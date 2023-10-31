@@ -5,10 +5,10 @@
 
 import '@vaadin/icons';
 
+import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import { Grid, IconButton, keyframes, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { objectSpread } from '@polkadot/util';
@@ -44,7 +44,7 @@ export default function ImportSeed(): React.ReactElement {
   const [type, setType] = useState(DEFAULT_TYPE);
   const [path, setPath] = useState<string | null>(null);
   const [notFirstTime, setFirstTime] = useState<boolean>(false);
-  const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
+  const [showMore, setShowMore] = useState<boolean>(false);
 
   const chain = useMetadata(account?.genesis, true);
   const [name, setName] = useState<string | null | undefined>();
@@ -233,13 +233,13 @@ export default function ImportSeed(): React.ReactElement {
             // eslint-disable-next-line react/jsx-no-bind
             onEnter={password && name && !error && !!seed ? onCreate : () => null}
           />
-          <Grid alignItems='flex-end' container item justifyContent='flex-start' onClick={() => setShowAdvanced(!showAdvanced)}>
+          <Grid alignItems='flex-end' container item justifyContent='flex-start' onClick={() => setShowMore(!showMore)}>
             <Typography pt='20px' sx={{ color: 'secondary.light', cursor: 'pointer', textDecoration: 'underline', userSelect: 'none' }} >
               {t('More ...')}
             </Typography>
-            <ArrowForwardIosIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: 17, ml: '5px', stroke: '#BA2882', strokeWidth: '2px', transform: showAdvanced ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
+            <ArrowForwardIosIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: 17, ml: '5px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
           </Grid>
-          {showAdvanced &&
+          {showMore &&
             <Grid container item justifyContent='space-between' mt='10px' mb='25px'>
               <Grid container item width='49%'>
                 <InputWithLabel
