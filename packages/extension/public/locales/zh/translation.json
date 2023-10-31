@@ -198,10 +198,14 @@
   "No": "否",
   "Scan address QR code": "扫描地址二维码",
   "Hold the QR code in front of the device’s camera": "将二维码置于设备摄像头前",
-  "Add account": "添加账户"
-  
-  
-  
+  "Add account": "添加账户",
+  "Refresh": "刷新",
+  "Import ledger account": "导入 Ledger 账户",
+  "Connect your ledger device to the computer.": "将您的 Ledger 设备连接到计算机。",
+  "Open your desired App on the ledger device.": "在 Ledger 设备上打开您所需的应用。",
+  "Select the relevant chain of your desired App from below.": "从下方选择所需应用的相关链。",
+  "account type": "账户类型",
+  "address index": "地址索引"
   
   
 }
