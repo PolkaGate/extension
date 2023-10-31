@@ -212,7 +212,7 @@ export default function RestoreJson(): React.ReactElement {
                   : onBack}
                 primaryBtnText={t<string>('Restore')}
                 secondaryBtnText={stepOne
-                  ? t<string>('Close Tab')
+                  ? t<string>('Close tab')
                   : t<string>('Back')}
               />
             </Grid>

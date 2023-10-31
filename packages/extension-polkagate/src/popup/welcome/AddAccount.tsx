@@ -96,7 +96,7 @@ function AddAccount(): React.ReactElement {
         _mt='10px'
         _onClick={_goToAttachQR}
         _variant={'outlined'}
-        text={t<string>('Attach QR signer')}
+        text={t<string>('Attach QR-signer')}
       />
       <PButton
         _mt='10px'

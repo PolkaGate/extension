@@ -98,7 +98,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
           }
           onClick={_goToAddAddressOnly}
           py='4px'
-          text='Add watch-only account'
+          text={t('Add watch-only account')}
         />
         <MenuItem
           disabled={settings.camera !== 'on'}
@@ -107,7 +107,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
           }
           onClick={_goToAttachQR}
           py='4px'
-          text='Attach external QR-signer '
+          text={t('Attach external QR-signer')}
         />
         {settings.camera !== 'on' &&
           <Grid fontSize='10px' item letterSpacing='-1.5%' onClick={toggleSettingSubMenu} sx={{ cursor: 'pointer' }} textAlign='left'>
@@ -121,7 +121,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
           }
           onClick={_goToImportLedger}
           py='4px'
-          text='Attach ledger device'
+          text={t('Attach ledger device')}
         />
       </Grid>
     </Grid>

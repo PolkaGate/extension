@@ -138,7 +138,7 @@ export default function Confirmation({ handleDone, txInfo }: Props): React.React
           onPrimaryClick={handleDone}
           onSecondaryClick={() => { window.close() }}
           primaryBtnText={t<string>('Done')}
-          secondaryBtnText={t<string>('Close Tab')}
+          secondaryBtnText={t<string>('Close tab')}
         />
       </Grid>
     </Motion>

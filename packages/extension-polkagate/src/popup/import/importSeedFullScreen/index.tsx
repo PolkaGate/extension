@@ -268,7 +268,7 @@ export default function ImportSeed(): React.ReactElement {
                 onPrimaryClick={onCreate}
                 onSecondaryClick={onCloseTab}
                 primaryBtnText={t<string>('Import')}
-                secondaryBtnText={t<string>('Close Tab')}
+                secondaryBtnText={t<string>('Close tab')}
               />
             </Grid>
           </Grid>
