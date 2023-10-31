@@ -43,8 +43,9 @@ function AddAccount(): React.ReactElement {
   );
 
   const _goToImport = useCallback(
-    () => onAction('/account/import-seed'),
-    [onAction]
+    (): void => {
+      windowOpen('/account/import-seed').catch(console.error);
+    }, []
   );
 
   const _goToAttachQR = useCallback(
