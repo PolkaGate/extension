@@ -42,6 +42,7 @@ export default function Name({ address, className, isFocused, label, onBlur, onE
         onValidatedChange={onChange}
         type='text'
         validator={isNameValid}
+        width={style?.width}
       />
     </div>
   );
