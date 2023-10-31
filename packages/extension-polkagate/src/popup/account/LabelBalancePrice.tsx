@@ -13,7 +13,7 @@ import { Divider, Grid, IconButton, useTheme } from '@mui/material';
 import React from 'react';
 
 import { FormatPrice, ShowBalance } from '../../components';
-import { useApi, usePrice } from '../../hooks';
+import { useApi, usePrice, useTranslation } from '../../hooks';
 import { BalancesInfo } from '../../util/types';
 import { getValue } from './util';
 
@@ -27,6 +27,8 @@ interface Props {
 
 export default function LabelBalancePrice({ address, balances, label, onClick, showLabel = true }: Props): React.ReactElement<Props> {
   const theme = useTheme();
+  const { t } = useTranslation();
+
   const value = getValue(label, balances);
   const api = useApi(address);
   const price = usePrice(address);
@@ -37,7 +39,7 @@ export default function LabelBalancePrice({ address, balances, label, onClick, s
         <Grid alignItems='center' container justifyContent='space-between'>
           {showLabel &&
             <Grid item sx={{ fontSize: '16px', fontWeight: 300, lineHeight: '36px' }} xs={6}>
-              {label}
+              {t(label)}
             </Grid>
           }
           <Grid alignItems='flex-end' container direction='column' item xs>
