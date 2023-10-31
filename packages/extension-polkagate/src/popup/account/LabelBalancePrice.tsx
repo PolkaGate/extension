@@ -13,21 +13,21 @@ import { Divider, Grid, IconButton, useTheme } from '@mui/material';
 import React from 'react';
 
 import { FormatPrice, ShowBalance } from '../../components';
-import { useApi, usePrice, useTranslation } from '../../hooks';
+import { useApi, usePrice } from '../../hooks';
 import { BalancesInfo } from '../../util/types';
 import { getValue } from './util';
 
 interface Props {
   label: string;
+  title: string;
   balances: BalancesInfo | null | undefined;
   address: string | undefined;
   showLabel?: boolean;
   onClick?: () => void
 }
 
-export default function LabelBalancePrice({ address, balances, label, onClick, showLabel = true }: Props): React.ReactElement<Props> {
+export default function LabelBalancePrice({ address, balances, label, onClick, showLabel = true, title }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  const { t } = useTranslation();
 
   const value = getValue(label, balances);
   const api = useApi(address);
@@ -39,7 +39,7 @@ export default function LabelBalancePrice({ address, balances, label, onClick, s
         <Grid alignItems='center' container justifyContent='space-between'>
           {showLabel &&
             <Grid item sx={{ fontSize: '16px', fontWeight: 300, lineHeight: '36px' }} xs={6}>
-              {t(label)}
+              {title}
             </Grid>
           }
           <Grid alignItems='flex-end' container direction='column' item xs>

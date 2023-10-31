@@ -124,7 +124,7 @@ export default function AccountDetails(): React.ReactElement {
       : showStakingOptions
         ? theme.palette.secondary.main
         : theme.palette.text.primary
-  , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
+    , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
 
   const goToOthers = useCallback(() => {
     setShowOthers(true);
@@ -197,22 +197,22 @@ export default function AccountDetails(): React.ReactElement {
         {!showStakingOptions
           ? <Grid item pt='10px' sx={{ height: window.innerHeight - 208, overflowY: 'scroll' }} xs>
             {assetId !== undefined
-              ? <LabelBalancePrice address={address} balances={balanceToShow} label={'Balance'} />
+              ? <LabelBalancePrice address={address} balances={balanceToShow} label={'Balance'} title={t('Balance')} />
               : < >
-                <LabelBalancePrice address={address} balances={balanceToShow} label={'Total'} />
-                <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferable'} onClick={goToSend} />
+                <LabelBalancePrice address={address} balances={balanceToShow} label={'Total'} title={t('Total')} />
+                <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferable'} title={t('Transferable')} onClick={goToSend} />
                 {STAKING_CHAINS.includes(genesisHash)
                   ? <>
-                    <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Stake'} onClick={goToSoloStaking} />
-                    <LabelBalancePrice address={address} balances={balanceToShow} label={'Pool Stake'} onClick={goToPoolStaking} />
+                    <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Stake'} title={t('Solo Stake')} onClick={goToSoloStaking} />
+                    <LabelBalancePrice address={address} balances={balanceToShow} label={'Pool Stake'} title={t('Pool Stake')} onClick={goToPoolStaking} />
                   </>
-                  : <LabelBalancePrice address={address} balances={balanceToShow} label={'Free'} />
+                  : <LabelBalancePrice address={address} balances={balanceToShow} label={'Free'} title={t('Free')} />
                 }
                 {GOVERNANCE_CHAINS.includes(genesisHash)
                   ? <LockedInReferenda address={address} refresh={refresh} setRefresh={setRefresh} />
-                  : <LabelBalancePrice address={address} balances={balanceToShow} label={'Locked'} />
+                  : <LabelBalancePrice address={address} balances={balanceToShow} label={'Locked'} title={t('Locked')} />
                 }
-                <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} />
+                <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} title={t('Reserved')} />
                 <OthersRow />
               </>
             }

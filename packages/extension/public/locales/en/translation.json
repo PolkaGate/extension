@@ -1020,5 +1020,14 @@
   "We do not collect keys, addresses, or any personal information. Your data always stays on this device.": "",
   "We are committed to respecting your privacy and are not engaged in information collection – not even anonymized data.": "",
   "Thank you for choosing Polkagate!": "",
-  "Got it, Take Me In": ""
+  "Got it, Take Me In": "",
+  "Balance": "",
+  "Transferable": "",
+  "Solo Stake": "",
+  "Pool Stake": "",
+  "Free": "",
+  "Locked": "",
+  "Reserved": "",
+  "Free Balance": "",
+  "Voting Balance": ""
 }

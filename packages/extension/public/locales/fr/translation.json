@@ -1020,5 +1020,13 @@
   "We do not collect keys, addresses, or any personal information. Your data always stays on this device.": "Nous ne collectons pas de clés, d'adresses ou d'informations personnelles. Vos données restent toujours sur cet appareil.",
   "We are committed to respecting your privacy and are not engaged in information collection – not even anonymized data.": "Nous nous engageons à respecter votre vie privée et ne collectons aucune information, même pas des données anonymisées.",
   "Thank you for choosing Polkagate!": "Merci d'avoir choisi Polkagate !",
-  "Got it, Take Me In": "C'est compris, emmenez-moi"
+  "Got it, Take Me In": "C'est compris, emmenez-moi",
+  "Transferable": "Transférable",
+  "Solo Stake": "Délégation individuelle",
+  "Pool Stake": "Délégation collective",
+  "Free": "Disponible",
+  "Locked": "Bloqué",
+  "Reserved": "Engagé",
+  "Free Balance": "Solde disponible",
+  "Voting Balance": "Solde de délégation"
 }
