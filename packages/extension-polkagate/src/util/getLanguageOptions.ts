@@ -23,6 +23,10 @@ export default function getLanguageOptions (): Option[] {
     {
       text: 'Français',
       value: 'fr'
+    },
+    {
+      text: 'Русский',
+      value: 'ru'
     }
     // , // TODO:; will add others when its translation file is completed
     // {
