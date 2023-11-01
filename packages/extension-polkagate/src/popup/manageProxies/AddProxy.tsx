@@ -55,7 +55,7 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
   const possibleProxy = useMemo(() => ({ delay, delegate: realAddress, proxyType: selectedProxyType }) as Proxy, [delay, realAddress, selectedProxyType]);
   const alreadyExisting = useMemo(() => !!(proxyItems?.find((item) => isEqualProxy(item.proxy, possibleProxy))), [possibleProxy, proxyItems]);
 
-  const PROXY_TYPE = CHAIN_PROXY_TYPES[sanitizeChainName(chain.name) as string] as string[];
+  const PROXY_TYPE = CHAIN_PROXY_TYPES[sanitizeChainName(chain.name) as keyof typeof CHAIN_PROXY_TYPES];
 
   const proxyTypeOptions = PROXY_TYPE.map((type: string): DropdownOption => ({
     text: type,
