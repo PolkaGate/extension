@@ -15,9 +15,9 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
-import { useApi, useBalances, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation, useValidatorSuggestion } from '../../../../hooks';
+import { useApi, useBalances, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork, useValidatorSuggestion } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import { MAX_AMOUNT_LENGTH } from '../../../../util/constants';
+import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
 import SelectValidators from '../../partial/SelectValidators';
@@ -31,7 +31,7 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -43,9 +43,12 @@ export default function Index(): React.ReactElement {
   const chain = useChain(address);
   const formatted = useFormatted(address);
   const balances = useBalances(address);
+
+  useUnSupportedNetwork(address, STAKING_CHAINS);
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const autoSelectedValidators = useValidatorSuggestion(address);
+
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [amount, setAmount] = useState<string>();
   const [alert, setAlert] = useState<string | undefined>();
