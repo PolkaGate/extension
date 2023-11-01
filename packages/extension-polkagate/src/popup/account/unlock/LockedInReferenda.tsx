@@ -92,11 +92,30 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
       return;
     }
 
-    referendaLocks.sort((a, b) => b.total.sub(a.total).toNumber());
+    referendaLocks.sort((a, b) => { // sort locks based on total and endblock desc
+      if (a.total.gt(b.total)) {
+        return -1;
+      }
+
+      if (a.total.lt(b.total)) {
+        return 1;
+      }
+
+      if (a.endBlock.gt(b.endBlock)) {
+        return -1;
+      }
+
+      if (a.endBlock.lt(b.endBlock)) {
+        return 1;
+      }
+
+      return 0;
+    });
+
     const biggestVote = referendaLocks[0].total;
 
     setLockedInReferenda(biggestVote);
-    const indexOfBiggestNotLockable = referendaLocks.findIndex((l) => l.endBlock.gtn(currentBlock));
+    const indexOfBiggestNotLockable = referendaLocks.findIndex(({ endBlock }) => endBlock.gtn(currentBlock));
 
     if (indexOfBiggestNotLockable === -1) { // all is unlockable
       return setUnlockableAmount(biggestVote);
