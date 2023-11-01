@@ -147,7 +147,7 @@ export default function ImportLedger(): React.ReactElement {
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t<string>('Import ledger account')}
+                {t<string>('Attach ledger device')}
               </Typography>
             </Grid>
           </Grid>
