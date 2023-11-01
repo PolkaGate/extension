@@ -1029,5 +1029,9 @@
   "Locked": "",
   "Reserved": "",
   "Free Balance": "",
-  "Voting Balance": ""
+  "Voting Balance": "",
+  "Cannot set your account as a proxy for itself.": "",
+  "You've already included this proxy.": "",
+  "Step 1 of 3: Choose trusted friends": "",
+  "Step 2 of 3: Set details": ""
 }

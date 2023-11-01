@@ -1037,6 +1037,8 @@
   "Free": "可用",
   "Locked": "已锁定",
   "Voting Balance": "投票余额",
+  "Cannot set your account as a proxy for itself.": "无法将您的帐户设置为其自身的代理。",
+  "You've already included this proxy.": "您已经包括了这个代理。",
   "Step 1 of 3: Choose trusted friends": "第1步/3：选择可信任的朋友",
   "Step 2 of 3: Set details": "第2步/3：设置细节"
 }
