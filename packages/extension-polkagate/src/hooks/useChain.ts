@@ -20,12 +20,12 @@ export default function useChain(address: AccountId | string | undefined, chain?
   useEffect(() => {
     if (chain) {
       setNewChain(chain);
-
-      return;
+    } else if (account && !account?.genesisHash) {
+      setNewChain(null);
+    } else {
+      setNewChain(metaDataChain);
     }
-
-    setNewChain(metaDataChain);
-  }, [chain, metaDataChain]);
+  }, [account, chain, metaDataChain]);
 
   return newChain;
 }
