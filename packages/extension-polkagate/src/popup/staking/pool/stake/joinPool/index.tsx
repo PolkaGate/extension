@@ -14,9 +14,9 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, PButton, ShowBalance } from '../../../../../components';
-import { useApi, useDecimal, useFormatted, usePoolConsts, usePools, useToken, useTranslation } from '../../../../../hooks';
+import { useApi, useDecimal, useFormatted, usePoolConsts, usePools, useToken, useTranslation, useUnSupportedNetwork } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
-import { MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME } from '../../../../../util/constants';
+import { MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME, STAKING_CHAINS } from '../../../../../util/constants';
 import { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../../util/utils';
 import PoolsTable from './partials/PoolsTable';
@@ -28,13 +28,16 @@ interface State {
   poolStakingConsts: PoolStakingConsts;
 }
 
-export default function JoinPool(): React.ReactElement {
+export default function JoinPool (): React.ReactElement {
   const { t } = useTranslation();
 
   const { address } = useParams<{ address: string }>();
   const { state } = useLocation<State>();
   const formatted = useFormatted(address);
   const api = useApi(address, state?.api);
+
+  useUnSupportedNetwork(address, STAKING_CHAINS);
+
   const poolStakingConsts = usePoolConsts(address, state?.poolStakingConsts);
   const history = useHistory();
 

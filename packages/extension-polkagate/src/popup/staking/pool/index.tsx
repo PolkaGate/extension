@@ -12,17 +12,17 @@ import { faHand, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback,useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
-import { useApi, useBalances, useChain, useDecimal, useFormatted, useMyAccountIdentity, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation } from '../../../hooks';
+import { ActionContext,FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
+import { useApi, useBalances, useChain, useDecimal, useFormatted, useMyAccountIdentity, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { ChainSwitch, HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
-import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_ICON } from '../../../util/constants';
+import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, STAKING_CHAINS, TIME_TO_SHAKE_ICON } from '../../../util/constants';
 import AccountBrief from '../../account/AccountBrief';
 import { getValue } from '../../account/util';
 import RewardsStakeReview from './rewards/Stake';
@@ -44,14 +44,17 @@ interface State {
 
 export default function Index(): React.ReactElement {
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
   const theme = useTheme();
+  const onAction = useContext(ActionContext);
   const history = useHistory();
   const { pathname, state } = useLocation<State>();
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
   const chain = useChain(address);
   const api = useApi(address, state?.api);
+
+  useUnSupportedNetwork(address, STAKING_CHAINS);
+
   const [refresh, setRefresh] = useState<boolean>(false);
   const pool = usePool(address, undefined, refresh);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);

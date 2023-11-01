@@ -9,20 +9,24 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN, bnMax } from '@polkadot/util';
 
 import { poolStakingBlack, poolStakingWhite, soloStakingBlack, soloStakingWhite } from '../../assets/icons';
-import { useApi, useMinToReceiveRewardsInSolo, usePoolConsts, useStakingConsts, useTranslation } from '../../hooks';
+import { useApi, useMinToReceiveRewardsInSolo, usePoolConsts, useStakingConsts, useTranslation, useUnSupportedNetwork } from '../../hooks';
+import { STAKING_CHAINS } from '../../util/constants';
 import Option from './partial/StakingOption';
 
 interface Props {
-  showStakingOptions: boolean
+  showStakingOptions: boolean;
+  setShowStakingOptions: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Options({ showStakingOptions }: Props): React.ReactElement {
+export default function Options ({ setShowStakingOptions, showStakingOptions }: Props): React.ReactElement {
   const { t } = useTranslation();
   const history = useHistory();
   const theme = useTheme();
   const { pathname, state } = useLocation();
   const { address } = useParams<{ address: string }>();
   const api = useApi(address, state?.api);
+
+  useUnSupportedNetwork(address, STAKING_CHAINS, () => setShowStakingOptions(false));
   const stakingConsts = useStakingConsts(address);
   const poolConsts = usePoolConsts(address);
   const nominatorInfo = useMinToReceiveRewardsInSolo(address);

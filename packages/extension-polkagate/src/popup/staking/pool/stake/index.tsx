@@ -11,8 +11,9 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
 
-import { useApi, useBalances, useFormatted, usePool, usePoolConsts, useTranslation } from '../../../../hooks';
+import { useApi, useBalances, useFormatted, usePool, usePoolConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
+import { STAKING_CHAINS } from '../../../../util/constants';
 import { MyPoolInfo, PoolStakingConsts } from '../../../../util/types';
 import BondExtra from './bondExtra';
 import StakeInitialChoice from './StakeInitialChoice';
@@ -24,12 +25,15 @@ interface State {
   pathname: string;
 }
 
-export default function Stake(): React.ReactElement {
+export default function Stake (): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
   const { state } = useLocation<State>();
   const api = useApi(address, state?.api);
+
+  useUnSupportedNetwork(address, STAKING_CHAINS);
+
   const poolStakingConsts = usePoolConsts(address, state?.consts);
   const balances = useBalances(address);
   const pool = usePool(address);

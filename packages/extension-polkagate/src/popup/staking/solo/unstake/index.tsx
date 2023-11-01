@@ -15,9 +15,9 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
-import { useApi, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation } from '../../../../hooks';
+import { useApi, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import { DATE_OPTIONS, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
+import { DATE_OPTIONS, MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
 import Review from './Review';
@@ -41,6 +41,7 @@ export default function Index(): React.ReactElement {
   const token = useToken(address);
   const decimal = useDecimal(address);
 
+  useUnSupportedNetwork(address, STAKING_CHAINS);
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();

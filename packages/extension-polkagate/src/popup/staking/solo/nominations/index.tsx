@@ -18,8 +18,9 @@ import { DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { BN_ZERO } from '@polkadot/util';
 
 import { Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
-import { useApi, useChain, useFormatted, useStakingAccount, useStakingConsts, useTranslation, useValidators, useValidatorsIdentities } from '../../../../hooks';
+import { useApi, useChain, useFormatted, useStakingAccount, useStakingConsts, useTranslation, useUnSupportedNetwork, useValidators, useValidatorsIdentities } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
+import { STAKING_CHAINS } from '../../../../util/constants';
 import SelectValidators from '../../partial/SelectValidators';
 import Review from '../../partial/SelectValidatorsReview';
 import ValidatorsTable from '../../partial/ValidatorsTable';
@@ -32,7 +33,7 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -40,6 +41,8 @@ export default function Index(): React.ReactElement {
   const history = useHistory();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
+
+  useUnSupportedNetwork(address, STAKING_CHAINS);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
 
   const allValidatorsInfo = useValidators(address);

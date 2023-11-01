@@ -20,16 +20,17 @@ import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
 
 import { ActionContext, Motion, PasswordUseProxyConfirm, Progress, ShortAddress, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useApi, useChain, useChainName, useFormatted, useNeedsPutInFrontOf, useNeedsRebag, useProxies, useTranslation } from '../../../../hooks';
+import { useAccountDisplay, useApi, useChain, useChainName, useFormatted, useNeedsPutInFrontOf, useNeedsRebag, useProxies, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
+import { STAKING_CHAINS } from '../../../../util/constants';
 import getLogo from '../../../../util/getLogo';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './TxDetail';
 
-export default function TuneUp(): React.ReactElement {
+export default function TuneUp (): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const { address } = useParams<{ address: string }>();
@@ -39,6 +40,7 @@ export default function TuneUp(): React.ReactElement {
   const formatted = useFormatted(address);
   const onAction = useContext(ActionContext);
 
+  useUnSupportedNetwork(address, STAKING_CHAINS);
   const subscanLink = (address: string) => `https://${chainName}.subscan.io/account/${String(address)}?tab=reward`;
 
   const putInFrontInfo = useNeedsPutInFrontOf(address);
