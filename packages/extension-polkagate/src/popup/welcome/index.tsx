@@ -28,7 +28,7 @@ const Welcome = function (): React.ReactElement {
     <>
       <HeaderBrand
         showBrand
-        text={t<string>('Polkagate')}
+        text={'Polkagate'}
       />
       <Typography component='h2' sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '20px', pt: '25px', textAlign: 'center' }}>
         {t<string>('Welcome!')}
@@ -38,7 +38,7 @@ const Welcome = function (): React.ReactElement {
       </Typography>
       <Box sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '14px', m: '24px 15px 17px', p: '0' }}>
         <List sx={{ color: 'text.primary' }}>
-        <ListItem sx={{ py: '2px' }}>
+          <ListItem sx={{ py: '2px' }}>
             <ListItemIcon sx={{ color: 'primary.main', minWidth: '26px', width: '26px' }}>
               <FiberManualRecordIcon sx={{ width: '9px' }} />
             </ListItemIcon>

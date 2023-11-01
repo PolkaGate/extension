@@ -41,7 +41,7 @@ export default function useEndpoint(address: AccountId | string | undefined): st
 
           setEndpoint(endpoints[randomIndex].value);
         } else {
-          // Endpoint not found, handle the error (e.g., set a default value)
+          // Endpoint not found, handle the error (e.g., set a default value?)
           setEndpoint(undefined);
         }
       }

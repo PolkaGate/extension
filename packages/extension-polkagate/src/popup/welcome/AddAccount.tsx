@@ -60,7 +60,7 @@ function AddAccount(): React.ReactElement {
       <HeaderBrand
         showBrand
         showMenu
-        text={t<string>('Polkagate')}
+        text={'Polkagate'}
       />
       <Typography component='p' sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '20px', pt: '25px', textAlign: 'center' }}>
         {t('Welcome!')}
