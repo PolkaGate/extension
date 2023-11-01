@@ -161,9 +161,9 @@ export default function ClaimCommission({ address, pool, setShow, show }: Props)
             chain={chain}
             formatted={payee}
             label={t('Payee')}
+            noDivider
             pt1={0}
             pt2={0}
-            noDivider
           />
         </Container>
         <PasswordUseProxyConfirm
@@ -172,7 +172,7 @@ export default function ClaimCommission({ address, pool, setShow, show }: Props)
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
+          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={submit}
           proxiedAddress={formatted}

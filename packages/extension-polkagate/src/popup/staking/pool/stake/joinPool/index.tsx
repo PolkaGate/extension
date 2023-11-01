@@ -181,7 +181,7 @@ export default function JoinPool(): React.ReactElement {
         withSteps={{ current: 1, total: 2 }}
       />
       <AmountWithOptions
-        label={t<string>(`Amount (${token ?? '...'})`)}
+        label={t<string>('Amount ({{token}})', { replace: { token: token || '...' } })}
         onChangeAmount={stakeAmountChange}
         onPrimary={onMinAmount}
         onSecondary={onMaxAmount}

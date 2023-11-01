@@ -212,7 +212,7 @@ export default function TuneUp(): React.ReactElement {
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
+          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={submit}
           proxiedAddress={selectedProxyAddress}

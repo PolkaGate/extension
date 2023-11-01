@@ -175,7 +175,7 @@ export default function CreatePool(): React.ReactElement {
         <InputWithLabel label={t<string>('Pool name')} onChange={_onPoolNameChange} placeholder={DEFAULT_POOLNAME} value={poolName} />
       </Grid>
       <AmountWithOptions
-        label={t<string>(`Amount (${token || '...'})`)}
+        label={t<string>('Amount ({{token}})', { replace: { token: token || '...' } })}
         onChangeAmount={stakeAmountChange}
         onPrimary={onMinAmount}
         onSecondary={onMaxAmount}

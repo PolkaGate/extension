@@ -252,7 +252,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
         : <>
           {mustSelectProxy
             ? <>
-              <Grid container height='50px' item sx={{ '> div': { m: 0, p: 0 }, pt: '5px' }}>
+              <Grid container alignItems='center' height='50px' item sx={{ '> div': { m: 0, p: 0 }, pt: '5px' }}>
                 <Warning
                   fontWeight={300}
                   theme={theme}

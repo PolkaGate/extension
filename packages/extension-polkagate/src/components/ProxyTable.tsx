@@ -99,7 +99,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
 
   const Available = ({ proxy }: { proxy: Proxy }) => (
     <Typography fontSize='12px' fontWeight={400}>
-      {isAvailable(proxy) ? 'Yes' : 'No'}
+      {isAvailable(proxy) ? t('Yes') : t('No')}
     </Typography>
   );
 

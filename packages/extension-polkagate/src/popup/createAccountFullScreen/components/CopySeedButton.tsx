@@ -82,7 +82,7 @@ function CopySeedButton({ copyText, iconSize = 20, style, value }: Props): React
                 icon={faCopy}
               />
               <Typography fontSize='16px' fontWeight={400} sx={{ pl: '8px', textDecoration: 'underline' }}>
-                {copyText ?? 'Copy to clipboard'}
+                {copyText ?? t('Copy to clipboard')}
               </Typography>
             </Grid>
           </CopyToClipboard>

@@ -260,7 +260,7 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
               address={newCommissionPayee}
               allAddresses={allAddresses}
               chain={chain}
-              label={'Payee'}
+              label={t('Payee')}
               setAddress={setNewCommissionPayee}
               showIdenticon
               style={{

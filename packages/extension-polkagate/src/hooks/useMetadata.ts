@@ -7,8 +7,8 @@ import { useEffect, useState } from 'react';
 
 import { getMetadata } from '../messaging';
 
-export default function (genesisHash?: string | null, isPartial?: boolean): Chain | null {
-  const [chain, setChain] = useState<Chain | null>(null);
+export default function (genesisHash?: string | null, isPartial?: boolean): Chain | null | undefined {
+  const [chain, setChain] = useState<Chain | null>();
 
   useEffect((): void => {
     if (genesisHash) {
@@ -19,7 +19,7 @@ export default function (genesisHash?: string | null, isPartial?: boolean): Chai
           setChain(null);
         });
     } else {
-      setChain(null);
+      setChain(undefined);
     }
   }, [genesisHash, isPartial]);
 

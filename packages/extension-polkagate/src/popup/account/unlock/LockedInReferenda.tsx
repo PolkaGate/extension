@@ -105,7 +105,7 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
     if (biggestVote.eq(biggestOngoingLock(referendaLocks))) { // The biggest vote is already ongoing
       setUnlockableAmount(BN_ZERO);
 
-      return setTimeToUnlock('Locked in ongoing referenda');
+      return setTimeToUnlock(t('Locked in ongoing referenda'));
     }
 
     if (indexOfBiggestNotLockable === 0 || biggestVote.eq(referendaLocks[indexOfBiggestNotLockable].total)) { // nothing is unlockable
@@ -113,13 +113,13 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
 
       setUnlockableAmount(BN_ZERO);
 
-      return setTimeToUnlock(`Unlockable on ${dateString}`);
+      return setTimeToUnlock(t('Unlockable on {{dateString}}', { replace: { dateString } }));
     }
 
     const amountStillLocked = referendaLocks[indexOfBiggestNotLockable].total;
 
     setUnlockableAmount(biggestVote.sub(amountStillLocked));
-  }, [api, biggestOngoingLock, currentBlock, referendaLocks]);
+  }, [api, biggestOngoingLock, currentBlock, referendaLocks, t]);
 
   useEffect(() => {
     if (!api?.query?.balances || !formatted || api?.genesisHash?.toString() !== chain?.genesisHash) {

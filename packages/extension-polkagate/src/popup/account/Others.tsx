@@ -81,12 +81,9 @@ export default function Others({ address, balances, chain, identity, setShow, sh
         </Container>
         <Container disableGutters sx={{ maxHeight: `${parent.innerHeight - 150}px`, overflowY: 'auto', px: '15px' }}>
           {chain?.genesisHash && STAKING_CHAINS.includes(chain.genesisHash) &&
-            <LabelBalancePrice address={address} balances={balances} label={'Free Balance'} />
+            <LabelBalancePrice address={address} balances={balances} label={'Free Balance'} title={t('Free Balance')} />
           }
-          {/* {chain?.genesisHash && !GOVERNANCE_CHAINS.includes(chain.genesisHash) &&
-            <LabelBalancePrice address={address} balances={balances} label={'Locked Balance'} />
-          } */}
-          <LabelBalancePrice address={address} balances={balances} label={'Voting Balance'} />
+          <LabelBalancePrice address={address} balances={balances} label={'Voting Balance'} title={t('Voting Balance')} />
         </Container>
       </Popup>
     </Motion>

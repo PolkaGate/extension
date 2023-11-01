@@ -168,7 +168,7 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
+          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           proxiedAddress={formatted}
           proxies={proxyItems}

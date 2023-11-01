@@ -172,7 +172,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
           api={api}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
+          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={goCreatePool}
           proxiedAddress={formatted}

@@ -205,7 +205,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
         disabled={canPayFeeAndDeposit.isAbleToPay !== true}
         genesisHash={account?.genesisHash}
         isPasswordError={isPasswordError}
-        label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
+        label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
         onChange={setPassword}
         onConfirmClick={onNext}
         proxiedAddress={address}

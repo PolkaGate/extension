@@ -43,8 +43,9 @@ function AddAccount(): React.ReactElement {
   );
 
   const _goToImport = useCallback(
-    () => onAction('/account/import-seed'),
-    [onAction]
+    (): void => {
+      windowOpen('/account/import-seed').catch(console.error);
+    }, []
   );
 
   const _goToAttachQR = useCallback(
@@ -96,7 +97,7 @@ function AddAccount(): React.ReactElement {
         _mt='10px'
         _onClick={_goToAttachQR}
         _variant={'outlined'}
-        text={t<string>('Attach QR signer')}
+        text={t<string>('Attach QR-signer')}
       />
       <PButton
         _mt='10px'

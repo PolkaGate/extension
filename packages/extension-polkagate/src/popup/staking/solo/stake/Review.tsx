@@ -226,7 +226,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
+          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={stake}
           proxiedAddress={settings.stashId}
