@@ -143,7 +143,7 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
             helperText={t<string>('The announcement period required of the initial proxy. Generally will be zero.')}
             label={t<string>('Delay')}
             onChange={_selectDelay}
-            value={delay}
+            value={delay.toString()}
           />
         </Grid>
         <Typography fontSize='16px' fontWeight={300} pb='4px' pl='10px'>
