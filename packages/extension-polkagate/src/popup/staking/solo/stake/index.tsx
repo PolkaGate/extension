@@ -8,13 +8,13 @@ import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountStakingInfo, SoloSettings, StakingConsts, ValidatorInfo } from '../../../../util/types';
 
 import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
+import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
 import { useApi, useBalances, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork, useValidatorSuggestion } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
@@ -43,9 +43,8 @@ export default function Index (): React.ReactElement {
   const chain = useChain(address);
   const formatted = useFormatted(address);
   const balances = useBalances(address);
-  const onAction = useContext(ActionContext);
 
-  useUnSupportedNetwork(address, STAKING_CHAINS, () => onAction('/'));
+  useUnSupportedNetwork(address, STAKING_CHAINS);
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const autoSelectedValidators = useValidatorSuggestion(address);

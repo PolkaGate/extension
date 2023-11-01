@@ -10,14 +10,14 @@ import type { MyPoolInfo, PoolStakingConsts, StakingConsts, ValidatorInfo } from
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, SxProps, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { BN } from '@polkadot/util';
 
-import { ActionContext, Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
+import { Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
 import { useApi, useChain, useFormatted, usePool, useStakingConsts, useTranslation, useUnSupportedNetwork, useValidators, useValidatorsIdentities } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { STAKING_CHAINS } from '../../../../util/constants';
@@ -39,12 +39,11 @@ export default function Index (): React.ReactElement {
   const { state } = useLocation<State>();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
-  const onAction = useContext(ActionContext);
   const history = useHistory();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
 
-  useUnSupportedNetwork(address, STAKING_CHAINS, () => onAction('/'));
+  useUnSupportedNetwork(address, STAKING_CHAINS);
 
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const allValidatorsInfo = useValidators(address);

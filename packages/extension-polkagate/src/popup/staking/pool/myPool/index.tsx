@@ -11,11 +11,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon, AutoDelete as AutoDeleteIcon, KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon, LockOpenRounded as UnblockIcon, LockPersonRounded as BlockIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { ActionContext, PButton, Select, Warning } from '../../../../components';
+import { PButton, Select, Warning } from '../../../../components';
 import { useApi, useChain, useFormatted, useMyPools, usePool, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { STAKING_CHAINS } from '../../../../util/constants';
@@ -58,9 +58,8 @@ export default function Pool (): React.ReactElement {
   const history = useHistory();
   const chain = useChain(address);
   const formatted = useFormatted(address);
-  const onAction = useContext(ActionContext);
 
-  useUnSupportedNetwork(address, STAKING_CHAINS, () => onAction('/'));
+  useUnSupportedNetwork(address, STAKING_CHAINS);
   const myOtherPools = useMyPools(address);
 
   const [poolIndex, setPoolIndex] = useState<number>(0);

@@ -12,13 +12,13 @@ import { faHand, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
+import { FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
 import { useApi, useBalances, useChain, useDecimal, useFormatted, useMyAccountIdentity, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { ChainSwitch, HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
@@ -44,7 +44,6 @@ interface State {
 
 export default function Index(): React.ReactElement {
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
   const theme = useTheme();
   const history = useHistory();
   const { pathname, state } = useLocation<State>();
@@ -53,7 +52,7 @@ export default function Index(): React.ReactElement {
   const chain = useChain(address);
   const api = useApi(address, state?.api);
 
-  useUnSupportedNetwork(address, STAKING_CHAINS, () => onAction('/'));
+  useUnSupportedNetwork(address, STAKING_CHAINS);
 
   const [refresh, setRefresh] = useState<boolean>(false);
   const pool = usePool(address, undefined, refresh);

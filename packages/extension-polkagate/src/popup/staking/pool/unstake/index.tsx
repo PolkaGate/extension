@@ -12,13 +12,13 @@ import { faPersonCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AutoDelete as AutoDeleteIcon } from '@mui/icons-material';
 import { Button, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
+import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
 import { useApi, useChain, useDecimal, useFormatted, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
@@ -50,9 +50,8 @@ export default function Index (): React.ReactElement {
   const history = useHistory();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
-  const onAction = useContext(ActionContext);
 
-  useUnSupportedNetwork(address, STAKING_CHAINS, () => onAction('/'));
+  useUnSupportedNetwork(address, STAKING_CHAINS);
 
   const [refresh, setRefresh] = useState<boolean>(false);
   const myPool = usePool(address, undefined, refresh);

@@ -8,13 +8,13 @@ import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountStakingInfo, StakingConsts } from '../../../../util/types';
 
 import { Grid, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
+import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
 import { useApi, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { DATE_OPTIONS, MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
@@ -40,9 +40,8 @@ export default function Index(): React.ReactElement {
   const formatted = useFormatted(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
-  const onAction = useContext(ActionContext);
 
-  useUnSupportedNetwork(address, STAKING_CHAINS, () => onAction('/'));
+  useUnSupportedNetwork(address, STAKING_CHAINS);
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();

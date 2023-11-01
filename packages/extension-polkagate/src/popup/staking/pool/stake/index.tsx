@@ -5,13 +5,12 @@
 
 import { Grid, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
 
-import { ActionContext } from '../../../../components';
 import { useApi, useBalances, useFormatted, usePool, usePoolConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
 import { STAKING_CHAINS } from '../../../../util/constants';
@@ -32,9 +31,8 @@ export default function Stake (): React.ReactElement {
   const formatted = useFormatted(address);
   const { state } = useLocation<State>();
   const api = useApi(address, state?.api);
-  const onAction = useContext(ActionContext);
 
-  useUnSupportedNetwork(address, STAKING_CHAINS, () => onAction('/'));
+  useUnSupportedNetwork(address, STAKING_CHAINS);
 
   const poolStakingConsts = usePoolConsts(address, state?.consts);
   const balances = useBalances(address);

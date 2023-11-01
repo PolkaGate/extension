@@ -10,13 +10,13 @@ import type { AccountStakingInfo, StakingConsts } from '../../../../util/types';
 import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
 import { Grid, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { ActionContext, Motion, PButton, Warning } from '../../../../components';
+import { Motion, PButton, Warning } from '../../../../components';
 import { useApi, useBalances, useChain, useDecimal, useFormatted, useIsExposed, useStakingAccount, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { STAKING_CHAINS } from '../../../../util/constants';
@@ -41,9 +41,8 @@ export default function Index (): React.ReactElement {
   const chain = useChain(address);
   const formatted = useFormatted(address);
   const token = useToken(address);
-  const onAction = useContext(ActionContext);
 
-  useUnSupportedNetwork(address, STAKING_CHAINS, () => onAction('/'));
+  useUnSupportedNetwork(address, STAKING_CHAINS);
 
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
   const myBalances = useBalances(address);

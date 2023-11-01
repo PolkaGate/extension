@@ -6,14 +6,14 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, AddressInput, AmountWithOptions, InputWithLabel, PButton, ShowBalance } from '../../../../../components';
+import { AddressInput, AmountWithOptions, InputWithLabel, PButton, ShowBalance } from '../../../../../components';
 import { useApi, useChain, useDecimal, useFormatted, usePoolConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
 import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../../util/constants';
@@ -37,9 +37,8 @@ export default function CreatePool (): React.ReactElement {
   const history = useHistory();
   const token = useToken(address);
   const decimal = useDecimal(address);
-  const onAction = useContext(ActionContext);
 
-  useUnSupportedNetwork(address, STAKING_CHAINS, () => onAction('/'));
+  useUnSupportedNetwork(address, STAKING_CHAINS);
 
   const poolStakingConsts = usePoolConsts(address, state?.poolStakingConsts);
   const chain = useChain(address);

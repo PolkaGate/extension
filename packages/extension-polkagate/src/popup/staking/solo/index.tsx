@@ -51,7 +51,7 @@ export default function Index (): React.ReactElement {
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
 
-  useUnSupportedNetwork(address, STAKING_CHAINS, () => onAction('/'));
+  useUnSupportedNetwork(address, STAKING_CHAINS);
 
   const [refresh, setRefresh] = useState<boolean>(false);
   const stakingAccount = useStakingAccount(address, state?.stakingAccount, refresh, setRefresh);

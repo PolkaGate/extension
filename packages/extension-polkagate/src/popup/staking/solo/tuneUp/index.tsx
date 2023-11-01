@@ -40,7 +40,7 @@ export default function TuneUp (): React.ReactElement {
   const formatted = useFormatted(address);
   const onAction = useContext(ActionContext);
 
-  useUnSupportedNetwork(address, STAKING_CHAINS, () => onAction('/'));
+  useUnSupportedNetwork(address, STAKING_CHAINS);
   const subscanLink = (address: string) => `https://${chainName}.subscan.io/account/${String(address)}?tab=reward`;
 
   const putInFrontInfo = useNeedsPutInFrontOf(address);

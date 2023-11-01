@@ -44,7 +44,7 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
   const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
 
-  useUnSupportedNetwork(address, STAKING_CHAINS, () => onAction('/'));
+  useUnSupportedNetwork(address, STAKING_CHAINS);
 
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
