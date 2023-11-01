@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import '@vaadin/icons';
+
 import { Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
@@ -70,6 +72,7 @@ function AddAccount(): React.ReactElement {
         _mt='20px'
         _onClick={_goToCreate}
         _variant={'contained'}
+        startIcon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.main}` }} />}
         text={t<string>('Create a new account')}
       />
       <Typography component={'p'} sx={{ fontSize: '18px', fontWeight: 300, py: '10px', textAlign: 'center' }}>
