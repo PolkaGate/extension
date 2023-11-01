@@ -54,7 +54,7 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         showBrand
         showClose
         showCloseX
-        text={t<string>('Polkagate')}
+        text={'Polkagate'}
       />
       <Grid container direction='column' px='15px'>
         <Grid container item justifyContent='center' pb='20px' pt='50px'>
