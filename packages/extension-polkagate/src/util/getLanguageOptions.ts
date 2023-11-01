@@ -23,22 +23,23 @@ export default function getLanguageOptions (): Option[] {
     {
       text: 'Français',
       value: 'fr'
-    },
-    {
-      text: 'Türkce',
-      value: 'tr'
-    },
-    {
-      text: 'Polski',
-      value: 'pl'
-    },
-    {
-      text: 'ภาษาไทย',
-      value: 'th'
-    },
-    {
-      text: 'اردو',
-      value: 'ur'
     }
+    // , // TODO:; will add others when its translation file is completed
+    // {
+    //   text: 'Türkce',
+    //   value: 'tr'
+    // },
+    // {
+    //   text: 'Polski',
+    //   value: 'pl'
+    // },
+    // {
+    //   text: 'ภาษาไทย',
+    //   value: 'th'
+    // },
+    // {
+    //   text: 'اردو',
+    //   value: 'ur'
+    // }
   ];
 }
