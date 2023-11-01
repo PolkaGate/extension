@@ -25,7 +25,7 @@ import { getValue } from '../account/util';
 
 interface Props {
   address: string;
-  chain: Chain | null;
+  chain: Chain | null | undefined;
   formatted: string | undefined | null;
   hideNumbers: boolean | undefined;
   identity: DeriveAccountRegistration | null | undefined;
@@ -54,7 +54,7 @@ const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
   )
 };
 
-export default function AccountDetail({ address, chain, formatted, hideNumbers, identity, isHidden, goToAccount, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail({ address, chain, formatted, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const balances = useBalances(address);
@@ -73,10 +73,15 @@ export default function AccountDetail({ address, chain, formatted, hideNumbers, 
   }, [balances, chainName]);
 
   const NoChainAlert = () => (
-    <Grid color='text.primary' onClick={menuOnClick} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 500, lineHeight: '27px' }}>
-      {t('Select a chain to view balance')}
-      <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 10, mb: '-1px', stroke: '#BA2882' }} />
-    </Grid>
+    <>
+      {chain === null
+        ? <Grid color='text.primary' onClick={menuOnClick} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 500, lineHeight: '27px' }}>
+          {t('Select a chain to view balance')}
+          <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 10, mb: '-1px', stroke: '#BA2882' }} />
+        </Grid>
+        : <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={'95%'} />
+      }
+    </>
   );
 
   const Balance = () => (
