@@ -8,6 +8,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 interface Props {
+  bgColor?: string;
   children: React.ReactNode;
   className?: string;
   isBelowInput?: boolean;
@@ -31,12 +32,13 @@ function Warning({ children, className = '', isBelowInput, isDanger }: Props): R
   );
 }
 
-export default React.memo(styled(Warning)<Props>(({ fontSize = '14px', fontWeight = 300, iconDanger, isBelowInput, isDanger, marginTop = 30, theme }: Props) => `
+export default React.memo(styled(Warning)<Props>(({ bgColor, fontSize = '14px', fontWeight = 300, iconDanger, isBelowInput, isDanger, marginTop = 30, theme }: Props) => `
   display: flex;
   flex-direction: row;
   padding-left: 18px;
   margin-right: 20px;
   margin-top: ${marginTop}px;
+  background-color:${bgColor || 'transparent'};
 
   &.belowInput {
     font-size: 14px;
