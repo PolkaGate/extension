@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Grid, Typography, useTheme } from '@mui/material';
+import { Box, Container, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { blake2AsHex } from '@polkadot/util-crypto';
@@ -12,7 +12,7 @@ import { logoBlack, logoMotionDark, logoMotionLight, logoWhite } from '../assets
 import { useTranslation } from '../hooks';
 import Passwords2 from '../popup/createAccountFullScreen/components/Passwords2';
 import PButton from './PButton';
-import { Password, WrongPasswordAlert } from '.';
+import { Password, Warning, WrongPasswordAlert } from '.';
 
 interface Props {
   children?: React.ReactNode;
@@ -188,9 +188,22 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
   }, []);
 
   return (
-    <>
+    <Container disableGutters>
       {isPasswordError &&
         <WrongPasswordAlert bgcolor={theme.palette.mode === 'dark' ? 'black' : 'white'} />
+      }
+      {step === STEPS.SET_PASSWORD &&
+        <Grid container sx={{ bgColor: theme.palette.mode === 'dark' ? 'black' : 'white', position: 'absolute', top: '30px' }}>
+          <Warning
+            fontWeight={300}
+            theme={theme}
+          >
+            <Grid item>
+              <b>{t<string>('There is no way to recover your password. ')}</b>
+              {t<string>('If you forget it, you will have to reimport your accounts and create a new password. To avoid losing access to your accounts, make sure you export them and store them securely.')}
+            </Grid>
+          </Warning>
+        </Grid>
       }
       {
         (!permitted || !children || isFlying) && isPopupOpenedByExtension
@@ -293,6 +306,6 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
           </Grid>
           : children
       }
-    </>
+    </Container>
   );
 }
