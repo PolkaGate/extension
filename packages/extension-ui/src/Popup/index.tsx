@@ -157,18 +157,22 @@ export default function Popup(): React.ReactElement {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(async () => {
-    chrome.storage.onChanged.addListener(function (changes, areaName) {
-      if (areaName === 'local' && 'loginInfo' in changes) {
-        const newValue = changes.loginInfo.newValue as LoginInfo;
+  useEffect(() => {
+    const fetchLoginInfo = async () => {
+      chrome.storage.onChanged.addListener(function (changes, areaName) {
+        if (areaName === 'local' && 'loginInfo' in changes) {
+          const newValue = changes.loginInfo.newValue as LoginInfo;
 
-        setLoginInfo(newValue);
-      }
-    });
-    const info = await getStorage('loginInfo') as LoginInfo;
+          setLoginInfo(newValue);
+        }
+      });
+      const info = await getStorage('loginInfo') as LoginInfo;
 
-    setLoginInfo(info);
+      setLoginInfo(info);
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    fetchLoginInfo();
   }, []);
 
   useEffect((): void => {

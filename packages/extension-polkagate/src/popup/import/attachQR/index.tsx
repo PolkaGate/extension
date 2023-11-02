@@ -11,6 +11,7 @@ import { useTranslation } from '../../../hooks';
 import { createAccountExternal, createAccountSuri, createSeed } from '../../../messaging';
 import HeaderBrand from '../../../partials/HeaderBrand';
 import Name from '../../../partials/Name';
+import { resetOnForgotPassword } from '../../createAccountFullScreen/resetAccounts';
 
 interface QrAccount {
   content: string;
@@ -36,22 +37,23 @@ export default function AttachQR(): React.ReactElement {
     !accounts.length && onAction();
   }, [accounts, onAction]);
 
-  const _onCreate = useCallback(
-    (): void => {
-      if (account && name) {
-        if (account.isAddress) {
-          createAccountExternal(name, account.content, account.genesisHash)
-            .then(() => onAction('/'))
-            .catch((error: Error) => console.error(error));
-        } else if (password) {
-          createAccountSuri(name, password, account.content, 'sr25519', account.genesisHash)
-            .then(() => onAction('/'))
-            .catch((error: Error) => console.error(error));
-        }
+  const _onCreate = useCallback(async () => {
+    if (account && name) {
+      if (account.isAddress) {
+        await resetOnForgotPassword();
+
+        createAccountExternal(name, account.content, account.genesisHash)
+          .then(() => onAction('/'))
+          .catch((error: Error) => console.error(error));
+      } else if (password) {
+        await resetOnForgotPassword();
+
+        createAccountSuri(name, password, account.content, 'sr25519', account.genesisHash)
+          .then(() => onAction('/'))
+          .catch((error: Error) => console.error(error));
       }
-    },
-    [account, name, onAction, password]
-  );
+    }
+  }, [account, name, onAction, password]);
 
   const _setAccount = useCallback(
     (qrAccount: QrAccount) => {

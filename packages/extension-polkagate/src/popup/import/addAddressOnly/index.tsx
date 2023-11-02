@@ -15,6 +15,7 @@ import { createAccountExternal, getMetadata } from '../../../messaging';
 import { HeaderBrand, Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
 import { Proxy, ProxyItem } from '../../../util/types';
+import { resetOnForgotPassword } from '../../createAccountFullScreen/resetAccounts';
 
 export default function AddAddressOnly(): React.ReactElement {
   const { t } = useTranslation();
@@ -24,6 +25,8 @@ export default function AddAddressOnly(): React.ReactElement {
   const [chain, setChain] = useState<Chain>();
   const [name, setName] = useState<string | null | undefined>();
   const [proxies, setProxies] = useState<ProxyItem[] | undefined>();
+  const [isBusy, setIsBusy] = useState(false);
+
   const api = useApiWithChain(chain);
   const genesisOptions = useGenesisHashOptions();
 
@@ -62,10 +65,18 @@ export default function AddAddressOnly(): React.ReactElement {
     });
   }, []);
 
-  const handleAdd = useCallback(() => {
-    name && realAddress && chain?.genesisHash && createAccountExternal(name, realAddress, chain.genesisHash)
-      .then(() => onAction('/'))
-      .catch((error: Error) => console.error(error));
+  const handleAdd = useCallback(async () => {
+    if (name && realAddress && chain?.genesisHash) {
+      setIsBusy(true);
+      await resetOnForgotPassword();
+
+      createAccountExternal(name, realAddress, chain.genesisHash)
+        .then(() => onAction('/'))
+        .catch((error: Error) => {
+          setIsBusy(false);
+          console.error(error);
+        });
+    }
   }, [chain?.genesisHash, name, onAction, realAddress]);
 
   return (
@@ -115,6 +126,7 @@ export default function AddAddressOnly(): React.ReactElement {
         }}
       />
       <PButton
+        _isBusy={isBusy}
         _onClick={handleAdd}
         disabled={!name || !realAddress || !chain}
         text={t('Add')}

@@ -9,14 +9,14 @@ import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ActionContext, Checkbox2, InputWithLabel, PButton } from '../../components';
-import { getStorage,LoginInfo } from '../../components/Loading';
+import { getStorage, LoginInfo } from '../../components/Loading';
 import { useFullscreen, useTranslation } from '../../hooks';
 import { createAccountSuri, createSeed } from '../../messaging';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import CopySeedButton from './components/CopySeedButton';
 import DownloadSeedButton from './components/DownloadSeedButton';
 import Passwords2 from './components/Passwords2';
-import { resetAccounts } from './resetAccounts';
+import { resetAccounts, resetOnForgotPassword } from './resetAccounts';
 
 const MnemonicSeedDisplay = ({ seed, style }: { style?: SxProps<Theme>, seed: null | string }) => {
   const { t } = useTranslation();
@@ -26,7 +26,7 @@ const MnemonicSeedDisplay = ({ seed, style }: { style?: SxProps<Theme>, seed: nu
       <Typography fontSize='16px' fontWeight={400}>
         {t<string>('Generated 12-word recovery phrase')}
       </Typography>
-      <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '22px', fontWeight: 300, p: '8px 12px'}}>
+      <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '22px', fontWeight: 300, p: '8px 12px' }}>
         {seed}
       </Grid>
       <Grid container item>
@@ -86,16 +86,11 @@ function CreateAccount(): React.ReactElement {
   }, [isMnemonicSaved]);
 
   const onCreate = useCallback(async () => {
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    const info = await getStorage('loginInfo') as LoginInfo; // TODO: should do that on all new account creations/imports when status is 'forgot' password
-
-    if (info?.status === 'forgot') {
-      await resetAccounts();
-    }
-
     // this should always be the case
     if (name && password && seed) {
       setIsBusy(true);
+
+      await resetOnForgotPassword();
 
       createAccountSuri(name, password, seed)
         .then(() => onAction('/'))

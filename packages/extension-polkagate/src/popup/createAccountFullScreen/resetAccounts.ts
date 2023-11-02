@@ -4,22 +4,28 @@
 import { getStorage, LoginInfo, updateStorage } from '../../components/Loading';
 import { forgetAccount } from '../../messaging';
 
-export const resetAccounts = async (): Promise<boolean> => {
-  try {
-    const info = await getStorage('loginInfo') as LoginInfo;
+export const resetOnForgotPassword = async () => {
+  const info = await getStorage('loginInfo') as LoginInfo;
 
+  if (info?.status === 'forgot' && info?.addressesToForget) {
+    return await resetAccounts(info.addressesToForget);
+  }
+
+  return true;
+};
+
+const resetAccounts = async (addresses: string[]): Promise<boolean> => {
+  try {
     await updateStorage('loginInfo', { status: 'reset' });
 
     // Map and execute forgetAccount for each address
-    const promises = info.addressesToForget?.map((address) => forgetAccount(address));
+    const promises = addresses.map((address) => forgetAccount(address));
     const results = await Promise.all(promises);
 
     if (results.every((element) => element === true)) {
       return true;
     } else {
-      console.error('forgetAccount promises failed');
-
-      return false;
+      throw new Error('forgetAccount promises failed');
     }
   } catch (e) {
     console.error(e);

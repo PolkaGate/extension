@@ -19,6 +19,7 @@ import { Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
 import ledgerChains from '../../../util/legerChains';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
+import { resetOnForgotPassword } from '../../createAccountFullScreen/resetAccounts';
 
 interface AccOption {
   text: string;
@@ -100,9 +101,10 @@ export default function ImportLedger(): React.ReactElement {
     }))]
   );
 
-  const _onSave = useCallback(() => {
+  const _onSave = useCallback(async() => {
     if (address && genesis && name) {
       setIsBusy(true);
+      await resetOnForgotPassword();
 
       createAccountHardware(address, 'ledger', accountIndex, addressOffset, name, genesis)
         .then(() => onAction('/'))
