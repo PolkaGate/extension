@@ -15,9 +15,10 @@ interface Props {
   _isBusy?: boolean;
   _ml?: number;
   _width?: number;
+  startIcon?: React.ReactNode;
 }
 
-function PButton({ _fontSize = '16px', _isBusy, _ml = 6, _mt, _onClick, _variant = 'contained', _width = 88, disabled = false, text }: Props): React.ReactElement<Props> {
+function PButton({ _fontSize = '16px', startIcon, _isBusy, _ml = 6, _mt, _onClick, _variant = 'contained', _width = 88, disabled = false, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (
@@ -51,6 +52,7 @@ function PButton({ _fontSize = '16px', _isBusy, _ml = 6, _mt, _onClick, _variant
         : <Button
           disabled={disabled}
           onClick={_onClick}
+          startIcon={startIcon}
           sx={{
             "&:disabled": { backgroundColor: '#4b4b4b' },
             borderColor: 'secondary.main',

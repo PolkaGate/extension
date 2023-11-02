@@ -765,7 +765,7 @@
   "Find your trusted friend's account by entering their address or any associated identity details, such as their name, email, Twitter, etc.": "",
   "Find trusted friends accounts": "",
   "Trusted friends accounts": "",
-  "Define the recovery threshold as the required number of vouching from friends for account recovery. Set a recovery delay to introduce a waiting period after a rescuer initiats the recovery process, allowing time for monitoring and alerts. This delay is particularly useful in preventing potential malicious recovery attempts.": "",
+  "Define the recovery threshold as the required number of vouching from friends for account recovery. Set a recovery delay to introduce a waiting period after a rescuer initiates the recovery process, allowing time for monitoring and alerts. This delay is particularly useful in preventing potential malicious recovery attempts.": "",
   "Checking the recovery status...": "",
   "Enter both the lost account and the rescuer account, which initiated the recovery process for the lost account. This will allow you to proceed with vouching for them.": "",
   "Step 1 of 2: Verify accounts": "",
@@ -1029,5 +1029,9 @@
   "Locked": "",
   "Reserved": "",
   "Free Balance": "",
-  "Voting Balance": ""
+  "Voting Balance": "",
+  "Cannot set your account as a proxy for itself.": "",
+  "You've already included this proxy.": "",
+  "Step 1 of 3: Choose trusted friends": "",
+  "Step 2 of 3: Set details": ""
 }

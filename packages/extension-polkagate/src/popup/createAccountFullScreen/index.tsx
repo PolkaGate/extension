@@ -26,7 +26,7 @@ const MnemonicSeedDisplay = ({ seed, style }: { style?: SxProps<Theme>, seed: nu
       <Typography fontSize='16px' fontWeight={400}>
         {t<string>('Generated 12-word recovery phrase')}
       </Typography>
-      <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '18px', fontWeight: 400, p: '8px 12px' }}>
+      <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '22px', fontWeight: 300, p: '8px 12px'}}>
         {seed}
       </Grid>
       <Grid container item>

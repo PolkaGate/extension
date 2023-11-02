@@ -54,7 +54,7 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         showBrand
         showClose
         showCloseX
-        text={t<string>('Polkagate')}
+        text={'Polkagate'}
       />
       <Grid container direction='column' px='15px'>
         <Grid container item justifyContent='center' pb='20px' pt='50px'>
@@ -65,8 +65,9 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Experience full-screen imports whether from a file or a recovery phrase! 🖥️',
-              'We\'ve resolved known issues for a smoother and hassle-free experience! 🛠️'
+              'Experience Full-Screen Imports for File, Recovery Phrase, or Ledger! 🖥️',
+              'Chinese Language Now Supported - Select in Settings 🌐',
+              'Enjoy a Smoother Experience with Bug Fixes 🛠️'
             ]}
           />
         </Grid>

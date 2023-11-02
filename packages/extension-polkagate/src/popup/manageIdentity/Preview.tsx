@@ -48,7 +48,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         {icon}
       </Grid>
       <Grid container item justifyContent='center' pt='8px'>
-        <Typography color={theme.palette.mode === 'dark' ? 'secondary.light' : undefined} fontSize='18px' fontWeight={500}>
+        <Typography color={theme.palette.mode === 'dark' ? 'secondary.light' : undefined} fontSize='18px' fontWeight={500} textAlign='center'>
           {title}
         </Typography>
       </Grid>

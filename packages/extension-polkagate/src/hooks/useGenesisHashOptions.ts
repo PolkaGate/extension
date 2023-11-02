@@ -24,7 +24,7 @@ export default function (): DropdownOption[] {
 
   const hashes = useMemo(() => [
     {
-      text: t('Allow use on any chain'),
+      text: 'Allow use on any chain',
       value: ''
     },
     // put the relay chains at the top

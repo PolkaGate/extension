@@ -28,7 +28,7 @@ const Welcome = function (): React.ReactElement {
     <>
       <HeaderBrand
         showBrand
-        text={t<string>('Polkagate')}
+        text={'Polkagate'}
       />
       <Typography component='h2' sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '20px', pt: '25px', textAlign: 'center' }}>
         {t<string>('Welcome!')}

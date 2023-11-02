@@ -52,7 +52,7 @@ class ErrorBoundary extends React.Component<Props> {
           <HeaderBrand
             showBrand
             showMenu
-            text={t<string>('Polkagate')}
+            text={'Polkagate'}
           />
           <Grid container justifyContent='center' px='15px'>
             <Typography fontSize='18px' mt='35px'>

@@ -14,7 +14,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { ms, msGreen, msWarning, riot } from '../assets/icons';
-import { useAccountInfo, useAccountName, useApiWithChain, useChain, useFormatted2, useMerkleScience, useTranslation } from '../hooks';
+import { useAccountInfo, useAccountName, useChain, useFormatted2, useMerkleScience, useTranslation } from '../hooks';
 import { getSubstrateAddress, isValidAddress } from '../util/utils';
 import { ChainLogo, Identicon, Infotip, ShortAddress } from '.';
 
@@ -45,7 +45,6 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
   const _formatted = useFormatted2(address, formatted, chain);
   const msData = useMerkleScience(_formatted, chain);
   const _api = api;
-  // const _api = useApiWithChain(_chain, api);
 
   const isMSgreen = ['Exchange', 'Donation'].includes(msData?.tag_type_verbose);
   const isMSwarning = ['Scam', 'High Risk Organization', 'Theft', 'Sanctions'].includes(msData?.tag_type_verbose);
