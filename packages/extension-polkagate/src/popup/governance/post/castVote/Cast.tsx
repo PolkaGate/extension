@@ -129,6 +129,10 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
       return undefined;
     }
 
+    if (conviction === 0) { // Abstain voting power is zero
+      return BN_ZERO;
+    }
+
     const multipliedAmount = conviction !== 0.1 ? voteAmountAsBN.muln(conviction) : voteAmountAsBN.divn(10);
 
     return myDelegations ? new BN(myDelegations).add(multipliedAmount) : multipliedAmount;
