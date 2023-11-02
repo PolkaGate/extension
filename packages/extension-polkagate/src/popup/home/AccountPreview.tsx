@@ -6,7 +6,7 @@
 import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
-import { Grid } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -38,6 +38,7 @@ export interface Props {
 
 export default function AccountPreview({ address, genesisHash, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
   const history = useHistory();
+  const theme = useTheme();
   const chain = useChain(address);
   const api = useApi(address);
   const formatted = useFormatted(address);
@@ -111,6 +112,8 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isHi
           setShowMenu={setShowAccountMenu}
         />
       }
+      <Grid item sx={{ bottom: '0px', height: '100%', left: 0, position: 'absolute', width: '9.76px', bgcolor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderTopLeftRadius: '5px', borderBottomLeftRadius: '5px' }}>
+      </Grid>
       <Grid item sx={{ bottom: '20px', left: 0, position: 'absolute', width: 'fit-content' }}>
         <QuickAction address={address} quickActionOpen={quickActionOpen} setQuickActionOpen={setQuickActionOpen} />
       </Grid>

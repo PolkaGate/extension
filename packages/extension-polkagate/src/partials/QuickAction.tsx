@@ -69,6 +69,8 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
       : account?.genesisHash && history.push({ pathname: `/history/${String(address)}` });
   }, [account?.genesisHash, address, history]);
 
+  const ICON_SIZE = 10;
+
   const movingParts = (
     <Grid
       alignItems='center'
@@ -77,7 +79,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
       justifyContent='space-between'
       sx={{ border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '0 5px 5px 0', boxShadow: '0px 0px 10px 5px rgba(0, 0, 0, 0.55)', flexFlow: 'nowrap' }}
     >
-      <Grid container item justifyContent='center' width='13px'>
+      <Grid container item justifyContent='center' width='8.19px'>
         <IconButton
           onClick={handleClose}
           sx={{
@@ -86,12 +88,12 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
             },
             bgcolor: 'secondary.light',
             borderRadius: '0 20px 20px 0',
-            height: '25px',
+            height: '17px',
             p: 0,
-            width: '13px'
+            width: '8.19px'
           }}
         >
-          <CloseIcon sx={{ color: theme.palette.mode === 'dark' ? 'black' : 'white', fontSize: 15, ml: '-3px', stroke: theme.palette.mode === 'dark' ? 'black' : 'white', strokeWidth: '0.7px' }} />
+          <CloseIcon sx={{ color: theme.palette.mode === 'dark' ? 'black' : 'white', fontSize: ICON_SIZE, ml: '-3px', stroke: theme.palette.mode === 'dark' ? 'black' : 'white', strokeWidth: '0.7px' }} />
         </IconButton>
       </Grid>
       <Grid container item justifyContent='space-around' mr='10px' sx={{ flexFlow: 'nowrap' }} width='calc(100% - 50px)'>
@@ -202,16 +204,16 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
             onClick={handleOpen}
             sx={{
               '&:hover': {
-                backgroundColor: 'secondary.light'
+                backgroundColor: 'background.paper'
               },
-              bgcolor: 'secondary.light',
+              bgcolor: 'background.paper',
               borderRadius: '0 20px 20px 0',
-              height: '25px',
+              height: '17px',
               p: 0,
-              width: '13px'
+              width: '8.19px'
             }}
           >
-            <ArrowForwardIosIcon sx={{ color: theme.palette.mode === 'dark' ? 'black' : 'white', fontSize: 15, ml: '-2px', stroke: theme.palette.mode === 'dark' ? 'black' : 'white', strokeWidth: '0.5px' }} />
+            <ArrowForwardIosIcon sx={{ color: theme.palette.mode === 'light' ? 'primary.main' : 'white', fontSize: ICON_SIZE, ml: '-2px', stroke: theme.palette.mode === 'dark' ? 'black' : 'white', strokeWidth: '0.5px' }} />
           </IconButton>
         </div>
       </ClickAwayListener>
