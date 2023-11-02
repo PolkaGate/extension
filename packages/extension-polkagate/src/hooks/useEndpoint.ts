@@ -37,9 +37,7 @@ export default function useEndpoint(address: AccountId | string | undefined): st
         );
 
         if (endpoints?.length) {
-          const randomIndex = Math.floor(Math.random() * endpoints.length - 1); // set the initial endpoint with a random one, ignore last one which is light client
-
-          setEndpoint(endpoints[randomIndex].value);
+          setEndpoint(endpoints[0].value);
         } else {
           // Endpoint not found, handle the error (e.g., set a default value?)
           setEndpoint(undefined);
