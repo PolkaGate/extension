@@ -188,7 +188,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
   }, []);
 
   return (
-    <Container disableGutters>
+    <>
       {isPasswordError &&
         <WrongPasswordAlert bgcolor={theme.palette.mode === 'dark' ? 'black' : 'white'} />
       }
@@ -306,6 +306,6 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
           </Grid>
           : children
       }
-    </Container>
+    </>
   );
 }
