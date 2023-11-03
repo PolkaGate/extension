@@ -104,6 +104,7 @@ export default function QuickAction({ address, handleClose, handleOpen, quickAct
           />
         }
         onClick={goToSend}
+        textDisabled={!account?.genesisHash}
         title={t<string>('Send')}
         titleFontSize={10}
       />
@@ -128,7 +129,6 @@ export default function QuickAction({ address, handleClose, handleOpen, quickAct
         title={t<string>('Pool Staking')}
         titleFontSize={10}
         titleLineHeight={1}
-
       />
       <HorizontalMenuItem
         divider
@@ -161,7 +161,6 @@ export default function QuickAction({ address, handleClose, handleOpen, quickAct
         textDisabled={!CROWDLOANS_CHAINS.includes(account?.genesisHash)}
         title={t<string>('Crowdloans')}
         titleFontSize={10}
-
       />
       <HorizontalMenuItem
         dividerHeight={20}
