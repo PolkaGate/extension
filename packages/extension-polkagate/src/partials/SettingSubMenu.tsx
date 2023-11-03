@@ -3,15 +3,17 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import '@vaadin/icons';
+
 import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { DeleteOutline as DeleteOutlineIcon, OpenInNewRounded as OpenInNewRoundedIcon } from '@mui/icons-material';
+import { OpenInNewRounded as OpenInNewRoundedIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, keyframes, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-import { AccountContext, ActionContext, Checkbox2, ColorContext, MenuItem, OnActionToolTip, Select, Switch } from '../components';
+import { AccountContext, ActionContext, Checkbox2, ColorContext, MenuItem, Select, Switch } from '../components';
 import { useIsPopup, useTranslation } from '../hooks';
 import { setNotification, tieAccount, windowOpen } from '../messaging';
 import { TEST_NETS } from '../util/constants';
@@ -24,6 +26,28 @@ interface Props {
   show: boolean;
   onChange: () => void;
 }
+
+const slideIn = keyframes`
+0% {
+  display: none;
+  height: 0;
+}
+100%{
+  display: block;
+  height: 370px;
+}
+`;
+
+const slideOut = keyframes`
+0% {
+  display: block;
+  height: 370px;
+}
+100%{
+  display: none;
+  height: 0;
+}
+`;
 
 export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestnetEnabled, show }: Props): React.ReactElement {
   const { t } = useTranslation();
@@ -76,24 +100,28 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
   //   });
   // }, []);
 
-  const _onAuthManagement = useCallback(() => {
+  const onAuthManagement = useCallback(() => {
     onAction('/auth-list');
   }, [onAction]);
 
-  const _onChangeLang = useCallback((value: string): void => {
+  const onChangeLang = useCallback((value: string): void => {
     settings.set({ i18nLang: value });
   }, []);
 
-  const _onChangePrefix = useCallback((value: string): void => {
+  const onChangePrefix = useCallback((value: string): void => {
     setPrefix(value);
     settings.set({ prefix: parseInt(value, 10) });
   }, []);
 
-  const _onChangeTheme = useCallback((): void => {
+  const onChangeTheme = useCallback((): void => {
     colorMode.toggleColorMode();
   }, [colorMode]);
 
-  const _onChangeNotification = useCallback((value: string): void => {
+  const onManageLoginPassword = useCallback(() => {
+    onAction('/login-password');
+  }, [onAction]);
+
+  const onChangeNotification = useCallback((value: string): void => {
     setNotification(value).catch(console.error);
 
     updateNotification(value);
@@ -108,28 +136,6 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
     setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true');
   }, [setIsTestnetEnabled]);
 
-  const slideIn = keyframes`
-  0% {
-    display: none;
-    height: 0;
-  }
-  100%{
-    display: block;
-    height: 370px;
-  }
-`;
-
-  const slideOut = keyframes`
-  0% {
-    display: block;
-    height: 370px;
-  }
-  100%{
-    display: none;
-    height: 0;
-  }
-`;
-
   return (
     <Grid container display='inherit' item overflow='hidden' sx={{ animationDelay: firstTime ? '0.2s' : '0s', animationDuration: show ? '0.3s' : '0.15s', animationFillMode: 'both', animationName: `${show ? slideIn : slideOut}` }}>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
@@ -139,7 +145,7 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
             <Switch
               checkedLabel={t<string>('Dark')}
               isChecked={theme.palette.mode === 'dark'}
-              onChange={_onChangeTheme}
+              onChange={onChangeTheme}
               theme={theme}
               uncheckedLabel={t<string>('Light')}
             />
@@ -219,14 +225,24 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
                 icon={faListCheck}
               />
             }
-            onClick={_onAuthManagement}
+            onClick={onAuthManagement}
             text={t<string>('Manage website access')}
+          />
+        </Grid>
+        <Grid container item pb={'10px'} >
+          <MenuItem
+            iconComponent={
+              <vaadin-icon icon='vaadin:key' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            }
+            onClick={onManageLoginPassword}
+            text={t('Manage login password')}
+            py='2px'
           />
         </Grid>
         <Grid item pt='12px'>
           <Select
             label={t<string>('Language')}
-            onChange={_onChangeLang}
+            onChange={onChangeLang}
             options={languageOptions}
             value={settings.i18nLang !== 'default' ? settings.i18nLang : languageOptions[0].value}
           />
@@ -234,19 +250,19 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
         <Grid item pt='10px'>
           <Select
             label={t<string>('Notification')}
-            onChange={_onChangeNotification}
+            onChange={onChangeNotification}
             options={notificationOptions}
             value={notification ?? notificationOptions[1].value}
           />
         </Grid>
-        <Grid item pt='7px'>
+        {/* <Grid item pt='7px'>
           <Select
             label={t<string>('Default display address format')}
-            onChange={_onChangePrefix}
+            onChange={onChangePrefix}
             options={prefixOptions}
             value={prefix ?? prefixOptions[2].value}
           />
-        </Grid>
+        </Grid> */}
       </Grid>
     </Grid>
   );

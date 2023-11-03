@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Container, Grid, Typography, useTheme } from '@mui/material';
+import { Box, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { blake2AsHex } from '@polkadot/util-crypto';
@@ -48,11 +48,10 @@ export const updateStorage = async (label, newInfo) => {
 
     // Set the updated data in storage
     await setStorage(label, updatedData);
-    console.log('Data updated successfully');
 
     return true;
   } catch (error) {
-    console.error('Error updating data:', error);
+    console.error('Error while updating data');
 
     return false;
   }
@@ -71,16 +70,27 @@ export const getStorage = (label: any) => {
 };
 
 export const setStorage = (label: any, data: any) => {
-  return new Promise<void>((resolve, reject) => {
+  return new Promise<boolean>((resolve, reject) => {
     chrome.storage.local.set({ [label]: data }, () => {
       if (chrome.runtime.lastError) {
-        reject(chrome.runtime.lastError);
+        throw new Error(`${chrome.runtime.lastError}`);
+        resolve(false);
       } else {
-        resolve();
+        resolve(true);
       }
     });
   });
 };
+
+export function PasswordSettingAlert(): React.ReactElement {
+  const { t } = useTranslation();
+
+  return (<Grid item>
+    <b>{t<string>('Remember your password well and keep it safe. ')}</b>
+    {t<string>('You need to reimport your accounts and make a new password if you forget it. Export and store your accounts securely to avoid losing them.')}
+  </Grid>
+  );
+}
 
 export default function Loading({ children }: Props): React.ReactElement<Props> {
   const theme = useTheme();
@@ -198,10 +208,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
             fontWeight={300}
             theme={theme}
           >
-            <Grid item>
-              <b>{t<string>('There is no way to recover your password. ')}</b>
-              {t<string>('If you forget it, you will have to reimport your accounts and create a new password. To avoid losing access to your accounts, make sure you export them and store them securely.')}
-            </Grid>
+            <PasswordSettingAlert />
           </Warning>
         </Grid>
       }

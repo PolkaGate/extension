@@ -9,14 +9,13 @@ import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ActionContext, Checkbox2, InputWithLabel, PButton } from '../../components';
-import { getStorage, LoginInfo } from '../../components/Loading';
 import { useFullscreen, useTranslation } from '../../hooks';
 import { createAccountSuri, createSeed } from '../../messaging';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import CopySeedButton from './components/CopySeedButton';
 import DownloadSeedButton from './components/DownloadSeedButton';
 import Passwords2 from './components/Passwords2';
-import { resetAccounts, resetOnForgotPassword } from './resetAccounts';
+import { resetOnForgotPassword } from './resetAccounts';
 
 const MnemonicSeedDisplay = ({ seed, style }: { style?: SxProps<Theme>, seed: null | string }) => {
   const { t } = useTranslation();
