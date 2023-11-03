@@ -128,6 +128,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
                 <vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={toggleNewAccountSubMenu}
+              showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT}
               text={t('New account')}
             >
               <NewAccountSubMenu show={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT} />
