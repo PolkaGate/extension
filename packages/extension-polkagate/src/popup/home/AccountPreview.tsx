@@ -6,7 +6,7 @@
 import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
-import { ClickAwayListener, Grid, useTheme } from '@mui/material';
+import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -38,7 +38,6 @@ export interface Props {
 
 export default function AccountPreview({ address, genesisHash, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
   const history = useHistory();
-  const theme = useTheme();
   const chain = useChain(address);
   const api = useApi(address);
   const formatted = useFormatted(address);
