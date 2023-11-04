@@ -22,11 +22,10 @@ import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/co
 interface Props {
   address: AccountId | string;
   quickActionOpen?: string | boolean;
-  handleOpen: () => void;
-  handleClose: () => false | void;
+  setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
 }
 
-export default function QuickAction({ address, handleClose, handleOpen, quickActionOpen }: Props): React.ReactElement<Props> {
+export default function QuickAction({ address, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const formatted = useFormatted(address);
@@ -34,6 +33,9 @@ export default function QuickAction({ address, handleClose, handleOpen, quickAct
 
   const account = useAccount(address);
   const api = useApi(address);
+
+  const handleOpen = useCallback(() => setQuickActionOpen(String(address)), [address, setQuickActionOpen]);
+  const handleClose = useCallback(() => quickActionOpen === address && setQuickActionOpen(undefined), [address, quickActionOpen, setQuickActionOpen]);
 
   const goToSend = useCallback(() => {
     address && account?.genesisHash && windowOpen(`/send/${String(address)}/undefined`).catch(console.error);
@@ -183,31 +185,17 @@ export default function QuickAction({ address, handleClose, handleOpen, quickAct
   );
 
   return (
-    <>
+    <Grid container item onClick={isSlideOpen ? handleClose : handleOpen} sx={{ inset: '0 auto 0 -1px', position: 'absolute', width: '10px' }}>
+      <Grid container item sx={{ bgcolor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px 0 0 5px', cursor: 'pointer', inset: '0 auto 0 0', position: 'absolute', width: '10px', zIndex: 6 }}></Grid>
       <IconButton
-        onClick={isSlideOpen ? handleClose : handleOpen}
-        sx={{
-          '&:hover': {
-            backgroundColor: 'background.paper'
-          },
-          bgcolor: 'background.paper',
-          borderRadius: '0 20px 20px 0',
-          height: '17px',
-          ml: isSlideOpen ? `${(9.76 - 8.19)}px` : 0,
-          p: 0,
-          transform: isSlideOpen ? 'rotate(-180deg)' : 'none',
-          transitionDuration: '0.3s',
-          transitionProperty: 'transform',
-          width: '8.19px',
-          zIndex: 6
-        }}
+        sx={{ '&:hover': { backgroundColor: 'background.paper' }, bgcolor: 'background.paper', borderRadius: isSlideOpen ? '20px 0 0 20px' : '0 20px 20px 0', height: '17px', inset: isSlideOpen ? 'auto -1px 20px auto' : 'auto auto 20px -1px', p: 0, position: 'absolute', transition: 'border-radius 0.2s ease, inset 0.2s ease', width: '10px', zIndex: 6 }}
       >
-        <ArrowForwardIosIcon sx={{ color: theme.palette.mode === 'light' ? 'primary.main' : 'white', fontSize: ICON_SIZE, ml: '-2px', stroke: theme.palette.mode === 'dark' ? 'black' : 'white', strokeWidth: '0.5px' }} />
+        <ArrowForwardIosIcon sx={{ color: theme.palette.mode === 'light' ? 'primary.main' : 'white', fontSize: ICON_SIZE, stroke: theme.palette.mode === 'dark' ? 'black' : 'white', strokeWidth: '0.5px', transform: isSlideOpen ? 'rotate(-180deg)' : 'none', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
       </IconButton>
       <Slide
         direction='right'
         in={isSlideOpen}
-        style={{ backgroundColor: 'background.default', height: '56px', left: 0, position: 'absolute', top: '-14px', width: '320px', zIndex: 5 }}
+        style={{ backgroundColor: 'background.default', bottom: '1px', height: '56px', left: '10px', position: 'absolute', width: '310px', zIndex: 1 }}
         timeout={{
           enter: 600,
           exit: 500
@@ -215,6 +203,6 @@ export default function QuickAction({ address, handleClose, handleOpen, quickAct
       >
         {movingParts}
       </Slide>
-    </>
+    </Grid>
   );
 }
