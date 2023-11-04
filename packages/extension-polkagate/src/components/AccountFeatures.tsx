@@ -12,7 +12,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 interface Props {
   menuOnClick: () => void;
   goToAccount: () => void;
-  chain: Chain | null
+  chain: Chain | null | undefined;
 }
 
 export default function AccountFeatures({ chain, goToAccount, menuOnClick }: Props): React.ReactElement<Props> {
