@@ -8,6 +8,7 @@ import type { KeypairType } from '@polkadot/util-crypto/types';
 
 import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import AccountFeatures from '../../components/AccountFeatures';
 import AccountIcons from '../../components/AccountIcons';
@@ -21,6 +22,7 @@ export interface Props {
   actions?: React.ReactNode;
   address: string;
   children?: React.ReactNode;
+  genesisHash?: string | null;
   isExternal?: boolean | null;
   isHardware?: boolean | null;
   isHidden?: boolean;
@@ -34,7 +36,8 @@ export interface Props {
   hideNumbers: boolean | undefined;
 }
 
-export default function AccountPreview ({ address, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
+export default function AccountPreview({ address, genesisHash, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
+  const history = useHistory();
   const chain = useChain(address);
   const api = useApi(address);
   const formatted = useFormatted(address);
@@ -76,7 +79,7 @@ export default function AccountPreview ({ address, hideNumbers, isHidden, name, 
     <Grid alignItems='center' container position='relative' py='15px'>
       <AccountIcons
         chain={chain}
-        formatted={String(formatted) || address}
+        formatted={formatted || address}
         identiconTheme={identiconTheme}
         isSubId={!!identity?.displayParent}
         judgements={_judgement}
@@ -87,7 +90,7 @@ export default function AccountPreview ({ address, hideNumbers, isHidden, name, 
       <AccountDetail
         address={address}
         chain={chain}
-        formatted={String(formatted)}
+        formatted={formatted}
         goToAccount={goToAccount}
         hideNumbers={hideNumbers}
         identity={identity}
