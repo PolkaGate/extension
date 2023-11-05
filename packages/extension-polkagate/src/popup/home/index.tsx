@@ -2,9 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
+/* eslint-disable react/jsx-first-prop-new-line */
 
-import { Container, Grid, useTheme } from '@mui/material';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import '@vaadin/icons';
+
+import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
+import { Container, Grid, IconButton, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
@@ -12,7 +16,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Warning } from '../../components';
 import { useChainNames, useMerkleScience, usePrices, useTranslation } from '../../hooks';
-import { tieAccount } from '../../messaging';
+import { tieAccount, windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { NEW_VERSION_ALERT, TEST_NETS } from '../../util/constants';
 import AddAccount from '../welcome/AddAccount';
@@ -79,6 +83,44 @@ export default function Home(): React.ReactElement {
     })
     , [hierarchy]);
 
+  const _goToCreate = useCallback(
+    (): void => {
+      windowOpen('/account/create').catch(console.error);
+    }, []
+  );
+
+  const AddNewAccount = () => (
+    <Grid alignItems='center' container justifyContent='flex-end' onClick={_goToCreate} sx={{
+      backgroundColor: 'background.paper',
+      borderColor: 'secondary.main',
+      borderRadius: '5px',
+      borderStyle: 'solid',
+      borderWidth: '0.5px',
+      cursor: 'pointer',
+      my: '10px',
+      py: '13.5px',
+      pr: '7px'
+    }}
+    >
+      <vaadin-icon icon='vaadin:plus-circle' style={{ height: '36px', color: `${theme.palette.secondary.light}`, width: '36px' }} />
+      <Typography fontSize='18px' fontWeight={500} pl='14px' pr='60px'>
+        {t('Create a new account')}
+      </Typography>
+      <IconButton
+        sx={{ p: 0 }}
+      >
+        <ArrowForwardIosRoundedIcon
+          sx={{
+            color: 'secondary.light',
+            fontSize: '24px',
+            stroke: `${theme.palette.secondary.light}`,
+            strokeWidth: 1.5
+          }}
+        />
+      </IconButton>
+    </Grid>
+  )
+
   return (
     <>
       <Alert
@@ -134,6 +176,9 @@ export default function Home(): React.ReactElement {
                   setQuickActionOpen={setQuickActionOpen}
                 />
               ))}
+              {sortedAccount.length < 4 &&
+                <AddNewAccount />
+              }
             </Container>
           </>
         )

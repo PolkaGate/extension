@@ -3,12 +3,9 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
-import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Backdrop, Container, Grid, IconButton, Typography, useTheme } from '@mui/material';
+import { Backdrop, Container, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { PButton } from '../../components';
@@ -113,34 +110,6 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
           setQuickActionOpen={setQuickActionOpen}
         />
       ))}
-      <Grid container alignItems='center' justifyContent='flex-end' sx={{
-        backgroundColor: 'background.paper',
-        borderColor: 'secondary.main',
-        borderRadius: '5px',
-        borderStyle: 'solid',
-        borderWidth: '0.5px',
-        py: '13.5px',
-        my: '10px',
-        pr:'7px'
-      }}>
-        <vaadin-icon icon='vaadin:plus-circle' style={{ height: '36px', color: `${theme.palette.secondary.light}`, width: '36px' }} />
-        <Typography fontSize='18px' fontWeight={500} pl='14px' pr='60px'>
-          {t('Create a new account')}
-        </Typography>
-        <IconButton
-          // onClick={goToAccount}
-          sx={{ p: 0 }}
-        >
-          <ArrowForwardIosRoundedIcon
-            sx={{
-              color: 'secondary.light',
-              fontSize: '24px',
-              stroke: `${theme.palette.secondary.light}`,
-              strokeWidth: 1.5
-            }}
-          />
-        </IconButton>
-      </Grid>
     </>
   );
 }
