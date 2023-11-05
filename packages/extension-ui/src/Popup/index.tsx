@@ -15,7 +15,7 @@ import uiSettings from '@polkadot/ui-settings';
 import { ErrorBoundary, Loading } from '../../../extension-polkagate/src/components';
 import { AccountContext, ActionContext, APIContext, AuthorizeReqContext, FetchingContext, MediaContext, MetadataReqContext, ReferendaContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
-import Account from '../../../extension-polkagate/src/popup/account';
+import Account from '../../../extension-polkagate/src/popup/accountDetailsFullScreen';
 import AuthList from '../../../extension-polkagate/src/popup/authManagement';
 import Authorize from '../../../extension-polkagate/src/popup/authorize/index';
 import CreateAccount from '../../../extension-polkagate/src/popup/createAccountFullScreen';
@@ -214,7 +214,7 @@ export default function Popup(): React.ReactElement {
                               <Route path='/tuneup/:address'>{wrapWithErrorBoundary(<TuneUp />, 'tuneup')}</Route>
                               <Route path='/manageIdentity/:address'>{wrapWithErrorBoundary(<ManageIdentity />, 'manage-identity')}</Route>
                               <Route path='/socialRecovery/:address/:closeRecovery'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route>
-                              <Route exact path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>
+                              <Route exact path='/account/:address/'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>
                               <Route exact path='/send/:address'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
                               <Route exact path='/send/:address/:assetId'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
                               {/* <Route exact path='/send/review/:genesisHash/:address/:formatted/:assetId'>{wrapWithErrorBoundary(<Review />, 'review')}</Route> */}
