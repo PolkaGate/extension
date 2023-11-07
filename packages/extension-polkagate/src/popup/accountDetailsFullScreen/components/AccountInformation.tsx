@@ -39,6 +39,7 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
   const account = useAccount(address);
   const accountInfo = useAccountInfo(api, formatted);
   const theme = useTheme();
+  const token = useToken(address);
   const onAction = useContext(ActionContext);
   const proxies = useProxies(api, formatted);
 
@@ -54,9 +55,9 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
     if (!assetsOnOtherChains || assetsOnOtherChains.length === 0) {
       return undefined;
     } else {
-      return assetsOnOtherChains.filter((asset) => !asset.totalBalance.isZero());
+      return assetsOnOtherChains.filter((asset) => !asset.totalBalance.isZero() && asset.token !== token);
     }
-  }, [assetsOnOtherChains]);
+  }, [assetsOnOtherChains, token]);
 
   useEffect((): void => {
     api && api?.query.identity && api?.query.identity.identityOf(address).then((id) => setHasID(!id.isEmpty)).catch(console.error);
@@ -169,12 +170,13 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
           />
         ))}
       </Grid>
-      <Grid container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: 'pointer', width: '65px' }}>
-        <Typography fontSize='14px' fontWeight={400} sx={{ borderLeft: '1px solid', borderLeftColor: borderColor, height: 'fit-content', pl: '8px' }}>
-          {t<string>(showMore ? 'Less' : 'More')}
-        </Typography>
-        <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
-      </Grid>
+      {assetsOnOtherChains.length > 5 &&
+        <Grid container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: 'pointer', width: '65px' }}>
+          <Typography fontSize='14px' fontWeight={400} sx={{ borderLeft: '1px solid', borderLeftColor: borderColor, height: 'fit-content', pl: '8px' }}>
+            {t<string>(showMore ? 'Less' : 'More')}
+          </Typography>
+          <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+        </Grid>}
     </Grid>
   );
 
