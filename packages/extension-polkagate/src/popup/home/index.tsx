@@ -11,7 +11,7 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Warning } from '../../components';
-import { useChainNames, useMerkleScience, usePrices, useTranslation } from '../../hooks';
+import { useMerkleScience, usePrices, useTranslation } from '../../hooks';
 import { tieAccount } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { NEW_VERSION_ALERT, TEST_NETS } from '../../util/constants';
@@ -23,10 +23,9 @@ import YouHave from './YouHave';
 export default function Home(): React.ReactElement {
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
-  const chainNames = useChainNames();
   const theme = useTheme();
 
-  usePrices(chainNames); // get prices for all tokens saved in chainNames
+  usePrices(); // update prices for all tokens saved in chainNames
   useMerkleScience(undefined, undefined, true); // to download the data file
 
   const [hideNumbers, setHideNumbers] = useState<boolean>();
