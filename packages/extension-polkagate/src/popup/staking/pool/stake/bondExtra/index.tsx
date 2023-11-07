@@ -19,7 +19,7 @@ import { HeaderBrand, SubTitle } from '../../../../../partials';
 import { MAX_AMOUNT_LENGTH } from '../../../../../util/constants';
 import { MyPoolInfo } from '../../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../../util/utils';
-import Asset from '../../../../send/partial/Asset';
+import Asset from '../../../../../partials/Asset';
 import ShowPool from '../../../partial/ShowPool';
 import Review from './Review';
 

@@ -20,7 +20,7 @@ import { HeaderBrand, SubTitle } from '../../../partials';
 import { FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../util/constants';
 import { Crowdloan } from '../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
-import Asset from '../../send/partial/Asset';
+import Asset from '../../../partials/Asset';
 import ParachainInfo from '../partials/ParachainInfo';
 import ShowParachain from '../partials/ShowParachain';
 import Review from './Review';

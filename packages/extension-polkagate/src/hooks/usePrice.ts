@@ -14,7 +14,26 @@ import { useChainName } from '.';
 export default function usePrice(address: string, currency = 'usd'): Price | undefined {
   const [price, setPrice] = useState<Price | undefined>();
   const chainName = useChainName(address)?.toLocaleLowerCase();
-  const localSavedPrices = window.localStorage.getItem('prices');
+
+  const [localSavedPrices, setLocalSavedPrices] = useState<Prices>();
+
+  useEffect(() => {
+    chrome.storage.local.get('prices', (res) => {
+      const localSavedPrices = res?.prices as Prices;
+
+      setLocalSavedPrices(localSavedPrices);
+    });
+
+    chrome.storage.onChanged.addListener((changes, namespace) => {
+      if (namespace === 'local') {
+        for (const [key, { newValue }] of Object.entries(changes)) {
+          if (key === 'prices') {
+            setLocalSavedPrices(newValue as Prices);
+          }
+        }
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (!chainName || !localSavedPrices) {
@@ -22,15 +41,13 @@ export default function usePrice(address: string, currency = 'usd'): Price | und
     }
 
     const sanitizeName = chainName.replace('westendassethub', 'westend').replace('kusamaassethub', 'kusama').replace('polkadotassethub', 'polkadot');
+    const priceInUsd = localSavedPrices?.prices[sanitizeName]?.[currency];
 
-    const parsedPrices = JSON.parse(localSavedPrices) as Prices;
-    const priceInUsd = parsedPrices?.prices[sanitizeName]?.[currency];
-
-    if (priceInUsd !== undefined && parsedPrices?.date) {
+    if (priceInUsd !== undefined && localSavedPrices?.date) {
       setPrice({
         amount: priceInUsd,
         chainName,
-        date: parsedPrices.date
+        date: localSavedPrices.date
       });
     }
   }, [address, chainName, currency, localSavedPrices]);

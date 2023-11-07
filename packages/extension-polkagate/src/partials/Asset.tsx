@@ -17,9 +17,9 @@ import React from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { ChainLogo } from '../../../components';
-import { useChain, useTranslation } from '../../../hooks';
-import BalanceFee from './BalanceFee';
+import { ChainLogo } from '../components';
+import { useChain, useTranslation } from '../hooks';
+import BalanceFee from '../popup/send/partial/BalanceFee';
 
 interface Props {
   address?: string;
