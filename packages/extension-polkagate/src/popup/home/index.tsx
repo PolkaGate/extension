@@ -89,7 +89,7 @@ export default function Home(): React.ReactElement {
   );
 
   const AddNewAccount = () => (
-    <Grid alignItems='center' container justifyContent='flex-end' onClick={_goToCreate} sx={{
+    <Grid alignItems='center' container  onClick={_goToCreate} sx={{
       backgroundColor: 'background.paper',
       borderColor: 'secondary.main',
       borderRadius: '5px',
@@ -98,25 +98,30 @@ export default function Home(): React.ReactElement {
       cursor: 'pointer',
       my: '10px',
       py: '13.5px',
-      pr: '7px'
+      pr: '7px',
+      pl: '22px'
     }}
     >
-      <vaadin-icon icon='vaadin:plus-circle' style={{ height: '36px', color: `${theme.palette.secondary.light}`, width: '36px' }} />
-      <Typography fontSize='18px' fontWeight={500} pl='14px' pr='60px'>
-        {t('Create a new account')}
-      </Typography>
-      <IconButton
-        sx={{ p: 0 }}
-      >
-        <ArrowForwardIosRoundedIcon
-          sx={{
-            color: 'secondary.light',
-            fontSize: '24px',
-            stroke: `${theme.palette.secondary.light}`,
-            strokeWidth: 1.5
-          }}
-        />
-      </IconButton>
+      <Grid item xs={1.5}>
+        <vaadin-icon icon='vaadin:plus-circle' style={{ height: '36px', color: `${theme.palette.secondary.light}`, width: '36px' }} />
+      </Grid>
+      <Grid item textAlign='left' xs>
+        <Typography fontSize='18px' fontWeight={500} pl='8px' >
+          {t('Create a new account')}
+        </Typography>
+      </Grid>
+      <Grid item xs={1}>
+        <IconButton sx={{ p: 0 }}>
+          <ArrowForwardIosRoundedIcon
+            sx={{
+              color: 'secondary.light',
+              fontSize: '24px',
+              stroke: `${theme.palette.secondary.light}`,
+              strokeWidth: 1.5
+            }}
+          />
+        </IconButton>
+      </Grid>
     </Grid>
   )
 
