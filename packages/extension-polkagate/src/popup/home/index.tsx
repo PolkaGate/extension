@@ -26,7 +26,7 @@ export default function Home(): React.ReactElement {
   const chainNames = useChainNames();
   const theme = useTheme();
 
-  usePrices(chainNames); // get balances for all chains available in accounts
+  usePrices(chainNames); // get prices for all tokens saved in chainNames
   useMerkleScience(undefined, undefined, true); // to download the data file
 
   const [hideNumbers, setHideNumbers] = useState<boolean>();
