@@ -19,7 +19,7 @@ import { useApi, useBalances, useChain, useDecimal, useFormatted, useStakingAcco
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import Asset from '../../../send/partial/Asset';
+import Asset from '../../../../partials/Asset';
 import SelectValidators from '../../partial/SelectValidators';
 import Review from './Review';
 import Settings from './Settings';
