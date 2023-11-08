@@ -9,6 +9,8 @@ const ManifestPlugin = require('webpack-extension-manifest-plugin');
 
 const pkgJson = require('./package.json');
 const manifest = require('./manifest.json');
+const Dotenv = require('dotenv-webpack');
+const envPath = path.resolve(__dirname, '../../', '.env');
 
 const packages = [
   'extension',
@@ -91,7 +93,8 @@ module.exports = (entry, alias = {}) => ({
           version: pkgJson.version.split('-')[0] // remove possible -beta.xx
         }
       }
-    })
+    }),
+    new Dotenv({ path: envPath })
   ],
   resolve: {
     alias: packages.reduce((alias, p) => ({
