@@ -85,9 +85,16 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
       return;
     }
 
-    if (!referendaLocks?.length || !currentBlock) {
+    if (!referendaLocks || !currentBlock) {
       setLockedInReferenda(undefined);
       setTimeToUnlock(undefined);
+
+      return;
+    }
+
+    if (!referendaLocks?.length) {
+      setLockedInReferenda(undefined);
+      setTimeToUnlock(t('Unlock date unknown'));
 
       return;
     }
