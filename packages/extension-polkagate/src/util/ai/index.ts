@@ -4,7 +4,7 @@
 import { Theme } from '@mui/material';
 import OpenAI from 'openai';
 
-const API_KEY = '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';
+const API_KEY = process.env.OPEN_AI_API;
 
 const openai = new OpenAI({
   organization: 'polkagate',
