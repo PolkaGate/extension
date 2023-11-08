@@ -29,7 +29,7 @@ export default function Home(): React.ReactElement {
   const { accounts, hierarchy } = useContext(AccountContext);
   const theme = useTheme();
 
-  usePrices(); // update prices for all tokens saved in chainNames
+  // usePrices(); // update prices for all tokens saved in chainNames
   useMerkleScience(undefined, undefined, true); // to download the data file
 
   const [hideNumbers, setHideNumbers] = useState<boolean>();
