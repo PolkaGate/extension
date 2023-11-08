@@ -2,12 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
-import type { PalletConvictionVotingVoteCasting, PalletConvictionVotingVotePriorLock, PalletConvictionVotingVoteVoting, PalletReferendaReferendumInfoConvictionVotingTally, PalletReferendaReferendumInfoRankedCollectiveTally } from '@polkadot/types/lookup';
+import type { PalletConvictionVotingVoteCasting, PalletConvictionVotingVoteVoting, PalletReferendaReferendumInfoConvictionVotingTally, PalletReferendaReferendumInfoRankedCollectiveTally } from '@polkadot/types/lookup';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { BN, BN_ZERO } from '@polkadot/util';
-import { BN_MAX_INTEGER } from '@polkadot/util';
+import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import { CONVICTIONS } from '../popup/governance/utils/consts';
 import useApi from './useApi';
@@ -214,11 +213,7 @@ export default function useAccountLocks(address: string | undefined, palletRefer
       // /** add priors */
       accountLocks.push(...priors);
 
-      if (notExpired) {
-        return accountLocks.filter((l) => l.endBlock.gtn(currentBlock));
-      }
-
-      return accountLocks;
+      return notExpired ? accountLocks.filter((l) => l.endBlock.gtn(currentBlock)) : accountLocks;
     }
 
     if (info === null) {
