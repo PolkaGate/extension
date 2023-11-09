@@ -7,8 +7,8 @@
 import '@vaadin/icons';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Box, Container, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Container, Grid, IconButton, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
@@ -18,17 +18,24 @@ import { AccountContext, Progress, Warning } from '../../components';
 import { useMerkleScience, usePrices, useTranslation } from '../../hooks';
 import { tieAccount, windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
-import { getImage } from '../../util/ai';
 import { NEW_VERSION_ALERT, TEST_NETS } from '../../util/constants';
 import AddAccount from '../welcome/AddAccount';
 import AccountsTree from './AccountsTree';
 import Alert from './Alert';
 import YouHave from './YouHave';
 
+const imagePath = `https://raw.githubusercontent.com/PolkaGate/backgrounds/main/${process.env.BG_THEME}/`;
+
+type BgImage = {
+  dark: string;
+  light: string;
+}
+
 export default function Home(): React.ReactElement {
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
   const theme = useTheme();
+  const imgRef = useRef(0);
 
   usePrices(); // update prices for all tokens saved in chainNames
   useMerkleScience(undefined, undefined, true); // to download the data file
@@ -39,6 +46,7 @@ export default function Home(): React.ReactElement {
   const [hasActiveRecovery, setHasActiveRecovery] = useState<string | null | undefined>(); // if exists, include the account address
   const [bgImage, setBgImage] = useState<string | null | undefined>();
   const [isFetchingImage, setIsFetchingImage] = useState<boolean>();
+  const [imageLoadError, setImageLoadError] = useState(false);
 
   useEffect(() => {
     const isTestnetDisabled = window.localStorage.getItem('testnet_enabled') !== 'true';
@@ -72,7 +80,7 @@ export default function Home(): React.ReactElement {
     chrome.storage.local.get('backgroundImage', (res) => {
       setBgImage(res?.backgroundImage?.[theme.palette.mode]);
     });
-  }, [theme]);
+  }, [theme.palette.mode]);
 
   const sortedAccount = useMemo(() =>
     hierarchy.sort((a, b) => {
@@ -89,7 +97,7 @@ export default function Home(): React.ReactElement {
 
       return 0;
     })
-    , [hierarchy]);
+  , [hierarchy]);
 
   const _goToCreate = useCallback(
     (): void => {
@@ -99,18 +107,38 @@ export default function Home(): React.ReactElement {
 
   const clearBackground = useCallback((): void => {
     setBgImage(null);
+    setImageLoadError(true);
+    imgRef.current = 0;
     chrome.storage.local.remove('backgroundImage').catch(console.error);
   }, []);
 
   const setBackground = useCallback((): void => {
-    if (!isFetchingImage) {
-      setIsFetchingImage(true);
-      getImage(theme).then((img) => {
-        setBgImage(img);
-        setIsFetchingImage(false);
-      }).catch(console.error);
-    }
-  }, [isFetchingImage, theme]);
+    // if (!isFetchingImage) {
+    //   setIsFetchingImage(true);
+    //   getImage(theme).then((img) => {
+    //     setBgImage(img);
+    //     setIsFetchingImage(false);
+    //   }).catch(console.error);
+    // }
+    setImageLoadError(false);
+
+    const imageUrl = imagePath + theme.palette.mode + `/${imgRef.current}.jpeg`;
+
+    setBgImage(imageUrl);
+    chrome.storage.local.get('backgroundImage', (res) => {
+      const bgImage = (res?.backgroundImage || { dark: '', light: '' }) as BgImage;
+
+      bgImage[theme.palette.mode] = imageUrl;
+      chrome.storage.local.set({ backgroundImage: bgImage }).catch(console.error);
+    });
+
+    imgRef.current = imgRef.current + 1;
+  }, [theme]);
+
+  const handleImageError = useCallback(() => {
+    setImageLoadError(true);
+    imgRef.current = 0;
+  }, []);
 
   const AddNewAccount = () => (
     <Grid alignItems='center' container onClick={_goToCreate} sx={{
@@ -121,9 +149,11 @@ export default function Home(): React.ReactElement {
       borderWidth: '0.5px',
       cursor: 'pointer',
       my: '10px',
-      py: '13.5px',
+      pl: '22px',
+      position: 'relative',
       pr: '7px',
-      pl: '22px'
+      py: '13.5px',
+      zIndex: 1
     }}
     >
       <Grid item xs={1.5}>
@@ -158,14 +188,23 @@ export default function Home(): React.ReactElement {
       {(hierarchy.length === 0)
         ? <AddAccount />
         : (
-          <Grid container alignContent='flex-start' sx={{
-            background: bgImage && `${theme.palette.mode === 'dark' ? 'linear-gradient( rgba(255, 255, 255, 0),rgba(255, 255, 255, 0.99))' : 'linear-gradient(rgba(255, 255, 255, 0.99), rgba(255, 255, 255, 0))'}` + `, url("data:image/jpeg;base64, ${bgImage}")`,
-            backgroundPosition: 'center',
-            backgroundSize: 'cover',
-            position: 'relative',
-            height: '630px',
-            width: '100%' // Set the width to fill the container
-          }}>
+          <Grid container sx={{
+            background: bgImage && `${theme.palette.mode === 'dark' ? 'linear-gradient( rgba(255, 255, 255, 0),rgba(255, 255, 255, 0.1))' : 'linear-gradient(rgba(255, 255, 255, 0.99), rgba(255, 255, 255, 0))'}`
+          }}
+          >
+            <img
+              onError={handleImageError}
+              src={bgImage}
+              style={{
+                height: '100%',
+                left: 0,
+                objectFit: 'cover',
+                opacity: imageLoadError ? 0 : 1,
+                position: 'absolute',
+                top: 67,
+                width: '100%'
+              }}
+            />
             <Grid padding='0px' textAlign='center' xs={12}>
               <HeaderBrand
                 showBrand
@@ -215,10 +254,10 @@ export default function Home(): React.ReactElement {
                 <AddNewAccount />
               }
             </Container>
-            <Grid container justifyContent='space-between' sx={{ bottom: '33px', position: 'absolute', px: '10px', color:theme.palette.secondary.main }}>
-              <Grid item onClick={clearBackground} xs={1}>
-                <Typography sx={{ fontSize: '11px', cursor: 'pointer' }}>
-                  {t('Clear')}
+            <Grid container justifyContent='space-between' sx={{ backgroundColor: 'background.default', bottom: '0px', position: 'absolute', px: '10px', color: theme.palette.secondary.main }}>
+              <Grid item onClick={clearBackground} xs={1.5}>
+                <Typography sx={{ cursor: 'pointer', fontSize: '11px', userSelect: 'none' }}>
+                  {t('Clear')}-{imgRef.current - 1}
                 </Typography>
               </Grid>
               <Grid alignItems='baseline' container item justifyContent='flex-end' xs>
@@ -226,8 +265,8 @@ export default function Home(): React.ReactElement {
                   {isFetchingImage && <Progress pt='0px' size={10} />}
                 </Grid>
                 <Grid item onClick={setBackground}>
-                  <Typography sx={{ fontSize: '11px', cursor: 'pointer', pl: '5px' }}>
-                    {t('Set a new AI generated background')}
+                  <Typography sx={{ cursor: 'pointer', fontSize: '11px', pl: '5px', userSelect: 'none' }}>
+                    {t('Set an AI generated background')}
                   </Typography>
                 </Grid>
               </Grid>

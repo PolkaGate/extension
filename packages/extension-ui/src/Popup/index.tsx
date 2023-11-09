@@ -61,8 +61,6 @@ import { APIs, Fetching, LatestRefs } from '../../../extension-polkagate/src/uti
 
 const startSettings = uiSettings.get();
 
-console.log(' process.env.EXTENSION_PREFIX', process.env.EXTENSION_PREFIX)
-
 // Request permission for video, based on access we can hide/show import
 async function requestMediaAccess(cameraOn: boolean): Promise<boolean> {
   if (!cameraOn) {

@@ -7,7 +7,7 @@ import OpenAI from 'openai';
 const API_KEY = process.env.OPEN_AI_API;
 
 const openai = new OpenAI({
-  organization: 'polkagate',
+  organization: '',
   apiKey: API_KEY,
   dangerouslyAllowBrowser: true
 });
@@ -28,3 +28,4 @@ export const getImage = async (theme: Theme): Promise<string> => {
 
   return image;
 };
+
