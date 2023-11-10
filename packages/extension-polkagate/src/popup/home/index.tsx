@@ -15,10 +15,12 @@ import { useChainNames, useMerkleScience, usePrices, useTranslation } from '../.
 import { tieAccount } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { NEW_VERSION_ALERT, TEST_NETS } from '../../util/constants';
-import AddAccount from '../welcome/AddAccount';
+import Welcome from '../welcome';
 import AccountsTree from './AccountsTree';
 import Alert from './Alert';
 import YouHave from './YouHave';
+import { LoginInfo, getStorage } from '../../components/Loading';
+import Reset from '../welcome/Reset';
 
 export default function Home(): React.ReactElement {
   const { t } = useTranslation();
@@ -33,6 +35,7 @@ export default function Home(): React.ReactElement {
   const [show, setShowAlert] = useState<boolean>(false);
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
   const [hasActiveRecovery, setHasActiveRecovery] = useState<string | null | undefined>(); // if exists, include the account address
+  const [loginInfo, setLoginInfo] = useState<LoginInfo>();
 
   useEffect(() => {
     const isTestnetDisabled = window.localStorage.getItem('testnet_enabled') !== 'true';
@@ -60,6 +63,8 @@ export default function Home(): React.ReactElement {
     cryptoWaitReady().then(() => {
       keyring.loadAll({ store: new AccountsStore() });
     }).catch(() => null);
+
+    getStorage('loginInfo').then(setLoginInfo).catch(console.error);
   }, []);
 
   const sortedAccount = useMemo(() =>
@@ -86,7 +91,9 @@ export default function Home(): React.ReactElement {
         show={show}
       />
       {(hierarchy.length === 0)
-        ? <AddAccount />
+        ? loginInfo?.status === 'forgot'
+          ? <Reset />
+          : <Welcome />
         : (
           <>
             <Grid padding='0px' textAlign='center' xs={12}>

@@ -196,29 +196,28 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
   }, [password, savedHashPassword]);
 
   const onForgotPassword = useCallback(async (): Promise<void> => {
-    setStep(STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION);
-  }, []);
-
-  const onConfirmForgotPassword = useCallback(async (): Promise<void> => {
     await updateStorage('loginInfo', { status: 'forgot' });
     setPermitted(true);
+    // setStep(STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION);
   }, []);
 
-  const onRejectForgotPassword = useCallback(async (): Promise<void> => {
-    setStep(STEPS.SHOW_LOGIN);
-  }, []);
+  // const onConfirmForgotPassword = useCallback(async (): Promise<void> => {
+  //   await updateStorage('loginInfo', { status: 'forgot' });
+  //   setPermitted(true);
+  // }, []);
+
+  // const onRejectForgotPassword = useCallback(async (): Promise<void> => {
+  //   setStep(STEPS.SHOW_LOGIN);
+  // }, []);
 
   return (
     <>
-      {isPasswordError &&
-        <WrongPasswordAlert bgcolor={theme.palette.mode === 'dark' ? 'black' : 'white'} />
-      }
-      {step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
+      {/* {step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
         <ForgotPasswordConfirmation
           onConfirmForgotPassword={onConfirmForgotPassword}
           onRejectForgotPassword={onRejectForgotPassword}
         />
-      }
+      } */}
       {step === STEPS.SET_PASSWORD &&
         <Grid container sx={{ bgColor: theme.palette.mode === 'dark' ? 'black' : 'white', position: 'absolute', top: '30px' }}>
           <Warning
@@ -300,32 +299,37 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
               </Grid>
             }
             {!isFlying && step === STEPS.SHOW_LOGIN &&
-              <Grid container justifyContent='center' sx={{ display: 'block', px: '10%' }}>
-                <Typography fontSize={16}>
-                  {t('Please enter your password to proceed.')}
-                </Typography>
-                <Password
-                  isFocused={true}
-                  onChange={onPassChange}
-                  onEnter={onCheckPassword}
-                  style={{ marginBottom: '5px', marginTop: '5px' }}
-                />
-                <PButton
-                  _ml={0}
-                  _mt='20px'
-                  _onClick={onCheckPassword}
-                  _width={100}
-                  text={t('Unlock')}
-                />
-                <PButton
-                  _ml={0}
-                  _mt='10px'
-                  _onClick={onForgotPassword}
-                  _variant='text'
-                  _width={100}
-                  text={t('Forgot password?')}
-                />
-              </Grid>
+              <>
+                {isPasswordError &&
+                  <WrongPasswordAlert bgcolor={theme.palette.mode === 'dark' ? 'black' : 'white'} />
+                }
+                <Grid container justifyContent='center' sx={{ display: 'block', px: '10%' }}>
+                  <Typography fontSize={16}>
+                    {t('Please enter your password to proceed.')}
+                  </Typography>
+                  <Password
+                    isFocused={true}
+                    onChange={onPassChange}
+                    onEnter={onCheckPassword}
+                    style={{ marginBottom: '5px', marginTop: '5px' }}
+                  />
+                  <PButton
+                    _ml={0}
+                    _mt='20px'
+                    _onClick={onCheckPassword}
+                    _width={100}
+                    text={t('Unlock')}
+                  />
+                  <PButton
+                    _ml={0}
+                    _mt='10px'
+                    _onClick={onForgotPassword}
+                    _variant='text'
+                    _width={100}
+                    text={t('Forgot password?')}
+                  />
+                </Grid>
+              </>
             }
           </Grid>
           : children
