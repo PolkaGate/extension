@@ -87,7 +87,7 @@ export function PasswordSettingAlert(): React.ReactElement {
 
   return (<Grid item>
     <b>{t<string>('Remember your password well and keep it safe. ')}</b>
-    {t<string>('You need to reimport your accounts and make a new password if you forget it. Export and store your accounts securely to avoid losing them.')}
+    {t<string>('If you forget your password, you need to reimport your accounts and make a new password. Export and store your accounts securely to avoid losing them.')}
   </Grid>
   );
 }
