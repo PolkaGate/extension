@@ -30,7 +30,7 @@ export default function Checkbox2({ checked = false, disabled, iconStyle, label,
         />
       }
       label={
-        <span style={{ ...labelStyle }}>
+        <span style={{ ...labelStyle, userSelect: 'none' }}>
           {label}
         </span>
       }
