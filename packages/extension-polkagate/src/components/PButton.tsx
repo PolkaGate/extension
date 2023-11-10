@@ -18,7 +18,7 @@ interface Props {
   startIcon?: React.ReactNode;
 }
 
-function PButton({ _fontSize = '16px', startIcon, _isBusy, _ml = 6, _mt, _onClick, _variant = 'contained', _width = 88, disabled = false, text }: Props): React.ReactElement<Props> {
+function PButton({ _fontSize = '16px', _isBusy, _ml = 6, _mt, _onClick, _variant = 'contained', _width = 88, disabled = false, startIcon, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (
