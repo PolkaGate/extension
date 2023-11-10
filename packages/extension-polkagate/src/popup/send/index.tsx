@@ -27,7 +27,7 @@ import { HeaderBrand } from '../../partials';
 import { MAX_AMOUNT_LENGTH } from '../../util/constants';
 import { FormattedAddressState, TransferType } from '../../util/types';
 import { amountToHuman, amountToMachine, isValidAddress } from '../../util/utils';
-import Asset from './partial/Asset';
+import Asset from '../../partials/Asset';
 import Review from './Review';
 
 export default function Send(): React.ReactElement {

@@ -111,7 +111,7 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isHi
           setShowMenu={setShowAccountMenu}
         />
       }
-      <Grid item sx={{ bottom: '20px', left: 0, position: 'absolute', width: 'fit-content' }}>
+      <Grid item sx={{ bottom: 0, left: 0, position: 'absolute', top: 0, width: 'fit-content' }}>
         <QuickAction address={address} quickActionOpen={quickActionOpen} setQuickActionOpen={setQuickActionOpen} />
       </Grid>
     </Grid>

@@ -7,15 +7,14 @@ import '@vaadin/icons';
 
 import { faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowForwardIos as ArrowForwardIosIcon, Boy as BoyIcon, Close as CloseIcon } from '@mui/icons-material';
-import { Box, ClickAwayListener, Grid, IconButton, Slide, useTheme } from '@mui/material';
+import { ArrowForwardIos as ArrowForwardIosIcon, Boy as BoyIcon } from '@mui/icons-material';
+import { Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { poolStakingBlack, poolStakingDisabledDark, poolStakingDisabledLight, poolStakingWhite } from '../assets/icons';
-import { HorizontalMenuItem } from '../components';
+import { HorizontalMenuItem, PoolStakingIcon } from '../components';
 import { useAccount, useApi, useFormatted, useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
@@ -69,159 +68,141 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
       : account?.genesisHash && history.push({ pathname: `/history/${String(address)}` });
   }, [account?.genesisHash, address, history]);
 
+  const ICON_SIZE = 10;
+  const isSlideOpen = quickActionOpen === address;
+
   const movingParts = (
     <Grid
-      alignItems='center'
       bgcolor='background.paper'
       container
-      justifyContent='space-between'
-      sx={{ border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '0 5px 5px 0', boxShadow: '0px 0px 10px 5px rgba(0, 0, 0, 0.55)', flexFlow: 'nowrap' }}
+      justifyContent='space-around'
+      sx={{
+        border: '0.5px solid',
+        borderColor: 'secondary.light',
+        borderRadius: '0 5px 5px 0',
+        boxShadow: '0px 0px 10px 5px rgba(0, 0, 0, 0.55)',
+        flexFlow: 'nowrap',
+        minWidth: 'calc(100% - 50px)',
+        pl: '20px',
+        pr: '10px',
+        pt:'5px',
+        width: 'calc(100% - 50px)'
+      }}
     >
-      <Grid container item justifyContent='center' width='13px'>
-        <IconButton
-          onClick={handleClose}
-          sx={{
-            '&:hover': {
-              backgroundColor: 'secondary.light'
-            },
-            bgcolor: 'secondary.light',
-            borderRadius: '0 20px 20px 0',
-            height: '25px',
-            p: 0,
-            width: '13px'
-          }}
-        >
-          <CloseIcon sx={{ color: theme.palette.mode === 'dark' ? 'black' : 'white', fontSize: 15, ml: '-3px', stroke: theme.palette.mode === 'dark' ? 'black' : 'white', strokeWidth: '0.7px' }} />
-        </IconButton>
-      </Grid>
-      <Grid container item justifyContent='space-around' mr='10px' sx={{ flexFlow: 'nowrap' }} width='calc(100% - 50px)'>
-        <HorizontalMenuItem
-          divider
-          dividerHeight={20}
-          exceptionWidth={40}
-          icon={
-            <FontAwesomeIcon
-              color={
-                account?.genesisHash
-                  ? theme.palette.text.primary
-                  : theme.palette.action.disabledBackground
-              }
-              icon={faPaperPlane}
-              style={{ height: '20px' }}
-            />
-          }
-          onClick={goToSend}
-          title={t<string>('Send')}
-          titleFontSize={10}
-        />
-        <HorizontalMenuItem
-          divider
-          dividerHeight={20}
-          exceptionWidth={45}
-          icon={
-            <Box
-              component='img'
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              src={!STAKING_CHAINS.includes(account?.genesisHash)
-                ? theme.palette.mode === 'dark' ? poolStakingDisabledDark : poolStakingDisabledLight
-                : theme.palette.mode === 'dark' ? poolStakingWhite : poolStakingBlack
-              }
-              sx={{ height: '30px' }}
-            />
-          }
-          labelMarginTop='-5px'
-          onClick={goToPoolStaking}
-          textDisabled={!STAKING_CHAINS.includes(account?.genesisHash)}
-          title={t<string>('Pool Staking')}
-          titleFontSize={10}
-          titleLineHeight={1}
 
-        />
-        <HorizontalMenuItem
-          divider
-          dividerHeight={20}
-          exceptionWidth={37}
-          icon={
-            <BoyIcon
-              sx={{
-                color: STAKING_CHAINS.includes(account?.genesisHash)
-                  ? 'text.primary'
-                  : 'action.disabledBackground',
-                fontSize: '30px'
-              }}
+      <HorizontalMenuItem
+        divider
+        dividerHeight={20}
+        exceptionWidth={40}
+        icon={
+          <FontAwesomeIcon
+            color={
+              account?.genesisHash
+                ? theme.palette.text.primary
+                : theme.palette.action.disabledBackground
+            }
+            icon={faPaperPlane}
+            style={{ height: '20px' }}
+          />
+        }
+        onClick={goToSend}
+        textDisabled={!account?.genesisHash}
+        title={t<string>('Send')}
+        titleFontSize={10}
+      />
+      <HorizontalMenuItem
+        divider
+        dividerHeight={20}
+        exceptionWidth={45}
+        icon={
+          !STAKING_CHAINS.includes(account?.genesisHash)
+            ? <PoolStakingIcon
+              color={theme.palette.action.disabledBackground}
+              height={30}
             />
-          }
-          labelMarginTop='-5px'
-          onClick={goToSoloStaking}
-          textDisabled={!STAKING_CHAINS.includes(account?.genesisHash)}
-          title={t<string>('Solo Staking')}
-          titleFontSize={10}
-          titleLineHeight={1}
-        />
-        <HorizontalMenuItem
-          divider
-          dividerHeight={20}
-          icon={
-            <vaadin-icon
-              icon='vaadin:piggy-bank-coin'
-              style={{ height: '23px', color: `${CROWDLOANS_CHAINS.includes(account?.genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}` }}
+            : <PoolStakingIcon
+              color={theme.palette.text.primary}
+              height={30}
             />
-          }
-          onClick={goToCrowdLoans}
-          textDisabled={!CROWDLOANS_CHAINS.includes(account?.genesisHash)}
-          title={t<string>('Crowdloans')}
-          titleFontSize={10}
-
-        />
-        <HorizontalMenuItem
-          dividerHeight={20}
-          icon={
-            <FontAwesomeIcon
-              color={
-                account?.genesisHash
-                  ? theme.palette.text.primary
-                  : theme.palette.action.disabledBackground
-              }
-              icon={GOVERNANCE_CHAINS.includes(account?.genesisHash) ? faVoteYea : faHistory}
-              style={{ height: '20px' }}
-            />}
-          onClick={goToGovernanceOrHistory}
-          textDisabled={!account?.genesisHash}
-          title={t<string>(GOVERNANCE_CHAINS.includes(account?.genesisHash) ? 'Governance' : 'History')}
-          titleFontSize={10}
-        />
-      </Grid>
+        }
+        labelMarginTop='-5px'
+        onClick={goToPoolStaking}
+        textDisabled={!STAKING_CHAINS.includes(account?.genesisHash)}
+        title={t<string>('Pool Staking')}
+        titleFontSize={10}
+        titleLineHeight={1}
+      />
+      <HorizontalMenuItem
+        divider
+        dividerHeight={20}
+        exceptionWidth={37}
+        icon={
+          <BoyIcon
+            sx={{
+              color: STAKING_CHAINS.includes(account?.genesisHash)
+                ? 'text.primary'
+                : 'action.disabledBackground',
+              fontSize: '30px'
+            }}
+          />
+        }
+        labelMarginTop='-5px'
+        onClick={goToSoloStaking}
+        textDisabled={!STAKING_CHAINS.includes(account?.genesisHash)}
+        title={t<string>('Solo Staking')}
+        titleFontSize={10}
+        titleLineHeight={1}
+      />
+      <HorizontalMenuItem
+        divider
+        dividerHeight={20}
+        icon={
+          <vaadin-icon icon='vaadin:piggy-bank-coin' style={{ height: '23px', color: `${CROWDLOANS_CHAINS.includes(account?.genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}` }} />
+        }
+        onClick={goToCrowdLoans}
+        textDisabled={!CROWDLOANS_CHAINS.includes(account?.genesisHash)}
+        title={t<string>('Crowdloans')}
+        titleFontSize={10}
+      />
+      <HorizontalMenuItem
+        dividerHeight={20}
+        icon={
+          <FontAwesomeIcon
+            color={
+              account?.genesisHash
+                ? theme.palette.text.primary
+                : theme.palette.action.disabledBackground
+            }
+            icon={GOVERNANCE_CHAINS.includes(account?.genesisHash) ? faVoteYea : faHistory}
+            style={{ height: '20px' }}
+          />}
+        onClick={goToGovernanceOrHistory}
+        textDisabled={!account?.genesisHash}
+        title={t<string>(GOVERNANCE_CHAINS.includes(account?.genesisHash) ? 'Governance' : 'History')}
+        titleFontSize={10}
+      />
     </Grid>
   );
 
   return (
-    <>
-      <ClickAwayListener onClickAway={handleClose}>
-        <div>
-          <IconButton
-            onClick={handleOpen}
-            sx={{
-              '&:hover': {
-                backgroundColor: 'secondary.light'
-              },
-              bgcolor: 'secondary.light',
-              borderRadius: '0 20px 20px 0',
-              height: '25px',
-              p: 0,
-              width: '13px'
-            }}
-          >
-            <ArrowForwardIosIcon sx={{ color: theme.palette.mode === 'dark' ? 'black' : 'white', fontSize: 15, ml: '-2px', stroke: theme.palette.mode === 'dark' ? 'black' : 'white', strokeWidth: '0.5px' }} />
-          </IconButton>
-        </div>
-      </ClickAwayListener>
+    <Grid container item onClick={isSlideOpen ? handleClose : handleOpen} sx={{ inset: '0 auto 0 -1px', position: 'absolute', width: '10px' }}>
+      <Grid container item sx={{ bgcolor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px 0 0 5px', cursor: 'pointer', inset: '0 auto 0 0', position: 'absolute', width: '10px', zIndex: 6 }}></Grid>
+      <IconButton
+        sx={{ '&:hover': { backgroundColor: 'background.paper' }, bgcolor: 'background.paper', borderRadius: isSlideOpen ? '20px 0 0 20px' : '0 20px 20px 0', height: '17px', inset: isSlideOpen ? 'auto -1px 20px auto' : 'auto auto 20px -1px', p: 0, position: 'absolute', transition: 'border-radius 0.2s ease, inset 0.2s ease', width: '10px', zIndex: 6 }}
+      >
+        <ArrowForwardIosIcon sx={{ color: theme.palette.mode === 'light' ? 'primary.main' : 'white', fontSize: ICON_SIZE, stroke: theme.palette.mode === 'dark' ? 'black' : 'white', strokeWidth: '0.5px', transform: isSlideOpen ? 'rotate(-180deg)' : 'none', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+      </IconButton>
       <Slide
         direction='right'
-        in={quickActionOpen === address}
-        style={{ backgroundColor: 'background.default', height: '56px', left: 0, position: 'absolute', top: '-14px', width: '320px', zIndex: 10 }}
+        in={isSlideOpen}
+        style={{ backgroundColor: 'background.default', bottom: '1px', height: '56px', left: '10px', position: 'absolute', width: '310px', zIndex: 1 }}
+        timeout={{
+          enter: 600,
+          exit: 500
+        }}
       >
         {movingParts}
       </Slide>
-    </>
+    </Grid>
   );
 }

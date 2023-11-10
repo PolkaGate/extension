@@ -103,7 +103,7 @@ export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSele
 
   return (
     <>
-      <Grid container id='menu' sx={{ bgcolor: theme.palette.mode === 'light' ? 'primary.main' : 'background.paper', borderBottom: 1, borderTop: 1, borderColor: theme.palette.mode === 'dark' && 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500 }}>
+      <Grid container id='menu' sx={{ bgcolor: theme.palette.mode === 'light' ? 'primary.main' : 'background.paper', borderBottom: 1, borderTop: 1, borderColor: theme.palette.mode === 'dark' && 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500, minWidth: '810px' }}>
         <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
           <Grid alignItems='center' container justifyContent='space-between'>
             <ClickAwayListener onClickAway={handleClickAway}>

@@ -5,10 +5,11 @@ import { Box, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
+import { Boy as BoyIcon } from '@mui/icons-material';
 
 import { BN, bnMax } from '@polkadot/util';
 
-import { poolStakingBlack, poolStakingWhite, soloStakingBlack, soloStakingWhite } from '../../assets/icons';
+import { PoolStakingIcon } from '../../components';
 import { useApi, useMinToReceiveRewardsInSolo, usePoolConsts, useStakingConsts, useTranslation, useUnSupportedNetwork } from '../../hooks';
 import { STAKING_CHAINS } from '../../util/constants';
 import Option from './partial/StakingOption';
@@ -18,7 +19,7 @@ interface Props {
   setShowStakingOptions: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Options ({ setShowStakingOptions, showStakingOptions }: Props): React.ReactElement {
+export default function Options({ setShowStakingOptions, showStakingOptions }: Props): React.ReactElement {
   const { t } = useTranslation();
   const history = useHistory();
   const theme = useTheme();
@@ -64,7 +65,7 @@ export default function Options ({ setShowStakingOptions, showStakingOptions }: 
           balanceText={t('Minimum to join a pool')}
           buttonText={t<string>('Enter')}
           helperText={t('All the members of a pool act as a single nominator and the earnings of the pool are split pro rata to a member\'s stake in the bonded pool.')}
-          logo={<img src={theme.palette.mode === 'dark' ? poolStakingWhite : poolStakingBlack} />}
+          logo={<PoolStakingIcon color={theme.palette.text.primary} />}
           onClick={goToPoolStaking}
           showQuestionMark
           style={{
@@ -80,7 +81,14 @@ export default function Options ({ setShowStakingOptions, showStakingOptions }: 
           balanceText={t('Minimum to receive rewards')}
           buttonText={t<string>('Enter')}
           helperText={t('Each solo staker will be responsible to nominate validators and keep eyes on them to re-nominate if needed.')}
-          logo={<img src={theme.palette.mode === 'dark' ? soloStakingWhite : soloStakingBlack} />}
+          logo={
+            <BoyIcon
+              sx={{
+                color: 'text.primary',
+                fontSize: '30px'
+              }}
+            />
+          }
           onClick={goToSoloStaking}
           showQuestionMark
           style={{

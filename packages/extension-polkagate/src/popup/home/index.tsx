@@ -2,17 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
+/* eslint-disable react/jsx-first-prop-new-line */
 
-import { Container, Grid, useTheme } from '@mui/material';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import '@vaadin/icons';
+
+import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
+import { Container, Grid, IconButton, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Warning } from '../../components';
-import { useChainNames, useMerkleScience, usePrices, useTranslation } from '../../hooks';
-import { tieAccount } from '../../messaging';
+import { useMerkleScience, usePrices, useTranslation } from '../../hooks';
+import { tieAccount, windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { NEW_VERSION_ALERT, TEST_NETS } from '../../util/constants';
 import Welcome from '../welcome';
@@ -25,10 +29,9 @@ import Reset from '../welcome/Reset';
 export default function Home(): React.ReactElement {
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
-  const chainNames = useChainNames();
   const theme = useTheme();
 
-  usePrices(chainNames); // get balances for all chains available in accounts
+  // usePrices(); // update prices for all tokens saved in chainNames
   useMerkleScience(undefined, undefined, true); // to download the data file
 
   const [hideNumbers, setHideNumbers] = useState<boolean>();
@@ -83,6 +86,49 @@ export default function Home(): React.ReactElement {
       return 0;
     })
     , [hierarchy]);
+
+  const _goToCreate = useCallback(
+    (): void => {
+      windowOpen('/account/create').catch(console.error);
+    }, []
+  );
+
+  const AddNewAccount = () => (
+    <Grid alignItems='center' container  onClick={_goToCreate} sx={{
+      backgroundColor: 'background.paper',
+      borderColor: 'secondary.main',
+      borderRadius: '5px',
+      borderStyle: 'solid',
+      borderWidth: '0.5px',
+      cursor: 'pointer',
+      my: '10px',
+      py: '13.5px',
+      pr: '7px',
+      pl: '22px'
+    }}
+    >
+      <Grid item xs={1.5}>
+        <vaadin-icon icon='vaadin:plus-circle' style={{ height: '36px', color: `${theme.palette.secondary.light}`, width: '36px' }} />
+      </Grid>
+      <Grid item textAlign='left' xs>
+        <Typography fontSize='18px' fontWeight={500} pl='8px' >
+          {t('Create a new account')}
+        </Typography>
+      </Grid>
+      <Grid item xs={1}>
+        <IconButton sx={{ p: 0 }}>
+          <ArrowForwardIosRoundedIcon
+            sx={{
+              color: 'secondary.light',
+              fontSize: '24px',
+              stroke: `${theme.palette.secondary.light}`,
+              strokeWidth: 1.5
+            }}
+          />
+        </IconButton>
+      </Grid>
+    </Grid>
+  )
 
   return (
     <>
@@ -141,6 +187,9 @@ export default function Home(): React.ReactElement {
                   setQuickActionOpen={setQuickActionOpen}
                 />
               ))}
+              {sortedAccount.length < 4 &&
+                <AddNewAccount />
+              }
             </Container>
           </>
         )
