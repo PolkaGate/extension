@@ -62,10 +62,10 @@ function Welcome(): React.ReactElement {
         showMenu
         text={'Polkagate'}
       />
-      <Typography component='p' sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '20px', pt: '25px', textAlign: 'center' }}>
+      <Typography sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '20px', pt: '25px', textAlign: 'center' }}>
         {t('Welcome!')}
       </Typography>
-      <Typography component={'p'} sx={{ fontSize: '14px', fontWeight: 400, px: '24px' }}>
+      <Typography  sx={{ fontSize: '14px', fontWeight: 400, px: '24px' }}>
         {t<string>('Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started.')}
       </Typography>
       <PButton
@@ -75,7 +75,7 @@ function Welcome(): React.ReactElement {
         startIcon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.main}` }} />}
         text={t<string>('Create a new account')}
       />
-      <Typography component={'p'} sx={{ fontSize: '18px', fontWeight: 300, py: '10px', textAlign: 'center' }}>
+      <Typography sx={{ fontSize: '18px', fontWeight: 300, py: '10px', textAlign: 'center' }}>
         {t<string>('Or')}
       </Typography>
       <PButton

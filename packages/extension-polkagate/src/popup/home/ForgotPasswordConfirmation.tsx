@@ -48,7 +48,7 @@ export default function ForgotPasswordConfirmation({ onConfirmForgotPassword, on
       />
       <Grid container direction='column' px='15px'>
         <Grid container item justifyContent='center' pb='20px' pt='50px'>
-          <Typography fontSize='18px' fontWeight={500}>
+          <Typography fontSize='18px' fontWeight={400}>
             {t<string>('Are you sure you want to proceed?')}
           </Typography>
         </Grid>
@@ -57,12 +57,12 @@ export default function ForgotPasswordConfirmation({ onConfirmForgotPassword, on
             fontWeight={500}
             iconDanger
             isDanger
-            marginRight={5}
+            marginRight={11}
             marginTop={0}
-            paddingLeft={5}
+            paddingLeft={10}
             theme={theme}
           >
-            {t<string>('This action will permanently delete your account(s), and you won\'t be able to recover your password. You will need to start fresh by creating a new account or importing from a backup (JSON file or recovery phrase).')}
+            {t<string>('This action will permanently delete your account(s), and password recovery will not be possible. You can reset your wallet by importing from a backup (JSON file or recovery phrase). ')}
           </Warning>
         </Grid>
         <Checkbox2

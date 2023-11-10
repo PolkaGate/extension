@@ -196,28 +196,28 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
   }, [password, savedHashPassword]);
 
   const onForgotPassword = useCallback(async (): Promise<void> => {
-    await updateStorage('loginInfo', { status: 'forgot' });
-    setPermitted(true);
-    // setStep(STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION);
+    // await updateStorage('loginInfo', { status: 'forgot' });
+    // setPermitted(true);
+    setStep(STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION);
   }, []);
 
-  // const onConfirmForgotPassword = useCallback(async (): Promise<void> => {
-  //   await updateStorage('loginInfo', { status: 'forgot' });
-  //   setPermitted(true);
-  // }, []);
+  const onConfirmForgotPassword = useCallback(async (): Promise<void> => {
+    await updateStorage('loginInfo', { status: 'forgot' });
+    setPermitted(true);
+  }, []);
 
-  // const onRejectForgotPassword = useCallback(async (): Promise<void> => {
-  //   setStep(STEPS.SHOW_LOGIN);
-  // }, []);
+  const onRejectForgotPassword = useCallback(async (): Promise<void> => {
+    setStep(STEPS.SHOW_LOGIN);
+  }, []);
 
   return (
     <>
-      {/* {step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
+      {step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
         <ForgotPasswordConfirmation
           onConfirmForgotPassword={onConfirmForgotPassword}
           onRejectForgotPassword={onRejectForgotPassword}
         />
-      } */}
+      }
       {step === STEPS.SET_PASSWORD &&
         <Grid container sx={{ bgColor: theme.palette.mode === 'dark' ? 'black' : 'white', position: 'absolute', top: '30px' }}>
           <Warning
@@ -300,9 +300,11 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
             }
             {!isFlying && step === STEPS.SHOW_LOGIN &&
               <>
-                {isPasswordError &&
-                  <WrongPasswordAlert bgcolor={theme.palette.mode === 'dark' ? 'black' : 'white'} />
-                }
+                <Grid container sx={{ height: '40px' }}>
+                  {isPasswordError &&
+                    <WrongPasswordAlert bgcolor={theme.palette.mode === 'dark' ? 'black' : 'white'} />
+                  }
+                </Grid>
                 <Grid container justifyContent='center' sx={{ display: 'block', px: '10%' }}>
                   <Typography fontSize={16}>
                     {t('Please enter your password to proceed.')}

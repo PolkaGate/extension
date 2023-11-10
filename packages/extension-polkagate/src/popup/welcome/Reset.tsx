@@ -5,7 +5,7 @@
 
 import '@vaadin/icons';
 
-import { Typography, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { PButton } from '../../components';
@@ -37,28 +37,40 @@ function Reset(): React.ReactElement {
         showMenu
         text={'Polkagate'}
       />
-      <Typography component='p' sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '20px', pt: '25px', textAlign: 'center' }}>
+      <Typography sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, p: '25px 0 10px', textAlign: 'center' }}>
         {t('Reset Wallet')}
       </Typography>
-      <Typography component={'p'} sx={{ fontSize: '14px', fontWeight: 400, px: '24px' }}>
-        {t<string>('If you\'re having trouble unlocking your wallet, reset it by importing a previously exported accounts JSON backup file or providing the secret recovery phrase used during setup. This action deletes your current wallet and associated accounts from this device. After resetting, you\'ll see a list of accounts based on your backup file or recovery phrase.')}
+      <Typography sx={{ fontSize: '14px', px: '15px', mb: '25px' }}>
+        {t<string>('Resetting your wallet is a last resort option that will erase your current wallet data. Please make sure you have a backup JSON File or a Recovery Phrase before proceeding. To reset your wallet, you can choose one of the following methods:')}
       </Typography>
-      <PButton
-        _mt='75px'
-        _onClick={_goToRestoreFromJson}
-        _variant={'contained'}
-        startIcon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.main}` }} />}
-        text={t<string>('Restore from file')}
-      />
-      <Typography component={'p'} sx={{ fontSize: '18px', fontWeight: 300, py: '15px', textAlign: 'center' }}>
-        {t<string>('Or')}
-      </Typography>
-      <PButton
-        _mt='1px'
-        _onClick={_goToImport}
-        _variant={'outlined'}
-        text={t<string>('Import from recovery phrase')}
-      />
+      <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', m: '10px', p: '10px', width: '95%' }}>
+        <Typography sx={{ fontSize: '14px' }}>
+          {t<string>('Restore from a previously exported accounts JSON backup file. This file contains the encrypted data of your accounts and can be used to restore them.')}
+        </Typography>
+        <PButton
+          _mt='15px'
+          _onClick={_goToRestoreFromJson}
+          _variant={'contained'}
+          startIcon={
+            <vaadin-icon icon='vaadin:file-text' style={{ height: '18px', color: `${theme.palette.text.main}` }} />
+          }
+          text={t<string>('Restore from JSON File')}
+        />
+      </Grid>
+      <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', m: '10px', p: '10px', width: '95%' }}>
+        <Typography sx={{ fontSize: '14px' }}>
+          {t<string>('Import from the secret Recovery Phrase. This phrase is a sequence of 12 words that can be used to generate your account.')}
+        </Typography>
+        <PButton
+          _mt='15px'
+          _onClick={_goToImport}
+          _variant={'contained'}
+          startIcon={
+            <vaadin-icon icon='vaadin:book' style={{ height: '18px', color: `${theme.palette.text.main}` }} />
+          }
+          text={t<string>('Import from Recovery Phrase')}
+        />
+      </Grid>
     </>
   );
 }

@@ -82,7 +82,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
           }
           onClick={_goToRestoreFromJson}
           py='4px'
-          text={t('Restore from file')}
+          text={t('Restore from JSON file')}
         />
         <MenuItem
           iconComponent={
