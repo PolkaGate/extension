@@ -6,17 +6,15 @@
 import '@vaadin/icons';
 
 import { Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
 
-import { ActionContext, PButton } from '../../components';
-import { updateStorage } from '../../components/Loading';
+import { PButton } from '../../components';
 import { useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 
 function Reset(): React.ReactElement {
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
   const theme = useTheme();
 
   const _goToRestoreFromJson = useCallback(
@@ -30,10 +28,6 @@ function Reset(): React.ReactElement {
       windowOpen('/account/import-seed').catch(console.error);
     }, []
   );
-
-  const onClose = useCallback(async() => {
-    onAction('/')
-  }, [onAction]);
 
   return (
     <>

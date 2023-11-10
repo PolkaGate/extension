@@ -15,7 +15,6 @@ import { FullScreenHeader } from '../governance/FullScreenHeader';
 import CopySeedButton from './components/CopySeedButton';
 import DownloadSeedButton from './components/DownloadSeedButton';
 import Passwords2 from './components/Passwords2';
-import { resetOnForgotPassword } from './resetAccounts';
 
 const MnemonicSeedDisplay = ({ seed, style }: { style?: SxProps<Theme>, seed: null | string }) => {
   const { t } = useTranslation();
@@ -84,12 +83,10 @@ function CreateAccount(): React.ReactElement {
     setIsMnemonicSaved(!isMnemonicSaved);
   }, [isMnemonicSaved]);
 
-  const onCreate = useCallback(async () => {
+  const onCreate = useCallback(() => {
     // this should always be the case
     if (name && password && seed) {
       setIsBusy(true);
-
-      await resetOnForgotPassword();
 
       createAccountSuri(name, password, seed)
         .then(() => onAction('/'))

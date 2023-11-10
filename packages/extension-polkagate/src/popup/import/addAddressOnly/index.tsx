@@ -15,7 +15,6 @@ import { createAccountExternal, getMetadata } from '../../../messaging';
 import { HeaderBrand, Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
 import { Proxy, ProxyItem } from '../../../util/types';
-import { resetOnForgotPassword } from '../../createAccountFullScreen/resetAccounts';
 
 export default function AddAddressOnly(): React.ReactElement {
   const { t } = useTranslation();
@@ -65,10 +64,9 @@ export default function AddAddressOnly(): React.ReactElement {
     });
   }, []);
 
-  const handleAdd = useCallback(async () => {
+  const handleAdd = useCallback(() => {
     if (name && realAddress && chain?.genesisHash) {
       setIsBusy(true);
-      await resetOnForgotPassword();
 
       createAccountExternal(name, realAddress, chain.genesisHash)
         .then(() => onAction('/'))
