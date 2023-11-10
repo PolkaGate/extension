@@ -11,6 +11,7 @@ import { blake2AsHex } from '@polkadot/util-crypto';
 import { logoBlack, logoMotionDark, logoMotionLight, logoWhite } from '../assets/logos';
 import { useTranslation } from '../hooks';
 import Passwords2 from '../popup/createAccountFullScreen/components/Passwords2';
+import ForgotPasswordConfirmation from '../popup/home/ForgotPasswordConfirmation';
 import PButton from './PButton';
 import { Password, Warning, WrongPasswordAlert } from '.';
 
@@ -28,7 +29,8 @@ const STEPS = {
   MAYBE_LATER: 2,
   NO_LOGIN: 3,
   SHOW_LOGIN: 4,
-  IN_NO_LOGIN_PERIOD: 5
+  IN_NO_LOGIN_PERIOD: 5,
+  SHOW_DELETE_ACCOUNT_CONFIRMATION: 6
 };
 
 export type LoginInfo = {
@@ -116,33 +118,34 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
     };
   }, []);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(async () => {
-    const info = await getStorage('loginInfo') as LoginInfo;
+  useEffect(() => {
+    const handleInitLoginInfo = async () => {
+      const info = await getStorage('loginInfo') as LoginInfo;
 
-    console.log('loginInfo in loading page is:', info);
-
-    if (!info?.status || info?.status === 'reset') {
-      setStep(STEPS.ASK_TO_SET_PASSWORD);
-    } else if (info.status === 'mayBeLater') {
-      if (info.lastLogin && Date.now() > (info.lastLogin + MAYBE_LATER_PERIOD)) {
+      if (!info?.status || info?.status === 'reset') {
         setStep(STEPS.ASK_TO_SET_PASSWORD);
-      } else {
-        setStep(STEPS.MAYBE_LATER);
+      } else if (info.status === 'mayBeLater') {
+        if (info.lastLogin && Date.now() > (info.lastLogin + MAYBE_LATER_PERIOD)) {
+          setStep(STEPS.ASK_TO_SET_PASSWORD);
+        } else {
+          setStep(STEPS.MAYBE_LATER);
+          setPermitted(true);
+        }
+      } else if (info.status === 'no') {
+        setStep(STEPS.NO_LOGIN);
         setPermitted(true);
-      }
-    } else if (info.status === 'no') {
-      setStep(STEPS.NO_LOGIN);
-      setPermitted(true);
-    } else {
-      if (info.lastLogin && (Date.now() > (info.lastLogin + NO_PASS_PERIOD))) {
-        setStep(STEPS.SHOW_LOGIN);
-        setSavedHashedPassword(info.hashedPassword as string);
       } else {
-        setStep(STEPS.IN_NO_LOGIN_PERIOD);
-        setPermitted(true);
+        if (info.lastLogin && (Date.now() > (info.lastLogin + NO_PASS_PERIOD))) {
+          setStep(STEPS.SHOW_LOGIN);
+          setSavedHashedPassword(info.hashedPassword as string);
+        } else {
+          setStep(STEPS.IN_NO_LOGIN_PERIOD);
+          setPermitted(true);
+        }
       }
-    }
+    };
+
+    handleInitLoginInfo().catch(console.error);
   }, []);
 
   const onMayBeLater = useCallback(() => {
@@ -193,14 +196,28 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
   }, [password, savedHashPassword]);
 
   const onForgotPassword = useCallback(async (): Promise<void> => {
+    setStep(STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION);
+  }, []);
+
+  const onConfirmForgotPassword = useCallback(async (): Promise<void> => {
     await updateStorage('loginInfo', { status: 'forgot' });
     setPermitted(true);
+  }, []);
+
+  const onRejectForgotPassword = useCallback(async (): Promise<void> => {
+    setStep(STEPS.SHOW_LOGIN);
   }, []);
 
   return (
     <>
       {isPasswordError &&
         <WrongPasswordAlert bgcolor={theme.palette.mode === 'dark' ? 'black' : 'white'} />
+      }
+      {step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
+        <ForgotPasswordConfirmation
+          onConfirmForgotPassword={onConfirmForgotPassword}
+          onRejectForgotPassword={onRejectForgotPassword}
+        />
       }
       {step === STEPS.SET_PASSWORD &&
         <Grid container sx={{ bgColor: theme.palette.mode === 'dark' ? 'black' : 'white', position: 'absolute', top: '30px' }}>
