@@ -100,7 +100,7 @@ export default function Review({ address, amount, chilled, estimatedFee, hasNomi
 
       if (unlockingLen >= maxUnlockingChunks) {
         const optSpans = await api.query.staking.slashingSpans(formatted);
-        const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
+        const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1 as number;
 
         txs.push(redeem(spanCount));
       }
@@ -135,7 +135,7 @@ export default function Review({ address, amount, chilled, estimatedFee, hasNomi
       setShowWaitScreen(false);
       setShowConfirmation(true);
     } catch (e) {
-      console.log('error:', e);
+      console.error('Unstaking error:', e);
       setIsPasswordError(true);
     }
   }, [amount, api, chain, chilled, decimal, estimatedFee, formatted, hasNominator, maxUnlockingChunks, name, password, redeem, selectedProxy, selectedProxyAddress, selectedProxyName, unbonded, unlockingLen, isUnstakeAll]);
