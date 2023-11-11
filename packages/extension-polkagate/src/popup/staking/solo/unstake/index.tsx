@@ -222,6 +222,7 @@ export default function Index(): React.ReactElement {
           chilled={chilled}
           estimatedFee={estimatedFee}
           hasNominator={!!stakingAccount?.nominators?.length}
+          isUnstakeAll={isUnstakeAll}
           maxUnlockingChunks={maxUnlockingChunks}
           redeem={redeem}
           redeemDate={redeemDate}
@@ -230,7 +231,6 @@ export default function Index(): React.ReactElement {
           total={totalAfterUnstake}
           unbonded={unbonded}
           unlockingLen={unlockingLen ?? 0}
-          isUnstakeAll={isUnstakeAll}
         />
       }
     </Motion>
