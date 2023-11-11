@@ -14,7 +14,7 @@ import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountContext, Progress, Warning } from '../../components';
+import { AccountContext, Infotip2, Progress, Warning } from '../../components';
 import { useMerkleScience, usePrices, useTranslation } from '../../hooks';
 import { tieAccount, windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
@@ -24,7 +24,7 @@ import AccountsTree from './AccountsTree';
 import Alert from './Alert';
 import YouHave from './YouHave';
 
-const imagePath = `https://raw.githubusercontent.com/PolkaGate/backgrounds/main/${process.env.BG_THEME}/`;
+const imagePath = `https://raw.githubusercontent.com/PolkaGate/backgrounds/main/${process.env.BG_THEME || 'general'}/`;
 
 type BgImage = {
   dark: string;
@@ -44,8 +44,7 @@ export default function Home(): React.ReactElement {
   const [show, setShowAlert] = useState<boolean>(false);
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
   const [hasActiveRecovery, setHasActiveRecovery] = useState<string | null | undefined>(); // if exists, include the account address
-  const [bgImage, setBgImage] = useState<string | null | undefined>();
-  const [isFetchingImage, setIsFetchingImage] = useState<boolean>();
+  const [bgImage, setBgImage] = useState<string | undefined>();
   const [imageLoadError, setImageLoadError] = useState(false);
 
   useEffect(() => {
@@ -97,7 +96,7 @@ export default function Home(): React.ReactElement {
 
       return 0;
     })
-  , [hierarchy]);
+    , [hierarchy]);
 
   const _goToCreate = useCallback(
     (): void => {
@@ -106,23 +105,18 @@ export default function Home(): React.ReactElement {
   );
 
   const clearBackground = useCallback((): void => {
-    setBgImage(null);
+    setBgImage(undefined);
     setImageLoadError(true);
     imgRef.current = 0;
     chrome.storage.local.remove('backgroundImage').catch(console.error);
   }, []);
 
   const setBackground = useCallback((): void => {
-    // if (!isFetchingImage) {
-    //   setIsFetchingImage(true);
-    //   getImage(theme).then((img) => {
-    //     setBgImage(img);
-    //     setIsFetchingImage(false);
-    //   }).catch(console.error);
-    // }
     setImageLoadError(false);
 
     const imageUrl = imagePath + theme.palette.mode + `/${imgRef.current}.jpeg`;
+    
+    console.log('imageUrl:', imageUrl);
 
     setBgImage(imageUrl);
     chrome.storage.local.get('backgroundImage', (res) => {
@@ -189,17 +183,19 @@ export default function Home(): React.ReactElement {
         ? <AddAccount />
         : (
           <Grid container sx={{
-            background: bgImage && `${theme.palette.mode === 'dark' ? 'linear-gradient( rgba(255, 255, 255, 0),rgba(255, 255, 255, 0.1))' : 'linear-gradient(rgba(255, 255, 255, 0.99), rgba(255, 255, 255, 0))'}`
+            background: 'linear-gradient(180deg, #F1F1F1 10.79%, rgba(241, 241, 241, 0.70) 100%)'
+            // background: bgImage && `${theme.palette.mode === 'dark' ? 'linear-gradient( rgba(255, 255, 255, 0),rgba(255, 255, 255, 0.1))' : 'linear-gradient(rgba(255, 255, 255, 0.99), rgba(255, 255, 255, 0))'}`
           }}
           >
             <img
               onError={handleImageError}
               src={bgImage}
               style={{
-                height: '100%',
+                filter: 'blur(1px)',
+                height: '-webkit-fill-available',
                 left: 0,
                 objectFit: 'cover',
-                opacity: imageLoadError ? 0 : 1,
+                opacity: imageLoadError ? 0 : 0.7,
                 position: 'absolute',
                 top: 67,
                 width: '100%'
@@ -254,20 +250,20 @@ export default function Home(): React.ReactElement {
                 <AddNewAccount />
               }
             </Container>
-            <Grid container justifyContent='space-between' sx={{ backgroundColor: 'background.default', bottom: '0px', position: 'absolute', px: '10px', color: theme.palette.secondary.main }}>
+            <Grid container justifyContent='space-between' sx={{ backgroundColor: 'background.default', bottom: '0px', position: 'absolute', px: '10px', color: theme.palette.text.primary }}>
               <Grid item onClick={clearBackground} xs={1.5}>
-                <Typography sx={{ cursor: 'pointer', fontSize: '11px', userSelect: 'none' }}>
-                  {t('Clear')}-{imgRef.current - 1}
+                {bgImage && !imageLoadError && <Typography sx={{ cursor: 'pointer', fontSize: '11px', userSelect: 'none' }}>
+                  {t('Clear')}
                 </Typography>
+                }
               </Grid>
               <Grid alignItems='baseline' container item justifyContent='flex-end' xs>
-                <Grid item>
-                  {isFetchingImage && <Progress pt='0px' size={10} />}
-                </Grid>
                 <Grid item onClick={setBackground}>
-                  <Typography sx={{ cursor: 'pointer', fontSize: '11px', pl: '5px', userSelect: 'none' }}>
-                    {t('Set an AI generated background')}
-                  </Typography>
+                  <Infotip2 showInfoMark text={t('Click to set an AI-generated background.')}>
+                    <Typography sx={{ cursor: 'pointer', fontSize: '11px', pl: '5px', userSelect: 'none' }}>
+                      {t('AI Background')}
+                    </Typography>
+                  </Infotip2>
                 </Grid>
               </Grid>
             </Grid>
