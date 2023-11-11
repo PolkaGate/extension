@@ -172,105 +172,107 @@ export default function Home(): React.ReactElement {
     </Grid>
   );
 
+  const AiBackgroundLink = () => (
+    <Grid container justifyContent='space-between' sx={{ backgroundColor: 'background.default', bottom: '0px', color: theme.palette.text.primary, position: 'absolute', zIndex: 6, p: '0 10px 0' }}>
+      <Grid item onClick={clearBackground} xs={1.5}>
+        {bgImage && !imageLoadError && <Typography sx={{ cursor: 'pointer', fontSize: '11px', userSelect: 'none' }}>
+          {t('Clear')}
+        </Typography>
+        }
+      </Grid>
+      <Grid alignItems='baseline' container item justifyContent='flex-end' xs>
+        <Grid item onClick={setBackground}>
+          <Infotip2 showInfoMark text={t('Click to set an AI-generated background.')}>
+            <Typography sx={{ cursor: 'pointer', fontSize: '11px', pl: '5px', userSelect: 'none' }}>
+              {t('AI Background')}
+            </Typography>
+          </Infotip2>
+        </Grid>
+      </Grid>
+    </Grid>
+  );
+
   return (
     <>
       <Alert
         setShowAlert={setShowAlert}
         show={show}
       />
-      {(hierarchy.length === 0)
+      {hierarchy.length === 0
         ? <AddAccount />
-        : (
-          <Grid alignContent='flex-start' container sx={{
-            background:
-              bgImage && (theme.palette.mode === 'dark'
-                ? 'background: linear-gradient(180deg, #171717 10.79%, rgba(23, 23, 23, 0.70) 100%);'
-                : 'linear-gradient(180deg, #F1F1F1 10.79%, rgba(241, 241, 241, 0.70) 100%)'),
-            height: window.innerHeight
-          }}
-          >
-            <img
-              onError={handleImageError}
-              src={bgImage}
-              style={{
-                filter: 'blur(1px)',
-                height: '-webkit-fill-available',
-                left: 0,
-                objectFit: 'cover',
-                opacity: imageLoadError ? 0 : 0.7,
-                position: 'absolute',
-                top: 67,
-                width: '100%'
-              }}
+        : <Grid alignContent='flex-start' container sx={{
+          background:
+            bgImage && (theme.palette.mode === 'dark'
+              ? 'background: linear-gradient(180deg, #171717 10.79%, rgba(23, 23, 23, 0.70) 100%);'
+              : 'linear-gradient(180deg, #F1F1F1 10.79%, rgba(241, 241, 241, 0.70) 100%)'),
+          height: window.innerHeight
+        }}
+        >
+          <img
+            onError={handleImageError}
+            src={bgImage}
+            style={{
+              filter: 'blur(1px)',
+              height: '-webkit-fill-available',
+              left: 0,
+              objectFit: 'cover',
+              opacity: imageLoadError ? 0 : 0.7,
+              position: 'absolute',
+              top: 67,
+              width: '100%'
+            }}
+          />
+          <Grid padding='0px' textAlign='center' xs={12}>
+            <HeaderBrand
+              showBrand
+              showMenu
+              text={t<string>('Polkagate')}
             />
-            <Grid padding='0px' textAlign='center' xs={12}>
-              <HeaderBrand
-                showBrand
-                showMenu
-                text={t<string>('Polkagate')}
-              />
-            </Grid>
-            {hasActiveRecovery &&
-              <Grid container item sx={{ '> div.belowInput .warningImage': { fontSize: '18px' }, '> div.belowInput.danger': { m: 0, position: 'relative' }, height: '55px', pt: '8px', width: '92%' }}>
-                <Warning
-                  fontSize='16px'
-                  fontWeight={400}
-                  isBelowInput
-                  isDanger
-                  theme={theme}
-                >
-                  {t<string>('Suspicious recovery detected on one or more of your accounts.')}
-                </Warning>
-              </Grid>
-            }
-            <YouHave
-              hideNumbers={hideNumbers}
-              setHideNumbers={setHideNumbers}
-            />
-            <Container
-              disableGutters
-              sx={[{
-                m: 'auto',
-                maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`,
-                mt: '10px',
-                overflowY: 'scroll',
-                p: 0,
-                width: '92%'
-              }]}
-            >
-              {sortedAccount.map((json, index): React.ReactNode => (
-                <AccountsTree
-                  {...json}
-                  hideNumbers={hideNumbers}
-                  key={`${index}:${json.address}`}
-                  quickActionOpen={quickActionOpen}
-                  setHasActiveRecovery={setHasActiveRecovery}
-                  setQuickActionOpen={setQuickActionOpen}
-                />
-              ))}
-              {sortedAccount.length < 4 &&
-                <AddNewAccount />
-              }
-            </Container>
-            <Grid container justifyContent='space-between' sx={{ backgroundColor: 'background.default', bottom: '0px', position: 'absolute', px: '10px', color: theme.palette.text.primary }}>
-              <Grid item onClick={clearBackground} xs={1.5}>
-                {bgImage && !imageLoadError && <Typography sx={{ cursor: 'pointer', fontSize: '11px', userSelect: 'none' }}>
-                  {t('Clear')}
-                </Typography>
-                }
-              </Grid>
-              <Grid alignItems='baseline' container item justifyContent='flex-end' xs>
-                <Grid item onClick={setBackground}>
-                  <Infotip2 showInfoMark text={t('Click to set an AI-generated background.')}>
-                    <Typography sx={{ cursor: 'pointer', fontSize: '11px', pl: '5px', userSelect: 'none' }}>
-                      {t('AI Background')}
-                    </Typography>
-                  </Infotip2>
-                </Grid>
-              </Grid>
-            </Grid>
           </Grid>
-        )
+          {hasActiveRecovery &&
+            <Grid container item sx={{ '> div.belowInput .warningImage': { fontSize: '18px' }, '> div.belowInput.danger': { m: 0, position: 'relative' }, height: '55px', pt: '8px', width: '92%' }}>
+              <Warning
+                fontSize='16px'
+                fontWeight={400}
+                isBelowInput
+                isDanger
+                theme={theme}
+              >
+                {t<string>('Suspicious recovery detected on one or more of your accounts.')}
+              </Warning>
+            </Grid>
+          }
+          <YouHave
+            hideNumbers={hideNumbers}
+            setHideNumbers={setHideNumbers}
+          />
+          <Container
+            disableGutters
+            sx={[{
+              m: 'auto',
+              maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`,
+              mt: '10px',
+              overflowY: 'scroll',
+              p: 0,
+              width: '92%'
+            }]}
+          >
+            {sortedAccount.map((json, index): React.ReactNode => (
+              <AccountsTree
+                {...json}
+                hideNumbers={hideNumbers}
+                key={`${index}:${json.address}`}
+                quickActionOpen={quickActionOpen}
+                setHasActiveRecovery={setHasActiveRecovery}
+                setQuickActionOpen={setQuickActionOpen}
+              />
+            ))}
+            {sortedAccount.length < 4 &&
+              <AddNewAccount />
+            }
+          </Container>
+          <AiBackgroundLink />
+        </Grid>
       }
     </>
   );
