@@ -17,9 +17,9 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
 import { useApi, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
+import Asset from '../../../../partials/Asset';
 import { DATE_OPTIONS, MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import Asset from '../../../../partials/Asset';
 import Review from './Review';
 
 interface State {
@@ -50,8 +50,8 @@ export default function Index(): React.ReactElement {
   const [showReview, setShowReview] = useState<boolean>(false);
   const [unstakeAllAmount, setUnstakeAllAmount] = useState<boolean>(false);
 
-  const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active, [stakingAccount]);
-  const totalAfterUnstake = useMemo(() => staked && decimal && staked.sub(amountToMachine(amount, decimal)) as BN | undefined, [amount, decimal, staked]);
+  const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active as unknown as BN, [stakingAccount]);
+  const totalAfterUnstake = useMemo(() => staked && decimal ? staked.sub(amountToMachine(amount, decimal)) : undefined, [amount, decimal, staked]);
   const unlockingLen = stakingAccount?.stakingLedger?.unlocking?.length;
   const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
@@ -104,7 +104,7 @@ export default function Index(): React.ReactElement {
         txs.push(redeem(...dummyParams));
       }
 
-      if (amountAsBN.eq(staked)) {
+      if (unstakeAllAmount) {
         txs.push(chilled());
       }
 
@@ -114,7 +114,7 @@ export default function Index(): React.ReactElement {
 
       setEstimatedFee(api?.createType('Balance', partialFee));
     }
-  }, [amountAsBN, api, chilled, formatted, maxUnlockingChunks, redeem, staked, unbonded, unlockingLen]);
+  }, [amountAsBN, api, chilled, formatted, maxUnlockingChunks, redeem, staked, unbonded, unlockingLen, unstakeAllAmount]);
 
   useEffect(() => {
     if (amountAsBN && redeem && chilled && maxUnlockingChunks && unlockingLen !== undefined && unbonded && formatted && staked) {
@@ -219,21 +219,18 @@ export default function Index(): React.ReactElement {
         <Review
           address={address}
           amount={amount}
-          api={api}
-          chain={chain}
           chilled={chilled}
           estimatedFee={estimatedFee}
-          formatted={formatted}
           hasNominator={!!stakingAccount?.nominators?.length}
           maxUnlockingChunks={maxUnlockingChunks}
           redeem={redeem}
           redeemDate={redeemDate}
           setShow={setShowReview}
           show={showReview}
-          staked={staked}
           total={totalAfterUnstake}
           unbonded={unbonded}
           unlockingLen={unlockingLen ?? 0}
+          unstakeAllAmount={unstakeAllAmount}
         />
       }
     </Motion>

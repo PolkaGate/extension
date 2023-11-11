@@ -8,20 +8,18 @@
  * this component opens unstake review page
  * */
 
-import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import type { AnyTuple } from '@polkadot/types/types';
 
 import { Container, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useDecimal, useProxies, useToken, useTranslation } from '../../../../hooks';
+import { useAccountDisplay, useApi, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
@@ -32,13 +30,9 @@ import TxDetail from './partials/TxDetail';
 interface Props {
   address: string;
   amount: string;
-  api: ApiPromise;
-  chain: Chain;
   chilled: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined
   estimatedFee: Balance | undefined;
-  formatted: string;
   hasNominator: boolean;
-  ç: boolean;
   maxUnlockingChunks: number
   redeem: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   redeemDate: string | undefined;
@@ -47,11 +41,14 @@ interface Props {
   total: BN | undefined;
   unlockingLen: number;
   unbonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
-  staked: BN;
+  unstakeAllAmount: boolean;
 }
 
-export default function Review({ address, amount, api, chain, chilled, estimatedFee, formatted, hasNominator, maxUnlockingChunks, redeem, redeemDate, setShow, show, staked, total, unbonded, unlockingLen }: Props): React.ReactElement {
+export default function Review({ address, amount, chilled, estimatedFee, hasNominator, maxUnlockingChunks, redeem, redeemDate, setShow, show, total, unbonded, unlockingLen, unstakeAllAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const formatted = useFormatted(address);
+  const chain = useChain(address);
+  const api = useApi(address);
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
@@ -89,7 +86,7 @@ export default function Review({ address, amount, api, chain, chilled, estimated
 
   const unstake = useCallback(async () => {
     try {
-      if (!formatted || !unbonded || !redeem || !chilled || hasNominator === undefined) {
+      if (!api || !chain || !formatted || !unbonded || !redeem || !chilled || hasNominator === undefined) {
         return;
       }
 
@@ -108,7 +105,7 @@ export default function Review({ address, amount, api, chain, chilled, estimated
         txs.push(redeem(spanCount));
       }
 
-      if (amountAsBN.eq(staked) && hasNominator) {
+      if (unstakeAllAmount && hasNominator) {
         txs.push(chilled());
       }
 
@@ -124,7 +121,7 @@ export default function Review({ address, amount, api, chain, chilled, estimated
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
+        from: { address: String(formatted), name },
         subAction: 'Unstake',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
@@ -141,7 +138,7 @@ export default function Review({ address, amount, api, chain, chilled, estimated
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [amount, api, chain, chilled, decimal, estimatedFee, formatted, hasNominator, maxUnlockingChunks, name, password, redeem, selectedProxy, selectedProxyAddress, selectedProxyName, staked, unbonded, unlockingLen]);
+  }, [amount, api, chain, chilled, decimal, estimatedFee, formatted, hasNominator, maxUnlockingChunks, name, password, redeem, selectedProxy, selectedProxyAddress, selectedProxyName, unbonded, unlockingLen, unstakeAllAmount]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
