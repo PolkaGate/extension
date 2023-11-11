@@ -138,7 +138,9 @@ export default function Index(): React.ReactElement {
       return;
     }
 
-    setAmount(value.slice(0, MAX_AMOUNT_LENGTH));
+    const roundedAmount = value.slice(0, MAX_AMOUNT_LENGTH);
+
+    setAmount(roundedAmount);
   }, [decimal]);
 
   const onAllAmount = useCallback(() => {
@@ -219,6 +221,7 @@ export default function Index(): React.ReactElement {
         <Review
           address={address}
           amount={amount}
+          staked={staked}
           chilled={chilled}
           estimatedFee={estimatedFee}
           hasNominator={!!stakingAccount?.nominators?.length}

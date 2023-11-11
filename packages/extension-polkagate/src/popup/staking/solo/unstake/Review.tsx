@@ -24,7 +24,7 @@ import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
-import { amountToMachine, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
+import { amountToHuman, amountToMachine, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
 interface Props {
@@ -37,6 +37,7 @@ interface Props {
   redeem: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   redeemDate: string | undefined;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  staked: BN;
   show: boolean;
   total: BN | undefined;
   unlockingLen: number;
@@ -44,7 +45,7 @@ interface Props {
   isUnstakeAll: boolean;
 }
 
-export default function Review({ address, amount, chilled, estimatedFee, hasNominator, maxUnlockingChunks, redeem, redeemDate, setShow, show, total, unbonded, unlockingLen, isUnstakeAll }: Props): React.ReactElement {
+export default function Review({ address, amount, chilled, estimatedFee, hasNominator, isUnstakeAll, maxUnlockingChunks, redeem, redeemDate, setShow, show, staked, total, unbonded, unlockingLen }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const chain = useChain(address);
@@ -105,7 +106,7 @@ export default function Review({ address, amount, chilled, estimatedFee, hasNomi
         txs.push(redeem(spanCount));
       }
 
-      if (isUnstakeAll && hasNominator) {
+      if ((isUnstakeAll || amount === amountToHuman(staked, decimal)) && hasNominator) {
         txs.push(chilled());
       }
 
@@ -138,7 +139,7 @@ export default function Review({ address, amount, chilled, estimatedFee, hasNomi
       console.error('Unstaking error:', e);
       setIsPasswordError(true);
     }
-  }, [amount, api, chain, chilled, decimal, estimatedFee, formatted, hasNominator, maxUnlockingChunks, name, password, redeem, selectedProxy, selectedProxyAddress, selectedProxyName, unbonded, unlockingLen, isUnstakeAll]);
+  }, [amount, api, chain, chilled, decimal, estimatedFee, formatted, hasNominator, maxUnlockingChunks, name, password, redeem, selectedProxy, selectedProxyAddress, selectedProxyName, staked, unbonded, unlockingLen, isUnstakeAll]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
