@@ -37,7 +37,7 @@ export default function Home(): React.ReactElement {
   const theme = useTheme();
   const imgRef = useRef(0);
 
-  usePrices(); // update prices for all tokens saved in chainNames
+  // usePrices(); // update prices for all tokens saved in chainNames
   useMerkleScience(undefined, undefined, true); // to download the data file
 
   const [hideNumbers, setHideNumbers] = useState<boolean>();
