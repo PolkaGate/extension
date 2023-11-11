@@ -41,10 +41,10 @@ interface Props {
   total: BN | undefined;
   unlockingLen: number;
   unbonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
-  unstakeAllAmount: boolean;
+  isUnstakeAll: boolean;
 }
 
-export default function Review({ address, amount, chilled, estimatedFee, hasNominator, maxUnlockingChunks, redeem, redeemDate, setShow, show, total, unbonded, unlockingLen, unstakeAllAmount }: Props): React.ReactElement {
+export default function Review({ address, amount, chilled, estimatedFee, hasNominator, maxUnlockingChunks, redeem, redeemDate, setShow, show, total, unbonded, unlockingLen, isUnstakeAll }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const chain = useChain(address);
@@ -105,7 +105,7 @@ export default function Review({ address, amount, chilled, estimatedFee, hasNomi
         txs.push(redeem(spanCount));
       }
 
-      if (unstakeAllAmount && hasNominator) {
+      if (isUnstakeAll && hasNominator) {
         txs.push(chilled());
       }
 
@@ -138,7 +138,7 @@ export default function Review({ address, amount, chilled, estimatedFee, hasNomi
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [amount, api, chain, chilled, decimal, estimatedFee, formatted, hasNominator, maxUnlockingChunks, name, password, redeem, selectedProxy, selectedProxyAddress, selectedProxyName, unbonded, unlockingLen, unstakeAllAmount]);
+  }, [amount, api, chain, chilled, decimal, estimatedFee, formatted, hasNominator, maxUnlockingChunks, name, password, redeem, selectedProxy, selectedProxyAddress, selectedProxyName, unbonded, unlockingLen, isUnstakeAll]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);

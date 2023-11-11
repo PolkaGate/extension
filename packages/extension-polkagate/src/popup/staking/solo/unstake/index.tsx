@@ -48,7 +48,7 @@ export default function Index(): React.ReactElement {
   const [amount, setAmount] = useState<string>();
   const [alert, setAlert] = useState<string | undefined>();
   const [showReview, setShowReview] = useState<boolean>(false);
-  const [unstakeAllAmount, setUnstakeAllAmount] = useState<boolean>(false);
+  const [isUnstakeAll, setIsUnstakeAll] = useState<boolean>(false);
 
   const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active as unknown as BN, [stakingAccount]);
   const totalAfterUnstake = useMemo(() => staked && decimal ? staked.sub(amountToMachine(amount, decimal)) : undefined, [amount, decimal, staked]);
@@ -78,7 +78,7 @@ export default function Index(): React.ReactElement {
       return setAlert(t('It is more than already staked.'));
     }
 
-    if (api && staked && stakingConsts && !staked.sub(amountAsBN).isZero() && !unstakeAllAmount && staked.sub(amountAsBN).lt(stakingConsts.minNominatorBond)) {
+    if (api && staked && stakingConsts && !staked.sub(amountAsBN).isZero() && !isUnstakeAll && staked.sub(amountAsBN).lt(stakingConsts.minNominatorBond)) {
       const remained = api.createType('Balance', staked.sub(amountAsBN)).toHuman();
       const min = api.createType('Balance', stakingConsts.minNominatorBond).toHuman();
 
@@ -86,7 +86,7 @@ export default function Index(): React.ReactElement {
     }
 
     setAlert(undefined);
-  }, [amountAsBN, api, staked, stakingConsts, t, unstakeAllAmount]);
+  }, [amountAsBN, api, staked, stakingConsts, t, isUnstakeAll]);
 
   const getFee = useCallback(async () => {
     const txs = [];
@@ -104,7 +104,7 @@ export default function Index(): React.ReactElement {
         txs.push(redeem(...dummyParams));
       }
 
-      if (unstakeAllAmount) {
+      if (isUnstakeAll) {
         txs.push(chilled());
       }
 
@@ -114,7 +114,7 @@ export default function Index(): React.ReactElement {
 
       setEstimatedFee(api?.createType('Balance', partialFee));
     }
-  }, [amountAsBN, api, chilled, formatted, maxUnlockingChunks, redeem, staked, unbonded, unlockingLen, unstakeAllAmount]);
+  }, [amountAsBN, api, chilled, formatted, maxUnlockingChunks, redeem, staked, unbonded, unlockingLen, isUnstakeAll]);
 
   useEffect(() => {
     if (amountAsBN && redeem && chilled && maxUnlockingChunks && unlockingLen !== undefined && unbonded && formatted && staked) {
@@ -130,7 +130,7 @@ export default function Index(): React.ReactElement {
   }, [address, history, state]);
 
   const onChangeAmount = useCallback((value: string) => {
-    setUnstakeAllAmount(false);
+    setIsUnstakeAll(false);
 
     if (decimal && value.length > decimal - 1) {
       console.log(`The amount digits is more than decimal:${decimal}`);
@@ -148,7 +148,7 @@ export default function Index(): React.ReactElement {
 
     const allToShow = amountToHuman(staked.toString(), decimal);
 
-    setUnstakeAllAmount(true);
+    setIsUnstakeAll(true);
     setAmount(allToShow);
   }, [decimal, staked]);
 
@@ -230,7 +230,7 @@ export default function Index(): React.ReactElement {
           total={totalAfterUnstake}
           unbonded={unbonded}
           unlockingLen={unlockingLen ?? 0}
-          unstakeAllAmount={unstakeAllAmount}
+          isUnstakeAll={isUnstakeAll}
         />
       }
     </Motion>
