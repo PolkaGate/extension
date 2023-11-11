@@ -14,8 +14,8 @@ import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountContext, Infotip2, Progress, Warning } from '../../components';
-import { useMerkleScience, usePrices, useTranslation } from '../../hooks';
+import { AccountContext, Infotip2, Warning } from '../../components';
+import { useMerkleScience, useTranslation } from '../../hooks';
 import { tieAccount, windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { NEW_VERSION_ALERT, TEST_NETS } from '../../util/constants';
@@ -115,8 +115,7 @@ export default function Home(): React.ReactElement {
     setImageLoadError(false);
 
     const imageUrl = imagePath + theme.palette.mode + `/${imgRef.current}.jpeg`;
-    
-    console.log('imageUrl:', imageUrl);
+    // console.log('imageUrl:', imageUrl);
 
     setBgImage(imageUrl);
     chrome.storage.local.get('backgroundImage', (res) => {
@@ -182,9 +181,12 @@ export default function Home(): React.ReactElement {
       {(hierarchy.length === 0)
         ? <AddAccount />
         : (
-          <Grid container sx={{
-            background: 'linear-gradient(180deg, #F1F1F1 10.79%, rgba(241, 241, 241, 0.70) 100%)'
-            // background: bgImage && `${theme.palette.mode === 'dark' ? 'linear-gradient( rgba(255, 255, 255, 0),rgba(255, 255, 255, 0.1))' : 'linear-gradient(rgba(255, 255, 255, 0.99), rgba(255, 255, 255, 0))'}`
+          <Grid alignContent='flex-start' container sx={{
+            background:
+              bgImage && (theme.palette.mode === 'dark'
+                ? 'background: linear-gradient(180deg, #171717 10.79%, rgba(23, 23, 23, 0.70) 100%);'
+                : 'linear-gradient(180deg, #F1F1F1 10.79%, rgba(241, 241, 241, 0.70) 100%)'),
+            height: window.innerHeight
           }}
           >
             <img
