@@ -134,24 +134,26 @@ function getAssetsOnOtherChains (accountAddress) {
   const promises = CHAINS_TO_CHECK.map((chain) => {
     return setupConnections(chain.name, accountAddress, allEndpoints)
       .then((assetBalance) => {
-        getPrices([sanitizeText(chain.name)]).then((price) => {
-          results.push({
-            balances: Number(assetBalance),
-            chain: sanitizeText(chain.name),
-            decimal: getDecimal(chain.genesisHash),
-            price: price.prices[sanitizeText(chain.name).toLowerCase()]?.usd ?? 0,
-            token: getToken(chain.genesisHash)
+        if (!assetBalance.isZero()) {
+          getPrices([sanitizeText(chain.name)]).then((price) => {
+            results.push({
+              balances: Number(assetBalance),
+              chain: sanitizeText(chain.name),
+              decimal: getDecimal(chain.genesisHash),
+              price: price.prices[sanitizeText(chain.name).toLowerCase()]?.usd ?? 0,
+              token: getToken(chain.genesisHash)
+            });
+          }).catch((error) => {
+            results.push({
+              balances: Number(assetBalance),
+              chain: sanitizeText(chain.name),
+              decimal: getDecimal(chain.genesisHash),
+              price: undefined,
+              token: getToken(chain.genesisHash)
+            });
+            console.error(`Error fetching price for ${chain}:`, error);
           });
-        }).catch((error) => {
-          results.push({
-            balances: Number(assetBalance),
-            chain: sanitizeText(chain.name),
-            decimal: getDecimal(chain.genesisHash),
-            price: undefined,
-            token: getToken(chain.genesisHash)
-          });
-          console.error(`Error fetching price for ${chain}:`, error);
-        });
+        }
       })
       .catch((error) => {
         console.error(`Error fetching balances for ${chain}:`, error);
