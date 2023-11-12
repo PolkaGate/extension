@@ -19,6 +19,7 @@ import AccountSetting from './components/AccountSetting';
 import CommonTasks from './components/CommonTasks';
 import DisplayBalance from './components/DisplayBalance';
 import LockedBalanceDisplay from './components/LockedBalanceDisplay';
+import TotalChart from './components/TotalChart';
 
 export type AssetsOnOtherChains = { totalBalance: BN, chainName: string, decimal: number, price: number, token: string };
 
@@ -48,7 +49,6 @@ export default function AccountDetails(): React.ReactElement {
 
   const [assetId, setAssetId] = useState<number>();
   const [assetsOnOtherChains, setAssetsOnOtherChains] = useState<AssetsOnOtherChains[]>();
-console.log('assetsOnOtherChains:', assetsOnOtherChains)
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette]);
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
@@ -166,6 +166,10 @@ console.log('assetsOnOtherChains:', assetsOnOtherChains)
               />
             </Grid>
             <Grid container direction='column' gap='15px' item mb='15px' width='275px'>
+              <TotalChart
+                assetsOnOtherChains={assetsOnOtherChains}
+                isDarkTheme={true}
+              />
               <CommonTasks
                 address={address}
                 api={api}
