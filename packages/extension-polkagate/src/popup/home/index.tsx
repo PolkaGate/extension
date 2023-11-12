@@ -47,6 +47,26 @@ export default function Home(): React.ReactElement {
   const [bgImage, setBgImage] = useState<string | undefined>();
   const [imageLoadError, setImageLoadError] = useState(false);
 
+  const clearBackground = useCallback((): void => {
+    setBgImage(undefined);
+    setImageLoadError(true);
+    imgRef.current = 0;
+    chrome.storage.local.remove('backgroundImage').catch(console.error);
+  }, []);
+
+  const testImgUrl = useCallback((url: string) => {
+    const testImg = new Image();
+
+    const handleImageError = () => {
+      console.log('error handled');
+      clearBackground();
+    };
+
+    testImg.src = url;
+    testImg.onerror = handleImageError;
+    testImg.onload = () => setBgImage(url);
+  }, [clearBackground]);
+
   useEffect(() => {
     const isTestnetDisabled = window.localStorage.getItem('testnet_enabled') !== 'true';
 
@@ -77,9 +97,12 @@ export default function Home(): React.ReactElement {
 
   useEffect(() => {
     chrome.storage.local.get('backgroundImage', (res) => {
-      setBgImage(res?.backgroundImage?.[theme.palette.mode]);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      const imgUrl = res?.backgroundImage?.[theme.palette.mode] as string;
+
+      testImgUrl(imgUrl);
     });
-  }, [theme.palette.mode]);
+  }, [testImgUrl, theme.palette.mode]);
 
   const sortedAccount = useMemo(() =>
     hierarchy.sort((a, b) => {
@@ -104,20 +127,12 @@ export default function Home(): React.ReactElement {
     }, []
   );
 
-  const clearBackground = useCallback((): void => {
-    setBgImage(undefined);
-    setImageLoadError(true);
-    imgRef.current = 0;
-    chrome.storage.local.remove('backgroundImage').catch(console.error);
-  }, []);
-
   const setBackground = useCallback((): void => {
     setImageLoadError(false);
 
     const imageUrl = imagePath + theme.palette.mode + `/${imgRef.current}.jpeg`;
-    // console.log('imageUrl:', imageUrl);
 
-    setBgImage(imageUrl);
+    testImgUrl(imageUrl);
     chrome.storage.local.get('backgroundImage', (res) => {
       const bgImage = (res?.backgroundImage || { dark: '', light: '' }) as BgImage;
 
@@ -126,12 +141,7 @@ export default function Home(): React.ReactElement {
     });
 
     imgRef.current = imgRef.current + 1;
-  }, [theme]);
-
-  const handleImageError = useCallback(() => {
-    setImageLoadError(true);
-    imgRef.current = 0;
-  }, []);
+  }, [testImgUrl, theme.palette.mode]);
 
   const AddNewAccount = () => (
     <Grid alignItems='center' container onClick={_goToCreate} sx={{
