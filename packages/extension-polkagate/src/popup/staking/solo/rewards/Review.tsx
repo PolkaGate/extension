@@ -6,7 +6,7 @@
  * this component opens unstake review page
  * */
 
-import { Container } from '@mui/material';
+import { Container,Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
@@ -15,7 +15,7 @@ import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../components';
+import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, Warning, WrongPasswordAlert } from '../../../../components';
 import { useAccountDisplay, useApi, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
@@ -34,6 +34,7 @@ interface Props {
 
 export default function Review({ address, amount, selectedToPayout, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const api = useApi(address);
   const chain = useChain(address);
   const formatted = useFormatted(address);
@@ -164,7 +165,7 @@ export default function Review({ address, amount, selectedToPayout, setShow, sho
           <WrongPasswordAlert />
         }
         <SubTitle label={t('Review')} />
-        <Container disableGutters sx={{ px: '30px' }}>
+        <Container disableGutters sx={{ px: '20px' }}>
           <AccountHolderWithProxy
             address={address}
             chain={chain}
@@ -181,6 +182,14 @@ export default function Review({ address, amount, selectedToPayout, setShow, sho
             token={token}
             withFee
           />
+          <Grid container justifyContent='center'>
+            <Warning
+              marginTop={0}
+              theme={theme}
+            >
+              {t<string>('Usually, validators pay out the pending rewards themselves, but you can initiate the payout yourself if you prefer.')}
+            </Warning>
+          </Grid>
         </Container>
         <PasswordUseProxyConfirm
           api={api}
