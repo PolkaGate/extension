@@ -8,11 +8,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
 
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 
 import { useAccount, useApi, useBalances, useChain, useChainName, useDecimal, useFormatted, useFullscreen, usePrice, useToken, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { STAKING_CHAINS } from '../../util/constants';
+import { amountToHuman } from '../../util/utils';
+import { getValue } from '../account/util';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import AccountInformation from './components/AccountInformation';
 import AccountSetting from './components/AccountSetting';
@@ -21,7 +23,7 @@ import DisplayBalance from './components/DisplayBalance';
 import LockedBalanceDisplay from './components/LockedBalanceDisplay';
 import TotalChart from './components/TotalChart';
 
-export type AssetsOnOtherChains = { totalBalance: BN, chainName: string, decimal: number, price: number, token: string };
+export type AssetsOnOtherChains = { totalBalance: BN, chainName: string, decimal: number, price: number | undefined, token: string };
 
 export default function AccountDetails(): React.ReactElement {
   useFullscreen();
@@ -52,6 +54,16 @@ export default function AccountDetails(): React.ReactElement {
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette]);
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
+
+  const nativeAssetPrice = useMemo(() => {
+    if (!price || !balance) {
+      return undefined;
+    }
+
+    const totalBalance = getValue('total', balance);
+
+    return parseFloat(amountToHuman(totalBalance, decimal)) * price.amount;
+  }, [balance, decimal, price]);
 
   const fetchAssetsOnOtherChains = useCallback((accountAddress: string) => {
     const worker: Worker = new Worker(new URL('../../util/workers/getAssetsOnOtherChains.js', import.meta.url));
@@ -168,7 +180,8 @@ export default function AccountDetails(): React.ReactElement {
             <Grid container direction='column' gap='15px' item mb='15px' width='275px'>
               <TotalChart
                 assetsOnOtherChains={assetsOnOtherChains}
-                isDarkTheme={true}
+                isDarkTheme={isDarkTheme}
+                nativeAssetPrice={nativeAssetPrice}
               />
               <CommonTasks
                 address={address}
