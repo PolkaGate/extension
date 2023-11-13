@@ -197,7 +197,7 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
   }, [account?.isHidden, address]);
 
   return (
-    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '20px 30px 15px' }}>
+    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '20px 30px 15px', position: 'relative' }}>
       <Grid container item>
         <Grid container item sx={{ borderRight: '1px solid', borderRightColor: borderColor, pr: '15px', width: 'fit-content' }}>
           <Grid item pr='5px' width='fit-content'>
@@ -290,9 +290,14 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
         </Grid>
       </Grid>
       {otherAssetsToShow &&
-        <OtherAssets
-          assetsOnOtherChains={otherAssetsToShow}
-        />
+        <>
+          <OtherAssets
+            assetsOnOtherChains={otherAssetsToShow}
+          />
+          {otherAssetsToShow.length > 5 &&
+            <Grid item sx={{ bgcolor: 'text.primary', borderRadius: '0 0 5px 5px', bottom: 0, height: '6px', left: 0, position: 'absolute', right: 0 }}></Grid>
+          }
+        </>
       }
     </Grid>
   );
