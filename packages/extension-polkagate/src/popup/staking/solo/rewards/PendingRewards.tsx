@@ -164,7 +164,7 @@ export default function PendingRewards(): React.ReactElement {
             {Array.from({ length: TABLE_HEIGHT / SKELETON_HEIGHT }).map((_, index) => (
               <Skeleton height={SKELETON_HEIGHT}
                 key={index}
-                sx={{ display: 'inline-block', transform: 'none', width: '90%', my: '5px' }}
+                sx={{ display: 'inline-block', transform: 'none', width: '96%', my: '5px' }}
               />
             ))}
           </Grid>
