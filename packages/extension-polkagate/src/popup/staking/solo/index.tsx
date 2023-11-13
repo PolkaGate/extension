@@ -96,7 +96,6 @@ export default function Index(): React.ReactElement {
   const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
   const [shake, setShake] = useState<boolean>(false); //  to shake to persuade to stake ;)
   const [showRewardsDetail, setShowRewardsDetail] = useState<boolean>(false);
-  const [showPendingRewards, setShowPendingRewards] = useState<boolean>(false);
 
   const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
 
@@ -206,7 +205,7 @@ export default function Index(): React.ReactElement {
   const onPendingRewards = useCallback(() => {
     history.push({
       pathname: `/solo/payout/${address}`,
-      state: { }
+      state: {}
     });
   }, [address, history]);
 
@@ -229,7 +228,7 @@ export default function Index(): React.ReactElement {
   );
 
   const Row = ({ label, link1Text, link2Disabled, link2Text, onLink1, onLink2, showDivider = true, value }: { label: string, value: BN | undefined, link1Text?: string, onLink1?: () => void, link2Disabled?: boolean, link2Text?: string, onLink2?: () => void, showDivider?: boolean }) => {
-    const _link1Disable = (!value || value?.isZero() || formatted !== stakingAccount?.controllerId) && link1Text !== t('Details');
+    const _link1Disable = (!value || value?.isZero() || formatted !== stakingAccount?.controllerId) && link1Text !== t('Pending');
     const _link2Disable = _link1Disable || link2Disabled;
 
     return (
@@ -444,7 +443,7 @@ export default function Index(): React.ReactElement {
           api={api}
           available={getValue('available', balances)}
           chain={chain}
-          formatted={formatted}
+          formatted={String(formatted)}
           setRefresh={setRefresh}
           setShow={setShowRedeemableWithdraw}
           show={showRedeemableWithdraw}
@@ -455,14 +454,6 @@ export default function Index(): React.ReactElement {
           rewardDestinationAddress={rewardDestinationAddress}
           setShow={setShowRewardsDetail}
           show={showRewardsDetail}
-        />
-      }
-      {showPendingRewards &&
-        <PendingRewards
-          address={address}
-          rewardDestinationAddress={rewardDestinationAddress}
-          setShow={setShowPendingRewards}
-          show={showPendingRewards}
         />
       }
     </>
