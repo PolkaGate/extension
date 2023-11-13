@@ -126,12 +126,26 @@ export default function TotalChart({ assetsOnOtherChains, isDarkTheme, nativeAss
       data: {
         datasets: [{
           backgroundColor: otherAssetsToShow.color,
+          borderWidth: 0.9,
           data: otherAssetsToShow.price,
           hoverOffset: 1
         }]
       },
       options: {
-        cutout: 22
+        cutout: 22,
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                const index = otherAssetsToShow.color.findIndex((val) => val === context.element.options.backgroundColor);
+
+                console.log('context:', context);
+
+                return otherAssetsToShow.token[index];
+              }
+            }
+          }
+        }
       },
       type: 'doughnut'
     });
@@ -143,7 +157,7 @@ export default function TotalChart({ assetsOnOtherChains, isDarkTheme, nativeAss
   }, [otherAssetsToShow.price, otherAssetsToShow.price.length, otherAssetsToShow.color, otherAssetsToShow.color.length]);
 
   return (
-    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: '185px', p: '15px', width: '270px' }}>
+    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: '185px', p: '15px', width: '275px' }}>
       <Grid alignItems='center' container gap='15px' item justifyContent='center'>
         <Typography fontSize='18px' fontWeight={400}>
           {t<string>('Total')}
@@ -153,7 +167,7 @@ export default function TotalChart({ assetsOnOtherChains, isDarkTheme, nativeAss
         </Typography>
       </Grid>
       <Grid container item sx={{ borderTop: '1px solid', borderTopColor: borderColor, pt: '10px' }}>
-        <Grid container item sx={{ height: '85px', width: '85px' }}>
+        <Grid container item sx={{ height: '85px', mr: '5px', width: '85px' }}>
           <canvas id='chartCanvas' ref={chartRef} />
         </Grid>
         <Grid container item xs>
