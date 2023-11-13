@@ -135,35 +135,35 @@ function getAssetsOnOtherChains (accountAddress) {
     return setupConnections(chain.name, accountAddress, allEndpoints)
       .then((assetBalance) => {
         if (!assetBalance.isZero()) {
-          getPrices([sanitizeText(chain.name)]).then((price) => {
-            results.push({
-              balances: Number(assetBalance),
-              chain: sanitizeText(chain.name),
-              decimal: getDecimal(chain.genesisHash),
-              price: price.prices[sanitizeText(chain.name).toLowerCase()]?.usd ?? 0,
-              token: getToken(chain.genesisHash)
-            });
-          }).catch((error) => {
-            results.push({
-              balances: Number(assetBalance),
-              chain: sanitizeText(chain.name),
-              decimal: getDecimal(chain.genesisHash),
-              price: undefined,
-              token: getToken(chain.genesisHash)
-            });
-            console.error(`Error fetching price for ${chain}:`, error);
+          results.push({
+            balances: Number(assetBalance),
+            chain: sanitizeText(chain.name),
+            decimal: getDecimal(chain.genesisHash),
+            token: getToken(chain.genesisHash)
           });
         }
       })
       .catch((error) => {
-        console.error(`Error fetching balances for ${chain}:`, error);
+        console.error(`Error fetching balances for ${chain.name}:`, error);
       });
   });
 
   // Wait for all promises to resolve
   return Promise.all(promises)
     .then(() => {
-      return results;
+      const sanitizeChainNames = CHAINS_TO_CHECK.map((chain) => sanitizeText(chain.name));
+
+      return getPrices(sanitizeChainNames).then((prices) => {
+        sanitizeChainNames.forEach((chainName) => {
+          const index = results.findIndex((result) => result.chain === chainName);
+
+          if (index >= 0) {
+            results[index].price = prices.prices[chainName.toLowerCase()]?.usd ?? 0;
+          }
+        });
+
+        return results;
+      });
     })
     .catch((error) => {
       console.error('Error fetching balances:', error);
