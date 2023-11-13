@@ -184,7 +184,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
               }
               onClick={toggleSettingSubMenu}
               showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.SETTING}
-              text={t('Setting')}
+              text={t('Settings')}
             >
               <SettingSubMenu
                 isTestnetEnabled={isTestnetEnabled}
