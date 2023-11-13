@@ -7,15 +7,19 @@
  * @description to show pending rewards and let user to call payout
  * */
 
+import type { DeriveSessionProgress } from '@polkadot/api-derive/types';
+import type { Forcing } from '@polkadot/types/interfaces';
+
 import { Grid, Skeleton, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, Checkbox2, Identity, Motion, PButton, Progress, ShowBalance } from '../../../../components';
-import { useApi, useChain, usePendingRewards, useToken, useTranslation } from '../../../../hooks';
+import { ActionContext, Checkbox2, Identity, Motion, PButton, ShowBalance } from '../../../../components';
+import { useApi, useChain, useCurrentBlockNumber, usePendingRewards, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
+import blockToDate from '../../../crowdloans/partials/blockToDate';
 import Review from './Review';
 
 export type ValidatorEra = [string, number, BN]
@@ -30,15 +34,28 @@ export default function PendingRewards(): React.ReactElement {
   const token = useToken(address);
   const chain = useChain(address);
   const rewards = usePendingRewards(address);
+  const currentBlock = useCurrentBlockNumber(address);
 
-  const [isSelectAll, setSelectAll] = useState<boolean>(false);
   const [selectedToPayout, setSelectedToPayout] = useState<ValidatorEra[]>([]);
   const [erasHistoric, setErasHistoric] = useState<number>();
   const [showReview, setShowReview] = useState<boolean>(false);
+  const [progress, setProgress] = useState<DeriveSessionProgress>();
+  const [forcing, setForcing] = useState<Forcing>();
+  const [historyDepth, setHistoryDepth] = useState<BN>();
 
   useEffect(() => {
-    api?.derive?.staking?.erasHistoric().then((res) => setErasHistoric(res.length)).catch(console.error);
-  }, [api?.derive?.staking]);
+    if (!api?.derive?.staking) {
+      return;
+    }
+
+    api.derive.staking.erasHistoric().then((res) => setErasHistoric(res.length)).catch(console.error);
+    api.derive.session.progress().then(setProgress).catch(console.error);
+    api.query.staking.forceEra().then(setForcing).catch(console.error);
+
+    api.query.staking?.historyDepth
+      ? api.query.staking.historyDepth().then(setHistoryDepth).catch(console.error)
+      : setHistoryDepth(api.consts.staking.historyDepth);
+  }, [api]);
 
   const totalPending = useMemo(() => {
     if (!rewards) {
@@ -72,9 +89,29 @@ export default function PendingRewards(): React.ReactElement {
     return _isIncluded;
   }, [selectedToPayout]);
 
-  const onSelectAll = useCallback((_, checked: boolean) => {
-    setSelectAll(!isSelectAll);
+  const eraToDate = useCallback((era: number): string | undefined => {
+    if (!(currentBlock && historyDepth && era && forcing && progress && progress.sessionLength.gt(BN_ONE))) {
+      return undefined;
+    }
 
+    const EndEraInBlock =
+      (forcing.isForceAlways
+        ? progress.sessionLength
+        : progress.eraLength
+      ).mul(
+        historyDepth
+          .sub(progress.activeEra)
+          .iadd(new BN(era))
+          .iadd(BN_ONE)
+      ).isub(
+        forcing.isForceAlways
+          ? progress.sessionProgress
+          : progress.eraProgress);
+
+    return EndEraInBlock ? blockToDate(EndEraInBlock.iaddn(currentBlock).toNumber(), currentBlock, { day: 'numeric', month: 'short' }) : undefined;
+  }, [currentBlock, forcing, historyDepth, progress]);
+
+  const onSelectAll = useCallback((_, checked: boolean) => {
     if (checked) {
       const _selected: ValidatorEra[] = [];
 
@@ -87,7 +124,7 @@ export default function PendingRewards(): React.ReactElement {
     } else {
       setSelectedToPayout([]);
     }
-  }, [isSelectAll, rewards]);
+  }, [rewards]);
 
   const onSelect = useCallback((validatorEra: ValidatorEra, checked: boolean) => {
     if (checked) {
@@ -155,21 +192,18 @@ export default function PendingRewards(): React.ReactElement {
           />
           {t('Amount ({{token}})', { replace: { token } })}
         </Grid>
-        <Grid item xs sx={{ fontSize: '13px', textAlign: 'center' }}>
+        <Grid item xs sx={{ fontSize: '13px', textAlign: 'justify' }}>
           {t('Validator')}
         </Grid>
-        <Grid item sx={{ fontSize: '13px', textAlign: 'right' }} xs={2}>
-          {t('Era')}
+        <Grid item sx={{ fontSize: '13px', textAlign: 'center' }} xs={2}>
+          {t('Expires')}
         </Grid>
       </Grid>
       <Grid container height={TABLE_HEIGHT} sx={{ overflow: 'scroll', border: 1, borderColor: 'primary.main', borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px', mx: '2%', width: '96%' }}>
         {!rewards
           ? <Grid container justifyContent='center'>
             {Array.from({ length: TABLE_HEIGHT / SKELETON_HEIGHT }).map((_, index) => (
-              <Skeleton height={SKELETON_HEIGHT}
-                key={index}
-                sx={{ display: 'inline-block', transform: 'none', width: '96%', my: '5px' }}
-              />
+              <Skeleton height={SKELETON_HEIGHT} key={index} sx={{ display: 'inline-block', transform: 'none', width: '96%', my: '5px' }} />
             ))}
           </Grid>
           : !rewards.length
@@ -182,7 +216,7 @@ export default function PendingRewards(): React.ReactElement {
               <Grid container item key={index}>
                 {
                   Object.keys(info.validators).map((v, index) => (
-                    <Grid alignContent='flex-start' alignItems='center' container item key={index} sx={{ borderTop: 1, px: '10px', borderColor: 'primary.main' }}>
+                    <Grid alignContent='flex-start' alignItems='center' container item key={index} sx={{ borderTop: 1, px: '5px', borderColor: 'primary.main' }}>
                       <Grid container item sx={{ fontSize: '13px' }} xs={4}>
                         <Grid item>
                           <Checkbox2
@@ -218,7 +252,7 @@ export default function PendingRewards(): React.ReactElement {
                         />
                       </Grid>
                       <Grid item sx={{ fontSize: '13px', textAlign: 'right' }} xs={2}>
-                        {info.era.toNumber()}
+                        {eraToDate(info.era.toNumber())}
                       </Grid>
                     </Grid>
                   ))
