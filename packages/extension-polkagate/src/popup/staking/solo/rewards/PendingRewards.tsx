@@ -109,7 +109,7 @@ export default function PendingRewards(): React.ReactElement {
     setShowReview(true);
   }, []);
 
-  const TABLE_HEIGHT = window.innerHeight - 210;
+  const TABLE_HEIGHT = window.innerHeight - 215;
   const SKELETON_HEIGHT = 25;
 
   const LabelBalance = ({ balance, label }: { label: string, balance: BN }) => (
@@ -141,8 +141,8 @@ export default function PendingRewards(): React.ReactElement {
           total: 2
         }}
       />
-      <Grid alignContent='flex-start' alignItems='center' container item sx={{ borderBottom: 1, borderColor: 'primary.main', px: '10px' }}>
-        <Grid item sx={{ fontSize: '13px' }} xs={4}>
+      <Grid alignContent='flex-start' alignItems='center' container item sx={{ borderTop: 1, borderLeft: 1, borderRight: 1, borderTopRightRadius: '5px', borderTopLeftRadius: '5px', borderColor: 'primary.main', p: '10px 5px 10px', mx: '2%', width: '96%' }}>
+        <Grid item sx={{ fontSize: '13px' }} xs={4.5}>
           <Checkbox2
             checked={!!rewards?.length && selectedToPayout?.length === rewards?.length}
             iconStyle={{ transform: 'scale(0.9)' }}
@@ -151,20 +151,20 @@ export default function PendingRewards(): React.ReactElement {
           />
           {t('Amount ({{token}})', { replace: { token } })}
         </Grid>
-        <Grid item xs={6} sx={{ textAlign: 'center' }}>
+        <Grid item xs sx={{ fontSize: '13px', textAlign: 'center' }}>
           {t('Validator')}
         </Grid>
         <Grid item sx={{ fontSize: '13px', textAlign: 'right' }} xs={2}>
           {t('Era')}
         </Grid>
       </Grid>
-      <Grid container height={TABLE_HEIGHT} sx={{ overflow: 'scroll' }}>
+      <Grid container height={TABLE_HEIGHT} sx={{ overflow: 'scroll', border: 1, borderColor: 'primary.main', borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px', mx: '2%', width: '96%' }}>
         {!rewards
           ? <Grid container justifyContent='center'>
             {Array.from({ length: TABLE_HEIGHT / SKELETON_HEIGHT }).map((_, index) => (
               <Skeleton height={SKELETON_HEIGHT}
                 key={index}
-                sx={{ display: 'inline-block', transform: 'none', width: '95%', my: '5px' }}
+                sx={{ display: 'inline-block', transform: 'none', width: '90%', my: '5px' }}
               />
             ))}
           </Grid>
@@ -175,10 +175,10 @@ export default function PendingRewards(): React.ReactElement {
               </Typography>
             </Grid>
             : <> {rewards?.map((info, index) => (
-              <Grid container item key={index} px='10px'>
+              <Grid container item key={index}>
                 {
                   Object.keys(info.validators).map((v, index) => (
-                    <Grid alignContent='flex-start' alignItems='center' container item key={index}>
+                    <Grid alignContent='flex-start' alignItems='center' container item key={index} sx={{ borderTop: 1, px: '10px', borderColor: 'primary.main' }}>
                       <Grid container item sx={{ fontSize: '13px' }} xs={4}>
                         <Grid item>
                           <Checkbox2
@@ -202,7 +202,7 @@ export default function PendingRewards(): React.ReactElement {
                           api={api}
                           chain={chain}
                           formatted={v}
-                          identiconSize={25}
+                          identiconSize={20}
                           showSocial={false}
                           style={{
                             fontSize: '13px',
