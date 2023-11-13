@@ -162,7 +162,7 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
       <Typography fontSize='14px' fontWeight={400} width='80px'>
         {t<string>('Assets on other chains')}
       </Typography>
-      <Grid container gap='15px' item justifyContent='space-between' sx={{ height: showMore ? 'fit-content' : '42px', overflow: 'hidden', px: '5%', transitionDuration: '0.2s', transitionProperty: 'transform' }} xs>
+      <Grid container gap='15px' item justifyContent='flex-start' sx={{ height: showMore ? 'fit-content' : '42px', overflow: 'hidden', px: '5%', transitionDuration: '0.2s', transitionProperty: 'transform' }} xs>
         {assetsOnOtherChains.map((asset, index) => (
           <OtherAssetBox
             asset={asset}
@@ -170,7 +170,7 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
           />
         ))}
       </Grid>
-      {assetsOnOtherChains.length > 4 &&
+      {assetsOnOtherChains.length > 5 &&
         <Grid container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: 'pointer', width: '65px' }}>
           <Typography fontSize='14px' fontWeight={400} sx={{ borderLeft: '1px solid', borderLeftColor: borderColor, height: 'fit-content', pl: '8px' }}>
             {t<string>(showMore ? 'Less' : 'More')}
