@@ -7,7 +7,7 @@
  * @description to show pending rewards and let user to call payout
  * */
 
-import { Grid, Typography } from '@mui/material';
+import { Grid, Skeleton, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
@@ -109,6 +109,9 @@ export default function PendingRewards(): React.ReactElement {
     setShowReview(true);
   }, []);
 
+  const TABLE_HEIGHT = window.innerHeight - 210;
+  const SKELETON_HEIGHT = 25;
+
   const LabelBalance = ({ balance, label }: { label: string, balance: BN }) => (
     <Grid container item sx={{ fontSize: '13px' }}>
       <Grid item>
@@ -138,82 +141,96 @@ export default function PendingRewards(): React.ReactElement {
           total: 2
         }}
       />
-      {!rewards
-        ? <Progress pt='100px' size={100} title={t('Checking pending rewards in the last {{erasHistoric}} eras ...', { replace: { erasHistoric } })} />
-        : !rewards.length
-          ? <Grid container justifyContent='center' sx={{ mt: '50px' }}>
-            <Typography>
-              {t('No pending rewards found!')}
-            </Typography>
+      <Grid alignContent='flex-start' alignItems='center' container item sx={{ borderBottom: 1, borderColor: 'primary.main', px: '10px' }}>
+        <Grid item sx={{ fontSize: '13px' }} xs={4}>
+          <Checkbox2
+            checked={!!rewards?.length && selectedToPayout?.length === rewards?.length}
+            iconStyle={{ transform: 'scale(0.9)' }}
+            onChange={onSelectAll}
+            style={{ paddingRight: '10px' }}
+          />
+          {t('Amount ({{token}})', { replace: { token } })}
+        </Grid>
+        <Grid item xs={6} sx={{ textAlign: 'center' }}>
+          {t('Validator')}
+        </Grid>
+        <Grid item sx={{ fontSize: '13px', textAlign: 'right' }} xs={2}>
+          {t('Era')}
+        </Grid>
+      </Grid>
+      <Grid container height={TABLE_HEIGHT} sx={{ overflow: 'scroll' }}>
+        {!rewards
+          ? <Grid container justifyContent='center'>
+            {Array.from({ length: TABLE_HEIGHT / SKELETON_HEIGHT }).map((_, index) => (
+              <Skeleton height={SKELETON_HEIGHT}
+                key={index}
+                sx={{ display: 'inline-block', transform: 'none', width: '95%', my: '5px' }}
+              />
+            ))}
           </Grid>
-          : <>
-            <Grid alignContent='flex-start' alignItems='center' container item sx={{ borderBottom: 1, borderColor: 'primary.main', px: '10px' }}>
-              <Grid item sx={{ fontSize: '13px' }} xs={4}>
-                <Checkbox2
-                  checked={selectedToPayout?.length === rewards?.length}
-                  iconStyle={{ transform: 'scale(0.9)' }}
-                  onChange={onSelectAll}
-                  style={{ paddingRight: '10px' }}
-                />
-                {token}
-              </Grid>
-              <Grid item xs={6}>
-                {t('Validator')}
-              </Grid>
-              <Grid item sx={{ fontSize: '13px', textAlign: 'right' }} xs={2}>
-                {t('Era')}
-              </Grid>
+          : !rewards.length
+            ? <Grid container justifyContent='center' sx={{ mt: '70px' }}>
+              <Typography>
+                {t('No pending rewards found!')}
+              </Typography>
             </Grid>
-            <Grid container height={window.innerHeight - 210} sx={{ overflow: 'scroll' }}>
-              {rewards?.map((info, index) => (
-                <Grid container item key={index} px='10px'>
-                  {
-                    Object.keys(info.validators).map((v, index) => (
-                      <Grid alignContent='flex-start' alignItems='center' container item key={index}>
-                        <Grid container item sx={{ fontSize: '13px' }} xs={4}>
-                          <Grid item>
-                            <Checkbox2
-                              checked={isIncluded([v, info.era.toNumber(), info.validators[v].value])}
-                              iconStyle={{ transform: 'scale(0.8)' }}
-                              // eslint-disable-next-line react/jsx-no-bind
-                              onChange={(_event, checked) => onSelect([v, info.era.toNumber(), info.validators[v].value], checked)}
-                              style={{ paddingRight: '10px' }}
-                            />
-                          </Grid>
-                          <Grid item>
-                            <ShowBalance
-                              api={api}
-                              balance={info.validators[v].value}
-                              withCurrency={false}
-                            />
-                          </Grid>
-                        </Grid>
-                        <Grid item xs={6}>
-                          <Identity
-                            api={api}
-                            chain={chain}
-                            formatted={v}
-                            identiconSize={25}
-                            showSocial={false}
-                            style={{
-                              fontSize: '13px',
-                              height: '38px',
-                              maxWidth: '100%',
-                              minWidth: '35%',
-                              width: 'fit-content'
-                            }}
+            : <> {rewards?.map((info, index) => (
+              <Grid container item key={index} px='10px'>
+                {
+                  Object.keys(info.validators).map((v, index) => (
+                    <Grid alignContent='flex-start' alignItems='center' container item key={index}>
+                      <Grid container item sx={{ fontSize: '13px' }} xs={4}>
+                        <Grid item>
+                          <Checkbox2
+                            checked={isIncluded([v, info.era.toNumber(), info.validators[v].value])}
+                            iconStyle={{ transform: 'scale(0.8)' }}
+                            // eslint-disable-next-line react/jsx-no-bind
+                            onChange={(_event, checked) => onSelect([v, info.era.toNumber(), info.validators[v].value], checked)}
+                            style={{ paddingRight: '10px' }}
                           />
                         </Grid>
-                        <Grid item sx={{ fontSize: '13px', textAlign: 'right' }} xs={2}>
-                          {info.era.toNumber()}
+                        <Grid item>
+                          <ShowBalance
+                            api={api}
+                            balance={info.validators[v].value}
+                            withCurrency={false}
+                          />
                         </Grid>
                       </Grid>
-                    ))
-                  }
-                </Grid>
-              ))}
-            </Grid>
-            <Grid container item justifyContent='space-between' sx={{ fontSize: '13px', p: '10px' }}>
+                      <Grid item xs={6}>
+                        <Identity
+                          api={api}
+                          chain={chain}
+                          formatted={v}
+                          identiconSize={25}
+                          showSocial={false}
+                          style={{
+                            fontSize: '13px',
+                            height: '38px',
+                            maxWidth: '100%',
+                            minWidth: '35%',
+                            width: 'fit-content'
+                          }}
+                        />
+                      </Grid>
+                      <Grid item sx={{ fontSize: '13px', textAlign: 'right' }} xs={2}>
+                        {info.era.toNumber()}
+                      </Grid>
+                    </Grid>
+                  ))
+                }
+              </Grid>
+            ))}
+            </>
+        }
+      </Grid>
+      <Grid container item justifyContent='space-between' sx={{ fontSize: '13px', p: '10px' }}>
+        {
+          !rewards
+            ? <Typography fontSize='13px' sx={{ m: 'auto' }}>
+              {t('Checking pending rewards in the last {{erasHistoric}} eras ...', { replace: { erasHistoric: erasHistoric || 84 } })}
+            </Typography>
+            : <>
               <Grid item>
                 <LabelBalance
                   balance={totalPending}
@@ -226,15 +243,16 @@ export default function PendingRewards(): React.ReactElement {
                   label={t('Selected')}
                 />
               </Grid>
-            </Grid>
-          </>
-      }
+            </>
+        }
+      </Grid>
       <PButton
         _onClick={goToReview}
         disabled={!selectedToPayout?.length}
         text={t<string>('Payout')}
       />
-      {showReview && totalSelectedPending &&
+      {
+        showReview && totalSelectedPending &&
         <Review
           address={address}
           amount={totalSelectedPending}

@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 /**
  * @description
  * this component opens unstake review page
@@ -23,6 +25,7 @@ import { signAndSend } from '../../../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import { ValidatorEra } from './PendingRewards';
+import TxDetail from './TxDetail';
 
 interface Props {
   address: string;
@@ -105,7 +108,7 @@ export default function Review({ address, amount, selectedToPayout, setShow, sho
 
   const unstake = useCallback(async () => {
     try {
-      if (!api || !tx || !formatted) {
+      if (!api || !tx || !formatted || !chain) {
         return;
       }
 
@@ -125,8 +128,8 @@ export default function Review({ address, amount, selectedToPayout, setShow, sho
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        subAction: 'Restake',
+        from: { address: String(formatted), name },
+        subAction: 'Payout Rewards',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
@@ -184,7 +187,7 @@ export default function Review({ address, amount, selectedToPayout, setShow, sho
           />
           <Grid container justifyContent='center'>
             <Warning
-              marginTop={0}
+              marginTop={2}
               theme={theme}
             >
               {t<string>('Usually, validators pay out the pending rewards themselves, but you can initiate the payout yourself if you prefer.')}
@@ -226,7 +229,7 @@ export default function Review({ address, amount, selectedToPayout, setShow, sho
             showConfirmation={showConfirmation}
             txInfo={txInfo}
           >
-            {/* <TxDetail txInfo={txInfo} /> */}
+            <TxDetail txInfo={txInfo} />
           </Confirmation>)
         }
       </Popup>
