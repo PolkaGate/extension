@@ -95,8 +95,6 @@ export default function TotalChart({ assetsOnOtherChains, isDarkTheme, nativeAss
       nonZeroPrice.length = 3;
     }
 
-    console.log('nonZeroPrice:', nonZeroPrice);
-
     return {
       color: nonZeroPrice.map((item) => item.color),
       name: nonZeroPrice.map((item) => item.name),
@@ -117,7 +115,7 @@ export default function TotalChart({ assetsOnOtherChains, isDarkTheme, nativeAss
         totalPrice += price;
       });
 
-      return nFormatter(totalPrice + (nativeAssetPrice ?? 0), 2);
+      return nFormatter(totalPrice, 2);
     }
   }, [nativeAssetPrice, otherAssetsToShow.price]);
 
