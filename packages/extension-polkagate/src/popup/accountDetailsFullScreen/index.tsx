@@ -12,7 +12,7 @@ import { BN } from '@polkadot/util';
 
 import { useAccount, useApi, useBalances, useChain, useChainName, useDecimal, useFormatted, useFullscreen, usePrice, useToken, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
-import { STAKING_CHAINS } from '../../util/constants';
+import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { amountToHuman } from '../../util/utils';
 import { getValue } from '../account/util';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
@@ -51,9 +51,11 @@ export default function AccountDetails(): React.ReactElement {
 
   const [assetId, setAssetId] = useState<number>();
   const [assetsOnOtherChains, setAssetsOnOtherChains] = useState<AssetsOnOtherChains[]>();
+
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette]);
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
+  const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
 
   const nativeAssetPrice = useMemo(() => {
     if (!price || !balance) {
@@ -156,18 +158,20 @@ export default function AccountDetails(): React.ReactElement {
                 title={t<string>('Pool Stake')}
                 token={token}
               />
-              <LockedBalanceDisplay
-                address={address}
-                api={api}
-                chain={chain}
-                decimal={decimal}
-                formatted={String(formatted)}
-                isDarkTheme={isDarkTheme}
-                price={price?.amount}
-                // refreshNeeded={refreshNeeded}
-                title={t<string>('Locked in Referenda')}
-                token={token}
-              />
+              {supportGov &&
+                <LockedBalanceDisplay
+                  address={address}
+                  api={api}
+                  chain={chain}
+                  decimal={decimal}
+                  formatted={String(formatted)}
+                  isDarkTheme={isDarkTheme}
+                  price={price?.amount}
+                  // refreshNeeded={refreshNeeded}
+                  title={t<string>('Locked in Referenda')}
+                  token={token}
+                />
+              }
               <DisplayBalance
                 amount={balance?.reservedBalance}
                 decimal={decimal}
@@ -178,11 +182,13 @@ export default function AccountDetails(): React.ReactElement {
               />
             </Grid>
             <Grid container direction='column' gap='15px' item mb='15px' width='275px'>
-              <TotalChart
-                assetsOnOtherChains={assetsOnOtherChains}
-                isDarkTheme={isDarkTheme}
-                nativeAssetPrice={nativeAssetPrice}
-              />
+              {assetsOnOtherChains && assetsOnOtherChains.length > 0 &&
+                <TotalChart
+                  assetsOnOtherChains={assetsOnOtherChains}
+                  isDarkTheme={isDarkTheme}
+                  nativeAssetPrice={nativeAssetPrice}
+                />
+              }
               <CommonTasks
                 address={address}
                 api={api}
