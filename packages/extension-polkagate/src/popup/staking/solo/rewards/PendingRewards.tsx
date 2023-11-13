@@ -95,9 +95,13 @@ export default function PendingRewards(): React.ReactElement {
     } else {
       const index = selectedToPayout.findIndex((s) => s.every((value, index) => value === validatorEra[index]));
 
-      selectedToPayout.splice(index, 1);
+      setSelectedToPayout((prev) => {
+        const newArray = [...prev];
 
-      setSelectedToPayout([...selectedToPayout]);
+        newArray.splice(index, 1);
+
+        return newArray;
+      });
     }
   }, [selectedToPayout]);
 
@@ -142,12 +146,12 @@ export default function PendingRewards(): React.ReactElement {
         }}
       />
       <Grid alignContent='flex-start' alignItems='center' container item sx={{ borderTop: 1, borderLeft: 1, borderRight: 1, borderTopRightRadius: '5px', borderTopLeftRadius: '5px', borderColor: 'primary.main', p: '10px 5px 10px', mx: '2%', width: '96%' }}>
-        <Grid item sx={{ fontSize: '13px' }} xs={4.5}>
+        <Grid item sx={{ fontSize: '13px' }} xs={4.75}>
           <Checkbox2
             checked={!!rewards?.length && selectedToPayout?.length === rewards?.length}
             iconStyle={{ transform: 'scale(0.9)' }}
             onChange={onSelectAll}
-            style={{ paddingRight: '10px' }}
+            style={{ paddingRight: '5px' }}
           />
           {t('Amount ({{token}})', { replace: { token } })}
         </Grid>
