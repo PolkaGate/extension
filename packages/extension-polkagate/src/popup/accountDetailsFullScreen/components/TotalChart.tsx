@@ -89,20 +89,19 @@ export default function TotalChart({ assetsOnOtherChains, isDarkTheme, nativeAss
     }));
 
     combinedArray.sort((a, b) => b.price - a.price);
+    const nonZeroPrice = combinedArray.filter((asset) => asset.price > 0);
 
-    if (combinedArray.length > 3) {
-      combinedArray.filter((asset) => asset.price === 0);
-
-      if (combinedArray.length > 0) {
-        combinedArray.length = 3;
-      }
+    if (nonZeroPrice.length > 3) {
+      nonZeroPrice.length = 3;
     }
 
+    console.log('nonZeroPrice:', nonZeroPrice);
+
     return {
-      color: combinedArray.map((item) => item.color),
-      name: combinedArray.map((item) => item.name),
-      percentage: combinedArray.map((item) => formatNumber((item.price / totalPrice) * 100)),
-      token: combinedArray.map((item) => item.token)
+      color: nonZeroPrice.map((item) => item.color),
+      name: nonZeroPrice.map((item) => item.name),
+      percentage: nonZeroPrice.map((item) => formatNumber((item.price / totalPrice) * 100)),
+      token: nonZeroPrice.map((item) => item.token)
     };
   }, [otherAssetsToShow]);
 
@@ -126,8 +125,6 @@ export default function TotalChart({ assetsOnOtherChains, isDarkTheme, nativeAss
     const chartInstance = new Chart(chartRef.current, {
       data: {
         datasets: [{
-          // backgroundColor: ['green', 'red', 'blue'],
-          // data: [1, 5, 8],
           backgroundColor: otherAssetsToShow.color,
           data: otherAssetsToShow.price,
           hoverOffset: 1
@@ -168,12 +165,12 @@ export default function TotalChart({ assetsOnOtherChains, isDarkTheme, nativeAss
                   sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(asset) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 20, width: 20 }}
                   variant='square'
                 />
+                <Typography fontSize='16px' fontWeight={500} pl='5px' width='40px'>
+                  {topThreePercentages.token[index]}
+                </Typography>
               </Grid>
-              <Typography fontSize='16px' fontWeight={500} width='40px'>
-                {topThreePercentages.token[index]}
-              </Typography>
-              <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '21px', width: '2px' }} />
-              <Typography fontSize='16px' fontWeight={400} width='40px'>
+              <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '21px', m: 'auto', width: '2px' }} />
+              <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
                 {`${topThreePercentages.percentage[index]}%`}
               </Typography>
             </Grid>
