@@ -73,7 +73,7 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
   }, [setHideNumbers]);
 
   return (
-    <Grid container pt='15px' textAlign='center'>
+    <Grid container pt='15px' textAlign='center' sx={{ position: 'relative', zIndex: 1 }}>
       <Grid item xs={12}>
         <Typography sx={{ fontSize: '18px' }}>
           {t('You have')}

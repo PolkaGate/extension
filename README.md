@@ -76,21 +76,7 @@ Once added, you can create an account or import via multiple options. To view he
 
    - It is possible via the extension. To receive some westies (Westend's native token) for a created account use [Westend Faucet](https://matrix.to/#/#westend_faucet:matrix.org)
 
-   - Or build the extension on your own, but it needs to append the following Westend network info to './node_modules/@substrate/ss58-registry/esm/index.js') before build:
-
-     `{
-		"prefix": 42,
-		"network": "westend",
-		"displayName": "Westend",
-		"symbols": [
-			"WND"
-		],
-		"decimals": [
-			12
-		],
-		"standardAccount": "*25519",
-		"website": "https://polkadot.network"
-	}`
+   - Note that you need to check 'Enable testnet chains' in the Menu/Settings to be able to work with Westend.
 
 
 <!-- ## More information 

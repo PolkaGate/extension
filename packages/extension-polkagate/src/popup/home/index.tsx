@@ -15,27 +15,29 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Warning } from '../../components';
-import { useMerkleScience, usePrices, useTranslation } from '../../hooks';
+import { useMerkleScience, useTranslation } from '../../hooks';
 import { tieAccount, windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { NEW_VERSION_ALERT, TEST_NETS } from '../../util/constants';
 import AddAccount from '../welcome/AddAccount';
 import AccountsTree from './AccountsTree';
+import AiBackgroundImage from './AiBackgroundImage';
 import Alert from './Alert';
 import YouHave from './YouHave';
+
 
 export default function Home(): React.ReactElement {
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
   const theme = useTheme();
 
-  // usePrices(); // update prices for all tokens saved in chainNames
   useMerkleScience(undefined, undefined, true); // to download the data file
 
   const [hideNumbers, setHideNumbers] = useState<boolean>();
   const [show, setShowAlert] = useState<boolean>(false);
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
   const [hasActiveRecovery, setHasActiveRecovery] = useState<string | null | undefined>(); // if exists, include the account address
+  const [bgImage, setBgImage] = useState<string | undefined>();
 
   useEffect(() => {
     const isTestnetDisabled = window.localStorage.getItem('testnet_enabled') !== 'true';
@@ -79,51 +81,29 @@ export default function Home(): React.ReactElement {
       }
 
       return 0;
-    })
-    , [hierarchy]);
+    }), [hierarchy]);
 
-  const _goToCreate = useCallback(
-    (): void => {
-      windowOpen('/account/create').catch(console.error);
-    }, []
-  );
+  const onCreate = useCallback((): void => {
+    windowOpen('/account/create').catch(console.error);
+  }, []);
 
   const AddNewAccount = () => (
-    <Grid alignItems='center' container  onClick={_goToCreate} sx={{
-      backgroundColor: 'background.paper',
-      borderColor: 'secondary.main',
-      borderRadius: '5px',
-      borderStyle: 'solid',
-      borderWidth: '0.5px',
-      cursor: 'pointer',
-      my: '10px',
-      py: '13.5px',
-      pr: '7px',
-      pl: '22px'
-    }}
-    >
+    <Grid alignItems='center' container onClick={onCreate} sx={{ backgroundColor: 'background.paper', borderColor: 'secondary.main', borderRadius: '10px', borderStyle: 'solid', borderWidth: '0.5px', bottom: '20px', cursor: 'pointer', my: '10px', pl: '22px', position: 'absolute', pr: '7px', py: '13.5px', width: 'inherit', zIndex: 1 }}    >
       <Grid item xs={1.5}>
         <vaadin-icon icon='vaadin:plus-circle' style={{ height: '36px', color: `${theme.palette.secondary.light}`, width: '36px' }} />
       </Grid>
       <Grid item textAlign='left' xs>
-        <Typography fontSize='18px' fontWeight={500} pl='8px' >
+        <Typography fontSize='18px' fontWeight={500} pl='8px'>
           {t('Create a new account')}
         </Typography>
       </Grid>
       <Grid item xs={1}>
         <IconButton sx={{ p: 0 }}>
-          <ArrowForwardIosRoundedIcon
-            sx={{
-              color: 'secondary.light',
-              fontSize: '24px',
-              stroke: `${theme.palette.secondary.light}`,
-              strokeWidth: 1.5
-            }}
-          />
+          <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: `${theme.palette.secondary.light}`, strokeWidth: 1.5 }} />
         </IconButton>
       </Grid>
     </Grid>
-  )
+  );
 
   return (
     <>
@@ -131,61 +111,71 @@ export default function Home(): React.ReactElement {
         setShowAlert={setShowAlert}
         show={show}
       />
-      {(hierarchy.length === 0)
+      {hierarchy.length === 0
         ? <AddAccount />
-        : (
-          <>
-            <Grid padding='0px' textAlign='center' xs={12}>
-              <HeaderBrand
-                showBrand
-                showMenu
-                text={t<string>('Polkagate')}
-              />
-            </Grid>
-            {hasActiveRecovery &&
-              <Grid container item sx={{ '> div.belowInput .warningImage': { fontSize: '18px' }, '> div.belowInput.danger': { m: 0, position: 'relative' }, height: '55px', pt: '8px', width: '92%' }}>
-                <Warning
-                  fontSize='16px'
-                  fontWeight={400}
-                  isBelowInput
-                  isDanger
-                  theme={theme}
-                >
-                  {t<string>('Suspicious recovery detected on one or more of your accounts.')}
-                </Warning>
-              </Grid>
-            }
-            <YouHave
-              hideNumbers={hideNumbers}
-              setHideNumbers={setHideNumbers}
+        : <Grid alignContent='flex-start' container sx={{
+          backgroundImage:
+            bgImage && (theme.palette.mode === 'dark'
+              ? `linear-gradient(180deg, #171717 10.79%, rgba(23, 23, 23, 0.70) 100%), url(${bgImage ?? ''})`
+              : `linear-gradient(180deg, #F1F1F1 10.79%, rgba(241, 241, 241, 0.70) 100%), url(${bgImage ?? ''})`),
+          backgroundSize: '100% 100%',
+          height: window.innerHeight
+        }}
+        >
+          <Grid padding='0px' textAlign='center' xs={12}>
+            <HeaderBrand
+              showBrand
+              showMenu
+              text={t<string>('Polkagate')}
             />
-            <Container
-              disableGutters
-              sx={[{
-                m: 'auto',
-                maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`,
-                mt: '10px',
-                overflowY: 'scroll',
-                p: 0,
-                width: '92%'
-              }]}
-            >
-              {sortedAccount.map((json, index): React.ReactNode => (
-                <AccountsTree
-                  {...json}
-                  hideNumbers={hideNumbers}
-                  key={`${index}:${json.address}`}
-                  quickActionOpen={quickActionOpen}
-                  setHasActiveRecovery={setHasActiveRecovery}
-                  setQuickActionOpen={setQuickActionOpen}
-                />
-              ))}
-              {sortedAccount.length < 4 &&
-                <AddNewAccount />
-              }
-            </Container>
-          </>
-        )
+          </Grid>
+          {hasActiveRecovery &&
+            <Grid container item sx={{ '> div.belowInput .warningImage': { fontSize: '18px' }, '> div.belowInput.danger': { m: 0, position: 'relative' }, height: '55px', pt: '8px', width: '92%' }}>
+              <Warning
+                fontSize='16px'
+                fontWeight={400}
+                isBelowInput
+                isDanger
+                theme={theme}
+              >
+                {t<string>('Suspicious recovery detected on one or more of your accounts.')}
+              </Warning>
+            </Grid>
+          }
+          <YouHave
+            hideNumbers={hideNumbers}
+            setHideNumbers={setHideNumbers}
+          />
+          <Container
+            disableGutters
+            sx={[{
+              m: 'auto',
+              maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`,
+              mt: '10px',
+              overflowY: 'scroll',
+              p: 0,
+              width: '92%'
+            }]}
+          >
+            {sortedAccount.map((json, index): React.ReactNode => (
+              <AccountsTree
+                {...json}
+                hideNumbers={hideNumbers}
+                key={`${index}:${json.address}`}
+                quickActionOpen={quickActionOpen}
+                setHasActiveRecovery={setHasActiveRecovery}
+                setQuickActionOpen={setQuickActionOpen}
+              />
+            ))}
+            {sortedAccount.length < 4 &&
+              <AddNewAccount />
+            }
+          </Container>
+          <AiBackgroundImage
+            bgImage={bgImage}
+            setBgImage={setBgImage}
+          />
+        </Grid>
       }
     </>
   );
