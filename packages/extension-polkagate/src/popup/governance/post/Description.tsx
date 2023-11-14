@@ -52,7 +52,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
 
   useEffect(() => {
     referendum?.content && !expanded && setExpanded(true);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [referendum?.content]);
 
   const handleChange = (event, isExpanded: boolean) => {
@@ -135,16 +135,16 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
                   </>
                 }
               </Grid>
-              <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[referendum?.status], px: '10px', lineHeight: '24px', width: 'fit-content' }}>
+              <Grid item sx={{ bgcolor: STATUS_COLOR[referendum?.status], border: '0.01px solid primary.main', borderRadius: '30px', color: 'white', fontSize: '16px', fontWeight: 400, lineHeight: '24px', mb: '5px', px: '10px', textAlign: 'center', width: 'fit-content' }}>
                 {pascalCaseToTitleCase(formalizedStatus(referendum?.status))}
               </Grid>
             </Grid>
           </Grid>
         </AccordionSummary>
         <AccordionDetails sx={{ px: 0 }}>
-          <Grid container item sx={{ display: 'inline-block', overflowWrap: 'break-word', wordWrap: 'break-word', wordBreak: 'break-all' }} xs={12}>
+          <Grid container item sx={{ '&, & *': { color: `${theme.palette.text.primary} !important` }, display: 'inline-block', overflowWrap: 'break-word', wordBreak: 'break-all', wordWrap: 'break-word' }} xs={12}>
             <ReactMarkdown
-              components={{ img: ({ node, ...props }) => <img style={{ maxWidth: '100%' }}{...props} /> }}
+              components={{ img: ({ node, ...props }) => <img style={{ maxWidth: '100%' }} {...props} /> }}
               rehypePlugins={[rehypeRaw]}
             >
               {content}
