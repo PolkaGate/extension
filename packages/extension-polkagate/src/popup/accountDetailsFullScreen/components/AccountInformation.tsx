@@ -200,7 +200,7 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
     <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '20px 30px 15px', position: 'relative' }}>
       <Grid container item>
         <Grid container item sx={{ borderRight: '1px solid', borderRightColor: borderColor, pr: '15px', width: 'fit-content' }}>
-          <Grid item pr='5px' width='fit-content'>
+          <Grid container item pr='5px' width='fit-content'>
             <Identicon
               iconTheme={chain?.icon ?? 'polkadot'}
               prefix={chain?.ss58Format ?? 42}
@@ -208,50 +208,34 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
               value={formatted || address}
             />
           </Grid>
-          <Grid container direction='column' display='grid' item justifyContent='center' width='fit-content'>
-            <Grid item onClick={openIdentity} sx={{ cursor: 'pointer', display: hasID ? 'inherit' : 'none', height: '16px', width: '16px' }}>
+          <Grid container direction='column' display='grid' item justifyContent='center' justifyItems='center' width='fit-content'>
+            <Grid item onClick={openIdentity} sx={{ border: '1px solid', borderRadius: '5px', borderColor: 'success.main', cursor: 'pointer', display: hasID ? 'inherit' : 'none', p: '2px', width: 'fit-content' }}>
               {hasID
                 ? accountInfo?.identity?.displayParent
-                  ? <LinkIcon
-                    sx={{
-                      bgcolor: 'success.main',
-                      borderRadius: '50%',
-                      color: 'white',
-                      fontSize: '16px',
-                      transform: 'rotate(-45deg)'
-                    }}
-                  />
-                  : <CheckIcon
-                    sx={{
-                      bgcolor: 'success.main',
-                      borderRadius: '50%',
-                      color: 'white',
-                      fontSize: '16px'
-                    }}
-                  />
+                  ? <LinkIcon sx={{ bgcolor: 'success.main', border: '1px solid', borderRadius: '50%', color: 'white', fontSize: '18px', transform: 'rotate(-45deg)' }} />
+                  : <CheckIcon sx={{ bgcolor: 'success.main', border: '1px solid', borderRadius: '50%', color: 'white', fontSize: '18px' }} />
                 : undefined
               }
             </Grid>
-            <Grid item sx={{ height: '16px', width: '16px' }}>
+            <Grid item width='fit-content'>
               <Infotip placement='bottom-start' text={t('Is recoverable')}>
                 <IconButton
                   onClick={openSocialRecovery}
-                  sx={{ height: '16px', width: '16px' }}>
+                  sx={{ height: '16px', width: '16px' }}
+                >
                   <FontAwesomeIcon
-                    color={recoverable ? theme.palette.success.main : theme.palette.action.disabledBackground}
-                    fontSize='16px'
                     icon={faShieldHalved}
+                    style={{ border: '1px solid', borderRadius: '5px', color: recoverable ? theme.palette.success.main : theme.palette.action.disabledBackground, fontSize: '16px', padding: '3px' }}
                   />
                 </IconButton>
               </Infotip>
             </Grid>
-            <Grid item sx={{ height: '16px', width: '16px' }}>
+            <Grid item width='fit-content'>
               <Infotip placement='bottom-end' text={t('Has proxy')}>
                 <IconButton onClick={openManageProxy} sx={{ height: '16px', width: '16px' }}>
                   <FontAwesomeIcon
-                    color={proxies?.length ? theme.palette.success.main : theme.palette.action.disabledBackground}
-                    fontSize='16px'
                     icon={faSitemap}
+                    style={{ border: '1px solid', borderRadius: '5px', color: proxies?.length ? theme.palette.success.main : theme.palette.action.disabledBackground, fontSize: '16px', padding: '2px' }}
                   />
                 </IconButton>
               </Infotip>
