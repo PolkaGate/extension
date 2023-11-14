@@ -16,7 +16,7 @@ export default function Authorize(): React.ReactElement {
     <>
       <HeaderBrand
         showBrand
-        text={t<string>('Polkagate')}
+        text={'Polkagate'}
       />
       {requests.map(({ id, request, url }, index): React.ReactNode => (
         <Request

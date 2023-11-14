@@ -126,7 +126,7 @@ export default function Home(): React.ReactElement {
             <HeaderBrand
               showBrand
               showMenu
-              text={t<string>('Polkagate')}
+              text={'Polkagate'}
             />
           </Grid>
           {hasActiveRecovery &&
