@@ -47,6 +47,26 @@ export default function Home(): React.ReactElement {
   const [bgImage, setBgImage] = useState<string | undefined>();
   const [imageLoadError, setImageLoadError] = useState(false);
 
+  const clearBackground = useCallback((): void => {
+    setBgImage(undefined);
+    setImageLoadError(true);
+    imgRef.current = 0;
+    chrome.storage.local.remove('backgroundImage').catch(console.error);
+  }, []);
+
+  const testImgUrl = useCallback((url: string) => {
+    const testImg = new Image();
+
+    const handleImageError = () => {
+      console.log('error handled');
+      clearBackground();
+    };
+
+    testImg.src = url;
+    testImg.onerror = handleImageError;
+    testImg.onload = () => setBgImage(url);
+  }, [clearBackground]);
+
   useEffect(() => {
     const isTestnetDisabled = window.localStorage.getItem('testnet_enabled') !== 'true';
 
@@ -77,9 +97,12 @@ export default function Home(): React.ReactElement {
 
   useEffect(() => {
     chrome.storage.local.get('backgroundImage', (res) => {
-      setBgImage(res?.backgroundImage?.[theme.palette.mode]);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      const imgUrl = res?.backgroundImage?.[theme.palette.mode] as string;
+
+      testImgUrl(imgUrl);
     });
-  }, [theme.palette.mode]);
+  }, [testImgUrl, theme.palette.mode]);
 
   const sortedAccount = useMemo(() =>
     hierarchy.sort((a, b) => {
@@ -98,26 +121,18 @@ export default function Home(): React.ReactElement {
     })
     , [hierarchy]);
 
-  const _goToCreate = useCallback(
+  const onCreate = useCallback(
     (): void => {
       windowOpen('/account/create').catch(console.error);
     }, []
   );
 
-  const clearBackground = useCallback((): void => {
-    setBgImage(undefined);
-    setImageLoadError(true);
-    imgRef.current = 0;
-    chrome.storage.local.remove('backgroundImage').catch(console.error);
-  }, []);
-
   const setBackground = useCallback((): void => {
     setImageLoadError(false);
 
     const imageUrl = imagePath + theme.palette.mode + `/${imgRef.current}.jpeg`;
-    // console.log('imageUrl:', imageUrl);
 
-    setBgImage(imageUrl);
+    testImgUrl(imageUrl);
     chrome.storage.local.get('backgroundImage', (res) => {
       const bgImage = (res?.backgroundImage || { dark: '', light: '' }) as BgImage;
 
@@ -126,26 +141,23 @@ export default function Home(): React.ReactElement {
     });
 
     imgRef.current = imgRef.current + 1;
-  }, [theme]);
-
-  const handleImageError = useCallback(() => {
-    setImageLoadError(true);
-    imgRef.current = 0;
-  }, []);
+  }, [testImgUrl, theme.palette.mode]);
 
   const AddNewAccount = () => (
-    <Grid alignItems='center' container onClick={_goToCreate} sx={{
+    <Grid alignItems='center' container onClick={onCreate} sx={{
       backgroundColor: 'background.paper',
       borderColor: 'secondary.main',
-      borderRadius: '5px',
+      borderRadius: '10px',
       borderStyle: 'solid',
       borderWidth: '0.5px',
+      bottom: '20px',
       cursor: 'pointer',
       my: '10px',
       pl: '22px',
-      position: 'relative',
+      position: 'absolute',
       pr: '7px',
       py: '13.5px',
+      width: 'inherit',
       zIndex: 1
     }}
     >
@@ -153,7 +165,7 @@ export default function Home(): React.ReactElement {
         <vaadin-icon icon='vaadin:plus-circle' style={{ height: '36px', color: `${theme.palette.secondary.light}`, width: '36px' }} />
       </Grid>
       <Grid item textAlign='left' xs>
-        <Typography fontSize='18px' fontWeight={500} pl='8px' >
+        <Typography fontSize='18px' fontWeight={500} pl='8px'>
           {t('Create a new account')}
         </Typography>
       </Grid>
@@ -173,7 +185,7 @@ export default function Home(): React.ReactElement {
   );
 
   const AiBackgroundLink = () => (
-    <Grid container justifyContent='space-between' sx={{ backgroundColor: 'background.default', bottom: '0px', color: theme.palette.text.primary, position: 'absolute', zIndex: 6, p: '0 10px 0' }}>
+    <Grid container justifyContent='space-between' sx={{ backgroundColor: 'background.default', bottom: '3px', color: theme.palette.text.primary, position: 'absolute', zIndex: 6, p: '0 10px 0' }}>
       <Grid item onClick={clearBackground} xs={1.5}>
         {bgImage && !imageLoadError && <Typography sx={{ cursor: 'pointer', fontSize: '11px', userSelect: 'none' }}>
           {t('Clear')}
@@ -201,27 +213,14 @@ export default function Home(): React.ReactElement {
       {hierarchy.length === 0
         ? <AddAccount />
         : <Grid alignContent='flex-start' container sx={{
-          background:
+          backgroundImage:
             bgImage && (theme.palette.mode === 'dark'
-              ? 'background: linear-gradient(180deg, #171717 10.79%, rgba(23, 23, 23, 0.70) 100%);'
-              : 'linear-gradient(180deg, #F1F1F1 10.79%, rgba(241, 241, 241, 0.70) 100%)'),
+              ? `linear-gradient(180deg, #171717 10.79%, rgba(23, 23, 23, 0.70) 100%), url(${bgImage ?? ''})`
+              : `linear-gradient(180deg, #F1F1F1 10.79%, rgba(241, 241, 241, 0.70) 100%), url(${bgImage ?? ''})`),
+          backgroundSize: '100% 100%',
           height: window.innerHeight
         }}
         >
-          <img
-            onError={handleImageError}
-            src={bgImage}
-            style={{
-              filter: 'blur(1px)',
-              height: '-webkit-fill-available',
-              left: 0,
-              objectFit: 'cover',
-              opacity: imageLoadError ? 0 : 0.7,
-              position: 'absolute',
-              top: 67,
-              width: '100%'
-            }}
-          />
           <Grid padding='0px' textAlign='center' xs={12}>
             <HeaderBrand
               showBrand
