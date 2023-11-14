@@ -215,6 +215,7 @@ export default function Home(): React.ReactElement {
             bgImage && (theme.palette.mode === 'dark'
               ? `linear-gradient(180deg, #171717 10.79%, rgba(23, 23, 23, 0.70) 100%), url(${bgImage ?? ''})`
               : `linear-gradient(180deg, #F1F1F1 10.79%, rgba(241, 241, 241, 0.70) 100%), url(${bgImage ?? ''})`),
+          backgroundSize: '100% 100%',
           height: window.innerHeight
         }}
         >
