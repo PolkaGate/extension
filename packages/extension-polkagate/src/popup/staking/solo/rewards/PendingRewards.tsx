@@ -199,7 +199,7 @@ export default function PendingRewards(): React.ReactElement {
           {t('Expires')}
         </Grid>
       </Grid>
-      <Grid container height={TABLE_HEIGHT} sx={{ overflow: 'scroll', border: 1, borderColor: 'primary.main', borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px', mx: '2%', width: '96%' }}>
+      <Grid alignContent='flex-start' container height={TABLE_HEIGHT} sx={{ border: 1, borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px', borderColor: 'primary.main', mx: '2%', overflow: 'scroll', width: '96%' }}>
         {!rewards
           ? <Grid container justifyContent='center'>
             {Array.from({ length: TABLE_HEIGHT / SKELETON_HEIGHT }).map((_, index) => (
