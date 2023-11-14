@@ -79,7 +79,7 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isHi
   }, [history, genesisHash, address, formatted, api, identity]);
 
   return (
-    <Grid alignItems='center' container position='relative' py='15px'>
+    <Grid alignItems='center' container position='relative' p='15px 0 13px'>
       <AccountIcons
         chain={chain}
         formatted={formatted || address}
