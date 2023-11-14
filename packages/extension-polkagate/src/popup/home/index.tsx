@@ -121,7 +121,7 @@ export default function Home(): React.ReactElement {
     })
     , [hierarchy]);
 
-  const _goToCreate = useCallback(
+  const onCreate = useCallback(
     (): void => {
       windowOpen('/account/create').catch(console.error);
     }, []
@@ -144,18 +144,20 @@ export default function Home(): React.ReactElement {
   }, [testImgUrl, theme.palette.mode]);
 
   const AddNewAccount = () => (
-    <Grid alignItems='center' container onClick={_goToCreate} sx={{
+    <Grid alignItems='center' container onClick={onCreate} sx={{
       backgroundColor: 'background.paper',
       borderColor: 'secondary.main',
-      borderRadius: '5px',
+      borderRadius: '10px',
       borderStyle: 'solid',
       borderWidth: '0.5px',
+      bottom: '20px',
       cursor: 'pointer',
       my: '10px',
       pl: '22px',
-      position: 'relative',
+      position: 'absolute',
       pr: '7px',
       py: '13.5px',
+      width: 'inherit',
       zIndex: 1
     }}
     >
@@ -163,7 +165,7 @@ export default function Home(): React.ReactElement {
         <vaadin-icon icon='vaadin:plus-circle' style={{ height: '36px', color: `${theme.palette.secondary.light}`, width: '36px' }} />
       </Grid>
       <Grid item textAlign='left' xs>
-        <Typography fontSize='18px' fontWeight={500} pl='8px' >
+        <Typography fontSize='18px' fontWeight={500} pl='8px'>
           {t('Create a new account')}
         </Typography>
       </Grid>
@@ -183,7 +185,7 @@ export default function Home(): React.ReactElement {
   );
 
   const AiBackgroundLink = () => (
-    <Grid container justifyContent='space-between' sx={{ backgroundColor: 'background.default', bottom: '0px', color: theme.palette.text.primary, position: 'absolute', zIndex: 6, p: '0 10px 0' }}>
+    <Grid container justifyContent='space-between' sx={{ backgroundColor: 'background.default', bottom: '3px', color: theme.palette.text.primary, position: 'absolute', zIndex: 6, p: '0 10px 0' }}>
       <Grid item onClick={clearBackground} xs={1.5}>
         {bgImage && !imageLoadError && <Typography sx={{ cursor: 'pointer', fontSize: '11px', userSelect: 'none' }}>
           {t('Clear')}
