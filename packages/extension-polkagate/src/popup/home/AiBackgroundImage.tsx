@@ -87,7 +87,7 @@ export default function AiBackgroundImage({ bgImage, setBgImage }: Props): React
   }, [mode, tryToApplyImg]);
 
   return (
-    <Grid container justifyContent='space-between' sx={{ backgroundColor: bgImage ? 'transparent' : 'background.default', bottom: '3px', color: theme.palette.text.primary, position: 'absolute', zIndex: 6, p: '0 10px 0' }}>
+    <Grid container justifyContent='space-between' sx={{ backgroundColor: 'background.default', bottom: '3px', color: theme.palette.text.primary, position: 'absolute', zIndex: 6, p: '0 10px 0' }}>
       <Grid item onClick={clearBackground} xs={1.5}>
         {bgImage &&
           <Typography sx={{ cursor: 'pointer', fontSize: '11px', userSelect: 'none' }}>
