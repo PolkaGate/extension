@@ -8,6 +8,7 @@ export { default as ActionText } from './ActionText';
 export { default as AccountHolder } from './AccountHolder';
 export { default as AccountInputWithIdentity } from './AccountInputWithIdentity';
 export { default as Address } from './Address';
+export { default as NewAddress } from './NewAddress';
 export { default as AddressInput } from './AddressInput';
 export { default as AddressInput2 } from './AddressInput2';
 export { default as Amount } from './Amount';
