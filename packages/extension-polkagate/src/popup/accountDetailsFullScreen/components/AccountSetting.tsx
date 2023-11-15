@@ -54,8 +54,8 @@ export default function AccountSetting({ address, setDisplayPopup }: Props): Rea
 `;
 
   const onExportAccount = useCallback(() => {
-    address && onAction(`/export/${address}`);
-  }, [address, onAction]);
+    address && setDisplayPopup(popupNumbers.EXPORT_ACCOUNT);
+  }, [address, setDisplayPopup]);
 
   const goToDeriveAcc = useCallback(() => {
     address && onAction(`/derive/${address}/locked`);
