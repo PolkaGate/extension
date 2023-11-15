@@ -26,7 +26,7 @@ export default function NewAddress({ address, name, showCopy, style }: Props): R
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette]);
 
   return (
-    <Grid container justifyContent='space-between' sx={{ backgroundColor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '14px 8px', ...style }}>
+    <Grid container gap='10px' justifyContent='space-between' sx={{ backgroundColor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '14px 8px', ...style }}>
       <Grid container item width='fit-content'>
         <Identicon
           iconTheme={chain?.icon || 'polkadot'}
@@ -35,7 +35,7 @@ export default function NewAddress({ address, name, showCopy, style }: Props): R
           value={formatted || address}
         />
       </Grid>
-      <Grid container direction='column' item xs>
+      <Grid alignItems='flex-start' container direction='column' item xs>
         <Typography fontSize='16px' fontWeight={400} maxWidth='95%' overflow='hidden' variant='h3' whiteSpace='nowrap'>
           {name ?? account?.name ?? t('<unknown>')}
         </Typography>
