@@ -23,7 +23,7 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function AccountSetting ({ address, setDisplayPopup }: Props): React.ReactElement {
+export default function AccountSetting({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -62,8 +62,8 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
   }, [address, onAction]);
 
   const onRenameAccount = useCallback(() => {
-    address && onAction(`/rename/${address}`);
-  }, [address, onAction]);
+    address && setDisplayPopup(popupNumbers.RENAME);
+  }, [address, setDisplayPopup]);
 
   const onForgetAccount = useCallback(() => {
     address && account && setDisplayPopup(popupNumbers.FORGET_ACCOUNT);

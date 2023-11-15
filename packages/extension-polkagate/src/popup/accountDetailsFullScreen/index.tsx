@@ -25,11 +25,13 @@ import DisplayBalance from './components/DisplayBalance';
 import LockedBalanceDisplay from './components/LockedBalanceDisplay';
 import TotalChart from './components/TotalChart';
 import LockedInReferenda from './unlock/Review';
+import RenameModal from '../rename/RenameModal';
 
 export type AssetsOnOtherChains = { totalBalance: BN, chainName: string, decimal: number, price: number | undefined, token: string };
 export const popupNumbers = {
   LOCKED_IN_REFERENDA: 1,
-  FORGET_ACCOUNT: 2
+  FORGET_ACCOUNT: 2,
+  RENAME: 3
 };
 
 export interface UnlockInformationType {
@@ -234,6 +236,12 @@ export default function AccountDetails(): React.ReactElement {
       {displayPopup === popupNumbers.FORGET_ACCOUNT && account &&
         <ForgetAccountModal
           account={account}
+          setDisplayPopup={setDisplayPopup}
+        />
+      }
+      {displayPopup === popupNumbers.RENAME &&
+        <RenameModal
+          address={address}
           setDisplayPopup={setDisplayPopup}
         />
       }
