@@ -8,7 +8,7 @@ import type { PalletBalancesBalanceLock } from '@polkadot/types/lookup';
 import { faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
@@ -19,6 +19,7 @@ import { useAccountLocks, useCurrentBlockNumber, useHasDelegated, useTranslation
 import { Lock } from '../../../hooks/useAccountLocks';
 import { TIME_TO_SHAKE_ICON } from '../../../util/constants';
 import blockToDate from '../../crowdloans/partials/blockToDate';
+import { UnlockInformationType, popupNumbers } from '..';
 
 interface DisplayBalanceProps {
   address: string | undefined;
@@ -31,9 +32,11 @@ interface DisplayBalanceProps {
   price: number | undefined;
   isDarkTheme: boolean;
   refreshNeeded?: boolean;
+  setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
+  setUnlockInformation: React.Dispatch<React.SetStateAction<UnlockInformationType | undefined>>;
 }
 
-export default function LockedBalanceDisplay({ address, api, chain, decimal, formatted, isDarkTheme, price, refreshNeeded, title, token }: DisplayBalanceProps): React.ReactElement {
+export default function LockedBalanceDisplay({ address, api, chain, decimal, formatted, isDarkTheme, price, refreshNeeded, setDisplayPopup, setUnlockInformation, title, token }: DisplayBalanceProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const [refresh, setRefresh] = useState(false);
@@ -51,6 +54,7 @@ export default function LockedBalanceDisplay({ address, api, chain, decimal, for
   const [shake, setShake] = useState<boolean>();
 
   const classToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock) && ref.classId.lt(BN_MAX_INTEGER)) : undefined;
+  const isDisable = useMemo(() => !unlockableAmount || unlockableAmount.isZero() || !classToUnlock || !totalLocked, [classToUnlock, totalLocked, unlockableAmount]);
 
   useEffect(() => {
     if (unlockableAmount && !unlockableAmount.isZero()) {
@@ -160,10 +164,17 @@ export default function LockedBalanceDisplay({ address, api, chain, decimal, for
   }, [delegatedBalance, lockedInRef, miscRefLock]);
 
   const onUnlock = useCallback(() => {
-    // setShowReview(true);
-  }, []);
+    if (isDisable) {
+      return;
+    }
 
-  const noop = useCallback(() => null, []);
+    setUnlockInformation({
+      classToUnlock,
+      totalLocked,
+      unlockableAmount
+    });
+    setDisplayPopup(popupNumbers.LOCKED_IN_REFERENDA);
+  }, [classToUnlock, isDisable, setDisplayPopup, setUnlockInformation, totalLocked, unlockableAmount]);
 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: '85px', p: '15px 40px' }}>
@@ -201,13 +212,13 @@ export default function LockedBalanceDisplay({ address, api, chain, decimal, for
         </Grid>
         <Grid item m='auto' pl='8px'>
           <IconButton
+            disabled={isDisable}
             onClick={onUnlock}
             sx={{ p: '8px' }}
           >
             <FontAwesomeIcon
-              color={!unlockableAmount || unlockableAmount.isZero() ? theme.palette.action.disabledBackground : theme.palette.secondary.light}
+              color={isDisable ? theme.palette.action.disabledBackground : theme.palette.secondary.light}
               icon={faUnlockAlt}
-              onClick={unlockableAmount && !unlockableAmount.isZero() ? onUnlock : noop}
               shake={shake}
               style={{ height: '25px' }}
             />
