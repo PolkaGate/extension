@@ -5,7 +5,7 @@
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { ButtonWithCancel, NewAddress } from '../../components';
 import { useAccountName, useTranslation } from '../../hooks';
@@ -18,7 +18,7 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function RenameModal({ address, setDisplayPopup }: Props): React.ReactElement {
+export default function RenameModal ({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const accountName = useAccountName(address);
