@@ -11,10 +11,12 @@ import { useHistory } from 'react-router-dom';
 import { BN } from '@polkadot/util';
 
 import { useAccount, useApi, useBalances, useChain, useChainName, useDecimal, useFormatted, useFullscreen, usePrice, useToken, useTranslation } from '../../hooks';
+import { Lock } from '../../hooks/useAccountLocks';
 import { windowOpen } from '../../messaging';
 import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { amountToHuman } from '../../util/utils';
 import { getValue } from '../account/util';
+import ForgetAccountModal from '../forgetAccount/ForgetAccountModal';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import AccountInformation from './components/AccountInformation';
 import AccountSetting from './components/AccountSetting';
@@ -22,8 +24,19 @@ import CommonTasks from './components/CommonTasks';
 import DisplayBalance from './components/DisplayBalance';
 import LockedBalanceDisplay from './components/LockedBalanceDisplay';
 import TotalChart from './components/TotalChart';
+import LockedInReferenda from './unlock/Review';
 
 export type AssetsOnOtherChains = { totalBalance: BN, chainName: string, decimal: number, price: number | undefined, token: string };
+export const popupNumbers = {
+  LOCKED_IN_REFERENDA: 1,
+  FORGET_ACCOUNT: 2
+};
+
+export interface UnlockInformationType {
+  classToUnlock: Lock[];
+  totalLocked: BN;
+  unlockableAmount: BN;
+}
 
 export default function AccountDetails(): React.ReactElement {
   useFullscreen();
@@ -51,6 +64,8 @@ export default function AccountDetails(): React.ReactElement {
 
   const [assetId, setAssetId] = useState<number>();
   const [assetsOnOtherChains, setAssetsOnOtherChains] = useState<AssetsOnOtherChains[]>();
+  const [displayPopup, setDisplayPopup] = useState<number | undefined>();
+  const [unlockInformation, setUnlockInformation] = useState<UnlockInformationType | undefined>();
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette]);
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
@@ -168,6 +183,8 @@ export default function AccountDetails(): React.ReactElement {
                   isDarkTheme={isDarkTheme}
                   price={price?.amount}
                   // refreshNeeded={refreshNeeded}
+                  setDisplayPopup={setDisplayPopup}
+                  setUnlockInformation={setUnlockInformation}
                   title={t<string>('Locked in Referenda')}
                   token={token}
                 />
@@ -197,11 +214,29 @@ export default function AccountDetails(): React.ReactElement {
               />
               <AccountSetting
                 address={address}
+                setDisplayPopup={setDisplayPopup}
               />
             </Grid>
           </Grid>
         </Grid>
       </Grid>
+      {displayPopup === popupNumbers.LOCKED_IN_REFERENDA && unlockInformation && api &&
+        <LockedInReferenda
+          address={address}
+          api={api}
+          classToUnlock={unlockInformation.classToUnlock}
+          setDisplayPopup={setDisplayPopup}
+          show={displayPopup === popupNumbers.LOCKED_IN_REFERENDA}
+          totalLocked={unlockInformation.totalLocked}
+          unlockableAmount={unlockInformation.unlockableAmount}
+        />
+      }
+      {displayPopup === popupNumbers.FORGET_ACCOUNT && account &&
+        <ForgetAccountModal
+          account={account}
+          setDisplayPopup={setDisplayPopup}
+        />
+      }
     </Grid>
   );
 }
