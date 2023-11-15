@@ -15,13 +15,15 @@ import { ActionContext } from '../../../components';
 import { useAccount, useChain, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { IDENTITY_CHAINS } from '../../../util/constants';
+import { popupNumbers } from '..';
 import { TaskButton } from './CommonTasks';
 
 interface Props {
   address: string | undefined;
+  setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function AccountSetting ({ address }: Props): React.ReactElement {
+export default function AccountSetting ({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -64,8 +66,8 @@ export default function AccountSetting ({ address }: Props): React.ReactElement 
   }, [address, onAction]);
 
   const onForgetAccount = useCallback(() => {
-    address && account && onAction(`/forget/${address}/${account.isExternal}`);
-  }, [address, account, onAction]);
+    address && account && setDisplayPopup(popupNumbers.FORGET_ACCOUNT);
+  }, [address, account, setDisplayPopup]);
 
   const onManageProxies = useCallback(() => {
     address && onAction(`/manageProxies/${address}`);
