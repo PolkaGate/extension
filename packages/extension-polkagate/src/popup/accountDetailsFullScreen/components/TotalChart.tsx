@@ -152,7 +152,7 @@ export default function TotalChart({ assetsOnOtherChains, isDarkTheme, nativeAss
     return () => {
       chartInstance.destroy();
     };
-  }, [otherAssetsToShow.price, otherAssetsToShow.price.length, otherAssetsToShow.color, otherAssetsToShow.color.length]);
+  }, [otherAssetsToShow.price, otherAssetsToShow.price.length, otherAssetsToShow.color, otherAssetsToShow.color.length, otherAssetsToShow.token]);
 
   return (
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: '185px', p: '15px', width: '275px' }}>
