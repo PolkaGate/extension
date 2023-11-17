@@ -88,7 +88,8 @@ export default function Home(): React.ReactElement {
   }, []);
 
   const AddNewAccount = () => (
-    <Grid alignItems='center' container onClick={onCreate} sx={{ backgroundColor: 'background.paper', borderColor: 'secondary.main', borderRadius: '10px', borderStyle: 'solid', borderWidth: '0.5px', bottom: '20px', cursor: 'pointer', my: '10px', pl: '22px', position: 'absolute', pr: '7px', py: '13.5px', width: 'inherit', zIndex: 1 }}    >
+    <Grid alignItems='center' container onClick={onCreate} sx={{ '&:hover': { opacity: 1 }, backgroundColor: 'background.paper', borderColor: 'secondary.main', borderRadius: '10px', borderStyle: 'solid', borderWidth: '0.5px', bottom: '20px', cursor: 'pointer', my: '10px', opacity: '0.7', padding: '8px 7px 8px 22px', position: 'absolute', transition: 'opacity 0.3s ease', width: 'inherit', zIndex: 1 }
+    }>
       <Grid item xs={1.5}>
         <vaadin-icon icon='vaadin:plus-circle' style={{ height: '36px', color: `${theme.palette.secondary.light}`, width: '36px' }} />
       </Grid>
