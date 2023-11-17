@@ -324,7 +324,7 @@ export default function Index(): React.ReactElement {
           <Row
             label={t('Rewards')}
             link1Text={t('Pending')}
-            link2Text={t('Received')}
+            link2Text={t('Paid chart')}
             onLink1={onPendingRewards}
             onLink2={onReceivedRewards}
             value={rewards}
