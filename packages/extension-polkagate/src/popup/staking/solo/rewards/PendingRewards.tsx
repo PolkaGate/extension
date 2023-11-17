@@ -101,14 +101,14 @@ export default function PendingRewards(): React.ReactElement {
       ).mul(
         historyDepth
           .sub(progress.activeEra)
-          .iadd(new BN(era))
-          .iadd(BN_ONE)
-      ).isub(
+          .addn(era)
+          .add(BN_ONE)
+      ).sub(
         forcing.isForceAlways
           ? progress.sessionProgress
           : progress.eraProgress);
 
-    return EndEraInBlock ? blockToDate(EndEraInBlock.iaddn(currentBlock).toNumber(), currentBlock, { day: 'numeric', month: 'short' }) : undefined;
+    return EndEraInBlock ? blockToDate(EndEraInBlock.addn(currentBlock).toNumber(), currentBlock, { day: 'numeric', month: 'short' }) : undefined;
   }, [currentBlock, forcing, historyDepth, progress]);
 
   const onSelectAll = useCallback((_, checked: boolean) => {
