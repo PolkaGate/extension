@@ -58,8 +58,8 @@ export default function AccountSetting({ address, setDisplayPopup }: Props): Rea
   }, [address, setDisplayPopup]);
 
   const goToDeriveAcc = useCallback(() => {
-    address && onAction(`/derive/${address}/locked`);
-  }, [address, onAction]);
+    address && setDisplayPopup(popupNumbers.DERIVE_ACCOUNT);
+  }, [address, setDisplayPopup]);
 
   const onRenameAccount = useCallback(() => {
     address && setDisplayPopup(popupNumbers.RENAME);
