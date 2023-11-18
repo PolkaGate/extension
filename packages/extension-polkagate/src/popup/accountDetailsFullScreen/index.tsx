@@ -16,6 +16,8 @@ import { windowOpen } from '../../messaging';
 import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { amountToHuman } from '../../util/utils';
 import { getValue } from '../account/util';
+import DeriveAccountModal from '../deriveAccount/modal/DeriveAccountModal';
+import ExportAccountModal from '../export/ExportAccountModal';
 import ForgetAccountModal from '../forgetAccount/ForgetAccountModal';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import RenameModal from '../rename/RenameModal';
@@ -26,14 +28,14 @@ import DisplayBalance from './components/DisplayBalance';
 import LockedBalanceDisplay from './components/LockedBalanceDisplay';
 import TotalChart from './components/TotalChart';
 import LockedInReferenda from './unlock/Review';
-import ExportAccountModal from '../export/ExportAccountModal';
 
 export type AssetsOnOtherChains = { totalBalance: BN, chainName: string, decimal: number, price: number | undefined, token: string };
 export const popupNumbers = {
   LOCKED_IN_REFERENDA: 1,
   FORGET_ACCOUNT: 2,
   RENAME: 3,
-  EXPORT_ACCOUNT: 4
+  EXPORT_ACCOUNT: 4,
+  DERIVE_ACCOUNT: 5
 };
 
 export interface UnlockInformationType {
@@ -250,6 +252,12 @@ export default function AccountDetails(): React.ReactElement {
       {displayPopup === popupNumbers.EXPORT_ACCOUNT &&
         <ExportAccountModal
           address={address}
+          setDisplayPopup={setDisplayPopup}
+        />
+      }
+      {displayPopup === popupNumbers.DERIVE_ACCOUNT &&
+        <DeriveAccountModal
+          parentAddress={address}
           setDisplayPopup={setDisplayPopup}
         />
       }
