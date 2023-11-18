@@ -62,7 +62,6 @@ export default function useStakingRewards(address: string, stakingAccount: Accou
       return;
     }
 
-    console.log('rewardDestinationAddress:', rewardDestinationAddress)
     getStakingReward(chainName, rewardDestinationAddress).then((r) => {
       setRewards(r ? new BN(r) : BN_ZERO);
     }).catch(console.error);
