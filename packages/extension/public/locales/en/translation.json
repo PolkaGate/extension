@@ -1033,5 +1033,14 @@
   "Cannot set your account as a proxy for itself.": "",
   "You've already included this proxy.": "",
   "Step 1 of 3: Choose trusted friends": "",
-  "Step 2 of 3: Set details": ""
+  "Step 2 of 3: Set details": "",
+  "Unlock date unknown": "",
+  "Polkagate is a browser extension that lets you use the Polkadot network and decentralized apps. We respect your privacy and do not collect or store any of your personal data. This is how we protect your privacy:": "",
+  "We do not collect your clicks, browsing history, keys, addresses, transactions, or any other data.": "",
+  "We use open-source code, end-to-end encryption, local storage, and secure communication protocols.": "",
+  "We may update this privacy policy and notify you on our website and extension.": "",
+  "If you have any questions, please contact us at polkagate@outlook.com or follow us on our social media accounts.": "",
+  "Set a new AI generated background": "",
+  "Click to set an AI-generated background.": "",
+  "AI Background": ""
 }

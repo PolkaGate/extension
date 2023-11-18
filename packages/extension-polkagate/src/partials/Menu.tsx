@@ -29,6 +29,31 @@ const COLLAPSIBLE_MENUS = {
   SETTING: 3
 };
 
+export const SocialLinks = () => (
+  <Grid container width='fit-content'>
+    <Grid item>
+      <Link href={'mailto:polkagate@outlook.com'}>
+        <EmailIcon sx={{ color: '#1E5AEF', fontSize: 15 }} />
+      </Link>
+    </Grid>
+    <Grid item pl='5px'>
+      <Link href='https://polkagate.xyz' rel='noreferrer' target='_blank'>
+        <LanguageIcon sx={{ color: '#007CC4', fontSize: 15 }} />
+      </Link>
+    </Grid>
+    <Grid item pl='5px'>
+      <Link href='https://twitter.com/@polkagate' rel='noreferrer' target='_blank'>
+        <TwitterIcon sx={{ color: '#2AA9E0', fontSize: 15 }} />
+      </Link>
+    </Grid>
+    <Grid item pl='5px'>
+      <Link href='https://matrix.to/#/#polkagate:matrix.org' rel='noreferrer' target='_blank'>
+        <Box component='img' src={riot} sx={{ height: '12px', width: '12px', mt: '2px' }} />
+      </Link>
+    </Grid>
+  </Grid>
+);
+
 function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
@@ -159,7 +184,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
               }
               onClick={toggleSettingSubMenu}
               showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.SETTING}
-              text={t('Setting')}
+              text={t('Settings')}
             >
               <SettingSubMenu
                 isTestnetEnabled={isTestnetEnabled}
@@ -200,28 +225,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
           <Grid item>
             {`${t('Version')} ${manifest?.version || ''}`}
           </Grid>
-          <Grid container width='fit-content'>
-            <Grid item>
-              <Link href={'mailto:polkagate@outlook.com'}>
-                <EmailIcon sx={{ color: '#1E5AEF', fontSize: 15 }} />
-              </Link>
-            </Grid>
-            <Grid item pl='5px'>
-              <Link href='https://polkagate.xyz' rel='noreferrer' target='_blank'>
-                <LanguageIcon sx={{ color: '#007CC4', fontSize: 15 }} />
-              </Link>
-            </Grid>
-            <Grid item pl='5px'>
-              <Link href='https://twitter.com/@polkagate' rel='noreferrer' target='_blank'>
-                <TwitterIcon sx={{ color: '#2AA9E0', fontSize: 15 }} />
-              </Link>
-            </Grid>
-            <Grid item pl='5px'>
-              <Link href='https://matrix.to/#/#polkagate:matrix.org' rel='noreferrer' target='_blank'>
-                <Box component='img' src={riot} sx={{ height: '12px', width: '12px', mt: '2px' }} />
-              </Link>
-            </Grid>
-          </Grid>
+          <SocialLinks />
         </Grid>
       </Grid>
       <IconButton onClick={_toggleSettings} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>

@@ -31,7 +31,7 @@ export default async function getPrices(chainNames: string[], currency = 'usd'):
 
     return { date: Date.now(), prices };
   } catch (e) {
-    console.log('error while fetching prices:', e)
+    console.log('error while fetching prices:', e);
   }
 }
 

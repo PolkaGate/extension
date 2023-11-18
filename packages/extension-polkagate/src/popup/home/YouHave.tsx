@@ -10,6 +10,7 @@ import { BN } from '@polkadot/util';
 
 import { hide, show, stars6Black, stars6White } from '../../assets/icons';
 import { AccountContext, FormatPrice } from '../../components';
+import { usePrices } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { Prices, SavedBalances } from '../../util/types';
 
@@ -22,7 +23,7 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const theme = useTheme();
-
+  const parsedPrices = usePrices();
   /** save home page url in to local storage */
   // window.localStorage.setItem('last_url', JSON.stringify({ time: Date.now(), url: window.location.hash }));
 
@@ -33,7 +34,7 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
 
     let value = 0;
 
-    accounts.forEach((acc) => {
+    parsedPrices?.prices && accounts.forEach((acc) => {
       if (!acc?.balances) {
         return;
       }
@@ -41,10 +42,9 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
       const balances = JSON.parse(acc.balances) as SavedBalances;
 
       Object.keys(balances).forEach((chainName) => {
-        const localSavedPrices = window.localStorage.getItem('prices');
+        // const localSavedPrices = window.localStorage.getItem('prices');
 
-        const parsedPrices = localSavedPrices && JSON.parse(localSavedPrices) as Prices;
-        const price = (parsedPrices?.prices[chainName] || parsedPrices?.prices[chainName.toLocaleLowerCase()])?.usd;
+        const price = (parsedPrices.prices[chainName] || parsedPrices.prices[chainName.toLocaleLowerCase()])?.usd;
 
         const bal = balances[chainName];
 
@@ -59,7 +59,7 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
     });
 
     return value;
-  }, [accounts]);
+  }, [accounts, parsedPrices?.prices]);
 
   const onHideClick = useCallback(() => {
     setHideNumbers(!hideNumbers);
@@ -73,7 +73,7 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
   }, [setHideNumbers]);
 
   return (
-    <Grid container pt='15px' textAlign='center'>
+    <Grid container pt='15px' textAlign='center' sx={{ position: 'relative', zIndex: 1 }}>
       <Grid item xs={12}>
         <Typography sx={{ fontSize: '18px' }}>
           {t('You have')}

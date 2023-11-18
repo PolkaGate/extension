@@ -84,8 +84,6 @@ export enum NotificationOptions {
   PopUp,
 }
 
-const AUTH_URLS_KEY = 'authUrls';
-
 function extractMetadata(store: MetadataStore): void {
   store.allMap((map): void => {
     const knownEntries = Object.entries(knownGenesis);
@@ -155,16 +153,8 @@ export default class State {
     extractMetadata(this.#metaStore);
 
     // retrieve previously set authorizations
-
-    // const authString = localStorage.getItem(AUTH_URLS_KEY) || '{}';
-    // const previousAuth = JSON.parse(authString) as AuthUrls;
-    // this.#authUrls = previousAuth;
-
-    chrome.storage.local.get('AUTH_URLS_KEY', (res) => {
-      const authString = res?.AUTH_URLS_KEY || '{}';
-      const previousAuth = JSON.parse(authString) as AuthUrls;
-
-      this.#authUrls = previousAuth;
+    chrome.storage.local.get('authUrls', (res) => {
+      this.#authUrls = (res?.authUrls || {}) as AuthUrls;
     });
   }
 
@@ -257,8 +247,7 @@ export default class State {
   };
 
   private saveCurrentAuthList() {
-    // localStorage.setItem(AUTH_URLS_KEY, JSON.stringify(this.#authUrls));
-    void chrome.storage.local.set({ AUTH_URLS_KEY: JSON.stringify(this.#authUrls) });
+    chrome.storage.local.set({ authUrls: this.#authUrls }).catch(console.error);
   }
 
   private metaComplete = (id: string, resolve: (result: boolean) => void, reject: (error: Error) => void): Resolver<boolean> => {

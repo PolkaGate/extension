@@ -113,43 +113,6 @@ export async function getBonded(_chain: Chain, _address: string): Promise<Valida
   });
 }
 
-export async function getStakingReward(_chain: Chain | null | undefined, _stakerAddress: string | null): Promise<string | null> {
-  if (!_stakerAddress) {
-    console.log('_stakerAddress is null in getting getStakingReward ');
-
-    return null;
-  }
-
-  return new Promise((resolve) => {
-    try {
-      const network = _chain ? _chain.name.replace(' Relay Chain', '') : 'westend';
-
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      postData('https://' + network + '.api.subscan.io/api/scan/staking_history',
-        {
-          address: _stakerAddress,
-          page: 0,
-          row: 20
-        })
-        .then((data: { message: string; data: { sum: string; }; }) => {
-          if (data.message === 'Success') {
-            const reward = data.data.sum;
-
-            console.log('# reward:', reward);
-
-            resolve(reward);
-          } else {
-            console.log(`Fetching message ${data.message}`);
-            resolve(null);
-          }
-        });
-    } catch (error) {
-      console.log('something went wrong while getting getStakingReward ');
-      resolve(null);
-    }
-  });
-}
-
 //* *******************************POOL STAKING********************************************/
 
 export async function poolJoinOrBondExtra(

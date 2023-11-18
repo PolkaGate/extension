@@ -56,7 +56,7 @@ export default function useStakingRewards(address: string, stakingAccount: Accou
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
 
   useEffect(() => {
-    if (!stakingAccount || !chainName || !rewardDestinationAddress) {
+    if (!chainName || !rewardDestinationAddress) {
       setRewards(undefined);
 
       return;
@@ -65,7 +65,7 @@ export default function useStakingRewards(address: string, stakingAccount: Accou
     getStakingReward(chainName, rewardDestinationAddress).then((r) => {
       setRewards(r ? new BN(r) : BN_ZERO);
     }).catch(console.error);
-  }, [chainName, rewardDestinationAddress, stakingAccount]);
+  }, [chainName, rewardDestinationAddress]);
 
   return rewards;
 }

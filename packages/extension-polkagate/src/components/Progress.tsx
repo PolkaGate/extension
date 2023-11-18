@@ -12,7 +12,7 @@ interface Props {
   size?: number;
 }
 
-function Progress({ pt = '50px', title, size = 25, fontSize = 13 }: Props): React.ReactElement<Props> {
+function Progress({ fontSize = 13, pt = '50px', size = 25, title }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (
@@ -24,12 +24,11 @@ function Progress({ pt = '50px', title, size = 25, fontSize = 13 }: Props): Reac
       pt={pt}
     >
       <Circle color={theme.palette.primary.main} scaleEnd={0.7} scaleStart={0.4} size={size} />
-      <Grid
-        item
-        sx={{ fontSize, paddingTop: '20px' }}
-      >
-        {title}
-      </Grid>
+      {title &&
+        <Grid item sx={{ fontSize, paddingTop: '20px' }}>
+          {title}
+        </Grid>
+      }
     </Grid>
   );
 }

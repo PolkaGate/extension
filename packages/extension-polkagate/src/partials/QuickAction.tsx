@@ -73,19 +73,19 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
 
   const movingParts = (
     <Grid
-      alignItems='center'
       bgcolor='background.paper'
       container
       justifyContent='space-around'
       sx={{
         border: '0.5px solid',
         borderColor: 'secondary.light',
-        borderRadius: '0 5px 5px 0',
+        borderRadius: '0 6px 0',
         boxShadow: '0px 0px 10px 5px rgba(0, 0, 0, 0.55)',
         flexFlow: 'nowrap',
         minWidth: 'calc(100% - 50px)',
-        pl: '30px',
+        pl: '20px',
         pr: '10px',
+        pt:'5px',
         width: 'calc(100% - 50px)'
       }}
     >

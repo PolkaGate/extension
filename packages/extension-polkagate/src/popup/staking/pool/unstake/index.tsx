@@ -23,7 +23,7 @@ import { useApi, useChain, useDecimal, useFormatted, usePool, usePoolConsts, use
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import Asset from '../../../send/partial/Asset';
+import Asset from '../../../../partials/Asset';
 import ShowPool from '../../partial/ShowPool';
 import RemoveAll from '../myPool/removeAll';
 import SetState from '../myPool/SetState';
