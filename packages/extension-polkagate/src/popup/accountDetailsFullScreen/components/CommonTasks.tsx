@@ -3,17 +3,19 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faCoins, faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
+import { faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, OpenInNewRounded as OpenInNewRoundedIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material';
+import { Grid, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
+import { ApiPromise } from '@polkadot/api';
+
+import { PoolStakingIcon } from '../../../components';
 import { useChainName, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../../util/constants';
-import { ApiPromise } from '@polkadot/api';
 
 interface Props {
   address: string | undefined;
@@ -26,24 +28,28 @@ interface TaskButtonProps {
   icon: unknown;
   text: string;
   onClick: () => void;
-  secondaryIcon: unknown;
+  secondaryIconType: 'popup' | 'page';
   noBorderButton?: boolean;
-  disable?: boolean;
   borderColor: string;
+  theme: Theme;
+  disabled?: boolean;
 }
 
-export const TaskButton = ({ borderColor, icon, noBorderButton = false, onClick, secondaryIcon, text }: TaskButtonProps) => (
-  <Grid alignItems='center' container item justifyContent='space-between' onClick={onClick} sx={{ borderBottom: noBorderButton ? 0 : 1, borderBottomColor: borderColor, cursor: 'pointer', m: 'auto', mb: '6px', pb: '6px' }} width='80%'>
-    <Grid item xs={3}>
+export const TaskButton = ({ borderColor, disabled, icon, noBorderButton = false, onClick, secondaryIconType, text, theme }: TaskButtonProps) => (
+  <Grid alignItems='center' container item justifyContent='space-between' onClick={onClick} sx={{ borderBottom: noBorderButton ? 0 : 1, borderBottomColor: borderColor, cursor: disabled ? 'default' : 'pointer', m: 'auto', mb: '8px', pb: '8px' }} width='80%'>
+    <Grid container item xs={3}>
       {icon}
     </Grid>
-    <Grid item xs={7}>
-      <Typography fontSize='16px' fontWeight={500}>
+    <Grid container item xs={7}>
+      <Typography color={disabled ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='16px' fontWeight={500}>
         {text}
       </Typography>
     </Grid>
-    <Grid item justifyContent='flex-end' xs={2}>
-      {secondaryIcon}
+    <Grid alignItems='center' container item justifyContent='flex-end' xs={2}>
+      {secondaryIconType === 'page'
+        ? <ArrowForwardIosRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '26px', stroke: disabled ? theme.palette.action.disabledBackground : theme.palette.secondary.light, strokeWidth: 1 }} />
+        : <OpenInNewRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '25px' }} />
+      }
     </Grid>
   </Grid>
 );
@@ -54,9 +60,12 @@ export default function CommonTasks({ address, api, assetId, genesisHash }: Prop
   const chainName = useChainName(address);
   const history = useHistory();
 
+  const governanceDisabled = useMemo(() => !GOVERNANCE_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
+  const stakingDisabled = useMemo(() => !STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
+  const crowdloanDisabled = useMemo(() => !CROWDLOANS_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
-  const stakingIconColor = useMemo(() => `${STAKING_CHAINS.includes(genesisHash ?? '') ? theme.palette.text.primary : theme.palette.action.disabledBackground}`, [genesisHash, theme.palette.action.disabledBackground, theme.palette.text.primary]);
+  const stakingIconColor = useMemo(() => stakingDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary, [stakingDisabled, theme.palette.action.disabledBackground, theme.palette.text.primary]);
 
   const goToSend = useCallback(() => {
     address && windowOpen(`/send/${address}/${assetId}`).catch(console.error);
@@ -67,24 +76,24 @@ export default function CommonTasks({ address, api, assetId, genesisHash }: Prop
   }, [address]);
 
   const goToGovernance = useCallback(() => {
-    address && genesisHash && GOVERNANCE_CHAINS.includes(genesisHash) && windowOpen(`/governance/${address}/referenda`).catch(console.error);
-  }, [address, genesisHash]);
+    address && genesisHash && !governanceDisabled && windowOpen(`/governance/${address}/referenda`).catch(console.error);
+  }, [address, genesisHash, governanceDisabled]);
 
   const goToSoloStaking = useCallback(() => {
-    address && genesisHash && STAKING_CHAINS.includes(genesisHash) &&
+    address && genesisHash && !stakingDisabled &&
       history.push({
         pathname: `/solo/${address}/`,
         state: { api, pathname: `account/${address}` }
       });
-  }, [address, api, genesisHash, history]);
+  }, [address, api, genesisHash, history, stakingDisabled]);
 
   const goToPoolStaking = useCallback(() => {
-    address && genesisHash && STAKING_CHAINS.includes(genesisHash) && windowOpen(`/pool/${address}/`).catch(console.error);
-  }, [address, genesisHash]);
+    address && genesisHash && !stakingDisabled && windowOpen(`/pool/${address}/`).catch(console.error);
+  }, [address, genesisHash, stakingDisabled]);
 
   const goToCrowdLoans = useCallback(() => {
-    address && genesisHash && CROWDLOANS_CHAINS.includes(genesisHash) && windowOpen(`/crowdloans/${address}/`).catch(console.error);
-  }, [address, genesisHash]);
+    address && genesisHash && !crowdloanDisabled && windowOpen(`/crowdloans/${address}/`).catch(console.error);
+  }, [address, crowdloanDisabled, genesisHash]);
 
   const goToHistory = useCallback(() => {
     address && chainName && windowOpen(`/history/${address}/`).catch(console.error);
@@ -106,82 +115,77 @@ export default function CommonTasks({ address, api, assetId, genesisHash }: Prop
             />
           }
           onClick={goToSend}
-          secondaryIcon={
-            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
-          }
+          secondaryIconType='page'
           text={t<string>('Send Fund')}
+          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
           icon={
-            <QrCodeIcon sx={{ color: 'text.primary', cursor: 'pointer', fontSize: '35px', mr: '4px', mt: '9px' }} />
+            <QrCodeIcon sx={{ color: 'text.primary', cursor: 'pointer', fontSize: '35px' }} />
           }
           onClick={goToReceive}
-          secondaryIcon={
-            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
-          }
+          secondaryIconType='popup'
           text={t<string>('Receive Fund')}
+          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
+          disabled={governanceDisabled}
           icon={
             <FontAwesomeIcon
-              color={`${GOVERNANCE_CHAINS.includes(genesisHash ?? '') ? theme.palette.text.primary : theme.palette.action.disabledBackground}`}
+              color={governanceDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary}
               fontSize='28px'
               icon={faVoteYea}
             />
           }
           onClick={goToGovernance}
-          secondaryIcon={
-            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
-          }
+          secondaryIconType='page'
           text={t<string>('Governance')}
+          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
+          disabled={stakingDisabled}
           icon={
-            <FontAwesomeIcon
-              color={stakingIconColor}
-              fontSize='28px'
-              icon={faCoins}
+            <BoyIcon
+              sx={{
+                color: stakingIconColor,
+                fontSize: '35px'
+              }}
             />
           }
           onClick={goToSoloStaking}
-          secondaryIcon={
-            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
-          }
+          secondaryIconType='popup'
           text={t<string>('Solo Stake')}
+          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
+          disabled={stakingDisabled}
           icon={
-            <FontAwesomeIcon
-              color={stakingIconColor}
-              fontSize='28px'
-              icon={faCoins}
-            />
+            <PoolStakingIcon color={stakingIconColor} height={35} width={35} />
           }
           onClick={goToPoolStaking}
-          secondaryIcon={
-            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
-          }
+          secondaryIconType='popup'
           text={t<string>('Pool Stake')}
+          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
+          disabled={crowdloanDisabled}
           icon={
             <FontAwesomeIcon
-              color={`${CROWDLOANS_CHAINS.includes(genesisHash ?? '') ? theme.palette.text.primary : theme.palette.action.disabledBackground}`}
+              color={crowdloanDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary}
               flip='horizontal'
               fontSize='28px'
               icon={faPiggyBank}
             />
           }
           onClick={goToCrowdLoans}
-          secondaryIcon={
-            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
-          }
+          secondaryIconType='popup'
           text={t<string>('Crowdloans')}
+          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
@@ -194,10 +198,9 @@ export default function CommonTasks({ address, api, assetId, genesisHash }: Prop
           }
           noBorderButton
           onClick={goToHistory}
-          secondaryIcon={
-            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
-          }
+          secondaryIconType='popup'
           text={t<string>('History')}
+          theme={theme}
         />
       </Grid>
     </Grid>

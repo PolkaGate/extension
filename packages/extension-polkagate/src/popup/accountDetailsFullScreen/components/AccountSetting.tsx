@@ -14,7 +14,7 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { ActionContext } from '../../../components';
 import { useAccount, useChain, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
-import { IDENTITY_CHAINS } from '../../../util/constants';
+import { IDENTITY_CHAINS, PROXY_CHAINS } from '../../../util/constants';
 import { popupNumbers } from '..';
 import { TaskButton } from './CommonTasks';
 
@@ -23,7 +23,7 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function AccountSetting({ address, setDisplayPopup }: Props): React.ReactElement {
+export default function AccountSetting ({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -34,6 +34,8 @@ export default function AccountSetting({ address, setDisplayPopup }: Props): Rea
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
+  const identityDisable = useMemo(() => !IDENTITY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
+  const proxyDisable = useMemo(() => !PROXY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
 
   const slideIn = keyframes`
   0% {
@@ -70,12 +72,12 @@ export default function AccountSetting({ address, setDisplayPopup }: Props): Rea
   }, [address, account, setDisplayPopup]);
 
   const onManageProxies = useCallback(() => {
-    address && onAction(`/manageProxies/${address}`);
-  }, [address, onAction]);
+    address && !proxyDisable && onAction(`/manageProxies/${address}`);
+  }, [address, onAction, proxyDisable]);
 
   const onManageIdentity = useCallback(() => {
-    address && windowOpen(`/manageIdentity/${address}`).catch(console.error);
-  }, [address]);
+    address && !identityDisable && windowOpen(`/manageIdentity/${address}`).catch(console.error);
+  }, [address, identityDisable]);
 
   const toggleAccountSetting = useCallback(() => {
     setShowAccountSettings(!showAccountSettings);
@@ -96,62 +98,58 @@ export default function AccountSetting({ address, setDisplayPopup }: Props): Rea
           borderColor={borderColor}
           icon={<vaadin-icon icon='vaadin:download-alt' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
           onClick={onExportAccount}
-          secondaryIcon={
-            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
-          }
+          secondaryIconType='popup'
           text={t<string>('Export account')}
+          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
           icon={<vaadin-icon icon='vaadin:road-branch' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
           onClick={goToDeriveAcc}
-          secondaryIcon={
-            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
-          }
+          secondaryIconType='popup'
           text={t<string>('Derive new account')}
+          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
           icon={<vaadin-icon icon='vaadin:edit' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
           onClick={onRenameAccount}
-          secondaryIcon={
-            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
-          }
+          secondaryIconType='popup'
           text={t<string>('Rename')}
+          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
           icon={<vaadin-icon icon='vaadin:file-remove' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
           onClick={onForgetAccount}
-          secondaryIcon={
-            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
-          }
+          secondaryIconType='popup'
           text={t<string>('Forget account')}
+          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
-          icon={<vaadin-icon icon='vaadin:sitemap' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
+          disabled={proxyDisable}
+          icon={<vaadin-icon icon='vaadin:sitemap' style={{ height: '30px', color: `${proxyDisable ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
           onClick={onManageProxies}
-          secondaryIcon={
-            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
-          }
+          secondaryIconType='popup'
           text={t<string>('Manage proxies')}
+          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
+          disabled={identityDisable}
           icon={
             <FontAwesomeIcon
-              color={(!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))) ? theme.palette.text.disabled : theme.palette.text.primary}
+              color={!chain || identityDisable ? theme.palette.text.disabled : theme.palette.text.primary}
               fontSize={25}
               icon={faAddressCard}
             />
           }
           noBorderButton
           onClick={onManageIdentity}
-          secondaryIcon={
-            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
-          }
+          secondaryIconType='page'
           text={t<string>('Manage Identity')}
+          theme={theme}
         />
       </Grid>
     </Grid>
