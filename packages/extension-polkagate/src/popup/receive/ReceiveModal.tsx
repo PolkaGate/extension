@@ -17,7 +17,7 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function Receive({ address, setDisplayPopup }: Props): React.ReactElement {
+export default function ReceiveModal({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const api = useApi(address);
