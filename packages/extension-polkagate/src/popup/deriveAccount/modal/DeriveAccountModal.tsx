@@ -92,6 +92,47 @@ function DeriveModal({ parentAddress, setDisplayPopup }: Props): React.ReactElem
     }
   }, [onAction, stepOne]);
 
+  const CreateNewDerivedAccount = () => (
+    <>
+      <Label
+        label={t<string>('New derived account')}
+        style={{ margin: 'auto', marginBottom: '15px' }}
+      >
+        <Address
+          address={account?.address}
+          genesisHash={parentAccount?.genesisHash}
+          name={name}
+          // width={'100%'}
+          style={{ m: 0, width: '100%' }}
+        />
+      </Label>
+      <InputWithLabel
+        isError={name === null || name?.length === 0}
+        isFocused
+        label={t<string>('Choose a name for this account')}
+        onChange={onNameChange}
+        value={name ?? ''}
+      />
+      <Passwords2
+        firstPassStyle={{ marginBlock: '10px' }}
+        label={t<string>('Password for this account (more than 5 characters)')}
+        onChange={onPasswordChange}
+        // eslint-disable-next-line react/jsx-no-bind
+        onEnter={name && password ? onCreate : () => null}
+      />
+      <Grid container item sx={{ '> div': { ml: 'auto', width: '87.5%' }, bottom: 0, height: '36px', position: 'absolute' }}>
+        <ButtonWithCancel
+          _isBusy={isBusy}
+          _onClick={onCreate}
+          _onClickCancel={onBackClick}
+          cancelText={t<string>('Back')}
+          disabled={!password || !name}
+          text={t<string>('Create')}
+        />
+      </Grid>
+    </>
+  );
+
   return (
     <DraggableModal onClose={onClose} open>
       <>
@@ -108,7 +149,7 @@ function DeriveModal({ parentAddress, setDisplayPopup }: Props): React.ReactElem
         <Typography fontSize='14px' fontWeight={300} m='25px auto' textAlign='left'>
           {t<string>('A derived account inherits the recovery phrase from its parent, but has a unique derivation path.')}
         </Typography>
-        {stepOne && !account && (
+        {stepOne && !account &&
           <SelectParent
             isLocked={!!parentAddress}
             onClose={onClose}
@@ -117,47 +158,10 @@ function DeriveModal({ parentAddress, setDisplayPopup }: Props): React.ReactElem
             selectedParentAddress={selectedParentAddress}
             setSelectedParentAddress={setSelectedParentAddress}
           />
-        )}
-        {!stepOne && account && (
-          <>
-            <Label
-              label={t<string>('New derived account')}
-              style={{ margin: 'auto', marginBottom: '15px' }}
-            >
-              <Address
-                address={account.address}
-                genesisHash={parentAccount?.genesisHash}
-                name={name}
-                // width={'100%'}
-                style={{ m: 0, width: '100%' }}
-              />
-            </Label>
-            <InputWithLabel
-              isError={name === null || name?.length === 0}
-              isFocused
-              label={t<string>('Choose a name for this account')}
-              onChange={onNameChange}
-              value={name ?? ''}
-            />
-            <Passwords2
-              firstPassStyle={{ marginBlock: '10px' }}
-              label={t<string>('Password for this account (more than 5 characters)')}
-              onChange={onPasswordChange}
-              // eslint-disable-next-line react/jsx-no-bind
-              onEnter={name && password ? onCreate : () => null}
-            />
-            <Grid container item sx={{ '> div': { ml: 'auto', width: '87.5%' }, bottom: 0, height: '36px', position: 'absolute' }}>
-              <ButtonWithCancel
-                _isBusy={isBusy}
-                _onClick={onCreate}
-                _onClickCancel={onBackClick}
-                cancelText={t<string>('Back')}
-                disabled={!password || !name}
-                text={t<string>('Create')}
-              />
-            </Grid>
-          </>
-        )}
+        }
+        {!stepOne && account &&
+          <CreateNewDerivedAccount />
+        }
       </>
     </DraggableModal>
   );
