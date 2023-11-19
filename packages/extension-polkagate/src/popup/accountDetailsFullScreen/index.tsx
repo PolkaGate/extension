@@ -29,6 +29,7 @@ import LockedBalanceDisplay from './components/LockedBalanceDisplay';
 import TotalChart from './components/TotalChart';
 import LockedInReferenda from './unlock/Review';
 import ReceiveModal from '../receive/ReceiveModal';
+import HistoryModal from '../history/modal/HistoryModal';
 
 export type AssetsOnOtherChains = { totalBalance: BN, chainName: string, decimal: number, price: number | undefined, token: string };
 export const popupNumbers = {
@@ -37,7 +38,8 @@ export const popupNumbers = {
   RENAME: 3,
   EXPORT_ACCOUNT: 4,
   DERIVE_ACCOUNT: 5,
-  RECEIVE: 6
+  RECEIVE: 6,
+  HISTORY: 7
 };
 
 export interface UnlockInformationType {
@@ -266,6 +268,12 @@ export default function AccountDetails(): React.ReactElement {
       }
       {displayPopup === popupNumbers.RECEIVE &&
         <ReceiveModal
+          address={address}
+          setDisplayPopup={setDisplayPopup}
+        />
+      }
+      {displayPopup === popupNumbers.HISTORY &&
+        <HistoryModal
           address={address}
           setDisplayPopup={setDisplayPopup}
         />

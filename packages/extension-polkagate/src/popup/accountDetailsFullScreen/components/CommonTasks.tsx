@@ -98,8 +98,8 @@ export default function CommonTasks({ address, api, assetId, genesisHash, setDis
   }, [address, crowdloanDisabled, genesisHash]);
 
   const goToHistory = useCallback(() => {
-    address && chainName && windowOpen(`/history/${address}/`).catch(console.error);
-  }, [address, chainName]);
+    address && setDisplayPopup(popupNumbers.HISTORY);
+  }, [address, setDisplayPopup]);
 
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} width='275px'>
