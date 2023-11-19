@@ -16,12 +16,14 @@ import { PoolStakingIcon } from '../../../components';
 import { useChainName, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../../util/constants';
+import { popupNumbers } from '..';
 
 interface Props {
   address: string | undefined;
   assetId: number | undefined;
   genesisHash: string | null | undefined;
   api: ApiPromise | undefined;
+  setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
 interface TaskButtonProps {
@@ -54,7 +56,7 @@ export const TaskButton = ({ borderColor, disabled, icon, noBorderButton = false
   </Grid>
 );
 
-export default function CommonTasks({ address, api, assetId, genesisHash }: Props): React.ReactElement {
+export default function CommonTasks({ address, api, assetId, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chainName = useChainName(address);
@@ -72,8 +74,8 @@ export default function CommonTasks({ address, api, assetId, genesisHash }: Prop
   }, [address, assetId]);
 
   const goToReceive = useCallback(() => {
-    address && windowOpen(`/receive/${address}/`).catch(console.error);
-  }, [address]);
+    address && setDisplayPopup(popupNumbers.RECEIVE);
+  }, [address, setDisplayPopup]);
 
   const goToGovernance = useCallback(() => {
     address && genesisHash && !governanceDisabled && windowOpen(`/governance/${address}/referenda`).catch(console.error);
