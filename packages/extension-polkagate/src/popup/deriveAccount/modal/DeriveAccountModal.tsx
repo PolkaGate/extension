@@ -7,12 +7,12 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { AccountNamePasswordCreation, ActionContext, Address, ButtonWithCancel, InputWithLabel, Label, NewAddress } from '../../../components';
+import { ActionContext, Address, ButtonWithCancel, InputWithLabel, Label } from '../../../components';
 import { useAccount, useTranslation } from '../../../hooks';
 import { deriveAccount } from '../../../messaging';
+import Passwords2 from '../../createAccountFullScreen/components/Passwords2';
 import { DraggableModal } from '../../governance/components/DraggableModal';
 import SelectParent from './SelectParent';
-import Passwords2 from '../../createAccountFullScreen/components/Passwords2';
 
 interface Props {
   parentAddress?: string | undefined;
@@ -32,7 +32,7 @@ interface ConfirmState {
   parentPassword: string;
 }
 
-function DeriveModal({ parentAddress, setDisplayPopup }: Props): React.ReactElement<Props> {
+function DeriveModal ({ parentAddress, setDisplayPopup }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();
@@ -40,7 +40,7 @@ function DeriveModal({ parentAddress, setDisplayPopup }: Props): React.ReactElem
   const [isBusy, setIsBusy] = useState(false);
   const [account, setAccount] = useState<null | PathState>(null);
   const [name, setName] = useState<string | null>(null);
-  const [password, setPassword] = useState<string>();
+  const [password, setPassword] = useState<string | null>(null);
   const [parentPassword, setParentPassword] = useState<string | null>(null);
   const [stepOne, setStep] = useState<boolean>(true);
   const [selectedParentAddress, setSelectedParentAddress] = useState<string | undefined>(parentAddress);
@@ -102,7 +102,6 @@ function DeriveModal({ parentAddress, setDisplayPopup }: Props): React.ReactElem
           address={account?.address}
           genesisHash={parentAccount?.genesisHash}
           name={name}
-          // width={'100%'}
           style={{ m: 0, width: '100%' }}
         />
       </Label>
