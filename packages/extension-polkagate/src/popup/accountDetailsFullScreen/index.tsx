@@ -14,7 +14,7 @@ import { useAccount, useApi, useBalances, useChain, useChainName, useDecimal, us
 import { Lock } from '../../hooks/useAccountLocks';
 import { windowOpen } from '../../messaging';
 import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
-import { amountToHuman } from '../../util/utils';
+import { amountToHuman, isHexToBn } from '../../util/utils';
 import { getValue } from '../account/util';
 import DeriveAccountModal from '../deriveAccount/modal/DeriveAccountModal';
 import ExportAccountModal from '../export/ExportAccountModal';
@@ -104,9 +104,11 @@ export default function AccountDetails(): React.ReactElement {
     worker.onmessage = (e: MessageEvent<string>) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 
-      const fetchedBalances = JSON.parse(e.data) as { balances: number, chain: string, decimal: number, price: number, token: string }[];
+      const fetchedBalances = JSON.parse(e.data) as { balances: string, chain: string, decimal: number, price: number, token: string }[];
 
-      setAssetsOnOtherChains(fetchedBalances.map((asset) => ({ chainName: asset.chain, decimal: Number(asset.decimal), price: asset.price, token: asset.token, totalBalance: new BN(asset.balances) })));
+      console.log('fetchedBalances:', fetchedBalances)
+
+      setAssetsOnOtherChains(fetchedBalances.map((asset) => ({ chainName: asset.chain, decimal: Number(asset.decimal), price: asset.price, token: asset.token, totalBalance: isHexToBn(asset.balances) })));
 
       worker.terminate();
     };

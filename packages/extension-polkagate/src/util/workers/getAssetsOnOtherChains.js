@@ -174,7 +174,7 @@ async function getAssetsOnOtherChains (accountAddress) {
       .then((assetBalance) => {
         if (!assetBalance.isZero()) {
           results.push({
-            balances: Number(assetBalance),
+            balances: String(assetBalance),
             chain: sanitizeText(chain.name),
             decimal: getDecimal(chain.genesisHash),
             token: getToken(chain.genesisHash)

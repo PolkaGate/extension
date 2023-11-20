@@ -124,6 +124,7 @@ export default function TotalChart({ assetsOnOtherChains, isDarkTheme, nativeAss
       data: {
         datasets: [{
           backgroundColor: otherAssetsToShow.color,
+          borderColor,
           borderWidth: 0.9,
           data: otherAssetsToShow.price,
           hoverOffset: 1
