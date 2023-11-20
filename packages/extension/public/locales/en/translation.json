@@ -1034,6 +1034,7 @@
   "You've already included this proxy.": "",
   "Step 1 of 3: Choose trusted friends": "",
   "Step 2 of 3: Set details": "",
+<<<<<<< Updated upstream
   "Unlock date unknown": "",
   "Polkagate is a browser extension that lets you use the Polkadot network and decentralized apps. We respect your privacy and do not collect or store any of your personal data. This is how we protect your privacy:": "",
   "We do not collect your clicks, browsing history, keys, addresses, transactions, or any other data.": "",
@@ -1043,4 +1044,11 @@
   "Set a new AI generated background": "",
   "Click to set an AI-generated background.": "",
   "AI Background": ""
+=======
+  "Assets on other chains": "",
+  "Account setting": "",
+  "Most common tasks": "",
+  "Receive Fund": "",
+  "Account Details": ""
+>>>>>>> Stashed changes
 }
