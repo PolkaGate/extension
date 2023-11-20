@@ -59,46 +59,46 @@ const CHAINS_TO_CHECK = [{
 }
 ];
 
-function getPoolBalance (api, address, balances, connections) {
-  return api.query.nominationPools.poolMembers(address).then((res) => {
-    const member = res && res.unwrapOr(undefined);
+async function getPoolBalance (api, address, availableBalance, connections) {
+  const response = await api.query.nominationPools.poolMembers(address);
+  // .then((res) => {
+  const member = response && response.unwrapOr(undefined);
 
-    if (!member) {
-      connections.forEach((con) => con.wsProvider.disconnect().catch(handleError));
+  if (!member) {
+    connections.forEach((con) => con.wsProvider.disconnect().catch(handleError));
 
-      return balances.freeBalance.add(balances.reservedBalance);
-    }
+    return availableBalance;
+  }
 
-    const poolId = member.poolId;
-    const accounts = poolId && getPoolAccounts(api, poolId);
+  const poolId = member.poolId;
+  const accounts = poolId && getPoolAccounts(api, poolId);
 
-    if (!accounts) {
-      connections.forEach((con) => con.wsProvider.disconnect().catch(handleError));
+  if (!accounts) {
+    connections.forEach((con) => con.wsProvider.disconnect().catch(handleError));
 
-      return balances.freeBalance.add(balances.reservedBalance);
-    }
+    return availableBalance;
+  }
 
-    return Promise.all([
-      api.query.nominationPools.bondedPools(poolId),
-      api.derive.staking.account(accounts.stashId),
-      api.call.nominationPoolsApi.pendingRewards(address)
-    ]).then(([bondedPool, stashIdAccount, myClaimable]) => {
-      const active = member.points.isZero()
-        ? BN_ZERO
-        : (new BN(String(member.points)).mul(new BN(String(stashIdAccount.stakingLedger.active)))).div(new BN(String(bondedPool.unwrap()?.points ?? BN_ONE)));
+  const [bondedPool, stashIdAccount, myClaimable] = await Promise.all([
+    api.query.nominationPools.bondedPools(poolId),
+    api.derive.staking.account(accounts.stashId),
+    api.call.nominationPoolsApi.pendingRewards(address)
+  ]);
 
-      const rewards = myClaimable;
-      let unlockingValue = BN_ZERO;
+  const active = member.points.isZero()
+    ? BN_ZERO
+    : (new BN(String(member.points)).mul(new BN(String(stashIdAccount.stakingLedger.active)))).div(new BN(String(bondedPool.unwrap()?.points ?? BN_ONE)));
 
-      member?.unbondingEras?.forEach((value) => {
-        unlockingValue = unlockingValue.add(value);
-      });
+  const rewards = myClaimable;
+  let unlockingValue = BN_ZERO;
 
-      connections.forEach((con) => con.wsProvider.disconnect().catch(handleError));
+  member?.unbondingEras?.forEach((value) => {
+    unlockingValue = unlockingValue.add(value);
+  });
 
-      return balances.freeBalance.add(balances.reservedBalance).add(active.add(rewards).add(unlockingValue));
-    }).catch(console.error);
-  }).catch(console.error);
+  connections.forEach((con) => con.wsProvider.disconnect().catch(handleError));
+
+  return availableBalance.add(active.add(rewards).add(unlockingValue));
 }
 
 function handleError (error) {
@@ -124,7 +124,45 @@ function getDecimal (genesisHash) {
   return network?.decimals?.length ? network.decimals[0] : undefined;
 }
 
-function getAssetsOnOtherChains (accountAddress) {
+async function setupConnections (chain, accountAddress, allEndpoints) {
+  const chainEndpoints = allEndpoints
+    .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === chain.toLowerCase())
+    .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'));
+
+  console.log(`Connecting to endpoints for ${chain}`);
+
+  const connections = chainEndpoints.map((endpoint) => {
+    const wsProvider = new WsProvider(endpoint.value);
+    const connection = ApiPromise.create({
+      provider: wsProvider
+    });
+
+    return {
+      connection,
+      wsProvider
+    };
+  });
+
+  // Wait for the fastest connection to resolve
+  const fastestApi = await Promise.any(connections.map((con) => con.connection));
+
+  if (fastestApi.isConnected && fastestApi.derive.balances) {
+    const balances = await fastestApi.derive.balances.all(accountAddress);
+    const availableBalance = balances.freeBalance.add(balances.reservedBalance);
+
+    if (fastestApi.query.nominationPools) {
+      const total = await getPoolBalance(fastestApi, accountAddress, availableBalance, connections);
+
+      return total;
+    }
+
+    connections.forEach((con) => con.wsProvider.disconnect().catch(handleError));
+
+    return availableBalance;
+  }
+}
+
+async function getAssetsOnOtherChains (accountAddress) {
   console.log(`get assets on other chains called for ${accountAddress}`);
   const allEndpoints = createWsEndpoints();
 
@@ -148,77 +186,42 @@ function getAssetsOnOtherChains (accountAddress) {
       });
   });
 
-  // Wait for all promises to resolve
-  return Promise.all(promises)
-    .then(() => {
-      const sanitizeChainNames = CHAINS_TO_CHECK.map((chain) => sanitizeText(chain.name));
+  await Promise.all(promises);
 
-      return getPrices(sanitizeChainNames).then((prices) => {
-        sanitizeChainNames.forEach((chainName) => {
-          const index = results.findIndex((result) => result.chain === chainName);
+  const chainsToFetchPrice = results.map((res) => res.chain);
+  const prices = await getPrices(chainsToFetchPrice);
 
-          if (index >= 0) {
-            results[index].price = prices.prices[chainName.toLowerCase()]?.usd ?? 0;
-          }
-        });
+  chainsToFetchPrice.forEach((chainName) => {
+    const index = results.findIndex((result) => result.chain === chainName);
 
-        return results;
-      });
-    })
-    .catch((error) => {
-      console.error('Error fetching balances:', error);
-
-      return results; // Return whatever results were collected before the error
-    });
-}
-
-function setupConnections (chain, accountAddress, allEndpoints) {
-  const chainEndpoints = allEndpoints
-    .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === chain.toLowerCase())
-    .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'));
-
-  console.log(`Connecting to endpoints for ${chain}`);
-
-  const connections = chainEndpoints.map((endpoint) => {
-    const wsProvider = new WsProvider(endpoint.value);
-    const connection = ApiPromise.create({
-      provider: wsProvider
-    });
-
-    return {
-      connection,
-      wsProvider
-    };
+    if (index >= 0) {
+      results[index].price = prices.prices[chainName.toLowerCase()]?.usd ?? 0;
+    }
   });
 
-  // Wait for the fastest connection to resolve
-  return Promise.any(connections.map((con) => con.connection))
-    .then((fastApi) => fastApi.derive.balances && fastApi.derive.balances.all(accountAddress)
-      .then((balances) => {
-        if (fastApi && !fastApi.query.nominationPools) {
-          connections.forEach((con) => con.wsProvider.disconnect().catch(handleError));
-
-          return balances.freeBalance.add(balances.reservedBalance);
-        } else if (fastApi && fastApi.query.nominationPools) {
-          const total = getPoolBalance(fastApi, accountAddress, balances, connections);
-
-          return total;
-        }
-      }))
-    .catch((error) => {
-      handleError(error);
-
-      return null; // Return null or a placeholder value to indicate failure
-    });
+  return results;
 }
 
-onmessage = (e) => {
+onmessage = async (e) => {
   const {
     accountAddress
   } = e.data;
 
-  // eslint-disable-next-line no-void
-  void getAssetsOnOtherChains(accountAddress).then((assetsBalances) => {
-    postMessage(JSON.stringify(assetsBalances));
-  });
+  let tryCount = 1;
+
+  console.log(`tryCount fetch assets on other chains: ${tryCount}`);
+
+  while (tryCount >= 1 && tryCount <= 5) {
+    tryCount++;
+
+    try {
+      // eslint-disable-next-line no-void
+      const assetsBalances = await getAssetsOnOtherChains(accountAddress);
+
+      postMessage(JSON.stringify(assetsBalances));
+      tryCount = 0;
+    } catch (error) {
+      console.error('Error while fetching assets on other chains, times to try', error, tryCount);
+    }
+  }
 };
