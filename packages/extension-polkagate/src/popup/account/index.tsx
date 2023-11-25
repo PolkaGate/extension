@@ -20,7 +20,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { stakingClose } from '../../assets/icons';
 import { ActionContext, Assets, Chain, HorizontalMenuItem, Identity, Motion } from '../../components';
-import { useApi, useBalances, useChain, useChainName, useFormatted, useGenesisHashOptions, useMyAccountIdentity, useTranslation } from '../../hooks';
+import { useApi, useBalances, useChain, useChainInfo, useChainName, useFormatted, useGenesisHashOptions, useMyAccountIdentity, useTranslation } from '../../hooks';
 import { tieAccount, windowOpen } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
@@ -44,6 +44,9 @@ export default function AccountDetails(): React.ReactElement {
   const chain = useChain(address);
   const chainName = useChainName(address);
 
+  const chainInformation = useChainInfo(address);
+
+  console.log('chainInformation:', chainInformation);
   const genesisOptions = useGenesisHashOptions();
 
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
