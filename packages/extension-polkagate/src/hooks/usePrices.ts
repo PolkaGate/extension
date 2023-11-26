@@ -11,19 +11,20 @@ import useChainNames from './useChainNames';
 /**
  * @description
  * get all referred chains token prices and save in local storage
+ * @returns null: means not savedPrice found, happens when the first account is created
  */
-export default function usePrices(): Prices | undefined {
+export default function usePrices(): Prices | undefined | null {
   const chainNames = useChainNames() || [];
 
-  const [prices, setPrices] = useState<Prices>();
+  const [savedPrice, setSavedPrice] = useState<Prices | null>();
   const [newPrices, setNewPrices] = useState<Prices>();
 
   useEffect(() => {
     async function fetchPrices() {
       try {
-        const prices = await getPrices(chainNames);
+        const fetchedPrices = await getPrices(chainNames);
 
-        setNewPrices(prices);
+        setNewPrices(fetchedPrices);
       } catch (error) {
         console.error(error);
       }
@@ -48,11 +49,13 @@ export default function usePrices(): Prices | undefined {
 
       if (localSavedPrices) {
         if (Date.now() - localSavedPrices.date < MILLISECONDS_TO_UPDATE) {
-          setPrices(localSavedPrices);
+          setSavedPrice(localSavedPrices);
         }
+      } else {
+        setSavedPrice(null);
       }
     });
   }, []);
 
-  return newPrices || prices;
+  return newPrices || savedPrice;
 }
