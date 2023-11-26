@@ -20,6 +20,8 @@ import DeriveAccountModal from '../deriveAccount/modal/DeriveAccountModal';
 import ExportAccountModal from '../export/ExportAccountModal';
 import ForgetAccountModal from '../forgetAccount/ForgetAccountModal';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
+import HistoryModal from '../history/modal/HistoryModal';
+import ReceiveModal from '../receive/ReceiveModal';
 import RenameModal from '../rename/RenameModal';
 import AccountInformation from './components/AccountInformation';
 import AccountSetting from './components/AccountSetting';
@@ -28,8 +30,7 @@ import DisplayBalance from './components/DisplayBalance';
 import LockedBalanceDisplay from './components/LockedBalanceDisplay';
 import TotalChart from './components/TotalChart';
 import LockedInReferenda from './unlock/Review';
-import ReceiveModal from '../receive/ReceiveModal';
-import HistoryModal from '../history/modal/HistoryModal';
+import ExternalLinks from './components/ExternalLinks';
 
 export type AssetsOnOtherChains = { totalBalance: BN, chainName: string, decimal: number, price: number | undefined, token: string };
 export const popupNumbers = {
@@ -81,6 +82,7 @@ export default function AccountDetails(): React.ReactElement {
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
   const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
+  const supportStakings = useMemo(() => STAKING_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
 
   const nativeAssetPrice = useMemo(() => {
     if (!price || !balance) {
@@ -110,7 +112,7 @@ export default function AccountDetails(): React.ReactElement {
 
       setAssetsOnOtherChains(fetchedBalances.map((asset) => ({ chainName: asset.chain, decimal: Number(asset.decimal), price: asset.price, token: asset.token, totalBalance: isHexToBn(asset.balances) })));
 
-      worker.terminate();
+      // worker.terminate();
     };
   }, []);
 
@@ -165,26 +167,28 @@ export default function AccountDetails(): React.ReactElement {
                 title={t<string>('Transferable')}
                 token={token}
               />
-              <DisplayBalance
-                amount={balance?.soloTotal}
-                decimal={decimal}
-                isDarkTheme={isDarkTheme}
-                onClick={goToSoloStaking}
-                price={price?.amount}
-                theme={theme}
-                title={t<string>('Solo Stake')}
-                token={token}
-              />
-              <DisplayBalance
-                amount={balance?.pooledBalance}
-                decimal={decimal}
-                isDarkTheme={isDarkTheme}
-                onClick={goToPoolStaking}
-                price={price?.amount}
-                theme={theme}
-                title={t<string>('Pool Stake')}
-                token={token}
-              />
+              {supportStakings &&
+                <DisplayBalance
+                  amount={balance?.soloTotal}
+                  decimal={decimal}
+                  isDarkTheme={isDarkTheme}
+                  onClick={goToSoloStaking}
+                  price={price?.amount}
+                  theme={theme}
+                  title={t<string>('Solo Stake')}
+                  token={token}
+                />}
+              {supportStakings &&
+                <DisplayBalance
+                  amount={balance?.pooledBalance}
+                  decimal={decimal}
+                  isDarkTheme={isDarkTheme}
+                  onClick={goToPoolStaking}
+                  price={price?.amount}
+                  theme={theme}
+                  title={t<string>('Pool Stake')}
+                  token={token}
+                />}
               {supportGov &&
                 <LockedBalanceDisplay
                   address={address}
@@ -228,6 +232,9 @@ export default function AccountDetails(): React.ReactElement {
               <AccountSetting
                 address={address}
                 setDisplayPopup={setDisplayPopup}
+              />
+              <ExternalLinks
+                address={address}
               />
             </Grid>
           </Grid>

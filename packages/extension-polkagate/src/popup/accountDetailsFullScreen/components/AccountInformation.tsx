@@ -273,7 +273,7 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
           </Grid>
         </Grid>
       </Grid>
-      {otherAssetsToShow &&
+      {otherAssetsToShow && otherAssetsToShow.length > 0 &&
         <>
           <OtherAssets
             assetsOnOtherChains={otherAssetsToShow}

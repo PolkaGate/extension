@@ -104,10 +104,10 @@ export default function TotalChart({ assetsOnOtherChains, isDarkTheme, nativeAss
   }, [otherAssetsToShow]);
 
   const allChainTotalBalance = useMemo(() => {
-    if (nativeAssetPrice === undefined) {
+    if (nativeAssetPrice === undefined && otherAssetsToShow.price.length === 0) {
       return undefined;
     } else if (otherAssetsToShow.price.length === 0) {
-      return nFormatter(nativeAssetPrice, 2);
+      return nFormatter(nativeAssetPrice ?? 0, 2);
     } else {
       let totalPrice = 0;
 
@@ -117,7 +117,7 @@ export default function TotalChart({ assetsOnOtherChains, isDarkTheme, nativeAss
 
       return nFormatter(totalPrice, 2);
     }
-  }, [nativeAssetPrice, otherAssetsToShow.price]);
+  }, [nativeAssetPrice, otherAssetsToShow]);
 
   useEffect(() => {
     const chartInstance = new Chart(chartRef.current, {
@@ -153,7 +153,7 @@ export default function TotalChart({ assetsOnOtherChains, isDarkTheme, nativeAss
     return () => {
       chartInstance.destroy();
     };
-  }, [otherAssetsToShow.price, otherAssetsToShow.price.length, otherAssetsToShow.color, otherAssetsToShow.color.length, otherAssetsToShow.token]);
+  }, [borderColor, otherAssetsToShow.price, otherAssetsToShow.price.length, otherAssetsToShow.color, otherAssetsToShow.color.length, otherAssetsToShow.token]);
 
   return (
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: '185px', p: '15px', width: '275px' }}>
