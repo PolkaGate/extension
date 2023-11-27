@@ -1,5 +1,5 @@
 {
-  "Version": 0.11,
+  "Version": 0.12,
   "Polkadot": {
     "color": "#e6007a",
     "name": "Polkadot",
@@ -131,6 +131,7 @@
     ]
   },
   "Westmint": {
+    "color": "#da68a7",
     "name": "Westmint",
     "prefix": 42,
     "genesishash": "0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9",
@@ -1956,6 +1957,7 @@
     ]
   },
   "Ternoa": {
+    "color": "#d622ff",
     "name": "Ternoa",
     "prefix": 42,
     "genesishash": "0x6859c81ca95ef624c9dfe4dc6e3381c33e5d6509e35e147092bfbc780f777c4e",
@@ -1977,6 +1979,7 @@
     ]
   },
   "TernoaAlphanet": {
+    "color": "#d622ff",
     "name": "Ternoa Alphanet",
     "prefix": 42,
     "genesishash": "0x18bcdb75a0bba577b084878db2dc2546eb21504eaad4b564bb7d47f9d02b6ace",
