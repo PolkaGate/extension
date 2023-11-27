@@ -259,7 +259,7 @@ export default function Index(): React.ReactElement {
               </Grid>
             </Grid>
             {label === 'Unstaking' &&
-              <Grid alignItems='center' container item onClick={_toggleShowUnlockings} sx={{ ml: '25px' }} xs={1}>
+              <Grid alignItems='center' container item onClick={toBeReleased?.length ? _toggleShowUnlockings : noop} sx={{ ml: '25px' }} xs={1}>
                 <ArrowForwardIosIcon
                   sx={{
                     color: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',
@@ -322,7 +322,7 @@ export default function Index(): React.ReactElement {
             value={staked}
           />
           <Row
-            label={t('Paid Rewards')}
+            label={t('Rewards Paid')}
             link1Text={t('Chart')}
             link2Text={t('Pending')}
             onLink1={onReceivedRewards}
@@ -338,14 +338,14 @@ export default function Index(): React.ReactElement {
           <Row
             label={t('Unstaking')}
             link1Text={t('Restake')}
-            onLink1={unlockingAmount && !unlockingAmount?.isZero() && onRestake}
+            onLink1={unlockingAmount && !unlockingAmount?.isZero() ? onRestake : noop}
             showDivider={canStake}
             value={unlockingAmount}
 
           />
           {canStake &&
             <Row
-              label={t('Available to stake')}
+              label={t('Available to Stake')}
               showDivider={false}
               value={availableToSoloStake}
             />
