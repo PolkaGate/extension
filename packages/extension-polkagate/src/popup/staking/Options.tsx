@@ -30,17 +30,17 @@ export default function Options({ setShowStakingOptions, showStakingOptions }: P
   useUnSupportedNetwork(address, STAKING_CHAINS, () => setShowStakingOptions(false));
   const stakingConsts = useStakingConsts(address);
   const poolConsts = usePoolConsts(address);
-  const nominatorInfo = useMinToReceiveRewardsInSolo(address);
+  const minimumActiveStake = useMinToReceiveRewardsInSolo(address);
 
   const [minToReceiveRewardsInSolo, setMinToReceiveRewardsInSolo] = useState<BN | undefined>();
 
   useEffect(() => {
-    if (!stakingConsts || !nominatorInfo?.minToGetRewards) { return; }
+    if (!stakingConsts || !minimumActiveStake) { return; }
 
-    const minSolo = bnMax(new BN(stakingConsts.minNominatorBond.toString()), new BN(stakingConsts?.existentialDeposit.toString()), new BN(nominatorInfo.minToGetRewards.toString()));
+    const minSolo = bnMax(new BN(stakingConsts.minNominatorBond.toString()), new BN(stakingConsts?.existentialDeposit.toString()), minimumActiveStake);
 
     setMinToReceiveRewardsInSolo(minSolo);
-  }, [nominatorInfo?.minToGetRewards, stakingConsts]);
+  }, [minimumActiveStake, stakingConsts]);
 
   const goToPoolStaking = useCallback(() => {
     address && history.push({

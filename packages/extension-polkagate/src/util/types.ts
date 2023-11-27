@@ -67,11 +67,6 @@ export interface NominatorInfo {
   isInList: boolean // is Nominator in top 22500 elected
   eraIndex: number;
 }
-export interface MinToReceiveRewardsInSolo {
-  minToGetRewards: BN;
-  eraIndex: number;
-  token: string;
-}
 
 export interface ValidatorInfo extends DeriveStakingQuery {
   accountInfo?: DeriveAccountInfo;
