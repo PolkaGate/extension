@@ -150,7 +150,7 @@ export default function PendingRewards(): React.ReactElement {
     setShowReview(true);
   }, []);
 
-  const TABLE_HEIGHT = window.innerHeight - 215;
+  const TABLE_HEIGHT = window.innerHeight - 300;
   const SKELETON_HEIGHT = 25;
 
   const LabelBalance = ({ balance, label }: { label: string, balance: BN }) => (
@@ -182,6 +182,11 @@ export default function PendingRewards(): React.ReactElement {
           total: 2
         }}
       />
+      <Grid container item sx={{ fontSize: '13px', pb: '10px', textAlign: 'center' }}>
+        <Typography sx={{ fontSize: '14px', fontWeight: 400 }}>
+          {t('Rewards are typically paid out by validators on a regular basis. However, if not paid within the determined period, they will expire and be forfeited.')}
+        </Typography>
+      </Grid>
       <Grid alignContent='flex-start' alignItems='center' container item sx={{ borderTop: 1, borderLeft: 1, borderRight: 1, borderTopRightRadius: '5px', borderTopLeftRadius: '5px', borderColor: 'primary.main', p: '10px 5px 10px', mx: '2%', width: '96%' }}>
         <Grid item sx={{ fontSize: '13px' }} xs={4.75}>
           <Checkbox2

@@ -1042,5 +1042,15 @@
   "If you have any questions, please contact us at polkagate@outlook.com or follow us on our social media accounts.": "",
   "Set a new AI generated background": "",
   "Click to set an AI-generated background.": "",
-  "AI Background": ""
+  "AI Background": "",
+  "Pending": "",
+  "Paid chart": "",
+  "Validator": "",
+  "No pending rewards found!": "",
+  "Checking pending rewards in the last {{erasHistoric}} eras ...": "",
+  "Selected": "",
+  "Pending Rewards": "",
+  "Payout": "",
+  "Usually, validators pay out the pending rewards themselves, but you can initiate the payout yourself if you prefer.": "",
+  "Received Rewards": ""
 }

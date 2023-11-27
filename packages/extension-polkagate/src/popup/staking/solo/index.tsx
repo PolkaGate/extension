@@ -322,11 +322,11 @@ export default function Index(): React.ReactElement {
             value={staked}
           />
           <Row
-            label={t('Rewards')}
-            link1Text={t('Pending')}
-            link2Text={t('Paid chart')}
-            onLink1={onPendingRewards}
-            onLink2={onReceivedRewards}
+            label={t('Paid Rewards')}
+            link1Text={t('Chart')}
+            link2Text={t('Pending')}
+            onLink1={onReceivedRewards}
+            onLink2={onPendingRewards}
             value={rewards}
           />
           <Row
