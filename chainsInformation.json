@@ -1,6 +1,7 @@
 {
   "Version": 0.11,
   "Polkadot": {
+    "color": "#e6007a",
     "name": "Polkadot",
     "prefix": 0,
     "genesishash": "0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3",
@@ -45,6 +46,7 @@
     ]
   },
   "Kusama": {
+    "color": "#000000",
     "name": "Kusama",
     "prefix": 2,
     "genesishash": "0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe",
@@ -93,6 +95,7 @@
     ]
   },
   "Westend": {
+    "color": "#da68a7",
     "name": "Westend",
     "prefix": 42,
     "genesishash": "0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e",
@@ -161,6 +164,7 @@
     ]
   },
   "KusamaAssetHub": {
+    "color": "#113911",
     "name": "Kusama Asset Hub",
     "prefix": 2,
     "genesishash": "0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a",
@@ -255,6 +259,7 @@
     ]
   },
   "Karura": {
+    "color": "#ff4c3b",
     "name": "Karura",
     "prefix": 8,
     "genesishash": "0xbaf5aabe40646d11f0ee8abbdc64f4a4b7674925cba08e4a05ff9ebed6e2126b",
@@ -482,6 +487,7 @@
     ]
   },
   "BifrostKusama": {
+    "color": "#5a25f0",
     "name": "Bifrost",
     "prefix": 6,
     "genesishash": "0x9f28c6a68e0fc9646eff64935684f6eeeece527e37bbe1f213d22caa1d9d6bed",
@@ -610,6 +616,7 @@
     ]
   },
   "Edgeware": {
+    "color": "#111111",
     "name": "Edgeware",
     "prefix": 7,
     "genesishash": "0x742a2ca70c2fda6cee4f8df98d64c4c670a052d9568058982dad9d5a7a135c5b",
@@ -638,6 +645,7 @@
     ]
   },
   "Basilisk": {
+    "color": "#49E49F",
     "name": "Basilisk",
     "prefix": 10041,
     "genesishash": "0xa85cfb9b9fd4d622a5b28289a02347af987d8f73fa3108450e2b4a11c1ce5755",
@@ -701,6 +709,7 @@
     ]
   },
   "Khala": {
+    "color": "#03f3f3",
     "name": "Khala",
     "prefix": 30,
     "genesishash": "0xd43540ba6d3eb4897c28a77d48cb5b729fea37603cbbfc7a86a73b72adb3be8d",
@@ -891,6 +900,7 @@
     ]
   },
   "Acala": {
+    "color": "#645AFF",
     "name": "Acala",
     "prefix": 10,
     "genesishash": "0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c",
@@ -1041,6 +1051,7 @@
     ]
   },
   "Astar": {
+    "color": "#1b6dc1d9",
     "name": "Astar",
     "prefix": 5,
     "genesishash": "0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6",
@@ -1208,6 +1219,7 @@
     ]
   },
   "Parallel": {
+    "color": "#ef18ac",
     "name": "Parallel",
     "prefix": 172,
     "genesishash": "0xe61a41c53f5dcd0beb09df93b34402aada44cb05117b71059cce40a2723a4e97",
@@ -1414,6 +1426,7 @@
     ]
   },
   "PolkadotAssetHub": {
+    "color": "#86e62a",
     "name": "Polkadot Asset Hub",
     "prefix": 0,
     "genesishash": "0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f",
@@ -1472,6 +1485,7 @@
     ]
   },
   "Picasso": {
+    "color": "#000000",
     "name": "Picasso",
     "prefix": 49,
     "genesishash": "0x6811a339673c9daa897944dcdac99c6e2939cc88245ed21951a0a3c9a2be75bc",
@@ -1519,6 +1533,7 @@
     ]
   },
   "Zeitgeist": {
+    "color": "linear-gradient(180deg, rgba(32,90,172,1) 0%, rgba(26,72,138,1) 50%, rgba(13,36,69,1) 100%)",
     "name": "Zeitgeist",
     "prefix": 73,
     "genesishash": "0x1bf2a2ecb4a868de66ea8610f2ce7c8c43706561b6476031315f6640fe38e060",
@@ -1543,6 +1558,7 @@
     ]
   },
   "Centrifuge": {
+    "color": "#fcc367",
     "name": "Centrifuge",
     "prefix": 36,
     "genesishash": "0xb3db41421702df9a7fcac62b53ffeac85f7853cc4e689e0b93aeb3db18c09d82",
@@ -1567,6 +1583,7 @@
     ]
   },
   "HydraDX": {
+    "color": "#f653a2",
     "name": "HydraDX",
     "prefix": 63,
     "genesishash": "0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d",
@@ -1718,6 +1735,7 @@
     ]
   },
   "Nodle": {
+    "color": "#1ab394",
     "name": "Nodle",
     "prefix": 37,
     "genesishash": "0x97da7ede98d7bad4e36b4d734b6055425a3be036da2a332ea5a7037656427a21",
@@ -1742,6 +1760,7 @@
     ]
   },
   "Phala": {
+    "color": "#c6fa4c",
     "name": "Phala",
     "prefix": 30,
     "genesishash": "0x1bb969d85965e4bb5a651abbedf21a54b6b31a21f66b5401cc3f1e286268d736",
@@ -1770,6 +1789,7 @@
     ]
   },
   "ComposableFinance": {
+    "color": "#C90E8A",
     "name": "Composable Finance",
     "prefix": 50,
     "genesishash": "0xdaab8df776eb52ec604a5df5d388bb62a050a0aaec4556a64265b9d42755552d",
@@ -1813,6 +1833,7 @@
     ]
   },
   "BifrostPolkadot": {
+    "color": "#5a25f0",
     "name": "Bifrost Polkadot",
     "prefix": 6,
     "genesishash": "0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931ddad144059b1eb884e5b",
@@ -1894,6 +1915,7 @@
     ]
   },
   "PolymeshTestnet": {
+    "color": "#43195B",
     "name": "Polymesh",
     "prefix": 42,
     "genesishash": "0x3c3183f6d701500766ff7d147b79c4f10014a095eaaa98e960dcef6b3ead50ee",
@@ -1914,6 +1936,7 @@
     ]
   },
   "Rococo": {
+    "color": "#6f36dc",
     "name": "Rococo",
     "prefix": 42,
     "genesishash": "0x6408de7737c59c238890533af25896a2c20608d8b380bb01029acb392781063e",
@@ -1974,6 +1997,7 @@
     ]
   },
   "Polymesh": {
+    "color": "linear-gradient(197deg, #FF2E72, #4A125E)",
     "name": "Polymesh",
     "prefix": 12,
     "genesishash": "0x6fbd74e5e1d0a61d52ccfe9d4adaed16dd3a7caa37c6bc4d0c2fa12e8b2f4063",
@@ -1994,6 +2018,7 @@
     ]
   },
   "Pendulum": {
+    "color": "#49E2FD",
     "name": "Pendulum",
     "prefix": 56,
     "genesishash": "0x5d3c298622d5634ed019bf61ea4b71655030015bde9beb0d6a24743714462c86",
@@ -2030,6 +2055,7 @@
     ]
   },
   "Bittensor": {
+    "color": "#252525",
     "name": "Bittensor",
     "prefix": 42,
     "genesishash": "0x2f0555cc76fc2840a25a6ea3b9637146806f1f44b090c175ffde2a7e5ab36c03",
@@ -2050,6 +2076,7 @@
     ]
   },
   "Ajuna": {
+    "color": "#161212",
     "name": "Ajuna",
     "prefix": 1328,
     "genesishash": "0xe358eb1d11b31255a286c12e44fe6780b7edb171d657905a97e39f71d9c6c3ee",
@@ -2073,6 +2100,7 @@
     ]
   },
   "PolkadotBridgeHub": {
+    "color": "#86e62a",
     "name": "Polkadot Bridge Hub",
     "prefix": 0,
     "genesishash": "0xdcf691b5a3fbe24adc99ddc959c0561b973e329b1aef4c4b22e7bb2ddecb4464",
@@ -2105,6 +2133,7 @@
     ]
   },
   "KusamaBridgeHub": {
+    "color": "#113911",
     "name": "Kusama Bridge Hub",
     "prefix": 2,
     "genesishash": "0x00dcb981df86429de8bbacf9803401f09485366c44efbf53af9ecfab03adc7e5",
@@ -2137,6 +2166,7 @@
     ]
   },
   "PolkadotCollectives": {
+    "color": "#e6777a",
     "name": "Polkadot Collectives",
     "prefix": 0,
     "genesishash": "0x46ee89aa2eedd13e988962630ec9fb7565964cf5023bb351f2b6b25c1b68b0b2",
