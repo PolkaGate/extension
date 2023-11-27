@@ -28,8 +28,12 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
   // window.localStorage.setItem('last_url', JSON.stringify({ time: Date.now(), url: window.location.hash }));
 
   const allYouHaveAmount = useMemo((): number | undefined => {
-    if (!accounts) {
+    if (!accounts || parsedPrices === undefined) {
       return undefined;
+    }
+
+    if (parsedPrices === null) {
+      return 0;
     }
 
     let value = 0;
@@ -59,7 +63,7 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
     });
 
     return value;
-  }, [accounts, parsedPrices?.prices]);
+  }, [accounts, parsedPrices]);
 
   const onHideClick = useCallback(() => {
     setHideNumbers(!hideNumbers);
