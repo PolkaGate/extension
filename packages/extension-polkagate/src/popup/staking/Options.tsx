@@ -1,11 +1,11 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { Boy as BoyIcon } from '@mui/icons-material';
 import { Box, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Boy as BoyIcon } from '@mui/icons-material';
 
 import { BN, bnMax } from '@polkadot/util';
 
