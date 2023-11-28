@@ -188,7 +188,7 @@ export default function PendingRewards(): React.ReactElement {
           {t('Rewards are typically paid out by validators on a regular basis. However, if not paid within the determined period, they will expire and be forfeited.')}
         </Typography>
       </Grid>
-      <Grid alignContent='flex-start' alignItems='center' container item sx={{ borderTop: 1, borderLeft: 1, borderRight: 1, borderTopRightRadius: '5px', borderTopLeftRadius: '5px', borderColor: 'primary.main', p: '10px 5px 10px', mx: '2%', width: '96%' }}>
+      <Grid alignContent='flex-start' alignItems='center' container item sx={{ borderColor: 'primary.main', borderLeft: 1, borderRight: 1, borderTop: 1, borderTopLeftRadius: '5px', borderTopRightRadius: '5px', p: '10px 5px 10px', mx: '2%', width: '96%' }}>
         <Grid item sx={{ fontSize: '13px' }} xs={4.75}>
           <Checkbox2
             checked={!!rewards?.length && selectedToPayout?.length === rewards?.length}
@@ -272,17 +272,19 @@ export default function PendingRewards(): React.ReactElement {
         {
           !rewards
             ? <Typography fontSize='13px' sx={{ m: 'auto' }}>
-              {t('Checking pending rewards in the last {{erasHistoric}} eras ...', { replace: { erasHistoric: erasHistoric || 84 } })}
+              {t('Checking pending rewards ...')}
             </Typography>
             : <>
               <Grid item>
                 <LabelBalance
+                  api={api}
                   balance={totalPending}
                   label={t('Total')}
                 />
               </Grid>
               <Grid item>
                 <LabelBalance
+                  api={api}
                   balance={totalSelectedPending}
                   label={t('Selected')}
                 />
