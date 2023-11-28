@@ -19,7 +19,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "polkadot-dev-build-ts && yarn build:zip && yarn build:rollup",
+    "build": "polkadot-dev-build-ts && yarn build:zip && yarn build:rollup && yarn icons",
     "build:extra": "yarn build:i18n && yarn build:ui",
     "build:i18n": "i18next-scanner --config i18next-scanner.config.js",
     "build:release": "polkadot-ci-ghact-build",
@@ -29,6 +29,7 @@
     "build:zip:dst": "rm -rf ./master-build.zip && cd packages/extension/build && zip -r -FS ../../../master-build.zip .",
     "build:zip:src": "rm -rf ./master-src.zip && zip -r -x '*build/*' -x '*node_modules*' -FS ./master-src.zip packages .editorconfig .eslintignore .eslintrc.js babel.config.cjs CHANGELOG.md CONTRIBUTING.md i18next-scanner.config.js jest.config.cjs LICENSE package.json README.md tsconfig.json yarn.lock",
     "clean": "polkadot-dev-clean-build",
+    "icons": "cd packages/extension-config/src && node index.js",
     "lint": "polkadot-dev-run-lint",
     "postinstall": "polkadot-dev-yarn-only",
     "start": "yarn watch",

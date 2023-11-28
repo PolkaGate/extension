@@ -1,0 +1,24 @@
+{
+  "author": "Kami Ekbatanifard <ekbatanifard@gmail.com>",
+  "bugs": "https://github.com/polkagate/extension/issues",
+  "contributors": [],
+  "description": "A user-friendly wallet for seamless browser-based interaction with Polkadot/Substrate-based blockchains.",
+  "homepage": "https://github.com/polkagate/extension/tree/master/packages/extension-config#readme",
+  "license": "Apache-2.0",
+  "maintainers": [],
+  "name": "@polkadot/extension-config",
+  "repository": {
+    "directory": "packages/extension-config",
+    "type": "git",
+    "url": "https://github.com/polkagate/extension.git"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "version": "0.44.1",
+  "main": "index.ts",
+  "dependencies": {
+    "@babel/runtime": "^7.18.3",
+    "@polkadot/util": "latest",
+    "sinon-chrome": "^3.0.1"
+  }
+}

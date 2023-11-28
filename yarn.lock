@@ -4109,6 +4109,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@polkadot/extension-config@workspace:packages/extension-config":
+  version: 0.0.0-use.local
+  resolution: "@polkadot/extension-config@workspace:packages/extension-config"
+  dependencies:
+    "@babel/runtime": ^7.18.3
+    sinon-chrome: ^3.0.1
+  languageName: unknown
+  linkType: soft
+
 "@polkadot/extension-dapp@^0.44.1, @polkadot/extension-dapp@workspace:packages/extension-dapp":
   version: 0.0.0-use.local
   resolution: "@polkadot/extension-dapp@workspace:packages/extension-dapp"
