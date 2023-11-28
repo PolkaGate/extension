@@ -183,8 +183,8 @@ export default function PendingRewards(): React.ReactElement {
           total: 2
         }}
       />
-      <Grid container item sx={{ fontSize: '13px', pb: '10px', textAlign: 'center' }}>
-        <Typography sx={{ fontSize: '14px', fontWeight: 400 }}>
+      <Grid container item sx={{ fontSize: '13px', p: '0 5px 10px', textAlign: 'center' }}>
+        <Typography sx={{ fontSize: '14px' }}>
           {t('Rewards are typically paid out by validators on a regular basis. However, if not paid within the determined period, they will expire and be forfeited.')}
         </Typography>
       </Grid>
