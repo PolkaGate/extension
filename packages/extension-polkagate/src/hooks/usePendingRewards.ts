@@ -19,7 +19,7 @@ export default function usePendingRewards(address: string): DeriveStakerReward[]
 
     api.derive.staking.erasHistoric().then((eraHistoric) => {
       api.derive.staking?.stakerRewardsMultiEras([formatted], eraHistoric).then((stakerRewards) => {
-        console.log(' stakerRewards', stakerRewards);
+        // console.log(' stakerRewards', stakerRewards);
         setRewards(stakerRewards[0]);
       }).catch(console.error);
     }).catch(console.error);

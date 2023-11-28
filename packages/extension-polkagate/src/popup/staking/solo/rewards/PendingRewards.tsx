@@ -14,6 +14,7 @@ import { Grid, Skeleton, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
+import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, Checkbox2, Identity, Motion, PButton, ShowBalance } from '../../../../components';
@@ -23,6 +24,22 @@ import blockToDate from '../../../crowdloans/partials/blockToDate';
 import Review from './Review';
 
 export type ValidatorEra = [string, number, BN]
+
+const LabelBalance = ({ api, balance, label }: { api: ApiPromise | undefined, label: string, balance: BN }) => (
+  <Grid container item sx={{ fontSize: '13px' }}>
+    <Grid item>
+      <Typography fontSize='14px'>
+        {label}:
+      </Typography>
+    </Grid>
+    <Grid item sx={{ fontSize: '14px', fontWeight: 500, pl: '5px' }}>
+      <ShowBalance
+        api={api}
+        balance={balance}
+      />
+    </Grid>
+  </Grid>
+);
 
 export default function PendingRewards(): React.ReactElement {
   const { t } = useTranslation();
@@ -153,22 +170,6 @@ export default function PendingRewards(): React.ReactElement {
   const TABLE_HEIGHT = window.innerHeight - 300;
   const SKELETON_HEIGHT = 25;
 
-  const LabelBalance = ({ balance, label }: { label: string, balance: BN }) => (
-    <Grid container item sx={{ fontSize: '13px' }}>
-      <Grid item>
-        <Typography fontSize='14px'>
-          {label}:
-        </Typography>
-      </Grid>
-      <Grid item sx={{ fontSize: '14px', fontWeight: 500, pl: '5px' }}>
-        <ShowBalance
-          api={api}
-          balance={balance}
-        />
-      </Grid>
-    </Grid>
-  );
-
   return (
     <Motion>
       <HeaderBrand
@@ -221,7 +222,7 @@ export default function PendingRewards(): React.ReactElement {
               <Grid container item key={index}>
                 {
                   Object.keys(info.validators).map((v, index) => (
-                    <Grid alignContent='flex-start' alignItems='center' container item key={index} sx={{ borderTop: 1, px: '5px', borderColor: 'primary.main' }}>
+                    <Grid alignContent='flex-start' alignItems='center' container item key={index} sx={{ borderColor: 'primary.main', borderTop: 1, px: '5px' }}>
                       <Grid container item sx={{ fontSize: '13px' }} xs={4}>
                         <Grid item>
                           <Checkbox2
