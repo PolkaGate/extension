@@ -18,7 +18,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { controllerSettingBlack, controllerSettingWhite, soloSettingBlack, soloSettingWhite, stashSettingBlack, stashSettingWhite } from '../../../assets/icons';
 import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
-import { useApi, useBalances, useChain, useDecimal, useFormatted, useMinToReceiveRewardsInSolo, useMyAccountIdentity, useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress, useStakingRewards, useToken, useTranslation, useUnSupportedNetwork } from '../../../hooks';
+import { useApi, useBalances, useChain, useDecimal, useFormatted, useMyAccountIdentity, useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress, useStakingRewards, useToken, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { ChainSwitch, HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, STAKING_CHAINS, TIME_TO_SHAKE_ICON } from '../../../util/constants';
@@ -61,7 +61,6 @@ export default function Index(): React.ReactElement {
   const api = useApi(address, state?.api);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const balances = useBalances(address, refresh, setRefresh);
-  const nominatorInfo = useMinToReceiveRewardsInSolo(address);
   const identity = useMyAccountIdentity(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
@@ -419,7 +418,6 @@ export default function Index(): React.ReactElement {
       <Info
         address={address}
         info={stakingConsts}
-        nominatorInfo={nominatorInfo}
         setShowInfo={setShowInfo}
         showInfo={showInfo}
       />
