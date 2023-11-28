@@ -35,7 +35,9 @@ export default function Options({ setShowStakingOptions, showStakingOptions }: P
   const [minToReceiveRewardsInSolo, setMinToReceiveRewardsInSolo] = useState<BN | undefined>();
 
   useEffect(() => {
-    if (!stakingConsts || !minimumActiveStake) { return; }
+    if (!stakingConsts || !minimumActiveStake) {
+      return setMinToReceiveRewardsInSolo(undefined);
+    }
 
     const minSolo = bnMax(new BN(stakingConsts.minNominatorBond.toString()), new BN(stakingConsts?.existentialDeposit.toString()), minimumActiveStake);
 
