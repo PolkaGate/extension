@@ -274,14 +274,12 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
         </Grid>
       </Grid>
       {otherAssetsToShow && otherAssetsToShow.length > 0 &&
-        <>
-          <OtherAssets
-            assetsOnOtherChains={otherAssetsToShow}
-          />
-          {otherAssetsToShow.length > 5 &&
-            <Grid item sx={{ bgcolor: 'text.primary', borderRadius: '0 0 5px 5px', bottom: 0, height: '6px', left: 0, position: 'absolute', right: 0 }}></Grid>
-          }
-        </>
+        <OtherAssets
+          assetsOnOtherChains={otherAssetsToShow}
+        />
+      }
+      {theme.palette.mode === 'light' &&
+        <Grid item sx={{ bgcolor: 'black', borderRadius: '0 0 5px 5px', height: '6px', inset: 'auto 0 0 0', position: 'absolute' }}></Grid>
       }
     </Grid>
   );
