@@ -14,7 +14,6 @@ import type { KeypairType } from '@polkadot/util-crypto/types';
 import { TypeRegistry } from '@polkadot/types';
 
 import { ALLOWED_PATH } from '../defaults';
-import { AuthUrls } from './handlers/State';
 
 type KeysWithDefinedValues<T> = {
   [K in keyof T]: T[K] extends undefined ? never : K
@@ -28,25 +27,42 @@ type IsNull<T, K extends keyof T> = { [K1 in Exclude<keyof T, K>]: T[K1] } & T[K
 
 type NullKeys<T> = { [K in keyof T]: IsNull<T, K> }[keyof T];
 
+export type AuthUrls = Record<string, AuthUrlInfo>;
+
+export interface AuthUrlInfo {
+  count: number;
+  id: string;
+  // this is from pre-0.44.1
+  isAllowed?: boolean;
+  origin: string;
+  url: string;
+  // authorizedAccounts: string[];
+}
+
 export type SeedLengths = 12 | 24;
+
+// export interface AccountJson extends KeyringPair$Meta {
+//   address: string;
+//   genesisHash?: string | null;
+//   isExternal?: boolean;
+//   isHardware?: boolean;
+//   isHidden?: boolean;
+//   name?: string;
+//   parentAddress?: string;
+//   suri?: string;
+//   type?: KeypairType;
+//   whenCreated?: number;
+
+//   // added for polkagate
+//   balances?: string;
+//   stakingAccount?: string;
+//   identities?: string;
+// }
 
 export interface AccountJson extends KeyringPair$Meta {
   address: string;
-  genesisHash?: string | null;
-  isExternal?: boolean;
-  isHardware?: boolean;
-  isHidden?: boolean;
-  name?: string;
-  parentAddress?: string;
-  suri?: string;
-  type?: KeypairType;
-  whenCreated?: number;
 
   // added for polkagate
-  // txHistory?: string;
-  // nominatedValidators?: string; // can be removed
-  // poolNominatedValidators?: string; // can be removed
-  // endpoint?: string; // can be removed
   balances?: string;
   stakingAccount?: string;
   identities?: string;
@@ -134,9 +150,9 @@ export interface RequestSignatures {
   'pub(metadata.provide)': [MetadataDef, boolean];
   'pub(phishing.redirectIfDenied)': [null, boolean];
   'pub(rpc.listProviders)': [void, ResponseRpcListProviders];
-  'pub(rpc.send)': [RequestRpcSend, JsonRpcResponse];
+  'pub(rpc.send)': [RequestRpcSend, JsonRpcResponse<unknown>];
   'pub(rpc.startProvider)': [string, ProviderMeta];
-  'pub(rpc.subscribe)': [RequestRpcSubscribe, number, JsonRpcResponse];
+  'pub(rpc.subscribe)': [RequestRpcSubscribe, number, JsonRpcResponse<unknown>];
   'pub(rpc.subscribeConnected)': [null, boolean, boolean];
   'pub(rpc.unsubscribe)': [RequestRpcUnsubscribe, boolean];
 }
@@ -184,13 +200,13 @@ export type RequestMetadataSubscribe = null;
 
 export interface RequestAccountCreateExternal {
   address: string;
-  genesisHash?: string | null;
+  genesisHash?: HexString | null;
   name: string;
 }
 
 export interface RequestAccountCreateSuri {
   name: string;
-  genesisHash?: string | null;
+  genesisHash?: HexString | null;
   password: string;
   suri: string;
   type?: KeypairType;
@@ -200,7 +216,7 @@ export interface RequestAccountCreateHardware {
   accountIndex: number;
   address: string;
   addressOffset: number;
-  genesisHash: string;
+  genesisHash: HexString;
   hardwareType: string;
   name: string;
 }
@@ -213,7 +229,7 @@ export interface RequestAccountChangePassword {
 
 export interface RequestAccountEdit {
   address: string;
-  genesisHash?: string | null;
+  genesisHash?: HexString | null;
   name: string;
 }
 
@@ -228,7 +244,7 @@ export interface RequestAccountShow {
 
 export interface RequestAccountTie {
   address: string;
-  genesisHash: string | null;
+  genesisHash: HexString | null;
 }
 
 export interface RequestAccountValidate {
@@ -238,7 +254,7 @@ export interface RequestAccountValidate {
 
 export interface RequestDeriveCreate {
   name: string;
-  genesisHash?: string | null;
+  genesisHash?: HexString | null;
   suri: string;
   parentAddress: string;
   parentPassword: string;
@@ -416,7 +432,7 @@ export type AllowedPath = typeof ALLOWED_PATH[number];
 export interface ResponseJsonGetAccountInfo {
   address: string;
   name: string;
-  genesisHash: string;
+  genesisHash: HexString;
   type: KeypairType;
 }
 

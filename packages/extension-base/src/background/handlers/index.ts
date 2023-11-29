@@ -10,6 +10,8 @@ import Extension from './Extension';
 import State from './State';
 import Tabs from './Tabs';
 
+export { withErrorLog } from './helpers.js';
+
 const state = new State();
 const extension = new Extension(state);
 const tabs = new Tabs(state);

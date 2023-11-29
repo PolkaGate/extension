@@ -1,7 +1,7 @@
 // Copyright 2019-2023 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Theme } from '../../extension-polkagate/src/components/themes';
+import { Theme } from './components/themes';
 
 export { Theme };
 

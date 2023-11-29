@@ -1,11 +1,12 @@
 {
   "author": "Jaco Greeff <jacogr@gmail.com>",
   "bugs": "https://github.com/polkagate/extension/issues",
-  "contributors": [],
   "description": "Definitions for all known chains as exposed by the extension.",
+  "engines": {
+    "node": ">=18"
+  },
   "homepage": "https://github.com/polkagate/extension/tree/master/packages/extension-chains#readme",
   "license": "Apache-2.0",
-  "maintainers": [],
   "name": "@polkadot/extension-chains",
   "repository": {
     "directory": "packages/extension-chains",
@@ -20,11 +21,11 @@
   "version": "0.44.1",
   "main": "index.js",
   "dependencies": {
-    "@babel/runtime": "^7.18.3",
     "@polkadot/extension-inject": "^0.44.1",
-    "@polkadot/networks": "latest",
-    "@polkadot/util": "latest",
-    "@polkadot/util-crypto": "latest"
+    "@polkadot/networks": "^12.6.1",
+    "@polkadot/util": "^12.6.1",
+    "@polkadot/util-crypto": "^12.6.1",
+    "tslib": "^2.6.2"
   },
   "peerDependencies": {
     "@polkadot/api": "*",

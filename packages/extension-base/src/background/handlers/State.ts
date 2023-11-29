@@ -3,7 +3,7 @@
 
 import type { MetadataDef, ProviderMeta } from '@polkadot/extension-inject/types';
 import type { JsonRpcResponse, ProviderInterface, ProviderInterfaceCallback } from '@polkadot/rpc-provider/types';
-import type { AccountJson, AuthorizeRequest, MetadataRequest, RequestAuthorizeTab, RequestRpcSend, RequestRpcSubscribe, RequestRpcUnsubscribe, RequestSign, ResponseRpcListProviders, ResponseSigning, SigningRequest } from '../types';
+import type { AccountJson, AuthUrls, AuthorizeRequest, MetadataRequest, RequestAuthorizeTab, RequestRpcSend, RequestRpcSubscribe, RequestRpcUnsubscribe, RequestSign, ResponseRpcListProviders, ResponseSigning, SigningRequest } from '../types';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -25,16 +25,6 @@ interface AuthRequest extends Resolver<boolean> {
   id: string;
   idStr: string;
   request: RequestAuthorizeTab;
-  url: string;
-}
-
-export type AuthUrls = Record<string, AuthUrlInfo>;
-
-export interface AuthUrlInfo {
-  count: number;
-  id: string;
-  isAllowed: boolean;
-  origin: string;
   url: string;
 }
 
@@ -93,11 +83,11 @@ function extractMetadata(store: MetadataStore): void {
     Object
       .entries(map)
       .forEach(([key, def]): void => {
-        const entry = knownEntries.find(([, hashes]) => hashes.includes(def.genesisHash));
+        const entry = knownEntries.find(([, hashes]) => hashes.includes(def.genesisHash as `0x${string}`));
 
         if (entry) {
           const [name, hashes] = entry;
-          const index = hashes.indexOf(def.genesisHash);
+          const index = hashes.indexOf(def.genesisHash as `0x${string}`);
 
           // flatten the known metadata based on the genesis index
           // (lower is better/newer)
@@ -154,7 +144,13 @@ export default class State {
 
     // retrieve previously set authorizations
     chrome.storage.local.get('authUrls', (res) => {
-      this.#authUrls = (res?.authUrls || {}) as AuthUrls;
+      if (res?.['authUrls']) {
+        const urls = res['authUrls'] as AuthUrls;
+
+        Object.keys(urls).forEach((key) => {
+          this.#authUrls[key] = urls[key];
+        });
+      }
     });
   }
 
@@ -286,7 +282,7 @@ export default class State {
     };
   };
 
-  private stripUrl(url: string): string {
+  public stripUrl(url: string): string {
     assert(url && (url.startsWith('http:') || url.startsWith('https:') || url.startsWith('ipfs:') || url.startsWith('ipns:')), `Invalid url ${url}, expected to start with http: or https: or ipfs: or ipns:`);
 
     const parts = url.split('/');
@@ -428,7 +424,7 @@ export default class State {
     }, {} as ResponseRpcListProviders));
   }
 
-  public rpcSend(request: RequestRpcSend, port: chrome.runtime.Port): Promise<JsonRpcResponse> {
+  public rpcSend (request: RequestRpcSend, port: chrome.runtime.Port): Promise<JsonRpcResponse<unknown>> {
     const provider = this.#injectedProviders.get(port);
 
     assert(provider, 'Cannot call pub(rpc.subscribe) before provider is set');

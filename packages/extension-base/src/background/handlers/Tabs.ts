@@ -47,12 +47,12 @@ export default class Tabs {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private accountsList (url: string, { anyType }: RequestAccountList): InjectedAccount[] {
+  private accountsList (_url: string, { anyType }: RequestAccountList): InjectedAccount[] {
     return transformAccounts(accountsObservable.subject.getValue(), anyType);
   }
 
   // FIXME This looks very much like what we have in Extension
-  private accountsSubscribe (url: string, id: string, port: chrome.runtime.Port): boolean {
+  private accountsSubscribe (_url: string, id: string, port: chrome.runtime.Port): boolean {
     const cb = createSubscription<'pub(accounts.subscribe)'>(id, port);
     const subscription = accountsObservable.subject.subscribe((accounts: SubjectInfo): void =>
       cb(transformAccounts(accounts))
@@ -93,7 +93,7 @@ export default class Tabs {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private metadataList (url: string): InjectedMetadataKnown[] {
+  private metadataList (_url: string): InjectedMetadataKnown[] {
     return this.#state.knownMetadata.map(({ genesisHash, specVersion }) => ({
       genesisHash,
       specVersion
@@ -104,7 +104,7 @@ export default class Tabs {
     return this.#state.rpcListProviders();
   }
 
-  private rpcSend (request: RequestRpcSend, port: chrome.runtime.Port): Promise<JsonRpcResponse> {
+  private rpcSend (request: RequestRpcSend, port: chrome.runtime.Port): Promise<JsonRpcResponse<unknown>> {
     return this.#state.rpcSend(request, port);
   }
 
