@@ -182,7 +182,7 @@ export default function TotalChart({ assetsOnOtherChains, isDarkTheme, nativeAss
                   {topThreePercentages.token[index]}
                 </Typography>
               </Grid>
-              <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '21px', m: 'auto', width: '2px' }} />
+              <Divider orientation='vertical' sx={{ bgcolor: getChartColor(topThreePercentages.token[index]), height: '21px', m: 'auto', width: '5px' }} />
               <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
                 {`${topThreePercentages.percentage[index]}%`}
               </Typography>
