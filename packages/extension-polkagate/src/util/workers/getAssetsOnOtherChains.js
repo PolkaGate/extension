@@ -4,6 +4,8 @@
 /* eslint-disable import-newlines/enforce */
 /* eslint-disable object-curly-newline */
 
+import { options } from '@acala-network/api';
+
 import {
   ApiPromise,
   WsProvider
@@ -16,52 +18,202 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import getPoolAccounts from '../../util/getPoolAccounts';
 import getPrices from '../api/getPrices';
+import getLogo from '../getLogo';
 
 const CHAINS_TO_CHECK = [{
   genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
-  name: 'Polkadot'
+  name: 'Polkadot',
+  priceID: 'polkadot'
 },
 {
   genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
-  name: 'Kusama'
+  name: 'Kusama',
+  priceID: 'kusama'
 },
 {
   genesisHash: '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c',
-  name: 'Acala'
+  name: 'Acala',
+  priceID: 'acala'
 },
 {
   genesisHash: '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
-  name: 'Westend'
+  name: 'Westend',
+  priceID: ''
 },
 {
   genesisHash: '0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6',
-  name: 'Astar'
+  name: 'Astar',
+  priceID: 'astar'
 },
 {
   genesisHash: '0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d',
-  name: 'HydraDX'
+  name: 'HydraDX',
+  priceID: 'hydradx'
 },
 {
   genesisHash: '0xbaf5aabe40646d11f0ee8abbdc64f4a4b7674925cba08e4a05ff9ebed6e2126b',
-  name: 'Karura'
+  name: 'Karura',
+  priceID: 'karura'
 },
 {
   genesisHash: '0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a',
-  name: 'KusamaAssetHub'
+  name: 'KusamaAssetHub',
+  priceID: 'kusama'
 },
 {
   genesisHash: '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f',
-  name: 'PolkadotAssetHub'
+  name: 'PolkadotAssetHub',
+  priceID: 'polkadot'
 },
 {
   genesisHash: '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9',
-  name: 'WestendAssetHub'
+  name: 'WestendAssetHub',
+  priceID: ''
 }
 ];
+const fetchPriceFor = ['hydradx', 'karura', 'liquid-staking-dot', 'acala-dollar-acala', 'astar', 'kusama', 'acala', 'polkadot'];
+
+async function fastestEndpoint (chainEndpoints) {
+  const connections = chainEndpoints.map((endpoint) => {
+    const wsProvider = new WsProvider(endpoint.value);
+    const connection = ApiPromise.create({
+      provider: wsProvider
+    });
+
+    return {
+      connection,
+      wsProvider
+    };
+  });
+
+  // Wait for the fastest connection to resolve
+  const fastestApi = await Promise.any(connections.map((con) => con.connection));
+
+  return {
+    connections,
+    fastApi: fastestApi
+  };
+}
+
+function closeWebsockets (connections) {
+  connections.forEach((con) => con.wsProvider.disconnect().catch(handleError));
+}
+
+function handleError (error) {
+  console.error('Error:', error);
+}
+
+function sanitizeText (input) {
+  return input
+    .split(/(?=[A-Z])/)
+    .join(' ')
+    .trim();
+}
+
+function getToken (genesisHash) {
+  const network = selectableNetworks.find((network) => network.genesisHash[0] === genesisHash);
+
+  return network?.symbols?.length ? network.symbols[0] : undefined;
+}
+
+function getDecimal (genesisHash) {
+  const network = selectableNetworks.find((network) => network.genesisHash[0] === genesisHash);
+
+  return network?.decimals?.length ? network.decimals[0] : undefined;
+}
+
+async function acalaTokens (address, results, promisesArray, prices) {
+  const allEndpoints = createWsEndpoints();
+
+  const chainEndpoints = allEndpoints
+    .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === 'acala')
+    .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'));
+
+  const { connections, fastApi } = await fastestEndpoint(chainEndpoints);
+
+  // const provider = new WsProvider(chainEndpoints[0].value);
+  // const api = new ApiPromise(options({ provider }));
+
+  await fastApi.isReady;
+
+  const tokensList = [
+    'LDOT', // 'liquid-staking-dot' price apiID
+    'ACA',
+    'DOT',
+    'AUSD' // acala-dollar-acala price apiID
+  ];
+
+  const ldotPriceID = 'liquid-staking-dot';
+  const AusdPriceID = 'acala-dollar-acala';
+
+  for (const token of tokensList) {
+    await fastApi.query.tokens.accounts(address, { Token: token }).then((bal) => {
+      const total = bal.free.add(bal.reserved);
+      const priceID = token === 'AUSD' ? AusdPriceID : token === 'LDOT' ? ldotPriceID : undefined;
+      const price = priceID ? prices.prices[priceID]?.usd : prices.prices.acala?.usd;
+
+      if (!total.isZero()) {
+        results.push({
+          balances: String(total),
+          chain: sanitizeText('Acala'),
+          decimal: getDecimal('0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c'),
+          price,
+          token
+        });
+
+        postMessage(JSON.stringify(results));
+      }
+    });
+  }
+
+  closeWebsockets(connections);
+}
+
+async function polkadotAssetHubTokens (address, results, promisesArray, prices) {
+  const allEndpoints = createWsEndpoints();
+
+  const chainEndpoints = allEndpoints
+    .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === 'PolkadotAssetHub')
+    .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'));
+
+  const provider = new WsProvider(chainEndpoints[0].value);
+  const api = new ApiPromise(options({ provider }));
+
+  await api.isReady;
+
+  const tokensList = [
+    'LDOT', // 'liquid-staking-dot' price apiID
+    'ACA',
+    'DOT',
+    'AUSD' // acala-dollar-acala price apiID
+  ];
+
+  const ldotPriceID = 'liquid-staking-dot';
+  const AusdPriceID = 'acala-dollar-acala';
+
+  const promises = tokensList.map((token) => api.query.tokens.accounts(address, { Token: token }).then((bal) => {
+    const total = bal.free.add(bal.reserved);
+    const priceID = token === 'AUSD' ? AusdPriceID : token === 'LDOT' ? ldotPriceID : undefined;
+    const price = priceID ? prices.prices[priceID]?.usd : prices.prices.acala?.usd;
+
+    if (!total.isZero()) {
+      results.push({
+        balances: String(total),
+        chain: sanitizeText('Acala'),
+        decimal: getDecimal('0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c'),
+        price,
+        token
+      });
+
+      postMessage(JSON.stringify(results));
+    }
+  }));
+
+  promisesArray.push(...promises);
+}
 
 async function getPoolBalance (api, address, availableBalance, connections) {
   const response = await api.query.nominationPools.poolMembers(address);
-  // .then((res) => {
   const member = response && response.unwrapOr(undefined);
 
   if (!member) {
@@ -101,29 +253,6 @@ async function getPoolBalance (api, address, availableBalance, connections) {
   return availableBalance.add(active.add(rewards).add(unlockingValue));
 }
 
-function handleError (error) {
-  console.error('Error:', error);
-}
-
-function sanitizeText (input) {
-  return input
-    .split(/(?=[A-Z])/)
-    .join(' ')
-    .trim();
-}
-
-function getToken (genesisHash) {
-  const network = selectableNetworks.find((network) => network.genesisHash[0] === genesisHash);
-
-  return network?.symbols?.length ? network.symbols[0] : undefined;
-}
-
-function getDecimal (genesisHash) {
-  const network = selectableNetworks.find((network) => network.genesisHash[0] === genesisHash);
-
-  return network?.decimals?.length ? network.decimals[0] : undefined;
-}
-
 async function setupConnections (chain, accountAddress, allEndpoints) {
   const chainEndpoints = allEndpoints
     .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === chain.toLowerCase())
@@ -131,32 +260,19 @@ async function setupConnections (chain, accountAddress, allEndpoints) {
 
   console.log(`Connecting to endpoints for ${chain}`);
 
-  const connections = chainEndpoints.map((endpoint) => {
-    const wsProvider = new WsProvider(endpoint.value);
-    const connection = ApiPromise.create({
-      provider: wsProvider
-    });
+  const { connections, fastApi } = await fastestEndpoint(chainEndpoints);
 
-    return {
-      connection,
-      wsProvider
-    };
-  });
-
-  // Wait for the fastest connection to resolve
-  const fastestApi = await Promise.any(connections.map((con) => con.connection));
-
-  if (fastestApi.isConnected && fastestApi.derive.balances) {
-    const balances = await fastestApi.derive.balances.all(accountAddress);
+  if (fastApi.isConnected && fastApi.derive.balances) {
+    const balances = await fastApi.derive.balances.all(accountAddress);
     const availableBalance = balances.freeBalance.add(balances.reservedBalance);
 
-    if (fastestApi.query.nominationPools) {
-      const total = await getPoolBalance(fastestApi, accountAddress, availableBalance, connections);
+    if (fastApi.query.nominationPools) {
+      const total = await getPoolBalance(fastApi, accountAddress, availableBalance, connections);
 
       return total;
     }
 
-    connections.forEach((con) => con.wsProvider.disconnect().catch(handleError));
+    closeWebsockets(connections);
 
     return availableBalance;
   }
@@ -168,17 +284,25 @@ async function getAssetsOnOtherChains (accountAddress) {
 
   // Create an array to store the results
   const results = [];
+  const prices = await getPrices(fetchPriceFor);
 
-  const promises = CHAINS_TO_CHECK.map((chain) => {
+  const promises = [];
+
+  const newPromises = CHAINS_TO_CHECK.map((chain) => {
     return setupConnections(chain.name, accountAddress, allEndpoints)
       .then((assetBalance) => {
         if (!assetBalance.isZero()) {
+          const price = chain.priceID ? prices.prices[chain.priceID]?.usd ?? 0 : 0;
+
           results.push({
             balances: String(assetBalance),
             chain: sanitizeText(chain.name),
             decimal: getDecimal(chain.genesisHash),
+            price,
             token: getToken(chain.genesisHash)
           });
+
+          postMessage(JSON.stringify(results));
         }
       })
       .catch((error) => {
@@ -186,20 +310,12 @@ async function getAssetsOnOtherChains (accountAddress) {
       });
   });
 
-  await Promise.all(promises);
+  promises.push(...newPromises);
+  await acalaTokens(accountAddress, results, promises, prices);
 
-  const chainsToFetchPrice = results.map((res) => res.chain);
-  const prices = await getPrices(chainsToFetchPrice);
-
-  chainsToFetchPrice.forEach((chainName) => {
-    const index = results.findIndex((result) => result.chain === chainName);
-
-    if (index >= 0) {
-      results[index].price = prices.prices[chainName.toLowerCase()]?.usd ?? 0;
-    }
-  });
-
-  return results;
+  for (const prom of promises) {
+    prom.catch(handleError);
+  }
 }
 
 onmessage = async (e) => {
@@ -216,9 +332,8 @@ onmessage = async (e) => {
 
     try {
       // eslint-disable-next-line no-void
-      const assetsBalances = await getAssetsOnOtherChains(accountAddress);
+      await getAssetsOnOtherChains(accountAddress);
 
-      postMessage(JSON.stringify(assetsBalances));
       tryCount = 0;
     } catch (error) {
       console.error('Error while fetching assets on other chains, times to try', error, tryCount);

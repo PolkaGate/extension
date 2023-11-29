@@ -27,10 +27,10 @@ import AccountInformation from './components/AccountInformation';
 import AccountSetting from './components/AccountSetting';
 import CommonTasks from './components/CommonTasks';
 import DisplayBalance from './components/DisplayBalance';
+import ExternalLinks from './components/ExternalLinks';
 import LockedBalanceDisplay from './components/LockedBalanceDisplay';
 import TotalChart from './components/TotalChart';
 import LockedInReferenda from './unlock/Review';
-import ExternalLinks from './components/ExternalLinks';
 
 export type AssetsOnOtherChains = { totalBalance: BN, chainName: string, decimal: number, price: number | undefined, token: string };
 export const popupNumbers = {
@@ -107,8 +107,6 @@ export default function AccountDetails(): React.ReactElement {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 
       const fetchedBalances = JSON.parse(e.data) as { balances: string, chain: string, decimal: number, price: number, token: string }[];
-
-      console.log('fetchedBalances:', fetchedBalances)
 
       setAssetsOnOtherChains(fetchedBalances.map((asset) => ({ chainName: asset.chain, decimal: Number(asset.decimal), price: asset.price, token: asset.token, totalBalance: isHexToBn(asset.balances) })));
 
