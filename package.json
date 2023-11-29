@@ -1,6 +1,9 @@
 {
   "author": "polkagate@outlook.com",
   "bugs": "https://github.com/polkagate/extension/issues",
+  "engines": {
+    "node": ">=18.14"
+  },
   "homepage": "https://github.com/polkagate/extension#readme",
   "license": "Apache-2.0",
   "packageManager": "yarn@3.2.0",
@@ -10,6 +13,7 @@
     "url": "https://github.com/polkagate/extension.git"
   },
   "sideEffects": false,
+  "type": "module",
   "version": "0.44.1",
   "versions": {
     "git": "0.44.7-9-x",
@@ -20,18 +24,16 @@
   ],
   "scripts": {
     "build": "polkadot-dev-build-ts && yarn build:zip && yarn build:rollup",
-    "build:extra": "yarn build:i18n && yarn build:ui",
-    "build:i18n": "i18next-scanner --config i18next-scanner.config.js",
+    "build:before": "yarn build:i18n",
+    "build:i18n": "i18next-scanner --config i18next-scanner.config.cjs",
     "build:release": "polkadot-ci-ghact-build",
     "build:rollup": "polkadot-exec-rollup --config",
-    "build:ui": "cd packages/extension && NODE_ENV=production yarn webpack --config webpack.extension.cjs --mode production",
     "build:zip": "yarn build:zip:dst && yarn build:zip:src",
     "build:zip:dst": "rm -rf ./master-build.zip && cd packages/extension/build && zip -r -FS ../../../master-build.zip .",
-    "build:zip:src": "rm -rf ./master-src.zip && zip -r -x '*build/*' -x '*node_modules*' -FS ./master-src.zip packages .editorconfig .eslintignore .eslintrc.js babel.config.cjs CHANGELOG.md CONTRIBUTING.md i18next-scanner.config.js jest.config.cjs LICENSE package.json README.md tsconfig.json yarn.lock",
+    "build:zip:src": "rm -rf ./master-src.zip && zip -r -x '*build/*' -x '*node_modules*' -FS ./master-src.zip packages .editorconfig .eslintignore .eslintrc.js babel.config.cjs CHANGELOG.md CONTRIBUTING.md i18next-scanner.config.js LICENSE package.json README.md tsconfig.json yarn.lock",
     "clean": "polkadot-dev-clean-build",
     "lint": "polkadot-dev-run-lint",
     "postinstall": "polkadot-dev-yarn-only",
-    "start": "yarn watch",
     "test": "polkadot-dev-run-test --silent --detectOpenHandles --testPathPattern=packages/extension-polkagate/src --maxWorkers=1",
     "test:one": "polkadot-dev-run-test --detectOpenHandles",
     "watch": "cd packages/extension && yarn polkadot-exec-webpack --config webpack.watch.cjs --mode development --watch"
@@ -42,9 +44,9 @@
     "@mui/icons-material": "latest",
     "@mui/lab": "^5.0.0-alpha.85",
     "@mui/material": "^5.8.3",
-    "@polkadot/api": "^10.9.1",
-    "@polkadot/apps-config": "^0.132.1",
-    "@polkadot/rpc-provider": "^10.9.1",
+    "@polkadot/api": "^10.11.1",
+    "@polkadot/apps-config": "^0.133.1",
+    "@polkadot/rpc-provider": "^10.11.1",
     "@substrate/connect": "^0.7.32",
     "@vaadin/icons": "^23.2.3",
     "babel-plugin-transform-import-meta": "^2.1.1",
@@ -64,12 +66,11 @@
     "umi-request": "^1.4.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.18.2",
-    "@polkadot/dev": "latest",
+    "@polkadot/dev": "0.77.1",
     "@testing-library/react": "latest",
     "@types/jest": "latest",
     "dotenv-webpack": "^8.0.1",
-    "i18next-scanner": "^3.1.0",
+    "i18next-scanner": "^4.4.0",
     "intersection-observer": "^0.12.0",
     "jsdom-worker-fix": "^0.1.8",
     "openai": "^4.0.0",
@@ -77,15 +78,14 @@
     "webpack-bundle-analyzer": "^4.9.0"
   },
   "resolutions": {
-    "@polkadot/api": "^10.9.1",
-    "@polkadot/keyring": "^12.3.2",
-    "@polkadot/networks": "^12.3.2",
-    "@polkadot/types": "^10.9.1",
-    "@polkadot/util": "^12.3.2",
-    "@polkadot/util-crypto": "^12.3.2",
-    "@polkadot/x-fetch": "^12.3.2",
-    "babel-core": "^7.0.0-bridge.0",
+    "@polkadot/api": "^10.11.1",
+    "@polkadot/keyring": "^12.6.1",
+    "@polkadot/networks": "^12.6.1",
+    "@polkadot/types": "^10.11.1",
+    "@polkadot/util": "^12.6.1",
+    "@polkadot/util-crypto": "^12.6.1",
+    "@polkadot/x-fetch": "^12.6.1",
     "safe-buffer": "^5.2.1",
-    "typescript": "^4.8.3"
+    "typescript": "^5.2.2"
   }
 }

@@ -1056,5 +1056,11 @@
   "Rewards Paid": "",
   "Chart": "",
   "Available to Stake": "",
-  "Rewards are typically paid out by validators on a regular basis. However, if not paid within the determined period, they will expire and be forfeited.": ""
+  "Rewards are typically paid out by validators on a regular basis. However, if not paid within the determined period, they will expire and be forfeited.": "",
+  "Checking pending rewards ...": "",
+  "Is your ledger locked?": "",
+  "App \"{{network}}\" does not seem to be open": "",
+  "Ledger error: {{errorMessage}}": "",
+  "Identity cleared.": "",
+  "Identity not cleared.": ""
 }
