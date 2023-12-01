@@ -1056,5 +1056,6 @@
   "Rewards Paid": "",
   "Chart": "",
   "Available to Stake": "",
-  "Rewards are typically paid out by validators on a regular basis. However, if not paid within the determined period, they will expire and be forfeited.": ""
+  "Rewards are typically paid out by validators on a regular basis. However, if not paid within the determined period, they will expire and be forfeited.": "",
+  "Checking pending rewards ...": ""
 }
