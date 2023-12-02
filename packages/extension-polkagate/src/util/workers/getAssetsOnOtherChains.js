@@ -75,9 +75,7 @@ const fetchPriceFor = ['hydradx', 'karura', 'liquid-staking-dot', 'acala-dollar-
 async function fastestEndpoint (chainEndpoints) {
   const connections = chainEndpoints.map((endpoint) => {
     const wsProvider = new WsProvider(endpoint.value);
-    const connection = ApiPromise.create({
-      provider: wsProvider
-    });
+    const connection = ApiPromise.create({ provider: wsProvider });
 
     return {
       connection,
@@ -128,7 +126,8 @@ async function acalaTokens (address, results, promises, prices) {
     .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === 'acala')
     .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'));
 
-  const { connections, fastApi } = await fastestEndpoint(chainEndpoints);
+  const provider = new WsProvider(chainEndpoints[0].value);
+  const fastApi = new ApiPromise(options({ provider }));
 
   await fastApi.isReady;
 
@@ -161,51 +160,19 @@ async function acalaTokens (address, results, promises, prices) {
     }));
   }
 
-  return connections;
+  return [{ wsProvider: provider }];
 }
 
-async function polkadotAssetHubTokens (address, results, promisesArray, prices) {
-  const allEndpoints = createWsEndpoints();
+// async function polkadotAssetHubTokens (address, results, promisesArray, prices) {
+//   const allEndpoints = createWsEndpoints();
 
-  const chainEndpoints = allEndpoints
-    .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === 'PolkadotAssetHub')
-    .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'));
+//   const chainEndpoints = allEndpoints
+//     .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === 'PolkadotAssetHub')
+//     .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'));
 
-  const provider = new WsProvider(chainEndpoints[0].value);
-  const api = new ApiPromise(options({ provider }));
+//     const { connections, fastApi } = await fastestEndpoint(chainEndpoints);
 
-  await api.isReady;
-
-  const tokensList = [
-    'LDOT', // 'liquid-staking-dot' price apiID
-    'ACA',
-    'DOT',
-    'AUSD' // acala-dollar-acala price apiID
-  ];
-
-  const ldotPriceID = 'liquid-staking-dot';
-  const AusdPriceID = 'acala-dollar-acala';
-
-  const promises = tokensList.map((token) => api.query.tokens.accounts(address, { Token: token }).then((bal) => {
-    const total = bal.free.add(bal.reserved);
-    const priceID = token === 'AUSD' ? AusdPriceID : token === 'LDOT' ? ldotPriceID : undefined;
-    const price = priceID ? prices.prices[priceID]?.usd : prices.prices.acala?.usd;
-
-    if (!total.isZero()) {
-      results.push({
-        balances: String(total),
-        chain: sanitizeText('Acala'),
-        decimal: getDecimal('0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c'),
-        price,
-        token
-      });
-
-      postMessage(JSON.stringify(results));
-    }
-  }));
-
-  promisesArray.push(...promises);
-}
+// }
 
 async function getPoolBalance (api, address, availableBalance, connections) {
   const response = await api.query.nominationPools.poolMembers(address);
@@ -281,7 +248,13 @@ async function getAssetsOnOtherChains (accountAddress) {
   const results = [];
   const prices = await getPrices(fetchPriceFor);
 
+  if (prices === null) {
+    Promise.reject('failed');
+  }
+
   const promises = [];
+
+  const acalaConnections = await acalaTokens(accountAddress, results, promises, prices);
 
   const newPromises = CHAINS_TO_CHECK.map((chain) => {
     return setupConnections(chain.name, accountAddress, allEndpoints)
@@ -306,23 +279,22 @@ async function getAssetsOnOtherChains (accountAddress) {
   });
 
   promises.push(...newPromises);
-  const acalaConnections = await acalaTokens(accountAddress, results, promises, prices);
 
   for (let i = 0; i < promises.length; i++) {
     const promise = promises[i];
 
-    promise.catch(handleError);
+    promise.finally(() => {
+      if (i === promises.length - 1) {
+        closeWebsockets(acalaConnections);
+        const noAssetsOnOtherChains = results.every((res) => res.balances === '0');
 
-    if (i === promises.length - 1) {
-      closeWebsockets(acalaConnections);
-      const noAssetsOnOtherChains = results.every((res) => res.balances === '0');
-
-      if (noAssetsOnOtherChains) {
-        return postMessage('null');
-      } else {
-        return postMessage('Done');
+        if (noAssetsOnOtherChains) {
+          return postMessage('null');
+        } else {
+          return postMessage('Done');
+        }
       }
-    }
+    }).catch(handleError);
   }
 }
 

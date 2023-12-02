@@ -105,17 +105,16 @@ export default function AccountDetails(): React.ReactElement {
 
     worker.onmessage = (e: MessageEvent<string>) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const message = e.data;
 
-      console.log('e.data:', e.data);
-
-      const fetchedBalances = JSON.parse(e.data) as { balances: string, chain: string, decimal: number, price: number, token: string }[] | null | 'Done';
-
-      if (fetchedBalances === null) {
+      if (message === 'null') {
         setAssetsOnOtherChains(null);
-      } else if (fetchedBalances !== 'Done') {
-        setAssetsOnOtherChains(fetchedBalances.map((asset) => ({ chainName: asset.chain, decimal: Number(asset.decimal), price: asset.price, token: asset.token, totalBalance: isHexToBn(asset.balances) })));
-      } else {
+      } else if (message === 'Done') {
         worker.terminate();
+      } else {
+        const fetchedBalances = JSON.parse(message) as { balances: string, chain: string, decimal: number, price: number, token: string }[];
+
+        setAssetsOnOtherChains(fetchedBalances.map((asset) => ({ chainName: asset.chain, decimal: Number(asset.decimal), price: asset.price, token: asset.token, totalBalance: isHexToBn(asset.balances) })));
       }
     };
   }, []);
