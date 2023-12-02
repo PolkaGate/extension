@@ -5,14 +5,15 @@
 import { MAX_NOMINATIONS } from '../constants';
 import getApi from '../getApi.ts';
 
-async function getStackingConsts (endpoint) {
+async function getStakingConsts(endpoint) {
   try {
     const api = await getApi(endpoint);
     const at = await api.rpc.chain.getFinalizedHead();
     const apiAt = await api.at(at);
 
     const maxNominations = apiAt.consts.staking.maxNominations?.toNumber() || MAX_NOMINATIONS;
-    const maxNominatorRewardedPerValidator = apiAt.consts.staking.maxNominatorRewardedPerValidator.toNumber();
+    // TODO: apiAt.consts.staking.maxNominatorRewardedPerValidator is deprecated
+    const maxNominatorRewardedPerValidator = (apiAt.consts.staking.maxNominatorRewardedPerValidator || apiAt.consts.staking.maxExposurePageSize).toNumber();
     const existentialDeposit = apiAt.consts.balances.existentialDeposit.toString();
     const bondingDuration = apiAt.consts.staking.bondingDuration.toNumber();
     const sessionsPerEra = apiAt.consts.staking.sessionsPerEra.toNumber();
@@ -37,7 +38,7 @@ async function getStackingConsts (endpoint) {
       unbondingDuration: bondingDuration * sessionsPerEra * epochDurationInHours / 24 // unbondingDuration in days
     };
   } catch (error) {
-    console.log('something went wrong while getStackingConsts. err: ' + error);
+    console.log('something went wrong while getStakingConsts. err: ' + error);
 
     return null;
   }
@@ -46,7 +47,7 @@ async function getStackingConsts (endpoint) {
 onmessage = (e) => {
   const { endpoint } = e.data;
 
-  getStackingConsts(endpoint)
+  getStakingConsts(endpoint)
     .then((consts) => {
       postMessage(consts);
     }).catch(console.error);

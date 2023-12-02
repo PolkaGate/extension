@@ -63,7 +63,7 @@ function renderMethod(data: string, { args, method }: Decoded, t: TFunction): Re
     );
   }
 
-  console.log('args:', JSON.stringify(args, null, 2))
+  console.log('args:', JSON.stringify(args, null, 2));
 
   const PrettyArgs = () => (
     <Grid container fontSize='11px' overflow='scroll' textAlign='left'>
@@ -76,7 +76,7 @@ function renderMethod(data: string, { args, method }: Decoded, t: TFunction): Re
   return (
     <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
       <Grid container item justifyContent='flex-start' width='25%'>
-        <Infotip showQuestionMark iconLeft={5} text={<PrettyArgs />}>
+        <Infotip iconLeft={5} showQuestionMark text={<PrettyArgs />}>
           <Typography fontWeight={300}>
             {t<string>('Method')}
           </Typography>

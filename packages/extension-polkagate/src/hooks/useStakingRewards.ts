@@ -17,12 +17,12 @@ import { useChainName, useStakingRewardDestinationAddress } from '.';
 
 export async function getStakingReward(chainName: string, address: AccountId | string | null): Promise<string | null> {
   if (!address) {
-    console.log('address is null in getting getStakingReward ');
+    console.log('address is null in getting get Staking Rewards ');
 
     return null;
   }
 
-  console.log('Getting Staking Reward from subscan ... ');
+  console.log(`Getting Staking Reward from subscan  on chain:${chainName} for address:${address} ... `);
 
   return new Promise((resolve) => {
     try {
@@ -44,7 +44,7 @@ export async function getStakingReward(chainName: string, address: AccountId | s
           }
         });
     } catch (error) {
-      console.log('something went wrong while getting getStakingReward ');
+      console.log('something went wrong while getting get Staking Rewards ');
       resolve(null);
     }
   });

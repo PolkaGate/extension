@@ -17,9 +17,9 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
 import { useApi, useChain, useDecimal, useFormatted, useStakingAccount, useToken, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
+import Asset from '../../../../partials/Asset';
 import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import Asset from '../../../../partials/Asset';
 import Review from './Review';
 
 interface State {
@@ -169,7 +169,6 @@ export default function Index (): React.ReactElement {
           balance={unlockingAmount}
           balanceLabel={t('Unlocking')}
           fee={estimatedFee}
-          genesisHash={chain?.genesisHash}
           style={{ pt: '20px' }}
         />
         <div style={{ paddingTop: '30px' }}>
@@ -209,4 +208,3 @@ export default function Index (): React.ReactElement {
     </Motion>
   );
 }
-
