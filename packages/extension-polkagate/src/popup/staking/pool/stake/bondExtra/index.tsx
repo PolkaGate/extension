@@ -154,7 +154,6 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
         balance={availableBalance}
         balanceLabel={t<string>('Available balance')}
         fee={estimatedFee}
-        genesisHash={account?.genesisHash}
         style={{
           m: '20px auto',
           width: '92%'

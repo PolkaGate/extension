@@ -169,7 +169,6 @@ export default function Index (): React.ReactElement {
           balance={unlockingAmount}
           balanceLabel={t('Unlocking')}
           fee={estimatedFee}
-          genesisHash={chain?.genesisHash}
           style={{ pt: '20px' }}
         />
         <div style={{ paddingTop: '30px' }}>

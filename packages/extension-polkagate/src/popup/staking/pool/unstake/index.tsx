@@ -305,7 +305,6 @@ export default function Index (): React.ReactElement {
           balance={staked}
           balanceLabel={t('Staked')}
           fee={estimatedFee}
-          genesisHash={chain?.genesisHash}
           style={{ pt: '20px' }}
         />
         <div style={{ paddingTop: '15px' }}>

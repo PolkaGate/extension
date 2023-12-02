@@ -234,7 +234,6 @@ export default function Index (): React.ReactElement {
           balance={availableToSoloStake}
           balanceLabel={t('Available balance')}
           fee={estimatedFee}
-          genesisHash={chain?.genesisHash}
           style={{ pt: '20px' }}
         />
         <div style={{ paddingTop: '30px' }}>
