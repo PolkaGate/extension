@@ -10,7 +10,7 @@
 import type { DeriveSessionProgress } from '@polkadot/api-derive/types';
 import type { Forcing } from '@polkadot/types/interfaces';
 
-import { Grid, Skeleton, Typography } from '@mui/material';
+import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
@@ -43,6 +43,7 @@ const LabelBalance = ({ api, balance, label }: { api: ApiPromise | undefined, la
 
 export default function PendingRewards(): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const onAction = useContext(ActionContext);
 
   const { address } = useParams<{ address: string }>();
@@ -185,10 +186,10 @@ export default function PendingRewards(): React.ReactElement {
       />
       <Grid container item sx={{ fontSize: '13px', p: '0 5px 10px', textAlign: 'center' }}>
         <Typography sx={{ fontSize: '14px' }}>
-          {t('Rewards are typically paid out by validators on a regular basis. However, if not paid within the determined period, they will expire and be forfeited.')}
+          {t('Validators usually pay rewards regularly. If not received within the set period, rewards expire. You can manually initiate the payout if desired.')}
         </Typography>
       </Grid>
-      <Grid alignContent='flex-start' alignItems='center' container item sx={{ borderColor: 'primary.main', borderLeft: 1, borderRight: 1, borderTop: 1, borderTopLeftRadius: '5px', borderTopRightRadius: '5px', p: '10px 5px 10px', mx: '2%', width: '96%' }}>
+      <Grid alignContent='flex-start' alignItems='center' container item sx={{ border: `1px solid ${theme.palette.primary.main}`,borderBottom: 0, borderTopLeftRadius: '5px', borderTopRightRadius: '5px', p: '10px 5px 10px', mx: '2%', width: '96%' }}>
         <Grid item sx={{ fontSize: '13px' }} xs={4.75}>
           <Checkbox2
             checked={!!rewards?.length && selectedToPayout?.length === rewards?.length}
@@ -295,7 +296,7 @@ export default function PendingRewards(): React.ReactElement {
       <PButton
         _onClick={goToReview}
         disabled={!selectedToPayout?.length}
-        text={t<string>('Payout')}
+        text={t<string>('Next')}
       />
       {
         showReview && totalSelectedPending &&
