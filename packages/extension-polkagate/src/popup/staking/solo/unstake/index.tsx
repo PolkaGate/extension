@@ -188,14 +188,13 @@ export default function Index(): React.ReactElement {
       {staked?.isZero() &&
         <Warn isDanger text={t<string>('Nothing to unstake.')} />
       }
-      <Grid item xs={12} sx={{ mx: '15px' }}>
+      <Grid item sx={{ mx: '15px' }} xs={12}>
         <Asset
           address={address}
           api={api}
           balance={staked}
           balanceLabel={t('Staked')}
           fee={estimatedFee}
-          genesisHash={chain?.genesisHash}
           style={{ pt: '20px' }}
         />
         <div style={{ paddingTop: '30px' }}>

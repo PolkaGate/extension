@@ -12,7 +12,8 @@ import { hide, show, stars6Black, stars6White } from '../../assets/icons';
 import { AccountContext, FormatPrice } from '../../components';
 import { usePrices } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
-import { Prices, SavedBalances } from '../../util/types';
+import { MILLISECONDS_TO_UPDATE } from '../../util/constants';
+import { SavedBalances } from '../../util/types';
 
 interface Props {
   hideNumbers: boolean | undefined;
@@ -23,22 +24,27 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const theme = useTheme();
-  const parsedPrices = usePrices();
-  /** save home page url in to local storage */
-  // window.localStorage.setItem('last_url', JSON.stringify({ time: Date.now(), url: window.location.hash }));
-
-  const allYouHaveAmount = useMemo((): number | undefined => {
-    if (!accounts || parsedPrices === undefined) {
+  const pricesInfo = usePrices();
+  const isPriceOutdated = useMemo((): boolean | undefined => {
+    if (!pricesInfo) {
       return undefined;
     }
 
-    if (parsedPrices === null) {
+    return (Date.now() - pricesInfo.date > MILLISECONDS_TO_UPDATE);
+  }, [pricesInfo]);
+
+  const allYouHaveAmount = useMemo((): number | undefined => {
+    if (!accounts || pricesInfo === undefined) {
+      return undefined;
+    }
+
+    if (pricesInfo === null) {
       return 0;
     }
 
     let value = 0;
 
-    parsedPrices?.prices && accounts.forEach((acc) => {
+    pricesInfo?.prices && accounts.forEach((acc) => {
       if (!acc?.balances) {
         return;
       }
@@ -48,7 +54,7 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
       Object.keys(balances).forEach((chainName) => {
         // const localSavedPrices = window.localStorage.getItem('prices');
 
-        const price = (parsedPrices.prices[chainName] || parsedPrices.prices[chainName.toLocaleLowerCase()])?.usd;
+        const price = (pricesInfo.prices[chainName] || pricesInfo.prices[chainName.toLocaleLowerCase()])?.usd;
 
         const bal = balances[chainName];
 
@@ -63,7 +69,7 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
     });
 
     return value;
-  }, [accounts, parsedPrices]);
+  }, [accounts, pricesInfo]);
 
   const onHideClick = useCallback(() => {
     setHideNumbers(!hideNumbers);
@@ -90,7 +96,7 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
             src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
             sx={{ height: '36px', width: '154px' }}
           />
-          : <Typography sx={{ fontSize: '42px', fontWeight: 500, height: 36, lineHeight: 1 }}>
+          : <Typography sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontSize: '42px', fontWeight: 500, height: 36, lineHeight: 1 }}>
             {allYouHaveAmount === undefined
               ? <Skeleton height={38} sx={{ transform: 'none' }} variant='text' width={223} />
               : <FormatPrice num={allYouHaveAmount || '0'} />

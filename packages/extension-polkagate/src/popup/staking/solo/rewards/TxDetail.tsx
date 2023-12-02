@@ -6,10 +6,10 @@
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 
-import { ShortAddress } from '../../../../../components';
-import { useTranslation } from '../../../../../hooks';
-import { ThroughProxy } from '../../../../../partials';
-import { TxInfo } from '../../../../../util/types';
+import { ShortAddress } from '../../../../components';
+import { useTranslation } from '../../../../hooks';
+import { ThroughProxy } from '../../../../partials';
+import { TxInfo } from '../../../../util/types';
 
 interface Props {
   txInfo: TxInfo;
@@ -40,7 +40,7 @@ export default function TxDetail({ txInfo }: Props): React.ReactElement {
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
       <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-          {t<string>('Restaked')}:
+          {t<string>('Payout')}:
         </Typography>
         <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
           {`${txInfo.amount} ${token}`}

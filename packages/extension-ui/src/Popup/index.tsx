@@ -53,6 +53,7 @@ import Solo from '../../../extension-polkagate/src/popup/staking/solo';
 import FastUnstake from '../../../extension-polkagate/src/popup/staking/solo/fastUnstake';
 import SoloNominations from '../../../extension-polkagate/src/popup/staking/solo/nominations';
 import SoloRestake from '../../../extension-polkagate/src/popup/staking/solo/restake';
+import SoloPayout from '../../../extension-polkagate/src/popup/staking/solo/rewards/PendingRewards';
 import SoloStake from '../../../extension-polkagate/src/popup/staking/solo/stake';
 import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
@@ -205,6 +206,7 @@ export default function Popup(): React.ReactElement {
                               <Route path='/solo/unstake/:address'>{wrapWithErrorBoundary(<SoloUnstake />, 'solo-unstake')}</Route>
                               <Route path='/solo/fastUnstake/:address'>{wrapWithErrorBoundary(<FastUnstake />, 'solo-fast-unstake')}</Route>
                               <Route path='/solo/restake/:address'>{wrapWithErrorBoundary(<SoloRestake />, 'solo-restake')}</Route>
+                              <Route path='/solo/payout/:address'>{wrapWithErrorBoundary(<SoloPayout />, 'solo-payout')}</Route>
                               <Route path='/pool/join/:address'>{wrapWithErrorBoundary(<JoinPool />, 'pool-join')}</Route>
                               <Route path='/pool/create/:address'>{wrapWithErrorBoundary(<CreatePool />, 'pool-create')}</Route>
                               <Route path='/pool/nominations/:address'>{wrapWithErrorBoundary(<PoolNominations />, 'pool-nominations')}</Route>

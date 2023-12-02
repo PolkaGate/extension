@@ -65,9 +65,9 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Experience Full-Screen Imports for File, Recovery Phrase, or Ledger! 🖥️',
-              'Chinese Language Now Supported - Select in Settings 🌐',
-              'Enjoy a Smoother Experience with Bug Fixes 🛠️'
+              'Revamp the style of the quick action bar for a fresh, modern look.',
+              'Introduce the option to create a new account directly on the home page.',
+              'Enhance your experience with increased smoothness and various bug fixes. 🛠️'
             ]}
           />
         </Grid>
