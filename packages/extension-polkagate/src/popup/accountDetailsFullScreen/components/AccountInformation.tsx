@@ -14,7 +14,7 @@ import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { ActionContext, ChainLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, ShortAddress2, ShowBalance } from '../../../components';
-import { useAccount, useAccountInfo, useDecimal, useProxies, useToken, useTranslation } from '../../../hooks';
+import { useAccount, useAccountInfo, useProxies, useToken, useTranslation } from '../../../hooks';
 import { showAccount, windowOpen } from '../../../messaging';
 import { BALANCES_VALIDITY_PERIOD, CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo from '../../../util/getLogo';
@@ -25,7 +25,7 @@ import { AssetsOnOtherChains } from '..';
 interface AddressDetailsProps {
   address: string | undefined;
   api: ApiPromise | undefined;
-  assetsOnOtherChains: AssetsOnOtherChains[] | undefined;
+  assetsOnOtherChains: AssetsOnOtherChains[] | null | undefined;
   chain: Chain | null | undefined;
   formatted: string | undefined;
   chainName: string | undefined;
@@ -52,8 +52,8 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
   const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
   const isPriceOutdated = useMemo(() => price !== undefined && Date.now() - price.date > BALANCES_VALIDITY_PERIOD, [price]);
   const otherAssetsToShow = useMemo(() => {
-    if (!assetsOnOtherChains || assetsOnOtherChains.length === 0) {
-      return undefined;
+    if (!assetsOnOtherChains) {
+      return assetsOnOtherChains;
     } else {
       return assetsOnOtherChains.filter((asset) => !asset.totalBalance.isZero() && asset.token !== token);
     }
@@ -146,39 +146,50 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
     </Grid>
   );
 
-  const OtherAssetBox = ({ asset }: { asset: AssetsOnOtherChains }) => (
-    <Grid alignItems='center' container item justifyContent='center' sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '8px', p: '5px' }} width='fit-content'>
-      <Grid alignItems='center' container item pr='5px' width='fit-content'>
-        <Avatar src={getLogo(asset.chainName)} sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(asset.chainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 22, width: 22 }} variant='square' />
-      </Grid>
-      <BalanceColumn
-        asset={asset}
-      />
+  const OtherAssetBox = ({ asset }: { asset: AssetsOnOtherChains | undefined }) => (
+    <Grid alignItems='center' container item justifyContent='center' sx={{ border: asset ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '8px', p: asset ? '5px' : 0 }} width='fit-content'>
+      {asset
+        ? <>
+          <Grid alignItems='center' container item pr='5px' width='fit-content'>
+            <Avatar src={getLogo(asset.chainName)} sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(asset.chainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 22, width: 22 }} variant='square' />
+          </Grid>
+          <BalanceColumn
+            asset={asset}
+          />
+        </>
+        : <>
+          <Skeleton height={38} sx={{ transform: 'none' }} variant='text' width={99} />
+        </>
+      }
     </Grid>
   );
 
-  const OtherAssets = ({ assetsOnOtherChains }: { assetsOnOtherChains: AssetsOnOtherChains[] }) => (
-    <Grid container item sx={{ borderTop: '1px solid', borderTopColor: borderColor, mt: '10px', pt: '15px' }}>
-      <Typography fontSize='14px' fontWeight={400} width='80px'>
-        {t<string>('Assets on other chains')}
-      </Typography>
-      <Grid container gap='15px' item justifyContent='flex-start' sx={{ height: showMore ? 'fit-content' : '42px', overflow: 'hidden', px: '5%', transitionDuration: '0.2s', transitionProperty: 'transform' }} xs>
-        {assetsOnOtherChains.map((asset, index) => (
-          <OtherAssetBox
-            asset={asset}
-            key={index}
-          />
-        ))}
+  const OtherAssets = ({ assetsOnOtherChains }: { assetsOnOtherChains: AssetsOnOtherChains[] | undefined }) => {
+    const assets = assetsOnOtherChains && assetsOnOtherChains.length > 0 ? assetsOnOtherChains : [undefined, undefined];
+
+    return (
+      <Grid container item sx={{ borderTop: '1px solid', borderTopColor: borderColor, mt: '10px', pt: '15px' }}>
+        <Typography fontSize='14px' fontWeight={400} width='80px'>
+          {t<string>('Assets on other chains')}
+        </Typography>
+        <Grid container gap='15px' item justifyContent='flex-start' sx={{ height: showMore ? 'fit-content' : '42px', overflow: 'hidden', px: '5%', transitionDuration: '0.2s', transitionProperty: 'transform' }} xs>
+          {assets.map((asset, index) => (
+            <OtherAssetBox
+              asset={asset}
+              key={index}
+            />
+          ))}
+        </Grid>
+        {assetsOnOtherChains && assetsOnOtherChains.length > 5 &&
+          <Grid container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: 'pointer', width: '65px' }}>
+            <Typography fontSize='14px' fontWeight={400} sx={{ borderLeft: '1px solid', borderLeftColor: borderColor, height: 'fit-content', pl: '8px' }}>
+              {t<string>(showMore ? 'Less' : 'More')}
+            </Typography>
+            <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+          </Grid>}
       </Grid>
-      {assetsOnOtherChains.length > 5 &&
-        <Grid container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: 'pointer', width: '65px' }}>
-          <Typography fontSize='14px' fontWeight={400} sx={{ borderLeft: '1px solid', borderLeftColor: borderColor, height: 'fit-content', pl: '8px' }}>
-            {t<string>(showMore ? 'Less' : 'More')}
-          </Typography>
-          <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
-        </Grid>}
-    </Grid>
-  );
+    );
+  };
 
   const openIdentity = useCallback(() => {
     address && windowOpen(`/manageIdentity/${address}`);
@@ -197,7 +208,7 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
   }, [account?.isHidden, address]);
 
   return (
-    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '20px 30px 15px', position: 'relative' }}>
+    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '20px 30px 15px' }}>
       <Grid container item>
         <Grid container item sx={{ borderRight: '1px solid', borderRightColor: borderColor, pr: '15px', width: 'fit-content' }}>
           <Grid container item pr='5px' width='fit-content'>
@@ -273,14 +284,12 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
           </Grid>
         </Grid>
       </Grid>
-      {otherAssetsToShow && otherAssetsToShow.length > 0 &&
+      {otherAssetsToShow !== null &&
         <OtherAssets
           assetsOnOtherChains={otherAssetsToShow}
         />
       }
-      {theme.palette.mode === 'light' &&
-        <Grid item sx={{ bgcolor: 'black', borderRadius: '0 0 5px 5px', height: '6px', inset: 'auto 0 0 0', position: 'absolute' }}></Grid>
-      }
+      {/* <Grid item sx={{ bgcolor: theme.palette.mode === 'light' ? 'black' : theme.palette.primary.main, borderRadius: '0 0 4px 4px', height: '6px', inset: 'auto 0 0 0', position: 'absolute' }}></Grid> */}
     </Grid>
   );
 }

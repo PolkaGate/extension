@@ -18,7 +18,6 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import getPoolAccounts from '../../util/getPoolAccounts';
 import getPrices from '../api/getPrices';
-import getLogo from '../getLogo';
 
 const CHAINS_TO_CHECK = [{
   genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
@@ -122,7 +121,7 @@ function getDecimal (genesisHash) {
   return network?.decimals?.length ? network.decimals[0] : undefined;
 }
 
-async function acalaTokens (address, results, promisesArray, prices) {
+async function acalaTokens (address, results, promises, prices) {
   const allEndpoints = createWsEndpoints();
 
   const chainEndpoints = allEndpoints
@@ -130,9 +129,6 @@ async function acalaTokens (address, results, promisesArray, prices) {
     .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'));
 
   const { connections, fastApi } = await fastestEndpoint(chainEndpoints);
-
-  // const provider = new WsProvider(chainEndpoints[0].value);
-  // const api = new ApiPromise(options({ provider }));
 
   await fastApi.isReady;
 
@@ -147,26 +143,25 @@ async function acalaTokens (address, results, promisesArray, prices) {
   const AusdPriceID = 'acala-dollar-acala';
 
   for (const token of tokensList) {
-    await fastApi.query.tokens.accounts(address, { Token: token }).then((bal) => {
+    promises.push(fastApi.query.tokens.accounts(address, { Token: token }).then((bal) => {
       const total = bal.free.add(bal.reserved);
       const priceID = token === 'AUSD' ? AusdPriceID : token === 'LDOT' ? ldotPriceID : undefined;
       const price = priceID ? prices.prices[priceID]?.usd : prices.prices.acala?.usd;
+      const zeroBalance = total.isZero();
 
-      if (!total.isZero()) {
-        results.push({
-          balances: String(total),
-          chain: sanitizeText('Acala'),
-          decimal: getDecimal('0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c'),
-          price,
-          token
-        });
+      results.push({
+        balances: String(total),
+        chain: sanitizeText('Acala'),
+        decimal: getDecimal('0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c'),
+        price,
+        token
+      });
 
-        postMessage(JSON.stringify(results));
-      }
-    });
+      !zeroBalance && postMessage(JSON.stringify(results));
+    }));
   }
 
-  closeWebsockets(connections);
+  return connections;
 }
 
 async function polkadotAssetHubTokens (address, results, promisesArray, prices) {
@@ -291,19 +286,19 @@ async function getAssetsOnOtherChains (accountAddress) {
   const newPromises = CHAINS_TO_CHECK.map((chain) => {
     return setupConnections(chain.name, accountAddress, allEndpoints)
       .then((assetBalance) => {
-        if (!assetBalance.isZero()) {
-          const price = chain.priceID ? prices.prices[chain.priceID]?.usd ?? 0 : 0;
+        const zeroBalance = assetBalance.isZero();
 
-          results.push({
-            balances: String(assetBalance),
-            chain: sanitizeText(chain.name),
-            decimal: getDecimal(chain.genesisHash),
-            price,
-            token: getToken(chain.genesisHash)
-          });
+        const price = chain.priceID ? prices.prices[chain.priceID]?.usd ?? 0 : 0;
 
-          postMessage(JSON.stringify(results));
-        }
+        results.push({
+          balances: String(assetBalance),
+          chain: sanitizeText(chain.name),
+          decimal: getDecimal(chain.genesisHash),
+          price,
+          token: getToken(chain.genesisHash)
+        });
+
+        !zeroBalance && postMessage(JSON.stringify(results));
       })
       .catch((error) => {
         console.error(`Error fetching balances for ${chain.name}:`, error);
@@ -311,10 +306,23 @@ async function getAssetsOnOtherChains (accountAddress) {
   });
 
   promises.push(...newPromises);
-  await acalaTokens(accountAddress, results, promises, prices);
+  const acalaConnections = await acalaTokens(accountAddress, results, promises, prices);
 
-  for (const prom of promises) {
-    prom.catch(handleError);
+  for (let i = 0; i < promises.length; i++) {
+    const promise = promises[i];
+
+    promise.catch(handleError);
+
+    if (i === promises.length - 1) {
+      closeWebsockets(acalaConnections);
+      const noAssetsOnOtherChains = results.every((res) => res.balances === '0');
+
+      if (noAssetsOnOtherChains) {
+        return postMessage('null');
+      } else {
+        return postMessage('Done');
+      }
+    }
   }
 }
 
@@ -336,7 +344,7 @@ onmessage = async (e) => {
 
       tryCount = 0;
     } catch (error) {
-      console.error('Error while fetching assets on other chains, times to try', error, tryCount);
+      console.error('Error while fetching assets on other chains, times to retry', error, tryCount);
     }
   }
 };

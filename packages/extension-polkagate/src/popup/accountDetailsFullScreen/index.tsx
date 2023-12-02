@@ -74,7 +74,7 @@ export default function AccountDetails(): React.ReactElement {
   const decimal = useDecimal(address);
 
   const [assetId, setAssetId] = useState<number>();
-  const [assetsOnOtherChains, setAssetsOnOtherChains] = useState<AssetsOnOtherChains[]>();
+  const [assetsOnOtherChains, setAssetsOnOtherChains] = useState<AssetsOnOtherChains[] | undefined | null>();
   const [displayPopup, setDisplayPopup] = useState<number | undefined>();
   const [unlockInformation, setUnlockInformation] = useState<UnlockInformationType | undefined>();
 
@@ -106,11 +106,17 @@ export default function AccountDetails(): React.ReactElement {
     worker.onmessage = (e: MessageEvent<string>) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 
-      const fetchedBalances = JSON.parse(e.data) as { balances: string, chain: string, decimal: number, price: number, token: string }[];
+      console.log('e.data:', e.data);
 
-      setAssetsOnOtherChains(fetchedBalances.map((asset) => ({ chainName: asset.chain, decimal: Number(asset.decimal), price: asset.price, token: asset.token, totalBalance: isHexToBn(asset.balances) })));
+      const fetchedBalances = JSON.parse(e.data) as { balances: string, chain: string, decimal: number, price: number, token: string }[] | null | 'Done';
 
-      // worker.terminate();
+      if (fetchedBalances === null) {
+        setAssetsOnOtherChains(null);
+      } else if (fetchedBalances !== 'Done') {
+        setAssetsOnOtherChains(fetchedBalances.map((asset) => ({ chainName: asset.chain, decimal: Number(asset.decimal), price: asset.price, token: asset.token, totalBalance: isHexToBn(asset.balances) })));
+      } else {
+        worker.terminate();
+      }
     };
   }, []);
 
