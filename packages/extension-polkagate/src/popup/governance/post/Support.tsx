@@ -107,7 +107,7 @@ export default function Support({ address, referendum, track }: Props): React.Re
             }
           </Grid>
         </Grid>
-        : <Skeleton height='20px' sx={{ display: 'inline-block', transform: 'none', width: '115px' }} />
+        : <Skeleton animation='wave' height='20px' sx={{ display: 'inline-block', transform: 'none', width: '115px' }} />
       }
     </Grid>
   );

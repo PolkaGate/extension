@@ -210,7 +210,7 @@ export default function PendingRewards(): React.ReactElement {
         {!rewards
           ? <Grid container justifyContent='center'>
             {Array.from({ length: TABLE_HEIGHT / SKELETON_HEIGHT }).map((_, index) => (
-              <Skeleton height={SKELETON_HEIGHT} key={index} sx={{ display: 'inline-block', transform: 'none', width: '96%', my: '5px' }} />
+              <Skeleton animation='wave' height={SKELETON_HEIGHT} key={index} sx={{ display: 'inline-block', transform: 'none', width: '96%', my: '5px' }} />
             ))}
           </Grid>
           : !rewards.length

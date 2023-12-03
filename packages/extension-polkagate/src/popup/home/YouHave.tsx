@@ -98,7 +98,7 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
           />
           : <Typography sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontSize: '42px', fontWeight: 500, height: 36, lineHeight: 1 }}>
             {allYouHaveAmount === undefined
-              ? <Skeleton height={38} sx={{ transform: 'none' }} variant='text' width={223} />
+              ? <Skeleton animation='wave' height={38} sx={{ transform: 'none' }} variant='text' width={223} />
               : <FormatPrice num={allYouHaveAmount || '0'} />
             }
           </Typography>
