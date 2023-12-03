@@ -211,6 +211,8 @@ async function kusamaAssetHubTokens (address, results, promises, prices) {
       !zeroBalance && postMessage(JSON.stringify(results));
     }));
   }
+
+  return connections;
 }
 
 async function polkadotAssetHubTokens (address, results, promises, prices) {
@@ -256,6 +258,8 @@ async function polkadotAssetHubTokens (address, results, promises, prices) {
       !zeroBalance && postMessage(JSON.stringify(results));
     }));
   }
+
+  return connections;
 }
 
 async function getPoolBalance (api, address, availableBalance, connections) {
