@@ -6,7 +6,7 @@
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 
-import { Motion, PButton, Popup, ShortAddress, TwoButtons } from '../../../components';
+import { Motion, PButton, Popup, ShortAddress } from '../../../components';
 import { useToken, useTranslation } from '../../../hooks';
 import { HeaderBrand, SubTitle, ThroughProxy } from '../../../partials';
 import { TxInfo } from '../../../util/types';
@@ -20,7 +20,7 @@ interface Props {
   onPrimaryBtnClick: () => void;
 }
 
-export default function Confirmation({ address, onPrimaryBtnClick, showConfirmation, txInfo }: Props): React.ReactElement {
+export default function Confirmation ({ address, onPrimaryBtnClick, showConfirmation, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = useToken(address);
 

@@ -23,7 +23,7 @@ interface TotalChartProps {
   nativeAssetPrice: number | undefined;
 }
 
-export default function TotalChart({ assetsOnOtherChains, isDarkTheme, nativeAssetPrice }: TotalChartProps): React.ReactElement {
+export default function TotalChart ({ assetsOnOtherChains, isDarkTheme, nativeAssetPrice }: TotalChartProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chartRef = useRef(null);

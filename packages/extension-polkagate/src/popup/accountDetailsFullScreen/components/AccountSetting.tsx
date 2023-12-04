@@ -13,7 +13,6 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { ActionContext } from '../../../components';
 import { useAccount, useChain, useTranslation } from '../../../hooks';
-import { windowOpen } from '../../../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS } from '../../../util/constants';
 import { popupNumbers } from '..';
 import { TaskButton } from './CommonTasks';

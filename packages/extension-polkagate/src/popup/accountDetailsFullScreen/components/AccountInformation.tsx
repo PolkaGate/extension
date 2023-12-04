@@ -34,7 +34,7 @@ interface AddressDetailsProps {
   price: Price | undefined;
 }
 
-export default function AccountInformation({ address, api, assetsOnOtherChains, balances, chain, chainName, formatted, isDarkTheme, price }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation ({ address, api, assetsOnOtherChains, balances, chain, chainName, formatted, isDarkTheme, price }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
   const accountInfo = useAccountInfo(api, formatted);
@@ -71,18 +71,6 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
 
     setBalanceToShow(undefined);
   }, [balances, chainName]);
-
-  // const subscanLink = useCallback((address: string) => {
-  //   if (chainName === 'WestendAssetHub') {
-  //     return `https://westmint.statescan.io/#/accounts/${String(address)}`;
-  //   }
-
-  //   if (chainName?.includes('AssetHub')) {
-  //     return `https://assethub-${chainName.replace(/AssetHub/, '')}.subscan.io/account/${String(address)}`;
-  //   }
-
-  //   return `https://${chainName}.subscan.io/account/${String(address)}`;
-  // }, [chainName]);
 
   const Balance = () => (
     <>
@@ -289,7 +277,6 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
           assetsOnOtherChains={otherAssetsToShow}
         />
       }
-      {/* <Grid item sx={{ bgcolor: theme.palette.mode === 'light' ? 'black' : theme.palette.primary.main, borderRadius: '0 0 4px 4px', height: '6px', inset: 'auto 0 0 0', position: 'absolute' }}></Grid> */}
     </Grid>
   );
 }

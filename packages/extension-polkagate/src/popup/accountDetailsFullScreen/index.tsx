@@ -50,7 +50,7 @@ export interface UnlockInformationType {
   unlockableAmount: BN;
 }
 
-export default function AccountDetails(): React.ReactElement {
+export default function AccountDetails (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -63,10 +63,8 @@ export default function AccountDetails(): React.ReactElement {
   const chainName = useChainName(address);
 
   const [workerCalled, setWorkerCalled] = useState<{ address: string, worker: Worker }>();
-  // const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
   const [assetId, setAssetId] = useState<number>();
 
-  // const balance = useBalances(address, refreshNeeded, setRefreshNeeded);
   const balance = useBalances(address, undefined, undefined, undefined, assetId);
   const price = usePrice(address);
   const token = useToken(address);
@@ -121,19 +119,6 @@ export default function AccountDetails(): React.ReactElement {
       }
     };
   }, []);
-
-  // const loadInformation = useCallback(() => {
-  //   setAssetsOnOtherChains(undefined);
-  //   setDisplayPopup(undefined);
-  //   setUnlockInformation(undefined);
-  //   setAssetId(undefined);
-  //   setRefreshNeeded(true);
-  //   fetchAssetsOnOtherChains(address);
-  // }, [address, fetchAssetsOnOtherChains]);
-
-  // useEffect(() => {
-  //   address && loadInformation();
-  // }, [address, loadInformation]);
 
   useEffect(() => {
     if (!address) {
@@ -246,7 +231,6 @@ export default function AccountDetails(): React.ReactElement {
                   formatted={String(formatted)}
                   isDarkTheme={isDarkTheme}
                   price={price?.amount}
-                  // refreshNeeded={refreshNeeded}
                   setDisplayPopup={setDisplayPopup}
                   setUnlockInformation={setUnlockInformation}
                   title={t<string>('Locked in Referenda')}

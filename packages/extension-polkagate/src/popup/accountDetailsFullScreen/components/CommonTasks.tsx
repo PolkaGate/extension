@@ -13,7 +13,7 @@ import { useHistory } from 'react-router-dom';
 import { ApiPromise } from '@polkadot/api';
 
 import { ActionContext, PoolStakingIcon } from '../../../components';
-import { useChainName, useTranslation } from '../../../hooks';
+import { useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../../util/constants';
 import { popupNumbers } from '..';
@@ -59,7 +59,6 @@ export const TaskButton = ({ borderColor, disabled, icon, noBorderButton = false
 export default function CommonTasks({ address, api, assetId, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const chainName = useChainName(address);
   const history = useHistory();
   const onAction = useContext(ActionContext);
 

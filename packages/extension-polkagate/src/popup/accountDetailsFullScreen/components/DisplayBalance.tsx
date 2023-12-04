@@ -24,7 +24,7 @@ interface DisplayBalanceProps {
   isDarkTheme: boolean;
 }
 
-export default function DisplayBalance({ amount, decimal, isDarkTheme, onClick, price, theme, title, token }: DisplayBalanceProps): React.ReactElement {
+export default function DisplayBalance ({ amount, decimal, isDarkTheme, onClick, price, theme, title, token }: DisplayBalanceProps): React.ReactElement {
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px 40px' }}>
       <Typography fontSize='18px' fontWeight={400}>

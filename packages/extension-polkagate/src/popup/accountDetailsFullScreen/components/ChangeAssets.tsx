@@ -24,10 +24,6 @@ function ChangeAssets ({ address, assetId, label, onChange, setAssetId, style }:
   const assets = useAssets(address);
   const options = useMemo(() => (tokens || []).concat(assets || []), [assets, tokens]);
 
-  console.log('tokens:', tokens);
-  console.log('assets:', assets);
-  console.log('options:', options);
-
   const [isLoading, setLoading] = useState<boolean>();
 
   useEffect(() => {
