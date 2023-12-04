@@ -76,8 +76,8 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
   }, [address, onAction, proxyDisable]);
 
   const onManageIdentity = useCallback(() => {
-    address && !identityDisable && windowOpen(`/manageIdentity/${address}`).catch(console.error);
-  }, [address, identityDisable]);
+    address && !identityDisable && onAction(`/manageIdentity/${address}`);
+  }, [address, identityDisable, onAction]);
 
   const toggleAccountSetting = useCallback(() => {
     setShowAccountSettings(!showAccountSettings);
@@ -131,7 +131,7 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
           disabled={proxyDisable}
           icon={<vaadin-icon icon='vaadin:sitemap' style={{ height: '30px', color: `${proxyDisable ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
           onClick={onManageProxies}
-          secondaryIconType='popup'
+          secondaryIconType='page'
           text={t<string>('Manage proxies')}
           theme={theme}
         />

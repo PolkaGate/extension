@@ -7,12 +7,12 @@ import { faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/fr
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, OpenInNewRounded as OpenInNewRoundedIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material';
 import { Grid, Theme, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
 
-import { PoolStakingIcon } from '../../../components';
+import { ActionContext, PoolStakingIcon } from '../../../components';
 import { useChainName, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../../util/constants';
@@ -61,6 +61,7 @@ export default function CommonTasks({ address, api, assetId, genesisHash, setDis
   const theme = useTheme();
   const chainName = useChainName(address);
   const history = useHistory();
+  const onAction = useContext(ActionContext);
 
   const governanceDisabled = useMemo(() => !GOVERNANCE_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const stakingDisabled = useMemo(() => !STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
@@ -70,8 +71,8 @@ export default function CommonTasks({ address, api, assetId, genesisHash, setDis
   const stakingIconColor = useMemo(() => stakingDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary, [stakingDisabled, theme.palette.action.disabledBackground, theme.palette.text.primary]);
 
   const goToSend = useCallback(() => {
-    address && windowOpen(`/send/${address}/${assetId}`).catch(console.error);
-  }, [address, assetId]);
+    address && onAction(`/send/${address}/${assetId}`);
+  }, [address, assetId, onAction]);
 
   const goToReceive = useCallback(() => {
     address && setDisplayPopup(popupNumbers.RECEIVE);
@@ -90,12 +91,15 @@ export default function CommonTasks({ address, api, assetId, genesisHash, setDis
   }, [address, api, genesisHash, history, stakingDisabled]);
 
   const goToPoolStaking = useCallback(() => {
-    address && genesisHash && !stakingDisabled && windowOpen(`/pool/${address}/`).catch(console.error);
-  }, [address, genesisHash, stakingDisabled]);
+    address && genesisHash && !stakingDisabled && history.push({
+      pathname: `/pool/${address}/`,
+      state: { api, pathname: `account/${address}` }
+    });
+  }, [address, api, genesisHash, history, stakingDisabled]);
 
   const goToCrowdLoans = useCallback(() => {
-    address && genesisHash && !crowdloanDisabled && windowOpen(`/crowdloans/${address}/`).catch(console.error);
-  }, [address, crowdloanDisabled, genesisHash]);
+    address && genesisHash && !crowdloanDisabled && onAction(`/crowdloans/${address}/`);
+  }, [address, crowdloanDisabled, genesisHash, onAction]);
 
   const goToHistory = useCallback(() => {
     address && setDisplayPopup(popupNumbers.HISTORY);
@@ -158,7 +162,7 @@ export default function CommonTasks({ address, api, assetId, genesisHash, setDis
             />
           }
           onClick={goToSoloStaking}
-          secondaryIconType='popup'
+          secondaryIconType='page'
           text={t<string>('Solo Stake')}
           theme={theme}
         />
@@ -169,7 +173,7 @@ export default function CommonTasks({ address, api, assetId, genesisHash, setDis
             <PoolStakingIcon color={stakingIconColor} height={35} width={35} />
           }
           onClick={goToPoolStaking}
-          secondaryIconType='popup'
+          secondaryIconType='page'
           text={t<string>('Pool Stake')}
           theme={theme}
         />
@@ -185,7 +189,7 @@ export default function CommonTasks({ address, api, assetId, genesisHash, setDis
             />
           }
           onClick={goToCrowdLoans}
-          secondaryIconType='popup'
+          secondaryIconType='page'
           text={t<string>('Crowdloans')}
           theme={theme}
         />

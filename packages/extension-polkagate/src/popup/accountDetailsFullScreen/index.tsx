@@ -166,7 +166,7 @@ export default function AccountDetails(): React.ReactElement {
           <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
             {t<string>('Account Details')}
           </Typography>
-          <Grid container item justifyContent='space-between'>
+          <Grid container item justifyContent='space-between' mb='15px'>
             <Grid container direction='column' item rowGap='10px' width='calc(100% - 275px - 3%)'>
               <AccountInformation
                 address={address}
@@ -245,7 +245,7 @@ export default function AccountDetails(): React.ReactElement {
                 token={token}
               />
             </Grid>
-            <Grid container direction='column' gap='15px' item mb='15px' width='275px'>
+            <Grid container direction='column' gap='15px' item width='275px'>
               {assetsOnOtherChains && assetsOnOtherChains.length > 0 &&
                 <TotalChart
                   assetsOnOtherChains={assetsOnOtherChains}
