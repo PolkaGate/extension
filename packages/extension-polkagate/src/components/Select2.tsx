@@ -110,7 +110,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
             }
           }}
           defaultValue={defaultValue}
-          endAdornment={isItemsLoading ? <CircularProgress size={20} sx={{ color: `${theme.palette.secondary.light}`, position: 'absolute', left: '90px' }} /> : null}
+          IconComponent={isItemsLoading ? () =>  <CircularProgress size={20} sx={{ color: `${theme.palette.secondary.light}`, position: 'absolute', right: '5px' }} /> : undefined}
           id='selectChain'
           input={<BootstrapInput isDisabled={isDisabled} />}
           onChange={_onChange}
