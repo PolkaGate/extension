@@ -13,7 +13,7 @@ import { BN } from '@polkadot/util';
 import { useAccount, useApi, useBalances, useChain, useChainName, useDecimal, useFormatted, useFullscreen, usePrice, useToken, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
 import { windowOpen } from '../../messaging';
-import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
+import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { amountToHuman, isHexToBn } from '../../util/utils';
 import { getValue } from '../account/util';
 import DeriveAccountModal from '../deriveAccount/modal/DeriveAccountModal';
@@ -25,6 +25,7 @@ import ReceiveModal from '../receive/ReceiveModal';
 import RenameModal from '../rename/RenameModal';
 import AccountInformation from './components/AccountInformation';
 import AccountSetting from './components/AccountSetting';
+import ChangeAssets from './components/ChangeAssets';
 import CommonTasks from './components/CommonTasks';
 import DisplayBalance from './components/DisplayBalance';
 import ExternalLinks from './components/ExternalLinks';
@@ -62,18 +63,14 @@ export default function AccountDetails(): React.ReactElement {
   const chainName = useChainName(address);
 
   // const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
+  const [assetId, setAssetId] = useState<number>();
 
-  // useEffect(() => {
-  //   address && setRefreshNeeded(true);
-  //   address && console.log('heyyy ooooo')
-  // }, [address]);
-
-  const balance = useBalances(address);
+  // const balance = useBalances(address, refreshNeeded, setRefreshNeeded);
+  const balance = useBalances(address, undefined, undefined, undefined, assetId);
   const price = usePrice(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
 
-  const [assetId, setAssetId] = useState<number>();
   const [assetsOnOtherChains, setAssetsOnOtherChains] = useState<AssetsOnOtherChains[] | undefined | null>();
   const [displayPopup, setDisplayPopup] = useState<number | undefined>();
   const [unlockInformation, setUnlockInformation] = useState<UnlockInformationType | undefined>();
@@ -83,6 +80,7 @@ export default function AccountDetails(): React.ReactElement {
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
   const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
   const supportStakings = useMemo(() => STAKING_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
+  const supportAssetHubs = useMemo(() => ASSET_HUBS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
 
   const nativeAssetPrice = useMemo(() => {
     if (!price || !balance) {
@@ -119,9 +117,30 @@ export default function AccountDetails(): React.ReactElement {
     };
   }, []);
 
+  // const loadInformation = useCallback(() => {
+  //   setAssetsOnOtherChains(undefined);
+  //   setDisplayPopup(undefined);
+  //   setUnlockInformation(undefined);
+  //   setAssetId(undefined);
+  //   setRefreshNeeded(true);
+  //   fetchAssetsOnOtherChains(address);
+  // }, [address, fetchAssetsOnOtherChains]);
+
+  // useEffect(() => {
+  //   address && loadInformation();
+  // }, [address, loadInformation]);
+
   useEffect(() => {
     address && fetchAssetsOnOtherChains(address);
   }, [address, fetchAssetsOnOtherChains]);
+
+  const _onChangeAsset = useCallback((id: number) => {
+    if (id === -1) { // this is the id of native token
+      return setAssetId(undefined);
+    }
+
+    setAssetId(id);
+  }, []);
 
   const goToSend = useCallback(() => {
     address && windowOpen(`/send/${address}/${assetId}`).catch(console.error);
@@ -160,6 +179,15 @@ export default function AccountDetails(): React.ReactElement {
                 isDarkTheme={isDarkTheme}
                 price={price}
               />
+              {supportAssetHubs &&
+                <ChangeAssets
+                  address={address}
+                  assetId={assetId}
+                  label={t<string>('Assets')}
+                  onChange={_onChangeAsset}
+                  setAssetId={setAssetId}
+                  style={{ '> div div div#selectChain': { borderRadius: '5px' }, '> div p': { fontSize: '16px' } }}
+                />}
               <DisplayBalance
                 amount={balance?.availableBalance}
                 decimal={decimal}
