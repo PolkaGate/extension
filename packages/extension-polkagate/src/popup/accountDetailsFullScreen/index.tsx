@@ -62,6 +62,7 @@ export default function AccountDetails(): React.ReactElement {
   const chain = useChain(address);
   const chainName = useChainName(address);
 
+  const [workerCalled, setWorkerCalled] = useState<{ address: string, worker: Worker }>();
   // const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
   const [assetId, setAssetId] = useState<number>();
 
@@ -79,9 +80,9 @@ export default function AccountDetails(): React.ReactElement {
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
   const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
-  const supportStakings = useMemo(() => STAKING_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
+  const supportStaking = useMemo(() => STAKING_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
   const supportAssetHubs = useMemo(() => ASSET_HUBS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
-
+  const showTotalChart = useMemo(() => assetsOnOtherChains && assetsOnOtherChains.length > 0 && assetsOnOtherChains.some((asset) => asset.price && asset.price > 0 && !asset.totalBalance.isZero()), [assetsOnOtherChains]);
   const nativeAssetPrice = useMemo(() => {
     if (!price || !balance) {
       return undefined;
@@ -95,6 +96,10 @@ export default function AccountDetails(): React.ReactElement {
   const fetchAssetsOnOtherChains = useCallback((accountAddress: string) => {
     const worker: Worker = new Worker(new URL('../../util/workers/getAssetsOnOtherChains.js', import.meta.url));
 
+    setWorkerCalled({
+      address: accountAddress,
+      worker
+    });
     worker.postMessage({ accountAddress });
 
     worker.onerror = (err) => {
@@ -131,8 +136,20 @@ export default function AccountDetails(): React.ReactElement {
   // }, [address, loadInformation]);
 
   useEffect(() => {
-    address && fetchAssetsOnOtherChains(address);
-  }, [address, fetchAssetsOnOtherChains]);
+    if (!address) {
+      return;
+    }
+
+    if (!workerCalled) {
+      fetchAssetsOnOtherChains(address);
+    }
+
+    if (workerCalled && workerCalled.address !== address) {
+      workerCalled.worker.terminate();
+      setAssetsOnOtherChains(undefined);
+      fetchAssetsOnOtherChains(address);
+    }
+  }, [address, fetchAssetsOnOtherChains, workerCalled]);
 
   const _onChangeAsset = useCallback((id: number) => {
     if (id === -1) { // this is the id of native token
@@ -198,7 +215,7 @@ export default function AccountDetails(): React.ReactElement {
                 title={t<string>('Transferable')}
                 token={token}
               />
-              {supportStakings &&
+              {supportStaking &&
                 <DisplayBalance
                   amount={balance?.soloTotal}
                   decimal={decimal}
@@ -209,7 +226,7 @@ export default function AccountDetails(): React.ReactElement {
                   title={t<string>('Solo Stake')}
                   token={token}
                 />}
-              {supportStakings &&
+              {supportStaking &&
                 <DisplayBalance
                   amount={balance?.pooledBalance}
                   decimal={decimal}
@@ -246,7 +263,7 @@ export default function AccountDetails(): React.ReactElement {
               />
             </Grid>
             <Grid container direction='column' gap='15px' item width='275px'>
-              {assetsOnOtherChains && assetsOnOtherChains.length > 0 &&
+              {showTotalChart && assetsOnOtherChains &&
                 <TotalChart
                   assetsOnOtherChains={assetsOnOtherChains}
                   isDarkTheme={isDarkTheme}
