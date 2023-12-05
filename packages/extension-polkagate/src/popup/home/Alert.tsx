@@ -33,7 +33,7 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item>
           <ul style={{ margin: 0, paddingLeft: '25px' }}>
             {notes.map((note, index) => (
-              <li key={index} style={{ paddingBottom: '5px', paddingTop: '5px', color: `${theme.palette.secondary.light}` }}>
+              <li key={index} style={{ color: `${theme.palette.secondary.light}`, paddingBottom: '7px', paddingTop: '7px' }}>
                 <Typography color='text.primary' fontSize='14px' fontWeight={400} textAlign='left'>
                   {note}
                 </Typography>
@@ -65,9 +65,9 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Revamp the style of the quick action bar for a fresh, modern look.',
-              'Introduce the option to create a new account directly on the home page.',
-              'Enhance your experience with increased smoothness and various bug fixes. 🛠️'
+              'Claim your pending solo staking rewards in just a few clicks! 💸',
+              'Set AI-generated backgrounds for a visually appealing home page. 🎨',
+              'Experience enhanced smoothness and bug fixes. 🛠️'
             ]}
           />
         </Grid>
