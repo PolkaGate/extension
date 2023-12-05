@@ -273,7 +273,7 @@ export default function PendingRewards(): React.ReactElement {
         {
           !rewards
             ? <Typography fontSize='13px' sx={{ m: 'auto' }}>
-              {t('Checking pending rewards ...')}
+              {t('Getting pending rewards, please wait ...')}
             </Typography>
             : <>
               <Grid item>
