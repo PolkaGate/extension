@@ -1062,5 +1062,7 @@
   "Account setting": "",
   "Most common tasks": "",
   "Receive Fund": "",
-  "Account Details": ""
+  "Account Details": "",
+  "Assets": "",
+  "Validators usually pay rewards regularly. If not received within the set period, rewards expire. You can manually initiate the payout if desired.": ""
 }
