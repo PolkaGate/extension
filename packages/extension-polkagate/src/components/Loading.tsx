@@ -19,9 +19,9 @@ interface Props {
   children?: React.ReactNode;
 }
 
-const MAX_WAITING_TIME = 1000; //ms
-const NO_PASS_PERIOD = 6000; //ms
-const MAYBE_LATER_PERIOD = 5000; //ms
+const MAX_WAITING_TIME = 1000; // ms
+const NO_PASS_PERIOD = 6000; // ms
+const MAYBE_LATER_PERIOD = 5000; // ms
 
 const STEPS = {
   ASK_TO_SET_PASSWORD: 0,
