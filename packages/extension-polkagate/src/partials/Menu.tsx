@@ -8,11 +8,11 @@ import '@vaadin/icons';
 import { Close as CloseIcon, Email as EmailIcon, Language as LanguageIcon, Twitter as TwitterIcon } from '@mui/icons-material';
 import { Box, Divider, Grid, IconButton, Link, Typography } from '@mui/material';
 import { keyframes, Theme } from '@mui/material/styles';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
 import { riot } from '../assets/icons';
 import { ActionContext, MenuItem, TwoButtons, Warning } from '../components';
-import { useTranslation } from '../hooks';
+import { useManifest, useTranslation } from '../hooks';
 import ImportAccSubMenu from './ImportAccSubMenu';
 import NewAccountSubMenu from './NewAccountSubMenu';
 import SettingSubMenu from './SettingSubMenu';
@@ -54,29 +54,15 @@ export const SocialLinks = () => (
   </Grid>
 );
 
-function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
+function Menu ({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const manifest = useManifest();
   const onAction = useContext(ActionContext);
   const [collapsedMenu, setCollapsedMenu] = useState<number>(COLLAPSIBLE_MENUS.SETTING);
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
   const [showWarning, setShowWarning] = useState<boolean>();
-  const [manifest, setManifest] = useState<chrome.runtime.Manifest>();
+
   const [closeMenu, setCloseMenu] = useState<boolean>(false);
-
-  const fetchJson = () => {
-    fetch('./manifest.json')
-      .then((response) => {
-        return response.json();
-      }).then((data: chrome.runtime.Manifest) => {
-        setManifest(data);
-      }).catch((e: Error) => {
-        console.log(e.message);
-      });
-  };
-
-  useEffect(() => {
-    fetchJson();
-  }, []);
 
   const toggleImportSubMenu = useCallback(() => {
     collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT

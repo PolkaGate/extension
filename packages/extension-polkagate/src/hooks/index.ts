@@ -76,3 +76,4 @@ export { default as useLostAccountInformation } from './useLostAccountInformatio
 export { default as useCanPayFeeAndDeposit } from './useCanPayFeeAndDeposit';
 export { default as useUnSupportedNetwork } from './useUnSupportedNetwork';
 export { default as usePendingRewards } from './usePendingRewards';
+export { default as useManifest } from './useManifest';
