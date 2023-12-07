@@ -174,6 +174,7 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
           ? `${endpointDelay} ms`
           : (endpointDelay === undefined || isSelected)
             ? <Skeleton
+              animation='wave'
               height='20px'
               sx={{ display: 'inline-block', fontWeight: 'bold', mt: '5px', transform: 'none', width: '55px' }}
             />

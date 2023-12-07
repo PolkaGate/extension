@@ -21,9 +21,9 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
 import { useApi, useChain, useDecimal, useFormatted, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
+import Asset from '../../../../partials/Asset';
 import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import Asset from '../../../../partials/Asset';
 import ShowPool from '../../partial/ShowPool';
 import RemoveAll from '../myPool/removeAll';
 import SetState from '../myPool/SetState';
@@ -305,7 +305,6 @@ export default function Index (): React.ReactElement {
           balance={staked}
           balanceLabel={t('Staked')}
           fee={estimatedFee}
-          genesisHash={chain?.genesisHash}
           style={{ pt: '20px' }}
         />
         <div style={{ paddingTop: '15px' }}>

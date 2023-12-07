@@ -17,12 +17,12 @@ import { useChainName, useStakingRewardDestinationAddress } from '.';
 
 export async function getStakingReward(chainName: string, address: AccountId | string | null): Promise<string | null> {
   if (!address) {
-    console.log('address is null in getting getStakingReward ');
+    console.log('address is null in getting get Staking Rewards ');
 
     return null;
   }
 
-  console.log('Getting Staking Reward from subscan ... ');
+  console.log(`Getting Staking Reward from subscan  on chain:${chainName} for address:${address} ... `);
 
   return new Promise((resolve) => {
     try {
@@ -44,7 +44,7 @@ export async function getStakingReward(chainName: string, address: AccountId | s
           }
         });
     } catch (error) {
-      console.log('something went wrong while getting getStakingReward ');
+      console.log('something went wrong while getting get Staking Rewards ');
       resolve(null);
     }
   });
@@ -56,7 +56,7 @@ export default function useStakingRewards(address: string, stakingAccount: Accou
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
 
   useEffect(() => {
-    if (!stakingAccount || !chainName || !rewardDestinationAddress) {
+    if (!chainName || !rewardDestinationAddress) {
       setRewards(undefined);
 
       return;
@@ -65,7 +65,7 @@ export default function useStakingRewards(address: string, stakingAccount: Accou
     getStakingReward(chainName, rewardDestinationAddress).then((r) => {
       setRewards(r ? new BN(r) : BN_ZERO);
     }).catch(console.error);
-  }, [chainName, rewardDestinationAddress, stakingAccount]);
+  }, [chainName, rewardDestinationAddress]);
 
   return rewards;
 }

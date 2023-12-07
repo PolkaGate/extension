@@ -15,7 +15,7 @@ import { AccountContext, AddressInput, Identity } from '.';
 
 interface Props {
   address: string | null | undefined;
-  chain: Chain | null;
+  chain: Chain | null | undefined;
   label: string;
   style?: SxProps<Theme>;
   setAddress: React.Dispatch<React.SetStateAction<string | null | undefined>>;

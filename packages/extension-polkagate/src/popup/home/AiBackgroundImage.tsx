@@ -87,7 +87,7 @@ export default function AiBackgroundImage({ bgImage, setBgImage }: Props): React
   }, [mode, tryToApplyImg]);
 
   return (
-    <Grid container justifyContent='space-between' sx={{ backgroundColor: bgImage ? 'transparent' : 'background.default', bottom: '3px', color: theme.palette.text.primary, position: 'absolute', zIndex: 6, p: '0 10px 0' }}>
+    <Grid container justifyContent='space-between' sx={{ backgroundColor: 'background.default', bottom: '3px', color: theme.palette.text.primary, position: 'absolute', zIndex: 6, p: '0 10px 0' }}>
       <Grid item onClick={clearBackground} xs={1.5}>
         {bgImage &&
           <Typography sx={{ cursor: 'pointer', fontSize: '11px', userSelect: 'none' }}>
@@ -98,7 +98,7 @@ export default function AiBackgroundImage({ bgImage, setBgImage }: Props): React
       <Grid alignItems='baseline' container item justifyContent='flex-end' xs>
         <Grid item onClick={onAiBackground}>
           <Infotip2 showInfoMark text={t('Click to set an AI-generated background.')}>
-            <Typography sx={{ cursor: 'pointer', fontSize: '11px', pl: '5px', userSelect: 'none' }}>
+            <Typography sx={{ cursor: 'pointer', fontSize: '11px', pl: '5px', textDecoration: 'underline', userSelect: 'none' }}>
               {t('AI Background')}
             </Typography>
           </Infotip2>

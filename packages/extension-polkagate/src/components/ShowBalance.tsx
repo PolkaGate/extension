@@ -35,6 +35,7 @@ export default function ShowBalance({ api, balance, decimalPoint, withCurrency =
       {
         balance === undefined || !(api || (decimal && token))
           ? <Skeleton
+            animation='wave'
             height={height}
             sx={{ display: 'inline-block', transform: 'none', width: `${skeletonWidth}px` }}
           />

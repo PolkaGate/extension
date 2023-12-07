@@ -24,10 +24,10 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { AccountInputWithIdentity, AmountWithOptions, From, Motion, PButton } from '../../components';
 import { useAccountInfo, useAccountName, useApi, useChain, useDecimal, useFormatted, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
+import Asset from '../../partials/Asset';
 import { MAX_AMOUNT_LENGTH } from '../../util/constants';
 import { FormattedAddressState, TransferType } from '../../util/types';
 import { amountToHuman, amountToMachine, isValidAddress } from '../../util/utils';
-import Asset from '../../partials/Asset';
 import Review from './Review';
 
 export default function Send(): React.ReactElement {

@@ -12,7 +12,7 @@ interface Props {
   amount?: BN | null;
   decimalPoint?: number;
   decimals?: number;
-  num?: number;
+  num?: number | string;
   price?: number,
   textAlign?: 'left' | 'right';
   width?: string;
@@ -64,6 +64,7 @@ function FormatPrice({ amount, decimalPoint = 2, decimals, mt = '0px', num, pric
       {total !== undefined
         ? `$${nFormatter(total, decimalPoint)}`
         : <Skeleton
+          animation='wave'
           height={15}
           sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width }}
         />
