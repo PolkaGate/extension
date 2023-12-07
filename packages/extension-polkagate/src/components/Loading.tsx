@@ -86,7 +86,6 @@ export const setStorage = (label: any, data: any) => {
 
 export function PasswordSettingAlert(): React.ReactElement {
   const { t } = useTranslation();
-  const manifest = useManifest();
 
   return (<Grid item>
     <b>{t<string>('Remember your password well and keep it safe. ')}</b>
@@ -97,6 +96,7 @@ export function PasswordSettingAlert(): React.ReactElement {
 
 export default function Loading({ children }: Props): React.ReactElement<Props> {
   const theme = useTheme();
+  const manifest = useManifest();
   const { t } = useTranslation();
 
   const extensionViews = chrome.extension.getViews({ type: 'popup' });
@@ -337,7 +337,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
           </Grid>
           : children
       }
-      <Grid item sx={{ bottom: '10px', fontSize: '10px', position: 'absolute' }}>
+      <Grid container item justifyContent='center' sx={{ bottom: '10px', fontSize: '10px', position: 'absolute' }}>
         {`${('V')}${manifest?.version || ''}`}
       </Grid>
     </>
