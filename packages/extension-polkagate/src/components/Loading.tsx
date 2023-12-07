@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { blake2AsHex } from '@polkadot/util-crypto';
 
 import { logoBlack, logoMotionDark, logoMotionLight, logoWhite } from '../assets/logos';
-import { useTranslation } from '../hooks';
+import { useManifest, useTranslation } from '../hooks';
 import Passwords2 from '../popup/createAccountFullScreen/components/Passwords2';
 import ForgotPasswordConfirmation from '../popup/home/ForgotPasswordConfirmation';
 import PButton from './PButton';
@@ -86,6 +86,7 @@ export const setStorage = (label: any, data: any) => {
 
 export function PasswordSettingAlert(): React.ReactElement {
   const { t } = useTranslation();
+  const manifest = useManifest();
 
   return (<Grid item>
     <b>{t<string>('Remember your password well and keep it safe. ')}</b>
@@ -336,6 +337,9 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
           </Grid>
           : children
       }
+      <Grid item sx={{ bottom: '10px', fontSize: '10px', position: 'absolute' }}>
+        {`${('V')}${manifest?.version || ''}`}
+      </Grid>
     </>
   );
 }
