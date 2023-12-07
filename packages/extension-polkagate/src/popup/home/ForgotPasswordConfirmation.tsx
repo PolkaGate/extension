@@ -6,7 +6,7 @@
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { Checkbox2, PButton, Popup, Warning } from '../../components';
+import { Checkbox2, Popup, TwoButtons, Warning } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { HeaderBrand } from '../../partials';
 
@@ -15,7 +15,7 @@ interface Props {
   onConfirmForgotPassword: () => Promise<void>
 }
 
-export default function ForgotPasswordConfirmation({ onConfirmForgotPassword, onRejectForgotPassword }: Props): React.ReactElement<Props> {
+export default function ForgotPasswordConfirmation ({ onConfirmForgotPassword, onRejectForgotPassword }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const [show, setShow] = useState<boolean>(true);
@@ -48,7 +48,7 @@ export default function ForgotPasswordConfirmation({ onConfirmForgotPassword, on
       />
       <Grid container direction='column' px='15px'>
         <Grid container item justifyContent='center' pb='20px' pt='50px'>
-          <Typography fontSize='18px' fontWeight={400}>
+          <Typography fontSize='16px' fontWeight={400}>
             {t<string>('Are you sure you want to proceed?')}
           </Typography>
         </Grid>
@@ -73,10 +73,12 @@ export default function ForgotPasswordConfirmation({ onConfirmForgotPassword, on
           style={{ bottom: 75, position: 'absolute' }}
         />
       </Grid>
-      <PButton
-        _onClick={_onConfirmForgotPassword}
+      <TwoButtons
         disabled={!isChecked}
-        text={t<string>('Confirm')}
+        onPrimaryClick={_onConfirmForgotPassword}
+        onSecondaryClick={onClose}
+        primaryBtnText={ t<string>('Proceed')}
+        secondaryBtnText={ t<string>('Cancel')}
       />
     </Popup>
   );
