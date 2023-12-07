@@ -301,7 +301,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
             }
             {!isFlying && step === STEPS.SHOW_LOGIN &&
               <>
-                <Grid container sx={{ height: '40px' }}>
+                <Grid container sx={{ height: '30px' }}>
                   {isPasswordError &&
                     <WrongPasswordAlert bgcolor={theme.palette.mode === 'dark' ? 'black' : 'white'} />
                   }
@@ -334,12 +334,12 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
                 </Grid>
               </>
             }
+            <Grid container item justifyContent='center' sx={{ bottom: '10px', fontSize: '10px', position: 'absolute' }}>
+              {`${('V')}${manifest?.version || ''}`}
+            </Grid>
           </Grid>
           : children
       }
-      <Grid container item justifyContent='center' sx={{ bottom: '10px', fontSize: '10px', position: 'absolute' }}>
-        {`${('V')}${manifest?.version || ''}`}
-      </Grid>
     </>
   );
 }
