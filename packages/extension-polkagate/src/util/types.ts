@@ -735,4 +735,25 @@ export enum CanPayStatements {
   CANNOTPAYFEE,
   CANNOTPAYDEPOSIT,
   PROXYCANPAYFEE,
-};
+}
+
+export type Asset = {
+  assetId: number;
+  symbol: string;
+  decimal: number;
+  priceId?: string;
+  assetName: string;
+  ED?: string;
+}
+
+export type ChainInformation = {
+  color: string;
+  name: string;
+  prefix: number;
+  genesishash: string;
+  endpoints: {
+    url: string;
+    name: string;
+  }[];
+  assets: Asset[];
+}
