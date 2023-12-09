@@ -63,9 +63,10 @@ export default function AccountDetails (): React.ReactElement {
   const chainName = useChainName(address);
 
   const [workerCalled, setWorkerCalled] = useState<{ address: string, worker: Worker }>();
+  const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
   const [assetId, setAssetId] = useState<number>();
 
-  const balance = useBalances(address, undefined, undefined, undefined, assetId);
+  const balance = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId);
   const price = usePrice(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
@@ -130,6 +131,7 @@ export default function AccountDetails (): React.ReactElement {
     }
 
     if (workerCalled && workerCalled.address !== address) {
+      setRefreshNeeded(true);
       workerCalled.worker.terminate();
       setAssetsOnOtherChains(undefined);
       fetchAssetsOnOtherChains(address);
@@ -231,6 +233,7 @@ export default function AccountDetails (): React.ReactElement {
                   formatted={String(formatted)}
                   isDarkTheme={isDarkTheme}
                   price={price?.amount}
+                  refreshNeeded={refreshNeeded}
                   setDisplayPopup={setDisplayPopup}
                   setUnlockInformation={setUnlockInformation}
                   title={t<string>('Locked in Referenda')}

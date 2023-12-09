@@ -14,14 +14,25 @@ interface Props {
   address: string | undefined;
 }
 
-export default function ExternalLinks({ address }: Props): React.ReactElement {
+export default function ExternalLinks ({ address }: Props): React.ReactElement {
   const theme = useTheme();
   const chainName = useChainName(address);
   const formatted = useFormatted(address);
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const subIDURL = useMemo(() => `https://sub.id/${formatted}`, [formatted]);
-  const subscanURL = useMemo(() => `https://${chainName}.subscan.io/account/${formatted}`, [formatted, chainName]);
+  const subscanURL = useMemo(() => {
+    if (chainName === 'WestendAssetHub') {
+      return `https://westmint.statescan.io/#/accounts/${String(formatted)}`;
+    }
+
+    if (chainName?.includes('AssetHub')) {
+      return `https://assethub-${chainName.replace(/AssetHub/, '')}.subscan.io/account/${String(formatted)}`;
+    }
+
+    return `https://${chainName}.subscan.io/account/${String(formatted)}`;
+  }, [chainName, formatted]);
+  // TODO: subsquare does not support all networks
   const subsquareURL = useMemo(() => `https://${chainName}.subsquare.io/user/${formatted}/votes`, [formatted, chainName]);
   const stateScanURL = useMemo(() => `https://${chainName}.statescan.io/#/accounts/${formatted}`, [formatted, chainName]);
 
