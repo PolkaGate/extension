@@ -199,7 +199,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
     <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '20px 30px 15px' }}>
       <Grid container item>
         <Grid container item sx={{ borderRight: '1px solid', borderRightColor: borderColor, pr: '15px', width: 'fit-content' }}>
-          <Grid container item pr='5px' width='fit-content'>
+          <Grid container item pr='10px' width='fit-content'>
             <Identicon
               iconTheme={chain?.icon ?? 'polkadot'}
               prefix={chain?.ss58Format ?? 42}
@@ -208,7 +208,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
             />
           </Grid>
           <Grid container direction='column' display='grid' item justifyContent='center' justifyItems='center' width='fit-content'>
-            <Grid item onClick={openIdentity} sx={{ border: '1px solid', borderRadius: '5px', borderColor: 'success.main', cursor: 'pointer', display: hasID ? 'inherit' : 'none', p: '2px', width: 'fit-content' }}>
+            <Grid item onClick={openIdentity} sx={{ border: '1px solid', borderColor: 'success.main', borderRadius: '5px', cursor: 'pointer', display: hasID ? 'inherit' : 'none', p: '2px', width: 'fit-content' }}>
               {hasID
                 ? accountInfo?.identity?.displayParent
                   ? <LinkIcon sx={{ bgcolor: 'success.main', border: '1px solid', borderRadius: '50%', color: 'white', fontSize: '18px', transform: 'rotate(-45deg)' }} />
@@ -241,7 +241,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
             </Grid>
           </Grid>
         </Grid>
-        <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: borderColor, px: '10px' }} xs={5}>
+        <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: borderColor, px: '10px' }} xs={5.2}>
           <Grid container item justifyContent='space-between'>
             <Identity
               address={address}
