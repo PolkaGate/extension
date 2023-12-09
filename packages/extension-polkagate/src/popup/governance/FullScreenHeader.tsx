@@ -55,6 +55,8 @@ export function FullScreenHeader({ noAccountDropDown = false, noChainSwitch = fa
         return onAction(`/socialRecovery/${selectedAddress}/false`);
       case 'AccountDetails':
         return onAction(`/account/${selectedAddress}/`);
+      case 'send':
+        return onAction(`/send/${selectedAddress}/`);
       default:
         return null;
     }
