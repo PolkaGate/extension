@@ -127,7 +127,7 @@ const updateIndexedDB = (jsonFile: JSON) => {
     const clearRequest = objectStore.clear();
 
     clearRequest.onsuccess = () => {
-      console.log(`Database cleared successfully`);
+      console.log('Database cleared successfully');
       initializeIndexedDB(jsonFile);
     };
 
@@ -160,13 +160,8 @@ export async function updateIndexedDBChainInformation(): Promise<void> {
       const fetchedDBV = json.Version;
       const existingDBVersion = await getDBVersion().catch(console.error);
 
-      console.log('existingDBVersion:', existingDBVersion);
-
       if (existingDBVersion) {
         if (fetchedDBV > existingDBVersion) {
-          console.log('fetchedDBV > existingDBVersion:', fetchedDBV > existingDBVersion)
-          console.log('existingDBVersion:', existingDBVersion)
-          console.log('fetchedDBV:', fetchedDBV)
           updateIndexedDB(json);
         }
       } else {
