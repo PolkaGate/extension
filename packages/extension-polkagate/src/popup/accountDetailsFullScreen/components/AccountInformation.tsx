@@ -32,9 +32,10 @@ interface AddressDetailsProps {
   isDarkTheme: boolean;
   balances: BalancesInfo | undefined;
   price: Price | undefined;
+  terminateWorker: () => void | undefined;
 }
 
-export default function AccountInformation ({ address, api, assetsOnOtherChains, balances, chain, chainName, formatted, isDarkTheme, price }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation ({ address, api, assetsOnOtherChains, balances, chain, chainName, formatted, isDarkTheme, price, terminateWorker }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
   const accountInfo = useAccountInfo(api, formatted);
@@ -180,16 +181,19 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
   };
 
   const openIdentity = useCallback(() => {
+    terminateWorker();
     address && windowOpen(`/manageIdentity/${address}`);
-  }, [address]);
+  }, [address, terminateWorker]);
 
   const openSocialRecovery = useCallback(() => {
+    terminateWorker();
     address && windowOpen(`/socialRecovery/${address}/false`);
-  }, [address]);
+  }, [address, terminateWorker]);
 
   const openManageProxy = useCallback(() => {
+    terminateWorker();
     address && chain && onAction(`/manageProxies/${address}`);
-  }, [address, chain, onAction]);
+  }, [address, chain, onAction, terminateWorker]);
 
   const toggleVisibility = useCallback((): void => {
     address && showAccount(address, account?.isHidden || false).catch(console.error);

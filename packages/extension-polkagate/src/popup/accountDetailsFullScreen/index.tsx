@@ -51,7 +51,7 @@ export interface UnlockInformationType {
   unlockableAmount: BN;
 }
 
-export default function AccountDetails (): React.ReactElement {
+export default function AccountDetails(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -123,6 +123,8 @@ export default function AccountDetails (): React.ReactElement {
     };
   }, []);
 
+  const terminateWorker = useCallback(() => workerCalled && workerCalled.worker.terminate(), [workerCalled]);
+
   useEffect(() => {
     if (!address) {
       return;
@@ -134,11 +136,11 @@ export default function AccountDetails (): React.ReactElement {
 
     if (workerCalled && workerCalled.address !== address) {
       setRefreshNeeded(true);
-      workerCalled.worker.terminate();
+      terminateWorker();
       setAssetsOnOtherChains(undefined);
       fetchAssetsOnOtherChains(address);
     }
-  }, [address, fetchAssetsOnOtherChains, workerCalled]);
+  }, [address, fetchAssetsOnOtherChains, workerCalled, terminateWorker]);
 
   const _onChangeAsset = useCallback((id: number) => {
     if (id === -1) { // this is the id of native token
@@ -149,20 +151,23 @@ export default function AccountDetails (): React.ReactElement {
   }, []);
 
   const goToSend = useCallback(() => {
+    terminateWorker();
     address && onAction(`/send/${address}/${assetId ?? ''}`);
-  }, [address, assetId, onAction]);
+  }, [address, assetId, onAction, terminateWorker]);
 
   const goToSoloStaking = useCallback(() => {
+    terminateWorker();
     address && account?.genesisHash && STAKING_CHAINS.includes(account.genesisHash) &&
       history.push({
         pathname: `/solo/${address}/`,
         state: { api, pathname: `account/${address}` }
       });
-  }, [account?.genesisHash, address, api, history]);
+  }, [account?.genesisHash, address, api, history, terminateWorker]);
 
   const goToPoolStaking = useCallback(() => {
+    terminateWorker();
     address && account?.genesisHash && STAKING_CHAINS.includes(account.genesisHash) && windowOpen(`/pool/${address}/`).catch(console.error);
-  }, [account?.genesisHash, address]);
+  }, [account?.genesisHash, address, terminateWorker]);
 
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>
@@ -184,6 +189,7 @@ export default function AccountDetails (): React.ReactElement {
                 formatted={String(formatted)}
                 isDarkTheme={isDarkTheme}
                 price={price}
+                terminateWorker={terminateWorker}
               />
               {supportAssetHubs &&
                 <ChangeAssets
@@ -265,10 +271,12 @@ export default function AccountDetails (): React.ReactElement {
                 assetId={assetId}
                 genesisHash={account?.genesisHash}
                 setDisplayPopup={setDisplayPopup}
+                terminateWorker={terminateWorker}
               />
               <AccountSetting
                 address={address}
                 setDisplayPopup={setDisplayPopup}
+                terminateWorker={terminateWorker}
               />
               <ExternalLinks
                 address={address}

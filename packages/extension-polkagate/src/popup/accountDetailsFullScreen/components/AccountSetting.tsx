@@ -11,18 +11,19 @@ import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons
 import { Grid, keyframes, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
-import { ActionContext } from '../../../components';
+import { ActionContext, SocialRecoveryIcon } from '../../../components';
 import { useAccount, useChain, useTranslation } from '../../../hooks';
-import { IDENTITY_CHAINS, PROXY_CHAINS } from '../../../util/constants';
+import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 import { popupNumbers } from '..';
 import { TaskButton } from './CommonTasks';
 
 interface Props {
   address: string | undefined;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
+  terminateWorker: () => void | undefined;
 }
 
-export default function AccountSetting ({ address, setDisplayPopup }: Props): React.ReactElement {
+export default function AccountSetting({ address, setDisplayPopup, terminateWorker }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -35,6 +36,7 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
   const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
   const identityDisable = useMemo(() => !IDENTITY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
   const proxyDisable = useMemo(() => !PROXY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
+  const socialRecoveryDisable = useMemo(() => !SOCIAL_RECOVERY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
 
   const slideIn = keyframes`
   0% {
@@ -71,12 +73,19 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
   }, [address, account, setDisplayPopup]);
 
   const onManageProxies = useCallback(() => {
+    terminateWorker();
     address && !proxyDisable && onAction(`/manageProxies/${address}`);
-  }, [address, onAction, proxyDisable]);
+  }, [address, onAction, proxyDisable, terminateWorker]);
 
   const onManageIdentity = useCallback(() => {
+    terminateWorker();
     address && !identityDisable && onAction(`/manageIdentity/${address}`);
-  }, [address, identityDisable, onAction]);
+  }, [address, identityDisable, onAction, terminateWorker]);
+
+  const onSocialRecovery = useCallback(() => {
+    terminateWorker();
+    address && !socialRecoveryDisable && onAction(`/socialRecovery/${address}/false`);
+  }, [address, socialRecoveryDisable, onAction, terminateWorker]);
 
   const toggleAccountSetting = useCallback(() => {
     setShowAccountSettings(!showAccountSettings);
@@ -144,10 +153,28 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
               icon={faAddressCard}
             />
           }
-          noBorderButton
           onClick={onManageIdentity}
           secondaryIconType='page'
           text={t<string>('Manage Identity')}
+          theme={theme}
+        />
+        <TaskButton
+          borderColor={borderColor}
+          disabled={socialRecoveryDisable}
+          icon={
+            <SocialRecoveryIcon
+              color={
+                socialRecoveryDisable
+                  ? theme.palette.text.disabled
+                  : theme.palette.text.primary}
+              height={30}
+              width={30}
+            />
+          }
+          noBorderButton
+          onClick={onSocialRecovery}
+          secondaryIconType='page'
+          text={t<string>('Social Recovery')}
           theme={theme}
         />
       </Grid>
