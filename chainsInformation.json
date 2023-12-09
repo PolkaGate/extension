@@ -43,7 +43,8 @@
         "priceId": "polkadot",
         "assetName": "Polkadot"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subsquare", "subid", "statescan" ]
   },
   "Kusama": {
     "color": "#000000",
@@ -92,7 +93,8 @@
         "priceId": "kusama",
         "assetName": "Kusama"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subsquare", "subid", "statescan" ]
   },
   "Westend": {
     "color": "#da68a7",
@@ -128,7 +130,8 @@
         "decimal": 12,
         "assetName": "Westend"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subsquare", "subid" ]
   },
   "Westmint": {
     "color": "#da68a7",
@@ -162,7 +165,8 @@
         },
         "assetName": "Siri"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subid", "statescan" ]
   },
   "KusamaAssetHub": {
     "color": "#113911",
@@ -257,7 +261,8 @@
         },
         "assetName": "USD Tether"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subid" ]
   },
   "Karura": {
     "color": "#ff4c3b",
@@ -485,7 +490,8 @@
         "ED": "1000000000000000000",
         "assetName": "Darwinia Crab"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subsquare", "subid"]
   },
   "BifrostKusama": {
     "color": "#5a25f0",
@@ -614,7 +620,8 @@
         "ED": "1000000000000",
         "assetName": "vMOVR"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subsquare", "subid"]
   },
   "Edgeware": {
     "color": "#111111",
@@ -643,7 +650,8 @@
         "priceId": "edgeware",
         "assetName": "Edgeware"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subid"]
   },
   "Basilisk": {
     "color": "#49E49F",
@@ -707,7 +715,8 @@
         "ED": "1683502",
         "assetName": "Robonomics"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subsquare", "subid"]
   },
   "Khala": {
     "color": "#03f3f3",
@@ -898,7 +907,8 @@
         },
         "assetName": "Picasso"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subsquare", "subid"]
   },
   "Acala": {
     "color": "#645AFF",
@@ -1049,7 +1059,8 @@
         "ED": "10000",
         "assetName": "USD Tether"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subsquare", "subid"]
   },
   "Astar": {
     "color": "#1b6dc1d9",
@@ -1217,7 +1228,8 @@
         },
         "assetName": "Equilibrium USD"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subid"]
   },
   "Parallel": {
     "color": "#ef18ac",
@@ -1424,7 +1436,8 @@
         },
         "assetName": "Phala"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subid" ]
   },
   "PolkadotAssetHub": {
     "color": "#86e62a",
@@ -1483,7 +1496,8 @@
         },
         "assetName": "USD Coin"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subid" ]
   },
   "Picasso": {
     "color": "#000000",
@@ -1531,7 +1545,8 @@
         "ED": "1500",
         "assetName": "USD Tether"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subid"]
   },
   "Zeitgeist": {
     "color": "linear-gradient(180deg, rgba(32,90,172,1) 0%, rgba(26,72,138,1) 50%, rgba(13,36,69,1) 100%)",
@@ -1556,7 +1571,8 @@
         "priceId": "zeitgeist",
         "assetName": "Zeitgeist"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subsquare", "subid" ]
   },
   "Centrifuge": {
     "color": "#fcc367",
@@ -1581,7 +1597,8 @@
         "priceId": "centrifuge",
         "assetName": "Centrifuge"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subsquare", "subid" ]
   },
   "HydraDX": {
     "color": "#f653a2",
@@ -1733,7 +1750,8 @@
         "ED": "34854864344868000",
         "assetName": "Moonbeam"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subsquare", "subid" ]
   },
   "Nodle": {
     "color": "#1ab394",
@@ -1758,7 +1776,8 @@
         "priceId": "nodle-network",
         "assetName": "Nodle"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subid" ]
   },
   "Phala": {
     "color": "#c6fa4c",
@@ -1787,7 +1806,8 @@
         "priceId": "pha",
         "assetName": "Phala"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subsquare", "subid" ]
   },
   "ComposableFinance": {
     "color": "#C90E8A",
@@ -1831,7 +1851,8 @@
         "ED": "1500",
         "assetName": "USD Tether"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subid" ]
   },
   "BifrostPolkadot": {
     "color": "#5a25f0",
@@ -1913,7 +1934,8 @@
         "ED": "10000000000000000",
         "assetName": "vASTR"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subsquare", "subid" ]
   },
   "PolymeshTestnet": {
     "color": "#43195B",
@@ -1934,7 +1956,8 @@
         "priceId": "polymesh",
         "assetName": "Polymesh Testnet"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subid" ]
   },
   "Rococo": {
     "color": "#6f36dc",
@@ -1954,7 +1977,8 @@
         "decimal": 12,
         "assetName": "Rococo Testnet"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subsquare", "subid" ]
   },
   "Ternoa": {
     "color": "#d622ff",
@@ -1976,7 +2000,8 @@
         "staking": "relaychain",
         "assetName": "Ternoa"
       }
-    ]
+    ],
+    "explorers" : [ ]
   },
   "TernoaAlphanet": {
     "color": "#d622ff",
@@ -1997,7 +2022,8 @@
         "priceId": "coin-capsule",
         "assetName": "Ternoa"
       }
-    ]
+    ],
+    "explorers" : [ ]
   },
   "Polymesh": {
     "color": "linear-gradient(197deg, #FF2E72, #4A125E)",
@@ -2018,7 +2044,8 @@
         "priceId": "polymesh",
         "assetName": "Polymesh Testnet"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subid" ]
   },
   "Pendulum": {
     "color": "#49E2FD",
@@ -2055,7 +2082,8 @@
         "ED": "1000",
         "assetName": "USD Tether"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subid" ]
   },
   "Bittensor": {
     "color": "#252525",
@@ -2076,7 +2104,8 @@
         "priceId": "bittensor",
         "assetName": "Fusotao token"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subid" ]
   },
   "Ajuna": {
     "color": "#161212",
@@ -2100,7 +2129,8 @@
         "decimal": 12,
         "assetName": "Ajuna"
       }
-    ]
+    ],
+    "explorers" : [ "subscan", "subid" ]
   },
   "PolkadotBridgeHub": {
     "color": "#86e62a",
@@ -2133,7 +2163,8 @@
         "priceId": "polkadot",
         "assetName": "Polkadot"
       }
-    ]
+    ],
+    "explorers" : [ ]
   },
   "KusamaBridgeHub": {
     "color": "#113911",
@@ -2166,7 +2197,8 @@
         "priceId": "kusama",
         "assetName": "Kusama"
       }
-    ]
+    ],
+    "explorers" : [ ]
   },
   "PolkadotCollectives": {
     "color": "#e6777a",
@@ -2207,6 +2239,7 @@
         "priceId": "polkadot",
         "assetName": "Polkadot"
       }
-    ]
+    ],
+    "explorers" : [ "subsquare", "subid", "statescan" ]
   }
 }
