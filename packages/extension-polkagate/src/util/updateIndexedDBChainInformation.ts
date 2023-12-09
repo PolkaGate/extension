@@ -5,12 +5,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-const OWNER = 'AMIRKHANEF';
-// const OWNER = 'Nick-1979';
+const OWNER = 'Nick-1979';
 const REPO = 'polkagate-extension';
 const FILE_PATH = 'chainsInformation.json';
 const DATABASE_NAME = 'PolkaGateDB';
 const OBJECT_STORE_NAME = 'ChainsInformation';
+
+const url = `https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${FILE_PATH}`;
 
 const getDBVersion = () => {
   return new Promise((resolve, reject) => {
@@ -48,7 +49,7 @@ const getDBVersion = () => {
         db.close();
       };
 
-      getRequest.onerror = (event) => {
+      getRequest.onerror = () => {
         console.error('Error retrieving version');
         reject('Error retrieving version');
         db.close();
@@ -149,8 +150,6 @@ const updateIndexedDB = (jsonFile: JSON) => {
 };
 
 export async function updateIndexedDBChainInformation(): Promise<void> {
-  const url = `https://raw.githubusercontent.com/${OWNER}/${REPO}/IndexedDBV1/${FILE_PATH}`;
-
   try {
     const response = await fetch(url);
 
