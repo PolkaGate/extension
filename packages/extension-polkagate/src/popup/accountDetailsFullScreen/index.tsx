@@ -4,12 +4,13 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
+import { ActionContext } from '../../components';
 import { useAccount, useApi, useBalances, useChain, useChainName, useDecimal, useFormatted, useFullscreen, usePrice, useToken, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
 import { windowOpen } from '../../messaging';
@@ -61,6 +62,7 @@ export default function AccountDetails (): React.ReactElement {
   const api = useApi(address);
   const chain = useChain(address);
   const chainName = useChainName(address);
+  const onAction = useContext(ActionContext);
 
   const [workerCalled, setWorkerCalled] = useState<{ address: string, worker: Worker }>();
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
@@ -147,8 +149,8 @@ export default function AccountDetails (): React.ReactElement {
   }, []);
 
   const goToSend = useCallback(() => {
-    address && windowOpen(`/send/${address}/${assetId}`).catch(console.error);
-  }, [address, assetId]);
+    address && onAction(`/send/${address}/${assetId ?? ''}`);
+  }, [address, assetId, onAction]);
 
   const goToSoloStaking = useCallback(() => {
     address && account?.genesisHash && STAKING_CHAINS.includes(account.genesisHash) &&
