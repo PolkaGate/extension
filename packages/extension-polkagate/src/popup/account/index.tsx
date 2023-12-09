@@ -44,9 +44,6 @@ export default function AccountDetails(): React.ReactElement {
   const chain = useChain(address);
   const chainName = useChainName(address);
 
-  const chainInformation = useChainInfo(address);
-
-  console.log('chainInformation:', chainInformation);
   const genesisOptions = useGenesisHashOptions();
 
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
