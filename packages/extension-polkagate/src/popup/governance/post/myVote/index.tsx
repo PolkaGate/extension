@@ -55,7 +55,7 @@ export default function MyVote({ address, isFinished, notVoted, vote }: Props): 
         </Grid>
         : !voteBalance
           ? <Grid alignItems='center' container item sx={{ pt: '20px', px: '10%' }}>
-            <Skeleton sx={{ borderRadius: '5px', display: 'inline-block', height: '20px', transform: 'none', width: '90%' }} />
+            <Skeleton animation='wave' sx={{ borderRadius: '5px', display: 'inline-block', height: '20px', transform: 'none', width: '90%' }} />
           </Grid>
           : <Grid alignItems='center' container item justifyContent='space-between' sx={{ pt: '20px', px: '10%' }}>
             <Grid container item xs={8}>

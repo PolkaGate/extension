@@ -296,6 +296,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
           </>
           : [0, 1, 2, 3, 4].map((item) => (
             <Skeleton
+              animation='wave'
               height='25px'
               key={item}
               sx={{ mb: '5px', transform: 'none', width: '410px' }}
@@ -574,6 +575,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                     </>
                     : [0, 1, 2].map((item) => (
                       <Skeleton
+                        animation='wave'
                         height='25px'
                         key={item}
                         sx={{ mb: '5px', mx: 'auto', transform: 'none', width: '410px' }}

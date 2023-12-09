@@ -24,6 +24,7 @@ export default function ShowValue({ height = 20, unit, value, width = '90px' }: 
           {value}{' '}{unit}
         </>
         : <Skeleton
+          animation='wave'
           height={height}
           sx={{ display: 'inline-block', transform: 'none', width: { width } }}
         />

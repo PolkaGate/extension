@@ -60,6 +60,7 @@ export default function InitiatedRecoveryStatus({ api, chain, delayRemainBlock, 
             </Typography>
           </>
           : <Skeleton
+            animation='wave'
             height='30px'
             sx={{ transform: 'none', width: '450px' }}
           />}
@@ -132,12 +133,14 @@ export default function InitiatedRecoveryStatus({ api, chain, delayRemainBlock, 
             : [0, 1, 2].map((item, index) => (<Grid container item key={index} sx={{ borderBottom: '1px solid', borderBottomColor: '#D5CCD0' }}>
               <Grid alignItems='center' container item py='5px' width='80%'>
                 <Skeleton
+                  animation='wave'
                   height='30px'
                   sx={{ transform: 'none', width: '410px' }}
                 />
               </Grid>
               <Grid alignItems='center' container item justifyContent='center' sx={{ borderLeft: '1px solid', borderLeftColor: '#D5CCD0' }} width='20%'>
                 <Skeleton
+                  animation='wave'
                   height='30px'
                   sx={{ transform: 'none', width: '94px' }}
                 />
@@ -156,6 +159,7 @@ export default function InitiatedRecoveryStatus({ api, chain, delayRemainBlock, 
               {recoveryDelayPeriod(lostAccountRecoveryInfo.delayPeriod.toNumber(), 1)}
             </Typography>
             : <Skeleton
+              animation='wave'
               height='30px'
               sx={{ transform: 'none', width: '60px' }}
             />}
@@ -172,6 +176,7 @@ export default function InitiatedRecoveryStatus({ api, chain, delayRemainBlock, 
               {`${lostAccountRecoveryInfo.threshold.toNumber()} of ${lostAccountRecoveryInfo.friends.length}`}
             </Typography>
             : <Skeleton
+              animation='wave'
               height='30px'
               sx={{ transform: 'none', width: '60px' }}
             />}
@@ -192,6 +197,7 @@ export default function InitiatedRecoveryStatus({ api, chain, delayRemainBlock, 
               />
             </Grid>
             : <Skeleton
+              animation='wave'
               height='30px'
               sx={{ transform: 'none', width: '60px' }}
             />}
