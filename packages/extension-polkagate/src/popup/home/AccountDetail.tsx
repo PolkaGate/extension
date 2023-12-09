@@ -75,11 +75,13 @@ export default function AccountDetail({ address, chain, formatted, goToAccount, 
   const NoChainAlert = () => (
     <>
       {chain === null
-        ? <Grid color='text.primary' onClick={menuOnClick} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 500, lineHeight: '27px' }}>
-          {t('Select a chain to view balance')}
-          <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 10, mb: '-1px', stroke: '#BA2882' }} />
+        ? <Grid alignItems='center' color='text.primary' container onClick={menuOnClick} sx={{ cursor: 'pointer', lineHeight: '27px', textDecoration: 'underline' }}>
+          <Typography sx={{ fontSize: '14px', fontWeight: 500 }}>
+            {t('Select a chain to view balance')}
+          </Typography>
+          <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 12, mb: '-1px', stroke: '#BA2882' }} />
         </Grid>
-        : <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={'95%'} />
+        : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={'95%'} />
       }
     </>
   );
@@ -95,7 +97,7 @@ export default function AccountDetail({ address, chain, formatted, goToAccount, 
             value={getValue('total', balanceToShow)}
           />
         </Grid>
-        : <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
+        : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
       }
     </>
   );
@@ -103,7 +105,7 @@ export default function AccountDetail({ address, chain, formatted, goToAccount, 
   const Price = () => (
     <>
       {price === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== price?.chainName
-        ? <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
+        ? <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
         : <Grid item sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 300 }}>
           <FormatPrice
             amount={getValue('total', balanceToShow)}

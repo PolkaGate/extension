@@ -11,20 +11,15 @@ import { Accordion, AccordionDetails, AccordionSummary, Divider, Grid, Typograph
 import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
 
-import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ChainLogo, Identity, PButton, Popup, Progress } from '../../../../components';
-import { useApi, useChain, useChainName, useDecimal, useEndpoint, useFormatted, useStakingAccount, useStakingRewardDestinationAddress, useToken, useTranslation } from '../../../../hooks';
+import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
 import getRewardsSlashes from '../../../../util/api/getRewardsSlashes';
 import { MAX_REWARDS_TO_SHOW } from '../../../../util/constants';
-import { getRewards } from '../../../../util/subquery/staking';
-import { RewardInfo, SubQueryRewardInfo, SubscanRewardInfo } from '../../../../util/types';
+import { RewardInfo, SubscanRewardInfo } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
 
 ChartJS.register(
@@ -44,19 +39,20 @@ interface ArrowsProps {
 }
 
 interface Props {
-  api: ApiPromise | undefined;
-  chain: Chain;
-  chainName: string | undefined;
-  decimal: number | undefined;
+  address: string;
   rewardDestinationAddress: string | undefined;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
-  token: string | undefined;
 }
 
-export default function RewardsDetail({ api, chain, chainName, decimal, rewardDestinationAddress, setShow, show, token }: Props): React.ReactElement {
+export default function RewardsDetail({ address, rewardDestinationAddress, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const api = useApi(address);
+  const chain = useChain(address);
+  const chainName = useChainName(address);
+  const decimal = useDecimal(address);
+  const token = useToken(address);
 
   const [rewardsInfo, setRewardsInfo] = useState<RewardInfo[]>();
   const [pageIndex, setPageIndex] = useState<number>(0);
@@ -252,8 +248,6 @@ export default function RewardsDetail({ api, chain, chainName, decimal, rewardDe
         } as RewardInfo;
       });
 
-      console.log('rewardsFromSubscan:', rewardsFromSubscan);
-
       if (rewardsFromSubscan?.length) {
         return setRewardsInfo(rewardsFromSubscan);
       }
@@ -400,7 +394,7 @@ export default function RewardsDetail({ api, chain, chainName, decimal, rewardDe
         shortBorder
         showBackArrow
         showClose
-        text={t<string>('Rewards')}
+        text={t<string>('Received Rewards')}
       />
       {descSortedRewards && decimal && mostPrize
         ? (

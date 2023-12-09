@@ -46,6 +46,7 @@ function decodeMethod(data: string, chain: Chain, specVersion: BN): Decoded {
   } catch (error) {
     console.error(`${displayDecodeVersion('Error decoding method', chain, specVersion)}:: ${(error as Error).message}`);
 
+    // TODO: @AMIRKHANEF do we need these here again!
     args = null;
     method = null;
   }
@@ -63,8 +64,6 @@ function renderMethod(data: string, { args, method }: Decoded, t: TFunction): Re
     );
   }
 
-  console.log('args:', JSON.stringify(args, null, 2))
-
   const PrettyArgs = () => (
     <Grid container fontSize='11px' overflow='scroll' textAlign='left'>
       <pre>
@@ -76,7 +75,7 @@ function renderMethod(data: string, { args, method }: Decoded, t: TFunction): Re
   return (
     <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
       <Grid container item justifyContent='flex-start' width='25%'>
-        <Infotip showQuestionMark iconLeft={5} text={<PrettyArgs />}>
+        <Infotip iconLeft={5} showQuestionMark text={<PrettyArgs />}>
           <Typography fontWeight={300}>
             {t<string>('Method')}
           </Typography>

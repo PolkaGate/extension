@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { MinToReceiveRewardsInSolo, StakingConsts } from '../../../util/types';
+import type { StakingConsts } from '../../../util/types';
 
 import { Container, Divider, Grid } from '@mui/material';
 import React, { useCallback } from 'react';
@@ -11,7 +11,7 @@ import React, { useCallback } from 'react';
 import { BN, bnMax } from '@polkadot/util';
 
 import { Popup, ShowValue } from '../../../components';
-import { useDecimal, useToken, useTranslation } from '../../../hooks';
+import { useDecimal, useMinToReceiveRewardsInSolo, useToken, useTranslation } from '../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../partials';
 import { amountToHuman } from '../../../util/utils';
 
@@ -20,11 +20,11 @@ interface Props {
   showInfo: boolean;
   info: StakingConsts | null | undefined;
   setShowInfo: React.Dispatch<React.SetStateAction<boolean>>
-  nominatorInfo: MinToReceiveRewardsInSolo | undefined
 }
 
-export default function Info({ address, info, nominatorInfo, setShowInfo, showInfo }: Props): React.ReactElement {
+export default function Info({ address, info, setShowInfo, showInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const minimumActiveStake = useMinToReceiveRewardsInSolo(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
 
@@ -68,7 +68,7 @@ export default function Info({ address, info, nominatorInfo, setShowInfo, showIn
       <Container disableGutters sx={{ pt: '20px' }}>
         <Row label={t('Max validators you can select')} value={info?.maxNominations} />
         <Row label={t('Min {{token}} to be a staker', { replace: { token } })} value={info?.minNominatorBond} />
-        <Row label={t('Min {{token}} to receive rewards', { replace: { token } })} value={nominatorInfo?.minToGetRewards && info?.minNominatorBond && bnMax(info.minNominatorBond, new BN(String(nominatorInfo?.minToGetRewards)))} />
+        <Row label={t('Min {{token}} to receive rewards', { replace: { token } })} value={minimumActiveStake && info?.minNominatorBond && bnMax(info.minNominatorBond, minimumActiveStake)} />
         <Row label={t('Max nominators of a validator, who may receive rewards')} value={info?.maxNominatorRewardedPerValidator} />
         <Row label={t('Days it takes to receive your funds back after unstaking')} value={info?.unbondingDuration} />
         <Row label={t('Min {{token}} that must remain in your account (ED)', { replace: { token } })} value={info?.existentialDeposit} />

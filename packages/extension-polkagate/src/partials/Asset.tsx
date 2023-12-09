@@ -23,12 +23,12 @@ import BalanceFee from '../popup/send/partial/BalanceFee';
 
 interface Props {
   address?: string;
+  api: ApiPromise | undefined;
+  balance?: BN | null;
+  balances?: DeriveBalancesAll | null | undefined;
   balanceLabel: string;
   balanceType?: string;
-  balances?: DeriveBalancesAll | null | undefined;
-  api: ApiPromise | undefined;
   fee: Balance | undefined;
-  balance?: BN;
   style?: SxProps<Theme> | undefined;
 }
 

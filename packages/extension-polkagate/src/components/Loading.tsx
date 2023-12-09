@@ -7,15 +7,17 @@ import { Box, Grid, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
 import { logoMotionDark, logoMotionLight } from '../assets/logos';
+import { useManifest } from '../hooks';
 
 interface Props {
   children?: React.ReactNode;
 }
 
-const MAX_WAITING_TIME = 750; //ms
+const MAX_WAITING_TIME = 750; // ms
 
 export default function Loading({ children }: Props): React.ReactElement<Props> {
   const theme = useTheme();
+  const manifest = useManifest();
 
   const extensionViews = chrome.extension.getViews({ type: 'popup' });
   const isPopupOpenedByExtension = extensionViews.includes(window);
@@ -43,17 +45,21 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
   }, [value]);
 
   return (
-    <>{
-      (isLoading || !children) && isPopupOpenedByExtension
-        ? <Grid alignContent='center' alignItems='center' container sx={{ bgcolor: theme.palette.mode === 'dark' ? 'black' : 'white', height: '100%', pt: '190px', pb: '210px' }}>
-          <Box
-            component='img'
-            src={theme.palette.mode === 'dark' ? logoMotionDark as string : logoMotionLight as string}
-            sx={{ height: 'fit-content', width: '100%' }}
-          />
-        </Grid>
-        : children
-    }
+    <>
+      {
+        (isLoading || !children) && isPopupOpenedByExtension
+          ? <Grid alignContent='center' alignItems='center' container justifyContent='center' sx={{ bgcolor: theme.palette.mode === 'dark' ? 'black' : 'white', height: '100%', pb: '210px', pt: '190px', position: 'relative' }}>
+            <Box
+              component='img'
+              src={theme.palette.mode === 'dark' ? logoMotionDark as string : logoMotionLight as string}
+              sx={{ height: 'fit-content', width: '100%' }}
+            />
+            <Grid item sx={{ bottom: '10px', fontSize: '10px', position: 'absolute' }}>
+              {`${('V')}${manifest?.version || ''}`}
+            </Grid>
+          </Grid>
+          : children
+      }
     </>
   );
 }

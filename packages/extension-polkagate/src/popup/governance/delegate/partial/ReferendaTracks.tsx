@@ -34,7 +34,7 @@ export const LoadingSkeleton = ({ skeletonsNum, withCheckBox = false }: { skelet
   for (let index = 0; index < skeletonsNum; index++) {
     skeletonArray.push(<Grid container item justifyContent='space-between' key={index} pt='5px' px='5%'>
       <Grid container direction='column' item xs={10}>
-        <Skeleton height={20} sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width: index % 2 === 0 ? '161px' : '123px' }} />
+        <Skeleton animation='wave' height={20} sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width: index % 2 === 0 ? '161px' : '123px' }} />
       </Grid>
       {withCheckBox &&
         <Grid container item width='fit-content'>

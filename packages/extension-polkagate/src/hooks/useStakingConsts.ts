@@ -10,7 +10,7 @@ import { BN } from '@polkadot/util';
 import { useChainName, useCurrentEraIndex, useEndpoint, useToken } from '.';
 
 export default function useStakingConsts(address: string, stateConsts?: StakingConsts): StakingConsts | null | undefined {
-  const [consts, setConsts] = useState<StakingConsts | undefined | null>();
+  const [savedConsts, setSavedConsts] = useState<StakingConsts | undefined | null>();
   const [newConsts, setNewConsts] = useState<StakingConsts | undefined | null>();
   const endpoint = useEndpoint(address);
   const chainName = useChainName(address);
@@ -57,21 +57,23 @@ export default function useStakingConsts(address: string, stateConsts?: StakingC
       parsedConsts.existentialDeposit = new BN(parsedConsts.existentialDeposit);
       parsedConsts.minNominatorBond = new BN(parsedConsts.minNominatorBond);
 
-      setConsts(parsedConsts);
+      setSavedConsts(parsedConsts);
     }
   }, [chainName]);
 
   useEffect(() => {
     if (stateConsts) {
-      return setConsts(stateConsts);
+      return setSavedConsts(stateConsts);
     }
 
-    endpoint && chainName && eraIndex && eraIndex !== consts?.eraIndex && getStakingConsts(chainName, endpoint);
-  }, [endpoint, chainName, getStakingConsts, stateConsts, eraIndex, consts]);
+    const isSavedVersionOutOfDate = eraIndex !== savedConsts?.eraIndex;
+
+    endpoint && chainName && eraIndex && isSavedVersionOutOfDate && getStakingConsts(chainName, endpoint);
+  }, [endpoint, chainName, getStakingConsts, stateConsts, eraIndex, savedConsts]);
 
   return (newConsts && newConsts.token === token)
     ? newConsts
-    : (consts && consts.token === token)
-      ? consts
+    : (savedConsts && savedConsts.token === token)
+      ? savedConsts
       : undefined;
 }

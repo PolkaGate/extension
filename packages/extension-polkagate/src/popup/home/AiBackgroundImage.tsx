@@ -98,7 +98,7 @@ export default function AiBackgroundImage({ bgImage, setBgImage }: Props): React
       <Grid alignItems='baseline' container item justifyContent='flex-end' xs>
         <Grid item onClick={onAiBackground}>
           <Infotip2 showInfoMark text={t('Click to set an AI-generated background.')}>
-            <Typography sx={{ cursor: 'pointer', fontSize: '11px', pl: '5px', userSelect: 'none' }}>
+            <Typography sx={{ cursor: 'pointer', fontSize: '11px', pl: '5px', textDecoration: 'underline', userSelect: 'none' }}>
               {t('AI Background')}
             </Typography>
           </Infotip2>
