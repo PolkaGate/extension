@@ -10,6 +10,7 @@ import { Route, Switch } from 'react-router';
 
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
+import LoginPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement';
 import uiSettings from '@polkadot/ui-settings';
 
 import { ErrorBoundary, Loading } from '../../../extension-polkagate/src/components';
@@ -37,7 +38,6 @@ import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJS
 import ManageIdentity from '../../../extension-polkagate/src/popup/manageIdentity';
 import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
 import Metadata from '../../../extension-polkagate/src/popup/metadata';
-import LoginPassword from '../../../extension-polkagate/src/popup/passwordManagemant';
 import PhishingDetected from '../../../extension-polkagate/src/popup/PhishingDetected';
 import Receive from '../../../extension-polkagate/src/popup/receive';
 import Rename from '../../../extension-polkagate/src/popup/rename';

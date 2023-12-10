@@ -12,8 +12,9 @@ import { logoBlack, logoMotionDark, logoMotionLight, logoWhite } from '../assets
 import { useManifest, useTranslation } from '../hooks';
 import Passwords2 from '../popup/createAccountFullScreen/components/Passwords2';
 import ForgotPasswordConfirmation from '../popup/home/ForgotPasswordConfirmation';
+import PasswordSettingAlert from '../popup/passwordManagement/PasswordSettingAlert';
 import PButton from './PButton';
-import { Password, Warning, WrongPasswordAlert } from '.';
+import { Password, WrongPasswordAlert } from '.';
 
 interface Props {
   children?: React.ReactNode;
@@ -83,16 +84,6 @@ export const setStorage = (label: any, data: any) => {
     });
   });
 };
-
-export function PasswordSettingAlert(): React.ReactElement {
-  const { t } = useTranslation();
-
-  return (<Grid item>
-    <b>{t<string>('Remember your password well and keep it safe. ')}</b>
-    {t<string>('If you forget your password, you need to reimport your accounts and make a new password. Export and store your accounts securely to avoid losing them.')}
-  </Grid>
-  );
-}
 
 export default function Loading({ children }: Props): React.ReactElement<Props> {
   const theme = useTheme();
@@ -221,12 +212,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
       }
       {step === STEPS.SET_PASSWORD &&
         <Grid container sx={{ bgColor: theme.palette.mode === 'dark' ? 'black' : 'white', position: 'absolute', top: '30px' }}>
-          <Warning
-            fontWeight={300}
-            theme={theme}
-          >
-            <PasswordSettingAlert />
-          </Warning>
+          <PasswordSettingAlert />
         </Grid>
       }
       {
