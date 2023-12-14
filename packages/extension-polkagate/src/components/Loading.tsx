@@ -72,11 +72,11 @@ export const getStorage = (label: any) => {
   });
 };
 
-export const setStorage = (label: any, data: any) => {
+export const setStorage = (label: unknown, data: any) => {
   return new Promise<boolean>((resolve, reject) => {
     chrome.storage.local.set({ [label]: data }, () => {
       if (chrome.runtime.lastError) {
-        throw new Error(`${chrome.runtime.lastError}`);
+        console.log('Error while setting storage:', chrome.runtime.lastError);
         resolve(false);
       } else {
         resolve(true);
@@ -320,9 +320,11 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
                 </Grid>
               </>
             }
-            <Grid container item justifyContent='center' sx={{ bottom: '10px', fontSize: '10px', position: 'absolute' }}>
-              {`${('V')}${manifest?.version || ''}`}
-            </Grid>
+            {!isFlying &&
+              <Grid container item justifyContent='center' sx={{ bottom: '10px', fontSize: '10px', position: 'absolute' }}>
+                {`${('V')}${(manifest?.version || '') as string}`}
+              </Grid>
+            }
           </Grid>
           : children
       }
