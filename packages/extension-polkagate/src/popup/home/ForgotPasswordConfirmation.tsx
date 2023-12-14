@@ -3,19 +3,20 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { Checkbox2, Popup, TwoButtons, Warning } from '../../components';
+import { Checkbox2, Header, Popup, TwoButtons } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
-import { HeaderBrand } from '../../partials';
 
 interface Props {
   onRejectForgotPassword: () => Promise<void>
   onConfirmForgotPassword: () => Promise<void>
 }
 
-export default function ForgotPasswordConfirmation ({ onConfirmForgotPassword, onRejectForgotPassword }: Props): React.ReactElement<Props> {
+export default function ForgotPasswordConfirmation({ onConfirmForgotPassword, onRejectForgotPassword }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const [show, setShow] = useState<boolean>(true);
@@ -37,48 +38,42 @@ export default function ForgotPasswordConfirmation ({ onConfirmForgotPassword, o
 
   return (
     <Popup show={show}>
-      <HeaderBrand
-        backgroundDefault
-        noBorder
+      <Header
         onClose={onClose}
-        showBrand
-        showClose
-        showCloseX
-        text={'Polkagate'}
+        text={t<string>('Forgot Password')}
       />
       <Grid container direction='column' px='15px'>
-        <Grid container item justifyContent='center' pb='20px' pt='50px'>
-          <Typography fontSize='16px' fontWeight={400}>
-            {t<string>('Are you sure you want to proceed?')}
-          </Typography>
-        </Grid>
-        <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', py: '25px' }}>
-          <Warning
-            fontWeight={500}
-            iconDanger
-            isDanger
-            marginRight={11}
-            marginTop={0}
-            paddingLeft={10}
-            theme={theme}
-          >
+        <Grid container direction='column' item justifyContent='center' pb='20px' pt='50px'>
+          <Grid item textAlign='center'>
+            <FontAwesomeIcon
+              color={theme.palette.warning.main}
+              icon={faExclamationTriangle}
+              size='3x'
+            />
+          </Grid>
+          <Grid item textAlign='center'>
+            <Typography fontSize='16px' fontWeight={400} sx={{ color: 'warning.main' }}>
+              {t<string>('Are you sure you want to proceed?')}
+            </Typography>
+          </Grid>
+          <Typography fontSize='16px' fontWeight={400} mt='25px' px='15px'>
             {t<string>('This action will permanently delete your account(s), and password recovery will not be possible. You can reset your wallet by importing from a backup (JSON file or recovery phrase). ')}
-          </Warning>
+          </Typography>
         </Grid>
         <Checkbox2
           checked={isChecked}
           label={t<string>('I acknowledge permanent account(s) deletion.')}
           labelStyle={{ fontSize: '14px' }}
           onChange={onCheckChange}
-          style={{ bottom: 75, position: 'absolute' }}
+          style={{ bottom: 75, pl: '5px', position: 'absolute' }}
         />
       </Grid>
       <TwoButtons
         disabled={!isChecked}
         onPrimaryClick={_onConfirmForgotPassword}
         onSecondaryClick={onClose}
-        primaryBtnText={ t<string>('Proceed')}
-        secondaryBtnText={ t<string>('Cancel')}
+        primaryBtnText={t<string>('Proceed')}
+        secondaryBtnText={t<string>('Cancel')}
       />
     </Popup>
   );

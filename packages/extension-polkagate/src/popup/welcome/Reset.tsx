@@ -33,8 +33,6 @@ function Reset(): React.ReactElement {
     <>
       <HeaderBrand
         showBrand
-        showClose
-        showMenu
         text={'Polkagate'}
       />
       <Typography sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, p: '25px 0 10px', textAlign: 'center' }}>
