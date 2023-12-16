@@ -126,7 +126,7 @@ async function acalaTokens (address, results, promises, prices) {
     .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === 'acala')
     .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'));
 
-  const provider = new WsProvider(chainEndpoints[0].value);
+  const provider = new WsProvider(chainEndpoints[1].value);
   const fastApi = new ApiPromise(options({ provider }));
 
   await fastApi.isReady;
@@ -184,7 +184,7 @@ async function kusamaAssetHubTokens (address, results, promises, prices) {
   const allEndpoints = createWsEndpoints();
 
   const chainEndpoints = allEndpoints
-    .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === 'polkadotassethub')
+    .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === 'kusamaassethub')
     .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'));
 
   const { connections, fastApi } = await fastestEndpoint(chainEndpoints);
@@ -202,7 +202,7 @@ async function kusamaAssetHubTokens (address, results, promises, prices) {
 
       results.push({
         balances: String(total),
-        chain: sanitizeText('PolkadotAssetHub'),
+        chain: sanitizeText('KusamaAssetHub'),
         decimal,
         price,
         token
