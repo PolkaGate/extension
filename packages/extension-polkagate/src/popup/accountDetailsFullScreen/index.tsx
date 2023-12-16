@@ -94,8 +94,45 @@ export default function AccountDetails(): React.ReactElement {
     return parseFloat(amountToHuman(totalBalance, decimal)) * price.amount;
   }, [balance, decimal, price]);
 
+  const readAssetsOnOtherChains = useCallback((addressA: string) => {
+    chrome.storage.local.get('assetsOnOtherChains', (res) => {
+      const aOC = res.assetsOnOtherChains || {};
+
+      const addressAsset = aOC[addressA] as AssetsOnOtherChains[];
+
+      if (addressAsset) {
+        const parsed = JSON.parse(addressAsset) as AssetsOnOtherChains[] | null | undefined;
+
+        const updatedAssets = parsed?.map((asset) => {
+          const totalBalanceBN = isHexToBn(asset.totalBalance as unknown as string);
+
+          return { ...asset, totalBalance: totalBalanceBN };
+        });
+
+        setAssetsOnOtherChains(updatedAssets);
+      }
+    });
+  }, []);
+
+  const saveAssetsOnOtherChains = useCallback((addressA: string, fetched: AssetsOnOtherChains[]) => {
+    const nonZeros = fetched.filter((asset) => !asset.totalBalance.isZero());
+
+    chrome.storage.local.get('assetsOnOtherChains', (res) => {
+      const aOC = res.assetsOnOtherChains || {};
+
+      aOC[addressA] = JSON.stringify(nonZeros);
+
+      // eslint-disable-next-line no-void
+      void chrome.storage.local.set({ assetsOnOtherChains: aOC });
+    });
+  }, []);
+
   const fetchAssetsOnOtherChains = useCallback((accountAddress: string) => {
+    type fetchedBalance = { balances: string, chain: string, decimal: number, price: number, token: string };
     const worker: Worker = new Worker(new URL('../../util/workers/getAssetsOnOtherChains.js', import.meta.url));
+    let fetchedAssetsOnOtherChains: AssetsOnOtherChains[] = [];
+
+    readAssetsOnOtherChains(accountAddress);
 
     setWorkerCalled({
       address: accountAddress,
@@ -115,13 +152,17 @@ export default function AccountDetails(): React.ReactElement {
         setAssetsOnOtherChains(null);
       } else if (message === 'Done') {
         worker.terminate();
-      } else {
-        const fetchedBalances = JSON.parse(message) as { balances: string, chain: string, decimal: number, price: number, token: string }[];
 
-        setAssetsOnOtherChains(fetchedBalances.map((asset) => ({ chainName: asset.chain, decimal: Number(asset.decimal), price: asset.price, token: asset.token, totalBalance: isHexToBn(asset.balances) })));
+        saveAssetsOnOtherChains(accountAddress, fetchedAssetsOnOtherChains);
+      } else {
+        const fetchedBalances = JSON.parse(message) as fetchedBalance[];
+        const mapped = fetchedBalances.map((asset) => ({ chainName: asset.chain, decimal: Number(asset.decimal), price: asset.price, token: asset.token, totalBalance: isHexToBn(asset.balances) }));
+
+        setAssetsOnOtherChains(mapped);
+        fetchedAssetsOnOtherChains = mapped;
       }
     };
-  }, []);
+  }, [saveAssetsOnOtherChains, readAssetsOnOtherChains]);
 
   const terminateWorker = useCallback(() => workerCalled && workerCalled.worker.terminate(), [workerCalled]);
 
