@@ -4,31 +4,30 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid } from '@mui/material';
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { TwoButtons } from '../../components';
 import { useTranslation } from '../../hooks';
 import Passwords2 from '../createAccountFullScreen/components/Passwords2';
-import PasswordSettingAlert from './PasswordSettingAlert';
+import { STEPS } from './constants';
 
 interface Props {
-  onBackClick: () => void;
   onPassChange: (pass: string | null) => void
-  error: string | undefined;
   onSetPassword: () => Promise<void>
+  setStep: React.Dispatch<React.SetStateAction<number | undefined>>;
+  password: string;
 }
 
-function Confirmation({ error, onBackClick, onPassChange, onSetPassword }: Props): React.ReactElement {
+function FirstTimeSetPassword({ onPassChange, onSetPassword, password, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
+
+  const onCancel = useCallback(() => {
+    setStep(STEPS.ASK_TO_SET_PASSWORD);
+  }, [setStep]);
 
   return (
     <>
-      {!error &&
-        <Grid container sx={{ height: '120px', top: '30px' }}>
-          <PasswordSettingAlert />
-        </Grid>
-      }
-      <Grid container justifyContent='center' sx={{ display: 'block', pt: '180px', px: '10%' }}>
+      <Grid container justifyContent='center' sx={{ display: 'block', px: '10%' }}>
         <Passwords2
           firstPassStyle={{ marginBlock: '8px' }}
           isFocussed
@@ -40,10 +39,11 @@ function Confirmation({ error, onBackClick, onPassChange, onSetPassword }: Props
       </Grid>
       <Grid container justifyContent='center' sx={{ px: '2%' }}>
         <TwoButtons
+          disabled={!password}
           mt='20px'
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onPrimaryClick={onSetPassword}
-          onSecondaryClick={onBackClick}
+          onSecondaryClick={onCancel}
           primaryBtnText={t<string>('Set')}
           secondaryBtnText={t<string>('Cancel')}
         />
@@ -52,4 +52,4 @@ function Confirmation({ error, onBackClick, onPassChange, onSetPassword }: Props
   );
 }
 
-export default Confirmation;
+export default FirstTimeSetPassword;

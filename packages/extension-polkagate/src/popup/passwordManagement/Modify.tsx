@@ -4,9 +4,9 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography } from '@mui/material';
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 
-import { Password, TwoButtons } from '../../components';
+import { Checkbox2, Password, TwoButtons } from '../../components';
 import { useTranslation } from '../../hooks';
 import Passwords2 from '../createAccountFullScreen/components/Passwords2';
 
@@ -21,24 +21,21 @@ interface Props {
 
 function Confirmation({ currentPassword, error, onBackClick, onCurrentPasswordChange, onPassChange, onSetPassword }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const [isChecked, setChecked] = useState<boolean>(false);
+  const onCheckChange = useCallback(() => {
+    isChecked && onPassChange('');
+    setChecked(!isChecked);
+  }, [isChecked, onPassChange]);
 
   return (
     <>
       {!error &&
         <Grid alignContent='center' container sx={{ height: '200px', pl: '40px' }}>
-          <Typography sx={{ fontSize: '14px', fontWeight: 400, pb: '10px' }}>
+          <Typography sx={{ fontSize: '14px', fontWeight: 500, pb: '5px' }}>
             {t<string>('You are about to modify your password. ')}
           </Typography>
           <Typography sx={{ fontSize: '13px' }}>
-            <b> {t<string>('To Change Password:')}</b>{' '}
-            {t<string>('Enter current password. Add a new password. Click Set.')}<br />
-          </Typography>
-          <Typography sx={{ fontSize: '13px', py: '7px' }}>
-            <b>{t<string>('OR')}</b>
-          </Typography>
-          <Typography sx={{ fontSize: '13px' }}>
-            <b> {t<string>('To Remove Password:')}</b>{' '}
-            {t<string>('Enter current password. Leave new password fields empty. Click Set.')}
+            {t<string>('You can set a new password or even remove your password.')}<br />
           </Typography>
         </Grid>
       }
@@ -50,10 +47,18 @@ function Confirmation({ currentPassword, error, onBackClick, onCurrentPasswordCh
           style={{ marginBottom: '25px' }}
         />
         <Passwords2
+          disabled={isChecked}
           firstPassStyle={{ marginBlock: '8px' }}
           label={t<string>('New password')}
           onChange={onPassChange}
           onEnter={onSetPassword}
+        />
+        <Checkbox2
+          checked={isChecked}
+          label={t<string>('I want to enable passwordless login.')}
+          labelStyle={{ fontSize: '14px' }}
+          onChange={onCheckChange}
+          style={{ p: '10px 0 0 5px' }}
         />
       </Grid>
       <TwoButtons

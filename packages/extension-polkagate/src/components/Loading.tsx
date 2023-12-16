@@ -3,36 +3,24 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Grid, Typography, useTheme } from '@mui/material';
+import { Box, Grid, Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { blake2AsHex } from '@polkadot/util-crypto';
 
 import { logoBlack, logoMotionDark, logoMotionLight, logoWhite } from '../assets/logos';
 import { useManifest, useTranslation } from '../hooks';
-import Passwords2 from '../popup/createAccountFullScreen/components/Passwords2';
 import ForgotPasswordConfirmation from '../popup/home/ForgotPasswordConfirmation';
+import AskToSetPassword from '../popup/passwordManagement/AskToSetPassword';
+import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPassword';
 import PasswordSettingAlert from '../popup/passwordManagement/PasswordSettingAlert';
-import PButton from './PButton';
-import { Password, WrongPasswordAlert } from '.';
+import ShowLogin from '../popup/passwordManagement/ShowLogin';
+import { MAYBE_LATER_PERIOD, NO_PASS_PERIOD } from '../util/constants';
+import { STEPS } from '../popup/passwordManagement/constants';
 
 interface Props {
   children?: React.ReactNode;
 }
-
-const MAX_WAITING_TIME = 1000; // ms
-const NO_PASS_PERIOD = 6000; // ms
-const MAYBE_LATER_PERIOD = 5000; // ms
-
-const STEPS = {
-  ASK_TO_SET_PASSWORD: 0,
-  SET_PASSWORD: 1,
-  MAYBE_LATER: 2,
-  NO_LOGIN: 3,
-  SHOW_LOGIN: 4,
-  IN_NO_LOGIN_PERIOD: 5,
-  SHOW_DELETE_ACCOUNT_CONFIRMATION: 6
-};
 
 export type LoginInfo = {
   status: 'no' | 'mayBeLater' | 'set' | 'forgot' | 'reset';
@@ -73,7 +61,7 @@ export const getStorage = (label: any) => {
 };
 
 export const setStorage = (label: unknown, data: any) => {
-  return new Promise<boolean>((resolve, reject) => {
+  return new Promise<boolean>((resolve) => {
     chrome.storage.local.set({ [label]: data }, () => {
       if (chrome.runtime.lastError) {
         console.log('Error while setting storage:', chrome.runtime.lastError);
@@ -84,6 +72,24 @@ export const setStorage = (label: unknown, data: any) => {
     });
   });
 };
+
+const MAX_WAITING_TIME = 1000; // ms
+
+const StillLogo = ({ theme }: { theme: Theme }) => (
+  <Box
+    component='img'
+    src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
+    sx={{ height: 'fit-content', width: '37%' }}
+  />
+);
+
+const FlyingLogo = ({ theme }: { theme: Theme }) => (
+  <Box
+    component='img'
+    src={theme.palette.mode === 'dark' ? logoMotionDark as string : logoMotionLight as string}
+    sx={{ height: 'fit-content', width: '100%' }}
+  />
+);
 
 export default function Loading({ children }: Props): React.ReactElement<Props> {
   const theme = useTheme();
@@ -140,23 +146,6 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
     handleInitLoginInfo().catch(console.error);
   }, []);
 
-  const onMayBeLater = useCallback(() => {
-    setPermitted(true);
-
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    setStorage('loginInfo', { lastLogin: Date.now(), status: 'mayBeLater' });
-  }, []);
-
-  const onNoPassword = useCallback(() => {
-    setPermitted(true);
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    setStorage('loginInfo', { status: 'no' });
-  }, []);
-
-  const onYesToSetPassword = useCallback(() => {
-    setStep(STEPS.SET_PASSWORD);
-  }, []);
-
   const onSetPassword = useCallback(async () => {
     const hashedPassword = blake2AsHex(password, 256); // Hash the string with a 256-bit output
 
@@ -187,12 +176,6 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
     }
   }, [password, savedHashPassword]);
 
-  const onForgotPassword = useCallback(async (): Promise<void> => {
-    // await updateStorage('loginInfo', { status: 'forgot' });
-    // setPermitted(true);
-    setStep(STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION);
-  }, []);
-
   const onConfirmForgotPassword = useCallback(async (): Promise<void> => {
     await updateStorage('loginInfo', { status: 'forgot' });
     setPermitted(true);
@@ -204,127 +187,66 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
 
   return (
     <>
-      {step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
-        <ForgotPasswordConfirmation
-          onConfirmForgotPassword={onConfirmForgotPassword}
-          onRejectForgotPassword={onRejectForgotPassword}
-        />
-      }
-      {step === STEPS.SET_PASSWORD &&
-        <Grid container sx={{ bgColor: theme.palette.mode === 'dark' ? 'black' : 'white', position: 'absolute', top: '30px' }}>
-          <PasswordSettingAlert />
-        </Grid>
-      }
       {
         (!permitted || !children || isFlying) && isPopupOpenedByExtension
-          ? <Grid alignContent='center' alignItems='center' container sx={{ bgcolor: theme.palette.mode === 'dark' ? 'black' : 'white', height: '100%', pt: '150px', pb: '250px' }}>
-            {isFlying
-              ? <Box
-                component='img'
-                src={theme.palette.mode === 'dark' ? logoMotionDark as string : logoMotionLight as string}
-                sx={{ height: 'fit-content', width: '100%' }}
+          ? <Grid container item sx={{ backgroundColor: theme.palette.mode === 'dark' ? 'black' : 'white', height: '600px' }}>
+            {step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
+              <ForgotPasswordConfirmation
+                onConfirmForgotPassword={onConfirmForgotPassword}
+                onRejectForgotPassword={onRejectForgotPassword}
               />
-              : <Grid container item justifyContent='center' mt='33px' my='35px'>
-                <Box
-                  component='img'
-                  src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
-                  sx={{ height: 'fit-content', width: '37%' }}
-                />
-              </Grid>
-            }
-            {!isFlying && step === STEPS.ASK_TO_SET_PASSWORD &&
-              <Grid container justifyContent='center'>
-                <Typography fontSize={16} pb='25px'>
-                  {t('Would you like to create a password now?')}
-                </Typography>
-                <PButton
-                  _ml={0}
-                  _mt='10px'
-                  _onClick={onYesToSetPassword}
-                  text={t('Yes')}
-                />
-                <PButton
-                  _ml={0}
-                  _mt='10px'
-                  _onClick={onMayBeLater}
-                  _variant='outlined'
-                  text={t('Maybe later')}
-                />
-                <PButton
-                  _ml={0}
-                  _mt='10px'
-                  _onClick={onNoPassword}
-                  _variant='text'
-                  text={t('No')}
-                />
-              </Grid>
             }
             {step === STEPS.SET_PASSWORD &&
-              <Grid container justifyContent='center' sx={{ display: 'block', px: '10%' }}>
-                <Passwords2
-                  firstPassStyle={{ marginBlock: '8px' }}
-                  isFocussed
-                  label={t<string>('Password')}
-                  onChange={onPassChange}
-                  onEnter={onSetPassword}
-                />
-                <PButton
-                  _ml={0}
-                  _mt='20px'
-                  _variant='outlined'
-                  _onClick={() => setStep(STEPS.ASK_TO_SET_PASSWORD)}
-                  _width={45}
-                  text={t('Cancel')}
-                />
-                <PButton
-                  _ml={10}
-                  _mt='20px'
-                  _onClick={onSetPassword}
-                  _width={45}
-                  text={t('Set')}
-                />
-              </Grid>
-            }
-            {!isFlying && step === STEPS.SHOW_LOGIN &&
               <>
-                <Grid container sx={{ height: '30px' }}>
-                  {isPasswordError &&
-                    <WrongPasswordAlert bgcolor={theme.palette.mode === 'dark' ? 'black' : 'white'} />
-                  }
+                <Grid container item justifyContent='center' mt='33px' my='35px'>
+                  <StillLogo theme={theme} />
                 </Grid>
-                <Grid container justifyContent='center' sx={{ display: 'block', px: '10%' }}>
-                  <Typography fontSize={16}>
-                    {t('Please enter your password to proceed.')}
-                  </Typography>
-                  <Password
-                    isFocused={true}
-                    onChange={onPassChange}
-                    onEnter={onCheckPassword}
-                    style={{ marginBottom: '5px', marginTop: '5px' }}
-                  />
-                  <PButton
-                    _ml={0}
-                    _mt='20px'
-                    _onClick={onCheckPassword}
-                    _width={100}
-                    text={t('Unlock')}
-                  />
-                  <PButton
-                    _ml={0}
-                    _mt='10px'
-                    _onClick={onForgotPassword}
-                    _variant='text'
-                    _width={100}
-                    text={t('Forgot password?')}
-                  />
+                <Grid container sx={{ position: 'absolute', top: '165px' }}>
+                  <PasswordSettingAlert />
                 </Grid>
               </>
             }
-            {!isFlying &&
-              <Grid container item justifyContent='center' sx={{ bottom: '10px', fontSize: '10px', position: 'absolute' }}>
-                {`${('V')}${(manifest?.version || '') as string}`}
-              </Grid>
-            }
+            <Grid container item sx={{ p: '145px 0 70px' }}>
+              {isFlying
+                ? <FlyingLogo theme={theme} />
+                : <>
+                  {step !== STEPS.SET_PASSWORD &&
+                    <Grid container item justifyContent='center' mt='33px' my='35px'>
+                      <Box
+                        component='img'
+                        src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
+                        sx={{ height: 'fit-content', width: '37%' }}
+                      />
+                    </Grid>
+                  }
+                  {step === STEPS.ASK_TO_SET_PASSWORD &&
+                    <AskToSetPassword
+                      setPermitted={setPermitted}
+                      setStep={setStep}
+                    />
+                  }
+                  {step === STEPS.SET_PASSWORD &&
+                    <FirstTimeSetPassword
+                      onPassChange={onPassChange}
+                      onSetPassword={onSetPassword}
+                      password={password}
+                      setStep={setStep}
+                    />
+                  }
+                  {step === STEPS.SHOW_LOGIN &&
+                    <ShowLogin
+                      isPasswordError={isPasswordError}
+                      onCheckPassword={onCheckPassword}
+                      onPassChange={onPassChange}
+                      setStep={setStep}
+                    />
+                  }
+                  <Grid container item justifyContent='center' sx={{ bottom: '10px', fontSize: '10px', position: 'absolute' }}>
+                    {`${('V')}${(manifest?.version || '') as string}`}
+                  </Grid>
+                </>
+              }
+            </Grid>
           </Grid>
           : children
       }
