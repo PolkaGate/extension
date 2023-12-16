@@ -63,11 +63,6 @@ export default function LoginPassword (): React.ReactElement {
       const isConfirmed = await setStorage('loginInfo', { hashedPassword, lastLogin: Date.now(), status: 'set' });
 
       setStep(isConfirmed ? STEPS.NEW_PASSWORD_SET : STEPS.ERROR);
-    } else {
-      /** remove password */
-      const isConfirmed = await setStorage('loginInfo', { status: 'no' });
-
-      setStep(isConfirmed ? STEPS.PASSWORD_REMOVED : STEPS.ERROR);
     }
   }, [currentPassword, loginInfo?.hashedPassword, newPassword, step, t]);
 
@@ -109,6 +104,7 @@ export default function LoginPassword (): React.ReactElement {
           onCurrentPasswordChange={onCurrentPasswordChange}
           onPassChange={onPassChange}
           onSetPassword={onSetPassword}
+          setStep={setStep}
         />
       }
       {step !== undefined && [STEPS.NEW_PASSWORD_SET, STEPS.PASSWORD_REMOVED].includes(step) &&

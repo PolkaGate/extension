@@ -7,8 +7,10 @@ import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { Checkbox2, Password, TwoButtons } from '../../components';
+import { setStorage } from '../../components/Loading';
 import { useTranslation } from '../../hooks';
 import Passwords2 from '../createAccountFullScreen/components/Passwords2';
+import { STEPS } from './constants';
 
 interface Props {
   onBackClick: () => void;
@@ -17,15 +19,29 @@ interface Props {
   onSetPassword: () => Promise<void>
   currentPassword: string
   onCurrentPasswordChange: (pass: string | null) => void;
+  setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-function Confirmation({ currentPassword, error, onBackClick, onCurrentPasswordChange, onPassChange, onSetPassword }: Props): React.ReactElement {
+function Modify({ currentPassword, error, onBackClick, onCurrentPasswordChange, onPassChange, onSetPassword, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const [isChecked, setChecked] = useState<boolean>(false);
+  const [isRemovePasswordChecked, setChecked] = useState<boolean>(false);
   const onCheckChange = useCallback(() => {
-    isChecked && onPassChange('');
-    setChecked(!isChecked);
-  }, [isChecked, onPassChange]);
+    setChecked(!isRemovePasswordChecked);
+  }, [isRemovePasswordChecked]);
+
+  const onRemovePassword = useCallback(async () => {
+    const isConfirmed = await setStorage('loginInfo', { status: 'no' });
+
+    setStep(isConfirmed ? STEPS.PASSWORD_REMOVED : STEPS.ERROR);
+  }, [setStep]);
+
+  const onSet = useCallback(() => {
+    if (isRemovePasswordChecked) {
+      onRemovePassword().catch(console.error);
+    } else {
+      onSetPassword().catch(console.error);
+    }
+  }, [isRemovePasswordChecked, onRemovePassword, onSetPassword]);
 
   return (
     <>
@@ -34,7 +50,7 @@ function Confirmation({ currentPassword, error, onBackClick, onCurrentPasswordCh
           <Typography sx={{ fontSize: '14px', fontWeight: 500, pb: '5px' }}>
             {t<string>('You are about to modify your password. ')}
           </Typography>
-          <Typography sx={{ fontSize: '13px' }}>
+          <Typography sx={{ fontSize: '14px' }}>
             {t<string>('You can set a new password or even remove your password.')}<br />
           </Typography>
         </Grid>
@@ -46,9 +62,9 @@ function Confirmation({ currentPassword, error, onBackClick, onCurrentPasswordCh
           onChange={onCurrentPasswordChange}
           style={{ marginBottom: '25px' }}
         />
-        <Grid item sx={{ opacity: isChecked ? 0.5 : 1 }}>
+        <Grid item sx={{ opacity: isRemovePasswordChecked ? 0.5 : 1 }}>
           <Passwords2
-            disabled={isChecked}
+            disabled={isRemovePasswordChecked}
             firstPassStyle={{ marginBlock: '8px' }}
             label={t<string>('New password')}
             onChange={onPassChange}
@@ -56,7 +72,7 @@ function Confirmation({ currentPassword, error, onBackClick, onCurrentPasswordCh
           />
         </Grid>
         <Checkbox2
-          checked={isChecked}
+          checked={isRemovePasswordChecked}
           label={t<string>('I want to enable passwordless login.')}
           labelStyle={{ fontSize: '14px' }}
           onChange={onCheckChange}
@@ -65,7 +81,7 @@ function Confirmation({ currentPassword, error, onBackClick, onCurrentPasswordCh
       </Grid>
       <TwoButtons
         disabled={!currentPassword}
-        onPrimaryClick={onSetPassword}
+        onPrimaryClick={onSet}
         onSecondaryClick={onBackClick}
         primaryBtnText={t<string>('Set')}
         secondaryBtnText={t<string>('Cancel')}
@@ -74,4 +90,4 @@ function Confirmation({ currentPassword, error, onBackClick, onCurrentPasswordCh
   );
 }
 
-export default Confirmation;
+export default Modify;
