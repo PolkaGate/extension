@@ -8,7 +8,7 @@ import type { PalletBalancesBalanceLock } from '@polkadot/types/lookup';
 import { faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
@@ -19,7 +19,7 @@ import { useAccountLocks, useCurrentBlockNumber, useHasDelegated, useTranslation
 import { Lock } from '../../../hooks/useAccountLocks';
 import { TIME_TO_SHAKE_ICON } from '../../../util/constants';
 import blockToDate from '../../crowdloans/partials/blockToDate';
-import { UnlockInformationType, popupNumbers } from '..';
+import { popupNumbers, UnlockInformationType } from '..';
 
 interface DisplayBalanceProps {
   address: string | undefined;
@@ -36,13 +36,12 @@ interface DisplayBalanceProps {
   setUnlockInformation: React.Dispatch<React.SetStateAction<UnlockInformationType | undefined>>;
 }
 
-export default function LockedBalanceDisplay({ address, api, chain, decimal, formatted, isDarkTheme, price, refreshNeeded, setDisplayPopup, setUnlockInformation, title, token }: DisplayBalanceProps): React.ReactElement {
+export default function LockedBalanceDisplay ({ address, api, chain, decimal, formatted, isDarkTheme, price, refreshNeeded, setDisplayPopup, setUnlockInformation, title, token }: DisplayBalanceProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const [refresh, setRefresh] = useState(false);
 
-  const delegatedBalance = useHasDelegated(address, refresh || refreshNeeded);
-  const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting', false, refresh || refreshNeeded);
+  const delegatedBalance = useHasDelegated(address, refreshNeeded);
+  const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting', false, refreshNeeded);
   const currentBlock = useCurrentBlockNumber(address);
 
   // const [showReview, setShowReview] = useState(false);
@@ -70,13 +69,13 @@ export default function LockedBalanceDisplay({ address, api, chain, decimal, for
   }, []);
 
   useEffect(() => {
-    if (refresh) {
+    if (refreshNeeded) {
       setLockedInReferenda(undefined); // TODO: needs double check
       setUnlockableAmount(undefined);
       setTotalLocked(undefined);
       setMiscRefLock(undefined);
     }
-  }, [refresh]);
+  }, [refreshNeeded]);
 
   useEffect(() => {
     if (referendaLocks === null) {
@@ -153,7 +152,7 @@ export default function LockedBalanceDisplay({ address, api, chain, decimal, for
         setMiscRefLock(foundRefLock?.amount);
       }
     });
-  }, [api, chain?.genesisHash, formatted, refresh]);
+  }, [api, chain?.genesisHash, formatted, refreshNeeded]);
 
   useEffect(() => {
     if (!lockedInRef && !delegatedBalance && !miscRefLock) {
