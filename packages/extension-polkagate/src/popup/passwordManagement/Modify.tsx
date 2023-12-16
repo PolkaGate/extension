@@ -46,13 +46,15 @@ function Confirmation({ currentPassword, error, onBackClick, onCurrentPasswordCh
           onChange={onCurrentPasswordChange}
           style={{ marginBottom: '25px' }}
         />
-        <Passwords2
-          disabled={isChecked}
-          firstPassStyle={{ marginBlock: '8px' }}
-          label={t<string>('New password')}
-          onChange={onPassChange}
-          onEnter={onSetPassword}
-        />
+        <Grid item sx={{ opacity: isChecked ? 0.5 : 1 }}>
+          <Passwords2
+            disabled={isChecked}
+            firstPassStyle={{ marginBlock: '8px' }}
+            label={t<string>('New password')}
+            onChange={onPassChange}
+            onEnter={onSetPassword}
+          />
+        </Grid>
         <Checkbox2
           checked={isChecked}
           label={t<string>('I want to enable passwordless login.')}
