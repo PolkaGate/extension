@@ -18,7 +18,7 @@ interface Props {
   onSetPassword: () => Promise<void>
 }
 
-function Confirmation({ error, onBackClick, onPassChange, onSetPassword }: Props): React.ReactElement {
+function SetPassword ({ error, onBackClick, onPassChange, onSetPassword }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -52,4 +52,4 @@ function Confirmation({ error, onBackClick, onPassChange, onSetPassword }: Props
   );
 }
 
-export default Confirmation;
+export default SetPassword;
