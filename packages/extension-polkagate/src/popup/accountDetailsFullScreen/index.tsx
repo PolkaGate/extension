@@ -34,7 +34,7 @@ import LockedBalanceDisplay from './components/LockedBalanceDisplay';
 import TotalChart from './components/TotalChart';
 import LockedInReferenda from './unlock/Review';
 
-export type AssetsOnOtherChains = { totalBalance: BN, chainName: string, decimal: number, price: number | undefined, token: string };
+export type AssetsOnOtherChains = { totalBalance: BN, chainName: string, decimal: number, genesisHash: string, price: number | undefined, token: string };
 export const popupNumbers = {
   LOCKED_IN_REFERENDA: 1,
   FORGET_ACCOUNT: 2,
@@ -128,7 +128,7 @@ export default function AccountDetails(): React.ReactElement {
   }, []);
 
   const fetchAssetsOnOtherChains = useCallback((accountAddress: string) => {
-    type fetchedBalance = { balances: string, chain: string, decimal: number, price: number, token: string };
+    type fetchedBalance = { balances: string, chain: string, decimal: number, genesisHash: string, price: number, token: string };
     const worker: Worker = new Worker(new URL('../../util/workers/getAssetsOnOtherChains.js', import.meta.url));
     let fetchedAssetsOnOtherChains: AssetsOnOtherChains[] = [];
 
@@ -153,10 +153,12 @@ export default function AccountDetails(): React.ReactElement {
       } else if (message === 'Done') {
         worker.terminate();
 
+        console.log('DONE')
+
         saveAssetsOnOtherChains(accountAddress, fetchedAssetsOnOtherChains);
       } else {
         const fetchedBalances = JSON.parse(message) as fetchedBalance[];
-        const mapped = fetchedBalances.map((asset) => ({ chainName: asset.chain, decimal: Number(asset.decimal), price: asset.price, token: asset.token, totalBalance: isHexToBn(asset.balances) }));
+        const mapped = fetchedBalances.map((asset) => ({ chainName: asset.chain, decimal: Number(asset.decimal), genesisHash: asset.genesisHash, price: asset.price, token: asset.token, totalBalance: isHexToBn(asset.balances) }));
 
         setAssetsOnOtherChains(mapped);
         fetchedAssetsOnOtherChains = mapped;

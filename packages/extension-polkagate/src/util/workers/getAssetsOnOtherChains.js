@@ -19,6 +19,10 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import getPoolAccounts from '../../util/getPoolAccounts';
 import getPrices from '../api/getPrices';
 
+const ACALA_GENESISHASH = '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c';
+const KUSAMA_ASSETHUB_GENESISHASH = '0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a';
+const POLKADOT_ASSETHUB_GENESISHASH = '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f';
+
 const CHAINS_TO_CHECK = [{
   genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
   name: 'Polkadot',
@@ -30,7 +34,7 @@ const CHAINS_TO_CHECK = [{
   priceID: 'kusama'
 },
 {
-  genesisHash: '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c',
+  genesisHash: ACALA_GENESISHASH,
   name: 'Acala',
   priceID: 'acala'
 },
@@ -55,12 +59,12 @@ const CHAINS_TO_CHECK = [{
   priceID: 'karura'
 },
 {
-  genesisHash: '0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a',
+  genesisHash: KUSAMA_ASSETHUB_GENESISHASH,
   name: 'KusamaAssetHub',
   priceID: 'kusama'
 },
 {
-  genesisHash: '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f',
+  genesisHash: POLKADOT_ASSETHUB_GENESISHASH,
   name: 'PolkadotAssetHub',
   priceID: 'polkadot'
 },
@@ -151,7 +155,8 @@ async function acalaTokens (address, results, promises, prices) {
       results.push({
         balances: String(total),
         chain: sanitizeText('Acala'),
-        decimal: getDecimal('0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c'),
+        decimal: getDecimal(ACALA_GENESISHASH),
+        genesisHash: ACALA_GENESISHASH,
         price,
         token
       });
@@ -204,6 +209,7 @@ async function kusamaAssetHubTokens (address, results, promises, prices) {
         balances: String(total),
         chain: sanitizeText('KusamaAssetHub'),
         decimal,
+        genesisHash: KUSAMA_ASSETHUB_GENESISHASH,
         price,
         token
       });
@@ -251,6 +257,7 @@ async function polkadotAssetHubTokens (address, results, promises, prices) {
         balances: String(total),
         chain: sanitizeText('PolkadotAssetHub'),
         decimal,
+        genesisHash: POLKADOT_ASSETHUB_GENESISHASH,
         price,
         token
       });
@@ -314,6 +321,7 @@ async function setupConnections (chain, accountAddress, allEndpoints) {
 
   if (fastApi.isConnected && fastApi.derive.balances) {
     const balances = await fastApi.derive.balances.all(accountAddress);
+
     const availableBalance = balances.freeBalance.add(balances.reservedBalance);
 
     if (fastApi.query.nominationPools) {
@@ -357,6 +365,7 @@ async function getAssetsOnOtherChains (accountAddress) {
           balances: String(assetBalance),
           chain: sanitizeText(chain.name),
           decimal: getDecimal(chain.genesisHash),
+          genesisHash: chain.genesisHash,
           price,
           token: getToken(chain.genesisHash)
         });
@@ -370,6 +379,16 @@ async function getAssetsOnOtherChains (accountAddress) {
 
   promises.push(...newPromises);
 
+  // Promise.all(promises).finally(() => {
+  //   closeWebsockets([...acalaConnections, ...pAHConnections, ...kAHConnections]);
+  //   const noAssetsOnOtherChains = results.every((res) => res.balances === '0');
+
+  //   if (noAssetsOnOtherChains) {
+  //     return postMessage('null');
+  //   } else {
+  //     return postMessage('Done');
+  //   }
+  // });
   for (let i = 0; i < promises.length; i++) {
     const promise = promises[i];
 

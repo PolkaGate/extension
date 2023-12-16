@@ -15,7 +15,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { ActionContext, ChainLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, ShortAddress2, ShowBalance } from '../../../components';
 import { useAccount, useAccountInfo, useProxies, useToken, useTranslation } from '../../../hooks';
-import { showAccount, windowOpen } from '../../../messaging';
+import { showAccount, tieAccount, windowOpen } from '../../../messaging';
 import { BALANCES_VALIDITY_PERIOD, CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo from '../../../util/getLogo';
 import { BalancesInfo, Price } from '../../../util/types';
@@ -35,7 +35,7 @@ interface AddressDetailsProps {
   terminateWorker: () => void | undefined;
 }
 
-export default function AccountInformation ({ address, api, assetsOnOtherChains, balances, chain, chainName, formatted, isDarkTheme, price, terminateWorker }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation({ address, api, assetsOnOtherChains, balances, chain, chainName, formatted, isDarkTheme, price, terminateWorker }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
   const accountInfo = useAccountInfo(api, formatted);
@@ -56,9 +56,9 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
     if (!assetsOnOtherChains) {
       return assetsOnOtherChains;
     } else {
-      return assetsOnOtherChains.filter((asset) => !asset.totalBalance.isZero() && asset.token !== token);
+      return assetsOnOtherChains.filter((asset) => !asset.totalBalance.isZero() && asset.genesisHash !== account?.genesisHash);
     }
-  }, [assetsOnOtherChains, token]);
+  }, [account?.genesisHash, assetsOnOtherChains]);
 
   useEffect((): void => {
     api && api?.query.identity && api?.query.identity.identityOf(address).then((id) => setHasID(!id.isEmpty)).catch(console.error);
@@ -72,6 +72,10 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
 
     setBalanceToShow(undefined);
   }, [balances, chainName]);
+
+  const assetBoxClicked = useCallback((genesisHash: string) => {
+    address && tieAccount(address, genesisHash).catch(console.error);
+  }, [address]);
 
   const Balance = () => (
     <>
@@ -136,7 +140,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
   );
 
   const OtherAssetBox = ({ asset }: { asset: AssetsOnOtherChains | undefined }) => (
-    <Grid alignItems='center' container item justifyContent='center' sx={{ border: asset ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '8px', p: asset ? '5px' : 0 }} width='fit-content'>
+    <Grid alignItems='center' container item justifyContent='center' onClick={() => assetBoxClicked(asset?.genesisHash)} sx={{ border: asset ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '8px', cursor: 'pointer', p: asset ? '5px' : 0, width: 'fit-content' }}>
       {asset
         ? <>
           <Grid alignItems='center' container item pr='5px' width='fit-content'>
