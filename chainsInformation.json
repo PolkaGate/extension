@@ -7,8 +7,16 @@
     "genesishash": "0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3",
     "endpoints": [
       {
+        "url": "wss://polkadot-public-rpc.blockops.network/ws",
+        "name": "BlockOps"
+      },
+      {
         "url": "wss://polkadot-rpc.dwellir.com",
         "name": "Dwellir"
+      },
+      {
+        "url": "wss://polkadot-rpc-tn.dwellir.com",
+        "name": "Dwellir Tunisia"
       },
       {
         "url": "wss://rpc.polkadot.io",
@@ -20,7 +28,11 @@
       },
       {
         "url": "wss://rpc.ibp.network/polkadot",
-        "name": "IBP network"
+        "name": "IBP network 1"
+      },
+      {
+        "url": "wss://rpc.dotters.network/polkadot",
+        "name": "IBP network 2"
       },
       {
         "url": "wss://rpc.dotters.network/polkadot",
@@ -31,8 +43,20 @@
         "name": "Automata 1RPC"
       },
       {
+        "url": "wss://polkadot.public.curie.radiumblock.co/ws",
+        "name": "RadiumBlock"
+      },
+      {
+        "url": "wss://dot-rpc.stakeworld.io",
+        "name": "Stakeworld"
+      },
+      {
         "url": "wss://polkadot.api.onfinality.io/public-ws",
         "name": "OnFinality"
+      },
+      {
+        "url": "light://substrate-connect/polkadot",
+        "name": "light client (experimental)"
       }
     ],
     "assets": [
@@ -44,7 +68,7 @@
         "assetName": "Polkadot"
       }
     ],
-    "explorers" : [ "subscan", "subsquare", "subid", "statescan" ]
+    "externalLinks" : [ "subscan", "subsquare", "subid", "statescan" ]
   },
   "Kusama": {
     "color": "#000000",
@@ -53,8 +77,16 @@
     "genesishash": "0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe",
     "endpoints": [
       {
+        "url": "wss://kusama-public-rpc.blockops.network/ws",
+        "name": "BlockOps"
+      },
+      {
         "url": "wss://kusama-rpc.dwellir.com",
         "name": "Dwellir"
+      },
+      {
+        "url": "wss://kusama-rpc-tn.dwellir.com",
+        "name": "Dwellir Tunisia"
       },
       {
         "url": "wss://kusama-rpc.polkadot.io",
@@ -70,7 +102,11 @@
       },
       {
         "url": "wss://rpc.ibp.network/kusama",
-        "name": "IBP network"
+        "name": "IBP network 1"
+      },
+      {
+        "url": "wss://rpc.dotters.network/kusama",
+        "name": "IBP network 2"
       },
       {
         "url": "wss://rpc.dotters.network/kusama",
@@ -78,11 +114,19 @@
       },
       {
         "url": "wss://kusama.public.curie.radiumblock.co/ws",
-        "name": "Radium"
+        "name": "RadiumBlock"
+      },
+      {
+        "url": "wss://ksm-rpc.stakeworld.io",
+        "name": "Stakeworld"
       },
       {
         "url": "wss://kusama.api.onfinality.io/public-ws",
         "name": "OnFinality"
+      },
+      {
+        "url": "light://substrate-connect/kusama",
+        "name": "light client (experimental)"
       }
     ],
     "assets": [
@@ -94,7 +138,7 @@
         "assetName": "Kusama"
       }
     ],
-    "explorers" : [ "subscan", "subsquare", "subid", "statescan" ]
+    "externalLinks" : [ "subscan", "subsquare", "subid", "statescan" ]
   },
   "Westend": {
     "color": "#da68a7",
@@ -103,12 +147,16 @@
     "genesishash": "0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e",
     "endpoints": [
       {
+        "url": "wss://westend-rpc.polkadot.io",
+        "name": "Parity"
+      },
+      {
         "url": "wss://rpc.ibp.network/westend",
-        "name": "IBP network"
+        "name": "IBP network 1"
       },
       {
         "url": "wss://rpc.dotters.network/westend",
-        "name": "Dotters Net"
+        "name": "IBP network 2"
       },
       {
         "url": "wss://westend-rpc.polkadot.io",
@@ -119,8 +167,28 @@
         "name": "Dwellir"
       },
       {
+        "url": "wss://westend-rpc-tn.dwellir.com",
+        "name": "Dwellir Tunisia"
+      },
+      {
+        "url": "wss://rpc-westend.luckyfriday.io",
+        "name": "LuckyFriday"
+      },
+      {
+        "url": "wss://westend.public.curie.radiumblock.co/ws",
+        "name": "RadiumBlock"
+      },
+      {
+        "url": "wss://wnd-rpc.stakeworld.io",
+        "name": "Stakeworld"
+      },
+      {
         "url": "wss://westend.api.onfinality.io/public-ws",
         "name": "OnFinality"
+      },
+      {
+        "url": "light://substrate-connect/westend",
+        "name": "light client (experimental)"
       }
     ],
     "assets": [
@@ -131,7 +199,7 @@
         "assetName": "Westend"
       }
     ],
-    "explorers" : [ "subscan", "subsquare", "subid" ]
+    "externalLinks" : [ "subscan", "subsquare", "subid" ]
   },
   "Westmint": {
     "color": "#da68a7",
@@ -166,7 +234,7 @@
         "assetName": "Siri"
       }
     ],
-    "explorers" : [ "subscan", "subid", "statescan" ]
+    "externalLinks" : [ "subscan", "subid", "statescan" ]
   },
   "KusamaAssetHub": {
     "color": "#113911",
@@ -176,18 +244,38 @@
     "endpoints": [
       {
         "url": "wss://sys.ibp.network/statemine",
-        "name": "IBP network"
+        "name": "IBP network 1"
       },
       {
         "url": "wss://sys.dotters.network/statemine",
-        "name": "Dotters Net"
+        "name": "IBP network 2"
       },
       {
         "url": "wss://statemine-rpc.dwellir.com",
         "name": "Dwellir"
       },
       {
-        "url": "wss://statemine-rpc.polkadot.io",
+        "url": "wss://statemine-rpc-tn.dwellir.com",
+        "name": "Dwellir Tunisia"
+      },
+      {
+        "url": "wss://rpc-statemine.luckyfriday.io",
+        "name": "LuckyFriday"
+      },
+      {
+        "url": "wss://statemine.api.onfinality.io/public-ws",
+        "name": "OnFinality"
+      },
+      {
+        "url": "wss://statemine.public.curie.radiumblock.co/ws",
+        "name": "RadiumBlock"
+      },
+      {
+        "url": "wss://ksm-rpc.stakeworld.io/statemine",
+        "name": "Stakeworld"
+      },
+      {
+        "url": "wss://kusama-asset-hub-rpc.polkadot.io",
         "name": "Parity"
       }
     ],
@@ -262,7 +350,7 @@
         "assetName": "USD Tether"
       }
     ],
-    "explorers" : [ "subscan", "subid" ]
+    "externalLinks" : [ "subscan", "subid" ]
   },
   "Karura": {
     "color": "#ff4c3b",
@@ -285,6 +373,14 @@
       {
         "url": "wss://karura-rpc-3.aca-api.network/ws",
         "name": "Acala Foundation 3"
+      },
+      {
+        "url": "wss://karura-rpc.dwellir.com",
+        "name": "Dwellir"
+      },
+      {
+        "url": "wss://karura.api.onfinality.io/public-ws",
+        "name": "OnFinality"
       }
     ],
     "assets": [
@@ -491,7 +587,7 @@
         "assetName": "Darwinia Crab"
       }
     ],
-    "explorers" : [ "subscan", "subsquare", "subid"]
+    "externalLinks" : [ "subscan", "subsquare", "subid"]
   },
   "BifrostKusama": {
     "color": "#5a25f0",
@@ -621,7 +717,7 @@
         "assetName": "vMOVR"
       }
     ],
-    "explorers" : [ "subscan", "subsquare", "subid"]
+    "externalLinks" : [ "subscan", "subsquare", "subid"]
   },
   "Edgeware": {
     "color": "#111111",
@@ -630,12 +726,20 @@
     "genesishash": "0x742a2ca70c2fda6cee4f8df98d64c4c670a052d9568058982dad9d5a7a135c5b",
     "endpoints": [
       {
+        "url": "wss://edgeware.api.onfinality.io/public-ws",
+        "name": "OnFinality"
+      },
+      {
         "url": "wss://edgeware-rpc.dwellir.com",
         "name": "Dwellir"
       },
       {
         "url": "wss://edgeware.jelliedowl.net",
         "name": "JelliedOwl"
+      },
+      {
+        "url": "wss://beresheet.jelliedowl.net",
+        "name": "JelliedOwl 2"
       },
       {
         "url": "wss://mainnet2.edgewa.re",
@@ -651,7 +755,7 @@
         "assetName": "Edgeware"
       }
     ],
-    "explorers" : [ "subscan", "subid"]
+    "externalLinks" : [ "subscan", "subid"]
   },
   "Basilisk": {
     "color": "#49E49F",
@@ -716,7 +820,7 @@
         "assetName": "Robonomics"
       }
     ],
-    "explorers" : [ "subscan", "subsquare", "subid"]
+    "externalLinks" : [ "subscan", "subsquare", "subid"]
   },
   "Khala": {
     "color": "#03f3f3",
@@ -908,7 +1012,7 @@
         "assetName": "Picasso"
       }
     ],
-    "explorers" : [ "subscan", "subsquare", "subid"]
+    "externalLinks" : [ "subscan", "subsquare", "subid"]
   },
   "Acala": {
     "color": "#645AFF",
@@ -935,6 +1039,10 @@
       {
         "url": "wss://acala-rpc-3.aca-api.network/ws",
         "name": "Acala Foundation 3"
+      },
+      {
+        "url": "wss://acala-polkadot.api.onfinality.io/public-ws",
+        "name": "OnFinality"
       },
       {
         "url": "wss://acala.polkawallet.io",
@@ -1060,7 +1168,7 @@
         "assetName": "USD Tether"
       }
     ],
-    "explorers" : [ "subscan", "subsquare", "subid"]
+    "externalLinks" : [ "subscan", "subsquare", "subid"]
   },
   "Astar": {
     "color": "#1b6dc1d9",
@@ -1073,8 +1181,28 @@
         "name": "Astar"
       },
       {
+        "url": "wss://1rpc.io/astr",
+        "name": "Automata 1RPC"
+      },
+      {
+        "url": "wss://astar.public.blastapi.io",
+        "name": "Blast"
+      },
+      {
+        "url": "wss://astar-rpc.dwellir.com",
+        "name": "Dwellir"
+      },
+      {
+        "url": "wss://astar.public.curie.radiumblock.co/ws",
+        "name": "RadiumBlock"
+      },
+      {
         "url": "wss://astar.api.onfinality.io/public-ws",
         "name": "OnFinality"
+      },
+      {
+        "url": "light://substrate-connect/polkadot/astar",
+        "name": "light client (experimental)"
       }
     ],
     "assets": [
@@ -1229,7 +1357,7 @@
         "assetName": "Equilibrium USD"
       }
     ],
-    "explorers" : [ "subscan", "subid"]
+    "externalLinks" : [ "subscan", "subid"]
   },
   "Parallel": {
     "color": "#ef18ac",
@@ -1437,7 +1565,7 @@
         "assetName": "Phala"
       }
     ],
-    "explorers" : [ "subscan", "subid" ]
+    "externalLinks" : [ "subscan", "subid" ]
   },
   "PolkadotAssetHub": {
     "color": "#86e62a",
@@ -1447,19 +1575,31 @@
     "endpoints": [
       {
         "url": "wss://sys.ibp.network/statemint",
-        "name": "IBP network"
+        "name": "IBP network 1"
       },
       {
         "url": "wss://sys.dotters.network/statemint",
-        "name": "Dotters Net"
+        "name": "IBP network 2"
       },
       {
-        "url": "wss://statemint-rpc.polkadot.io",
+        "url": "wss://polkadot-asset-hub-rpc.polkadot.io",
         "name": "Parity"
       },
       {
         "url": "wss://statemint-rpc.dwellir.com",
         "name": "Dwellir"
+      },
+      {
+        "url": "wss://statemint-rpc-tn.dwellir.com",
+        "name": "Dwellir Tunisia"
+      },
+      {
+        "url": "wss://statemint.public.curie.radiumblock.co/ws",
+        "name": "RadiumBlock"
+      },
+      {
+        "url": "wss://dot-rpc.stakeworld.io/statemint",
+        "name": "Stakeworld"
       },
       {
         "url": "wss://statemint.api.onfinality.io/public-ws",
@@ -1497,7 +1637,7 @@
         "assetName": "USD Coin"
       }
     ],
-    "explorers" : [ "subscan", "subid" ]
+    "externalLinks" : [ "subscan", "subid" ]
   },
   "Picasso": {
     "color": "#000000",
@@ -1507,11 +1647,15 @@
     "endpoints": [
       {
         "url": "wss://picasso-rpc.composable.finance",
-        "name": "Composable"
+        "name": "Composable 1"
       },
       {
         "url": "wss://rpc.composablenodes.tech",
-        "name": "Composable"
+        "name": "Composable 2"
+      },
+      {
+        "url": "wss://picasso-rpc.dwellir.com",
+        "name": "Dwellir"
       }
     ],
     "assets": [
@@ -1546,7 +1690,7 @@
         "assetName": "USD Tether"
       }
     ],
-    "explorers" : [ "subscan", "subid"]
+    "externalLinks" : [ "subscan", "subid"]
   },
   "Zeitgeist": {
     "color": "linear-gradient(180deg, rgba(32,90,172,1) 0%, rgba(26,72,138,1) 50%, rgba(13,36,69,1) 100%)",
@@ -1561,6 +1705,10 @@
       {
         "url": "wss://zeitgeist.api.onfinality.io/public-ws",
         "name": "OnFinality"
+      },
+      {
+        "url": "wss://main.rpc.zeitgeist.pm/ws",
+        "name": "ZeitgeistPM"
       }
     ],
     "assets": [
@@ -1572,7 +1720,7 @@
         "assetName": "Zeitgeist"
       }
     ],
-    "explorers" : [ "subscan", "subsquare", "subid" ]
+    "externalLinks" : [ "subscan", "subsquare", "subid" ]
   },
   "Centrifuge": {
     "color": "#fcc367",
@@ -1580,6 +1728,10 @@
     "prefix": 36,
     "genesishash": "0xb3db41421702df9a7fcac62b53ffeac85f7853cc4e689e0b93aeb3db18c09d82",
     "endpoints": [
+      {
+        "url": "wss://fullnode.centrifuge.io",
+        "name": "Centrifuge"
+      },
       {
         "url": "wss://centrifuge-rpc.dwellir.com",
         "name": "Dwellir"
@@ -1598,7 +1750,7 @@
         "assetName": "Centrifuge"
       }
     ],
-    "explorers" : [ "subscan", "subsquare", "subid" ]
+    "externalLinks" : [ "subscan", "subsquare", "subid" ]
   },
   "HydraDX": {
     "color": "#f653a2",
@@ -1608,7 +1760,15 @@
     "endpoints": [
       {
         "url": "wss://rpc.hydradx.cloud",
-        "name": "Calactic Council"
+        "name": "Galactic Council"
+      },
+      {
+        "url": "wss://hydradx.api.onfinality.io/public-ws",
+        "name": "OnFinality"
+      },
+      {
+        "url": "wss://rpc-lb.data6.zp-labs.net:8443/hydradx/ws/?token=2ZGuGivPJJAxXiT1hR1Yg2MXGjMrhEBYFjgbdPi",
+        "name": "ZeePrime"
       },
       {
         "url": "wss://hydradx-rpc.dwellir.com",
@@ -1751,7 +1911,7 @@
         "assetName": "Moonbeam"
       }
     ],
-    "explorers" : [ "subscan", "subsquare", "subid" ]
+    "externalLinks" : [ "subscan", "subsquare", "subid" ]
   },
   "Nodle": {
     "color": "#1ab394",
@@ -1777,7 +1937,7 @@
         "assetName": "Nodle"
       }
     ],
-    "explorers" : [ "subscan", "subid" ]
+    "externalLinks" : [ "subscan", "subid" ]
   },
   "Phala": {
     "color": "#c6fa4c",
@@ -1794,6 +1954,10 @@
         "name": "Phala"
       },
       {
+        "url": "wss://poc5.phala.network/ws",
+        "name": "Phala Network"
+      },
+      {
         "url": "wss://phala.api.onfinality.io/public-ws",
         "name": "OnFinality"
       }
@@ -1807,7 +1971,7 @@
         "assetName": "Phala"
       }
     ],
-    "explorers" : [ "subscan", "subsquare", "subid" ]
+    "externalLinks" : [ "subscan", "subsquare", "subid" ]
   },
   "ComposableFinance": {
     "color": "#C90E8A",
@@ -1818,6 +1982,14 @@
       {
         "url": "wss://rpc.composable.finance",
         "name": "Composable"
+      },
+      {
+        "url": "wss://composable.api.onfinality.io/public-ws",
+        "name": "OnFinality"
+      },
+      {
+        "url": "wss://composable-rpc.dwellir.com",
+        "name": "Dwellir"
       }
     ],
     "assets": [
@@ -1852,7 +2024,7 @@
         "assetName": "USD Tether"
       }
     ],
-    "explorers" : [ "subscan", "subid" ]
+    "externalLinks" : [ "subscan", "subid" ]
   },
   "BifrostPolkadot": {
     "color": "#5a25f0",
@@ -1863,6 +2035,10 @@
       {
         "url": "wss://hk.p.bifrost-rpc.liebi.com/ws",
         "name": "Liebi"
+      },
+      {
+        "url": "wss://bifrost-polkadot.api.onfinality.io/public-ws",
+        "name": "OnFinality"
       }
     ],
     "assets": [
@@ -1935,7 +2111,7 @@
         "assetName": "vASTR"
       }
     ],
-    "explorers" : [ "subscan", "subsquare", "subid" ]
+    "externalLinks" : [ "subscan", "subsquare", "subid" ]
   },
   "PolymeshTestnet": {
     "color": "#43195B",
@@ -1957,7 +2133,7 @@
         "assetName": "Polymesh Testnet"
       }
     ],
-    "explorers" : [ "subscan", "subid" ]
+    "externalLinks" : [ "subscan", "subid" ]
   },
   "Rococo": {
     "color": "#6f36dc",
@@ -1968,6 +2144,10 @@
       {
         "url": "wss://rococo-rpc.polkadot.io/",
         "name": "Rococo"
+      },
+      {
+        "url": "light://substrate-connect/rococo",
+        "name": "light client (experimental)"
       }
     ],
     "assets": [
@@ -1978,7 +2158,7 @@
         "assetName": "Rococo Testnet"
       }
     ],
-    "explorers" : [ "subscan", "subsquare", "subid" ]
+    "externalLinks" : [ "subscan", "subsquare", "subid" ]
   },
   "Ternoa": {
     "color": "#d622ff",
@@ -2001,29 +2181,7 @@
         "assetName": "Ternoa"
       }
     ],
-    "explorers" : [ ]
-  },
-  "TernoaAlphanet": {
-    "color": "#d622ff",
-    "name": "Ternoa Alphanet",
-    "prefix": 42,
-    "genesishash": "0x18bcdb75a0bba577b084878db2dc2546eb21504eaad4b564bb7d47f9d02b6ace",
-    "endpoints": [
-      {
-        "url": "wss://alphanet.ternoa.com",
-        "name": "Ternoa Alphanet"
-      }
-    ],
-    "assets": [
-      {
-        "assetId": 0,
-        "symbol": "CAPS",
-        "decimal": 18,
-        "priceId": "coin-capsule",
-        "assetName": "Ternoa"
-      }
-    ],
-    "explorers" : [ ]
+    "externalLinks" : [ ]
   },
   "Polymesh": {
     "color": "linear-gradient(197deg, #FF2E72, #4A125E)",
@@ -2045,7 +2203,7 @@
         "assetName": "Polymesh Testnet"
       }
     ],
-    "explorers" : [ "subscan", "subid" ]
+    "externalLinks" : [ "subscan", "subid" ]
   },
   "Pendulum": {
     "color": "#49E2FD",
@@ -2083,7 +2241,7 @@
         "assetName": "USD Tether"
       }
     ],
-    "explorers" : [ "subscan", "subid" ]
+    "externalLinks" : [ "subscan", "subid" ]
   },
   "Bittensor": {
     "color": "#252525",
@@ -2105,7 +2263,7 @@
         "assetName": "Fusotao token"
       }
     ],
-    "explorers" : [ "subscan", "subid" ]
+    "externalLinks" : [ "subscan", "subid" ]
   },
   "Ajuna": {
     "color": "#161212",
@@ -2130,7 +2288,7 @@
         "assetName": "Ajuna"
       }
     ],
-    "explorers" : [ "subscan", "subid" ]
+    "externalLinks" : [ "subscan", "subid" ]
   },
   "PolkadotBridgeHub": {
     "color": "#86e62a",
@@ -2164,7 +2322,7 @@
         "assetName": "Polkadot"
       }
     ],
-    "explorers" : [ ]
+    "externalLinks" : [ ]
   },
   "KusamaBridgeHub": {
     "color": "#113911",
@@ -2174,11 +2332,11 @@
     "endpoints": [
       {
         "url": "wss://sys.ibp.network/bridgehub-kusama",
-        "name": "IBP network"
+        "name": "IBP network 1"
       },
       {
         "url": "wss://sys.dotters.network/bridgehub-kusama",
-        "name": "Dotters Net"
+        "name": "IBP network 2"
       },
       {
         "url": "wss://kusama-bridge-hub-rpc.polkadot.io",
@@ -2198,7 +2356,7 @@
         "assetName": "Kusama"
       }
     ],
-    "explorers" : [ ]
+    "externalLinks" : [ ]
   },
   "PolkadotCollectives": {
     "color": "#e6777a",
@@ -2208,11 +2366,11 @@
     "endpoints": [
       {
         "url": "wss://sys.ibp.network/collectives-polkadot",
-        "name": "IBP network"
+        "name": "IBP network 1"
       },
       {
         "url": "wss://sys.dotters.network/collectives-polkadot",
-        "name": "Dotters Net"
+        "name": "IBP network 2"
       },
       {
         "url": "wss://polkadot-collectives-rpc.polkadot.io",
@@ -2220,7 +2378,7 @@
       },
       {
         "url": "wss://collectives.public.curie.radiumblock.co/ws",
-        "name": "Radium"
+        "name": "RadiumBlock"
       },
       {
         "url": "wss://dot-rpc.stakeworld.io/collectives",
@@ -2240,6 +2398,6 @@
         "assetName": "Polkadot"
       }
     ],
-    "explorers" : [ "subsquare", "subid", "statescan" ]
+    "externalLinks" : [ "subsquare", "subid", "statescan" ]
   }
 }
