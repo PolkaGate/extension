@@ -35,10 +35,14 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
   }, []);
 
   useEffect(() => {
-    if (!currentSelectedChainName && currentChainNameFromAccount) {
-      setCurrentSelectedChainName(currentChainNameFromAccount);
-    }
-  }, [currentChainNameFromAccount, currentSelectedChainName]);
+    setCurrentSelectedChainName(currentChainNameFromAccount);
+  }, [currentChainNameFromAccount]);
+
+  // useEffect(() => {
+  //   if (!currentSelectedChainName && currentChainNameFromAccount) {
+  //     setCurrentSelectedChainName(currentChainNameFromAccount);
+  //   }
+  // }, [currentChainNameFromAccount, currentSelectedChainName]);
 
   const selectNetwork = useCallback((net: DropdownOption) => {
     setAnchorEl(null);
