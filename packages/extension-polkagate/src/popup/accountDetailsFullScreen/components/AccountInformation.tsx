@@ -56,9 +56,9 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
     if (!assetsOnOtherChains) {
       return assetsOnOtherChains;
     } else {
-      return assetsOnOtherChains.filter((asset) => !asset.totalBalance.isZero() && asset.genesisHash !== account?.genesisHash);
+      return assetsOnOtherChains.filter((asset) => !asset.totalBalance.isZero() && !(asset.genesisHash === account?.genesisHash && asset.token === token));
     }
-  }, [account?.genesisHash, assetsOnOtherChains]);
+  }, [account?.genesisHash, assetsOnOtherChains, token]);
 
   useEffect((): void => {
     api && api?.query.identity && api?.query.identity.identityOf(address).then((id) => setHasID(!id.isEmpty)).catch(console.error);
@@ -140,7 +140,8 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
   );
 
   const OtherAssetBox = ({ asset }: { asset: AssetsOnOtherChains | undefined }) => (
-    <Grid alignItems='center' container item justifyContent='center' onClick={() => assetBoxClicked(asset?.genesisHash)} sx={{ border: asset ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '8px', cursor: 'pointer', p: asset ? '5px' : 0, width: 'fit-content' }}>
+    // eslint-disable-next-line react/jsx-no-bind
+    <Grid alignItems='center' container item justifyContent='center' onClick={() => asset ? assetBoxClicked(asset?.genesisHash) : null} sx={{ border: asset ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '8px', cursor: asset ? 'pointer' : 'default', p: asset ? '5px' : 0, width: 'fit-content' }}>
       {asset
         ? <>
           <Grid alignItems='center' container item pr='5px' width='fit-content'>
