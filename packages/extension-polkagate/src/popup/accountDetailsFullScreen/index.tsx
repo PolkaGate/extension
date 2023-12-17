@@ -153,14 +153,15 @@ export default function AccountDetails(): React.ReactElement {
       } else if (message === 'Done') {
         worker.terminate();
 
-        console.log('DONE')
+        console.log('DONE');
 
+        setAssetsOnOtherChains(fetchedAssetsOnOtherChains);
         saveAssetsOnOtherChains(accountAddress, fetchedAssetsOnOtherChains);
       } else {
         const fetchedBalances = JSON.parse(message) as fetchedBalance[];
         const mapped = fetchedBalances.map((asset) => ({ chainName: asset.chain, decimal: Number(asset.decimal), genesisHash: asset.genesisHash, price: asset.price, token: asset.token, totalBalance: isHexToBn(asset.balances) }));
 
-        setAssetsOnOtherChains(mapped);
+        // setAssetsOnOtherChains(mapped);
         fetchedAssetsOnOtherChains = mapped;
       }
     };

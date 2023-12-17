@@ -379,32 +379,33 @@ async function getAssetsOnOtherChains (accountAddress) {
 
   promises.push(...newPromises);
 
-  // Promise.all(promises).finally(() => {
-  //   closeWebsockets([...acalaConnections, ...pAHConnections, ...kAHConnections]);
-  //   const noAssetsOnOtherChains = results.every((res) => res.balances === '0');
+  Promise.all(promises).finally(() => {
+    closeWebsockets([...acalaConnections, ...pAHConnections, ...kAHConnections]);
+    const noAssetsOnOtherChains = results.every((res) => res.balances === '0');
 
-  //   if (noAssetsOnOtherChains) {
-  //     return postMessage('null');
-  //   } else {
-  //     return postMessage('Done');
-  //   }
-  // });
-  for (let i = 0; i < promises.length; i++) {
-    const promise = promises[i];
+    if (noAssetsOnOtherChains) {
+      return postMessage('null');
+    } else {
+      return postMessage('Done');
+    }
+  });
 
-    promise.finally(() => {
-      if (i === promises.length - 1) {
-        closeWebsockets([...acalaConnections, ...pAHConnections, ...kAHConnections]);
-        const noAssetsOnOtherChains = results.every((res) => res.balances === '0');
+  // for (let i = 0; i < promises.length; i++) {
+  //   const promise = promises[i];
 
-        if (noAssetsOnOtherChains) {
-          return postMessage('null');
-        } else {
-          return postMessage('Done');
-        }
-      }
-    }).catch(handleError);
-  }
+  //   promise.finally(() => {
+  //     if (i === promises.length - 1) {
+  //       closeWebsockets([...acalaConnections, ...pAHConnections, ...kAHConnections]);
+  //       const noAssetsOnOtherChains = results.every((res) => res.balances === '0');
+
+  //       if (noAssetsOnOtherChains) {
+  //         return postMessage('null');
+  //       } else {
+  //         return postMessage('Done');
+  //       }
+  //     }
+  //   }).catch(handleError);
+  // }
 }
 
 onmessage = async (e) => {
