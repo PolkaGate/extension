@@ -33,7 +33,7 @@ export default function AddressDropdown({ api, chainGenesis, onSelect, selectedA
   const _hideDropdown = useCallback(() => setDropdownVisible(false), []);
   const _toggleDropdown = useCallback(() => setDropdownVisible(!isDropdownVisible), [isDropdownVisible]);
   const _onSelect = useCallback((addr: string) => () => {
-    addr && chainGenesis && tieAccount(addr, chainGenesis).then(() => onSelect(addr)).catch(console.error);
+    addr && chainGenesis && tieAccount(addr, chainGenesis).then(() => setTimeout(() => onSelect(addr), 150)).catch(console.error);
   }, [chainGenesis, onSelect]);
 
   useOutsideClick([ref], _hideDropdown);
