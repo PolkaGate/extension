@@ -72,8 +72,8 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isHi
   }, [address, isHidden]);
 
   const goToAccount = useCallback(() => {
-    address && windowOpen(`/account/${address}/`).catch(console.error);
-  }, [address]);
+    address && chain && windowOpen(`/account/${address}/`).catch(console.error);
+  }, [address, chain]);
 
   return (
     <Grid alignItems='center' container position='relative' p='15px 0 13px'>
