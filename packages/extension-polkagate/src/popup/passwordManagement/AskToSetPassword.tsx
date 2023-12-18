@@ -8,29 +8,30 @@ import React, { useCallback } from 'react';
 
 import { PButton } from '../../components';
 import { setStorage } from '../../components/Loading';
+import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import { useTranslation } from '../../hooks';
 import { STEPS } from './constants';
 
 interface Props {
   setStep: (value: React.SetStateAction<number | undefined>) => void;
-  setPermitted: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-function AskToSetPassword({ setPermitted, setStep }: Props): React.ReactElement {
+function AskToSetPassword ({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const { setExtensionLock } = useExtensionLockContext();
 
   const onMayBeLater = useCallback(() => {
-    setPermitted(true);
+    setExtensionLock(false);
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     setStorage('loginInfo', { lastLogin: Date.now(), status: 'mayBeLater' });
-  }, [setPermitted]);
+  }, [setExtensionLock]);
 
   const onNoPassword = useCallback(() => {
-    setPermitted(true);
+    setExtensionLock(false);
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     setStorage('loginInfo', { status: 'no' });
-  }, [setPermitted]);
+  }, [setExtensionLock]);
 
   const onYesToSetPassword = useCallback(() => {
     setStep(STEPS.SET_PASSWORD);

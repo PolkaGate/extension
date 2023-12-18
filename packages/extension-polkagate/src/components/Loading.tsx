@@ -9,14 +9,16 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { blake2AsHex } from '@polkadot/util-crypto';
 
 import { logoBlack, logoMotionDark, logoMotionLight, logoWhite } from '../assets/logos';
-import { useManifest, useTranslation } from '../hooks';
+import { useExtensionLockContext } from '../context/ExtensionLockContext';
+import { useManifest } from '../hooks';
+import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
 import ForgotPasswordConfirmation from '../popup/home/ForgotPasswordConfirmation';
 import AskToSetPassword from '../popup/passwordManagement/AskToSetPassword';
+import { STEPS } from '../popup/passwordManagement/constants';
 import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPassword';
 import PasswordSettingAlert from '../popup/passwordManagement/PasswordSettingAlert';
 import ShowLogin from '../popup/passwordManagement/ShowLogin';
 import { MAYBE_LATER_PERIOD, NO_PASS_PERIOD } from '../util/constants';
-import { STEPS } from '../popup/passwordManagement/constants';
 
 interface Props {
   children?: React.ReactNode;
@@ -94,13 +96,10 @@ const FlyingLogo = ({ theme }: { theme: Theme }) => (
 export default function Loading({ children }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const manifest = useManifest();
-  const { t } = useTranslation();
-
-  const extensionViews = chrome.extension.getViews({ type: 'popup' });
-  const isPopupOpenedByExtension = extensionViews.includes(window);
+  const { isExtensionLocked, setExtensionLock } = useExtensionLockContext();
+  const isPopupOpenedByExtension = useIsExtensionPopup();
 
   const [isFlying, setIsFlying] = useState(true);
-  const [permitted, setPermitted] = useState(false);
   const [savedHashPassword, setSavedHashedPassword] = useState<string>();
   const [step, setStep] = useState<number>();
   const [password, setPassword] = useState<string>('');
@@ -127,24 +126,24 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
           setStep(STEPS.ASK_TO_SET_PASSWORD);
         } else {
           setStep(STEPS.MAYBE_LATER);
-          setPermitted(true);
+          setExtensionLock(false);
         }
       } else if (info.status === 'no') {
         setStep(STEPS.NO_LOGIN);
-        setPermitted(true);
+        setExtensionLock(false);
       } else {
         if (info.lastLogin && (Date.now() > (info.lastLogin + NO_PASS_PERIOD))) {
           setStep(STEPS.SHOW_LOGIN);
           setSavedHashedPassword(info.hashedPassword as string);
         } else {
           setStep(STEPS.IN_NO_LOGIN_PERIOD);
-          setPermitted(true);
+          setExtensionLock(false);
         }
       }
     };
 
     handleInitLoginInfo().catch(console.error);
-  }, []);
+  }, [setExtensionLock]);
 
   const onSetPassword = useCallback(async () => {
     const hashedPassword = blake2AsHex(password, 256); // Hash the string with a 256-bit output
@@ -159,7 +158,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
     setPassword(pass || '');
   }, []);
 
-  const onCheckPassword = useCallback(async (): Promise<void> => {
+  const onUnlock = useCallback(async (): Promise<void> => {
     try {
       const hashedPassword = blake2AsHex(password || '', 256);
 
@@ -167,28 +166,29 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
         const _info = { hashedPassword, lastLogin: Date.now(), status: 'set' };
 
         await setStorage('loginInfo', _info);
-        setPermitted(true);
+        setPassword('');
+        setExtensionLock(false);
       } else {
         setIsPasswordError(true);
       }
     } catch (e) {
       console.error(e);
     }
-  }, [password, savedHashPassword]);
+  }, [password, savedHashPassword, setExtensionLock]);
 
   const onConfirmForgotPassword = useCallback(async (): Promise<void> => {
     await updateStorage('loginInfo', { status: 'forgot' });
-    setPermitted(true);
-  }, []);
+    setExtensionLock(false);
+  }, [setExtensionLock]);
 
-  const onRejectForgotPassword = useCallback(async (): Promise<void> => {
+  const onRejectForgotPassword = useCallback(() => {
     setStep(STEPS.SHOW_LOGIN);
   }, []);
 
   return (
     <>
       {
-        (!permitted || !children || isFlying) && isPopupOpenedByExtension
+        (isExtensionLocked || !children || isFlying) && isPopupOpenedByExtension
           ? <Grid container item sx={{ backgroundColor: theme.palette.mode === 'dark' ? 'black' : 'white', height: '600px' }}>
             {step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
               <ForgotPasswordConfirmation
@@ -221,7 +221,6 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
                   }
                   {step === STEPS.ASK_TO_SET_PASSWORD &&
                     <AskToSetPassword
-                      setPermitted={setPermitted}
                       setStep={setStep}
                     />
                   }
@@ -236,8 +235,8 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
                   {step === STEPS.SHOW_LOGIN &&
                     <ShowLogin
                       isPasswordError={isPasswordError}
-                      onCheckPassword={onCheckPassword}
                       onPassChange={onPassChange}
+                      onUnlock={onUnlock}
                       setStep={setStep}
                     />
                   }

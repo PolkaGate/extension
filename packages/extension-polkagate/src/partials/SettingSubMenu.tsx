@@ -8,15 +8,18 @@ import '@vaadin/icons';
 import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { OpenInNewRounded as OpenInNewRoundedIcon } from '@mui/icons-material';
+import LockIcon from '@mui/icons-material/Lock';
 import { Divider, Grid, IconButton, keyframes, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-import { AccountContext, ActionContext, Checkbox2, ColorContext, MenuItem, Select, Switch } from '../components';
-import { useIsPopup, useTranslation } from '../hooks';
+import { AccountContext, ActionContext, Checkbox2, ColorContext, Infotip2, MenuItem, Select, Switch } from '../components';
+import { updateStorage } from '../components/Loading';
+import { useExtensionLockContext } from '../context/ExtensionLockContext';
+import { useIsLoginEnabled, useIsPopup, useTranslation } from '../hooks';
 import { setNotification, tieAccount, windowOpen } from '../messaging';
-import { TEST_NETS } from '../util/constants';
+import { NO_PASS_PERIOD, TEST_NETS } from '../util/constants';
 import getLanguageOptions from '../util/getLanguageOptions';
 import { DropdownOption } from '../util/types';
 
@@ -25,6 +28,7 @@ interface Props {
   setIsTestnetEnabled: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   show: boolean;
   onChange: () => void;
+  onCloseMenu: () => void
 }
 
 const slideIn = keyframes`
@@ -53,15 +57,16 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
   const { t } = useTranslation();
   const theme = useTheme();
   const isPopup = useIsPopup();
+  const isLoginEnabled = useIsLoginEnabled();
   const onAction = useContext(ActionContext);
   const colorMode = useContext(ColorContext);
   const { accounts } = useContext(AccountContext);
+  const { setExtensionLock } = useExtensionLockContext();
 
   const [notification, updateNotification] = useState(settings.notification);
   const [camera, setCamera] = useState(settings.camera === 'on');
   const [prefix, setPrefix] = useState(`${settings.prefix === -1 ? 42 : settings.prefix}`);
   const [firstTime, setFirstTime] = useState<boolean>(true);
-  const [cacheCleared, setCacheCleared] = useState<boolean>(false);
 
   const languageOptions = useMemo(() => getLanguageOptions(), []);
   const notificationOptions = ['Extension', 'PopUp', 'Window'].map((item) => ({ text: item, value: item.toLowerCase() }));
@@ -94,11 +99,11 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
     windowOpen('/').catch(console.error);
   }, []);
 
-  // const _onClearCache = useCallback((): void => {
-  //   chrome.storage.local.clear(function () {
-  //     setCacheCleared(true); // TODO: use caution, this will clear the kyring as well
-  //   });
-  // }, []);
+  const onLockExtension = useCallback((): void => {
+    updateStorage('loginInfo', { lastLogin: Date.now() - NO_PASS_PERIOD }).then(() => {
+      setExtensionLock(true);
+    }).catch(console.error);
+  }, [setExtensionLock]);
 
   const onAuthManagement = useCallback(() => {
     onAction('/auth-list');
@@ -144,56 +149,48 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
           <Grid item>
             <Switch
               checkedLabel={t<string>('Dark')}
+              fontSize='17px'
               isChecked={theme.palette.mode === 'dark'}
               onChange={onChangeTheme}
               theme={theme}
               uncheckedLabel={t<string>('Light')}
             />
           </Grid>
-          {/* <Grid item>
-            <Divider
-              orientation='vertical'
-              sx={{
-                backgroundColor: 'text.primary',
-                height: '20px',
-                my: 'auto'
-              }}
-            />
-          </Grid>
-          <Grid item>
-            <OnActionToolTip
-              actionHappened={cacheCleared}
-              helperText={t('Clear temporary saved data')}
-              setIsHappened={setCacheCleared}
-              title={t('Cache Cleared')}
-            >
-              <IconButton
-                onClick={_onClearCache}
-                sx={{ height: '35px', mr: '-5px', width: '35px' }}
-              >
-                <DeleteOutlineIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: '25px' }} />
-              </IconButton>
-            </OnActionToolTip>
-          </Grid> */}
           {isPopup &&
             <>
+              {isLoginEnabled &&
+                <>
+                  <Grid item>
+                    <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '20px', my: 'auto' }} />
+                  </Grid>
+                  <Grid item>
+                    <Infotip2
+                      text={t('Lock Extension')}
+                    >
+                      <IconButton
+                        onClick={onLockExtension}
+                        sx={{ height: '35px', mr: '-5px', width: '35px' }}
+                      >
+                        <LockIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: '25px' }} />
+                      </IconButton>
+                    </Infotip2>
+                  </Grid>
+                </>
+              }
               <Grid item>
-                <Divider
-                  orientation='vertical'
-                  sx={{
-                    backgroundColor: 'text.primary',
-                    height: '20px',
-                    my: 'auto'
-                  }}
-                />
+                <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '20px', my: 'auto' }} />
               </Grid>
               <Grid item>
-                <IconButton
-                  onClick={_onWindowOpen}
-                  sx={{ height: '35px', mr: '-5px', width: '35px' }}
+                <Infotip2
+                  text={t('Fullscreen')}
                 >
-                  <OpenInNewRoundedIcon sx={{ color: 'secondary.light', fontSize: '25px' }} />
-                </IconButton>
+                  <IconButton
+                    onClick={_onWindowOpen}
+                    sx={{ height: '35px', mr: '-5px', width: '35px' }}
+                  >
+                    <OpenInNewRoundedIcon sx={{ color: 'secondary.light', fontSize: '25px' }} />
+                  </IconButton>
+                </Infotip2>
               </Grid>
             </>
           }
@@ -203,7 +200,7 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
             checked={isTestnetEnabled}
             iconStyle={{ transform: 'scale(1.13)' }}
             label={t<string>('Enable testnet chains')}
-            labelStyle={{ fontSize: '18px', fontWeight: 300, marginLeft: '7px' }}
+            labelStyle={{ fontSize: '17px', fontWeight: 300, marginLeft: '7px' }}
             onChange={onChange}
           />
         </Grid>
@@ -212,12 +209,13 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
             checked={camera}
             iconStyle={{ transform: 'scale(1.13)' }}
             label={t<string>('Allow QR camera access')}
-            labelStyle={{ fontSize: '18px', fontWeight: 300, marginLeft: '7px' }}
+            labelStyle={{ fontSize: '17px', fontWeight: 300, marginLeft: '7px' }}
             onChange={toggleCamera}
           />
         </Grid>
         <Grid container item >
           <MenuItem
+            fontSize='17px'
             iconComponent={
               <FontAwesomeIcon
                 color={`${theme.palette.text.primary}`}
@@ -231,12 +229,13 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
         </Grid>
         <Grid container item pb={'10px'} >
           <MenuItem
+            fontSize='17px'
             iconComponent={
               <vaadin-icon icon='vaadin:key' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
             }
             onClick={onManageLoginPassword}
-            text={t('Manage login password')}
             py='2px'
+            text={t('Manage login password')}
           />
         </Grid>
         <Grid item pt='12px'>
