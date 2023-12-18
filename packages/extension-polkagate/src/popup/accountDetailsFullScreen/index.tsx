@@ -186,6 +186,10 @@ export default function AccountDetails(): React.ReactElement {
     }
   }, [address, fetchAssetsOnOtherChains, workerCalled, terminateWorker]);
 
+  useEffect(() => {
+    assetId && setAssetId(undefined);
+  }, [chain, assetId]);
+
   const _onChangeAsset = useCallback((id: number) => {
     if (id === -1) { // this is the id of native token
       return setAssetId(undefined);
