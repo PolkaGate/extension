@@ -7,7 +7,6 @@ import '@vaadin/icons';
 
 import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { OpenInNewRounded as OpenInNewRoundedIcon } from '@mui/icons-material';
 import LockIcon from '@mui/icons-material/Lock';
 import { Divider, Grid, IconButton, keyframes, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -188,7 +187,7 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
                     onClick={_onWindowOpen}
                     sx={{ height: '35px', mr: '-5px', width: '35px' }}
                   >
-                    <OpenInNewRoundedIcon sx={{ color: 'secondary.light', fontSize: '25px' }} />
+                    <vaadin-icon icon='vaadin:expand-full' style={{ height: '19px', color: `${theme.palette.secondary.light}` }} />
                   </IconButton>
                 </Infotip2>
               </Grid>
