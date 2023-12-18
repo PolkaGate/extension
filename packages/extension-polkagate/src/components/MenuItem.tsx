@@ -16,10 +16,11 @@ interface Props {
   onClick?: MouseEventHandler<HTMLDivElement>;
   showSubMenu?: boolean;
   py?: string;
+  fontSize?: string;
   pl?: string;
 }
 
-export default function MenuItem({ children, disabled = false, icon, iconComponent, onClick, pl = '0', py = '8px', showSubMenu = false, text }: Props): React.ReactElement<Props> {
+export default function MenuItem({ children, disabled = false, fontSize, icon, iconComponent, onClick, pl = '0', py = '8px', showSubMenu = false, text }: Props): React.ReactElement<Props> {
   return (
     <>
       <Grid alignItems='center' color={disabled ? '#4B4B4B' : 'inherit'} container item justifyContent='space-between' my='4px' onClick={disabled ? () => null : onClick} pl={pl} py={py} sx={{ cursor: disabled ? '' : 'pointer' }} textAlign='left' xs={12}>
@@ -38,7 +39,7 @@ export default function MenuItem({ children, disabled = false, icon, iconCompone
           <Grid item pl='10px'>
             <Typography
               color={disabled ? 'text.disabled' : 'inherit'}
-              fontSize='18px'
+              fontSize={fontSize || '18px'}
               fontWeight={300}
               lineHeight='20px'
             >
@@ -49,7 +50,7 @@ export default function MenuItem({ children, disabled = false, icon, iconCompone
         <Grid alignItems='center' container item sx={{ display: children ? 'inherit' : 'none' }} xs={1}>
           <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showSubMenu ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
         </Grid>
-      </Grid>
+      </Grid >
       {
         children
       }
