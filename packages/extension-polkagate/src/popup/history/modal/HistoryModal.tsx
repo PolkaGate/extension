@@ -224,7 +224,7 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
 
   return (
     <DraggableModal onClose={backToAccount} open>
-      <>
+      <Grid alignItems='center' container justifyContent='center' maxHeight='650px' overflow='hidden'>
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
@@ -351,7 +351,7 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
             token={token}
           />
         }
-      </>
+      </Grid>
     </DraggableModal>
   );
 }
