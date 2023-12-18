@@ -6,46 +6,74 @@
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
+import { blake2AsHex } from '@polkadot/util-crypto';
+
 import { Checkbox2, Password, TwoButtons } from '../../components';
 import { setStorage } from '../../components/Loading';
 import { useTranslation } from '../../hooks';
 import Passwords2 from '../createAccountFullScreen/components/Passwords2';
 import { STEPS } from './constants';
+import { isPasswordCorrect } from '.';
 
 interface Props {
   onBackClick: () => void;
   onPassChange: (pass: string | null) => void
-  error: string | undefined;
-  onSetPassword: () => Promise<void>
-  currentPassword: string
-  onCurrentPasswordChange: (pass: string | null) => void;
-  setStep: React.Dispatch<React.SetStateAction<number | undefined>>
+  isPasswordError: boolean;
+  setStep: React.Dispatch<React.SetStateAction<number | undefined>>;
+  setIsPasswordError: React.Dispatch<React.SetStateAction<boolean>>
+  newPassword: string;
 }
 
-function Modify({ currentPassword, error, onBackClick, onCurrentPasswordChange, onPassChange, onSetPassword, setStep }: Props): React.ReactElement {
+function Modify({ isPasswordError, newPassword, onBackClick, onPassChange, setIsPasswordError, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const [isRemovePasswordChecked, setChecked] = useState<boolean>(false);
+  const [currentPassword, setCurrentPassword] = useState<string>('');
+
+  const onCurrentPasswordChange = useCallback((pass: string | null): void => {
+    setIsPasswordError(false);
+    setCurrentPassword(pass || '');
+  }, [setIsPasswordError]);
+
   const onCheckChange = useCallback(() => {
     setChecked(!isRemovePasswordChecked);
   }, [isRemovePasswordChecked]);
 
   const onRemovePassword = useCallback(async () => {
-    const isConfirmed = await setStorage('loginInfo', { status: 'no' });
+    if (await isPasswordCorrect(currentPassword)) {
+      const isConfirmed = await setStorage('loginInfo', { status: 'noLogin' });
 
-    setStep(isConfirmed ? STEPS.PASSWORD_REMOVED : STEPS.ERROR);
-  }, [setStep]);
+      setStep(isConfirmed ? STEPS.PASSWORD_REMOVED : STEPS.ERROR);
+    } else {
+      setIsPasswordError(true);
+    }
+  }, [currentPassword, setIsPasswordError, setStep]);
+
+  const onUpdatePassword = useCallback(async () => {
+    if (!await isPasswordCorrect(currentPassword)) {
+      setIsPasswordError(true);
+
+      return;
+    }
+
+    if (newPassword) {
+      const hashedPassword = blake2AsHex(newPassword, 256);
+      const isConfirmed = await setStorage('loginInfo', { hashedPassword, lastLoginTime: Date.now(), status: 'set' });
+
+      setStep(isConfirmed ? STEPS.NEW_PASSWORD_SET : STEPS.ERROR);
+    }
+  }, [currentPassword, newPassword, setIsPasswordError, setStep]);
 
   const onSet = useCallback(() => {
     if (isRemovePasswordChecked) {
       onRemovePassword().catch(console.error);
     } else {
-      onSetPassword().catch(console.error);
+      onUpdatePassword().catch(console.error);
     }
-  }, [isRemovePasswordChecked, onRemovePassword, onSetPassword]);
+  }, [isRemovePasswordChecked, onRemovePassword, onUpdatePassword]);
 
   return (
     <>
-      {!error &&
+      {!isPasswordError &&
         <Grid alignContent='center' container sx={{ height: '200px', pl: '40px' }}>
           <Typography sx={{ fontSize: '14px', fontWeight: 500, pb: '5px' }}>
             {t<string>('You are about to modify your password. ')}
@@ -68,7 +96,7 @@ function Modify({ currentPassword, error, onBackClick, onCurrentPasswordChange, 
             firstPassStyle={{ marginBlock: '8px' }}
             label={t<string>('New password')}
             onChange={onPassChange}
-            onEnter={onSetPassword}
+            onEnter={onUpdatePassword}
           />
         </Grid>
         <Checkbox2
@@ -80,7 +108,7 @@ function Modify({ currentPassword, error, onBackClick, onCurrentPasswordChange, 
         />
       </Grid>
       <TwoButtons
-        disabled={!currentPassword}
+        disabled={!currentPassword || !(newPassword || isRemovePasswordChecked)}
         onPrimaryClick={onSet}
         onSecondaryClick={onBackClick}
         primaryBtnText={t<string>('Set')}

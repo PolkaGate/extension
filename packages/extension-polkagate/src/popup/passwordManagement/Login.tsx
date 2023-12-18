@@ -17,7 +17,7 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-function ShowLogin({ isPasswordError, onPassChange, onUnlock, setStep }: Props): React.ReactElement {
+function Login({ isPasswordError, onPassChange, onUnlock, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -39,14 +39,12 @@ function ShowLogin({ isPasswordError, onPassChange, onUnlock, setStep }: Props):
         <Password
           isFocused={true}
           onChange={onPassChange}
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onEnter={onUnlock}
           style={{ marginBottom: '5px', marginTop: '5px' }}
         />
         <PButton
           _ml={0}
           _mt='20px'
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
           _onClick={onUnlock}
           _width={100}
           text={t('Unlock')}
@@ -64,4 +62,4 @@ function ShowLogin({ isPasswordError, onPassChange, onUnlock, setStep }: Props):
   );
 }
 
-export default ShowLogin;
+export default Login;

@@ -100,7 +100,7 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
   }, []);
 
   const onLockExtension = useCallback((): void => {
-    updateStorage('loginInfo', { lastLogin: Date.now() - NO_PASS_PERIOD }).then(() => {
+    updateStorage('loginInfo', { lastLoginTime: Date.now() - NO_PASS_PERIOD }).then(() => {
       setExtensionLock(true);
     }).catch(console.error);
   }, [setExtensionLock]);

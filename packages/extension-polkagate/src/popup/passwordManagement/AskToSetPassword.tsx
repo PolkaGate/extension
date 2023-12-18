@@ -24,13 +24,13 @@ function AskToSetPassword ({ setStep }: Props): React.ReactElement {
     setExtensionLock(false);
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    setStorage('loginInfo', { lastLogin: Date.now(), status: 'mayBeLater' });
+    setStorage('loginInfo', { lastLoginTime: Date.now(), status: 'mayBeLater' });
   }, [setExtensionLock]);
 
   const onNoPassword = useCallback(() => {
     setExtensionLock(false);
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    setStorage('loginInfo', { status: 'no' });
+    setStorage('loginInfo', { status: 'noLogin' });
   }, [setExtensionLock]);
 
   const onYesToSetPassword = useCallback(() => {

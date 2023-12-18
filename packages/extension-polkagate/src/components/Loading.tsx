@@ -13,11 +13,12 @@ import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import { useManifest } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
 import ForgotPasswordConfirmation from '../popup/home/ForgotPasswordConfirmation';
+import { isPasswordCorrect } from '../popup/passwordManagement';
 import AskToSetPassword from '../popup/passwordManagement/AskToSetPassword';
 import { STEPS } from '../popup/passwordManagement/constants';
 import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPassword';
+import Login from '../popup/passwordManagement/Login';
 import PasswordSettingAlert from '../popup/passwordManagement/PasswordSettingAlert';
-import ShowLogin from '../popup/passwordManagement/ShowLogin';
 import { MAYBE_LATER_PERIOD, NO_PASS_PERIOD } from '../util/constants';
 
 interface Props {
@@ -25,8 +26,8 @@ interface Props {
 }
 
 export type LoginInfo = {
-  status: 'no' | 'mayBeLater' | 'set' | 'forgot' | 'reset';
-  lastLogin?: number;
+  status: 'noLogin' | 'mayBeLater' | 'justSet' | 'set' | 'forgot' | 'reset';
+  lastLoginTime?: number;
   hashedPassword?: string;
   addressesToForget?: string[];
 }
@@ -100,9 +101,8 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
   const isPopupOpenedByExtension = useIsExtensionPopup();
 
   const [isFlying, setIsFlying] = useState(true);
-  const [savedHashPassword, setSavedHashedPassword] = useState<string>();
   const [step, setStep] = useState<number>();
-  const [password, setPassword] = useState<string>('');
+  const [hashedPassword, setHashedPassword] = useState<string>('');
   const [isPasswordError, setIsPasswordError] = useState(false);
 
   useEffect(() => {
@@ -120,53 +120,61 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
       const info = await getStorage('loginInfo') as LoginInfo;
 
       if (!info?.status || info?.status === 'reset') {
-        setStep(STEPS.ASK_TO_SET_PASSWORD);
-      } else if (info.status === 'mayBeLater') {
-        if (info.lastLogin && Date.now() > (info.lastLogin + MAYBE_LATER_PERIOD)) {
+        return setStep(STEPS.ASK_TO_SET_PASSWORD);
+      }
+
+      if (info.status === 'mayBeLater') {
+        if (info.lastLoginTime && Date.now() > (info.lastLoginTime + MAYBE_LATER_PERIOD)) {
           setStep(STEPS.ASK_TO_SET_PASSWORD);
         } else {
           setStep(STEPS.MAYBE_LATER);
           setExtensionLock(false);
         }
-      } else if (info.status === 'no') {
+
+        return;
+      }
+
+      if (info.status === 'noLogin') {
         setStep(STEPS.NO_LOGIN);
-        setExtensionLock(false);
-      } else {
-        if (info.lastLogin && (Date.now() > (info.lastLogin + NO_PASS_PERIOD))) {
+
+        return setExtensionLock(false);
+      }
+
+      if (info.status === 'justSet') {
+        return setStep(STEPS.SHOW_LOGIN);
+      }
+
+      if (info.status === 'set') {
+        if (info.lastLoginTime && (Date.now() > (info.lastLoginTime + NO_PASS_PERIOD))) {
           setStep(STEPS.SHOW_LOGIN);
-          setSavedHashedPassword(info.hashedPassword as string);
         } else {
           setStep(STEPS.IN_NO_LOGIN_PERIOD);
           setExtensionLock(false);
         }
+
+        return;
+      }
+
+      if (info.status === 'forgot') {
+        setStep(STEPS.SHOW_LOGIN);
       }
     };
 
     handleInitLoginInfo().catch(console.error);
   }, [setExtensionLock]);
 
-  const onSetPassword = useCallback(async () => {
-    const hashedPassword = blake2AsHex(password, 256); // Hash the string with a 256-bit output
-
-    await setStorage('loginInfo', { hashedPassword, lastLogin: Date.now(), status: 'set' });
-    setSavedHashedPassword(hashedPassword);
-    setStep(STEPS.SHOW_LOGIN);
-  }, [password]);
-
   const onPassChange = useCallback((pass: string | null): void => {
     setIsPasswordError(false);
-    setPassword(pass || '');
+    const hashedPassword = blake2AsHex(pass, 256); // Hash the string with a 256-bit output
+
+    setHashedPassword(hashedPassword);
   }, []);
 
   const onUnlock = useCallback(async (): Promise<void> => {
     try {
-      const hashedPassword = blake2AsHex(password || '', 256);
-
-      if (savedHashPassword === hashedPassword) {
-        const _info = { hashedPassword, lastLogin: Date.now(), status: 'set' };
-
-        await setStorage('loginInfo', _info);
-        setPassword('');
+      if (await isPasswordCorrect(hashedPassword, true)) {
+        await updateStorage('loginInfo', { lastLoginTime: Date.now(), status: 'set' });
+        setHashedPassword('');
         setExtensionLock(false);
       } else {
         setIsPasswordError(true);
@@ -174,16 +182,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
     } catch (e) {
       console.error(e);
     }
-  }, [password, savedHashPassword, setExtensionLock]);
-
-  const onConfirmForgotPassword = useCallback(async (): Promise<void> => {
-    await updateStorage('loginInfo', { status: 'forgot' });
-    setExtensionLock(false);
-  }, [setExtensionLock]);
-
-  const onRejectForgotPassword = useCallback(() => {
-    setStep(STEPS.SHOW_LOGIN);
-  }, []);
+  }, [hashedPassword, setExtensionLock]);
 
   return (
     <>
@@ -192,8 +191,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
           ? <Grid container item sx={{ backgroundColor: theme.palette.mode === 'dark' ? 'black' : 'white', height: '600px' }}>
             {step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
               <ForgotPasswordConfirmation
-                onConfirmForgotPassword={onConfirmForgotPassword}
-                onRejectForgotPassword={onRejectForgotPassword}
+                setStep={setStep}
               />
             }
             {step === STEPS.SET_PASSWORD &&
@@ -212,11 +210,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
                 : <>
                   {step !== STEPS.SET_PASSWORD &&
                     <Grid container item justifyContent='center' mt='33px' my='35px'>
-                      <Box
-                        component='img'
-                        src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
-                        sx={{ height: 'fit-content', width: '37%' }}
-                      />
+                      <StillLogo theme={theme} />
                     </Grid>
                   }
                   {step === STEPS.ASK_TO_SET_PASSWORD &&
@@ -226,22 +220,21 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
                   }
                   {step === STEPS.SET_PASSWORD &&
                     <FirstTimeSetPassword
+                      hashedPassword={hashedPassword}
                       onPassChange={onPassChange}
-                      onSetPassword={onSetPassword}
-                      password={password}
                       setStep={setStep}
                     />
                   }
                   {step === STEPS.SHOW_LOGIN &&
-                    <ShowLogin
+                    <Login
                       isPasswordError={isPasswordError}
                       onPassChange={onPassChange}
                       onUnlock={onUnlock}
                       setStep={setStep}
                     />
                   }
-                  <Grid container item justifyContent='center' sx={{ bottom: '10px', fontSize: '10px', position: 'absolute' }}>
-                    {`${('V')}${(manifest?.version || '') as string}`}
+                  <Grid container item justifyContent='center' sx={{ bottom: '10px', fontSize: '10px', opacity: '0.7', position: 'absolute' }}>
+                    {`${('V')}${(manifest?.version || '')}`}
                   </Grid>
                 </>
               }

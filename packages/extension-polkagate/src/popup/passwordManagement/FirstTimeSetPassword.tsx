@@ -7,19 +7,27 @@ import { Grid } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { TwoButtons } from '../../components';
+import { setStorage } from '../../components/Loading';
+import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import { useTranslation } from '../../hooks';
 import Passwords2 from '../createAccountFullScreen/components/Passwords2';
 import { STEPS } from './constants';
 
 interface Props {
   onPassChange: (pass: string | null) => void
-  onSetPassword: () => Promise<void>
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>;
-  password: string;
+  hashedPassword: string;
 }
 
-function FirstTimeSetPassword({ onPassChange, onSetPassword, password, setStep }: Props): React.ReactElement {
+function FirstTimeSetPassword ({ hashedPassword, onPassChange, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const { setExtensionLock } = useExtensionLockContext();
+
+  const onSetPassword = useCallback(async () => {
+    await setStorage('loginInfo', { hashedPassword, lastLoginTime: Date.now(), status: 'justSet' });
+    setExtensionLock(true);
+    setStep(STEPS.SHOW_LOGIN);
+  }, [hashedPassword, setExtensionLock, setStep]);
 
   const onCancel = useCallback(() => {
     setStep(STEPS.ASK_TO_SET_PASSWORD);
@@ -39,7 +47,7 @@ function FirstTimeSetPassword({ onPassChange, onSetPassword, password, setStep }
       </Grid>
       <Grid container justifyContent='center' sx={{ px: '2%' }}>
         <TwoButtons
-          disabled={!password}
+          disabled={!hashedPassword}
           mt='20px'
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onPrimaryClick={onSetPassword}

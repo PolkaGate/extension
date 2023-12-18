@@ -9,23 +9,32 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { Checkbox2, Header, Popup, TwoButtons } from '../../components';
+import { updateStorage } from '../../components/Loading';
+import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import useTranslation from '../../hooks/useTranslation';
+import { STEPS } from '../passwordManagement/constants';
 
 interface Props {
-  onRejectForgotPassword: () => Promise<void>
-  onConfirmForgotPassword: () => Promise<void>
+  setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-export default function ForgotPasswordConfirmation({ onConfirmForgotPassword, onRejectForgotPassword }: Props): React.ReactElement<Props> {
+export default function ForgotPasswordConfirmation({ setStep }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const { setExtensionLock } = useExtensionLockContext();
+
   const [show, setShow] = useState<boolean>(true);
   const [isChecked, setChecked] = useState<boolean>(false);
 
+  const onConfirmForgotPassword = useCallback(async (): Promise<void> => {
+    await updateStorage('loginInfo', { status: 'forgot' });
+    setExtensionLock(false);
+  }, [setExtensionLock]);
+
   const onClose = useCallback(() => {
+    setStep(STEPS.SHOW_LOGIN);
     setShow(false);
-    onRejectForgotPassword().catch(console.error);
-  }, [onRejectForgotPassword]);
+  }, [setStep]);
 
   const onCheckChange = useCallback(() => {
     setChecked(!isChecked);

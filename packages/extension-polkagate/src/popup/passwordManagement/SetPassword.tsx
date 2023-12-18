@@ -4,27 +4,40 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
+
+import { blake2AsHex } from '@polkadot/util-crypto';
 
 import { TwoButtons } from '../../components';
+import { setStorage } from '../../components/Loading';
 import { useTranslation } from '../../hooks';
 import Passwords2 from '../createAccountFullScreen/components/Passwords2';
+import { STEPS } from './constants';
 import PasswordSettingAlert from './PasswordSettingAlert';
 
 interface Props {
   onBackClick: () => void;
   onPassChange: (pass: string | null) => void
-  error: string | undefined;
-  onSetPassword: () => Promise<void>;
+  isPasswordError: boolean;
   newPassword: string;
+  setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-function SetPassword({ error, onBackClick, onPassChange, newPassword, onSetPassword }: Props): React.ReactElement {
+function SetPassword({ isPasswordError, newPassword, onBackClick, onPassChange, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
+
+  const onSetPassword = useCallback(async () => {
+    if (newPassword) {
+      const hashedPassword = blake2AsHex(newPassword, 256);
+      const isConfirmed = await setStorage('loginInfo', { hashedPassword, lastLoginTime: Date.now(), status: 'set' });
+
+      setStep(isConfirmed ? STEPS.NEW_PASSWORD_SET : STEPS.ERROR);
+    }
+  }, [newPassword, setStep]);
 
   return (
     <>
-      {!error &&
+      {!isPasswordError &&
         <Grid container sx={{ height: '120px', top: '30px' }}>
           <PasswordSettingAlert />
         </Grid>
