@@ -8,14 +8,14 @@ import React from 'react';
 
 interface Props {
   asset: string;
-  logo: string;
+  baseLogo: string;
   assetHeight?: string;
   assetWidth?: string;
-  logoHeight?: string;
-  logoWidth?: string;
+  baseLogoHeight?: string;
+  baseLogoWidth?: string;
 }
 
-export default function AssetIcon({ asset, assetHeight = '40px', assetWidth = '40px', logo, logoHeight = '20px', logoWidth = '20px' }: Props): React.ReactElement {
+export default function AssetIcon({ asset, assetHeight = '40px', assetWidth = '40px', baseLogo, baseLogoHeight = '20px', baseLogoWidth = '20px' }: Props): React.ReactElement {
   return (
     <Grid container sx={{ position: 'relative', width: 'fit-content' }}>
       <Avatar
@@ -24,8 +24,8 @@ export default function AssetIcon({ asset, assetHeight = '40px', assetWidth = '4
         variant='square'
       />
       <Avatar
-        src={logo}
-        sx={{ bgcolor: 'white', borderRadius: '50%', height: logoHeight, inset: 'auto -5px -5px auto', p: '1.5px', position: 'absolute', width: logoWidth }}
+        src={baseLogo}
+        sx={{ bgcolor: 'white', borderRadius: '50%', height: baseLogoHeight, inset: 'auto -5px -5px auto', p: '1.5px', position: 'absolute', width: baseLogoWidth }}
         variant='square'
       />
     </Grid>
