@@ -36,13 +36,16 @@ export default function TotalChart ({ assetsOnOtherChains, isDarkTheme, nativeAs
   const getChartColor = useCallback((assetToken: string): string => {
     switch (assetToken) {
       case 'KSM':
-        return 'black';
+        return '#000000';
         break;
       case 'DOT':
-        return 'pink';
+        return '#e6007a';
         break;
       case 'ACA':
-        return 'red';
+        return '#645AFF';
+        break;
+      case 'WND':
+        return '#da68a7';
         break;
       default:
         return 'green';
