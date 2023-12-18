@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid } from '@mui/material';
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { TwoButtons } from '../../components';
 import { useTranslation } from '../../hooks';
@@ -15,10 +15,11 @@ interface Props {
   onBackClick: () => void;
   onPassChange: (pass: string | null) => void
   error: string | undefined;
-  onSetPassword: () => Promise<void>
+  onSetPassword: () => Promise<void>;
+  newPassword: string;
 }
 
-function SetPassword ({ error, onBackClick, onPassChange, onSetPassword }: Props): React.ReactElement {
+function SetPassword({ error, onBackClick, onPassChange, newPassword, onSetPassword }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -40,6 +41,7 @@ function SetPassword ({ error, onBackClick, onPassChange, onSetPassword }: Props
       </Grid>
       <Grid container justifyContent='center' sx={{ px: '2%' }}>
         <TwoButtons
+          disabled={!newPassword}
           mt='20px'
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onPrimaryClick={onSetPassword}

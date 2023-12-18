@@ -91,6 +91,7 @@ export default function LoginPassword (): React.ReactElement {
       {step === STEPS.NO_PASSWORD &&
         <SetPassword
           error={error}
+          newPassword={newPassword}
           onBackClick={onBackClick}
           onPassChange={onPassChange}
           onSetPassword={onSetPassword}

@@ -76,7 +76,7 @@ function Modify({ currentPassword, error, onBackClick, onCurrentPasswordChange, 
           label={t<string>('I want to enable passwordless login.')}
           labelStyle={{ fontSize: '14px' }}
           onChange={onCheckChange}
-          style={{ p: '10px 0 0 5px' }}
+          style={{ pt: '10px' }}
         />
       </Grid>
       <TwoButtons

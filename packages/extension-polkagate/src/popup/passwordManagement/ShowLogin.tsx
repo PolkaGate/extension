@@ -13,17 +13,15 @@ import { STEPS } from './constants';
 interface Props {
   isPasswordError: boolean;
   onPassChange: (pass: string | null) => void;
-  onCheckPassword: () => Promise<void>;
+  onUnlock: () => Promise<void>;
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-function ShowLogin({ isPasswordError, onCheckPassword, onPassChange, setStep }: Props): React.ReactElement {
+function ShowLogin({ isPasswordError, onPassChange, onUnlock, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
   const onForgotPassword = useCallback((): void => {
-    // await updateStorage('loginInfo', { status: 'forgot' });
-    // setPermitted(true);
     setStep(STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION);
   }, [setStep]);
 
@@ -42,14 +40,14 @@ function ShowLogin({ isPasswordError, onCheckPassword, onPassChange, setStep }: 
           isFocused={true}
           onChange={onPassChange}
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          onEnter={onCheckPassword}
+          onEnter={onUnlock}
           style={{ marginBottom: '5px', marginTop: '5px' }}
         />
         <PButton
           _ml={0}
           _mt='20px'
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          _onClick={onCheckPassword}
+          _onClick={onUnlock}
           _width={100}
           text={t('Unlock')}
         />

@@ -54,14 +54,13 @@ export const SocialLinks = () => (
   </Grid>
 );
 
-function Menu ({ setShowMenu, theme }: Props): React.ReactElement<Props> {
+function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const manifest = useManifest();
   const onAction = useContext(ActionContext);
   const [collapsedMenu, setCollapsedMenu] = useState<number>(COLLAPSIBLE_MENUS.SETTING);
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
   const [showWarning, setShowWarning] = useState<boolean>();
-
   const [closeMenu, setCloseMenu] = useState<boolean>(false);
 
   const toggleImportSubMenu = useCallback(() => {
@@ -82,7 +81,7 @@ function Menu ({ setShowMenu, theme }: Props): React.ReactElement<Props> {
       : setCollapsedMenu(COLLAPSIBLE_MENUS.SETTING);
   }, [collapsedMenu]);
 
-  const _toggleSettings = useCallback(() => {
+  const onCloseMenu = useCallback(() => {
     setCloseMenu(true);
     setTimeout(() => setShowMenu(false), 300);
   }, [setShowMenu]);
@@ -214,7 +213,7 @@ function Menu ({ setShowMenu, theme }: Props): React.ReactElement<Props> {
           <SocialLinks />
         </Grid>
       </Grid>
-      <IconButton onClick={_toggleSettings} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>
+      <IconButton onClick={onCloseMenu} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>
         <CloseIcon sx={{ color: 'text.secondary', fontSize: 35 }} />
       </IconButton>
     </Grid>
