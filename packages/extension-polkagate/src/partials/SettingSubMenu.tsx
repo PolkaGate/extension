@@ -17,7 +17,7 @@ import { AccountContext, ActionContext, Checkbox2, ColorContext, Infotip2, MenuI
 import { updateStorage } from '../components/Loading';
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import { useIsLoginEnabled, useIsPopup, useTranslation } from '../hooks';
-import { setNotification, tieAccount, windowOpen } from '../messaging';
+import { lockExtension, setNotification, tieAccount, windowOpen } from '../messaging';
 import { NO_PASS_PERIOD, TEST_NETS } from '../util/constants';
 import getLanguageOptions from '../util/getLanguageOptions';
 import { DropdownOption } from '../util/types';
@@ -101,6 +101,7 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
   const onLockExtension = useCallback((): void => {
     updateStorage('loginInfo', { lastLoginTime: Date.now() - NO_PASS_PERIOD }).then(() => {
       setExtensionLock(true);
+      lockExtension().catch(console.error);
     }).catch(console.error);
   }, [setExtensionLock]);
 

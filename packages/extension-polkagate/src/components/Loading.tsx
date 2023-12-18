@@ -116,6 +116,10 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
   }, []);
 
   useEffect(() => {
+    isPopupOpenedByExtension && setIsFlying(false);
+  }, [isPopupOpenedByExtension]);
+
+  useEffect(() => {
     const handleInitLoginInfo = async () => {
       const info = await getStorage('loginInfo') as LoginInfo;
 
@@ -187,8 +191,8 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
   return (
     <>
       {
-        (isExtensionLocked || !children || isFlying) && isPopupOpenedByExtension
-          ? <Grid container item sx={{ backgroundColor: theme.palette.mode === 'dark' ? 'black' : 'white', height: '600px' }}>
+        (isExtensionLocked || !children || isFlying)
+          ? <Grid container item sx={{ backgroundColor: theme.palette.mode === 'dark' ? 'black' : 'white', height: window.innerHeight }}>
             {step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
               <ForgotPasswordConfirmation
                 setStep={setStep}
@@ -205,10 +209,10 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
               </>
             }
             <Grid container item sx={{ p: '145px 0 70px' }}>
-              {isFlying
+              {isFlying && isPopupOpenedByExtension
                 ? <FlyingLogo theme={theme} />
                 : <>
-                  {step !== STEPS.SET_PASSWORD &&
+                  {step !== STEPS.SET_PASSWORD && (isPopupOpenedByExtension || isExtensionLocked) &&
                     <Grid container item justifyContent='center' mt='33px' my='35px'>
                       <StillLogo theme={theme} />
                     </Grid>

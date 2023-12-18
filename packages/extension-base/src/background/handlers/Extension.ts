@@ -118,6 +118,26 @@ export default class Extension {
     return true;
   }
 
+  private lockExtension(): boolean {
+    const currentDomain = chrome.runtime.getURL('/');
+    console.log('currentDomain:', currentDomain);
+
+    chrome.tabs.query({}, function (tabs) {
+      for (let i = 0; i < tabs.length; i++) {
+        const tabParsedUrl = new URL(tabs[i].url);
+
+        const tabDomain = `${tabParsedUrl?.protocol}//${tabParsedUrl?.hostname}/`;
+        console.log('tabDomain:', tabDomain);
+
+        if (tabDomain === currentDomain) {
+          chrome.tabs.reload(tabs[i].id).catch(console.error);
+        }
+      }
+    });
+
+    return true;
+  }
+
   private accountsExport({ address, password }: RequestAccountExport): ResponseAccountExport {
     return { exportedJson: keyring.backupAccount(keyring.getPair(address), password) };
   }
@@ -553,8 +573,11 @@ export default class Extension {
       case 'pri(accounts.create.suri)':
         return this.accountsCreateSuri(request as RequestAccountCreateSuri);
 
-      case 'pri(accounts.updateMeta)': // added for plus 
+      case 'pri(accounts.updateMeta)': // added for polkagate
         return this.accountsUpdateMeta(request as RequestUpdateMeta);
+
+      case 'pri(extension.lock)': // added for polkagate
+        return this.lockExtension();
 
       case 'pri(accounts.changePassword)':
         return this.accountsChangePassword(request as RequestAccountChangePassword);
