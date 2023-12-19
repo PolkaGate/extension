@@ -23,7 +23,7 @@ interface Props {
   terminateWorker: () => void | undefined;
 }
 
-export default function AccountSetting({ address, setDisplayPopup, terminateWorker }: Props): React.ReactElement {
+export default function AccountSetting ({ address, setDisplayPopup, terminateWorker }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);

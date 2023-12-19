@@ -6,9 +6,8 @@
 import { Grid, SxProps, Theme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { useAssets, useTokens } from '@polkadot/extension-polkagate/src/hooks';
-
 import Select2 from '../../../components/Select2';
+import { useAssets, useTokens } from '../../../hooks';
 
 interface Props {
   address: string | undefined;

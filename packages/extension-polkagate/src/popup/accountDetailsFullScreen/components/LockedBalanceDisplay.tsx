@@ -44,7 +44,6 @@ export default function LockedBalanceDisplay ({ address, api, chain, decimal, fo
   const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting', false, refreshNeeded);
   const currentBlock = useCurrentBlockNumber(address);
 
-  // const [showReview, setShowReview] = useState(false);
   const [unlockableAmount, setUnlockableAmount] = useState<BN>();
   const [lockedInRef, setLockedInReferenda] = useState<BN>();
   const [totalLocked, setTotalLocked] = useState<BN | null>();

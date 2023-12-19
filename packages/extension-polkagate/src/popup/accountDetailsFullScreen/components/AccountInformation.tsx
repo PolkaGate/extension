@@ -35,7 +35,7 @@ interface AddressDetailsProps {
   terminateWorker: () => void | undefined;
 }
 
-export default function AccountInformation({ address, api, assetsOnOtherChains, balances, chain, chainName, formatted, isDarkTheme, price, terminateWorker }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation ({ address, api, assetsOnOtherChains, balances, chain, chainName, formatted, isDarkTheme, price, terminateWorker }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
   const accountInfo = useAccountInfo(api, formatted);

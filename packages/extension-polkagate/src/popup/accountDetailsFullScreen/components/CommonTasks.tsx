@@ -57,7 +57,7 @@ export const TaskButton = ({ borderColor, disabled, icon, noBorderButton = false
   </Grid>
 );
 
-export default function CommonTasks({ address, api, assetId, genesisHash, setDisplayPopup, terminateWorker }: Props): React.ReactElement {
+export default function CommonTasks ({ address, api, assetId, genesisHash, setDisplayPopup, terminateWorker }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();

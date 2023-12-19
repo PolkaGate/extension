@@ -13,7 +13,6 @@ import { BN } from '@polkadot/util';
 import { ActionContext } from '../../components';
 import { useAccount, useApi, useBalances, useChain, useChainName, useDecimal, useFormatted, useFullscreen, usePrice, useToken, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
-import { windowOpen } from '../../messaging';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { amountToHuman, isHexToBn } from '../../util/utils';
 import { getValue } from '../account/util';
@@ -24,15 +23,8 @@ import { FullScreenHeader } from '../governance/FullScreenHeader';
 import HistoryModal from '../history/modal/HistoryModal';
 import ReceiveModal from '../receive/ReceiveModal';
 import RenameModal from '../rename/RenameModal';
-import AccountInformation from './components/AccountInformation';
-import AccountSetting from './components/AccountSetting';
-import ChangeAssets from './components/ChangeAssets';
-import CommonTasks from './components/CommonTasks';
-import DisplayBalance from './components/DisplayBalance';
-import ExternalLinks from './components/ExternalLinks';
-import LockedBalanceDisplay from './components/LockedBalanceDisplay';
-import TotalChart from './components/TotalChart';
 import LockedInReferenda from './unlock/Review';
+import { AccountInformation, AccountSetting, ChangeAssets, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
 
 export type AssetsOnOtherChains = { totalBalance: BN, chainName: string, decimal: number, genesisHash: string, price: number | undefined, token: string };
 export const popupNumbers = {
@@ -188,7 +180,7 @@ export default function AccountDetails(): React.ReactElement {
 
   useEffect(() => {
     assetId && setAssetId(undefined);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chain]);
 
   const _onChangeAsset = useCallback((id: number) => {
