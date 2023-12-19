@@ -212,7 +212,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
               {isFlying && isPopupOpenedByExtension
                 ? <FlyingLogo theme={theme} />
                 : <>
-                  {step !== STEPS.SET_PASSWORD && (isPopupOpenedByExtension || isExtensionLocked) &&
+                  {[STEPS.SET_PASSWORD, STEPS.SET_PASSWORD, STEPS.SHOW_LOGIN].includes(step) && (isPopupOpenedByExtension || isExtensionLocked) &&
                     <Grid container item justifyContent='center' mt='33px' my='35px'>
                       <StillLogo theme={theme} />
                     </Grid>
