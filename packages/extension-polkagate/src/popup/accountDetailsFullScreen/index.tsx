@@ -188,7 +188,8 @@ export default function AccountDetails(): React.ReactElement {
 
   useEffect(() => {
     assetId && setAssetId(undefined);
-  }, [chain, assetId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chain]);
 
   const _onChangeAsset = useCallback((id: number) => {
     if (id === -1) { // this is the id of native token
