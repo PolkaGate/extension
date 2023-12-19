@@ -214,8 +214,11 @@ export default function AccountDetails(): React.ReactElement {
 
   const goToPoolStaking = useCallback(() => {
     terminateWorker();
-    address && account?.genesisHash && STAKING_CHAINS.includes(account.genesisHash) && windowOpen(`/pool/${address}/`).catch(console.error);
-  }, [account?.genesisHash, address, terminateWorker]);
+    address && account?.genesisHash && STAKING_CHAINS.includes(account.genesisHash) && history.push({
+      pathname: `/pool/${address}/`,
+      state: { api, pathname: `account/${address}` }
+    });
+  }, [account?.genesisHash, address, api, history, terminateWorker]);
 
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>
