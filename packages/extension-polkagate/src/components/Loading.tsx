@@ -116,7 +116,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
   }, []);
 
   useEffect(() => {
-    isPopupOpenedByExtension && setIsFlying(false);
+    !isPopupOpenedByExtension && setIsFlying(false);
   }, [isPopupOpenedByExtension]);
 
   useEffect(() => {
