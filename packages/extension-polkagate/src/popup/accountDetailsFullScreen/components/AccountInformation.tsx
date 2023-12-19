@@ -281,7 +281,7 @@ export default function AccountInformation({ address, api, assetsOnOtherChains, 
           </Grid>
         </Grid>
       </Grid>
-      {otherAssetsToShow !== null &&
+      {(otherAssetsToShow === undefined || (otherAssetsToShow && otherAssetsToShow?.length > 0)) &&
         <OtherAssets
           assetsOnOtherChains={otherAssetsToShow}
         />
