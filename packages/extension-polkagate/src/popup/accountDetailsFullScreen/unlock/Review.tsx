@@ -11,22 +11,23 @@
 import type { ApiPromise } from '@polkadot/api';
 
 import { useTheme } from '@emotion/react';
-import { Container } from '@mui/material';
+import { Close as CloseIcon } from '@mui/icons-material';
+import { Container, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
-import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, isBn } from '@polkadot/util';
 
-import { AccountHolderWithProxy, AmountFee, PasswordUseProxyConfirm, Warning, WrongPasswordAlert } from '../../../components';
-import { useAccountDisplay, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../hooks';
+import { AccountHolderWithProxy, AmountFee, SignArea2, Warning, WrongPasswordAlert } from '../../../components';
+import { useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../hooks';
 import { Lock } from '../../../hooks/useAccountLocks';
-import { HeaderBrand, SubTitle, WaitScreen } from '../../../partials';
-import { signAndSend } from '../../../util/api';
+import { SubTitle } from '../../../partials';
 import { Proxy, ProxyItem, TxInfo } from '../../../util/types';
-import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../util/utils';
+import { amountToHuman } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
+import SelectProxyModal2 from '../../governance/components/SelectProxyModal2';
+import WaitScreen from '../../governance/partials/WaitScreen';
 import Confirmation from './Confirmation';
 
 interface Props {
@@ -39,32 +40,42 @@ interface Props {
   totalLocked: BN;
 }
 
+const STEPS = {
+  REVIEW: 1,
+  WAIT_SCREEN: 2,
+  CONFIRMATION: 3,
+  PROXY: 100
+};
+
 export default function Review ({ address, api, classToUnlock, setDisplayPopup, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const theme = useTheme();
   const proxies = useProxies(api, formatted);
   const chain = useChain(address);
-  const name = useAccountDisplay(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
-  const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
-  const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [estimatedFee, setEstimatedFee] = useState<BN>();
   const [params, setParams] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>[]>();
+  const [step, setStep] = useState<number>(STEPS.REVIEW);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const amount = useMemo(() => amountToHuman(unlockableAmount, decimal), [decimal, unlockableAmount]);
   const remove = api.tx.convictionVoting.removeVote; // (class, index)
   const unlockClass = api.tx.convictionVoting.unlock; // (class)
   const batchAll = api.tx.utility.batchAll;
+
+  const extraInfo = useMemo(() => ({
+    action: 'Unlock Referenda',
+    amount,
+    fee: String(estimatedFee || 0),
+    subAction: 'Unlock'
+  }), [amount, estimatedFee]);
 
   useEffect((): void => {
     if (!formatted) {
@@ -99,128 +110,108 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
 
-  const unlockRef = useCallback(async () => {
-    try {
-      if (!formatted || !params) {
-        return;
-      }
+  const tx = useMemo(() => {
+    const extrinsic = batchAll(params);
+    const ptx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, extrinsic) : extrinsic;
 
-      const from = selectedProxyAddress ?? formatted;
-      const signer = keyring.getPair(from);
-
-      signer.unlock(password);
-      setShowWaitScreen(true);
-
-      const extrinsic = batchAll(params);
-      const ptx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, extrinsic) : extrinsic;
-
-      const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, formatted);
-
-      const info = {
-        action: 'Unlock Referenda',
-        amount,
-        block,
-        date: Date.now(),
-        failureText,
-        fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        subAction: 'Unlock',
-        success,
-        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
-        txHash
-      };
-
-      setTxInfo({ ...info, api, chain });
-      saveAsHistory(from, info);
-
-      setShowWaitScreen(false);
-      setShowConfirmation(true);
-    } catch (e) {
-      console.log('error:', e);
-      setIsPasswordError(true);
-    }
-  }, [formatted, params, selectedProxyAddress, password, batchAll, selectedProxy, api, amount, estimatedFee, name, selectedProxyName, chain]);
+    return ptx;
+  }, [api.tx.proxy, batchAll, formatted, params, selectedProxy]);
 
   const onClose = useCallback(() => {
     setDisplayPopup(undefined);
   }, [setDisplayPopup]);
 
+  const closeProxy = useCallback(() => setStep(STEPS.REVIEW), []);
+
   return (
     <DraggableModal onClose={onClose} open={show}>
-      <>
-        <HeaderBrand
-          onBackClick={onClose}
-          shortBorder
-          showBackArrow
-          showClose
-          text={t<string>('Unlocking')}
-        />
+      <Grid alignItems='center' container justifyContent='center' maxHeight='650px' overflow='hidden'>
+        <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
+          <Grid item>
+            <Typography fontSize='22px' fontWeight={700}>
+              {step === STEPS.PROXY ? t<string>('Select Proxy') : t<string>('Unlocking')}
+            </Typography>
+          </Grid>
+          <Grid item>
+            <CloseIcon onClick={step === STEPS.PROXY ? closeProxy : onClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
+          </Grid>
+        </Grid>
         {isPasswordError &&
           <WrongPasswordAlert />
         }
-        <SubTitle label={t('Review')} />
-        <Container disableGutters sx={{ px: '30px' }}>
-          <AccountHolderWithProxy
+        {step === STEPS.REVIEW &&
+          <>
+            <SubTitle label={t('Review')} style={{ paddingTop: isPasswordError ? '10px' : '25px' }} />
+            <Container disableGutters sx={{ px: '30px' }}>
+              <AccountHolderWithProxy
+                address={address}
+                chain={chain}
+                selectedProxyAddress={selectedProxyAddress}
+                showDivider
+                style={{ mt: '-5px' }}
+                title={t('Account holder')}
+              />
+              <AmountFee
+                address={address}
+                amount={amount}
+                fee={estimatedFee}
+                label={t('Available to unlock')}
+                showDivider={!totalLocked.sub(unlockableAmount).isZero()}
+                token={token}
+                withFee
+              />
+              {!totalLocked.sub(unlockableAmount).isZero() &&
+                <Warning
+                  theme={theme}
+                >
+                  {t<string>('The rest will be available when the corresponding locks have expired.')}
+                </Warning>
+              }
+            </Container>
+            <Grid container item sx={{ bottom: '10px', left: '4%', position: 'absolute', width: '92%' }}>
+              <SignArea2
+                address={address}
+                call={tx}
+                extraInfo={extraInfo}
+                isPasswordError={isPasswordError}
+                onSecondaryClick={onClose}
+                primaryBtnText={t<string>('Confirm')}
+                proxyTypeFilter={['Any', 'NonTransfer']}
+                secondaryBtnText={t<string>('Back')}
+                selectedProxy={selectedProxy}
+                setIsPasswordError={setIsPasswordError}
+                setStep={setStep}
+                setTxInfo={setTxInfo}
+                step={step}
+                steps={STEPS}
+              />
+            </Grid>
+          </>}
+        {step === STEPS.PROXY &&
+          <SelectProxyModal2
             address={address}
-            chain={chain}
-            selectedProxyAddress={selectedProxyAddress}
-            showDivider
-            style={{ mt: '-5px' }}
-            title={t('Account holder')}
+            closeSelectProxy={closeProxy}
+            height={500}
+            proxies={proxyItems}
+            proxyTypeFilter={['Any', 'NonTransfer']}
+            selectedProxy={selectedProxy}
+            setSelectedProxy={setSelectedProxy}
           />
-          <AmountFee
-            address={address}
-            amount={amount}
-            fee={estimatedFee}
-            label={t('Available to unlock')}
-            showDivider={!totalLocked.sub(unlockableAmount).isZero()}
-            token={token}
-            withFee
-          />
-          {!totalLocked.sub(unlockableAmount).isZero() &&
-            <Warning
-              theme={theme}
-            >
-              {t<string>('The rest will be available when the corresponding locks have expired.')}
-            </Warning>
-          }
-        </Container>
-        <PasswordUseProxyConfirm
-          api={api}
-          estimatedFee={estimatedFee}
-          genesisHash={chain?.genesisHash}
-          isPasswordError={isPasswordError}
-          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
-          onChange={setPassword}
-          onConfirmClick={unlockRef}
-          proxiedAddress={formatted}
-          proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
-          selectedProxy={selectedProxy}
-          setIsPasswordError={setIsPasswordError}
-          setSelectedProxy={setSelectedProxy}
-          style={{
-            bottom: '80px',
-            left: '4%',
-            position: 'absolute',
-            width: '92%'
-          }}
-        />
-        <WaitScreen
-          show={showWaitScreen}
-          title={t('Staking')}
-        />
-        {
-          txInfo && (
-            <Confirmation
-              address={address}
-              onPrimaryBtnClick={onClose}
-              showConfirmation={showConfirmation}
-              txInfo={txInfo}
-            />
-          )
         }
-      </>
+        {step === STEPS.WAIT_SCREEN &&
+          <WaitScreen
+            defaultText={t('Checking your votes and delegating status...')}
+          />
+        }
+        {txInfo && step === STEPS.CONFIRMATION &&
+          <Confirmation
+            address={address}
+            onPrimaryBtnClick={onClose}
+            showConfirmation={true}
+            txInfo={txInfo}
+          />
+        }
+      </Grid>
     </DraggableModal>
   );
 }
