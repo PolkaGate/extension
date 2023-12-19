@@ -27,7 +27,6 @@ interface Props {
   setIsTestnetEnabled: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   show: boolean;
   onChange: () => void;
-  onCloseMenu: () => void
 }
 
 const slideIn = keyframes`

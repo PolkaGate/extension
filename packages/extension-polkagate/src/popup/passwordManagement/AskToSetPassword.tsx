@@ -40,7 +40,7 @@ function AskToSetPassword ({ setStep }: Props): React.ReactElement {
   return (
     <Grid container justifyContent='center'>
       <Typography fontSize={16} pb='25px'>
-        {t('Would you like to create a password now?')}
+        {t('Would you like to set a login password?')}
       </Typography>
       <PButton
         _ml={0}
@@ -53,7 +53,7 @@ function AskToSetPassword ({ setStep }: Props): React.ReactElement {
         _mt='10px'
         _onClick={onMayBeLater}
         _variant='outlined'
-        text={t('Maybe later')}
+        text={t('Later')}
       />
       <PButton
         _ml={0}

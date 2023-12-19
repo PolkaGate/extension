@@ -14,7 +14,7 @@ import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 import Privacy from './Privacy';
 
-function Welcome(): React.ReactElement {
+function Welcome (): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();
