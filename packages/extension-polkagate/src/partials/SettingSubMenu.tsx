@@ -155,9 +155,7 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
               uncheckedLabel={t<string>('Light')}
             />
           </Grid>
-          {isPopup &&
-            <>
-              {isLoginEnabled &&
+          {isLoginEnabled &&
                 <>
                   <Grid item>
                     <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '20px', my: 'auto' }} />
@@ -175,7 +173,9 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
                     </Infotip2>
                   </Grid>
                 </>
-              }
+          }
+          {isPopup &&
+            <>
               <Grid item>
                 <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '20px', my: 'auto' }} />
               </Grid>
@@ -185,7 +185,7 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
                 >
                   <IconButton
                     onClick={_onWindowOpen}
-                    sx={{ height: '35px', mr: '-5px', width: '35px' }}
+                    sx={{ height: '35px', width: '35px' }}
                   >
                     <vaadin-icon icon='vaadin:expand-full' style={{ height: '19px', color: `${theme.palette.secondary.light}` }} />
                   </IconButton>

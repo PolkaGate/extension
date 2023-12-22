@@ -3,12 +3,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { blake2AsHex } from '@polkadot/util-crypto';
 
-import { Checkbox2, Password, TwoButtons } from '../../components';
+import { Checkbox2, Password, Switch, TwoButtons } from '../../components';
 import { setStorage } from '../../components/Loading';
 import { useTranslation } from '../../hooks';
 import Passwords2 from '../createAccountFullScreen/components/Passwords2';
@@ -26,6 +26,7 @@ interface Props {
 
 function Modify({ isPasswordError, newPassword, onBackClick, onPassChange, setIsPasswordError, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const [isRemovePasswordChecked, setChecked] = useState<boolean>(false);
   const [currentPassword, setCurrentPassword] = useState<string>('');
 
@@ -88,9 +89,21 @@ function Modify({ isPasswordError, newPassword, onBackClick, onPassChange, setIs
           isFocused
           label={t('Current password')}
           onChange={onCurrentPasswordChange}
-          style={{ marginBottom: '25px' }}
         />
-        <Grid item sx={{ opacity: isRemovePasswordChecked ? 0.5 : 1 }}>
+        <Grid alignItems='center' container item justifyContent='space-between'>
+          <Typography sx={{ fontSize: '14px' }}>
+            {t<string>('Password Enabled')}<br />
+          </Typography>
+          <Switch
+            changeBackground
+            fontSize='17px'
+            isChecked={!isRemovePasswordChecked}
+            onChange={onCheckChange}
+            theme={theme}
+          // uncheckedLabel={t<string>('Light')}
+          />
+        </Grid>
+        <Grid item sx={{ opacity: isRemovePasswordChecked ? 0.5 : 1, mt: '20px' }}>
           <Passwords2
             disabled={isRemovePasswordChecked}
             firstPassStyle={{ marginBlock: '8px' }}
@@ -99,13 +112,6 @@ function Modify({ isPasswordError, newPassword, onBackClick, onPassChange, setIs
             onEnter={onUpdatePassword}
           />
         </Grid>
-        <Checkbox2
-          checked={isRemovePasswordChecked}
-          label={t<string>('I want to enable passwordless login.')}
-          labelStyle={{ fontSize: '14px' }}
-          onChange={onCheckChange}
-          style={{ pt: '10px' }}
-        />
       </Grid>
       <TwoButtons
         disabled={!currentPassword || !(newPassword || isRemovePasswordChecked)}

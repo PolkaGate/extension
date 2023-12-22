@@ -10,16 +10,21 @@ interface Props {
   className?: string;
   theme: Theme;
   onChange: () => void;
-  checkedLabel: string;
-  uncheckedLabel: string;
+  checkedLabel?: string;
+  uncheckedLabel?: string;
   fontSize?: string;
   fontWeight?: number;
   isChecked?: boolean;
+  changeBackground?: boolean;
 }
 
-function Switch({ checkedLabel, className, fontSize = '18px', fontWeight = 300, onChange, theme, uncheckedLabel, isChecked = false }: Props): React.ReactElement<Props> {
+function Switch({ changeBackground = false, checkedLabel, className, fontSize = '18px', fontWeight = 300, isChecked = false, onChange, uncheckedLabel }: Props): React.ReactElement<Props> {
   return (
-    <Grid alignItems='center' className={className} container item width='fit-content'>
+    <Grid alignItems='center'
+      className={className}
+      container
+      item
+      width='fit-content'>
       <Typography
         display='inline'
         fontSize={fontSize}
@@ -34,7 +39,9 @@ function Switch({ checkedLabel, className, fontSize = '18px', fontWeight = 300, 
           onChange={onChange}
           type='checkbox'
         />
-        <span className='slider' />
+        <span
+          className='slider'
+          style={{ backgroundColor: isChecked && changeBackground ? '#C1FF83' : 'transparent' }} />
       </label>
       <Typography
         display='inline'
@@ -73,7 +80,7 @@ export default styled(Switch)(({ theme }: Props) => `
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: ${theme.palette.background.default};
+    background-color: '${theme.palette.background.default}';
     transition: 0.2s;
     border-radius: 100px;
     border: 1px solid ${theme.palette.secondary.light};
