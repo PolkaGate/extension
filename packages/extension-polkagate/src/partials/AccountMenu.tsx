@@ -197,4 +197,3 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
 }
 
 export default React.memo(AccountMenu);
-

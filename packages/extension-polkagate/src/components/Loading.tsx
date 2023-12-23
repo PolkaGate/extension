@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Grid, Theme, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { blake2AsHex } from '@polkadot/util-crypto';
 
@@ -25,6 +25,8 @@ interface Props {
   children?: React.ReactNode;
 }
 
+const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed'];
+
 export type LoginInfo = {
   status: 'noLogin' | 'mayBeLater' | 'justSet' | 'set' | 'forgot' | 'reset';
   lastLoginTime?: number;
@@ -32,13 +34,13 @@ export type LoginInfo = {
   addressesToForget?: string[];
 }
 
-export const updateStorage = async (label, newInfo) => {
+export const updateStorage = async (label: string, newInfo: unknown) => {
   try {
     // Retrieve the previous value
     const previousData = await getStorage(label);
 
     // Update the previous data with the new data
-    const updatedData = { ...previousData, ...newInfo };
+    const updatedData = { ...previousData, ...newInfo } as unknown;
 
     // Set the updated data in storage
     await setStorage(label, updatedData);
@@ -51,7 +53,7 @@ export const updateStorage = async (label, newInfo) => {
   }
 };
 
-export const getStorage = (label: any) => {
+export const getStorage = (label: string) => {
   return new Promise((resolve, reject) => {
     chrome.storage.local.get([label], (result) => {
       if (chrome.runtime.lastError) {
@@ -63,7 +65,7 @@ export const getStorage = (label: any) => {
   });
 };
 
-export const setStorage = (label: unknown, data: any) => {
+export const setStorage = (label: string, data: unknown) => {
   return new Promise<boolean>((resolve) => {
     chrome.storage.local.set({ [label]: data }, () => {
       if (chrome.runtime.lastError) {
@@ -94,7 +96,7 @@ const FlyingLogo = ({ theme }: { theme: Theme }) => (
   />
 );
 
-export default function Loading ({ children }: Props): React.ReactElement<Props> {
+export default function Loading({ children }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const manifest = useManifest();
   const { isExtensionLocked, setExtensionLock } = useExtensionLockContext();
@@ -188,63 +190,72 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
     }
   }, [hashedPassword, setExtensionLock]);
 
+  const showLoginPage = useMemo(() => {
+    const extensionUrl = window.location.hash.replace('#', '');
+
+    return isPopupOpenedByExtension
+      ? isExtensionLocked || !children || isFlying
+      : step === STEPS.SHOW_LOGIN && ALLOWED_URL_ON_RESET_PASSWORD.includes(extensionUrl)
+        ? false
+        : isExtensionLocked || !children || isFlying;
+  }, [children, isExtensionLocked, isFlying, isPopupOpenedByExtension, step]);
+
   return (
     <>
-      {
-        (isExtensionLocked || !children || isFlying)
-          ? <Grid container item sx={{ backgroundColor: theme.palette.mode === 'dark' ? 'black' : 'white', height: window.innerHeight }}>
-            {step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
-              <ForgotPasswordConfirmation
-                setStep={setStep}
-              />
-            }
-            {step === STEPS.SET_PASSWORD &&
-              <>
-                <Grid container item justifyContent='center' mt='33px' my='35px'>
-                  <StillLogo theme={theme} />
-                </Grid>
-                <Grid container sx={{ position: 'absolute', top: '165px' }}>
-                  <PasswordSettingAlert />
+      {showLoginPage
+        ? <Grid container item sx={{ backgroundColor: theme.palette.mode === 'dark' ? 'black' : 'white', height: window.innerHeight }}>
+          {step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
+            <ForgotPasswordConfirmation
+              setStep={setStep}
+            />
+          }
+          {step === STEPS.SET_PASSWORD &&
+            <>
+              <Grid container item justifyContent='center' mt='33px' my='35px'>
+                <StillLogo theme={theme} />
+              </Grid>
+              <Grid container sx={{ position: 'absolute', top: '165px' }}>
+                <PasswordSettingAlert />
+              </Grid>
+            </>
+          }
+          <Grid container item sx={{ p: '145px 0 70px' }}>
+            {isFlying && isPopupOpenedByExtension
+              ? <FlyingLogo theme={theme} />
+              : <>
+                {[STEPS.ASK_TO_SET_PASSWORD, STEPS.SHOW_LOGIN].includes(step) && (isPopupOpenedByExtension || isExtensionLocked) &&
+                  <Grid container item justifyContent='center' mt='33px' my='35px'>
+                    <StillLogo theme={theme} />
+                  </Grid>
+                }
+                {step === STEPS.ASK_TO_SET_PASSWORD &&
+                  <AskToSetPassword
+                    setStep={setStep}
+                  />
+                }
+                {step === STEPS.SET_PASSWORD &&
+                  <FirstTimeSetPassword
+                    hashedPassword={hashedPassword}
+                    onPassChange={onPassChange}
+                    setStep={setStep}
+                  />
+                }
+                {[STEPS.SHOW_LOGIN].includes(step) &&
+                  <Login
+                    isPasswordError={isPasswordError}
+                    onPassChange={onPassChange}
+                    onUnlock={onUnlock}
+                    setStep={setStep}
+                  />
+                }
+                <Grid container item justifyContent='center' sx={{ bottom: '10px', fontSize: '10px', opacity: '0.7', position: 'absolute' }}>
+                  {`${('V')}${(manifest?.version || '')}`}
                 </Grid>
               </>
             }
-            <Grid container item sx={{ p: '145px 0 70px' }}>
-              {isFlying && isPopupOpenedByExtension
-                ? <FlyingLogo theme={theme} />
-                : <>
-                  {[STEPS.ASK_TO_SET_PASSWORD, STEPS.SHOW_LOGIN].includes(step) && (isPopupOpenedByExtension || isExtensionLocked) &&
-                    <Grid container item justifyContent='center' mt='33px' my='35px'>
-                      <StillLogo theme={theme} />
-                    </Grid>
-                  }
-                  {step === STEPS.ASK_TO_SET_PASSWORD &&
-                    <AskToSetPassword
-                      setStep={setStep}
-                    />
-                  }
-                  {step === STEPS.SET_PASSWORD &&
-                    <FirstTimeSetPassword
-                      hashedPassword={hashedPassword}
-                      onPassChange={onPassChange}
-                      setStep={setStep}
-                    />
-                  }
-                  {step === STEPS.SHOW_LOGIN &&
-                    <Login
-                      isPasswordError={isPasswordError}
-                      onPassChange={onPassChange}
-                      onUnlock={onUnlock}
-                      setStep={setStep}
-                    />
-                  }
-                  <Grid container item justifyContent='center' sx={{ bottom: '10px', fontSize: '10px', opacity: '0.7', position: 'absolute' }}>
-                    {`${('V')}${(manifest?.version || '')}`}
-                  </Grid>
-                </>
-              }
-            </Grid>
           </Grid>
-          : children
+        </Grid>
+        : children
       }
     </>
   );
