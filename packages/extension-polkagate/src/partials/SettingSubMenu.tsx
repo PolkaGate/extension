@@ -212,7 +212,7 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
             onChange={toggleCamera}
           />
         </Grid>
-        <Grid container item >
+        <Grid container item>
           <MenuItem
             fontSize='17px'
             iconComponent={
