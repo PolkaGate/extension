@@ -28,7 +28,9 @@ export default function TotalChart ({ assetsOnOtherChains, isDarkTheme, nativeAs
   const theme = useTheme();
   const chartRef = useRef(null);
 
-  Chart.register(ArcElement);
+  useEffect(() => {
+    Chart.register(ArcElement);
+  }, []);
 
   const calPrice = useCallback((assetPrice: number | undefined, balance: BN, decimal: number) => parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0), []);
   const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
@@ -140,8 +142,6 @@ export default function TotalChart ({ assetsOnOtherChains, isDarkTheme, nativeAs
             callbacks: {
               label: function (context) {
                 const index = otherAssetsToShow.color.findIndex((val) => val === context.element.options.backgroundColor);
-
-                console.log('context:', context);
 
                 return otherAssetsToShow.token[index];
               }
