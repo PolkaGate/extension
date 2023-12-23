@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { twoItemCurveBackgroundBlack, twoItemCurveBackgroundWhite } from '../assets/icons';
-import { useAccount, useChainName, useGenesisHashOptions } from '../hooks';
+import { useAccount, useChainName, useGenesisHashOptions, useIsTestnetEnabled } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CHAINS_WITH_BLACK_LOGO, CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
@@ -33,17 +33,13 @@ function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Pr
   const genesisHashes = useGenesisHashOptions();
   const currentChainNameFromAccount = useChainName(address);
   const [currentChainName, setCurrentChainName] = useState<string | undefined>(currentChainNameFromAccount);
-  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+  const isTestnetEnabled = useIsTestnetEnabled();
 
   const isTestnetDisabled = useCallback((name: string | undefined) => !isTestnetEnabled && name?.toLowerCase() === 'westend', [isTestnetEnabled]);
 
   useEffect(() => {
     currentChainNameFromAccount && setCurrentChainName(currentChainNameFromAccount);
   }, [currentChainNameFromAccount]);
-
-  useEffect(() =>
-    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
-    , [showOtherChains]);
 
   const availableChains = useMemo(() => {
     if (!pathname || !account?.genesisHash) {

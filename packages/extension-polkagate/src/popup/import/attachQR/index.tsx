@@ -36,22 +36,19 @@ export default function AttachQR(): React.ReactElement {
     !accounts.length && onAction();
   }, [accounts, onAction]);
 
-  const _onCreate = useCallback(
-    (): void => {
-      if (account && name) {
-        if (account.isAddress) {
-          createAccountExternal(name, account.content, account.genesisHash)
-            .then(() => onAction('/'))
-            .catch((error: Error) => console.error(error));
-        } else if (password) {
-          createAccountSuri(name, password, account.content, 'sr25519', account.genesisHash)
-            .then(() => onAction('/'))
-            .catch((error: Error) => console.error(error));
-        }
+  const _onCreate = useCallback(() => {
+    if (account && name) {
+      if (account.isAddress) {
+        createAccountExternal(name, account.content, account.genesisHash)
+          .then(() => onAction('/'))
+          .catch((error: Error) => console.error(error));
+      } else if (password) {
+        createAccountSuri(name, password, account.content, 'sr25519', account.genesisHash)
+          .then(() => onAction('/'))
+          .catch((error: Error) => console.error(error));
       }
-    },
-    [account, name, onAction, password]
-  );
+    }
+  }, [account, name, onAction, password]);
 
   const _setAccount = useCallback(
     (qrAccount: QrAccount) => {

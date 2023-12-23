@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Close as CloseIcon, FiberManualRecord as FiberManualRecordIcon } from '@mui/icons-material';
-import { Box, Divider, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText, Typography, useTheme } from '@mui/material';
+import { Box, Divider, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { SlidePopUp } from '../../components';
@@ -18,7 +18,6 @@ interface Props {
 
 function Privacy({ setShow, show = false }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   const onClose = useCallback(() => {
     setShow(false);

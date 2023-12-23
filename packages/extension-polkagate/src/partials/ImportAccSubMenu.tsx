@@ -77,14 +77,16 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
       <Grid container direction='column' display='block' item sx={{ p: '18px 0 15px 10px' }}>
         <MenuItem
+          fontSize='17px'
           iconComponent={
             <vaadin-icon icon='vaadin:file-text' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
           onClick={_goToRestoreFromJson}
           py='4px'
-          text={t('Restore from file')}
+          text={t('Restore from JSON file')}
         />
         <MenuItem
+          fontSize='17px'
           iconComponent={
             <vaadin-icon icon='vaadin:book' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
@@ -93,6 +95,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
           text={t('Import from recovery phrase')}
         />
         <MenuItem
+          fontSize='17px'
           iconComponent={
             <vaadin-icon icon='vaadin:tag' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
@@ -102,6 +105,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
         />
         <MenuItem
           disabled={settings.camera !== 'on'}
+          fontSize='17px'
           iconComponent={
             <vaadin-icon icon='vaadin:qrcode' style={{ height: '18px', color: `${settings.camera === 'on' ? 'theme.palette.text.primary' : 'theme.palette.text.disabled'}` }} />
           }
@@ -110,12 +114,13 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
           text={t('Attach external QR-signer')}
         />
         {settings.camera !== 'on' &&
-          <Grid fontSize='10px' item letterSpacing='-1.5%' onClick={toggleSettingSubMenu} sx={{ cursor: 'pointer' }} textAlign='left'>
+          <Grid fontSize='11px' item letterSpacing='-1.5%' onClick={toggleSettingSubMenu} sx={{ cursor: 'pointer' }} textAlign='left'>
             {t('Allow QR camera access in the extension’s setting in order to use this feature')}
             <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 10, mb: '-2px', stroke: '#BA2882' }} />
           </Grid>
         }
         <MenuItem
+          fontSize='17px'
           iconComponent={
             <vaadin-icon icon='vaadin:wallet' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }

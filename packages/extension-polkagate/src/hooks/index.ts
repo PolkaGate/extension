@@ -77,3 +77,5 @@ export { default as useCanPayFeeAndDeposit } from './useCanPayFeeAndDeposit';
 export { default as useUnSupportedNetwork } from './useUnSupportedNetwork';
 export { default as usePendingRewards } from './usePendingRewards';
 export { default as useManifest } from './useManifest';
+export { default as useIsLoginEnabled } from './useIsLoginEnabled';
+export { default as useIsTestnetEnabled } from './useIsTestnetEnabled';

@@ -4,14 +4,13 @@
 import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { AccountInfo } from '.';
 
-import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { objectSpread } from '@polkadot/util';
 
-import { SelectChain, InputWithLabel, PButton, TextAreaWithLabel, Warning } from '../../../components';
+import { InputWithLabel, PButton, SelectChain, TextAreaWithLabel, Warning } from '../../../components';
 import { useGenesisHashOptions, useTranslation } from '../../../hooks';
 import { getMetadata, validateSeed } from '../../../messaging';
 import getLogo from '../../../util/getLogo';

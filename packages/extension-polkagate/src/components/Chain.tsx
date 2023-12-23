@@ -6,7 +6,7 @@
 import { Grid, SxProps, Theme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useGenesisHashOptions } from '@polkadot/extension-polkagate/src/hooks';
+import { useGenesisHashOptions, useIsTestnetEnabled } from '@polkadot/extension-polkagate/src/hooks';
 import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
@@ -21,22 +21,17 @@ interface Props {
   disabledItems?: string[] | number[];
 }
 
-function Chain({ address, defaultValue, disabledItems, label, onChange, style }: Props) {
+function Chain ({ address, defaultValue, disabledItems, label, onChange, style }: Props) {
   let options = useGenesisHashOptions();
+  const isTestnetEnabled = useIsTestnetEnabled();
 
   options = options.filter(({ text }) => text !== 'Allow use on any chain');
-
-  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
 
   const _disabledItems = useMemo((): (string | number)[] | undefined =>
     !isTestnetEnabled
       ? [...(disabledItems || []), ...TEST_NETS]
       : disabledItems
-    , [disabledItems, isTestnetEnabled]);
-
-  useEffect(() =>
-    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
-    , []);
+  , [disabledItems, isTestnetEnabled]);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     try {
