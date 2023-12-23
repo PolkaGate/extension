@@ -13,21 +13,17 @@ import { useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 
-function Reset(): React.ReactElement {
+function Reset (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const _goToRestoreFromJson = useCallback(
-    (): void => {
-      windowOpen('/account/restore-json').catch(console.error);
-    }, []
-  );
+  const _goToRestoreFromJson = useCallback((): void => {
+    windowOpen('/account/restore-json').catch(console.error);
+  }, []);
 
-  const _goToImport = useCallback(
-    (): void => {
-      windowOpen('/account/import-seed').catch(console.error);
-    }, []
-  );
+  const _goToImport = useCallback((): void => {
+    windowOpen('/account/import-seed').catch(console.error);
+  }, []);
 
   return (
     <>
