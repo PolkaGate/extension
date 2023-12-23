@@ -94,7 +94,7 @@ const FlyingLogo = ({ theme }: { theme: Theme }) => (
   />
 );
 
-export default function Loading({ children }: Props): React.ReactElement<Props> {
+export default function Loading ({ children }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const manifest = useManifest();
   const { isExtensionLocked, setExtensionLock } = useExtensionLockContext();
@@ -212,7 +212,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
               {isFlying && isPopupOpenedByExtension
                 ? <FlyingLogo theme={theme} />
                 : <>
-                  {[ STEPS.ASK_TO_SET_PASSWORD, STEPS.SHOW_LOGIN].includes(step) && (isPopupOpenedByExtension || isExtensionLocked) &&
+                  {[STEPS.ASK_TO_SET_PASSWORD, STEPS.SHOW_LOGIN].includes(step) && (isPopupOpenedByExtension || isExtensionLocked) &&
                     <Grid container item justifyContent='center' mt='33px' my='35px'>
                       <StillLogo theme={theme} />
                     </Grid>

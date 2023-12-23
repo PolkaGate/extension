@@ -377,7 +377,6 @@ export default function Index(): React.ReactElement {
             />
           }
           onClick={onNominations}
-          // textDisabled={role() === 'Stash'}
           title={t<string>('Validators')}
         />
         {stakingAccount?.stakingLedger?.total?.gt(BN_ZERO) &&
