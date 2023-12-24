@@ -35,13 +35,13 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
   const chainName = sanitizeChainName(chain?.name);
 
   const sortedNominators = validatorInfo?.exposure?.others?.sort((a, b) => b.value - a.value);
-  const own = api.createType('Balance', validatorInfo?.exposure.own || validatorInfo?.stakingLedger.active);
-  const total = api.createType('Balance', validatorInfo?.exposure.total);
+  const own = api.createType('Balance', validatorInfo?.exposure?.own || validatorInfo?.stakingLedger?.active);
+  const total = api.createType('Balance', validatorInfo?.exposure?.total || 1);
   const commission = Number(validatorInfo?.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo?.validatorPrefs.commission) / (10 ** 7);
   const myIndex = sortedNominators?.findIndex((n) => n.who.toString() === stakerAddress);
   const myPossibleIndex = useMemo(() => {
     if (staked && myIndex === -1 && sortedNominators) {
-      const index = sortedNominators.findIndex((n) => isHexToBn(n.value).lt(staked));
+      const index = sortedNominators.findIndex((n) => isHexToBn(String(n.value)).lt(staked));
 
       if (index === -1) {/** will be the last nominator */
         return sortedNominators.length;
@@ -154,7 +154,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
   };
 
   const percent = (value: string) => {
-    const percentToShow = (Number(value) * 100 / Number(total.toString())).toFixed(2);
+    const percentToShow = Number(isHexToBn(value).muln(100).div(isHexToBn(total.toString()))).toFixed(2);
 
     return percentToShow;
   };
