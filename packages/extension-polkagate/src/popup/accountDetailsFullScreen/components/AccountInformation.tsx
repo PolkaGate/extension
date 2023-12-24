@@ -59,10 +59,33 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
       return assetsOnOtherChains.filter((asset) => !asset.totalBalance.isZero() && !(asset.genesisHash === account?.genesisHash && asset.token === token));
     }
   }, [account?.genesisHash, assetsOnOtherChains, token]);
+  const recoverableToolTipTxt = useMemo(() => {
+    switch (recoverable) {
+      case true:
+        return 'Recoverable';
+        break;
+      case false:
+        return 'Not Recoverable';
+        break;
+
+      default:
+        return 'Checking';
+        break;
+    }
+  }, [recoverable]);
+  const proxyTooltipTxt = useMemo(() => {
+    if (proxies && proxies.length > 0) {
+      return 'Has Proxy';
+    } else if (proxies && proxies.length === 0) {
+      return 'No Proxy';
+    } else {
+      return 'Checking';
+    }
+  }, [proxies]);
 
   useEffect((): void => {
     api && api?.query.identity && api?.query.identity.identityOf(address).then((id) => setHasID(!id.isEmpty)).catch(console.error);
-    api && api.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => r.isSome && setRecoverable(r.unwrap())).catch(console.error);
+    api && api.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => setRecoverable(r.isSome)).catch(console.error);
   }, [api, address, formatted]);
 
   useEffect(() => {
@@ -226,7 +249,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
               }
             </Grid>
             <Grid item width='fit-content'>
-              <Infotip placement='bottom-start' text={t('Is recoverable')}>
+              <Infotip placement='right' text={t(recoverableToolTipTxt)}>
                 <IconButton
                   onClick={openSocialRecovery}
                   sx={{ height: '16px', width: '16px' }}
@@ -239,7 +262,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
               </Infotip>
             </Grid>
             <Grid item width='fit-content'>
-              <Infotip placement='bottom-end' text={t('Has proxy')}>
+              <Infotip placement='right' text={t(proxyTooltipTxt)}>
                 <IconButton onClick={openManageProxy} sx={{ height: '16px', width: '16px' }}>
                   <FontAwesomeIcon
                     icon={faSitemap}
