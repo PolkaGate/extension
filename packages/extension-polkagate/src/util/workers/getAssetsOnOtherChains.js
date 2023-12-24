@@ -59,16 +59,6 @@ const CHAINS_TO_CHECK = [{
   priceID: 'karura'
 },
 {
-  genesisHash: KUSAMA_ASSETHUB_GENESISHASH,
-  name: 'KusamaAssetHub',
-  priceID: 'kusama'
-},
-{
-  genesisHash: POLKADOT_ASSETHUB_GENESISHASH,
-  name: 'PolkadotAssetHub',
-  priceID: 'polkadot'
-},
-{
   genesisHash: '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9',
   name: 'WestendAssetHub',
   priceID: ''
@@ -76,10 +66,17 @@ const CHAINS_TO_CHECK = [{
 ];
 const fetchPriceFor = ['hydradx', 'karura', 'liquid-staking-dot', 'acala-dollar-acala', 'astar', 'kusama', 'acala', 'polkadot', 'tether', 'usd-coin'];
 
-async function fastestEndpoint (chainEndpoints) {
+async function fastestEndpoint (chainEndpoints, isACA) {
+  let connection;
+
   const connections = chainEndpoints.map((endpoint) => {
     const wsProvider = new WsProvider(endpoint.value);
-    const connection = ApiPromise.create({ provider: wsProvider });
+
+    if (isACA) {
+      connection = new ApiPromise(options({ provider: wsProvider })).isReady;
+    } else {
+      connection = ApiPromise.create({ provider: wsProvider });
+    }
 
     return {
       connection,
@@ -117,6 +114,27 @@ function getToken (genesisHash) {
   return network?.symbols?.length ? network.symbols[0] : undefined;
 }
 
+function firstLetterUppercase (text) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function getNativeToken(address, api, genesisHash, tokenName, prices, promises, results) {
+  promises.push(api.derive.balances.all(address).then((balances) => {
+    const availableBalance = balances.freeBalance.add(balances.reservedBalance);
+    const price = prices.prices[tokenName]?.usd ?? 0;
+    const chainName = firstLetterUppercase(tokenName) + 'AssetHub';
+
+    results.push({
+      balances: String(availableBalance),
+      chain: sanitizeText(chainName),
+      decimal: getDecimal(genesisHash),
+      genesisHash,
+      price,
+      token: getToken(genesisHash)
+    });
+  }));
+}
+
 function getDecimal (genesisHash) {
   const network = selectableNetworks.find((network) => network.genesisHash[0] === genesisHash);
 
@@ -128,12 +146,10 @@ async function acalaTokens (address, results, promises, prices) {
 
   const chainEndpoints = allEndpoints
     .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === 'acala')
-    .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'));
+    .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'))
+    .slice(0, 5);
 
-  const provider = new WsProvider(chainEndpoints[1].value);
-  const fastApi = new ApiPromise(options({ provider }));
-
-  await fastApi.isReady;
+  const { connections, fastApi } = await fastestEndpoint(chainEndpoints, true);
 
   const tokensList = [
     'LDOT', // 'liquid-staking-dot' price apiID
@@ -165,7 +181,7 @@ async function acalaTokens (address, results, promises, prices) {
     }));
   }
 
-  return [{ wsProvider: provider }];
+  return connections;
 }
 
 async function kusamaAssetHubTokens (address, results, promises, prices) {
@@ -192,7 +208,9 @@ async function kusamaAssetHubTokens (address, results, promises, prices) {
     .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === 'kusamaassethub')
     .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'));
 
-  const { connections, fastApi } = await fastestEndpoint(chainEndpoints);
+  const { connections, fastApi } = await fastestEndpoint(chainEndpoints, false);
+
+  getNativeToken(address, fastApi, KUSAMA_ASSETHUB_GENESISHASH, 'kusama', prices, promises, results);
 
   for (const asset of assetsToFetch) {
     promises.push(Promise.all([
@@ -240,7 +258,9 @@ async function polkadotAssetHubTokens (address, results, promises, prices) {
     .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === 'polkadotassethub')
     .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'));
 
-  const { connections, fastApi } = await fastestEndpoint(chainEndpoints);
+  const { connections, fastApi } = await fastestEndpoint(chainEndpoints, false);
+
+  getNativeToken(address, fastApi, POLKADOT_ASSETHUB_GENESISHASH, 'polkadot', prices, promises, results);
 
   for (const asset of assetsToFetch) {
     promises.push(Promise.all([
@@ -317,7 +337,7 @@ async function setupConnections (chain, accountAddress, allEndpoints) {
 
   console.log(`Connecting to endpoints for ${chain}`);
 
-  const { connections, fastApi } = await fastestEndpoint(chainEndpoints);
+  const { connections, fastApi } = await fastestEndpoint(chainEndpoints, false);
 
   if (fastApi.isConnected && fastApi.derive.balances) {
     const balances = await fastApi.derive.balances.all(accountAddress);
@@ -345,14 +365,14 @@ async function getAssetsOnOtherChains (accountAddress) {
   const prices = await getPrices(fetchPriceFor);
 
   if (prices === null) {
-    Promise.reject('failed');
+    throw new Error('Failed to fetch prices');
   }
 
   const promises = [];
 
+  const acalaConnections = await acalaTokens(accountAddress, results, promises, prices);
   const pAHConnections = await polkadotAssetHubTokens(accountAddress, results, promises, prices);
   const kAHConnections = await kusamaAssetHubTokens(accountAddress, results, promises, prices);
-  const acalaConnections = await acalaTokens(accountAddress, results, promises, prices);
 
   const newPromises = CHAINS_TO_CHECK.map((chain) => {
     return setupConnections(chain.name, accountAddress, allEndpoints)
@@ -379,7 +399,7 @@ async function getAssetsOnOtherChains (accountAddress) {
 
   promises.push(...newPromises);
 
-  Promise.all(promises).finally(() => {
+  await Promise.all(promises).finally(() => {
     closeWebsockets([...acalaConnections, ...pAHConnections, ...kAHConnections]);
     const noAssetsOnOtherChains = results.every((res) => res.balances === '0');
 
@@ -418,15 +438,17 @@ onmessage = async (e) => {
   console.log(`tryCount fetch assets on other chains: ${tryCount}`);
 
   while (tryCount >= 1 && tryCount <= 5) {
-    tryCount++;
-
     try {
       // eslint-disable-next-line no-void
       await getAssetsOnOtherChains(accountAddress);
 
       tryCount = 0;
     } catch (error) {
-      console.error('Error while fetching assets on other chains, times to retry', error, tryCount);
+      console.error(`Error while fetching assets on other chains, ${5 - tryCount} times to retry`, error);
+
+      tryCount === 5 && postMessage('Done');
     }
+
+    tryCount++;
   }
 };
