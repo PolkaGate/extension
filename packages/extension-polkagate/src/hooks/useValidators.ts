@@ -168,7 +168,7 @@ export default function useValidators(address: string, validators?: AllValidator
       /** get validators info, including current and waiting, should be called after savedValidators gets value */
       endpoint && chain && currentEraIndex && currentEraIndex !== info?.eraIndex && getValidatorsInfo(chain, endpoint, info);
     }
-  }, [api, chain, currentEraIndex, endpoint, getValidatorsInfo, info]);
+  }, [api, chain, currentEraIndex, endpoint, getValidatorsInfo, info, validators]);
 
   return newInfo || info;
 }
