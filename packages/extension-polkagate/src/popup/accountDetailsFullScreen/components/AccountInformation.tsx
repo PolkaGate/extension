@@ -231,7 +231,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
     <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '20px 30px 15px' }}>
       <Grid container item>
         <Grid container item sx={{ borderRight: '1px solid', borderRightColor: borderColor, pr: '15px', width: 'fit-content' }}>
-          <Grid container item pr='10px' width='fit-content'>
+          <Grid container item pr='10px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>
             <Identicon
               iconTheme={chain?.icon ?? 'polkadot'}
               prefix={chain?.ss58Format ?? 42}
@@ -239,8 +239,8 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
               value={formatted || address}
             />
           </Grid>
-          <Grid container direction='column' display='grid' item justifyContent='center' justifyItems='center' width='fit-content'>
-            <Grid item onClick={openIdentity} sx={{ border: '1px solid', borderColor: 'success.main', borderRadius: '5px', cursor: 'pointer', display: hasID ? 'inherit' : 'none', p: '2px', width: 'fit-content' }}>
+          <Grid alignItems='center' container direction='column' display='grid' item justifyContent='center' justifyItems='center' width='fit-content'>
+            <Grid item onClick={openIdentity} sx={{ border: '1px solid', borderColor: 'success.main', borderRadius: '5px', cursor: 'pointer', display: hasID ? 'inherit' : 'none', height: '24px', m: 'auto', p: '2px', width: 'fit-content' }}>
               {hasID
                 ? accountInfo?.identity?.displayParent
                   ? <LinkIcon sx={{ bgcolor: 'success.main', border: '1px solid', borderRadius: '50%', color: 'white', fontSize: '18px', transform: 'rotate(-45deg)' }} />
@@ -248,11 +248,11 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
                 : undefined
               }
             </Grid>
-            <Grid item width='fit-content'>
+            <Grid height='24px' item width='24px'>
               <Infotip placement='right' text={t(recoverableToolTipTxt)}>
                 <IconButton
                   onClick={openSocialRecovery}
-                  sx={{ height: '16px', width: '16px' }}
+                  sx={{ height: '24px', width: '24px' }}
                 >
                   <FontAwesomeIcon
                     icon={faShieldHalved}
@@ -261,7 +261,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
                 </IconButton>
               </Infotip>
             </Grid>
-            <Grid item width='fit-content'>
+            <Grid height='24px' item width='fit-content'>
               <Infotip placement='right' text={t(proxyTooltipTxt)}>
                 <IconButton onClick={openManageProxy} sx={{ height: '16px', width: '16px' }}>
                   <FontAwesomeIcon
