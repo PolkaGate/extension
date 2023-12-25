@@ -15,21 +15,23 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Warning } from '../../components';
-import { useMerkleScience, useTranslation } from '../../hooks';
+import { getStorage, LoginInfo } from '../../components/Loading';
+import { useIsTestnetEnabled, useMerkleScience, useTranslation } from '../../hooks';
 import { tieAccount, windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { NEW_VERSION_ALERT, TEST_NETS } from '../../util/constants';
-import AddAccount from '../welcome/AddAccount';
+import Welcome from '../welcome';
+import Reset from '../welcome/Reset';
 import AccountsTree from './AccountsTree';
 import AiBackgroundImage from './AiBackgroundImage';
 import Alert from './Alert';
 import YouHave from './YouHave';
 
-
 export default function Home(): React.ReactElement {
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
   const theme = useTheme();
+  const isTestnetEnabled = useIsTestnetEnabled();
 
   useMerkleScience(undefined, undefined, true); // to download the data file
 
@@ -37,19 +39,18 @@ export default function Home(): React.ReactElement {
   const [show, setShowAlert] = useState<boolean>(false);
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
   const [hasActiveRecovery, setHasActiveRecovery] = useState<string | null | undefined>(); // if exists, include the account address
+  const [loginInfo, setLoginInfo] = useState<LoginInfo>();
   const [bgImage, setBgImage] = useState<string | undefined>();
 
   useEffect(() => {
-    const isTestnetDisabled = window.localStorage.getItem('testnet_enabled') !== 'true';
-
-    isTestnetDisabled && (
+    !isTestnetEnabled && (
       accounts?.forEach(({ address, genesisHash }) => {
         if (genesisHash && TEST_NETS.includes(genesisHash)) {
           tieAccount(address, null).catch(console.error);
         }
       })
     );
-  }, [accounts]);
+  }, [accounts, isTestnetEnabled]);
 
   useEffect(() => {
     const value = window.localStorage.getItem('inUse_version');
@@ -65,6 +66,8 @@ export default function Home(): React.ReactElement {
     cryptoWaitReady().then(() => {
       keyring.loadAll({ store: new AccountsStore() });
     }).catch(() => null);
+
+    getStorage('loginInfo').then(setLoginInfo).catch(console.error);
   }, []);
 
   const sortedAccount = useMemo(() =>
@@ -88,8 +91,7 @@ export default function Home(): React.ReactElement {
   }, []);
 
   const AddNewAccount = () => (
-    <Grid alignItems='center' container onClick={onCreate} sx={{ '&:hover': { opacity: 1 }, backgroundColor: 'background.paper', borderColor: 'secondary.main', borderRadius: '10px', borderStyle: 'solid', borderWidth: '0.5px', bottom: '20px', cursor: 'pointer', my: '10px', opacity: '0.7', padding: '8px 7px 8px 22px', position: 'absolute', transition: 'opacity 0.3s ease', width: 'inherit', zIndex: 1 }
-    }>
+    <Grid alignItems='center' container onClick={onCreate} sx={{ '&:hover': { opacity: 1 }, backgroundColor: 'background.paper', borderColor: 'secondary.main', borderRadius: '10px', borderStyle: 'solid', borderWidth: '0.5px', bottom: '20px', cursor: 'pointer', my: '10px', opacity: '0.7', padding: '8px 7px 8px 22px', position: 'absolute', transition: 'opacity 0.3s ease', width: 'inherit', zIndex: 1 }}>
       <Grid item xs={1.5}>
         <vaadin-icon icon='vaadin:plus-circle' style={{ height: '36px', color: `${theme.palette.secondary.light}`, width: '36px' }} />
       </Grid>
@@ -113,7 +115,9 @@ export default function Home(): React.ReactElement {
         show={show}
       />
       {hierarchy.length === 0
-        ? <AddAccount />
+        ? loginInfo?.status === 'forgot'
+          ? <Reset />
+          : <Welcome />
         : <Grid alignContent='flex-start' container sx={{
           backgroundImage:
             bgImage && (theme.palette.mode === 'dark'
@@ -143,21 +147,8 @@ export default function Home(): React.ReactElement {
               </Warning>
             </Grid>
           }
-          <YouHave
-            hideNumbers={hideNumbers}
-            setHideNumbers={setHideNumbers}
-          />
-          <Container
-            disableGutters
-            sx={[{
-              m: 'auto',
-              maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`,
-              mt: '10px',
-              overflowY: 'scroll',
-              p: 0,
-              width: '92%'
-            }]}
-          >
+          <YouHave hideNumbers={hideNumbers} setHideNumbers={setHideNumbers} />
+          <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`, mt: '10px', overflowY: 'scroll', p: 0, width: '92%' }]}>
             {sortedAccount.map((json, index): React.ReactNode => (
               <AccountsTree
                 {...json}

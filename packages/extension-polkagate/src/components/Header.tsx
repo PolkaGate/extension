@@ -1,6 +1,6 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-/* eslint-disable header/header */
+
 /* eslint-disable react/jsx-max-props-per-line */
 
 /**
@@ -23,9 +23,9 @@ export default function Header({ onClose, text }: Props): React.ReactElement {
   const theme = useTheme();
 
   return (
-    <Grid alignItems='center' container justifyContent='flex-end' p='15px 30px 0'>
+    <Grid alignItems='center' container justifyContent='flex-end' p='15px 30px 11px' sx={{ borderBottom: 0.5, borderColor: 'secondary.light' }}>
       <Grid alignItems='center' container item xs={2}>
-        <Box component='img' src={theme.palette.mode === 'dark' ? logoBlack : logoWhite} sx={{ height: 38, width: 38 }} />
+        <Box component='img' src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string} sx={{ height: 38, width: 38 }} />
       </Grid>
       <Grid item m='auto' textAlign='center' xs={8}>
         <Typography fontSize='20px' fontWeight={400}>

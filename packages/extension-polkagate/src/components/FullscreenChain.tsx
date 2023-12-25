@@ -7,7 +7,7 @@ import { FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, SxPr
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useGenesisHashOptions } from '@polkadot/extension-polkagate/src/hooks';
+import { useGenesisHashOptions, useIsTestnetEnabled } from '@polkadot/extension-polkagate/src/hooks';
 import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
@@ -74,6 +74,7 @@ const Item: React.FC<{ height?: string, logoSize?: number, text: string }> = ({ 
 function FullscreenChain({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style }: Props) {
   const theme = useTheme();
   const _allOptions = useGenesisHashOptions();
+  const isTestnetEnabled = useIsTestnetEnabled();
 
   const _options = useMemo(() => {
     const filteredOptions = _allOptions.filter(({ text }) => text === 'Allow use on any chain');
@@ -83,16 +84,14 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<string>();
-  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
 
   const _disabledItems = useMemo((): (string | number)[] | undefined =>
     !isTestnetEnabled
       ? [...(disabledItems || []), ...TEST_NETS]
       : disabledItems
-    , [disabledItems, isTestnetEnabled]);
+  , [disabledItems, isTestnetEnabled]);
 
   useEffect(() => {
-    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true');
     onChange(defaultValue);
   }, [defaultValue, onChange]);
 

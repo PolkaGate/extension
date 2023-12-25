@@ -15,7 +15,7 @@ interface Props {
   isError?: boolean;
   isFocused?: boolean;
   isReadOnly?: boolean;
-  label: string;
+  label?: string;
   onChange?: (value: string) => void;
   onEnter?: () => void;
   placeholder?: string;

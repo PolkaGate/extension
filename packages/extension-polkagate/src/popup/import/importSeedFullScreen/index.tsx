@@ -19,6 +19,7 @@ import { createAccountSuri, getMetadata, validateSeed } from '../../../messaging
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import getLogo from '../../../util/getLogo';
 import Passwords2 from '../../createAccountFullScreen/components/Passwords2';
+import { resetOnForgotPassword } from '../../createAccountFullScreen/resetAccounts';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
 
 export interface AccountInfo {
@@ -122,10 +123,11 @@ export default function ImportSeed(): React.ReactElement {
     });
   }, [genesis]);
 
-  const onCreate = useCallback((): void => {
+  const onCreate = useCallback(async (): Promise<void> => {
     // this should always be the case
     if (name && password && account) {
       setIsBusy(true);
+      await resetOnForgotPassword();
 
       createAccountSuri(name, password, account.suri, type, account.genesis)
         .then(() => onAction('/'))

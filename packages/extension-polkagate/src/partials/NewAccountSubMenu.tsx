@@ -67,6 +67,7 @@ function NewAccountSubMenu({ show }: Props): React.ReactElement<Props> {
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
       <Grid container direction='column' display='block' item sx={{ p: '18px 0 15px 10px' }}>
         <MenuItem
+          fontSize='17px'
           iconComponent={
             <vaadin-icon icon='vaadin:plus-circle-o' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
@@ -75,6 +76,7 @@ function NewAccountSubMenu({ show }: Props): React.ReactElement<Props> {
           text={t('Create new account')}
         />
         <MenuItem
+          fontSize='17px'
           iconComponent={
             <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }

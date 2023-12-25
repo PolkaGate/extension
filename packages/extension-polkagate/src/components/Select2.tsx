@@ -185,7 +185,6 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
                     {text}
                   </Typography>
                 </Grid>
-
               </Grid>
             </MenuItem>
           ))}

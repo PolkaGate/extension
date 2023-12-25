@@ -43,10 +43,6 @@ export interface AccountJson extends KeyringPair$Meta {
   whenCreated?: number;
 
   // added for polkagate
-  // txHistory?: string;
-  // nominatedValidators?: string; // can be removed
-  // poolNominatedValidators?: string; // can be removed
-  // endpoint?: string; // can be removed
   balances?: string;
   stakingAccount?: string;
   identities?: string;
@@ -89,7 +85,8 @@ export interface RequestSignatures {
   'pri(accounts.create.suri)': [RequestAccountCreateSuri, boolean];
   'pri(accounts.edit)': [RequestAccountEdit, boolean];
 
-  'pri(accounts.updateMeta)': [RequestUpdateMeta, boolean]; // added for plus
+  'pri(accounts.updateMeta)': [RequestUpdateMeta, boolean]; // added for polkagate
+  'pri(extension.lock)': [null, boolean]; // added for polkagate
 
   'pri(accounts.export)': [RequestAccountExport, ResponseAccountExport];
   'pri(accounts.batchExport)': [RequestAccountBatchExport, ResponseAccountsExport]
@@ -319,7 +316,7 @@ export interface RequestSeedValidate {
   type?: KeypairType;
 }
 
-// added for plus
+// added for polkagate
 export interface RequestUpdateMeta {
   address: string;
   meta: string;
