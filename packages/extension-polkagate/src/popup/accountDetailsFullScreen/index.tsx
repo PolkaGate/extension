@@ -101,7 +101,7 @@ export default function AccountDetails(): React.ReactElement {
           return { ...asset, totalBalance: totalBalanceBN };
         });
 
-        setAssetsOnOtherChains(updatedAssets);
+        updatedAssets && updatedAssets.length > 0 && setAssetsOnOtherChains(updatedAssets);
       }
     });
   }, []);
