@@ -1099,5 +1099,8 @@
   "I want to enable passwordless login.": "",
   "Would you like to set a login password?": "",
   "Later": "",
-  "Password Enabled": ""
+  "Password Enabled": "",
+  "Checking your votes and delegating status...": "",
+  "Back to Account page": "",
+  "Getting pending rewards, please wait ...": ""
 }
