@@ -18,7 +18,8 @@ import { AccountContext, ActionContext, APIContext, AuthorizeReqContext, Fetchin
 import { getStorage, LoginInfo, updateStorage } from '../../../extension-polkagate/src/components/Loading';
 import { ExtensionLockProvider } from '../../../extension-polkagate/src/context/ExtensionLockContext';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
-import Account from '../../../extension-polkagate/src/popup/accountDetailsFullScreen';
+import AccountEx from '../../../extension-polkagate/src/popup/account';
+import AccountFL from '../../../extension-polkagate/src/popup/accountDetailsFullScreen';
 import AuthList from '../../../extension-polkagate/src/popup/authManagement';
 import Authorize from '../../../extension-polkagate/src/popup/authorize/index';
 import CreateAccount from '../../../extension-polkagate/src/popup/createAccountFullScreen';
@@ -207,12 +208,13 @@ export default function Popup(): React.ReactElement {
                           <MetadataReqContext.Provider value={metaRequests}>
                             <SigningReqContext.Provider value={signRequests}>
                               <Switch>
+                                <Route path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<AccountEx />, 'account')}</Route>
                                 <Route path='/account/create'>{wrapWithErrorBoundary(<CreateAccount />, 'account-creation')}</Route>
                                 <Route path='/account/export-all'>{wrapWithErrorBoundary(<ExportAll />, 'export-all-address')}</Route>
                                 <Route path='/account/import-ledger'>{wrapWithErrorBoundary(<ImportLedger />, 'import-ledger')}</Route>
                                 <Route path='/account/import-seed'>{wrapWithErrorBoundary(<ImportSeed />, 'import-seed')}</Route>
                                 <Route path='/account/restore-json'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json')}</Route>
-                                <Route path='/account/:address/'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>
+                                <Route path='/account/:address/'>{wrapWithErrorBoundary(<AccountFL />, 'account')}</Route>
                                 <Route path='/auth-list'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
                                 <Route path='/crowdloans/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
                                 <Route path='/derive/:address/locked'>{wrapWithErrorBoundary(<Derive isLocked />, 'derived-address-locked')}</Route>

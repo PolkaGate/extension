@@ -24,6 +24,7 @@ import { auctionBlack, auctionRed, auctionWhite, crowdloanHomeBlack, crowdloanHo
 import { ActionContext, HorizontalMenuItem, Identicon, Identity, Progress, ShowBalance, Warning } from '../../components';
 import { SettingsContext } from '../../components/contexts';
 import { useAccount, useApi, useAuction, useChain, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useMyAccountIdentity, useToken, useTranslation } from '../../hooks';
+import useIsExtensionPopup from '../../hooks/useIsExtensionPopup';
 import { ChainSwitch, HeaderBrand } from '../../partials';
 import BouncingSubTitle from '../../partials/BouncingSubTitle';
 import getContributions from '../../util/api/getContributions';
@@ -64,6 +65,8 @@ export default function CrowdLoans(): React.ReactElement {
   const token = useToken(address);
   const decimal = useDecimal(address);
   const chainName = useChainName(address);
+  const onExtension = useIsExtensionPopup();
+
   const [myContributions, setMyContributions] = useState<Map<string, Balance> | undefined>();
   const [allContributionAmount, setAllContributionAmount] = useState<Balance | undefined>();
   const [myContributedCrowdloans, setMyContributedCrowdloans] = useState<Crowdloan[] | undefined>();
@@ -167,10 +170,14 @@ export default function CrowdLoans(): React.ReactElement {
   }, [address, chain, settings, auction, api, paraIds]);
 
   const onBackClick = useCallback(() => {
-    const url = chain?.genesisHash ? `/account/${chain.genesisHash}/${address}/` : '/';
-
-    onAction(url);
-  }, [address, chain?.genesisHash, onAction]);
+    if (chain?.genesisHash && onExtension) {
+      onAction(`/account/${chain.genesisHash}/${address}/`);
+    } else if (!onExtension) {
+      onAction(`/account/${address}/`);
+    } else {
+      onAction('/');
+    }
+  }, [address, chain?.genesisHash, onAction, onExtension]);
 
   const showMyContribution = useCallback(() => {
     setItemShow(TAB_MAP.MY_CONTRIBUTION);

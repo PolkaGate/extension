@@ -18,8 +18,9 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { ActionContext,FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
+import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
 import { useApi, useBalances, useChain, useDecimal, useFormatted, useMyAccountIdentity, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../hooks';
+import useIsExtensionPopup from '../../../hooks/useIsExtensionPopup';
 import { ChainSwitch, HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, STAKING_CHAINS, TIME_TO_SHAKE_ICON } from '../../../util/constants';
@@ -52,6 +53,7 @@ export default function Index(): React.ReactElement {
   const formatted = useFormatted(address);
   const chain = useChain(address);
   const api = useApi(address, state?.api);
+  const onExtension = useIsExtensionPopup();
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
 
@@ -143,10 +145,14 @@ export default function Index(): React.ReactElement {
   }, [pool, api, currentEraIndex, sessionInfo, state?.unlockingAmount, state?.redeemable]);
 
   const onBackClick = useCallback(() => {
-    const url = chain?.genesisHash ? `/account/${chain.genesisHash}/${address}/` : '/';
-
-    onAction(url);
-  }, [address, chain?.genesisHash, onAction]);
+    if (chain?.genesisHash && onExtension) {
+      onAction(`/account/${chain.genesisHash}/${address}/`);
+    } else if (!onExtension) {
+      onAction(`/account/${address}/`);
+    } else {
+      onAction('/');
+    }
+  }, [address, chain?.genesisHash, onAction, onExtension]);
 
   const goToStake = useCallback(() => {
     history.push({
