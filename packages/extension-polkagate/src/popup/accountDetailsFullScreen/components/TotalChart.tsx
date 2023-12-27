@@ -5,7 +5,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Avatar, Divider, Grid, Typography, useTheme } from '@mui/material';
-import { ArcElement, Chart } from 'chart.js';
+import { Chart, registerables } from 'chart.js';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { BN } from '@polkadot/util';
@@ -28,9 +28,7 @@ export default function TotalChart ({ assetsOnOtherChains, isDarkTheme, nativeAs
   const theme = useTheme();
   const chartRef = useRef(null);
 
-  useEffect(() => {
-    Chart.register(ArcElement);
-  }, []);
+  Chart.register(...registerables);
 
   const calPrice = useCallback((assetPrice: number | undefined, balance: BN, decimal: number) => parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0), []);
   const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
