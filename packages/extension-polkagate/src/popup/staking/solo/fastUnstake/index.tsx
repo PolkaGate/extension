@@ -31,7 +31,7 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -96,6 +96,14 @@ export default function Index (): React.ReactElement {
     isEligible === false && onBackClick();
   }, [isEligible, onBackClick]);
 
+  const NumberPassFail = ({ condition, no }: { condition: boolean | undefined, no: number }) => (
+    condition
+      ? <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', color: '#fff', fontSize: '20px', ml: '-1px' }} />
+      : <Typography fontSize='13px' sx={{ bgcolor: condition === undefined ? 'action.disabledBackground' : 'warning.main', border: '1px solid', borderColor: '#fff', borderRadius: '50%', color: 'white', height: '18px', lineHeight: 1.4, textAlign: 'center', width: '18px' }}>
+        {no}
+      </Typography>
+  );
+
   return (
     <Motion>
       <HeaderBrand
@@ -114,33 +122,19 @@ export default function Index (): React.ReactElement {
           {t<string>('Checking fast unstake eligibility')}:
         </Typography>
         <Grid alignItems='center' container item lineHeight='28px' pl='5px' pt='15px'>
-          {hasEnoughDeposit
-            ? <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', color: '#fff', fontSize: '20px', ml: '-1px' }} />
-            : <Typography fontSize='13px' sx={{ bgcolor: hasEnoughDeposit === undefined ? 'action.disabledBackground' : 'warning.main', border: '1px solid', borderColor: '#fff', borderRadius: '50%', height: '18px', lineHeight: 1.4, textAlign: 'center', width: '18px' }}>
-              1
-            </Typography>}
+          <NumberPassFail condition={hasEnoughDeposit} no={1} />
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
             {t<string>('Having {{deposit}} {{token}} available to deposit', { replace: { deposit: fastUnstakeDeposit && decimal ? amountToHuman(fastUnstakeDeposit, decimal) : '...', token } })}
           </Typography>
         </Grid>
         <Grid alignItems='center' container item lineHeight='28px' pl='5px'>
-          {hasUnlockingAndRedeemable === false
-            ? <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', color: '#fff', fontSize: '20px', ml: '-1px' }} />
-            : <Typography fontSize='13px' sx={{ bgcolor: hasUnlockingAndRedeemable === undefined ? 'action.disabledBackground' : 'warning.main', border: '1px solid', borderColor: '#fff', borderRadius: '50%', height: '18px', lineHeight: 1.4, textAlign: 'center', width: '18px' }}>
-              2
-            </Typography>
-          }
+          <NumberPassFail condition={hasUnlockingAndRedeemable === undefined ? undefined : hasUnlockingAndRedeemable === false } no={2} />
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
             {t<string>('No redeemable or unstaking funds')}
           </Typography>
         </Grid>
         <Grid alignItems='center' container item lineHeight='28px' pl='5px'>
-          {isExposed === false
-            ? <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', color: '#fff', fontSize: '20px', ml: '-1px' }} />
-            : <Typography fontSize='13px' sx={{ bgcolor: isExposed === undefined ? 'action.disabledBackground' : 'warning.main', border: '1px solid', borderColor: '#fff', borderRadius: '50%', height: '18px', lineHeight: 1.4, textAlign: 'center', width: '18px' }}>
-              3
-            </Typography>
-          }
+          <NumberPassFail condition={isExposed === undefined ? undefined : isExposed === false} no={3} />
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
             {t<string>('Not being rewarded in the past {{unbondingDuration}} {{day}}', { replace: { unbondingDuration: stakingConsts?.unbondingDuration || '...', day: stakingConsts?.unbondingDuration && stakingConsts.unbondingDuration > 1 ? 'days' : 'day' } })}
           </Typography>
