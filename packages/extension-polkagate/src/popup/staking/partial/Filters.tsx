@@ -53,7 +53,7 @@ export default function Filters({ allValidators, allValidatorsIdentities, apply,
     }
 
     // at first filtered blocked allValidators
-    let filtered = allValidators?.filter((v) => !v.validatorPrefs.blocked);
+    let filtered = allValidators?.filter((v) => v.validatorPrefs.blocked === false || v.validatorPrefs.blocked.isFalse);
 
     filtered = filters.noWaiting ? filtered?.filter((v) => v.exposure.others.length !== 0) : filtered;
 

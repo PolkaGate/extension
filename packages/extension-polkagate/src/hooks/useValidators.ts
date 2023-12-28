@@ -6,7 +6,7 @@ import type { AllValidators, ValidatorInfo, Validators } from '../util/types';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { useApi, useChain, useChainName, useCurrentEraIndex, useEndpoint } from '.';
 
@@ -151,7 +151,12 @@ export default function useValidators(address: string, validators?: AllValidator
           : waiting.push({
             accountId: v,
             stashId: v,
-            validatorPrefs: validatorPrefs[v]
+            validatorPrefs: validatorPrefs[v],
+            exposure: {
+              own: BN_ZERO,
+              total: BN_ZERO,
+              others: []
+            }
           });
       });
 

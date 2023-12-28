@@ -54,8 +54,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
   const allValidatorsInfo = useValidators(address, validatorsInfo);
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds, validatorsIdentities);
-
-  const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => !v.validatorPrefs.blocked), [allValidatorsInfo]);
+  const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => v.validatorPrefs.blocked === false || v.validatorPrefs.blocked?.isFalse), [allValidatorsInfo]);
   const [systemSuggestion, setSystemSuggestion] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [filteredValidators, setFilteredValidators] = useState<ValidatorInfo[] | undefined>(allValidators);
@@ -193,7 +192,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
 
   const isSelected = useCallback((v: ValidatorInfo) =>
     !!newSelectedValidators.find((n) => n.accountId === v.accountId)
-  , [newSelectedValidators]);
+    , [newSelectedValidators]);
 
   const handleCheck = useCallback((e: React.ChangeEvent<HTMLInputElement>, validator: ValidatorInfo) => {
     const checked = e.target.checked;
@@ -269,7 +268,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
                     <Checkbox2
                       checked={systemSuggestion}
                       label={t<string>('System Suggestions')}
-                      labelStyle={{ fontSize: '16px', fontWeight: '400' }}
+                      labelStyle={{ fontSize: '16px', fontWeight: 400 }}
                       onChange={onSystemSuggestion}
                     />
                   </Infotip>
