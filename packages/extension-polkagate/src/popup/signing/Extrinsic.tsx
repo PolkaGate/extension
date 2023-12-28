@@ -127,7 +127,7 @@ function Extrinsic({ payload: { era, nonce, tip }, request: { blockNumber, genes
         <Typography fontWeight={300} width='35%'>
           {t<string>('From')}
         </Typography>
-        <Typography fontWeight={400} textAlign='right' width='65%'>
+        <Typography fontWeight={400} sx={{ maxWidth: '65%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} textAlign='right'>
           {final}
         </Typography>
       </Grid>
