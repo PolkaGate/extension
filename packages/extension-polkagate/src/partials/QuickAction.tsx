@@ -79,7 +79,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
       sx={{
         border: '0.5px solid',
         borderColor: 'secondary.light',
-        borderRadius: '0 6px 0',
+        borderRadius: '0 6px 6px 0',
         boxShadow: '0px 0px 10px 5px rgba(0, 0, 0, 0.55)',
         flexFlow: 'nowrap',
         minWidth: 'calc(100% - 50px)',
