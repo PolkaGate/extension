@@ -117,18 +117,18 @@ export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSele
                 // disabled={disabled}
                 onClick={handleOpenDelegate}
                 sx={{
+                  '&:hover': {
+                    backgroundColor: '#fff',
+                    color: '#3c52b2'
+                  },
                   backgroundColor: theme.palette.mode === 'light' ? 'background.paper' : 'primary.main',
                   borderRadius: '5px',
                   color: theme.palette.mode === 'light' ? 'primary.main' : 'text.primary',
                   fontSize: '18px',
                   fontWeight: 500,
                   height: '36px',
-                  textTransform: 'none',
-                  width: '190px',
-                  '&:hover': {
-                    backgroundColor: '#fff',
-                    color: '#3c52b2'
-                  }
+                  minWidth: '190px',
+                  textTransform: 'none'
                 }}
                 variant='contained'
               >
