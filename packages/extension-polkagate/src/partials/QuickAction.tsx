@@ -25,6 +25,8 @@ interface Props {
   setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
 }
 
+const ICON_SIZE = 10;
+
 export default function QuickAction({ address, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -68,7 +70,6 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
       : account?.genesisHash && history.push({ pathname: `/history/${String(address)}` });
   }, [account?.genesisHash, address, history]);
 
-  const ICON_SIZE = 10;
   const isSlideOpen = quickActionOpen === address;
 
   const movingParts = (

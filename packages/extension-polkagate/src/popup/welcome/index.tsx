@@ -5,7 +5,7 @@
 
 import '@vaadin/icons';
 
-import { Typography, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
 import { ActionContext, PButton } from '../../components';
@@ -14,7 +14,7 @@ import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 import Privacy from './Privacy';
 
-function Welcome (): React.ReactElement {
+function Welcome(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();
@@ -65,7 +65,7 @@ function Welcome (): React.ReactElement {
       <Typography sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '20px', pt: '25px', textAlign: 'center' }}>
         {t('Welcome!')}
       </Typography>
-      <Typography  sx={{ fontSize: '14px', fontWeight: 400, px: '24px' }}>
+      <Typography sx={{ fontSize: '14px', fontWeight: 400, px: '24px' }}>
         {t<string>('Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started.')}
       </Typography>
       <PButton
@@ -108,9 +108,11 @@ function Welcome (): React.ReactElement {
         _variant={'outlined'}
         text={t<string>('Attach ledger device')}
       />
-      <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ cursor: 'pointer', fontSize: '12px', mt: '18px', textAlign: 'center', textDecoration: 'underline' }}>
-        {t('Privacy and Security')}
-      </Typography>
+      <Grid container justifyContent='center'>
+        <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ cursor: 'pointer', fontSize: '12px', bottom: 0, position: 'absolute', textAlign: 'center', textDecoration: 'underline' }}>
+          {t('Privacy and Security')}
+        </Typography>
+      </Grid>
       {showPrivacyAndSecurity &&
         <Privacy
           setShow={setShowPrivacyAndSecurity}
