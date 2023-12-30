@@ -27,7 +27,7 @@ function Login({ isPasswordError, onPassChange, onUnlock, setStep }: Props): Rea
 
   return (
     <>
-      <Grid container sx={{ height: '30px' }}>
+      <Grid container sx={{ my: '10px' }}>
         {isPasswordError &&
           <WrongPasswordAlert bgcolor={theme.palette.mode === 'dark' ? 'black' : 'white'} />
         }

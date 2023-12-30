@@ -207,5 +207,5 @@ export const REGISTRARS_LIST: { addresses: string[]; index: number; name: string
 ];
 
 /** Login Password constants */
-export const NO_PASS_PERIOD = 15 * 60 * 1000; // in ms, the duration of time we do not ask user for password after a successful login
+export const NO_PASS_PERIOD = 30 * 60 * 1000; // in ms, the duration of time we do not ask user for password after a successful login
 export const MAYBE_LATER_PERIOD = 5000; // ms

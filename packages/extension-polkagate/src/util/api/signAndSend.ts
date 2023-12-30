@@ -40,7 +40,8 @@ export async function signAndSend(
 
           console.log(`dispatchError module: ${section}.${name}: ${docs.join(' ')}`);
         } else {
-          // Other, CannotLookup, BadOrigin, no extra info
+          success = false;
+          failureText = `${result.dispatchError.toString()}`;
           console.log(`dispatchError other reason: ${result.dispatchError.toString()}`);
         }
       }
