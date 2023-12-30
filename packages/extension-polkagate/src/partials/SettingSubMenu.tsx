@@ -3,18 +3,22 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import '@vaadin/icons';
+
 import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { DeleteOutline as DeleteOutlineIcon, OpenInNewRounded as OpenInNewRoundedIcon } from '@mui/icons-material';
+import LockIcon from '@mui/icons-material/Lock';
 import { Divider, Grid, IconButton, keyframes, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-import { AccountContext, ActionContext, Checkbox2, ColorContext, MenuItem, OnActionToolTip, Select, Switch } from '../components';
-import { useIsPopup, useTranslation } from '../hooks';
-import { setNotification, tieAccount, windowOpen } from '../messaging';
-import { TEST_NETS } from '../util/constants';
+import { AccountContext, ActionContext, Checkbox2, ColorContext, Infotip2, MenuItem, Select, Switch } from '../components';
+import { updateStorage } from '../components/Loading';
+import { useExtensionLockContext } from '../context/ExtensionLockContext';
+import { useIsLoginEnabled, useIsPopup, useTranslation } from '../hooks';
+import { lockExtension, setNotification, tieAccount, windowOpen } from '../messaging';
+import { NO_PASS_PERIOD, TEST_NETS } from '../util/constants';
 import getLanguageOptions from '../util/getLanguageOptions';
 import { DropdownOption } from '../util/types';
 
@@ -25,19 +29,42 @@ interface Props {
   onChange: () => void;
 }
 
+const slideIn = keyframes`
+0% {
+  display: none;
+  height: 0;
+}
+100%{
+  display: block;
+  height: 370px;
+}
+`;
+
+const slideOut = keyframes`
+0% {
+  display: block;
+  height: 370px;
+}
+100%{
+  display: none;
+  height: 0;
+}
+`;
+
 export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestnetEnabled, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isPopup = useIsPopup();
+  const isLoginEnabled = useIsLoginEnabled();
   const onAction = useContext(ActionContext);
   const colorMode = useContext(ColorContext);
   const { accounts } = useContext(AccountContext);
+  const { setExtensionLock } = useExtensionLockContext();
 
   const [notification, updateNotification] = useState(settings.notification);
   const [camera, setCamera] = useState(settings.camera === 'on');
   const [prefix, setPrefix] = useState(`${settings.prefix === -1 ? 42 : settings.prefix}`);
   const [firstTime, setFirstTime] = useState<boolean>(true);
-  const [cacheCleared, setCacheCleared] = useState<boolean>(false);
 
   const languageOptions = useMemo(() => getLanguageOptions(), []);
   const notificationOptions = ['Extension', 'PopUp', 'Window'].map((item) => ({ text: item, value: item.toLowerCase() }));
@@ -70,30 +97,35 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
     windowOpen('/').catch(console.error);
   }, []);
 
-  // const _onClearCache = useCallback((): void => {
-  //   chrome.storage.local.clear(function () {
-  //     setCacheCleared(true); // TODO: use caution, this will clear the kyring as well
-  //   });
-  // }, []);
+  const onLockExtension = useCallback((): void => {
+    updateStorage('loginInfo', { lastLoginTime: Date.now() - NO_PASS_PERIOD }).then(() => {
+      setExtensionLock(true);
+      lockExtension().catch(console.error);
+    }).catch(console.error);
+  }, [setExtensionLock]);
 
-  const _onAuthManagement = useCallback(() => {
+  const onAuthManagement = useCallback(() => {
     onAction('/auth-list');
   }, [onAction]);
 
-  const _onChangeLang = useCallback((value: string): void => {
+  const onChangeLang = useCallback((value: string): void => {
     settings.set({ i18nLang: value });
   }, []);
 
-  const _onChangePrefix = useCallback((value: string): void => {
+  const onChangePrefix = useCallback((value: string): void => {
     setPrefix(value);
     settings.set({ prefix: parseInt(value, 10) });
   }, []);
 
-  const _onChangeTheme = useCallback((): void => {
+  const onChangeTheme = useCallback((): void => {
     colorMode.toggleColorMode();
   }, [colorMode]);
 
-  const _onChangeNotification = useCallback((value: string): void => {
+  const onManageLoginPassword = useCallback(() => {
+    onAction('/login-password');
+  }, [onAction]);
+
+  const onChangeNotification = useCallback((value: string): void => {
     setNotification(value).catch(console.error);
 
     updateNotification(value);
@@ -108,28 +140,6 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
     setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true');
   }, [setIsTestnetEnabled]);
 
-  const slideIn = keyframes`
-  0% {
-    display: none;
-    height: 0;
-  }
-  100%{
-    display: block;
-    height: 370px;
-  }
-`;
-
-  const slideOut = keyframes`
-  0% {
-    display: block;
-    height: 370px;
-  }
-  100%{
-    display: none;
-    height: 0;
-  }
-`;
-
   return (
     <Grid container display='inherit' item overflow='hidden' sx={{ animationDelay: firstTime ? '0.2s' : '0s', animationDuration: show ? '0.3s' : '0.15s', animationFillMode: 'both', animationName: `${show ? slideIn : slideOut}` }}>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
@@ -138,56 +148,48 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
           <Grid item>
             <Switch
               checkedLabel={t<string>('Dark')}
+              fontSize='17px'
               isChecked={theme.palette.mode === 'dark'}
-              onChange={_onChangeTheme}
+              onChange={onChangeTheme}
               theme={theme}
               uncheckedLabel={t<string>('Light')}
             />
           </Grid>
-          {/* <Grid item>
-            <Divider
-              orientation='vertical'
-              sx={{
-                backgroundColor: 'text.primary',
-                height: '20px',
-                my: 'auto'
-              }}
-            />
-          </Grid>
-          <Grid item>
-            <OnActionToolTip
-              actionHappened={cacheCleared}
-              helperText={t('Clear temporary saved data')}
-              setIsHappened={setCacheCleared}
-              title={t('Cache Cleared')}
-            >
-              <IconButton
-                onClick={_onClearCache}
-                sx={{ height: '35px', mr: '-5px', width: '35px' }}
-              >
-                <DeleteOutlineIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: '25px' }} />
-              </IconButton>
-            </OnActionToolTip>
-          </Grid> */}
+          {isLoginEnabled &&
+                <>
+                  <Grid item>
+                    <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '20px', my: 'auto' }} />
+                  </Grid>
+                  <Grid item>
+                    <Infotip2
+                      text={t('Lock Extension')}
+                    >
+                      <IconButton
+                        onClick={onLockExtension}
+                        sx={{ height: '35px', mr: '-5px', width: '35px' }}
+                      >
+                        <LockIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: '25px' }} />
+                      </IconButton>
+                    </Infotip2>
+                  </Grid>
+                </>
+          }
           {isPopup &&
             <>
               <Grid item>
-                <Divider
-                  orientation='vertical'
-                  sx={{
-                    backgroundColor: 'text.primary',
-                    height: '20px',
-                    my: 'auto'
-                  }}
-                />
+                <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '20px', my: 'auto' }} />
               </Grid>
               <Grid item>
-                <IconButton
-                  onClick={_onWindowOpen}
-                  sx={{ height: '35px', mr: '-5px', width: '35px' }}
+                <Infotip2
+                  text={t('Fullscreen')}
                 >
-                  <OpenInNewRoundedIcon sx={{ color: 'secondary.light', fontSize: '25px' }} />
-                </IconButton>
+                  <IconButton
+                    onClick={_onWindowOpen}
+                    sx={{ height: '35px', width: '35px' }}
+                  >
+                    <vaadin-icon icon='vaadin:expand-full' style={{ height: '19px', color: `${theme.palette.secondary.light}` }} />
+                  </IconButton>
+                </Infotip2>
               </Grid>
             </>
           }
@@ -197,7 +199,7 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
             checked={isTestnetEnabled}
             iconStyle={{ transform: 'scale(1.13)' }}
             label={t<string>('Enable testnet chains')}
-            labelStyle={{ fontSize: '18px', fontWeight: 300, marginLeft: '7px' }}
+            labelStyle={{ fontSize: '17px', fontWeight: 300, marginLeft: '7px' }}
             onChange={onChange}
           />
         </Grid>
@@ -206,12 +208,13 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
             checked={camera}
             iconStyle={{ transform: 'scale(1.13)' }}
             label={t<string>('Allow QR camera access')}
-            labelStyle={{ fontSize: '18px', fontWeight: 300, marginLeft: '7px' }}
+            labelStyle={{ fontSize: '17px', fontWeight: 300, marginLeft: '7px' }}
             onChange={toggleCamera}
           />
         </Grid>
-        <Grid container item >
+        <Grid container item>
           <MenuItem
+            fontSize='17px'
             iconComponent={
               <FontAwesomeIcon
                 color={`${theme.palette.text.primary}`}
@@ -219,14 +222,25 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
                 icon={faListCheck}
               />
             }
-            onClick={_onAuthManagement}
+            onClick={onAuthManagement}
             text={t<string>('Manage website access')}
+          />
+        </Grid>
+        <Grid container item pb={'10px'} >
+          <MenuItem
+            fontSize='17px'
+            iconComponent={
+              <vaadin-icon icon='vaadin:key' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            }
+            onClick={onManageLoginPassword}
+            py='2px'
+            text={t('Manage login password')}
           />
         </Grid>
         <Grid item pt='12px'>
           <Select
             label={t<string>('Language')}
-            onChange={_onChangeLang}
+            onChange={onChangeLang}
             options={languageOptions}
             value={settings.i18nLang !== 'default' ? settings.i18nLang : languageOptions[0].value}
           />
@@ -234,19 +248,19 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
         <Grid item pt='10px'>
           <Select
             label={t<string>('Notification')}
-            onChange={_onChangeNotification}
+            onChange={onChangeNotification}
             options={notificationOptions}
             value={notification ?? notificationOptions[1].value}
           />
         </Grid>
-        <Grid item pt='7px'>
+        {/* <Grid item pt='7px'>
           <Select
             label={t<string>('Default display address format')}
-            onChange={_onChangePrefix}
+            onChange={onChangePrefix}
             options={prefixOptions}
             value={prefix ?? prefixOptions[2].value}
           />
-        </Grid>
+        </Grid> */}
       </Grid>
     </Grid>
   );

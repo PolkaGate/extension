@@ -7,7 +7,7 @@
 import { Avatar, Grid, Popover, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useChainName, useGenesisHashOptions } from '../hooks';
+import { useChainName, useGenesisHashOptions, useIsTestnetEnabled } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '../util/constants';
 import getLogo from '../util/getLogo';
@@ -23,16 +23,13 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
   const theme = useTheme();
   const options = useGenesisHashOptions();
   const currentChainNameFromAccount = useChainName(address);
-  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+  const isTestnetEnabled = useIsTestnetEnabled();
+
   const [currentSelectedChainName, setCurrentSelectedChainName] = useState<string>();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const isTestnetDisabled = useCallback((genesisHash: string) => !isTestnetEnabled && TEST_NETS.includes(genesisHash), [isTestnetEnabled]);
   const selectableNetworks = useMemo(() => !chains.length ? options.filter(({ text }) => text !== 'Allow use on any chain') : options.filter((o) => chains.includes(o.value)), [chains, options]);
-
-  useEffect(() => {
-    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true');
-  }, []);
 
   useEffect(() => {
     if (!currentSelectedChainName && currentChainNameFromAccount) {

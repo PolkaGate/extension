@@ -129,8 +129,7 @@ export default function Index(): React.ReactElement {
           const amount = new BN(value as unknown as string);
 
           unlockingValue = unlockingValue.add(amount);
-
-          const secToBeReleased = (Number(remainingEras) * sessionInfo.eraLength + (sessionInfo.eraLength - sessionInfo.eraProgress)) * 6;
+          const secToBeReleased = (Number(remainingEras.subn(1)) * sessionInfo.eraLength + (sessionInfo.eraLength - sessionInfo.eraProgress)) * 6;
 
           toBeReleased.push({ amount, date: Date.now() + (secToBeReleased * 1000) });
         }
@@ -377,7 +376,6 @@ export default function Index(): React.ReactElement {
             />
           }
           onClick={onNominations}
-          // textDisabled={role() === 'Stash'}
           title={t<string>('Validators')}
         />
         {stakingAccount?.stakingLedger?.total?.gt(BN_ZERO) &&

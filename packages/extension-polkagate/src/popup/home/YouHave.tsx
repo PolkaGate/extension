@@ -52,8 +52,6 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
       const balances = JSON.parse(acc.balances) as SavedBalances;
 
       Object.keys(balances).forEach((chainName) => {
-        // const localSavedPrices = window.localStorage.getItem('prices');
-
         const price = (pricesInfo.prices[chainName] || pricesInfo.prices[chainName.toLocaleLowerCase()])?.usd;
 
         const bal = balances[chainName];

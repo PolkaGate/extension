@@ -18,7 +18,7 @@ interface Props {
   startIcon?: React.ReactNode;
 }
 
-function PButton({ _fontSize = '16px', startIcon, _isBusy, _ml = 6, _mt, _onClick, _variant = 'contained', _width = 88, disabled = false, text }: Props): React.ReactElement<Props> {
+function PButton({ _fontSize = '16px', _isBusy, _ml = 6, _mt, _onClick, _variant = 'contained', _width = 88, disabled = false, startIcon, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (
@@ -43,7 +43,11 @@ function PButton({ _fontSize = '16px', startIcon, _isBusy, _ml = 6, _mt, _onClic
             textTransform: 'none',
             width: '88%'
           }}>
-          <Circle color='white' scaleEnd={0.7} scaleStart={0.4} size={25} />
+          <Circle
+            color='white'
+            scaleEnd={0.7}
+            scaleStart={0.4}
+            size={25} />
         </Grid>
         : <Button
           disabled={disabled}
@@ -54,13 +58,20 @@ function PButton({ _fontSize = '16px', startIcon, _isBusy, _ml = 6, _mt, _onClic
             borderColor: 'secondary.main',
             borderRadius: '5px',
             bottom: !_mt ? '25px' : 0,
-            color: theme.palette.mode === 'dark' ? 'text.primary' : _variant === 'contained' ? 'text.secondary' : 'text.primary',
+            color: _variant === 'text'
+              ? 'secondary.light'
+              : theme.palette.mode === 'dark'
+                ? 'text.primary'
+                : _variant === 'contained'
+                  ? 'text.secondary'
+                  : 'text.primary',
             fontSize: _fontSize,
             fontWeight: 400,
             height: '36px',
             ml: `${_ml}%`,
             mt: _mt ?? 0,
             position: !_mt ? 'absolute' : 'inherit',
+            textDecoration: _variant === 'text' ? 'underline' : 'none',
             textTransform: 'none',
             width: `${_width}%`
           }}

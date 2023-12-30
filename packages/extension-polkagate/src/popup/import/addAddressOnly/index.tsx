@@ -24,6 +24,8 @@ export default function AddAddressOnly(): React.ReactElement {
   const [chain, setChain] = useState<Chain>();
   const [name, setName] = useState<string | null | undefined>();
   const [proxies, setProxies] = useState<ProxyItem[] | undefined>();
+  const [isBusy, setIsBusy] = useState(false);
+
   const api = useApiWithChain(chain);
   const genesisOptions = useGenesisHashOptions();
 
@@ -63,9 +65,16 @@ export default function AddAddressOnly(): React.ReactElement {
   }, []);
 
   const handleAdd = useCallback(() => {
-    name && realAddress && chain?.genesisHash && createAccountExternal(name, realAddress, chain.genesisHash)
-      .then(() => onAction('/'))
-      .catch((error: Error) => console.error(error));
+    if (name && realAddress && chain?.genesisHash) {
+      setIsBusy(true);
+
+      createAccountExternal(name, realAddress, chain.genesisHash)
+        .then(() => onAction('/'))
+        .catch((error: Error) => {
+          setIsBusy(false);
+          console.error(error);
+        });
+    }
   }, [chain?.genesisHash, name, onAction, realAddress]);
 
   return (
@@ -115,6 +124,7 @@ export default function AddAddressOnly(): React.ReactElement {
         }}
       />
       <PButton
+        _isBusy={isBusy}
         _onClick={handleAdd}
         disabled={!name || !realAddress || !chain}
         text={t('Add')}
