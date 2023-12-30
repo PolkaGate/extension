@@ -63,6 +63,7 @@ import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/uns
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { APIs, Fetching, LatestRefs } from '../../../extension-polkagate/src/util/types';
 import { updateIndexedDBChainInformation } from '../../../extension-polkagate/src/util/updateIndexedDBChainInformation';
+import { updateIndexedDBIcons } from '../../../extension-polkagate/src/util/updateIndexedDBIcons';
 
 const startSettings = uiSettings.get();
 
@@ -141,6 +142,7 @@ export default function Popup(): React.ReactElement {
     _onAction();
 
     updateIndexedDBChainInformation().catch(console.error);
+    updateIndexedDBIcons().catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
