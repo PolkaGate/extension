@@ -27,7 +27,7 @@ const logosExportStatements = logosSvgFiles.map((file, index) => {
   const base64 = Buffer.from(svgContent).toString('base64');
 
   // return `export const ${file.replace('.svg', '')} = 'data:image/svg+xml;base64,${base64}';`;
-  return `"${file.replace('.svg', '')}": "data:image/svg+xml;base64,${base64}"${isTheLastOne((logosSvgFiles.length - 1) + (tokensSvgFiles.length - 1), index) ? '' : ','}`;
+  return `"${file.replace('.svg', '').toLowerCase()}": "data:image/svg+xml;base64,${base64}"${isTheLastOne((logosSvgFiles.length - 1) + (tokensSvgFiles.length - 1), index) ? '' : ','}`;
 });
 
 const tokensExportStatements = tokensSvgFiles.map((file, index) => {
@@ -36,7 +36,7 @@ const tokensExportStatements = tokensSvgFiles.map((file, index) => {
   const base64 = Buffer.from(svgContent).toString('base64');
 
   // return `export const ${file.replace('.svg', '')} = 'data:image/svg+xml;base64,${base64}';`;
-  return `"${file.replace('.svg', '')}": "data:image/svg+xml;base64,${base64}"${isTheLastOne(tokensSvgFiles.length - 1, index) ? '' : ','}`;
+  return `"${file.replace('.svg', '').toLowerCase()}": "data:image/svg+xml;base64,${base64}"${isTheLastOne(tokensSvgFiles.length - 1, index) ? '' : ','}`;
 });
 
 const data = ['{', ...logosExportStatements, ...tokensExportStatements, '}'].join('\n');
