@@ -5,13 +5,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-const OWNER = 'Nick-1979';
+const OWNER = 'AMIRKHANEF';
+// const OWNER = 'Nick-1979';
 const REPO = 'polkagate-extension';
 const FILE_PATH = 'chainsInformation.json';
-const DATABASE_NAME = 'PolkaGateDB';
+const DATABASE_NAME = 'PolkaGateDBChainsInformation';
 const OBJECT_STORE_NAME = 'ChainsInformation';
 
-const url = `https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${FILE_PATH}`;
+const url = `https://raw.githubusercontent.com/${OWNER}/${REPO}/IndexedDBV1/${FILE_PATH}`;
+// const url = `https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${FILE_PATH}`;
 
 const getDBVersion = () => {
   return new Promise((resolve, reject) => {
