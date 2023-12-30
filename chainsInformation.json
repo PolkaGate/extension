@@ -35,10 +35,6 @@
         "name": "IBP network 2"
       },
       {
-        "url": "wss://rpc.dotters.network/polkadot",
-        "name": "Dotters Net"
-      },
-      {
         "url": "wss://1rpc.io/dot",
         "name": "Automata 1RPC"
       },
@@ -109,10 +105,6 @@
       {
         "url": "wss://rpc.dotters.network/kusama",
         "name": "IBP network 2"
-      },
-      {
-        "url": "wss://rpc.dotters.network/kusama",
-        "name": "Dotters Net"
       },
       {
         "url": "wss://kusama.public.curie.radiumblock.co/ws",
@@ -2514,11 +2506,11 @@
     "endpoints": [
       {
         "url": "wss://sys.ibp.network/bridgehub-polkadot",
-        "name": "IBP network"
+        "name": "IBP network 1"
       },
       {
         "url": "wss://sys.dotters.network/bridgehub-polkadot",
-        "name": "Dotters Net"
+        "name": "IBP network 2"
       },
       {
         "url": "wss://polkadot-bridge-hub-rpc.polkadot.io",
