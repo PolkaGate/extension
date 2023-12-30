@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Close as CloseIcon, FiberManualRecord as FiberManualRecordIcon } from '@mui/icons-material';
-import { Box, Divider, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText, Typography, useTheme } from '@mui/material';
+import { Box, Divider, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { SlidePopUp } from '../../components';
@@ -18,7 +18,6 @@ interface Props {
 
 function Privacy({ setShow, show = false }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   const onClose = useCallback(() => {
     setShow(false);
@@ -35,7 +34,7 @@ function Privacy({ setShow, show = false }: Props): React.ReactElement {
       <Typography fontSize='14px' lineHeight={1.4} px='15px'>
         {t<string>('Polkagate is a browser extension that lets you use the Polkadot network and decentralized apps. We respect your privacy and do not collect or store any of your personal data. This is how we protect your privacy:')}
       </Typography>
-      <Box sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '14px', m: '20px 15px 17px'}}>
+      <Box sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '14px', m: '20px 15px 17px' }}>
         <List sx={{ color: 'text.primary' }}>
           <ListItem sx={{ py: '2px' }}>
             <ListItemIcon sx={{ color: 'primary.main', minWidth: '26px', width: '26px' }}>
@@ -78,7 +77,7 @@ function Privacy({ setShow, show = false }: Props): React.ReactElement {
       <IconButton onClick={onClose} sx={{ left: '15px', p: 0, position: 'absolute', top: '65px' }}>
         <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />
       </IconButton>
-      <Grid container justifyContent='center'>
+      <Grid container justifyContent='center' sx={{ bottom: 0, position: 'absolute' }}>
         <SocialLinks />
       </Grid>
     </Grid>

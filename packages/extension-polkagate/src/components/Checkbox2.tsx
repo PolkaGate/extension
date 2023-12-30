@@ -22,15 +22,21 @@ export default function Checkbox2({ checked = false, disabled, iconStyle, label,
       control={
         <Checkbox
           checked={checked}
-          checkedIcon={<img src={checkedBox} style={{ ...iconStyle }} />}
+          checkedIcon={<img
+            src={checkedBox as string}
+            style={{ ...iconStyle }}
+          />}
           disabled={disabled}
-          icon={<img src={checkBox} style={{ ...iconStyle }} />}
+          icon={<img
+            src={checkBox as string}
+            style={{ ...iconStyle }}
+          />}
           onChange={onChange}
           sx={{ p: 0, pr: label && '5px' }}
         />
       }
       label={
-        <span style={{ ...labelStyle }}>
+        <span style={{ ...labelStyle, userSelect: 'none' }}>
           {label}
         </span>
       }

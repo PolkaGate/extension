@@ -18,7 +18,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { controllerSettingBlack, controllerSettingWhite, soloSettingBlack, soloSettingWhite, stashSettingBlack, stashSettingWhite } from '../../../assets/icons';
 import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
-import { useApi, useBalances, useChain, useChainName, useDecimal, useFormatted, useMinToReceiveRewardsInSolo, useMyAccountIdentity, useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress, useStakingRewards, useToken, useTranslation, useUnSupportedNetwork } from '../../../hooks';
+import { useApi, useBalances, useChain, useDecimal, useFormatted, useMyAccountIdentity, useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress, useStakingRewards, useToken, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { ChainSwitch, HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, STAKING_CHAINS, TIME_TO_SHAKE_ICON } from '../../../util/constants';
@@ -42,7 +42,7 @@ interface State {
 
 const noop = () => null;
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();
@@ -57,12 +57,10 @@ export default function Index (): React.ReactElement {
   const stakingAccount = useStakingAccount(address, state?.stakingAccount, refresh, setRefresh);
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
   const chain = useChain(address);
-  const chainName = useChainName(address);
   const rewards = useStakingRewards(address, stakingAccount);
   const api = useApi(address, state?.api);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const balances = useBalances(address, refresh, setRefresh);
-  const nominatorInfo = useMinToReceiveRewardsInSolo(address);
   const identity = useMyAccountIdentity(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
@@ -131,8 +129,7 @@ export default function Index (): React.ReactElement {
           const amount = new BN(value as unknown as string);
 
           unlockingValue = unlockingValue.add(amount);
-
-          const secToBeReleased = (Number(remainingEras) * sessionInfo.eraLength + (sessionInfo.eraLength - sessionInfo.eraProgress)) * 6;
+          const secToBeReleased = (Number(remainingEras.subn(1)) * sessionInfo.eraLength + (sessionInfo.eraLength - sessionInfo.eraProgress)) * 6;
 
           toBeReleased.push({ amount, date: Date.now() + (secToBeReleased * 1000) });
         }
@@ -149,57 +146,64 @@ export default function Index (): React.ReactElement {
     onAction(url);
   }, [address, chain?.genesisHash, onAction]);
 
-  const goToStake = useCallback(() => {
+  const onStake = useCallback(() => {
     history.push({
       pathname: `/solo/stake/${address}`,
       state: { api, pathname, stakingConsts }
     });
   }, [address, api, history, pathname, stakingConsts]);
 
-  const goToUnstake = useCallback(() => {
+  const onUnstake = useCallback(() => {
     history.push({
       pathname: `/solo/unstake/${address}`,
       state: { api, balances, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount }
     });
   }, [history, address, api, balances, pathname, redeemable, stakingConsts, unlockingAmount, stakingAccount]);
 
-  const goToFastUnstake = useCallback(() => {
+  const onFastUnstake = useCallback(() => {
     history.push({
       pathname: `/solo/fastUnstake/${address}`,
       state: { api, balances, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount }
     });
   }, [address, api, balances, history, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount]);
 
-  const goToRestake = useCallback(() => {
+  const onRestake = useCallback(() => {
     history.push({
       pathname: `/solo/restake/${address}`,
       state: { api, balances, pathname, stakingAccount, stakingConsts, unlockingAmount }
     });
   }, [history, address, api, balances, pathname, stakingConsts, unlockingAmount, stakingAccount]);
 
-  const goToNominations = useCallback(() => {
+  const onNominations = useCallback(() => {
     history.push({
       pathname: `/solo/nominations/${address}`,
       state: { api, balances, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount }
     });
   }, [history, address, api, balances, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount]);
 
-  const goToInfo = useCallback(() => {
+  const onInfo = useCallback(() => {
     setShowInfo(true);
   }, []);
 
-  const goToSettings = useCallback(() => {
+  const onSettings = useCallback(() => {
     setShowSettings(true);
   }, []);
 
-  const goToRedeemableWithdraw = useCallback(() => {
+  const onRedeemableWithdraw = useCallback(() => {
     redeemable && !redeemable?.isZero() && setShowRedeemableWithdraw(true);
   }, [redeemable]);
 
-  const goToDetail = useCallback(() => {
+  const onReceivedRewards = useCallback(() => {
     !rewards?.isZero() &&
       setShowRewardsDetail(true);
   }, [rewards]);
+
+  const onPendingRewards = useCallback(() => {
+    history.push({
+      pathname: `/solo/payout/${address}`,
+      state: {}
+    });
+  }, [address, history]);
 
   const ToBeReleased = () => (
     <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'secondary.main', fontSize: '16px', fontWeight: 500, ml: '7%', mt: '2px', width: '95%' }}>
@@ -220,7 +224,7 @@ export default function Index (): React.ReactElement {
   );
 
   const Row = ({ label, link1Text, link2Disabled, link2Text, onLink1, onLink2, showDivider = true, value }: { label: string, value: BN | undefined, link1Text?: string, onLink1?: () => void, link2Disabled?: boolean, link2Text?: string, onLink2?: () => void, showDivider?: boolean }) => {
-    const _link1Disable = (!value || value?.isZero() || formatted !== stakingAccount?.controllerId) && link1Text !== t('Details');
+    const _link1Disable = (!value || value?.isZero() || formatted !== stakingAccount?.controllerId) && link1Text !== t('Pending');
     const _link2Disable = _link1Disable || link2Disabled;
 
     return (
@@ -253,7 +257,7 @@ export default function Index (): React.ReactElement {
               </Grid>
             </Grid>
             {label === 'Unstaking' &&
-              <Grid alignItems='center' container item onClick={_toggleShowUnlockings} sx={{ ml: '25px' }} xs={1}>
+              <Grid alignItems='center' container item onClick={toBeReleased?.length ? _toggleShowUnlockings : noop} sx={{ ml: '25px' }} xs={1}>
                 <ArrowForwardIosIcon
                   sx={{
                     color: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',
@@ -311,33 +315,35 @@ export default function Index (): React.ReactElement {
             link1Text={t('Unstake')}
             link2Disabled={!api || (api && !api.consts?.fastUnstake?.deposit) || !canUnstake}
             link2Text={t('Fast Unstake')}
-            onLink1={goToUnstake}
-            onLink2={api && api.consts?.fastUnstake?.deposit && goToFastUnstake}
+            onLink1={onUnstake}
+            onLink2={api && api.consts?.fastUnstake?.deposit && onFastUnstake}
             value={staked}
           />
           <Row
-            label={t('Rewards')}
-            link1Text={t('Details')}
-            onLink1={goToDetail}
+            label={t('Rewards Paid')}
+            link1Text={t('Chart')}
+            link2Text={t('Pending')}
+            onLink1={onReceivedRewards}
+            onLink2={onPendingRewards}
             value={rewards}
           />
           <Row
             label={t('Redeemable')}
             link1Text={t('Withdraw')}
-            onLink1={goToRedeemableWithdraw}
+            onLink1={onRedeemableWithdraw}
             value={redeemable}
           />
           <Row
             label={t('Unstaking')}
             link1Text={t('Restake')}
-            onLink1={unlockingAmount && !unlockingAmount?.isZero() && goToRestake}
+            onLink1={unlockingAmount && !unlockingAmount?.isZero() ? onRestake : noop}
             showDivider={canStake}
             value={unlockingAmount}
 
           />
           {canStake &&
             <Row
-              label={t('Available to stake')}
+              label={t('Available to Stake')}
               showDivider={false}
               value={availableToSoloStake}
             />
@@ -355,7 +361,7 @@ export default function Index (): React.ReactElement {
               style={{ height: '34px', stroke: `${theme.palette.text.primary}`, strokeWidth: 30, width: '40px', marginBottom: '-4px' }}
             />
           }
-          onClick={goToStake}
+          onClick={onStake}
           textDisabled={role() === 'Controller'}
           title={t<string>('Stake')}
         />
@@ -369,8 +375,7 @@ export default function Index (): React.ReactElement {
               size='lg'
             />
           }
-          onClick={goToNominations}
-          // textDisabled={role() === 'Stash'}
+          onClick={onNominations}
           title={t<string>('Validators')}
         />
         {stakingAccount?.stakingLedger?.total?.gt(BN_ZERO) &&
@@ -392,7 +397,7 @@ export default function Index (): React.ReactElement {
               />
             }
             labelMarginTop={'-7px'}
-            onClick={goToSettings}
+            onClick={onSettings}
             title={t<string>('Setting')}
           />
         }
@@ -404,14 +409,13 @@ export default function Index (): React.ReactElement {
               size='lg'
             />
           }
-          onClick={goToInfo}
+          onClick={onInfo}
           title={t<string>('Info')}
         />
       </Grid>
       <Info
         address={address}
         info={stakingConsts}
-        nominatorInfo={nominatorInfo}
         setShowInfo={setShowInfo}
         showInfo={showInfo}
       />
@@ -433,21 +437,17 @@ export default function Index (): React.ReactElement {
           api={api}
           available={getValue('available', balances)}
           chain={chain}
-          formatted={formatted}
+          formatted={String(formatted)}
           setRefresh={setRefresh}
           setShow={setShowRedeemableWithdraw}
           show={showRedeemableWithdraw}
         />}
-      {showRewardsDetail && chain &&
+      {showRewardsDetail &&
         <RewardsDetail
-          api={api}
-          chain={chain}
-          chainName={chainName}
-          decimal={decimal}
+          address={address}
           rewardDestinationAddress={rewardDestinationAddress}
           setShow={setShowRewardsDetail}
           show={showRewardsDetail}
-          token={token}
         />
       }
     </>

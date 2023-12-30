@@ -5,7 +5,6 @@
 
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/promise/types';
 import type { DeriveAccountInfo, DeriveAccountRegistration, DeriveBalancesAll, DeriveCollectiveProposal, DeriveElectionsInfo, DeriveProposal, DeriveReferendumExt, DeriveStakingAccount, DeriveStakingQuery } from '@polkadot/api-derive/types';
-import type { LinkOption } from '@polkadot/apps-config/settings/types';
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 import type { KeypairType } from '@polkadot/util-crypto/types';
@@ -13,12 +12,13 @@ import type { KeypairType } from '@polkadot/util-crypto/types';
 import { SxProps, Theme } from '@mui/material';
 
 import { ApiPromise } from '@polkadot/api';
+import { LinkOption } from '@polkadot/apps-config/endpoints/types';
 import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
+import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { Balance } from '@polkadot/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { Lock } from '../hooks/useAccountLocks';
 import { LatestReferenda } from '../popup/governance/utils/types';
 
 export interface TransactionStatus {
@@ -66,11 +66,6 @@ export interface NominatorInfo {
   minNominated: BN;
   isInList: boolean // is Nominator in top 22500 elected
   eraIndex: number;
-}
-export interface MinToReceiveRewardsInSolo {
-  minToGetRewards: BN;
-  eraIndex: number;
-  token: string;
 }
 
 export interface ValidatorInfo extends DeriveStakingQuery {
@@ -643,7 +638,6 @@ export interface FetchingRequests {
   fetching: Fetching;
   set: (change: Fetching) => void;
 }
-
 interface Limit {
   check?: boolean;
   value?: number;

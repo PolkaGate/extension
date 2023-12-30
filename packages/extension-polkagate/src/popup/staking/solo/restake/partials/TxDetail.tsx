@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 
@@ -27,7 +29,7 @@ export default function TxDetail({ txInfo }: Props): React.ReactElement {
           {txInfo.from.name}
         </Typography>
         <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-          <ShortAddress address={txInfo.from.address} style={{ fontSize: '16px' }} inParentheses />
+          <ShortAddress address={txInfo.from.address} inParentheses style={{ fontSize: '16px' }} />
         </Grid>
       </Grid>
       {txInfo.throughProxy &&

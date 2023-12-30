@@ -11,20 +11,17 @@ import { Accordion, AccordionDetails, AccordionSummary, Divider, Grid, Typograph
 import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ChainLogo, Identity, PButton, Popup, Progress } from '../../../../components';
-import { useApi, useChain, useChainName, useDecimal, useEndpoint, useFormatted, useStakingAccount, useStakingRewardDestinationAddress, useToken, useTranslation } from '../../../../hooks';
+import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
 import getRewardsSlashes from '../../../../util/api/getRewardsSlashes';
 import { MAX_REWARDS_TO_SHOW } from '../../../../util/constants';
-import { getRewards } from '../../../../util/subquery/staking';
-import { RewardInfo, SubQueryRewardInfo, SubscanRewardInfo } from '../../../../util/types';
+import { RewardInfo, SubscanRewardInfo } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
 
 ChartJS.register(
@@ -44,19 +41,25 @@ interface ArrowsProps {
 }
 
 interface Props {
-  api: ApiPromise | undefined;
-  chain: Chain;
-  chainName: string | undefined;
-  decimal: number | undefined;
+  api?: ApiPromise | undefined;
+  chain?: Chain;
+  chainName?: string | undefined;
+  address?: string;
+  decimal?: number | undefined
   rewardDestinationAddress: string | undefined;
+  token?: string
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
-  token: string | undefined;
 }
 
-export default function RewardsDetail({ api, chain, chainName, decimal, rewardDestinationAddress, setShow, show, token }: Props): React.ReactElement {
+export default function RewardsDetail({ address, api, chain, chainName, decimal, rewardDestinationAddress, setShow, show, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const _api = useApi(address, api);
+  const _chain = useChain(address, chain);
+  const _chainName = useChainName(address) || chainName;
+  const _decimal = useDecimal(address) || decimal;
+  const _token = useToken(address) || token;
 
   const [rewardsInfo, setRewardsInfo] = useState<RewardInfo[]>();
   const [pageIndex, setPageIndex] = useState<number>(0);
@@ -89,7 +92,7 @@ export default function RewardsDetail({ api, chain, chainName, decimal, rewardDe
 
   // sorted labels and rewards and removed duplicates dates and sum rewards on the same date
   const aggregatedRewards = useMemo(() => {
-    if (!ascSortedRewards?.length || !decimal) {
+    if (!ascSortedRewards?.length || !_decimal) {
       return;
     }
 
@@ -107,7 +110,7 @@ export default function RewardsDetail({ api, chain, chainName, decimal, rewardDe
 
       temp[relatedDateIndex].amount = temp[relatedDateIndex].amount.add(item.amount);
       temp[relatedDateIndex].timestamp = temp[relatedDateIndex].timestamp ?? new Date(item.timeStamp).getTime();
-      temp[relatedDateIndex].amountInHuman = amountToHuman(temp[relatedDateIndex].amount, decimal);
+      temp[relatedDateIndex].amountInHuman = amountToHuman(temp[relatedDateIndex].amount, _decimal);
     });
 
     for (let j = 0; j < temp.length; j++) {
@@ -132,10 +135,10 @@ export default function RewardsDetail({ api, chain, chainName, decimal, rewardDe
       }
     });
 
-    setMostPrize(Number(amountToHuman(estimatedMostPrize, decimal)));
+    setMostPrize(Number(amountToHuman(estimatedMostPrize, _decimal)));
 
     return temp;
-  }, [ascSortedRewards, decimal, formateDate]);
+  }, [ascSortedRewards, _decimal, formateDate]);
 
   const descSortedRewards = useMemo(() => {
     if (!ascSortedRewards?.length || !weeksRewards?.length) {
@@ -239,7 +242,7 @@ export default function RewardsDetail({ api, chain, chainName, decimal, rewardDe
     //   }
     // });
 
-    rewardDestinationAddress && chainName && getRewardsSlashes(chainName, 0, MAX_REWARDS_TO_SHOW, String(rewardDestinationAddress)).then((r) => {
+    rewardDestinationAddress && _chainName && getRewardsSlashes(_chainName, 0, MAX_REWARDS_TO_SHOW, String(rewardDestinationAddress)).then((r) => {
       const list = r?.data.list as SubscanRewardInfo[];
       const rewardsFromSubscan: RewardInfo[] | undefined = list?.map((i: SubscanRewardInfo): RewardInfo => {
         return {
@@ -252,13 +255,11 @@ export default function RewardsDetail({ api, chain, chainName, decimal, rewardDe
         } as RewardInfo;
       });
 
-      console.log('rewardsFromSubscan:', rewardsFromSubscan);
-
       if (rewardsFromSubscan?.length) {
         return setRewardsInfo(rewardsFromSubscan);
       }
     });
-  }, [chainName, rewardDestinationAddress]);
+  }, [_chainName, rewardDestinationAddress]);
 
   const handleAccordionChange = useCallback((panel: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : -1);
@@ -300,10 +301,10 @@ export default function RewardsDetail({ api, chain, chainName, decimal, rewardDe
               return;
             }
 
-            return `${TooltipItem.formattedValue} ${token}`;
+            return `${TooltipItem.formattedValue} ${_token}`;
           },
           title: function (TooltipItem: string | { label: string }[] | undefined) {
-            if (!dataToShow || !TooltipItem || !token) {
+            if (!dataToShow || !TooltipItem || !_token) {
               return;
             }
 
@@ -354,7 +355,7 @@ export default function RewardsDetail({ api, chain, chainName, decimal, rewardDe
         borderRadius: 3,
         borderWidth: 1,
         data: dataToShow && dataToShow[pageIndex][0],
-        label: token
+        label: _token
       }
     ],
     labels: dataToShow && dataToShow[pageIndex][1]
@@ -400,17 +401,17 @@ export default function RewardsDetail({ api, chain, chainName, decimal, rewardDe
         shortBorder
         showBackArrow
         showClose
-        text={t<string>('Rewards')}
+        text={t<string>('Received Rewards')}
       />
-      {descSortedRewards && decimal && mostPrize
+      {descSortedRewards && _decimal && mostPrize
         ? (
           <>
             <Grid container justifyContent='center'>
               <Grid item>
-                <ChainLogo genesisHash={chain?.genesisHash} size={31} />
+                <ChainLogo genesisHash={_chain?.genesisHash} size={31} />
               </Grid>
               <Typography fontSize='20px' fontWeight={400} lineHeight='35px' pl='8px'>
-                {token}
+                {_token}
               </Typography>
             </Grid>
             <Arrows onNext={onNext} onPrevious={onPrevious} />
@@ -442,7 +443,7 @@ export default function RewardsDetail({ api, chain, chainName, decimal, rewardDe
                             {d.era}
                           </Grid>
                           <Grid item width='40%'>
-                            {amountToHuman(d.amount, decimal, 9)} {` ${token}`}
+                            {amountToHuman(d.amount, _decimal, 9)} {` ${_token}`}
                           </Grid>
                         </Grid>
                       </AccordionSummary>
@@ -454,8 +455,8 @@ export default function RewardsDetail({ api, chain, chainName, decimal, rewardDe
                           <Grid item width='65%'>
                             <Identity
                               address={d.validator}
-                              api={api}
-                              chain={chain}
+                              api={_api}
+                              chain={_chain}
                               formatted={d.validator}
                               identiconSize={30}
                               showSocial={false}

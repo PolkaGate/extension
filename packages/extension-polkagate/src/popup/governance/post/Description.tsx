@@ -142,7 +142,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
           </Grid>
         </AccordionSummary>
         <AccordionDetails sx={{ px: 0 }}>
-          <Grid container item sx={{ '&, & *': { color: `${theme.palette.text.primary} !important` }, display: 'inline-block', overflowWrap: 'break-word', wordBreak: 'break-all', wordWrap: 'break-word' }} xs={12}>
+          <Grid container item sx={{ '&, & *': { color: `${theme.palette.text.primary} !important`, maxWidth: '100%' }, display: 'inline-block', overflowWrap: 'break-word', wordBreak: 'break-all', wordWrap: 'break-word' }} xs={12}>
             <ReactMarkdown
               components={{ img: ({ node, ...props }) => <img style={{ maxWidth: '100%' }} {...props} /> }}
               rehypePlugins={[rehypeRaw]}

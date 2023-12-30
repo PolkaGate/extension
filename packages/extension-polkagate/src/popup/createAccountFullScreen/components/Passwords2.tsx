@@ -15,11 +15,12 @@ interface Props {
   onEnter: () => void;
   firstPassStyle?: React.CSSProperties;
   secondPassStyle?: React.CSSProperties;
+  disabled?: boolean;
 }
 
 const MIN_LENGTH = 6;
 
-export default function Passwords2 ({ firstPassStyle, secondPassStyle, isFocussed, onChange, onEnter, label = undefined }: Props): React.ReactElement<Props> {
+export default function Passwords2({ disabled, firstPassStyle, secondPassStyle, isFocussed, onChange, onEnter, label = undefined }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [pass1, setPass1] = useState<string | null>(null);
   const [pass2, setPass2] = useState<string | null>(null);
@@ -40,6 +41,7 @@ export default function Passwords2 ({ firstPassStyle, secondPassStyle, isFocusse
       <ValidatedInput2
         component={Password}
         data-input-password
+        disabled={disabled}
         isFocused={isFocussed}
         label={label || t<string>('Password for this account (>5 characters)')}
         onValidatedChange={setPass1}
@@ -51,6 +53,7 @@ export default function Passwords2 ({ firstPassStyle, secondPassStyle, isFocusse
       <ValidatedInput2
         component={Password}
         dataInputRepeatPassword
+        disabled={disabled}
         label={t<string>('Repeat the password')}
         onEnter={onEnter}
         onValidatedChange={setPass2}

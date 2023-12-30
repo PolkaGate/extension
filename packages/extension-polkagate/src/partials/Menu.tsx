@@ -8,11 +8,11 @@ import '@vaadin/icons';
 import { Close as CloseIcon, Email as EmailIcon, Language as LanguageIcon, Twitter as TwitterIcon } from '@mui/icons-material';
 import { Box, Divider, Grid, IconButton, Link, Typography } from '@mui/material';
 import { keyframes, Theme } from '@mui/material/styles';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
 import { riot } from '../assets/icons';
 import { ActionContext, MenuItem, TwoButtons, Warning } from '../components';
-import { useTranslation } from '../hooks';
+import { useManifest, useTranslation } from '../hooks';
 import ImportAccSubMenu from './ImportAccSubMenu';
 import NewAccountSubMenu from './NewAccountSubMenu';
 import SettingSubMenu from './SettingSubMenu';
@@ -56,27 +56,12 @@ export const SocialLinks = () => (
 
 function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const manifest = useManifest();
   const onAction = useContext(ActionContext);
   const [collapsedMenu, setCollapsedMenu] = useState<number>(COLLAPSIBLE_MENUS.SETTING);
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
   const [showWarning, setShowWarning] = useState<boolean>();
-  const [manifest, setManifest] = useState<chrome.runtime.Manifest>();
   const [closeMenu, setCloseMenu] = useState<boolean>(false);
-
-  const fetchJson = () => {
-    fetch('./manifest.json')
-      .then((response) => {
-        return response.json();
-      }).then((data: chrome.runtime.Manifest) => {
-        setManifest(data);
-      }).catch((e: Error) => {
-        console.log(e.message);
-      });
-  };
-
-  useEffect(() => {
-    fetchJson();
-  }, []);
 
   const toggleImportSubMenu = useCallback(() => {
     collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT
@@ -96,7 +81,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
       : setCollapsedMenu(COLLAPSIBLE_MENUS.SETTING);
   }, [collapsedMenu]);
 
-  const _toggleSettings = useCallback(() => {
+  const onCloseMenu = useCallback(() => {
     setCloseMenu(true);
     setTimeout(() => setShowMenu(false), 300);
   }, [setShowMenu]);
@@ -144,8 +129,8 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
 `;
 
   return (
-    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' sx={[{ animationDuration: '0.2s', animationFillMode: 'forwards', animationName: `${!closeMenu ? slideLeft : slideRight}`, position: 'absolute', right: 0, top: 0, mixBlendMode: 'normal', overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }]} zIndex={10} >
-      <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px 24px' sx={{ height: 'parent.innerHeight', position: 'relative' }} width='86%'>
+    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' sx={[{ animationDuration: '0.2s', animationFillMode: 'forwards', animationName: `${!closeMenu ? slideLeft : slideRight}`, position: 'absolute', right: 0, top: 0, mixBlendMode: 'normal', overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }]} zIndex={10}>
+      <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px 24px' sx={{ height: 'parent.innerHeight', minWidth: '307px', position: 'relative' }} width='86%'>
         {!showWarning
           ? <>
             <MenuItem
@@ -228,7 +213,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
           <SocialLinks />
         </Grid>
       </Grid>
-      <IconButton onClick={_toggleSettings} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>
+      <IconButton onClick={onCloseMenu} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>
         <CloseIcon sx={{ color: 'text.secondary', fontSize: 35 }} />
       </IconButton>
     </Grid>

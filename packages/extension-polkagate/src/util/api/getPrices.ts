@@ -5,7 +5,7 @@ import request from 'umi-request';
 
 import { Prices } from '../types';
 
-export default async function getPrices(chainNames: string[], currency = 'usd'): Promise<Prices> {
+export default async function getPrices(chainNames: string[], currency = 'usd'): Promise<Prices | null> {
   try {
     const replaceAssetHubs = chainNames.map((item) =>
       item.replace('westendassethub', 'westend').replace('kusamaassethub', 'kusama').replace('polkadotassethub', 'polkadot')
@@ -32,6 +32,8 @@ export default async function getPrices(chainNames: string[], currency = 'usd'):
     return { date: Date.now(), prices };
   } catch (e) {
     console.log('error while fetching prices:', e);
+
+    return null;
   }
 }
 

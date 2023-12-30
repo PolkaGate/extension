@@ -1,11 +1,11 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { Boy as BoyIcon } from '@mui/icons-material';
 import { Box, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Boy as BoyIcon } from '@mui/icons-material';
 
 import { BN, bnMax } from '@polkadot/util';
 
@@ -30,17 +30,19 @@ export default function Options({ setShowStakingOptions, showStakingOptions }: P
   useUnSupportedNetwork(address, STAKING_CHAINS, () => setShowStakingOptions(false));
   const stakingConsts = useStakingConsts(address);
   const poolConsts = usePoolConsts(address);
-  const nominatorInfo = useMinToReceiveRewardsInSolo(address);
+  const minimumActiveStake = useMinToReceiveRewardsInSolo(address);
 
   const [minToReceiveRewardsInSolo, setMinToReceiveRewardsInSolo] = useState<BN | undefined>();
 
   useEffect(() => {
-    if (!stakingConsts || !nominatorInfo?.minToGetRewards) { return; }
+    if (!stakingConsts || !minimumActiveStake) {
+      return setMinToReceiveRewardsInSolo(undefined);
+    }
 
-    const minSolo = bnMax(new BN(stakingConsts.minNominatorBond.toString()), new BN(stakingConsts?.existentialDeposit.toString()), new BN(nominatorInfo.minToGetRewards.toString()));
+    const minSolo = bnMax(new BN(stakingConsts.minNominatorBond.toString()), new BN(stakingConsts?.existentialDeposit.toString()), minimumActiveStake);
 
     setMinToReceiveRewardsInSolo(minSolo);
-  }, [nominatorInfo?.minToGetRewards, stakingConsts]);
+  }, [minimumActiveStake, stakingConsts]);
 
   const goToPoolStaking = useCallback(() => {
     address && history.push({

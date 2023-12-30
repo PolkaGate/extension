@@ -4,7 +4,6 @@
 import { useEffect, useState } from 'react';
 
 import { getPrices } from '../util/api/';
-import { MILLISECONDS_TO_UPDATE } from '../util/constants';
 import { Prices } from '../util/types';
 import useChainNames from './useChainNames';
 
@@ -17,7 +16,7 @@ export default function usePrices(): Prices | undefined | null {
   const chainNames = useChainNames() || [];
 
   const [savedPrice, setSavedPrice] = useState<Prices | null>();
-  const [newPrices, setNewPrices] = useState<Prices>();
+  const [newPrices, setNewPrices] = useState<Prices | null>();
 
   useEffect(() => {
     async function fetchPrices() {
@@ -48,9 +47,7 @@ export default function usePrices(): Prices | undefined | null {
       const localSavedPrices = res?.prices as Prices;
 
       if (localSavedPrices) {
-        if (Date.now() - localSavedPrices.date < MILLISECONDS_TO_UPDATE) {
-          setSavedPrice(localSavedPrices);
-        }
+        setSavedPrice(localSavedPrices);
       } else {
         setSavedPrice(null);
       }

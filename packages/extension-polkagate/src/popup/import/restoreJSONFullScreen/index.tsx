@@ -20,6 +20,7 @@ import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../../../messagin
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { isKeyringPairs$Json } from '../../../util/typeGuards';
 import { pgBoxShadow } from '../../../util/utils';
+import { resetOnForgotPassword } from '../../createAccountFullScreen/resetAccounts';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
@@ -88,7 +89,7 @@ export default function RestoreJson(): React.ReactElement {
     }
   }, []);
 
-  const onRestore = useCallback((): void => {
+  const onRestore = useCallback(async (): Promise<void> => {
     if (!file) {
       return;
     }
@@ -98,6 +99,8 @@ export default function RestoreJson(): React.ReactElement {
     }
 
     setIsBusy(true);
+
+    await resetOnForgotPassword();
 
     (isKeyringPairs$Json(file) ? batchRestore(file, password) : jsonRestore(file, password))
       .then(() => {

@@ -93,16 +93,15 @@ export default function AuthManagement({ className }: Props): React.ReactElement
             borderRadius: '5px',
             fontSize: '12px',
             fontWeight: '400',
-            overflow: 'hidden'
+            maxHeight: window.innerHeight - 320
           }}
         >
           {
             !authList || !Object.entries(authList)?.length
-              ?
-              <Grid alignItems='center' container item pl='10px' textAlign='left' xs={12}>
+              ? <Grid alignItems='center' container item pl='10px' textAlign='left'>
                 {t<string>('No website request yet!')}
               </Grid>
-              : <>
+              : <Grid container item sx={{ overflow: 'scroll' }}>
                 {Object.entries(authList)
                   .filter(([url]: [string, AuthUrlInfo]) => url.includes(filter))
                   .map(
@@ -115,7 +114,7 @@ export default function AuthManagement({ className }: Props): React.ReactElement
                         url={url}
                       />
                   )}
-              </>
+              </Grid>
           }
         </Grid>
       </Label>
