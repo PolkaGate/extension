@@ -12,6 +12,7 @@ import { ApiPromise } from '@polkadot/api';
 import { ChromeStorageGetResponse } from '../components/RemoteNodeSelector';
 import { useAccount, useChainName, useEndpoint, useEndpoints } from '../hooks';
 import CalculateNodeDelay from '../util/calculateNodeDelay';
+import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
 
 interface Props {
   address: string | undefined;
@@ -25,6 +26,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
   const account = useAccount(address);
   const genesisHash = account?.genesisHash;
   const endpointOptions = useEndpoints(genesisHash);
+  const onExtension = useIsExtensionPopup();
 
   const endpointUrl = useEndpoint(address);
   const chainName = useChainName(address);
@@ -35,6 +37,14 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
   const [endpointsDelay, setEndpointsDelay] = useState<EndpointsDelay>();
   const [api, setApi] = useState<ApiPromise | null | undefined>(null);
   const [fetchedApiAndDelay, setFetchedApiAndDelay] = useState<{ fetchedApi: ApiPromise | null | undefined, fetchedDelay: number | undefined }>();
+
+  const bgcolorOnAccountDetail: string = useMemo(() => {
+    if (onExtension) {
+      return 'background.paper';
+    } else {
+      return 'transparent';
+    }
+  }, [onExtension]);
 
   const colors = {
     gray: theme.palette.mode === 'light' ? '#E8E0E5' : '#747474',
@@ -225,7 +235,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
 
   return (
     <>
-      <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', cursor: 'pointer', height: `${iconSize + 7}px`, position: 'relative', width: `${iconSize + 7}px`, zIndex: 10 }}>
+      <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: bgcolorOnAccountDetail, border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', cursor: 'pointer', height: `${iconSize + 7}px`, position: 'relative', width: `${iconSize + 7}px`, zIndex: 10 }}>
         {isLightClient
           ? <LightClientEndpointIcon sx={{ bottom: '2px', color: colors.orange, fontSize: `${iconSize}px`, left: '2px', position: 'absolute' }} />
           : <>
