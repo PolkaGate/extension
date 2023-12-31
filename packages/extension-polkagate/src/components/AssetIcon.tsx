@@ -9,23 +9,21 @@ import React from 'react';
 interface Props {
   asset: string;
   baseLogo: string;
-  assetHeight?: string;
-  assetWidth?: string;
-  baseLogoHeight?: string;
-  baseLogoWidth?: string;
+  assetSize?: string;
+  baseLogoSize?: string;
 }
 
-export default function AssetIcon({ asset, assetHeight = '40px', assetWidth = '40px', baseLogo, baseLogoHeight = '20px', baseLogoWidth = '20px' }: Props): React.ReactElement {
+export default function AssetIcon({ asset, assetSize = '40px', baseLogo, baseLogoSize = '20px' }: Props): React.ReactElement {
   return (
     <Grid container sx={{ position: 'relative', width: 'fit-content' }}>
       <Avatar
         src={asset}
-        sx={{ borderRadius: '50%', height: assetHeight, width: assetWidth }}
+        sx={{ borderRadius: '50%', height: assetSize, width: assetSize }}
         variant='square'
       />
       <Avatar
         src={baseLogo}
-        sx={{ bgcolor: 'white', borderRadius: '50%', height: baseLogoHeight, inset: 'auto -5px -5px auto', p: '1.5px', position: 'absolute', width: baseLogoWidth }}
+        sx={{ bgcolor: 'white', borderRadius: '50%', height: baseLogoSize, inset: 'auto -5px -5px auto', p: '1.5px', position: 'absolute', width: baseLogoSize }}
         variant='square'
       />
     </Grid>
