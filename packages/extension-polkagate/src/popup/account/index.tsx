@@ -167,6 +167,7 @@ export default function AccountDetails(): React.ReactElement {
           <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={40} showSocial={false} style={{ fontSize: '32px', height: '40px', lineHeight: 'initial', maxWidth: '75%' }} subIdOnly />
         }
         address={address}
+        fullScreen
         noBorder
         onBackClick={gotToHome}
         paddingBottom={0}
@@ -181,7 +182,7 @@ export default function AccountDetails(): React.ReactElement {
             defaultValue={chain?.genesisHash ?? genesisOptions[0].text}
             label={t<string>('Chain')}
             onChange={_onChangeNetwork}
-            style={{ width: '53%' }}
+            style={{ width: '56%' }}
           />
           <Assets
             address={address}
@@ -190,7 +191,7 @@ export default function AccountDetails(): React.ReactElement {
             label={t<string>('Asset')}
             onChange={_onChangeAsset}
             setAssetId={setAssetId}
-            style={{ width: '30%' }}
+            style={{ width: '27%' }}
           />
           <Grid alignContent='flex-end' container item justifyContent='center' width='15%' zIndex={1}>
             <FullScreenRemoteNode
