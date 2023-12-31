@@ -16,7 +16,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { ActionContext, DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, ShortAddress2, ShowBalance } from '../../../components';
 import { useAccount, useAccountInfo, useProxies, useToken, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount, windowOpen } from '../../../messaging';
-import { ASSET_HUBS, BALANCES_VALIDITY_PERIOD } from '../../../util/constants';
+import { ACALA_GENESIS_HASH, ASSET_HUBS, BALANCES_VALIDITY_PERIOD } from '../../../util/constants';
 import { BalancesInfo, Price } from '../../../util/types';
 import { getValue } from '../../account/util';
 import { AssetsOnOtherChains } from '..';
@@ -83,6 +83,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
   }, [proxies]);
 
   const onAssetHub = useCallback((genesisHash: string | null | undefined) => ASSET_HUBS.includes(genesisHash ?? ''), []);
+  const onAcala = useCallback((genesisHash: string | null | undefined) => ACALA_GENESIS_HASH === genesisHash, []);
 
   useEffect((): void => {
     api && api?.query.identity && api?.query.identity.identityOf(address).then((id) => setHasID(!id.isEmpty)).catch(console.error);
@@ -169,7 +170,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
       {asset
         ? <>
           <Grid alignItems='center' container item pr='5px' width='fit-content'>
-            <DisplayLogo assetSize='25px' assetToken={onAssetHub(asset.genesisHash) ? asset.token : undefined} baseTokenSize='16px' genesisHash={asset.genesisHash ?? ''} />
+            <DisplayLogo assetSize='25px' assetToken={onAssetHub(asset.genesisHash) || onAcala(asset.genesisHash) ? asset.token : undefined} baseTokenSize='16px' genesisHash={asset.genesisHash ?? ''} />
           </Grid>
           <BalanceColumn
             asset={asset}
@@ -297,7 +298,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
           </Grid>
         </Grid>
         <Grid alignItems='center' container item xs>
-          <Grid item px='10px'>
+          <Grid item pl='10px'>
             <DisplayLogo assetToken={onAssetHub(account?.genesisHash) ? balanceToShow?.token : undefined} genesisHash={account?.genesisHash ?? ''} size={42} />
           </Grid>
           <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
