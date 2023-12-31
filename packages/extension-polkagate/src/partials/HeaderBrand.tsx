@@ -5,7 +5,7 @@
 
 import '@vaadin/icons';
 
-import { faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { faExpand, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon, Close as CloseIcon, Menu as MenuIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
@@ -42,7 +42,7 @@ interface Props {
   fullScreen?: boolean;
 }
 
-function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreen = false, isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreen = false, isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [isMenuOpen, setOpenMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
@@ -134,7 +134,12 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreen = fal
                 onClick={_onWindowOpen}
                 sx={{ height: '35px', p: 0, width: '35px' }}
               >
-                <vaadin-icon icon='vaadin:expand-full' style={{ height: '22px', color: `${theme.palette.secondary.light}`, stroke: `${theme.palette.secondary.light}`, strokeWidth: 1.5 }} />
+                <FontAwesomeIcon
+                  color={theme.palette.secondary.light}
+                  icon={faExpand}
+                  spin={isRefreshing}
+                  style={{ height: '28px' }}
+                />
               </IconButton>
             </Infotip2>
           }
@@ -170,7 +175,7 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreen = fal
           borderBottom: `${noBorder || shortBorder ? '' : '0.5px solid'}`,
           borderColor: 'secondary.light',
           lineHeight: 0,
-          p: showBrand ? '7px 30px 7px' : `18px 20px ${paddingBottom}px 30px`
+          p: showBrand ? '7px 30px 7px' : `18px ${fullScreen ? '5px' : '20px'} ${paddingBottom}px 30px`
         }}
       >
         <Grid alignItems='center' container justifyContent='space-between'>
