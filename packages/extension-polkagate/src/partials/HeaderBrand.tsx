@@ -12,8 +12,10 @@ import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from 
 import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { logoBlack, logoWhite } from '../assets/logos';
-import { ActionContext, Steps } from '../components';
+import { ActionContext, Infotip2, Steps } from '../components';
+import { useTranslation } from '../components/translate';
 import useOutsideClick from '../hooks/useOutsideClick';
+import { windowOpen } from '../messaging';
 import { Step } from '../util/types';
 import Menu from './Menu';
 import { AccountMenu } from '.';
@@ -37,9 +39,11 @@ interface Props {
   paddingBottom?: number;
   onClose?: () => void;
   backgroundDefault?: boolean;
+  fullScreen?: boolean;
 }
 
-function HeaderBrand({ _centerItem, address, backgroundDefault, isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreen = false, isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
   const [isMenuOpen, setOpenMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
@@ -62,6 +66,10 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, isRefreshing, no
   const _onClose = useCallback(() => {
     onAction('/');
   }, [onAction]);
+
+  const _onWindowOpen = useCallback((): void => {
+    address && windowOpen(`/account/${address}`).catch(console.error);
+  }, [address]);
 
   const LeftIcon = () => (
     <Grid item xs={1.4}>
@@ -103,20 +111,34 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, isRefreshing, no
   );
 
   const RightItem = () => (
-    <Grid item textAlign='right' xs={1.4}>
+    <Grid item textAlign='right' xs={fullScreen && showAccountMenu ? 2.7 : 1.4}>
       {!onRefresh && !showClose &&
-        <IconButton aria-label='menu' color='inherit' edge='start' onClick={_handleMenuClick} size='small' sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}>
-          {showMenu &&
-            <MenuIcon
-              sx={{ color: showBrand ? theme.palette.mode === 'dark' ? 'text.primary' : 'secondary.light' : 'secondary.light', fontSize: 39 }}
-            />
+        <Grid container item width='fit-content'>
+          <IconButton aria-label='menu' color='inherit' edge='start' onClick={_handleMenuClick} size='small' sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}>
+            {showMenu &&
+              <MenuIcon
+                sx={{ color: showBrand ? theme.palette.mode === 'dark' ? 'text.primary' : 'secondary.light' : 'secondary.light', fontSize: 39 }}
+              />
+            }
+            {showAccountMenu &&
+              <MoreVertIcon
+                sx={{ color: 'secondary.light', fontSize: '33px' }}
+              />
+            }
+          </IconButton>
+          {fullScreen &&
+            <Infotip2
+              text={t('Fullscreen')}
+            >
+              <IconButton
+                onClick={_onWindowOpen}
+                sx={{ height: '35px', p: 0, width: '35px' }}
+              >
+                <vaadin-icon icon='vaadin:expand-full' style={{ height: '22px', color: `${theme.palette.secondary.light}`, stroke: `${theme.palette.secondary.light}`, strokeWidth: 1.5 }} />
+              </IconButton>
+            </Infotip2>
           }
-          {showAccountMenu &&
-            <MoreVertIcon
-              sx={{ color: 'secondary.light', fontSize: '33px' }}
-            />
-          }
-        </IconButton>
+        </Grid>
       }
       {!!onRefresh &&
         <IconButton aria-label='menu' color='inherit' edge='start' onClick={onRefresh} size='small' sx={{ p: 0 }}>
