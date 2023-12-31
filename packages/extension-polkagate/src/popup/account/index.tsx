@@ -192,7 +192,7 @@ export default function AccountDetails(): React.ReactElement {
             setAssetId={setAssetId}
             style={{ width: '30%' }}
           />
-          <Grid alignContent='flex-end' container item justifyContent='center' width='15%'>
+          <Grid alignContent='flex-end' container item justifyContent='center' width='15%' zIndex={1}>
             <FullScreenRemoteNode
               address={address}
               iconSize={25}
