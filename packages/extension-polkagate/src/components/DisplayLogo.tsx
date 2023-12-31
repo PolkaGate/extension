@@ -28,7 +28,7 @@ interface Props {
 const SUPPORTED_TOKENS = ['DOT', 'KSM', 'ACA'];
 const SUPPORTED_ETH_TOKENS = ['USDt', 'USDC'];
 
-function DisplayLogo({ assetToken, assetSize, chainName, genesisHash, size = 25, baseTokenSize }: Props): React.ReactElement<Props> {
+function DisplayLogo({ assetSize, assetToken, baseTokenSize, chainName, genesisHash, size = 25 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const foundChainName = allChains.find((chain) => chain.genesisHash === genesisHash)?.chain;
   const foundAsset = assetToken && SUPPORTED_TOKENS.includes(assetToken) ? selectableNetworks.find((net) => net.symbols[0] === assetToken)?.displayName : undefined;

@@ -7,17 +7,16 @@ import { faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CheckCircleOutline as CheckIcon, InsertLinkRounded as LinkIcon } from '@mui/icons-material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { Avatar, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { ActionContext, ChainLogo, DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, ShortAddress2, ShowBalance } from '../../../components';
+import { ActionContext, DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, ShortAddress2, ShowBalance } from '../../../components';
 import { useAccount, useAccountInfo, useProxies, useToken, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount, windowOpen } from '../../../messaging';
-import { ASSET_HUBS, BALANCES_VALIDITY_PERIOD, CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
-import getLogo from '../../../util/getLogo';
+import { ASSET_HUBS, BALANCES_VALIDITY_PERIOD } from '../../../util/constants';
 import { BalancesInfo, Price } from '../../../util/types';
 import { getValue } from '../../account/util';
 import { AssetsOnOtherChains } from '..';
@@ -170,7 +169,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
       {asset
         ? <>
           <Grid alignItems='center' container item pr='5px' width='fit-content'>
-            <DisplayLogo assetSize='25px' baseTokenSize='16px' assetToken={onAssetHub(asset.genesisHash) ? asset.token : undefined} genesisHash={asset.genesisHash ?? ''} />
+            <DisplayLogo assetSize='25px' assetToken={onAssetHub(asset.genesisHash) ? asset.token : undefined} baseTokenSize='16px' genesisHash={asset.genesisHash ?? ''} />
           </Grid>
           <BalanceColumn
             asset={asset}

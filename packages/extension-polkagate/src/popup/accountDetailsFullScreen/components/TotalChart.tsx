@@ -36,7 +36,7 @@ export default function TotalChart ({ assetsOnOtherChains, isDarkTheme, nativeAs
   const getChartColor = useCallback((assetToken: string): string => {
     switch (assetToken) {
       case 'KSM':
-        return '#000000';
+        return isDarkTheme ? '#ffffff' : '#000000';
         break;
       case 'DOT':
         return '#e6007a';
@@ -51,7 +51,7 @@ export default function TotalChart ({ assetsOnOtherChains, isDarkTheme, nativeAs
         return 'green';
         break;
     }
-  }, []);
+  }, [isDarkTheme]);
 
   const otherAssetsToShow = useMemo(() => {
     if (!assetsOnOtherChains || assetsOnOtherChains.length === 0) {

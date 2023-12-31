@@ -13,7 +13,7 @@ interface Props {
   baseLogoSize?: string;
 }
 
-export default function AssetIcon({ asset, assetSize = '40px', baseLogo, baseLogoSize = '20px' }: Props): React.ReactElement {
+export default function AssetIcon ({ asset, assetSize = '40px', baseLogo, baseLogoSize = '20px' }: Props): React.ReactElement {
   return (
     <Grid container sx={{ position: 'relative', width: 'fit-content' }}>
       <Avatar
