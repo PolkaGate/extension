@@ -85,5 +85,6 @@ export { default as SignArea2 } from './SignArea2';
 export { default as Affirm } from './Affirm';
 export { default as AssetIcon } from './AssetIcon';
 export { default as CanPayErrorAlert } from './CanPayErrorAlert';
+export { default as DisplayLogo } from './DisplayLogo';
 
 export * from './contexts';
