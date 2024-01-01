@@ -1,19 +1,18 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import '@vaadin/icons';
 
-import { faExpand, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon, Close as CloseIcon, Menu as MenuIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { logoBlack, logoWhite } from '../assets/logos';
-import { ActionContext, FullScreenIcon, Infotip2, Steps } from '../components';
-import { useTranslation } from '../components/translate';
+import { ActionContext, FullScreenIcon, Steps } from '../components';
 import useOutsideClick from '../hooks/useOutsideClick';
 import { windowOpen } from '../messaging';
 import { Step } from '../util/types';
@@ -43,7 +42,6 @@ interface Props {
 }
 
 function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreen = false, isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
-  const { t } = useTranslation();
   const [isMenuOpen, setOpenMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
