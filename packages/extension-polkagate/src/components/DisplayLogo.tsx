@@ -1,4 +1,4 @@
-// Copyright 2019-2023 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { fas } from '@fortawesome/free-solid-svg-icons';
@@ -33,6 +33,10 @@ function DisplayLogo({ assetSize, assetToken, baseTokenSize, chainName, genesisH
   const theme = useTheme();
   const foundChainName = allChains.find((chain) => chain.genesisHash === genesisHash)?.chain;
   const foundAsset = assetToken && SUPPORTED_TOKENS.includes(assetToken) ? selectableNetworks.find((net) => net.symbols[0] === assetToken)?.displayName : undefined;
+  const _chainName = sanitizeChainName(foundChainName || chainName);
+  const logo = getLogo(_chainName);
+  const assetLogo = getLogo(foundAsset);
+
   const foundETHAsset = assetToken && SUPPORTED_ETH_TOKENS.includes(assetToken)
     ? assetToken === 'USDt'
       ? USDT as string
@@ -43,13 +47,10 @@ function DisplayLogo({ assetSize, assetToken, baseTokenSize, chainName, genesisH
       ? LDOT as string
       : lcDOT as string
     : undefined;
-  const _chainName = sanitizeChainName(foundChainName || chainName);
-  const logo = getLogo(_chainName);
-  const assetLogo = getLogo(foundAsset);
 
   return (
     <>
-      {logo && assetToken && !foundAcalaAsset &&
+      {logo && assetToken &&
         <AssetIcon
           asset={assetLogo ?? foundETHAsset ?? foundAcalaAsset ?? assetHub}
           assetSize={assetSize}
@@ -57,10 +58,10 @@ function DisplayLogo({ assetSize, assetToken, baseTokenSize, chainName, genesisH
           baseLogoSize={baseTokenSize}
         />
       }
-      {logo && assetToken && foundAcalaAsset &&
+      {!logo && assetToken &&
         <Avatar
-          src={foundAcalaAsset}
-          sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(_chainName ?? '') && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: size, pr: 0, width: size }}
+          src={foundAcalaAsset ?? foundETHAsset ?? assetLogo}
+          sx={{ borderRadius: '50%', height: size, pr: 0, width: size }}
           variant='square'
         />
       }
@@ -84,8 +85,8 @@ function DisplayLogo({ assetSize, assetToken, baseTokenSize, chainName, genesisH
             border: '1px solid',
             borderColor: 'secondary.light',
             borderRadius: '50%',
-            height: `${size + 6}px`,
-            width: `${size + 6}px`
+            height: `${size}px`,
+            width: `${size}px`
           }}
         >
         </Grid>
