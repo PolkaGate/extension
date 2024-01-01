@@ -1,4 +1,4 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -23,7 +23,7 @@ export default function AssetIcon ({ asset, assetSize = '40px', baseLogo, baseLo
       />
       <Avatar
         src={baseLogo}
-        sx={{ bgcolor: 'white', borderRadius: '50%', height: baseLogoSize, inset: 'auto -5px -5px auto', p: '1.5px', position: 'absolute', width: baseLogoSize }}
+        sx={{ '> img': { borderRadius: '50%' }, bgcolor: 'white', borderRadius: '50%', height: baseLogoSize, inset: 'auto -5px -5px auto', p: '1.5px', position: 'absolute', width: baseLogoSize }}
         variant='square'
       />
     </Grid>
