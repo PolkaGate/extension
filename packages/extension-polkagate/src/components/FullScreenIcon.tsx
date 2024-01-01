@@ -41,12 +41,12 @@ export default function FullScreenIcon ({ url }: Props): React.ReactElement {
           onClick={onWindowOpen}
           onMouseEnter={increaseScale}
           onMouseLeave={decreaseScale}
-          sx={{ height: '35px', p: 0, width: '35px' }}
+          sx={{ height: '35px', p: 0, width: '20px' }}
         >
           <FontAwesomeIcon
             color={theme.palette.secondary.light}
             icon={faExpand}
-            style={{ height: '28px', transform: `scale(${scale})`, transitionDuration: '150ms' }}
+            style={{ height: '25px', transform: `scale(${scale})`, transitionDuration: '150ms' }}
           />
         </IconButton>
       </Infotip2>
