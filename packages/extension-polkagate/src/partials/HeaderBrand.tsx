@@ -1,4 +1,4 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -64,7 +64,7 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, isRefreshing, no
   }, [onAction]);
 
   const LeftIcon = () => (
-    <Grid item xs={1.4}>
+    <Grid item xs={showBrand ? 1.4 : 1}>
       {!showBrand &&
         <ArrowBackIosIcon
           onClick={onBackClick}
