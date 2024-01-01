@@ -41,7 +41,7 @@ interface Props {
   fullScreen?: boolean;
 }
 
-function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreen = false, isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreen = false, isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
   const [isMenuOpen, setOpenMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
@@ -70,7 +70,7 @@ function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreen = fa
   }, [address]);
 
   const LeftIcon = () => (
-    <Grid item xs={1.4}>
+    <Grid item xs={showBrand ? 1.4 : 1}>
       {!showBrand &&
         <ArrowBackIosIcon
           onClick={onBackClick}
@@ -159,7 +159,7 @@ function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreen = fa
           borderBottom: `${noBorder || shortBorder ? '' : '0.5px solid'}`,
           borderColor: 'secondary.light',
           lineHeight: 0,
-          p: showBrand ? '7px 30px 7px' : `18px ${fullScreen ? '5px' : '20px'} ${paddingBottom}px 30px`
+          p: showBrand ? '7px 30px 7px' : `18px ${fullScreen ? '5px' : '20px'} ${paddingBottom}px 20px`
         }}
       >
         <Grid alignItems='center' container justifyContent='space-between'>
