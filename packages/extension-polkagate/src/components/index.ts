@@ -86,5 +86,6 @@ export { default as Affirm } from './Affirm';
 export { default as AssetIcon } from './AssetIcon';
 export { default as CanPayErrorAlert } from './CanPayErrorAlert';
 export { default as DisplayLogo } from './DisplayLogo';
+export { default as FullScreenIcon } from './FullScreenIcon';
 
 export * from './contexts';
