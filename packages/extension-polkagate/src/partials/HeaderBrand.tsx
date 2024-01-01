@@ -12,7 +12,7 @@ import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from 
 import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { logoBlack, logoWhite } from '../assets/logos';
-import { ActionContext, Infotip2, Steps } from '../components';
+import { ActionContext, FullScreenIcon, Infotip2, Steps } from '../components';
 import { useTranslation } from '../components/translate';
 import useOutsideClick from '../hooks/useOutsideClick';
 import { windowOpen } from '../messaging';
@@ -126,22 +126,8 @@ function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreen = fa
               />
             }
           </IconButton>
-          {fullScreen &&
-            <Infotip2
-              text={t('Fullscreen')}
-            >
-              <IconButton
-                onClick={_onWindowOpen}
-                sx={{ height: '35px', p: 0, width: '35px' }}
-              >
-                <FontAwesomeIcon
-                  color={theme.palette.secondary.light}
-                  icon={faExpand}
-                  spin={isRefreshing}
-                  style={{ height: '28px' }}
-                />
-              </IconButton>
-            </Infotip2>
+          {fullScreen && address &&
+            <FullScreenIcon url={`/account/${address}`} />
           }
         </Grid>
       }
