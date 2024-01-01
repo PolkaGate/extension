@@ -1,4 +1,4 @@
-// Copyright 2019-2023 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -7,17 +7,16 @@ import { faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CheckCircleOutline as CheckIcon, InsertLinkRounded as LinkIcon } from '@mui/icons-material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { Avatar, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { ActionContext, ChainLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, ShortAddress2, ShowBalance } from '../../../components';
+import { ActionContext, DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, ShortAddress2, ShowBalance } from '../../../components';
 import { useAccount, useAccountInfo, useProxies, useToken, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount, windowOpen } from '../../../messaging';
-import { BALANCES_VALIDITY_PERIOD, CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
-import getLogo from '../../../util/getLogo';
+import { ACALA_GENESIS_HASH, ASSET_HUBS, BALANCES_VALIDITY_PERIOD, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, WESTEND_GENESIS_HASH } from '../../../util/constants';
 import { BalancesInfo, Price } from '../../../util/types';
 import { getValue } from '../../account/util';
 import { AssetsOnOtherChains } from '..';
@@ -82,6 +81,48 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
       return 'Checking';
     }
   }, [proxies]);
+
+  const onAssetHub = useCallback((genesisHash: string | null | undefined) => ASSET_HUBS.includes(genesisHash ?? ''), []);
+  const onAcala = useCallback((genesisHash: string | null | undefined) => ACALA_GENESIS_HASH === genesisHash, []);
+  const displayLogoAOC = useCallback((genesisHash: string | null | undefined, symbol: string | undefined) => {
+    if (onAssetHub(genesisHash)) {
+      if (ASSET_HUBS[0] === genesisHash) {
+        return {
+          base: WESTEND_GENESIS_HASH,
+          symbol
+        };
+      } else if (ASSET_HUBS[1] === genesisHash) {
+        return {
+          base: KUSAMA_GENESIS_HASH,
+          symbol
+        };
+      } else {
+        return {
+          base: POLKADOT_GENESIS_HASH,
+          symbol
+        };
+      }
+    }
+
+    if (ACALA_GENESIS_HASH === genesisHash) {
+      if (symbol?.toLowerCase() === 'aca') {
+        return {
+          base: ACALA_GENESIS_HASH,
+          symbol: undefined
+        };
+      } else {
+        return {
+          base: undefined,
+          symbol
+        };
+      }
+    }
+
+    return {
+      base: genesisHash,
+      symbol: undefined
+    };
+  }, [onAssetHub]);
 
   useEffect((): void => {
     api && api?.query.identity && api?.query.identity.identityOf(address).then((id) => setHasID(!id.isEmpty)).catch(console.error);
@@ -168,7 +209,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
       {asset
         ? <>
           <Grid alignItems='center' container item pr='5px' width='fit-content'>
-            <Avatar src={getLogo(asset.chainName)} sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(asset.chainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 22, width: 22 }} variant='square' />
+            <DisplayLogo assetSize='25px' assetToken={displayLogoAOC(asset.genesisHash, asset.token)?.symbol} baseTokenSize='16px' genesisHash={displayLogoAOC(asset.genesisHash, asset.token)?.base} />
           </Grid>
           <BalanceColumn
             asset={asset}
@@ -228,10 +269,10 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
   }, [account?.isHidden, address]);
 
   return (
-    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '20px 30px 15px' }}>
+    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '20px 10px 15px 20px' }}>
       <Grid container item>
-        <Grid container item sx={{ borderRight: '1px solid', borderRightColor: borderColor, pr: '15px', width: 'fit-content' }}>
-          <Grid container item pr='10px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>
+        <Grid container item sx={{ borderRight: '1px solid', borderRightColor: borderColor, pr: '8px', width: 'fit-content' }}>
+          <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>
             <Identicon
               iconTheme={chain?.icon ?? 'polkadot'}
               prefix={chain?.ss58Format ?? 42}
@@ -273,7 +314,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
             </Grid>
           </Grid>
         </Grid>
-        <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: borderColor, px: '10px' }} xs={5.2}>
+        <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: borderColor, px: '7px' }} xs={5}>
           <Grid container item justifyContent='space-between'>
             <Identity
               address={address}
@@ -296,8 +337,8 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
           </Grid>
         </Grid>
         <Grid alignItems='center' container item xs>
-          <Grid item px='10px'>
-            <ChainLogo genesisHash={account?.genesisHash ?? ''} size={42} />
+          <Grid item pl='7px'>
+            <DisplayLogo assetToken={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.symbol} genesisHash={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.base} size={42} />
           </Grid>
           <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
             <BalanceRow />

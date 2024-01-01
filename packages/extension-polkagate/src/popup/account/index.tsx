@@ -22,7 +22,7 @@ import { stakingClose } from '../../assets/icons';
 import { ActionContext, Assets, Chain, HorizontalMenuItem, Identity, Motion } from '../../components';
 import { useApi, useBalances, useChain, useChainName, useFormatted, useGenesisHashOptions, useMyAccountIdentity, useTranslation } from '../../hooks';
 import { tieAccount, windowOpen } from '../../messaging';
-import { HeaderBrand } from '../../partials';
+import { FullScreenRemoteNode, HeaderBrand } from '../../partials';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { BalancesInfo, FormattedAddressState } from '../../util/types';
 import StakingOption from '../staking/Options';
@@ -164,9 +164,10 @@ export default function AccountDetails(): React.ReactElement {
     <Motion>
       <HeaderBrand
         _centerItem={
-          <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={40} showSocial={false} style={{ fontSize: '32px', height: '40px', lineHeight: 'initial', maxWidth: '75%' }} subIdOnly />
+          <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={40} showSocial={false} style={{ fontSize: '32px', height: '40px', lineHeight: 'initial', maxWidth: '65%' }} subIdOnly />
         }
         address={address}
+        fullScreen
         noBorder
         onBackClick={gotToHome}
         paddingBottom={0}
@@ -181,7 +182,7 @@ export default function AccountDetails(): React.ReactElement {
             defaultValue={chain?.genesisHash ?? genesisOptions[0].text}
             label={t<string>('Chain')}
             onChange={_onChangeNetwork}
-            style={{ width: '60%' }}
+            style={{ width: '56%' }}
           />
           <Assets
             address={address}
@@ -190,8 +191,14 @@ export default function AccountDetails(): React.ReactElement {
             label={t<string>('Asset')}
             onChange={_onChangeAsset}
             setAssetId={setAssetId}
-            style={{ width: '35%' }}
+            style={{ width: '27%' }}
           />
+          <Grid alignContent='flex-end' container item justifyContent='center' width='15%' zIndex={1}>
+            <FullScreenRemoteNode
+              address={address}
+              iconSize={25}
+            />
+          </Grid>
         </Grid>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '9px' }} />
         {!showStakingOptions

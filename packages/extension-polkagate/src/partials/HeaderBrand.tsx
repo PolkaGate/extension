@@ -5,15 +5,17 @@
 
 import '@vaadin/icons';
 
-import { faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { faExpand, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon, Close as CloseIcon, Menu as MenuIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { logoBlack, logoWhite } from '../assets/logos';
-import { ActionContext, Steps } from '../components';
+import { ActionContext, FullScreenIcon, Infotip2, Steps } from '../components';
+import { useTranslation } from '../components/translate';
 import useOutsideClick from '../hooks/useOutsideClick';
+import { windowOpen } from '../messaging';
 import { Step } from '../util/types';
 import Menu from './Menu';
 import { AccountMenu } from '.';
@@ -37,9 +39,11 @@ interface Props {
   paddingBottom?: number;
   onClose?: () => void;
   backgroundDefault?: boolean;
+  fullScreen?: boolean;
 }
 
-function HeaderBrand({ _centerItem, address, backgroundDefault, isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreen = false, isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
   const [isMenuOpen, setOpenMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
@@ -62,6 +66,10 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, isRefreshing, no
   const _onClose = useCallback(() => {
     onAction('/');
   }, [onAction]);
+
+  const _onWindowOpen = useCallback((): void => {
+    address && windowOpen(`/account/${address}`).catch(console.error);
+  }, [address]);
 
   const LeftIcon = () => (
     <Grid item xs={1.4}>
@@ -103,20 +111,25 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, isRefreshing, no
   );
 
   const RightItem = () => (
-    <Grid item textAlign='right' xs={1.4}>
+    <Grid item textAlign='right' xs={fullScreen && showAccountMenu ? 2.7 : 1.4}>
       {!onRefresh && !showClose &&
-        <IconButton aria-label='menu' color='inherit' edge='start' onClick={_handleMenuClick} size='small' sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}>
-          {showMenu &&
-            <MenuIcon
-              sx={{ color: showBrand ? theme.palette.mode === 'dark' ? 'text.primary' : 'secondary.light' : 'secondary.light', fontSize: 39 }}
-            />
+        <Grid container item width='fit-content'>
+          <IconButton aria-label='menu' color='inherit' edge='start' onClick={_handleMenuClick} size='small' sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}>
+            {showMenu &&
+              <MenuIcon
+                sx={{ color: showBrand ? theme.palette.mode === 'dark' ? 'text.primary' : 'secondary.light' : 'secondary.light', fontSize: 39 }}
+              />
+            }
+            {showAccountMenu &&
+              <MoreVertIcon
+                sx={{ color: 'secondary.light', fontSize: '33px' }}
+              />
+            }
+          </IconButton>
+          {fullScreen && address &&
+            <FullScreenIcon url={`/account/${address}`} />
           }
-          {showAccountMenu &&
-            <MoreVertIcon
-              sx={{ color: 'secondary.light', fontSize: '33px' }}
-            />
-          }
-        </IconButton>
+        </Grid>
       }
       {!!onRefresh &&
         <IconButton aria-label='menu' color='inherit' edge='start' onClick={onRefresh} size='small' sx={{ p: 0 }}>
@@ -148,7 +161,7 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, isRefreshing, no
           borderBottom: `${noBorder || shortBorder ? '' : '0.5px solid'}`,
           borderColor: 'secondary.light',
           lineHeight: 0,
-          p: showBrand ? '7px 30px 7px' : `18px 20px ${paddingBottom}px 30px`
+          p: showBrand ? '7px 30px 7px' : `18px ${fullScreen ? '5px' : '20px'} ${paddingBottom}px 30px`
         }}
       >
         <Grid alignItems='center' container justifyContent='space-between'>
