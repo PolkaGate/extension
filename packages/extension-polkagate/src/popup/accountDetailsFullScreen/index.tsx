@@ -335,6 +335,7 @@ export default function AccountDetails(): React.ReactElement {
           api={api}
           classToUnlock={unlockInformation.classToUnlock}
           setDisplayPopup={setDisplayPopup}
+          setRefresh={setRefreshNeeded}
           show={displayPopup === popupNumbers.LOCKED_IN_REFERENDA}
           totalLocked={unlockInformation.totalLocked}
           unlockableAmount={unlockInformation.unlockableAmount}

@@ -28,6 +28,7 @@ import { amountToHuman } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
 import SelectProxyModal2 from '../../governance/components/SelectProxyModal2';
 import WaitScreen from '../../governance/partials/WaitScreen';
+import { GOVERNANCE_PROXY } from '../../governance/utils/consts';
 import Confirmation from './Confirmation';
 
 interface Props {
@@ -38,16 +39,17 @@ interface Props {
   show: boolean;
   unlockableAmount: BN;
   totalLocked: BN;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const STEPS = {
   REVIEW: 1,
   WAIT_SCREEN: 2,
-  CONFIRMATION: 3,
+  CONFIRM: 3,
   PROXY: 100
 };
 
-export default function Review ({ address, api, classToUnlock, setDisplayPopup, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
+export default function Review ({ address, api, classToUnlock, setDisplayPopup, show, totalLocked, unlockableAmount, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const theme = useTheme();
@@ -176,10 +178,11 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
                 isPasswordError={isPasswordError}
                 onSecondaryClick={onClose}
                 primaryBtnText={t<string>('Confirm')}
-                proxyTypeFilter={['Any', 'NonTransfer']}
+                proxyTypeFilter={GOVERNANCE_PROXY}
                 secondaryBtnText={t<string>('Back')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
+                setRefresh={setRefresh}
                 setStep={setStep}
                 setTxInfo={setTxInfo}
                 step={step}
@@ -203,7 +206,7 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
             defaultText={t('Checking your votes and delegating status...')}
           />
         }
-        {txInfo && step === STEPS.CONFIRMATION &&
+        {txInfo && step === STEPS.CONFIRM &&
           <Confirmation
             address={address}
             onPrimaryBtnClick={onClose}
