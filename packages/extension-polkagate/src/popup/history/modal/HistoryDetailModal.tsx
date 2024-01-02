@@ -42,7 +42,7 @@ export default function HistoryDetailModal ({ chainName, decimal, info, setShowD
 
     return (
       <Grid container item maxWidth='85%' width='fit-content'>
-        <Grid item sx={{ maxWidth: '65%', width: 'fit-content' }}>
+        <Grid item sx={{ maxWidth: '60%', width: 'fit-content' }}>
           <Typography fontSize='16px' fontWeight={400} sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {title}: {name}
           </Typography>
