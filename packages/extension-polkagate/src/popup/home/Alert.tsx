@@ -49,11 +49,9 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
     <Popup show={show}>
       <HeaderBrand
         backgroundDefault
-        noBorder
         onClose={onClose}
         showBrand
         showClose
-        showCloseX
         text={'Polkagate'}
       />
       <Grid container direction='column' px='15px'>
@@ -65,8 +63,7 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Claim your pending solo staking rewards in just a few clicks! 💸',
-              'Set AI-generated backgrounds for a visually appealing home page. 🎨',
+              'Set an optional password for added security to access the extension! 🔒',
               'Experience enhanced smoothness and bug fixes. 🛠️'
             ]}
           />
