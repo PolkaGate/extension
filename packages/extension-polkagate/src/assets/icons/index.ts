@@ -41,3 +41,4 @@ export { default as USDT } from './USDT.svg';
 export { default as USDC } from './USDC.svg';
 export { default as lcDOT } from './lcDOT.svg';
 export { default as LDOT } from './LDOT.svg';
+export { default as DAI } from './DAI.svg';
