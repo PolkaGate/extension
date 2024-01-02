@@ -83,7 +83,6 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
   }, [proxies]);
 
   const onAssetHub = useCallback((genesisHash: string | null | undefined) => ASSET_HUBS.includes(genesisHash ?? ''), []);
-  const onAcala = useCallback((genesisHash: string | null | undefined) => ACALA_GENESIS_HASH === genesisHash, []);
   const displayLogoAOC = useCallback((genesisHash: string | null | undefined, symbol: string | undefined) => {
     if (onAssetHub(genesisHash)) {
       if (ASSET_HUBS[0] === genesisHash) {
