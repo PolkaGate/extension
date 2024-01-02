@@ -104,7 +104,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
 
   const [isFlying, setIsFlying] = useState(true);
   const [step, setStep] = useState<number>();
-  const [hashedPassword, setHashedPassword] = useState<string>('');
+  const [hashedPassword, setHashedPassword] = useState<string>();
   const [isPasswordError, setIsPasswordError] = useState(false);
 
   useEffect(() => {
@@ -170,6 +170,10 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
   }, [setExtensionLock]);
 
   const onPassChange = useCallback((pass: string | null): void => {
+    if (!pass) {
+      return setHashedPassword(undefined);
+    }
+
     setIsPasswordError(false);
     const hashedPassword = blake2AsHex(pass, 256); // Hash the string with a 256-bit output
 
@@ -178,9 +182,9 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
 
   const onUnlock = useCallback(async (): Promise<void> => {
     try {
-      if (await isPasswordCorrect(hashedPassword, true)) {
+      if (hashedPassword && await isPasswordCorrect(hashedPassword, true)) {
         await updateStorage('loginInfo', { lastLoginTime: Date.now(), status: 'set' });
-        setHashedPassword('');
+        setHashedPassword(undefined);
         setExtensionLock(false);
       } else {
         setIsPasswordError(true);
@@ -237,6 +241,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
                   <FirstTimeSetPassword
                     hashedPassword={hashedPassword}
                     onPassChange={onPassChange}
+                    setHashedPassword={setHashedPassword}
                     setStep={setStep}
                   />
                 }

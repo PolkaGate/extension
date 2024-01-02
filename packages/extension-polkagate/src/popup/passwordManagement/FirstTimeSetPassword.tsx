@@ -16,18 +16,24 @@ import { STEPS } from './constants';
 interface Props {
   onPassChange: (pass: string | null) => void
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>;
-  hashedPassword: string;
+  hashedPassword: string | undefined;
+  setHashedPassword: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
-function FirstTimeSetPassword ({ hashedPassword, onPassChange, setStep }: Props): React.ReactElement {
+function FirstTimeSetPassword({ hashedPassword, onPassChange, setHashedPassword, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { setExtensionLock } = useExtensionLockContext();
 
   const onSetPassword = useCallback(async () => {
+    if (!hashedPassword) {
+      return;
+    }
+
     await setStorage('loginInfo', { hashedPassword, lastLoginTime: Date.now(), status: 'justSet' });
     setExtensionLock(true);
     setStep(STEPS.SHOW_LOGIN);
-  }, [hashedPassword, setExtensionLock, setStep]);
+    setHashedPassword(undefined);
+  }, [hashedPassword, setExtensionLock, setHashedPassword, setStep]);
 
   const onCancel = useCallback(() => {
     setStep(STEPS.ASK_TO_SET_PASSWORD);
