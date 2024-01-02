@@ -8,7 +8,7 @@ import React from 'react';
 
 import { selectableNetworks } from '@polkadot/networks';
 
-import { assetHub, lcDOT, LDOT, USDC, USDT } from '../assets/icons';
+import { assetHub, DAI, lcDOT, LDOT, USDC, USDT } from '../assets/icons';
 import { convertToCamelCase } from '../popup/governance/utils/util';
 import allChains from '../util/chains';
 import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
@@ -25,14 +25,14 @@ interface Props {
   baseTokenSize?: string;
 }
 
-const SUPPORTED_TOKENS = ['DOT', 'KSM', 'ACA'];
-const SUPPORTED_ETH_TOKENS = ['USDt', 'USDC'];
+const SUPPORTED_TOKENS = ['DOT', 'KSM', 'ACA', 'WND'];
+const SUPPORTED_ETH_TOKENS = ['USDt', 'USDC', 'DAI'];
 const SUPPORTED_ACALA_TOKENS = ['LDOT', 'lcDOT'];
 
 function DisplayLogo({ assetSize, assetToken, baseTokenSize, chainName, genesisHash, size = 25 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const foundChainName = allChains.find((chain) => chain.genesisHash === genesisHash)?.chain;
-  const foundAsset = assetToken && SUPPORTED_TOKENS.includes(assetToken) ? selectableNetworks.find((net) => net.symbols[0] === assetToken)?.displayName : undefined;
+  const foundAsset = assetToken && SUPPORTED_TOKENS.includes(assetToken) ? selectableNetworks.filter((net) => !net.displayName.includes('Asset Hub')).find((net) => net.symbols[0] === assetToken)?.displayName : undefined;
   const _chainName = sanitizeChainName(foundChainName || chainName);
   const logo = getLogo(_chainName);
   const assetLogo = getLogo(foundAsset);
@@ -40,7 +40,9 @@ function DisplayLogo({ assetSize, assetToken, baseTokenSize, chainName, genesisH
   const foundETHAsset = assetToken && SUPPORTED_ETH_TOKENS.includes(assetToken)
     ? assetToken === 'USDt'
       ? USDT as string
-      : USDC as string
+      : assetToken === 'USDC'
+        ? USDC as string
+        : DAI as string
     : undefined;
   const foundAcalaAsset = assetToken && SUPPORTED_ACALA_TOKENS.includes(assetToken)
     ? assetToken === 'LDOT'
