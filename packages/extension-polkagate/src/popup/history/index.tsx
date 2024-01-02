@@ -284,7 +284,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
           }
         </Tabs>
       </Box>
-      <Grid container item sx={{ height: '70%', maxHeight: window.innerHeight - 145, overflowY: 'auto', px: '15px' }} xs={12}>
+      <Grid container item sx={{ gap: '5px', height: '70%', maxHeight: window.innerHeight - 145, overflowY: 'auto', px: '15px' }} xs={12}>
         {Object.keys(grouped).length !== 0
           ? <>
             {Object.entries(grouped)?.map((group) => {
