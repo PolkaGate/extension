@@ -4,11 +4,11 @@
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Grid, useTheme } from '@mui/material';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { selectableNetworks } from '@polkadot/networks';
 
-import { assetHub, DAI, lcDOT, LDOT, USDC, USDT } from '../assets/icons';
+import { assetHub, BTC, DAI, lcDOT, LDOT, USDC, USDT } from '../assets/icons';
 import { convertToCamelCase } from '../popup/governance/utils/util';
 import allChains from '../util/chains';
 import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
@@ -26,7 +26,7 @@ interface Props {
 }
 
 const SUPPORTED_TOKENS = ['DOT', 'KSM', 'ACA', 'WND'];
-const SUPPORTED_ETH_TOKENS = ['USDt', 'USDC', 'DAI'];
+const SUPPORTED_FOREIGN_TOKENS = ['USDt', 'USDC', 'DAI', 'BTC'];
 const SUPPORTED_ACALA_TOKENS = ['LDOT', 'lcDOT'];
 
 function DisplayLogo({ assetSize, assetToken, baseTokenSize, chainName, genesisHash, size = 25 }: Props): React.ReactElement<Props> {
@@ -37,13 +37,34 @@ function DisplayLogo({ assetSize, assetToken, baseTokenSize, chainName, genesisH
   const logo = getLogo(_chainName);
   const assetLogo = getLogo(foundAsset);
 
-  const foundETHAsset = assetToken && SUPPORTED_ETH_TOKENS.includes(assetToken)
-    ? assetToken === 'USDt'
-      ? USDT as string
-      : assetToken === 'USDC'
-        ? USDC as string
-        : DAI as string
-    : undefined;
+  const foundForeignAsset = useMemo(() => {
+    if (!assetToken || !SUPPORTED_FOREIGN_TOKENS.includes(assetToken)) {
+      return undefined;
+    }
+
+    switch (assetToken) {
+      case 'USDt':
+        return USDT as string;
+        break;
+
+      case 'USDC':
+        return USDC as string;
+        break;
+
+      case 'DAI':
+        return DAI as string;
+        break;
+
+      case 'BTC':
+        return BTC as string;
+        break;
+
+      default:
+        return undefined;
+        break;
+    }
+  }, [assetToken]);
+
   const foundAcalaAsset = assetToken && SUPPORTED_ACALA_TOKENS.includes(assetToken)
     ? assetToken === 'LDOT'
       ? LDOT as string
@@ -54,7 +75,7 @@ function DisplayLogo({ assetSize, assetToken, baseTokenSize, chainName, genesisH
     <>
       {logo && assetToken &&
         <AssetIcon
-          asset={assetLogo ?? foundETHAsset ?? foundAcalaAsset ?? assetHub}
+          asset={assetLogo ?? foundForeignAsset ?? foundAcalaAsset ?? assetHub}
           assetSize={assetSize}
           baseLogo={logo}
           baseLogoSize={baseTokenSize}
@@ -62,7 +83,7 @@ function DisplayLogo({ assetSize, assetToken, baseTokenSize, chainName, genesisH
       }
       {!logo && assetToken &&
         <Avatar
-          src={foundAcalaAsset ?? foundETHAsset ?? assetLogo}
+          src={foundAcalaAsset ?? foundForeignAsset ?? assetLogo}
           sx={{ borderRadius: '50%', height: size, pr: 0, width: size }}
           variant='square'
         />
