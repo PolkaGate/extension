@@ -132,7 +132,7 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
               }
               {(reset) &&
                 <Grid item mt='45px' mb='30px'>
-                  {t('or')}
+                  {t('Or')}
                 </Grid>
               }
               {(reset) &&
