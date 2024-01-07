@@ -17,7 +17,7 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-function Login({ isPasswordError, onPassChange, onUnlock, setStep }: Props): React.ReactElement {
+function Login ({ isPasswordError, onPassChange, onUnlock, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

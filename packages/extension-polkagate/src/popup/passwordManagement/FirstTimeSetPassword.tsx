@@ -40,8 +40,8 @@ function FirstTimeSetPassword({ hashedPassword, onPassChange, setHashedPassword,
   }, [setStep]);
 
   return (
-    <>
-      <Grid container justifyContent='center' sx={{ display: 'block', px: '10%' }}>
+    <Grid container justifyContent='center' direction='column' alignContent='center'>
+      <Grid container item justifyContent='center' sx={{ display: 'block', px: '10%' }}>
         <Passwords2
           firstPassStyle={{ marginBlock: '8px' }}
           isFocussed
@@ -51,7 +51,7 @@ function FirstTimeSetPassword({ hashedPassword, onPassChange, setHashedPassword,
           onEnter={onSetPassword}
         />
       </Grid>
-      <Grid container justifyContent='center' sx={{ px: '2%' }}>
+      <Grid container item justifyContent='center' sx={{ px: '2%' }}>
         <TwoButtons
           disabled={!hashedPassword}
           mt='20px'
@@ -62,7 +62,7 @@ function FirstTimeSetPassword({ hashedPassword, onPassChange, setHashedPassword,
           secondaryBtnText={t<string>('Cancel')}
         />
       </Grid>
-    </>
+    </Grid>
   );
 }
 
