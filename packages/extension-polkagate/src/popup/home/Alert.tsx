@@ -63,8 +63,10 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Set an optional password for added security to access the extension! 🔒',
-              'Experience enhanced smoothness and bug fixes. 🛠️'
+              'Enhance security by setting an optional password for accessing the extension! 🔒',
+              'Выберите русский язык в меню/настройках для улучшенного опыта.',
+              'Enjoy enhanced smoothness and benefit from bug fixes. 🛠️'
+
             ]}
           />
         </Grid>
