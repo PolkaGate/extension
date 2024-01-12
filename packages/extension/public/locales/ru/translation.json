@@ -72,7 +72,7 @@
   "Import from recovery phrase": "Импорт из фразы восст.",
   "Add watch-only account": "Добавить счет (просмотр).",
   "Attach external QR-signer": "Подключить внешний QR.",
-  "Allow QR camera access in the extension’s setting in order to use this feature": "Разрешите доступ к камере QR-кодов в настройках расширения, чтобы использовать эту функцию",
+  "Allow QR camera access in the extension’s setting in order to use this feature": "Разрешите доступ к камере QR-кода в настройках чтобы использовать эту функцию.",
   "Attach ledger device": "Подключить Ledger.",
   "New account": "Новый счет",
   "Import account": "Импорт счета",
@@ -1088,8 +1088,8 @@
   "Fullscreen": "Полноэкранный режим",
   "Forgot Password": "Забыли пароль",
   "You can set a new password or even remove your password.": "Вы можете установить новый пароль или даже удалить свой пароль.",
-  "I want to enable passwordless login.": "Я хочу включить вход без пароля.",
   "Would you like to set a login password?": "Хотели бы вы установить пароль для входа?",
   "Later": "Позже",
-  "Password Enabled": "Пароль включен" 
+  "Password Enabled": "Пароль включен",
+  "{{amount}} can be unlocked": "{{amount}} можно разблокировать"
 }

@@ -213,7 +213,7 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
             <ShowValue
               height={15}
               value={api && unlockableAmount && !unlockableAmount.isZero()
-                ? `${api.createType('Balance', unlockableAmount).toHuman()} can be unlocked`
+                ? t('{{amount}} can be unlocked', { replace: { amount: api.createType('Balance', unlockableAmount).toHuman() } })
                 : delegatedBalance && !delegatedBalance.isZero()
                   ? t('Locked as delegated')
                   : timeToUnlock === null ? '' : timeToUnlock}

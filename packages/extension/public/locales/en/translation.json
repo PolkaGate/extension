@@ -1093,5 +1093,6 @@
   "You can set a new password or even remove your password.": "",
   "Would you like to set a login password?": "",
   "Later": "",
-  "Password Enabled": ""
+  "Password Enabled": "",
+  "{{amount}} can be unlocked": ""
 }

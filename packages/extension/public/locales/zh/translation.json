@@ -1098,8 +1098,8 @@
   "Fullscreen": "全屏",
   "Forgot Password": "忘记密码",
   "You can set a new password or even remove your password.": "您可以设置新密码，甚至删除密码。",
-  "I want to enable passwordless login.": "我想启用免密码登录。",
   "Would you like to set a login password?": "您是否想设置登录密码？",
   "Later": "以后",
-  "Password Enabled": "密码已启用"
+  "Password Enabled": "密码已启用",
+  "{{amount}} can be unlocked": "{{amount}} 可以解锁"
 }
