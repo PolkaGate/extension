@@ -105,7 +105,7 @@ export default function ManageIdentity(): React.ReactElement {
 
   const getConstantValue = (api: ApiPromise, constantName: string) => {
     try {
-      return api ? api.consts.identity[constantName] as unknown as BN : BN_ZERO;
+      return api ? api.consts.identity?.[constantName] as unknown as BN || BN_ZERO : BN_ZERO;
     } catch (error) {
       setStep(STEPS.UNSUPPORTED);
 
