@@ -41,6 +41,16 @@ export default function useValidators(address: string, validators?: AllValidator
   const chainName = useChainName(address);
   const api = useApi(address);
 
+  const saveValidatorsInfoInStorage = useCallback((inf: AllValidators) => {
+    chrome.storage.local.get('validatorsInfo', (res) => {
+      const k = `${chainName as string}`;
+      const last = res?.validatorsInfo ?? {};
+
+      last[k] = inf;
+      chrome.storage.local.set({ validatorsInfo: last }).catch(console.error);
+    });
+  }, [chainName]);
+
   const getValidatorsInfo = useCallback((chain: Chain, endpoint: string, savedValidators = []) => {
     const getValidatorsInfoWorker: Worker = new Worker(new URL('../util/workers/getValidatorsInfo.js', import.meta.url));
 
@@ -56,22 +66,22 @@ export default function useValidators(address: string, validators?: AllValidator
 
       if (info && JSON.stringify(savedValidators) !== JSON.stringify(info)) {
         setNewValidatorsInfo(info);
-
-        chrome.storage.local.get('validatorsInfo', (res) => {
-          const k = `${chainName as string}`;
-          const last = res?.validatorsInfo ?? {};
-
-          last[k] = info;
-          chrome.storage.local.set({ validatorsInfo: last }).catch(console.error);
-        });
+        saveValidatorsInfoInStorage(info);
       }
 
       getValidatorsInfoWorker.terminate();
     };
-  }, [chainName]);
+  }, [saveValidatorsInfoInStorage]);
 
   useEffect(() => {
-    if (!chainName) {
+    if (!chainName || !api) {
+      return;
+    }
+
+    /** We don't save paged eraStakers in storage,
+     *  saving will be stopped after Polkadot runtime upgrade
+     * */
+    if (api.query.staking.erasStakersPaged) {
       return;
     }
 
@@ -81,10 +91,9 @@ export default function useValidators(address: string, validators?: AllValidator
 
       if (res?.validatorsInfo?.[chainName]) {
         setValidatorsInfo(res.validatorsInfo[chainName]);
-        // setSavedEraIndex(res.validatorsInfo[chainName]?.eraIndex);
       }
     });
-  }, [chainName]);
+  }, [api, chainName]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -95,6 +104,10 @@ export default function useValidators(address: string, validators?: AllValidator
     }
 
     const getValidatorsPaged = async () => {
+      if (!api) {
+        return; // never happens since we check api before, but to suppress linting
+      }
+
       const [prefs, overview] = await Promise.all([
         api.query.staking.validators.entries(),
         api.query.staking.erasStakersOverview.entries(currentEraIndex)
@@ -108,9 +121,9 @@ export default function useValidators(address: string, validators?: AllValidator
       const currentEraValidatorsOverview: Record<string, ExposureOverview> = Object.fromEntries(
         overview.map(([keys, value]) => {
           const validatorAddress = keys.toHuman()[1] as string;
-          const uv = value.unwrap();
+          const uv = value.unwrap() as ExposureOverview;
 
-          return [validatorAddress, { nominatorCount: uv.nominatorCount, own: uv.own, pageCount: uv.pageCount, total: uv.total } as ExposureOverview];
+          return [validatorAddress, { nominatorCount: uv.nominatorCount, own: uv.own, pageCount: uv.pageCount, total: uv.total }];
         }));
 
       const validatorKeys = Object.keys(currentEraValidatorsOverview);
@@ -159,12 +172,13 @@ export default function useValidators(address: string, validators?: AllValidator
             }
           });
       });
-
-      setNewValidatorsInfo({
+      const inf = {
         current,
-        waiting,
-        eraIndex: currentEraIndex
-      });
+        eraIndex: currentEraIndex as number,
+        waiting
+      };
+
+      setNewValidatorsInfo(inf);
     };
 
     if (api && currentEraIndex && api.query.staking.erasStakersOverview) {
