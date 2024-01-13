@@ -1,4 +1,4 @@
-// Copyright 2017-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2017-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -132,7 +132,7 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
               }
               {(reset) &&
                 <Grid item mt='45px' mb='30px'>
-                  {t('or')}
+                  {t('Or')}
                 </Grid>
               }
               {(reset) &&

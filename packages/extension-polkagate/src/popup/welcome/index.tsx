@@ -5,7 +5,7 @@
 
 import '@vaadin/icons';
 
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
 import { ActionContext, PButton } from '../../components';
@@ -75,9 +75,9 @@ function Welcome(): React.ReactElement {
         startIcon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.main}` }} />}
         text={t<string>('Create a new account')}
       />
-      <Typography sx={{ fontSize: '18px', fontWeight: 300, py: '10px', textAlign: 'center' }}>
-        {t<string>('Or')}
-      </Typography>
+      <Divider sx={{ fontSize: '18px', fontWeight: 300, my: '10px', px: '20px' }}>
+        {t('Or')}
+      </Divider>
       <PButton
         _mt='0'
         _onClick={_goToRestoreFromJson}

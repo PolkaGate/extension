@@ -229,14 +229,15 @@ export default function Index(): React.ReactElement {
     </Grid>
   );
 
-  const Row = ({ label, link1Text, link2Disabled, link2Text, onLink1, onLink2, showDivider = true, value }: { label: string, value: BN | undefined, link1Text?: string, onLink1?: () => void, link2Disabled?: boolean, link2Text?: string, onLink2?: () => void, showDivider?: boolean }) => {
+  const Row = ({ isUnstaking, label, link1Text, link2Disabled, link2Text, onLink1, onLink2, showDivider = true, value }
+  : { label: string, value: BN | undefined, link1Text?: string, onLink1?: () => void, link2Disabled?: boolean, link2Text?: string, onLink2?: () => void, showDivider?: boolean, isUnstaking?: boolean }) => {
     const _link1Disable = (!value || value?.isZero() || formatted !== stakingAccount?.controllerId) && link1Text !== t('Pending');
     const _link2Disable = _link1Disable || link2Disabled;
 
     return (
       <>
         <Grid alignItems='center' container justifyContent='space-between' pt='10px'>
-          <Grid item sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }} xs={5}>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', maxWidth: 'fit-content' }}>
             {label}
           </Grid>
           <Grid container item justifyContent='flex-end' xs>
@@ -262,7 +263,7 @@ export default function Index(): React.ReactElement {
                 }
               </Grid>
             </Grid>
-            {label === 'Unstaking' &&
+            {isUnstaking &&
               <Grid alignItems='center' container item onClick={toBeReleased?.length ? _toggleShowUnlockings : noop} sx={{ ml: '25px' }} xs={1}>
                 <ArrowForwardIosIcon
                   sx={{
@@ -279,7 +280,7 @@ export default function Index(): React.ReactElement {
             }
           </Grid>
         </Grid>
-        {label === 'Unstaking' && showUnlockings && !!toBeReleased?.length &&
+        {isUnstaking && showUnlockings && !!toBeReleased?.length &&
           <ToBeReleased />
         }
         {showDivider &&
@@ -340,6 +341,7 @@ export default function Index(): React.ReactElement {
             value={redeemable}
           />
           <Row
+            isUnstaking
             label={t('Unstaking')}
             link1Text={t('Restake')}
             onLink1={unlockingAmount && !unlockingAmount?.isZero() ? onRestake : noop}

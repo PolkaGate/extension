@@ -16,26 +16,32 @@ import { STEPS } from './constants';
 interface Props {
   onPassChange: (pass: string | null) => void
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>;
-  hashedPassword: string;
+  hashedPassword: string | undefined;
+  setHashedPassword: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
-function FirstTimeSetPassword ({ hashedPassword, onPassChange, setStep }: Props): React.ReactElement {
+function FirstTimeSetPassword({ hashedPassword, onPassChange, setHashedPassword, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { setExtensionLock } = useExtensionLockContext();
 
   const onSetPassword = useCallback(async () => {
+    if (!hashedPassword) {
+      return;
+    }
+
     await setStorage('loginInfo', { hashedPassword, lastLoginTime: Date.now(), status: 'justSet' });
     setExtensionLock(true);
     setStep(STEPS.SHOW_LOGIN);
-  }, [hashedPassword, setExtensionLock, setStep]);
+    setHashedPassword(undefined);
+  }, [hashedPassword, setExtensionLock, setHashedPassword, setStep]);
 
   const onCancel = useCallback(() => {
     setStep(STEPS.ASK_TO_SET_PASSWORD);
   }, [setStep]);
 
   return (
-    <>
-      <Grid container justifyContent='center' sx={{ display: 'block', px: '10%' }}>
+    <Grid container justifyContent='center' direction='column' alignContent='center'>
+      <Grid container item justifyContent='center' sx={{ display: 'block', px: '10%' }}>
         <Passwords2
           firstPassStyle={{ marginBlock: '8px' }}
           isFocussed
@@ -45,7 +51,7 @@ function FirstTimeSetPassword ({ hashedPassword, onPassChange, setStep }: Props)
           onEnter={onSetPassword}
         />
       </Grid>
-      <Grid container justifyContent='center' sx={{ px: '2%' }}>
+      <Grid container item justifyContent='center' sx={{ px: '2%' }}>
         <TwoButtons
           disabled={!hashedPassword}
           mt='20px'
@@ -56,7 +62,7 @@ function FirstTimeSetPassword ({ hashedPassword, onPassChange, setStep }: Props)
           secondaryBtnText={t<string>('Cancel')}
         />
       </Grid>
-    </>
+    </Grid>
   );
 }
 

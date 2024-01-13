@@ -36,7 +36,7 @@ export const darkTheme: ThemeOptions = {
     nay: { main: '#FF5722' },
     label: { main: '#63364D' },
     background: { default: '#171717', paper: '#000000' },
-    text: { primary: '#FFFFFF', secondary: '#000000', disabled: '#4B4B4B' },
+    text: { primary: '#D5D5D5', secondary: '#000000', disabled: '#4B4B4B' },
     action: { disabled: '#fff', disabledBackground: '#4B4B4B', focus: '#BA82A5' },
     success: { main: '#1F7720' }, // '#46890C'
     warning: { main: '#FF002B' }

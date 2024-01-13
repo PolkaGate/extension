@@ -12,7 +12,7 @@ import { faHand, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
-import React, { useCallback,useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -216,11 +216,12 @@ export default function Index(): React.ReactElement {
     </Grid>
   );
 
-  const Row = ({ label, link1Text, link2Text, onLink1, onLink2, showDivider = true, value }: { label: string, value: BN | undefined, link1Text?: Text, onLink1?: () => void, link2Text?: Text, onLink2?: () => void, showDivider?: boolean }) => {
+  const Row = ({ isUnstaking, label, link1Text, link2Text, onLink1, onLink2, showDivider = true, value }
+  : { label: string, value: BN | undefined, link1Text?: Text, onLink1?: () => void, link2Text?: Text, onLink2?: () => void, showDivider?: boolean, isUnstaking?: boolean }) => {
     return (
       <>
         <Grid alignItems='center' container justifyContent='space-between' pt='10px'>
-          <Grid item sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }} xs={5}>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', maxWidth: 'fit-content' }}>
             {label}
           </Grid>
           <Grid container item justifyContent='flex-end' xs>
@@ -249,7 +250,7 @@ export default function Index(): React.ReactElement {
                 }
               </Grid>
             </Grid>
-            {label === 'Unstaking' &&
+            {isUnstaking &&
               <Grid alignItems='center' container item onClick={_toggleShowUnlockings} sx={{ ml: '25px' }} xs={1}>
                 <ArrowForwardIosIcon
                   sx={{
@@ -266,7 +267,7 @@ export default function Index(): React.ReactElement {
             }
           </Grid>
         </Grid>
-        {label === 'Unstaking' && showUnlockings && !!toBeReleased?.length &&
+        {isUnstaking && showUnlockings && !!toBeReleased?.length &&
           <ToBeReleased />
         }
         {showDivider &&
@@ -325,6 +326,7 @@ export default function Index(): React.ReactElement {
           />
           <Row
             label={t('Unstaking')}
+            isUnstaking
             value={unlockingAmount}
           />
           <Row
