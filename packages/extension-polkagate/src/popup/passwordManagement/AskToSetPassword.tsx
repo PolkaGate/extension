@@ -1,4 +1,4 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -16,7 +16,7 @@ interface Props {
   setStep: (value: React.SetStateAction<number | undefined>) => void;
 }
 
-function AskToSetPassword ({ setStep }: Props): React.ReactElement {
+function AskToSetPassword({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { setExtensionLock } = useExtensionLockContext();
 
@@ -38,7 +38,7 @@ function AskToSetPassword ({ setStep }: Props): React.ReactElement {
   }, [setStep]);
 
   return (
-    <Grid container justifyContent='center'>
+    <Grid alignItems='center' container direction='column' justifyContent='center'>
       <Typography fontSize={16} pb='25px'>
         {t('Would you like to set a login password?')}
       </Typography>

@@ -1,4 +1,4 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -49,11 +49,9 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
     <Popup show={show}>
       <HeaderBrand
         backgroundDefault
-        noBorder
         onClose={onClose}
         showBrand
         showClose
-        showCloseX
         text={'Polkagate'}
       />
       <Grid container direction='column' px='15px'>
@@ -65,9 +63,10 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Claim your pending solo staking rewards in just a few clicks! 💸',
-              'Set AI-generated backgrounds for a visually appealing home page. 🎨',
-              'Experience enhanced smoothness and bug fixes. 🛠️'
+              'Enhance security by setting an optional password for accessing the extension! 🔒',
+              'Выберите русский язык в меню/настройках для улучшенного опыта.',
+              'Enjoy enhanced smoothness and benefit from bug fixes. 🛠️'
+
             ]}
           />
         </Grid>

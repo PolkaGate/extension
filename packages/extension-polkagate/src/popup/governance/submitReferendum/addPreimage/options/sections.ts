@@ -1,4 +1,4 @@
-// Copyright 2022-2023 @polkadot/polkagate authors & contributors
+// Copyright 2022-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';

@@ -1,4 +1,4 @@
-// Copyright 2017-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2017-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 export { default as useAccount } from './useAccount';

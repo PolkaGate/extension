@@ -1,4 +1,4 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -34,7 +34,7 @@ function Privacy({ setShow, show = false }: Props): React.ReactElement {
       <Typography fontSize='14px' lineHeight={1.4} px='15px'>
         {t<string>('Polkagate is a browser extension that lets you use the Polkadot network and decentralized apps. We respect your privacy and do not collect or store any of your personal data. This is how we protect your privacy:')}
       </Typography>
-      <Box sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '14px', m: '20px 15px 17px' }}>
+      <Box sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '14px', m: '20px 15px 17px', maxHeight: '300px', overflowY: 'scroll' }}>
         <List sx={{ color: 'text.primary' }}>
           <ListItem sx={{ py: '2px' }}>
             <ListItemIcon sx={{ color: 'primary.main', minWidth: '26px', width: '26px' }}>
