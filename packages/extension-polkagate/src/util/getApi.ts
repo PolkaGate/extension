@@ -7,7 +7,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 
 import LCConnector from './api/lightClient-connect';
 
-async function getApi(endpoint: string): Promise<ApiPromise | undefined> {
+async function getApi (endpoint: string): Promise<ApiPromise | undefined> {
   if (endpoint.startsWith('wss')) {
     const wsProvider = new WsProvider(endpoint);
 
