@@ -24,7 +24,7 @@ interface Props {
   staked: BN | undefined;
   showValidatorInfo: boolean;
   validatorInfo?: DeriveStakingQuery;
-  validatorsIdentities?: DeriveAccountInfo[];
+  validatorsIdentities?: DeriveAccountInfo[] | null;
   setShowValidatorInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 

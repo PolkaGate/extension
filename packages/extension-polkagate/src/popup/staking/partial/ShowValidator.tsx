@@ -21,7 +21,7 @@ interface Props {
   api?: ApiPromise;
   accountInfo: DeriveAccountInfo | undefined;
   check: boolean;
-  isActive: ValidatorInfo | undefined;
+  isActive: boolean | undefined;
   isOversubscribed: {
     notSafe: boolean;
     safe: boolean;
@@ -102,7 +102,7 @@ function ShowValidator({ accountInfo, api, chain, check, decimal, handleCheck, i
             {v.exposure.others.length || t('N/A')}
           </Grid>
         </Grid>
-        <Grid alignItems='center' container item justifyContent='flex-end' sx={{ lineHeight: '23px', pl: '4px' }} width='fit-content'>
+        <Grid alignItems='center' container item justifyContent='flex-end' sx={{ lineHeight: '23px', pl: '2px' }} width='fit-content'>
           {isActive &&
             <Infotip text={t('Active')}>
               <DirectionsRunIcon sx={{ color: '#1F7720', fontSize: '15px' }} />
