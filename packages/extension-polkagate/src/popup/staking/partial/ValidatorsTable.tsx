@@ -59,7 +59,7 @@ export default function ValidatorsTable ({ activeValidators, allValidatorsIdenti
 
     const threshold = stakingConsts.maxNominatorRewardedPerValidator;
     const sortedNominators = v.exposure.others.sort((a, b) => b.value - a.value);
-    const maybeMyIndex = staked ? sortedNominators.findIndex((n) => new BN(isHex(n.value) ? hexToBn(n.value) : n.value).lt(staked)) : -1;
+    const maybeMyIndex = staked ? sortedNominators.findIndex((n) => new BN(isHex(n.value) ? hexToBn(n.value) : String(n.value)).lt(staked)) : -1;
 
     return {
       notSafe: v.exposure.others.length > threshold && (maybeMyIndex > threshold || maybeMyIndex === -1),

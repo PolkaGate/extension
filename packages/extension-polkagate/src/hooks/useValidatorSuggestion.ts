@@ -11,10 +11,10 @@ import { useChainName, useStakingConsts, useValidators, useValidatorsIdentities 
 
 /**
  * @description
- * This hooks return a list 
+ * This hooks return a list of suggested validators to choose
  */
 
-export default function useValidatorSuggestion(address: string): ValidatorInfo[] | null | undefined {
+export default function useValidatorSuggestion (address: string): ValidatorInfo[] | null | undefined {
   const allValidatorsInfo = useValidators(address);
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
@@ -23,7 +23,7 @@ export default function useValidatorSuggestion(address: string): ValidatorInfo[]
 
   const [selected, setSelected] = useState<ValidatorInfo[] | undefined>();
 
-  const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => !v.validatorPrefs.blocked), [allValidatorsInfo]);
+  const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => v.validatorPrefs.blocked === false || v.validatorPrefs.blocked.isFalse), [allValidatorsInfo]);
 
   const onLimitValidatorsPerOperator = useCallback((validators: ValidatorInfoWithIdentity[] | undefined, limit: number): ValidatorInfoWithIdentity[] => {
     if (!validators?.length) {
