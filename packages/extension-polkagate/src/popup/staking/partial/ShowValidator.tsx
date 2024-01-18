@@ -10,16 +10,18 @@ import React from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
+import { BN_ZERO } from '@polkadot/util';
 
 import { Checkbox2, Identity, Infotip, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { StakingConsts, ValidatorInfo } from '../../../util/types';
+import { isHexToBn } from '../../../util/utils';
 
 interface Props {
   api?: ApiPromise;
   accountInfo: DeriveAccountInfo | undefined;
   check: boolean;
-  isActive: ValidatorInfo | undefined;
+  isActive: boolean | undefined;
   isOversubscribed: {
     notSafe: boolean;
     safe: boolean;
@@ -35,7 +37,7 @@ interface Props {
 
 function ShowValidator({ accountInfo, api, chain, check, decimal, handleCheck, isActive, isOversubscribed, showCheckbox, stakingConsts, token, v }: Props): React.ReactElement {
   const { t } = useTranslation();
-  
+
   const overSubscriptionAlert1 = t('This validator is oversubscribed but you are within the top {{max}}.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
   const overSubscriptionAlert2 = t('This validator is oversubscribed and you are not within the top {{max}} and won\'t get rewards.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
 
@@ -72,7 +74,7 @@ function ShowValidator({ accountInfo, api, chain, check, decimal, handleCheck, i
         <Grid alignItems='center' container item maxWidth='50%' sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '23px' }} width='fit-content'>
           {t<string>('Staked:')}
           <Grid fontSize='12px' fontWeight={400} item pl='3px'>
-            {v.exposure.total
+            {isHexToBn(v.exposure.total.toString()).gt(BN_ZERO)
               ? <ShowBalance
                 api={api}
                 balance={v.exposure.total}
@@ -100,7 +102,7 @@ function ShowValidator({ accountInfo, api, chain, check, decimal, handleCheck, i
             {v.exposure.others.length || t('N/A')}
           </Grid>
         </Grid>
-        <Grid alignItems='center' container item justifyContent='flex-end' sx={{ lineHeight: '23px', pl: '4px' }} width='fit-content'>
+        <Grid alignItems='center' container item justifyContent='flex-end' sx={{ lineHeight: '23px', pl: '2px' }} width='fit-content'>
           {isActive &&
             <Infotip text={t('Active')}>
               <DirectionsRunIcon sx={{ color: '#1F7720', fontSize: '15px' }} />

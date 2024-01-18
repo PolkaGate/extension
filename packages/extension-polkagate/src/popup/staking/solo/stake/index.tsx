@@ -197,7 +197,6 @@ export default function Index (): React.ReactElement {
   }, [validatorSelectionMethod]);
 
   const onSelectionMethodChange = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
-    console.log('value:', event.target.value);
     setValidatorSelectionMethod(event.target.value);
   }, []);
 

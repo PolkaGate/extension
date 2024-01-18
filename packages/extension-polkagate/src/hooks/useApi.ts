@@ -10,7 +10,7 @@ import { APIContext } from '../components';
 import LCConnector from '../util/api/lightClient-connect';
 import { useChain, useEndpoint } from '.';
 
-export default function useApi(address: AccountId | string | undefined, stateApi?: ApiPromise): ApiPromise | undefined {
+export default function useApi (address: AccountId | string | undefined, stateApi?: ApiPromise): ApiPromise | undefined {
   const endpoint = useEndpoint(address);
   const apisContext = useContext(APIContext);
   const chain = useChain(address);

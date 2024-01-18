@@ -8,7 +8,7 @@ import { sanitizeChainName } from './utils';
 
 const endpoints = createWsEndpoints(() => '');
 
-export default function getLogo(info: string | undefined | Chain): string {
+export default function getLogo (info: string | undefined | Chain): string {
   let mayBeExternalLogo;
   const iconName = sanitizeChainName(((info as Chain)?.name) || (info as string))?.toLowerCase();
 

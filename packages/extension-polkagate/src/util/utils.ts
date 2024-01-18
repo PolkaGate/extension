@@ -56,7 +56,9 @@ export function fixFloatingPoint(_number: number | string, decimalDigit = FLOATI
 }
 
 export function balanceToHuman(_balance: AccountsBalanceType | null, _type: string, decimalDigits?: number, commify?: boolean): string {
-  if (!_balance || !_balance.balanceInfo) { return ''; }
+  if (!_balance || !_balance.balanceInfo) {
+    return '';
+  }
 
   const balance = _balance.balanceInfo;
 
@@ -216,9 +218,13 @@ export const getWebsiteFavicon = (url: string | undefined): string => {
 export function remainingTime(blocks: number, noMinutes?: boolean): string {
   let mins = Math.floor(blocks * BLOCK_RATE / 60);
 
-  if (!mins) { return ''; }
+  if (!mins) {
+    return '';
+  }
 
-  if (mins <= 0) { return 'finished'; }
+  if (mins <= 0) {
+    return 'finished';
+  }
 
   let hrs = Math.floor(mins / 60);
   const days = Math.floor(hrs / 24);
@@ -227,23 +233,35 @@ export function remainingTime(blocks: number, noMinutes?: boolean): string {
 
   mins -= hrs * 60;
 
-  if (!(noMinutes && days) && mins) { time += mins + ' mins '; }
+  if (!(noMinutes && days) && mins) {
+    time += mins + ' mins ';
+  }
 
   hrs -= days * 24;
 
-  if (hrs === 1) { time = hrs + ' hour ' + time; }
+  if (hrs === 1) {
+    time = hrs + ' hour ' + time;
+  }
 
-  if (hrs && hrs !== 1) { time = hrs + ' hours ' + time; }
+  if (hrs && hrs !== 1) {
+    time = hrs + ' hours ' + time;
+  }
 
-  if (days === 1) { time = days + ' day ' + time; }
+  if (days === 1) {
+    time = days + ' day ' + time;
+  }
 
-  if (days && days !== 1) { time = days + ' days ' + time; }
+  if (days && days !== 1) {
+    time = days + ' days ' + time;
+  }
 
   return time;
 }
 
 export function remainingTimeCountDown(seconds: number | undefined): string {
-  if (!seconds || seconds <= 0) { return 'finished'; }
+  if (!seconds || seconds <= 0) {
+    return 'finished';
+  }
 
   const days = Math.floor(seconds / (60 * 60 * 24));
   const [hour, min, sec] = new Date(seconds * 1000).toISOString().substring(11, 19).split(':');

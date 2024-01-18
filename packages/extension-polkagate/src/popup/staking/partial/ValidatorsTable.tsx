@@ -40,7 +40,7 @@ interface Props {
   nominatedValidatorsIds: AccountId[] | null | undefined;
 }
 
-export default function ValidatorsTable ({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
   const theme = useTheme();
   const ref = useRef();
 
@@ -59,7 +59,7 @@ export default function ValidatorsTable ({ activeValidators, allValidatorsIdenti
 
     const threshold = stakingConsts.maxNominatorRewardedPerValidator;
     const sortedNominators = v.exposure.others.sort((a, b) => b.value - a.value);
-    const maybeMyIndex = staked ? sortedNominators.findIndex((n) => new BN(isHex(n.value) ? hexToBn(n.value) : n.value).lt(staked)) : -1;
+    const maybeMyIndex = staked ? sortedNominators.findIndex((n) => new BN(isHex(n.value) ? hexToBn(n.value) : String(n.value)).lt(staked)) : -1;
 
     return {
       notSafe: v.exposure.others.length > threshold && (maybeMyIndex > threshold || maybeMyIndex === -1),
@@ -98,7 +98,7 @@ export default function ValidatorsTable ({ activeValidators, allValidatorsIdenti
           >
             {({ index, key, style }) => {
               const v = validatorsToList[index];
-              const isActive = activeValidators?.find((av) => v.accountId === av?.accountId);
+              const isActive = !!activeValidators?.find((av) => v.accountId === av?.accountId);
               const isOversubscribed = overSubscribed(v);
               const accountInfo = allValidatorsIdentities?.find((a) => a.accountId === v?.accountId);
               const check = isSelected && isSelected(v);
@@ -129,8 +129,7 @@ export default function ValidatorsTable ({ activeValidators, allValidatorsIdenti
           </List>
         }
       </Grid>
-      {
-        showValidatorInfo && validatorToShowInfo && api && chain &&
+      {showValidatorInfo && validatorToShowInfo && api && chain &&
         <Grid ml='-15px'>
           <ValidatorInfoPage
             api={api}
@@ -138,7 +137,7 @@ export default function ValidatorsTable ({ activeValidators, allValidatorsIdenti
             setShowValidatorInfo={setShowValidatorInfo}
             showValidatorInfo={showValidatorInfo}
             staked={staked}
-            stakerAddress={formatted}
+            stakerAddress={String(formatted)}
             validatorInfo={validatorToShowInfo}
             validatorsIdentities={allValidatorsIdentities}
           />
