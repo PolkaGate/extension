@@ -49,7 +49,8 @@ export type SubIdsParams = (string | Data | undefined)[][] | undefined;
 export type IdJudgement = 'Reasonable' | 'KnownGood' | 'FeePaid' | null | undefined;
 
 function getRawValue(value: Data) {
-  const text = u8aToString(value.asRaw.toU8a(true));
+  // const text = u8aToString(value.asRaw.toU8a(true));
+  const text = value.Raw as unknown as string;
 
   return text === ''
     ? undefined
@@ -181,7 +182,19 @@ export default function ManageIdentity(): React.ReactElement {
       api?.query.identity.identityOf(address)
         .then((id) => {
           if (!id.isEmpty) {
-            const { info, judgements } = id.unwrap() as PalletIdentityRegistration;
+            const IdToHuman = id.toHuman() as string[];
+
+            if (!IdToHuman) {
+              setIdentity(null);
+              setRefresh(false);
+              setFetching(false);
+
+              return;
+            }
+
+            const newType = !!IdToHuman?.[0];
+
+            const { info, judgements } = newType ? IdToHuman[0] as unknown as PalletIdentityRegistration : IdToHuman as unknown as PalletIdentityRegistration;
 
             const idToSet: DeriveAccountRegistration | null = {
               display: getRawValue(info.display),
@@ -194,16 +207,15 @@ export default function ManageIdentity(): React.ReactElement {
               judgements
             };
 
-            if (judgements.isEmpty) {
+            if (judgements.length === 0) {
               setIdJudgement(null);
             } else {
-              const judgementInHuman = judgements.toHuman();
-              const judgementType = judgementInHuman[0][1] as string;
+              const judgementType = judgements[0][1] as unknown as string;
 
               if (['Reasonable', 'KnownGood'].includes(judgementType)) {
                 setIdJudgement(judgementType as 'Reasonable' | 'KnownGood');
               } else {
-                const feePaidReg = judgementInHuman[0][0] as string;
+                const feePaidReg = judgements[0][0] as unknown as string;
 
                 setIdJudgement('FeePaid');
                 setSelectedRegistrar(feePaidReg);
