@@ -192,9 +192,9 @@ export default function ManageIdentity(): React.ReactElement {
               return;
             }
 
-            const newType = !!IdToHuman?.[0];
+            const _IdToHuman = IdToHuman?.[0] || IdToHuman;
 
-            const { info, judgements } = newType ? IdToHuman[0] as unknown as PalletIdentityRegistration : IdToHuman as unknown as PalletIdentityRegistration;
+            const { info, judgements } = _IdToHuman as unknown as PalletIdentityRegistration;
 
             const idToSet: DeriveAccountRegistration | null = {
               display: getRawValue(info.display),
