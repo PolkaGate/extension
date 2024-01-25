@@ -20,9 +20,10 @@ interface Props {
   page?: 'governance' | 'manageIdentity' | 'send' | 'socialRecovery';
   noChainSwitch?: boolean;
   noAccountDropDown?: boolean;
+  _otherComponents?: JSX.Element;
 }
 
-export function FullScreenHeader({ noAccountDropDown = false, noChainSwitch = false, page }: Props): React.ReactElement {
+export function FullScreenHeader({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page }: Props): React.ReactElement {
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
 
   const api = useApi(address);
@@ -86,6 +87,9 @@ export function FullScreenHeader({ noAccountDropDown = false, noChainSwitch = fa
                   />
                 </Grid>
               </>
+            }
+            {!!_otherComponents &&
+              _otherComponents
             }
           </Grid>
         </Grid>
