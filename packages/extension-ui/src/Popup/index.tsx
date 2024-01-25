@@ -30,7 +30,7 @@ import ForgetAccount from '../../../extension-polkagate/src/popup/forgetAccount'
 import Governance from '../../../extension-polkagate/src/popup/governance';
 import ReferendumPost from '../../../extension-polkagate/src/popup/governance/post';
 import History from '../../../extension-polkagate/src/popup/history';
-import Accounts from '../../../extension-polkagate/src/popup/home';
+import Accounts from '../../../extension-polkagate/src/popup/home/ManageHome';
 import AddAddressOnly from '../../../extension-polkagate/src/popup/import/addAddressOnly';
 import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
 import ImportLedger from '../../../extension-polkagate/src/popup/import/importLedger';
