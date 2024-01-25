@@ -11,11 +11,13 @@ import { keyframes, Theme } from '@mui/material/styles';
 import React, { useCallback, useContext, useState } from 'react';
 
 import { riot } from '../assets/icons';
-import { ActionContext, MenuItem, TwoButtons, Warning } from '../components';
+import { AccountContext, ActionContext, MenuItem, TwoButtons, Warning } from '../components';
 import { useManifest, useTranslation } from '../hooks';
 import ImportAccSubMenu from './ImportAccSubMenu';
 import NewAccountSubMenu from './NewAccountSubMenu';
 import SettingSubMenu from './SettingSubMenu';
+import { tieAccount } from '../messaging';
+import { TEST_NETS } from '../util/constants';
 
 interface Props {
   theme: Theme;
@@ -62,6 +64,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
   const [showWarning, setShowWarning] = useState<boolean>();
   const [closeMenu, setCloseMenu] = useState<boolean>(false);
+  const { accounts } = useContext(AccountContext);
 
   const toggleImportSubMenu = useCallback(() => {
     collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT
@@ -106,9 +109,15 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
 
     if (isTestnetEnabled) {
       window.localStorage.setItem('testnet_enabled', 'false');
+      accounts?.forEach(({ address, genesisHash }) => {
+        if (genesisHash && TEST_NETS.includes(genesisHash)) {
+          console.log('here');
+          tieAccount(address, null).catch(console.error);
+        }
+      });
       setIsTestnetEnabled(false);
     }
-  }, [isTestnetEnabled]);
+  }, [accounts, isTestnetEnabled]);
 
   const slideLeft = keyframes`
   0% {

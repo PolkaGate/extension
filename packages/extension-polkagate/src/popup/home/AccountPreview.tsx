@@ -48,8 +48,10 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isHi
   const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
 
   useEffect((): void => {
+    const isTestnetDisabled = window.localStorage.getItem('testnet_enabled') !== 'true';
+
     // eslint-disable-next-line no-void
-    api && api.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => r.isSome && setRecoverable(r.unwrap()));
+    api && !isTestnetDisabled && api.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => r.isSome && setRecoverable(r.unwrap()));
   }, [api, formatted]);
 
   useEffect((): void => {

@@ -13,12 +13,12 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import settings from '@polkadot/ui-settings';
 
-import { AccountContext, ActionContext, Checkbox2, ColorContext, Infotip2, MenuItem, Select, Switch } from '../components';
+import { ActionContext, Checkbox2, ColorContext, Infotip2, MenuItem, Select, Switch } from '../components';
 import { updateStorage } from '../components/Loading';
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import { useIsLoginEnabled, useIsPopup, useTranslation } from '../hooks';
-import { lockExtension, setNotification, tieAccount, windowOpen } from '../messaging';
-import { NO_PASS_PERIOD, TEST_NETS } from '../util/constants';
+import { lockExtension, setNotification, windowOpen } from '../messaging';
+import { NO_PASS_PERIOD } from '../util/constants';
 import getLanguageOptions from '../util/getLanguageOptions';
 import { DropdownOption } from '../util/types';
 
@@ -58,7 +58,6 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
   const isLoginEnabled = useIsLoginEnabled();
   const onAction = useContext(ActionContext);
   const colorMode = useContext(ColorContext);
-  const { accounts } = useContext(AccountContext);
   const { setExtensionLock } = useExtensionLockContext();
 
   const [notification, updateNotification] = useState(settings.notification);
@@ -76,18 +75,6 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
   useEffect(() => {
     settings.set({ camera: camera ? 'on' : 'off' });
   }, [camera]);
-
-  useEffect(() => {
-    const isTestnetDisabled = window.localStorage.getItem('testnet_enabled') !== 'true';
-
-    isTestnetDisabled && (
-      accounts?.forEach(({ address, genesisHash }) => {
-        if (genesisHash && TEST_NETS.includes(genesisHash)) {
-          tieAccount(address, null).catch(console.error);
-        }
-      })
-    );
-  }, [accounts]);
 
   const prefixOptions = settings.availablePrefixes
     .filter(({ value }) => value !== -1)

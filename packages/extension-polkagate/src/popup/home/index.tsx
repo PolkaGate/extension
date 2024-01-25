@@ -31,7 +31,6 @@ export default function Home(): React.ReactElement {
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
   const theme = useTheme();
-  const isTestnetEnabled = useIsTestnetEnabled();
 
   useMerkleScience(undefined, undefined, true); // to download the data file
 
@@ -41,16 +40,6 @@ export default function Home(): React.ReactElement {
   const [hasActiveRecovery, setHasActiveRecovery] = useState<string | null | undefined>(); // if exists, include the account address
   const [loginInfo, setLoginInfo] = useState<LoginInfo>();
   const [bgImage, setBgImage] = useState<string | undefined>();
-
-  useEffect(() => {
-    !isTestnetEnabled && (
-      accounts?.forEach(({ address, genesisHash }) => {
-        if (genesisHash && TEST_NETS.includes(genesisHash)) {
-          tieAccount(address, null).catch(console.error);
-        }
-      })
-    );
-  }, [accounts, isTestnetEnabled]);
 
   useEffect(() => {
     const value = window.localStorage.getItem('inUse_version');
