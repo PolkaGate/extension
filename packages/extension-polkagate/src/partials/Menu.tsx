@@ -13,11 +13,11 @@ import React, { useCallback, useContext, useState } from 'react';
 import { riot } from '../assets/icons';
 import { AccountContext, ActionContext, MenuItem, TwoButtons, Warning } from '../components';
 import { useManifest, useTranslation } from '../hooks';
+import { tieAccount } from '../messaging';
+import { TEST_NETS } from '../util/constants';
 import ImportAccSubMenu from './ImportAccSubMenu';
 import NewAccountSubMenu from './NewAccountSubMenu';
 import SettingSubMenu from './SettingSubMenu';
-import { tieAccount } from '../messaging';
-import { TEST_NETS } from '../util/constants';
 
 interface Props {
   theme: Theme;
