@@ -111,7 +111,6 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
       window.localStorage.setItem('testnet_enabled', 'false');
       accounts?.forEach(({ address, genesisHash }) => {
         if (genesisHash && TEST_NETS.includes(genesisHash)) {
-          console.log('here');
           tieAccount(address, null).catch(console.error);
         }
       });
