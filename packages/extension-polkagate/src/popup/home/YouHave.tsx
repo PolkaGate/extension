@@ -3,18 +3,15 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { Box, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 
 import { BN } from '@polkadot/util';
 
 import { hide, show, stars6Black, stars6White } from '../../assets/icons';
-import { AccountContext, FormatPrice, HideIcon,ShowIcon } from '../../components';
+import { AccountContext, FormatPrice, HideIcon, ShowIcon } from '../../components';
 import { usePrices } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
-import { windowOpen } from '../../messaging';
 import { MILLISECONDS_TO_UPDATE } from '../../util/constants';
 import { SavedBalances } from '../../util/types';
 
@@ -77,10 +74,6 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
     window.localStorage.setItem('hide_numbers', hideNumbers ? 'false' : 'true');
   }, [hideNumbers, setHideNumbers]);
 
-  const onFullScreen = useCallback(() => {
-    windowOpen('/').catch(console.error);
-  }, []);
-
   useEffect(() => {
     const isHide = window.localStorage.getItem('hide_numbers');
 
@@ -88,14 +81,13 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
   }, [setHideNumbers]);
 
   return (
-    <Grid alignItems='flex-end' container justifyContent='space-between' pt='15px' px='7%'>
-      <Grid container item onClick={onFullScreen} sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', width: 'fit-content' }}>
-        <vaadin-icon icon='vaadin:arrows-cross' style={{ height: '34px', color: `${theme.palette.secondary.light}`, stroke: `${theme.palette.secondary.light}`, padding: '4px', strokeWidth: '1.5px', width: '34px' }} />
-      </Grid>
-      <Grid alignItems='center' container direction='column' item width='fit-content'>
+    <Grid container pt='15px' textAlign='center' sx={{ position: 'relative', zIndex: 1 }}>
+      <Grid item xs={12}>
         <Typography sx={{ fontSize: '18px' }}>
           {t('You have')}
         </Typography>
+      </Grid>
+      <Grid container item justifyContent='center' xs={12}>
         {hideNumbers || hideNumbers === undefined
           ? <Box
             component='img'
@@ -109,15 +101,15 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
             }
           </Typography>
         }
-      </Grid>
-      <Grid alignItems='center' container direction='column' item onClick={onHideClick} sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', cursor: 'pointer', width: 'fit-content' }}>
-        {hideNumbers
-          ? <ShowIcon />
-          : <HideIcon />
-        }
-        <Typography sx={{ color: 'secondary.light', fontSize: '12px', fontWeight: 500 }}>
-          {hideNumbers ? t('Show') : t('Hide')}
-        </Typography>
+        <Grid alignItems='center' direction='column' item onClick={onHideClick} sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', display: 'flex', position: 'absolute', pt: '3px', right: '31px' }}>
+          {hideNumbers
+            ? <ShowIcon />
+            : <HideIcon />
+          }
+          <Typography sx={{ color: 'secondary.light', fontSize: '12px', fontWeight: 500 }}>
+            {hideNumbers ? t('Show') : t('Hide')}
+          </Typography>
+        </Grid>
       </Grid>
     </Grid>
   );
