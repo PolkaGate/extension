@@ -39,9 +39,10 @@ interface Props {
   onClose?: () => void;
   backgroundDefault?: boolean;
   fullScreen?: boolean;
+  fullScreenURL?: string;
 }
 
-function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreen = false, isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreen = false, fullScreenURL = '/', isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
   const [isMenuOpen, setOpenMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
@@ -125,7 +126,7 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreen = fal
             }
           </IconButton>
           {fullScreen && address &&
-            <FullScreenIcon url={`/account/${address}`} />
+            <FullScreenIcon url={fullScreenURL} />
           }
         </Grid>
       }

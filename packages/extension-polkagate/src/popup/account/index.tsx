@@ -168,6 +168,7 @@ export default function AccountDetails(): React.ReactElement {
         }
         address={address}
         fullScreen
+        fullScreenURL={`/account/${address}`}
         noBorder
         onBackClick={gotToHome}
         paddingBottom={0}
