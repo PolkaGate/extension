@@ -85,5 +85,6 @@ export { default as ShowIcon } from './SVG/ShowIcon';
 export { default as SignArea2 } from './SignArea2';
 export { default as Affirm } from './Affirm';
 export { default as CanPayErrorAlert } from './CanPayErrorAlert';
+export { default as FullScreenIcon } from './FullScreenIcon';
 
 export * from './contexts';
