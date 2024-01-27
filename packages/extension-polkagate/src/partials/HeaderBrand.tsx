@@ -12,8 +12,9 @@ import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from 
 import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { logoBlack, logoWhite } from '../assets/logos';
-import { ActionContext, Steps } from '../components';
+import { ActionContext, FullScreenIcon, Steps } from '../components';
 import useOutsideClick from '../hooks/useOutsideClick';
+import { windowOpen } from '../messaging';
 import { Step } from '../util/types';
 import Menu from './Menu';
 import { AccountMenu } from '.';
@@ -37,9 +38,11 @@ interface Props {
   paddingBottom?: number;
   onClose?: () => void;
   backgroundDefault?: boolean;
+  showFullScreen?: boolean;
+  fullScreenURL?: string;
 }
 
-function HeaderBrand({ _centerItem, address, backgroundDefault, isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreenURL = '/', isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showFullScreen = false, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
   const [isMenuOpen, setOpenMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
@@ -62,6 +65,10 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, isRefreshing, no
   const _onClose = useCallback(() => {
     onAction('/');
   }, [onAction]);
+
+  const _onWindowOpen = useCallback((): void => {
+    address && windowOpen(`/account/${address}`).catch(console.error);
+  }, [address]);
 
   const LeftIcon = () => (
     <Grid item xs={showBrand ? 1.4 : 1}>
@@ -103,20 +110,25 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, isRefreshing, no
   );
 
   const RightItem = () => (
-    <Grid item textAlign='right' xs={1.4}>
+    <Grid item textAlign='right' xs={showFullScreen && showAccountMenu ? 2.7 : 1.4}>
       {!onRefresh && !showClose &&
-        <IconButton aria-label='menu' color='inherit' edge='start' onClick={_handleMenuClick} size='small' sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}>
-          {showMenu &&
-            <MenuIcon
-              sx={{ color: showBrand ? theme.palette.mode === 'dark' ? 'text.primary' : 'secondary.light' : 'secondary.light', fontSize: 39 }}
-            />
+        <Grid container item width='fit-content'>
+          <IconButton aria-label='menu' color='inherit' edge='start' onClick={_handleMenuClick} size='small' sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}>
+            {showMenu &&
+              <MenuIcon
+                sx={{ color: showBrand ? theme.palette.mode === 'dark' ? 'text.primary' : 'secondary.light' : 'secondary.light', fontSize: 39 }}
+              />
+            }
+            {showAccountMenu &&
+              <MoreVertIcon
+                sx={{ color: 'secondary.light', fontSize: '33px' }}
+              />
+            }
+          </IconButton>
+          {showFullScreen && address &&
+            <FullScreenIcon url={fullScreenURL} />
           }
-          {showAccountMenu &&
-            <MoreVertIcon
-              sx={{ color: 'secondary.light', fontSize: '33px' }}
-            />
-          }
-        </IconButton>
+        </Grid>
       }
       {!!onRefresh &&
         <IconButton aria-label='menu' color='inherit' edge='start' onClick={onRefresh} size='small' sx={{ p: 0 }}>
@@ -148,7 +160,7 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, isRefreshing, no
           borderBottom: `${noBorder || shortBorder ? '' : '0.5px solid'}`,
           borderColor: 'secondary.light',
           lineHeight: 0,
-          p: showBrand ? '7px 30px 7px' : `18px 20px ${paddingBottom}px 30px`
+          p: showBrand ? '7px 30px 7px' : `18px ${showFullScreen ? '5px' : '20px'} ${paddingBottom}px 20px`
         }}
       >
         <Grid alignItems='center' container justifyContent='space-between'>
