@@ -130,8 +130,10 @@ export default function Home(): React.ReactElement {
           <Grid padding='0px' textAlign='center' xs={12}>
             <HeaderBrand
               showBrand
+              showFullScreen
               showMenu
               text={'Polkagate'}
+              style={{ '> div div:nth-child(3)': { minWidth: '23%' }, pr: '10px' }}
             />
           </Grid>
           {hasActiveRecovery &&
