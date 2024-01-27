@@ -8,7 +8,7 @@ import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { hide, show, stars6Black, stars6White } from '../../assets/icons';
+import { stars6Black, stars6White } from '../../assets/icons';
 import { AccountContext, FormatPrice, HideIcon, ShowIcon } from '../../components';
 import { usePrices } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
