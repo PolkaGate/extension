@@ -54,7 +54,6 @@ export default function Review({ address, api, chain, depositToPay, depositValue
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const canPayFeeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
-  console.log('depositToPay:', depositToPay?.toString())
 
   const removeProxy = api.tx.proxy.removeProxy; /** (delegate, proxyType, delay) **/
   const addProxy = api.tx.proxy.addProxy; /** (delegate, proxyType, delay) **/
@@ -134,9 +133,9 @@ export default function Review({ address, api, chain, depositToPay, depositValue
     const addingLength = proxies.filter((item) => item.status === 'new').length;
     const removingLength = proxies.filter((item) => item.status === 'remove').length;
 
-    addingLength && setHelperText(t<string>(`You are adding ${addingLength} Prox${addingLength > 1 ? 'ies' : 'y'}`));
-    removingLength && setHelperText(t<string>(`You are removing ${removingLength} Prox${removingLength > 1 ? 'ies' : 'y'}`));
-    addingLength && removingLength && setHelperText(t<string>(`Adding ${addingLength} and removing ${removingLength} Proxies`));
+    addingLength && setHelperText(t<string>('You are adding {{addingLength}} Prox{{iesOrY}}', { replace: { addingLength, iesOrY: addingLength > 1 ? 'ies' : 'y' } }));
+    removingLength && setHelperText(t<string>('You are removing {{removingLength}} Prox{{iesOrY}}', { replace: { iesOrY: removingLength > 1 ? 'ies' : 'y', removingLength } }));
+    addingLength && removingLength && setHelperText(t<string>('Adding {{addingLength}} and removing {{removingLength}} Proxies', { replace: { addingLength, removingLength } }));
   }, [proxies, t]);
 
   useEffect(() => {

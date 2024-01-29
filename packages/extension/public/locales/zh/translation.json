@@ -139,8 +139,6 @@
   "Connect your ledger device to the computer.": "将您的 Ledger 设备连接到计算机。",
   "Open your desired App on the ledger device.": "在 Ledger 设备上打开您所需的应用。",
   "Select the relevant chain of your desired App from below.": "从下方选择所需应用的相关链。",
-  "account type": "账户类型",
-  "address index": "地址索引",
   "All your accounts will be encrypted with a password and stored in a JSON file.": "您的所有账户将使用密码加密并存储在一个 JSON 文件中。",
   "You can later use this JSON file to import your accounts into the extension using the provided password.": "您以后可以使用提供的密码将这个 JSON 文件导入到扩展中以访问您的账户。",
   "Create a password": "创建密码",
@@ -356,7 +354,6 @@
   "Insufficient balance to complete the transaction.": "余额不足以完成交易。",
   "Insufficient balance for transaction deposit.": "交易存款的余额不足。",
   "Vote Multiplier": "投票乘数",
-  "Polkagate": "Polkagate",
   "An error occurred": "发生错误",
   "Something went wrong with the query and rendering of this component": "查询和渲染此组件时出现问题",
   "Back to home": "返回主页",
@@ -782,7 +779,7 @@
   "Approve": "批准",
   "Phishing detected": "检测到钓鱼网站",
   "You have been redirected because we believe that this website could compromise the security of your accounts and your tokens.": "您已被重定向，因为我们认为此网站可能会危害您的帐户和代币的安全。",
-  "Note that this  website was reported on a community-driven, curated list. It might be incomplete or inaccurate. If you think that this website was flagged incorrectly": "请注意，此网站已被报告在社区驱动的精选列表上。可能不完整或不准确。如果您认为此网站被错误标记：",
+  "Note that this website was reported on a community-driven, curated list. It might be incomplete or inaccurate. If you think that this website was flagged incorrectly": "请注意，此网站已被报告在社区驱动的精选列表上。可能不完整或不准确。如果您认为此网站被错误标记：",
   "please open an issue by clicking here": "请点击此处打开问题",
   "Scan the QR code with a camera to get the address.": "使用相机扫描QR码以获取地址。",
   "From:": "从：",
@@ -1101,5 +1098,10 @@
   "Would you like to set a login password?": "您是否想设置登录密码？",
   "Later": "以后",
   "Password Enabled": "密码已启用",
-  "{{amount}} can be unlocked": "{{amount}} 可以解锁"
+  "{{amount}} can be unlocked": "{{amount}} 可以解锁",
+  "Account type": "帐户类型",
+  "Address index": "地址索引",
+  "You are adding {{addingLength}} Prox{{iesOrY}}": "您正在添加 {{addingLength}} 个代理{{iesOrY}}",
+  "You are removing {{removingLength}} Prox{{iesOrY}}": "您正在移除 {{removingLength}} 个代理{{iesOrY}}",
+  "Adding {{addingLength}} and removing {{removingLength}} Proxies": "添加 {{addingLength}} 个，移除 {{removingLength}} 个代理"
 }

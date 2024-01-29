@@ -14,7 +14,6 @@
   "Insufficient balance for transaction deposit.": "",
   "Vote Multiplier": "",
   "Copied": "",
-  "Polkagate": "",
   "An error occurred": "",
   "Something went wrong with the query and rendering of this component": "",
   "Back to home": "",
@@ -513,7 +512,6 @@
   "File name": "",
   "Identity": "",
   "Checking account's on-chain Identity, please wait...": "",
-  "Manage  Identity": "",
   "The chosen blockchain does not support on-chain identity.": "",
   "Display Name:": "",
   "Legal Name:": "",
@@ -623,7 +621,7 @@
   "Approve": "",
   "Phishing detected": "",
   "You have been redirected because we believe that this website could compromise the security of your accounts and your tokens.": "",
-  "Note that this  website was reported on a community-driven, curated list. It might be incomplete or inaccurate. If you think that this website was flagged incorrectly": "",
+  "Note that this website was reported on a community-driven, curated list. It might be incomplete or inaccurate. If you think that this website was flagged incorrectly": "",
   "please open an issue by clicking here": "",
   "Scan the QR code with a camera to get the address.": "",
   "Rename Account": "",
@@ -1094,5 +1092,10 @@
   "Would you like to set a login password?": "",
   "Later": "",
   "Password Enabled": "",
-  "{{amount}} can be unlocked": ""
+  "{{amount}} can be unlocked": "",
+  "Account type": "",
+  "Address index": "",
+  "You are adding {{addingLength}} Prox{{iesOrY}}": "",
+  "You are removing {{removingLength}} Prox{{iesOrY}}": "",
+  "Adding {{addingLength}} and removing {{removingLength}} Proxies": ""
 }
