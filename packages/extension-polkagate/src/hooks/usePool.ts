@@ -76,7 +76,7 @@ export default function usePool(address?: AccountId | string, id?: number, refre
         isFetching.fetching[String(stakerAddress)].getPool = false;
         isFetching.set(isFetching.fetching);
       }
-      
+
       /** save my pool to local storage if it is not fetched by id, note, a pool to join is fetched by Id*/
       !id && chrome.storage.local.get('MyPools', (res) => {
         const k = `${stakerAddress}`;
