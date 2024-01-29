@@ -1043,7 +1043,7 @@
   "No pending rewards found!": "Aucune récompense en attente trouvée !",
   "Checking pending rewards in the last {{erasHistoric}} eras …": "Vérification des récompenses en attente au cours des dernières {{erasHistoric}} ères…",
   "Selected": "Sélectionné",
-  "Pending Rewards": "Récompenses en attente",
+  "Pending Rewards": "Récompenses à venir",
   "Payout": "Paiement",
   "Usually, validators pay out the pending rewards themselves, but you can initiate the payout yourself if you prefer.": "Normalement, les validateurs paient eux-mêmes les récompenses en attente, mais vous pouvez initier le paiement vous-même si vous préférez.",
   "Received Rewards": "Récompenses reçues",
