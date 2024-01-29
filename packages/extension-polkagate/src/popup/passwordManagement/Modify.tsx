@@ -75,7 +75,7 @@ function Modify({ isPasswordError, newPassword, onBackClick, onPassChange, setIs
   return (
     <>
       {!isPasswordError &&
-        <Grid alignContent='center' container sx={{ height: '200px', pl: '40px' }}>
+        <Grid alignContent='center' container justifyContent='center' sx={{ height: '200px', px: '20px', textAlign: 'center' }}>
           <Typography sx={{ fontSize: '14px', fontWeight: 500, pb: '5px' }}>
             {t<string>('You are about to modify your password. ')}
           </Typography>
