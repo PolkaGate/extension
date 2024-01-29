@@ -189,7 +189,7 @@ export default function PendingRewards(): React.ReactElement {
           {t('Validators usually pay rewards regularly. If not received within the set period, rewards expire. You can manually initiate the payout if desired.')}
         </Typography>
       </Grid>
-      <Grid alignContent='flex-start' alignItems='center' container item sx={{ border: `1px solid ${theme.palette.primary.main}`,borderBottom: 0, borderTopLeftRadius: '5px', borderTopRightRadius: '5px', p: '10px 5px 10px', mx: '2%', width: '96%' }}>
+      <Grid alignContent='flex-start' alignItems='center' container item sx={{ border: `1px solid ${theme.palette.primary.main}`,borderBottom: 0, borderTopLeftRadius: '5px', borderTopRightRadius: '5px', p: '5px', mx: '2%', width: '96%' }}>
         <Grid item sx={{ fontSize: '13px' }} xs={4.75}>
           <Checkbox2
             checked={!!rewards?.length && selectedToPayout?.length === rewards?.length}
