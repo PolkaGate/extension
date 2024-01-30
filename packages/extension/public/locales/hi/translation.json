@@ -1097,5 +1097,6 @@
   "Address index": "पता सूची",
   "You are adding {{addingLength}} Prox{{iesOrY}}": "आप {{addingLength}} प्रॉक्स{{iesOrY}} जोड़ रहे हैं",
   "You are removing {{removingLength}} Prox{{iesOrY}}": "आप {{removingLength}} प्रॉक्स{{iesOrY}} हटा रहे हैं",
-  "Adding {{addingLength}} and removing {{removingLength}} Proxies": "{{addingLength}} जोड़ रहे हैं और {{removingLength}} प्रॉक्सी हटा रहे हैं"
+  "Adding {{addingLength}} and removing {{removingLength}} Proxies": "{{addingLength}} जोड़ रहे हैं और {{removingLength}} प्रॉक्सी हटा रहे हैं",
+  "Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.": "हमारी प्रणाली विश्वसनीय, उच्च लाभ, कम कमीशन वेरीफायर्स की सुझावित करती है। पोल्कागेट को वेरीफायर्स की भविष्य की किसी भी गलत आचरण के परिणामों के लिए कोई जिम्मेदारी या दायित्व नहीं होता।"
 }

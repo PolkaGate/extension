@@ -1093,5 +1093,6 @@
   "Address index": "Index d'adresse",
   "You are adding {{addingLength}} Prox{{iesOrY}}": "Vous ajoutez {{addingLength}} Prox{{iesOrY}}",
   "You are removing {{removingLength}} Prox{{iesOrY}}": "Vous retirez {{removingLength}} Prox{{iesOrY}}",
-  "Adding {{addingLength}} and removing {{removingLength}} Proxies": "Ajout de {{addingLength}} et retrait de {{removingLength}} procurations"
+  "Adding {{addingLength}} and removing {{removingLength}} Proxies": "Ajout de {{addingLength}} et retrait de {{removingLength}} procurations",
+  "Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.": "Notre système suggère des validateurs de confiance, à rendement élevé et à faibles commissions. Polkagate n'assume aucune responsabilité pour tout comportement répréhensible résultant des actions futures des validateurs."
 }

@@ -903,7 +903,7 @@
   "Available balance after": "Доступный баланс после",
   "Withdraw Redeemable": "Вывести подлежащее погашению",
   "Total stake after": "Итоговый стейк после",
-  "Stake Rewards": "Сделать ставку на награды",
+  "Stake Rewards": "Награды за ставку",
   "Withdraw Rewards": "Вывести награды",
   "The account is fully unstaked, so can't stake until you withdraw entire unstaked/redeemable amount.": "Счет полностью разблокирован, поэтому вы не можете ставить стейк, пока не выведете полную сумму, подлежащую снятию/погашению.",
   "Outstanding rewards automatically withdrawn after transaction": "Ожидаемые награды автоматически снимаются после транзакции",
@@ -1093,5 +1093,6 @@
   "Address index": "Индекс адреса",
   "You are adding {{addingLength}} Prox{{iesOrY}}": "Вы добавляете {{addingLength}} Прокси{{iesOrY}}",
   "You are removing {{removingLength}} Prox{{iesOrY}}": "Вы удаляете {{removingLength}} прокси{{iesOrY}}",
-  "Adding {{addingLength}} and removing {{removingLength}} Proxies": "Добавляется {{addingLength}}, и удаляется {{removingLength}} прокси"
+  "Adding {{addingLength}} and removing {{removingLength}} Proxies": "Добавляется {{addingLength}}, и удаляется {{removingLength}} прокси",
+  "Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.": "Наша система предлагает надежных, высокодоходных, с низкой комиссией валидаторов. Polkagate не несет ответственности за любые недобросовестные действия валидаторов в будущем."
 }
