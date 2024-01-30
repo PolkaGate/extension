@@ -63,9 +63,9 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Enhance security by setting an optional password for accessing the extension! 🔒',
-              'Выберите русский язык в меню/настройках для улучшенного опыта.',
-              'Enjoy enhanced smoothness and benefit from bug fixes. 🛠️'
+              'Sync your stakings on the Westend testnet with the latest chain updates',
+              'बेहतर अनुभव के लिए मेनू/सेटिंग्स में हिंदी भाषा का चयन करें.',
+              'Enjoy enhanced smoothness and benefit from bug fixes.'
 
             ]}
           />
