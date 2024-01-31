@@ -186,7 +186,7 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
             value={getValue('total', balanceToShow)}
           />
         </Grid>
-        : <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
+        : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90}/>
       }
     </>
   );
@@ -194,7 +194,7 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
   const Price = () => (
     <>
       {price === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== price?.chainName
-        ? <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
+        ? <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
         : <Grid item sx={{ '> div span': { display: 'block' }, color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 400 }}>
           <FormatPrice
             amount={getValue('total', balanceToShow)}
@@ -253,7 +253,7 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
             />
           </>
           : <>
-            <Skeleton height={38} sx={{ transform: 'none' }} variant='text' width={99} />
+            <Skeleton animation='wave' height={38} sx={{ transform: 'none' }} variant='text' width={99} />
           </>
         }
       </Grid>
