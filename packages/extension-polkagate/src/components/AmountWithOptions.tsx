@@ -25,7 +25,7 @@ interface Props {
   value?: string;
 }
 
-export default function AmountWithOptions({ disabled, inputWidth, label, labelFontSize = '14px', onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, style, textSpace = '10px', value }: Props): React.ReactElement {
+export default function AmountWithOptions ({ disabled, inputWidth, label, labelFontSize = '14px', onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, style, textSpace = '10px', value }: Props): React.ReactElement {
   const theme = useTheme();
   const _onChange = useCallback((value: string) => {
     onChangeAmount(fixFloatingPoint(value));
@@ -49,7 +49,7 @@ export default function AmountWithOptions({ disabled, inputWidth, label, labelFo
           value={value?.slice(0, MAX_AMOUNT_LENGTH)}
         />
       </Grid>
-      <Grid item justifyContent='center' direction='column' alignItems='flex-start' sx={{ pl: textSpace, pt: '20px', width: 'fit-content', display: 'inline-flex' }}>
+      <Grid alignItems='flex-start' direction='column' item justifyContent='center' sx={{ display: 'inline-flex', pl: textSpace, pt: '20px', width: 'fit-content' }}>
         <Typography aria-label='primaryBtn' onClick={!disabled ? onPrimary : disabledFunction} role='button' sx={{ color: disabled ? 'text.disabled' : theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline', userSelect: 'none' }}>
           {primaryBtnText}
         </Typography>
