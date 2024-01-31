@@ -357,7 +357,6 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
         </FormControl>
       </Grid>
       <AmountWithOptions
-        inputWidth={8.4}
         label={t<string>(`Vote Value (${token})`)}
         onChangeAmount={onVoteAmountChange}
         onPrimary={onMaxAmount}

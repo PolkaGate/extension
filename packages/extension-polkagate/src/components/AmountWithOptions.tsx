@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme, useTheme } from '@mui/material';
+import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { MAX_AMOUNT_LENGTH } from '../util/constants';
@@ -25,7 +25,7 @@ interface Props {
   value?: string;
 }
 
-export default function AmountWithOptions({ disabled, inputWidth = 8, label, labelFontSize = '14px', onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, style, textSpace = '10px', value }: Props): React.ReactElement {
+export default function AmountWithOptions({ disabled, inputWidth, label, labelFontSize = '14px', onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, style, textSpace = '10px', value }: Props): React.ReactElement {
   const theme = useTheme();
   const _onChange = useCallback((value: string) => {
     onChangeAmount(fixFloatingPoint(value));
@@ -34,8 +34,8 @@ export default function AmountWithOptions({ disabled, inputWidth = 8, label, lab
   const disabledFunction = useCallback(() => null, []);
 
   return (
-    <Grid container sx={style}>
-      <Grid item xs={inputWidth}>
+    <Grid container flexWrap='nowrap' sx={style}>
+      <Grid item xs={inputWidth || true}>
         <InputWithLabel
           disabled={disabled}
           fontSize={28}
@@ -49,14 +49,14 @@ export default function AmountWithOptions({ disabled, inputWidth = 8, label, lab
           value={value?.slice(0, MAX_AMOUNT_LENGTH)}
         />
       </Grid>
-      <Grid alignItems='flex-start' container direction='column' item justifyContent='center' sx={{ pl: textSpace, pt: '20px' }} xs>
-        <Grid aria-label='primaryBtn' item onClick={!disabled ? onPrimary : disabledFunction} role='button' sx={{ color: disabled ? 'text.disabled' : theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline', userSelect: 'none' }}>
+      <Grid item justifyContent='center' direction='column' alignItems='flex-start' sx={{ pl: textSpace, pt: '20px', width: 'fit-content', display: 'inline-flex' }}>
+        <Typography aria-label='primaryBtn' onClick={!disabled ? onPrimary : disabledFunction} role='button' sx={{ color: disabled ? 'text.disabled' : theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline', userSelect: 'none' }}>
           {primaryBtnText}
-        </Grid>
+        </Typography>
         {secondaryBtnText && onSecondary &&
-          <Grid aria-label='secondaryBtn' item onClick={!disabled ? onSecondary : disabledFunction} role='button' sx={{ color: disabled ? 'text.disabled' : theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline', userSelect: 'none' }}>
+          <Typography aria-label='secondaryBtn' onClick={!disabled ? onSecondary : disabledFunction} role='button' sx={{ color: disabled ? 'text.disabled' : theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline', userSelect: 'none' }}>
             {secondaryBtnText}
-          </Grid>}
+          </Typography>}
       </Grid>
     </Grid>
   );

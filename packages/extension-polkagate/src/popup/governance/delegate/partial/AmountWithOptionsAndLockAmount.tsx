@@ -98,7 +98,6 @@ export default function AmountWithOptionsAndLockAmount({ accountLocks, amount, b
   return (
     <>
       <AmountWithOptions
-        inputWidth={8.4}
         label={t<string>('Delegate Vote Value ({{token}})', { replace: { token } })}
         onChangeAmount={onValueChange}
         onPrimary={onMaxAmount}
