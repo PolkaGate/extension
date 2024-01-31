@@ -974,8 +974,6 @@
   "Selected more than": "选择多于",
   "Staked more than": "质押多于",
   "Members more than": "成员多于",
-  "Pick 1 of": "选择其中1个",
-  "to join": "加入",
   "🔍 Search pool": "🔍 搜索池",
   "Com.:": "佣金：",
   "Member:": "成员：",
@@ -1103,5 +1101,6 @@
   "Address index": "地址索引",
   "You are adding {{addingLength}} Prox{{iesOrY}}": "您正在添加 {{addingLength}} 个代理{{iesOrY}}",
   "You are removing {{removingLength}} Prox{{iesOrY}}": "您正在移除 {{removingLength}} 个代理{{iesOrY}}",
-  "Adding {{addingLength}} and removing {{removingLength}} Proxies": "添加 {{addingLength}} 个，移除 {{removingLength}} 个代理"
+  "Adding {{addingLength}} and removing {{removingLength}} Proxies": "添加 {{addingLength}} 个，移除 {{removingLength}} 个代理",
+  "Pick 1 of {{totalNumberOfPools}} to join": "选择 {{totalNumberOfPools}} 个中的 1 个加入"
 }
