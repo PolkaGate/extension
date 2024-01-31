@@ -12,12 +12,14 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
+import { BN } from '@polkadot/util';
 
 import { ActionContext, DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, ShortAddress2, ShowBalance } from '../../../components';
-import { useAccount, useAccountInfo, useProxies, useToken, useTranslation } from '../../../hooks';
+import { useAccount, useAccountInfo, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount, windowOpen } from '../../../messaging';
-import { ACALA_GENESIS_HASH, ASSET_HUBS, BALANCES_VALIDITY_PERIOD, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, WESTEND_GENESIS_HASH } from '../../../util/constants';
-import { BalancesInfo, Price } from '../../../util/types';
+import { ACALA_GENESIS_HASH, ASSET_HUBS, BALANCES_VALIDITY_PERIOD, IDENTITY_CHAINS, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, SOCIAL_RECOVERY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
+import { BalancesInfo, Price, Proxy } from '../../../util/types';
+import { amountToHuman } from '../../../util/utils';
 import { getValue } from '../../account/util';
 import { AssetsOnOtherChains } from '..';
 
@@ -32,21 +34,26 @@ interface AddressDetailsProps {
   balances: BalancesInfo | undefined;
   price: Price | undefined;
   terminateWorker: () => void | undefined;
+  setAssetId: React.Dispatch<React.SetStateAction<number | undefined>>;
+  assetId: number | undefined;
 }
 
-export default function AccountInformation ({ address, api, assetsOnOtherChains, balances, chain, chainName, formatted, isDarkTheme, price, terminateWorker }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation({ address, api, assetId, assetsOnOtherChains, balances, chain, chainName, formatted, isDarkTheme, price, setAssetId, terminateWorker }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
   const accountInfo = useAccountInfo(api, formatted);
   const theme = useTheme();
-  const token = useToken(address);
   const onAction = useContext(ActionContext);
-  const proxies = useProxies(api, formatted);
 
   const [hasID, setHasID] = useState<boolean | undefined>();
-  const [recoverable, setRecoverable] = useState<boolean | undefined>();
+  const [isRecoverable, setIsRecoverable] = useState<boolean | undefined>();
+  const [hasProxy, setHasProxy] = useState<boolean | undefined>();
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
   const [showMore, setShowMore] = useState<boolean>(false);
+
+  const calculatePrice = useCallback((amount: BN, decimal: number, price: number) => {
+    return parseFloat(amountToHuman(amount, decimal)) * price;
+  }, []);
 
   const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
   const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
@@ -55,11 +62,11 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
     if (!assetsOnOtherChains) {
       return assetsOnOtherChains;
     } else {
-      return assetsOnOtherChains.filter((asset) => !asset.totalBalance.isZero() && !(asset.genesisHash === account?.genesisHash && asset.token === token));
+      return assetsOnOtherChains.filter((asset) => !asset.totalBalance.isZero()).sort((a, b) => calculatePrice(b.totalBalance, b.decimal, b.price) - calculatePrice(a.totalBalance, a.decimal, a.price));
     }
-  }, [account?.genesisHash, assetsOnOtherChains, token]);
+  }, [assetsOnOtherChains, calculatePrice]);
   const recoverableToolTipTxt = useMemo(() => {
-    switch (recoverable) {
+    switch (isRecoverable) {
       case true:
         return 'Recoverable';
         break;
@@ -71,16 +78,16 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
         return 'Checking';
         break;
     }
-  }, [recoverable]);
+  }, [isRecoverable]);
   const proxyTooltipTxt = useMemo(() => {
-    if (proxies && proxies.length > 0) {
+    if (hasProxy) {
       return 'Has Proxy';
-    } else if (proxies && proxies.length === 0) {
+    } else if (hasProxy === false) {
       return 'No Proxy';
     } else {
       return 'Checking';
     }
-  }, [proxies]);
+  }, [hasProxy]);
 
   const onAssetHub = useCallback((genesisHash: string | null | undefined) => ASSET_HUBS.includes(genesisHash ?? ''), []);
   const displayLogoAOC = useCallback((genesisHash: string | null | undefined, symbol: string | undefined) => {
@@ -124,9 +131,32 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
   }, [onAssetHub]);
 
   useEffect((): void => {
-    api && api?.query.identity && api?.query.identity.identityOf(address).then((id) => setHasID(!id.isEmpty)).catch(console.error);
-    api && api.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => setRecoverable(r.isSome)).catch(console.error);
-  }, [api, address, formatted]);
+    setHasID(undefined);
+    setIsRecoverable(undefined);
+    setHasProxy(undefined);
+
+    if (!api || !address || !account?.genesisHash || api.genesisHash.toHex() !== account.genesisHash) {
+      return;
+    }
+
+    if (api.query.identity && IDENTITY_CHAINS.includes(account.genesisHash)) {
+      api.query.identity.identityOf(formatted).then((id) => setHasID(!id.isEmpty)).catch(console.error);
+    } else {
+      setHasID(false);
+    }
+
+    if (api.query?.recovery && SOCIAL_RECOVERY_CHAINS.includes(account.genesisHash)) {
+      api.query.recovery.recoverable(formatted).then((r) => setIsRecoverable(r.isSome)).catch(console.error);
+    } else {
+      setIsRecoverable(false);
+    }
+
+    api.query.proxy.proxies(formatted).then((p) => {
+      const fetchedProxies = JSON.parse(JSON.stringify(p[0])) as unknown as Proxy[];
+
+      setHasProxy(fetchedProxies.length > 0);
+    }).catch(console.error);
+  }, [api, address, formatted, account?.genesisHash]);
 
   useEffect(() => {
     if (balances?.chainName === chainName) {
@@ -136,9 +166,14 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
     setBalanceToShow(undefined);
   }, [balances, chainName]);
 
-  const assetBoxClicked = useCallback((genesisHash: string) => {
-    address && tieAccount(address, genesisHash).catch(console.error);
-  }, [address]);
+  console.log('assetID:', assetId);
+
+  const assetBoxClicked = useCallback((genesisHash: string, id: number | undefined) => {
+    address && tieAccount(address, genesisHash).finally(() => {
+      id && setAssetId(id);
+      (id === undefined || id === -1) && setAssetId(undefined);
+    }).catch(console.error);
+  }, [address, setAssetId]);
 
   const Balance = () => (
     <>
@@ -151,7 +186,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
             value={getValue('total', balanceToShow)}
           />
         </Grid>
-        : <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
+        : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90}/>
       }
     </>
   );
@@ -159,7 +194,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
   const Price = () => (
     <>
       {price === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== price?.chainName
-        ? <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
+        ? <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
         : <Grid item sx={{ '> div span': { display: 'block' }, color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 400 }}>
           <FormatPrice
             amount={getValue('total', balanceToShow)}
@@ -202,34 +237,42 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
     </Grid>
   );
 
-  const OtherAssetBox = ({ asset }: { asset: AssetsOnOtherChains | undefined }) => (
-    // eslint-disable-next-line react/jsx-no-bind
-    <Grid alignItems='center' container item justifyContent='center' onClick={() => asset ? assetBoxClicked(asset?.genesisHash) : null} sx={{ border: asset ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '8px', cursor: asset ? 'pointer' : 'default', p: asset ? '5px' : 0, width: 'fit-content' }}>
-      {asset
-        ? <>
-          <Grid alignItems='center' container item pr='5px' width='fit-content'>
-            <DisplayLogo assetSize='25px' assetToken={displayLogoAOC(asset.genesisHash, asset.token)?.symbol} baseTokenSize='16px' genesisHash={displayLogoAOC(asset.genesisHash, asset.token)?.base} />
-          </Grid>
-          <BalanceColumn
-            asset={asset}
-          />
-        </>
-        : <>
-          <Skeleton height={38} sx={{ transform: 'none' }} variant='text' width={99} />
-        </>
-      }
-    </Grid>
-  );
+  const OtherAssetBox = ({ asset }: { asset: AssetsOnOtherChains | undefined }) => {
+    const selectedAsset = asset && asset.genesisHash === account?.genesisHash && (asset.token === balanceToShow?.token || (asset.assetId && asset.assetId === assetId));
+
+    return (
+      // eslint-disable-next-line react/jsx-no-bind
+      <Grid alignItems='center' container item justifyContent='center' onClick={() => asset ? assetBoxClicked(asset?.genesisHash, asset?.assetId) : null} sx={{ border: asset ? `${selectedAsset ? '3px' : '1px'} solid` : 'none', borderColor: 'secondary.light', borderRadius: '8px', boxShadow: selectedAsset ? '0px 2px 5px 2px #00000040' : 'none', cursor: asset ? 'pointer' : 'default', height: 'fit-content', m: '2px 2px 7px 2px', p: asset ? '5px' : 0, width: 'fit-content' }}>
+        {asset
+          ? <>
+            <Grid alignItems='center' container item pr='5px' width='fit-content'>
+              <DisplayLogo assetSize='25px' assetToken={displayLogoAOC(asset.genesisHash, asset.token)?.symbol} baseTokenSize='16px' genesisHash={displayLogoAOC(asset.genesisHash, asset.token)?.base} />
+            </Grid>
+            <BalanceColumn
+              asset={asset}
+            />
+          </>
+          : <>
+            <Skeleton animation='wave' height={38} sx={{ transform: 'none' }} variant='text' width={99} />
+          </>
+        }
+      </Grid>
+    );
+  };
 
   const OtherAssets = ({ assetsOnOtherChains }: { assetsOnOtherChains: AssetsOnOtherChains[] | undefined }) => {
-    const assets = assetsOnOtherChains && assetsOnOtherChains.length > 0 ? assetsOnOtherChains : [undefined, undefined];
+    const assets = assetsOnOtherChains && assetsOnOtherChains.length > 0 ? [...assetsOnOtherChains] : [undefined, undefined];
+
+    if (!showMore) {
+      assets.length = 5;
+    }
 
     return (
       <Grid container item sx={{ borderTop: '1px solid', borderTopColor: borderColor, mt: '10px', pt: '15px' }}>
-        <Typography fontSize='14px' fontWeight={400} width='80px'>
-          {t<string>('Assets on other chains')}
+        <Typography fontSize='18px' fontWeight={400} m='auto' px='10px' width='fit-content'>
+          {t<string>('Assets')}
         </Typography>
-        <Grid container gap='15px' item justifyContent='flex-start' sx={{ height: showMore ? 'fit-content' : '42px', overflow: 'hidden', px: '5%', transitionDuration: '0.2s', transitionProperty: 'transform' }} xs>
+        <Grid alignItems='center' columnGap='15px' container item justifyContent='flex-start' sx={{ overflow: 'hidden', px: '3%', transitionDuration: '0.2s', transitionProperty: 'transform' }} xs>
           {assets.map((asset, index) => (
             <OtherAssetBox
               asset={asset}
@@ -238,7 +281,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
           ))}
         </Grid>
         {assetsOnOtherChains && assetsOnOtherChains.length > 5 &&
-          <Grid container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: 'pointer', width: '65px' }}>
+          <Grid alignItems='center' container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: 'pointer', width: '65px' }}>
             <Typography fontSize='14px' fontWeight={400} sx={{ borderLeft: '1px solid', borderLeftColor: borderColor, height: 'fit-content', pl: '8px' }}>
               {t<string>(showMore ? 'Less' : 'More')}
             </Typography>
@@ -275,7 +318,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
             <Identicon
               iconTheme={chain?.icon ?? 'polkadot'}
               prefix={chain?.ss58Format ?? 42}
-              size={60}
+              size={70}
               value={formatted || address}
             />
           </Grid>
@@ -296,7 +339,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
                 >
                   <FontAwesomeIcon
                     icon={faShieldHalved}
-                    style={{ border: '1px solid', borderRadius: '5px', color: recoverable ? theme.palette.success.main : theme.palette.action.disabledBackground, fontSize: '16px', padding: '3px' }}
+                    style={{ border: '1px solid', borderRadius: '5px', color: isRecoverable ? theme.palette.success.main : theme.palette.action.disabledBackground, fontSize: '16px', padding: '3px' }}
                   />
                 </IconButton>
               </Infotip>
@@ -306,7 +349,7 @@ export default function AccountInformation ({ address, api, assetsOnOtherChains,
                 <IconButton onClick={openManageProxy} sx={{ height: '16px', width: '16px' }}>
                   <FontAwesomeIcon
                     icon={faSitemap}
-                    style={{ border: '1px solid', borderRadius: '5px', color: proxies?.length ? theme.palette.success.main : theme.palette.action.disabledBackground, fontSize: '16px', padding: '2px' }}
+                    style={{ border: '1px solid', borderRadius: '5px', color: hasProxy ? theme.palette.success.main : theme.palette.action.disabledBackground, fontSize: '16px', padding: '2px' }}
                   />
                 </IconButton>
               </Infotip>

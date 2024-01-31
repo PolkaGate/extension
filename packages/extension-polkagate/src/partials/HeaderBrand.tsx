@@ -8,7 +8,7 @@ import '@vaadin/icons';
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon, Close as CloseIcon, Menu as MenuIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
-import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
+import { Box, Container, Divider, Grid, IconButton, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { logoBlack, logoWhite } from '../assets/logos';
@@ -38,10 +38,12 @@ interface Props {
   paddingBottom?: number;
   onClose?: () => void;
   backgroundDefault?: boolean;
-  fullScreen?: boolean;
+  showFullScreen?: boolean;
+  fullScreenURL?: string;
+  style?: SxProps<Theme> | undefined;
 }
 
-function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreen = false, isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreenURL = '/', isRefreshing, noBorder = false, style, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showFullScreen = false, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
   const [isMenuOpen, setOpenMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
@@ -64,10 +66,6 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreen = fal
   const _onClose = useCallback(() => {
     onAction('/');
   }, [onAction]);
-
-  const _onWindowOpen = useCallback((): void => {
-    address && windowOpen(`/account/${address}`).catch(console.error);
-  }, [address]);
 
   const LeftIcon = () => (
     <Grid item xs={showBrand ? 1.4 : 1}>
@@ -109,9 +107,12 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreen = fal
   );
 
   const RightItem = () => (
-    <Grid item textAlign='right' xs={fullScreen && showAccountMenu ? 2.7 : 1.4}>
+    <Grid item textAlign='right' xs={showFullScreen && showAccountMenu ? 2.7 : 1.4}>
       {!onRefresh && !showClose &&
-        <Grid container item width='fit-content'>
+        <Grid container direction='row' item width='fit-content'>
+          {showFullScreen &&
+            <FullScreenIcon url={fullScreenURL} />
+          }
           <IconButton aria-label='menu' color='inherit' edge='start' onClick={_handleMenuClick} size='small' sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}>
             {showMenu &&
               <MenuIcon
@@ -124,9 +125,6 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreen = fal
               />
             }
           </IconButton>
-          {fullScreen && address &&
-            <FullScreenIcon url={`/account/${address}`} />
-          }
         </Grid>
       }
       {!!onRefresh &&
@@ -155,11 +153,12 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreen = fal
       <Container
         disableGutters
         sx={{
-          bgcolor: (backgroundDefault && 'background.default') || (showBrand && 'background.paper'),
-          borderBottom: `${noBorder || shortBorder ? '' : '0.5px solid'}`,
+          bgcolor: backgroundDefault ? 'background.default' : showBrand ? 'background.paper' : 'transparent',
+          borderBottom: `${noBorder || shortBorder ? 'none' : '0.5px solid'}`,
           borderColor: 'secondary.light',
           lineHeight: 0,
-          p: showBrand ? '7px 30px 7px' : `18px ${fullScreen ? '5px' : '20px'} ${paddingBottom}px 20px`
+          p: showBrand ? '7px 30px 7px' : `18px ${showFullScreen ? '5px' : '20px'} ${paddingBottom}px 20px`,
+          ...style
         }}
       >
         <Grid alignItems='center' container justifyContent='space-between'>

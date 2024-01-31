@@ -145,7 +145,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
           open={ options?.length !== 1 && showMenu} // do not open select when page is loading , or options has just one item
           // eslint-disable-next-line react/jsx-no-bind
           renderValue={(v) => {
-            let textToShow = options.find((option) => v === option.value || v === option.text)?.text?.split(/\s*\(/)[0];
+            let textToShow = options.find((option) => v === option.value || v === option.text || String(v) === String(option.value))?.text?.split(/\s*\(/)[0];
 
             if (textToShow?.split(':')?.[1]) {
               textToShow = textToShow?.split(':')[1]?.trim();
