@@ -26,7 +26,7 @@ import RenameModal from '../rename/RenameModal';
 import LockedInReferenda from './unlock/Review';
 import { AccountInformation, AccountSetting, ChangeAssets, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
 
-export type AssetsOnOtherChains = { totalBalance: BN, chainName: string, decimal: number, genesisHash: string, price: number | undefined, token: string };
+export type AssetsOnOtherChains = { assetId?: number, totalBalance: BN, chainName: string, decimal: number, genesisHash: string, price: number | undefined, token: string };
 export const popupNumbers = {
   LOCKED_IN_REFERENDA: 1,
   FORGET_ACCOUNT: 2,
@@ -120,7 +120,7 @@ export default function AccountDetails(): React.ReactElement {
   }, []);
 
   const fetchAssetsOnOtherChains = useCallback((accountAddress: string) => {
-    type fetchedBalance = { balances: string, chain: string, decimal: number, genesisHash: string, price: number, token: string };
+    type fetchedBalance = { assetId?: number, balances: string, chain: string, decimal: number, genesisHash: string, price: number, token: string };
     const worker: Worker = new Worker(new URL('../../util/workers/getAssetsOnOtherChains.js', import.meta.url));
     let fetchedAssetsOnOtherChains: AssetsOnOtherChains[] = [];
 
@@ -151,7 +151,7 @@ export default function AccountDetails(): React.ReactElement {
         saveAssetsOnOtherChains(accountAddress, fetchedAssetsOnOtherChains);
       } else {
         const fetchedBalances = JSON.parse(message) as fetchedBalance[];
-        const mapped = fetchedBalances.map((asset) => ({ chainName: asset.chain, decimal: Number(asset.decimal), genesisHash: asset.genesisHash, price: asset.price, token: asset.token, totalBalance: isHexToBn(asset.balances) }));
+        const mapped = fetchedBalances.map((asset) => ({ assetId: asset?.assetId, chainName: asset.chain, decimal: Number(asset.decimal), genesisHash: asset.genesisHash, price: asset.price, token: asset.token, totalBalance: isHexToBn(asset.balances) }));
 
         // setAssetsOnOtherChains(mapped);
         fetchedAssetsOnOtherChains = mapped;
@@ -226,6 +226,7 @@ export default function AccountDetails(): React.ReactElement {
               <AccountInformation
                 address={address}
                 api={api}
+                assetId={assetId}
                 assetsOnOtherChains={assetsOnOtherChains}
                 balances={balance}
                 chain={chain}
@@ -233,6 +234,7 @@ export default function AccountDetails(): React.ReactElement {
                 formatted={String(formatted)}
                 isDarkTheme={isDarkTheme}
                 price={price}
+                setAssetId={setAssetId}
                 terminateWorker={terminateWorker}
               />
               {supportAssetHubs &&
