@@ -224,6 +224,7 @@ async function kusamaAssetHubTokens (address, results, promises, prices) {
       const zeroBalance = total.isZero();
 
       results.push({
+        assetId: asset.id,
         balances: String(total),
         chain: sanitizeText('KusamaAssetHub'),
         decimal,
@@ -274,6 +275,7 @@ async function polkadotAssetHubTokens (address, results, promises, prices) {
       const zeroBalance = total.isZero();
 
       results.push({
+        assetId: asset.id,
         balances: String(total),
         chain: sanitizeText('PolkadotAssetHub'),
         decimal,
