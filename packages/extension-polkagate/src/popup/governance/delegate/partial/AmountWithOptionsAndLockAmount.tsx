@@ -98,7 +98,7 @@ export default function AmountWithOptionsAndLockAmount({ accountLocks, amount, b
   return (
     <>
       <AmountWithOptions
-        label={t<string>('Delegate Vote Value ({{token}})', { replace: { token } })}
+        label={t<string>('Amount ({{token}})', { replace: { token } })}
         onChangeAmount={onValueChange}
         onPrimary={onMaxAmount}
         onSecondary={onLockedAmount}

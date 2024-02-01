@@ -1097,5 +1097,7 @@
   "Adding {{addingLength}} and removing {{removingLength}} Proxies": "{{addingLength}} जोड़ रहे हैं और {{removingLength}} प्रॉक्सी हटा रहे हैं",
   "Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.": "हमारी प्रणाली विश्वसनीय, उच्च लाभ, कम कमीशन वेरीफायर्स की सुझावित करती है। पोल्कागेट को वेरीफायर्स की भविष्य की किसी भी गलत आचरण के परिणामों के लिए कोई जिम्मेदारी या दायित्व नहीं होता।",
   "Pick 1 of {{totalNumberOfPools}} to join": "{{totalNumberOfPools}} में से 1 का चयन करें जुड़ने के लिए",
-  "Delegate Vote ({{ step }}/3)": "प्रतिनिधि वोट ({{ step }}/3)"
+  "Delegate Vote ({{ step }}/3)": "प्रतिनिधि वोट ({{ step }}/3)",
+  "Comment on {{site}}": "{{site}} पर टिप्पणी करें"
+
 }

@@ -262,7 +262,7 @@
   "Clear": "Очистить",
   "Enter the account address that you want to delegate to": "Введите адрес аккаунта, на который вы хотите делегировать",
   "Or": "Или",
-  "Your final delegated vote power": "Ваша окончательная делегированная избирательная сила",
+  "Your final delegated vote power": "Ваша окончательная делегированная сила голоса",
   "Advanced": "Дополнительно",
   "Delegatee": "Лицо, которому делегируют",
   "Delegate from": "Делегировать от",
@@ -288,7 +288,7 @@
   "Ref.": "Ссылка",
   "Multiplier": "Множитель",
   "Expires": "Истекает",
-  "Available Voting Balance": "Доступный голосующий баланс",
+  "Available Voting Balance": "Баланс голосования",
   "The maximum number of tokens that are already locked in the ecosystem": "Максимальное количество токенов, которые уже заблокированы в экосистеме",
   "Already Locked Amount": "Уже заблокированная сумма",
   "Delegate Vote Value ({{token}})": "Значение делегированного голоса ({{token}})",
@@ -1094,5 +1094,6 @@
   "Adding {{addingLength}} and removing {{removingLength}} Proxies": "Добавляется {{addingLength}}, и удаляется {{removingLength}} прокси",
   "Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.": "Наша система предлагает надежных, высокодоходных, с низкой комиссией валидаторов. Polkagate не несет ответственности за любые недобросовестные действия валидаторов в будущем.",
   "Pick 1 of {{totalNumberOfPools}} to join": "Присоединиться к 1 из {{totalNumberOfPools}}",
-  "Delegate Vote ({{ step }}/3)": "Голосование делегата ({{ step }}/3)"
+  "Delegate Vote ({{ step }}/3)": "Голосование делегата ({{ step }}/3)",
+  "Comment on {{site}}": "Оставьте комментарий на {{site}}"
 }

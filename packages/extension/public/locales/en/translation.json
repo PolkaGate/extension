@@ -1097,5 +1097,6 @@
   "Adding {{addingLength}} and removing {{removingLength}} Proxies": "",
   "Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.": "",
   "Pick 1 of {{totalNumberOfPools}} to join": "",
-  "Delegate Vote ({{ step }}/3)": ""
+  "Delegate Vote ({{ step }}/3)": "",
+  "Comment on {{site}}": ""
 }
