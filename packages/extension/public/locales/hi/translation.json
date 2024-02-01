@@ -948,7 +948,6 @@
   "You need to remove all members first to be able to unstake.": "आपको अनस्टेक करने के लिए पहले सभी सदस्यों को हटाना होगा।",
   "Destroying": "नष्ट हो रहा है",
   "RemoveAll": "सभी को हटाएं",
-  "Your rewards wil be automatically withdrawn.": "आपके पुरस्कार स्वचालित रूप से वापस लिए जाएंगे।",
   "Unstaked": "अनस्टेक किया गया",
   "This amount will be redeemable on {{redeemDate}}, and your rewards will be automatically claimed.": "यह राशि {{redeemDate}} को विमुक्त की जाएगी, और आपके पुरस्कार स्वचालित रूप से दावा किए जाएंगे।",
   "Fast Unstake": "त्वरित अनस्टेक",
