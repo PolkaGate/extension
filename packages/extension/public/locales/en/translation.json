@@ -929,8 +929,6 @@
   "Selected more than": "",
   "Staked more than": "",
   "Members more than": "",
-  "Pick 1 of ": "",
-  "to join": "",
   "🔍 Search pool": "",
   "Com.:": "",
   "Member:": "",
@@ -1097,5 +1095,6 @@
   "You are adding {{addingLength}} Prox{{iesOrY}}": "",
   "You are removing {{removingLength}} Prox{{iesOrY}}": "",
   "Adding {{addingLength}} and removing {{removingLength}} Proxies": "",
-  "Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.": ""
+  "Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.": "",
+  "Pick 1 of {{totalNumberOfPools}} to join": ""
 }

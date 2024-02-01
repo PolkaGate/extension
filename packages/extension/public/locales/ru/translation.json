@@ -925,8 +925,6 @@
   "Selected more than": "Выбрано больше чем",
   "Staked more than": "Стейк больше чем",
   "Members more than": "Участники больше чем",
-  "Pick 1 of": "Выберите 1 из",
-  "to join": "для присоединения",
   "🔍 Search pool": "🔍 Поиск пула",
   "Com.:": "Ком.:",
   "Member:": "Участник:",
@@ -1094,5 +1092,6 @@
   "You are adding {{addingLength}} Prox{{iesOrY}}": "Вы добавляете {{addingLength}} Прокси{{iesOrY}}",
   "You are removing {{removingLength}} Prox{{iesOrY}}": "Вы удаляете {{removingLength}} прокси{{iesOrY}}",
   "Adding {{addingLength}} and removing {{removingLength}} Proxies": "Добавляется {{addingLength}}, и удаляется {{removingLength}} прокси",
-  "Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.": "Наша система предлагает надежных, высокодоходных, с низкой комиссией валидаторов. Polkagate не несет ответственности за любые недобросовестные действия валидаторов в будущем."
+  "Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.": "Наша система предлагает надежных, высокодоходных, с низкой комиссией валидаторов. Polkagate не несет ответственности за любые недобросовестные действия валидаторов в будущем.",
+  "Pick 1 of {{totalNumberOfPools}} to join": "Присоединиться к 1 из {{totalNumberOfPools}}"
 }
