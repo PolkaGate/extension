@@ -1102,5 +1102,6 @@
   "You are adding {{addingLength}} Prox{{iesOrY}}": "您正在添加 {{addingLength}} 个代理{{iesOrY}}",
   "You are removing {{removingLength}} Prox{{iesOrY}}": "您正在移除 {{removingLength}} 个代理{{iesOrY}}",
   "Adding {{addingLength}} and removing {{removingLength}} Proxies": "添加 {{addingLength}} 个，移除 {{removingLength}} 个代理",
-  "Pick 1 of {{totalNumberOfPools}} to join": "选择 {{totalNumberOfPools}} 个中的 1 个加入"
+  "Pick 1 of {{totalNumberOfPools}} to join": "选择 {{totalNumberOfPools}} 个中的 1 个加入",
+  "Delegate Vote ({{ step }}/3)": "代表投票 ({{ step }}/3)"
 }

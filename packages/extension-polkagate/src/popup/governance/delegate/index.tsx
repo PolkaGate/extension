@@ -236,7 +236,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
                 t<string>('Delegate Vote')
               }
               {(step === STEPS.INDEX || step === STEPS.CHOOSE_DELEGATOR) &&
-                t<string>(`Delegate Vote (${step === STEPS.INDEX ? 1 : 2}/3)`)
+                t<string>('Delegate Vote ({{ step }}/3)', { replace: { step: step === STEPS.INDEX ? 1 : 2 } })
               }
               {step === STEPS.PREVIEW &&
                 t<string>('Delegation details')
@@ -353,7 +353,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
           <SelectProxyModal2
             address={address}
             height={modalHeight}
-            closeSelectProxy={()=>setStep(proxyStep)}
+            closeSelectProxy={() => setStep(proxyStep)}
             proxies={proxyItems}
             proxyTypeFilter={GOVERNANCE_PROXY}
             selectedProxy={selectedProxy}
