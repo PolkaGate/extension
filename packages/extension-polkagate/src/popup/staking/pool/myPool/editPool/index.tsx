@@ -61,12 +61,12 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
   const [newRootAddress, setNewRootAddress] = useState<string | null | undefined>();
   const [newNominatorAddress, setNewNominatorAddress] = useState<string | null | undefined>();
   const [newBouncerAddress, setNewBouncerAddress] = useState<string | null | undefined>();
-  const [collapsedName, setCollapsed] = useState<'Roles' | 'Commission' | undefined>();
+  const [collapsedName, setCollapsed] = useState<string | undefined>();
   const [newCommissionPayee, setNewCommissionPayee] = useState<string | null | undefined>();
   const [newCommissionValue, setNewCommissionValue] = useState<number | undefined>();
   const [maxCommission, setMaxCommission] = useState<number | undefined>();
 
-  const open = useCallback((title: 'Roles' | 'Commission') => {
+  const open = useCallback((title: string) => {
     setCollapsed(title === collapsedName ? undefined : title);
   }, [collapsedName]);
 
@@ -165,7 +165,7 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
         </Grid>
         <CollapseIt
           open={open}
-          show={collapsedName === 'Roles'}
+          show={collapsedName === t('Roles')}
           title={t('Roles')}
         >
           <>
@@ -174,7 +174,6 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
               chain={chain}
               disabled
               label={'Depositor'}
-              // setAddress={setDepositorAddress}
               showIdenticon
               style={{
                 m: '15px auto 0',
@@ -221,7 +220,7 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
         </CollapseIt>
         <CollapseIt
           open={open}
-          show={collapsedName === 'Commission'}
+          show={collapsedName === t('Commission')}
           title={t('Commission')}
         >
           <>
