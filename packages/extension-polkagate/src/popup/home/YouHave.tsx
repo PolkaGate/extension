@@ -8,8 +8,8 @@ import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { hide, show, stars6Black, stars6White } from '../../assets/icons';
-import { AccountContext, FormatPrice } from '../../components';
+import { stars6Black, stars6White } from '../../assets/icons';
+import { AccountContext, FormatPrice, HideIcon, ShowIcon } from '../../components';
 import { usePrices } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { MILLISECONDS_TO_UPDATE } from '../../util/constants';
@@ -101,11 +101,14 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
             }
           </Typography>
         }
-        <Grid alignItems='center' item onClick={onHideClick} sx={{ cursor: 'pointer', position: 'absolute', pt: '3px', right: '31px' }}>
+        <Grid alignItems='center' direction='column' item onClick={onHideClick} sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', display: 'flex', position: 'absolute', pt: '3px', right: '31px' }}>
           {hideNumbers
-            ? <Box component='img' src={show as string} sx={{ width: '34px' }} />
-            : <Box component='img' src={hide as string} sx={{ width: '34px' }} />
+            ? <ShowIcon />
+            : <HideIcon />
           }
+          <Typography sx={{ color: 'secondary.light', fontSize: '12px', fontWeight: 500 }}>
+            {hideNumbers ? t('Show') : t('Hide')}
+          </Typography>
         </Grid>
       </Grid>
     </Grid>

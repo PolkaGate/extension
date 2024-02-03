@@ -67,6 +67,10 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreenURL = 
     onAction('/');
   }, [onAction]);
 
+  const _onWindowOpen = useCallback((): void => {
+    address && windowOpen(`/account/${address}`).catch(console.error);
+  }, [address]);
+
   const LeftIcon = () => (
     <Grid item xs={showBrand ? 1.4 : 1}>
       {!showBrand &&
