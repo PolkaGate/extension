@@ -12,8 +12,10 @@ import { Grid, Tooltip, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
+import { AccountsStore } from '@polkadot/extension-base/stores';
 import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
+import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useAccount, useAccountDisplay, useApi, useChain, useFormatted, useProxies, useTranslation } from '../hooks';
 import { DraggableModal } from '../popup/governance/components/DraggableModal';
@@ -72,6 +74,10 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
   const [rawNonce, setRawNonce] = useState<number>();
 
   const from = selectedProxy?.delegate ?? formatted;
+
+  useEffect(() => {
+    cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
+  }, []);
 
   const ptx = useMemo((): SubmittableExtrinsic<'promise', ISubmittableResult> | undefined => {
     if (!call || !api) {

@@ -7,12 +7,13 @@ import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
 import { Grid } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
+import { ActionContext } from '../../components';
 import AccountFeatures from '../../components/AccountFeatures';
 import AccountIcons from '../../components/AccountIcons';
 import { useApi, useChain, useFormatted, useMyAccountIdentity, useProxies } from '../../hooks';
+import useIsExtensionPopup from '../../hooks/useIsExtensionPopup';
 import { showAccount } from '../../messaging';
 import { AccountMenu } from '../../partials';
 import QuickAction from '../../partials/QuickAction';
@@ -37,7 +38,6 @@ export interface Props {
 }
 
 export default function AccountPreview({ address, genesisHash, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
-  const history = useHistory();
   const chain = useChain(address);
   const api = useApi(address);
   const formatted = useFormatted(address);
@@ -46,6 +46,8 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isHi
   const [recoverable, setRecoverable] = useState<boolean | undefined>();
   const identity = useMyAccountIdentity(address);
   const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
+  const onAction = useContext(ActionContext);
+  const onExtension = useIsExtensionPopup();
 
   useEffect((): void => {
     // eslint-disable-next-line no-void
@@ -72,11 +74,12 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isHi
   }, [address, isHidden]);
 
   const goToAccount = useCallback(() => {
-    genesisHash && address && formatted && history.push({
-      pathname: `/account/${genesisHash}/${address}/`,
-      state: { api, identity }
-    });
-  }, [history, genesisHash, address, formatted, api, identity]);
+    if (chain?.genesisHash && onExtension) {
+      onAction(`/account/${chain.genesisHash}/${address}/`);
+    } else if (!onExtension) {
+      onAction(`/account/${address}/`);
+    }
+  }, [address, chain?.genesisHash, onAction, onExtension]);
 
   return (
     <Grid alignItems='center' container position='relative' p='15px 0 13px'>

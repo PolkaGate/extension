@@ -6,14 +6,14 @@
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { Balance } from '@polkadot/types/interfaces';
 import { BN, BN_ONE, BN_ZERO, isFunction, isNumber } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, PButton, ShowBalance, Warning } from '../../components';
+import { ActionContext, AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, PButton, ShowBalance, TwoButtons, Warning } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { useApi, useChain, useFormatted, useTeleport } from '../../hooks';
 import { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
@@ -37,7 +37,7 @@ export const Title = ({ padding = '30px 0px 20px', text }: { text: string, paddi
   const theme = useTheme();
 
   return (
-    <Grid alignItems='baseline' container item spacing={1} p={padding}>
+    <Grid alignItems='baseline' container item p={padding} spacing={1}>
       <Grid item>
         <FontAwesomeIcon
           color={theme.palette.text.primary}
@@ -62,6 +62,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
   const formatted = useFormatted(address);
   const chain = useChain(address);
   const teleportState = useTeleport(address);
+  const onAction = useContext(ActionContext);
 
   const [amount, setAmount] = useState<string>(inputs?.amount || '0');
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
@@ -122,6 +123,14 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
 
     return onChainCall;
   }, [api, isCrossChain, onChainCall]);
+
+  const buttonDisable = useMemo(() =>
+    !address ||
+    !recipientChainGenesisHash ||
+    !(recipientAddress && inputs?.recipientAddress) ||
+    Number(amount) <= 0 ||
+    amountAsBN?.gt(new BN(balances?.availableBalance || BN_ZERO)) ||
+    !inputs?.totalFee, [address, amount, amountAsBN, balances?.availableBalance, inputs?.recipientAddress, inputs?.totalFee, recipientAddress, recipientChainGenesisHash]);
 
   const calculateFee = useCallback((amount: Balance | BN, setFeeCall: (value: React.SetStateAction<Balance | undefined>) => void) => {
     /** to set Maximum fee which will be used to estimate and show max transferable amount */
@@ -286,6 +295,8 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
     setAmount(value);
   }, [balances]);
 
+  const backToDetail = useCallback(() => onAction(`/account/${address}/`), [address, onAction]);
+
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
       <Title text={t<string>('Send Fund')} />
@@ -344,7 +355,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
         {t<string>('To')}
       </Typography>
       <Grid container item justifyContent='space-between'>
-        <Grid item md={6.9} xs={12} sx={{ pt: '10px' }}>
+        <Grid item md={6.9} sx={{ pt: '10px' }} xs={12}>
           <InputAccount
             address={recipientAddress || inputs?.recipientAddress}
             chain={chain}
@@ -378,12 +389,12 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
             sx={{
               bgcolor: 'transparent',
               border: '0.5px solid rgba(99, 54, 77, 0.2) ',
-              mt: '38px',
+              mt: '20px',
               width: '100%'
             }}
           />
         </Grid>
-        <Grid alignItems='end' container justifyContent={noSufficientBalanceWarningCondition ? 'space-between' : 'flex-end'}>
+        <Grid alignItems='end' container justifyContent={noSufficientBalanceWarningCondition ? 'space-between' : 'flex-end'} mt='10px'>
           {noSufficientBalanceWarningCondition &&
             <Warning
               fontWeight={400}
@@ -394,21 +405,17 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
               {t<string>('There is no sufficient transferable balance')}
             </Warning>
           }
-          <PButton
-            _mt='15px'
-            // eslint-disable-next-line react/jsx-no-bind
-            _onClick={() => setStep(STEPS.REVIEW)}
-            _width={32}
-            disabled={
-              !address ||
-              !recipientChainGenesisHash ||
-              !(recipientAddress && inputs?.recipientAddress) ||
-              Number(amount) <= 0 ||
-              amountAsBN?.gt(new BN(balances?.availableBalance || BN_ZERO)) ||
-              !inputs?.totalFee
-            }
-            text={t<string>('Next')}
-          />
+          <Grid container item sx={{ '> div': { m: 0, width: '64%' }, justifyContent: 'flex-end', mt: '5px' }}>
+            <TwoButtons
+              disabled={buttonDisable}
+              mt='1px'
+              // eslint-disable-next-line react/jsx-no-bind
+              onPrimaryClick={() => setStep(STEPS.REVIEW)}
+              onSecondaryClick={backToDetail}
+              primaryBtnText={t<string>('Next')}
+              secondaryBtnText={t<string>('Back to Account page')}
+            />
+          </Grid>
         </Grid>
       </Grid>
     </Grid>

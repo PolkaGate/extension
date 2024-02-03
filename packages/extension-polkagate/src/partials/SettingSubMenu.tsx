@@ -13,7 +13,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import settings from '@polkadot/ui-settings';
 
-import { AccountContext, ActionContext, Checkbox2, ColorContext, Infotip2, MenuItem, Select, Switch } from '../components';
+import { AccountContext, ActionContext, Checkbox2, ColorContext, FullScreenIcon, Infotip2, MenuItem, Select, Switch } from '../components';
 import { updateStorage } from '../components/Loading';
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import { useIsLoginEnabled, useIsPopup, useTranslation } from '../hooks';
@@ -92,10 +92,6 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
   const prefixOptions = settings.availablePrefixes
     .filter(({ value }) => value !== -1)
     .map(({ text, value }): DropdownOption => ({ text, value: `${value}` }));
-
-  const _onWindowOpen = useCallback((): void => {
-    windowOpen('/').catch(console.error);
-  }, []);
 
   const onLockExtension = useCallback((): void => {
     updateStorage('loginInfo', { lastLoginTime: Date.now() - NO_PASS_PERIOD }).then(() => {
@@ -179,18 +175,7 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
               <Grid item>
                 <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '20px', my: 'auto' }} />
               </Grid>
-              <Grid item>
-                <Infotip2
-                  text={t('Fullscreen')}
-                >
-                  <IconButton
-                    onClick={_onWindowOpen}
-                    sx={{ height: '35px', width: '35px' }}
-                  >
-                    <vaadin-icon icon='vaadin:expand-full' style={{ height: '19px', color: `${theme.palette.secondary.light}` }} />
-                  </IconButton>
-                </Infotip2>
-              </Grid>
+              <FullScreenIcon url='/' />
             </>
           }
         </Grid>

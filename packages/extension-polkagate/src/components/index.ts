@@ -8,6 +8,7 @@ export { default as ActionText } from './ActionText';
 export { default as AccountHolder } from './AccountHolder';
 export { default as AccountInputWithIdentity } from './AccountInputWithIdentity';
 export { default as Address } from './Address';
+export { default as NewAddress } from './NewAddress';
 export { default as AddressInput } from './AddressInput';
 export { default as AddressInput2 } from './AddressInput2';
 export { default as Amount } from './Amount';
@@ -84,7 +85,9 @@ export { default as HideIcon } from './SVG/HideIcon';
 export { default as ShowIcon } from './SVG/ShowIcon';
 export { default as SignArea2 } from './SignArea2';
 export { default as Affirm } from './Affirm';
+export { default as AssetIcon } from './AssetIcon';
 export { default as CanPayErrorAlert } from './CanPayErrorAlert';
+export { default as DisplayLogo } from './DisplayLogo';
 export { default as FullScreenIcon } from './FullScreenIcon';
 
 export * from './contexts';

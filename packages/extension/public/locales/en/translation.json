@@ -1058,8 +1058,13 @@
   "Available to Stake": "",
   "Rewards are typically paid out by validators on a regular basis. However, if not paid within the determined period, they will expire and be forfeited.": "",
   "Checking pending rewards ...": "",
+  "Assets on other chains": "",
+  "Account setting": "",
+  "Most common tasks": "",
+  "Receive Fund": "",
+  "Account Details": "",
+  "Assets": "",
   "Validators usually pay rewards regularly. If not received within the set period, rewards expire. You can manually initiate the payout if desired.": "",
-  "Getting pending rewards, please wait ...": "",
   "Would you like to create a password now?": "",
   "Maybe later": "",
   "Please enter your password to proceed.": "",
@@ -1094,5 +1099,8 @@
   "Would you like to set a login password?": "",
   "Later": "",
   "Password Enabled": "",
-  "{{amount}} can be unlocked": ""
+  "{{amount}} can be unlocked": "",
+  "Checking your votes and delegating status...": "",
+  "Back to Account page": "",
+  "Getting pending rewards, please wait ...": ""
 }

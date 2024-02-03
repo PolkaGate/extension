@@ -32,10 +32,14 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
   const selectableNetworks = useMemo(() => !chains.length ? options.filter(({ text }) => text !== 'Allow use on any chain') : options.filter((o) => chains.includes(o.value)), [chains, options]);
 
   useEffect(() => {
-    if (!currentSelectedChainName && currentChainNameFromAccount) {
-      setCurrentSelectedChainName(currentChainNameFromAccount);
-    }
-  }, [currentChainNameFromAccount, currentSelectedChainName]);
+    setCurrentSelectedChainName(currentChainNameFromAccount);
+  }, [currentChainNameFromAccount]);
+
+  // useEffect(() => {
+  //   if (!currentSelectedChainName && currentChainNameFromAccount) {
+  //     setCurrentSelectedChainName(currentChainNameFromAccount);
+  //   }
+  // }, [currentChainNameFromAccount, currentSelectedChainName]);
 
   const selectNetwork = useCallback((net: DropdownOption) => {
     setAnchorEl(null);
