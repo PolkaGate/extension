@@ -951,7 +951,7 @@
   "No redeemable or unstaking funds": "Aucun fonds récupérables ou de désenjeu",
   "Not being rewarded in the past {{unbondingDuration}} {{day}}": "Ne pas avoir reçu de récompenses au cours des {{unbondingDuration}} derniers {{day}}",
   "You can proceed to do fast unstake. Note your stake amount will be available within a few minutes after submitting the transaction.": "Vous pouvez procéder au désenjeu rapide. Notez que votre montant misé sera disponible dans les quelques minutes qui suivent la soumission de la transaction.",
-  "This account is not eligible for fast unstake because the requirements (highlighted above) are not met.": "Ce compte n'est pas éligible au désenjeu rapide car les exigences (indiquées ci-dessus) ne sont pas remplies.",
+  "This account is not eligible for fast unstake, because the requirements (highlighted above) are not met.": "Ce compte n'est pas éligible au désenjeu rapide car les exigences (indiquées ci-dessus) ne sont pas remplies.",
   "Unstake amount": "Montant du désenjeu",
   "Unstaked amount": "Montant désenjeuné",
   "Details": "Détails",
