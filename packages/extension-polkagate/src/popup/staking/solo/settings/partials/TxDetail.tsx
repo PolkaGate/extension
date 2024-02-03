@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useMemo } from 'react';
 
