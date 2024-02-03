@@ -215,7 +215,7 @@ export const getWebsiteFavicon = (url: string | undefined): string => {
   return 'https://s2.googleusercontent.com/s2/favicons?domain=' + url;
 };
 
-export function remainingTime(blocks: number, noMinutes?: boolean): string {
+export function remainingTime (blocks: number, noMinutes?: boolean): string {
   let mins = Math.floor(blocks * BLOCK_RATE / 60);
 
   if (!mins) {
