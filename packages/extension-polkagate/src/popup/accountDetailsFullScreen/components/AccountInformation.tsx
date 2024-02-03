@@ -6,15 +6,14 @@
 import { faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CheckCircleOutline as CheckIcon, InsertLinkRounded as LinkIcon } from '@mui/icons-material';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, IconButton, Skeleton, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
-import { ActionContext, DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, ShortAddress2, ShowBalance } from '../../../components';
+import { ActionContext, DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, ShortAddress2 } from '../../../components';
 import { useAccount, useAccountInfo, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount, windowOpen } from '../../../messaging';
 import { ACALA_GENESIS_HASH, ASSET_HUBS, BALANCES_VALIDITY_PERIOD, IDENTITY_CHAINS, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, SOCIAL_RECOVERY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
@@ -22,6 +21,7 @@ import { BalancesInfo, Price, Proxy } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import { getValue } from '../../account/util';
 import { AssetsOnOtherChains } from '..';
+import AOC from './AOC';
 
 interface AddressDetailsProps {
   address: string | undefined;
@@ -38,6 +38,11 @@ interface AddressDetailsProps {
   assetId: number | undefined;
 }
 
+export type DisplayLogoAOC = {
+  base: string | null | undefined;
+  symbol: string | undefined;
+}
+
 export default function AccountInformation({ address, api, assetId, assetsOnOtherChains, balances, chain, chainName, formatted, isDarkTheme, price, setAssetId, terminateWorker }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
@@ -49,7 +54,6 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
   const [isRecoverable, setIsRecoverable] = useState<boolean | undefined>();
   const [hasProxy, setHasProxy] = useState<boolean | undefined>();
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
-  const [showMore, setShowMore] = useState<boolean>(false);
 
   const calculatePrice = useCallback((amount: BN, decimal: number, price: number) => {
     return parseFloat(amountToHuman(amount, decimal)) * price;
@@ -90,7 +94,7 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
   }, [hasProxy]);
 
   const onAssetHub = useCallback((genesisHash: string | null | undefined) => ASSET_HUBS.includes(genesisHash ?? ''), []);
-  const displayLogoAOC = useCallback((genesisHash: string | null | undefined, symbol: string | undefined) => {
+  const displayLogoAOC = useCallback((genesisHash: string | null | undefined, symbol: string | undefined): DisplayLogoAOC => {
     if (onAssetHub(genesisHash)) {
       if (ASSET_HUBS[0] === genesisHash) {
         return {
@@ -166,15 +170,6 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
     setBalanceToShow(undefined);
   }, [balances, chainName]);
 
-  console.log('assetID:', assetId);
-
-  const assetBoxClicked = useCallback((genesisHash: string, id: number | undefined) => {
-    address && tieAccount(address, genesisHash).finally(() => {
-      id && setAssetId(id);
-      (id === undefined || id === -1) && setAssetId(undefined);
-    }).catch(console.error);
-  }, [address, setAssetId]);
-
   const Balance = () => (
     <>
       {balanceToShow?.decimal
@@ -186,7 +181,7 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
             value={getValue('total', balanceToShow)}
           />
         </Grid>
-        : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90}/>
+        : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
       }
     </>
   );
@@ -214,82 +209,12 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
     </Grid>
   );
 
-  const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
-
-  const BalanceColumn = ({ asset }: { asset: AssetsOnOtherChains }) => (
-    <Grid alignItems='flex-start' container direction='column' item xs>
-      <Grid item sx={{ fontSize: '14px', fontWeight: 600, lineHeight: 1 }}>
-        <ShowBalance
-          api={api}
-          balance={asset.totalBalance}
-          decimal={asset.decimal}
-          decimalPoint={2}
-          token={asset.token}
-        />
-      </Grid>
-      <Grid item sx={{ fontSize: '13px', fontWeight: 400, lineHeight: 1 }}>
-        <FormatPrice
-          amount={asset.totalBalance}
-          decimals={asset.decimal}
-          price={asset.price}
-        />
-      </Grid>
-    </Grid>
-  );
-
-  const OtherAssetBox = ({ asset }: { asset: AssetsOnOtherChains | undefined }) => {
-    const selectedAsset = asset && asset.genesisHash === account?.genesisHash && (asset.token === balanceToShow?.token || (asset.assetId && asset.assetId === assetId));
-
-    return (
-      // eslint-disable-next-line react/jsx-no-bind
-      <Grid alignItems='center' container item justifyContent='center' onClick={() => asset ? assetBoxClicked(asset?.genesisHash, asset?.assetId) : null} sx={{ border: asset ? `${selectedAsset ? '3px' : '1px'} solid` : 'none', borderColor: 'secondary.light', borderRadius: '8px', boxShadow: selectedAsset ? '0px 2px 5px 2px #00000040' : 'none', cursor: asset ? 'pointer' : 'default', height: 'fit-content', m: '2px 2px 7px 2px', p: asset ? '5px' : 0, width: 'fit-content' }}>
-        {asset
-          ? <>
-            <Grid alignItems='center' container item pr='5px' width='fit-content'>
-              <DisplayLogo assetSize='25px' assetToken={displayLogoAOC(asset.genesisHash, asset.token)?.symbol} baseTokenSize='16px' genesisHash={displayLogoAOC(asset.genesisHash, asset.token)?.base} />
-            </Grid>
-            <BalanceColumn
-              asset={asset}
-            />
-          </>
-          : <>
-            <Skeleton animation='wave' height={38} sx={{ transform: 'none' }} variant='text' width={99} />
-          </>
-        }
-      </Grid>
-    );
-  };
-
-  const OtherAssets = ({ assetsOnOtherChains }: { assetsOnOtherChains: AssetsOnOtherChains[] | undefined }) => {
-    const assets = assetsOnOtherChains && assetsOnOtherChains.length > 0 ? [...assetsOnOtherChains] : [undefined, undefined];
-
-    if (!showMore) {
-      assets.length = 5;
-    }
-
-    return (
-      <Grid container item sx={{ borderTop: '1px solid', borderTopColor: borderColor, mt: '10px', pt: '15px' }}>
-        <Typography fontSize='18px' fontWeight={400} m='auto' px='10px' width='fit-content'>
-          {t<string>('Assets')}
-        </Typography>
-        <Grid alignItems='center' columnGap='15px' container item justifyContent='flex-start' sx={{ overflow: 'hidden', px: '3%', transitionDuration: '0.2s', transitionProperty: 'transform' }} xs>
-          {assets.map((asset, index) => (
-            <OtherAssetBox
-              asset={asset}
-              key={index}
-            />
-          ))}
-        </Grid>
-        {assetsOnOtherChains && assetsOnOtherChains.length > 5 &&
-          <Grid alignItems='center' container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: 'pointer', width: '65px' }}>
-            <Typography fontSize='14px' fontWeight={400} sx={{ borderLeft: '1px solid', borderLeftColor: borderColor, height: 'fit-content', pl: '8px' }}>
-              {t<string>(showMore ? 'Less' : 'More')}
-            </Typography>
-            <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
-          </Grid>}
-      </Grid>
-    );
-  };
+  const assetBoxClicked = useCallback((genesisHash: string, id: number | undefined) => {
+    address && tieAccount(address, genesisHash).finally(() => {
+      id && setAssetId(id);
+      (id === undefined || id === -1) && setAssetId(undefined);
+    }).catch(console.error);
+  }, [address, setAssetId]);
 
   const openIdentity = useCallback(() => {
     terminateWorker();
@@ -388,8 +313,17 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
         </Grid>
       </Grid>
       {(otherAssetsToShow === undefined || (otherAssetsToShow && otherAssetsToShow?.length > 0)) &&
-        <OtherAssets
+        <AOC
+          account={account}
+          address={address}
+          api={api}
+          assetId={assetId}
           assetsOnOtherChains={otherAssetsToShow}
+          balanceToShow={balanceToShow}
+          borderColor={borderColor}
+          displayLogoAOC={displayLogoAOC}
+          onclick={assetBoxClicked}
+          setAssetId={setAssetId}
         />
       }
     </Grid>
