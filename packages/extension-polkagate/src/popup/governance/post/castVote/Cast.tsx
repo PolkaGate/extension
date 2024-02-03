@@ -398,13 +398,13 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
             </Infotip2>
           </Grid>
           <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
-            <Infotip2 showInfoMark text={alreadyLockedTooltipText || 'Fetching ...'}>
+            <Infotip2 showInfoMark text={alreadyLockedTooltipText || t('Fetching ...')}>
               <ShowBalance balance={getAlreadyLockedValue(balances)} decimal={decimal} decimalPoint={2} token={token} />
             </Infotip2>
           </Grid>
         </Grid>
       </Grid>
-      <Grid container item height={mayBePreviousVote ? '85px' : '100px'}>
+      <Grid container height={mayBePreviousVote ? '85px' : '100px'} item>
         {voteType !== 'Abstain' &&
           <Convictions
             address={address}
