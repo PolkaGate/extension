@@ -196,7 +196,7 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
               address={newNominatorAddress}
               allAddresses={allAddresses}
               chain={chain}
-              label={'Nominator'}
+              label={t<string>('Nominator')}
               setAddress={setNewNominatorAddress}
               showIdenticon
               style={{
