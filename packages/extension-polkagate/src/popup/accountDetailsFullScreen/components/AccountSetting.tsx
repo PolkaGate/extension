@@ -37,6 +37,7 @@ export default function AccountSetting ({ address, setDisplayPopup, terminateWor
   const identityDisable = useMemo(() => !IDENTITY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
   const proxyDisable = useMemo(() => !PROXY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
   const socialRecoveryDisable = useMemo(() => !SOCIAL_RECOVERY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
+  const hardwareOrExternalAccount = useMemo(() => account?.isExternal ?? account?.isHardware, [account]);
 
   const slideIn = keyframes`
   0% {
@@ -104,7 +105,8 @@ export default function AccountSetting ({ address, setDisplayPopup, terminateWor
       <Grid alignItems='center' container direction='column' display={showAccountSettings !== undefined ? 'inherit' : 'none'} item justifyContent='center' sx={{ animationDuration: '0.3s', animationFillMode: 'both', animationName: `${showAccountSettings ? slideIn : slideOut}`, overflow: 'hidden' }}>
         <TaskButton
           borderColor={borderColor}
-          icon={<vaadin-icon icon='vaadin:download-alt' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
+          disabled={hardwareOrExternalAccount}
+          icon={<vaadin-icon icon='vaadin:download-alt' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
           onClick={onExportAccount}
           secondaryIconType='popup'
           text={t<string>('Export account')}
@@ -112,7 +114,8 @@ export default function AccountSetting ({ address, setDisplayPopup, terminateWor
         />
         <TaskButton
           borderColor={borderColor}
-          icon={<vaadin-icon icon='vaadin:road-branch' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
+          disabled={hardwareOrExternalAccount}
+          icon={<vaadin-icon icon='vaadin:road-branch' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
           onClick={goToDeriveAcc}
           secondaryIconType='popup'
           text={t<string>('Derive new account')}
