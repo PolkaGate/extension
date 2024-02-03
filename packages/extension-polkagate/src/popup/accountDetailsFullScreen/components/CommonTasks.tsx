@@ -39,7 +39,8 @@ interface TaskButtonProps {
 }
 
 export const TaskButton = ({ borderColor, disabled, icon, noBorderButton = false, onClick, secondaryIconType, text, theme }: TaskButtonProps) => (
-  <Grid alignItems='center' container item justifyContent='space-between' onClick={onClick} sx={{ borderBottom: noBorderButton ? 0 : 1, borderBottomColor: borderColor, cursor: disabled ? 'default' : 'pointer', m: 'auto', mb: '8px', pb: '8px' }} width='80%'>
+  // eslint-disable-next-line react/jsx-no-bind
+  <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ borderBottom: noBorderButton ? 0 : 1, borderBottomColor: borderColor, cursor: disabled ? 'default' : 'pointer', m: 'auto', mb: '8px', pb: '8px' }} width='80%'>
     <Grid container item xs={3}>
       {icon}
     </Grid>
@@ -50,7 +51,7 @@ export const TaskButton = ({ borderColor, disabled, icon, noBorderButton = false
     </Grid>
     <Grid alignItems='center' container item justifyContent='flex-end' xs={2}>
       {secondaryIconType === 'page'
-        ? <ArrowForwardIosRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '26px', stroke: disabled ? theme.palette.action.disabledBackground : theme.palette.secondary.light, strokeWidth: 1 }} />
+        ? <ArrowForwardIosRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '26px', stroke: disabled ? theme.palette.text.disabled : theme.palette.secondary.light, strokeWidth: 1 }} />
         : <OpenInNewRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '25px' }} />
       }
     </Grid>
