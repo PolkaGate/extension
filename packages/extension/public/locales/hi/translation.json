@@ -776,7 +776,7 @@
   "Stakers (members) with a small amount of tokens can pool their funds together.": "छोटी राशि के टोकनों वाले स्टेकर्स (सदस्य) अपने फंडों को साथ में मिला सकते हैं।",
   "Minimum to receive rewards": "पुरस्कार प्राप्त करने के लिए न्यूनतम",
   "Each solo staker will be responsible to nominate validators and keep eyes on them to re-nominate if needed.": "प्रत्येक एकल स्टेकर को वैधानिकों का नामांकन करने और उन पर नज़र रखने की जिम्मेदारी होगी, यदि आवश्यक हो।",
-  "Stakers (nominators) with sufficient amount of tokens can choose solo staking.": "पर्याप्त मात्रा में टोकनों वाले स्टेकर्स (नामांकनकर्ता) स्वतंत्र स्टेकिंग चुन सकते हैं।",
+  "Stakers (nominators) with a sufficient amount of tokens can choose solo staking.": "पर्याप्त मात्रा में टोकनों वाले स्टेकर्स (नामांकनकर्ता) स्वतंत्र स्टेकिंग चुन सकते हैं।",
   "Enter": "प्रविष्ट करें",
   "None (Default)": "कोई नहीं (डिफ़ॉल्ट)",
   "Staked: High to Low": "स्टेक किया गया: उच्च से कम",

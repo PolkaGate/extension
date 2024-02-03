@@ -772,7 +772,7 @@
   "Stakers (members) with a small amount of tokens can pool their funds together.": "Стейкеры (участники) с мало токенов могут пулить средства.",
   "Minimum to receive rewards": "Минимум для получения наград",
   "Each solo staker will be responsible to nominate validators and keep eyes on them to re-nominate if needed.": "Каждый соло-стейкер будет отвечать за номинацию валидаторов и следить за ними, чтобы переноминировать их при необходимости.",
-  "Stakers (nominators) with sufficient amount of tokens can choose solo staking.": "Стейкеры (номинаторы) с много токенов могут соло-стейкать.",
+  "Stakers (nominators) with a sufficient amount of tokens can choose solo staking.": "Стейкеры (номинаторы) с много токенов могут соло-стейкать.",
   "Enter": "Ввести",
   "None (Default)": "Нет (По умолчанию)",
   "Staked: High to Low": "Стейк: Высокий - Низкий",

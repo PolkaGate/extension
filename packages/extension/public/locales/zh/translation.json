@@ -219,7 +219,7 @@
   "Minimum to join a pool": "加入池的最低要求",
   "Minimum to receive rewards": "获得奖励的最低要求",
   "Stakers (members) with a small amount of tokens can pool their funds together.": "拥有少量代币的质押者（成员）可以共同汇集他们的资金。",
-  "Stakers (nominators) with sufficient amount of tokens can choose solo staking.": "拥有足够代币的质押者（提名人）可以选择单独质押。",
+  "Stakers (nominators) with a sufficient amount of tokens can choose solo staking.": "拥有足够代币的质押者（提名人）可以选择单独质押。",
   "Enter": "输入",
   "We are working on your transaction.": "我们正在处理您的交易。",
   "Please wait a few seconds and don’t close the window.": "请等待几秒钟，不要关闭窗口。",

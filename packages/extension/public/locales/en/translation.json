@@ -776,7 +776,7 @@
   "Stakers (members) with a small amount of tokens can pool their funds together.": "",
   "Minimum to receive rewards": "",
   "Each solo staker will be responsible to nominate validators and keep eyes on them to re-nominate if needed.": "",
-  "Stakers (nominators) with sufficient amount of tokens can choose solo staking.": "",
+  "Stakers (nominators) with a sufficient amount of tokens can choose solo staking.": "",
   "Enter": "",
   "None (Default)": "",
   "Staked: High to Low": "",
@@ -1098,5 +1098,6 @@
   "Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.": "",
   "Pick 1 of {{totalNumberOfPools}} to join": "",
   "Delegate Vote ({{ step }}/3)": "",
-  "Comment on {{site}}": ""
+  "Comment on {{site}}": "",
+  "Preparation time is over. Please make the deposit.": ""
 }
