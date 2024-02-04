@@ -98,8 +98,8 @@ export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmT
               </Warning>
             </Grid>
             : <>
-              <Grid alignItems='center' container sx={{ ...style }}>
-                <Grid item xs>
+              <Grid alignItems='center' container sx={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', ...style }}>
+                <Grid item>
                   <Password
                     disabled={disabled}
                     isError={isPasswordError}
