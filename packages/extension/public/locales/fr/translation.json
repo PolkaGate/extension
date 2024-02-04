@@ -26,7 +26,7 @@
   "{{name}} ({{size}} bytes)": "{{name}} ({{size}} octets)",
   "Generated 12-word recovery phrase:": "Phrase de récupération de 12 mots générée :",
   "Copy to clipboard": "Copier dans le presse-papiers",
-  "This is a watch-only account. To complete this transaction, you must use a proxy.": "Il s'agit d'un compte en mode surveillance uniquement. Pour terminer cette transaction, vous devez utiliser un mandataire.",
+  "This is a watch-only account. To complete this transaction, you must use a proxy.": "C'est un compte d'observation. Utilisez un proxy pour la transaction.",
   "This account lacks the required available balance to cover the transaction fee.": "Ce compte ne dispose pas du solde disponible requis pour couvrir les frais de transaction.",
   "Update proxy": "le mandataire",
   "Use proxy": "un mandataire",
