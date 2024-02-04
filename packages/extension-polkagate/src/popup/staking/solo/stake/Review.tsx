@@ -200,8 +200,8 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
           />
           {isFirstTimeStaking
             ? <Grid alignContent='center' container justifyContent='center'>
-              <Grid item sx={{ alignSelf: 'center', mr: '8px', width: '60%' }}>
-                <Infotip fontSize='13px' iconLeft={-15} iconTop={5} showQuestionMark text={t<string>(SYSTEM_SUGGESTION_TEXT)}>
+              <Grid item sx={{ alignSelf: 'center', mr: '20px', width: 'fit=content' }}>
+                <Infotip fontSize='13px' iconTop={5} showQuestionMark text={t<string>(SYSTEM_SUGGESTION_TEXT)}>
                   <Typography sx={{ fontWeight: 300 }}>
                     {t('Selected Validators ({{count}})', { replace: { count: selectedValidators?.length } })}
                   </Typography>
