@@ -97,17 +97,22 @@ function Address({ address, backgroundColor, className, genesisHash, isHardware,
       return setRecoded(defaultRecoded);
     }
 
-    const account = findAccountByAddress(accounts, address);
+    try {
+      const account = findAccountByAddress(accounts, address);
 
-    setRecoded(
-      (
-        chain?.definition.chainType === 'ethereum' ||
-        account?.type === 'ethereum' ||
-        (!account && givenType === 'ethereum')
-      )
-        ? { account, formatted: address, type: 'ethereum' }
-        : recodeAddress(address, accounts, chain, settings)
-    );
+      setRecoded(
+        (
+          chain?.definition.chainType === 'ethereum' ||
+          account?.type === 'ethereum' ||
+          (!account && givenType === 'ethereum')
+        )
+          ? { account, formatted: address, type: 'ethereum' }
+          : recodeAddress(address, accounts, chain, settings)
+      );
+    } catch (e) {
+      console.error(e);
+      setRecoded(defaultRecoded);
+    }
   }, [accounts, address, chain, givenType, settings]);
 
   const theme = (
