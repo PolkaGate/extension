@@ -831,7 +831,7 @@
   "Validators": "Валидаторы",
   "Nominators ({{count}})": "Номинаторы ({{count}})",
   "Nominators": "Номинаторы",
-  "Own": "Собственный",
+  "Own": "Собств.",
   "Total": "Итого",
   "The list of nominators is not available to be displayed as this validator is in the waiting status.": "Список номинаторов недоступен для отображения, так как этот валидатор находится в состоянии ожидания.",
   "Validator’s Info": "Информация",
