@@ -1099,5 +1099,6 @@
   "Pick 1 of {{totalNumberOfPools}} to join": "",
   "Delegate Vote ({{ step }}/3)": "",
   "Comment on {{site}}": "",
-  "Preparation time is over. Please make the deposit.": ""
+  "Preparation time is over. Please make the deposit.": "",
+  "Selected Validators ({{length}})": ""
 }

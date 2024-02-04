@@ -1096,5 +1096,6 @@
   "Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.": "Наша система предлагает надежных, высокодоходных, с низкой комиссией валидаторов. Polkagate не несет ответственности за любые недобросовестные действия валидаторов в будущем.",
   "Pick 1 of {{totalNumberOfPools}} to join": "Присоединиться к 1 из {{totalNumberOfPools}}",
   "Delegate Vote ({{ step }}/3)": "Голосование делегата ({{ step }}/3)",
-  "Comment on {{site}}": "Оставьте комментарий на {{site}}"
+  "Comment on {{site}}": "Оставьте комментарий на {{site}}",
+  "Selected Validators ({{length}})": "Выбранные валидаторы ({{length}})"
 }
