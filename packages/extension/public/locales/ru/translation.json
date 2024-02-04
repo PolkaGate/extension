@@ -893,7 +893,7 @@
   "Removing all members from the pool": "Удаление всех участников из пула",
   "When you confirm, you will be able to unstake your tokens": "После подтверждения вы сможете снять стейк со своих токенов",
   "Change Validators": "Изменить валидаторов",
-  "Remove Validators": "Удалить валидаторов",
+  "Remove Validators": "Удалить",
   "Use this to unselect validators. Note you will not get any rewards after.": "Используйте это, чтобы снять выбор с валидаторов. Обратите внимание, что вы не получите наград после этого.",
   "Selected validators": "Выбранные валидаторы",
   "No validator found.": "Валидаторы не найдены.",
