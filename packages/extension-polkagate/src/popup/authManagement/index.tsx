@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
@@ -12,11 +14,7 @@ import { getAuthList, removeAuthorization, toggleAuthorization } from '../../mes
 import { HeaderBrand } from '../../partials';
 import WebsiteEntry from './WebsiteEntry';
 
-interface Props {
-  className?: string;
-}
-
-export default function AuthManagement({ className }: Props): React.ReactElement<Props> {
+export default function AuthManagement (): React.ReactElement {
   const { t } = useTranslation();
   const [authList, setAuthList] = useState<AuthUrls | null>(null);
   const [filter, setFilter] = useState('');
@@ -56,19 +54,14 @@ export default function AuthManagement({ className }: Props): React.ReactElement
         showBackArrow
         text={t<string>('Manage Website Access')}
       />
-      <Typography
-        fontSize='14px'
-        fontWeight={300}
-        m='20px auto'
-        width='90%'
-      >
+      <Typography fontSize='14px' fontWeight={300} m='20px auto' width='90%'>
         {t<string>('Allow or deny website(s) to request access to the extension\'s visible accounts')}
       </Typography>
-      <Grid item position='relative' px='15px' >
+      <Grid item position='relative' px='15px'>
         <InputFilter
           label={t<string>('Search')}
           onChange={_onChangeFilter}
-          placeholder={t<string>('www.example.com')}
+          placeholder={'www.example.com'}
           theme={theme}
           value={filter}
           withReset
@@ -81,40 +74,25 @@ export default function AuthManagement({ className }: Props): React.ReactElement
           width: '92%'
         }}
       >
-        <Grid
-          container
-          direction='column'
-          justifyContent='center'
-          minHeight='38px'
-          sx={{
-            bgcolor: 'background.paper',
-            border: '1px solid',
-            borderColor: 'secondary.light',
-            borderRadius: '5px',
-            fontSize: '12px',
-            fontWeight: '400',
-            maxHeight: window.innerHeight - 320
-          }}
-        >
-          {
-            !authList || !Object.entries(authList)?.length
-              ? <Grid alignItems='center' container item pl='10px' textAlign='left'>
-                {t<string>('No website request yet!')}
-              </Grid>
-              : <Grid container item sx={{ overflow: 'scroll' }}>
-                {Object.entries(authList)
-                  .filter(([url]: [string, AuthUrlInfo]) => url.includes(filter))
-                  .map(
-                    ([url, info]: [string, AuthUrlInfo]) =>
-                      <WebsiteEntry
-                        info={info}
-                        key={url}
-                        removeAuth={removeAuth}
-                        toggleAuth={toggleAuth}
-                        url={url}
-                      />
-                  )}
-              </Grid>
+        <Grid container direction='column' justifyContent='center' minHeight='38px' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '12px', fontWeight: '400', maxHeight: window.innerHeight - 320 }}>
+          {!authList || !Object.entries(authList)?.length
+            ? <Grid alignItems='center' container item pl='10px' textAlign='left'>
+              {t<string>('No website request yet!')}
+            </Grid>
+            : <Grid container item sx={{ overflow: 'scroll' }}>
+              {Object.entries(authList)
+                .filter(([url]: [string, AuthUrlInfo]) => url.includes(filter))
+                .map(
+                  ([url, info]: [string, AuthUrlInfo]) =>
+                    <WebsiteEntry
+                      info={info}
+                      key={url}
+                      removeAuth={removeAuth}
+                      toggleAuth={toggleAuth}
+                      url={url}
+                    />
+                )}
+            </Grid>
           }
         </Grid>
       </Label>

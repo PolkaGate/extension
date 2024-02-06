@@ -206,7 +206,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
               icon={<CheckIcon sx={{ color: 'success.main' }} />}
               iconPosition='start'
               label={t<string>('Ayes ({{ayesCount}})', { replace: { ayesCount: filteredVotes?.yes?.length || 0 } })}
-              sx={{ ...tabStyle, width: '35%' }}
+              sx={{ ...tabStyle, width: '34%' }}
               value={1}
             />
             <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: tabBorderColor, height: '25px', mx: '5px', my: 'auto', width: '2px' }} />} label='' sx={{ borderBlock: '5px solid', borderBlockColor: tabBorderColor, minWidth: '2px', p: '0', width: '2px' }} value={4} />
@@ -222,7 +222,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
               icon={<AbstainIcon sx={{ color: 'primary.light' }} />}
               iconPosition='start'
               label={t<string>('Abstains ({{abstainsCount}})', { replace: { abstainsCount: filteredVotes?.abstain?.length || 0 } })}
-              sx={{ ...tabStyle, width: '30%' }}
+              sx={{ ...tabStyle, width: '31%' }}
               value={3}
             />
           </Tabs>

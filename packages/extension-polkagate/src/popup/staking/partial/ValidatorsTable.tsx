@@ -22,22 +22,22 @@ import ValidatorInfoPage from './ValidatorInfo';
 
 interface Props {
   api?: ApiPromise;
-  activeValidators: ValidatorInfo[] | undefined;
-  allValidatorsIdentities: DeriveAccountInfo[] | null | undefined;
+  activeValidators?: ValidatorInfo[] | undefined;
+  allValidatorsIdentities?: DeriveAccountInfo[] | null | undefined;
   chain?: Chain;
   decimal?: number;
   formatted?: AccountId | string;
-  handleCheck: (checked: boolean, validator: ValidatorInfo) => void;
+  handleCheck?: (checked: boolean, validator: ValidatorInfo) => void;
   height?: number;
-  isSelected: (v: ValidatorInfo) => boolean;
+  isSelected?: (v: ValidatorInfo) => boolean;
   maxSelected?: boolean;
   style?: SxProps<Theme> | undefined;
   staked: BN | undefined;
-  stakingConsts: StakingConsts | null | undefined;
+  stakingConsts?: StakingConsts | null | undefined;
   showCheckbox?: boolean;
   validatorsToList: ValidatorInfo[] | null | undefined;
   token?: string;
-  nominatedValidatorsIds: AccountId[] | null | undefined;
+  nominatedValidatorsIds?: AccountId[] | null | undefined;
 }
 
 export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {

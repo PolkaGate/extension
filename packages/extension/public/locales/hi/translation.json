@@ -776,7 +776,7 @@
   "Stakers (members) with a small amount of tokens can pool their funds together.": "छोटी राशि के टोकनों वाले स्टेकर्स (सदस्य) अपने फंडों को साथ में मिला सकते हैं।",
   "Minimum to receive rewards": "पुरस्कार प्राप्त करने के लिए न्यूनतम",
   "Each solo staker will be responsible to nominate validators and keep eyes on them to re-nominate if needed.": "प्रत्येक एकल स्टेकर को वैधानिकों का नामांकन करने और उन पर नज़र रखने की जिम्मेदारी होगी, यदि आवश्यक हो।",
-  "Stakers (nominators) with sufficient amount of tokens can choose solo staking.": "पर्याप्त मात्रा में टोकनों वाले स्टेकर्स (नामांकनकर्ता) स्वतंत्र स्टेकिंग चुन सकते हैं।",
+  "Stakers (nominators) with a sufficient amount of tokens can choose solo staking.": "पर्याप्त मात्रा में टोकनों वाले स्टेकर्स (नामांकनकर्ता) स्वतंत्र स्टेकिंग चुन सकते हैं।",
   "Enter": "प्रविष्ट करें",
   "None (Default)": "कोई नहीं (डिफ़ॉल्ट)",
   "Staked: High to Low": "स्टेक किया गया: उच्च से कम",
@@ -946,7 +946,6 @@
   "You need to remove all members first to be able to unstake.": "आपको अनस्टेक करने के लिए पहले सभी सदस्यों को हटाना होगा।",
   "Destroying": "नष्ट हो रहा है",
   "RemoveAll": "सभी को हटाएं",
-  "Your rewards wil be automatically withdrawn.": "आपके पुरस्कार स्वचालित रूप से वापस लिए जाएंगे।",
   "Unstaked": "अनस्टेक किया गया",
   "This amount will be redeemable on {{redeemDate}}, and your rewards will be automatically claimed.": "यह राशि {{redeemDate}} को विमुक्त की जाएगी, और आपके पुरस्कार स्वचालित रूप से दावा किए जाएंगे।",
   "Fast Unstake": "त्वरित अनस्टेक",
@@ -1097,5 +1096,8 @@
   "You are removing {{removingLength}} Prox{{iesOrY}}": "आप {{removingLength}} प्रॉक्स{{iesOrY}} हटा रहे हैं",
   "Adding {{addingLength}} and removing {{removingLength}} Proxies": "{{addingLength}} जोड़ रहे हैं और {{removingLength}} प्रॉक्सी हटा रहे हैं",
   "Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.": "हमारी प्रणाली विश्वसनीय, उच्च लाभ, कम कमीशन वेरीफायर्स की सुझावित करती है। पोल्कागेट को वेरीफायर्स की भविष्य की किसी भी गलत आचरण के परिणामों के लिए कोई जिम्मेदारी या दायित्व नहीं होता।",
-  "Pick 1 of {{totalNumberOfPools}} to join": "{{totalNumberOfPools}} में से 1 का चयन करें जुड़ने के लिए"
+  "Pick 1 of {{totalNumberOfPools}} to join": "{{totalNumberOfPools}} में से 1 का चयन करें जुड़ने के लिए",
+  "Delegate Vote ({{ step }}/3)": "प्रतिनिधि वोट ({{ step }}/3)",
+  "Comment on {{site}}": "{{site}} पर टिप्पणी करें",
+  "Selected Validators ({{length}})": "चयनित मान्यकर्ता ({{length}})"
 }

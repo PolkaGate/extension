@@ -49,23 +49,27 @@ export default function StatusInfo({ address, isDecisionDepositPlaced, isOngoing
     }
   }, [status, t]);
 
-  const getUnitPassed = useCallback((timelineIndex: number, periodKey: string) => {
+  const getUnitPassed = useCallback((timelineIndex: number, periodKey: string): number | undefined => {
     if (track?.[1]?.[periodKey] && timeline?.[timelineIndex]?.block && currentBlock) {
       const startBlock = timeline[timelineIndex].block;
       const periodInBlock = Number(track[1][periodKey]);
       const endBlock = startBlock + periodInBlock;
+
+      setRemainingBlocks(endBlock - currentBlock);
 
       if (currentBlock > endBlock) {
         return null; // finished
       }
 
       const diff = currentBlock - startBlock;
+      const scale = getPeriodScale(periodInBlock);
 
-      setRemainingBlocks(endBlock - currentBlock);
-      const unitToEndOfPeriod = Math.ceil(diff / getPeriodScale(periodInBlock));
+      const unitToEndOfPeriod = scale ? Math.ceil(diff / scale) : 0;
 
       return unitToEndOfPeriod;
     }
+
+    return undefined;
   }, [currentBlock, timeline, track]);
 
   const prepareUnitPassed = useMemo(() => getUnitPassed(0, 'preparePeriod'), [getUnitPassed]);
@@ -84,7 +88,7 @@ export default function StatusInfo({ address, isDecisionDepositPlaced, isOngoing
         </Typography>
       </Grid>
       <Grid item>
-        <Infotip2 showQuestionMark text={`${remainingTime(remainingBlocks)} remaining` || t('Fetching ...')}>
+        <Infotip2 showQuestionMark text={remainingBlocks ? remainingTime(remainingBlocks) === 'finished' ? t('Preparation time is over. Please make the deposit.') : `${remainingTime(remainingBlocks)} remaining` : t('Fetching ...')}>
           <Grid item sx={{ pr: '5px' }}>
             <Typography sx={{ fontSize: '18px', fontWeight: 400 }}>
               {_status === t('Preparing') && prepareUnitPassed !== null &&

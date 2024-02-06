@@ -33,11 +33,11 @@ export default function RewardsDestination({ settings }: Props): React.ReactElem
       </Typography>
       <Grid container item justifyContent='center' mt='5px'>
         {settings.payee === 'Staked'
-          ? <Typography sx={{ fontWeight: 400 }}>
+          ? <Typography sx={{ fontWeight: 400}}>
             {t('Add to staked amount')}
           </Typography>
           : <Grid container item justifyContent='center'>
-            <Grid item sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: 'fit-content', maxWidth: '60%' }}>
+            <Grid item sx={{ maxWidth: '60%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: 'fit-content' }}>
               {payeeIdentity?.display || payeeName}
             </Grid>
             <Grid item>

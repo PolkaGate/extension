@@ -219,7 +219,7 @@
   "Minimum to join a pool": "加入池的最低要求",
   "Minimum to receive rewards": "获得奖励的最低要求",
   "Stakers (members) with a small amount of tokens can pool their funds together.": "拥有少量代币的质押者（成员）可以共同汇集他们的资金。",
-  "Stakers (nominators) with sufficient amount of tokens can choose solo staking.": "拥有足够代币的质押者（提名人）可以选择单独质押。",
+  "Stakers (nominators) with a sufficient amount of tokens can choose solo staking.": "拥有足够代币的质押者（提名人）可以选择单独质押。",
   "Enter": "输入",
   "We are working on your transaction.": "我们正在处理您的交易。",
   "Please wait a few seconds and don’t close the window.": "请等待几秒钟，不要关闭窗口。",
@@ -999,7 +999,7 @@
   "No redeemable or unstaking funds": "没有可赎回或取消质押的资金",
   "Not being rewarded in the past {{unbondingDuration}} {{day}}": "在过去{{unbondingDuration}} {{day}}内没有奖励",
   "You can proceed to do fast unstake. Note your stake amount will be available within a few minutes after submitting the transaction.": "您可以继续执行快速取消质押。请注意，提交交易后，您的质押金额将在几分钟内可用。",
-  "This account is not eligible for fast unstake because the requirements (highlighted above) are not met.": "此帐户不符合快速取消质押的要求（如上所述）。",
+  "This account is not eligible for fast unstake, because the requirements (highlighted above) are not met.": "此帐户不符合快速取消质押的要求（如上所述）。",
   "Unstake amount": "取消质押金额",
   "Unstaked amount": "取消质押金额",
   "It is more than the total unlocking amount.": "它超出了总解锁金额。",
@@ -1102,5 +1102,8 @@
   "You are adding {{addingLength}} Prox{{iesOrY}}": "您正在添加 {{addingLength}} 个代理{{iesOrY}}",
   "You are removing {{removingLength}} Prox{{iesOrY}}": "您正在移除 {{removingLength}} 个代理{{iesOrY}}",
   "Adding {{addingLength}} and removing {{removingLength}} Proxies": "添加 {{addingLength}} 个，移除 {{removingLength}} 个代理",
-  "Pick 1 of {{totalNumberOfPools}} to join": "选择 {{totalNumberOfPools}} 个中的 1 个加入"
+  "Pick 1 of {{totalNumberOfPools}} to join": "选择 {{totalNumberOfPools}} 个中的 1 个加入",
+  "Delegate Vote ({{ step }}/3)": "代表投票 ({{ step }}/3)",
+  "Comment on {{site}}": "在 {{site}} 上发表评论",
+  "Selected Validators ({{length}})": "已选验证器 ({{length}})"
 }
