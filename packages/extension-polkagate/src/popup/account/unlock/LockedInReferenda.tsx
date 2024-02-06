@@ -178,10 +178,10 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
     <>
       <Grid item pt='3px' pb='2px'>
         <Grid alignItems='flex-end' container justifyContent='space-between'>
-          <Grid item sx={{ fontSize: '16px', fontWeight: 300 }} xs={5.2}>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 300 }} xs>
             {t('Locked in Referenda')}
           </Grid>
-          <Grid alignItems='flex-end' container direction='column' item xs>
+          <Grid alignItems='flex-end' container direction='column' item sx={{ width: 'fit-content' }}>
             <Grid item sx={{ fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} textAlign='right'>
               <ShowBalance
                 api={api}
