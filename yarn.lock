@@ -9770,6 +9770,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"country-flag-icons@npm:^1.5.9":
+  version: 1.5.9
+  resolution: "country-flag-icons@npm:1.5.9"
+  checksum: de9041dd7d37b608038255ab41f9a1f16f71e7530de6b168cd96f44bb206c50cef9765054cd8da8d00fde1751f7c9095093e6f86cb74bc4aafaa1651b9808f56
+  languageName: node
+  linkType: hard
+
 "coveralls@npm:^3.1.1":
   version: 3.1.1
   resolution: "coveralls@npm:3.1.1"
@@ -19551,6 +19558,7 @@ resolve@^2.0.0-next.3:
     babel-plugin-transform-import-meta: ^2.1.1
     better-react-spinkit: ^2.0.4
     chart.js: ^4.2.1
+    country-flag-icons: ^1.5.9
     css-loader: ^6.7.3
     dotenv-webpack: ^8.0.1
     framer-motion: ^7.5.1
