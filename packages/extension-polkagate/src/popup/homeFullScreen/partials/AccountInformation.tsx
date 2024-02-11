@@ -58,7 +58,7 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
   }, []);
 
   const borderColor = useMemo(() => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [theme.palette.mode]);
-  const textAndIconColor = useMemo(() => theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.secondary.light, [theme.palette.mode, theme.palette.secondary.light, theme.palette.text.primary]);
+  const textAndIconColor = useMemo(() => theme.palette.secondary.main, [theme.palette.mode, theme.palette.secondary.light, theme.palette.text.primary]);
   // const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
   // const isPriceOutdated = useMemo(() => price !== undefined && Date.now() - price.date > BALANCES_VALIDITY_PERIOD, [price]);
   const otherAssetsToShow = useMemo(() => {
@@ -279,7 +279,7 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
         <AssetsBox />
       </Grid>
       <Grid container item justifyContent='flex-end' minHeight='50px'>
-        <Divider sx={{ bgcolor: borderColor, height: '1px', my: '15px', width: '95%' }} />
+        <Divider sx={{ bgcolor: borderColor, height: '1px', mr: '5%', my: '15px', width: '95%' }} />
         <Grid container item xs>
           {(otherAssetsToShow === undefined || (otherAssetsToShow && otherAssetsToShow?.length > 0)) &&
             <AOC
