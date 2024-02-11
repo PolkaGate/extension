@@ -24,7 +24,6 @@ interface Props {
   genesisHash: string | null | undefined;
   api: ApiPromise | undefined;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
-  terminateWorker: () => void | undefined;
 }
 
 interface TaskButtonProps {
@@ -58,7 +57,7 @@ export const TaskButton = ({ borderColor, disabled, icon, noBorderButton = false
   </Grid>
 );
 
-export default function CommonTasks ({ address, api, assetId, genesisHash, setDisplayPopup, terminateWorker }: Props): React.ReactElement {
+export default function CommonTasks ({ address, api, assetId, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
@@ -72,40 +71,35 @@ export default function CommonTasks ({ address, api, assetId, genesisHash, setDi
   const stakingIconColor = useMemo(() => stakingDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary, [stakingDisabled, theme.palette.action.disabledBackground, theme.palette.text.primary]);
 
   const goToSend = useCallback(() => {
-    terminateWorker();
     address && onAction(`/send/${address}/${assetId}`);
-  }, [address, assetId, onAction, terminateWorker]);
+  }, [address, assetId, onAction,]);
 
   const goToReceive = useCallback(() => {
     address && setDisplayPopup(popupNumbers.RECEIVE);
   }, [address, setDisplayPopup]);
 
   const goToGovernance = useCallback(() => {
-    terminateWorker();
     address && genesisHash && !governanceDisabled && windowOpen(`/governance/${address}/referenda`).catch(console.error);
-  }, [address, genesisHash, governanceDisabled, terminateWorker]);
+  }, [address, genesisHash, governanceDisabled]);
 
   const goToSoloStaking = useCallback(() => {
-    terminateWorker();
     address && genesisHash && !stakingDisabled &&
       history.push({
         pathname: `/solo/${address}/`,
         state: { api, pathname: `account/${address}` }
       });
-  }, [address, api, genesisHash, history, stakingDisabled, terminateWorker]);
+  }, [address, api, genesisHash, history, stakingDisabled]);
 
   const goToPoolStaking = useCallback(() => {
-    terminateWorker();
     address && genesisHash && !stakingDisabled && history.push({
       pathname: `/pool/${address}/`,
       state: { api, pathname: `account/${address}` }
     });
-  }, [address, api, genesisHash, history, stakingDisabled, terminateWorker]);
+  }, [address, api, genesisHash, history, stakingDisabled]);
 
   const goToCrowdLoans = useCallback(() => {
-    terminateWorker();
     address && genesisHash && !crowdloanDisabled && onAction(`/crowdloans/${address}/`);
-  }, [address, crowdloanDisabled, genesisHash, onAction, terminateWorker]);
+  }, [address, crowdloanDisabled, genesisHash, onAction]);
 
   const goToHistory = useCallback(() => {
     address && setDisplayPopup(popupNumbers.HISTORY);
