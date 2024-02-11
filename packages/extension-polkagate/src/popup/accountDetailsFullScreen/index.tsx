@@ -11,10 +11,10 @@ import { useHistory } from 'react-router-dom';
 import { BN } from '@polkadot/util';
 
 import { ActionContext } from '../../components';
-import { useAccount, useApi, useBalances, useChain, useChainName, useDecimal, useFormatted, useFullscreen, usePrice, useToken, useTranslation } from '../../hooks';
+import { useAccount, useApi, useAssetsOnChains, useBalances, useChain, useChainName, useDecimal, useFormatted, useFullscreen, usePrice, useToken, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
-import { amountToHuman, isHexToBn } from '../../util/utils';
+import { amountToHuman } from '../../util/utils';
 import { getValue } from '../account/util';
 import DeriveAccountModal from '../deriveAccount/modal/DeriveAccountModal';
 import ExportAccountModal from '../export/ExportAccountModal';
@@ -43,7 +43,7 @@ export interface UnlockInformationType {
   unlockableAmount: BN;
 }
 
-export default function AccountDetails(): React.ReactElement {
+export default function AccountDetails (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -55,8 +55,8 @@ export default function AccountDetails(): React.ReactElement {
   const chain = useChain(address);
   const chainName = useChainName(address);
   const onAction = useContext(ActionContext);
+  const assetsOnOtherChains = useAssetsOnChains(address);
 
-  const [workerCalled, setWorkerCalled] = useState<{ address: string, worker: Worker }>();
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
   const [assetId, setAssetId] = useState<number>();
 
@@ -65,7 +65,6 @@ export default function AccountDetails(): React.ReactElement {
   const token = useToken(address);
   const decimal = useDecimal(address);
 
-  const [assetsOnOtherChains, setAssetsOnOtherChains] = useState<AssetsOnOtherChains[] | undefined | null>();
   const [displayPopup, setDisplayPopup] = useState<number | undefined>();
   const [unlockInformation, setUnlockInformation] = useState<UnlockInformationType | undefined>();
 
@@ -86,98 +85,6 @@ export default function AccountDetails(): React.ReactElement {
     return parseFloat(amountToHuman(totalBalance, decimal)) * price.amount;
   }, [balance, decimal, price]);
 
-  const readAssetsOnOtherChains = useCallback((addressA: string) => {
-    chrome.storage.local.get('assetsOnOtherChains', (res) => {
-      const aOC = res.assetsOnOtherChains || {};
-
-      const addressAsset = aOC[addressA] as AssetsOnOtherChains[];
-
-      if (addressAsset) {
-        const parsed = JSON.parse(addressAsset) as AssetsOnOtherChains[] | null | undefined;
-
-        const updatedAssets = parsed?.map((asset) => {
-          const totalBalanceBN = isHexToBn(asset.totalBalance as unknown as string);
-
-          return { ...asset, totalBalance: totalBalanceBN };
-        });
-
-        updatedAssets && updatedAssets.length > 0 && setAssetsOnOtherChains(updatedAssets);
-      }
-    });
-  }, []);
-
-  const saveAssetsOnOtherChains = useCallback((addressA: string, fetched: AssetsOnOtherChains[]) => {
-    const nonZeros = fetched.filter((asset) => !asset.totalBalance.isZero());
-
-    chrome.storage.local.get('assetsOnOtherChains', (res) => {
-      const aOC = res.assetsOnOtherChains || {};
-
-      aOC[addressA] = JSON.stringify(nonZeros);
-
-      // eslint-disable-next-line no-void
-      void chrome.storage.local.set({ assetsOnOtherChains: aOC });
-    });
-  }, []);
-
-  const fetchAssetsOnOtherChains = useCallback((accountAddress: string) => {
-    type fetchedBalance = { assetId?: number, balances: string, chain: string, decimal: number, genesisHash: string, price: number, token: string };
-    const worker: Worker = new Worker(new URL('../../util/workers/getAssetsOnOtherChains.js', import.meta.url));
-    let fetchedAssetsOnOtherChains: AssetsOnOtherChains[] = [];
-
-    readAssetsOnOtherChains(accountAddress);
-
-    setWorkerCalled({
-      address: accountAddress,
-      worker
-    });
-    worker.postMessage({ accountAddress });
-
-    worker.onerror = (err) => {
-      console.log(err);
-    };
-
-    worker.onmessage = (e: MessageEvent<string>) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const message = e.data;
-
-      if (message === 'null') {
-        setAssetsOnOtherChains(null);
-      } else if (message === 'Done') {
-        worker.terminate();
-
-        console.log('DONE');
-
-        setAssetsOnOtherChains(fetchedAssetsOnOtherChains);
-        saveAssetsOnOtherChains(accountAddress, fetchedAssetsOnOtherChains);
-      } else {
-        const fetchedBalances = JSON.parse(message) as fetchedBalance[];
-        const mapped = fetchedBalances.map((asset) => ({ assetId: asset?.assetId, chainName: asset.chain, decimal: Number(asset.decimal), genesisHash: asset.genesisHash, price: asset.price, token: asset.token, totalBalance: isHexToBn(asset.balances) }));
-
-        // setAssetsOnOtherChains(mapped);
-        fetchedAssetsOnOtherChains = mapped;
-      }
-    };
-  }, [saveAssetsOnOtherChains, readAssetsOnOtherChains]);
-
-  const terminateWorker = useCallback(() => workerCalled && workerCalled.worker.terminate(), [workerCalled]);
-
-  useEffect(() => {
-    if (!address) {
-      return;
-    }
-
-    if (!workerCalled) {
-      fetchAssetsOnOtherChains(address);
-    }
-
-    if (workerCalled && workerCalled.address !== address) {
-      setRefreshNeeded(true);
-      terminateWorker();
-      setAssetsOnOtherChains(undefined);
-      fetchAssetsOnOtherChains(address);
-    }
-  }, [address, fetchAssetsOnOtherChains, workerCalled, terminateWorker]);
-
   useEffect(() => {
     assetId && setAssetId(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -192,26 +99,23 @@ export default function AccountDetails(): React.ReactElement {
   }, []);
 
   const goToSend = useCallback(() => {
-    terminateWorker();
     address && onAction(`/send/${address}/${assetId ?? ''}`);
-  }, [address, assetId, onAction, terminateWorker]);
+  }, [address, assetId, onAction]);
 
   const goToSoloStaking = useCallback(() => {
-    terminateWorker();
     address && account?.genesisHash && STAKING_CHAINS.includes(account.genesisHash) &&
       history.push({
         pathname: `/solo/${address}/`,
         state: { api, pathname: `account/${address}` }
       });
-  }, [account?.genesisHash, address, api, history, terminateWorker]);
+  }, [account?.genesisHash, address, api, history]);
 
   const goToPoolStaking = useCallback(() => {
-    terminateWorker();
     address && account?.genesisHash && STAKING_CHAINS.includes(account.genesisHash) && history.push({
       pathname: `/pool/${address}/`,
       state: { api, pathname: `account/${address}` }
     });
-  }, [account?.genesisHash, address, api, history, terminateWorker]);
+  }, [account?.genesisHash, address, api, history]);
 
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>
@@ -235,7 +139,6 @@ export default function AccountDetails(): React.ReactElement {
                 isDarkTheme={isDarkTheme}
                 price={price}
                 setAssetId={setAssetId}
-                terminateWorker={terminateWorker}
               />
               {supportAssetHubs &&
                 <ChangeAssets
@@ -317,12 +220,10 @@ export default function AccountDetails(): React.ReactElement {
                 assetId={assetId}
                 genesisHash={account?.genesisHash}
                 setDisplayPopup={setDisplayPopup}
-                terminateWorker={terminateWorker}
               />
               <AccountSetting
                 address={address}
                 setDisplayPopup={setDisplayPopup}
-                terminateWorker={terminateWorker}
               />
               <ExternalLinks
                 address={address}
