@@ -20,10 +20,9 @@ import { TaskButton } from './CommonTasks';
 interface Props {
   address: string | undefined;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
-  terminateWorker: () => void | undefined;
 }
 
-export default function AccountSetting ({ address, setDisplayPopup, terminateWorker }: Props): React.ReactElement {
+export default function AccountSetting ({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -74,19 +73,16 @@ export default function AccountSetting ({ address, setDisplayPopup, terminateWor
   }, [address, account, setDisplayPopup]);
 
   const onManageProxies = useCallback(() => {
-    terminateWorker();
     address && !proxyDisable && onAction(`/manageProxies/${address}`);
-  }, [address, onAction, proxyDisable, terminateWorker]);
+  }, [address, onAction, proxyDisable]);
 
   const onManageIdentity = useCallback(() => {
-    terminateWorker();
     address && !identityDisable && onAction(`/manageIdentity/${address}`);
-  }, [address, identityDisable, onAction, terminateWorker]);
+  }, [address, identityDisable, onAction]);
 
   const onSocialRecovery = useCallback(() => {
-    terminateWorker();
     address && !socialRecoveryDisable && onAction(`/socialRecovery/${address}/false`);
-  }, [address, socialRecoveryDisable, onAction, terminateWorker]);
+  }, [address, socialRecoveryDisable, onAction]);
 
   const toggleAccountSetting = useCallback(() => {
     setShowAccountSettings(!showAccountSettings);
