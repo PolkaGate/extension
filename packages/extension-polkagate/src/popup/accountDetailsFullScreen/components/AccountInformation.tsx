@@ -6,7 +6,7 @@
 import { faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CheckCircleOutline as CheckIcon, InsertLinkRounded as LinkIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, IconButton, Skeleton, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -35,8 +35,6 @@ interface AddressDetailsProps {
   price: Price | undefined;
   setAssetId: React.Dispatch<React.SetStateAction<number | undefined>>;
   assetId: number | undefined;
-  mode?: 'Home' | 'Detail';
-  allChainTotalBalance?: string | undefined;
 }
 
 export type DisplayLogoAOC = {
@@ -44,7 +42,7 @@ export type DisplayLogoAOC = {
   symbol: string | undefined;
 }
 
-export default function AccountInformation({ address, allChainTotalBalance, api, assetId, assetsOnOtherChains, balances, chain, chainName, formatted, isDarkTheme, mode = 'Detail', price, setAssetId }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation({ address, api, assetId, assetsOnOtherChains, balances, chain, chainName, formatted, isDarkTheme, price, setAssetId }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
   const accountInfo = useAccountInfo(api, formatted);
@@ -212,27 +210,12 @@ export default function AccountInformation({ address, allChainTotalBalance, api,
 
   const AssetsBox = () => (
     <Grid alignItems='center' container item xs>
-      {mode === 'Detail'
-        ? <>
-          <Grid item pl='7px'>
-            <DisplayLogo assetToken={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.symbol} genesisHash={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.base} size={42} />
-          </Grid>
-          <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
-            <BalanceRow />
-          </Grid>
-        </>
-        : <Grid alignItems='center' container gap='15px' item justifyContent='center' width='fit-content'>
-          <Typography fontSize='16px' fontWeight={400} pl='15px'>
-            {t<string>('Total Balance')}:
-          </Typography>
-          {allChainTotalBalance !== undefined
-            ? <Typography fontSize='36px' fontWeight={700}>
-              {`$${allChainTotalBalance ?? 0}`}
-            </Typography>
-            : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
-          }
-        </Grid>
-      }
+      <Grid item pl='7px'>
+        <DisplayLogo assetToken={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.symbol} genesisHash={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.base} size={42} />
+      </Grid>
+      <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
+        <BalanceRow />
+      </Grid>
     </Grid>
   );
 
@@ -260,7 +243,7 @@ export default function AccountInformation({ address, allChainTotalBalance, api,
   }, [account?.isHidden, address]);
 
   return (
-    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '20px 10px 15px 20px' }}>
+    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '20px 10px 5px 20px' }}>
       <Grid container item>
         <Grid container item sx={{ borderRight: '1px solid', borderRightColor: borderColor, pr: '8px', width: 'fit-content' }}>
           <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>
@@ -305,7 +288,7 @@ export default function AccountInformation({ address, allChainTotalBalance, api,
             </Grid>
           </Grid>
         </Grid>
-        <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: borderColor, px: '7px' }} xs={mode === 'Home' ? 6 : 5}>
+        <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: borderColor, px: '7px' }} xs={5}>
           <Grid container item justifyContent='space-between'>
             <Identity
               address={address}
@@ -329,19 +312,21 @@ export default function AccountInformation({ address, allChainTotalBalance, api,
         </Grid>
         <AssetsBox />
       </Grid>
-      {
-        (otherAssetsToShow === undefined || (otherAssetsToShow && otherAssetsToShow?.length > 0)) &&
-        <AOC
-          account={account}
-          api={api}
-          assetId={assetId}
-          assetsOnOtherChains={otherAssetsToShow}
-          balanceToShow={balanceToShow}
-          borderColor={borderColor}
-          displayLogoAOC={displayLogoAOC}
-          mode={mode}
-          onclick={assetBoxClicked}
-        />
+      {(otherAssetsToShow === undefined || (otherAssetsToShow && otherAssetsToShow?.length > 0)) &&
+        <>
+          <Divider sx={{ bgcolor: borderColor, height: '1px', my: '15px', width: '95%' }} />
+          <AOC
+            account={account}
+            api={api}
+            assetId={assetId}
+            assetsOnOtherChains={otherAssetsToShow}
+            balanceToShow={balanceToShow}
+            borderColor={borderColor}
+            displayLogoAOC={displayLogoAOC}
+            mode='Detail'
+            onclick={assetBoxClicked}
+          />
+        </>
       }
     </Grid>
   );
