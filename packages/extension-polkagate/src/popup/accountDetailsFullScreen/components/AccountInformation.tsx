@@ -6,7 +6,7 @@
 import { faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CheckCircleOutline as CheckIcon, InsertLinkRounded as LinkIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton, Skeleton, useTheme } from '@mui/material';
+import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -33,9 +33,10 @@ interface AddressDetailsProps {
   isDarkTheme: boolean;
   balances: BalancesInfo | undefined;
   price: Price | undefined;
-  terminateWorker: () => void | undefined;
   setAssetId: React.Dispatch<React.SetStateAction<number | undefined>>;
   assetId: number | undefined;
+  mode?: 'Home' | 'Detail';
+  allChainTotalBalance?: string | undefined;
 }
 
 export type DisplayLogoAOC = {
@@ -43,7 +44,7 @@ export type DisplayLogoAOC = {
   symbol: string | undefined;
 }
 
-export default function AccountInformation({ address, api, assetId, assetsOnOtherChains, balances, chain, chainName, formatted, isDarkTheme, price, setAssetId, terminateWorker }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation({ address, allChainTotalBalance, api, assetId, assetsOnOtherChains, balances, chain, chainName, formatted, isDarkTheme, mode = 'Detail', price, setAssetId }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
   const accountInfo = useAccountInfo(api, formatted);
@@ -209,6 +210,32 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
     </Grid>
   );
 
+  const AssetsBox = () => (
+    <Grid alignItems='center' container item xs>
+      {mode === 'Detail'
+        ? <>
+          <Grid item pl='7px'>
+            <DisplayLogo assetToken={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.symbol} genesisHash={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.base} size={42} />
+          </Grid>
+          <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
+            <BalanceRow />
+          </Grid>
+        </>
+        : <Grid alignItems='center' container gap='15px' item justifyContent='center' width='fit-content'>
+          <Typography fontSize='16px' fontWeight={400} pl='15px'>
+            {t<string>('Total Balance')}:
+          </Typography>
+          {allChainTotalBalance !== undefined
+            ? <Typography fontSize='36px' fontWeight={700}>
+              {`$${allChainTotalBalance ?? 0}`}
+            </Typography>
+            : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
+          }
+        </Grid>
+      }
+    </Grid>
+  );
+
   const assetBoxClicked = useCallback((genesisHash: string, id: number | undefined) => {
     address && tieAccount(address, genesisHash).finally(() => {
       id && setAssetId(id);
@@ -217,19 +244,16 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
   }, [address, setAssetId]);
 
   const openIdentity = useCallback(() => {
-    terminateWorker();
     address && windowOpen(`/manageIdentity/${address}`);
-  }, [address, terminateWorker]);
+  }, [address]);
 
   const openSocialRecovery = useCallback(() => {
-    terminateWorker();
     address && windowOpen(`/socialRecovery/${address}/false`);
-  }, [address, terminateWorker]);
+  }, [address]);
 
   const openManageProxy = useCallback(() => {
-    terminateWorker();
     address && chain && onAction(`/manageProxies/${address}`);
-  }, [address, chain, onAction, terminateWorker]);
+  }, [address, chain, onAction]);
 
   const toggleVisibility = useCallback((): void => {
     address && showAccount(address, account?.isHidden || false).catch(console.error);
@@ -281,7 +305,7 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
             </Grid>
           </Grid>
         </Grid>
-        <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: borderColor, px: '7px' }} xs={5}>
+        <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: borderColor, px: '7px' }} xs={mode === 'Home' ? 6 : 5}>
           <Grid container item justifyContent='space-between'>
             <Identity
               address={address}
@@ -303,27 +327,20 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
             <ShortAddress2 address={formatted} charsCount={40} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
           </Grid>
         </Grid>
-        <Grid alignItems='center' container item xs>
-          <Grid item pl='7px'>
-            <DisplayLogo assetToken={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.symbol} genesisHash={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.base} size={42} />
-          </Grid>
-          <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
-            <BalanceRow />
-          </Grid>
-        </Grid>
+        <AssetsBox />
       </Grid>
-      {(otherAssetsToShow === undefined || (otherAssetsToShow && otherAssetsToShow?.length > 0)) &&
+      {
+        (otherAssetsToShow === undefined || (otherAssetsToShow && otherAssetsToShow?.length > 0)) &&
         <AOC
           account={account}
-          address={address}
           api={api}
           assetId={assetId}
           assetsOnOtherChains={otherAssetsToShow}
           balanceToShow={balanceToShow}
           borderColor={borderColor}
           displayLogoAOC={displayLogoAOC}
+          mode={mode}
           onclick={assetBoxClicked}
-          setAssetId={setAssetId}
         />
       }
     </Grid>
