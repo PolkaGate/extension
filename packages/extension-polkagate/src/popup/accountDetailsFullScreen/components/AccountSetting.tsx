@@ -8,7 +8,7 @@ import '@vaadin/icons';
 import { faAddressCard } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Collapse, Divider, Grid, keyframes, Typography, useTheme } from '@mui/material';
+import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { ActionContext, SocialRecoveryIcon } from '../../../components';
@@ -22,7 +22,7 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function AccountSetting({ address, setDisplayPopup }: Props): React.ReactElement {
+export default function AccountSetting ({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
