@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { Collapse, Grid, Skeleton, Typography } from '@mui/material';
+import { Collapse, Divider, Grid, Skeleton, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -93,13 +93,13 @@ function AOC({ account, api, assetId, assetsOnOtherChains, balanceToShow, border
   };
 
   return (
-    <Grid container item sx={{ borderTop: '1px solid', borderTopColor: borderColor, minHeight: '58px', mt: '10px', pt: '15px' }}>
-      <Typography fontSize='18px' fontWeight={400} m='auto' px='10px' width='fit-content'>
+    <Grid container item>
+      <Typography fontSize='18px' fontWeight={400} mt='13px' px='10px' width='fit-content'>
         {t<string>('Assets')}
       </Typography>
       <Grid alignItems='center' container item xs>
-        <Collapse collapsedSize={42} in={showMore} orientation='vertical' sx={{ width: '100%' }}>
-          <Grid container gap='10px 15px' item justifyContent='flex-start' sx={{ height: 'fit-content', overflow: 'hidden', px: '3%' }}>
+        <Collapse collapsedSize={53} in={showMore} orientation='vertical' sx={{ width: '100%' }}>
+          <Grid container gap='15px' item justifyContent='flex-start' sx={{ height: 'fit-content', minHeight: '50px', overflow: 'hidden', p: '5px 3%' }}>
             {assets.map((asset, index) => (
               <OtherAssetBox
                 asset={asset}
