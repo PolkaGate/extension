@@ -9,7 +9,7 @@ import React, { useState } from 'react';
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { useApi, useAssetsOnChains, useChain, useFormatted } from '../../../hooks';
-import { AccountInformation } from '../../accountDetailsFullScreen/components';
+import AccountInformation from '../partials/AccountInformation';
 
 interface Props {
   account: AccountWithChildren;
@@ -34,8 +34,6 @@ function AccountItem({ account }: Props): React.ReactElement {
         chain={chain}
         chainName={chain?.name}
         formatted={formatted}
-        isDarkTheme
-        mode='Home'
         price={0}
         setAssetId={setAssetId}
       />
