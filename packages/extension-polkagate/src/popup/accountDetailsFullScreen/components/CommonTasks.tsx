@@ -40,7 +40,7 @@ interface TaskButtonProps {
 export const TaskButton = ({ borderColor, disabled, icon, noBorderButton = false, onClick, secondaryIconType, text, theme }: TaskButtonProps) => (
   <>
     {/* eslint-disable-next-line react/jsx-no-bind */}
-    <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ cursor: disabled ? 'default' : 'pointer', m: 'auto', py: '5px' }} width='80%'>
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: borderColor }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', m: 'auto', minHeight: '45px', p: '5px 10px' }} width='85%'>
       <Grid container item xs={3}>
         {icon}
       </Grid>
