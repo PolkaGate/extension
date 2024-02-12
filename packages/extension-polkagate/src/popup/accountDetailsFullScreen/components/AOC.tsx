@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { Grid, Skeleton, Typography } from '@mui/material';
+import { Collapse, Divider, Grid, Skeleton, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -25,9 +25,10 @@ interface Props {
   assetsOnOtherChains: AssetsOnOtherChains[] | null | undefined;
   borderColor: string;
   onclick: (genesisHash: string, id: number | undefined) => void;
+  mode?: 'Home' | 'Detail';
 }
 
-function AOC({ account, api, assetId, assetsOnOtherChains, balanceToShow, borderColor, displayLogoAOC, onclick}: Props) {
+function AOC({ account, api, assetId, assetsOnOtherChains, balanceToShow, borderColor, displayLogoAOC, mode = 'Detail', onclick }: Props) {
   const { t } = useTranslation();
 
   const [showMore, setShowMore] = useState<boolean>(false);
@@ -38,20 +39,14 @@ function AOC({ account, api, assetId, assetsOnOtherChains, balanceToShow, border
     if (assetsOnOtherChains && assetsOnOtherChains.length > 0) {
       const aOC = [...assetsOnOtherChains];
 
-      if (showMore) {
-        return aOC;
-      } else {
-        aOC.length = 5;
-
-        return aOC;
-      }
+      return aOC;
     } else {
       return [undefined, undefined];
     }
-  }, [assetsOnOtherChains, showMore]);
+  }, [assetsOnOtherChains]);
 
   const BalanceColumn = ({ asset }: { asset: AssetsOnOtherChains }) => (
-    <Grid alignItems='flex-start' container direction='column' item xs>
+    <Grid alignItems='flex-start' container direction='column' item pl='5px' xs>
       <Grid item sx={{ fontSize: '14px', fontWeight: 600, lineHeight: 1 }}>
         <ShowBalance
           api={api}
@@ -73,18 +68,21 @@ function AOC({ account, api, assetId, assetsOnOtherChains, balanceToShow, border
 
   const OtherAssetBox = ({ asset }: { asset: AssetsOnOtherChains | undefined }) => {
     const selectedAsset = asset && asset.genesisHash === account?.genesisHash && (asset.token === balanceToShow?.token || (asset.assetId && asset.assetId === assetId));
+    const homeMode = (mode === 'Home' && selectedAsset);
 
     return (
       // eslint-disable-next-line react/jsx-no-bind
-      <Grid alignItems='center' container item justifyContent='center' onClick={() => asset ? onclick(asset?.genesisHash, asset?.assetId) : null} sx={{ border: asset ? `${selectedAsset ? '3px' : '1px'} solid` : 'none', borderColor: 'secondary.light', borderRadius: '8px', boxShadow: selectedAsset ? '0px 2px 5px 2px #00000040' : 'none', cursor: asset ? 'pointer' : 'default', height: 'fit-content', m: '2px 2px 7px 2px', p: asset ? '5px' : 0, width: 'fit-content' }}>
+      <Grid alignItems='center' container item justifyContent='center' onClick={() => asset ? onclick(asset?.genesisHash, asset?.assetId) : null} sx={{ border: asset ? `${selectedAsset ? '3px' : '1px'} solid` : 'none', borderColor: 'secondary.light', borderRadius: '8px', boxShadow: selectedAsset ? '0px 2px 5px 2px #00000040' : 'none', cursor: asset ? 'pointer' : 'default', height: 'fit-content', p: asset ? '5px' : 0, width: 'fit-content' }}>
         {asset
           ? <>
-            <Grid alignItems='center' container item pr='5px' width='fit-content'>
+            <Grid alignItems='center' container item width='fit-content'>
               <DisplayLogo assetSize='25px' assetToken={displayLogoAOC(asset.genesisHash, asset.token)?.symbol} baseTokenSize='16px' genesisHash={displayLogoAOC(asset.genesisHash, asset.token)?.base} />
             </Grid>
-            <BalanceColumn
-              asset={asset}
-            />
+            {(mode === 'Detail' || homeMode) &&
+              <BalanceColumn
+                asset={asset}
+              />
+            }
           </>
           : <>
             <Skeleton animation='wave' height={38} sx={{ transform: 'none' }} variant='text' width={99} />
@@ -95,17 +93,21 @@ function AOC({ account, api, assetId, assetsOnOtherChains, balanceToShow, border
   };
 
   return (
-    <Grid container item sx={{ borderTop: '1px solid', borderTopColor: borderColor, mt: '10px', pt: '15px' }}>
-      <Typography fontSize='18px' fontWeight={400} m='auto' px='10px' width='fit-content'>
+    <Grid container item>
+      <Typography fontSize='18px' fontWeight={400} mt='13px' px='10px' width='fit-content'>
         {t<string>('Assets')}
       </Typography>
-      <Grid alignItems='center' columnGap='15px' container item justifyContent='flex-start' sx={{ overflow: 'hidden', px: '3%', transitionDuration: '0.2s', transitionProperty: 'transform' }} xs>
-        {assets.map((asset, index) => (
-          <OtherAssetBox
-            asset={asset}
-            key={index}
-          />
-        ))}
+      <Grid alignItems='center' container item xs>
+        <Collapse collapsedSize={53} in={showMore} orientation='vertical' sx={{ width: '100%' }}>
+          <Grid container gap='15px' item justifyContent='flex-start' sx={{ height: 'fit-content', minHeight: '50px', overflow: 'hidden', p: '5px 3%' }}>
+            {assets.map((asset, index) => (
+              <OtherAssetBox
+                asset={asset}
+                key={index}
+              />
+            ))}
+          </Grid>
+        </Collapse>
       </Grid>
       {assetsOnOtherChains && assetsOnOtherChains.length > 5 &&
         <Grid alignItems='center' container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: 'pointer', width: '65px' }}>

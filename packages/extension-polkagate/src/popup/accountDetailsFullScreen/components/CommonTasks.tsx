@@ -6,7 +6,7 @@
 import { faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, OpenInNewRounded as OpenInNewRoundedIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material';
-import { Grid, Theme, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -24,7 +24,6 @@ interface Props {
   genesisHash: string | null | undefined;
   api: ApiPromise | undefined;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
-  terminateWorker: () => void | undefined;
 }
 
 interface TaskButtonProps {
@@ -39,26 +38,29 @@ interface TaskButtonProps {
 }
 
 export const TaskButton = ({ borderColor, disabled, icon, noBorderButton = false, onClick, secondaryIconType, text, theme }: TaskButtonProps) => (
-  // eslint-disable-next-line react/jsx-no-bind
-  <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ borderBottom: noBorderButton ? 0 : 1, borderBottomColor: borderColor, cursor: disabled ? 'default' : 'pointer', m: 'auto', mb: '8px', pb: '8px' }} width='80%'>
-    <Grid container item xs={3}>
-      {icon}
+  <>
+    {/* eslint-disable-next-line react/jsx-no-bind */}
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: borderColor }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', m: 'auto', minHeight: '45px', p: '5px 10px' }} width='85%'>
+      <Grid container item xs={3}>
+        {icon}
+      </Grid>
+      <Grid container item xs={7}>
+        <Typography color={disabled ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='16px' fontWeight={500}>
+          {text}
+        </Typography>
+      </Grid>
+      <Grid alignItems='center' container item justifyContent='flex-end' xs={2}>
+        {secondaryIconType === 'page'
+          ? <ArrowForwardIosRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '26px', stroke: disabled ? theme.palette.text.disabled : theme.palette.secondary.light, strokeWidth: 1 }} />
+          : <OpenInNewRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '25px' }} />
+        }
+      </Grid>
     </Grid>
-    <Grid container item xs={7}>
-      <Typography color={disabled ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='16px' fontWeight={500}>
-        {text}
-      </Typography>
-    </Grid>
-    <Grid alignItems='center' container item justifyContent='flex-end' xs={2}>
-      {secondaryIconType === 'page'
-        ? <ArrowForwardIosRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '26px', stroke: disabled ? theme.palette.text.disabled : theme.palette.secondary.light, strokeWidth: 1 }} />
-        : <OpenInNewRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '25px' }} />
-      }
-    </Grid>
-  </Grid>
+    {!noBorderButton && <Divider sx={{ bgcolor: borderColor, height: '2px', m: '5px auto', width: '80%' }} />}
+  </>
 );
 
-export default function CommonTasks ({ address, api, assetId, genesisHash, setDisplayPopup, terminateWorker }: Props): React.ReactElement {
+export default function CommonTasks({ address, api, assetId, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
@@ -72,40 +74,35 @@ export default function CommonTasks ({ address, api, assetId, genesisHash, setDi
   const stakingIconColor = useMemo(() => stakingDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary, [stakingDisabled, theme.palette.action.disabledBackground, theme.palette.text.primary]);
 
   const goToSend = useCallback(() => {
-    terminateWorker();
     address && onAction(`/send/${address}/${assetId}`);
-  }, [address, assetId, onAction, terminateWorker]);
+  }, [address, assetId, onAction,]);
 
   const goToReceive = useCallback(() => {
     address && setDisplayPopup(popupNumbers.RECEIVE);
   }, [address, setDisplayPopup]);
 
   const goToGovernance = useCallback(() => {
-    terminateWorker();
     address && genesisHash && !governanceDisabled && windowOpen(`/governance/${address}/referenda`).catch(console.error);
-  }, [address, genesisHash, governanceDisabled, terminateWorker]);
+  }, [address, genesisHash, governanceDisabled]);
 
   const goToSoloStaking = useCallback(() => {
-    terminateWorker();
     address && genesisHash && !stakingDisabled &&
       history.push({
         pathname: `/solo/${address}/`,
         state: { api, pathname: `account/${address}` }
       });
-  }, [address, api, genesisHash, history, stakingDisabled, terminateWorker]);
+  }, [address, api, genesisHash, history, stakingDisabled]);
 
   const goToPoolStaking = useCallback(() => {
-    terminateWorker();
     address && genesisHash && !stakingDisabled && history.push({
       pathname: `/pool/${address}/`,
       state: { api, pathname: `account/${address}` }
     });
-  }, [address, api, genesisHash, history, stakingDisabled, terminateWorker]);
+  }, [address, api, genesisHash, history, stakingDisabled]);
 
   const goToCrowdLoans = useCallback(() => {
-    terminateWorker();
     address && genesisHash && !crowdloanDisabled && onAction(`/crowdloans/${address}/`);
-  }, [address, crowdloanDisabled, genesisHash, onAction, terminateWorker]);
+  }, [address, crowdloanDisabled, genesisHash, onAction]);
 
   const goToHistory = useCallback(() => {
     address && setDisplayPopup(popupNumbers.HISTORY);
@@ -113,9 +110,10 @@ export default function CommonTasks ({ address, api, assetId, genesisHash, setDi
 
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} width='275px'>
-      <Typography fontSize='22px' fontWeight={700} sx={{ borderBottom: '2px solid', borderBottomColor: borderColor, mb: '10px', pb: '10px' }}>
+      <Typography fontSize='22px' fontWeight={700}>
         {t<string>('Most common tasks')}
       </Typography>
+      <Divider sx={{ bgcolor: borderColor, height: '2px', m: '5px auto 15px', width: '90%' }} />
       <Grid alignItems='center' container direction='column' display='block' item justifyContent='center'>
         <TaskButton
           borderColor={borderColor}

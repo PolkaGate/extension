@@ -5,23 +5,22 @@
 
 import { faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CheckCircleOutline as CheckIcon, InsertLinkRounded as LinkIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton, Skeleton, useTheme } from '@mui/material';
+import { ArrowForwardIos as ArrowForwardIosIcon, CheckCircleOutline as CheckIcon, InsertLinkRounded as LinkIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
+import { Button, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
-import { ActionContext, DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, ShortAddress2 } from '../../../components';
+import { ActionContext, Identicon, Identity, Infotip, ShortAddress2 } from '../../../components';
 import { useAccount, useAccountInfo, useTranslation } from '../../../hooks';
-import { showAccount, tieAccount, windowOpen } from '../../../messaging';
-import { ACALA_GENESIS_HASH, ASSET_HUBS, BALANCES_VALIDITY_PERIOD, IDENTITY_CHAINS, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, SOCIAL_RECOVERY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
+import { showAccount, tieAccount } from '../../../messaging';
+import { ACALA_GENESIS_HASH, ASSET_HUBS, IDENTITY_CHAINS, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, SOCIAL_RECOVERY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
 import { BalancesInfo, Price, Proxy } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
-import { getValue } from '../../account/util';
-import { AssetsOnOtherChains } from '..';
-import AOC from './AOC';
+import { AssetsOnOtherChains } from '../../accountDetailsFullScreen';
+import AOC from '../../accountDetailsFullScreen/components/AOC';
 
 interface AddressDetailsProps {
   address: string | undefined;
@@ -30,11 +29,11 @@ interface AddressDetailsProps {
   chain: Chain | null | undefined;
   formatted: string | undefined;
   chainName: string | undefined;
-  isDarkTheme: boolean;
   balances: BalancesInfo | undefined;
   price: Price | undefined;
   setAssetId: React.Dispatch<React.SetStateAction<number | undefined>>;
   assetId: number | undefined;
+  totalBalance?: string | undefined;
 }
 
 export type DisplayLogoAOC = {
@@ -42,7 +41,7 @@ export type DisplayLogoAOC = {
   symbol: string | undefined;
 }
 
-export default function AccountInformation({ address, api, assetId, assetsOnOtherChains, balances, chain, chainName, formatted, isDarkTheme, price, setAssetId }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation({ address, api, assetId, assetsOnOtherChains, balances, chain, chainName, formatted, price, setAssetId, totalBalance }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
   const accountInfo = useAccountInfo(api, formatted);
@@ -58,9 +57,10 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
     return parseFloat(amountToHuman(amount, decimal)) * price;
   }, []);
 
-  const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
-  const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
-  const isPriceOutdated = useMemo(() => price !== undefined && Date.now() - price.date > BALANCES_VALIDITY_PERIOD, [price]);
+  const borderColor = useMemo(() => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [theme.palette.mode]);
+  const textAndIconColor = useMemo(() => theme.palette.secondary.main, [theme.palette.mode, theme.palette.secondary.light, theme.palette.text.primary]);
+  // const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
+  // const isPriceOutdated = useMemo(() => price !== undefined && Date.now() - price.date > BALANCES_VALIDITY_PERIOD, [price]);
   const otherAssetsToShow = useMemo(() => {
     if (!assetsOnOtherChains) {
       return assetsOnOtherChains;
@@ -169,52 +169,18 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
     setBalanceToShow(undefined);
   }, [balances, chainName]);
 
-  const Balance = () => (
-    <>
-      {balanceToShow?.decimal
-        ? <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary', fontWeight: 500 }}>
-          <FormatBalance2
-            decimalPoint={2}
-            decimals={[balanceToShow.decimal]}
-            tokens={[balanceToShow.token]}
-            value={getValue('total', balanceToShow)}
-          />
-        </Grid>
-        : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
-      }
-    </>
-  );
-
-  const Price = () => (
-    <>
-      {price === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== price?.chainName
-        ? <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
-        : <Grid item sx={{ '> div span': { display: 'block' }, color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 400 }}>
-          <FormatPrice
-            amount={getValue('total', balanceToShow)}
-            decimals={balanceToShow.decimal}
-            price={price.amount}
-          />
-        </Grid>
-      }
-    </>
-  );
-
-  const BalanceRow = () => (
-    <Grid alignItems='center' container fontSize='28px' item xs>
-      <Balance />
-      <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '30px', mx: '10px', my: 'auto' }} />
-      <Price />
-    </Grid>
-  );
-
   const AssetsBox = () => (
     <Grid alignItems='center' container item xs>
-      <Grid item pl='7px'>
-        <DisplayLogo assetToken={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.symbol} genesisHash={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.base} size={42} />
-      </Grid>
-      <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
-        <BalanceRow />
+      <Grid alignItems='center' container gap='15px' item justifyContent='center' width='fit-content'>
+        <Typography fontSize='16px' fontWeight={400} pl='15px'>
+          {t<string>('Total Balance')}:
+        </Typography>
+        {totalBalance !== undefined
+          ? <Typography fontSize='36px' fontWeight={700}>
+            {`$${totalBalance ?? 0}`}
+          </Typography>
+          : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
+        }
       </Grid>
     </Grid>
   );
@@ -227,12 +193,12 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
   }, [address, setAssetId]);
 
   const openIdentity = useCallback(() => {
-    address && windowOpen(`/manageIdentity/${address}`);
-  }, [address]);
+    address && onAction(`/manageIdentity/${address}`);
+  }, [address, onAction]);
 
   const openSocialRecovery = useCallback(() => {
-    address && windowOpen(`/socialRecovery/${address}/false`);
-  }, [address]);
+    address && onAction(`/socialRecovery/${address}/false`);
+  }, [address, onAction]);
 
   const openManageProxy = useCallback(() => {
     address && chain && onAction(`/manageProxies/${address}`);
@@ -243,7 +209,7 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
   }, [account?.isHidden, address]);
 
   return (
-    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '20px 10px 5px 20px' }}>
+    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: theme.palette.mode === 'dark' ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '20px 10px 15px 20px' }}>
       <Grid container item>
         <Grid container item sx={{ borderRight: '1px solid', borderRightColor: borderColor, pr: '8px', width: 'fit-content' }}>
           <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>
@@ -288,7 +254,7 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
             </Grid>
           </Grid>
         </Grid>
-        <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: borderColor, px: '7px' }} xs={5}>
+        <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: borderColor, px: '7px' }} xs={5.5}>
           <Grid container item justifyContent='space-between'>
             <Identity
               address={address}
@@ -312,22 +278,34 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
         </Grid>
         <AssetsBox />
       </Grid>
-      {(otherAssetsToShow === undefined || (otherAssetsToShow && otherAssetsToShow?.length > 0)) &&
-        <>
-          <Divider sx={{ bgcolor: borderColor, height: '1px', my: '15px', width: '95%' }} />
-          <AOC
-            account={account}
-            api={api}
-            assetId={assetId}
-            assetsOnOtherChains={otherAssetsToShow}
-            balanceToShow={balanceToShow}
-            borderColor={borderColor}
-            displayLogoAOC={displayLogoAOC}
-            mode='Detail'
-            onclick={assetBoxClicked}
-          />
-        </>
-      }
+      <Grid container item justifyContent='flex-end' minHeight='50px'>
+        <Divider sx={{ bgcolor: borderColor, height: '1px', mr: '5%', my: '15px', width: '95%' }} />
+        <Grid container item xs>
+          {(otherAssetsToShow === undefined || (otherAssetsToShow && otherAssetsToShow?.length > 0)) &&
+            <AOC
+              account={account}
+              api={api}
+              assetId={assetId}
+              assetsOnOtherChains={otherAssetsToShow}
+              balanceToShow={balanceToShow}
+              borderColor={borderColor}
+              displayLogoAOC={displayLogoAOC}
+              mode='Home'
+              onclick={assetBoxClicked}
+            />
+          }
+        </Grid>
+        <Grid alignItems='center' container item width='fit-content'>
+          <Divider orientation='vertical' sx={{ bgcolor: borderColor, height: '34px', ml: 0, mr: '10px', my: 'auto', width: '1px' }} />
+          <Button endIcon={<MoreVertIcon style={{ color: textAndIconColor, fontSize: '32px' }} />} sx={{ color: textAndIconColor, fontSize: '16px', fontWeight: 400, height: 'fit-content', width: 'fit-content' }} variant='text'>
+            {t<string>('Settings')}
+          </Button>
+          <Divider orientation='vertical' sx={{ bgcolor: borderColor, height: '34px', ml: '5px', mr: '15px', my: 'auto', width: '1px' }} />
+          <Button endIcon={<ArrowForwardIosIcon style={{ color: textAndIconColor, fontSize: '28px' }} />} sx={{ color: textAndIconColor, fontSize: '16px', fontWeight: 400, height: 'fit-content', width: 'fit-content' }} variant='text'>
+            {t<string>('Details')}
+          </Button>
+        </Grid>
+      </Grid>
     </Grid>
   );
 }
