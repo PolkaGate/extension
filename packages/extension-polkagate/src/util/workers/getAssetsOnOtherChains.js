@@ -64,7 +64,9 @@ const CHAINS_TO_CHECK = [{
   priceID: ''
 }
 ];
-const fetchPriceFor = ['hydradx', 'karura', 'liquid-staking-dot', 'acala-dollar-acala', 'astar', 'kusama', 'acala', 'polkadot', 'tether', 'usd-coin'];
+// const fetchPriceFor = ['hydradx', 'karura', 'liquid-staking-dot', 'acala-dollar-acala', 'astar', 'kusama', 'acala',
+//   'polkadot', 'tether', 'usd-coin'
+// ];
 
 async function fastestEndpoint (chainEndpoints, isACA) {
   let connection;
@@ -84,7 +86,6 @@ async function fastestEndpoint (chainEndpoints, isACA) {
     };
   });
 
-  // Wait for the fastest connection to resolve
   const fastestApi = await Promise.any(connections.map((con) => con.connection));
 
   return {
@@ -118,21 +119,26 @@ function firstLetterUppercase (text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-function getNativeToken(address, api, genesisHash, tokenName, prices, promises, results) {
-  promises.push(api.derive.balances.all(address).then((balances) => {
+function getNativeToken (accounts, api, genesisHash, tokenName, promises, results) {
+  const params = accounts.map((address) => api.derive.balances.all(address).then((balances) => {
     const availableBalance = balances.freeBalance.add(balances.reservedBalance);
-    const price = prices.prices[tokenName]?.usd ?? 0;
     const chainName = firstLetterUppercase(tokenName) + 'AssetHub';
 
+    if (availableBalance.isZero()) {
+      return;
+    }
+
     results.push({
+      address,
       balances: String(availableBalance),
       chain: sanitizeText(chainName),
       decimal: getDecimal(genesisHash),
       genesisHash,
-      price,
       token: getToken(genesisHash)
     });
   }));
+
+  promises.push(params);
 }
 
 function getDecimal (genesisHash) {
@@ -141,7 +147,7 @@ function getDecimal (genesisHash) {
   return network?.decimals?.length ? network.decimals[0] : undefined;
 }
 
-async function acalaTokens (address, results, promises, prices) {
+async function acalaTokens (accounts, results, promises) {
   const allEndpoints = createWsEndpoints();
 
   const chainEndpoints = allEndpoints
@@ -158,33 +164,37 @@ async function acalaTokens (address, results, promises, prices) {
     'AUSD' // acala-dollar-acala price apiID
   ];
 
-  const ldotPriceID = 'liquid-staking-dot';
-  const AusdPriceID = 'acala-dollar-acala';
+  // const ldotPriceID = 'liquid-staking-dot';
+  // const AusdPriceID = 'acala-dollar-acala';
 
   for (const token of tokensList) {
-    promises.push(fastApi.query.tokens.accounts(address, { Token: token }).then((bal) => {
+    const params = accounts.map((address) => fastApi.query.tokens.accounts(address, { Token: token }).then((bal) => {
       const total = bal.free.add(bal.reserved);
-      const priceID = token === 'AUSD' ? AusdPriceID : token === 'LDOT' ? ldotPriceID : undefined;
-      const price = priceID ? prices.prices[priceID]?.usd : prices.prices.acala?.usd;
       const zeroBalance = total.isZero();
 
+      if (zeroBalance) {
+        return;
+      }
+
       results.push({
+        address,
         balances: String(total),
         chain: sanitizeText('Acala'),
         decimal: getDecimal(ACALA_GENESISHASH),
         genesisHash: ACALA_GENESISHASH,
-        price,
         token
       });
 
-      !zeroBalance && postMessage(JSON.stringify(results));
+      postMessage(JSON.stringify(results));
     }));
+
+    promises.push(params);
   }
 
   return connections;
 }
 
-async function kusamaAssetHubTokens (address, results, promises, prices) {
+async function kusamaAssetHubTokens (accounts, results, promises) {
   const assetsToFetch = [
     {
       name: 'Polkadot',
@@ -210,37 +220,45 @@ async function kusamaAssetHubTokens (address, results, promises, prices) {
 
   const { connections, fastApi } = await fastestEndpoint(chainEndpoints, false);
 
-  getNativeToken(address, fastApi, KUSAMA_ASSETHUB_GENESISHASH, 'kusama', prices, promises, results);
+  getNativeToken(accounts, fastApi, KUSAMA_ASSETHUB_GENESISHASH, 'kusama', promises, results);
 
   for (const asset of assetsToFetch) {
-    promises.push(Promise.all([
-      fastApi.query.assets.account(asset.id, address),
-      fastApi.query.assets.metadata(asset.id)
-    ]).then(([assetAccount, metadata]) => {
+    const params = accounts.map((address) => fastApi.query.assets.account(asset.id, address));
+
+    promises.push(Promise.all([fastApi.query.assets.metadata(asset.id), ...params]).then((p) => {
+      const metadata = p[0];
+      const accountsAssets = p.slice(1);
+
       const decimal = metadata.decimals.toNumber();
       const token = metadata.symbol.toHuman();
-      const total = assetAccount.isNone ? BN_ZERO : assetAccount.unwrap().balance;
-      const price = asset.priceID ? prices.prices[asset.priceID]?.usd : 1;
-      const zeroBalance = total.isZero();
 
-      results.push({
-        assetId: asset.id,
-        balances: String(total),
-        chain: sanitizeText('KusamaAssetHub'),
-        decimal,
-        genesisHash: KUSAMA_ASSETHUB_GENESISHASH,
-        price,
-        token
+      accountsAssets.forEach((asset, index) => {
+        const total = asset.isNone ? BN_ZERO : asset.unwrap().balance;
+        const zeroBalance = total.isZero();
+
+        if (zeroBalance) {
+          return;
+        }
+
+        results.push({
+          address: accounts[index],
+          assetId: asset.id,
+          balances: String(total),
+          chain: sanitizeText('KusamaAssetHub'),
+          decimal,
+          genesisHash: KUSAMA_ASSETHUB_GENESISHASH,
+          token
+        });
+
+        postMessage(JSON.stringify(results));
       });
-
-      !zeroBalance && postMessage(JSON.stringify(results));
     }));
   }
 
   return connections;
 }
 
-async function polkadotAssetHubTokens (address, results, promises, prices) {
+async function polkadotAssetHubTokens (accounts, results, promises) {
   const assetsToFetch = [
     {
       name: 'Tether USD',
@@ -261,43 +279,49 @@ async function polkadotAssetHubTokens (address, results, promises, prices) {
 
   const { connections, fastApi } = await fastestEndpoint(chainEndpoints, false);
 
-  getNativeToken(address, fastApi, POLKADOT_ASSETHUB_GENESISHASH, 'polkadot', prices, promises, results);
+  getNativeToken(accounts, fastApi, POLKADOT_ASSETHUB_GENESISHASH, 'polkadot', promises, results);
 
   for (const asset of assetsToFetch) {
-    promises.push(Promise.all([
-      fastApi.query.assets.account(asset.id, address),
-      fastApi.query.assets.metadata(asset.id)
-    ]).then(([assetAccount, metadata]) => {
+    const params = accounts.map((address) => fastApi.query.assets.account(asset.id, address));
+
+    promises.push(Promise.all([fastApi.query.assets.metadata(asset.id), ...params]).then((p) => {
+      const metadata = p[0];
+      const accountsAssets = p.slice(1);
+
       const decimal = metadata.decimals.toNumber();
       const token = metadata.symbol.toHuman();
-      const total = assetAccount.isNone ? BN_ZERO : assetAccount.unwrap().balance;
-      const price = asset.priceID ? prices.prices[asset.priceID]?.usd : 1;
-      const zeroBalance = total.isZero();
 
-      results.push({
-        assetId: asset.id,
-        balances: String(total),
-        chain: sanitizeText('PolkadotAssetHub'),
-        decimal,
-        genesisHash: POLKADOT_ASSETHUB_GENESISHASH,
-        price,
-        token
+      accountsAssets.forEach((asset, index) => {
+        const total = asset.isNone ? BN_ZERO : asset.unwrap().balance;
+        const zeroBalance = total.isZero();
+
+        if (zeroBalance) {
+          return;
+        }
+
+        results.push({
+          address: accounts[index],
+          assetId: asset.id,
+          balances: String(total),
+          chain: sanitizeText('PolkadotAssetHub'),
+          decimal,
+          genesisHash: POLKADOT_ASSETHUB_GENESISHASH,
+          token
+        });
+
+        postMessage(JSON.stringify(results));
       });
-
-      !zeroBalance && postMessage(JSON.stringify(results));
     }));
   }
 
   return connections;
 }
 
-async function getPoolBalance (api, address, availableBalance, connections) {
+async function getPoolBalance (api, address, availableBalance) {
   const response = await api.query.nominationPools.poolMembers(address);
   const member = response && response.unwrapOr(undefined);
 
   if (!member) {
-    connections.forEach((con) => con.wsProvider.disconnect().catch(handleError));
-
     return availableBalance;
   }
 
@@ -305,8 +329,6 @@ async function getPoolBalance (api, address, availableBalance, connections) {
   const accounts = poolId && getPoolAccounts(api, poolId);
 
   if (!accounts) {
-    connections.forEach((con) => con.wsProvider.disconnect().catch(handleError));
-
     return availableBalance;
   }
 
@@ -327,12 +349,10 @@ async function getPoolBalance (api, address, availableBalance, connections) {
     unlockingValue = unlockingValue.add(value);
   });
 
-  connections.forEach((con) => con.wsProvider.disconnect().catch(handleError));
-
   return availableBalance.add(active.add(rewards).add(unlockingValue));
 }
 
-async function setupConnections (chain, accountAddress, allEndpoints) {
+async function setupConnections(chain, accounts, allEndpoints) {
   const chainEndpoints = allEndpoints
     .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === chain.toLowerCase())
     .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'));
@@ -342,57 +362,60 @@ async function setupConnections (chain, accountAddress, allEndpoints) {
   const { connections, fastApi } = await fastestEndpoint(chainEndpoints, false);
 
   if (fastApi.isConnected && fastApi.derive.balances) {
-    const balances = await fastApi.derive.balances.all(accountAddress);
+    const requests = accounts.map(async (accountAddress) => {
+      const balances = await fastApi.derive.balances.all(accountAddress);
 
-    const availableBalance = balances.freeBalance.add(balances.reservedBalance);
+      const availableBalance = balances.freeBalance.add(balances.reservedBalance);
 
-    if (fastApi.query.nominationPools) {
-      const total = await getPoolBalance(fastApi, accountAddress, availableBalance, connections);
+      if (fastApi.query.nominationPools) {
+        const total = await getPoolBalance(fastApi, accountAddress, availableBalance);
 
-      return total;
-    }
+        return { address: accountAddress, balance: total };
+      }
 
-    closeWebsockets(connections);
+      return { address: accountAddress, balance: availableBalance };
+    });
 
-    return availableBalance;
+    return { balances: await Promise.all(requests), connections };
   }
 }
 
-async function getAssetsOnOtherChains (accountAddress) {
-  console.log(`get assets on other chains called for ${accountAddress}`);
+async function getAssetsOnOtherChains (accounts) {
+  console.log(`get assets on other chains called for ${accounts}`);
   const allEndpoints = createWsEndpoints();
 
   // Create an array to store the results
   const results = [];
-  const prices = await getPrices(fetchPriceFor);
-
-  if (prices === null) {
-    throw new Error('Failed to fetch prices');
-  }
 
   const promises = [];
 
-  const acalaConnections = await acalaTokens(accountAddress, results, promises, prices);
-  const pAHConnections = await polkadotAssetHubTokens(accountAddress, results, promises, prices);
-  const kAHConnections = await kusamaAssetHubTokens(accountAddress, results, promises, prices);
+  const acalaConnections = await acalaTokens(accounts, results, promises);
+  const pAHConnections = await polkadotAssetHubTokens(accounts, results, promises);
+  const kAHConnections = await kusamaAssetHubTokens(accounts, results, promises);
 
   const newPromises = CHAINS_TO_CHECK.map((chain) => {
-    return setupConnections(chain.name, accountAddress, allEndpoints)
-      .then((assetBalance) => {
-        const zeroBalance = assetBalance.isZero();
+    return setupConnections(chain.name, accounts, allEndpoints)
+      .then(({ balances, connections }) => {
+        balances.forEach(({ address, balance }) => {
+          const zeroBalance = balance.isZero();
 
-        const price = chain.priceID ? prices.prices[chain.priceID]?.usd ?? 0 : 0;
+          if (zeroBalance) {
+            return;
+          }
 
-        results.push({
-          balances: String(assetBalance),
-          chain: sanitizeText(chain.name),
-          decimal: getDecimal(chain.genesisHash),
-          genesisHash: chain.genesisHash,
-          price,
-          token: getToken(chain.genesisHash)
+          results.push({
+            address,
+            balances: String(balance),
+            chain: sanitizeText(chain.name),
+            decimal: getDecimal(chain.genesisHash),
+            genesisHash: chain.genesisHash,
+            token: getToken(chain.genesisHash)
+          });
+
+          postMessage(JSON.stringify(results));
         });
 
-        !zeroBalance && postMessage(JSON.stringify(results));
+        closeWebsockets(connections);
       })
       .catch((error) => {
         console.error(`Error fetching balances for ${chain.name}:`, error);
@@ -411,28 +434,11 @@ async function getAssetsOnOtherChains (accountAddress) {
       return postMessage('Done');
     }
   });
-
-  // for (let i = 0; i < promises.length; i++) {
-  //   const promise = promises[i];
-
-  //   promise.finally(() => {
-  //     if (i === promises.length - 1) {
-  //       closeWebsockets([...acalaConnections, ...pAHConnections, ...kAHConnections]);
-  //       const noAssetsOnOtherChains = results.every((res) => res.balances === '0');
-
-  //       if (noAssetsOnOtherChains) {
-  //         return postMessage('null');
-  //       } else {
-  //         return postMessage('Done');
-  //       }
-  //     }
-  //   }).catch(handleError);
-  // }
 }
 
 onmessage = async (e) => {
   const {
-    accountAddress
+    accounts
   } = e.data;
 
   let tryCount = 1;
@@ -442,7 +448,7 @@ onmessage = async (e) => {
   while (tryCount >= 1 && tryCount <= 5) {
     try {
       // eslint-disable-next-line no-void
-      await getAssetsOnOtherChains(accountAddress);
+      await getAssetsOnOtherChains(accounts);
 
       tryCount = 0;
     } catch (error) {
