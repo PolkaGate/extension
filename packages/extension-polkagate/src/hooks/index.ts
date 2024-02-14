@@ -80,3 +80,4 @@ export { default as useManifest } from './useManifest';
 export { default as useIsLoginEnabled } from './useIsLoginEnabled';
 export { default as useIsTestnetEnabled } from './useIsTestnetEnabled';
 export { default as useAssetsOnChains } from './useAssetsOnChains';
+export { default as useAccountAssets } from './useAccountAssets';
