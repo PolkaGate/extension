@@ -17,10 +17,9 @@ import { ActionContext, DisplayLogo, FormatBalance2, FormatPrice, Identicon, Ide
 import { useAccount, useAccountInfo, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount, windowOpen } from '../../../messaging';
 import { ACALA_GENESIS_HASH, ASSET_HUBS, BALANCES_VALIDITY_PERIOD, IDENTITY_CHAINS, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, SOCIAL_RECOVERY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
-import { BalancesInfo, Price, Proxy } from '../../../util/types';
+import { AssetsOnOtherChains, BalancesInfo, Price, Proxy } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import { getValue } from '../../account/util';
-import { AssetsOnOtherChains } from '..';
 import AOC from './AOC';
 
 interface AddressDetailsProps {

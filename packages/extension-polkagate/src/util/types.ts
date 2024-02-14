@@ -707,9 +707,20 @@ export interface APIsContext {
 export interface LatestRefs {
   [key: string]: LatestReferenda[]
 }
+
 export interface ReferendaContextType {
   refs: LatestRefs;
   setRefs: (refs: LatestRefs) => void;
+}
+
+export type AccountsAssets = { address: string, assets: { assetId: number | undefined, chainName: string, decimal: number, genesisHash: string, token: string, totalBalance: BN }[] };
+export type SavedAccountsAssets = { balances: AccountsAssets[], timestamp: number };
+export type AssetsOnOtherChains = { assetId?: number, totalBalance: BN, chainName: string, decimal: number, genesisHash: string, price: number | undefined, token: string };
+export type AccountAssets = { assetId: number | undefined; chainName: string; decimal: number; genesisHash: string; token: string; totalBalance: BN; };
+
+export interface AccountsAssetsContextType {
+  accountsAssets: SavedAccountsAssets | undefined;
+  setAccountsAssets: (savedAccountAssets: SavedAccountsAssets) => void;
 }
 
 export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }

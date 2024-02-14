@@ -15,7 +15,7 @@ import { useTranslation } from '../../../hooks';
 import { CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo from '../../../util/getLogo';
 import { amountToHuman } from '../../../util/utils';
-import { AssetsOnOtherChains } from '..';
+import { AssetsOnOtherChains } from '../../../util/types';
 
 interface TotalChartProps {
   isDarkTheme: boolean;
