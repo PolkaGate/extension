@@ -125,36 +125,7 @@
     ]
   },
   "Karura": {
-    "color": "#ff4c3b",
-    "name": "Karura",
-    "prefix": 8,
     "genesishash": "0xbaf5aabe40646d11f0ee8abbdc64f4a4b7674925cba08e4a05ff9ebed6e2126b",
-    "endpoints": [
-      {
-        "url": "wss://karura-rpc-0.aca-api.network",
-        "name": "Acala Foundation 0"
-      },
-      {
-        "url": "wss://karura-rpc-1.aca-api.network",
-        "name": "Acala Foundation 1"
-      },
-      {
-        "url": "wss://karura-rpc-2.aca-api.network/ws",
-        "name": "Acala Foundation 2"
-      },
-      {
-        "url": "wss://karura-rpc-3.aca-api.network/ws",
-        "name": "Acala Foundation 3"
-      },
-      {
-        "url": "wss://karura-rpc.dwellir.com",
-        "name": "Dwellir"
-      },
-      {
-        "url": "wss://karura.api.onfinality.io/public-ws",
-        "name": "OnFinality"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -162,7 +133,7 @@
         "decimal": 12,
         "priceId": "karura",
         "assetName": "Karura",
-        "isNative": "false"
+        "isNative": true
       },
       {
         "assetId": 1,
@@ -171,7 +142,7 @@
         "priceId": "ausd-seed-karura",
         "ED": "10000000000",
         "assetName": "Acala SEED",
-        "isNative": "true"
+        "isNative": true
       },
       {
         "assetId": 2,
@@ -179,8 +150,7 @@
         "decimal": 12,
         "priceId": "kusama",
         "ED": "100000000",
-        "assetName": "Kusama",
-        "isNative": "true"
+        "assetName": "Kusama"
       },
       {
         "assetId": 3,
@@ -188,17 +158,15 @@
         "decimal": 10,
         "priceId": "rmrk",
         "ED": "100000000",
-        "assetName": "Remark",
-        "isNative": "true"
+        "assetName": "Remark"
       },
       {
         "assetId": 4,
         "symbol": "BNC",
         "decimal": 12,
-        "priceId": "bifrost-isNative-coin",
+        "priceId": "bifrost-native-coin",
         "ED": "8000000000",
-        "assetName": "Bifrost",
-        "isNative": "true"
+        "assetName": "Bifrost"
       },
       {
         "assetId": 5,
@@ -206,8 +174,7 @@
         "decimal": 12,
         "priceId": "liquid-ksm",
         "ED": "500000000",
-        "assetName": "Liquid KSM",
-        "isNative": "true"
+        "assetName": "Liquid KSM"
       },
       {
         "assetId": 6,
@@ -215,8 +182,7 @@
         "decimal": 12,
         "priceId": "pha",
         "ED": "40000000000",
-        "assetName": "Phala",
-        "isNative": "true"
+        "assetName": "Phala"
       },
       {
         "assetId": 7,
@@ -224,8 +190,7 @@
         "decimal": 12,
         "priceId": "kintsugi",
         "ED": "133330000",
-        "assetName": "Kintsugi",
-        "isNative": "true"
+        "assetName": "Kintsugi"
       },
       {
         "assetId": 8,
@@ -233,32 +198,28 @@
         "decimal": 8,
         "priceId": "bitcoin",
         "ED": "660000",
-        "assetName": "KINT Bitcoin",
-        "isNative": "true"
+        "assetName": "KINT Bitcoin"
       },
       {
         "assetId": 9,
         "symbol": "TAI",
         "decimal": 12,
         "ED": "1000000000000",
-        "assetName": "Taiga",
-        "isNative": "true"
+        "assetName": "Taiga"
       },
       {
         "assetId": 10,
         "symbol": "vsKSM",
         "decimal": 12,
         "ED": "100000000",
-        "assetName": "vs Kusama",
-        "isNative": "true"
+        "assetName": "vs Kusama"
       },
       {
         "assetId": 11,
         "symbol": "taiKSM",
         "decimal": 12,
         "ED": "100000000",
-        "assetName": "tai Kusama",
-        "isNative": "true"
+        "assetName": "tai Kusama"
       },
       {
         "assetId": 12,
@@ -266,8 +227,7 @@
         "decimal": 18,
         "priceId": "quartz",
         "ED": "1000000000000000000",
-        "assetName": "Quartz",
-        "isNative": "true"
+        "assetName": "Quartz"
       },
       {
         "assetId": 14,
@@ -275,16 +235,14 @@
         "decimal": 18,
         "priceId": "moonriver",
         "ED": "1000000000000000",
-        "assetName": "Moonriver",
-        "isNative": "true"
+        "assetName": "Moonriver"
       },
       {
         "assetId": 15,
         "symbol": "HKO",
         "decimal": 12,
         "ED": "100000000000",
-        "assetName": "Parallel Heiko",
-        "isNative": "true"
+        "assetName": "Parallel Heiko"
       },
       {
         "assetId": 16,
@@ -292,8 +250,7 @@
         "decimal": 12,
         "priceId": "crust-storage-market",
         "ED": "1000000000000",
-        "assetName": "Crust Shadow",
-        "isNative": "true"
+        "assetName": "Crust Shadow"
       },
       {
         "assetId": 17,
@@ -301,8 +258,7 @@
         "decimal": 6,
         "priceId": "tether",
         "ED": "10000",
-        "assetName": "USD Tether",
-        "isNative": "true"
+        "assetName": "USD Tether"
       },
       {
         "assetId": 18,
@@ -310,8 +266,7 @@
         "decimal": 12,
         "priceId": "calamari-network",
         "ED": "100000000000",
-        "assetName": "Calamari Network",
-        "isNative": "true"
+        "assetName": "Calamari Network"
       },
       {
         "assetId": 19,
@@ -319,16 +274,14 @@
         "decimal": 12,
         "priceId": "integritee",
         "ED": "100000000000",
-        "assetName": "Integritee",
-        "isNative": "true"
+        "assetName": "Integritee"
       },
       {
         "assetId": 20,
         "symbol": "KICO",
         "decimal": 14,
         "ED": "100000000000000",
-        "assetName": "KICO",
-        "isNative": "true"
+        "assetName": "KICO"
       },
       {
         "assetId": 21,
@@ -336,8 +289,7 @@
         "decimal": 18,
         "priceId": "metaverse-network-pioneer",
         "ED": "100000000000000000",
-        "assetName": "Metaverse.Network Pioneer",
-        "isNative": "true"
+        "assetName": "Metaverse.Network Pioneer"
       },
       {
         "assetId": 22,
@@ -345,8 +297,7 @@
         "decimal": 12,
         "priceId": "basilisk",
         "ED": "1000000000000",
-        "assetName": "Basilisk",
-        "isNative": "true"
+        "assetName": "Basilisk"
       },
       {
         "assetId": 23,
@@ -354,8 +305,7 @@
         "decimal": 18,
         "priceId": "altair",
         "ED": "100000000000000000",
-        "assetName": "Altair",
-        "isNative": "true"
+        "assetName": "Altair"
       },
       {
         "assetId": 24,
@@ -363,8 +313,7 @@
         "decimal": 9,
         "priceId": "genshiro",
         "ED": "1000000000000",
-        "assetName": "Genshiro",
-        "isNative": "true"
+        "assetName": "Genshiro"
       },
       {
         "assetId": 25,
@@ -372,8 +321,7 @@
         "decimal": 9,
         "priceId": "tether",
         "ED": "10000000000",
-        "assetName": "Equilibrium USD",
-        "isNative": "true"
+        "assetName": "Equilibrium USD"
       },
       {
         "assetId": 26,
@@ -381,40 +329,20 @@
         "decimal": 18,
         "priceId": "darwinia-crab-network",
         "ED": "1000000000000000000",
-        "assetName": "Darwinia Crab",
-        "isNative": "false"
+        "assetName": "Darwinia Crab"
       }
-    ],
-    "features": [ "proxyManagement" ],
-    "externalLinks" : [ "subscan", "subsquare", "subid"]
+    ]
   },
   "BifrostKusama": {
-    "color": "#5a25f0",
-    "name": "Bifrost",
-    "prefix": 6,
     "genesishash": "0x9f28c6a68e0fc9646eff64935684f6eeeece527e37bbe1f213d22caa1d9d6bed",
-    "endpoints": [
-      {
-        "url": "wss://bifrost-rpc.liebi.com/ws",
-        "name": "Liebi"
-      },
-      {
-        "url": "wss://bifrost-rpc.dwellir.com",
-        "name": "Dwellir"
-      },
-      {
-        "url": "wss://bifrost-parachain.api.onfinality.io/public-ws",
-        "name": "OnFinality"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
         "symbol": "BNC",
         "decimal": 12,
-        "priceId": "bifrost-isNative-coin",
+        "priceId": "bifrost-native-coin",
         "assetName": "Bifrost",
-        "isNative": "false"
+        "isNative": true
       },
       {
         "assetId": 1,
@@ -422,8 +350,7 @@
         "decimal": 12,
         "priceId": "kusama",
         "ED": "100000000",
-        "assetName": "Kusama",
-        "isNative": "false"
+        "assetName": "Kusama"
       },
       {
         "assetId": 2,
@@ -431,8 +358,7 @@
         "decimal": 10,
         "priceId": "rmrk",
         "ED": "10000",
-        "assetName": "Remark",
-        "isNative": "false"
+        "assetName": "Remark"
       },
       {
         "assetId": 3,
@@ -440,8 +366,7 @@
         "decimal": 18,
         "priceId": "zenlink-network-token",
         "ED": "1000000000000",
-        "assetName": "Zenlink Network",
-        "isNative": "false"
+        "assetName": "Zenlink Network"
       },
       {
         "assetId": 4,
@@ -449,8 +374,7 @@
         "decimal": 12,
         "priceId": "karura",
         "ED": "100000000",
-        "assetName": "Karura",
-        "isNative": "false"
+        "assetName": "Karura"
       },
       {
         "assetId": 5,
@@ -458,16 +382,15 @@
         "decimal": 12,
         "priceId": "ausd-seed-karura",
         "ED": "100000000",
-        "assetName": "Acala SEED",
-        "isNative": "false"
+        "assetName": "Acala SEED"
       },
       {
         "assetId": 6,
         "symbol": "vsKSM",
         "decimal": 12,
+        "priceId": "kusama",
         "ED": "100000000",
-        "assetName": "vs Kusama",
-        "isNative": "false"
+        "assetName": "vs Kusama"
       },
       {
         "assetId": 7,
@@ -475,8 +398,7 @@
         "decimal": 6,
         "priceId": "tether",
         "ED": "1000",
-        "assetName": "USD Tether",
-        "isNative": "false"
+        "assetName": "USD Tether"
       },
       {
         "assetId": 8,
@@ -484,25 +406,23 @@
         "decimal": 18,
         "priceId": "moonriver",
         "ED": "1000000000000",
-        "assetName": "Moonriver",
-        "isNative": "false"
+        "assetName": "Moonriver"
       },
       {
         "assetId": 9,
-        "symbol": "PHA",
-        "decimal": 12,
-        "priceId": "pha",
         "ED": "40000000000",
-        "assetName": "Phala",
-        "isNative": "false"
+        "decimal": 12,
+        "symbol": "PHA",
+        "priceId": "pha",
+        "assetName": "Phala"
       },
       {
         "assetId": 10,
+        "ED": "100000000",
         "symbol": "vKSM",
         "decimal": 12,
-        "ED": "100000000",
-        "assetName": "v Kusama",
-        "isNative": "false"
+        "priceId": "kusama",
+        "assetName": "v Kusama"
       },
       {
         "assetId": 11,
@@ -510,56 +430,26 @@
         "decimal": 8,
         "priceId": "bitcoin",
         "ED": "100",
-        "assetName": "KINT Bitcoin",
-        "isNative": "false"
+        "assetName": "KINT Bitcoin"
       },
       {
         "assetId": 12,
         "symbol": "vBNC",
         "decimal": 12,
         "ED": "10000000000",
-        "assetName": "vBNC",
-        "isNative": "false"
+        "assetName": "vBNC"
       },
       {
         "assetId": 13,
         "symbol": "vMOVR",
         "decimal": 18,
         "ED": "1000000000000",
-        "assetName": "vMOVR",
-        "isNative": "false"
+        "assetName": "vMOVR"
       }
-    ],
-    "features": [ "proxyManagement", "manageIdentity" ],
-    "externalLinks" : [ "subscan", "subsquare", "subid"]
+    ]
   },
   "Edgeware": {
-    "color": "#111111",
-    "name": "Edgeware",
-    "prefix": 7,
     "genesishash": "0x742a2ca70c2fda6cee4f8df98d64c4c670a052d9568058982dad9d5a7a135c5b",
-    "endpoints": [
-      {
-        "url": "wss://edgeware.api.onfinality.io/public-ws",
-        "name": "OnFinality"
-      },
-      {
-        "url": "wss://edgeware-rpc.dwellir.com",
-        "name": "Dwellir"
-      },
-      {
-        "url": "wss://edgeware.jelliedowl.net",
-        "name": "JelliedOwl"
-      },
-      {
-        "url": "wss://beresheet.jelliedowl.net",
-        "name": "JelliedOwl 2"
-      },
-      {
-        "url": "wss://mainnet2.edgewa.re",
-        "name": "Edgeware"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -567,27 +457,12 @@
         "decimal": 18,
         "priceId": "edgeware",
         "assetName": "Edgeware",
-        "isNative": "false"
+        "isNative": true
       }
-    ],
-    "features": [ ],
-    "externalLinks" : [ "subscan", "subid"]
+    ]
   },
   "Basilisk": {
-    "color": "#49E49F",
-    "name": "Basilisk",
-    "prefix": 10041,
     "genesishash": "0xa85cfb9b9fd4d622a5b28289a02347af987d8f73fa3108450e2b4a11c1ce5755",
-    "endpoints": [
-      {
-        "url": "wss://rpc.basilisk.cloud",
-        "name": "Basilisk"
-      },
-      {
-        "url": "wss://basilisk-rpc.dwellir.com",
-        "name": "Dwellir"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -595,7 +470,7 @@
         "decimal": 12,
         "priceId": "basilisk",
         "assetName": "Basilisk",
-        "isNative": "false"
+        "isNative": true
       },
       {
         "assetId": 1,
@@ -603,8 +478,7 @@
         "decimal": 12,
         "priceId": "kusama",
         "ED": "100000000",
-        "assetName": "Kusama",
-        "isNative": "false"
+        "assetName": "Kusama"
       },
       {
         "assetId": 2,
@@ -612,16 +486,14 @@
         "decimal": 12,
         "priceId": "ausd-seed-karura",
         "ED": "10000000000",
-        "assetName": "Acala SEED",
-        "isNative": "false"
+        "assetName": "Acala SEED"
       },
       {
         "assetId": 3,
         "symbol": "TNKR",
         "decimal": 12,
         "ED": "1000000000",
-        "assetName": "Tinkernet",
-        "isNative": "false"
+        "assetName": "Tinkernet"
       },
       {
         "assetId": 4,
@@ -629,8 +501,7 @@
         "decimal": 6,
         "priceId": "tether",
         "ED": "10000",
-        "assetName": "USD Tether",
-        "isNative": "false"
+        "assetName": "USD Tether"
       },
       {
         "assetId": 5,
@@ -638,32 +509,12 @@
         "decimal": 9,
         "priceId": "robonomics-network",
         "ED": "1683502",
-        "assetName": "Robonomics",
-        "isNative": "false"
+        "assetName": "Robonomics"
       }
-    ],
-    "features": [ "proxyManagement", "manageIdentity" ],
-    "externalLinks" : [ "subscan", "subsquare", "subid"]
+    ]
   },
   "Khala": {
-    "color": "#03f3f3",
-    "name": "Khala",
-    "prefix": 30,
     "genesishash": "0xd43540ba6d3eb4897c28a77d48cb5b729fea37603cbbfc7a86a73b72adb3be8d",
-    "endpoints": [
-      {
-        "url": "wss://khala-api.phala.network/ws",
-        "name": "Phala"
-      },
-      {
-        "url": "wss://khala-rpc.dwellir.com",
-        "name": "Dwellir"
-      },
-      {
-        "url": "wss://khala.api.onfinality.io/public-ws",
-        "name": "OnFinality"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -671,7 +522,7 @@
         "decimal": 12,
         "priceId": "pha",
         "assetName": "Phala",
-        "isNative": "false"
+        "isNative": true
       },
       {
         "assetId": 1,
@@ -682,8 +533,7 @@
         "typeExtras": {
           "assetId": "0"
         },
-        "assetName": "Kusama",
-        "isNative": "false"
+        "assetName": "Kusama"
       },
       {
         "assetId": 2,
@@ -694,20 +544,18 @@
         "typeExtras": {
           "assetId": "1"
         },
-        "assetName": "Karura",
-        "isNative": "false"
+        "assetName": "Karura"
       },
       {
         "assetId": 3,
         "symbol": "BNC",
         "decimal": 12,
         "type": "statemine",
-        "priceId": "bifrost-isNative-coin",
+        "priceId": "bifrost-native-coin",
         "typeExtras": {
           "assetId": "2"
         },
-        "assetName": "Bifrost",
-        "isNative": "false"
+        "assetName": "Bifrost"
       },
       {
         "assetId": 4,
@@ -718,8 +566,7 @@
         "typeExtras": {
           "assetId": "3"
         },
-        "assetName": "Zenlink Network",
-        "isNative": "false"
+        "assetName": "Zenlink Network"
       },
       {
         "assetId": 5,
@@ -730,8 +577,7 @@
         "typeExtras": {
           "assetId": "4"
         },
-        "assetName": "Acala SEED",
-        "isNative": "false"
+        "assetName": "Acala SEED"
       },
       {
         "assetId": 6,
@@ -742,8 +588,7 @@
         "typeExtras": {
           "assetId": "9"
         },
-        "assetName": "Basilisk",
-        "isNative": "false"
+        "assetName": "Basilisk"
       },
       {
         "assetId": 7,
@@ -754,8 +599,7 @@
         "typeExtras": {
           "assetId": "6"
         },
-        "assetName": "Moonriver",
-        "isNative": "false"
+        "assetName": "Moonriver"
       },
       {
         "assetId": 8,
@@ -765,8 +609,7 @@
         "typeExtras": {
           "assetId": "7"
         },
-        "assetName": "Parallel Heiko",
-        "isNative": "false"
+        "assetName": "Parallel Heiko"
       },
       {
         "assetId": 9,
@@ -777,8 +620,7 @@
         "typeExtras": {
           "assetId": "8"
         },
-        "assetName": "Calamari Network",
-        "isNative": "false"
+        "assetName": "Calamari Network"
       },
       {
         "assetId": 10,
@@ -789,8 +631,7 @@
         "typeExtras": {
           "assetId": "10"
         },
-        "assetName": "Turing",
-        "isNative": "false"
+        "assetName": "Turing"
       },
       {
         "assetId": 11,
@@ -801,8 +642,7 @@
         "typeExtras": {
           "assetId": "11"
         },
-        "assetName": "Darwinia Crab",
-        "isNative": "false"
+        "assetName": "Darwinia Crab"
       },
       {
         "assetId": 12,
@@ -813,8 +653,7 @@
         "typeExtras": {
           "assetId": "12"
         },
-        "assetName": "Shiden",
-        "isNative": "false"
+        "assetName": "Shiden"
       },
       {
         "assetId": 13,
@@ -825,8 +664,7 @@
         "typeExtras": {
           "assetId": "13"
         },
-        "assetName": "Metaverse.Network Pioneer",
-        "isNative": "false"
+        "assetName": "Metaverse.Network Pioneer"
       },
       {
         "assetId": 14,
@@ -836,8 +674,7 @@
         "typeExtras": {
           "assetId": "14"
         },
-        "assetName": "Bit.Country Pioneer",
-        "isNative": "false"
+        "assetName": "Bit.Country Pioneer"
       },
       {
         "assetId": 15,
@@ -847,47 +684,12 @@
         "typeExtras": {
           "assetId": "15"
         },
-        "assetName": "Picasso",
-        "isNative": "false"
+        "assetName": "Picasso"
       }
-    ],
-    "externalLinks" : [ "subscan", "subsquare", "subid"]
+    ]
   },
   "Acala": {
-    "color": "#645AFF",
-    "name": "Acala",
-    "prefix": 10,
     "genesishash": "0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c",
-    "endpoints": [
-      {
-        "url": "wss://acala-rpc.dwellir.com",
-        "name": "Dwellir"
-      },
-      {
-        "url": "wss://acala-rpc-0.aca-api.network",
-        "name": "Acala Foundation 0"
-      },
-      {
-        "url": "wss://acala-rpc-1.aca-api.network",
-        "name": "Acala Foundation 1"
-      },
-      {
-        "url": "wss://acala-rpc-2.aca-api.network/ws",
-        "name": "Acala Foundation 2"
-      },
-      {
-        "url": "wss://acala-rpc-3.aca-api.network/ws",
-        "name": "Acala Foundation 3"
-      },
-      {
-        "url": "wss://acala-polkadot.api.onfinality.io/public-ws",
-        "name": "OnFinality"
-      },
-      {
-        "url": "wss://acala.polkawallet.io",
-        "name": "Polkawallet"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -895,7 +697,7 @@
         "decimal": 12,
         "priceId": "acala",
         "assetName": "Acala",
-        "isNative": "false"
+        "isNative": true
       },
       {
         "assetId": 1,
@@ -903,8 +705,7 @@
         "decimal": 10,
         "priceId": "liquid-staking-dot",
         "ED": "500000000",
-        "assetName": "Liquid DOT",
-        "isNative": "false"
+        "assetName": "Liquid DOT"
       },
       {
         "assetId": 2,
@@ -913,7 +714,7 @@
         "priceId": "ausd-seed-acala",
         "ED": "100000000000",
         "assetName": "Acala SEED",
-        "isNative": "false"
+        "isNative": true
       },
       {
         "assetId": 3,
@@ -921,8 +722,7 @@
         "decimal": 10,
         "priceId": "polkadot",
         "ED": "100000000",
-        "assetName": "Polkadot",
-        "isNative": "false"
+        "assetName": "Polkadot"
       },
       {
         "assetId": 4,
@@ -930,8 +730,7 @@
         "decimal": 10,
         "priceId": "polkadot",
         "ED": "100000000",
-        "assetName": "Crowdloan DOT",
-        "isNative": "false"
+        "assetName": "Crowdloan DOT"
       },
       {
         "assetId": 5,
@@ -939,8 +738,7 @@
         "decimal": 18,
         "priceId": "moonbeam",
         "ED": "100000000000000000",
-        "assetName": "Moonbeam",
-        "isNative": "false"
+        "assetName": "Moonbeam"
       },
       {
         "assetId": 6,
@@ -948,24 +746,21 @@
         "decimal": 12,
         "priceId": "parallel-finance",
         "ED": "100000000000",
-        "assetName": "Parallel Finance",
-        "isNative": "false"
+        "assetName": "Parallel Finance"
       },
       {
         "assetId": 7,
         "symbol": "TAP",
         "decimal": 12,
         "ED": "1000000000000",
-        "assetName": "TAP",
-        "isNative": "false"
+        "assetName": "TAP"
       },
       {
         "assetId": 8,
         "symbol": "tDOT",
         "decimal": 10,
         "ED": "100000000",
-        "assetName": "tDOT",
-        "isNative": "false"
+        "assetName": "tDOT"
       },
       {
         "assetId": 9,
@@ -973,8 +768,7 @@
         "decimal": 10,
         "priceId": "interlay",
         "ED": "1000000000",
-        "assetName": "Interlay",
-        "isNative": "false"
+        "assetName": "Interlay"
       },
       {
         "assetId": 10,
@@ -982,8 +776,7 @@
         "decimal": 18,
         "priceId": "astar",
         "ED": "100000000000000000",
-        "assetName": "Astar",
-        "isNative": "false"
+        "assetName": "Astar"
       },
       {
         "assetId": 11,
@@ -991,8 +784,7 @@
         "decimal": 9,
         "priceId": "equilibrium-token",
         "ED": "1000000000",
-        "assetName": "Equilibrium",
-        "isNative": "false"
+        "assetName": "Equilibrium"
       },
       {
         "assetId": 12,
@@ -1000,8 +792,7 @@
         "decimal": 8,
         "priceId": "bitcoin",
         "ED": "100",
-        "assetName": "Interlay Bitcoin",
-        "isNative": "false"
+        "assetName": "Interlay Bitcoin"
       },
       {
         "assetId": 13,
@@ -1009,8 +800,7 @@
         "decimal": 18,
         "priceId": "dai",
         "ED": "10000000000000000",
-        "assetName": "DAI",
-        "isNative": "false"
+        "assetName": "DAI"
       },
       {
         "assetId": 14,
@@ -1018,48 +808,12 @@
         "decimal": 6,
         "priceId": "tether",
         "ED": "10000",
-        "assetName": "USD Tether",
-        "isNative": "false"
+        "assetName": "USD Tether"
       }
-    ],
-    "features": [ "proxyManagement" ],
-    "externalLinks" : [ "subscan", "subsquare", "subid"]
+    ]
   },
   "Astar": {
-    "color": "#1b6dc1d9",
-    "name": "Astar",
-    "prefix": 5,
     "genesishash": "0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6",
-    "endpoints": [
-      {
-        "url": "wss://rpc.astar.network",
-        "name": "Astar"
-      },
-      {
-        "url": "wss://1rpc.io/astr",
-        "name": "Automata 1RPC"
-      },
-      {
-        "url": "wss://astar.public.blastapi.io",
-        "name": "Blast"
-      },
-      {
-        "url": "wss://astar-rpc.dwellir.com",
-        "name": "Dwellir"
-      },
-      {
-        "url": "wss://astar.public.curie.radiumblock.co/ws",
-        "name": "RadiumBlock"
-      },
-      {
-        "url": "wss://astar.api.onfinality.io/public-ws",
-        "name": "OnFinality"
-      },
-      {
-        "url": "light://substrate-connect/polkadot/astar",
-        "name": "light client (experimental)"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -1067,7 +821,7 @@
         "decimal": 18,
         "priceId": "astar",
         "assetName": "Astar",
-        "isNative": "false"
+        "isNative": true
       },
       {
         "assetId": 1,
@@ -1078,8 +832,7 @@
         "typeExtras": {
           "assetId": "340282366920938463463374607431768211455"
         },
-        "assetName": "Polkadot",
-        "isNative": "false"
+        "assetName": "Polkadot"
       },
       {
         "assetId": 2,
@@ -1090,8 +843,7 @@
         "typeExtras": {
           "assetId": "18446744073709551619"
         },
-        "assetName": "Moonbeam",
-        "isNative": "false"
+        "assetName": "Moonbeam"
       },
       {
         "assetId": 3,
@@ -1102,8 +854,7 @@
         "typeExtras": {
           "assetId": "18446744073709551620"
         },
-        "assetName": "Interlay Bitcoin",
-        "isNative": "false"
+        "assetName": "Interlay Bitcoin"
       },
       {
         "assetId": 4,
@@ -1114,8 +865,7 @@
         "typeExtras": {
           "assetId": "18446744073709551621"
         },
-        "assetName": "Interlay",
-        "isNative": "false"
+        "assetName": "Interlay"
       },
       {
         "assetId": 5,
@@ -1126,8 +876,7 @@
         "typeExtras": {
           "assetId": "18446744073709551622"
         },
-        "assetName": "Phala",
-        "isNative": "false"
+        "assetName": "Phala"
       },
       {
         "assetId": 6,
@@ -1138,8 +887,7 @@
         "typeExtras": {
           "assetId": "18446744073709551616"
         },
-        "assetName": "Acala",
-        "isNative": "false"
+        "assetName": "Acala"
       },
       {
         "assetId": 7,
@@ -1150,8 +898,7 @@
         "typeExtras": {
           "assetId": "18446744073709551618"
         },
-        "assetName": "Liquid DOT",
-        "isNative": "false"
+        "assetName": "Liquid DOT"
       },
       {
         "assetId": 8,
@@ -1162,8 +909,7 @@
         "typeExtras": {
           "assetId": "18446744073709551617"
         },
-        "assetName": "Acala SEED",
-        "isNative": "false"
+        "assetName": "Acala SEED"
       },
       {
         "assetId": 9,
@@ -1174,20 +920,18 @@
         "typeExtras": {
           "assetId": "4294969280"
         },
-        "assetName": "USD Tether",
-        "isNative": "false"
+        "assetName": "USD Tether"
       },
       {
         "assetId": 10,
         "symbol": "BNC",
         "decimal": 12,
         "type": "statemine",
-        "priceId": "bifrost-isNative-coin",
+        "priceId": "bifrost-native-coin",
         "typeExtras": {
           "assetId": "18446744073709551623"
         },
-        "assetName": "Bifrost",
-        "isNative": "false"
+        "assetName": "Bifrost"
       },
       {
         "assetId": 11,
@@ -1198,8 +942,7 @@
         "typeExtras": {
           "assetId": "18446744073709551631"
         },
-        "assetName": "UNIQUE",
-        "isNative": "false"
+        "assetName": "UNIQUE"
       },
       {
         "assetId": 12,
@@ -1210,8 +953,7 @@
         "typeExtras": {
           "assetId": "18446744073709551624"
         },
-        "assetName": "vDOT",
-        "isNative": "false"
+        "assetName": "vDOT"
       },
       {
         "assetId": 13,
@@ -1222,28 +964,12 @@
         "typeExtras": {
           "assetId": "18446744073709551629"
         },
-        "assetName": "Equilibrium USD",
-        "isNative": "false"
+        "assetName": "Equilibrium USD"
       }
-    ],
-    "features": [ "proxyManagement", "manageIdentity" ],
-    "externalLinks" : [ "subscan", "subid"]
+    ]
   },
   "Parallel": {
-    "color": "#ef18ac",
-    "name": "Parallel",
-    "prefix": 172,
     "genesishash": "0xe61a41c53f5dcd0beb09df93b34402aada44cb05117b71059cce40a2723a4e97",
-    "endpoints": [
-      {
-        "url": "wss://rpc.parallel.fi",
-        "name": "Parallel"
-      },
-      {
-        "url": "wss://parallel-rpc.dwellir.com",
-        "name": "Dwellir"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -1251,7 +977,7 @@
         "decimal": 12,
         "priceId": "parallel-finance",
         "assetName": "Parallel Finance",
-        "isNative": "false"
+        "isNative": true
       },
       {
         "assetId": 1,
@@ -1262,8 +988,7 @@
         "typeExtras": {
           "assetId": "101"
         },
-        "assetName": "Polkadot",
-        "isNative": "false"
+        "assetName": "Polkadot"
       },
       {
         "assetId": 2,
@@ -1274,8 +999,7 @@
         "typeExtras": {
           "assetId": "1001"
         },
-        "assetName": "s Polkadot",
-        "isNative": "false"
+        "assetName": "s Polkadot"
       },
       {
         "assetId": 3,
@@ -1286,8 +1010,7 @@
         "typeExtras": {
           "assetId": "108"
         },
-        "assetName": "Acala",
-        "isNative": "false"
+        "assetName": "Acala"
       },
       {
         "assetId": 4,
@@ -1298,8 +1021,7 @@
         "typeExtras": {
           "assetId": "104"
         },
-        "assetName": "Acala SEED",
-        "isNative": "false"
+        "assetName": "Acala SEED"
       },
       {
         "assetId": 5,
@@ -1310,8 +1032,7 @@
         "typeExtras": {
           "assetId": "110"
         },
-        "assetName": "Liquid DOT",
-        "isNative": "false"
+        "assetName": "Liquid DOT"
       },
       {
         "assetId": 6,
@@ -1322,8 +1043,7 @@
         "typeExtras": {
           "assetId": "114"
         },
-        "assetName": "Moonbeam",
-        "isNative": "false"
+        "assetName": "Moonbeam"
       },
       {
         "assetId": 7,
@@ -1334,8 +1054,7 @@
         "typeExtras": {
           "assetId": "200060013"
         },
-        "assetName": "Special DOT token",
-        "isNative": "false"
+        "assetName": "Special DOT token"
       },
       {
         "assetId": 8,
@@ -1345,8 +1064,7 @@
         "typeExtras": {
           "assetId": "200070014"
         },
-        "assetName": "Special DOT token",
-        "isNative": "false"
+        "assetName": "Special DOT token"
       },
       {
         "assetId": 9,
@@ -1356,8 +1074,7 @@
         "typeExtras": {
           "assetId": "200080015"
         },
-        "assetName": "Special DOT token",
-        "isNative": "false"
+        "assetName": "Special DOT token"
       },
       {
         "assetId": 10,
@@ -1367,8 +1084,7 @@
         "typeExtras": {
           "assetId": "200090016"
         },
-        "assetName": "Special DOT token",
-        "isNative": "false"
+        "assetName": "Special DOT token"
       },
       {
         "assetId": 11,
@@ -1378,8 +1094,7 @@
         "typeExtras": {
           "assetId": "200100017"
         },
-        "assetName": "Special DOT token",
-        "isNative": "false"
+        "assetName": "Special DOT token"
       },
       {
         "assetId": 12,
@@ -1390,8 +1105,7 @@
         "typeExtras": {
           "assetId": "120"
         },
-        "assetName": "Interlay",
-        "isNative": "false"
+        "assetName": "Interlay"
       },
       {
         "assetId": 13,
@@ -1402,8 +1116,7 @@
         "typeExtras": {
           "assetId": "122"
         },
-        "assetName": "Interlay Bitcoin",
-        "isNative": "false"
+        "assetName": "Interlay Bitcoin"
       },
       {
         "assetId": 14,
@@ -1414,8 +1127,7 @@
         "typeExtras": {
           "assetId": "102"
         },
-        "assetName": "USD Tether",
-        "isNative": "false"
+        "assetName": "USD Tether"
       },
       {
         "assetId": 15,
@@ -1425,8 +1137,7 @@
         "typeExtras": {
           "assetId": "130"
         },
-        "assetName": "Clover Finance",
-        "isNative": "false"
+        "assetName": "Clover Finance"
       },
       {
         "assetId": 16,
@@ -1437,8 +1148,7 @@
         "typeExtras": {
           "assetId": "112"
         },
-        "assetName": "Astar",
-        "isNative": "false"
+        "assetName": "Astar"
       },
       {
         "assetId": 17,
@@ -1449,52 +1159,12 @@
         "typeExtras": {
           "assetId": "115"
         },
-        "assetName": "Phala",
-        "isNative": "false"
+        "assetName": "Phala"
       }
-    ],
-    "features": [ "proxyManagement", "manageIdentity" ],
-    "externalLinks" : [ "subscan", "subid" ]
+    ]
   },
   "PolkadotAssetHub": {
-    "color": "#86e62a",
-    "name": "Polkadot Asset Hub",
-    "prefix": 0,
     "genesishash": "0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f",
-    "endpoints": [
-      {
-        "url": "wss://sys.ibp.network/statemint",
-        "name": "IBP network 1"
-      },
-      {
-        "url": "wss://sys.dotters.network/statemint",
-        "name": "IBP network 2"
-      },
-      {
-        "url": "wss://polkadot-asset-hub-rpc.polkadot.io",
-        "name": "Parity"
-      },
-      {
-        "url": "wss://statemint-rpc.dwellir.com",
-        "name": "Dwellir"
-      },
-      {
-        "url": "wss://statemint-rpc-tn.dwellir.com",
-        "name": "Dwellir Tunisia"
-      },
-      {
-        "url": "wss://statemint.public.curie.radiumblock.co/ws",
-        "name": "RadiumBlock"
-      },
-      {
-        "url": "wss://dot-rpc.stakeworld.io/statemint",
-        "name": "Stakeworld"
-      },
-      {
-        "url": "wss://statemint.api.onfinality.io/public-ws",
-        "name": "OnFinality"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -1502,7 +1172,7 @@
         "decimal": 10,
         "priceId": "polkadot",
         "assetName": "Polkadot",
-        "isNative": "false"
+        "isNative":  true
       },
       {
         "assetId": 1,
@@ -1514,7 +1184,6 @@
           "assetId": "1984"
         },
         "assetName": "USD Tether",
-        "isNative": "false"
       },
       {
         "assetId": 2,
@@ -1525,39 +1194,19 @@
         "typeExtras": {
           "assetId": "1337"
         },
-        "assetName": "USD Coin",
-        "isNative": "false"
+        "assetName": "USD Coin"
       }
-    ],
-    "features": [ "proxyManagement" ],
-    "externalLinks" : [ "subscan", "subid" ]
+    ]
   },
   "Picasso": {
-    "color": "#000000",
-    "name": "Picasso",
-    "prefix": 49,
     "genesishash": "0x6811a339673c9daa897944dcdac99c6e2939cc88245ed21951a0a3c9a2be75bc",
-    "endpoints": [
-      {
-        "url": "wss://picasso-rpc.composable.finance",
-        "name": "Composable 1"
-      },
-      {
-        "url": "wss://rpc.composablenodes.tech",
-        "name": "Composable 2"
-      },
-      {
-        "url": "wss://picasso-rpc.dwellir.com",
-        "name": "Dwellir"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
         "symbol": "PICA",
         "decimal": 12,
         "assetName": "Picasso",
-        "isNative": "false"
+        "isNative":  true
       },
       {
         "assetId": 1,
@@ -1565,8 +1214,7 @@
         "decimal": 10,
         "priceId": "polkadot",
         "ED": "21430000",
-        "assetName": "Polkadot",
-        "isNative": "false"
+        "assetName": "Polkadot"
       },
       {
         "assetId": 2,
@@ -1574,8 +1222,7 @@
         "decimal": 12,
         "priceId": "kusama",
         "ED": "375000000",
-        "assetName": "Kusama",
-        "isNative": "false"
+        "assetName": "Kusama"
       },
       {
         "assetId": 3,
@@ -1583,32 +1230,12 @@
         "decimal": 6,
         "priceId": "tether",
         "ED": "1500",
-        "assetName": "USD Tether",
-        "isNative": "false"
+        "assetName": "USD Tether"
       }
-    ],
-    "features": [ "proxyManagement", "manageIdentity" ],
-    "externalLinks" : [ "subscan", "subid"]
+    ]
   },
   "Zeitgeist": {
-    "color": "linear-gradient(180deg, rgba(32,90,172,1) 0%, rgba(26,72,138,1) 50%, rgba(13,36,69,1) 100%)",
-    "name": "Zeitgeist",
-    "prefix": 73,
     "genesishash": "0x1bf2a2ecb4a868de66ea8610f2ce7c8c43706561b6476031315f6640fe38e060",
-    "endpoints": [
-      {
-        "url": "wss://zeitgeist-rpc.dwellir.com",
-        "name": "Dwellir"
-      },
-      {
-        "url": "wss://zeitgeist.api.onfinality.io/public-ws",
-        "name": "OnFinality"
-      },
-      {
-        "url": "wss://main.rpc.zeitgeist.pm/ws",
-        "name": "ZeitgeistPM"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -1616,31 +1243,12 @@
         "decimal": 10,
         "priceId": "zeitgeist",
         "assetName": "Zeitgeist",
-        "isNative": "false"
+        "isNative":  true
       }
-    ],
-    "features": [ "proxyManagement", "manageIdentity" ],
-    "externalLinks" : [ "subscan", "subsquare", "subid" ]
+    ]
   },
   "Centrifuge": {
-    "color": "#fcc367",
-    "name": "Centrifuge",
-    "prefix": 36,
     "genesishash": "0xb3db41421702df9a7fcac62b53ffeac85f7853cc4e689e0b93aeb3db18c09d82",
-    "endpoints": [
-      {
-        "url": "wss://fullnode.centrifuge.io",
-        "name": "Centrifuge"
-      },
-      {
-        "url": "wss://centrifuge-rpc.dwellir.com",
-        "name": "Dwellir"
-      },
-      {
-        "url": "wss://centrifuge-parachain.api.onfinality.io/public-ws",
-        "name": "Onfinality"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -1648,35 +1256,12 @@
         "decimal": 18,
         "priceId": "centrifuge",
         "assetName": "Centrifuge",
-        "isNative": "false"
+        "isNative":  true
       }
-    ],
-    "features": [ "proxyManagement", "manageIdentity" ],
-    "externalLinks" : [ "subscan", "subsquare", "subid" ]
+    ]
   },
   "HydraDX": {
-    "color": "#f653a2",
-    "name": "HydraDX",
-    "prefix": 63,
     "genesishash": "0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d",
-    "endpoints": [
-      {
-        "url": "wss://rpc.hydradx.cloud",
-        "name": "Galactic Council"
-      },
-      {
-        "url": "wss://hydradx.api.onfinality.io/public-ws",
-        "name": "OnFinality"
-      },
-      {
-        "url": "wss://rpc-lb.data6.zp-labs.net:8443/hydradx/ws/?token=2ZGuGivPJJAxXiT1hR1Yg2MXGjMrhEBYFjgbdPi",
-        "name": "ZeePrime"
-      },
-      {
-        "url": "wss://hydradx-rpc.dwellir.com",
-        "name": "Dwellir"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -1684,7 +1269,7 @@
         "decimal": 12,
         "priceId": "hydradx",
         "assetName": "HydraDX",
-        "isNative": "false"
+        "isNative": true
       },
       {
         "assetId": 1,
@@ -1692,8 +1277,7 @@
         "decimal": 10,
         "priceId": "polkadot",
         "ED": "17540000",
-        "assetName": "Polkadot",
-        "isNative": "false"
+        "assetName": "Polkadot"
       },
       {
         "assetId": 2,
@@ -1701,16 +1285,14 @@
         "decimal": 18,
         "priceId": "dai",
         "ED": "10000000000000000",
-        "assetName": "DAI on Acala",
-        "isNative": "false"
+        "assetName": "DAI on Acala"
       },
       {
         "assetId": 3,
         "symbol": "LRNA",
         "decimal": 12,
         "ED": "400000000",
-        "assetName": "LRNA",
-        "isNative": "false"
+        "assetName": "LRNA"
       },
       {
         "assetId": 4,
@@ -1718,8 +1300,7 @@
         "decimal": 18,
         "priceId": "ethereum-wormhole",
         "ED": "7000000000000",
-        "assetName": "WETH-Acala",
-        "isNative": "false"
+        "assetName": "WETH-Acala"
       },
       {
         "assetId": 5,
@@ -1727,8 +1308,7 @@
         "decimal": 8,
         "priceId": "wrapped-bitcoin",
         "ED": "44",
-        "assetName": "WBTC-Acala",
-        "isNative": "false"
+        "assetName": "WBTC-Acala"
       },
       {
         "assetId": 6,
@@ -1736,8 +1316,7 @@
         "decimal": 8,
         "priceId": "bitcoin",
         "ED": "36",
-        "assetName": "Interlay Bitcoin",
-        "isNative": "false"
+        "assetName": "Interlay Bitcoin"
       },
       {
         "assetId": 7,
@@ -1745,8 +1324,7 @@
         "decimal": 10,
         "priceId": "zeitgeist",
         "ED": "1204151916",
-        "assetName": "Zeitgeist",
-        "isNative": "false"
+        "assetName": "Zeitgeist"
       },
       {
         "assetId": 8,
@@ -1754,8 +1332,7 @@
         "decimal": 18,
         "priceId": "astar",
         "ED": "147058823529412000",
-        "assetName": "Astar",
-        "isNative": "false"
+        "assetName": "Astar"
       },
       {
         "assetId": 9,
@@ -1763,8 +1340,7 @@
         "decimal": 6,
         "priceId": "tether",
         "ED": "10000",
-        "assetName": "USD Tether",
-        "isNative": "false"
+        "assetName": "USD Tether"
       },
       {
         "assetId": 10,
@@ -1772,17 +1348,15 @@
         "decimal": 18,
         "priceId": "centrifuge",
         "ED": "32467532467532500",
-        "assetName": "Centrifuge",
-        "isNative": "false"
+        "assetName": "Centrifuge"
       },
       {
         "assetId": 11,
         "symbol": "BNC",
         "decimal": 12,
-        "priceId": "bifrost-isNative-coin",
+        "priceId": "bifrost-native-coin",
         "ED": "68795189840",
-        "assetName": "Bifrost",
-        "isNative": "false"
+        "assetName": "Bifrost"
       },
       {
         "assetId": 12,
@@ -1790,8 +1364,7 @@
         "decimal": 18,
         "priceId": "dai",
         "ED": "10000000000000000",
-        "assetName": "DAI-Moonbeam",
-        "isNative": "false"
+        "assetName": "DAI-Moonbeam"
       },
       {
         "assetId": 13,
@@ -1799,8 +1372,7 @@
         "decimal": 8,
         "priceId": "wrapped-bitcoin",
         "ED": "34",
-        "assetName": "WBTC-Moonbeam",
-        "isNative": "false"
+        "assetName": "WBTC-Moonbeam"
       },
       {
         "assetId": 14,
@@ -1808,8 +1380,7 @@
         "decimal": 18,
         "priceId": "ethereum-wormhole",
         "ED": "7000000000000",
-        "assetName": "WETH-Moonbeam",
-        "isNative": "false"
+        "assetName": "WETH-Moonbeam"
       },
       {
         "assetId": 15,
@@ -1817,8 +1388,7 @@
         "decimal": 6,
         "priceId": "usd-coin",
         "ED": "10000",
-        "assetName": "USD Coin",
-        "isNative": "false"
+        "assetName": "USD Coin"
       },
       {
         "assetId": 16,
@@ -1826,28 +1396,12 @@
         "decimal": 18,
         "priceId": "moonbeam",
         "ED": "34854864344868000",
-        "assetName": "Moonbeam",
-        "isNative": "false"
+        "assetName": "Moonbeam"
       }
-    ],
-    "features": [ "proxyManagement", "manageIdentity" ],
-    "externalLinks" : [ "subscan", "subsquare", "subid" ]
+    ]
   },
   "Nodle": {
-    "color": "#1ab394",
-    "name": "Nodle",
-    "prefix": 37,
     "genesishash": "0x97da7ede98d7bad4e36b4d734b6055425a3be036da2a332ea5a7037656427a21",
-    "endpoints": [
-      {
-        "url": "wss://eden-rpc.dwellir.com",
-        "name": "Dwellir"
-      },
-      {
-        "url": "wss://nodle-parachain.api.onfinality.io/public-ws",
-        "name": "OnFinality"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -1855,35 +1409,12 @@
         "decimal": 11,
         "priceId": "nodle-network",
         "assetName": "Nodle",
-        "isNative": "false"
+        "isNative":  true
       }
-    ],
-    "features": [ ],
-    "externalLinks" : [ "subscan", "subid" ]
+    ]
   },
   "Phala": {
-    "color": "#c6fa4c",
-    "name": "Phala",
-    "prefix": 30,
     "genesishash": "0x1bb969d85965e4bb5a651abbedf21a54b6b31a21f66b5401cc3f1e286268d736",
-    "endpoints": [
-      {
-        "url": "wss://phala-rpc.dwellir.com",
-        "name": "Dwellir"
-      },
-      {
-        "url": "wss://api.phala.network/ws",
-        "name": "Phala"
-      },
-      {
-        "url": "wss://poc5.phala.network/ws",
-        "name": "Phala Network"
-      },
-      {
-        "url": "wss://phala.api.onfinality.io/public-ws",
-        "name": "OnFinality"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -1891,38 +1422,19 @@
         "decimal": 12,
         "priceId": "pha",
         "assetName": "Phala",
-        "isNative": "false"
+        "isNative": true
       }
-    ],
-    "features": [ "proxyManagement", "manageIdentity" ],
-    "externalLinks" : [ "subscan", "subsquare", "subid" ]
+    ]
   },
   "ComposableFinance": {
-    "color": "#C90E8A",
-    "name": "Composable Finance",
-    "prefix": 50,
     "genesishash": "0xdaab8df776eb52ec604a5df5d388bb62a050a0aaec4556a64265b9d42755552d",
-    "endpoints": [
-      {
-        "url": "wss://rpc.composable.finance",
-        "name": "Composable"
-      },
-      {
-        "url": "wss://composable.api.onfinality.io/public-ws",
-        "name": "OnFinality"
-      },
-      {
-        "url": "wss://composable-rpc.dwellir.com",
-        "name": "Dwellir"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
         "symbol": "LAYR",
         "decimal": 12,
         "assetName": "Composable Finance",
-        "isNative": "false"
+        "isNative":  true
       },
       {
         "assetId": 1,
@@ -1930,8 +1442,7 @@
         "decimal": 10,
         "priceId": "polkadot",
         "ED": "21430000",
-        "assetName": "Polkadot",
-        "isNative": "false"
+        "assetName": "Polkadot"
       },
       {
         "assetId": 2,
@@ -1939,8 +1450,7 @@
         "decimal": 12,
         "priceId": "kusama",
         "ED": "375000000",
-        "assetName": "Kusama",
-        "isNative": "false"
+        "assetName": "Kusama"
       },
       {
         "assetId": 3,
@@ -1948,36 +1458,20 @@
         "decimal": 6,
         "priceId": "tether",
         "ED": "1500",
-        "assetName": "USD Tether",
-        "isNative": "false"
+        "assetName": "USD Tether"
       }
-    ],
-    "features": [ "proxyManagement" ],
-    "externalLinks" : [ "subscan", "subid" ]
+    ]
   },
   "BifrostPolkadot": {
-    "color": "#5a25f0",
-    "name": "Bifrost Polkadot",
-    "prefix": 6,
     "genesishash": "0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931ddad144059b1eb884e5b",
-    "endpoints": [
-      {
-        "url": "wss://hk.p.bifrost-rpc.liebi.com/ws",
-        "name": "Liebi"
-      },
-      {
-        "url": "wss://bifrost-polkadot.api.onfinality.io/public-ws",
-        "name": "OnFinality"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
         "symbol": "BNC",
         "decimal": 12,
-        "priceId": "bifrost-isNative-coin",
+        "priceId": "bifrost-native-coin",
         "assetName": "Bifrost",
-        "isNative": "false"
+        "isNative": true
       },
       {
         "assetId": 1,
@@ -1985,8 +1479,7 @@
         "decimal": 18,
         "priceId": "moonbeam",
         "ED": "1000000000000",
-        "assetName": "Moonbeam",
-        "isNative": "false"
+        "assetName": "Moonbeam"
       },
       {
         "assetId": 2,
@@ -1994,8 +1487,7 @@
         "decimal": 10,
         "priceId": "polkadot",
         "ED": "1000000",
-        "assetName": "Polkadot",
-        "isNative": "false"
+        "assetName": "Polkadot"
       },
       {
         "assetId": 3,
@@ -2003,8 +1495,7 @@
         "decimal": 6,
         "priceId": "tether",
         "ED": "1000",
-        "assetName": "USD Tether",
-        "isNative": "false"
+        "assetName": "USD Tether"
       },
       {
         "assetId": 4,
@@ -2012,8 +1503,7 @@
         "decimal": 18,
         "priceId": "astar",
         "ED": "10000000000000000",
-        "assetName": "Astar",
-        "isNative": "false"
+        "assetName": "Astar"
       },
       {
         "assetId": 5,
@@ -2021,75 +1511,45 @@
         "decimal": 10,
         "priceId": "voucher-dot",
         "ED": "1000000",
-        "assetName": "vDOT",
-        "isNative": "false"
+        "assetName": "vDOT"
       },
       {
         "assetId": 6,
         "symbol": "vGLMR",
         "decimal": 18,
         "ED": "1000000000000",
-        "assetName": "vGLMR",
-        "isNative": "false"
+        "assetName": "vGLMR"
       },
       {
         "assetId": 7,
         "symbol": "vFIL",
         "decimal": 18,
         "ED": "1000000000000",
-        "assetName": "vFIL",
-        "isNative": "false"
+        "assetName": "vFIL"
       },
       {
         "assetId": 8,
         "symbol": "vASTR",
         "decimal": 18,
         "ED": "10000000000000000",
-        "assetName": "vASTR",
-        "isNative": "false"
+        "assetName": "vASTR"
       }
-    ],
-    "features": [ "proxyManagement", "manageIdentity" ],
-    "externalLinks" : [ "subscan", "subsquare", "subid" ]
+    ]
   },
   "Rococo": {
-    "color": "#6f36dc",
-    "name": "Rococo",
-    "prefix": 42,
     "genesishash": "0x6408de7737c59c238890533af25896a2c20608d8b380bb01029acb392781063e",
-    "endpoints": [
-      {
-        "url": "wss://rococo-rpc.polkadot.io/",
-        "name": "Rococo"
-      },
-      {
-        "url": "light://substrate-connect/rococo",
-        "name": "light client (experimental)"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
         "symbol": "ROC",
         "decimal": 12,
         "assetName": "Rococo Testnet",
-        "isNative": "false"
+        "isNative": true
       }
-    ],
-    "features": [ "proxyManagement", "socialRecovery", "manageIdentity", "openGov" ],
-    "externalLinks" : [ "subscan", "subsquare", "subid" ]
+    ]
   },
   "Ternoa": {
-    "color": "#d622ff",
-    "name": "Ternoa",
-    "prefix": 42,
     "genesishash": "0x6859c81ca95ef624c9dfe4dc6e3381c33e5d6509e35e147092bfbc780f777c4e",
-    "endpoints": [
-      {
-        "url": "wss://mainnet.ternoa.network",
-        "name": "CapsuleCorp"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -2098,22 +1558,12 @@
         "priceId": "coin-capsule",
         "staking": "relaychain",
         "assetName": "Ternoa",
-        "isNative": "false"
+        "isNative": true
       }
-    ],
-    "externalLinks" : [ ]
+    ]
   },
   "Polymesh": {
-    "color": "linear-gradient(197deg, #FF2E72, #4A125E)",
-    "name": "Polymesh",
-    "prefix": 12,
     "genesishash": "0x6fbd74e5e1d0a61d52ccfe9d4adaed16dd3a7caa37c6bc4d0c2fa12e8b2f4063",
-    "endpoints": [
-      {
-        "url": "wss://mainnet-rpc.polymesh.network",
-        "name": "Polymesh"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -2121,23 +1571,12 @@
         "decimal": 6,
         "priceId": "polymesh",
         "assetName": "Polymesh Testnet",
-        "isNative": "false"
+        "isNative": true
       }
-    ],
-    "features": [ ],
-    "externalLinks" : [ "subscan", "subid" ]
+    ]
   },
   "Pendulum": {
-    "color": "#49E2FD",
-    "name": "Pendulum",
-    "prefix": 56,
     "genesishash": "0x5d3c298622d5634ed019bf61ea4b71655030015bde9beb0d6a24743714462c86",
-    "endpoints": [
-      {
-        "url": "wss://rpc-pendulum.prd.pendulumchain.tech",
-        "name": "Pendulum"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -2145,7 +1584,7 @@
         "decimal": 12,
         "priceId": "pendulum-chain",
         "assetName": "Pendulum token",
-        "isNative": "false"
+        "isNative": true
       },
       {
         "assetId": 1,
@@ -2153,8 +1592,7 @@
         "decimal": 10,
         "priceId": "polkadot",
         "ED": "1000",
-        "assetName": "Polkadot",
-        "isNative": "false"
+        "assetName": "Polkadot"
       },
       {
         "assetId": 2,
@@ -2162,23 +1600,12 @@
         "decimal": 6,
         "priceId": "tether",
         "ED": "1000",
-        "assetName": "USD Tether",
-        "isNative": "false"
+        "assetName": "USD Tether"
       }
-    ],
-    "externalLinks" : [ "subscan", "subid" ]
+    ]
   },
   "Bittensor": {
-    "color": "#252525",
-    "name": "Bittensor",
-    "prefix": 42,
     "genesishash": "0x2f0555cc76fc2840a25a6ea3b9637146806f1f44b090c175ffde2a7e5ab36c03",
-    "endpoints": [
-      {
-        "url": "wss://entrypoint-finney.opentensor.ai:443",
-        "name": "Opentensor Fdn"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -2186,61 +1613,24 @@
         "decimal": 9,
         "priceId": "bittensor",
         "assetName": "Fusotao token",
-        "isNative": "false"
+        "isNative":  true
       }
-    ],
-    "features": [ ],
-    "externalLinks" : [ "subscan", "subid" ]
+    ]
   },
   "Ajuna": {
-    "color": "#161212",
-    "name": "Ajuna",
-    "prefix": 1328,
     "genesishash": "0xe358eb1d11b31255a286c12e44fe6780b7edb171d657905a97e39f71d9c6c3ee",
-    "endpoints": [
-      {
-        "url": "wss://rpc-parachain.ajuna.network",
-        "name": "Ajuna"
-      },
-      {
-        "url": "wss://ajuna.public.curie.radiumblock.co/ws",
-        "name": "RadiumBlock"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
         "symbol": "AJUN",
         "decimal": 12,
         "assetName": "Ajuna",
-        "isNative": "false"
+        "isNative":  true
       }
-    ],
-    "externalLinks" : [ "subscan", "subid" ]
+    ]
   },
   "PolkadotBridgeHub": {
-    "color": "#86e62a",
-    "name": "Polkadot Bridge Hub",
-    "prefix": 0,
     "genesishash": "0xdcf691b5a3fbe24adc99ddc959c0561b973e329b1aef4c4b22e7bb2ddecb4464",
-    "endpoints": [
-      {
-        "url": "wss://sys.ibp.network/bridgehub-polkadot",
-        "name": "IBP network 1"
-      },
-      {
-        "url": "wss://sys.dotters.network/bridgehub-polkadot",
-        "name": "IBP network 2"
-      },
-      {
-        "url": "wss://polkadot-bridge-hub-rpc.polkadot.io",
-        "name": "Parity"
-      },
-      {
-        "url": "wss://dot-rpc.stakeworld.io/bridgehub",
-        "name": "Stakeworld"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -2248,35 +1638,12 @@
         "decimal": 10,
         "priceId": "polkadot",
         "assetName": "Polkadot",
-        "isNative": "false"
+        "isNative":  true
       }
-    ],
-    "features": [ ],
-    "externalLinks" : [ ]
+    ]
   },
   "KusamaBridgeHub": {
-    "color": "#113911",
-    "name": "Kusama Bridge Hub",
-    "prefix": 2,
     "genesishash": "0x00dcb981df86429de8bbacf9803401f09485366c44efbf53af9ecfab03adc7e5",
-    "endpoints": [
-      {
-        "url": "wss://sys.ibp.network/bridgehub-kusama",
-        "name": "IBP network 1"
-      },
-      {
-        "url": "wss://sys.dotters.network/bridgehub-kusama",
-        "name": "IBP network 2"
-      },
-      {
-        "url": "wss://kusama-bridge-hub-rpc.polkadot.io",
-        "name": "Parity"
-      },
-      {
-        "url": "wss://ksm-rpc.stakeworld.io/bridgehub",
-        "name": "Stakeworld"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -2284,43 +1651,12 @@
         "decimal": 12,
         "priceId": "kusama",
         "assetName": "Kusama",
-        "isNative": "false"
+        "isNative": true
       }
-    ],
-    "features": [ ],
-    "externalLinks" : [ ]
+    ]
   },
   "PolkadotCollectives": {
-    "color": "#e6777a",
-    "name": "Polkadot Collectives",
-    "prefix": 0,
     "genesishash": "0x46ee89aa2eedd13e988962630ec9fb7565964cf5023bb351f2b6b25c1b68b0b2",
-    "endpoints": [
-      {
-        "url": "wss://sys.ibp.network/collectives-polkadot",
-        "name": "IBP network 1"
-      },
-      {
-        "url": "wss://sys.dotters.network/collectives-polkadot",
-        "name": "IBP network 2"
-      },
-      {
-        "url": "wss://polkadot-collectives-rpc.polkadot.io",
-        "name": "Parity"
-      },
-      {
-        "url": "wss://collectives.public.curie.radiumblock.co/ws",
-        "name": "RadiumBlock"
-      },
-      {
-        "url": "wss://dot-rpc.stakeworld.io/collectives",
-        "name": "Stakeworld"
-      },
-      {
-        "url": "wss://collectives.api.onfinality.io/public-ws",
-        "name": "Onfinality"
-      }
-    ],
     "assets": [
       {
         "assetId": 0,
@@ -2328,10 +1664,8 @@
         "decimal": 10,
         "priceId": "polkadot",
         "assetName": "Polkadot",
-        "isNative": "false"
+        "isNative":  true
       }
-    ],
-    "features": [ "proxyManagement" ],
-    "externalLinks" : [ "subsquare", "subid", "statescan" ]
+    ]
   }
 }
