@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { InputFilter } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { currencyList } from '../../../util/constants';
+import { currencyList } from '../../../util/defaultAssets';
 import { CurrencyItemType } from '../partials/Currency';
 import CurrencyItem from './CurrencyItem';
 
