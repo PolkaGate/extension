@@ -17,56 +17,8 @@ import { selectableNetworks } from '@polkadot/networks';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import getPoolAccounts from '../../util/getPoolAccounts';
-import getPrices from '../api/getPrices';
-
-const ACALA_GENESISHASH = '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c';
-const KUSAMA_ASSETHUB_GENESISHASH = '0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a';
-const POLKADOT_ASSETHUB_GENESISHASH = '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f';
-
-const CHAINS_TO_CHECK = [{
-  genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
-  name: 'Polkadot',
-  priceID: 'polkadot'
-},
-{
-  genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
-  name: 'Kusama',
-  priceID: 'kusama'
-},
-{
-  genesisHash: ACALA_GENESISHASH,
-  name: 'Acala',
-  priceID: 'acala'
-},
-{
-  genesisHash: '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
-  name: 'Westend',
-  priceID: ''
-},
-{
-  genesisHash: '0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6',
-  name: 'Astar',
-  priceID: 'astar'
-},
-{
-  genesisHash: '0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d',
-  name: 'HydraDX',
-  priceID: 'hydradx'
-},
-{
-  genesisHash: '0xbaf5aabe40646d11f0ee8abbdc64f4a4b7674925cba08e4a05ff9ebed6e2126b',
-  name: 'Karura',
-  priceID: 'karura'
-},
-{
-  genesisHash: '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9',
-  name: 'WestendAssetHub',
-  priceID: ''
-}
-];
-// const fetchPriceFor = ['hydradx', 'karura', 'liquid-staking-dot', 'acala-dollar-acala', 'astar', 'kusama', 'acala',
-//   'polkadot', 'tether', 'usd-coin'
-// ];
+import { ACALA_GENESIS_HASH, STATEMINE_GENESIS_HASH, STATEMINT_GENESIS_HASH } from '../constants';
+import { DEFAULT_ASSETS } from '../defaultAssets';
 
 async function fastestEndpoint (chainEndpoints, isACA) {
   let connection;
@@ -134,6 +86,7 @@ function getNativeToken (accounts, api, genesisHash, tokenName, promises, result
       chain: sanitizeText(chainName),
       decimal: getDecimal(genesisHash),
       genesisHash,
+      priceId: tokenName,
       token: getToken(genesisHash)
     });
   }));
@@ -147,7 +100,11 @@ function getDecimal (genesisHash) {
   return network?.decimals?.length ? network.decimals[0] : undefined;
 }
 
-async function acalaTokens (accounts, results, promises) {
+async function acalaTokens (accounts, acalaAssetsList, results, promises) {
+  if (!acalaAssetsList || acalaAssetsList.length === 0) {
+    return [];
+  }
+
   const allEndpoints = createWsEndpoints();
 
   const chainEndpoints = allEndpoints
@@ -157,18 +114,8 @@ async function acalaTokens (accounts, results, promises) {
 
   const { connections, fastApi } = await fastestEndpoint(chainEndpoints, true);
 
-  const tokensList = [
-    'LDOT', // 'liquid-staking-dot' price apiID
-    'ACA',
-    'DOT',
-    'AUSD' // acala-dollar-acala price apiID
-  ];
-
-  // const ldotPriceID = 'liquid-staking-dot';
-  // const AusdPriceID = 'acala-dollar-acala';
-
-  for (const token of tokensList) {
-    const params = accounts.map((address) => fastApi.query.tokens.accounts(address, { Token: token }).then((bal) => {
+  for (const asset of acalaAssetsList) {
+    const params = accounts.map((address) => fastApi.query.tokens.accounts(address, { Token: asset.token }).then((bal) => {
       const total = bal.free.add(bal.reserved);
       const zeroBalance = total.isZero();
 
@@ -180,9 +127,10 @@ async function acalaTokens (accounts, results, promises) {
         address,
         balances: String(total),
         chain: sanitizeText('Acala'),
-        decimal: getDecimal(ACALA_GENESISHASH),
-        genesisHash: ACALA_GENESISHASH,
-        token
+        decimal: asset?.decimal ?? getDecimal(ACALA_GENESIS_HASH),
+        genesisHash: ACALA_GENESIS_HASH,
+        priceId: asset.priceId,
+        token: asset.token
       });
 
       postMessage(JSON.stringify(results));
@@ -194,105 +142,39 @@ async function acalaTokens (accounts, results, promises) {
   return connections;
 }
 
-async function kusamaAssetHubTokens (accounts, results, promises) {
-  const assetsToFetch = [
-    {
-      name: 'Polkadot',
-      id: 14,
-      priceID: 'polkadot'
-    },
-    {
-      name: 'Tether USD',
-      id: 19840,
-      priceID: 'tether'
-    },
-    {
-      name: 'USD Coin',
-      id: 10,
-      priceID: 'usd-coin'
-    }
-  ];
-  const allEndpoints = createWsEndpoints();
-
-  const chainEndpoints = allEndpoints
-    .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === 'kusamaassethub')
-    .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'));
-
-  const { connections, fastApi } = await fastestEndpoint(chainEndpoints, false);
-
-  getNativeToken(accounts, fastApi, KUSAMA_ASSETHUB_GENESISHASH, 'kusama', promises, results);
-
-  for (const asset of assetsToFetch) {
-    const params = accounts.map((address) => fastApi.query.assets.account(asset.id, address));
-
-    promises.push(Promise.all([fastApi.query.assets.metadata(asset.id), ...params]).then((p) => {
-      const metadata = p[0];
-      const accountsAssets = p.slice(1);
-
-      const decimal = metadata.decimals.toNumber();
-      const token = metadata.symbol.toHuman();
-
-      accountsAssets.forEach((asset, index) => {
-        const total = asset.isNone ? BN_ZERO : asset.unwrap().balance;
-        const zeroBalance = total.isZero();
-
-        if (zeroBalance) {
-          return;
-        }
-
-        results.push({
-          address: accounts[index],
-          assetId: asset.id,
-          balances: String(total),
-          chain: sanitizeText('KusamaAssetHub'),
-          decimal,
-          genesisHash: KUSAMA_ASSETHUB_GENESISHASH,
-          token
-        });
-
-        postMessage(JSON.stringify(results));
-      });
-    }));
+async function assetHubTokens (accounts, assetsToFetch, assetHubChainName, genesishash, results, promises) {
+  if (!assetsToFetch || assetsToFetch.length === 0) {
+    return [];
   }
 
-  return connections;
-}
-
-async function polkadotAssetHubTokens (accounts, results, promises) {
-  const assetsToFetch = [
-    {
-      name: 'Tether USD',
-      id: 1984,
-      priceID: 'tether'
-    },
-    {
-      name: 'USD Coin',
-      id: 1337,
-      priceID: 'usd-coin'
-    }
-  ];
   const allEndpoints = createWsEndpoints();
 
   const chainEndpoints = allEndpoints
-    .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === 'polkadotassethub')
+    .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === assetHubChainName.toLowerCase())
     .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'));
 
   const { connections, fastApi } = await fastestEndpoint(chainEndpoints, false);
 
-  getNativeToken(accounts, fastApi, POLKADOT_ASSETHUB_GENESISHASH, 'polkadot', promises, results);
+  const nativeAssetName = assetHubChainName.toLowerCase() === 'polkadotassethub'
+    ? 'polkadot'
+    : assetHubChainName.toLowerCase() === 'kusamaassethub'
+      ? 'kusama'
+      : 'westend';
+
+  getNativeToken(accounts, fastApi, genesishash, nativeAssetName, promises, results);
 
   for (const asset of assetsToFetch) {
-    const params = accounts.map((address) => fastApi.query.assets.account(asset.id, address));
+    const params = accounts.map((address) => fastApi.query.assets.account(asset.assetId, address));
 
-    promises.push(Promise.all([fastApi.query.assets.metadata(asset.id), ...params]).then((p) => {
+    promises.push(Promise.all([fastApi.query.assets.metadata(asset.assetId), ...params]).then((p) => {
       const metadata = p[0];
       const accountsAssets = p.slice(1);
 
       const decimal = metadata.decimals.toNumber();
       const token = metadata.symbol.toHuman();
 
-      accountsAssets.forEach((asset, index) => {
-        const total = asset.isNone ? BN_ZERO : asset.unwrap().balance;
+      accountsAssets.forEach((accountAsset, index) => {
+        const total = accountAsset.isNone ? BN_ZERO : accountAsset.unwrap().balance;
         const zeroBalance = total.isZero();
 
         if (zeroBalance) {
@@ -301,11 +183,12 @@ async function polkadotAssetHubTokens (accounts, results, promises) {
 
         results.push({
           address: accounts[index],
-          assetId: asset.id,
+          assetId: asset?.assetId,
           balances: String(total),
-          chain: sanitizeText('PolkadotAssetHub'),
+          chain: sanitizeText(assetHubChainName),
           decimal,
-          genesisHash: POLKADOT_ASSETHUB_GENESISHASH,
+          genesisHash: genesishash,
+          priceId: asset?.priceId,
           token
         });
 
@@ -352,7 +235,7 @@ async function getPoolBalance (api, address, availableBalance) {
   return availableBalance.add(active.add(rewards).add(unlockingValue));
 }
 
-async function setupConnections(chain, accounts, allEndpoints) {
+async function setupConnections (chain, accounts, allEndpoints) {
   const chainEndpoints = allEndpoints
     .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === chain.toLowerCase())
     .filter((endpoint) => endpoint.value && endpoint.value.startsWith('wss://'));
@@ -389,38 +272,52 @@ async function getAssetsOnOtherChains (accounts) {
 
   const promises = [];
 
-  const acalaConnections = await acalaTokens(accounts, results, promises);
-  const pAHConnections = await polkadotAssetHubTokens(accounts, results, promises);
-  const kAHConnections = await kusamaAssetHubTokens(accounts, results, promises);
+  const acalaAssets = DEFAULT_ASSETS.filter((asset) => asset.genesisHash === ACALA_GENESIS_HASH);
+  const polkadotAssetHubsAssets = DEFAULT_ASSETS.filter((asset) => asset.genesisHash === STATEMINT_GENESIS_HASH);
+  const kusamaAssetHubsAssets = DEFAULT_ASSETS.filter((asset) => asset.genesisHash === STATEMINE_GENESIS_HASH);
+  const otherAssets = DEFAULT_ASSETS.filter((asset) =>
+    asset.genesisHash !== STATEMINE_GENESIS_HASH &&
+    asset.genesisHash !== STATEMINT_GENESIS_HASH &&
+    asset.genesisHash !== ACALA_GENESIS_HASH
+  );
 
-  const newPromises = CHAINS_TO_CHECK.map((chain) => {
-    return setupConnections(chain.name, accounts, allEndpoints)
-      .then(({ balances, connections }) => {
-        balances.forEach(({ address, balance }) => {
-          const zeroBalance = balance.isZero();
+  console.log('polkadotAssetHubsAssets:', polkadotAssetHubsAssets);
 
-          if (zeroBalance) {
-            return;
-          }
+  const acalaConnections = await acalaTokens(accounts, acalaAssets, results, promises);
+  const pAHConnections = await assetHubTokens(accounts, polkadotAssetHubsAssets, 'PolkadotAssetHub', STATEMINT_GENESIS_HASH, results, promises);
+  const kAHConnections = await assetHubTokens(accounts, kusamaAssetHubsAssets, 'KusamaAssetHub', STATEMINE_GENESIS_HASH, results, promises);
 
-          results.push({
-            address,
-            balances: String(balance),
-            chain: sanitizeText(chain.name),
-            decimal: getDecimal(chain.genesisHash),
-            genesisHash: chain.genesisHash,
-            token: getToken(chain.genesisHash)
+  const newPromises = otherAssets.length > 0
+    ? otherAssets.map((asset) => {
+      return setupConnections(asset.name, accounts, allEndpoints)
+        .then(({ balances, connections }) => {
+          balances.forEach(({ address, balance }) => {
+            const zeroBalance = balance.isZero();
+
+            if (zeroBalance) {
+              return;
+            }
+
+            results.push({
+              address,
+              balances: String(balance),
+              chain: sanitizeText(asset.name),
+              decimal: getDecimal(asset.genesisHash),
+              genesisHash: asset.genesisHash,
+              priceId: asset.priceId,
+              token: getToken(asset.genesisHash)
+            });
+
+            postMessage(JSON.stringify(results));
           });
 
-          postMessage(JSON.stringify(results));
+          closeWebsockets(connections);
+        })
+        .catch((error) => {
+          console.error(`Error fetching balances for ${asset.name}:`, error);
         });
-
-        closeWebsockets(connections);
-      })
-      .catch((error) => {
-        console.error(`Error fetching balances for ${chain.name}:`, error);
-      });
-  });
+    })
+    : [];
 
   promises.push(...newPromises);
 
