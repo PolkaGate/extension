@@ -17,7 +17,7 @@ import { ActionContext, DisplayLogo, FormatBalance2, FormatPrice, Identicon, Ide
 import { useAccount, useAccountInfo, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount, windowOpen } from '../../../messaging';
 import { ACALA_GENESIS_HASH, ASSET_HUBS, BALANCES_VALIDITY_PERIOD, IDENTITY_CHAINS, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, SOCIAL_RECOVERY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
-import { AssetsOnOtherChains, BalancesInfo, Price, Proxy } from '../../../util/types';
+import { AccountAssets, BalancesInfo, Price, Price2, Proxy } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import { getValue } from '../../account/util';
 import AOC from './AOC';
@@ -25,13 +25,13 @@ import AOC from './AOC';
 interface AddressDetailsProps {
   address: string | undefined;
   api: ApiPromise | undefined;
-  assetsOnOtherChains: AssetsOnOtherChains[] | null | undefined;
+  accountAssets: AccountAssets[] | null | undefined;
   chain: Chain | null | undefined;
   formatted: string | undefined;
   chainName: string | undefined;
   isDarkTheme: boolean;
   balances: BalancesInfo | undefined;
-  price: Price | undefined;
+  price: Price2 | undefined;
   setAssetId: React.Dispatch<React.SetStateAction<number | undefined>>;
   assetId: number | undefined;
 }
@@ -41,7 +41,7 @@ export type DisplayLogoAOC = {
   symbol: string | undefined;
 }
 
-export default function AccountInformation({ address, api, assetId, assetsOnOtherChains, balances, chain, chainName, formatted, isDarkTheme, price, setAssetId }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation({ accountAssets, address, api, assetId, balances, chain, chainName, formatted, isDarkTheme, price, setAssetId }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
   const accountInfo = useAccountInfo(api, formatted);
@@ -59,26 +59,23 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
 
   const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
   const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
-  const isPriceOutdated = useMemo(() => price !== undefined && Date.now() - price.date > BALANCES_VALIDITY_PERIOD, [price]);
+  const isPriceOutdated = useMemo(() => price !== undefined && Date.now() - price.timestamp > BALANCES_VALIDITY_PERIOD, [price]);
   const otherAssetsToShow = useMemo(() => {
-    if (!assetsOnOtherChains) {
-      return assetsOnOtherChains;
+    if (!accountAssets) {
+      return accountAssets;
     } else {
-      return assetsOnOtherChains.filter((asset) => !asset.totalBalance.isZero()).sort((a, b) => calculatePrice(b.totalBalance, b.decimal, b.price) - calculatePrice(a.totalBalance, a.decimal, a.price));
+      return accountAssets;
+      // return accountAssets.filter((asset) => !asset.totalBalance.isZero()).sort((a, b) => calculatePrice(b.totalBalance, b.decimal, b.price) - calculatePrice(a.totalBalance, a.decimal, a.price));
     }
-  }, [assetsOnOtherChains, calculatePrice]);
+  }, [accountAssets]);
   const recoverableToolTipTxt = useMemo(() => {
     switch (isRecoverable) {
       case true:
         return 'Recoverable';
-        break;
       case false:
         return 'Not Recoverable';
-        break;
-
       default:
         return 'Checking';
-        break;
     }
   }, [isRecoverable]);
   const proxyTooltipTxt = useMemo(() => {
@@ -192,7 +189,7 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
           <FormatPrice
             amount={getValue('total', balanceToShow)}
             decimals={balanceToShow.decimal}
-            price={price.amount}
+            price={price.price}
           />
         </Grid>
       }
@@ -316,9 +313,9 @@ export default function AccountInformation({ address, api, assetId, assetsOnOthe
           <Divider sx={{ bgcolor: borderColor, height: '1px', my: '15px', width: '95%' }} />
           <AOC
             account={account}
+            accountAssets={otherAssetsToShow}
             api={api}
             assetId={assetId}
-            assetsOnOtherChains={otherAssetsToShow}
             balanceToShow={balanceToShow}
             borderColor={borderColor}
             displayLogoAOC={displayLogoAOC}
