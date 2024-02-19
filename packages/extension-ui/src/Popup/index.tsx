@@ -63,7 +63,7 @@ import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { APIs, Fetching, LatestRefs, SavedAccountsAssets } from '../../../extension-polkagate/src/util/types';
-import { useAssetsOnChains } from '../../../extension-polkagate/src/hooks';
+import { useAssetsOnChains, usePrices2 } from '../../../extension-polkagate/src/hooks';
 
 const startSettings = uiSettings.get();
 
@@ -110,6 +110,7 @@ export default function Popup(): React.ReactElement {
   const [accountsAssets, setAccountsAssets] = useState<SavedAccountsAssets | null | undefined>();
   const [loginInfo, setLoginInfo] = useState<LoginInfo>();
 
+  const prices = usePrices2()
   const addresses = accounts?.map((acc) => acc.address);
   const assetsOnChains = useAssetsOnChains(addresses);
 
@@ -131,12 +132,20 @@ export default function Popup(): React.ReactElement {
   );
 
   useEffect(() => {
-    if (assetsOnChains === undefined) {
+    if (assetsOnChains === undefined || !prices) {
       return;
     }
 
-    setAccountsAssets(assetsOnChains);
-  }, [assetsOnChains]);
+    const accsAssets = { ...assetsOnChains };
+
+    accsAssets.balances.forEach((accountAsset) => accountAsset.assets.forEach((asset) => {
+      asset.price = prices.prices[asset.priceId];
+    }));
+
+    // eslint-disable-next-line no-void
+    void chrome.storage.local.set({ accountsAssets: JSON.stringify(accsAssets) });
+    setAccountsAssets(accsAssets);
+  }, [assetsOnChains, prices]);
 
   useEffect((): void => {
     Promise.all([

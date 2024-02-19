@@ -69,7 +69,6 @@ export default function TotalChart ({ accountAssets, isDarkTheme, nativeAssetPri
       return assets;
     }
   }, [accountAssets, calPrice, getChartColor]);
-  console.log('otherAssetsToShow:', otherAssetsToShow);
 
   const topThreePercentages = useMemo(() => {
     if (otherAssetsToShow.price.length === 0) {

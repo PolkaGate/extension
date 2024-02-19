@@ -31,8 +31,6 @@ function AOC ({ account, accountAssets, api, assetId, balanceToShow, borderColor
   const { t } = useTranslation();
   const prices = usePrices2();
 
-  console.log('prices:', prices)
-
   const [showMore, setShowMore] = useState<boolean>(false);
 
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);

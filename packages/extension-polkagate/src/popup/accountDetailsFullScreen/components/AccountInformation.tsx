@@ -64,10 +64,9 @@ export default function AccountInformation({ accountAssets, address, api, assetI
     if (!accountAssets) {
       return accountAssets;
     } else {
-      return accountAssets;
-      // return accountAssets.filter((asset) => !asset.totalBalance.isZero()).sort((a, b) => calculatePrice(b.totalBalance, b.decimal, b.price) - calculatePrice(a.totalBalance, a.decimal, a.price));
+      return accountAssets.sort((a, b) => calculatePrice(b.totalBalance, b.decimal, b.price ?? 0) - calculatePrice(a.totalBalance, a.decimal, a.price ?? 0));
     }
-  }, [accountAssets]);
+  }, [accountAssets, calculatePrice]);
   const recoverableToolTipTxt = useMemo(() => {
     switch (isRecoverable) {
       case true:

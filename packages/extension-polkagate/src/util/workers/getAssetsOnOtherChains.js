@@ -281,8 +281,6 @@ async function getAssetsOnOtherChains (accounts) {
     asset.genesisHash !== ACALA_GENESIS_HASH
   );
 
-  console.log('polkadotAssetHubsAssets:', polkadotAssetHubsAssets);
-
   const acalaConnections = await acalaTokens(accounts, acalaAssets, results, promises);
   const pAHConnections = await assetHubTokens(accounts, polkadotAssetHubsAssets, 'PolkadotAssetHub', STATEMINT_GENESIS_HASH, results, promises);
   const kAHConnections = await assetHubTokens(accounts, kusamaAssetHubsAssets, 'KusamaAssetHub', STATEMINE_GENESIS_HASH, results, promises);
