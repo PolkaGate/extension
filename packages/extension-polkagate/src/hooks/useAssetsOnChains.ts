@@ -9,31 +9,37 @@ import { isHexToBn } from '../util/utils';
 type FetchedBalance = { address: string, assetId?: number, balances: string, chain: string, decimal: number, genesisHash: string, priceId: string, token: string };
 
 export default function useAssetsOnChains(addresses: string[] | undefined): SavedAccountsAssets | undefined {
-  const [accountAssets, setAccountAssets] = useState<SavedAccountsAssets | undefined>();
+  const [accountsAssets, setAccountsAssets] = useState<SavedAccountsAssets | undefined>();
   const [workerCalled, setWorkerCalled] = useState<Worker>();
   const [isOutDated, setIsOutDated] = useState<boolean>();
 
   const readAccountAssets = useCallback(() => {
-    chrome.storage.local.get('accountAssets', (res) => {
-      const aOC = res.accountAssets || {};
+    chrome.storage.local.get('accountsAssets', (res) => {
+      try {
+        const aOC = res.accountsAssets || {};
 
-      // NEEDS DOUBLE CHECK, ON BIG NUMBERS!
-      if (aOC) {
-        const parsed = JSON.parse(aOC) as SavedAccountsAssets | null | undefined;
+        // NEEDS DOUBLE CHECK, ON BIG NUMBERS!
+        if (aOC) {
+          const parsed = JSON.parse(aOC) as SavedAccountsAssets | null | undefined;
 
-        const timeOut = (Date.now() - (parsed?.timestamp ?? 0) > (1000 * 60));
+          const timeOut = (Date.now() - (parsed?.timestamp ?? 0) > (1000 * 60));
 
-        setIsOutDated(timeOut);
+          setIsOutDated(timeOut);
 
-        parsed?.balances.forEach((account) => {
-          account.assets.map((asset) => {
-            const totalBalanceBN = isHexToBn(asset.totalBalance as unknown as string);
+          parsed?.balances.forEach((account) => {
+            account.assets.map((asset) => {
+              const totalBalanceBN = isHexToBn(asset.totalBalance as unknown as string);
 
-            return { ...asset, totalBalance: totalBalanceBN };
+              asset.totalBalance = totalBalanceBN;
+
+              return asset;
+            });
           });
-        });
 
-        parsed && setAccountAssets(parsed);
+          parsed && setAccountsAssets(parsed);
+        }
+      } catch (error) {
+        setIsOutDated(true);
       }
     });
   }, []);
@@ -54,7 +60,7 @@ export default function useAssetsOnChains(addresses: string[] | undefined): Save
       const message = e.data;
 
       if (message === 'null') {
-        setAccountAssets(undefined);
+        setAccountsAssets(undefined);
       } else if (message === 'Done') {
         worker.terminate();
 
@@ -79,12 +85,7 @@ export default function useAssetsOnChains(addresses: string[] | undefined): Save
 
         console.log('DONE');
 
-        setAccountAssets({ balances: combine, timestamp: Date.now() });
-        // const toSave = [...combine, { timestamp: Date.now() }];
-        const toSave = { balances: combine, timestamp: Date.now() };
-
-        // eslint-disable-next-line no-void
-        void chrome.storage.local.set({ accountAssets: JSON.stringify(toSave) });
+        setAccountsAssets({ balances: combine, timestamp: Date.now() });
       } else {
         const fetchedBalances = JSON.parse(message) as FetchedBalance[];
 
@@ -92,8 +93,6 @@ export default function useAssetsOnChains(addresses: string[] | undefined): Save
       }
     };
   }, []);
-
-  // const terminateWorker = useCallback(() => workerCalled && workerCalled.terminate(), [workerCalled]);
 
   useEffect(() => {
     if (!addresses || addresses.length === 0 || workerCalled) {
@@ -104,12 +103,12 @@ export default function useAssetsOnChains(addresses: string[] | undefined): Save
   }, [addresses, fetchAssetsOnOtherChains, isOutDated, workerCalled]);
 
   useEffect(() => {
-    if (!addresses || addresses.length === 0 || workerCalled || accountAssets) {
+    if (!addresses || addresses.length === 0 || workerCalled || accountsAssets) {
       return;
     }
 
     readAccountAssets();
-  }, [accountAssets, addresses, readAccountAssets, workerCalled]);
+  }, [accountsAssets, addresses, readAccountAssets, workerCalled]);
 
-  return accountAssets;
+  return accountsAssets;
 }
