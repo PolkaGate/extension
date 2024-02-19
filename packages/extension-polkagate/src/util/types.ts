@@ -584,11 +584,27 @@ export interface Prices {
   prices: Record<string, Record<string, number>>;
   date: number;
 }
+
+export interface PricesType {
+  [key: string]: number;
+}
+
+export interface OutputPrices {
+  date: number,
+  prices: PricesType
+}
+
 export interface Price {
   amount: number;
   chainName: string;
   date: number;
   token?: string;
+}
+
+export interface Price2 {
+  price: number;
+  timestamp: number;
+  chainName: string;
 }
 
 export interface SavedBalances {
@@ -713,10 +729,24 @@ export interface ReferendaContextType {
   setRefs: (refs: LatestRefs) => void;
 }
 
-export type AccountsAssets = { address: string, assets: { assetId: number | undefined, chainName: string, decimal: number, genesisHash: string, token: string, totalBalance: BN }[] };
-export type SavedAccountsAssets = { balances: AccountsAssets[], timestamp: number };
 export type AssetsOnOtherChains = { assetId?: number, totalBalance: BN, chainName: string, decimal: number, genesisHash: string, price: number | undefined, token: string };
-export type AccountAssets = { assetId: number | undefined; chainName: string; decimal: number; genesisHash: string; token: string; totalBalance: BN; };
+export type AccountAssets = {
+  assetId: number | undefined;
+  chainName: string;
+  decimal: number;
+  price?: number;
+  priceId: string;
+  genesisHash: string;
+  token: string;
+  totalBalance: BN;
+};
+
+export type AccountsAssets = {
+  address: string;
+  assets: AccountAssets[];
+};
+
+export type SavedAccountsAssets = { balances: AccountsAssets[], timestamp: number };
 
 export interface AccountsAssetsContextType {
   accountsAssets: SavedAccountsAssets | undefined;
