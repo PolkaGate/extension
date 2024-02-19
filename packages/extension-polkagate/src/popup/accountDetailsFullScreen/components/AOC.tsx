@@ -3,17 +3,16 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { Collapse, Divider, Grid, Skeleton, Typography } from '@mui/material';
+import { ArrowDropDown as ArrowDropDownIcon, MoreHoriz as MoreHorizIcon } from '@mui/icons-material';
+import { Collapse, Grid, Skeleton, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { DisplayLogo, FormatPrice, ShowBalance } from '../../../components';
-import { useTranslation } from '../../../hooks';
-import { BalancesInfo } from '../../../util/types';
-import { AssetsOnOtherChains } from '..';
+import { usePrices2, useTranslation } from '../../../hooks';
+import { AccountAssets, AssetsOnOtherChains, BalancesInfo } from '../../../util/types';
 import { DisplayLogoAOC } from './AccountInformation';
 
 interface Props {
@@ -22,30 +21,37 @@ interface Props {
   assetId: number | undefined;
   displayLogoAOC: (genesisHash: string | null | undefined, symbol: string | undefined) => DisplayLogoAOC;
   balanceToShow: BalancesInfo | undefined;
-  assetsOnOtherChains: AssetsOnOtherChains[] | null | undefined;
+  accountAssets: AccountAssets[] | null | undefined;
   borderColor: string;
   onclick: (genesisHash: string, id: number | undefined) => void;
   mode?: 'Home' | 'Detail';
 }
 
-function AOC({ account, api, assetId, assetsOnOtherChains, balanceToShow, borderColor, displayLogoAOC, mode = 'Detail', onclick }: Props) {
+function AOC ({ account, accountAssets, api, assetId, balanceToShow, borderColor, displayLogoAOC, mode = 'Detail', onclick }: Props) {
   const { t } = useTranslation();
+  const prices = usePrices2();
+
+  console.log('prices:', prices)
 
   const [showMore, setShowMore] = useState<boolean>(false);
 
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
   const assets = useMemo(() => {
-    if (assetsOnOtherChains && assetsOnOtherChains.length > 0) {
-      const aOC = [...assetsOnOtherChains];
+    if (accountAssets && accountAssets.length > 0 && prices?.prices) {
+      const aOC = accountAssets.map((asset) => {
+        asset.price = asset.priceId ? prices.prices[asset.priceId] : 0;
+
+        return asset;
+      });
 
       return aOC;
     } else {
       return [undefined, undefined];
     }
-  }, [assetsOnOtherChains]);
+  }, [accountAssets, prices]);
 
-  const BalanceColumn = ({ asset }: { asset: AssetsOnOtherChains }) => (
+  const BalanceRow = ({ asset }: { asset: AccountAssets }) => (
     <Grid alignItems='flex-start' container direction='column' item pl='5px' xs>
       <Grid item sx={{ fontSize: '14px', fontWeight: 600, lineHeight: 1 }}>
         <ShowBalance
@@ -66,7 +72,7 @@ function AOC({ account, api, assetId, assetsOnOtherChains, balanceToShow, border
     </Grid>
   );
 
-  const OtherAssetBox = ({ asset }: { asset: AssetsOnOtherChains | undefined }) => {
+  const OtherAssetBox = ({ asset }: { asset: AccountAssets | undefined }) => {
     const selectedAsset = asset && asset.genesisHash === account?.genesisHash && (asset.token === balanceToShow?.token || (asset.assetId && asset.assetId === assetId));
     const homeMode = (mode === 'Home' && selectedAsset);
 
@@ -79,7 +85,7 @@ function AOC({ account, api, assetId, assetsOnOtherChains, balanceToShow, border
               <DisplayLogo assetSize='25px' assetToken={displayLogoAOC(asset.genesisHash, asset.token)?.symbol} baseTokenSize='16px' genesisHash={displayLogoAOC(asset.genesisHash, asset.token)?.base} />
             </Grid>
             {(mode === 'Detail' || homeMode) &&
-              <BalanceColumn
+              <BalanceRow
                 asset={asset}
               />
             }
@@ -109,13 +115,19 @@ function AOC({ account, api, assetId, assetsOnOtherChains, balanceToShow, border
           </Grid>
         </Collapse>
       </Grid>
-      {assetsOnOtherChains && assetsOnOtherChains.length > 5 &&
+      {accountAssets && accountAssets.length > 5 &&
         <Grid alignItems='center' container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: 'pointer', width: '65px' }}>
-          <Typography fontSize='14px' fontWeight={400} sx={{ borderLeft: '1px solid', borderLeftColor: borderColor, height: 'fit-content', pl: '8px' }}>
-            {t<string>(showMore ? 'Less' : 'More')}
-          </Typography>
-          <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
-        </Grid>}
+          {mode === 'Detail'
+            ? <>
+              <Typography fontSize='14px' fontWeight={400} sx={{ borderLeft: '1px solid', borderLeftColor: borderColor, height: 'fit-content', pl: '8px' }}>
+                {t<string>(showMore ? 'Less' : 'More')}
+              </Typography>
+              <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+            </>
+            : <MoreHorizIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
+          }
+        </Grid>
+      }
     </Grid>
   );
 }

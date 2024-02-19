@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { SavedAccountsAssets } from '../util/types';
 import { isHexToBn } from '../util/utils';
 
-type FetchedBalance = { address: string, assetId?: number, balances: string, chain: string, decimal: number, genesisHash: string, token: string };
+type FetchedBalance = { address: string, assetId?: number, balances: string, chain: string, decimal: number, genesisHash: string, priceId: string, token: string };
 
 export default function useAssetsOnChains(addresses: string[] | undefined): SavedAccountsAssets | undefined {
   const [accountAssets, setAccountAssets] = useState<SavedAccountsAssets | undefined>();
@@ -21,7 +21,7 @@ export default function useAssetsOnChains(addresses: string[] | undefined): Save
       if (aOC) {
         const parsed = JSON.parse(aOC) as SavedAccountsAssets | null | undefined;
 
-        const timeOut = (Date.now() - (parsed?.timestamp ?? 0) > (1000 * 60 * 5));
+        const timeOut = (Date.now() - (parsed?.timestamp ?? 0) > (1000 * 60));
 
         setIsOutDated(timeOut);
 
@@ -58,7 +58,7 @@ export default function useAssetsOnChains(addresses: string[] | undefined): Save
       } else if (message === 'Done') {
         worker.terminate();
 
-        const mapped = fetchedAssetsOnOtherChains.map((asset) => ({ address: asset.address, assetId: asset?.assetId, chainName: asset.chain, decimal: Number(asset.decimal), genesisHash: asset.genesisHash, token: asset.token, totalBalance: isHexToBn(asset.balances) }));
+        const mapped = fetchedAssetsOnOtherChains.map((asset) => ({ address: asset.address, assetId: asset?.assetId, chainName: asset.chain, decimal: Number(asset.decimal), genesisHash: asset.genesisHash, priceId: asset.priceId, token: asset.token, totalBalance: isHexToBn(asset.balances) }));
         const combine = accounts.map((address) => {
           const accountBalance = mapped.filter((balance) => balance.address === address);
           const assets = accountBalance.map((b) => ({
@@ -66,6 +66,7 @@ export default function useAssetsOnChains(addresses: string[] | undefined): Save
             chainName: b.chainName,
             decimal: b.decimal,
             genesisHash: b.genesisHash,
+            priceId: b.priceId,
             token: b.token,
             totalBalance: b.totalBalance
           }));
