@@ -3,62 +3,53 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
-import { BN } from '@polkadot/util';
-
+import { SavedAccountsAssets } from '../util/types';
 import { isHexToBn } from '../util/utils';
 
-export type AssetsOnOtherChains = { assetId?: number, totalBalance: BN, chainName: string, decimal: number, genesisHash: string, price: number | undefined, token: string };
+type FetchedBalance = { address: string, assetId?: number, balances: string, chain: string, decimal: number, genesisHash: string, priceId: string, token: string };
 
-export default function useAssetsOnChains(address: AccountId | string | undefined, assets?: AssetsOnOtherChains[] | undefined | null): AssetsOnOtherChains[] | undefined | null {
-  const [assetsOnOtherChains, setAssetsOnOtherChains] = useState<AssetsOnOtherChains[] | undefined | null>();
-  const [workerCalled, setWorkerCalled] = useState<{ address: string, worker: Worker }>();
+export default function useAssetsOnChains(addresses: string[] | undefined): SavedAccountsAssets | undefined {
+  const [accountsAssets, setAccountsAssets] = useState<SavedAccountsAssets | undefined>();
+  const [workerCalled, setWorkerCalled] = useState<Worker>();
+  const [isOutDated, setIsOutDated] = useState<boolean>();
 
-  const readAssetsOnOtherChains = useCallback((addressA: string) => {
-    chrome.storage.local.get('assetsOnOtherChains', (res) => {
-      const aOC = res.assetsOnOtherChains || {};
+  const readAccountAssets = useCallback(() => {
+    chrome.storage.local.get('accountsAssets', (res) => {
+      try {
+        const aOC = res.accountsAssets || {};
 
-      const addressAsset = aOC[addressA] as AssetsOnOtherChains[];
+        // NEEDS DOUBLE CHECK, ON BIG NUMBERS!
+        if (aOC) {
+          const parsed = JSON.parse(aOC) as SavedAccountsAssets | null | undefined;
 
-      if (addressAsset) {
-        const parsed = JSON.parse(addressAsset) as AssetsOnOtherChains[] | null | undefined;
+          const timeOut = (Date.now() - (parsed?.timestamp ?? 0) > (1000 * 60));
 
-        const updatedAssets = parsed?.map((asset) => {
-          const totalBalanceBN = isHexToBn(asset.totalBalance as unknown as string);
+          setIsOutDated(timeOut);
 
-          return { ...asset, totalBalance: totalBalanceBN };
-        });
+          parsed?.balances.forEach((account) => {
+            account.assets.map((asset) => {
+              const totalBalanceBN = isHexToBn(asset.totalBalance as unknown as string);
 
-        updatedAssets && updatedAssets.length > 0 && setAssetsOnOtherChains(updatedAssets);
+              asset.totalBalance = totalBalanceBN;
+
+              return asset;
+            });
+          });
+
+          parsed && setAccountsAssets(parsed);
+        }
+      } catch (error) {
+        setIsOutDated(true);
       }
     });
   }, []);
 
-  const saveAssetsOnOtherChains = useCallback((addressA: string, fetched: AssetsOnOtherChains[]) => {
-    const nonZeros = fetched.filter((asset) => !asset.totalBalance.isZero());
-
-    chrome.storage.local.get('assetsOnOtherChains', (res) => {
-      const aOC = res.assetsOnOtherChains || {};
-
-      aOC[addressA] = JSON.stringify(nonZeros);
-
-      // eslint-disable-next-line no-void
-      void chrome.storage.local.set({ assetsOnOtherChains: aOC });
-    });
-  }, []);
-
-  const fetchAssetsOnOtherChains = useCallback((accountAddress: string) => {
-    type fetchedBalance = { assetId?: number, balances: string, chain: string, decimal: number, genesisHash: string, price: number, token: string };
+  const fetchAssetsOnOtherChains = useCallback((accounts: string[]) => {
     const worker: Worker = new Worker(new URL('../util/workers/getAssetsOnOtherChains.js', import.meta.url));
-    let fetchedAssetsOnOtherChains: AssetsOnOtherChains[] = [];
+    let fetchedAssetsOnOtherChains: FetchedBalance[] = [];
 
-    readAssetsOnOtherChains(accountAddress);
-
-    setWorkerCalled({
-      address: accountAddress,
-      worker
-    });
-    worker.postMessage({ accountAddress });
+    setWorkerCalled(worker);
+    worker.postMessage({ accounts });
 
     worker.onerror = (err) => {
       console.log(err);
@@ -69,46 +60,55 @@ export default function useAssetsOnChains(address: AccountId | string | undefine
       const message = e.data;
 
       if (message === 'null') {
-        setAssetsOnOtherChains(null);
+        setAccountsAssets(undefined);
       } else if (message === 'Done') {
         worker.terminate();
 
+        const mapped = fetchedAssetsOnOtherChains.map((asset) => ({ address: asset.address, assetId: asset?.assetId, chainName: asset.chain, decimal: Number(asset.decimal), genesisHash: asset.genesisHash, priceId: asset.priceId, token: asset.token, totalBalance: isHexToBn(asset.balances) }));
+        const combine = accounts.map((address) => {
+          const accountBalance = mapped.filter((balance) => balance.address === address);
+          const assets = accountBalance.map((b) => ({
+            assetId: b.assetId,
+            chainName: b.chainName,
+            decimal: b.decimal,
+            genesisHash: b.genesisHash,
+            priceId: b.priceId,
+            token: b.token,
+            totalBalance: b.totalBalance
+          }));
+
+          return {
+            address,
+            assets
+          };
+        });
+
         console.log('DONE');
 
-        setAssetsOnOtherChains(fetchedAssetsOnOtherChains);
-        saveAssetsOnOtherChains(accountAddress, fetchedAssetsOnOtherChains);
+        setAccountsAssets({ balances: combine, timestamp: Date.now() });
       } else {
-        const fetchedBalances = JSON.parse(message) as fetchedBalance[];
-        const mapped = fetchedBalances.map((asset) => ({ assetId: asset?.assetId, chainName: asset.chain, decimal: Number(asset.decimal), genesisHash: asset.genesisHash, price: asset.price, token: asset.token, totalBalance: isHexToBn(asset.balances) }));
+        const fetchedBalances = JSON.parse(message) as FetchedBalance[];
 
-        // setAssetsOnOtherChains(mapped);
-        fetchedAssetsOnOtherChains = mapped;
+        fetchedAssetsOnOtherChains = fetchedBalances;
       }
     };
-  }, [saveAssetsOnOtherChains, readAssetsOnOtherChains]);
-
-  const terminateWorker = useCallback(() => workerCalled && workerCalled.worker.terminate(), [workerCalled]);
+  }, []);
 
   useEffect(() => {
-    if (!address) {
+    if (!addresses || addresses.length === 0 || workerCalled) {
       return;
     }
 
-    if (!workerCalled) {
-      fetchAssetsOnOtherChains(String(address));
+    isOutDated && fetchAssetsOnOtherChains(addresses);
+  }, [addresses, fetchAssetsOnOtherChains, isOutDated, workerCalled]);
+
+  useEffect(() => {
+    if (!addresses || addresses.length === 0 || workerCalled || accountsAssets) {
+      return;
     }
 
-    if (workerCalled && workerCalled.address !== address) {
-      // setRefreshNeeded(true);
-      terminateWorker();
-      setAssetsOnOtherChains(undefined);
-      fetchAssetsOnOtherChains(String(address));
-    }
-  }, [address, fetchAssetsOnOtherChains, workerCalled, terminateWorker]);
+    readAccountAssets();
+  }, [accountsAssets, addresses, readAccountAssets, workerCalled]);
 
-  return assets !== undefined
-    ? assets
-    : workerCalled?.address === address
-      ? assetsOnOtherChains
-      : undefined;
+  return accountsAssets;
 }

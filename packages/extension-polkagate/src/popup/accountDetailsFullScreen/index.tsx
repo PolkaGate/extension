@@ -11,7 +11,7 @@ import { useHistory } from 'react-router-dom';
 import { BN } from '@polkadot/util';
 
 import { ActionContext } from '../../components';
-import { useAccount, useApi, useAssetsOnChains, useBalances, useChain, useChainName, useDecimal, useFormatted, useFullscreen, usePrice, useToken, useTranslation } from '../../hooks';
+import { useAccount, useAccountAssets, useApi, useBalances, useChain, useChainName, useDecimal, useFormatted, useFullscreen, usePrice2, useToken, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { amountToHuman } from '../../util/utils';
@@ -55,13 +55,13 @@ export default function AccountDetails (): React.ReactElement {
   const chain = useChain(address);
   const chainName = useChainName(address);
   const onAction = useContext(ActionContext);
-  const assetsOnOtherChains = useAssetsOnChains(address);
+  const accountAssets = useAccountAssets(address);
 
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
   const [assetId, setAssetId] = useState<number>();
 
   const balance = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId);
-  const price = usePrice(address);
+  const price = usePrice2(address, assetId);
   const token = useToken(address);
   const decimal = useDecimal(address);
 
@@ -74,7 +74,7 @@ export default function AccountDetails (): React.ReactElement {
   const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
   const supportStaking = useMemo(() => STAKING_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
   const supportAssetHubs = useMemo(() => ASSET_HUBS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
-  const showTotalChart = useMemo(() => assetsOnOtherChains && assetsOnOtherChains.length > 0 && assetsOnOtherChains.some((asset) => asset.price && asset.price > 0 && !asset.totalBalance.isZero()), [assetsOnOtherChains]);
+  const showTotalChart = useMemo(() => accountAssets && accountAssets.length > 0 && accountAssets.filter((asset) => asset.price && asset.price > 0 && !asset.totalBalance.isZero()), [accountAssets]);
   const nativeAssetPrice = useMemo(() => {
     if (!price || !balance) {
       return undefined;
@@ -82,7 +82,7 @@ export default function AccountDetails (): React.ReactElement {
 
     const totalBalance = getValue('total', balance);
 
-    return parseFloat(amountToHuman(totalBalance, decimal)) * price.amount;
+    return parseFloat(amountToHuman(totalBalance, decimal)) * price.price;
   }, [balance, decimal, price]);
 
   useEffect(() => {
@@ -128,10 +128,10 @@ export default function AccountDetails (): React.ReactElement {
           <Grid container item justifyContent='space-between' mb='15px'>
             <Grid container direction='column' item rowGap='10px' width='calc(100% - 275px - 3%)'>
               <AccountInformation
+                accountAssets={accountAssets}
                 address={address}
                 api={api}
                 assetId={assetId}
-                assetsOnOtherChains={assetsOnOtherChains}
                 balances={balance}
                 chain={chain}
                 chainName={chainName}
@@ -154,7 +154,7 @@ export default function AccountDetails (): React.ReactElement {
                 decimal={decimal}
                 isDarkTheme={isDarkTheme}
                 onClick={goToSend}
-                price={price?.amount}
+                price={price?.price}
                 theme={theme}
                 title={t<string>('Transferable')}
                 token={token}
@@ -165,7 +165,7 @@ export default function AccountDetails (): React.ReactElement {
                   decimal={decimal}
                   isDarkTheme={isDarkTheme}
                   onClick={goToSoloStaking}
-                  price={price?.amount}
+                  price={price?.price}
                   theme={theme}
                   title={t<string>('Solo Stake')}
                   token={token}
@@ -176,7 +176,7 @@ export default function AccountDetails (): React.ReactElement {
                   decimal={decimal}
                   isDarkTheme={isDarkTheme}
                   onClick={goToPoolStaking}
-                  price={price?.amount}
+                  price={price?.price}
                   theme={theme}
                   title={t<string>('Pool Stake')}
                   token={token}
@@ -189,7 +189,7 @@ export default function AccountDetails (): React.ReactElement {
                   decimal={decimal}
                   formatted={String(formatted)}
                   isDarkTheme={isDarkTheme}
-                  price={price?.amount}
+                  price={price?.price}
                   refreshNeeded={refreshNeeded}
                   setDisplayPopup={setDisplayPopup}
                   setUnlockInformation={setUnlockInformation}
@@ -201,15 +201,15 @@ export default function AccountDetails (): React.ReactElement {
                 amount={balance?.reservedBalance}
                 decimal={decimal}
                 isDarkTheme={isDarkTheme}
-                price={price?.amount}
+                price={price?.price}
                 title={t<string>('Reserved')}
                 token={token}
               />
             </Grid>
             <Grid container direction='column' gap='15px' item width='275px'>
-              {showTotalChart && assetsOnOtherChains &&
+              {showTotalChart &&
                 <TotalChart
-                  assetsOnOtherChains={assetsOnOtherChains}
+                  accountAssets={accountAssets}
                   isDarkTheme={isDarkTheme}
                   nativeAssetPrice={nativeAssetPrice}
                 />

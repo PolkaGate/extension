@@ -8,33 +8,32 @@ import React, { useState } from 'react';
 
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
-import { useApi, useAssetsOnChains, useChain, useFormatted } from '../../../hooks';
+import { useAccountAssets, useApi, useChain, useFormatted } from '../../../hooks';
 import AccountInformation from '../partials/AccountInformation';
 
 interface Props {
   account: AccountWithChildren;
 }
 
-function AccountItem({ account }: Props): React.ReactElement {
+function AccountItem ({ account }: Props): React.ReactElement {
   const api = useApi(account.address);
   const chain = useChain(account.address);
   const formatted = useFormatted(account.address);
-  const assetsOnChains = useAssetsOnChains(account.address);
+  const accountAssets = useAccountAssets(account.address);
 
   const [assetId, setAssetId] = useState<number | undefined>();
 
   return (
     <Grid container item width='760px'>
       <AccountInformation
+        accountAssets={accountAssets}
         address={account.address}
         api={api}
         assetId={assetId}
-        assetsOnOtherChains={assetsOnChains}
         balances={undefined}
         chain={chain}
         chainName={chain?.name}
         formatted={formatted}
-        price={0}
         setAssetId={setAssetId}
       />
     </Grid>

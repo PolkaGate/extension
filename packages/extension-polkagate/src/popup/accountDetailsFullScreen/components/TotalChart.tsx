@@ -11,21 +11,22 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { BN } from '@polkadot/util';
 
 import { nFormatter } from '../../../components/FormatPrice';
-import { useTranslation } from '../../../hooks';
+import { useCurrency, useTranslation } from '../../../hooks';
 import { CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo from '../../../util/getLogo';
+import { AccountAssets } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
-import { AssetsOnOtherChains } from '..';
 
 interface TotalChartProps {
   isDarkTheme: boolean;
-  assetsOnOtherChains: AssetsOnOtherChains[] | undefined;
+  accountAssets: AccountAssets[] | null | undefined;
   nativeAssetPrice: number | undefined;
 }
 
-export default function TotalChart ({ assetsOnOtherChains, isDarkTheme, nativeAssetPrice }: TotalChartProps): React.ReactElement {
+export default function TotalChart ({ accountAssets, isDarkTheme, nativeAssetPrice }: TotalChartProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const currency = useCurrency();
   const chartRef = useRef(null);
 
   Chart.register(...registerables);
@@ -52,15 +53,13 @@ export default function TotalChart ({ assetsOnOtherChains, isDarkTheme, nativeAs
         break;
     }
   }, [isDarkTheme]);
-
   const otherAssetsToShow = useMemo(() => {
-    if (!assetsOnOtherChains || assetsOnOtherChains.length === 0) {
+    if (!accountAssets || accountAssets.length === 0) {
       return { color: [], name: [], price: [], token: [] };
     } else {
       const assets: { price: number[], color: string[], name: string[], token: string[] } = { color: [], name: [], price: [], token: [] };
-      const nonZeroAssets = assetsOnOtherChains.filter((asset) => !asset.totalBalance.isZero());
 
-      nonZeroAssets.forEach((asset) => {
+      accountAssets.forEach((asset) => {
         assets.price.push((calPrice(asset.price, asset.totalBalance, asset.decimal)));
         assets.color.push(getChartColor(asset.token));
         assets.name.push(asset.chainName);
@@ -69,7 +68,7 @@ export default function TotalChart ({ assetsOnOtherChains, isDarkTheme, nativeAs
 
       return assets;
     }
-  }, [assetsOnOtherChains, calPrice, getChartColor]);
+  }, [accountAssets, calPrice, getChartColor]);
 
   const topThreePercentages = useMemo(() => {
     if (otherAssetsToShow.price.length === 0) {
@@ -163,7 +162,7 @@ export default function TotalChart ({ assetsOnOtherChains, isDarkTheme, nativeAs
           {t<string>('Total')}
         </Typography>
         <Typography fontSize='36px' fontWeight={700}>
-          {`$${allChainTotalBalance ?? 0}`}
+          {`${currency?.sign ?? ''}${allChainTotalBalance ?? 0}`}
         </Typography>
       </Grid>
       <Grid container item sx={{ borderTop: '1px solid', borderTopColor: borderColor, pt: '10px' }}>
