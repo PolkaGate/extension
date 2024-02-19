@@ -7,6 +7,7 @@ import { faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/fr
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, OpenInNewRounded as OpenInNewRoundedIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material';
 import { Divider, Grid, Theme, Typography, useTheme } from '@mui/material';
+import { BalancesInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useContext, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -21,6 +22,7 @@ import { popupNumbers } from '..';
 interface Props {
   address: string | undefined;
   assetId: number | undefined;
+  balance: BalancesInfo | undefined
   genesisHash: string | null | undefined;
   api: ApiPromise | undefined;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
@@ -60,7 +62,7 @@ export const TaskButton = ({ borderColor, disabled, icon, noBorderButton = false
   </>
 );
 
-export default function CommonTasks({ address, api, assetId, genesisHash, setDisplayPopup }: Props): React.ReactElement {
+export default function CommonTasks({ address, api, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
@@ -158,12 +160,12 @@ export default function CommonTasks({ address, api, assetId, genesisHash, setDis
           borderColor={borderColor}
           disabled={stakingDisabled}
           icon={
-            <BoyIcon
-              sx={{
-                color: stakingIconColor,
-                fontSize: '35px'
-              }}
-            />
+            <Grid sx={{ position: 'relative' }}>
+              <BoyIcon sx={{ color: stakingIconColor, fontSize: '35px' }} />
+              {balance?.soloTotal && !balance.soloTotal.isZero() &&
+                <span style={{ backgroundColor: '#00FF00', border: `1px solid ${theme.palette.background.default}`, borderRadius: '50%', height: '10px', position: 'absolute', right: '6px', top: '33%', width: '10px' }} />
+              }
+            </Grid>
           }
           onClick={goToSoloStaking}
           secondaryIconType='page'
@@ -174,7 +176,12 @@ export default function CommonTasks({ address, api, assetId, genesisHash, setDis
           borderColor={borderColor}
           disabled={stakingDisabled}
           icon={
-            <PoolStakingIcon color={stakingIconColor} height={35} width={35} />
+            <Grid sx={{ position: 'relative' }}>
+              <PoolStakingIcon color={stakingIconColor} height={35} width={35} />
+              {balance?.pooledBalance && !balance.pooledBalance.isZero() &&
+                <span style={{ backgroundColor: '#00FF00', border: `1px solid ${theme.palette.background.default}`, borderRadius: '50%', height: '10px', position: 'absolute', right: '-1px', top: '33%', width: '10px' }} />
+              }
+            </Grid>
           }
           onClick={goToPoolStaking}
           secondaryIconType='page'
@@ -213,6 +220,6 @@ export default function CommonTasks({ address, api, assetId, genesisHash, setDis
           theme={theme}
         />
       </Grid>
-    </Grid>
+    </Grid >
   );
 }

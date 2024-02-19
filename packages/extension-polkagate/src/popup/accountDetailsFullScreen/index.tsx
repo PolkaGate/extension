@@ -218,6 +218,7 @@ export default function AccountDetails (): React.ReactElement {
                 address={address}
                 api={api}
                 assetId={assetId}
+                balance={balance}
                 genesisHash={account?.genesisHash}
                 setDisplayPopup={setDisplayPopup}
               />
