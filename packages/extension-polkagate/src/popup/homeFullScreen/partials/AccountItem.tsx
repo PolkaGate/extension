@@ -30,7 +30,7 @@ function AccountItem({ account, hideNumbers, quickActionOpen, setQuickActionOpen
   const [assetId, setAssetId] = useState<number | undefined>();
 
   return (
-    <Grid container item ref={containerRef} sx={{ overflow: 'hidden', position: 'relative' }} width='760px'>
+    <Grid container item ref={containerRef} sx={{ borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', overflow: 'hidden', position: 'relative' }} width='760px'>
       <AccountInformation
         accountAssets={accountAssets}
         address={account.address}
