@@ -19,12 +19,6 @@ export default function HomePageFullScreen(): React.ReactElement {
 
   const [hideNumbers, setHideNumbers] = useState<boolean>();
 
-  useEffect(() => {
-    const isHide = window.localStorage.getItem('hide_numbers');
-
-    isHide === 'false' || isHide === null ? setHideNumbers(false) : setHideNumbers(true);
-  }, [setHideNumbers]);
-
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
 
@@ -45,6 +39,7 @@ export default function HomePageFullScreen(): React.ReactElement {
           {hierarchy.map((acc, index) => (
             <AccountItem
               account={acc}
+              hideNumbers={hideNumbers}
               key={index}
             />
           ))}

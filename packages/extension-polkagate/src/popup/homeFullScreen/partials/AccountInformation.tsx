@@ -7,16 +7,17 @@
 import { faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon, CheckCircleOutline as CheckIcon, InsertLinkRounded as LinkIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
-import { Button, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
+import { Box, Button, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
+import { stars6Black, stars6White } from '../../../assets/icons';
 import { ActionContext, Identicon, Identity, Infotip, ShortAddress2 } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
-import { useAccount, useAccountAssets, useAccountInfo, useCurrency, useTranslation } from '../../../hooks';
+import { useAccount, useAccountInfo, useCurrency, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount } from '../../../messaging';
 import { ACALA_GENESIS_HASH, ASSET_HUBS, IDENTITY_CHAINS, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, SOCIAL_RECOVERY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
 import { AccountAssets, BalancesInfo, Proxy } from '../../../util/types';
@@ -28,12 +29,13 @@ interface AddressDetailsProps {
   accountAssets: AccountAssets[] | null | undefined;
   address: string | undefined;
   api: ApiPromise | undefined;
-  chain: Chain | null | undefined;
-  formatted: string | undefined;
-  chainName: string | undefined;
-  balances: BalancesInfo | undefined;
-  setAssetId: React.Dispatch<React.SetStateAction<number | undefined>>;
   assetId: number | undefined;
+  balances: BalancesInfo | undefined;
+  chain: Chain | null | undefined;
+  chainName: string | undefined;
+  formatted: string | undefined;
+  hideNumbers: boolean | undefined
+  setAssetId: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
 export type DisplayLogoAOC = {
@@ -43,7 +45,7 @@ export type DisplayLogoAOC = {
 
 type AccountButtonType = { text: string, onClick: () => void, icon: React.ReactNode };
 
-export default function AccountInformation({ accountAssets, address, api, assetId, balances, chain, chainName, formatted, setAssetId }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation({ accountAssets, address, api, assetId, balances, chain, chainName, formatted, hideNumbers, setAssetId }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const currency = useCurrency();
   const account = useAccount(address);
@@ -179,13 +181,20 @@ export default function AccountInformation({ accountAssets, address, api, assetI
     <Grid alignItems='center' container item xs>
       <Grid alignItems='center' container gap='15px' item justifyContent='center' width='fit-content'>
         <Typography fontSize='16px' fontWeight={400} pl='15px'>
-          {t<string>('Total')}:
+          {t('Total')}:
         </Typography>
-        {totalBalance !== undefined
-          ? <Typography fontSize='36px' fontWeight={700}>
-            {`${currency?.sign ?? ''}${nFormatter(totalBalance ?? 0, 2)}`}
-          </Typography>
-          : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
+        {
+          hideNumbers || hideNumbers === undefined
+            ? <Box
+              component='img'
+              src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
+              sx={{ height: '36px', width: '154px' }}
+            />
+            : totalBalance !== undefined
+              ? <Typography fontSize='36px' fontWeight={700}>
+                {`${currency?.sign ?? ''}${nFormatter(totalBalance ?? 0, 2)}`}
+              </Typography>
+              : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
         }
       </Grid>
     </Grid>

@@ -3,10 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faDollarSign } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Box, Grid, Popover, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
+import { Grid, Typography } from '@mui/material';
+import React, { useCallback, useEffect } from 'react';
 
 import { HideIcon, ShowIcon } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -25,13 +23,19 @@ export default function HeaderComponents({ hideNumbers, setHideNumbers }: Props)
     window.localStorage.setItem('hide_numbers', hideNumbers ? 'false' : 'true');
   }, [hideNumbers, setHideNumbers]);
 
+  useEffect(() => {
+    const isHide = window.localStorage.getItem('hide_numbers');
+
+    isHide === 'false' || isHide === null ? setHideNumbers(false) : setHideNumbers(true);
+  }, [setHideNumbers]);
+
   const HideNumbers = () => (
-    <Grid alignItems='center' container direction='column' item onClick={onHideClick} sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', p: '2px 6px', width: '92px' }}>
+    <Grid alignItems='center' container direction='column' item onClick={onHideClick} sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', minWidth: '92px', p: '2px 6px', width: 'fit-content' }}>
       {hideNumbers
         ? <ShowIcon color='#fff' height={18} scale={1.2} width={40} />
         : <HideIcon color='#fff' height={18} scale={1.2} width={40} />
       }
-      <Typography sx={{ color: '#fff', fontSize: '12px', fontWeight: 500 }}>
+      <Typography sx={{ color: '#fff', fontSize: '12px', fontWeight: 500, textWrap: 'nowrap' }}>
         {hideNumbers ? t('Hide numbers') : t('Show numbers')}
       </Typography>
     </Grid>

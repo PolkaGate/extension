@@ -13,9 +13,10 @@ import AccountInformation from '../partials/AccountInformation';
 
 interface Props {
   account: AccountWithChildren;
+  hideNumbers: boolean | undefined
 }
 
-function AccountItem ({ account }: Props): React.ReactElement {
+function AccountItem({ account, hideNumbers }: Props): React.ReactElement {
   const api = useApi(account.address);
   const chain = useChain(account.address);
   const formatted = useFormatted(account.address);
@@ -34,6 +35,7 @@ function AccountItem ({ account }: Props): React.ReactElement {
         chain={chain}
         chainName={chain?.name}
         formatted={formatted}
+        hideNumbers={hideNumbers}
         setAssetId={setAssetId}
       />
     </Grid>
