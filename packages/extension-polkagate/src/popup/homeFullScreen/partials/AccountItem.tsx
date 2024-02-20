@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Backdrop, Grid, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
@@ -29,9 +29,6 @@ function AccountItem({ account, hideNumbers, quickActionOpen, setQuickActionOpen
 
   const [assetId, setAssetId] = useState<number | undefined>();
 
-  const handleClose = useCallback(() => setQuickActionOpen(undefined), [setQuickActionOpen]);
-
-
   return (
     <Grid container item ref={containerRef} sx={{ overflow: 'hidden', position: 'relative' }} width='760px'>
       <AccountInformation
@@ -47,7 +44,6 @@ function AccountItem({ account, hideNumbers, quickActionOpen, setQuickActionOpen
         setAssetId={setAssetId}
       />
       <Backdrop
-        onClick={handleClose}
         open={quickActionOpen !== undefined}
         sx={{ bgcolor: theme.palette.mode === 'dark' ? 'rgba(23, 23, 23, 0.8)' : 'rgba(241, 241, 241, 0.7)', borderRadius: '5px', bottom: '-1px', left: '-1px', position: 'absolute', right: '-1px', top: '-1px' }}
       />
