@@ -99,7 +99,7 @@ function AOC ({ account, accountAssets, api, assetId, balanceToShow, borderColor
   return (
     <Grid container item>
       <Typography fontSize='18px' fontWeight={400} mt='13px' px='10px' width='fit-content'>
-        {t<string>('Assets')}
+        {t('Assets')}
       </Typography>
       <Grid alignItems='center' container item xs>
         <Collapse collapsedSize={53} in={showMore} orientation='vertical' sx={{ width: '100%' }}>

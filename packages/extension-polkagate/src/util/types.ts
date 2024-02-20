@@ -730,7 +730,7 @@ export interface ReferendaContextType {
 }
 
 export type AssetsOnOtherChains = { assetId?: number, totalBalance: BN, chainName: string, decimal: number, genesisHash: string, price: number | undefined, token: string };
-export type AccountAssets = {
+export interface AccountAssets {
   assetId: number | undefined;
   chainName: string;
   decimal: number;
@@ -739,7 +739,7 @@ export type AccountAssets = {
   genesisHash: string;
   token: string;
   totalBalance: BN;
-};
+}
 
 export type AccountsAssets = {
   address: string;

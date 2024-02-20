@@ -144,7 +144,7 @@ export default function AccountDetails (): React.ReactElement {
                 <ChangeAssets
                   address={address}
                   assetId={assetId}
-                  label={t<string>('Assets')}
+                  label={t('Assets')}
                   onChange={_onChangeAsset}
                   setAssetId={setAssetId}
                   style={{ '> div div div#selectChain': { borderRadius: '5px' }, '> div p': { fontSize: '16px' } }}

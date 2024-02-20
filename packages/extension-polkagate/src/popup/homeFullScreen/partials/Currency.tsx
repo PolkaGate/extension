@@ -10,7 +10,7 @@ import React, { useCallback, useState } from 'react';
 
 import CurrencyList from '../components/CurrencyList';
 
-export type CurrencyItemType = { code: string; country: string; currency: string; sign: string; };
+export interface CurrencyItemType { code: string; country: string; currency: string; sign: string; };
 
 export default function Currency(): React.ReactElement {
   const theme = useTheme();

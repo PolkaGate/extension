@@ -20,7 +20,7 @@ interface Props {
   setHideNumbers: React.Dispatch<React.SetStateAction<boolean | undefined>>
 }
 
-export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.ReactElement {
+export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const theme = useTheme();
