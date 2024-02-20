@@ -201,7 +201,7 @@ export default function AccountInformation({ accountAssets, address, api, assetI
   );
 
   const AccountButton = ({ icon, onClick, text }: AccountButtonType) => (
-    <Button endIcon={icon} onClick={onClick} sx={{ '&:hover': { bgcolor: borderColor }, color: textAndIconColor, fontSize: '16px', fontWeight: 400, height: '44px', textTransform: 'none', width: 'fit-content' }} variant='text'>
+    <Button endIcon={icon} onClick={onClick} sx={{ '&:hover': { bgcolor: borderColor }, color: textAndIconColor, fontSize: '16px', fontWeight: 400, height: '53px', textTransform: 'none', width: 'fit-content' }} variant='text'>
       {text}
     </Button>
   );
