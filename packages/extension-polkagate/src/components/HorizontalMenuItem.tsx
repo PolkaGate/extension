@@ -13,6 +13,7 @@ interface Props {
   onClick: () => void;
   exceptionWidth?: number;
   textDisabled?: boolean;
+  iconMarginTop?: string;
   labelMarginTop?: string;
   titleFontSize?: number;
   titleLineHeight?: number;
@@ -20,14 +21,14 @@ interface Props {
   textSelected?: boolean;
 }
 
-export default function HorizontalMenuItem({ divider = false, dividerHeight = 30, exceptionWidth = 0, icon, labelMarginTop = '0px', onClick, textDisabled, textSelected, title, titleFontSize = 12, titleLineHeight = 1.5 }: Props): React.ReactElement {
+export default function HorizontalMenuItem({ divider = false, dividerHeight = 30, exceptionWidth = 0, icon, iconMarginTop, labelMarginTop = '0px', onClick, textDisabled, textSelected, title, titleFontSize = 12, titleLineHeight = 1.5 }: Props): React.ReactElement {
   const theme = useTheme();
 
   return (
     <>
       <Grid container direction='column' item justifyContent='center' maxWidth={exceptionWidth !== 0 ? `${exceptionWidth}px` : 'fit-content'} onClick={!textDisabled && onClick} sx={{ cursor: 'pointer' }}>
         <Grid container item justifyContent='center'>
-          <IconButton sx={{ alignSelf: 'center', m: 'auto', p: 0, transform: 'scale(0.9)', width: 'fit-content', opacity: textDisabled && 0.7 }}>
+          <IconButton sx={{ alignSelf: 'center', m: iconMarginTop ? `${iconMarginTop} 0 0 0` : 'auto', p: 0, transform: 'scale(0.9)', width: 'fit-content', opacity: textDisabled && 0.7 }}>
             {icon}
           </IconButton>
         </Grid>
