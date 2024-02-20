@@ -1093,5 +1093,14 @@
   "Would you like to set a login password?": "Voulez-vous définir un mot de passe de connexion ?",
   "Later": "Plus tard",
   "Password Enabled": "Mot de passe activé",
-  "{{amount}} can be unlocked": "{{amount}} peut être débloqué"
+  "{{amount}} can be unlocked": "{{amount}} peut être débloqué",
+  "Checking your votes and delegating status…": "Vérification de vos votes et de l’état de délégation…",
+  "Back to Account page": "Retour à la page du compte",
+  "Getting pending rewards, please wait ...": "Récupération des récompenses en attente, veuillez patienter…",
+  "Show": "Afficher",
+  "Hide": "Masquer",
+  "🔍 Search currency": "🔍 Rechercher une devise",
+  "Hide numbers": "Masquer les chiffres",
+  "Show numbers": "Afficher les chiffres",
+  "Total Balance": "Solde total"
 }
