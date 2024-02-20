@@ -238,7 +238,7 @@ export default function AccountInformation({ accountAssets, address, api, assetI
   }, [onAction, address]);
 
   return (
-    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: theme.palette.mode === 'dark' ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '20px 10px 15px 20px' }}>
+    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: theme.palette.mode === 'dark' ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', p: '20px 10px 15px 20px' }}>
       <Grid container item>
         <Grid container item sx={{ borderRight: '1px solid', borderRightColor: borderColor, pr: '8px', width: 'fit-content' }}>
           <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>
