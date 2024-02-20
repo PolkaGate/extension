@@ -89,19 +89,19 @@ export default function QuickActionFullScreen({ address, containerRef, quickActi
   const QuickActionButton = ({ disabled, divider, icon, onClick, title }: QuickActionButtonType) => {
     return (
       <>
-        <Grid alignItems='center' container direction='column' display='flex' item justifyContent='center' onClick={!disabled ? onClick : nullF} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : borderColor }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minWidth: '80px', p: '10px', width: 'fit-content' }}>
-          <Grid container item justifyContent='center' width='fit-content'>
+        <Grid alignItems='center' container direction='column' display='flex' item justifyContent='center' onClick={!disabled ? onClick : nullF} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : borderColor }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minWidth: '80px', p: '0 5px', width: 'fit-content' }}>
+          <Grid alignItems='center' container height='40px' item justifyContent='center' width='fit-content'>
             {icon}
           </Grid>
-          <Grid item textAlign='center' width='max-content'>
-            <Typography fontSize='16px' fontWeight={theme.palette.mode === 'dark' ? 300 : 400} sx={{ opacity: disabled ? 0.7 : 1, pt: '3px' }}>
+          <Grid alignItems='center' height='25px' item textAlign='center' width='max-content'>
+            <Typography fontSize='14px' fontWeight={theme.palette.mode === 'dark' ? 300 : 400} sx={{ opacity: disabled ? 0.7 : 1, pt: '3px' }}>
               {title}
             </Typography>
           </Grid>
         </Grid>
         {divider &&
           <Grid alignItems='center' item justifyContent='center'>
-            <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '30px', m: '7px 2px 0', width: '2px' }} />
+            <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '30px', width: '2px' }} />
           </Grid>
         }
       </>
@@ -131,17 +131,11 @@ export default function QuickActionFullScreen({ address, containerRef, quickActi
         disabled={!STAKING_CHAINS.includes(account?.genesisHash ?? '')}
         divider
         icon={
-          !STAKING_CHAINS.includes(account?.genesisHash ?? '')
-            ? <PoolStakingIcon
-              color={theme.palette.action.disabledBackground}
-              height={38}
-              width={38}
-            />
-            : <PoolStakingIcon
-              color={theme.palette.text.primary}
-              height={38}
-              width={38}
-            />
+          <PoolStakingIcon
+            color={!STAKING_CHAINS.includes(account?.genesisHash ?? '') ? theme.palette.action.disabledBackground : theme.palette.text.primary}
+            height={38}
+            width={38}
+          />
         }
         onClick={goToPoolStaking}
         title={t('Pool Staking')}
@@ -201,7 +195,7 @@ export default function QuickActionFullScreen({ address, containerRef, quickActi
             container={containerRef.current}
             direction='right'
             in={isSlideOpen}
-            style={{ backgroundColor: 'background.default', bottom: '35px', columnGap: '10px', left: '10px', position: 'absolute', width: 'fit-content', zIndex: 1 }}
+            style={{ backgroundColor: 'background.default', bottom: '48px', columnGap: '10px', left: '10px', position: 'absolute', width: 'fit-content', zIndex: 1 }}
             timeout={{
               enter: 600,
               exit: 500
