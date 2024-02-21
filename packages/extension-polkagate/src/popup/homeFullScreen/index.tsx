@@ -11,6 +11,7 @@ import { useFullscreen } from '../../hooks';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import HeaderComponents from './components/HeaderComponents';
 import AccountItem from './partials/AccountItem';
+import TotalBalancePieChart from './partials/TotalBalancePieChart';
 
 export default function HomePageFullScreen(): React.ReactElement {
   useFullscreen();
@@ -35,7 +36,7 @@ export default function HomePageFullScreen(): React.ReactElement {
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='space-around' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '1282px', py: '40px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='space-around' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', py: '40px' }}>
         <Grid container direction='column' item rowGap='20px' width='fit-content'>
           {hierarchy.map((acc, index) => (
             <AccountItem
@@ -46,6 +47,11 @@ export default function HomePageFullScreen(): React.ReactElement {
               setQuickActionOpen={setQuickActionOpen}
             />
           ))}
+        </Grid>
+        <Grid container item width='fit-content'>
+          <TotalBalancePieChart
+            hideNumbers={hideNumbers}
+          />
         </Grid>
       </Grid>
     </Grid>
