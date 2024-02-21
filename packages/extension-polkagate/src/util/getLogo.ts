@@ -23,7 +23,7 @@ export default function getLogo(info: string | undefined | Chain, token?: string
     const assets = createAssets();
     const chainAssets = assets[toCamelCase(sanitizeChainName(chainName) || '')];
 
-    return chainAssets?.find(({ symbol }) => symbol === token)?.ui?.logo
+    return chainAssets?.find(({ symbol }) => symbol === token)?.ui?.logo;
   }
 
   let mayBeExternalLogo;
