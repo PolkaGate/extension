@@ -55,6 +55,7 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
 
     return totalPrice;
   }, [accountsAssets, calPrice]);
+
   const assets = useMemo(() => {
     if (!accountsAssets || !allAccountsTotalBalance) {
       return undefined;
@@ -166,7 +167,7 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
               <Grid container item justifyContent='space-between' key={index}>
                 <Grid alignItems='center' container item width='fit-content'>
                   <Avatar
-                    src={getLogo(asset.token)}
+                    src={getLogo(asset.genesishash, asset.token)}
                     sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(asset.token) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 20, width: 20 }}
                     variant='square'
                   />
