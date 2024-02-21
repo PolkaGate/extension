@@ -17,9 +17,10 @@ interface Props {
   hideNumbers: boolean | undefined;
   quickActionOpen: string | boolean | undefined;
   setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
+  isChild?:boolean;
 }
 
-function AccountItem({ account, hideNumbers, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement {
+function AccountItem({ account, hideNumbers, quickActionOpen, setQuickActionOpen, isChild }: Props): React.ReactElement {
   const api = useApi(account.address);
   const theme = useTheme();
   const chain = useChain(account.address);
@@ -41,6 +42,7 @@ function AccountItem({ account, hideNumbers, quickActionOpen, setQuickActionOpen
         chainName={chain?.name}
         formatted={formatted}
         hideNumbers={hideNumbers}
+        isChild={isChild}
         setAssetId={setAssetId}
       />
       <Backdrop

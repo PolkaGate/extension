@@ -36,6 +36,7 @@ interface AddressDetailsProps {
   formatted: string | undefined;
   hideNumbers: boolean | undefined
   setAssetId: React.Dispatch<React.SetStateAction<number | undefined>>;
+  isChild?: boolean;
 }
 
 export type DisplayLogoAOC = {
@@ -45,7 +46,7 @@ export type DisplayLogoAOC = {
 
 type AccountButtonType = { text: string, onClick: () => void, icon: React.ReactNode };
 
-export default function AccountInformation({ accountAssets, address, api, assetId, balances, chain, chainName, formatted, hideNumbers, setAssetId }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation({ accountAssets, address, api, assetId, balances, chain, chainName, formatted, hideNumbers, setAssetId, isChild }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const currency = useCurrency();
   const account = useAccount(address);
@@ -238,7 +239,7 @@ export default function AccountInformation({ accountAssets, address, api, assetI
   }, [onAction, address]);
 
   return (
-    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: theme.palette.mode === 'dark' ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', p: '20px 10px 15px 20px' }}>
+    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isChild ? '1px dashed' : theme.palette.mode === 'dark' ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', p: '20px 10px 15px 20px' }}>
       <Grid container item>
         <Grid container item sx={{ borderRight: '1px solid', borderRightColor: borderColor, pr: '8px', width: 'fit-content' }}>
           <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>
