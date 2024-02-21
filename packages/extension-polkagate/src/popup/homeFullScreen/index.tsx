@@ -53,6 +53,7 @@ export default function HomePageFullScreen(): React.ReactElement {
                     <AccountItem
                       account={child}
                       hideNumbers={hideNumbers}
+                      parentName={account.name}
                       isChild
                       key={childIndex}
                       quickActionOpen={quickActionOpen}

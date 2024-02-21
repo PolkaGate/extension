@@ -23,7 +23,7 @@ interface Props extends AccountWithChildren {
   setHasActiveRecovery: React.Dispatch<React.SetStateAction<string | null | undefined>>;
 }
 
-export default function AccountsTree({ hideNumbers, parentName, quickActionOpen, setHasActiveRecovery, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
+export default function AccountsTree ({ hideNumbers, parentName, quickActionOpen, setHasActiveRecovery, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(SOCIAL_RECOVERY_CHAINS.includes(account?.genesisHash ?? '') ? account.address : undefined);

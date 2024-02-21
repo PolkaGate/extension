@@ -4,24 +4,26 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Backdrop, Grid, useTheme } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
-import { useAccountAssets, useApi, useChain, useFormatted } from '../../../hooks';
+import { useAccountAssets, useApi, useChain, useFormatted, useTranslation } from '../../../hooks';
 import QuickActionFullScreen from '../../../partials/QuickActionFullScreen';
 import AccountInformation from '../partials/AccountInformation';
 
 interface Props {
   account: AccountWithChildren;
   hideNumbers: boolean | undefined;
+  isChild?: boolean;
+  parentName?: string | undefined;
   quickActionOpen: string | boolean | undefined;
   setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
-  isChild?:boolean;
 }
 
-function AccountItem({ account, hideNumbers, quickActionOpen, setQuickActionOpen, isChild }: Props): React.ReactElement {
+function AccountItem({ account, hideNumbers, isChild, parentName, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement {
   const api = useApi(account.address);
+  const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(account.address);
   const formatted = useFormatted(account.address);
@@ -30,8 +32,27 @@ function AccountItem({ account, hideNumbers, quickActionOpen, setQuickActionOpen
 
   const [assetId, setAssetId] = useState<number | undefined>();
 
+  const label = useMemo((): string | undefined => {
+    if (account?.isHardware) {
+      return t('Ledger');
+    }
+
+    if (account?.isExternal) {
+      return t('Watch-only');
+    }
+
+    if (account?.parentAddress) {
+      return t('Derived from {{parentName}}', { replace: { parentName } });
+    }
+
+    return undefined;
+  }, [account, parentName, t]);
+
   return (
     <Grid container item ref={containerRef} sx={{ borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', overflow: 'hidden', position: 'relative' }} width='760px'>
+      <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', ml: 5, position: 'absolute', px: 1, width: 'fit-content' }}>
+        {label}
+      </Grid>
       <AccountInformation
         accountAssets={accountAssets}
         address={account.address}

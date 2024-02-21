@@ -46,7 +46,7 @@ export type DisplayLogoAOC = {
 
 type AccountButtonType = { text: string, onClick: () => void, icon: React.ReactNode };
 
-export default function AccountInformation({ accountAssets, address, api, assetId, balances, chain, chainName, formatted, hideNumbers, setAssetId, isChild }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation({ accountAssets, address, api, assetId, balances, chain, chainName, formatted, hideNumbers, isChild, setAssetId }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const currency = useCurrency();
   const account = useAccount(address);
