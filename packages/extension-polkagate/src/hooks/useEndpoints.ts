@@ -5,11 +5,11 @@
  * @description
  * find endpoints based on chainName and also omit light client which my be add later
  */
-import type { LinkOption } from '@polkadot/apps-config/endpoints/types';
+import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { createWsEndpoints } from '@polkadot/apps-config';
+import { createWsEndpoints } from '@polkagate/apps-config';
 
 import { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';

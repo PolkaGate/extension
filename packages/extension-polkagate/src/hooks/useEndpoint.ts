@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { createWsEndpoints } from '@polkadot/apps-config';
+import { createWsEndpoints } from '@polkagate/apps-config';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useChainName, useTranslation } from '.';

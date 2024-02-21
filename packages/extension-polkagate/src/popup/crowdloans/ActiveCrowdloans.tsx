@@ -11,7 +11,7 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useState } from 'react';
 
-import { LinkOption } from '@polkadot/apps-config/endpoints/types';
+import { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 

@@ -19,7 +19,7 @@ interface Props {
   size?: number;
 }
 
-function ChainLogo({ chainName, genesisHash, showDefault = true, size = 25 }: Props): React.ReactElement<Props> {
+function ChainLogo ({ chainName, genesisHash, showDefault = true, size = 25 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const foundChainName = allChains.find((chain) => chain.genesisHash === genesisHash)?.chain;
   const _chainName = sanitizeChainName(foundChainName || chainName);

@@ -4,7 +4,7 @@
 import { useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { createWsEndpoints } from '@polkadot/apps-config';
+import { createWsEndpoints } from '@polkagate/apps-config';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { APIContext } from '../components';

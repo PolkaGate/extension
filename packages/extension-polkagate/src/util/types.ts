@@ -12,7 +12,7 @@ import type { KeypairType } from '@polkadot/util-crypto/types';
 import { SxProps, Theme } from '@mui/material';
 
 import { ApiPromise } from '@polkadot/api';
-import { LinkOption } from '@polkadot/apps-config/endpoints/types';
+import { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { InjectedExtension } from '@polkadot/extension-inject/types';

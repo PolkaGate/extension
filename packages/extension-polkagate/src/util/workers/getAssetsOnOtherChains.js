@@ -12,7 +12,7 @@ import {
 } from '@polkadot/api';
 import {
   createWsEndpoints
-} from '@polkadot/apps-config';
+} from '@polkagate/apps-config';
 import { selectableNetworks } from '@polkadot/networks';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
