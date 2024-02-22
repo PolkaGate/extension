@@ -12,22 +12,27 @@ import { sanitizeChainName } from './utils';
 const endpoints = createWsEndpoints(() => '');
 
 export default function getLogo(info: string | undefined | Chain, token?: string): string | undefined {
+  let chainNameFromGenesisHash;
+
   if (token) {
     const networkMap = getNetworkMap();
-    const chainName = networkMap.get(info as string || '');
 
-    if (!chainName) {
+    chainNameFromGenesisHash = networkMap.get(info as string || '');
+
+    if (!chainNameFromGenesisHash) {
       return undefined;
     }
 
     const assets = createAssets();
-    const chainAssets = assets[toCamelCase(sanitizeChainName(chainName) || '')];
+    const chainAssets = assets[toCamelCase(sanitizeChainName(chainNameFromGenesisHash) || '')];
 
-    return chainAssets?.find(({ symbol }) => symbol === token)?.ui?.logo;
+    if (chainAssets) {
+      return chainAssets?.find(({ symbol }) => symbol === token)?.ui?.logo;
+    }
   }
 
   let mayBeExternalLogo;
-  const iconName = sanitizeChainName(((info as Chain)?.name) || (info as string))?.toLowerCase();
+  const iconName = sanitizeChainName(chainNameFromGenesisHash || (info as Chain)?.name || (info as string))?.toLowerCase();
 
   const endpoint = endpoints.find((o) => o.info?.toLowerCase() === iconName);
 
