@@ -22,11 +22,14 @@ interface Props {
   hideNumbers: boolean | undefined;
 }
 
+type UiType = { logo: string | undefined, color: string | undefined };
+
 type AssetType = {
   balance: number;
   genesishash: string;
   percent: number;
   token: string;
+  ui: UiType;
 }
 
 function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
@@ -77,15 +80,21 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
       let token: string | undefined = '';
       let decimal: number | undefined = 0;
       let price: number | undefined = 0;
+      let ui: UiType | undefined;
 
       const balance = accountsAssets.balances.reduce((accumulator, balance) => {
         const asset = balance.assets.find((asset) => asset.genesisHash === assetInfo.genesis && asset.token === assetInfo.token);
+        const assetUi = getLogo2(asset?.genesisHash, asset?.token);
 
-        if (!genesishash || !token || !decimal || !price) {
+        if (!genesishash || !token || !decimal || !price || !ui) {
           genesishash = asset?.genesisHash;
           token = asset?.token;
           decimal = asset?.decimal;
           price = asset?.price;
+          ui = {
+            color: assetUi?.color,
+            logo: assetUi?.logo
+          };
         }
 
         return accumulator.add(asset?.totalBalance ?? BN_ZERO);
@@ -97,7 +106,8 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
         balance: balancePrice,
         genesishash,
         percent: formatNumber((balancePrice / allAccountsTotalBalance) * 100),
-        token
+        token,
+        ui
       };
     });
 
@@ -118,7 +128,7 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
     const chartInstance = new Chart(chartRef.current, {
       data: {
         datasets: [{
-          backgroundColor: ['red', 'green', 'blue', 'white', 'black', 'orange'],
+          backgroundColor: assets?.map((asset) => asset.ui?.color),
           borderColor,
           borderWidth: 0.9,
           data: assets?.map((asset) => asset.percent),
@@ -154,7 +164,7 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
     <Grid container item justifyContent='space-between'>
       <Grid alignItems='center' container item width='fit-content'>
         <Avatar
-          src={getLogo2(asset.genesishash, asset.token)?.logo}
+          src={asset.ui.logo}
           sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(asset.token) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 20, width: 20 }}
           variant='square'
         />
@@ -166,7 +176,7 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
         <Typography fontSize='16px' fontWeight={600}>
           {hideNumbers || hideNumbers === undefined ? '****' : `${currency?.sign ?? ''}${nFormatter(asset.balance ?? 0, 2)}`}
         </Typography>
-        <Divider orientation='vertical' sx={{ bgcolor: getLogo2(asset.genesishash, asset.token)?.color, height: '21px', m: 'auto', width: '5px' }} />
+        <Divider orientation='vertical' sx={{ bgcolor: asset.ui.color, height: '21px', m: 'auto', width: '5px' }} />
         <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
           {hideNumbers || hideNumbers === undefined ? '****' : `${asset.percent}%`}
         </Typography>
