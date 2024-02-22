@@ -150,29 +150,33 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
 
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
-  const DisplayAssetRow = ({ asset }: { asset: AssetType }) => (
-    <Grid container item justifyContent='space-between'>
-      <Grid alignItems='center' container item width='fit-content'>
-        <Avatar
-          src={getLogo2(asset.genesishash, asset.token)?.logo}
-          sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(asset.token) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 20, width: 20 }}
-          variant='square'
-        />
-        <Typography fontSize='16px' fontWeight={500} pl='5px' width='40px'>
-          {asset.token}
-        </Typography>
+  const DisplayAssetRow = ({ asset }: { asset: AssetType }) => {
+    const ui = getLogo2(asset.genesishash, asset.token);
+
+    return (
+      <Grid container item justifyContent='space-between'>
+        <Grid alignItems='center' container item width='fit-content'>
+          <Avatar
+            src={ui?.logo}
+            sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(asset.token) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 20, width: 20 }}
+            variant='square'
+          />
+          <Typography fontSize='16px' fontWeight={500} pl='5px' width='40px'>
+            {asset.token}
+          </Typography>
+        </Grid>
+        <Grid alignItems='center' columnGap='10px' container item width='fit-content'>
+          <Typography fontSize='16px' fontWeight={600}>
+            {hideNumbers || hideNumbers === undefined ? '****' : `${currency?.sign ?? ''}${nFormatter(asset.balance ?? 0, 2)}`}
+          </Typography>
+          <Divider orientation='vertical' sx={{ bgcolor: ui?.color, height: '21px', m: 'auto', width: '5px' }} />
+          <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
+            {hideNumbers || hideNumbers === undefined ? '****' : `${asset.percent}%`}
+          </Typography>
+        </Grid>
       </Grid>
-      <Grid alignItems='center' columnGap='10px' container item width='fit-content'>
-        <Typography fontSize='16px' fontWeight={600}>
-          {hideNumbers || hideNumbers === undefined ? '****' : `${currency?.sign ?? ''}${nFormatter(asset.balance ?? 0, 2)}`}
-        </Typography>
-        <Divider orientation='vertical' sx={{ bgcolor: getLogo2(asset.genesishash, asset.token)?.color, height: '21px', m: 'auto', width: '5px' }} />
-        <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
-          {hideNumbers || hideNumbers === undefined ? '****' : `${asset.percent}%`}
-        </Typography>
-      </Grid>
-    </Grid>
-  );
+    )
+  };
 
   return (
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px', width: '430px' }}>
