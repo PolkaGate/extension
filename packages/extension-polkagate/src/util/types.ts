@@ -729,7 +729,7 @@ export interface ReferendaContextType {
   setRefs: (refs: LatestRefs) => void;
 }
 
-export type AssetsOnOtherChains = { assetId?: number, totalBalance: BN, chainName: string, decimal: number, genesisHash: string, price: number | undefined, token: string };
+export interface AssetsOnOtherChains { assetId?: number, totalBalance: BN, chainName: string, decimal: number, genesisHash: string, price: number | undefined, token: string };
 export interface AccountAssets {
   assetId: number | undefined;
   chainName: string;
@@ -741,12 +741,12 @@ export interface AccountAssets {
   totalBalance: BN;
 }
 
-export type AccountsAssets = {
+export interface AccountsAssets {
   address: string;
   assets: AccountAssets[];
 };
 
-export type SavedAccountsAssets = { balances: AccountsAssets[], timestamp: number };
+export interface SavedAccountsAssets { balances: AccountsAssets[], timestamp: number };
 
 export interface AccountsAssetsContextType {
   accountsAssets: SavedAccountsAssets | undefined;
