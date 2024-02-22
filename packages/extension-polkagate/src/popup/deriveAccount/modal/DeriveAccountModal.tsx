@@ -7,11 +7,11 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { ActionContext, Address, ButtonWithCancel, InputWithLabel, Label } from '../../../components';
+import { ActionContext } from '../../../components';
 import { useAccount, useTranslation } from '../../../hooks';
 import { deriveAccount } from '../../../messaging';
-import Passwords2 from '../../createAccountFullScreen/components/Passwords2';
 import { DraggableModal } from '../../governance/components/DraggableModal';
+import CreateNewDerivedAccount from './CreateNewDerivedAccount';
 import SelectParent from './SelectParent';
 
 interface Props {
@@ -92,46 +92,6 @@ function DeriveModal ({ parentAddress, setDisplayPopup }: Props): React.ReactEle
     }
   }, [onAction, stepOne]);
 
-  const CreateNewDerivedAccount = () => (
-    <>
-      <Label
-        label={t<string>('New derived account')}
-        style={{ margin: 'auto', marginBottom: '15px' }}
-      >
-        <Address
-          address={account?.address}
-          genesisHash={parentAccount?.genesisHash}
-          name={name}
-          style={{ m: 0, width: '100%' }}
-        />
-      </Label>
-      <InputWithLabel
-        isError={name === null || name?.length === 0}
-        isFocused
-        label={t<string>('Choose a name for this account')}
-        onChange={onNameChange}
-        value={name ?? ''}
-      />
-      <Passwords2
-        firstPassStyle={{ marginBlock: '10px' }}
-        label={t<string>('Password for this account (more than 5 characters)')}
-        onChange={onPasswordChange}
-        // eslint-disable-next-line react/jsx-no-bind
-        onEnter={name && password ? onCreate : () => null}
-      />
-      <Grid container item sx={{ '> div': { ml: 'auto', width: '87.5%' }, bottom: 0, height: '36px', position: 'absolute' }}>
-        <ButtonWithCancel
-          _isBusy={isBusy}
-          _onClick={onCreate}
-          _onClickCancel={onBackClick}
-          cancelText={t<string>('Back')}
-          disabled={!password || !name}
-          text={t<string>('Create')}
-        />
-      </Grid>
-    </>
-  );
-
   return (
     <DraggableModal onClose={onClose} open>
       <>
@@ -159,7 +119,17 @@ function DeriveModal ({ parentAddress, setDisplayPopup }: Props): React.ReactEle
           />
         }
         {!stepOne && account &&
-          <CreateNewDerivedAccount />
+          <CreateNewDerivedAccount
+            address={account.address}
+            derivedAccountName={name}
+            genesisHash={parentAccount?.genesisHash}
+            isBusy={isBusy}
+            onBackClick={onBackClick}
+            onCreate={onCreate}
+            onNameChange={onNameChange}
+            onPasswordChange={onPasswordChange}
+            password={password}
+          />
         }
       </>
     </DraggableModal>
