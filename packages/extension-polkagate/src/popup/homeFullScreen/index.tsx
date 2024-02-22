@@ -39,42 +39,13 @@ export default function HomePageFullScreen(): React.ReactElement {
       <Grid container item justifyContent='space-around' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', py: '40px' }}>
         <Grid container direction='column' item rowGap='20px' width='fit-content'>
           {hierarchy.map((account, index) => (
-            <>
-              <AccountItem
-                account={account}
-                hideNumbers={hideNumbers}
-                key={index}
-                quickActionOpen={quickActionOpen}
-                setQuickActionOpen={setQuickActionOpen}
-              />
-              {account.children && account.children.length > 0 &&
-                account.children.map((child, childIndex) => (
-                  <>
-                    <AccountItem
-                      account={child}
-                      hideNumbers={hideNumbers}
-                      parentName={account.name}
-                      isChild
-                      key={childIndex}
-                      quickActionOpen={quickActionOpen}
-                      setQuickActionOpen={setQuickActionOpen}
-                    />
-                    {child.children && child.children.length > 0 &&
-                      child.children.map((grandChild, childIndex) => (
-                        <AccountItem
-                          account={grandChild}
-                          hideNumbers={hideNumbers}
-                          isChild
-                          key={childIndex}
-                          quickActionOpen={quickActionOpen}
-                          setQuickActionOpen={setQuickActionOpen}
-                        />
-                      ))
-                    }
-                  </>
-                ))
-              }
-            </>
+            <AccountItem
+              account={account}
+              hideNumbers={hideNumbers}
+              key={index}
+              quickActionOpen={quickActionOpen}
+              setQuickActionOpen={setQuickActionOpen}
+            />
           ))}
         </Grid>
         <Grid container item width='fit-content'>

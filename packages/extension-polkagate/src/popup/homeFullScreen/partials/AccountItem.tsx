@@ -49,29 +49,42 @@ function AccountItem({ account, hideNumbers, isChild, parentName, quickActionOpe
   }, [account, parentName, t]);
 
   return (
-    <Grid container item ref={containerRef} sx={{ borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', overflow: 'hidden', position: 'relative' }} width='760px'>
-      <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', ml: 5, position: 'absolute', px: 1, width: 'fit-content' }}>
-        {label}
+    <>
+      <Grid container item ref={containerRef} sx={{ borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', overflow: 'hidden', position: 'relative' }} width='760px'>
+        <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', ml: 5, position: 'absolute', px: 1, width: 'fit-content' }}>
+          {label}
+        </Grid>
+        <AccountInformation
+          accountAssets={accountAssets}
+          address={account.address}
+          api={api}
+          assetId={assetId}
+          balances={undefined}
+          chain={chain}
+          chainName={chain?.name}
+          formatted={formatted}
+          hideNumbers={hideNumbers}
+          isChild={isChild}
+          setAssetId={setAssetId}
+        />
+        <Backdrop
+          open={quickActionOpen !== undefined}
+          sx={{ bgcolor: theme.palette.mode === 'dark' ? 'rgba(23, 23, 23, 0.8)' : 'rgba(241, 241, 241, 0.7)', borderRadius: '5px', bottom: '-1px', left: '-1px', position: 'absolute', right: '-1px', top: '-1px' }}
+        />
+        <QuickActionFullScreen address={account.address} containerRef={containerRef} quickActionOpen={quickActionOpen} setQuickActionOpen={setQuickActionOpen} />
       </Grid>
-      <AccountInformation
-        accountAssets={accountAssets}
-        address={account.address}
-        api={api}
-        assetId={assetId}
-        balances={undefined}
-        chain={chain}
-        chainName={chain?.name}
-        formatted={formatted}
-        hideNumbers={hideNumbers}
-        isChild={isChild}
-        setAssetId={setAssetId}
-      />
-      <Backdrop
-        open={quickActionOpen !== undefined}
-        sx={{ bgcolor: theme.palette.mode === 'dark' ? 'rgba(23, 23, 23, 0.8)' : 'rgba(241, 241, 241, 0.7)', borderRadius: '5px', bottom: '-1px', left: '-1px', position: 'absolute', right: '-1px', top: '-1px' }}
-      />
-      <QuickActionFullScreen address={account.address} containerRef={containerRef} quickActionOpen={quickActionOpen} setQuickActionOpen={setQuickActionOpen} />
-    </Grid>
+      {account?.children?.map((child, index) => (
+        <AccountItem
+          account={child}
+          hideNumbers={hideNumbers}
+          isChild
+          key={index}
+          parentName={account.name}
+          quickActionOpen={quickActionOpen}
+          setQuickActionOpen={setQuickActionOpen}
+        />
+      ))}
+    </>
   );
 }
 
