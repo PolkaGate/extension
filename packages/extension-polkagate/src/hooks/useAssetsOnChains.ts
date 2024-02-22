@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { SavedAccountsAssets } from '../util/types';
 import { isHexToBn } from '../util/utils';
@@ -43,6 +43,16 @@ export default function useAssetsOnChains(addresses: string[] | undefined): Save
       }
     });
   }, []);
+
+  const newAccountAdded = useMemo((): boolean => {
+    if (!addresses || addresses.length === 0 || !accountsAssets) {
+      return false;
+    }
+
+    const noNewAccountAdded = addresses.every((address) => !!accountsAssets.balances.find((accountAsset) => accountAsset.address === address));
+
+    return !noNewAccountAdded;
+  }, [accountsAssets, addresses]);
 
   const fetchAssetsOnOtherChains = useCallback((accounts: string[]) => {
     const worker: Worker = new Worker(new URL('../util/workers/getAssetsOnOtherChains.js', import.meta.url));
@@ -99,8 +109,8 @@ export default function useAssetsOnChains(addresses: string[] | undefined): Save
       return;
     }
 
-    isOutDated && fetchAssetsOnOtherChains(addresses);
-  }, [addresses, fetchAssetsOnOtherChains, isOutDated, workerCalled]);
+    (isOutDated || newAccountAdded) && fetchAssetsOnOtherChains(addresses);
+  }, [addresses, fetchAssetsOnOtherChains, isOutDated, newAccountAdded, workerCalled]);
 
   useEffect(() => {
     if (!addresses || addresses.length === 0 || workerCalled || accountsAssets) {
