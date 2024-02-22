@@ -26,8 +26,10 @@ export default function getLogo(info: string | undefined | Chain, token?: string
     const assets = createAssets();
     const chainAssets = assets[toCamelCase(sanitizeChainName(chainNameFromGenesisHash) || '')];
 
-    if (chainAssets) {
-      return chainAssets?.find(({ symbol }) => symbol === token)?.ui?.logo;
+    const found = chainAssets?.find(({ symbol }) => symbol === token)?.ui?.logo;
+
+    if (found) {
+      return found;
     }
   }
 
