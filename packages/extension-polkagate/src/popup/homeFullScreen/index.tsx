@@ -12,6 +12,7 @@ import { FullScreenHeader } from '../governance/FullScreenHeader';
 import HeaderComponents from './components/HeaderComponents';
 import AccountItem from './partials/AccountItem';
 import TotalBalancePieChart from './partials/TotalBalancePieChart';
+import HomeMenu from './partials/HomeMenu';
 
 export default function HomePageFullScreen(): React.ReactElement {
   useFullscreen();
@@ -48,10 +49,17 @@ export default function HomePageFullScreen(): React.ReactElement {
             />
           ))}
         </Grid>
-        <Grid container item width='fit-content'>
-          <TotalBalancePieChart
-            hideNumbers={hideNumbers}
-          />
+        <Grid container direction='column' item rowGap='20px' width='fit-content'>
+          <Grid container item width='fit-content'>
+            <TotalBalancePieChart
+              hideNumbers={hideNumbers}
+            />
+          </Grid>
+          <Grid container item width='fit-content'>
+            <HomeMenu
+            // setDisplayPopup={setDisplayPopup}
+            />
+          </Grid>
         </Grid>
       </Grid>
     </Grid>

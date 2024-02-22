@@ -17,6 +17,7 @@ import { ErrorBoundary, Loading } from '../../../extension-polkagate/src/compone
 import { AccountContext, AccountsAssetsContext, ActionContext, APIContext, AuthorizeReqContext, FetchingContext, MediaContext, MetadataReqContext, ReferendaContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
 import { getStorage, LoginInfo, updateStorage } from '../../../extension-polkagate/src/components/Loading';
 import { ExtensionLockProvider } from '../../../extension-polkagate/src/context/ExtensionLockContext';
+import { useAssetsOnChains, usePrices2 } from '../../../extension-polkagate/src/hooks';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
 import AccountEx from '../../../extension-polkagate/src/popup/account';
 import AccountFL from '../../../extension-polkagate/src/popup/accountDetailsFullScreen';
@@ -25,6 +26,7 @@ import Authorize from '../../../extension-polkagate/src/popup/authorize/index';
 import CreateAccount from '../../../extension-polkagate/src/popup/createAccountFullScreen';
 import CrowdLoans from '../../../extension-polkagate/src/popup/crowdloans';
 import Derive from '../../../extension-polkagate/src/popup/deriveAccount';
+import FullscreenDerive from '../../../extension-polkagate/src/popup/deriveFromAccountsFullscreen';
 import Export from '../../../extension-polkagate/src/popup/export/Export';
 import ExportAll from '../../../extension-polkagate/src/popup/export/ExportAll';
 import ForgetAccount from '../../../extension-polkagate/src/popup/forgetAccount';
@@ -63,7 +65,6 @@ import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { APIs, Fetching, LatestRefs, SavedAccountsAssets } from '../../../extension-polkagate/src/util/types';
-import { useAssetsOnChains, usePrices2 } from '../../../extension-polkagate/src/hooks';
 
 const startSettings = uiSettings.get();
 
@@ -233,6 +234,7 @@ export default function Popup(): React.ReactElement {
                                 <Switch>
                                   <Route path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<AccountEx />, 'account')}</Route>
                                   <Route path='/account/create'>{wrapWithErrorBoundary(<CreateAccount />, 'account-creation')}</Route>
+                                  <Route path='/fullscreenDerive/:address/'>{wrapWithErrorBoundary(<FullscreenDerive />, 'fullscreen-account-derive')}</Route>
                                   <Route path='/account/export-all'>{wrapWithErrorBoundary(<ExportAll />, 'export-all-address')}</Route>
                                   <Route path='/account/import-ledger'>{wrapWithErrorBoundary(<ImportLedger />, 'import-ledger')}</Route>
                                   <Route path='/account/import-seed'>{wrapWithErrorBoundary(<ImportSeed />, 'import-seed')}</Route>
