@@ -1108,5 +1108,9 @@
   "🔍 Search currency": "",
   "Hide numbers": "",
   "Show numbers": "",
-  "Total Balance": ""
+  "Total Balance": "",
+  "Choose a name for the derived account": "",
+  "Create a password for the derived account (>5 characters)": "",
+  "A derived account inherits the recovery phrase from its parent, but has a unique derivation path. Please select a parent account and enter its password to proceed.": "",
+  "Derived from {{parentName}}": ""
 }

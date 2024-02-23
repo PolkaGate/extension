@@ -17,7 +17,7 @@ import { AccountContext, ActionContext, Checkbox2, ColorContext, FullScreenIcon,
 import { updateStorage } from '../components/Loading';
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import { useIsLoginEnabled, useIsPopup, useTranslation } from '../hooks';
-import { lockExtension, setNotification, tieAccount, windowOpen } from '../messaging';
+import { lockExtension, setNotification, tieAccount } from '../messaging';
 import { NO_PASS_PERIOD, TEST_NETS } from '../util/constants';
 import getLanguageOptions from '../util/getLanguageOptions';
 import { DropdownOption } from '../util/types';

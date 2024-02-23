@@ -38,7 +38,7 @@ interface TaskButtonProps {
 
 export const TaskButton = ({ borderColor, disabled, icon, noBorderButton = false, onClick, secondaryIconType, text, theme }: TaskButtonProps) => (
   <>
-    <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : borderColor }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minHeight: '45px', py: '5px' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : borderColor }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minHeight: '45px', p: '5px 0px 5px 10px', my:'5px' }}>
       <Grid container item xs={2}>
         {icon}
         {/* <Box
