@@ -9,14 +9,14 @@ import React, { useCallback } from 'react';
 
 import { SlidePopUp } from '../../components';
 import { useTranslation } from '../../hooks';
-import { SocialLinks } from '../../partials/Menu';
+import { SocialLinks } from '../../partials/VersionSocial';
 
 interface Props {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function Privacy({ setShow, show = false }: Props): React.ReactElement {
+function Privacy ({ setShow, show = false }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const onClose = useCallback(() => {
