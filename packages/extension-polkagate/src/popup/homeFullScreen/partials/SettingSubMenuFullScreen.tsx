@@ -146,7 +146,7 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
         <TaskButton
           borderColor={borderColor}
           icon={
-            <vaadin-icon icon='vaadin:file-text' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+            <vaadin-icon icon='vaadin:lines-list' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
           }
           isSubMenu
           onClick={onAuthManagement}
