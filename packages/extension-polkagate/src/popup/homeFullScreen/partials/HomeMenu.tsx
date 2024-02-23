@@ -6,52 +6,61 @@
 import '@vaadin/icons';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, OpenInNewRounded as OpenInNewRoundedIcon } from '@mui/icons-material';
-import { Divider, Grid, Theme, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { AccountContext, ActionContext } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import VersionSocial from '../../../partials/VersionSocial';
 import ImportAccSubMenuFullScreen from './ImportAccSubMenuFullScreen';
+import SettingSubMenuFullScreen from './SettingSubMenuFullScreen';
 
 interface TaskButtonProps {
   icon: JSX.Element;
   text: string;
   onClick: () => void;
-  secondaryIconType: 'popup' | 'page';
+  secondaryIconType?: 'popup' | 'page';
   noBorderButton?: boolean;
   borderColor: string;
-  theme: Theme;
   disabled?: boolean;
   hasChildren?: boolean;
   showChildren?: boolean;
   children?: React.ReactElement;
+  extra?: React.ReactElement;
+  isSubMenu?: boolean;
 }
 
-export const TaskButton = ({ borderColor, children, disabled, hasChildren, icon, noBorderButton = false, onClick, secondaryIconType, showChildren, text, theme }: TaskButtonProps) => (
-  <>
-    <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : borderColor }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minHeight: '45px', p: '5px 0px 5px 10px', my: '5px' }}>
-      <Grid container item xs={2}>
-        {icon}
-      </Grid>
-      <Grid container item justifyContent='left' xs>
-        <Typography color={disabled ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='16px' fontWeight={500}>
-          {text}
-        </Typography>
-      </Grid>
-      <Grid alignItems='center' container item justifyContent='flex-end' xs={1}>
-        {secondaryIconType === 'page'
-          ? <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1, transform: hasChildren ? showChildren ? 'rotate(-90deg)' : 'rotate(90deg)' : 'rotate(0deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
-          : <OpenInNewRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '25px' }} />
+export const TaskButton = ({ borderColor, children, disabled, extra, hasChildren, icon, isSubMenu, noBorderButton = false, onClick, secondaryIconType, showChildren, text }: TaskButtonProps) => {
+  const theme = useTheme();
+
+  return (
+    <>
+      <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : borderColor }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minHeight: isSubMenu ? '40px' : '45px', p: '5px 0px 5px 10px', my: '5px' }}>
+        <Grid container item xs={2}>
+          {icon}
+        </Grid>
+        <Grid container item justifyContent='left' xs>
+          <Typography color={disabled ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='16px' fontWeight={500}>
+            {text}
+          </Typography>
+        </Grid>
+        {secondaryIconType &&
+          <Grid alignItems='center' container item justifyContent='flex-end' xs={1}>
+            {secondaryIconType === 'page'
+              ? <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1, transform: hasChildren ? showChildren ? 'rotate(-90deg)' : 'rotate(90deg)' : 'rotate(0deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
+              : <OpenInNewRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '25px' }} />
+            }
+          </Grid>
         }
       </Grid>
-    </Grid>
-    <Grid container item justifyContent='flex-end'>
-      {!noBorderButton && <Divider sx={{ bgcolor: borderColor, height: '2px', width: '98%' }} />}
-    </Grid>
-    {children}
-  </>
-);
+      {extra}
+      <Grid container item justifyContent='flex-end'>
+        {!noBorderButton && <Divider sx={{ bgcolor: borderColor, height: '2px', width: '98%' }} />}
+      </Grid>
+      {children}
+    </>
+  );
+};
 
 export default function HomeMenu(): React.ReactElement {
   const { t } = useTranslation();
@@ -71,10 +80,12 @@ export default function HomeMenu(): React.ReactElement {
 
   const onImportClick = useCallback(() => {
     setShowImport(!showImport);
+    setShowSetting(false);
   }, [showImport]);
 
   const onSettingClick = useCallback(() => {
     setShowSetting(!showSetting);
+    setShowImport(false);
   }, [showSetting]);
 
   const onDeriveFromAccounts = useCallback(() => {
@@ -92,7 +103,6 @@ export default function HomeMenu(): React.ReactElement {
           onClick={goToSend}
           secondaryIconType='page'
           text={t<string>('Create new account')}
-          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
@@ -102,7 +112,6 @@ export default function HomeMenu(): React.ReactElement {
           onClick={onDeriveFromAccounts}
           secondaryIconType='page'
           text={t<string>('Derive from accounts')}
-          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
@@ -114,7 +123,6 @@ export default function HomeMenu(): React.ReactElement {
           secondaryIconType='page'
           showChildren={showImport}
           text={t<string>('Import account')}
-          theme={theme}
         >
           <ImportAccSubMenuFullScreen show={showImport} toggleSettingSubMenu={onSettingClick} />
         </TaskButton>
@@ -127,7 +135,6 @@ export default function HomeMenu(): React.ReactElement {
           secondaryIconType='page'
           secondaryIconType='popup'
           text={t<string>('Export all accounts')}
-          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
@@ -140,8 +147,9 @@ export default function HomeMenu(): React.ReactElement {
           secondaryIconType='page'
           showChildren={showSetting}
           text={t<string>('Settings')}
-          theme={theme}
-        />
+        >
+          <SettingSubMenuFullScreen show={showSetting} />
+        </TaskButton>
       </Grid>
       <VersionSocial fontSize='14px' iconSize={20} />
     </Grid>
