@@ -325,8 +325,8 @@ export default function Index(): React.ReactElement {
             value={redeemable}
           />
           <Row
-            label={t('Unstaking')}
             isUnstaking
+            label={t('Unstaking')}
             value={unlockingAmount}
           />
           <Row

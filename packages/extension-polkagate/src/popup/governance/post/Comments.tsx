@@ -26,9 +26,9 @@ export default function Comments({ address, referendum }: { address: string | un
 
   const sortedComments = useMemo(() => referendum?.comments?.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)), [referendum]);
 
-  function openPolkassembly() {
+  const openPolkassembly = () => {
     window.open(`https://${ChainName}.polkassembly.io/referenda/${referendum?.index}`, '_blank');
-  }
+  };
 
   function openSubsquare() {
     window.open(`https://${ChainName}.subsquare.io/${type}/referendum/${referendum?.index}`, '_blank');
@@ -58,17 +58,15 @@ export default function Comments({ address, referendum }: { address: string | un
           <Grid container item justifyContent='flex-end' spacing={5} sx={{ mt: '30px' }}>
             <Grid item>
               {type !== 'fellowship' &&
-                <Button onClick={openPolkassembly} sx={{
-                  color: 'text.primary',
-                  textTransform: 'none', borderColor: 'primary.main'
-                }} variant='outlined'>
-                  {'Comment on Polkassembly'}
+                <Button onClick={openPolkassembly} sx={{ borderColor: 'primary.main', color: 'text.primary', textTransform: 'none' }} variant='outlined'>
+                  {t('Comment on {{site}}', { replace: { site: 'Polkassembly' } })}
+
                 </Button>
               }
             </Grid>
             <Grid item>
               <Button onClick={openSubsquare} sx={{ borderColor: 'primary.main', color: 'text.primary', textTransform: 'none' }} variant='outlined'>
-                {'Comment on Subsquare'}
+                {t('Comment on {{site}}', { replace: { site: 'Subsquare' } })}
               </Button>
             </Grid>
           </Grid>

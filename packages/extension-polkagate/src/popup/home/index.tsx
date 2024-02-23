@@ -16,10 +16,10 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Warning } from '../../components';
 import { getStorage, LoginInfo } from '../../components/Loading';
-import { useIsTestnetEnabled, useMerkleScience, useTranslation } from '../../hooks';
-import { tieAccount, windowOpen } from '../../messaging';
+import { useMerkleScience, useTranslation } from '../../hooks';
+import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
-import { NEW_VERSION_ALERT, TEST_NETS } from '../../util/constants';
+import { NEW_VERSION_ALERT } from '../../util/constants';
 import Welcome from '../welcome';
 import Reset from '../welcome/Reset';
 import AccountsTree from './AccountsTree';
@@ -27,11 +27,10 @@ import AiBackgroundImage from './AiBackgroundImage';
 import Alert from './Alert';
 import YouHave from './YouHave';
 
-export default function Home(): React.ReactElement {
+export default function Home (): React.ReactElement {
   const { t } = useTranslation();
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { hierarchy } = useContext(AccountContext);
   const theme = useTheme();
-  const isTestnetEnabled = useIsTestnetEnabled();
 
   useMerkleScience(undefined, undefined, true); // to download the data file
 
@@ -41,16 +40,6 @@ export default function Home(): React.ReactElement {
   const [hasActiveRecovery, setHasActiveRecovery] = useState<string | null | undefined>(); // if exists, include the account address
   const [loginInfo, setLoginInfo] = useState<LoginInfo>();
   const [bgImage, setBgImage] = useState<string | undefined>();
-
-  useEffect(() => {
-    !isTestnetEnabled && (
-      accounts?.forEach(({ address, genesisHash }) => {
-        if (genesisHash && TEST_NETS.includes(genesisHash)) {
-          tieAccount(address, null).catch(console.error);
-        }
-      })
-    );
-  }, [accounts, isTestnetEnabled]);
 
   useEffect(() => {
     const value = window.localStorage.getItem('inUse_version');

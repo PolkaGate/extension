@@ -100,7 +100,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, refSummary }: Props):
         {`#${refSummary.post_id}  ${refSummary.title || t('No title yet')} `}
       </Grid>
       <Grid alignItems='center' container item justifyContent='space-between'>
-        <Grid alignItems='center' container item xs={9.5}>
+        <Grid alignItems='center' container item xs>
           <Grid item sx={{ fontSize: '16px', fontWeight: 400, mr: '10px' }}>
             {t('By')}:
           </Grid>
@@ -155,7 +155,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, refSummary }: Props):
             </>
           }
         </Grid>
-        <Grid item sx={{ color: 'white', textAlign: 'center', mb: '10px', fontSize: '17px', fontWeight: 400, border: '1px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[refSummary.status], px: '10px', height: '27px', minWidth: '119px', width: 'fit-content' }}>
+        <Grid item sx={{ bgcolor: STATUS_COLOR[refSummary.status], border: '1px solid primary.main', borderRadius: '30px', color: 'white', fontSize: '17px', fontWeight: 400, height: '27px', textAlign: 'center', mb: '10px', px: '10px', minWidth: '119px', width: 'fit-content' }}>
           {pascalCaseToTitleCase(formalizedStatus(refSummary.status))}
         </Grid>
       </Grid>

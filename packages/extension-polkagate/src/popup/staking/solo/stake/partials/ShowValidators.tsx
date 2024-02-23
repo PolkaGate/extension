@@ -39,7 +39,7 @@ export default function ShowValidators({ address, api, chain, selectedValidators
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item ml='-15px' mt='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container justifyContent='center' mb='20px' mt='40px'>
         <Typography fontSize='20px' fontWeight={400} sx={{ textAlign: 'center', width: '100%' }}>
-          {t<string>(`Selected Validator (${selectedValidators.length})`)}
+          {t<string>('Selected Validators ({{length}})', { replace: { length: selectedValidators.length } })}
         </Typography>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
       </Grid>

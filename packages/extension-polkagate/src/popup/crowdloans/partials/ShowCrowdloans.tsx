@@ -37,7 +37,7 @@ interface Props {
   selectedCrowdloan?: Crowdloan;
 }
 
-export default function ShowCrowdloan({ selectedCrowdloan, api, chain, crowdloan, crowdloansId, currentBlockNumber, decimal, key, myContribution, onContribute, setSelectedCrowdloan, showStatus = false, token }: Props): React.ReactElement {
+export default function ShowCrowdloan({ api, chain, crowdloan, crowdloansId, currentBlockNumber, decimal, key, myContribution, onContribute, selectedCrowdloan, setSelectedCrowdloan, showStatus = false, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const paraId = crowdloan.fund.paraId;
   const name = useMemo(() => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansId, paraId]);
@@ -71,7 +71,7 @@ export default function ShowCrowdloan({ selectedCrowdloan, api, chain, crowdloan
             sx={{ height: 20, width: 20 }}
           />
         </Grid>
-        <Grid container item xs={showStatus ? 8 : 10.5}>
+        <Grid container item xs>
           {name
             ? <Grid container item>
               <Typography fontSize='16px' fontWeight={400} lineHeight='47px' maxWidth={homePage ? '90%' : '100%'} overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap' width='fit-content'>
@@ -89,7 +89,7 @@ export default function ShowCrowdloan({ selectedCrowdloan, api, chain, crowdloan
           }
         </Grid>
         {showStatus &&
-          <Grid alignItems='center' container item justifyContent='center' sx={{ borderLeft: '1px solid', borderLeftColor: 'secondary.light' }} xs={2.5}>
+          <Grid alignItems='center' container item justifyContent='center' sx={{ borderLeft: '1px solid', borderLeftColor: 'secondary.light', px: '4px', width: 'fit-content' }}>
             <Typography fontSize='16px' fontWeight={400}>
               {crowdloan.fund.hasLeased ? t<string>('Winner') : t<string>('Ended')}
             </Typography>
@@ -122,10 +122,10 @@ export default function ShowCrowdloan({ selectedCrowdloan, api, chain, crowdloan
           </Typography>
         </Grid>
         <Grid container item justifyContent='space-between'>
-          <Typography fontSize='16px' fontWeight={300} lineHeight='34px' pl='10px' width='29%'>
+          <Typography fontSize='16px' fontWeight={300} lineHeight='34px' pl='10px' width='39%'>
             {t<string>('Raised/Cap')}
           </Typography>
-          <Grid container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400 }} width='71%'>
+          <Grid container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400 }} width='61%'>
             <Grid item sx={{ '> div': { lineHeight: '34px' } }} width='fit-content'>
               <FormatBalance2 decimalPoint={2} decimals={[decimal]} tokens={[token]} value={crowdloan.fund.raised} />
             </Grid>

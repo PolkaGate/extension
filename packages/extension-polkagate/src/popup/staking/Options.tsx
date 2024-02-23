@@ -97,7 +97,7 @@ export default function Options({ setShowStakingOptions, showStakingOptions }: P
             m: 'auto',
             width: '100%'
           }}
-          text={t('Stakers (nominators) with sufficient amount of tokens can choose solo staking.')}
+          text={t('Stakers (nominators) with a sufficient amount of tokens can choose solo staking.')}
           tipPlace='bottom'
           title={t('Solo Staking')}
         />

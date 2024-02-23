@@ -37,10 +37,10 @@ export default function Info({ address, info, setShowInfo, showInfo }: Props): R
     return (
       <>
         <Grid alignItems='center' container justifyContent='space-between' p='5px 15px'>
-          <Grid item sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }}>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }} xs>
             {label}
           </Grid>
-          <Grid item sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em' }} >
+          <Grid item sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', width: 'fit-content' }}>
             {BN.isBN(value)
               ? decimal && <>{amountToHuman(value, decimal)}</>
               : <ShowValue value={value} />

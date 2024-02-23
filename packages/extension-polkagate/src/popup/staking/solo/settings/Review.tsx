@@ -57,7 +57,7 @@ function RewardsDestination({ chain, newSettings, settings }: { settings: SoloSe
       </Typography>
       <Grid container item justifyContent='center'>
         {newSettings.payee === 'Staked'
-          ? <Typography sx={{ fontSize: '28px', fontWeight: 300 }}>
+          ? <Typography sx={{ fontSize: '28px', fontWeight: 300, textAlign: 'center' }}>
             {t('Add to staked amount')}
           </Typography>
           : <Grid container item justifyContent='center'>

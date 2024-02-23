@@ -117,7 +117,7 @@ export default function Index(): React.ReactElement {
         label={t('Fast Unstake')}
         withSteps={{ current: 1, total: 2 }}
       />
-      <Grid container direction='column' m='20px auto' width='85%'>
+      <Grid container direction='column' m='20px auto' width='90%'>
         <Typography fontSize='14px' fontWeight={300}>
           {t<string>('Checking fast unstake eligibility')}:
         </Typography>

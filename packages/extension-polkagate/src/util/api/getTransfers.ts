@@ -6,7 +6,7 @@ import request from 'umi-request';
 import { TransferRequest } from '../types';
 
 export function getTxTransfers (chainName: string, address: string, pageNum: number, pageSize: number): Promise<TransferRequest> {
-  return postReq(`https://${chainName}.api.subscan.io/api/scan/transfers`, {
+  return postReq(`https://${chainName}.api.subscan.io/api/v2/scan/transfers`, {
     address,
     // from_block: 8658091,
     // to_block: 8684569,

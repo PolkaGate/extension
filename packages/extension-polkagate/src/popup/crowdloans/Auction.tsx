@@ -137,7 +137,7 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
                     }
                     variant='determinate'
                   />
-                  <Typography color='white' fontSize='12px' fontWeight={400} sx={{ WebkitTextStroke: '3px transparent', backgroundClip: 'text', backgroundColor: '#1F7720', bottom: '2px', cursor: 'default', left: '10px', position: 'absolute', textAlign: 'center', width: '75px' }}>
+                  <Typography color='white' fontSize='12px' fontWeight={400} sx={{ WebkitTextStroke: '3px transparent', backgroundClip: 'text', backgroundColor: '#1F7720', bottom: '2px', cursor: 'default', left: '5px', position: 'absolute', textAlign: 'center', width: 'fit-content' }}>
                     {t('Auction Stage')}
                   </Typography>
                 </div>
@@ -176,7 +176,7 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
                     }
                     variant='determinate'
                   />
-                  <Typography color='white' fontSize='12px' fontWeight={400} sx={{ WebkitTextStroke: '3px transparent', backgroundClip: 'text', backgroundColor: '#629460', bottom: '2px', cursor: 'default', position: 'absolute', right: '70px', textAlign: 'center', width: '75px' }}>
+                  <Typography color='white' fontSize='12px' fontWeight={400} sx={{ WebkitTextStroke: '3px transparent', backgroundClip: 'text', backgroundColor: '#629460', bottom: '2px', cursor: 'default', position: 'absolute', right: '70px', textAlign: 'center', width: 'fit-content' }}>
                     {t('Ending stage')}
                   </Typography>
                 </div>

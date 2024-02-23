@@ -26,13 +26,12 @@ export interface Others {
   value: string;
 }
 
-
 /**
  * @description
- * This hooks return a list of all available validators (current and waiting) on the chain which the address is already tied with.
+ * This hooks return a list of all available validators (current and waiting) on the chain, which the address is already tied with.
  */
 
-export default function useValidators(address: string, validators?: AllValidators): AllValidators | null | undefined {
+export default function useValidators (address: string, validators?: AllValidators): AllValidators | null | undefined {
   const [info, setValidatorsInfo] = useState<AllValidators | undefined | null>();
   const [newInfo, setNewValidatorsInfo] = useState<AllValidators | undefined | null>();
   const endpoint = useEndpoint(address);

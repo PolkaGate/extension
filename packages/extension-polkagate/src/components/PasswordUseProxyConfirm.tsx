@@ -98,8 +98,8 @@ export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmT
               </Warning>
             </Grid>
             : <>
-              <Grid alignItems='center' container sx={{ ...style }}>
-                <Grid item xs={proxiesToSelect?.length ? 8 : 12}>
+              <Grid alignItems='center' container sx={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', ...style }}>
+                <Grid item>
                   <Password
                     disabled={disabled}
                     isError={isPasswordError}
@@ -155,7 +155,7 @@ export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmT
                       </>
                     }
                   >
-                    <Grid aria-label='useProxy' item onClick={goToSelectProxy} pl='10px' pt='10px' role='button' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}              >
+                    <Grid aria-label='useProxy' item onClick={goToSelectProxy} pl='5px' pt='10px' role='button' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
                       {selectedProxy ? t('Update proxy') : t('Use proxy')}
                     </Grid>
                   </Tooltip>

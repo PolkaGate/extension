@@ -116,12 +116,16 @@ export default function ImportLedger(): React.ReactElement {
   }, [accountIndex, address, addressOffset, genesis, name, onAction]);
 
   // select element is returning a string
-  const _onSetAccountIndex = useCallback((value: number) => {
-    setAccountIndex(Number(value));
+  const _onSetAccountIndex = useCallback((_value: number | string) => {
+    const index = accOps.current.find(({ text, value }) => text === _value || value === _value)?.value || 0;
+
+    setAccountIndex(Number(index));
   }, []);
 
-  const _onSetAddressOffset = useCallback((value: number) => {
-    setAddressOffset(Number(value));
+  const _onSetAddressOffset = useCallback((_value: number | string) => {
+    const index = addOps.current.find(({ text, value }) => text === _value || value === _value)?.value || 0;
+
+    setAddressOffset(Number(index));
   }, []);
 
   useEffect((): void => {
@@ -196,22 +200,24 @@ export default function ImportLedger(): React.ReactElement {
               </Grid>
               {showMore &&
                 <Grid container item justifyContent='space-between' mt='15px'>
-                  <Grid item md={5.5}>
+                  <Grid item md={5.5} xs={12}>
                     <Select
-                      defaultValue={accOps.current[0].text}
+                      defaultValue={accOps.current[0].value}
                       isDisabled={ledgerLoading}
-                      label={t<string>('account type')}
+                      label={t<string>('Account type')}
                       onChange={_onSetAccountIndex}
                       options={accOps.current}
+                      value={accountIndex}
                     />
                   </Grid>
-                  <Grid item md={5.5}>
+                  <Grid item md={5.5} xs={12}>
                     <Select
-                      defaultValue={addOps.current[0].text}
+                      defaultValue={addOps.current[0].value}
                       isDisabled={ledgerLoading}
-                      label={t<string>('address index')}
+                      label={t<string>('Address index')}
                       onChange={_onSetAddressOffset}
                       options={addOps.current}
+                      value={addressOffset}
                     />
                   </Grid>
 

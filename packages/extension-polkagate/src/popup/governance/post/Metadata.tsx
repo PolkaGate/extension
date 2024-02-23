@@ -53,8 +53,8 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
   const [expanded, setExpanded] = React.useState(false);
   const [showJson, setShowJson] = React.useState(false);
 
-  const referendumLinkOnsSubscan = () => 'https://' + chainName + '.subscan.io/referenda_v2/' + String(referendum?.index);
-  const mayBeBeneficiary = hexAddressToFormatted(referendum?.call?.args?.beneficiary, chain) || referendum?.call?.args?.beneficiary?.toString();
+  const referendumLinkOnsSubscan = () => `https://${chainName}.subscan.io/referenda_v2/${String(referendum?.index)}`;
+  const mayBeBeneficiary = referendum?.call?.args?.beneficiary?.value || hexAddressToFormatted(referendum?.call?.args?.beneficiary, chain) || referendum?.call?.args?.beneficiary?.toString() as unknown as  string;
 
   const handleChange = (event, isExpanded: boolean) => {
     setExpanded(isExpanded);

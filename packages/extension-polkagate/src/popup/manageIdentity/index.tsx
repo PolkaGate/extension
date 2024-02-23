@@ -354,7 +354,7 @@ export default function ManageIdentity(): React.ReactElement {
         {step === STEPS.UNSUPPORTED &&
           <Grid alignItems='center' container direction='column' display='block' item>
             <Typography fontSize='30px' fontWeight={700} p='30px 0 60px 80px'>
-              {t<string>('Manage  Identity')}
+              {t<string>('Manage Identity')}
             </Typography>
             <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', width: '400px' }}>
               <Warning

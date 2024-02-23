@@ -45,7 +45,7 @@ export default function PhishingDetected(): React.ReactElement {
           isBelowInput
           theme={theme}
         >
-          {t<string>('Note that this  website was reported on a community-driven, curated list. It might be incomplete or inaccurate. If you think that this website was flagged incorrectly')}, {<a href='https://github.com/polkadot-js/phishing/issues/new' rel='noreferrer' style={{ color: theme.palette.text.primary }} target='_blank'>{t<string>('please open an issue by clicking here')}.</a>}
+          {t<string>('Note that this website was reported on a community-driven, curated list. It might be incomplete or inaccurate. If you think that this website was flagged incorrectly')}, {<a href='https://github.com/polkadot-js/phishing/issues/new' rel='noreferrer' style={{ color: theme.palette.text.primary }} target='_blank'>{t<string>('please open an issue by clicking here')}.</a>}
         </Warning>
       </Grid>
     </>

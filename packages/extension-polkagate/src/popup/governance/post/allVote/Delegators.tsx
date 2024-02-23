@@ -115,12 +115,12 @@ export default function Delegators({ address, closeDelegators, handleCloseStanda
 
   const StandardSummary = () => (
     <Grid container sx={{ pb: '10px' }}>
-      <Grid container item textAlign='left' xs={2}>
+      <Grid container item textAlign='left' xs={2.3}>
         <Typography color='secondary.contrastText' fontSize='20px' fontWeight={500}>
           {t('Standard')}
         </Typography>
       </Grid>
-      <Grid alignItems='baseline' container item sx={{ pl: '30px' }} textAlign='left' xs={10}>
+      <Grid alignItems='baseline' container item sx={{ pl: '30px' }} textAlign='left' xs>
         <AmountVal
           label={t('Vote')}
           value={getVoteValue(standard)}
@@ -147,12 +147,12 @@ export default function Delegators({ address, closeDelegators, handleCloseStanda
 
   const DelegatedSummary = () => (
     <Grid container item sx={{ py: '7px' }}>
-      <Grid container item textAlign='left' xs={2}>
+      <Grid container item textAlign='left' xs={2.3}>
         <Typography color='secondary.contrastText' fontSize='20px' fontWeight={500}>
           {t('Delegated')}
         </Typography>
       </Grid>
-      <Grid container item sx={{ pl: '30px' }} textAlign='left' xs={10}>
+      <Grid container item sx={{ pl: '30px' }} textAlign='left' xs>
         <AmountVal
           label={t('Vote')}
           value={standard.delegatedVotingPower}
@@ -181,12 +181,12 @@ export default function Delegators({ address, closeDelegators, handleCloseStanda
               }}
             />
           </Grid>
-          <Grid item xs={3}>
+          <Grid item sx={{ width: 'fit-content' }}>
             <Typography fontSize='22px' fontWeight={700}>
               {t('Vote Details of')}
             </Typography>
           </Grid>
-          <Grid item sx={{ pl: '6px' }} xs={7.7}>
+          <Grid item sx={{ pl: '6px' }} xs>
             <Identity
               api={api}
               chain={chain}
@@ -203,7 +203,7 @@ export default function Delegators({ address, closeDelegators, handleCloseStanda
               }}
             />
           </Grid>
-          <Grid item xs={1}>
+          <Grid item xs={0.5}>
             <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
           </Grid>
         </Grid>

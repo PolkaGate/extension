@@ -50,8 +50,7 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isHi
   const onExtension = useIsExtensionPopup();
 
   useEffect((): void => {
-    // eslint-disable-next-line no-void
-    api && api.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => r.isSome && setRecoverable(r.unwrap()));
+    api && api.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => setRecoverable(!!r.isSome));
   }, [api, formatted]);
 
   useEffect((): void => {
