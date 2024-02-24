@@ -19,15 +19,16 @@ interface Props {
   disabled?: boolean;
   isBusy?: boolean;
   variant?: 'text' | 'outlined';
+  width?: string;
 }
 // TODO: can replace ButtonWithCancel later
 
-export default function TwoButtons({ disabled = false, isBusy = false, mt, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, variant = 'outlined' }: Props): React.ReactElement<Props> {
+export default function TwoButtons({ disabled = false, isBusy = false, mt, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, variant = 'outlined', width = '88%' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
   return (
-    <Grid container justifyContent='space-between' margin='auto' ml='6%' mt={mt} sx={{ bottom: mt ? 0 : '25px', position: mt ? 'inherit' : 'absolute' }} width='88%'>
+    <Grid container justifyContent='space-between' margin='auto' ml='6%' mt={mt} sx={{ bottom: mt ? 0 : '25px', position: mt ? 'inherit' : 'absolute' }} width={width}>
       <Grid item xs={5.8}>
         <Button
           disabled={isBusy}

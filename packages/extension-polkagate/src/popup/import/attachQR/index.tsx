@@ -1,14 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button, Grid, Typography } from '@mui/material';
+/* eslint-disable react/jsx-max-props-per-line */
+
+import { Button, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { QrScanAddress } from '@polkadot/react-qr';
 
 import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, PButton, Warning } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { createAccountExternal, createAccountSuri, createSeed } from '../../../messaging';
+import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from '../../../messaging';
 import HeaderBrand from '../../../partials/HeaderBrand';
 import Name from '../../../partials/Name';
 
@@ -21,6 +23,7 @@ interface QrAccount {
 
 export default function AttachQR(): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
   const [account, setAccount] = useState<QrAccount | null>(null);
@@ -36,19 +39,25 @@ export default function AttachQR(): React.ReactElement {
     !accounts.length && onAction();
   }, [accounts, onAction]);
 
-  const _onCreate = useCallback(() => {
+  const setQrLabelAndGoToHome = useCallback(() => {
+    const metaData = JSON.stringify({ isQR: true });
+
+    updateMeta(String(address), metaData).then(() => onAction('/')).catch(console.error);
+  }, [address, onAction]);
+
+  const onCreate = useCallback(() => {
     if (account && name) {
       if (account.isAddress) {
         createAccountExternal(name, account.content, account.genesisHash)
-          .then(() => onAction('/'))
+          .then(() => setQrLabelAndGoToHome())
           .catch((error: Error) => console.error(error));
       } else if (password) {
         createAccountSuri(name, password, account.content, 'sr25519', account.genesisHash)
-          .then(() => onAction('/'))
+          .then(() => setQrLabelAndGoToHome())
           .catch((error: Error) => console.error(error));
       }
     }
-  }, [account, name, onAction, password]);
+  }, [account, name, password, setQrLabelAndGoToHome]);
 
   const _setAccount = useCallback(
     (qrAccount: QrAccount) => {
@@ -78,19 +87,19 @@ export default function AttachQR(): React.ReactElement {
   }, [onAction, stepOne]);
 
   const _onError = useCallback((error: string) => {
-    console.log('error:', error)
     setInvalidQR(String(error).includes('Invalid prefix'));
   }, []);
 
-  const _onOkay = useCallback(() => {
+  const onOkay = useCallback(() => {
     setInvalidQR(false);
   }, []);
 
   const QRWarning = () => (
-    <Grid item container direction='column' justifyContent='center' alignItems='center' fontSize={14} pt='30px' pb='80px' border={1.5} mx='28px' borderColor='warning.main'>
+    <Grid alignItems='center' border={1.5} borderColor='warning.main' container direction='column' fontSize={14} item justifyContent='center' mx='28px' pb='80px' pt='30px'>
       <Grid item>
         <Warning
           isDanger
+          theme={theme}
         >
           {t('Invalid QR code.')}
         </Warning>
@@ -99,7 +108,7 @@ export default function AttachQR(): React.ReactElement {
         {t('Please try another one.')}
       </Grid>
       <Button
-        onClick={_onOkay}
+        onClick={onOkay}
         sx={{
           borderColor: 'secondary.main',
           borderRadius: '5px',
@@ -112,7 +121,7 @@ export default function AttachQR(): React.ReactElement {
         }}
         variant='contained'
       >
-        {t<string>('Okay')}
+        {t('Okay')}
       </Button>
     </Grid>
   );
@@ -129,31 +138,11 @@ export default function AttachQR(): React.ReactElement {
         }}
       />
       {stepOne &&
-        <div>
-          <Typography
-            fontSize='14px'
-            fontWeight={300}
-            m='auto'
-            pt='20px'
-            textAlign='center'
-            width='92%'
-          >
+        <>
+          <Typography fontSize='14px' fontWeight={300} m='auto' pt='20px' textAlign='center' width='92%'>
             {t('Scan address QR code')}
           </Typography>
-          <Grid
-            alignItems='center'
-            border='1px dashed'
-            borderColor='secondary.light'
-            borderRadius='5px'
-            boxSizing='border-box'
-            container
-            fontSize='16px'
-            height='328px'
-            justifyContent='center'
-            m='10px 15px'
-            sx={{ backgroundColor: 'background.paper' }}
-            width='328px'
-          >
+          <Grid alignItems='center' border='1px dashed' borderColor='secondary.light' borderRadius='5px' boxSizing='border-box' container fontSize='16px' height='328px' justifyContent='center' m='10px 15px' sx={{ backgroundColor: 'background.paper' }} width='328px'>
             {!account &&
               <>
                 {!invalidQR
@@ -167,51 +156,39 @@ export default function AttachQR(): React.ReactElement {
               </>
             }
           </Grid>
-          <Typography
-            fontSize='14px'
-            fontWeight={300}
-            m='auto'
-            pt='20px'
-            textAlign='center'
-            width='92%'
-          >
+          <Typography fontSize='14px' fontWeight={300} m='auto' pt='20px' textAlign='center' width='92%'          >
             {t('Hold the QR code in front of the device’s camera')}
           </Typography>
-        </div>
+        </>
       }
-      {
-        !stepOne && account &&
+      {!stepOne && account &&
         <Address
           address={address}
           name={name}
         />
       }
-      {
-        !stepOne && account &&
+      {!stepOne && account &&
         (
           account?.isAddress
-            ? (
-              <div>
-                <Name
-                  isFocused
-                  onChange={setName}
-                  value={name || ''}
-                />
-                <PButton
-                  _onClick={_onCreate}
-                  _variant='contained'
-                  disabled={!name}
-                  text={t<string>('Add account')}
-                />
-              </div>
-            )
-            : (
-              <AccountNamePasswordCreation
-                buttonLabel={t<string>('Add account')}
-                onCreate={_onCreate}
-                onNameChange={setName}
-                onPasswordChange={setPassword}
-              />)
+            ? <>
+              <Name
+                isFocused
+                onChange={setName}
+                value={name || ''}
+              />
+              <PButton
+                _onClick={onCreate}
+                _variant='contained'
+                disabled={!name}
+                text={t('Add account')}
+              />
+            </>
+            : <AccountNamePasswordCreation
+              buttonLabel={t('Add account')}
+              onCreate={onCreate}
+              onNameChange={setName}
+              onPasswordChange={setPassword}
+            />
         )
       }
     </>

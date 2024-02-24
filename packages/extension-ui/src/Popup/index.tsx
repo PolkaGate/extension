@@ -11,7 +11,6 @@ import { Route, Switch } from 'react-router';
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
 import AddWatchOnly from '@polkadot/extension-polkagate/src/popup/import/addWatchOnly';
-import AddWatchOnlyFullScreen from '@polkadot/extension-polkagate/src/popup/import/addWatchOnlyFullScreen';
 import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
 import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
 import LoginPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement';
@@ -35,7 +34,9 @@ import Governance from '../../../extension-polkagate/src/popup/governance';
 import ReferendumPost from '../../../extension-polkagate/src/popup/governance/post';
 import History from '../../../extension-polkagate/src/popup/history';
 import Accounts from '../../../extension-polkagate/src/popup/home/ManageHome';
+import AddWatchOnlyFullScreen from '../../../extension-polkagate/src/popup/import/addWatchOnlyFullScreen';
 import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
+import AttachQrFullScreen from '../../../extension-polkagate/src/popup/import/attachQrFullScreen';
 import ImportLedger from '../../../extension-polkagate/src/popup/import/importLedger';
 import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeedFullScreen';
 import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJSONFullScreen';
@@ -253,6 +254,7 @@ export default function Popup(): React.ReactElement {
                                   <Route path='/import/add-watch-only'>{wrapWithErrorBoundary(<AddWatchOnly />, 'import-add-watch-only')}</Route>
                                   <Route path='/import/add-watch-only-full-screen'>{wrapWithErrorBoundary(<AddWatchOnlyFullScreen />, 'import-add-watch-only-full-screen')}</Route>
                                   <Route path='/import/attach-qr'>{wrapWithErrorBoundary(<AttachQR />, 'attach-qr')}</Route>
+                                  <Route path='/import/attach-qr-full-screen'>{wrapWithErrorBoundary(<AttachQrFullScreen />, 'attach-qr-full-screen')}</Route>
                                   <Route path='/login-password'>{wrapWithErrorBoundary(<LoginPassword />, 'manage-login-password')}</Route>
                                   <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
                                   <Route path='/manageIdentity/:address'>{wrapWithErrorBoundary(<ManageIdentity />, 'manage-identity')}</Route>

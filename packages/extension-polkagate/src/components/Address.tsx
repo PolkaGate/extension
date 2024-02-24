@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { IconTheme } from '@polkadot/react-identicon/types';
@@ -84,7 +86,7 @@ function recodeAddress(address: string, accounts: AccountWithChildren[], chain: 
 
 const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
 
-function Address({ address, backgroundColor, className, genesisHash, isHardware, margin = '20px auto', name, showCopy = true, style, type: givenType, width = '92%' }: Props): React.ReactElement<Props> {
+function Address({ address, backgroundColor, genesisHash, isHardware, margin = '20px auto', name, showCopy = true, style, type: givenType, width = '92%' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const accountName = useAccountName(address);
@@ -122,27 +124,8 @@ function Address({ address, backgroundColor, className, genesisHash, isHardware,
   ) as IconTheme;
 
   return (
-    <Grid
-      className={className}
-      container
-      direction={'row'}
-      justifyContent={'space-between'}
-      sx={{
-        backgroundColor: backgroundColor || 'background.paper',
-        border: '0.5px solid',
-        borderColor: 'secondary.light',
-        borderRadius: '5px',
-        height: '70px',
-        m: { margin },
-        p: '14px 8px',
-        width: { width },
-        ...style
-      }}
-    >
-      <Grid
-        item
-        width='40px'
-      >
+    <Grid container direction={'row'} justifyContent={'space-between'} sx={{ backgroundColor: backgroundColor || 'background.paper', border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', height: '70px', m: { margin }, p: '14px 8px', width: { width }, ...style }}>
+      <Grid item width='40px'>
         <Identicon
           className='identityIcon'
           iconTheme={theme}
@@ -151,28 +134,11 @@ function Address({ address, backgroundColor, className, genesisHash, isHardware,
           value={formatted || address}
         />
       </Grid>
-      <Grid
-        container
-        direction={'column'}
-        item
-        width='calc(95% - 40px)'
-      >
-        <Typography
-          fontSize={'16px'}
-          fontWeight={400}
-          maxWidth='95%'
-          overflow='hidden'
-          variant='h3'
-          whiteSpace='nowrap'
-        >
+      <Grid container direction={'column'} item width='calc(95% - 40px)'>
+        <Typography fontSize={'16px'} fontWeight={400} maxWidth='95%' overflow='hidden' variant='h3' whiteSpace='nowrap'>
           {name || accountName || t('<unknown>')}
         </Typography>
-        <Grid
-          container
-          direction={'row'}
-          item
-          justifyContent={'space-between'}
-        >
+        <Grid container direction={'row'} item justifyContent={'space-between'}>
           {(formatted || address)
             ? (
               <ShortAddress
@@ -187,12 +153,7 @@ function Address({ address, backgroundColor, className, genesisHash, isHardware,
                 }}
               />)
             : (
-              <Typography
-                fontSize={'10px'}
-                fontWeight={300}
-                variant='h3'
-                whiteSpace='nowrap'
-              >
+              <Typography fontSize={'10px'} fontWeight={300} variant='h3' whiteSpace='nowrap'>
                 {t('<unknown>')}
               </Typography>)
           }

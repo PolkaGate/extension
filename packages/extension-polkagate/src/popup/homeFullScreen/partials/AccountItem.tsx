@@ -11,6 +11,7 @@ import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { useAccountAssets, useApi, useChain, useFormatted, useTranslation } from '../../../hooks';
 import QuickActionFullScreen from '../../../partials/QuickActionFullScreen';
 import AccountInformation from '../partials/AccountInformation';
+import { label } from '../../home/AccountsTree';
 
 interface Props {
   account: AccountWithChildren;
@@ -32,27 +33,11 @@ function AccountItem({ account, hideNumbers, isChild, parentName, quickActionOpe
 
   const [assetId, setAssetId] = useState<number | undefined>();
 
-  const label = useMemo((): string | undefined => {
-    if (account?.isHardware) {
-      return t('Ledger');
-    }
-
-    if (account?.isExternal) {
-      return t('Watch-only');
-    }
-
-    if (account?.parentAddress) {
-      return t('Derived from {{parentName}}', { replace: { parentName } });
-    }
-
-    return undefined;
-  }, [account, parentName, t]);
-
   return (
     <>
       <Grid container item ref={containerRef} sx={{ borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', overflow: 'hidden', position: 'relative' }} width='760px'>
         <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', ml: 5, position: 'absolute', px: 1, width: 'fit-content' }}>
-          {label}
+          {label(account, parentName, t)}
         </Grid>
         <AccountInformation
           accountAssets={accountAssets}

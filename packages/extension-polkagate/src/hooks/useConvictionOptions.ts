@@ -7,9 +7,9 @@
  * This hook will get and calculate the conviction options
  */
 
+import { TFunction } from '@polkagate/apps-config/types';
 import { useCallback, useEffect, useState } from 'react';
 
-import { TFunction } from '@polkagate/apps-config/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 

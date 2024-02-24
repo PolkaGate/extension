@@ -69,7 +69,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
   }, [onAction]);
 
   const _goToAttachQR = useCallback(() => {
-    onAction('/import/attach-qr');
+    onAction('/import/attach-qr-full-screen');
   }, [onAction]);
 
   const _goToImportLedger = useCallback((): void => {
@@ -108,6 +108,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
         />
         <TaskButton
           borderColor={borderColor}
+          disabled={settings.camera !== 'on'}
           extra={settings.camera !== 'on' && <Grid fontSize='12px' item letterSpacing='-1.5%' onClick={toggleSettingSubMenu} sx={{ cursor: 'pointer' }} textAlign='left'>
             {t('Allow QR camera access in the extension’s setting in order to use this feature')}
             <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 12, mb: '-2px', stroke: '#BA2882' }} />

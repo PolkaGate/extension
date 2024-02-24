@@ -46,6 +46,7 @@ export interface AccountJson extends KeyringPair$Meta {
   balances?: string;
   stakingAccount?: string;
   identities?: string;
+  isQR?: boolean;
 }
 
 export type AccountWithChildren = AccountJson & {
