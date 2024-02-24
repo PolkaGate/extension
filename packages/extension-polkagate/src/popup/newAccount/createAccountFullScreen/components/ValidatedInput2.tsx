@@ -6,9 +6,9 @@
 import { Grid, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
-import { Affirm, Warning } from '../../../components';
-import { useIsMounted, useTranslation } from '../../../hooks';
-import { Result, Validator } from '../../../util/validators';
+import { Affirm, Warning } from '../../../../components';
+import { useIsMounted, useTranslation } from '../../../../hooks';
+import { Result, Validator } from '../../../../util/validators';
 
 interface BasicProps {
   isError?: boolean;

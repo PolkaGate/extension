@@ -9,7 +9,7 @@ import { Grid, IconButton, SxProps, Theme, Tooltip, Typography, useTheme } from 
 import React, { useCallback, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
-import { useTranslation } from '../../../hooks';
+import { useTranslation } from '../../../../hooks';
 
 interface Props {
   value: string;

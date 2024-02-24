@@ -8,10 +8,10 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 
 import { canDerive } from '@polkadot/extension-base/utils';
 
-import { AccountContext, ActionContext, Address, ChainLogo, Label, Password, PButton, Warning } from '../../components';
-import useTranslation from '../../hooks/useTranslation';
-import { validateAccount, validateDerivationPath } from '../../messaging';
-import { nextDerivationPath } from '../../util/nextDerivationPath';
+import { AccountContext, ActionContext, Address, ChainLogo, Label, Password, PButton, Warning } from '../../../components';
+import useTranslation from '../../../hooks/useTranslation';
+import { validateAccount, validateDerivationPath } from '../../../messaging';
+import { nextDerivationPath } from '../../../util/nextDerivationPath';
 import AddressDropdown from './AddressDropdown';
 import DerivationPath from './DerivationPath';
 

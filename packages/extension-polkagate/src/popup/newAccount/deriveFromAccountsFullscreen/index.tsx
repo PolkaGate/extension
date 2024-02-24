@@ -11,14 +11,14 @@ import { useParams } from 'react-router';
 
 import { canDerive } from '@polkadot/extension-base/utils';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext, Label, Password, PButton, Warning } from '../../components';
-import { useFullscreen, useTranslation } from '../../hooks';
-import { deriveAccount, validateAccount, validateDerivationPath } from '../../messaging';
-import { nextDerivationPath } from '../../util/nextDerivationPath';
-import { AddressState } from '../../util/types';
+import { AccountContext, AccountNamePasswordCreation, ActionContext, Label, Password, PButton, Warning } from '../../../components';
+import { useFullscreen, useTranslation } from '../../../hooks';
+import { deriveAccount, validateAccount, validateDerivationPath } from '../../../messaging';
+import { nextDerivationPath } from '../../../util/nextDerivationPath';
+import { AddressState } from '../../../util/types';
 import AddressDropdown from '../deriveAccount/AddressDropdown';
 import DerivationPath from '../deriveAccount/DerivationPath';
-import { FullScreenHeader } from '../governance/FullScreenHeader';
+import { FullScreenHeader } from '../../governance/FullScreenHeader';
 
 // match any single slash
 const singleSlashRegex = /([^/]|^)\/([^/]|$)/;

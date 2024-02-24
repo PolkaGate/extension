@@ -4,8 +4,8 @@
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { Checkbox2 as Checkbox, MnemonicSeed, PButton, Warning } from '../../components';
-import { useTranslation } from '../../hooks';
+import { Checkbox2 as Checkbox, MnemonicSeed, PButton, Warning } from '../../../components';
+import { useTranslation } from '../../../hooks';
 
 interface Props {
   onNextStep: () => void;
