@@ -9,9 +9,9 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography } from '@mui/material';
 import { keyframes, Theme } from '@mui/material/styles';
 import React, { useCallback, useContext, useState } from 'react';
-import { riot } from '../assets/icons';
+
 import { AccountContext, ActionContext, MenuItem, TwoButtons, Warning } from '../components';
-import { useManifest, useTranslation } from '../hooks';
+import { useTranslation } from '../hooks';
 import { tieAccount } from '../messaging';
 import { TEST_NETS } from '../util/constants';
 import ImportAccSubMenu from './ImportAccSubMenu';
