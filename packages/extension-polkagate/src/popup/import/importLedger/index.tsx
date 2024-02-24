@@ -132,7 +132,7 @@ export default function ImportLedger(): React.ReactElement {
     !accounts.length && onAction();
   }, [accounts, onAction]);
 
-  const onCloseTab = useCallback(() => window.close(), []);
+  const onCancel = useCallback(() => onAction('/'), [onAction]);
 
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
@@ -245,9 +245,9 @@ export default function ImportLedger(): React.ReactElement {
                 isBusy={ledgerLocked ? false : isBusy}
                 mt='30px'
                 onPrimaryClick={ledgerLocked ? refresh : _onSave}
-                onSecondaryClick={onCloseTab}
+                onSecondaryClick={onCancel}
                 primaryBtnText={ledgerLocked ? t<string>('Refresh') : t<string>('Import')}
-                secondaryBtnText={t<string>('Close tab')}
+                secondaryBtnText={t<string>('Cancel')}
               />
             </Grid>
           </Grid>

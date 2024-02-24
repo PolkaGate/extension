@@ -4,9 +4,9 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useContext,useMemo, useState } from 'react';
 
-import { ChainLogo, Identity, Motion, ShowBalance, SignArea2, WrongPasswordAlert } from '../../components';
+import { ActionContext, ChainLogo, Identity, Motion, ShowBalance, SignArea2, WrongPasswordAlert } from '../../components';
 import { useApi, useChain } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
@@ -32,6 +32,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
   const api = useApi(address);
   const chain = useChain(address);
   const theme = useTheme();
+  const onAction = useContext(ActionContext);
 
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
@@ -53,8 +54,8 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
 
   const closeConfirmation = useCallback(() => {
     setRefresh(true);
-    setStep(STEPS.INDEX);
-  }, [setRefresh, setStep]);
+    onAction(`/account/${address}/`);
+  }, [address, onAction, setRefresh]);
 
   return (
     <Motion style={{ height: '100%', paddingInline: '10%', width: '100%' }}>

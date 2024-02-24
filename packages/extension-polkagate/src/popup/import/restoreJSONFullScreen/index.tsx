@@ -25,7 +25,7 @@ import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
-export default function RestoreJson (): React.ReactElement {
+export default function RestoreJson(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -120,7 +120,7 @@ export default function RestoreJson (): React.ReactElement {
     setPassword('');
   }, []);
 
-  const onCloseTab = useCallback(() => window.close(), []);
+  const onCancel = useCallback(() => onAction('/'), [onAction]);
 
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>
@@ -211,11 +211,11 @@ export default function RestoreJson (): React.ReactElement {
                 mt='1px'
                 onPrimaryClick={onRestore}
                 onSecondaryClick={stepOne
-                  ? onCloseTab
+                  ? onCancel
                   : onBack}
                 primaryBtnText={t<string>('Restore')}
                 secondaryBtnText={stepOne
-                  ? t<string>('Close tab')
+                  ? t<string>('Cancel')
                   : t<string>('Back')}
               />
             </Grid>

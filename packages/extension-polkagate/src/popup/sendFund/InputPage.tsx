@@ -413,7 +413,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
               onPrimaryClick={() => setStep(STEPS.REVIEW)}
               onSecondaryClick={backToDetail}
               primaryBtnText={t<string>('Next')}
-              secondaryBtnText={t<string>('Back to Account page')}
+              secondaryBtnText={t<string>('Back')}
             />
           </Grid>
         </Grid>

@@ -6,7 +6,7 @@
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { Motion, ShortAddress, TwoButtons } from '../../components';
+import { Motion, PButton, ShortAddress } from '../../components';
 import { useAccountDisplay, useTranslation } from '../../hooks';
 import { ThroughProxy } from '../../partials';
 import { NameAddress, TxInfo } from '../../util/types';
@@ -43,7 +43,7 @@ const Account = ({ info, label }: { label: string, info: NameAddress }) => {
   );
 };
 
-export default function Confirmation({ handleDone, txInfo }: Props): React.ReactElement {
+export default function Confirmation ({ handleDone, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -133,12 +133,10 @@ export default function Confirmation({ handleDone, txInfo }: Props): React.React
         }
       </Grid>
       <Grid container sx={{ '> div': { ml: '30%', mt: '15px', width: '100%' } }}>
-        <TwoButtons
-          mt='15px'
-          onPrimaryClick={handleDone}
-          onSecondaryClick={() => { window.close() }}
-          primaryBtnText={t<string>('Done')}
-          secondaryBtnText={t<string>('Close tab')}
+        <PButton
+          _mt='15px'
+          _onClick={handleDone}
+          text={t<string>('Done')}
         />
       </Grid>
     </Motion>

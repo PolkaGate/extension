@@ -154,7 +154,7 @@ export default function ImportSeed(): React.ReactElement {
     setPassword(pass);
   }, []);
 
-  const onCloseTab = useCallback(() => window.close(), []);
+  const onCancel = useCallback(() => onAction('/'), [onAction]);
 
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>
@@ -268,9 +268,9 @@ export default function ImportSeed(): React.ReactElement {
                 isBusy={isBusy}
                 mt='1px'
                 onPrimaryClick={onCreate}
-                onSecondaryClick={onCloseTab}
+                onSecondaryClick={onCancel}
                 primaryBtnText={t<string>('Import')}
-                secondaryBtnText={t<string>('Close tab')}
+                secondaryBtnText={t<string>('Cancel')}
               />
             </Grid>
           </Grid>
