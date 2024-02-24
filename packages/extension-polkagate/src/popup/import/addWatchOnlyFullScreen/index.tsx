@@ -117,20 +117,26 @@ export default function AddWatchOnly(): React.ReactElement {
             setAddress={setRealAddress}
             style={{ m: '30px auto 0', width: '100%' }}
           />
-          <Name
-            onChange={onNameChange}
-            style={{ width: '100%' }}
-          />
-          <SelectChain
-            address={realAddress}
-            defaultValue={chain?.genesisHash}
-            disabledItems={disabledItems}
-            icon={getLogo(chain ?? undefined)}
-            label={t<string>('Select the chain')}
-            onChange={onChangeGenesis}
-            options={genesisOptions}
-            style={{ my: '15px', width: '100%' }}
-          />
+          <Grid container justifyContent='space-between'>
+            <Grid item md={5.5} xs={12}>
+              <Name
+                onChange={onNameChange}
+                style={{ width: '100%' }}
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <SelectChain
+                address={realAddress}
+                defaultValue={chain?.genesisHash}
+                disabledItems={disabledItems}
+                icon={getLogo(chain ?? undefined)}
+                label={t<string>('Select the chain')}
+                onChange={onChangeGenesis}
+                options={genesisOptions}
+                style={{ my: '13px', width: '100%' }}
+              />
+            </Grid>
+          </Grid>
           <ProxyTable
             chain={realAddress ? chain : undefined}
             label={t<string>('Proxies')}
