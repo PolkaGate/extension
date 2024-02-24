@@ -10,6 +10,7 @@
 
 import type { AccountId } from '@polkadot/types/interfaces';
 
+import { FilterAltOutlined as FilterIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -282,11 +283,8 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
                     value={searchKeyword ?? ''}
                   />
                 </Grid>
-                <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' onClick={onFilters} pl='15px' py='10px' width='27%' sx={{ cursor: 'pointer' }}>
-                  {t('Filters')}
-                  <Grid alignItems='center' container item justifyContent='center' pl='10px' sx={{ cursor: 'pointer', width: '40%' }}>
-                    <vaadin-icon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
-                  </Grid>
+                <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-end' onClick={onFilters} pl='15px' py='10px' width='27%' sx={{ cursor: 'pointer' }}>
+                  <FilterIcon sx={{ color: 'secondary.light' }} />
                 </Grid>
                 <Grid item xs={12}>
                   {validatorsToList &&

@@ -86,7 +86,7 @@ export default function AmountWithOptionsAndLockAmount({ accountLocks, amount, b
             </Infotip2>
           </Grid>
           <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
-            <Infotip2 showInfoMark text={alreadyLockedTooltipText || 'Fetching ...'}>
+            <Infotip2 showInfoMark text={alreadyLockedTooltipText || t('Fetching ...')}>
               <ShowBalance balance={lockedAmount} decimal={decimal} decimalPoint={2} token={token} />
             </Infotip2>
           </Grid>
@@ -98,8 +98,7 @@ export default function AmountWithOptionsAndLockAmount({ accountLocks, amount, b
   return (
     <>
       <AmountWithOptions
-        inputWidth={8.4}
-        label={t<string>('Delegate Vote Value ({{token}})', { replace: { token } })}
+        label={t<string>('Amount ({{token}})', { replace: { token } })}
         onChangeAmount={onValueChange}
         onPrimary={onMaxAmount}
         onSecondary={onLockedAmount}

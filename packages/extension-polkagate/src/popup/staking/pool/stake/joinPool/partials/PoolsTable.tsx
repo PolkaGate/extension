@@ -5,7 +5,7 @@
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { MoreVert as MoreVertIcon, SearchOff as SearchOffIcon, SearchOutlined as SearchOutlinedIcon } from '@mui/icons-material';
+import { FilterAltOutlined as FilterIcon, MoreVert as MoreVertIcon, SearchOff as SearchOffIcon, SearchOutlined as SearchOutlinedIcon } from '@mui/icons-material';
 import { Divider, FormControlLabel, Grid, LinearProgress, Radio, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useRef, useState } from 'react';
@@ -112,23 +112,12 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
 
   return (
     <Grid sx={{ ...style }}>
-      <Grid alignItems='center' container item justifyContent='space-between'>
-        <Grid alignItems='center' container item width='fit-content'>
-          <Grid item>
-            {t<string>('Pick 1 of ')}
-          </Grid>
-          <Grid item px='5px'>
-            <ShowValue value={totalNumberOfPools} width='35px' />
-          </Grid>
-          <Grid item>
-            {t<string>('to join')}
-          </Grid>
+      <Grid alignItems='center' container item justifyContent='space-between' wrap='nowrap'>
+        <Grid item textAlign='left' width='fit-content'>
+          {t<string>('Pick 1 of {{totalNumberOfPools}} to join', { replace: { totalNumberOfPools: totalNumberOfPools || ' . . . ' } })}
         </Grid>
         <Div height='19px' />
         <Grid alignItems='center' container item onClick={onSearchClick} sx={{ cursor: 'pointer' }} width='fit-content'>
-          <Typography fontWeight={400} mr='5px'>
-            {t('Search')}
-          </Typography>
           {isSearching
             ? <SearchOffIcon sx={{ color: 'secondary.light' }} />
             : <SearchOutlinedIcon sx={{ color: 'secondary.light' }} />
@@ -136,10 +125,7 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
         </Grid>
         <Div height='19px' />
         <Grid alignItems='center' container item onClick={onFilters} sx={{ cursor: 'pointer' }} width='fit-content'>
-          <Typography fontWeight={400} mr='5px'>
-            {t('Filters')}
-          </Typography>
-          <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '30px' }} />
+          <FilterIcon sx={{ color: 'secondary.light' }} />
         </Grid>
       </Grid>
       {isSearching &&
@@ -199,14 +185,6 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
                           {commission}%
                         </Grid>
                       </Grid>
-                      {/* <Grid alignItems='center' container item width='fit-content'>
-                      <Typography fontSize='12px' fontWeight={300} lineHeight='23px'>
-                        {t<string>('Index:')}
-                      </Typography>
-                      <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
-                        {pool.poolId?.toString()}
-                      </Grid>
-                    </Grid> */}
                       <Div />
                       <Grid alignItems='end' container item width='fit-content'>
                         <Typography fontSize='12px' fontWeight={300} lineHeight='23px'>

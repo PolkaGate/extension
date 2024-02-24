@@ -135,7 +135,16 @@ export function getSubstrateAddress(address: AccountId | string | undefined): st
     return undefined;
   }
 
-  const publicKey = decodeAddress(address);
+  let publicKey;
+
+  // eslint-disable-next-line no-useless-catch
+  try {
+    publicKey = decodeAddress(address, true);
+  } catch (e) {
+    console.log(e);
+
+    return undefined;
+  }
 
   return encodeAddress(publicKey, 42);
 }
@@ -215,7 +224,7 @@ export const getWebsiteFavicon = (url: string | undefined): string => {
   return 'https://s2.googleusercontent.com/s2/favicons?domain=' + url;
 };
 
-export function remainingTime(blocks: number, noMinutes?: boolean): string {
+export function remainingTime (blocks: number, noMinutes?: boolean): string {
   let mins = Math.floor(blocks * BLOCK_RATE / 60);
 
   if (!mins) {

@@ -8,8 +8,6 @@
  * this component shows an account information in detail
  * */
 
-import '@vaadin/icons';
-
 import { faCoins, faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
@@ -124,7 +122,7 @@ export default function AccountDetails(): React.ReactElement {
       : showStakingOptions
         ? theme.palette.secondary.main
         : theme.palette.text.primary
-    , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
+  , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
 
   const goToOthers = useCallback(() => {
     setShowOthers(true);
@@ -225,7 +223,7 @@ export default function AccountDetails(): React.ReactElement {
               </>
             }
           </Grid>
-          : <StakingOption showStakingOptions={showStakingOptions} setShowStakingOptions={setShowStakingOptions} />
+          : <StakingOption setShowStakingOptions={setShowStakingOptions} showStakingOptions={showStakingOptions} />
         }
         <Grid container justifyContent='space-around' sx={{ bgcolor: 'background.default', borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, height: '62px', left: '4%', position: 'absolute', pt: '7px', pb: '5px', width: '92%' }} >
           <HorizontalMenuItem

@@ -42,7 +42,7 @@ const CONDITION_MAP = {
   REMOVE_ALL: 2
 };
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -336,9 +336,10 @@ export default function Index (): React.ReactElement {
         />
       }
       {!helperButton &&
-        <Typography fontSize='16px' fontWeight={400} m='20px 0 0' textAlign='center'>
-          {t<string>('Your rewards wil be automatically withdrawn.')}
-        </Typography>}
+        <Typography fontSize='12px' fontWeight={400} m='20px 0 0' textAlign='center'>
+          {t<string>('Outstanding rewards automatically withdrawn after transaction')}
+        </Typography>
+      }
       <PButton
         _onClick={goToReview}
         disabled={!amount || amount === '0' || !staked || staked?.isZero() || !estimatedFee || alert}
