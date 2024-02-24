@@ -7,8 +7,8 @@ import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 
-import { Address, ChainLogo } from '../../components';
-import { useOutsideClick } from '../../hooks';
+import { Address, ChainLogo } from '../../../../components';
+import { useOutsideClick } from '../../../../hooks';
 
 interface Props {
   allAddresses: [string, string | null, string | undefined][];

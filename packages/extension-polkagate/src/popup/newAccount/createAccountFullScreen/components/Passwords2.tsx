@@ -3,9 +3,9 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Password } from '../../../components';
-import { useTranslation } from '../../../hooks';
-import { allOf, isNotShorterThan, isSameAs, Validator } from '../../../util/validators';
+import { Password } from '../../../../components';
+import { useTranslation } from '../../../../hooks';
+import { allOf, isNotShorterThan, isSameAs,Validator } from '../../../../util/validators';
 import ValidatedInput2 from './ValidatedInput2';
 
 interface Props {

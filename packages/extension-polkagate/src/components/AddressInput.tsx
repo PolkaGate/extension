@@ -15,7 +15,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import settings from '@polkadot/ui-settings';
 
 import { useTranslation } from '../hooks';
-import QrScanner from '../popup/import/addAddressOnly/QrScanner';
+import QrScanner from '../popup/import/addWatchOnly/QrScanner';
 import isValidAddress from '../util/validateAddress';
 import Identicon from './Identicon';
 import Label from './Label';

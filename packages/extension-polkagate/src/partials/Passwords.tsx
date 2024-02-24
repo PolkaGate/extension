@@ -1,6 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { CSSProperties } from '@mui/styled-engine';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Password, ValidatedInput } from '../components';
@@ -12,11 +13,12 @@ interface Props {
   label?: string;
   onChange: (password: string | null) => void;
   onEnter: () => void;
+  style?: CSSProperties | undefined;
 }
 
 const MIN_LENGTH = 6;
 
-export default function Passwords({ isFocussed, onChange, onEnter, label = undefined }: Props): React.ReactElement<Props> {
+export default function Passwords({ isFocussed, onChange, onEnter, label = undefined, style = {} }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [pass1, setPass1] = useState<string | null>(null);
   const [pass2, setPass2] = useState<string | null>(null);
@@ -43,6 +45,7 @@ export default function Passwords({ isFocussed, onChange, onEnter, label = undef
         setShowPassword={setShowPassword}
         showPassword={showPassword}
         validator={isFirstPasswordValid}
+        width={style?.width}
       />
       <ValidatedInput
         component={Password}
@@ -54,6 +57,7 @@ export default function Passwords({ isFocussed, onChange, onEnter, label = undef
         setShowPassword={setShowConfirmPassword}
         showPassword={showConfirmPassword}
         validator={isSecondPasswordValid(pass1)}
+        width={style?.width}
       />
     </>
   );

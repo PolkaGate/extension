@@ -16,7 +16,7 @@ import { Lock } from '../../hooks/useAccountLocks';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { amountToHuman } from '../../util/utils';
 import { getValue } from '../account/util';
-import DeriveAccountModal from '../deriveAccount/modal/DeriveAccountModal';
+import DeriveAccountModal from '../newAccount/deriveAccount/modal/DeriveAccountModal';
 import ExportAccountModal from '../export/ExportAccountModal';
 import ForgetAccountModal from '../forgetAccount/ForgetAccountModal';
 import { FullScreenHeader } from '../governance/FullScreenHeader';

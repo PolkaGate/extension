@@ -6,8 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { IButton, InputWithLabel } from '../../components';
-import { useTranslation } from '../../hooks';
+import { IButton, InputWithLabel } from '../../../components';
+import { useTranslation } from '../../../hooks';
 
 interface Props {
   className?: string;

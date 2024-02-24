@@ -8,8 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { InputWithLabel } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { InputWithLabel } from '../../../../components';
+import { useTranslation } from '../../../../hooks';
 
 interface Props {
   defaultPath: string | undefined;

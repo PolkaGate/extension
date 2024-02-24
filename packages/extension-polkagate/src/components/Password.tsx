@@ -18,12 +18,13 @@ interface Props {
   label?: string;
   onChange?: (value: string) => void;
   onEnter?: () => void;
+  onOffFocus?: () => void;
   placeholder?: string;
   value?: string;
   style?: React.CSSProperties;
 }
 
-export default function Password({ defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, style }: Props): React.ReactElement<Props> {
+export default function Password({ defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, onOffFocus, placeholder, style }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const theme = useTheme();
@@ -47,7 +48,8 @@ export default function Password({ defaultValue, disabled, isError, isFocused, i
 
   const _setOffFocus = useCallback(() => {
     setOffFocus(true);
-  }, []);
+    onOffFocus && onOffFocus();
+  }, [onOffFocus]);
 
   return (
     <Label

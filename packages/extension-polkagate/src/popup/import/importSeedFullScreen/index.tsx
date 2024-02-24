@@ -18,9 +18,9 @@ import { useFullscreen, useGenesisHashOptions, useMetadata, useTranslation } fro
 import { createAccountSuri, getMetadata, validateSeed } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import getLogo from '../../../util/getLogo';
-import Passwords2 from '../../createAccountFullScreen/components/Passwords2';
-import { resetOnForgotPassword } from '../../createAccountFullScreen/resetAccounts';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
+import Passwords2 from '../../newAccount/createAccountFullScreen/components/Passwords2';
+import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/resetAccounts';
 
 export interface AccountInfo {
   address: string;

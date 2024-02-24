@@ -9,10 +9,10 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import { AccountJson } from '@polkadot/extension-base/background/types';
 import { canDerive } from '@polkadot/extension-base/utils';
 
-import { AccountContext, Address, ButtonWithCancel, ChainLogo, Label, Password, Warning } from '../../../components';
-import useTranslation from '../../../hooks/useTranslation';
-import { validateAccount, validateDerivationPath } from '../../../messaging';
-import { nextDerivationPath } from '../../../util/nextDerivationPath';
+import { AccountContext, Address, ButtonWithCancel, ChainLogo, Label, Password, Warning } from '../../../../components';
+import useTranslation from '../../../../hooks/useTranslation';
+import { validateAccount, validateDerivationPath } from '../../../../messaging';
+import { nextDerivationPath } from '../../../../util/nextDerivationPath';
 import AddressDropdown from './AddressDropdown';
 import DerivationPath from './DerivationPath';
 

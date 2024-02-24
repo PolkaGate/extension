@@ -10,6 +10,9 @@ import { Route, Switch } from 'react-router';
 
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
+import AddAddressOnly from '@polkadot/extension-polkagate/src/popup/import/addWatchOnly';
+import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
+import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
 import LoginPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement';
 import uiSettings from '@polkadot/ui-settings';
 
@@ -17,14 +20,13 @@ import { ErrorBoundary, Loading } from '../../../extension-polkagate/src/compone
 import { AccountContext, AccountsAssetsContext, ActionContext, APIContext, AuthorizeReqContext, FetchingContext, MediaContext, MetadataReqContext, ReferendaContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
 import { getStorage, LoginInfo, updateStorage } from '../../../extension-polkagate/src/components/Loading';
 import { ExtensionLockProvider } from '../../../extension-polkagate/src/context/ExtensionLockContext';
+import { useAssetsOnChains, usePrices2 } from '../../../extension-polkagate/src/hooks';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
 import AccountEx from '../../../extension-polkagate/src/popup/account';
 import AccountFL from '../../../extension-polkagate/src/popup/accountDetailsFullScreen';
 import AuthList from '../../../extension-polkagate/src/popup/authManagement';
 import Authorize from '../../../extension-polkagate/src/popup/authorize/index';
-import CreateAccount from '../../../extension-polkagate/src/popup/createAccountFullScreen';
 import CrowdLoans from '../../../extension-polkagate/src/popup/crowdloans';
-import Derive from '../../../extension-polkagate/src/popup/deriveAccount';
 import Export from '../../../extension-polkagate/src/popup/export/Export';
 import ExportAll from '../../../extension-polkagate/src/popup/export/ExportAll';
 import ForgetAccount from '../../../extension-polkagate/src/popup/forgetAccount';
@@ -32,7 +34,6 @@ import Governance from '../../../extension-polkagate/src/popup/governance';
 import ReferendumPost from '../../../extension-polkagate/src/popup/governance/post';
 import History from '../../../extension-polkagate/src/popup/history';
 import Accounts from '../../../extension-polkagate/src/popup/home/ManageHome';
-import AddAddressOnly from '../../../extension-polkagate/src/popup/import/addAddressOnly';
 import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
 import ImportLedger from '../../../extension-polkagate/src/popup/import/importLedger';
 import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeedFullScreen';
@@ -40,6 +41,7 @@ import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJS
 import ManageIdentity from '../../../extension-polkagate/src/popup/manageIdentity';
 import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
 import Metadata from '../../../extension-polkagate/src/popup/metadata';
+import CreateAccount from '../../../extension-polkagate/src/popup/newAccount/createAccountFullScreen';
 import PhishingDetected from '../../../extension-polkagate/src/popup/PhishingDetected';
 import Receive from '../../../extension-polkagate/src/popup/receive';
 import Rename from '../../../extension-polkagate/src/popup/rename';
@@ -63,7 +65,6 @@ import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { APIs, Fetching, LatestRefs, SavedAccountsAssets } from '../../../extension-polkagate/src/util/types';
-import { useAssetsOnChains, usePrices2 } from '../../../extension-polkagate/src/hooks';
 
 const startSettings = uiSettings.get();
 
@@ -233,6 +234,7 @@ export default function Popup(): React.ReactElement {
                                 <Switch>
                                   <Route path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<AccountEx />, 'account')}</Route>
                                   <Route path='/account/create'>{wrapWithErrorBoundary(<CreateAccount />, 'account-creation')}</Route>
+                                  <Route path='/fullscreenDerive/:address/'>{wrapWithErrorBoundary(<FullscreenDerive />, 'fullscreen-account-derive')}</Route>
                                   <Route path='/account/export-all'>{wrapWithErrorBoundary(<ExportAll />, 'export-all-address')}</Route>
                                   <Route path='/account/import-ledger'>{wrapWithErrorBoundary(<ImportLedger />, 'import-ledger')}</Route>
                                   <Route path='/account/import-seed'>{wrapWithErrorBoundary(<ImportSeed />, 'import-seed')}</Route>

@@ -8,10 +8,10 @@ import React, { useCallback, useState } from 'react';
 
 import { blake2AsHex } from '@polkadot/util-crypto';
 
-import { Checkbox2, Password, Switch, TwoButtons } from '../../components';
+import { Password, Switch, TwoButtons } from '../../components';
 import { setStorage } from '../../components/Loading';
 import { useTranslation } from '../../hooks';
-import Passwords2 from '../createAccountFullScreen/components/Passwords2';
+import Passwords2 from '../newAccount/createAccountFullScreen/components/Passwords2';
 import { STEPS } from './constants';
 import { isPasswordCorrect } from '.';
 

@@ -7,10 +7,10 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { ActionContext } from '../../../components';
-import { useAccount, useTranslation } from '../../../hooks';
-import { deriveAccount } from '../../../messaging';
-import { DraggableModal } from '../../governance/components/DraggableModal';
+import { ActionContext } from '../../../../components';
+import { useAccount, useTranslation } from '../../../../hooks';
+import { deriveAccount } from '../../../../messaging';
+import { DraggableModal } from '../../../governance/components/DraggableModal';
 import CreateNewDerivedAccount from './CreateNewDerivedAccount';
 import SelectParent from './SelectParent';
 

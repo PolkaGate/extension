@@ -1,6 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { CSSProperties } from '@mui/styled-engine';
 import React, { useCallback, useState } from 'react';
 
 import { Name, Passwords } from '../partials';
@@ -12,13 +13,17 @@ interface Props {
   isBusy?: boolean;
   onBackClick?: () => void;
   onCreate: (name: string, password: string) => void | Promise<void | boolean>;
-  onNameChange: (name: string) => void;
+  onNameChange?: (name: string) => void;
   onPasswordChange?: (password: string) => void;
   withCancel?: boolean;
   mt?: string;
+  style?: CSSProperties | undefined;
+  nameLabel?: string;
+  passwordLabel?: string;
+  isFocused?: boolean;
 }
 
-function AccountNamePasswordCreation({ buttonLabel, isBusy, mt, onBackClick, onCreate, onNameChange, onPasswordChange, withCancel = false }: Props): React.ReactElement<Props> {
+function AccountNamePasswordCreation({ buttonLabel, isBusy, mt, onBackClick, onCreate, onNameChange, onPasswordChange, withCancel = false, style = {}, nameLabel, isFocused = true, passwordLabel }: Props): React.ReactElement<Props> {
   const [name, setName] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
 
@@ -29,7 +34,7 @@ function AccountNamePasswordCreation({ buttonLabel, isBusy, mt, onBackClick, onC
 
   const _onNameChange = useCallback(
     (name: string | null) => {
-      onNameChange(name || '');
+      onNameChange && onNameChange(name || '');
       setName(name);
     },
     [onNameChange]
@@ -55,10 +60,17 @@ function AccountNamePasswordCreation({ buttonLabel, isBusy, mt, onBackClick, onC
   return (
     <>
       <Name
-        isFocused
+        isFocused={isFocused}
+        label={nameLabel}
         onChange={_onNameChange}
+        style={style}
       />
-      <Passwords onChange={_onPasswordChange} onEnter={_onCreate} />
+      <Passwords
+        label={passwordLabel}
+        onChange={_onPasswordChange}
+        onEnter={_onCreate}
+        style={style}
+      />
       {!withCancel &&
         <PButton
           _isBusy={isBusy}
@@ -72,6 +84,7 @@ function AccountNamePasswordCreation({ buttonLabel, isBusy, mt, onBackClick, onC
       {withCancel &&
         <ButtonWithCancel
           _isBusy={isBusy}
+          _mt={mt}
           _onClick={_onCreate}
           _onClickCancel={_onBackClick}
           disabled={!password || !name}

@@ -6,8 +6,8 @@
 import { Grid } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { Address, ButtonWithCancel, InputWithLabel, Label } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { Address, ButtonWithCancel, InputWithLabel, Label } from '../../../../components';
+import { useTranslation } from '../../../../hooks';
 import Passwords2 from '../../createAccountFullScreen/components/Passwords2';
 
 interface Props {

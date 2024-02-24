@@ -5,10 +5,10 @@ import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, Label } from '../../components';
-import { useTranslation } from '../../hooks';
-import { deriveAccount } from '../../messaging';
-import HeaderBrand from '../../partials/HeaderBrand';
+import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, Label } from '../../../components';
+import { useTranslation } from '../../../hooks';
+import { deriveAccount } from '../../../messaging';
+import HeaderBrand from '../../../partials/HeaderBrand';
 import SelectParent from './SelectParent';
 
 interface Props {
@@ -40,7 +40,7 @@ function Derive({ isLocked }: Props): React.ReactElement<Props> {
   const [stepOne, setStep] = useState<boolean>(true);
 
   const parentGenesis = useMemo(
-    () => accounts.find((a) => a.address === parentAddress)?.genesisHash || undefined,
+    () => accounts.find((a) => a.address === parentAddress)?.genesisHash || null,
     [accounts, parentAddress]
   );
 

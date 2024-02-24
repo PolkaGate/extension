@@ -1,8 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { getStorage, LoginInfo, updateStorage } from '../../components/Loading';
-import { forgetAccount } from '../../messaging';
+import { getStorage, LoginInfo, updateStorage } from '../../../components/Loading';
+import { forgetAccount } from '../../../messaging';
 
 export const resetOnForgotPassword = async () => {
   const info = await getStorage('loginInfo') as LoginInfo;

@@ -17,8 +17,8 @@ import { ActionContext,Checkbox2, ColorContext, FullScreenIcon, Infotip2, MenuIt
 import { updateStorage } from '../components/Loading';
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import { useIsLoginEnabled, useIsPopup, useTranslation } from '../hooks';
-import { lockExtension, setNotification } from '../messaging';
-import { NO_PASS_PERIOD } from '../util/constants';
+import { lockExtension, setNotification, tieAccount } from '../messaging';
+import { NO_PASS_PERIOD, TEST_NETS } from '../util/constants';
 import getLanguageOptions from '../util/getLanguageOptions';
 import { DropdownOption } from '../util/types';
 

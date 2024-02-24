@@ -6,12 +6,12 @@ import styled from 'styled-components';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { AccountNamePasswordCreation, ActionContext, Address, Loading, SelectChain } from '../../components';
-import { useGenesisHashOptions, useMetadata, useTranslation } from '../../hooks';
-import { createAccountSuri, createSeed, getMetadata, validateSeed } from '../../messaging';
-import HeaderBrand from '../../partials/HeaderBrand';
-import { DEFAULT_TYPE } from '../../util/defaultType';
-import getLogo from '../../util/getLogo';
+import { AccountNamePasswordCreation, ActionContext, Address, Loading, SelectChain } from '../../../components';
+import { useGenesisHashOptions, useMetadata, useTranslation } from '../../../hooks';
+import { createAccountSuri, createSeed, getMetadata, validateSeed } from '../../../messaging';
+import HeaderBrand from '../../../partials/HeaderBrand';
+import { DEFAULT_TYPE } from '../../../util/defaultType';
+import getLogo from '../../../util/getLogo';
 import Mnemonic from './Mnemonic';
 
 function CreateAccount (): React.ReactElement {

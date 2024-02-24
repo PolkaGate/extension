@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { useTranslation } from '../../../hooks';
+import { useTranslation } from '../../../../hooks';
 
 interface Props {
   value: string;

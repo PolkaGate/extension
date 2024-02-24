@@ -35,32 +35,35 @@ interface TaskButtonProps {
   secondaryIconType: 'popup' | 'page';
   noBorderButton?: boolean;
   borderColor: string;
-  theme: Theme;
   disabled?: boolean;
 }
 
-export const TaskButton = ({ borderColor, disabled, icon, noBorderButton = false, onClick, secondaryIconType, text, theme }: TaskButtonProps) => (
-  <>
-    {/* eslint-disable-next-line react/jsx-no-bind */}
-    <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : borderColor }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', m: 'auto', minHeight: '45px', p: '5px 10px' }} width='90%'>
-      <Grid container item xs={3}>
-        {icon}
+export const TaskButton = ({ borderColor, disabled, icon, noBorderButton = false, onClick, secondaryIconType, text }: TaskButtonProps) => {
+  const theme = useTheme();
+
+  return (
+    <>
+      {/* eslint-disable-next-line react/jsx-no-bind */}
+      <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : borderColor }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', m: 'auto', minHeight: '45px', p: '5px 10px' }} width='90%'>
+        <Grid container item xs={3}>
+          {icon}
+        </Grid>
+        <Grid container item xs={7}>
+          <Typography color={disabled ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='16px' fontWeight={500}>
+            {text}
+          </Typography>
+        </Grid>
+        <Grid alignItems='center' container item justifyContent='flex-end' xs={2}>
+          {secondaryIconType === 'page'
+            ? <ArrowForwardIosRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '26px', stroke: disabled ? theme.palette.text.disabled : theme.palette.secondary.light, strokeWidth: 1 }} />
+            : <OpenInNewRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '25px' }} />
+          }
+        </Grid>
       </Grid>
-      <Grid container item xs={7}>
-        <Typography color={disabled ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='16px' fontWeight={500}>
-          {text}
-        </Typography>
-      </Grid>
-      <Grid alignItems='center' container item justifyContent='flex-end' xs={2}>
-        {secondaryIconType === 'page'
-          ? <ArrowForwardIosRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '26px', stroke: disabled ? theme.palette.text.disabled : theme.palette.secondary.light, strokeWidth: 1 }} />
-          : <OpenInNewRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '25px' }} />
-        }
-      </Grid>
-    </Grid>
-    {!noBorderButton && <Divider sx={{ bgcolor: borderColor, height: '2px', m: '5px auto', width: '85%' }} />}
-  </>
-);
+      {!noBorderButton && <Divider sx={{ bgcolor: borderColor, height: '2px', m: '5px auto', width: '85%' }} />}
+    </>
+  );
+};
 
 export default function CommonTasks({ address, api, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
@@ -129,7 +132,6 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
           onClick={goToSend}
           secondaryIconType='page'
           text={t<string>('Send Fund')}
-          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
@@ -139,7 +141,6 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
           onClick={goToReceive}
           secondaryIconType='popup'
           text={t<string>('Receive Fund')}
-          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
@@ -154,7 +155,6 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
           onClick={goToGovernance}
           secondaryIconType='page'
           text={t<string>('Governance')}
-          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
@@ -170,7 +170,6 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
           onClick={goToSoloStaking}
           secondaryIconType='page'
           text={t<string>('Solo Stake')}
-          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
@@ -186,7 +185,6 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
           onClick={goToPoolStaking}
           secondaryIconType='page'
           text={t<string>('Pool Stake')}
-          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
@@ -202,7 +200,6 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
           onClick={goToCrowdLoans}
           secondaryIconType='page'
           text={t<string>('Crowdloans')}
-          theme={theme}
         />
         <TaskButton
           borderColor={borderColor}
@@ -217,9 +214,8 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
           onClick={goToHistory}
           secondaryIconType='popup'
           text={t<string>('History')}
-          theme={theme}
         />
       </Grid>
-    </Grid >
+    </Grid>
   );
 }

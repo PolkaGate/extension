@@ -90,7 +90,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
             onClick={onExportAccount}
             secondaryIconType='popup'
             text={t<string>('Export account')}
-            theme={theme}
           />
           <TaskButton
             borderColor={borderColor}
@@ -99,7 +98,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
             onClick={goToDeriveAcc}
             secondaryIconType='popup'
             text={t<string>('Derive new account')}
-            theme={theme}
           />
           <TaskButton
             borderColor={borderColor}
@@ -107,7 +105,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
             onClick={onRenameAccount}
             secondaryIconType='popup'
             text={t<string>('Rename')}
-            theme={theme}
           />
           <TaskButton
             borderColor={borderColor}
@@ -115,7 +112,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
             onClick={onForgetAccount}
             secondaryIconType='popup'
             text={t<string>('Forget account')}
-            theme={theme}
           />
           <TaskButton
             borderColor={borderColor}
@@ -124,7 +120,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
             onClick={onManageProxies}
             secondaryIconType='page'
             text={t<string>('Manage proxies')}
-            theme={theme}
           />
           <TaskButton
             borderColor={borderColor}
@@ -139,7 +134,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
             onClick={onManageIdentity}
             secondaryIconType='page'
             text={t<string>('Manage Identity')}
-            theme={theme}
           />
           <TaskButton
             borderColor={borderColor}
@@ -158,7 +152,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
             onClick={onSocialRecovery}
             secondaryIconType='page'
             text={t<string>('Social Recovery')}
-            theme={theme}
           />
         </Grid>
       </Collapse>

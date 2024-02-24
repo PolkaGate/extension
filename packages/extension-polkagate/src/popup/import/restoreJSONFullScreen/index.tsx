@@ -20,12 +20,12 @@ import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../../../messagin
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { isKeyringPairs$Json } from '../../../util/typeGuards';
 import { pgBoxShadow } from '../../../util/utils';
-import { resetOnForgotPassword } from '../../createAccountFullScreen/resetAccounts';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
+import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/resetAccounts';
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
-export default function RestoreJson(): React.ReactElement {
+export default function RestoreJson (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();

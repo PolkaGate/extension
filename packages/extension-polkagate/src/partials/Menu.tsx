@@ -5,11 +5,10 @@
 
 import '@vaadin/icons';
 
-import { Close as CloseIcon, Email as EmailIcon, Language as LanguageIcon, Twitter as TwitterIcon } from '@mui/icons-material';
-import { Box, Divider, Grid, IconButton, Link, Typography } from '@mui/material';
+import { Close as CloseIcon } from '@mui/icons-material';
+import { Divider, Grid, IconButton, Typography } from '@mui/material';
 import { keyframes, Theme } from '@mui/material/styles';
 import React, { useCallback, useContext, useState } from 'react';
-
 import { riot } from '../assets/icons';
 import { AccountContext, ActionContext, MenuItem, TwoButtons, Warning } from '../components';
 import { useManifest, useTranslation } from '../hooks';
@@ -18,6 +17,7 @@ import { TEST_NETS } from '../util/constants';
 import ImportAccSubMenu from './ImportAccSubMenu';
 import NewAccountSubMenu from './NewAccountSubMenu';
 import SettingSubMenu from './SettingSubMenu';
+import VersionSocial from './VersionSocial';
 
 interface Props {
   theme: Theme;
@@ -31,34 +31,8 @@ const COLLAPSIBLE_MENUS = {
   SETTING: 3
 };
 
-export const SocialLinks = () => (
-  <Grid container width='fit-content'>
-    <Grid item>
-      <Link href={'mailto:polkagate@outlook.com'}>
-        <EmailIcon sx={{ color: '#1E5AEF', fontSize: 15 }} />
-      </Link>
-    </Grid>
-    <Grid item pl='5px'>
-      <Link href='https://polkagate.xyz' rel='noreferrer' target='_blank'>
-        <LanguageIcon sx={{ color: '#007CC4', fontSize: 15 }} />
-      </Link>
-    </Grid>
-    <Grid item pl='5px'>
-      <Link href='https://twitter.com/@polkagate' rel='noreferrer' target='_blank'>
-        <TwitterIcon sx={{ color: '#2AA9E0', fontSize: 15 }} />
-      </Link>
-    </Grid>
-    <Grid item pl='5px'>
-      <Link href='https://matrix.to/#/#polkagate:matrix.org' rel='noreferrer' target='_blank'>
-        <Box component='img' src={riot} sx={{ height: '12px', width: '12px', mt: '2px' }} />
-      </Link>
-    </Grid>
-  </Grid>
-);
-
-function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
+function Menu ({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const manifest = useManifest();
   const onAction = useContext(ActionContext);
   const [collapsedMenu, setCollapsedMenu] = useState<number>(COLLAPSIBLE_MENUS.SETTING);
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
@@ -214,12 +188,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
             </Grid>
           </Grid>
         }
-        <Grid container fontSize='11px' justifyContent='space-between' sx={{ bottom: '10px', position: 'absolute', pl: '10px', width: '85%' }}>
-          <Grid item>
-            {`${t('Version')} ${manifest?.version || ''}`}
-          </Grid>
-          <SocialLinks />
-        </Grid>
+        <VersionSocial fontSize='11px' />
       </Grid>
       <IconButton onClick={onCloseMenu} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>
         <CloseIcon sx={{ color: 'text.secondary', fontSize: 35 }} />

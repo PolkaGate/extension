@@ -5,7 +5,7 @@
 
 import '@vaadin/icons';
 
-import { ArrowForwardIos as ArrowForwardIosIcon, QrCode as QrCodeIcon, UploadFileRounded as UploadJSONIcon, Usb as UsbIcon } from '@mui/icons-material';
+import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Divider, Grid, keyframes, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
