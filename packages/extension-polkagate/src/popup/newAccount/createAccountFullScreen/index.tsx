@@ -8,7 +8,7 @@ import '@vaadin/icons';
 import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { ActionContext, Checkbox2, InputWithLabel, PButton } from '../../../components';
+import { ActionContext, Checkbox2, InputWithLabel, TwoButtons } from '../../../components';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountSuri, createSeed } from '../../../messaging';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
@@ -97,6 +97,10 @@ function CreateAccount(): React.ReactElement {
     }
   }, [name, onAction, password, seed]);
 
+  const onCancel = useCallback(() => {
+    onAction('/');
+  }, [onAction]);
+
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>
       <FullScreenHeader
@@ -135,22 +139,23 @@ function CreateAccount(): React.ReactElement {
             onEnter={isMnemonicSaved && password ? onCreate : () => null}
           />
           <Grid alignItems='center' container item pt='40px'>
-            <Grid container item xs={8}>
-              <Checkbox2
-                checked={isMnemonicSaved}
-                iconStyle={{ transform: 'scale(1.13)' }}
-                label={t<string>('I have saved my recovery phrase safely.')}
-                labelStyle={{ fontSize: '18px', fontWeight: 300, marginLeft: '7px', userSelect: 'none' }}
-                onChange={onCheck}
-              />
-            </Grid>
-            <Grid container item xs={4}>
-              <PButton
-                _isBusy={isBusy}
-                _mt='1px'
-                _onClick={onCreate}
+            <Checkbox2
+              checked={isMnemonicSaved}
+              iconStyle={{ transform: 'scale(1.13)' }}
+              label={t<string>('I have saved my recovery phrase safely.')}
+              labelStyle={{ fontSize: '18px', fontWeight: 300, marginLeft: '7px', userSelect: 'none' }}
+              onChange={onCheck}
+            />
+          </Grid>
+          <Grid container item justifyContent='flex-end' pt='10px'>
+            <Grid container item sx={{ '> div': { width: '100%' } }} xs={7}>
+              <TwoButtons
                 disabled={!(name && password && seed && isMnemonicSaved)}
-                text={t<string>('Create account')}
+                onPrimaryClick={onCreate}
+                onSecondaryClick={onCancel}
+                mt='30px'
+                primaryBtnText={t<string>('Create account')}
+                secondaryBtnText={t<string>('Cancel')}
               />
             </Grid>
           </Grid>
