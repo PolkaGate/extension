@@ -38,7 +38,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
     windowOpen('/account/import-seed').catch(console.error);
   }, []);
 
-  const _goToAddAddressOnly = useCallback(() => {
+  const goToAddWatchOnly = useCallback(() => {
     onAction('/import/add-watch-only');
   }, [onAction]);
 
@@ -99,7 +99,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
           iconComponent={
             <vaadin-icon icon='vaadin:tag' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
-          onClick={_goToAddAddressOnly}
+          onClick={goToAddWatchOnly}
           py='4px'
           text={t('Add watch-only account')}
         />

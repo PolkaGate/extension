@@ -39,7 +39,7 @@ function Welcome(): React.ReactElement {
     }, []
   );
 
-  const _goToAddAddressOnly = useCallback(
+  const goToAddWatchOnly = useCallback(
     () => onAction('/import/add-watch-only'),
     [onAction]
   );
@@ -92,7 +92,7 @@ function Welcome(): React.ReactElement {
       />
       <PButton
         _mt='10px'
-        _onClick={_goToAddAddressOnly}
+        _onClick={goToAddWatchOnly}
         _variant={'outlined'}
         text={t<string>('Add watch-only account')}
       />

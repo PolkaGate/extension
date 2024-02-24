@@ -64,7 +64,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
     windowOpen('/account/import-seed').catch(console.error);
   }, []);
 
-  const goToWatchOnly = useCallback(() => {
+  const goToAddWatchOnly = useCallback(() => {
     onAction('/import/add-watch-only-full-screen');
   }, [onAction]);
 
@@ -103,7 +103,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             <vaadin-icon icon='vaadin:tag' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
           }
           isSubMenu
-          onClick={goToWatchOnly}
+          onClick={goToAddWatchOnly}
           text={t<string>('Add watch-only account')}
         />
         <TaskButton
