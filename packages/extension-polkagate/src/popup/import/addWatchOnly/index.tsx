@@ -55,9 +55,9 @@ export default function AddAddressOnly(): React.ReactElement {
     [onAction]
   );
 
-  const _onNameChange = useCallback((name: string | null) => setName(name), []);
+  const onNameChange = useCallback((name: string | null) => setName(name), []);
 
-  const _onChangeGenesis = useCallback((genesisHash?: string | null): void => {
+  const onChangeGenesis = useCallback((genesisHash?: string | null): void => {
     setProxies(undefined);
     genesisHash && getMetadata(genesisHash, true).then(setChain).catch((error): void => {
       console.error(error);
@@ -101,7 +101,7 @@ export default function AddAddressOnly(): React.ReactElement {
         style={{ m: '15px auto 0', width: '92%' }}
       />
       <Name
-        onChange={_onNameChange}
+        onChange={onNameChange}
       />
       <SelectChain
         address={realAddress}
@@ -109,7 +109,7 @@ export default function AddAddressOnly(): React.ReactElement {
         disabledItems={disabledItems}
         icon={getLogo(chain ?? undefined)}
         label={t<string>('Select the chain')}
-        onChange={_onChangeGenesis}
+        onChange={onChangeGenesis}
         options={genesisOptions}
         style={{ m: '15px auto 0', width: '92%' }}
       />

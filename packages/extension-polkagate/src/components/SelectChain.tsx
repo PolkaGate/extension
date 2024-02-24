@@ -37,7 +37,7 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
     !isTestnetEnabled
       ? [...(disabledItems || []), ...TEST_NETS]
       : disabledItems
-  , [disabledItems, isTestnetEnabled]);
+    , [disabledItems, isTestnetEnabled]);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     try {
@@ -79,7 +79,7 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
 
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' pt={1} sx={{ ...style }}>
-      <Grid item xs={10.5}>
+      <Grid item xs>
         <Select
           defaultValue={defaultValue}
           disabledItems={_disabledItems}
@@ -90,7 +90,7 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
           showLogo
         />
       </Grid>
-      <Grid item pl={1} xs={1.5}>
+      <Grid item sx={{ ml: '10px', width: 'fit-content' }}>
         {icon
           ? <Avatar src={icon} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 31, width: 31 }} variant='square' />
           : <Grid sx={{ bgcolor: 'action.disabledBackground', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', height: '31px', width: '31px' }}>

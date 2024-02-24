@@ -40,7 +40,7 @@ function Welcome(): React.ReactElement {
   );
 
   const _goToAddAddressOnly = useCallback(
-    () => onAction('/import/add-address-only'),
+    () => onAction('/import/add-watch-only'),
     [onAction]
   );
 

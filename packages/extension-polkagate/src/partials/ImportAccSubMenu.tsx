@@ -39,7 +39,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
   }, []);
 
   const _goToAddAddressOnly = useCallback(() => {
-    onAction('/import/add-address-only');
+    onAction('/import/add-watch-only');
   }, [onAction]);
 
   const _goToAttachQR = useCallback(() => {
