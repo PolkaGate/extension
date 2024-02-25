@@ -56,9 +56,7 @@ export default function HomePageFullScreen(): React.ReactElement {
             />
           </Grid>
           <Grid container item width='fit-content'>
-            <HomeMenu
-            // setDisplayPopup={setDisplayPopup}
-            />
+            <HomeMenu />
           </Grid>
         </Grid>
       </Grid>
