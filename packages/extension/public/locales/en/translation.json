@@ -1117,5 +1117,10 @@
   "Delegate Vote ({{ step }}/3)": "",
   "Comment on {{site}}": "",
   "Preparation time is over. Please make the deposit.": "",
-  "Selected Validators ({{length}})": ""
+  "Selected Validators ({{length}})": "",
+  "QR-attached": "",
+  "Hold the QR code in front of the device’s camera.": "",
+  "Add Watch-Only Account": "",
+  "Scan account QR code": "",
+  "The account fetched via the scanned QR code.": ""
 }
