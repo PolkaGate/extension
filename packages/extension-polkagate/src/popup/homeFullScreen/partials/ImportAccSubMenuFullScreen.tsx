@@ -21,28 +21,6 @@ interface Props {
   show: boolean;
 }
 
-const slideIn = keyframes`
-  0% {
-    display: none;
-    height: 0;
-  }
-  100%{
-    display: block;
-    height: ${settings.camera !== 'on' ? '300px' : '260px'};
-  }
-`;
-
-const slideOut = keyframes`
-  0% {
-    display: block;
-    height: ${settings.camera !== 'on' ? '300px' : '260px'};
-  }
-  100%{
-    display: none;
-    height: 0;
-  }
-`;
-
 function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -51,6 +29,28 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
+
+  const slideIn = keyframes`
+  0% {
+    display: none;
+    height: 0;
+  }
+  100%{
+    display: block;
+    height: ${settings.camera !== 'on' ? '300px' : '260px'};
+  }
+`;
+
+  const slideOut = keyframes`
+  0% {
+    display: block;
+    height: ${settings.camera !== 'on' ? '300px' : '260px'};
+  }
+  100%{
+    display: none;
+    height: 0;
+  }
+`;
 
   useEffect(() => {
     show ? setFirstTime(true) : setTimeout(() => setFirstTime(false), 150);
@@ -65,7 +65,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
   }, []);
 
   const _goToAddAddressOnly = useCallback(() => {
-    onAction('/import/add-address-only');
+    onAction('/import/add-watch-only-full-screen');
   }, [onAction]);
 
   const _goToAttachQR = useCallback(() => {

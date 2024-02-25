@@ -85,7 +85,7 @@ function Qr({ address, className, cmd, genesisHash, onSignature, payload }: Prop
       }
       {isScanning &&
         <Typography fontSize='14px' fontWeight={300} m='5px auto' textAlign='center' width='90%'>
-          {t<string>('Hold the QR code infront of the device’s camera.')}
+          {t<string>('Hold the QR code in front of the device’s camera.')}
         </Typography>
       }
       {!isScanning && (

@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
@@ -49,7 +51,7 @@ export default function QrScanner({ openCamera, setAddress, setOpenCamera }: Pro
         <QrScanSignature onScan={_onSignature} />
       </Grid>
       <Typography fontSize='14px' fontWeight={300} sx={{ width: '100%', textAlign: 'center' }}>
-        {t<string>('Hold the QR code infront of the device’s camera.')}
+        {t<string>('Hold the QR code in front of the device’s camera.')}
       </Typography>
       <IconButton
         onClick={onClose}
