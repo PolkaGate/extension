@@ -23,7 +23,7 @@ interface Props {
   isFocused?: boolean;
 }
 
-function AccountNamePasswordCreation({ buttonLabel, isBusy, mt, onBackClick, onCreate, onNameChange, onPasswordChange, withCancel = false, style = {}, nameLabel, isFocused = true, passwordLabel }: Props): React.ReactElement<Props> {
+function AccountNamePasswordCreation ({ buttonLabel, isBusy, mt, onBackClick, onCreate, onNameChange, onPasswordChange, withCancel = false, style = {}, nameLabel, isFocused = true, passwordLabel }: Props): React.ReactElement<Props> {
   const [name, setName] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
 

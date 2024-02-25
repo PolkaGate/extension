@@ -11,13 +11,13 @@ import { useFullscreen } from '../../hooks';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import HeaderComponents from './components/HeaderComponents';
 import AccountItem from './partials/AccountItem';
-import TotalBalancePieChart from './partials/TotalBalancePieChart';
 import HomeMenu from './partials/HomeMenu';
+import TotalBalancePieChart from './partials/TotalBalancePieChart';
 
 export default function HomePageFullScreen(): React.ReactElement {
   useFullscreen();
   const theme = useTheme();
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { hierarchy } = useContext(AccountContext);
 
   const [hideNumbers, setHideNumbers] = useState<boolean>();
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();

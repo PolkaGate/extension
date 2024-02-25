@@ -22,7 +22,7 @@ interface Props {
   marginRight?: number;
 }
 
-function Warning({ children, className = '', isBelowInput, isDanger }: Props): React.ReactElement<Props> {
+function Warning ({ children, className = '', isBelowInput, isDanger }: Props): React.ReactElement<Props> {
   return (
     <div className={`${className} ${isDanger ? 'danger' : ''} ${isBelowInput ? 'belowInput' : ''}`}>
       <FontAwesomeIcon

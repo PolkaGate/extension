@@ -56,23 +56,23 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
     show ? setFirstTime(true) : setTimeout(() => setFirstTime(false), 150);
   }, [show]);
 
-  const _goToRestoreFromJson = useCallback((): void => {
+  const onRestoreFromJson = useCallback((): void => {
     windowOpen('/account/restore-json').catch(console.error);
   }, []);
 
-  const _goToImportAcc = useCallback(() => {
+  const onImportFromSeed = useCallback(() => {
     windowOpen('/account/import-seed').catch(console.error);
   }, []);
 
-  const _goToAddAddressOnly = useCallback(() => {
+  const onAddWatchOnlyFullScreen = useCallback(() => {
     onAction('/import/add-watch-only-full-screen');
   }, [onAction]);
 
-  const _goToAttachQR = useCallback(() => {
-    onAction('/import/attach-qr');
+  const onAttachQrFullScreen = useCallback(() => {
+    onAction('/import/attach-qr-full-screen');
   }, [onAction]);
 
-  const _goToImportLedger = useCallback((): void => {
+  const onImportLedger = useCallback((): void => {
     windowOpen('/account/import-ledger').catch(console.error);
   }, []);
 
@@ -85,7 +85,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             <vaadin-icon icon='vaadin:file-text' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
           }
           isSubMenu
-          onClick={_goToRestoreFromJson}
+          onClick={onRestoreFromJson}
           text={t<string>('Restore from JSON file')}
         />
         <TaskButton
@@ -94,7 +94,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             <vaadin-icon icon='vaadin:book' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
           }
           isSubMenu
-          onClick={_goToImportAcc}
+          onClick={onImportFromSeed}
           text={t<string>('Import from recovery phrase')}
         />
         <TaskButton
@@ -103,11 +103,12 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             <vaadin-icon icon='vaadin:tag' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
           }
           isSubMenu
-          onClick={_goToAddAddressOnly}
+          onClick={onAddWatchOnlyFullScreen}
           text={t<string>('Add watch-only account')}
         />
         <TaskButton
           borderColor={borderColor}
+          disabled={settings.camera !== 'on'}
           extra={settings.camera !== 'on' && <Grid fontSize='12px' item letterSpacing='-1.5%' onClick={toggleSettingSubMenu} sx={{ cursor: 'pointer' }} textAlign='left'>
             {t('Allow QR camera access in the extension’s setting in order to use this feature')}
             <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 12, mb: '-2px', stroke: '#BA2882' }} />
@@ -116,7 +117,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             <vaadin-icon icon='vaadin:qrcode' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
           }
           isSubMenu
-          onClick={_goToAttachQR}
+          onClick={onAttachQrFullScreen}
           text={t<string>('Attach external QR-signer')}
         />
         <TaskButton
@@ -125,7 +126,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             <vaadin-icon icon='vaadin:wallet' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
           }
           isSubMenu
-          onClick={_goToImportLedger}
+          onClick={onImportLedger}
           text={t<string>('Attach ledger device')}
         />
       </Grid>

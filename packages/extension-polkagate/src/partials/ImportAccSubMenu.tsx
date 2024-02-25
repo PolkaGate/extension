@@ -30,23 +30,23 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
     show ? setFirstTime(true) : setTimeout(() => setFirstTime(false), 150);
   }, [show]);
 
-  const _goToRestoreFromJson = useCallback((): void => {
+  const onRestoreFromJson = useCallback((): void => {
     windowOpen('/account/restore-json').catch(console.error);
   }, []);
 
-  const _goToImportAcc = useCallback(() => {
+  const onImportAcc = useCallback(() => {
     windowOpen('/account/import-seed').catch(console.error);
   }, []);
 
-  const _goToAddAddressOnly = useCallback(() => {
+  const onAddWatchOnly = useCallback(() => {
     onAction('/import/add-watch-only');
   }, [onAction]);
 
-  const _goToAttachQR = useCallback(() => {
+  const onAttachQR = useCallback(() => {
     onAction('/import/attach-qr');
   }, [onAction]);
 
-  const _goToImportLedger = useCallback((): void => {
+  const onImportLedger = useCallback((): void => {
     windowOpen('/account/import-ledger').catch(console.error);
   }, []);
 
@@ -81,7 +81,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
           iconComponent={
             <vaadin-icon icon='vaadin:file-text' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
-          onClick={_goToRestoreFromJson}
+          onClick={onRestoreFromJson}
           py='4px'
           text={t('Restore from JSON file')}
         />
@@ -90,7 +90,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
           iconComponent={
             <vaadin-icon icon='vaadin:book' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
-          onClick={_goToImportAcc}
+          onClick={onImportAcc}
           py='4px'
           text={t('Import from recovery phrase')}
         />
@@ -99,7 +99,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
           iconComponent={
             <vaadin-icon icon='vaadin:tag' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
-          onClick={_goToAddAddressOnly}
+          onClick={onAddWatchOnly}
           py='4px'
           text={t('Add watch-only account')}
         />
@@ -109,7 +109,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
           iconComponent={
             <vaadin-icon icon='vaadin:qrcode' style={{ height: '18px', color: `${settings.camera === 'on' ? 'theme.palette.text.primary' : 'theme.palette.text.disabled'}` }} />
           }
-          onClick={_goToAttachQR}
+          onClick={onAttachQR}
           py='4px'
           text={t('Attach external QR-signer')}
         />
@@ -124,7 +124,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
           iconComponent={
             <vaadin-icon icon='vaadin:wallet' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
-          onClick={_goToImportLedger}
+          onClick={onImportLedger}
           py='4px'
           text={t('Attach ledger device')}
         />
