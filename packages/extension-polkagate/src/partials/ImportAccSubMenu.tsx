@@ -42,7 +42,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
     onAction('/import/add-watch-only');
   }, [onAction]);
 
-  const _goToAttachQR = useCallback(() => {
+  const goToAttachQR = useCallback(() => {
     onAction('/import/attach-qr');
   }, [onAction]);
 
@@ -109,7 +109,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
           iconComponent={
             <vaadin-icon icon='vaadin:qrcode' style={{ height: '18px', color: `${settings.camera === 'on' ? 'theme.palette.text.primary' : 'theme.palette.text.disabled'}` }} />
           }
-          onClick={_goToAttachQR}
+          onClick={goToAttachQR}
           py='4px'
           text={t('Attach external QR-signer')}
         />

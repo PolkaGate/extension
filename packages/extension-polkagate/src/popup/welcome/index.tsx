@@ -21,36 +21,36 @@ function Welcome(): React.ReactElement {
 
   const [showPrivacyAndSecurity, setShowPrivacyAndSecurity] = useState(false);
 
-  const _goToRestoreFromJson = useCallback(
+  const onRestoreFromJson = useCallback(
     (): void => {
       windowOpen('/account/restore-json').catch(console.error);
     }, []
   );
 
-  const _goToImportLedger = useCallback(
+  const onImportLedger = useCallback(
     (): void => {
       windowOpen('/account/import-ledger').catch(console.error);
     }, []
   );
 
-  const _goToCreate = useCallback(
+  const onCreate = useCallback(
     (): void => {
       windowOpen('/account/create').catch(console.error);
     }, []
   );
 
-  const goToAddWatchOnly = useCallback(
+  const onAddWatchOnly = useCallback(
     () => onAction('/import/add-watch-only'),
     [onAction]
   );
 
-  const _goToImport = useCallback(
+  const onImport = useCallback(
     (): void => {
       windowOpen('/account/import-seed').catch(console.error);
     }, []
   );
 
-  const _goToAttachQR = useCallback(
+  const onAttachQR = useCallback(
     () => onAction('/import/attach-qr'),
     [onAction]
   );
@@ -70,7 +70,7 @@ function Welcome(): React.ReactElement {
       </Typography>
       <PButton
         _mt='20px'
-        _onClick={_goToCreate}
+        _onClick={onCreate}
         _variant={'contained'}
         startIcon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.main}` }} />}
         text={t<string>('Create a new account')}
@@ -80,31 +80,31 @@ function Welcome(): React.ReactElement {
       </Divider>
       <PButton
         _mt='0'
-        _onClick={_goToRestoreFromJson}
+        _onClick={onRestoreFromJson}
         _variant={'outlined'}
         text={t<string>('Restore from file')}
       />
       <PButton
         _mt='10px'
-        _onClick={_goToImport}
+        _onClick={onImport}
         _variant={'outlined'}
         text={t<string>('Import from recovery phrase')}
       />
       <PButton
         _mt='10px'
-        _onClick={goToAddWatchOnly}
+        _onClick={onAddWatchOnly}
         _variant={'outlined'}
         text={t<string>('Add watch-only account')}
       />
       <PButton
         _mt='10px'
-        _onClick={_goToAttachQR}
+        _onClick={onAttachQR}
         _variant={'outlined'}
         text={t<string>('Attach QR-signer')}
       />
       <PButton
         _mt='10px'
-        _onClick={_goToImportLedger}
+        _onClick={onImportLedger}
         _variant={'outlined'}
         text={t<string>('Attach ledger device')}
       />
