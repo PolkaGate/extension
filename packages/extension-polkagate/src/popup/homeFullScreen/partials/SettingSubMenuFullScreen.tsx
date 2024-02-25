@@ -5,7 +5,7 @@
 
 import '@vaadin/icons';
 
-import { Box, Divider, Grid, keyframes, useTheme } from '@mui/material';
+import { Box, Collapse, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
@@ -22,29 +22,7 @@ interface Props {
   show: boolean;
 }
 
-const slideIn = keyframes`
-0% {
-  display: none;
-  height: 0;
-}
-100%{
-  display: block;
-  height: 370px;
-}
-`;
-
-const slideOut = keyframes`
-0% {
-  display: block;
-  height: 370px;
-}
-100%{
-  display: none;
-  height: 0;
-}
-`;
-
-export default function SettingSubMenuFullScreen({ show }: Props): React.ReactElement {
+export default function SettingSubMenuFullScreen ({ show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -114,70 +92,74 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
   }, [setIsTestnetEnabled]);
 
   return (
-    <Grid container display='inherit' item overflow='hidden' sx={{ animationDelay: '0s', animationDuration: show ? '0.3s' : '0.15s', animationFillMode: 'both', animationName: `${show ? slideIn : slideOut}` }}>
-      <Divider sx={{ bgcolor: borderColor, height: '1px' }} />
-      <Grid container direction='column' sx={{ p: '0px 0 15px 40px' }}>
-        <TaskButton
-          borderColor={borderColor}
-          icon={
-            <Box
-              component='img'
-              src={isTestnetEnabled ? checkedBox : checkBox}
-              sx={{ height: 20, width: 20 }}
+    <>
+      <Collapse in={show}>
+        <>
+          <Divider sx={{ bgcolor: borderColor, height: '1px' }} />
+          <Grid container direction='column' sx={{ p: '0px 0 15px 40px' }}>
+            <TaskButton
+              borderColor={borderColor}
+              icon={
+                <Box
+                  component='img'
+                  src={isTestnetEnabled ? checkedBox as string : checkBox as string}
+                  sx={{ height: 20, width: 20 }}
+                />
+              }
+              isSubMenu
+              onClick={onEnableTestNetClick}
+              text={t<string>('Enable testnet chains')}
             />
-          }
-          isSubMenu
-          onClick={onEnableTestNetClick}
-          text={t<string>('Enable testnet chains')}
-        />
-        <TaskButton
-          borderColor={borderColor}
-          icon={
-            <Box
-              component='img'
-              src={camera ? checkedBox : checkBox}
-              sx={{ height: 20, width: 20 }}
+            <TaskButton
+              borderColor={borderColor}
+              icon={
+                <Box
+                  component='img'
+                  src={camera ? checkedBox as string : checkBox as string}
+                  sx={{ height: 20, width: 20 }}
+                />
+              }
+              isSubMenu
+              onClick={toggleCamera}
+              text={t<string>('Allow QR camera access')}
             />
-          }
-          isSubMenu
-          onClick={toggleCamera}
-          text={t<string>('Allow QR camera access')}
-        />
-        <TaskButton
-          borderColor={borderColor}
-          icon={
-            <vaadin-icon icon='vaadin:lines-list' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
-          }
-          isSubMenu
-          onClick={onAuthManagement}
-          text={t<string>('Manage website access')}
-        />
-        <TaskButton
-          borderColor={borderColor}
-          icon={
-            <vaadin-icon icon='vaadin:key' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
-          }
-          isSubMenu
-          onClick={onManageLoginPassword}
-          text={t<string>('Manage login password')}
-        />
-        <Grid item pt='12px'>
-          <Select
-            label={t<string>('Language')}
-            onChange={onChangeLang}
-            options={languageOptions}
-            value={settings.i18nLang !== 'default' ? settings.i18nLang : languageOptions[0].value}
-          />
-        </Grid>
-        <Grid item pt='10px'>
-          <Select
-            label={t<string>('Notification')}
-            onChange={onChangeNotification}
-            options={notificationOptions}
-            value={notification ?? notificationOptions[1].value}
-          />
-        </Grid>
-      </Grid>
-    </Grid>
+            <TaskButton
+              borderColor={borderColor}
+              icon={
+                <vaadin-icon icon='vaadin:lines-list' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+              }
+              isSubMenu
+              onClick={onAuthManagement}
+              text={t<string>('Manage website access')}
+            />
+            <TaskButton
+              borderColor={borderColor}
+              icon={
+                <vaadin-icon icon='vaadin:key' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+              }
+              isSubMenu
+              onClick={onManageLoginPassword}
+              text={t<string>('Manage login password')}
+            />
+            <Grid item pt='12px'>
+              <Select
+                label={t<string>('Language')}
+                onChange={onChangeLang}
+                options={languageOptions}
+                value={settings.i18nLang !== 'default' ? settings.i18nLang : languageOptions[0].value}
+              />
+            </Grid>
+            <Grid item pt='10px'>
+              <Select
+                label={t<string>('Notification')}
+                onChange={onChangeNotification}
+                options={notificationOptions}
+                value={notification ?? notificationOptions[1].value}
+              />
+            </Grid>
+          </Grid>
+        </>
+      </Collapse>
+    </>
   );
 }

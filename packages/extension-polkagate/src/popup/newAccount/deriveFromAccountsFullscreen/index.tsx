@@ -11,19 +11,19 @@ import { useParams } from 'react-router';
 
 import { canDerive } from '@polkadot/extension-base/utils';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext, Label, Password, PButton, Warning } from '../../../components';
+import { AccountContext, AccountNamePasswordCreation, ActionContext, Label, Password, Warning } from '../../../components';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { deriveAccount, validateAccount, validateDerivationPath } from '../../../messaging';
 import { nextDerivationPath } from '../../../util/nextDerivationPath';
 import { AddressState } from '../../../util/types';
-import AddressDropdown from '../deriveAccount/AddressDropdown';
-import DerivationPath from '../deriveAccount/DerivationPath';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
+import DerivationPath from '../deriveAccount/DerivationPath';
+import AddressDropdownFullScreen from './AddressDropdownFullScreen';
 
 // match any single slash
 const singleSlashRegex = /([^/]|^)\/([^/]|$)/;
 
-function DeriveFromAccounts(): React.ReactElement {
+function DeriveFromAccounts (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -32,7 +32,6 @@ function DeriveFromAccounts(): React.ReactElement {
   const { address: parentAddress } = useParams<AddressState>();
   const defaultPath = useMemo(() => nextDerivationPath(accounts, parentAddress), [accounts, parentAddress]);
   const [suriPath, setSuriPath] = useState<null | string>(defaultPath);
-  const [name, setName] = useState<string | null>(null);
 
   const [isBusy, setIsBusy] = useState<boolean>(false);
   const [parentPassword, setParentPassword] = useState<string>('');
@@ -48,25 +47,15 @@ function DeriveFromAccounts(): React.ReactElement {
     return parent?.type === 'sr25519';
   }, [accounts, parentAddress]);
 
-  const allAddresses = useMemo(
-    () => hierarchy
+  const allAddresses = useMemo(() => {
+    return accounts
       .filter(({ isExternal }) => !isExternal)
+      .filter(({ isQR }) => !isQR)
       .filter(({ type }) => canDerive(type))
-      .map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name]),
-    [hierarchy]
-  );
+      .map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name]);
+  }, [accounts]);
 
-  const { genesisHash: parentGenesis, name: parentName } = useMemo(
-    () =>
-      accounts.find((a) => a.address === parentAddress) || { genesisHash: null, name: null }
-    ,
-    [accounts, parentAddress]
-  );
-
-  // reset the password field if the parent address changes
-  useEffect(() => {
-    setParentPassword('');
-  }, [parentAddress]);
+  const { genesisHash: parentGenesis, name: parentName } = useMemo(() => accounts.find((a) => a.address === parentAddress) || { genesisHash: null, name: null }, [accounts, parentAddress]);
 
   useEffect(() => {
     // forbid the use of password since Keyring ignores it
@@ -79,13 +68,9 @@ function DeriveFromAccounts(): React.ReactElement {
     }
   }, [allowSoftDerivation, suriPath, t]);
 
-  const _onCreate = useCallback(async (name: string, password: string) => {
+  const onCreate = useCallback(async (name: string, password: string) => {
     let account;
     let validatedParentPassword;
-
-    console.log('nameL', name);
-    console.log('password', password);
-    console.log('parentPassword', parentPassword);
 
     if (suriPath && parentAddress && parentPassword) {
       setIsBusy(true);
@@ -123,35 +108,27 @@ function DeriveFromAccounts(): React.ReactElement {
       });
   }, [onAction, parentAddress, parentGenesis, parentPassword, suriPath, t]);
 
-  const _onParentChange = useCallback(
-    (address: string) =>
-      onAction(`/fullscreenDerive/${address}`)
-    ,
-    [onAction]
-  );
+  const onParentChange = useCallback((address: string) => {
+    setParentPassword('');
+    onAction(`/fullscreenDerive/${address}`);
+  }, [onAction]);
 
-  const _onParentPasswordEnter = useCallback(
-    (password: string): void => {
-      setParentPassword(password);
-      setIsProperParentPassword(!!password);
-    },
-    []
-  );
+  const onParentPasswordEnter = useCallback((password: string): void => {
+    setParentPassword(password);
+    setIsProperParentPassword(!!password);
+  }, []);
 
   useEffect(() => {
     setParentPassword('');
     setIsProperParentPassword(false);
-  }, [_onParentPasswordEnter]);
+  }, [onParentPasswordEnter]);
 
-  const _onSuriPathChange = useCallback(
-    (path: string): void => {
-      setSuriPath(path);
-      setPathError('');
-    },
-    []
-  );
+  const _onSuriPathChange = useCallback((path: string): void => {
+    setSuriPath(path);
+    setPathError('');
+  }, []);
 
-  const _onBackClick = useCallback(() => {
+  const onBackClick = useCallback(() => {
     onAction('/');
   }, [onAction]);
 
@@ -166,8 +143,8 @@ function DeriveFromAccounts(): React.ReactElement {
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
-        <Grid container item sx={{ display: 'block', px: '10%' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll', position: 'relative' }}>
+        <Grid container item sx={{ display: 'block', mb: '20px', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
               <vaadin-icon icon='vaadin:road-branch' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
@@ -181,25 +158,26 @@ function DeriveFromAccounts(): React.ReactElement {
           <Typography fontSize='16px' fontWeight={400} width='100%'>
             {t<string>('A derived account inherits the recovery phrase from its parent, but has a unique derivation path. Please select a parent account and enter its password to proceed.')}
           </Typography>
-          <Label
-            label={t<string>('Choose parent account')}
-            style={{ margin: 'auto', paddingBottom: '30px', paddingTop: '30px', width: '100%' }}
-          >
-            <AddressDropdown
-              allAddresses={allAddresses}
-              onSelect={_onParentChange}
-              selectedAddress={parentAddress}
-              selectedGenesis={parentGenesis}
-              selectedName={parentName}
-            />
-          </Label>
+          <Grid container item justifyContent='space-around' sx={{ my: '30px' }}>
+            <Label
+              label={t<string>('Choose parent account')}
+              style={{ margin: 'auto', width: '100%' }}
+            >
+              <AddressDropdownFullScreen
+                allAddresses={allAddresses}
+                onSelect={onParentChange}
+                selectedAddress={parentAddress}
+                selectedGenesis={parentGenesis}
+                selectedName={parentName}
+              />
+            </Label>
+          </Grid>
           <Password
             data-input-password
             isError={!!parentPassword && !isProperParentPassword}
             isFocused
             label={t<string>('Password for the account to derive from')}
-            onChange={_onParentPasswordEnter}
-            onOffFocus={onPassword}
+            onChange={onParentPasswordEnter}
             value={parentPassword}
           />
           {!!parentPassword && !isProperParentPassword && (
@@ -234,9 +212,8 @@ function DeriveFromAccounts(): React.ReactElement {
             isFocused={false}
             mt='30px'
             nameLabel={t('Choose a name for the derived account')}
-            onBackClick={_onBackClick}
-            onCreate={_onCreate}
-            onNameChange={setName}
+            onBackClick={onBackClick}
+            onCreate={onCreate}
             passwordLabel={t('Create a password for the derived account (>5 characters)')}
             style={{ width: '100%' }}
             withCancel
