@@ -25,6 +25,22 @@ export default function HomePageFullScreen(): React.ReactElement {
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
 
+  const sortedAccount = useMemo(() =>
+    hierarchy.sort((a, b) => {
+      const x = a.name.toLowerCase();
+      const y = b.name.toLowerCase();
+
+      if (x < y) {
+        return -1;
+      }
+
+      if (x > y) {
+        return 1;
+      }
+
+      return 0;
+    }), [hierarchy]);
+
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>
       <FullScreenHeader
@@ -39,7 +55,7 @@ export default function HomePageFullScreen(): React.ReactElement {
       />
       <Grid container item justifyContent='space-around' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', py: '40px' }}>
         <Grid container direction='column' item rowGap='20px' width='fit-content'>
-          {hierarchy.map((account, index) => (
+          {sortedAccount.map((account, index) => (
             <AccountItem
               account={account}
               hideNumbers={hideNumbers}
