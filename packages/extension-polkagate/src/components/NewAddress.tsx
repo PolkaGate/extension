@@ -35,14 +35,14 @@ export default function NewAddress({ address, name, showCopy, style }: Props): R
           value={formatted || address}
         />
       </Grid>
-      <Grid alignItems='flex-start' container direction='column' item xs>
-        <Typography fontSize='16px' fontWeight={400} maxWidth='95%' overflow='hidden' variant='h3' whiteSpace='nowrap'>
+      <Grid alignItems='flex-start' container direction='column' item style={{ maxWidth: '85%' }} xs>
+        <Typography fontSize='16px' fontWeight={400} maxWidth='95%' overflow='hidden' variant='h3' whiteSpace='nowrap' textOverflow='ellipsis'>
           {name ?? account?.name ?? t('<unknown>')}
         </Typography>
         <Grid container item justifyContent='space-between'>
           {(formatted || address)
             ? <ShortAddress
-              address={String(formatted) || address}
+              address={String(formatted ?? address)}
               clipped
               showCopy={showCopy}
               style={{ fontSize: '10px', fontWeight: 300, justifyContent: 'space-between', lineHeight: '23px' }}
