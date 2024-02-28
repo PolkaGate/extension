@@ -7,7 +7,7 @@ import { Typography } from '@mui/material';
 import { saveAs } from 'file-saver';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { AccountContext, ActionContext, ButtonWithCancel } from '../../components';
+import { AccountContext, ActionContext, TwoButtons } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { exportAccounts } from '../../messaging';
 import { HeaderBrand, Passwords } from '../../partials';
@@ -17,7 +17,7 @@ export default function ExportAll (): React.ReactElement {
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState<boolean>(false);
-  const [pass, setPass] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
 
   const _goHome = useCallback(
@@ -25,18 +25,16 @@ export default function ExportAll (): React.ReactElement {
     [onAction]
   );
 
-  const onPassChange = useCallback(
-    (password: string | null) => {
-      setPass(password || '');
-      setError('');
-    }
-    , []);
+  const onPassChange = useCallback((pass: string | null) => {
+    setPassword(pass || '');
+    setError('');
+  }, []);
 
   const _onExportAllButtonClick = useCallback(
     (): void => {
       setIsBusy(true);
 
-      exportAccounts(accounts.map((account) => account.address), pass)
+      exportAccounts(accounts.map((account) => account.address), password)
         .then(({ exportedJson }) => {
           const blob = new Blob([JSON.stringify(exportedJson)], { type: 'application/json; charset=utf-8' });
 
@@ -50,7 +48,7 @@ export default function ExportAll (): React.ReactElement {
           setIsBusy(false);
         });
     },
-    [accounts, onAction, pass]
+    [accounts, onAction, password]
   );
 
   return (
@@ -58,25 +56,27 @@ export default function ExportAll (): React.ReactElement {
       <HeaderBrand
         onBackClick={_goHome}
         showBackArrow
-        text={t<string>('Export All Accounts')}
+        text={t('Export All Accounts')}
       />
       <Typography fontSize='14px' fontWeight={300} m='15px auto' textAlign='left' width='88%'>
-        {t<string>('All your accounts will be encrypted with a password and stored in a JSON file.')}
+        {t('All your accounts will be encrypted with a password and stored in a JSON file inside your browser’s download history.')}
       </Typography>
       <Typography fontSize='14px' fontWeight={300} m='5px auto' textAlign='left' width='88%'>
-        {t<string>('You can later use this JSON file to import your accounts into the extension using the provided password.')}
+        {t('You can later use this JSON file to import your accounts into the extension using the provided password.')}
       </Typography>
       <Passwords
-        label={t<string>('Create a password')}
+        label={t('Create a password')}
         onChange={onPassChange}
         onEnter={_onExportAllButtonClick}
       />
-      <ButtonWithCancel
-        _isBusy={isBusy}
-        _onClick={_onExportAllButtonClick}
-        _onClickCancel={_goHome}
-        disabled={!pass || !!error}
-        text={t<string>('Export')}
+      <TwoButtons
+        disabled={!password || !!error}
+        isBusy={isBusy}
+        onPrimaryClick={_onExportAllButtonClick}
+        onSecondaryClick={_goHome}
+        primaryBtnText={t('Export')}
+        secondaryBtnText={t('Cancel')}
+        width='88%'
       />
     </>
   );
