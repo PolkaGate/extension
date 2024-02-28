@@ -37,7 +37,7 @@ function PButton({ _fontSize = '16px', _isBusy, _ml = 6, _mt, _onClick, _variant
             fontSize: _fontSize,
             fontWeight: 400,
             height: '36px',
-            ml: '6%',
+            ml: `${_ml}%`,
             mt: _mt ?? 0,
             position: !_mt ? 'absolute' : 'inherit',
             textTransform: 'none',

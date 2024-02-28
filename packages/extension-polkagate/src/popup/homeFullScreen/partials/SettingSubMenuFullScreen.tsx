@@ -19,6 +19,7 @@ import { TEST_NETS } from '../../../util/constants';
 import getLanguageOptions from '../../../util/getLanguageOptions';
 import EnableTestNetsModal from './EnableTestNetsModal';
 import { TaskButton } from './HomeMenu';
+import ManageWebAccess from './ManageWebAccess';
 
 interface Props {
   show: boolean;
@@ -36,6 +37,7 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
 
   const [isEnableTestnetChecked, setIsTestnetEnabledChecked] = useState<boolean>();
   const [testnetWarning, setShowTestnetWarning] = useState<boolean>(false);
+  const [showManageWebAccess, setShowManageWebAccess] = useState<boolean>(false);
 
   const onEnableTestNetClick = useCallback(() => {
     !isEnableTestnetChecked && setShowTestnetWarning(true);
@@ -72,8 +74,8 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
   }, [accounts, isEnableTestnetChecked]);
 
   const onAuthManagement = useCallback(() => {
-    onAction('/auth-list');
-  }, [onAction]);
+    setShowManageWebAccess(true);
+  }, []);
 
   const onChangeLang = useCallback((value: string): void => {
     settings.set({ i18nLang: value });
@@ -173,6 +175,10 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
         open={testnetWarning}
         setDisplayPopup={setShowTestnetWarning}
         setIsTestnetEnabled={setIsTestnetEnabledChecked}
+      />
+      <ManageWebAccess
+        open={showManageWebAccess}
+        setDisplayPopup={setShowManageWebAccess}
       />
     </>
   );
