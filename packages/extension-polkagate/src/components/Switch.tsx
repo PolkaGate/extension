@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Typography } from '@mui/material';
-import { Theme } from '@mui/material/styles';
+import { Theme, useTheme } from '@mui/material/styles';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -19,17 +19,11 @@ interface Props {
 }
 
 function Switch({ changeBackground = false, checkedLabel, className, fontSize = '18px', fontWeight = 300, isChecked = false, onChange, uncheckedLabel }: Props): React.ReactElement<Props> {
+  const theme = useTheme();
+
   return (
-    <Grid alignItems='center'
-      className={className}
-      container
-      item
-      width='fit-content'>
-      <Typography
-        display='inline'
-        fontSize={fontSize}
-        fontWeight={fontWeight}
-      >
+    <Grid alignItems='center' className={className} container item width='fit-content'>
+      <Typography display='inline' fontSize={fontSize} fontWeight={fontWeight}>
         {uncheckedLabel}
       </Typography>
       <label>
@@ -41,7 +35,7 @@ function Switch({ changeBackground = false, checkedLabel, className, fontSize = 
         />
         <span
           className='slider'
-          style={{ backgroundColor: isChecked && changeBackground ? '#C1FF83' : 'transparent' }} />
+          style={{ backgroundColor: isChecked && changeBackground ? theme.palette.success.main : 'transparent' }} />
       </label>
       <Typography
         display='inline'

@@ -65,6 +65,7 @@ export default function AccountInformation ({ accountAssets, address, api, asset
   const textAndIconColor = useMemo(() => theme.palette.secondary.main, [theme.palette.secondary.main]);
   // const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
   // const isPriceOutdated = useMemo(() => price !== undefined && Date.now() - price.date > BALANCES_VALIDITY_PERIOD, [price]);
+
   const otherAssetsToShow = useMemo(() => {
     if (!accountAssets) {
       return accountAssets;
@@ -72,6 +73,7 @@ export default function AccountInformation ({ accountAssets, address, api, asset
       return accountAssets.sort((a, b) => calculatePrice(b.totalBalance, b.decimal, b.price ?? 0) - calculatePrice(a.totalBalance, a.decimal, a.price ?? 0));
     }
   }, [accountAssets, calculatePrice]);
+
   const recoverableToolTipTxt = useMemo(() => {
     switch (isRecoverable) {
       case true:
@@ -83,6 +85,7 @@ export default function AccountInformation ({ accountAssets, address, api, asset
         return 'Checking';
     }
   }, [isRecoverable]);
+
   const proxyTooltipTxt = useMemo(() => {
     if (hasProxy) {
       return 'Has Proxy';
@@ -92,6 +95,7 @@ export default function AccountInformation ({ accountAssets, address, api, asset
       return 'Checking';
     }
   }, [hasProxy]);
+  
   const totalBalance = useMemo(() => {
     if (accountAssets) {
       return accountAssets.reduce((accumulator, accountAsset) => (accumulator + calculatePrice(accountAsset.totalBalance, accountAsset.decimal, accountAsset?.price ?? 0)), 0)
@@ -101,7 +105,9 @@ export default function AccountInformation ({ accountAssets, address, api, asset
 
     return undefined;
   }, [accountAssets, calculatePrice]);
+
   const onAssetHub = useCallback((genesisHash: string | null | undefined) => ASSET_HUBS.includes(genesisHash ?? ''), []);
+
   const displayLogoAOC = useCallback((genesisHash: string | null | undefined, symbol: string | undefined): DisplayLogoAOC => {
     if (onAssetHub(genesisHash)) {
       if (ASSET_HUBS[0] === genesisHash) {
@@ -304,7 +310,7 @@ export default function AccountInformation ({ accountAssets, address, api, asset
             </Grid>
           </Grid>
           <Grid alignItems='center' container item sx={{ '> div div:last-child': { width: 'auto' } }} xs>
-            <ShortAddress2 address={formatted} charsCount={40} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
+            <ShortAddress2 address={formatted || address} charsCount={40} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
           </Grid>
         </Grid>
         <AssetsBox />

@@ -10,9 +10,9 @@ import type { BN } from '@polkadot/util';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
 import { SxProps, Theme } from '@mui/material';
+import { LinkOption } from '@polkagate/apps-config/endpoints/types';
 
 import { ApiPromise } from '@polkadot/api';
-import { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
@@ -736,7 +736,7 @@ export interface ReferendaContextType {
   setRefs: (refs: LatestRefs) => void;
 }
 
-export interface AssetsOnOtherChains { assetId?: number, totalBalance: BN, chainName: string, decimal: number, genesisHash: string, price: number | undefined, token: string };
+export interface AssetsOnOtherChains { assetId?: number, totalBalance: BN, chainName: string, decimal: number, genesisHash: string, price: number | undefined, token: string }
 export interface AccountAssets {
   assetId: number | undefined;
   chainName: string;
@@ -751,9 +751,9 @@ export interface AccountAssets {
 export interface AccountsAssets {
   address: string;
   assets: AccountAssets[];
-};
+}
 
-export interface SavedAccountsAssets { balances: AccountsAssets[], timestamp: number };
+export interface SavedAccountsAssets { balances: AccountsAssets[], timestamp: number }
 
 export interface AccountsAssetsContextType {
   accountsAssets: SavedAccountsAssets | null | undefined;
@@ -782,4 +782,4 @@ export enum CanPayStatements {
   CANNOTPAYFEE,
   CANNOTPAYDEPOSIT,
   PROXYCANPAYFEE,
-};
+}

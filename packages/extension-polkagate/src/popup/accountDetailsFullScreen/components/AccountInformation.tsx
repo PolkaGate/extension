@@ -41,7 +41,7 @@ export type DisplayLogoAOC = {
   symbol: string | undefined;
 }
 
-export default function AccountInformation({ accountAssets, address, api, assetId, balances, chain, chainName, formatted, isDarkTheme, price, setAssetId }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation ({ accountAssets, address, api, assetId, balances, chain, chainName, formatted, isDarkTheme, price, setAssetId }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
   const accountInfo = useAccountInfo(api, formatted);
@@ -302,7 +302,7 @@ export default function AccountInformation({ accountAssets, address, api, assetI
             </Grid>
           </Grid>
           <Grid alignItems='center' container item sx={{ '> div div:last-child': { width: 'auto' } }} xs>
-            <ShortAddress2 address={formatted} charsCount={40} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
+            <ShortAddress2 address={formatted || address} charsCount={40} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
           </Grid>
         </Grid>
         <AssetsBox />
