@@ -11,6 +11,7 @@ import { keyframes, Theme } from '@mui/material/styles';
 import React, { useCallback, useContext, useState } from 'react';
 
 import { AccountContext, ActionContext, MenuItem, TwoButtons, Warning } from '../components';
+import { setStorage } from '../components/Loading';
 import { useTranslation } from '../hooks';
 import { tieAccount } from '../messaging';
 import { TEST_NETS } from '../util/constants';
@@ -35,7 +36,7 @@ function Menu ({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const [collapsedMenu, setCollapsedMenu] = useState<number>(COLLAPSIBLE_MENUS.SETTING);
-  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+  const [isTestnetEnableConfirmed, setIsTestnetEnableConfirmed] = useState<boolean>();
   const [showWarning, setShowWarning] = useState<boolean>();
   const [closeMenu, setCloseMenu] = useState<boolean>(false);
   const { accounts } = useContext(AccountContext);
@@ -69,28 +70,28 @@ function Menu ({ setShowMenu, theme }: Props): React.ReactElement<Props> {
 
   const onEnableTestnetConfirm = useCallback(() => {
     setShowWarning(false);
-    setIsTestnetEnabled(true);
-    window.localStorage.setItem('testnet_enabled', 'true');
+    setIsTestnetEnableConfirmed(true);
+    setStorage('testnet_enabled', true).catch(console.error);
   }, []);
 
   const onEnableTestnetReject = useCallback(() => {
     setShowWarning(false);
-    setIsTestnetEnabled(false);
+    setIsTestnetEnableConfirmed(false);
   }, []);
 
   const onEnableTestNetClick = useCallback(() => {
-    !isTestnetEnabled && setShowWarning(true);
+    !isTestnetEnableConfirmed && setShowWarning(true);
 
-    if (isTestnetEnabled) {
-      window.localStorage.setItem('testnet_enabled', 'false');
+    if (isTestnetEnableConfirmed) {
+      setStorage('testnet_enabled', false).catch(console.error);
       accounts?.forEach(({ address, genesisHash }) => {
         if (genesisHash && TEST_NETS.includes(genesisHash)) {
           tieAccount(address, null).catch(console.error);
         }
       });
-      setIsTestnetEnabled(false);
+      setIsTestnetEnableConfirmed(false);
     }
-  }, [accounts, isTestnetEnabled]);
+  }, [accounts, isTestnetEnableConfirmed]);
 
   const slideLeft = keyframes`
   0% {
@@ -154,9 +155,9 @@ function Menu ({ setShowMenu, theme }: Props): React.ReactElement<Props> {
               text={t('Settings')}
             >
               <SettingSubMenu
-                isTestnetEnabled={isTestnetEnabled}
+                isTestnetEnabledChecked={isTestnetEnableConfirmed}
                 onChange={onEnableTestNetClick}
-                setIsTestnetEnabled={setIsTestnetEnabled}
+                setTestnetEnabledChecked={setIsTestnetEnableConfirmed}
                 show={collapsedMenu === COLLAPSIBLE_MENUS.SETTING}
               />
             </MenuItem>
@@ -174,7 +175,7 @@ function Menu ({ setShowMenu, theme }: Props): React.ReactElement<Props> {
                 marginTop={0}
                 theme={theme}
               >
-                {t<string>('Enabling testnet chains may cause instability or crashes since they\'re meant for testing. Proceed with caution. If issues arise, return here to disable the option.')}
+                {t('Enabling testnet chains may cause instability or crashes since they\'re meant for testing. Proceed with caution. If issues arise, return here to disable the option.')}
               </Warning>
             </Grid>
             <Grid container>

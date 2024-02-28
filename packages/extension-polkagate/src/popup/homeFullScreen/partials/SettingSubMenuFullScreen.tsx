@@ -12,35 +12,44 @@ import settings from '@polkadot/ui-settings';
 
 import { checkBox, checkedBox } from '../../../assets/icons';
 import { AccountContext, ActionContext, Select } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { getStorage, setStorage } from '../../../components/Loading';
+import { useIsTestnetEnabled, useTranslation } from '../../../hooks';
 import { setNotification, tieAccount } from '../../../messaging';
 import { TEST_NETS } from '../../../util/constants';
 import getLanguageOptions from '../../../util/getLanguageOptions';
+import EnableTestNetsModal from './EnableTestNetsModal';
 import { TaskButton } from './HomeMenu';
 
 interface Props {
   show: boolean;
 }
 
-export default function SettingSubMenuFullScreen ({ show }: Props): React.ReactElement {
+export default function SettingSubMenuFullScreen({ show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
+  const isTestnetEnabled = useIsTestnetEnabled();
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
 
-  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+  const [isEnableTestnetChecked, setIsTestnetEnabledChecked] = useState<boolean>();
+  const [testnetWarning, setShowTestnetWarning] = useState<boolean>(false);
 
   const onEnableTestNetClick = useCallback(() => {
-    // !isTestnetEnabled && setShowWarning(true);
+    !isEnableTestnetChecked && setShowTestnetWarning(true);
 
-    if (isTestnetEnabled) {
-      window.localStorage.setItem('testnet_enabled', 'false');
-      setIsTestnetEnabled(false);
+    if (isEnableTestnetChecked) {
+      setStorage('testnet_enabled', false).catch(console.error);
+      accounts?.forEach(({ address, genesisHash }) => {
+        if (genesisHash && TEST_NETS.includes(genesisHash)) {
+          tieAccount(address, null).catch(console.error);
+        }
+      });
+      setIsTestnetEnabledChecked(false);
     }
-  }, [isTestnetEnabled]);
+  }, [accounts, isEnableTestnetChecked]);
 
   const [notification, updateNotification] = useState(settings.notification);
   const [camera, setCamera] = useState(settings.camera === 'on');
@@ -53,16 +62,14 @@ export default function SettingSubMenuFullScreen ({ show }: Props): React.ReactE
   }, [camera]);
 
   useEffect(() => {
-    const isTestnetDisabled = window.localStorage.getItem('testnet_enabled') !== 'true';
-
-    isTestnetDisabled && (
+    !isEnableTestnetChecked && (
       accounts?.forEach(({ address, genesisHash }) => {
         if (genesisHash && TEST_NETS.includes(genesisHash)) {
           tieAccount(address, null).catch(console.error);
         }
       })
     );
-  }, [accounts]);
+  }, [accounts, isEnableTestnetChecked]);
 
   const onAuthManagement = useCallback(() => {
     onAction('/auth-list');
@@ -88,8 +95,10 @@ export default function SettingSubMenuFullScreen ({ show }: Props): React.ReactE
   }, [camera]);
 
   useEffect(() => {
-    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true');
-  }, [setIsTestnetEnabled]);
+    getStorage('testnet_enabled').then((res) => {
+      setIsTestnetEnabledChecked(res as boolean);
+    }).catch(console.error);
+  }, [setIsTestnetEnabledChecked]);
 
   return (
     <>
@@ -108,7 +117,7 @@ export default function SettingSubMenuFullScreen ({ show }: Props): React.ReactE
               }
               isSubMenu
               onClick={onEnableTestNetClick}
-              text={t<string>('Enable testnet chains')}
+              text={t('Enable testnet chains')}
             />
             <TaskButton
               borderColor={borderColor}
@@ -160,6 +169,11 @@ export default function SettingSubMenuFullScreen ({ show }: Props): React.ReactE
           </Grid>
         </>
       </Collapse>
+      <EnableTestNetsModal
+        open={testnetWarning}
+        setDisplayPopup={setShowTestnetWarning}
+        setIsTestnetEnabled={setIsTestnetEnabledChecked}
+      />
     </>
   );
 }

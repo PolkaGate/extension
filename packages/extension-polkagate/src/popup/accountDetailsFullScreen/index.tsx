@@ -16,11 +16,11 @@ import { Lock } from '../../hooks/useAccountLocks';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { amountToHuman } from '../../util/utils';
 import { getValue } from '../account/util';
-import DeriveAccountModal from '../newAccount/deriveAccount/modal/DeriveAccountModal';
 import ExportAccountModal from '../export/ExportAccountModal';
 import ForgetAccountModal from '../forgetAccount/ForgetAccountModal';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import HistoryModal from '../history/modal/HistoryModal';
+import DeriveAccountModal from '../newAccount/deriveAccount/modal/DeriveAccountModal';
 import ReceiveModal from '../receive/ReceiveModal';
 import RenameModal from '../rename/RenameModal';
 import LockedInReferenda from './unlock/Review';
@@ -135,7 +135,7 @@ export default function AccountDetails (): React.ReactElement {
                 balances={balance}
                 chain={chain}
                 chainName={chainName}
-                formatted={String(formatted)}
+                formatted={formatted}
                 isDarkTheme={isDarkTheme}
                 price={price}
                 setAssetId={setAssetId}
