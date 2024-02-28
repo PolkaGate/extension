@@ -10,6 +10,7 @@ import { Avatar, Backdrop, Box, ClickAwayListener, Grid, keyframes, useTheme } f
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { threeItemCurveBackgroundBlack, threeItemCurveBackgroundWhite } from '../assets/icons';
+import { getStorage } from '../components/Loading';
 import { useAccount, useGenesisHashOptions } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CHAINS_WITH_BLACK_LOGO, INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
@@ -37,9 +38,11 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
     currentChainName && setCurrentSelectedChain(currentChainName);
   }, [currentChainName]);
 
-  useEffect(() =>
-    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
-    , [showRecentChains]);
+  useEffect(() => {
+    getStorage('testnet_enabled').then((res) => {
+      setIsTestnetEnabled(res as boolean);
+    }).catch(console.error);
+  }, [showRecentChains]);
 
   useEffect(() => {
     if (!address || !account) {

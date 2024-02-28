@@ -1,8 +1,26 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
-export default function useIsTestnetEnabled (): boolean | undefined {
-  return useMemo(() => window.localStorage.getItem('testnet_enabled') === 'true', []);
+import { getStorage } from '../components/Loading';
+
+export default function useIsTestnetEnabled(): boolean | undefined {
+  const [isTestnetEnabled, setTestnetIsEnabled] = useState<boolean>();
+
+  useEffect(() => {
+    getStorage('testnet_enabled').then((res) => {
+      setTestnetIsEnabled(res as boolean);
+    }).catch(console.error);
+
+    chrome.storage.onChanged.addListener(function (changes, areaName) {
+      if (areaName === 'local' && 'testnet_enabled' in changes) {
+        const newValue = changes.testnet_enabled.newValue as boolean;
+
+        setTestnetIsEnabled(newValue);
+      }
+    });
+  }, []);
+
+  return isTestnetEnabled;
 }
