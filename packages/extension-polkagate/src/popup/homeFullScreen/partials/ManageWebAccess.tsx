@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import '@vaadin/icons';
+
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -54,10 +56,15 @@ export default function ManageWebAccess ({ open, setDisplayPopup }: Props): Reac
     <DraggableModal onClose={backToAccount} open={open}>
       <>
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
-          <Grid item>
-            <Typography fontSize='22px' fontWeight={700}>
-              {t('Manage Website Access')}
-            </Typography>
+          <Grid alignItems='flex-start' container justifyContent='flex-start' sx={{ width: 'fit-content' }}>
+            <Grid item>
+              <vaadin-icon icon='vaadin:lines-list' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+            </Grid>
+            <Grid item sx={{ pl: '10px' }}>
+              <Typography fontSize='22px' fontWeight={700}>
+                {t('Manage Website Access')}
+              </Typography>
+            </Grid>
           </Grid>
           <Grid item>
             <CloseIcon onClick={backToAccount} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />

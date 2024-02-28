@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
+import '@vaadin/icons';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -21,7 +22,7 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ManageLoginPassword({ open, setDisplayPopup }: Props): React.ReactElement {
+export default function ManageLoginPassword ({ open, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -53,10 +54,15 @@ export default function ManageLoginPassword({ open, setDisplayPopup }: Props): R
     <DraggableModal onClose={backToAccount} open={open}>
       <>
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
-          <Grid item>
-            <Typography fontSize='22px' fontWeight={700}>
-              {t('Manage Login Password')}
-            </Typography>
+          <Grid alignItems='flex-start' container justifyContent='flex-start' sx={{ width: 'fit-content' }}>
+            <Grid item>
+              <vaadin-icon icon='vaadin:key' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+            </Grid>
+            <Grid item sx={{ pl: '10px' }}>
+              <Typography fontSize='22px' fontWeight={700}>
+                {t('Manage Login Password')}
+              </Typography>
+            </Grid>
           </Grid>
           <Grid item>
             <CloseIcon onClick={backToAccount} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
