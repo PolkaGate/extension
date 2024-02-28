@@ -12,6 +12,7 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { AccountContext, ActionContext } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import VersionSocial from '../../../partials/VersionSocial';
+import ExportAllModal from './ExportAllModal';
 import ImportAccSubMenuFullScreen from './ImportAccSubMenuFullScreen';
 import SettingSubMenuFullScreen from './SettingSubMenuFullScreen';
 
@@ -70,13 +71,18 @@ export default function HomeMenu(): React.ReactElement {
 
   const [showImport, setShowImport] = useState<boolean>(false);
   const [showSetting, setShowSetting] = useState<boolean>(false);
+  const [showExportAll, setShowExportAll] = useState<boolean>(false);
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
 
-  const goToSend = useCallback(() => {
+  const onSend = useCallback(() => {
     onAction('/account/create');
   }, [onAction]);
+
+  const onExportAll = useCallback(() => {
+    setShowExportAll(true);
+  }, []);
 
   const onImportClick = useCallback(() => {
     setShowImport(!showImport);
@@ -100,7 +106,7 @@ export default function HomeMenu(): React.ReactElement {
           icon={
             <vaadin-icon icon='vaadin:plus-circle' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
-          onClick={goToSend}
+          onClick={onSend}
           secondaryIconType='page'
           text={t<string>('Create new account')}
         />
@@ -131,7 +137,7 @@ export default function HomeMenu(): React.ReactElement {
           icon={
             <vaadin-icon icon='vaadin:download' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
-          onClick={goToSend}
+          onClick={onExportAll}
           secondaryIconType='page'
           secondaryIconType='popup'
           text={t<string>('Export all accounts')}
@@ -152,6 +158,10 @@ export default function HomeMenu(): React.ReactElement {
         </TaskButton>
       </Grid>
       <VersionSocial fontSize='14px' iconSize={20} />
+      <ExportAllModal
+        open={showExportAll}
+        setDisplayPopup={setShowExportAll}
+      />
     </Grid>
   );
 }
