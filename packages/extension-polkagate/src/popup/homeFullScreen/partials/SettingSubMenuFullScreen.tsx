@@ -11,7 +11,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import settings from '@polkadot/ui-settings';
 
 import { checkBox, checkedBox } from '../../../assets/icons';
-import { AccountContext, ActionContext, Select } from '../../../components';
+import { AccountContext, Select } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
 import { useIsTestnetEnabled, useTranslation } from '../../../hooks';
 import { setNotification, tieAccount } from '../../../messaging';
@@ -19,6 +19,7 @@ import { TEST_NETS } from '../../../util/constants';
 import getLanguageOptions from '../../../util/getLanguageOptions';
 import EnableTestNetsModal from './EnableTestNetsModal';
 import { TaskButton } from './HomeMenu';
+import ManageLoginPassword from './ManageLoginPassword';
 import ManageWebAccess from './ManageWebAccess';
 
 interface Props {
@@ -28,7 +29,6 @@ interface Props {
 export default function SettingSubMenuFullScreen({ show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
   const isTestnetEnabled = useIsTestnetEnabled();
 
@@ -38,6 +38,7 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
   const [isEnableTestnetChecked, setIsTestnetEnabledChecked] = useState<boolean>();
   const [testnetWarning, setShowTestnetWarning] = useState<boolean>(false);
   const [showManageWebAccess, setShowManageWebAccess] = useState<boolean>(false);
+  const [showManageLoginPassword, setShowManageLoginPassword] = useState<boolean>(false);
 
   const onEnableTestNetClick = useCallback(() => {
     !isEnableTestnetChecked && setShowTestnetWarning(true);
@@ -82,8 +83,8 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
   }, []);
 
   const onManageLoginPassword = useCallback(() => {
-    onAction('/login-password');
-  }, [onAction]);
+    setShowManageLoginPassword(true);
+  }, []);
 
   const onChangeNotification = useCallback((value: string): void => {
     setNotification(value).catch(console.error);
@@ -179,6 +180,10 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
       <ManageWebAccess
         open={showManageWebAccess}
         setDisplayPopup={setShowManageWebAccess}
+      />
+      <ManageLoginPassword
+        open={showManageLoginPassword}
+        setDisplayPopup={setShowManageLoginPassword}
       />
     </>
   );

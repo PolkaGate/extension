@@ -16,6 +16,7 @@ interface Props {
   secondaryBtnText?: string;
   onSecondaryClick: React.MouseEventHandler<HTMLButtonElement>;
   mt?: string;
+  ml?: string;
   disabled?: boolean;
   isBusy?: boolean;
   variant?: 'text' | 'outlined';
@@ -23,12 +24,12 @@ interface Props {
 }
 // TODO: can replace ButtonWithCancel later
 
-export default function TwoButtons({ disabled = false, isBusy = false, mt, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, variant = 'outlined', width = '88%' }: Props): React.ReactElement<Props> {
+export default function TwoButtons ({ disabled = false, isBusy = false, ml = '6%', mt, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, variant = 'outlined', width = '88%' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
   return (
-    <Grid container justifyContent='space-between' margin='auto' ml='6%' mt={mt} sx={{ bottom: mt ? 0 : '25px', position: mt ? 'inherit' : 'absolute' }} width={width}>
+    <Grid container justifyContent='space-between' margin='auto' ml={ml} mt={mt} sx={{ bottom: mt ? 0 : '25px', position: mt ? 'inherit' : 'absolute' }} width={width}>
       <Grid item xs={5.8}>
         <Button
           disabled={isBusy}

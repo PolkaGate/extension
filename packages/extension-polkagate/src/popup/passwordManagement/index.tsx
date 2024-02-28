@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, useTheme } from '@mui/material';
+import { Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { blake2AsHex } from '@polkadot/util-crypto';
@@ -26,7 +26,6 @@ export const isPasswordCorrect = async (password: string, isHashed?: boolean) =>
 
 export default function LoginPassword(): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const onAction = useContext(ActionContext);
 
   const [step, setStep] = useState<number>();
