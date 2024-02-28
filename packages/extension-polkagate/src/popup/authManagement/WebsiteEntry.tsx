@@ -18,7 +18,7 @@ interface Props {
   url: string;
 }
 
-export default function WebsiteEntry ({ info, removeAuth, toggleAuth, url }: Props): React.ReactElement<Props> {
+export default function WebsiteEntry({ info, removeAuth, toggleAuth, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -32,7 +32,7 @@ export default function WebsiteEntry ({ info, removeAuth, toggleAuth, url }: Pro
 
   return (
     <Grid container item sx={{ '&:last-child': { borderBottom: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
-      <Grid alignItems='center' container item maxWidth='163px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light', overflowX: 'hidden', pl: '5px', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <Grid alignItems='center' container item maxWidth='163px' xs sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light', overflowX: 'hidden', pl: '5px', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {url}
       </Grid>
       <Grid alignItems='center' container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light' }} xs={5.2}>
@@ -46,7 +46,7 @@ export default function WebsiteEntry ({ info, removeAuth, toggleAuth, url }: Pro
           uncheckedLabel={t<string>('Denied')}
         />
       </Grid>
-      <Grid alignItems='center' container item justifyContent='center' onClick={_removeAuth} xs={0.8}>
+      <Grid alignItems='center' container item justifyContent='center' onClick={_removeAuth} sx={{ width: 'fit-content', px:'5px' }}>
         <RemoveAuth />
       </Grid>
     </Grid>

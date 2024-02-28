@@ -197,7 +197,7 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
               />
             }
             onClick={onAuthManagement}
-            text={t<string>('Manage website access')}
+            text={t('Manage website access')}
           />
         </Grid>
         <Grid container item pb={'10px'} >
