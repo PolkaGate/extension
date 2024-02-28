@@ -3,28 +3,31 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faDollarSign } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Grid, Popover, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import { Grid, Popover, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
 
 import CurrencyList from '../components/CurrencyList';
 
-export interface CurrencyItemType { code: string; country: string; currency: string; sign: string; };
+export interface CurrencyItemType { code: string; country: string; currency: string; sign: string; }
 
 export default function Currency(): React.ReactElement {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [currencyToShow, setCurrencyToShow] = useState<string | undefined>();
 
-  // useLayoutEffect(() => {
-  //   if (currencyToShow) {
-  //     return;
-  //   }
+  const textColor = useMemo(() => theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.text.secondary, [theme.palette.mode, theme.palette.text.primary, theme.palette.text.secondary]);
 
-  //   const selectedCurrency = window.localStorage.getItem('currency');
+  useLayoutEffect(() => {
+    if (currencyToShow) {
+      return;
+    }
 
-  //   setCurrencyToShow(selectedCurrency ?? 'Dollar');
-  // }, [currencyToShow]);
+    const selectedCurrency = window.localStorage.getItem('currency');
+
+    const currencyCode = selectedCurrency ? (JSON.parse(selectedCurrency) as CurrencyItemType).sign : '$';
+
+    setCurrencyToShow(currencyCode);
+  }, [currencyToShow]);
 
   const onCurrencyClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -39,12 +42,10 @@ export default function Currency(): React.ReactElement {
 
   return (
     <>
-      <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', p: '2px 6px', position: 'relative', width: '42px' }}>
-        <FontAwesomeIcon
-          color='#fff'
-          fontSize='24px'
-          icon={faDollarSign}
-        />
+      <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', height: '42px', minWidth: '42px', p: '2px 6px', position: 'relative', width: 'fit-content' }}>
+        <Typography color={textColor} fontSize='25px' fontWeight={600}>
+          {currencyToShow}
+        </Typography>
       </Grid>
       <Popover
         PaperProps={{
@@ -67,6 +68,7 @@ export default function Currency(): React.ReactElement {
         <CurrencyList
           anchorEl={anchorEl}
           setAnchorEl={setAnchorEl}
+          setCurrencyToShow={setCurrencyToShow}
         />
       </Popover>
     </>
