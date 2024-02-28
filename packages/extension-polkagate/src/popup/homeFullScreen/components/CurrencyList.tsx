@@ -5,9 +5,9 @@
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Collapse, Grid, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { InputFilter } from '../../../components';
+import { CurrencyContext, InputFilter } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { currencyList } from '../../../util/defaultAssets';
 import { CurrencyItemType } from '../partials/Currency';
@@ -16,11 +16,13 @@ import CurrencyItem from './CurrencyItem';
 interface Props {
   anchorEl: HTMLButtonElement | null;
   setAnchorEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
+  setCurrencyToShow: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-function CurrencyList({ anchorEl, setAnchorEl }: Props): React.ReactElement {
+function CurrencyList ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
+  const { setCurrency } = useContext(CurrencyContext);
 
   const [showOtherCurrencies, setShowOtherCurrencies] = useState<boolean>(false);
   const [searchKeyword, setSearchKeyword] = useState<string>('');
@@ -35,10 +37,10 @@ function CurrencyList({ anchorEl, setAnchorEl }: Props): React.ReactElement {
 
   const changeCurrency = useCallback((currency: CurrencyItemType) => {
     setAnchorEl(null);
-
-    // setCurrencyToShow(currency);
+    setCurrency(currency);
+    setCurrencyToShow(currency.sign);
     window.localStorage.setItem('currency', JSON.stringify(currency));
-  }, [setAnchorEl]);
+  }, [setAnchorEl, setCurrency, setCurrencyToShow]);
 
   const onOtherCurrencies = useCallback(() => setShowOtherCurrencies(!showOtherCurrencies), [showOtherCurrencies]);
 
