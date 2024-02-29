@@ -95,7 +95,7 @@ export default function AccountInformation ({ accountAssets, address, api, asset
       return 'Checking';
     }
   }, [hasProxy]);
-  
+
   const totalBalance = useMemo(() => {
     if (accountAssets) {
       return accountAssets.reduce((accumulator, accountAsset) => (accumulator + calculatePrice(accountAsset.totalBalance, accountAsset.decimal, accountAsset?.price ?? 0)), 0)
@@ -201,7 +201,7 @@ export default function AccountInformation ({ accountAssets, address, api, asset
               ? <Typography fontSize='36px' fontWeight={700}>
                 {`${currency?.sign ?? ''}${nFormatter(totalBalance ?? 0, 2)}`}
               </Typography>
-              : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
+              : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={180} />
         }
       </Grid>
     </Grid>
