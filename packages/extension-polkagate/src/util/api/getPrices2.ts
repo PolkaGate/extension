@@ -26,7 +26,7 @@ export default async function getPrices2 (priceIds: string[], currency = 'usd'):
       outputObjectPrices[key] = value[currency];
     }
 
-    return { date: Date.now(), prices: outputObjectPrices };
+    return { currencyCode: currency ,date: Date.now(), prices: outputObjectPrices };
   } catch (e) {
     console.log('error while fetching prices:', e);
 
