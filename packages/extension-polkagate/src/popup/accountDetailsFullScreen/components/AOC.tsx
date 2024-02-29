@@ -11,8 +11,8 @@ import { ApiPromise } from '@polkadot/api';
 import { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { DisplayLogo, FormatPrice, ShowBalance } from '../../../components';
-import { usePrices2, useTranslation } from '../../../hooks';
-import { AccountAssets, AssetsOnOtherChains, BalancesInfo } from '../../../util/types';
+import { useTranslation } from '../../../hooks';
+import { AccountAssets, BalancesInfo } from '../../../util/types';
 import { DisplayLogoAOC } from './AccountInformation';
 
 interface Props {
@@ -29,25 +29,18 @@ interface Props {
 
 function AOC ({ account, accountAssets, api, assetId, balanceToShow, borderColor, displayLogoAOC, mode = 'Detail', onclick }: Props) {
   const { t } = useTranslation();
-  const prices = usePrices2();
 
   const [showMore, setShowMore] = useState<boolean>(false);
 
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
   const assets = useMemo(() => {
-    if (accountAssets && accountAssets.length > 0 && prices?.prices) {
-      const aOC = accountAssets.map((asset) => {
-        asset.price = asset.priceId ? prices.prices[asset.priceId] : 0;
-
-        return asset;
-      });
-
-      return aOC;
+    if (accountAssets && accountAssets.length > 0) {
+      return accountAssets;
     } else {
       return [undefined, undefined];
     }
-  }, [accountAssets, prices]);
+  }, [accountAssets]);
 
   const BalanceRow = ({ asset }: { asset: AccountAssets }) => (
     <Grid alignItems='flex-start' container direction='column' item pl='5px' xs>
