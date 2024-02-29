@@ -587,10 +587,10 @@ export interface Prices {
 }
 
 export interface PricesType {
-  [key: string]: number;
+  [key: string]: { price: number, change: number };
 }
 
-export interface OutputPrices {
+export interface Prices2 {
   date: number;
   prices: PricesType;
   currencyCode: string;
@@ -601,6 +601,11 @@ export interface Price {
   chainName: string;
   date: number;
   token?: string;
+}
+
+export interface PricesContextType {
+  prices: Prices2[] | undefined;
+  setPrices: (prices: Prices2[]) => void;
 }
 
 export interface Price2 {
