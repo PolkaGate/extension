@@ -141,7 +141,7 @@ export default function Popup(): React.ReactElement {
     });
   }, []);
 
-  const updatePrices = useCallback(async (prices: Prices2[], currencyCode: string) => {
+  const updatePrices = useCallback(async (currencyCode: string) => {
     const priceIds = ['polkadot', 'kusama', 'acala', 'astar', 'hydradx', 'karura', 'liquid-staking-dot', 'acala-dollar-acala', 'tether', 'usd-coin'];
 
     fetching.fetchingPrices = { price: true };
@@ -186,17 +186,17 @@ export default function Popup(): React.ReactElement {
   );
 
   useEffect(() => {
-    if (!currency || !prices || prices.length === 0 || (fetching.fetchingPrices && fetching.fetchingPrices?.price)) {
+    if (!currency || (fetching.fetchingPrices && fetching.fetchingPrices?.price)) {
       return;
     }
 
-    const price = prices.find((p) => p.currencyCode.toLowerCase() === currency.code.toLowerCase());
+    const price = prices?.find(({ currencyCode }) => currencyCode.toLowerCase() === currency.code.toLowerCase());
 
     if (price && Date.now() - price.date < 1000 * 30) {
       return;
     }
 
-    updatePrices(prices, currency.code).catch(console.error);
+    updatePrices(currency.code).catch(console.error);
   }, [currency, fetching.fetchingPrices, fetching?.fetchingPrices?.price, prices, updatePrices]);
 
   useEffect(() => {
