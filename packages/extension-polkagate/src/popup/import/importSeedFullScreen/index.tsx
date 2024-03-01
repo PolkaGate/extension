@@ -7,7 +7,7 @@ import '@vaadin/icons';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
-import { Grid, IconButton, keyframes, Typography, useTheme } from '@mui/material';
+import { Collapse, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
@@ -28,13 +28,13 @@ export interface AccountInfo {
   suri: string;
 }
 
-export default function ImportSeed(): React.ReactElement {
+export default function ImportSeed (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
   const genesisOptions = useGenesisHashOptions();
-
   const onAction = useContext(ActionContext);
+
   const [isBusy, setIsBusy] = useState(false);
   const [seed, setSeed] = useState<string | null>(null);
   const [error, setError] = useState<string | undefined>();
@@ -44,37 +44,16 @@ export default function ImportSeed(): React.ReactElement {
   const [address, setAddress] = useState('');
   const [type, setType] = useState(DEFAULT_TYPE);
   const [path, setPath] = useState<string | null>(null);
-  const [notFirstTime, setFirstTime] = useState<boolean>(false);
   const [showMore, setShowMore] = useState<boolean>(false);
-
-  const chain = useMetadata(account?.genesis, true);
   const [name, setName] = useState<string | null | undefined>();
   const [password, setPassword] = useState<string | null | string>();
+
+  const chain = useMetadata(account?.genesis, true);
 
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
 
   const showAddress = useMemo(() => !!(account && account.address), [account]);
-  const showAddressAnimation = keyframes`
-  0% {
-    height: 0;
-  }
-  100% {
-    height: 70px;
-  }
-`;
-  const hideAddressAnimation = keyframes`
-  0% {
-    height: 70px;
-  }
-  100% {
-    height: 0;
-  }
-`;
-
-  useEffect(() => {
-    showAddress ? setFirstTime(true) : setTimeout(() => setFirstTime(false), 150);
-  }, [showAddress]);
 
   useEffect((): void => {
     setGenesis(genesisOptions[1].value as string); // to set the polkadot as the default selected chain
@@ -155,6 +134,7 @@ export default function ImportSeed(): React.ReactElement {
   }, []);
 
   const onCancel = useCallback(() => onAction('/'), [onAction]);
+  const toggleMore = useCallback(() => setShowMore(!showMore), [showMore]);
 
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>
@@ -163,7 +143,7 @@ export default function ImportSeed(): React.ReactElement {
         noChainSwitch
       />
       <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
-        <Grid container item sx={{ display: 'block', px: '10%' }}>
+        <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
               <vaadin-icon icon='vaadin:book' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
@@ -208,18 +188,20 @@ export default function ImportSeed(): React.ReactElement {
               </Warning>
             </Grid>
           }
-          <Grid container display={notFirstTime ? 'inherit' : 'none'} item overflow='hidden' sx={{ animationDuration: showAddress ? '300ms' : '150ms', animationFillMode: 'forwards', animationName: `${showAddress ? showAddressAnimation : hideAddressAnimation}`, animationTimingFunction: 'linear', mt: '15px' }}>
-            <Address
-              address={account?.address}
-              backgroundColor='background.main'
-              className='addr'
-              genesisHash={account?.genesis}
-              margin='0px'
-              name={name}
-              showCopy={!!account?.address}
-              style={{ width: '100%' }}
-            />
-          </Grid>
+          <Collapse in={showAddress}>
+            <Grid container item sx={{ mt: '15px' }}>
+              <Address
+                address={account?.address}
+                backgroundColor='background.main'
+                className='addr'
+                genesisHash={account?.genesis}
+                margin='0px'
+                name={name}
+                showCopy={!!account?.address}
+                style={{ width: '100%' }}
+              />
+            </Grid>
+          </Collapse>
           <Grid container sx={{ mt: '15px' }}>
             <InputWithLabel
               isError={name === null || name?.length === 0}
@@ -235,14 +217,14 @@ export default function ImportSeed(): React.ReactElement {
             // eslint-disable-next-line react/jsx-no-bind
             onEnter={password && name && !error && !!seed ? onCreate : () => null}
           />
-          <Grid alignItems='flex-end' container item justifyContent='flex-start' onClick={() => setShowMore(!showMore)}>
-            <Typography pt='20px' sx={{ color: 'secondary.light', cursor: 'pointer', textDecoration: 'underline', userSelect: 'none' }} >
+          <Grid alignItems='flex-end' container item justifyContent='flex-start' onClick={toggleMore}>
+            <Typography pt='20px' sx={{ color: 'secondary.light', cursor: 'pointer', textDecoration: 'underline', userSelect: 'none' }}>
               {t('More ...')}
             </Typography>
             <ArrowForwardIosIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: 17, ml: '5px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
           </Grid>
-          {showMore &&
-            <Grid container item justifyContent='space-between' mt='10px' mb='25px'>
+          <Collapse in={showMore}>
+            <Grid container item justifyContent='space-between' mb='25px' mt='10px'>
               <Grid container item width='49%'>
                 <InputWithLabel
                   isError={!!path && !!error}
@@ -260,8 +242,9 @@ export default function ImportSeed(): React.ReactElement {
                 options={genesisOptions}
                 style={{ p: 0, width: '49%' }}
               />
-            </Grid>}
-          <Grid container item justifyContent='flex-end' pt='10px'>
+            </Grid>
+          </Collapse>
+          <Grid container item justifyContent='flex-end' py='10px'>
             <Grid container item sx={{ '> div': { m: 0, width: '100%' } }} xs={7}>
               <TwoButtons
                 disabled={!password || !name || !address || !account}
