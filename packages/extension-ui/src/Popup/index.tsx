@@ -158,7 +158,7 @@ export default function Popup(): React.ReactElement {
         return;
       } catch (error) {
         console.error(error);
-        await new Promise((resolve) => setTimeout(resolve, 15000));
+        await new Promise((resolve) => setTimeout(resolve, ((retryCount + 1) * 5) * 1000));
         retryCount += 1;
 
         if (retryCount === 5) {
