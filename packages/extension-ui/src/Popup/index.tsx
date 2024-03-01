@@ -134,29 +134,39 @@ export default function Popup(): React.ReactElement {
   }, []);
 
   const initializePrices = useCallback(() => {
-    chrome.storage.local.get('prices2', (res) => {
-      const parsed = res && res.prices2 ? JSON.parse(res.prices2 as string) as Prices2[] : [];
+    chrome.storage.local.get('assetsPrice', (res) => {
+      const parsed = res && res.assetsPrice ? JSON.parse(res.assetsPrice as string) as Prices2[] : [];
 
       setPrices(parsed);
     });
   }, []);
 
-  const updatePrices = useCallback((prices: Prices2[], currencyCode: string) => {
+  const updatePrices = useCallback(async (prices: Prices2[], currencyCode: string) => {
     const priceIds = ['polkadot', 'kusama', 'acala', 'astar', 'hydradx', 'karura', 'liquid-staking-dot', 'acala-dollar-acala', 'tether', 'usd-coin'];
-    const price = prices.find((p) => p.currencyCode.toLowerCase() === currencyCode.toLowerCase());
 
-    if (prices.length === 0 || !price || (price && ((Date.now() - price.date) > 1000 * 20))) {
+    fetching.fetchingPrices = { price: true };
+
+    let retryCount = 0;
+
+    while (retryCount < 5) {
       try {
-        getPrices2(priceIds, currencyCode.toLowerCase())
-          .then(() => initializePrices())
-          .catch(console.error);
+        await getPrices2(priceIds, currencyCode.toLowerCase());
+        initializePrices();
+        fetching.fetchingPrices = { price: false };
+        retryCount = 5;
 
         return;
       } catch (error) {
         console.error(error);
+        await new Promise((resolve) => setTimeout(resolve, 15000));
+        retryCount += 1;
+
+        if (retryCount === 5) {
+          fetching.fetchingPrices = { price: false };
+        }
       }
     }
-  }, [initializePrices]);
+  }, [fetching, initializePrices]);
 
   const set = useCallback((change: Fetching) => {
     setFetching(change);
@@ -176,12 +186,18 @@ export default function Popup(): React.ReactElement {
   );
 
   useEffect(() => {
-    if (!currency || !prices) {
+    if (!currency || !prices || prices.length === 0 || (fetching.fetchingPrices && fetching.fetchingPrices?.price)) {
       return;
     }
 
-    updatePrices(prices, currency?.code);
-  }, [currency, prices, updatePrices]);
+    const price = prices.find((p) => p.currencyCode.toLowerCase() === currency.code.toLowerCase());
+
+    if (price && Date.now() - price.date < 1000 * 30) {
+      return;
+    }
+
+    updatePrices(prices, currency.code).catch(console.error);
+  }, [currency, fetching.fetchingPrices, fetching?.fetchingPrices?.price, prices, updatePrices]);
 
   useEffect(() => {
     if (assetsOnChains === undefined || !prices) {
