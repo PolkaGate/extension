@@ -20,6 +20,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { LatestReferenda } from '../popup/governance/utils/types';
+import { CurrencyItemType } from '../popup/homeFullScreen/partials/Currency';
 
 export interface TransactionStatus {
   blockNumber: string | null;
@@ -586,12 +587,13 @@ export interface Prices {
 }
 
 export interface PricesType {
-  [key: string]: number;
+  [key: string]: { price: number, change: number };
 }
 
-export interface OutputPrices {
-  date: number,
-  prices: PricesType
+export interface Prices2 {
+  date: number;
+  prices: PricesType;
+  currencyCode: string;
 }
 
 export interface Price {
@@ -599,6 +601,11 @@ export interface Price {
   chainName: string;
   date: number;
   token?: string;
+}
+
+export interface PricesContextType {
+  prices: Prices2[] | undefined;
+  setPrices: (prices: Prices2[]) => void;
 }
 
 export interface Price2 {
@@ -648,6 +655,11 @@ export interface Fetching {
 
 export interface IsFetching {
   [item: string]: boolean;
+}
+
+export interface CurrencyContextType {
+  currency: CurrencyItemType | undefined;
+  setCurrency: (selectedCurrency: CurrencyItemType) => void;
 }
 
 export interface FetchingRequests {
@@ -749,7 +761,7 @@ export interface AccountsAssets {
 export interface SavedAccountsAssets { balances: AccountsAssets[], timestamp: number }
 
 export interface AccountsAssetsContextType {
-  accountsAssets: SavedAccountsAssets | undefined;
+  accountsAssets: SavedAccountsAssets | null | undefined;
   setAccountsAssets: (savedAccountAssets: SavedAccountsAssets) => void;
 }
 

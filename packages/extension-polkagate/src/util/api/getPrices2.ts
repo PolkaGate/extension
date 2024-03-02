@@ -3,35 +3,37 @@
 
 import request from 'umi-request';
 
-import { OutputPrices, PricesType } from '../types';
+import { Prices2, PricesType } from '../types';
 
-export default async function getPrices2 (priceIds: string[], currency = 'usd'): Promise<OutputPrices | null> {
-  try {
-    console.log(' getting prices for:', priceIds);
+async function updateStorage (newPrice: Prices2) {
+  console.log('Price fetched successfully!');
+  const load = await chrome.storage.local.get('assetsPrice');
 
-    const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${priceIds}&vs_currencies=${currency}`, {});
+  const savedPrices = load && load.assetsPrice ? JSON.parse(load.assetsPrice as string) as Prices2[] : [];
 
-    // if (chainNames.includes('pendulum')) {
-    //   const pendulumPrice = await getReq(`https://min-api.cryptocompare.com/data/price?fsym=PEN&tsyms=USD`, {});
+  const index = savedPrices.findIndex((priceItem) => priceItem.currencyCode === newPrice.currencyCode);
 
-    //   if (pendulumPrice?.USD) {
-    //     prices.pendulum = { usd: pendulumPrice.USD };
-    //   }
-    // }
+  index === -1
+    ? savedPrices.push(newPrice)
+    : savedPrices[index] = newPrice;
 
-    // prices.westend = { usd: 0 };
-    const outputObjectPrices: PricesType = {};
+  await chrome.storage.local.set({ assetsPrice: JSON.stringify(savedPrices) }).catch(console.error);
+}
 
-    for (const [key, value] of Object.entries(prices)) {
-      outputObjectPrices[key] = value[currency];
-    }
+export default async function getPrices2 (priceIds: string[], currency = 'usd') {
+  console.log(' getting prices2 for:', priceIds);
 
-    return { date: Date.now(), prices: outputObjectPrices };
-  } catch (e) {
-    console.log('error while fetching prices:', e);
+  const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${priceIds}&vs_currencies=${currency}&include_24hr_change=true`, {});
 
-    return null;
+  const outputObjectPrices: PricesType = {};
+
+  for (const [key, value] of Object.entries(prices)) {
+    outputObjectPrices[key] = { price: value[currency], change: value[`${currency}_24h_change`] };
   }
+
+  const price = { currencyCode: currency, date: Date.now(), prices: outputObjectPrices };
+
+  await updateStorage(price);
 }
 
 function getReq(api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<Record<string, unknown>> {

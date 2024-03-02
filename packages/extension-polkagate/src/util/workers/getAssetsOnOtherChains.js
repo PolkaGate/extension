@@ -346,6 +346,8 @@ onmessage = async (e) => {
       await getAssetsOnOtherChains(accounts);
 
       tryCount = 0;
+
+      return;
     } catch (error) {
       console.error(`Error while fetching assets on other chains, ${5 - tryCount} times to retry`, error);
 

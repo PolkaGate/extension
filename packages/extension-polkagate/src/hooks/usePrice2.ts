@@ -1,10 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
+import { CurrencyContext, PricesContext } from '../components';
 import { DEFAULT_ASSETS } from '../util/defaultAssets';
-import { OutputPrices, Price2 } from '../util/types';
+import { Price2 } from '../util/types';
 import { useChain, useChainName } from '.';
 
 /**
@@ -13,33 +14,15 @@ import { useChain, useChainName } from '.';
  * @param assetId : selected token asset id
  * @returns price : price of the token which the address is already switched to
  */
-export default function usePrice (address: string, assetId?: number): Price2 | undefined {
+export default function usePrice(address: string, assetId?: number): Price2 | undefined {
+  const { prices } = useContext(PricesContext);
+  const { currency } = useContext(CurrencyContext);
   const [price, setPrice] = useState<Price2 | undefined>();
   const chainName = useChainName(address)?.toLocaleLowerCase();
   const chain = useChain(address);
 
-  const [localSavedPrices, setLocalSavedPrices] = useState<OutputPrices>();
-
   useEffect(() => {
-    chrome.storage.local.get('prices2', (res) => {
-      const localSavedPrices = res?.prices2 as OutputPrices;
-
-      setLocalSavedPrices(localSavedPrices);
-    });
-
-    chrome.storage.onChanged.addListener((changes, namespace) => {
-      if (namespace === 'local') {
-        for (const [key, { newValue }] of Object.entries(changes)) {
-          if (key === 'prices') {
-            setLocalSavedPrices(newValue as OutputPrices);
-          }
-        }
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!chainName || !localSavedPrices) {
+    if (!chainName || !prices) {
       return;
     }
 
@@ -50,16 +33,16 @@ export default function usePrice (address: string, assetId?: number): Price2 | u
     }
 
     const sanitizeName = assetPriceId ?? chainName.replace('westendassethub', 'westend').replace('kusamaassethub', 'kusama').replace('polkadotassethub', 'polkadot');
-    const price = localSavedPrices?.prices[sanitizeName];
+    const price = prices.find((price) => price.currencyCode.toLowerCase() === currency?.code?.toLowerCase());
 
-    if (price !== undefined && localSavedPrices.date) {
+    if (price !== undefined) {
       setPrice({
         chainName,
-        price,
-        timestamp: localSavedPrices.date
+        price: price.prices[sanitizeName]?.price ?? 0,
+        timestamp: price.date
       });
     }
-  }, [address, assetId, chain?.genesisHash, chainName, localSavedPrices]);
+  }, [assetId, chain?.genesisHash, chainName, currency?.code, prices]);
 
   return price;
 }

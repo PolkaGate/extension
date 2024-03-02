@@ -1,9 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect } from 'react';
 
+import { CurrencyContext } from '../components';
+import { getStorage } from '../components/Loading';
 import { CurrencyItemType } from '../popup/homeFullScreen/partials/Currency';
+import { USD_CURRENCY } from '../util/constants';
 
 /**
  * @description
@@ -11,25 +14,21 @@ import { CurrencyItemType } from '../popup/homeFullScreen/partials/Currency';
  * @returns CurrencyItemType
  */
 export default function useCurrency (): CurrencyItemType | undefined {
-  const [currency, setCurrency] = useState<CurrencyItemType | undefined>();
-
-  const USD = useMemo(() => ({
-    code: 'USD',
-    country: 'United States',
-    currency: 'Dollar',
-    sign: '$'
-  }), []);
+  const { currency, setCurrency } = useContext(CurrencyContext);
 
   useEffect(() => {
-    if (currency) {
-      return;
-    }
+    getStorage('currency').then((res) => {
+      setCurrency(res as CurrencyItemType || USD_CURRENCY);
+    }).catch(console.error);
 
-    const fetchedPrice = window.localStorage.getItem('currency');
-    const parsed = fetchedPrice ? JSON.parse(fetchedPrice) as CurrencyItemType : USD;
+    chrome.storage.onChanged.addListener(function (changes, areaName) {
+      if (areaName === 'local' && 'currency' in changes) {
+        const newValue = changes.currency.newValue as CurrencyItemType;
 
-    setCurrency(parsed);
-  }, [USD, currency]);
+        setCurrency(newValue);
+      }
+    });
+  }, [setCurrency]);
 
   return currency;
 }

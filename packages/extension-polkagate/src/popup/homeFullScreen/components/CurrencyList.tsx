@@ -5,22 +5,25 @@
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Collapse, Grid, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { InputFilter } from '../../../components';
+import { CurrencyContext, InputFilter } from '../../../components';
+import { setStorage } from '../../../components/Loading';
 import { useTranslation } from '../../../hooks';
-import { currencyList } from '../../../util/defaultAssets';
+import { CURRENCY_LIST } from '../../../util/currencyList';
 import { CurrencyItemType } from '../partials/Currency';
 import CurrencyItem from './CurrencyItem';
 
 interface Props {
   anchorEl: HTMLButtonElement | null;
   setAnchorEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
+  setCurrencyToShow: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-function CurrencyList({ anchorEl, setAnchorEl }: Props): React.ReactElement {
+function CurrencyList ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
+  const { setCurrency } = useContext(CurrencyContext);
 
   const [showOtherCurrencies, setShowOtherCurrencies] = useState<boolean>(false);
   const [searchKeyword, setSearchKeyword] = useState<string>('');
@@ -35,10 +38,10 @@ function CurrencyList({ anchorEl, setAnchorEl }: Props): React.ReactElement {
 
   const changeCurrency = useCallback((currency: CurrencyItemType) => {
     setAnchorEl(null);
-
-    // setCurrencyToShow(currency);
-    window.localStorage.setItem('currency', JSON.stringify(currency));
-  }, [setAnchorEl]);
+    setCurrency(currency);
+    setCurrencyToShow(currency.sign);
+    setStorage('currency', currency).catch(console.error);
+  }, [setAnchorEl, setCurrency, setCurrencyToShow]);
 
   const onOtherCurrencies = useCallback(() => setShowOtherCurrencies(!showOtherCurrencies), [showOtherCurrencies]);
 
@@ -52,18 +55,18 @@ function CurrencyList({ anchorEl, setAnchorEl }: Props): React.ReactElement {
     setSearchKeyword(keyword);
     keyword = keyword.trim().toLowerCase();
 
-    const _filtered = currencyList.filter((currency) =>
+    const filtered = CURRENCY_LIST.filter((currency) =>
       currency.code.toLowerCase().includes(keyword) ||
       currency.country.toLowerCase().includes(keyword) ||
       currency.currency.toLowerCase().includes(keyword)
     );
 
-    setSearchedCurrency([..._filtered]);
+    setSearchedCurrency([...filtered]);
   }, []);
 
   return (
     <Grid container item sx={{ maxHeight: '550px', overflow: 'hidden', overflowY: 'scroll', transition: 'height 5000ms ease-in-out', width: '230px' }}>
-      {[...currencyList.slice(0, 3)].map((item, index) => (
+      {[...CURRENCY_LIST.slice(0, 3)].map((item, index) => (
         <CurrencyItem
           currency={item}
           key={index}
@@ -93,7 +96,7 @@ function CurrencyList({ anchorEl, setAnchorEl }: Props): React.ReactElement {
             value={searchKeyword ?? ''}
           />
         </Grid>
-        {[...(searchedCurrency ?? currencyList.slice(3))].map((item, index) => (
+        {[...(searchedCurrency ?? CURRENCY_LIST.slice(3))].map((item, index) => (
           <CurrencyItem
             currency={item}
             key={index}
