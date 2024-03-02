@@ -53,6 +53,7 @@ export default function TotalChart ({ accountAssets, isDarkTheme, nativeAssetPri
         break;
     }
   }, [isDarkTheme]);
+
   const otherAssetsToShow = useMemo(() => {
     if (!accountAssets || accountAssets.length === 0) {
       return { color: [], name: [], price: [], token: [] };

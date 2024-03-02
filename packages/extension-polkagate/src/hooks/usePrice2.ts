@@ -33,13 +33,12 @@ export default function usePrice(address: string, assetId?: number): Price2 | un
     }
 
     const sanitizeName = assetPriceId ?? chainName.replace('westendassethub', 'westend').replace('kusamaassethub', 'kusama').replace('polkadotassethub', 'polkadot');
-    // const price = localSavedPrices?.prices[sanitizeName];
     const price = prices.find((price) => price.currencyCode.toLowerCase() === currency?.code?.toLowerCase());
 
     if (price !== undefined) {
       setPrice({
         chainName,
-        price: price.prices[sanitizeName].price,
+        price: price.prices[sanitizeName]?.price ?? 0,
         timestamp: price.date
       });
     }

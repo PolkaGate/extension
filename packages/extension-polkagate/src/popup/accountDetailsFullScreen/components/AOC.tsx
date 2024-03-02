@@ -57,7 +57,7 @@ function AOC ({ account, accountAssets, api, assetId, balanceToShow, borderColor
         <FormatPrice
           amount={asset.totalBalance}
           decimals={asset.decimal}
-          price={asset.price}
+          price={asset.price ?? 0}
         />
       </Grid>
     </Grid>

@@ -17,7 +17,7 @@ import { ActionContext, DisplayLogo, FormatBalance2, FormatPrice, Identicon, Ide
 import { useAccount, useAccountInfo, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount, windowOpen } from '../../../messaging';
 import { ACALA_GENESIS_HASH, ASSET_HUBS, BALANCES_VALIDITY_PERIOD, IDENTITY_CHAINS, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, SOCIAL_RECOVERY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
-import { AccountAssets, BalancesInfo, Price, Price2, Proxy } from '../../../util/types';
+import { AccountAssets, BalancesInfo, Price2, Proxy } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import { getValue } from '../../account/util';
 import AOC from './AOC';
@@ -41,7 +41,7 @@ export type DisplayLogoAOC = {
   symbol: string | undefined;
 }
 
-export default function AccountInformation ({ accountAssets, address, api, assetId, balances, chain, chainName, formatted, isDarkTheme, price, setAssetId }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation({ accountAssets, address, api, assetId, balances, chain, chainName, formatted, isDarkTheme, price, setAssetId }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
   const accountInfo = useAccountInfo(api, formatted);
@@ -181,18 +181,15 @@ export default function AccountInformation ({ accountAssets, address, api, asset
   );
 
   const Price = () => (
-    <>
-      {price === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== price?.chainName
-        ? <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
-        : <Grid item sx={{ '> div span': { display: 'block' }, color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 400 }}>
-          <FormatPrice
-            amount={getValue('total', balanceToShow)}
-            decimals={balanceToShow.decimal}
-            price={price.price}
-          />
-        </Grid>
-      }
-    </>
+    <Grid item sx={{ '> div span': { display: 'block' }, color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 400 }}>
+      <FormatPrice
+        amount={getValue('total', balanceToShow)}
+        decimals={balanceToShow?.decimal}
+        price={price?.price}
+        skeletonHeight={22}
+        width='80px'
+      />
+    </Grid>
   );
 
   const BalanceRow = () => (

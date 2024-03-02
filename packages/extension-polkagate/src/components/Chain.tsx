@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, SxProps, Theme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { useGenesisHashOptions, useIsTestnetEnabled } from '@polkadot/extension-polkagate/src/hooks';
 import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';

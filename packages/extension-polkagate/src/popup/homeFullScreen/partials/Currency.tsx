@@ -6,11 +6,12 @@
 import { Grid, Popover, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
 
+import { getStorage } from '../../../components/Loading';
 import CurrencyList from '../components/CurrencyList';
 
 export interface CurrencyItemType { code: string; country: string; currency: string; sign: string; }
 
-export default function Currency(): React.ReactElement {
+export default function Currency (): React.ReactElement {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [currencyToShow, setCurrencyToShow] = useState<string | undefined>();
@@ -22,11 +23,9 @@ export default function Currency(): React.ReactElement {
       return;
     }
 
-    const selectedCurrency = window.localStorage.getItem('currency');
-
-    const currencyCode = selectedCurrency ? (JSON.parse(selectedCurrency) as CurrencyItemType).sign : '$';
-
-    setCurrencyToShow(currencyCode);
+    getStorage('currency').then((res) => {
+      setCurrencyToShow((res as CurrencyItemType)?.sign || '$');
+    }).catch(console.error);
   }, [currencyToShow]);
 
   const onCurrencyClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {

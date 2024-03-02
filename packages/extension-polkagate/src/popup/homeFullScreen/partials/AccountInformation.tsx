@@ -46,7 +46,7 @@ export type DisplayLogoAOC = {
 
 type AccountButtonType = { text: string, onClick: () => void, icon: React.ReactNode };
 
-export default function AccountInformation ({ accountAssets, address, api, assetId, balances, chain, chainName, formatted, hideNumbers, isChild, setAssetId }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation({ accountAssets, address, api, assetId, balances, chain, chainName, formatted, hideNumbers, isChild, setAssetId }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const currency = useCurrency();
   const account = useAccount(address);
@@ -95,7 +95,7 @@ export default function AccountInformation ({ accountAssets, address, api, asset
       return 'Checking';
     }
   }, [hasProxy]);
-  
+
   const totalBalance = useMemo(() => {
     if (accountAssets) {
       return accountAssets.reduce((accumulator, accountAsset) => (accumulator + calculatePrice(accountAsset.totalBalance, accountAsset.decimal, accountAsset?.price ?? 0)), 0)
@@ -104,7 +104,9 @@ export default function AccountInformation ({ accountAssets, address, api, asset
     }
 
     return undefined;
-  }, [accountAssets, calculatePrice]);
+    /** we need currency as a dependency to update balance by changing currency*/
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountAssets, calculatePrice, currency]);
 
   const onAssetHub = useCallback((genesisHash: string | null | undefined) => ASSET_HUBS.includes(genesisHash ?? ''), []);
 

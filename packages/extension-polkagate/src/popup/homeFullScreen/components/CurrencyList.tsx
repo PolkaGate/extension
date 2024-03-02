@@ -8,8 +8,9 @@ import { Collapse, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { CurrencyContext, InputFilter } from '../../../components';
+import { setStorage } from '../../../components/Loading';
 import { useTranslation } from '../../../hooks';
-import { currencyList } from '../../../util/defaultAssets';
+import { CURRENCY_LIST } from '../../../util/currencyList';
 import { CurrencyItemType } from '../partials/Currency';
 import CurrencyItem from './CurrencyItem';
 
@@ -39,7 +40,7 @@ function CurrencyList ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): Rea
     setAnchorEl(null);
     setCurrency(currency);
     setCurrencyToShow(currency.sign);
-    window.localStorage.setItem('currency', JSON.stringify(currency));
+    setStorage('currency', currency).catch(console.error);
   }, [setAnchorEl, setCurrency, setCurrencyToShow]);
 
   const onOtherCurrencies = useCallback(() => setShowOtherCurrencies(!showOtherCurrencies), [showOtherCurrencies]);
@@ -54,18 +55,18 @@ function CurrencyList ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): Rea
     setSearchKeyword(keyword);
     keyword = keyword.trim().toLowerCase();
 
-    const _filtered = currencyList.filter((currency) =>
+    const filtered = CURRENCY_LIST.filter((currency) =>
       currency.code.toLowerCase().includes(keyword) ||
       currency.country.toLowerCase().includes(keyword) ||
       currency.currency.toLowerCase().includes(keyword)
     );
 
-    setSearchedCurrency([..._filtered]);
+    setSearchedCurrency([...filtered]);
   }, []);
 
   return (
     <Grid container item sx={{ maxHeight: '550px', overflow: 'hidden', overflowY: 'scroll', transition: 'height 5000ms ease-in-out', width: '230px' }}>
-      {[...currencyList.slice(0, 3)].map((item, index) => (
+      {[...CURRENCY_LIST.slice(0, 3)].map((item, index) => (
         <CurrencyItem
           currency={item}
           key={index}
@@ -95,7 +96,7 @@ function CurrencyList ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): Rea
             value={searchKeyword ?? ''}
           />
         </Grid>
-        {[...(searchedCurrency ?? currencyList.slice(3))].map((item, index) => (
+        {[...(searchedCurrency ?? CURRENCY_LIST.slice(3))].map((item, index) => (
           <CurrencyItem
             currency={item}
             key={index}

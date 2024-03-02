@@ -68,6 +68,7 @@ import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
 import { getPrices2 } from '../../../extension-polkagate/src/util/api';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
+import { USD_CURRENCY } from '../../../extension-polkagate/src/util/constants';
 import { APIs, Fetching, LatestRefs, Prices2, SavedAccountsAssets } from '../../../extension-polkagate/src/util/types';
 
 const startSettings = uiSettings.get();
@@ -121,16 +122,9 @@ export default function Popup(): React.ReactElement {
   const assetsOnChains = useAssetsOnChains(addresses);
 
   const initializeCurrency = useCallback(() => {
-    const USD = {
-      code: 'USD',
-      country: 'United States',
-      currency: 'Dollar',
-      sign: '$'
-    };
-    const fetchedPrice = window.localStorage.getItem('currency');
-    const parsed = fetchedPrice ? JSON.parse(fetchedPrice) as CurrencyItemType : USD;
-
-    setCurrency(parsed);
+    getStorage('currency').then((res) => {
+      setCurrency((res as CurrencyItemType) || USD_CURRENCY);
+    }).catch(console.error);
   }, []);
 
   const initializePrices = useCallback(() => {
