@@ -37,7 +37,7 @@ export default function DisplayBalance ({ amount, decimal, isDarkTheme, onClick,
             decimal={decimal}
             decimalPoint={2}
             token={token}
-            withCurrency={false}
+            withCurrency
           />
         </Grid>
         <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '35px', mx: '10px', my: 'auto' }} />
