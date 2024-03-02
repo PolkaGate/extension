@@ -10,7 +10,10 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { DropdownOption } from '../util/types';
 import { useApi, useGenesisHash } from '.';
 
-export default function useAssets(address: AccountId | string | undefined): DropdownOption[] | undefined | null {
+/**
+ * @description To get all assets on asset hubs for an address based on its chain
+ */
+export default function useAssets (address: AccountId | string | undefined): DropdownOption[] | undefined | null {
   const api = useApi(address);
   const accountGenesisHash = useGenesisHash(address);
   const [assets, setAssets] = useState<DropdownOption[] | null>();

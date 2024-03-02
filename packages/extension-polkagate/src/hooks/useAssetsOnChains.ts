@@ -8,6 +8,11 @@ import { isHexToBn } from '../util/utils';
 
 type FetchedBalance = { address: string, assetId?: number, balances: string, chain: string, decimal: number, genesisHash: string, priceId: string, token: string };
 
+/**
+ * @description To fetch accounts assets on different selected chains
+ * @param addresses a list of users accounts' addresses
+ * @returns a list of assets balances on different selected chains and their fetching timestamps
+ */
 export default function useAssetsOnChains(addresses: string[] | undefined): SavedAccountsAssets | undefined {
   const [accountsAssets, setAccountsAssets] = useState<SavedAccountsAssets | undefined>();
   const [workerCalled, setWorkerCalled] = useState<Worker>();
@@ -54,12 +59,12 @@ export default function useAssetsOnChains(addresses: string[] | undefined): Save
     return !noNewAccountAdded;
   }, [accountsAssets, addresses]);
 
-  const fetchAssetsOnOtherChains = useCallback((accounts: string[]) => {
+  const fetchAssetsOnOtherChains = useCallback((_addresses: string[]) => {
     const worker: Worker = new Worker(new URL('../util/workers/getAssetsOnOtherChains.js', import.meta.url));
     let fetchedAssetsOnOtherChains: FetchedBalance[] = [];
 
     setWorkerCalled(worker);
-    worker.postMessage({ accounts });
+    worker.postMessage({ accounts: _addresses });
 
     worker.onerror = (err) => {
       console.log(err);
@@ -75,7 +80,7 @@ export default function useAssetsOnChains(addresses: string[] | undefined): Save
         worker.terminate();
 
         const mapped = fetchedAssetsOnOtherChains.map((asset) => ({ address: asset.address, assetId: asset?.assetId, chainName: asset.chain, decimal: Number(asset.decimal), genesisHash: asset.genesisHash, priceId: asset.priceId, token: asset.token, totalBalance: isHexToBn(asset.balances) }));
-        const combine = accounts.map((address) => {
+        const combine = _addresses.map((address) => {
           const accountBalance = mapped.filter((balance) => balance.address === address);
           const assets = accountBalance.map((b) => ({
             assetId: b.assetId,
@@ -92,8 +97,6 @@ export default function useAssetsOnChains(addresses: string[] | undefined): Save
             assets
           };
         });
-
-        console.log('DONE');
 
         setAccountsAssets({ balances: combine, timestamp: Date.now() });
       } else {

@@ -20,7 +20,7 @@ interface Props {
 
 }
 
-function Assets({ address, assetId, label, onChange, setAssetId, style }: Props) {
+function Assets ({ address, assetId, label, onChange, setAssetId, style }: Props) {
   const tokens = useTokens(address);
   const assets = useAssets(address);
   const options = useMemo(() => (tokens || []).concat(assets || []), [assets, tokens]);
