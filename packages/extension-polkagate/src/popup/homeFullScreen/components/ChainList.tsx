@@ -8,7 +8,7 @@ import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { InputFilter } from '../../../components';
-import { setStorage } from '../../../components/Loading';
+import { getStorage, setStorage } from '../../../components/Loading';
 import { useGenesisHashOptions, useIsTestnetEnabled, useTranslation } from '../../../hooks';
 import { TEST_NETS } from '../../../util/constants';
 import { DEFAULT_SELECTED_CHAINS } from '../../../util/defaultAssets';
@@ -17,12 +17,11 @@ import ChainItem from './ChainItem';
 
 interface Props {
   anchorEl: HTMLButtonElement | null;
-  setAnchorEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
 }
 
 const DEFAULT_SELECTED_CHAINS_COUNT = 10;
 
-function ChainList({ anchorEl, setAnchorEl }: Props): React.ReactElement {
+function ChainList({ anchorEl }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const allChains = useGenesisHashOptions(false);
@@ -36,7 +35,9 @@ function ChainList({ anchorEl, setAnchorEl }: Props): React.ReactElement {
   useEffect(() => {
     const defaultSelectedGenesisHashes = DEFAULT_SELECTED_CHAINS.map(({ value }) => value as string);
 
-    setSelectedChains(new Set(defaultSelectedGenesisHashes));
+    getStorage('selectedChains').then((res) => {
+      (res as string[])?.length ? setSelectedChains(new Set(res as string[])) : setSelectedChains(new Set(defaultSelectedGenesisHashes));
+    }).catch(console.error);
   }, [allChains]);
 
   useEffect(() => {

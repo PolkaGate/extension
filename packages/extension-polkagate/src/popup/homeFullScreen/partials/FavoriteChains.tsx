@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, Popover, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import TokenList from '../components/ChainList';
+import ChainList from '../components/ChainList';
 
 export interface CurrencyItemType { code: string; country: string; currency: string; sign: string; };
 
@@ -16,7 +16,7 @@ export default function FavoriteChains (): React.ReactElement {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
-  const onCurrencyClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+  const onChainListClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   }, []);
 
@@ -29,7 +29,7 @@ export default function FavoriteChains (): React.ReactElement {
 
   return (
     <>
-      <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', p: '2px 6px', position: 'relative', width: '42px' }}>
+      <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onChainListClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', p: '2px 6px', position: 'relative', width: '42px' }}>
         <FontAwesomeIcon
           color='#fff'
           fontSize='24px'
@@ -54,9 +54,8 @@ export default function FavoriteChains (): React.ReactElement {
           vertical: 'top'
         }}
       >
-        <TokenList
+        <ChainList
           anchorEl={anchorEl}
-          setAnchorEl={setAnchorEl}
         />
       </Popover>
     </>
