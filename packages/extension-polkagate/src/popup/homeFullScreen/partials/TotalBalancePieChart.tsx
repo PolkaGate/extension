@@ -125,6 +125,10 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
   }, [accountsAssets, allAccountsTotalBalance, calPrice, formatNumber]);
 
   useEffect(() => {
+    if (!assets || !borderColor) {
+      return;
+    }
+
     const chartInstance = new Chart(chartRef.current, {
       data: {
         datasets: [{

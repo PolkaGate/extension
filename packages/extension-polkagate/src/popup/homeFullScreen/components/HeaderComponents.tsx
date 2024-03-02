@@ -9,6 +9,7 @@ import React, { useCallback, useEffect } from 'react';
 import { HideIcon, ShowIcon } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import Currency from '../partials/Currency';
+import FavoriteTokens from '../partials/FavoriteChains';
 
 interface Props {
   hideNumbers: boolean | undefined;
@@ -44,6 +45,7 @@ export default function HeaderComponents({ hideNumbers, setHideNumbers }: Props)
   return (
     <Grid columnGap='18px' container item pl='18px' width='fit-content'>
       <Currency />
+      <FavoriteTokens />
       <HideNumbers />
     </Grid>
   );

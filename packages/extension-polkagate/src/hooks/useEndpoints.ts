@@ -7,14 +7,12 @@
  */
 import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
 
-import { useEffect, useMemo, useState } from 'react';
-
 import { createWsEndpoints } from '@polkagate/apps-config';
+import { useEffect, useMemo, useState } from 'react';
 
 import { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
 import { useGenesisHashOptions, useTranslation } from './';
-
 
 const supportedLC = ['Polkadot', 'Kusama', 'Westend'];
 
@@ -44,8 +42,8 @@ export function useEndpoints(genesisHash: string | null | undefined): DropdownOp
 
     return chainName
       ? supportedLC.includes(chainName)
-        ? endpoints?.map((endpoint) => ({ text: endpoint.textBy, value: endpoint.value as string }))
-        : endpoints?.filter((e) => String(e.value).startsWith('wss')).map((e) => ({ text: e.textBy, value: e.value as string }))
+        ? endpoints?.map((endpoint) => ({ text: endpoint.textBy, value: endpoint.value }))
+        : endpoints?.filter((e) => String(e.value).startsWith('wss')).map((e) => ({ text: e.textBy, value: e.value }))
       : undefined;
     // return endpoints?.filter((e) => String(e.value).startsWith('wss')).map((e) => ({ text: e.textBy, value: e.value }));
   }, [allEndpoints, genesisHash, genesisOptions]);

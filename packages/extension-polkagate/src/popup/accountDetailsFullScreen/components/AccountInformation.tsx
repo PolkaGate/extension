@@ -60,6 +60,7 @@ export default function AccountInformation({ accountAssets, address, api, assetI
   const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
   const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
   const isPriceOutdated = useMemo(() => price !== undefined && Date.now() - price.timestamp > BALANCES_VALIDITY_PERIOD, [price]);
+
   const otherAssetsToShow = useMemo(() => {
     if (!accountAssets) {
       return accountAssets;
@@ -67,6 +68,7 @@ export default function AccountInformation({ accountAssets, address, api, assetI
       return accountAssets.sort((a, b) => calculatePrice(b.totalBalance, b.decimal, b.price ?? 0) - calculatePrice(a.totalBalance, a.decimal, a.price ?? 0));
     }
   }, [accountAssets, calculatePrice]);
+
   const recoverableToolTipTxt = useMemo(() => {
     switch (isRecoverable) {
       case true:
@@ -77,6 +79,7 @@ export default function AccountInformation({ accountAssets, address, api, assetI
         return 'Checking';
     }
   }, [isRecoverable]);
+
   const proxyTooltipTxt = useMemo(() => {
     if (hasProxy) {
       return 'Has Proxy';
@@ -86,8 +89,10 @@ export default function AccountInformation({ accountAssets, address, api, assetI
       return 'Checking';
     }
   }, [hasProxy]);
+  const showAOC = useMemo(() => !!(otherAssetsToShow === undefined || (otherAssetsToShow && otherAssetsToShow?.length > 0)), [otherAssetsToShow]);
 
   const onAssetHub = useCallback((genesisHash: string | null | undefined) => ASSET_HUBS.includes(genesisHash ?? ''), []);
+
   const displayLogoAOC = useCallback((genesisHash: string | null | undefined, symbol: string | undefined): DisplayLogoAOC => {
     if (onAssetHub(genesisHash)) {
       if (ASSET_HUBS[0] === genesisHash) {
@@ -235,7 +240,7 @@ export default function AccountInformation({ accountAssets, address, api, assetI
   }, [account?.isHidden, address]);
 
   return (
-    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '20px 10px 5px 20px' }}>
+    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: `20px 10px ${showAOC ? '5px' : '20px'} 20px` }}>
       <Grid container item>
         <Grid container item sx={{ borderRight: '1px solid', borderRightColor: borderColor, pr: '8px', width: 'fit-content' }}>
           <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>
@@ -304,7 +309,7 @@ export default function AccountInformation({ accountAssets, address, api, assetI
         </Grid>
         <AssetsBox />
       </Grid>
-      {(otherAssetsToShow === undefined || (otherAssetsToShow && otherAssetsToShow?.length > 0)) &&
+      {showAOC &&
         <>
           <Divider sx={{ bgcolor: borderColor, height: '1px', my: '15px', width: '95%' }} />
           <AOC
