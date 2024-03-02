@@ -7,9 +7,11 @@ import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
+import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
+import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { ActionContext, ButtonWithCancel, Checkbox2 as Checkbox, NewAddress, Password, Warning, WrongPasswordAlert } from '../../components';
 import { useTranslation } from '../../hooks';
@@ -21,7 +23,7 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function ForgetAccountModal({ account, setDisplayPopup }: Props): React.ReactElement<Props> {
+export default function ForgetAccountModal ({ account, setDisplayPopup }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
@@ -29,11 +31,15 @@ export default function ForgetAccountModal({ account, setDisplayPopup }: Props):
   const [checkConfirmed, setCheckConfirmed] = useState<boolean>(false);
   const [isPasswordError, setIsPasswordError] = useState(false);
   const theme = useTheme();
-  const needsPasswordConfirmation = account.isExternal !== true;
+  const needsPasswordConfirmation = !account.isExternal;
+
+  useEffect(() => {
+    cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
+  }, []);
 
   const backToAccount = useCallback(() => setDisplayPopup(undefined), [setDisplayPopup]);
 
-  const _onClickForget = useCallback((): void => {
+  const onForget = useCallback((): void => {
     try {
       setIsBusy(true);
 
@@ -58,10 +64,12 @@ export default function ForgetAccountModal({ account, setDisplayPopup }: Props):
     }
   }, [account.address, needsPasswordConfirmation, onAction, password]);
 
-  const _onChangePass = useCallback((pass: string): void => {
+  const onChangePass = useCallback((pass: string): void => {
     setPassword(pass);
     setIsPasswordError(false);
   }, []);
+
+  const toggleConfirm = useCallback(() => setCheckConfirmed(!checkConfirmed), [checkConfirmed]);
 
   return (
     <DraggableModal onClose={backToAccount} open>
@@ -98,8 +106,8 @@ export default function ForgetAccountModal({ account, setDisplayPopup }: Props):
               <Password
                 isError={isPasswordError}
                 label={t<string>('Password for this account')}
-                onChange={_onChangePass}
-                onEnter={_onClickForget}
+                onChange={onChangePass}
+                onEnter={onForget}
                 style={{ width: '87.5%' }}
               />
             </>
@@ -109,7 +117,7 @@ export default function ForgetAccountModal({ account, setDisplayPopup }: Props):
                 iconStyle={{ transform: 'scale:(1.13)' }}
                 label={t<string>('I want to forget this account.')}
                 labelStyle={{ fontSize: '16px', marginLeft: '7px' }}
-                onChange={() => setCheckConfirmed(!checkConfirmed)}
+                onChange={toggleConfirm}
                 style={{ ml: '5px' }}
               />)
           }
@@ -117,7 +125,7 @@ export default function ForgetAccountModal({ account, setDisplayPopup }: Props):
         <Grid container item sx={{ '> div': { ml: 'auto', width: '87.5%' }, bottom: 0, height: '36px', position: 'absolute' }}>
           <ButtonWithCancel
             _isBusy={isBusy}
-            _onClick={_onClickForget}
+            _onClick={onForget}
             _onClickCancel={backToAccount}
             disabled={!checkConfirmed && !password?.length}
             text={t<string>('Forget')}
