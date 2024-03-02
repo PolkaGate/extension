@@ -121,7 +121,7 @@ const BalanceRow = ({ balanceToShow, isBalanceOutdated, isPriceOutdated, price }
 );
 
 const AssetsBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOutdated, price }: { account: AccountJson | undefined, balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined, isPriceOutdated: boolean, price: Price2 | undefined }) => (
-  <Grid alignItems='center' container item xs>
+  <Grid alignItems='center' container item minWidth='40%'>
     <Grid item pl='7px'>
       <DisplayLogo assetToken={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.symbol} genesisHash={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.base} size={42} />
     </Grid>
@@ -286,35 +286,37 @@ export default function AccountInformation({ accountAssets, address, api, assetI
             </Grid>
           </Grid>
         </Grid>
-        <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: borderColor, px: '7px' }} xs={5}>
-          <Grid container item justifyContent='space-between'>
-            <Identity
-              address={address}
-              api={api}
-              chain={chain}
-              noIdenticon
-              style={{ width: 'calc(100% - 40px)' }}
-              subIdOnly
-            />
-            <Grid item width='40px'>
-              <Infotip text={account?.isHidden && t('This account is hidden from websites')}>
-                <IconButton onClick={toggleVisibility} sx={{ height: '20px', ml: '7px', mt: '13px', p: 0, width: '28px' }}>
-                  <vaadin-icon icon={account?.isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
-                </IconButton>
-              </Infotip>
+        <Grid container item sx={{ display: 'grid', gridTemplateColumns: 'minmax(150px, 60%) max-content' }} xs>
+          <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: borderColor, px: '7px' }}>
+            <Grid container item justifyContent='space-between'>
+              <Identity
+                address={address}
+                api={api}
+                chain={chain}
+                noIdenticon
+                style={{ width: 'calc(100% - 40px)' }}
+                subIdOnly
+              />
+              <Grid item width='40px'>
+                <Infotip text={account?.isHidden && t('This account is hidden from websites')}>
+                  <IconButton onClick={toggleVisibility} sx={{ height: '20px', ml: '7px', mt: '13px', p: 0, width: '28px' }}>
+                    <vaadin-icon icon={account?.isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
+                  </IconButton>
+                </Infotip>
+              </Grid>
+            </Grid>
+            <Grid alignItems='center' container item sx={{ '> div div:last-child': { width: 'auto' } }} xs>
+              <ShortAddress2 address={formatted || address} clipped showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
             </Grid>
           </Grid>
-          <Grid alignItems='center' container item sx={{ '> div div:last-child': { width: 'auto' } }} xs>
-            <ShortAddress2 address={formatted || address} charsCount={40} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
-          </Grid>
+          <AssetsBox
+            account={account}
+            balanceToShow={balanceToShow}
+            isBalanceOutdated={isBalanceOutdated}
+            isPriceOutdated={isPriceOutdated}
+            price={price}
+          />
         </Grid>
-        <AssetsBox
-          account={account}
-          balanceToShow={balanceToShow}
-          isBalanceOutdated={isBalanceOutdated}
-          isPriceOutdated={isPriceOutdated}
-          price={price}
-        />
       </Grid>
       {showAOC &&
         <>
