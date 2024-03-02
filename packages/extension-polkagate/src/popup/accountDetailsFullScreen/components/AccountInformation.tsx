@@ -21,6 +21,7 @@ import { AccountAssets, BalancesInfo, Price2, Proxy } from '../../../util/types'
 import { amountToHuman } from '../../../util/utils';
 import { getValue } from '../../account/util';
 import AOC from './AOC';
+import { AccountJson } from '@polkadot/extension-base/background/types';
 
 interface AddressDetailsProps {
   address: string | undefined;
@@ -40,6 +41,95 @@ export type DisplayLogoAOC = {
   base: string | null | undefined;
   symbol: string | undefined;
 }
+
+const onAssetHub = (genesisHash: string | null | undefined) => ASSET_HUBS.includes(genesisHash ?? '');
+
+const displayLogoAOC = (genesisHash: string | null | undefined, symbol: string | undefined): DisplayLogoAOC => {
+  if (onAssetHub(genesisHash)) {
+    if (ASSET_HUBS[0] === genesisHash) {
+      return {
+        base: WESTEND_GENESIS_HASH,
+        symbol
+      };
+    } else if (ASSET_HUBS[1] === genesisHash) {
+      return {
+        base: KUSAMA_GENESIS_HASH,
+        symbol
+      };
+    } else {
+      return {
+        base: POLKADOT_GENESIS_HASH,
+        symbol
+      };
+    }
+  }
+
+  if (ACALA_GENESIS_HASH === genesisHash) {
+    if (symbol?.toLowerCase() === 'aca') {
+      return {
+        base: ACALA_GENESIS_HASH,
+        symbol: undefined
+      };
+    } else {
+      return {
+        base: undefined,
+        symbol
+      };
+    }
+  }
+
+  return {
+    base: genesisHash,
+    symbol: undefined
+  };
+};
+
+const Price = ({ balanceToShow, isPriceOutdated, price }: { balanceToShow: BalancesInfo | undefined, isPriceOutdated: boolean | undefined, price: Price2 | undefined }) => (
+  <Grid item sx={{ '> div span': { display: 'block' }, color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 400 }}>
+    <FormatPrice
+      amount={getValue('total', balanceToShow)}
+      decimals={balanceToShow?.decimal}
+      price={price?.price}
+      skeletonHeight={22}
+      width='80px'
+    />
+  </Grid>
+);
+
+const Balance = ({ balanceToShow, isBalanceOutdated }: { balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined }) => (
+  <>
+    {balanceToShow?.decimal
+      ? <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary', fontWeight: 500 }}>
+        <FormatBalance2
+          decimalPoint={2}
+          decimals={[balanceToShow.decimal]}
+          tokens={[balanceToShow.token]}
+          value={getValue('total', balanceToShow)}
+        />
+      </Grid>
+      : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
+    }
+  </>
+);
+
+const BalanceRow = ({ balanceToShow, isBalanceOutdated, isPriceOutdated, price }: { balanceToShow: BalancesInfo | undefined, isPriceOutdated: boolean | undefined, isBalanceOutdated: boolean | undefined, price: Price2 | undefined }) => (
+  <Grid alignItems='center' container fontSize='28px' item xs>
+    <Balance balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} />
+    <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '30px', mx: '10px', my: 'auto' }} />
+    <Price balanceToShow={balanceToShow} isPriceOutdated={isPriceOutdated} price={price} />
+  </Grid>
+);
+
+const AssetsBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOutdated, price }: { account: AccountJson | undefined, balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined, isPriceOutdated: boolean, price: Price2 | undefined }) => (
+  <Grid alignItems='center' container item xs>
+    <Grid item pl='7px'>
+      <DisplayLogo assetToken={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.symbol} genesisHash={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.base} size={42} />
+    </Grid>
+    <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
+      <BalanceRow balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} isPriceOutdated={isPriceOutdated} price={price} />
+    </Grid>
+  </Grid>
+);
 
 export default function AccountInformation({ accountAssets, address, api, assetId, balances, chain, chainName, formatted, isDarkTheme, price, setAssetId }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
@@ -91,48 +181,6 @@ export default function AccountInformation({ accountAssets, address, api, assetI
   }, [hasProxy]);
   const showAOC = useMemo(() => !!(otherAssetsToShow === undefined || (otherAssetsToShow && otherAssetsToShow?.length > 0)), [otherAssetsToShow]);
 
-  const onAssetHub = useCallback((genesisHash: string | null | undefined) => ASSET_HUBS.includes(genesisHash ?? ''), []);
-
-  const displayLogoAOC = useCallback((genesisHash: string | null | undefined, symbol: string | undefined): DisplayLogoAOC => {
-    if (onAssetHub(genesisHash)) {
-      if (ASSET_HUBS[0] === genesisHash) {
-        return {
-          base: WESTEND_GENESIS_HASH,
-          symbol
-        };
-      } else if (ASSET_HUBS[1] === genesisHash) {
-        return {
-          base: KUSAMA_GENESIS_HASH,
-          symbol
-        };
-      } else {
-        return {
-          base: POLKADOT_GENESIS_HASH,
-          symbol
-        };
-      }
-    }
-
-    if (ACALA_GENESIS_HASH === genesisHash) {
-      if (symbol?.toLowerCase() === 'aca') {
-        return {
-          base: ACALA_GENESIS_HASH,
-          symbol: undefined
-        };
-      } else {
-        return {
-          base: undefined,
-          symbol
-        };
-      }
-    }
-
-    return {
-      base: genesisHash,
-      symbol: undefined
-    };
-  }, [onAssetHub]);
-
   useEffect((): void => {
     setHasID(undefined);
     setIsRecoverable(undefined);
@@ -168,53 +216,6 @@ export default function AccountInformation({ accountAssets, address, api, assetI
 
     setBalanceToShow(undefined);
   }, [balances, chainName]);
-
-  const Balance = () => (
-    <>
-      {balanceToShow?.decimal
-        ? <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary', fontWeight: 500 }}>
-          <FormatBalance2
-            decimalPoint={2}
-            decimals={[balanceToShow.decimal]}
-            tokens={[balanceToShow.token]}
-            value={getValue('total', balanceToShow)}
-          />
-        </Grid>
-        : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
-      }
-    </>
-  );
-
-  const Price = () => (
-    <Grid item sx={{ '> div span': { display: 'block' }, color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 400 }}>
-      <FormatPrice
-        amount={getValue('total', balanceToShow)}
-        decimals={balanceToShow?.decimal}
-        price={price?.price}
-        skeletonHeight={22}
-        width='80px'
-      />
-    </Grid>
-  );
-
-  const BalanceRow = () => (
-    <Grid alignItems='center' container fontSize='28px' item xs>
-      <Balance />
-      <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '30px', mx: '10px', my: 'auto' }} />
-      <Price />
-    </Grid>
-  );
-
-  const AssetsBox = () => (
-    <Grid alignItems='center' container item xs>
-      <Grid item pl='7px'>
-        <DisplayLogo assetToken={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.symbol} genesisHash={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.base} size={42} />
-      </Grid>
-      <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
-        <BalanceRow />
-      </Grid>
-    </Grid>
-  );
 
   const assetBoxClicked = useCallback((genesisHash: string, id: number | undefined) => {
     address && tieAccount(address, genesisHash).finally(() => {
@@ -307,7 +308,13 @@ export default function AccountInformation({ accountAssets, address, api, assetI
             <ShortAddress2 address={formatted || address} charsCount={40} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
           </Grid>
         </Grid>
-        <AssetsBox />
+        <AssetsBox
+          account={account}
+          balanceToShow={balanceToShow}
+          isBalanceOutdated={isBalanceOutdated}
+          isPriceOutdated={isPriceOutdated}
+          price={price}
+        />
       </Grid>
       {showAOC &&
         <>

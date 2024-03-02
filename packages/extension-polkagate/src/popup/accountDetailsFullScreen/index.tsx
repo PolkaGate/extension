@@ -62,8 +62,6 @@ export default function AccountDetails (): React.ReactElement {
 
   const balance = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId);
   const price = usePrice2(address, assetId);
-  const token = useToken(address);
-  const decimal = useDecimal(address);
 
   const [displayPopup, setDisplayPopup] = useState<number | undefined>();
   const [unlockInformation, setUnlockInformation] = useState<UnlockInformationType | undefined>();
@@ -82,8 +80,8 @@ export default function AccountDetails (): React.ReactElement {
 
     const totalBalance = getValue('total', balance);
 
-    return parseFloat(amountToHuman(totalBalance, decimal)) * price.price;
-  }, [balance, decimal, price]);
+    return parseFloat(amountToHuman(totalBalance, balance.decimal)) * price.price;
+  }, [balance, price]);
 
   useEffect(() => {
     assetId && setAssetId(undefined);
@@ -151,42 +149,42 @@ export default function AccountDetails (): React.ReactElement {
                 />}
               <DisplayBalance
                 amount={balance?.availableBalance}
-                decimal={decimal}
+                decimal={balance?.decimal}
                 isDarkTheme={isDarkTheme}
                 onClick={goToSend}
                 price={price?.price}
                 theme={theme}
                 title={t<string>('Transferable')}
-                token={token}
+                token={balance?.token}
               />
               {supportStaking &&
                 <DisplayBalance
                   amount={balance?.soloTotal}
-                  decimal={decimal}
+                  decimal={balance?.decimal}
                   isDarkTheme={isDarkTheme}
                   onClick={goToSoloStaking}
                   price={price?.price}
                   theme={theme}
                   title={t<string>('Solo Stake')}
-                  token={token}
+                  token={balance?.token}
                 />}
               {supportStaking &&
                 <DisplayBalance
                   amount={balance?.pooledBalance}
-                  decimal={decimal}
+                  decimal={balance?.decimal}
                   isDarkTheme={isDarkTheme}
                   onClick={goToPoolStaking}
                   price={price?.price}
                   theme={theme}
                   title={t<string>('Pool Stake')}
-                  token={token}
+                  token={balance?.token}
                 />}
               {supportGov &&
                 <LockedBalanceDisplay
                   address={address}
                   api={api}
                   chain={chain}
-                  decimal={decimal}
+                  decimal={balance?.decimal}
                   formatted={String(formatted)}
                   isDarkTheme={isDarkTheme}
                   price={price?.price}
@@ -194,16 +192,16 @@ export default function AccountDetails (): React.ReactElement {
                   setDisplayPopup={setDisplayPopup}
                   setUnlockInformation={setUnlockInformation}
                   title={t<string>('Locked in Referenda')}
-                  token={token}
+                  token={balance?.token}
                 />
               }
               <DisplayBalance
                 amount={balance?.reservedBalance}
-                decimal={decimal}
+                decimal={balance?.decimal}
                 isDarkTheme={isDarkTheme}
                 price={price?.price}
                 title={t<string>('Reserved')}
-                token={token}
+                token={balance?.token}
               />
             </Grid>
             <Grid container direction='column' gap='15px' item width='275px'>
