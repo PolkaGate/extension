@@ -5,7 +5,7 @@
 
 import { Avatar, CircularProgress, FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useLayoutEffect } from 'react';
 
 import { CHAINS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
 
@@ -55,7 +55,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<string>();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setSelectedValue(value || defaultValue);
   }, [value, defaultValue]);
 
@@ -74,7 +74,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
       <Typography sx={{ fontSize: '10px', paddingLeft: '5px' }}>
         {label}
       </Typography>
-      { selectedValue &&
+      {selectedValue &&
         <Select
           MenuProps={{
             MenuListProps: {

@@ -16,7 +16,7 @@ import { BN } from '@polkadot/util';
 import { ActionContext, DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, ShortAddress2 } from '../../../components';
 import { useAccount, useAccountInfo, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount, windowOpen } from '../../../messaging';
-import { ACALA_GENESIS_HASH, ASSET_HUBS, BALANCES_VALIDITY_PERIOD, IDENTITY_CHAINS, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, SOCIAL_RECOVERY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
+import { ACALA_GENESIS_HASH, ASSET_HUBS, BALANCES_VALIDITY_PERIOD, IDENTITY_CHAINS, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
 import { AccountAssets, BalancesInfo, Price2, Proxy } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import { getValue } from '../../account/util';
@@ -202,11 +202,15 @@ export default function AccountInformation({ accountAssets, address, api, assetI
       setIsRecoverable(false);
     }
 
-    api.query.proxy.proxies(formatted).then((p) => {
-      const fetchedProxies = JSON.parse(JSON.stringify(p[0])) as unknown as Proxy[];
+    if (api.query?.proxy && PROXY_CHAINS.includes(account.genesisHash)) {
+      api.query.proxy.proxies(formatted).then((p) => {
+        const fetchedProxies = JSON.parse(JSON.stringify(p[0])) as unknown as Proxy[];
 
-      setHasProxy(fetchedProxies.length > 0);
-    }).catch(console.error);
+        setHasProxy(fetchedProxies.length > 0);
+      }).catch(console.error);
+    } else {
+      setHasProxy(false);
+    }
   }, [api, address, formatted, account?.genesisHash]);
 
   useEffect(() => {
@@ -320,7 +324,7 @@ export default function AccountInformation({ accountAssets, address, api, assetI
       </Grid>
       {showAOC &&
         <>
-          <Divider sx={{ bgcolor: borderColor, height: '1px', my: '15px', width: '95%' }} />
+          <Divider sx={{ bgcolor: borderColor, height: '1px', my: '15px', width: '98.5%' }} />
           <AOC
             account={account}
             accountAssets={otherAssetsToShow}
