@@ -43,7 +43,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
     setAnchorEl(event.currentTarget);
   }, []);
 
-  const isExternalAccount = !(account?.isExternal || account?.isHardware);
+  const hasPrivateKey = !(account?.isExternal || account?.isHardware);
 
   const onForgetAccount = useCallback(() => {
     account && setDisplayPopup(POPUPS_NUMBER.FORGET_ACCOUNT);
@@ -139,7 +139,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
         text={t('Social Recovery')}
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
-      {isExternalAccount &&
+      {hasPrivateKey &&
         <MenuItem
           iconComponent={
             <vaadin-icon icon='vaadin:download-alt' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
@@ -148,7 +148,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
           text={t('Export account')}
         />
       }
-      {isExternalAccount &&
+      {hasPrivateKey &&
         <MenuItem
           iconComponent={
             <vaadin-icon icon='vaadin:road-branch' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
