@@ -5049,9 +5049,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkagate/apps-config@npm:^0.133.2":
-  version: 0.133.2
-  resolution: "@polkagate/apps-config@npm:0.133.2"
+"@polkagate/apps-config@npm:^0.133.3":
+  version: 0.133.3
+  resolution: "@polkagate/apps-config@npm:0.133.3"
   dependencies:
     "@acala-network/type-definitions": 5.1.2
     "@bifrost-finance/type-definitions": 1.11.3
@@ -5098,7 +5098,7 @@ __metadata:
     pontem-types-bundle: 1.0.15
     rxjs: ^7.8.1
     tslib: ^2.6.2
-  checksum: cfba55ded6992d0e7941bab82c18afc39a2f896ef164af7405b166876a8c0224a032a7cda7a3b4ffb295e38123faf9fbc96e2a38af4e6d7813573b874abd4521
+  checksum: 6947ee9c365067660ca4ff162612a94279def54785a007d08d510f0cc046789197eb5404180f47d3e273956d9c37fc9d4f030b54ba8474786ec022b573e9a4ec
   languageName: node
   linkType: hard
 
@@ -19584,7 +19584,7 @@ resolve@^2.0.0-next.3:
     "@polkadot/api": ^10.11.2
     "@polkadot/dev": latest
     "@polkadot/rpc-provider": ^10.9.1
-    "@polkagate/apps-config": ^0.133.2
+    "@polkagate/apps-config": ^0.133.3
     "@substrate/connect": ^0.7.32
     "@testing-library/react": latest
     "@types/jest": latest

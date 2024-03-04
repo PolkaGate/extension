@@ -22,6 +22,7 @@ import { AccountContext, AccountsAssetsContext, ActionContext, APIContext, Autho
 import { getStorage, LoginInfo, updateStorage } from '../../../extension-polkagate/src/components/Loading';
 import { ExtensionLockProvider } from '../../../extension-polkagate/src/context/ExtensionLockContext';
 import { useAssetsOnChains } from '../../../extension-polkagate/src/hooks';
+import useAssetsOnChains2 from '../../../extension-polkagate/src/hooks/useAssetsOnChains2';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
 import AccountEx from '../../../extension-polkagate/src/popup/account';
 import AccountFL from '../../../extension-polkagate/src/popup/accountDetailsFullScreen';
@@ -120,6 +121,7 @@ export default function Popup(): React.ReactElement {
 
   const addresses = accounts?.map((acc) => acc.address);
   const assetsOnChains = useAssetsOnChains(addresses);
+  const assetsOnChains2 = useAssetsOnChains2(addresses);
 
   const initializeCurrency = useCallback(() => {
     getStorage('currency').then((res) => {
