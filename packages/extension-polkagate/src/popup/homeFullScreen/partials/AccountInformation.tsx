@@ -23,11 +23,11 @@ import { ACALA_GENESIS_HASH, ASSET_HUBS, IDENTITY_CHAINS, KUSAMA_GENESIS_HASH, P
 import { AccountAssets, BalancesInfo, Proxy } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import AOC from '../../accountDetailsFullScreen/components/AOC';
-import FullScreenAccountMenu from './FullScreenAccountMenu';
-import ForgetAccountModal from '../../forgetAccount/ForgetAccountModal';
-import RenameModal from '../../rename/RenameModal';
 import ExportAccountModal from '../../export/ExportAccountModal';
+import ForgetAccountModal from '../../forgetAccount/ForgetAccountModal';
 import DeriveAccountModal from '../../newAccount/deriveAccount/modal/DeriveAccountModal';
+import RenameModal from '../../rename/RenameModal';
+import FullScreenAccountMenu from './FullScreenAccountMenu';
 
 interface AddressDetailsProps {
   accountAssets: AccountAssets[] | null | undefined;

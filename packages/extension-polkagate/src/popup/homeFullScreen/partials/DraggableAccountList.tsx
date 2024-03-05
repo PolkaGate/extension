@@ -6,7 +6,7 @@
 import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useLayoutEffect,useState } from 'react';
 
 import { AccountsOrder } from '..';
 import AccountItem from './AccountItem';
@@ -16,9 +16,19 @@ interface Props {
   hideNumbers: boolean | undefined;
 }
 
-export default function DraggableAccountList ({ hideNumbers, initialAccountList }: Props) {
+export const saveNewOrder = (newOrder: AccountsOrder[]) => {
+  const addressOrder = newOrder.map(({ account }) => account.address);
+
+  chrome.storage.local.set({ addressOrder }).catch(console.error);
+};
+
+export default function DraggableAccountList({ hideNumbers, initialAccountList }: Props) {
   const [accountsOrder, setAccountsOrder] = useState<AccountsOrder[]>(initialAccountList);
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
+
+  useLayoutEffect(() => {
+    setAccountsOrder(initialAccountList);
+  }, [initialAccountList, initialAccountList.length]);
 
   const getItemPos = useCallback((_id) => accountsOrder?.findIndex(({ id }) => _id === id), [accountsOrder]);
 
@@ -29,10 +39,13 @@ export default function DraggableAccountList ({ hideNumbers, initialAccountList 
       return;
     }
 
-    const orgPos = getItemPos(active.id);
-    const newPos = getItemPos(over?.id);
+    const originalPosition = getItemPos(active.id);
+    const newPosition = getItemPos(over?.id);
 
-    setAccountsOrder(arrayMove(accountsOrder, orgPos, newPos));
+    const newOrder = arrayMove(accountsOrder, originalPosition, newPosition);
+
+    saveNewOrder(newOrder);
+    setAccountsOrder(newOrder);
   }, [accountsOrder, getItemPos]);
 
   return (

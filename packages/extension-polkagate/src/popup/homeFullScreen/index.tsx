@@ -3,19 +3,16 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { closestCorners, DndContext, DragEndEvent } from '@dnd-kit/core';
-import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Grid, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 
-import { AccountWithChildren } from '@polkadot/extension-base/background/types';
+import { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { AccountContext } from '../../components';
 import { useFullscreen } from '../../hooks';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import HeaderComponents from './components/HeaderComponents';
-import AccountItem from './partials/AccountItem';
-import DraggableAccountsList from './partials/DraggableAccountList';
+import DraggableAccountsList, { saveNewOrder } from './partials/DraggableAccountList';
 import HomeMenu from './partials/HomeMenu';
 import TotalBalancePieChart from './partials/TotalBalancePieChart';
 
@@ -27,20 +24,80 @@ export interface AccountsOrder {
 export default function HomePageFullScreen(): React.ReactElement {
   useFullscreen();
   const theme = useTheme();
-  const { hierarchy } = useContext(AccountContext);
+  const { accounts: accountsInExtension, hierarchy } = useContext(AccountContext);
 
   const [hideNumbers, setHideNumbers] = useState<boolean>();
-  const [accountsOrder, setAccountsOrder] = useState<AccountsOrder[]>();
+  const [initialAccountList, setInitialAccountList] = useState<AccountsOrder[] | undefined>();
 
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
 
-  const init = useMemo(() => {
-    return hierarchy.map((_account, index) => ({
-      account: _account,
-      id: index + 1
-    }));
-  }, [hierarchy]);
+  useEffect(() => {
+    chrome.storage.local.get('addressOrder').then(({ addressOrder }: { addressOrder?: string[] }) => {
+      if (addressOrder && addressOrder.length > 0) {
+        const accountsOrder: AccountsOrder[] = [];
+        let idCounter = 0;
+
+        addressOrder.forEach((_address) => {
+          const account = accountsInExtension.find(({ address }) => _address === address);
+
+          if (account) {
+            idCounter++;
+            accountsOrder.push({
+              account,
+              id: idCounter
+            });
+          }
+        });
+
+        // Detects newly added accounts that may not be present in the storage.
+        const untrackedAccounts = accountsInExtension.filter(({ address }) => !accountsOrder.map(({ account }) => account.address).includes(address));
+
+        if (untrackedAccounts.length > 0) {
+          const newAccounts = untrackedAccounts.filter(({ parentAddress }) => !parentAddress);
+          const derivedAccounts = untrackedAccounts.filter(({ parentAddress }) => parentAddress);
+
+          derivedAccounts.forEach((derivedAccount) => {
+            const parentIndex = accountsOrder.findIndex(({ account }) => account.address === derivedAccount.parentAddress);
+            const derivedAccountWithId = {
+              account: derivedAccount,
+              id: parentIndex + 1
+            };
+
+            accountsOrder.splice(parentIndex + 1, 0, derivedAccountWithId);
+
+            accountsOrder.forEach((account, index) => {
+              if (index <= parentIndex) {
+                return;
+              }
+
+              account.id += 1;
+            });
+          });
+
+          newAccounts.forEach((account) => {
+            idCounter++;
+            accountsOrder.push({
+              account,
+              id: idCounter
+            });
+          });
+        }
+
+        saveNewOrder(accountsOrder);
+        setInitialAccountList(accountsOrder);
+      } else {
+        const accountsOrder = accountsInExtension.map((_account, index) => (
+          {
+            account: _account,
+            id: index + 1
+          }
+        ));
+
+        setInitialAccountList(accountsOrder);
+      }
+    }).catch(console.error);
+  }, [accountsInExtension, accountsInExtension.length, hierarchy]);
 
   // const sortedAccount = useMemo(() =>
   //   hierarchy.sort((a, b) => {
@@ -71,11 +128,13 @@ export default function HomePageFullScreen(): React.ReactElement {
         noChainSwitch
       />
       <Grid container item justifyContent='space-around' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', py: '40px' }}>
-        <Grid container direction='column' item rowGap='20px' width='fit-content'>
-          <DraggableAccountsList
-            hideNumbers={hideNumbers}
-            initialAccountList={init}
-          />
+        <Grid container direction='column' item rowGap='20px' width='760px'>
+          {initialAccountList &&
+            <DraggableAccountsList
+              hideNumbers={hideNumbers}
+              initialAccountList={initialAccountList}
+            />
+          }
         </Grid>
         <Grid container direction='column' item rowGap='20px' width='fit-content'>
           <Grid container item width='fit-content'>
