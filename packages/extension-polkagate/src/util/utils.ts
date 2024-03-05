@@ -120,16 +120,6 @@ export function getFormattedAddress(_address: string | null | undefined, _chain:
   return encodeAddress(publicKey, prefix);
 }
 
-// export function handleAccountBalance(balance: any): { available: bigint, feeFrozen: bigint, miscFrozen: bigint, reserved: bigint, total: bigint } {
-//   return {
-//     available: BigInt(String(balance.free)) - BigInt(String(balance.miscFrozen)),
-//     feeFrozen: BigInt(String(balance.feeFrozen)),
-//     miscFrozen: BigInt(String(balance.miscFrozen)),
-//     reserved: BigInt(String(balance.reserved)),
-//     total: BigInt(String(balance.free)) + BigInt(String(balance.reserved))
-//   };
-// }
-
 export function getSubstrateAddress(address: AccountId | string | undefined): string | undefined {
   if (!address) {
     return undefined;

@@ -4,12 +4,14 @@
 /* eslint-disable import-newlines/enforce */
 /* eslint-disable object-curly-newline */
 
+import { options } from '@acala-network/api';
+import { createAssets } from '@polkagate/apps-config/assets';
+
 import { BN_ZERO } from '@polkadot/util';
 
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
 
 async function toGetNativeToken (addresses, api, chainName) {
-  const tokenName = chainName.replace('AssetHub', '');
   const _result = {};
 
   const balances = await Promise.all(addresses.map((address) => api.derive.balances.all(address)));
@@ -25,7 +27,7 @@ async function toGetNativeToken (addresses, api, chainName) {
       chainName,
       decimal: api.registry.chainDecimals[0],
       genesisHash: api.genesisHash.toString(),
-      priceId: tokenName, // based on the fact that asset hubs native token price id is the same as their token names
+      priceId: chainName, // based on the fact that chains native token price id is the same as their chain names
       token: api.registry.chainTokens[0],
       totalBalance: String(totalBalance)
     }];
@@ -34,39 +36,33 @@ async function toGetNativeToken (addresses, api, chainName) {
   return _result;
 }
 
-async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
+async function getAssetOnAcala (addresses, assetsToBeFetched, chainName) {
   const endpoints = getChainEndpoints(chainName);
   const { api, connections } = await fastestEndpoint(endpoints, false);
 
   const results = await toGetNativeToken(addresses, api, chainName);
 
-  const nonNativeAssets = assetsToBeFetched.filter((asset) => !asset.extras?.isNative);
+  const nonNativeAssets = assetsToBeFetched.slice(1);
 
   for (const asset of nonNativeAssets) {
-    const maybeTheAssetOfAddresses = addresses.map((address) => api.query.assets.account(asset.id, address));
-    const assetMetaData = api.query.assets.metadata(asset.id);
+    const maybeTheAssetOfAddresses = addresses.map((address) => api.query.tokens.accounts(address, { Token: asset.symbol === 'aSEED' ? 'ausd' : asset.symbol.toLowerCase() }));
 
-    const response = await Promise.all([assetMetaData, ...maybeTheAssetOfAddresses]);
-    const metadata = response[0];
-    const AssetOfAddresses = response.slice(1);
+    const balanceOfAssetsOfAddresses = await Promise.all(maybeTheAssetOfAddresses);
 
-    const decimal = metadata.decimals.toNumber();
-    const token = metadata.symbol.toHuman();
+    balanceOfAssetsOfAddresses.forEach((balance, index) => {
+      const totalBalance = balance.free.add(balance.reserved);
 
-    AssetOfAddresses.forEach((_asset, index) => {
-      const balance = _asset.isNone ? BN_ZERO : _asset.unwrap().balance;
-
-      if (balance.isZero()) {
+      if (totalBalance.isZero()) {
         return;
       }
 
       const item = {
         assetId: asset.id,
         chainName,
-        decimal,
+        decimal: asset.decimal,
         genesisHash: api.genesisHash.toString(),
         priceId: asset?.priceId,
-        token,
+        token: asset.symbol,
         totalBalance: String(balance)
       };
 
@@ -81,28 +77,34 @@ async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
 }
 
 onmessage = async (e) => {
-  const { addresses, assetsToBeFetched, chainName } = e.data;
+  const { addresses } = e.data;
+
+  const assetsChains = createAssets();
+  const chainName = 'acala';
+  const assetsToBeFetched = assetsChains[chainName];
 
   /** if assetsToBeFetched === undefined then we don't fetch assets by default at first, but wil fetch them on-demand later in account details page*/
   if (!assetsToBeFetched) {
-    console.warn(`getAssetOnAssetHub: No assets to be fetched on ${chainName}`);
+    console.warn(`getAssetOnAcala: No assets to be fetched on ${chainName}`);
 
     return postMessage(undefined);
   }
 
+  console.info('getAssetOnAcala:  assets to be fetched', assetsToBeFetched);
+
   let tryCount = 1;
 
-  console.log(`getAssetOnAssetHub: try ${tryCount} to fetch assets on ${chainName}.`);
+  console.log(`getAssetOnAcala: try ${tryCount} to fetch assets on ${chainName}.`);
 
   while (tryCount >= 1 && tryCount <= 5) {
     try {
-      await getAssetOnAssetHub(addresses, assetsToBeFetched, chainName);
+      await getAssetOnAcala(addresses, assetsToBeFetched, chainName);
 
       tryCount = 0;
 
       return;
     } catch (error) {
-      console.error(`getAssetOnAssetHub: Error while fetching assets on asset hubs, ${5 - tryCount} times to retry`, error);
+      console.error(`getAssetOnAcala: Error while fetching assets on acala, ${5 - tryCount} times to retry`, error);
 
       tryCount === 5 && postMessage(undefined);
     }
