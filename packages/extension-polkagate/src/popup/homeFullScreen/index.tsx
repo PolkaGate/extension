@@ -4,9 +4,9 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, useTheme } from '@mui/material';
-import React, { useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
+import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { AccountContext } from '../../components';
 import { useFullscreen } from '../../hooks';
@@ -31,6 +31,12 @@ export default function HomePageFullScreen(): React.ReactElement {
 
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
+
+  const flattenHierarchy = useCallback((account: AccountWithChildren): AccountWithChildren[] => {
+    const flattenedChildren = (account.children || []).flatMap(flattenHierarchy);
+
+    return [account, ...flattenedChildren];
+  }, []);
 
   useEffect(() => {
     chrome.storage.local.get('addressOrder').then(({ addressOrder }: { addressOrder?: string[] }) => {
@@ -87,17 +93,20 @@ export default function HomePageFullScreen(): React.ReactElement {
         saveNewOrder(accountsOrder);
         setInitialAccountList(accountsOrder);
       } else {
-        const accountsOrder = accountsInExtension.map((_account, index) => (
+        const accounts = hierarchy.flatMap((account) => flattenHierarchy(account));
+
+        const accountsOrder = accounts.map((_account, index) => (
           {
             account: _account,
             id: index + 1
           }
         ));
 
+        saveNewOrder(accountsOrder);
         setInitialAccountList(accountsOrder);
       }
     }).catch(console.error);
-  }, [accountsInExtension, accountsInExtension.length, hierarchy]);
+  }, [accountsInExtension, accountsInExtension.length, flattenHierarchy, hierarchy]);
 
   // const sortedAccount = useMemo(() =>
   //   hierarchy.sort((a, b) => {
