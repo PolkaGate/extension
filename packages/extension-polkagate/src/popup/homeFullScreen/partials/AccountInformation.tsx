@@ -17,20 +17,21 @@ import { BN } from '@polkadot/util';
 import { stars6Black, stars6White } from '../../../assets/icons';
 import { ActionContext, Identicon, Identity, Infotip, ShortAddress2 } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
-import { useAccount, useAccountInfo, useCurrency, useTranslation } from '../../../hooks';
+import { useAccount, useAccountInfo, useCurrency, usePrices3, useTranslation } from '../../../hooks';
+import { FetchedBalance } from '../../../hooks/useAssetsOnChains2';
 import { showAccount, tieAccount } from '../../../messaging';
 import { ACALA_GENESIS_HASH, ASSET_HUBS, IDENTITY_CHAINS, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
-import { AccountAssets, BalancesInfo, Proxy } from '../../../util/types';
+import { BalancesInfo, Proxy } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import AOC from '../../accountDetailsFullScreen/components/AOC';
-import FullScreenAccountMenu from './FullScreenAccountMenu';
-import ForgetAccountModal from '../../forgetAccount/ForgetAccountModal';
-import RenameModal from '../../rename/RenameModal';
 import ExportAccountModal from '../../export/ExportAccountModal';
+import ForgetAccountModal from '../../forgetAccount/ForgetAccountModal';
 import DeriveAccountModal from '../../newAccount/deriveAccount/modal/DeriveAccountModal';
+import RenameModal from '../../rename/RenameModal';
+import FullScreenAccountMenu from './FullScreenAccountMenu';
 
 interface AddressDetailsProps {
-  accountAssets: AccountAssets[] | null | undefined;
+  accountAssets: FetchedBalance[] | null | undefined;
   address: string | undefined;
   api: ApiPromise | undefined;
   assetId: number | undefined;
@@ -59,6 +60,7 @@ export const POPUPS_NUMBER = {
 
 export default function AccountInformation({ accountAssets, address, api, assetId, balances, chain, chainName, formatted, hideNumbers, isChild, setAssetId }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
+  const pricesInCurrencies = usePrices3();
   const currency = useCurrency();
   const account = useAccount(address);
   const accountInfo = useAccountInfo(api, formatted);
@@ -75,16 +77,14 @@ export default function AccountInformation({ accountAssets, address, api, assetI
 
   const borderColor = useMemo(() => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [theme.palette.mode]);
   const textAndIconColor = useMemo(() => theme.palette.secondary.main, [theme.palette.secondary.main]);
-  // const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
-  // const isPriceOutdated = useMemo(() => price !== undefined && Date.now() - price.date > BALANCES_VALIDITY_PERIOD, [price]);
 
-  const otherAssetsToShow = useMemo(() => {
-    if (!accountAssets) {
-      return accountAssets;
+  const assetsToShow = useMemo(() => {
+    if (!accountAssets || !pricesInCurrencies) {
+      return accountAssets; // null  or undefined
     } else {
-      return accountAssets.sort((a, b) => calculatePrice(b.totalBalance, b.decimal, b.price ?? 0) - calculatePrice(a.totalBalance, a.decimal, a.price ?? 0));
+      return accountAssets.sort((a, b) => calculatePrice(b.totalBalance, b.decimal, pricesInCurrencies.prices?.[b.priceId]?.value ?? 0) - calculatePrice(a.totalBalance, a.decimal, pricesInCurrencies.prices?.[a.priceId]?.value ?? 0));
     }
-  }, [accountAssets, calculatePrice]);
+  }, [accountAssets, calculatePrice, pricesInCurrencies]);
 
   const recoverableToolTipTxt = useMemo(() => {
     switch (isRecoverable) {
@@ -109,8 +109,10 @@ export default function AccountInformation({ accountAssets, address, api, assetI
   }, [hasProxy]);
 
   const totalBalance = useMemo(() => {
-    if (accountAssets) {
-      return accountAssets.reduce((accumulator, accountAsset) => (accumulator + calculatePrice(accountAsset.totalBalance, accountAsset.decimal, accountAsset?.price ?? 0)), 0)
+    if (accountAssets && pricesInCurrencies && currency) {
+      const t = accountAssets.reduce((accumulator, { decimal, priceId, totalBalance }) => (accumulator + calculatePrice(totalBalance, decimal, pricesInCurrencies.prices?.[priceId]?.value ?? 0)), 0);
+
+      return t;
     } else if (accountAssets === null) {
       return 0;
     }
@@ -118,7 +120,7 @@ export default function AccountInformation({ accountAssets, address, api, assetI
     return undefined;
     /** we need currency as a dependency to update balance by changing currency*/
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountAssets, calculatePrice, currency]);
+  }, [accountAssets, calculatePrice, currency, pricesInCurrencies]);
 
   const onAssetHub = useCallback((genesisHash: string | null | undefined) => ASSET_HUBS.includes(genesisHash ?? ''), []);
 
@@ -337,10 +339,10 @@ export default function AccountInformation({ accountAssets, address, api, assetI
         <Grid container item justifyContent='flex-end' minHeight='50px'>
           <Divider sx={{ bgcolor: borderColor, height: '1px', mr: '5px', my: '15px', width: '100%' }} />
           <Grid container item xs>
-            {(otherAssetsToShow === undefined || (otherAssetsToShow && otherAssetsToShow?.length > 0)) &&
+            {(assetsToShow === undefined || (assetsToShow && assetsToShow?.length > 0)) &&
               <AOC
                 account={account}
-                accountAssets={otherAssetsToShow}
+                accountAssets={assetsToShow}
                 api={api}
                 assetId={assetId}
                 balanceToShow={balanceToShow}

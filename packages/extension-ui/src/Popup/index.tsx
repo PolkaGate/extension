@@ -19,10 +19,10 @@ import uiSettings from '@polkadot/ui-settings';
 
 import { ErrorBoundary, Loading } from '../../../extension-polkagate/src/components';
 import { AccountContext, AccountsAssetsContext, ActionContext, APIContext, AuthorizeReqContext, CurrencyContext, FetchingContext, MediaContext, MetadataReqContext, PricesContext, ReferendaContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
-import { getStorage, LoginInfo, updateStorage } from '../../../extension-polkagate/src/components/Loading';
+import { getStorage, LoginInfo, setStorage, updateStorage } from '../../../extension-polkagate/src/components/Loading';
 import { ExtensionLockProvider } from '../../../extension-polkagate/src/context/ExtensionLockContext';
-import { useAssetsOnChains, usePriceIds } from '../../../extension-polkagate/src/hooks';
-import useAssetsOnChains2 from '../../../extension-polkagate/src/hooks/useAssetsOnChains2';
+import { usePriceIds } from '../../../extension-polkagate/src/hooks';
+import useAssetsOnChains2, { SavedAssets } from '../../../extension-polkagate/src/hooks/useAssetsOnChains2';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
 import AccountEx from '../../../extension-polkagate/src/popup/account';
 import AccountFL from '../../../extension-polkagate/src/popup/accountDetailsFullScreen';
@@ -67,10 +67,9 @@ import SoloPayout from '../../../extension-polkagate/src/popup/staking/solo/rewa
 import SoloStake from '../../../extension-polkagate/src/popup/staking/solo/stake';
 import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
-import { getPrices2 } from '../../../extension-polkagate/src/util/api';
+import { getPrices3 } from '../../../extension-polkagate/src/util/api';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
-import { USD_CURRENCY } from '../../../extension-polkagate/src/util/constants';
-import { APIs, Fetching, LatestRefs, Prices2, SavedAccountsAssets } from '../../../extension-polkagate/src/util/types';
+import { APIs, Fetching, LatestRefs, Prices2, Prices3, PricesInCurrencies } from '../../../extension-polkagate/src/util/types';
 
 const startSettings = uiSettings.get();
 
@@ -103,13 +102,9 @@ function initAccountContext(accounts: AccountJson[]): AccountsContext {
 }
 
 export default function Popup(): React.ReactElement {
-  const priceIds = usePriceIds();
-
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
-
-  const addresses = accounts?.map(({ address }) => address);
-  const assetsOnChains = useAssetsOnChains(addresses);
-  const assetsOnChains2 = useAssetsOnChains2(addresses);
+  const assetsOnChains2 = useAssetsOnChains2(accounts);
+  const priceIds = usePriceIds();
 
   const [accountCtx, setAccountCtx] = useState<AccountsContext>({ accounts: [], hierarchy: [] });
   const [authRequests, setAuthRequests] = useState<null | AuthorizeRequest[]>(null);
@@ -121,53 +116,12 @@ export default function Popup(): React.ReactElement {
   const [apis, setApis] = useState<APIs>({});
   const [fetching, setFetching] = useState<Fetching>({});
   const [refs, setRefs] = useState<LatestRefs>({});
-  const [accountsAssets, setAccountsAssets] = useState<SavedAccountsAssets | null | undefined>();
+  const [accountsAssets, setAccountsAssets] = useState<SavedAssets | null | undefined>();
   const [currency, setCurrency] = useState<CurrencyItemType>();
   const [prices, setPrices] = useState<Prices2[]>();
   const [loginInfo, setLoginInfo] = useState<LoginInfo>();
 
-
-
   console.log('--assetsOnChains2:', assetsOnChains2);
-
-  const initializeCurrency = useCallback(() => {
-    getStorage('currency').then((res) => {
-      setCurrency((res as CurrencyItemType) || USD_CURRENCY);
-    }).catch(console.error);
-  }, []);
-
-  const initializePrices = useCallback(() => {
-    chrome.storage.local.get('assetsPrice', (res) => {
-      const parsed = res && res.assetsPrice ? JSON.parse(res.assetsPrice as string) as Prices2[] : [];
-
-      setPrices(parsed);
-    });
-  }, []);
-
-  const updatePrices = useCallback(async (currencyCode: string, priceIds: string[]) => {
-    fetching.fetchingPrices = { price: true };
-
-    let retryCount = 0;
-
-    while (retryCount < 5) {
-      try {
-        await getPrices2(priceIds, currencyCode.toLowerCase());
-        initializePrices();
-        fetching.fetchingPrices = { price: false };
-        retryCount = 5;
-
-        return;
-      } catch (error) {
-        console.error(error);
-        await new Promise((resolve) => setTimeout(resolve, ((retryCount + 1) * 5) * 1000));
-        retryCount += 1;
-
-        if (retryCount === 5) {
-          fetching.fetchingPrices = { price: false };
-        }
-      }
-    }
-  }, [fetching, initializePrices]);
 
   const set = useCallback((change: Fetching) => {
     setFetching(change);
@@ -184,35 +138,20 @@ export default function Popup(): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    if (!currency || !priceIds || (fetching.fetchingPrices && fetching.fetchingPrices?.price)) {
-      return;
-    }
-
-    const price = prices?.find(({ currencyCode }) => currencyCode.toLowerCase() === currency.code.toLowerCase());
-
-    if (price && Date.now() - price.date < 1000 * 30) {
-      return;
-    }
-
-    updatePrices(currency.code, priceIds).catch(console.error);
-  }, [currency, fetching.fetchingPrices, fetching.fetchingPrices?.price, priceIds, prices, updatePrices]);
+    assetsOnChains2 && setAccountsAssets(assetsOnChains2);
+  }, [assetsOnChains2]);
 
   useEffect(() => {
-    if (assetsOnChains === undefined || !prices) {
-      return;
-    }
+    priceIds && currency && getPrices3(priceIds, currency.code.toLowerCase()).then((newPrices) => {
+      getStorage('pricesInCurrencies').then((res) => {
+        const pricesInCurrencies = (res || {}) as PricesInCurrencies;
 
-    const selectedPrice = prices.find((price) => price.currencyCode.toLowerCase() === currency?.code?.toLowerCase());
-    const accsAssets = { ...assetsOnChains };
-
-    accsAssets.balances.forEach((accountAsset) => accountAsset.assets.forEach((asset) => {
-      asset.price = selectedPrice?.prices[asset.priceId]?.price;
-    }));
-
-    // eslint-disable-next-line no-void
-    void chrome.storage.local.set({ accountsAssets: JSON.stringify(accsAssets) });
-    setAccountsAssets(accsAssets);
-  }, [assetsOnChains, currency?.code, prices, prices?.length]);
+        delete (newPrices as Prices3).currencyCode;
+        pricesInCurrencies[currency.code] = newPrices;
+        setStorage('pricesInCurrencies', pricesInCurrencies).catch(console.error);
+      }).catch(console.error);
+    }).catch(console.error);
+  }, [currency, priceIds]);
 
   useEffect((): void => {
     Promise.all([
@@ -226,9 +165,6 @@ export default function Popup(): React.ReactElement {
       setSettingsCtx(settings);
       setCameraOn(settings.camera === 'on');
     });
-
-    initializeCurrency();
-    initializePrices();
 
     _onAction();
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -5,11 +5,12 @@
 
 import { createAssets } from '@polkagate/apps-config/assets';
 import { Asset } from '@polkagate/apps-config/assets/types';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { AccountJson } from '@polkadot/extension-base/background/types';
 import { BN } from '@polkadot/util';
 
-import { getStorage, setStorage } from '../components/Loading';
+import { getStorage, setStorage, watchStorage } from '../components/Loading';
 import { toCamelCase } from '../popup/governance/utils/util';
 import allChains from '../util/chains';
 import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH } from '../util/constants';
@@ -21,7 +22,7 @@ type WorkerMessage = Record<string, MessageBody[]>;
 type Assets = Record<string, FetchedBalance[]>;
 type AssetsBalancesPerChain = { [genesisHash: string]: FetchedBalance[] };
 type AssetsBalancesPerAddress = { [address: string]: AssetsBalancesPerChain };
-type SavedAssets = { balances: AssetsBalancesPerAddress, timeStamp: number };
+export interface SavedAssets { balances: AssetsBalancesPerAddress, timeStamp: number }
 
 type MessageBody = {
   assetId?: number,
@@ -33,7 +34,7 @@ type MessageBody = {
   token: string
 };
 
-type FetchedBalance = {
+export interface FetchedBalance {
   assetId?: number,
   totalBalance: BN,
   chainName: string,
@@ -41,7 +42,7 @@ type FetchedBalance = {
   genesisHash: string,
   priceId: string,
   token: string
-};
+}
 
 const DEFAULT_SAVED_ASSETS = { balances: {} as AssetsBalancesPerAddress, timeStamp: Date.now() };
 const assetsChains = createAssets();
@@ -51,25 +52,44 @@ const assetsChains = createAssets();
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and their fetching timestamps
  */
-export default function useAssetsOnChains2(addresses: string[] | undefined): SavedAssets | undefined {
-  const [fetchedAssets, setFetchedAssets] = useState<SavedAssets | undefined>();
+export default function useAssetsOnChains2 (accounts: AccountJson[] | null): SavedAssets | undefined | null {
+  const addresses = useMemo(() => accounts?.map(({ address }) => address), [accounts]);
+
+  const [fetchedAssets, setFetchedAssets] = useState<SavedAssets | undefined | null>();
   const [workerCalled, setWorkerCalled] = useState<Worker>();
   const [isOutDated, setIsOutDated] = useState<boolean>();
   const selectedChains = useSelectedChains();
 
   useEffect(() => {
-    getStorage('assets3').then((res) => {
-      setFetchedAssets(res as SavedAssets);
+    if (!addresses) {
+      console.info('useAssetsOnChains2: no addresses to fetch assets!');
+
+      return setFetchedAssets(null);
+    }
+
+    getStorage('assets6').then((savedAssets) => {
+      /** handle BN issues */
+      if (!savedAssets) {
+        return;
+      }
+
+      const parsedAssets = JSON.parse(savedAssets as string) as SavedAssets;
+
+      // Object.keys(parsedAssets).forEach((address) => {
+      //   parsedAssets.balances?.[address] && Object.keys(parsedAssets.balances[address]).forEach((genesisHash) => {
+      //     parsedAssets.balances[address]?.[genesisHash]?.map((asset) => {
+      //       asset.totalBalance = isHexToBn(asset.totalBalance as unknown as string);
+
+      //       return asset;
+      //     });
+      //   });
+      // });
+
+      setFetchedAssets(parsedAssets);
     }).catch(console.error);
 
-    chrome.storage.onChanged.addListener(function (changes, areaName) {
-      if (areaName === 'local' && 'assets3' in changes) {
-        const newValue = changes.assets3.newValue as SavedAssets;
-
-        setFetchedAssets(newValue);
-      }
-    });
-  }, []);
+    watchStorage('assets6', setFetchedAssets, true).catch(console.error);
+  }, [addresses]);
 
   const combineAndSetAssets = useCallback((assets: Assets) => {
     if (!addresses) {
@@ -78,25 +98,25 @@ export default function useAssetsOnChains2(addresses: string[] | undefined): Sav
       return;
     }
 
-    getStorage('assets3').then((res) => {
-      const savedAssets = (res || DEFAULT_SAVED_ASSETS) as SavedAssets;
+    getStorage('assets6').then((res) => {
+      const savedAssets = (res || JSON.stringify(DEFAULT_SAVED_ASSETS)) as string;
+      const parsedAssets = JSON.parse(savedAssets) as SavedAssets;
 
       Object.keys(assets).forEach((address) => {
-        if (savedAssets.balances[address] === undefined) {
-          savedAssets.balances[address] = {};
+        if (parsedAssets.balances[address] === undefined) {
+          parsedAssets.balances[address] = {};
         }
 
         const { genesisHash } = assets[address][0];
 
-        savedAssets.balances[address][genesisHash] = assets[address];
+        parsedAssets.balances[address][genesisHash] = assets[address];
       });
 
-      savedAssets.timeStamp = Date.now();
-      setStorage('assets3', savedAssets).catch(console.error);
+      parsedAssets.timeStamp = Date.now();
+      /** we use JSON.stringify to cope with saving BN issue */
+      setStorage('assets6', JSON.stringify(parsedAssets)).catch(console.error);
     }).catch(console.error);
   }, [addresses]);
-
-  // console.log('apps config assetsChains:', assetsChains);
 
   const fetchAssetOnRelayChain = useCallback((_addresses: string[], chainName: string) => {
     const worker: Worker = new Worker(new URL('../util/workers/getAssetOnRelayChain.js', import.meta.url));
@@ -120,8 +140,6 @@ export default function useAssetsOnChains2(addresses: string[] | undefined): Sav
 
         return;
       }
-
-      console.info(`getAssetOnRelayChain: assets on ${chainName}`, message);
 
       const parsedMessage = JSON.parse(message) as WorkerMessage;
 

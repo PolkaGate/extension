@@ -65,6 +65,19 @@ export const getStorage = (label: string) => {
   });
 };
 
+export const watchStorage = (label: string, setChanges: ((value: any) => void), parse = false) => {
+  return new Promise((resolve, reject) => {
+    chrome.storage.onChanged.addListener(function (changes, areaName) {
+      if (areaName === 'local' && label in changes) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const newValue = changes[label].newValue;
+
+        resolve(setChanges(parse ? JSON.parse(newValue as string) : newValue));
+      }
+    });
+  });
+};
+
 export const setStorage = (label: string, data: unknown) => {
   return new Promise<boolean>((resolve) => {
     chrome.storage.local.set({ [label]: data }, () => {

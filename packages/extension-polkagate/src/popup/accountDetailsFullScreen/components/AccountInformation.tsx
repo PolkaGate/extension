@@ -10,31 +10,34 @@ import { Divider, Grid, IconButton, Skeleton, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
+import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
 import { ActionContext, DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, ShortAddress2 } from '../../../components';
-import { useAccount, useAccountInfo, useTranslation } from '../../../hooks';
+import { useAccount, useAccountInfo, usePrices3, useTranslation } from '../../../hooks';
+import { FetchedBalance } from '../../../hooks/useAssetsOnChains2';
 import { showAccount, tieAccount, windowOpen } from '../../../messaging';
 import { ACALA_GENESIS_HASH, ASSET_HUBS, BALANCES_VALIDITY_PERIOD, IDENTITY_CHAINS, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
-import { AccountAssets, BalancesInfo, Price2, Proxy } from '../../../util/types';
+import { AccountAssets, BalancesInfo, Prices3, Proxy } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import { getValue } from '../../account/util';
 import AOC from './AOC';
-import { AccountJson } from '@polkadot/extension-base/background/types';
 
 interface AddressDetailsProps {
   address: string | undefined;
   api: ApiPromise | undefined;
-  accountAssets: AccountAssets[] | null | undefined;
+  accountAssets: FetchedBalance[] | null | undefined;
   chain: Chain | null | undefined;
   formatted: string | undefined;
   chainName: string | undefined;
   isDarkTheme: boolean;
   balances: BalancesInfo | undefined;
-  price: Price2 | undefined;
   setAssetId: React.Dispatch<React.SetStateAction<number | undefined>>;
   assetId: number | undefined;
+  price: number | undefined;
+  setAsset: React.Dispatch<React.SetStateAction<AccountAssets | undefined>>;
+  pricesInCurrency: Prices3 | null | undefined;
 }
 
 export type DisplayLogoAOC = {
@@ -84,12 +87,12 @@ const displayLogoAOC = (genesisHash: string | null | undefined, symbol: string |
   };
 };
 
-const Price = ({ balanceToShow, isPriceOutdated, price }: { balanceToShow: BalancesInfo | undefined, isPriceOutdated: boolean | undefined, price: Price2 | undefined }) => (
+const Price = ({ balanceToShow, isPriceOutdated, price }: { balanceToShow: BalancesInfo | undefined, isPriceOutdated: boolean | undefined, price: number | undefined }) => (
   <Grid item sx={{ '> div span': { display: 'block' }, color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 400 }}>
     <FormatPrice
       amount={getValue('total', balanceToShow)}
       decimals={balanceToShow?.decimal}
-      price={price?.price}
+      price={price}
       skeletonHeight={22}
       width='80px'
     />
@@ -112,7 +115,7 @@ const Balance = ({ balanceToShow, isBalanceOutdated }: { balanceToShow: Balances
   </>
 );
 
-const BalanceRow = ({ balanceToShow, isBalanceOutdated, isPriceOutdated, price }: { balanceToShow: BalancesInfo | undefined, isPriceOutdated: boolean | undefined, isBalanceOutdated: boolean | undefined, price: Price2 | undefined }) => (
+const BalanceRow = ({ balanceToShow, isBalanceOutdated, isPriceOutdated, price }: { balanceToShow: BalancesInfo | undefined, isPriceOutdated: boolean | undefined, isBalanceOutdated: boolean | undefined, price: number | undefined }) => (
   <Grid alignItems='center' container fontSize='28px' item xs>
     <Balance balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} />
     <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '30px', mx: '10px', my: 'auto' }} />
@@ -120,7 +123,7 @@ const BalanceRow = ({ balanceToShow, isBalanceOutdated, isPriceOutdated, price }
   </Grid>
 );
 
-const AssetsBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOutdated, price }: { account: AccountJson | undefined, balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined, isPriceOutdated: boolean, price: Price2 | undefined }) => (
+const SelectedAsset = ({ account, balanceToShow, isBalanceOutdated, isPriceOutdated, price }: { account: AccountJson | undefined, balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined, isPriceOutdated: boolean, price: number | undefined }) => (
   <Grid alignItems='center' container item minWidth='40%'>
     <Grid item pl='7px'>
       <DisplayLogo assetToken={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.symbol} genesisHash={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.base} size={42} />
@@ -131,8 +134,9 @@ const AssetsBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOutdated,
   </Grid>
 );
 
-export default function AccountInformation({ accountAssets, address, api, assetId, balances, chain, chainName, formatted, isDarkTheme, price, setAssetId }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation ({ accountAssets,price,pricesInCurrency, address, api, assetId, balances, chain, chainName, formatted, isDarkTheme, setAsset, setAssetId }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
+
   const account = useAccount(address);
   const accountInfo = useAccountInfo(api, formatted);
   const theme = useTheme();
@@ -143,21 +147,21 @@ export default function AccountInformation({ accountAssets, address, api, assetI
   const [hasProxy, setHasProxy] = useState<boolean | undefined>();
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
 
-  const calculatePrice = useCallback((amount: BN, decimal: number, price: number) => {
-    return parseFloat(amountToHuman(amount, decimal)) * price;
+  const calculatePrice = useCallback((amount: BN, decimal: number, _price: number) => {
+    return parseFloat(amountToHuman(amount, decimal)) * _price;
   }, []);
 
   const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
   const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
-  const isPriceOutdated = useMemo(() => price !== undefined && Date.now() - price.timestamp > BALANCES_VALIDITY_PERIOD, [price]);
+  const isPriceOutdated = useMemo(() => pricesInCurrency && Date.now() - pricesInCurrency.date > BALANCES_VALIDITY_PERIOD, [pricesInCurrency]);
 
-  const otherAssetsToShow = useMemo(() => {
+  const assetsToShow = useMemo(() => {
     if (!accountAssets) {
-      return accountAssets;
+      return accountAssets; // null or undefined!
     } else {
-      return accountAssets.sort((a, b) => calculatePrice(b.totalBalance, b.decimal, b.price ?? 0) - calculatePrice(a.totalBalance, a.decimal, a.price ?? 0));
+      return accountAssets.sort((a, b) => calculatePrice(b.totalBalance, b.decimal, pricesInCurrency?.prices?.[b.priceId]?.value ?? 0) - calculatePrice(a.totalBalance, a.decimal, pricesInCurrency?.prices?.[a.priceId]?.value ?? 0));
     }
-  }, [accountAssets, calculatePrice]);
+  }, [accountAssets, calculatePrice, pricesInCurrency?.prices]);
 
   const recoverableToolTipTxt = useMemo(() => {
     switch (isRecoverable) {
@@ -179,7 +183,8 @@ export default function AccountInformation({ accountAssets, address, api, assetI
       return 'Checking';
     }
   }, [hasProxy]);
-  const showAOC = useMemo(() => !!(otherAssetsToShow === undefined || (otherAssetsToShow && otherAssetsToShow?.length > 0)), [otherAssetsToShow]);
+
+  const showAOC = useMemo(() => !!(assetsToShow === undefined || (assetsToShow && assetsToShow?.length > 0)), [assetsToShow]);
 
   useEffect((): void => {
     setHasID(undefined);
@@ -221,12 +226,13 @@ export default function AccountInformation({ accountAssets, address, api, assetI
     setBalanceToShow(undefined);
   }, [balances, chainName]);
 
-  const assetBoxClicked = useCallback((genesisHash: string, id: number | undefined) => {
+  const assetBoxClicked = useCallback((genesisHash: string, asset: AccountAssets | undefined) => {
     address && tieAccount(address, genesisHash).finally(() => {
-      id && setAssetId(id);
-      (id === undefined || id === -1) && setAssetId(undefined);
+      asset && setAssetId(asset.assetId);
+      setAsset(asset);
+      (asset?.assetId === undefined || asset?.assetId === -1) && setAssetId(undefined);
     }).catch(console.error);
-  }, [address, setAssetId]);
+  }, [address, setAsset, setAssetId]);
 
   const openIdentity = useCallback(() => {
     address && windowOpen(`/manageIdentity/${address}`);
@@ -313,7 +319,7 @@ export default function AccountInformation({ accountAssets, address, api, assetI
               <ShortAddress2 address={formatted || address} clipped showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
             </Grid>
           </Grid>
-          <AssetsBox
+          <SelectedAsset
             account={account}
             balanceToShow={balanceToShow}
             isBalanceOutdated={isBalanceOutdated}
@@ -327,7 +333,7 @@ export default function AccountInformation({ accountAssets, address, api, assetI
           <Divider sx={{ bgcolor: borderColor, height: '1px', my: '15px', width: '98.5%' }} />
           <AOC
             account={account}
-            accountAssets={otherAssetsToShow}
+            accountAssets={assetsToShow}
             api={api}
             assetId={assetId}
             balanceToShow={balanceToShow}

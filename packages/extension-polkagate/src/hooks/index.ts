@@ -57,6 +57,7 @@ export { default as usePreImage } from './usePreImage';
 export { default as usePreImageHashes } from './usePreImageHashes';
 export { default as usePrice } from './usePrice';
 export { default as usePrices } from './usePrices';
+export { default as usePrices3 } from './usePrices3';
 export { default as useProxies } from './useProxies';
 export { default as usePool } from './usePool';
 export { default as usePools } from './usePools';

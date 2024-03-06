@@ -10,11 +10,12 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
+import { FetchedBalance } from '../../..//hooks/useAssetsOnChains2';
 import { stars6Black, stars6White } from '../../../assets/icons';
 import { AccountsAssetsContext } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
-import { useCurrency, useTranslation } from '../../../hooks';
-import { CHAINS_WITH_BLACK_LOGO, WESTEND_GENESIS_HASH, WESTMINT_GENESIS_HASH } from '../../../util/constants';
+import { useCurrency, usePrices3, useTranslation } from '../../../hooks';
+import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import { amountToHuman } from '../../../util/utils';
 
@@ -37,6 +38,8 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const currency = useCurrency();
+  const pricesInCurrencies = usePrices3();
+
   const { accountsAssets } = useContext(AccountsAssetsContext);
 
   Chart.register(...registerables);
@@ -50,68 +53,69 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
+
   const allAccountsTotalBalance = useMemo(() => {
-    if (!accountsAssets) {
+    if (!accountsAssets || !pricesInCurrencies) {
       return undefined;
     }
 
     let totalPrice = 0;
+    const balances = accountsAssets.balances;
 
-    accountsAssets.balances.forEach((balance) => {
-      balance.assets.forEach((accountAsset) => {
-        totalPrice += calPrice(accountAsset.price ?? 0, accountAsset.totalBalance, accountAsset.decimal);
+    Object.keys(balances).forEach((address) => {
+      Object.keys(balances?.[address]).forEach((genesisHash) => {
+        balances?.[address]?.[genesisHash].forEach((asset) => {
+          totalPrice += calPrice(pricesInCurrencies.prices[asset.priceId]?.value ?? 0, asset.totalBalance, asset.decimal);
+        });
       });
     });
 
     return totalPrice;
-  }, [accountsAssets, calPrice]);
+  }, [accountsAssets, calPrice, pricesInCurrencies]);
 
   const assets = useMemo(() => {
-    if (!accountsAssets || !allAccountsTotalBalance) {
+    if (!accountsAssets || !allAccountsTotalBalance || !pricesInCurrencies) {
       return undefined;
     }
 
-    const allAssetsInfo = accountsAssets.balances.flatMap((balance) => balance.assets.map((asset) => ({ token: asset.token, genesis: asset.genesisHash })));
-    const removeDup = [...new Set(allAssetsInfo.map((obj) => JSON.stringify(obj)))];
-    const assetsInfo = removeDup.map((str) => JSON.parse(str) as { token: string; genesis: string }).filter((value) => ![WESTEND_GENESIS_HASH, WESTMINT_GENESIS_HASH].includes(value.genesis));
+    let allAccountsAssets = [] as FetchedBalance[];
+    const balances = accountsAssets.balances;
 
-    const eachAssetTotal = assetsInfo.map((assetInfo) => {
-      let genesishash: string | undefined = '';
-      let token: string | undefined = '';
-      let decimal: number | undefined = 0;
-      let price: number | undefined = 0;
-      let ui: UiType | undefined;
-
-      const balance = accountsAssets.balances.reduce((accumulator, balance) => {
-        const asset = balance.assets.find((asset) => asset.genesisHash === assetInfo.genesis && asset.token === assetInfo.token);
-        const assetUi = getLogo2(asset?.genesisHash, asset?.token);
-
-        if (!genesishash || !token || !decimal || !price || !ui) {
-          genesishash = asset?.genesisHash;
-          token = asset?.token;
-          decimal = asset?.decimal;
-          price = asset?.price;
-          ui = {
-            color: assetUi?.color,
-            logo: assetUi?.logo
-          };
+    Object.keys(balances).forEach((address) => {
+      Object.keys(balances?.[address]).forEach((genesisHash) => {
+        if (!TEST_NETS.includes(genesisHash)) {
+          allAccountsAssets = allAccountsAssets.concat(balances[address][genesisHash]);
         }
-
-        return accumulator.add(asset?.totalBalance ?? BN_ZERO);
-      }, BN_ZERO);
-
-      const balancePrice = calPrice(price, balance, decimal ?? 0);
-
-      return {
-        balance: balancePrice,
-        genesishash,
-        percent: formatNumber((balancePrice / allAccountsTotalBalance) * 100),
-        token,
-        ui
-      };
+      });
     });
 
-    eachAssetTotal.sort((a, b) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+    const groupedAssets = Object.groupBy(allAccountsAssets, ({ genesisHash, token }) => `${token}_${genesisHash}`);
+    const aggregatedAssets = Object.keys(groupedAssets).map((index) => {
+      const assetSample = groupedAssets[index][0] as FetchedBalance;
+      const ui = getLogo2(assetSample?.genesisHash, assetSample?.token);
+      const assetPrice = pricesInCurrencies.prices[assetSample.priceId]?.value;
+      const accumulatedPricePerAsset = groupedAssets[index].reduce((sum, { totalBalance }) => sum.add(new BN(totalBalance)), BN_ZERO) as BN;
+
+      const balancePrice = calPrice(assetPrice, accumulatedPricePerAsset, assetSample.decimal ?? 0);
+
+      return (
+        {
+          ...assetSample,
+          percent: formatNumber((balancePrice / allAccountsTotalBalance) * 100),
+          price: assetPrice,
+          totalBalance: balancePrice,
+          ui: {
+            color: ui?.color,
+            logo: ui?.logo
+          }
+        }
+      );
+    });
+
+    console.log('aggregatedAssets:', aggregatedAssets);
+
+    aggregatedAssets.sort((a, b) => {
       if (a.percent < b.percent) {
         return 1;
       } else if (a.percent > b.percent) {
@@ -121,8 +125,8 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
       return 0;
     });
 
-    return eachAssetTotal;
-  }, [accountsAssets, allAccountsTotalBalance, calPrice, formatNumber]);
+    return aggregatedAssets;
+  }, [accountsAssets, allAccountsTotalBalance, calPrice, formatNumber, pricesInCurrencies]);
 
   useEffect(() => {
     if (!assets || !borderColor) {
@@ -164,7 +168,7 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
 
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
-  const DisplayAssetRow = ({ asset }: { asset: AssetType }) => (
+  const DisplayAssetRow = ({ asset }: { asset: FetchedBalance }) => (
     <Grid container item justifyContent='space-between'>
       <Grid alignItems='center' container item width='fit-content'>
         <Avatar
@@ -178,7 +182,7 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
       </Grid>
       <Grid alignItems='center' columnGap='10px' container item width='fit-content'>
         <Typography fontSize='16px' fontWeight={600}>
-          {hideNumbers || hideNumbers === undefined ? '****' : `${currency?.sign ?? ''}${nFormatter(asset.balance ?? 0, 2)}`}
+          {hideNumbers || hideNumbers === undefined ? '****' : `${currency?.sign ?? ''}${nFormatter(asset.totalBalance ?? 0, 2)}`}
         </Typography>
         <Divider orientation='vertical' sx={{ bgcolor: asset.ui.color, height: '21px', m: 'auto', width: '5px' }} />
         <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>

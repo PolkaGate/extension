@@ -4,7 +4,7 @@
 import { useContext, useEffect } from 'react';
 
 import { CurrencyContext } from '../components';
-import { getStorage } from '../components/Loading';
+import { getStorage, watchStorage } from '../components/Loading';
 import { CurrencyItemType } from '../popup/homeFullScreen/partials/Currency';
 import { USD_CURRENCY } from '../util/constants';
 
@@ -21,13 +21,7 @@ export default function useCurrency (): CurrencyItemType | undefined {
       setCurrency(res as CurrencyItemType || USD_CURRENCY);
     }).catch(console.error);
 
-    chrome.storage.onChanged.addListener(function (changes, areaName) {
-      if (areaName === 'local' && 'currency' in changes) {
-        const newValue = changes.currency.newValue as CurrencyItemType;
-
-        setCurrency(newValue);
-      }
-    });
+    watchStorage('currency', setCurrency).catch(console.error);
   }, [setCurrency]);
 
   return currency;

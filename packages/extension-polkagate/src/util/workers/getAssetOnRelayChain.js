@@ -68,7 +68,7 @@ async function getTotalBalance (chainName, addresses) {
 }
 
 async function getAssetOnRelayChain (addresses, chainName) {
-  console.log(`getAssetOnRelayChain: get assets on other chains called for ${addresses}`);
+  console.log(`getAssetOnRelayChain: get assets on relay chain ${chainName} is called for ${addresses}`);
   const results = {};
 
   await getTotalBalance(chainName, addresses)

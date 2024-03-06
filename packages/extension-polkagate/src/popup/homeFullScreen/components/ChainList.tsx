@@ -36,7 +36,9 @@ function ChainList({ anchorEl }: Props): React.ReactElement {
     const defaultSelectedGenesisHashes = DEFAULT_SELECTED_CHAINS.map(({ value }) => value as string);
 
     getStorage('selectedChains').then((res) => {
-      (res as string[])?.length ? setSelectedChains(new Set(res as string[])) : setSelectedChains(new Set(defaultSelectedGenesisHashes));
+      (res as string[])?.length
+        ? setSelectedChains(new Set(res as string[]))
+        : setSelectedChains(new Set(defaultSelectedGenesisHashes));
     }).catch(console.error);
   }, [allChains]);
 
