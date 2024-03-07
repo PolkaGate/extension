@@ -49,7 +49,7 @@ const DEFAULT_SAVED_ASSETS = { balances: {} as AssetsBalancesPerAddress, timeSta
 export const ASSETS_NAME_IN_STORAGE = 'assets7';
 const BALANCE_VALIDITY_PERIOD = 1 * 1000 * 60;
 
-function isUpToDate(date?: number): boolean | undefined {
+function isUpToDate (date?: number): boolean | undefined {
   return date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
 }
 
@@ -60,7 +60,7 @@ const assetsChains = createAssets();
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsOnChains2(accounts: AccountJson[] | null): SavedAssets | undefined | null {
+export default function useAssetsOnChains2 (accounts: AccountJson[] | null): SavedAssets | undefined | null {
   const addresses = useMemo(() => accounts?.map(({ address }) => address), [accounts]);
 
   const [fetchedAssets, setFetchedAssets] = useState<SavedAssets | undefined | null>();
@@ -80,11 +80,11 @@ export default function useAssetsOnChains2(accounts: AccountJson[] | null): Save
   useEffect(() => {
     /** chain list may have changed */
     isUpdate && !isWorking && selectedChains?.length && setIsUpdate(false);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedChains]);
 
   useEffect(() => {
-    workersCalled?.length ? setIsWorking(true) : setIsWorking(false);
+    setIsWorking(!!workersCalled?.length);
   }, [workersCalled?.length]);
 
   useEffect(() => {
@@ -144,6 +144,7 @@ export default function useAssetsOnChains2(accounts: AccountJson[] | null): Save
           parsedAssets.balances[address] = {};
         }
 
+        /** to group assets by their chain's genesisHash */
         const { genesisHash } = assets[address][0];
 
         parsedAssets.balances[address][genesisHash] = assets[address];
@@ -151,7 +152,7 @@ export default function useAssetsOnChains2(accounts: AccountJson[] | null): Save
 
       parsedAssets.timeStamp = Date.now();
       /** we use JSON.stringify to cope with saving BN issue */
-      setStorage(ASSETS_NAME_IN_STORAGE, JSON.stringify(parsedAssets)).catch(console.error);
+      setStorage(ASSETS_NAME_IN_STORAGE, parsedAssets, true).catch(console.error);
     }).catch(console.error);
   }, [addresses]);
 
@@ -302,7 +303,7 @@ export default function useAssetsOnChains2(accounts: AccountJson[] | null): Save
 
     const multipleAssetsChainsNames = Object.keys(assetsChains);
 
-    const otherSingleAssetChains = allChains.filter(({ chain, genesisHash }) =>
+    const singleAssetChains = allChains.filter(({ chain, genesisHash }) =>
       selectedChains.includes(genesisHash) &&
       !ASSET_HUBS.includes(genesisHash) &&
       !RELAY_CHAINS_GENESISHASH.includes(genesisHash) &&
@@ -311,7 +312,7 @@ export default function useAssetsOnChains2(accounts: AccountJson[] | null): Save
 
     /** Fetch assets for all the selected chains by default */
     selectedChains?.forEach((genesisHash) => {
-      const isSingleTokenChain = !!otherSingleAssetChains.find((o) => o.genesisHash === genesisHash);
+      const isSingleTokenChain = !!singleAssetChains.find((o) => o.genesisHash === genesisHash);
       const maybeMultiAssetChainName = multipleAssetsChainsNames.find((chainName) => chainName === getChainName(genesisHash));
 
       fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);

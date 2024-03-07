@@ -21,10 +21,10 @@ export default function usePriceIds (): string[] | undefined | null {
     const nonTestNetSelectedChains = selectedChains?.filter((genesisHash) => !TEST_NETS.includes(genesisHash));
     let selectedChainsChainName = nonTestNetSelectedChains?.map((genesisHash) => getChainName(genesisHash));
 
-    const assetsOnSelectedMultiAssetChains = selectedChainsChainName?.map((chainName) => chainName && assetsChains[chainName]?.map((asset) => asset?.priceId))?.flat().filter((item) => !!item);
+    const assetsInfoOfMultiAssetSelectedChains = selectedChainsChainName?.map((chainName) => chainName && assetsChains[chainName]?.map((asset) => asset?.priceId))?.flat().filter((item) => !!item);
 
-    selectedChainsChainName = selectedChainsChainName?.map((item) => item?.replace('AssetHub', ''));
-    const nonDuplicatedPriceIds = new Set([...(selectedChainsChainName || []), ...(assetsOnSelectedMultiAssetChains || [])]);
+    selectedChainsChainName = selectedChainsChainName?.map((item) => item?.replace('AssetHub', '')); // TODO: needs double check
+    const nonDuplicatedPriceIds = new Set([...(selectedChainsChainName || []), ...(assetsInfoOfMultiAssetSelectedChains || [])]);
 
     return nonDuplicatedPriceIds.size ? [...nonDuplicatedPriceIds] as string[] : null;
   }, [selectedChains]);
