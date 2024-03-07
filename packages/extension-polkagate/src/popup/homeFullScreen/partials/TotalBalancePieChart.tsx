@@ -5,8 +5,7 @@
 
 import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
 import { Avatar, Box, Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
-import { Chart, registerables } from 'chart.js';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
@@ -18,6 +17,7 @@ import { useCurrency, usePrices3, useTranslation } from '../../../hooks';
 import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import { amountToHuman } from '../../../util/utils';
+import Chart from './Chart';
 
 interface Props {
   hideNumbers: boolean | undefined;
@@ -34,15 +34,12 @@ type AssetType = {
 }
 
 function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
-  const chartRef = useRef(null);
   const theme = useTheme();
   const { t } = useTranslation();
   const currency = useCurrency();
   const pricesInCurrencies = usePrices3();
 
   const { accountsAssets } = useContext(AccountsAssetsContext);
-
-  Chart.register(...registerables);
 
   const [showMore, setShowMore] = useState<boolean>(false);
 
@@ -113,8 +110,6 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
       );
     });
 
-    console.log('aggregatedAssets:', aggregatedAssets);
-
     aggregatedAssets.sort((a, b) => {
       if (a.percent < b.percent) {
         return 1;
@@ -127,44 +122,6 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
 
     return aggregatedAssets;
   }, [accountsAssets, allAccountsTotalBalance, calPrice, formatNumber, pricesInCurrencies]);
-
-  useEffect(() => {
-    if (!assets || !borderColor) {
-      return;
-    }
-
-    const chartInstance = new Chart(chartRef.current, {
-      data: {
-        datasets: [{
-          backgroundColor: assets?.map((asset) => asset.ui?.color),
-          borderColor,
-          borderWidth: 0.9,
-          data: assets?.map((asset) => asset.percent),
-          hoverOffset: 1
-        }]
-      },
-      options: {
-        plugins: {
-          tooltip: {
-            callbacks: {
-              label: function (context) {
-                const index = context.dataIndex;
-                const token = assets?.[index]?.token;
-
-                return token;
-              }
-            }
-          }
-        }
-      },
-      type: 'pie'
-    });
-
-    // Clean up the chart instance on component unmount
-    return () => {
-      chartInstance.destroy();
-    };
-  }, [assets, borderColor]);
 
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
@@ -210,9 +167,7 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
       </Grid>
       {allAccountsTotalBalance !== 0 && assets && assets.length > 0 &&
         <Grid container item sx={{ borderTop: '1px solid', borderTopColor: borderColor, pt: '10px' }}>
-          <Grid container item sx={{ height: '125px', mr: '5px', width: '125px' }}>
-            <canvas id='chartCanvas' ref={chartRef} />
-          </Grid>
+          <Chart assets={assets} borderColor={borderColor} />
           <Grid container item pt='10px' rowGap='10px' xs>
             {assets.slice(0, 3).map((asset, index) => (
               <DisplayAssetRow
