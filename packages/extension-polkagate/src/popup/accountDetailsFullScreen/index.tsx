@@ -76,17 +76,16 @@ export default function AccountDetails(): React.ReactElement {
   const supportStaking = useMemo(() => STAKING_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
   const supportAssetHubs = useMemo(() => ASSET_HUBS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
   const showTotalChart = useMemo(() => accountAssets && accountAssets.length > 0 && accountAssets.filter((asset) => pricesInCurrency && currency && pricesInCurrency.prices[asset?.priceId]?.value > 0 && !new BN(asset.totalBalance).isZero()), [accountAssets, currency, pricesInCurrency]);
+  const currentPrice = useMemo((): number | undefined => pricesInCurrency?.prices?.[asset?.priceId || sanitizeChainName(chainName)?.toLocaleLowerCase()]?.value, [asset?.priceId, chainName, pricesInCurrency?.prices]);
   const nativeAssetPrice = useMemo(() => {
-    if (!pricesInCurrency || !balances) {
+    if (!pricesInCurrency || !balances || !currentPrice) {
       return undefined;
     }
 
     const totalBalance = getValue('total', balances);
 
-    const priceValue = pricesInCurrency.prices[sanitizeChainName(balances.chainName) as string]?.value;
-
-    return parseFloat(amountToHuman(totalBalance, balances.decimal)) * priceValue;
-  }, [balances, pricesInCurrency]);
+    return parseFloat(amountToHuman(totalBalance, balances.decimal)) * currentPrice;
+  }, [balances, currentPrice, pricesInCurrency]);
 
   useEffect(() => {
     assetId && setAssetId(undefined);
@@ -140,7 +139,7 @@ export default function AccountDetails(): React.ReactElement {
                 chainName={chainName}
                 formatted={formatted}
                 isDarkTheme={isDarkTheme}
-                price={pricesInCurrency?.prices?.[asset?.priceId || sanitizeChainName(chainName)]?.value}
+                price={currentPrice}
                 pricesInCurrency={pricesInCurrency}
                 setAsset={setAsset}
                 setAssetId={setAssetId}
@@ -159,7 +158,7 @@ export default function AccountDetails(): React.ReactElement {
                 decimal={balances?.decimal}
                 isDarkTheme={isDarkTheme}
                 onClick={goToSend}
-                price={pricesInCurrency?.prices?.[asset?.priceId || sanitizeChainName(balances?.chainName) as string]?.value}
+                price={currentPrice}
                 theme={theme}
                 title={t<string>('Transferable')}
                 token={balances?.token}
@@ -170,7 +169,7 @@ export default function AccountDetails(): React.ReactElement {
                   decimal={balances?.decimal}
                   isDarkTheme={isDarkTheme}
                   onClick={goToSoloStaking}
-                  price={nativeAssetPrice}
+                  price={currentPrice}
                   theme={theme}
                   title={t<string>('Solo Stake')}
                   token={balances?.token}
@@ -181,7 +180,7 @@ export default function AccountDetails(): React.ReactElement {
                   decimal={balances?.decimal}
                   isDarkTheme={isDarkTheme}
                   onClick={goToPoolStaking}
-                  price={nativeAssetPrice}
+                  price={currentPrice}
                   theme={theme}
                   title={t<string>('Pool Stake')}
                   token={balances?.token}
@@ -194,7 +193,7 @@ export default function AccountDetails(): React.ReactElement {
                   decimal={balances?.decimal}
                   formatted={String(formatted)}
                   isDarkTheme={isDarkTheme}
-                  price={nativeAssetPrice}
+                  price={currentPrice}
                   refreshNeeded={refreshNeeded}
                   setDisplayPopup={setDisplayPopup}
                   setUnlockInformation={setUnlockInformation}
@@ -206,7 +205,7 @@ export default function AccountDetails(): React.ReactElement {
                 amount={balances?.reservedBalance}
                 decimal={balances?.decimal}
                 isDarkTheme={isDarkTheme}
-                price={nativeAssetPrice} // TODO: double check
+                price={currentPrice} // TODO: double check
                 title={t<string>('Reserved')}
                 token={balances?.token}
               />
