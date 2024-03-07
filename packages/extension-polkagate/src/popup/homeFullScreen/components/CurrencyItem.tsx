@@ -15,6 +15,7 @@ interface Props {
 
 function CurrencyItem({ currency, onclick }: Props): React.ReactElement {
   const theme = useTheme();
+
   const flagSVG = useMemo(() => {
     const countryCode = currency.code.slice(0, 2);
     const svg = flags?.[countryCode];

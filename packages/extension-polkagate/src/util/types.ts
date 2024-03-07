@@ -19,6 +19,7 @@ import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { Balance } from '@polkadot/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
+import { SavedAssets } from '../hooks/useAssetsOnChains2';
 import { LatestReferenda } from '../popup/governance/utils/types';
 import { CurrencyItemType } from '../popup/homeFullScreen/partials/Currency';
 
@@ -586,14 +587,30 @@ export interface Prices {
   date: number;
 }
 
-export interface PricesType {
+export interface PricesType { // deprecated
   [key: string]: { price: number, change: number };
 }
 
-export interface Prices2 {
+export interface Prices2 { // deprecated
   date: number;
   prices: PricesType;
   currencyCode: string;
+}
+
+interface PriceValue { value: number, change: number }
+
+export interface PricesType3 {
+  [priceId: string]: PriceValue;
+}
+
+export interface Prices3 {
+  date: number;
+  prices: PricesType3;
+  currencyCode?: string;
+}
+
+export interface PricesInCurrencies {
+  [currencyCode: string]: { date: number; prices: PricesType3; };
 }
 
 export interface Price {
@@ -761,8 +778,8 @@ export interface AccountsAssets {
 export interface SavedAccountsAssets { balances: AccountsAssets[], timestamp: number }
 
 export interface AccountsAssetsContextType {
-  accountsAssets: SavedAccountsAssets | null | undefined;
-  setAccountsAssets: (savedAccountAssets: SavedAccountsAssets) => void;
+  accountsAssets: SavedAssets | null | undefined;
+  setAccountsAssets: (savedAccountAssets: SavedAssets) => void;
 }
 
 export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }

@@ -10,6 +10,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { InputFilter } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
 import { useGenesisHashOptions, useIsTestnetEnabled, useTranslation } from '../../../hooks';
+import { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../hooks/useAssetsOnChains2';
 import { TEST_NETS } from '../../../util/constants';
 import { DEFAULT_SELECTED_CHAINS } from '../../../util/defaultAssets';
 import { DropdownOption } from '../../../util/types';
@@ -36,17 +37,38 @@ function ChainList({ anchorEl }: Props): React.ReactElement {
     const defaultSelectedGenesisHashes = DEFAULT_SELECTED_CHAINS.map(({ value }) => value as string);
 
     getStorage('selectedChains').then((res) => {
-      (res as string[])?.length ? setSelectedChains(new Set(res as string[])) : setSelectedChains(new Set(defaultSelectedGenesisHashes));
+      (res as string[])?.length
+        ? setSelectedChains(new Set(res as string[]))
+        : setSelectedChains(new Set(defaultSelectedGenesisHashes));
     }).catch(console.error);
   }, [allChains]);
+
+  const updateSavedAssetsInStorage = useCallback(() => {
+    getStorage(ASSETS_NAME_IN_STORAGE, true).then((assets: SavedAssets) => {
+      assets && Object.keys(assets.balances).forEach((addresses) => {
+        Object.keys(assets.balances[addresses]).forEach((genesisHash) => {
+          if (!selectedChains.has(genesisHash)) {
+            assets.balances[addresses][genesisHash] && delete assets.balances[addresses][genesisHash];
+          }
+        });
+      });
+      setStorage(ASSETS_NAME_IN_STORAGE, assets, true).catch(console.error);
+    }).catch(console.error);
+  }, [selectedChains]);
+
+  const handleChainsChanges = useCallback(() => {
+    setStorage('selectedChains', [...selectedChains]).catch(console.error);
+    updateSavedAssetsInStorage();
+  }, [selectedChains, updateSavedAssetsInStorage]);
 
   useEffect(() => {
     if (anchorEl === null) {
       setShowOtherChains(false);
       setSearchKeyword('');
-      selectedChains?.size && setStorage('selectedChains', [...selectedChains]);
+      selectedChains?.size &&
+        handleChainsChanges();
     }
-  }, [anchorEl, selectedChains]);
+  }, [anchorEl, handleChainsChanges, selectedChains]);
 
   const onChainSelect = useCallback((chain: DropdownOption) => {
     setSelectedChains((prevChains) => {
