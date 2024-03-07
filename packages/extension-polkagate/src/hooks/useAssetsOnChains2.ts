@@ -45,6 +45,14 @@ export interface FetchedBalance {
 }
 
 const DEFAULT_SAVED_ASSETS = { balances: {} as AssetsBalancesPerAddress, timeStamp: Date.now() };
+
+export const ASSETS_NAME_IN_STORAGE = 'assets7';
+const BALANCE_VALIDITY_PERIOD = 1 * 1000 * 60;
+
+function isUpToDate(date?: number): boolean | undefined {
+  return date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
+}
+
 const assetsChains = createAssets();
 
 /**
@@ -52,13 +60,32 @@ const assetsChains = createAssets();
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and their fetching timestamps
  */
-export default function useAssetsOnChains2 (accounts: AccountJson[] | null): SavedAssets | undefined | null {
+export default function useAssetsOnChains2(accounts: AccountJson[] | null): SavedAssets | undefined | null {
   const addresses = useMemo(() => accounts?.map(({ address }) => address), [accounts]);
 
   const [fetchedAssets, setFetchedAssets] = useState<SavedAssets | undefined | null>();
-  const [workerCalled, setWorkerCalled] = useState<Worker>();
-  const [isOutDated, setIsOutDated] = useState<boolean>();
+  const [isWorking, setIsWorking] = useState<boolean>(false);
+  const [workersCalled, setWorkersCalled] = useState<Worker[]>([]);
+  const [isUpdate, setIsUpdate] = useState<boolean>();
   const selectedChains = useSelectedChains();
+
+  useEffect(() => {
+    getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
+      const _timeStamp = (savedAssets as SavedAssets)?.timeStamp;
+
+      setIsUpdate(isUpToDate(_timeStamp));
+    }).catch(console.error);
+  }, [workersCalled?.length]);
+
+  useEffect(() => {
+    /** chain list may have changed */
+    isUpdate && !isWorking && selectedChains?.length && setIsUpdate(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedChains]);
+
+  useEffect(() => {
+    workersCalled?.length ? setIsWorking(true) : setIsWorking(false);
+  }, [workersCalled?.length]);
 
   useEffect(() => {
     if (!addresses) {
@@ -67,17 +94,15 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
       return setFetchedAssets(null);
     }
 
-    getStorage('assets6').then((savedAssets) => {
+    getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
       /** handle BN issues */
       if (!savedAssets) {
         return;
       }
 
-      const parsedAssets = JSON.parse(savedAssets as string) as SavedAssets;
-
-      // Object.keys(parsedAssets).forEach((address) => {
-      //   parsedAssets.balances?.[address] && Object.keys(parsedAssets.balances[address]).forEach((genesisHash) => {
-      //     parsedAssets.balances[address]?.[genesisHash]?.map((asset) => {
+      // Object.keys(savedAssets).forEach((address) => {
+      //   savedAssets.balances?.[address] && Object.keys(savedAssets.balances[address]).forEach((genesisHash) => {
+      //     savedAssets.balances[address]?.[genesisHash]?.map((asset) => {
       //       asset.totalBalance = isHexToBn(asset.totalBalance as unknown as string);
 
       //       return asset;
@@ -85,11 +110,23 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
       //   });
       // });
 
-      setFetchedAssets(parsedAssets);
+      setFetchedAssets(savedAssets as SavedAssets);
     }).catch(console.error);
 
-    watchStorage('assets6', setFetchedAssets, true).catch(console.error);
+    watchStorage(ASSETS_NAME_IN_STORAGE, setFetchedAssets, true).catch(console.error);
   }, [addresses]);
+
+  const handleSetWorkersCall = useCallback((worker: Worker, terminate?: 'terminate') => {
+    if (terminate) {
+      worker.terminate();
+    }
+
+    setWorkersCalled((workersCalled) => {
+      terminate ? workersCalled.pop() : workersCalled.push(worker);
+
+      return [...workersCalled];
+    });
+  }, []);
 
   const combineAndSetAssets = useCallback((assets: Assets) => {
     if (!addresses) {
@@ -98,7 +135,7 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
       return;
     }
 
-    getStorage('assets6').then((res) => {
+    getStorage(ASSETS_NAME_IN_STORAGE).then((res) => {
       const savedAssets = (res || JSON.stringify(DEFAULT_SAVED_ASSETS)) as string;
       const parsedAssets = JSON.parse(savedAssets) as SavedAssets;
 
@@ -114,7 +151,7 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
 
       parsedAssets.timeStamp = Date.now();
       /** we use JSON.stringify to cope with saving BN issue */
-      setStorage('assets6', JSON.stringify(parsedAssets)).catch(console.error);
+      setStorage(ASSETS_NAME_IN_STORAGE, JSON.stringify(parsedAssets)).catch(console.error);
     }).catch(console.error);
   }, [addresses]);
 
@@ -122,7 +159,8 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
     const worker: Worker = new Worker(new URL('../util/workers/getAssetOnRelayChain.js', import.meta.url));
     const _assets: Assets = {};
 
-    setWorkerCalled(worker);
+    handleSetWorkersCall(worker);
+
     worker.postMessage({ addresses: _addresses, chainName });
 
     worker.onerror = (err) => {
@@ -133,7 +171,7 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const message = e.data;
 
-      worker.terminate();
+      handleSetWorkersCall(worker, 'terminate');
 
       if (!message) {
         console.info(`getAssetOnRelayChain: No assets found on ${chainName}`);
@@ -150,13 +188,13 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
 
       combineAndSetAssets(_assets);
     };
-  }, [combineAndSetAssets]);
+  }, [combineAndSetAssets, handleSetWorkersCall]);
 
   const fetchAssetOnAssetHubs = useCallback((_addresses: string[], chainName: string, assetsToBeFetched?: Asset[]) => {
     const worker: Worker = new Worker(new URL('../util/workers/getAssetOnAssetHub.js', import.meta.url));
     const _assets: Assets = {};
 
-    setWorkerCalled(worker);
+    handleSetWorkersCall(worker);
     worker.postMessage({ addresses: _addresses, assetsToBeFetched, chainName });
 
     worker.onerror = (err) => {
@@ -167,15 +205,13 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const message = e.data;
 
-      worker.terminate();
+      handleSetWorkersCall(worker, 'terminate');
 
       if (!message) {
         console.info(`fetchAssetOnAssetHubs: No assets found on ${chainName}`);
 
         return;
       }
-
-      console.info(`fetchAssetOnAssetHubs: assets on ${chainName}`, message);
 
       const parsedMessage = JSON.parse(message) as WorkerMessage;
 
@@ -185,13 +221,13 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
 
       combineAndSetAssets(_assets);
     };
-  }, [combineAndSetAssets]);
+  }, [combineAndSetAssets, handleSetWorkersCall]);
 
   const fetchAssetsOnAcala = useCallback((_addresses: string[]) => {
     const worker: Worker = new Worker(new URL('../util/workers/getAssetOnAcala.js', import.meta.url));
     const _assets: Assets = {};
 
-    setWorkerCalled(worker);
+    handleSetWorkersCall(worker);
     worker.postMessage({ addresses: _addresses });
 
     worker.onerror = (err) => {
@@ -202,15 +238,13 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const message = e.data;
 
-      worker.terminate();
+      handleSetWorkersCall(worker, 'terminate');
 
       if (!message) {
         console.info('fetchAssetsOnAcala: No assets found on Acala');
 
         return;
       }
-
-      console.info('fetchAssetsOnAcala: assets message on Acala', message);
 
       const parsedMessage = JSON.parse(message) as WorkerMessage;
 
@@ -220,7 +254,7 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
 
       combineAndSetAssets(_assets);
     };
-  }, [combineAndSetAssets]);
+  }, [combineAndSetAssets, handleSetWorkersCall]);
 
   const fetchMultiAssetChainAssets = useCallback((maybeMultiAssetChainName: string) => {
     // if (maybeMultiAssetChainName === 'acala') {
@@ -240,8 +274,6 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
         return;
       }
 
-      console.log('useAssetsOnChains2: to fetch assets for relayChains:', chainName);
-
       return chainName && fetchAssetOnRelayChain(addresses!, chainName);
     }
 
@@ -256,8 +288,6 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
 
       const assetsToBeFetched = assetsChains[chainName]; /** we fetch asset hubs assets only if it is whitelisted via Polkagate/apps-config */
 
-      console.log('useAssetsOnChains2: to fetch assets for assetHubs:', chainName, assetsToBeFetched);
-
       return fetchAssetOnAssetHubs(addresses!, chainName, assetsToBeFetched);
     }
 
@@ -266,7 +296,10 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
   }, [addresses, fetchAssetOnAssetHubs, fetchAssetOnRelayChain, fetchMultiAssetChainAssets]);
 
   useEffect(() => {
-    if (!addresses || addresses.length === 0 || workerCalled || !selectedChains) {
+    console.log('isWorking:', isWorking);
+    console.log('isUpdate:', isUpdate);
+
+    if (!addresses || addresses.length === 0 || isWorking || isUpdate || !selectedChains) {
       return;
     }
 
@@ -286,7 +319,7 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
 
       fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);
     });
-  }, [addresses, fetchAssets, selectedChains, workerCalled]);
+  }, [addresses, fetchAssets, isUpdate, isWorking, selectedChains]);
 
   return fetchedAssets;
 }
