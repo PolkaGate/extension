@@ -58,7 +58,7 @@ const assetsChains = createAssets();
 /**
  * @description To fetch accounts assets on different selected chains
  * @param addresses a list of users accounts' addresses
- * @returns a list of assets balances on different selected chains and their fetching timestamps
+ * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
 export default function useAssetsOnChains2(accounts: AccountJson[] | null): SavedAssets | undefined | null {
   const addresses = useMemo(() => accounts?.map(({ address }) => address), [accounts]);
