@@ -12,18 +12,27 @@ import { BN } from '@polkadot/util';
 
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, useTranslation } from '../../../hooks';
+import { FetchedBalance } from '../../../hooks/useAssetsOnChains2';
 import { CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo from '../../../util/getLogo';
-import { AccountAssets } from '../../../util/types';
+import getLogo2 from '../../../util/getLogo2';
+import { Prices3 } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 
 interface TotalChartProps {
   isDarkTheme: boolean;
-  accountAssets: AccountAssets[] | null | undefined;
+  accountAssets: FetchedBalance[] | null | undefined;
   nativeAssetPrice: number | undefined;
+  pricesInCurrency: Prices3 | null | undefined
 }
 
-export default function TotalChart ({ accountAssets, isDarkTheme, nativeAssetPrice }: TotalChartProps): React.ReactElement {
+interface AssetsToShow extends FetchedBalance {
+  worth: number;
+  percentage: number;
+  color: string
+}
+
+export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrency }: TotalChartProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const currency = useCurrency();
@@ -34,102 +43,52 @@ export default function TotalChart ({ accountAssets, isDarkTheme, nativeAssetPri
   const calPrice = useCallback((assetPrice: number | undefined, balance: BN, decimal: number) => parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0), []);
   const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
 
-  const getChartColor = useCallback((assetToken: string): string => {
-    switch (assetToken) {
-      case 'KSM':
-        return isDarkTheme ? '#ffffff' : '#000000';
-        break;
-      case 'DOT':
-        return '#e6007a';
-        break;
-      case 'ACA':
-        return '#645AFF';
-        break;
-      case 'WND':
-        return '#da68a7';
-        break;
-      default:
-        return 'green';
-        break;
-    }
-  }, [isDarkTheme]);
+  const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
+  const formatNumber = useCallback((num: number): number => parseFloat(Math.trunc(num) === 0 ? num.toFixed(2) : num.toFixed(1)), []);
 
-  const otherAssetsToShow = useMemo(() => {
-    if (!accountAssets || accountAssets.length === 0) {
-      return { color: [], name: [], price: [], token: [] };
-    } else {
-      const assets: { price: number[], color: string[], name: string[], token: string[] } = { color: [], name: [], price: [], token: [] };
+  const { assets, totalWorth } = useMemo(() => {
+    if (accountAssets && accountAssets.length) {
+      const _assets = accountAssets as unknown as AssetsToShow[];
 
-      accountAssets.forEach((asset) => {
-        assets.price.push((calPrice(asset.price, asset.totalBalance, asset.decimal)));
-        assets.color.push(getChartColor(asset.token));
-        assets.name.push(asset.chainName);
-        assets.token.push(asset.token);
+      let totalWorth = 0;
+
+      /** to add asset's worth and color */
+      accountAssets.forEach((asset, index) => {
+        const assetWorth = calPrice(priceOf(asset.priceId), asset.totalBalance, asset.decimal);
+
+        _assets[index].worth = assetWorth;
+        _assets[index].color = getLogo2(asset.genesisHash, asset.token)?.color || 'green';
+
+        totalWorth += assetWorth;
       });
 
-      return assets;
-    }
-  }, [accountAssets, calPrice, getChartColor]);
+      /** to add asset's percentage */
+      _assets.forEach((asset) => {
+        asset.percentage = formatNumber((asset.worth / totalWorth) * 100);
 
-  const topThreePercentages = useMemo(() => {
-    if (otherAssetsToShow.price.length === 0) {
-      return undefined;
-    }
-
-    const formatNumber = (num: number) => parseFloat(Math.trunc(num) === 0 ? num.toFixed(2) : num.toFixed(1));
-
-    let totalPrice = 0;
-
-    otherAssetsToShow.price.forEach((price) => {
-      totalPrice += price;
-    });
-
-    const combinedArray = otherAssetsToShow.price.map((pri, index) => ({
-      color: otherAssetsToShow.color[index],
-      name: otherAssetsToShow.name[index],
-      price: pri,
-      token: otherAssetsToShow.token[index]
-    }));
-
-    combinedArray.sort((a, b) => b.price - a.price);
-    const nonZeroPrice = combinedArray.filter((asset) => asset.price > 0);
-
-    if (nonZeroPrice.length > 3) {
-      nonZeroPrice.length = 3;
-    }
-
-    return {
-      color: nonZeroPrice.map((item) => item.color),
-      name: nonZeroPrice.map((item) => item.name),
-      percentage: nonZeroPrice.map((item) => formatNumber((item.price / totalPrice) * 100)),
-      token: nonZeroPrice.map((item) => item.token)
-    };
-  }, [otherAssetsToShow]);
-
-  const allChainTotalBalance = useMemo(() => {
-    if (nativeAssetPrice === undefined && otherAssetsToShow.price.length === 0) {
-      return undefined;
-    } else if (otherAssetsToShow.price.length === 0) {
-      return nFormatter(nativeAssetPrice ?? 0, 2);
-    } else {
-      let totalPrice = 0;
-
-      otherAssetsToShow.price.forEach((price) => {
-        totalPrice += price;
+        return asset;
       });
 
-      return nFormatter(totalPrice, 2);
+      _assets.sort((a, b) => b.worth - a.worth);
+      const nonZeroAssets = _assets.filter((asset) => asset.worth > 0);
+
+      return { assets: nonZeroAssets, totalWorth: nFormatter(totalWorth, 2) };
     }
-  }, [nativeAssetPrice, otherAssetsToShow]);
+
+    return { assets: undefined, totalWorth: undefined };
+  }, [accountAssets, calPrice, formatNumber, priceOf]);
 
   useEffect(() => {
+    const worths = assets?.map(({ worth }) => worth);
+    const colors = assets?.map(({ color }) => color);
+
     const chartInstance = new Chart(chartRef.current, {
       data: {
         datasets: [{
-          backgroundColor: otherAssetsToShow.color,
+          backgroundColor: colors,
           borderColor,
           borderWidth: 0.9,
-          data: otherAssetsToShow.price,
+          data: worths,
           hoverOffset: 1
         }]
       },
@@ -139,9 +98,9 @@ export default function TotalChart ({ accountAssets, isDarkTheme, nativeAssetPri
           tooltip: {
             callbacks: {
               label: function (context) {
-                const index = otherAssetsToShow.color.findIndex((val) => val === context.element.options.backgroundColor);
+                const index = colors?.findIndex((val) => val === context.element.options.backgroundColor);
 
-                return otherAssetsToShow.token[index];
+                return assets?.[index]?.token as string;
               }
             }
           }
@@ -154,7 +113,7 @@ export default function TotalChart ({ accountAssets, isDarkTheme, nativeAssetPri
     return () => {
       chartInstance.destroy();
     };
-  }, [borderColor, otherAssetsToShow.price, otherAssetsToShow.price.length, otherAssetsToShow.color, otherAssetsToShow.color.length, otherAssetsToShow.token]);
+  }, [assets, borderColor]);
 
   return (
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: '185px', p: '15px', width: '275px' }}>
@@ -163,7 +122,7 @@ export default function TotalChart ({ accountAssets, isDarkTheme, nativeAssetPri
           {t<string>('Total')}
         </Typography>
         <Typography fontSize='36px' fontWeight={700}>
-          {`${currency?.sign ?? ''}${allChainTotalBalance ?? 0}`}
+          {`${currency?.sign ?? ''}${totalWorth ?? 0}`}
         </Typography>
       </Grid>
       <Grid container item sx={{ borderTop: '1px solid', borderTopColor: borderColor, pt: '10px' }}>
@@ -171,21 +130,21 @@ export default function TotalChart ({ accountAssets, isDarkTheme, nativeAssetPri
           <canvas id='chartCanvas' ref={chartRef} />
         </Grid>
         <Grid container item xs>
-          {topThreePercentages && topThreePercentages.name.map((asset, index) => (
+          {assets && assets.slice(0, 3).map(({ genesisHash, percentage, token }, index) => (
             <Grid container item justifyContent='space-between' key={index}>
               <Grid alignItems='center' container item width='fit-content'>
                 <Avatar
-                  src={getLogo(asset)}
-                  sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(asset) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 20, width: 20 }}
+                  src={(getLogo2(genesisHash, token)?.logo)}
+                  sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(genesisHash) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 20, width: 20 }}
                   variant='square'
                 />
                 <Typography fontSize='16px' fontWeight={500} pl='5px' width='40px'>
-                  {topThreePercentages.token[index]}
+                  {token}
                 </Typography>
               </Grid>
-              <Divider orientation='vertical' sx={{ bgcolor: getChartColor(topThreePercentages.token[index]), height: '21px', m: 'auto', width: '5px' }} />
+              <Divider orientation='vertical' sx={{ bgcolor: getLogo2(genesisHash, token)?.color, height: '21px', m: 'auto', width: '5px' }} />
               <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
-                {`${topThreePercentages.percentage[index]}%`}
+                {`${percentage}%`}
               </Typography>
             </Grid>
           ))

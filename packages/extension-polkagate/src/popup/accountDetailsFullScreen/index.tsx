@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography, useTheme } from '@mui/material';
+import { AccountAssets } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
@@ -25,7 +26,6 @@ import ReceiveModal from '../receive/ReceiveModal';
 import RenameModal from '../rename/RenameModal';
 import LockedInReferenda from './unlock/Review';
 import { AccountInformation, AccountSetting, ChangeAssets, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
-import { AccountAssets } from 'extension-polkagate/src/util/types';
 
 export type AssetsOnOtherChains = { assetId?: number, totalBalance: BN, chainName: string, decimal: number, genesisHash: string, price: number | undefined, token: string };
 export const popupNumbers = {
@@ -216,6 +216,7 @@ export default function AccountDetails(): React.ReactElement {
                   accountAssets={accountAssets}
                   isDarkTheme={isDarkTheme}
                   nativeAssetPrice={nativeAssetPrice}
+                  pricesInCurrency={pricesInCurrency}
                 />
               }
               <CommonTasks
