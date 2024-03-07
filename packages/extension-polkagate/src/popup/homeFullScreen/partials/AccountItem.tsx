@@ -3,26 +3,29 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { Backdrop, Grid, useTheme } from '@mui/material';
-import React, { useMemo, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
+import { AccountContext } from '../../../components';
 import { useAccountAssets, useApi, useChain, useFormatted, useTranslation } from '../../../hooks';
 import QuickActionFullScreen from '../../../partials/QuickActionFullScreen';
-import AccountInformation from '../partials/AccountInformation';
 import { label } from '../../home/AccountsTree';
+import AccountInformation from '../partials/AccountInformation';
 
 interface Props {
   account: AccountWithChildren;
   hideNumbers: boolean | undefined;
-  isChild?: boolean;
-  parentName?: string | undefined;
   quickActionOpen: string | boolean | undefined;
   setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
+  id?: number;
 }
 
-function AccountItem({ account, hideNumbers, isChild, parentName, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement {
+function AccountItem({ account, hideNumbers, id, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement {
   const api = useApi(account.address);
   const { t } = useTranslation();
   const theme = useTheme();
@@ -30,15 +33,22 @@ function AccountItem({ account, hideNumbers, isChild, parentName, quickActionOpe
   const formatted = useFormatted(account.address);
   const accountAssets = useAccountAssets(account.address);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const { accounts } = useContext(AccountContext);
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: id ?? 0 });
+
+  const hasParent = useMemo(() => accounts.find(({ address }) => address === account.parentAddress), [account.address, accounts]);
 
   const [assetId, setAssetId] = useState<number | undefined>();
 
   return (
-    <>
-      <Grid container item ref={containerRef} sx={{ borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', overflow: 'hidden', position: 'relative' }} width='760px'>
-        <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', ml: 5, position: 'absolute', px: 1, width: 'fit-content' }}>
-          {label(account, parentName, t)}
-        </Grid>
+    <div ref={id ? setNodeRef : null} style={{ transform: CSS.Transform.toString(transform), transition }}>
+      <Grid container {...attributes} item ref={containerRef} sx={{ borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', overflow: 'hidden', position: 'relative' }} width='760px'>
+        <DragIndicatorIcon {...listeners} sx={{ ':active': { cursor: 'grabbing' }, color: '#D1D1D1', cursor: 'grab', fontSize: '25px', position: 'absolute', right: '5px', top: '5px' }} />
+        {hasParent &&
+          <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', ml: 5, position: 'absolute', px: 1, width: 'fit-content' }}>
+            {label(account, hasParent.name ?? '', t)}
+          </Grid>
+        }
         <AccountInformation
           accountAssets={accountAssets}
           address={account.address}
@@ -49,7 +59,7 @@ function AccountItem({ account, hideNumbers, isChild, parentName, quickActionOpe
           chainName={chain?.name}
           formatted={formatted}
           hideNumbers={hideNumbers}
-          isChild={isChild}
+          isChild={!!hasParent}
           setAssetId={setAssetId}
         />
         <Backdrop
@@ -58,18 +68,7 @@ function AccountItem({ account, hideNumbers, isChild, parentName, quickActionOpe
         />
         <QuickActionFullScreen address={account.address} containerRef={containerRef} quickActionOpen={quickActionOpen} setQuickActionOpen={setQuickActionOpen} />
       </Grid>
-      {account?.children?.map((child, index) => (
-        <AccountItem
-          account={child}
-          hideNumbers={hideNumbers}
-          isChild
-          key={index}
-          parentName={account.name}
-          quickActionOpen={quickActionOpen}
-          setQuickActionOpen={setQuickActionOpen}
-        />
-      ))}
-    </>
+    </div>
   );
 }
 
