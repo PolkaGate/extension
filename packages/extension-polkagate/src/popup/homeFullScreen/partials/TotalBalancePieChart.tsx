@@ -52,7 +52,7 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
   const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
 
   const allAccountsTotalBalance = useMemo(() => {
-    if (!accountsAssets || !pricesInCurrencies) {
+    if (!accountsAssets?.balances || !pricesInCurrencies) {
       return undefined;
     }
 
