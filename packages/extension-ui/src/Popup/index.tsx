@@ -121,8 +121,6 @@ export default function Popup(): React.ReactElement {
   const [prices, setPrices] = useState<Prices2[]>();
   const [loginInfo, setLoginInfo] = useState<LoginInfo>();
 
-  console.log('--assetsOnChains2:', assetsOnChains2);
-
   const set = useCallback((change: Fetching) => {
     setFetching(change);
   }, []);

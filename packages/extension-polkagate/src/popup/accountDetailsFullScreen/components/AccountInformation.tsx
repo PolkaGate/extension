@@ -15,7 +15,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
 import { ActionContext, DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, ShortAddress2 } from '../../../components';
-import { useAccount, useAccountInfo, usePrices3, useTranslation } from '../../../hooks';
+import { useAccount, useAccountInfo, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsOnChains2';
 import { showAccount, tieAccount, windowOpen } from '../../../messaging';
 import { ACALA_GENESIS_HASH, ASSET_HUBS, BALANCES_VALIDITY_PERIOD, IDENTITY_CHAINS, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
