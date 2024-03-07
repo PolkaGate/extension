@@ -174,7 +174,7 @@ export default function useAssetsOnChains2(accounts: AccountJson[] | null): Save
       handleSetWorkersCall(worker, 'terminate');
 
       if (!message) {
-        console.info(`getAssetOnRelayChain: No assets found on ${chainName}`);
+        console.info(`No assets found on ${chainName}`);
 
         return;
       }
@@ -296,9 +296,6 @@ export default function useAssetsOnChains2(accounts: AccountJson[] | null): Save
   }, [addresses, fetchAssetOnAssetHubs, fetchAssetOnRelayChain, fetchMultiAssetChainAssets]);
 
   useEffect(() => {
-    console.log('isWorking:', isWorking);
-    console.log('isUpdate:', isUpdate);
-
     if (!addresses || addresses.length === 0 || isWorking || isUpdate || !selectedChains) {
       return;
     }
