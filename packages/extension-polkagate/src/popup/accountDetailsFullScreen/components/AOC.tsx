@@ -108,6 +108,7 @@ function AOC({ account, accountAssets, api, assetId, balanceToShow, borderColor,
                 balanceToShow={balanceToShow}
                 displayLogoAOC={displayLogoAOC}
                 key={index}
+                mode={mode}
                 onclick={onclick}
                 pricesInCurrencies={pricesInCurrencies}
               />
