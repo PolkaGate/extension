@@ -251,7 +251,7 @@ export default function AccountInformation ({ accountAssets,price,pricesInCurren
   }, [account?.isHidden, address]);
 
   return (
-    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: `20px 10px ${showAOC ? '5px' : '20px'} 20px` }}>
+    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: `20px 20px ${showAOC ? '5px' : '20px'} 20px` }}>
       <Grid container item>
         <Grid container item sx={{ borderRight: '1px solid', borderRightColor: borderColor, pr: '8px', width: 'fit-content' }}>
           <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>
@@ -330,7 +330,7 @@ export default function AccountInformation ({ accountAssets,price,pricesInCurren
       </Grid>
       {showAOC &&
         <>
-          <Divider sx={{ bgcolor: borderColor, height: '1px', my: '15px', width: '98.5%' }} />
+          <Divider sx={{ bgcolor: borderColor, height: '1px', my: '15px', width: '100%' }} />
           <AOC
             account={account}
             accountAssets={assetsToShow}
