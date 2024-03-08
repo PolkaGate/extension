@@ -13,6 +13,7 @@ import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { AccountContext } from '../../../components';
 import { useAccountAssets, useApi, useChain, useFormatted, useTranslation } from '../../../hooks';
+import { FetchedBalance } from '../../../hooks/useAssetsOnChains2';
 import QuickActionFullScreen from '../../../partials/QuickActionFullScreen';
 import { label } from '../../home/AccountsTree';
 import AccountInformation from '../partials/AccountInformation';
@@ -38,7 +39,7 @@ function AccountItem({ account, hideNumbers, id, quickActionOpen, setQuickAction
 
   const hasParent = useMemo(() => accounts.find(({ address }) => address === account.parentAddress), [account.address, accounts]);
 
-  const [assetId, setAssetId] = useState<number | undefined>();
+  const [selectedAsset, setSelectedAsset] = useState<FetchedBalance | undefined>();
 
   return (
     <div ref={id ? setNodeRef : null} style={{ transform: CSS.Transform.toString(transform), transition }}>
@@ -53,14 +54,14 @@ function AccountItem({ account, hideNumbers, id, quickActionOpen, setQuickAction
           accountAssets={accountAssets}
           address={account.address}
           api={api}
-          assetId={assetId}
           balances={undefined}
           chain={chain}
           chainName={chain?.name}
           formatted={formatted}
           hideNumbers={hideNumbers}
           isChild={!!hasParent}
-          setAssetId={setAssetId}
+          selectedAsset={selectedAsset}
+          setSelectedAsset={setSelectedAsset}
         />
         <Backdrop
           open={quickActionOpen !== undefined}

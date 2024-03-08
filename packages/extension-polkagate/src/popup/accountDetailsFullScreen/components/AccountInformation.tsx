@@ -19,7 +19,7 @@ import { useAccount, useAccountInfo, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsOnChains2';
 import { showAccount, tieAccount, windowOpen } from '../../../messaging';
 import { ACALA_GENESIS_HASH, ASSET_HUBS, BALANCES_VALIDITY_PERIOD, IDENTITY_CHAINS, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
-import { AccountAssets, BalancesInfo, Prices3, Proxy } from '../../../util/types';
+import { BalancesInfo, Prices3, Proxy } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import { getValue } from '../../account/util';
 import AOC from './AOC';
@@ -33,10 +33,9 @@ interface AddressDetailsProps {
   chainName: string | undefined;
   isDarkTheme: boolean;
   balances: BalancesInfo | undefined;
-  setAssetId: React.Dispatch<React.SetStateAction<number | undefined>>;
-  assetId: number | undefined;
+  setSelectedAsset: React.Dispatch<React.SetStateAction<FetchedBalance | undefined>>;
+  selectedAsset: FetchedBalance | undefined;
   price: number | undefined;
-  setAsset: React.Dispatch<React.SetStateAction<AccountAssets | undefined>>;
   pricesInCurrency: Prices3 | null | undefined;
 }
 
@@ -134,7 +133,7 @@ const SelectedAsset = ({ account, balanceToShow, isBalanceOutdated, isPriceOutda
   </Grid>
 );
 
-export default function AccountInformation ({ accountAssets,price,pricesInCurrency, address, api, assetId, balances, chain, chainName, formatted, isDarkTheme, setAsset, setAssetId }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, price, pricesInCurrency, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
 
   const account = useAccount(address);
@@ -226,13 +225,12 @@ export default function AccountInformation ({ accountAssets,price,pricesInCurren
     setBalanceToShow(undefined);
   }, [balances, chainName]);
 
-  const assetBoxClicked = useCallback((genesisHash: string, asset: AccountAssets | undefined) => {
-    address && tieAccount(address, genesisHash).finally(() => {
-      asset && setAssetId(asset.assetId);
-      setAsset(asset);
-      (asset?.assetId === undefined || asset?.assetId === -1) && setAssetId(undefined);
+  const onAssetBoxClicked = useCallback((asset: FetchedBalance | undefined) => {
+    address && asset && tieAccount(address, asset.genesisHash).finally(() => {
+      setSelectedAsset(asset);
+      // (asset?.assetId === undefined || asset?.assetId === -1) && setSelectedAsset(undefined);
     }).catch(console.error);
-  }, [address, setAsset, setAssetId]);
+  }, [address, setSelectedAsset]);
 
   const openIdentity = useCallback(() => {
     address && windowOpen(`/manageIdentity/${address}`);
@@ -323,7 +321,7 @@ export default function AccountInformation ({ accountAssets,price,pricesInCurren
             account={account}
             balanceToShow={balanceToShow}
             isBalanceOutdated={isBalanceOutdated}
-            isPriceOutdated={isPriceOutdated}
+            isPriceOutdated={!!isPriceOutdated}
             price={price}
           />
         </Grid>
@@ -335,12 +333,12 @@ export default function AccountInformation ({ accountAssets,price,pricesInCurren
             account={account}
             accountAssets={assetsToShow}
             api={api}
-            assetId={assetId}
             balanceToShow={balanceToShow}
             borderColor={borderColor}
             displayLogoAOC={displayLogoAOC}
             mode='Detail'
-            onclick={assetBoxClicked}
+            onclick={onAssetBoxClicked}
+            selectedAsset={selectedAsset}
           />
         </>
       }

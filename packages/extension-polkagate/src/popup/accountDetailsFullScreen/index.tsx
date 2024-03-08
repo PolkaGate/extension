@@ -4,7 +4,6 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import { AccountAssets } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
@@ -14,6 +13,7 @@ import { BN } from '@polkadot/util';
 import { ActionContext } from '../../components';
 import { useAccount, useAccountAssets, useApi, useBalances, useChain, useChainName, useCurrency, useFormatted, useFullscreen, usePrices3, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
+import { FetchedBalance } from '../../hooks/useAssetsOnChains2';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { amountToHuman, sanitizeChainName } from '../../util/utils';
 import { getValue } from '../account/util';
@@ -27,7 +27,16 @@ import RenameModal from '../rename/RenameModal';
 import LockedInReferenda from './unlock/Review';
 import { AccountInformation, AccountSetting, ChangeAssets, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
 
-export type AssetsOnOtherChains = { assetId?: number, totalBalance: BN, chainName: string, decimal: number, genesisHash: string, price: number | undefined, token: string };
+export type AssetsOnOtherChains = {
+  assetId?: number,
+  totalBalance: BN,
+  chainName: string,
+  decimal: number,
+  genesisHash: string,
+  price: number | undefined,
+  token: string
+};
+
 export const popupNumbers = {
   LOCKED_IN_REFERENDA: 1,
   FORGET_ACCOUNT: 2,
@@ -60,8 +69,8 @@ export default function AccountDetails(): React.ReactElement {
   const accountAssets = useAccountAssets(address);
 
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
-  const [assetId, setAssetId] = useState<number>();
-  const [asset, setAsset] = useState<AccountAssets>();
+  const [assetId, setAssetId] = useState<number | string>();
+  const [selectedAsset, setSelectedAsset] = useState<FetchedBalance>();
 
   const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId);
   const pricesInCurrency = usePrices3();
@@ -75,8 +84,8 @@ export default function AccountDetails(): React.ReactElement {
   const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
   const supportStaking = useMemo(() => STAKING_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
   const supportAssetHubs = useMemo(() => ASSET_HUBS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
-  const showTotalChart = useMemo(() => accountAssets && accountAssets.length > 0 && accountAssets.filter((asset) => pricesInCurrency && currency && pricesInCurrency.prices[asset?.priceId]?.value > 0 && !new BN(asset.totalBalance).isZero()), [accountAssets, currency, pricesInCurrency]);
-  const currentPrice = useMemo((): number | undefined => pricesInCurrency?.prices?.[asset?.priceId || sanitizeChainName(chainName)?.toLocaleLowerCase()]?.value, [asset?.priceId, chainName, pricesInCurrency?.prices]);
+  const showTotalChart = useMemo(() => accountAssets && accountAssets.length > 0 && accountAssets.filter((_asset) => pricesInCurrency && currency && pricesInCurrency.prices[_asset?.priceId]?.value > 0 && !new BN(_asset.totalBalance).isZero()), [accountAssets, currency, pricesInCurrency]);
+  const currentPrice = useMemo((): number | undefined => pricesInCurrency?.prices?.[selectedAsset?.priceId || sanitizeChainName(chainName)?.toLocaleLowerCase()]?.value, [selectedAsset?.priceId, chainName, pricesInCurrency?.prices]);
   const nativeAssetPrice = useMemo(() => {
     if (!pricesInCurrency || !balances || !currentPrice) {
       return undefined;
@@ -92,7 +101,7 @@ export default function AccountDetails(): React.ReactElement {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chain]);
 
-  const _onChangeAsset = useCallback((id: number) => {
+  const onChangeAsset = useCallback((id: number | string) => {
     if (id === -1) { // this is the id of native token
       return setAssetId(undefined);
     }
@@ -133,7 +142,6 @@ export default function AccountDetails(): React.ReactElement {
                 accountAssets={accountAssets}
                 address={address}
                 api={api}
-                assetId={assetId}
                 balances={balances}
                 chain={chain}
                 chainName={chainName}
@@ -141,15 +149,15 @@ export default function AccountDetails(): React.ReactElement {
                 isDarkTheme={isDarkTheme}
                 price={currentPrice}
                 pricesInCurrency={pricesInCurrency}
-                setAsset={setAsset}
-                setAssetId={setAssetId}
+                selectedAsset={selectedAsset}
+                setSelectedAsset={setSelectedAsset}
               />
               {supportAssetHubs &&
                 <ChangeAssets
                   address={address}
                   assetId={assetId}
                   label={t('Assets')}
-                  onChange={_onChangeAsset}
+                  onChange={onChangeAsset}
                   setAssetId={setAssetId}
                   style={{ '> div div div#selectChain': { borderRadius: '5px' }, '> div p': { fontSize: '16px' } }}
                 />}

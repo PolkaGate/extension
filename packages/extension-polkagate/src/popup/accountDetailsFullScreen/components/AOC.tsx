@@ -13,22 +13,40 @@ import { AccountJson } from '@polkadot/extension-base/background/types';
 import { DisplayLogo, FormatPrice, ShowBalance } from '../../../components';
 import { usePrices3, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsOnChains2';
-import { AccountAssets, BalancesInfo, Prices3 } from '../../../util/types';
+import { BalancesInfo, Prices3 } from '../../../util/types';
 import { DisplayLogoAOC } from './AccountInformation';
 
 interface Props {
   account: AccountJson | undefined;
   api: ApiPromise | undefined;
-  assetId: number | undefined;
+  selectedAsset: FetchedBalance | undefined;
   displayLogoAOC: (genesisHash: string | null | undefined, symbol: string | undefined) => DisplayLogoAOC;
   balanceToShow: BalancesInfo | undefined;
   accountAssets: FetchedBalance[] | null | undefined;
   borderColor: string;
-  onclick: (genesisHash: string, asset: AccountAssets | undefined) => void;
+  onclick: (asset: FetchedBalance | undefined) => void;
   mode?: 'Home' | 'Detail';
 }
 
-const BalanceRow = ({ api, asset, pricesInCurrencies }: { asset: FetchedBalance, api: ApiPromise | undefined, pricesInCurrencies: Prices3 | null | undefined }) => (
+interface AssetBoxProps {
+  api: ApiPromise | undefined,
+  pricesInCurrencies: Prices3 | null | undefined,
+  displayLogoAOC: (genesisHash: string | null | undefined, symbol: string | undefined) => DisplayLogoAOC,
+  account: AccountJson | undefined,
+  selectedAsset: FetchedBalance | undefined,
+  balanceToShow: BalancesInfo | undefined,
+  asset: FetchedBalance | undefined,
+  mode: 'Home' | 'Detail',
+  onclick: (asset: FetchedBalance | undefined) => void;
+}
+
+interface BalanceRowProps {
+  asset: FetchedBalance,
+  api: ApiPromise | undefined,
+  pricesInCurrencies: Prices3 | null | undefined
+}
+
+const BalanceRow = ({ api, asset, pricesInCurrencies }: BalanceRowProps) => (
   <Grid alignItems='flex-start' container direction='column' item pl='5px' xs>
     <Grid item sx={{ fontSize: '14px', fontWeight: 600, lineHeight: 1 }}>
       <ShowBalance
@@ -49,13 +67,14 @@ const BalanceRow = ({ api, asset, pricesInCurrencies }: { asset: FetchedBalance,
   </Grid>
 );
 
-const AssetsBoxes = ({ account, api, asset, assetId, balanceToShow, displayLogoAOC, mode, onclick, pricesInCurrencies }: { api: ApiPromise | undefined, pricesInCurrencies: Prices3 | null | undefined, displayLogoAOC: (genesisHash: string | null | undefined, symbol: string | undefined) => DisplayLogoAOC, account: AccountJson | undefined, assetId: number | undefined, balanceToShow: BalancesInfo | undefined, asset: FetchedBalance | undefined, mode: 'Home' | 'Detail', onclick: (genesisHash: string, asset: AccountAssets | undefined) => void }) => {
-  const selectedAsset = asset && asset.genesisHash === account?.genesisHash && (asset.token === balanceToShow?.token || (asset.assetId && asset.assetId === assetId));
-  const homeMode = (mode === 'Home' && selectedAsset);
+const AssetsBoxes = ({ account, api, asset, balanceToShow, displayLogoAOC, mode, onclick, pricesInCurrencies, selectedAsset }: AssetBoxProps) => {
+  const isAssetSelected = (asset && asset.genesisHash === account?.genesisHash && asset.token === balanceToShow?.token) || (asset?.genesisHash === selectedAsset?.genesisHash && asset?.token === selectedAsset?.token);
+
+  const homeMode = (mode === 'Home' && isAssetSelected);
 
   return (
     // eslint-disable-next-line react/jsx-no-bind
-    <Grid alignItems='center' container item justifyContent='center' onClick={() => asset ? onclick(asset?.genesisHash, asset) : null} sx={{ border: asset ? `${selectedAsset ? '3px' : '1px'} solid` : 'none', borderColor: 'secondary.light', borderRadius: '8px', boxShadow: selectedAsset ? '0px 2px 5px 2px #00000040' : 'none', cursor: asset ? 'pointer' : 'default', height: 'fit-content', p: asset ? '5px' : 0, width: 'fit-content' }}>
+    <Grid alignItems='center' container item justifyContent='center' onClick={() => asset ? onclick(asset) : null} sx={{ border: asset ? `${isAssetSelected ? '3px' : '1px'} solid` : 'none', borderColor: 'secondary.light', borderRadius: '8px', boxShadow: isAssetSelected ? '0px 2px 5px 2px #00000040' : 'none', cursor: asset ? 'pointer' : 'default', height: 'fit-content', p: asset ? '5px' : 0, width: 'fit-content' }}>
       {asset
         ? <>
           <Grid alignItems='center' container item width='fit-content'>
@@ -75,7 +94,7 @@ const AssetsBoxes = ({ account, api, asset, assetId, balanceToShow, displayLogoA
   );
 };
 
-function AOC({ account, accountAssets, api, assetId, balanceToShow, borderColor, displayLogoAOC, mode = 'Detail', onclick }: Props) {
+function AOC({ account, accountAssets, api, balanceToShow, borderColor, displayLogoAOC, mode = 'Detail', onclick, selectedAsset }: Props) {
   const { t } = useTranslation();
   const pricesInCurrencies = usePrices3();
 
@@ -104,28 +123,29 @@ function AOC({ account, accountAssets, api, assetId, balanceToShow, borderColor,
                 account={account}
                 api={api}
                 asset={asset}
-                assetId={assetId}
                 balanceToShow={balanceToShow}
                 displayLogoAOC={displayLogoAOC}
                 key={index}
                 mode={mode}
                 onclick={onclick}
                 pricesInCurrencies={pricesInCurrencies}
+                selectedAsset={selectedAsset}
               />
             ))}
           </Grid>
         </Collapse>
       </Grid>
-      {accountAssets && accountAssets.length > 5 &&
+      {accountAssets?.length &&
         <Grid alignItems='center' container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: 'pointer', width: '65px' }}>
           {mode === 'Detail'
-            ? <>
+            ? accountAssets.length > 5 &&
+            <>
               <Typography fontSize='14px' fontWeight={400} sx={{ borderLeft: '1px solid', borderLeftColor: borderColor, height: 'fit-content', pl: '8px' }}>
-                {t<string>(showMore ? 'Less' : 'More')}
+                {t<string>(showMore ? t('Less') : t('More'))}
               </Typography>
               <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
             </>
-            : <MoreHorizIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
+            : accountAssets.length > 6 && <MoreHorizIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
           }
         </Grid>
       }
