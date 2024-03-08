@@ -47,6 +47,7 @@ function ChartTotal ({ assets, borderColor }: Props): React.ReactElement {
         }]
       },
       options: {
+        animation: false,
         plugins: {
           tooltip: {
             callbacks: {
