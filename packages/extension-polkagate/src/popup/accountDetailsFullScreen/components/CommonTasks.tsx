@@ -80,7 +80,7 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
 
   const goToSend = useCallback(() => {
     address && onAction(`/send/${address}/${assetId}`);
-  }, [address, assetId, onAction,]);
+  }, [address, assetId, onAction]);
 
   const goToReceive = useCallback(() => {
     address && setDisplayPopup(popupNumbers.RECEIVE);
