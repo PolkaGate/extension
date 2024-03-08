@@ -13,10 +13,11 @@ import { BN } from '@polkadot/util';
 import { getStorage, setStorage, watchStorage } from '../components/Loading';
 import { toCamelCase } from '../popup/governance/utils/util';
 import allChains from '../util/chains';
-import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH } from '../util/constants';
+import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
 import { isHexToBn } from '../util/utils';
 import useSelectedChains from './useSelectedChains';
+import { useIsTestnetEnabled } from '.';
 
 type WorkerMessage = Record<string, MessageBody[]>;
 type Assets = Record<string, FetchedBalance[]>;
@@ -47,9 +48,9 @@ export interface FetchedBalance {
 const DEFAULT_SAVED_ASSETS = { balances: {} as AssetsBalancesPerAddress, timeStamp: Date.now() };
 
 export const ASSETS_NAME_IN_STORAGE = 'assets7';
-const BALANCE_VALIDITY_PERIOD = 1 * 1000 * 60;
+const BALANCE_VALIDITY_PERIOD = 2 * 1000 * 60;
 
-function isUpToDate (date?: number): boolean | undefined {
+function isUpToDate(date?: number): boolean | undefined {
   return date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
 }
 
@@ -60,12 +61,16 @@ const assetsChains = createAssets();
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsOnChains2 (accounts: AccountJson[] | null): SavedAssets | undefined | null {
-  const addresses = useMemo(() => accounts?.map(({ address }) => address), [accounts]);
+export default function useAssetsOnChains2(accounts: AccountJson[] | null): SavedAssets | undefined | null {
+  const isTestnetEnabled = useIsTestnetEnabled();
+
+  /** We need to trigger address change when a new address is added, without affecting other account fields. Therefore, we use the length of the accounts array as a dependency. */
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const addresses = useMemo(() => accounts?.map(({ address }) => address), [accounts?.length]);
 
   const [fetchedAssets, setFetchedAssets] = useState<SavedAssets | undefined | null>();
   const [isWorking, setIsWorking] = useState<boolean>(false);
-  const [workersCalled, setWorkersCalled] = useState<Worker[]>([]);
+  const [workersCalled, setWorkersCalled] = useState<Worker[]>();
   const [isUpdate, setIsUpdate] = useState<boolean>();
   const selectedChains = useSelectedChains();
 
@@ -77,11 +82,45 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
     }).catch(console.error);
   }, [workersCalled?.length]);
 
+  const handleNewAccounts = useCallback(() => {
+    getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
+      if (Object.keys(savedAssets as SavedAssets).length === 0) {
+        savedAssets = { balances: {}, timeStamp: Date.now() } as SavedAssets;
+      }
+
+      const addressesInSavedAccounts = Object.keys((savedAssets as SavedAssets)?.balances || []);
+      const addressesWithoutBalance = addresses!.filter((address) => !addressesInSavedAccounts.includes(address));
+
+      addressesWithoutBalance.forEach((address) => {
+        (savedAssets as SavedAssets).balances[address] = {};
+      });
+
+      setStorage(ASSETS_NAME_IN_STORAGE, savedAssets, true).catch(console.error);
+      setWorkersCalled(undefined);
+    }).catch(console.error);
+  }, [addresses]);
+
+  useEffect(() => {
+    /** when one round fetch is done, we add addresses which have no assets to saved assets
+     * We set a timeout to cope with possible race condition
+     */
+    if (workersCalled?.length === 0 && addresses) {
+      setWorkersCalled(undefined);
+      setTimeout(handleNewAccounts, 10000);
+    }
+  }, [accounts, addresses, handleNewAccounts, workersCalled?.length]);
+
   useEffect(() => {
     /** chain list may have changed */
     isUpdate && !isWorking && selectedChains?.length && setIsUpdate(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedChains]);
+
+  useEffect(() => {
+    /** account list may have changed */
+    isUpdate && !isWorking && addresses?.length && setIsUpdate(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addresses]);
 
   useEffect(() => {
     setIsWorking(!!workersCalled?.length);
@@ -117,14 +156,16 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
   }, [addresses]);
 
   const handleSetWorkersCall = useCallback((worker: Worker, terminate?: 'terminate') => {
-    if (terminate) {
-      worker.terminate();
-    }
+    terminate && worker.terminate();
 
     setWorkersCalled((workersCalled) => {
-      terminate ? workersCalled.pop() : workersCalled.push(worker);
+      terminate
+        ? workersCalled?.pop()
+        : !workersCalled
+          ? workersCalled = [worker]
+          : workersCalled.push(worker);
 
-      return [...workersCalled];
+      return workersCalled && [...workersCalled] as Worker[];
     });
   }, []);
 
@@ -172,10 +213,9 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const message = e.data;
 
-      handleSetWorkersCall(worker, 'terminate');
-
       if (!message) {
         console.info(`No assets found on ${chainName}`);
+        handleSetWorkersCall(worker, 'terminate');
 
         return;
       }
@@ -188,6 +228,7 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
       });
 
       combineAndSetAssets(_assets);
+      handleSetWorkersCall(worker, 'terminate');
     };
   }, [combineAndSetAssets, handleSetWorkersCall]);
 
@@ -206,10 +247,9 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const message = e.data;
 
-      handleSetWorkersCall(worker, 'terminate');
-
       if (!message) {
         console.info(`fetchAssetOnAssetHubs: No assets found on ${chainName}`);
+        handleSetWorkersCall(worker, 'terminate');
 
         return;
       }
@@ -221,6 +261,7 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
       });
 
       combineAndSetAssets(_assets);
+      handleSetWorkersCall(worker, 'terminate');
     };
   }, [combineAndSetAssets, handleSetWorkersCall]);
 
@@ -239,10 +280,9 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const message = e.data;
 
-      handleSetWorkersCall(worker, 'terminate');
-
       if (!message) {
         console.info('fetchAssetsOnAcala: No assets found on Acala');
+        handleSetWorkersCall(worker, 'terminate');
 
         return;
       }
@@ -254,6 +294,7 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
       });
 
       combineAndSetAssets(_assets);
+      handleSetWorkersCall(worker, 'terminate');
     };
   }, [combineAndSetAssets, handleSetWorkersCall]);
 
@@ -297,27 +338,28 @@ export default function useAssetsOnChains2 (accounts: AccountJson[] | null): Sav
   }, [addresses, fetchAssetOnAssetHubs, fetchAssetOnRelayChain, fetchMultiAssetChainAssets]);
 
   useEffect(() => {
-    if (!addresses || addresses.length === 0 || isWorking || isUpdate || !selectedChains) {
+    if (!addresses || addresses.length === 0 || isWorking || isUpdate || !selectedChains || isTestnetEnabled === undefined) {
       return;
     }
 
+    const _selectedChains = isTestnetEnabled ? selectedChains : selectedChains.filter((genesisHash) => !TEST_NETS.includes(genesisHash));
     const multipleAssetsChainsNames = Object.keys(assetsChains);
 
     const singleAssetChains = allChains.filter(({ chain, genesisHash }) =>
-      selectedChains.includes(genesisHash) &&
+      _selectedChains.includes(genesisHash) &&
       !ASSET_HUBS.includes(genesisHash) &&
       !RELAY_CHAINS_GENESISHASH.includes(genesisHash) &&
       !multipleAssetsChainsNames.includes(toCamelCase(chain))
     );
 
     /** Fetch assets for all the selected chains by default */
-    selectedChains?.forEach((genesisHash) => {
+    _selectedChains?.forEach((genesisHash) => {
       const isSingleTokenChain = !!singleAssetChains.find((o) => o.genesisHash === genesisHash);
       const maybeMultiAssetChainName = multipleAssetsChainsNames.find((chainName) => chainName === getChainName(genesisHash));
 
       fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);
     });
-  }, [addresses, fetchAssets, isUpdate, isWorking, selectedChains]);
+  }, [addresses, fetchAssets, isTestnetEnabled, isUpdate, isWorking, selectedChains]);
 
   return fetchedAssets;
 }
