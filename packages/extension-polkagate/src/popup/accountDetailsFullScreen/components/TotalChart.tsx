@@ -4,17 +4,16 @@
 /* eslint-disable sort-keys */
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Avatar, Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import { Chart, registerables } from 'chart.js';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { BN } from '@polkadot/util';
 
+import { DisplayLogo } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsOnChains2';
-import { CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
-import getLogo from '../../../util/getLogo';
 import getLogo2 from '../../../util/getLogo2';
 import { Prices3 } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
@@ -32,9 +31,8 @@ interface AssetsToShow extends FetchedBalance {
   color: string
 }
 
-export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrency }: TotalChartProps): React.ReactElement {
+export default function TotalChart ({ accountAssets, isDarkTheme, pricesInCurrency }: TotalChartProps): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const currency = useCurrency();
   const chartRef = useRef(null);
 
@@ -130,24 +128,24 @@ export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrenc
           <canvas id='chartCanvas' ref={chartRef} />
         </Grid>
         <Grid container item xs>
-          {assets && assets.slice(0, 3).map(({ genesisHash, percentage, token }, index) => (
-            <Grid container item justifyContent='space-between' key={index}>
-              <Grid alignItems='center' container item width='fit-content'>
-                <Avatar
-                  src={(getLogo2(genesisHash, token)?.logo)}
-                  sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(genesisHash) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 20, width: 20 }}
-                  variant='square'
-                />
-                <Typography fontSize='16px' fontWeight={500} pl='5px' width='40px'>
-                  {token}
+          {assets && assets.slice(0, 3).map(({ genesisHash, percentage, token }, index) => {
+            const logoInfo = getLogo2(genesisHash, token);
+
+            return (
+              <Grid container item justifyContent='space-between' key={index}>
+                <Grid alignItems='center' container item width='fit-content'>
+                  <DisplayLogo assetSize='20px' baseTokenSize='14px' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+                  <Typography fontSize='16px' fontWeight={500} pl='5px' width='40px'>
+                    {token}
+                  </Typography>
+                </Grid>
+                <Divider orientation='vertical' sx={{ bgcolor: getLogo2(genesisHash, token)?.color, height: '21px', m: 'auto', width: '5px' }} />
+                <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
+                  {`${percentage}%`}
                 </Typography>
               </Grid>
-              <Divider orientation='vertical' sx={{ bgcolor: getLogo2(genesisHash, token)?.color, height: '21px', m: 'auto', width: '5px' }} />
-              <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
-                {`${percentage}%`}
-              </Typography>
-            </Grid>
-          ))
+            );
+          })
           }
         </Grid>
       </Grid>

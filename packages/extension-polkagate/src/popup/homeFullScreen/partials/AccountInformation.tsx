@@ -20,7 +20,7 @@ import { nFormatter } from '../../../components/FormatPrice';
 import { useAccount, useAccountInfo, useCurrency, usePrices3, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsOnChains2';
 import { showAccount, tieAccount } from '../../../messaging';
-import { ACALA_GENESIS_HASH, ASSET_HUBS, IDENTITY_CHAINS, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
+import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 import { BalancesInfo, Proxy } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import AOC from '../../accountDetailsFullScreen/components/AOC';
@@ -42,11 +42,6 @@ interface AddressDetailsProps {
   hideNumbers: boolean | undefined
   setSelectedAsset: React.Dispatch<React.SetStateAction<FetchedBalance | undefined>>;
   isChild?: boolean;
-}
-
-export type DisplayLogoAOC = {
-  base: string | null | undefined;
-  symbol: string | undefined;
 }
 
 type AccountButtonType = { text: string, onClick: () => void, icon: React.ReactNode };
@@ -121,48 +116,6 @@ export default function AccountInformation ({ accountAssets, address, api, balan
     /** we need currency as a dependency to update balance by changing currency*/
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountAssets, calculatePrice, currency, pricesInCurrencies]);
-
-  const onAssetHub = useCallback((genesisHash: string | null | undefined) => ASSET_HUBS.includes(genesisHash ?? ''), []);
-
-  const displayLogoAOC = useCallback((genesisHash: string | null | undefined, symbol: string | undefined): DisplayLogoAOC => {
-    if (onAssetHub(genesisHash)) {
-      if (ASSET_HUBS[0] === genesisHash) {
-        return {
-          base: WESTEND_GENESIS_HASH,
-          symbol
-        };
-      } else if (ASSET_HUBS[1] === genesisHash) {
-        return {
-          base: KUSAMA_GENESIS_HASH,
-          symbol
-        };
-      } else {
-        return {
-          base: POLKADOT_GENESIS_HASH,
-          symbol
-        };
-      }
-    }
-
-    if (ACALA_GENESIS_HASH === genesisHash) {
-      if (symbol?.toLowerCase() === 'aca') {
-        return {
-          base: ACALA_GENESIS_HASH,
-          symbol: undefined
-        };
-      } else {
-        return {
-          base: undefined,
-          symbol
-        };
-      }
-    }
-
-    return {
-      base: genesisHash,
-      symbol: undefined
-    };
-  }, [onAssetHub]);
 
   useEffect((): void => {
     setHasID(undefined);
@@ -342,7 +295,6 @@ export default function AccountInformation ({ accountAssets, address, api, balan
                 api={api}
                 balanceToShow={balanceToShow}
                 borderColor={borderColor}
-                displayLogoAOC={displayLogoAOC}
                 mode='Home'
                 onclick={onAssetBoxClicked}
                 selectedAsset={selectedAsset}

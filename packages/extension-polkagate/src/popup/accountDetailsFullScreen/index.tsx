@@ -69,10 +69,10 @@ export default function AccountDetails(): React.ReactElement {
   const accountAssets = useAccountAssets(address);
 
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
-  const [assetId, setAssetId] = useState<number | string>();
+  const [assetId, setAssetId] = useState<number>();
   const [selectedAsset, setSelectedAsset] = useState<FetchedBalance>();
 
-  const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId);
+  const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId || selectedAsset?.assetId);
   const pricesInCurrency = usePrices3();
 
   const [displayPopup, setDisplayPopup] = useState<number | undefined>();
@@ -101,7 +101,7 @@ export default function AccountDetails(): React.ReactElement {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chain]);
 
-  const onChangeAsset = useCallback((id: number | string) => {
+  const onChangeAsset = useCallback((id: number) => {
     if (id === -1) { // this is the id of native token
       return setAssetId(undefined);
     }
@@ -155,7 +155,7 @@ export default function AccountDetails(): React.ReactElement {
               {supportAssetHubs &&
                 <ChangeAssets
                   address={address}
-                  assetId={assetId}
+                  assetId={assetId || selectedAsset?.assetId}
                   label={t('Assets')}
                   onChange={onChangeAsset}
                   setAssetId={setAssetId}

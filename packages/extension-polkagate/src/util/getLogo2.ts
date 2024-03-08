@@ -11,12 +11,13 @@ import { sanitizeChainName } from './utils';
 
 const endpoints = createWsEndpoints(() => '');
 
-export interface AssetUI {
+export interface LogoInfo {
   logo: string;
   color: string;
+  subLogo?: string;
 }
 
-export default function getLogo2 (info: string | undefined | Chain, token?: string): AssetUI | undefined {
+export default function getLogo2 (info: string | undefined | Chain, token?: string): LogoInfo | undefined {
   let chainNameFromGenesisHash;
 
   if (token) {
@@ -29,12 +30,13 @@ export default function getLogo2 (info: string | undefined | Chain, token?: stri
     }
 
     const assets = createAssets();
+
     const chainAssets = assets[toCamelCase(sanitizeChainName(chainNameFromGenesisHash) || '')];
 
     const found = chainAssets?.find(({ symbol }) => symbol === token)?.ui;
 
     if (found) {
-      return found;
+      return { ...found, subLogo: found.subLogo ? chainAssets[0].ui.logo : undefined };
     }
   }
 

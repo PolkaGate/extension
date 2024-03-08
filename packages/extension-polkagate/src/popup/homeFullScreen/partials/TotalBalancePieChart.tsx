@@ -4,17 +4,17 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
-import { Avatar, Box, Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Box, Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { FetchedBalance } from '../../..//hooks/useAssetsOnChains2';
 import { stars6Black, stars6White } from '../../../assets/icons';
-import { AccountsAssetsContext } from '../../../components';
+import { AccountsAssetsContext, DisplayLogo } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, usePrices3, useTranslation } from '../../../hooks';
-import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '../../../util/constants';
+import { TEST_NETS } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import { amountToHuman } from '../../../util/utils';
 import Chart from './Chart';
@@ -23,17 +23,7 @@ interface Props {
   hideNumbers: boolean | undefined;
 }
 
-type UiType = { logo: string | undefined, color: string | undefined };
-
-type AssetType = {
-  balance: number;
-  genesishash: string;
-  percent: number;
-  token: string;
-  ui: UiType;
-}
-
-function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
+function TotalBalancePieChart ({ hideNumbers }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const currency = useCurrency();
@@ -125,29 +115,29 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
 
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
-  const DisplayAssetRow = ({ asset }: { asset: FetchedBalance }) => (
-    <Grid container item justifyContent='space-between'>
-      <Grid alignItems='center' container item width='fit-content'>
-        <Avatar
-          src={asset.ui.logo}
-          sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(asset.token) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 20, width: 20 }}
-          variant='square'
-        />
-        <Typography fontSize='16px' fontWeight={500} pl='5px' width='40px'>
-          {asset.token}
-        </Typography>
+  const DisplayAssetRow = ({ asset }: { asset: FetchedBalance }) => {
+    const logoInfo = useMemo(() => asset && getLogo2(asset.genesisHash, asset.token), [asset]);
+
+    return (
+      <Grid container item justifyContent='space-between'>
+        <Grid alignItems='center' container item width='fit-content'>
+          <DisplayLogo assetSize='20px' baseTokenSize='14px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+          <Typography fontSize='16px' fontWeight={500} pl='5px' width='40px'>
+            {asset.token}
+          </Typography>
+        </Grid>
+        <Grid alignItems='center' columnGap='10px' container item width='fit-content'>
+          <Typography fontSize='16px' fontWeight={600}>
+            {hideNumbers || hideNumbers === undefined ? '****' : `${currency?.sign ?? ''}${nFormatter(asset.totalBalance ?? 0, 2)}`}
+          </Typography>
+          <Divider orientation='vertical' sx={{ bgcolor: asset.ui.color, height: '21px', m: 'auto', width: '5px' }} />
+          <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
+            {hideNumbers || hideNumbers === undefined ? '****' : `${asset.percent}%`}
+          </Typography>
+        </Grid>
       </Grid>
-      <Grid alignItems='center' columnGap='10px' container item width='fit-content'>
-        <Typography fontSize='16px' fontWeight={600}>
-          {hideNumbers || hideNumbers === undefined ? '****' : `${currency?.sign ?? ''}${nFormatter(asset.totalBalance ?? 0, 2)}`}
-        </Typography>
-        <Divider orientation='vertical' sx={{ bgcolor: asset.ui.color, height: '21px', m: 'auto', width: '5px' }} />
-        <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
-          {hideNumbers || hideNumbers === undefined ? '****' : `${asset.percent}%`}
-        </Typography>
-      </Grid>
-    </Grid>
-  );
+    )
+  };
 
   return (
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px', width: '430px' }}>

@@ -18,7 +18,8 @@ import { ActionContext, DisplayLogo, FormatBalance2, FormatPrice, Identicon, Ide
 import { useAccount, useAccountInfo, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsOnChains2';
 import { showAccount, tieAccount, windowOpen } from '../../../messaging';
-import { ACALA_GENESIS_HASH, ASSET_HUBS, BALANCES_VALIDITY_PERIOD, IDENTITY_CHAINS, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
+import { BALANCES_VALIDITY_PERIOD, IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
+import getLogo2 from '../../../util/getLogo2';
 import { BalancesInfo, Prices3, Proxy } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import { getValue } from '../../account/util';
@@ -38,53 +39,6 @@ interface AddressDetailsProps {
   price: number | undefined;
   pricesInCurrency: Prices3 | null | undefined;
 }
-
-export type DisplayLogoAOC = {
-  base: string | null | undefined;
-  symbol: string | undefined;
-}
-
-const onAssetHub = (genesisHash: string | null | undefined) => ASSET_HUBS.includes(genesisHash ?? '');
-
-const displayLogoAOC = (genesisHash: string | null | undefined, symbol: string | undefined): DisplayLogoAOC => {
-  if (onAssetHub(genesisHash)) {
-    if (ASSET_HUBS[0] === genesisHash) {
-      return {
-        base: WESTEND_GENESIS_HASH,
-        symbol
-      };
-    } else if (ASSET_HUBS[1] === genesisHash) {
-      return {
-        base: KUSAMA_GENESIS_HASH,
-        symbol
-      };
-    } else {
-      return {
-        base: POLKADOT_GENESIS_HASH,
-        symbol
-      };
-    }
-  }
-
-  if (ACALA_GENESIS_HASH === genesisHash) {
-    if (symbol?.toLowerCase() === 'aca') {
-      return {
-        base: ACALA_GENESIS_HASH,
-        symbol: undefined
-      };
-    } else {
-      return {
-        base: undefined,
-        symbol
-      };
-    }
-  }
-
-  return {
-    base: genesisHash,
-    symbol: undefined
-  };
-};
 
 const Price = ({ balanceToShow, isPriceOutdated, price }: { balanceToShow: BalancesInfo | undefined, isPriceOutdated: boolean | undefined, price: number | undefined }) => (
   <Grid item sx={{ '> div span': { display: 'block' }, color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 400 }}>
@@ -122,18 +76,22 @@ const BalanceRow = ({ balanceToShow, isBalanceOutdated, isPriceOutdated, price }
   </Grid>
 );
 
-const SelectedAsset = ({ account, balanceToShow, isBalanceOutdated, isPriceOutdated, price }: { account: AccountJson | undefined, balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined, isPriceOutdated: boolean, price: number | undefined }) => (
-  <Grid alignItems='center' container item minWidth='40%'>
-    <Grid item pl='7px'>
-      <DisplayLogo assetToken={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.symbol} genesisHash={displayLogoAOC(account?.genesisHash, balanceToShow?.token)?.base} size={42} />
-    </Grid>
-    <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
-      <BalanceRow balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} isPriceOutdated={isPriceOutdated} price={price} />
-    </Grid>
-  </Grid>
-);
+const SelectedAsset = ({ account, balanceToShow, isBalanceOutdated, isPriceOutdated, price }: { account: AccountJson | undefined, balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined, isPriceOutdated: boolean, price: number | undefined }) => {
+  const logoInfo = useMemo(() => account?.genesisHash && getLogo2(account?.genesisHash, balanceToShow?.token), [account?.genesisHash, balanceToShow?.token]);
 
-export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, price, pricesInCurrency, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+  return (
+    <Grid alignItems='center' container item minWidth='40%'>
+      <Grid item pl='7px'>
+        <DisplayLogo assetSize='42px' baseTokenSize='20px' genesisHash={account?.genesisHash} logo={logoInfo?.logo as string} subLogo={logoInfo?.subLogo as string} />
+      </Grid>
+      <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
+        <BalanceRow balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} isPriceOutdated={isPriceOutdated} price={price} />
+      </Grid>
+    </Grid>
+  );
+};
+
+export default function AccountInformation({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, price, pricesInCurrency, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
 
   const account = useAccount(address);
@@ -228,7 +186,6 @@ export default function AccountInformation ({ accountAssets, address, api, balan
   const onAssetBoxClicked = useCallback((asset: FetchedBalance | undefined) => {
     address && asset && tieAccount(address, asset.genesisHash).finally(() => {
       setSelectedAsset(asset);
-      // (asset?.assetId === undefined || asset?.assetId === -1) && setSelectedAsset(undefined);
     }).catch(console.error);
   }, [address, setSelectedAsset]);
 
@@ -335,7 +292,6 @@ export default function AccountInformation ({ accountAssets, address, api, balan
             api={api}
             balanceToShow={balanceToShow}
             borderColor={borderColor}
-            displayLogoAOC={displayLogoAOC}
             mode='Detail'
             onclick={onAssetBoxClicked}
             selectedAsset={selectedAsset}

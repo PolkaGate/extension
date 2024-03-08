@@ -13,14 +13,13 @@ import { AccountJson } from '@polkadot/extension-base/background/types';
 import { DisplayLogo, FormatPrice, ShowBalance } from '../../../components';
 import { usePrices3, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsOnChains2';
+import getLogo2 from '../../../util/getLogo2';
 import { BalancesInfo, Prices3 } from '../../../util/types';
-import { DisplayLogoAOC } from './AccountInformation';
 
 interface Props {
   account: AccountJson | undefined;
   api: ApiPromise | undefined;
   selectedAsset: FetchedBalance | undefined;
-  displayLogoAOC: (genesisHash: string | null | undefined, symbol: string | undefined) => DisplayLogoAOC;
   balanceToShow: BalancesInfo | undefined;
   accountAssets: FetchedBalance[] | null | undefined;
   borderColor: string;
@@ -31,7 +30,6 @@ interface Props {
 interface AssetBoxProps {
   api: ApiPromise | undefined,
   pricesInCurrencies: Prices3 | null | undefined,
-  displayLogoAOC: (genesisHash: string | null | undefined, symbol: string | undefined) => DisplayLogoAOC,
   account: AccountJson | undefined,
   selectedAsset: FetchedBalance | undefined,
   balanceToShow: BalancesInfo | undefined,
@@ -67,10 +65,11 @@ const BalanceRow = ({ api, asset, pricesInCurrencies }: BalanceRowProps) => (
   </Grid>
 );
 
-const AssetsBoxes = ({ account, api, asset, balanceToShow, displayLogoAOC, mode, onclick, pricesInCurrencies, selectedAsset }: AssetBoxProps) => {
+const AssetsBoxes = ({ account, api, asset, balanceToShow, mode, onclick, pricesInCurrencies, selectedAsset }: AssetBoxProps) => {
   const isAssetSelected = (asset && asset.genesisHash === account?.genesisHash && asset.token === balanceToShow?.token) || (asset?.genesisHash === selectedAsset?.genesisHash && asset?.token === selectedAsset?.token);
 
   const homeMode = (mode === 'Home' && isAssetSelected);
+  const logoInfo = useMemo(() => asset && getLogo2(asset.genesisHash, asset.token), [asset]);
 
   return (
     // eslint-disable-next-line react/jsx-no-bind
@@ -78,7 +77,7 @@ const AssetsBoxes = ({ account, api, asset, balanceToShow, displayLogoAOC, mode,
       {asset
         ? <>
           <Grid alignItems='center' container item width='fit-content'>
-            <DisplayLogo assetSize='25px' assetToken={displayLogoAOC(asset.genesisHash, asset.token)?.symbol} baseTokenSize='16px' genesisHash={displayLogoAOC(asset.genesisHash, asset.token)?.base} />
+            <DisplayLogo assetSize='25px' baseTokenSize='16px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
           </Grid>
           {(mode === 'Detail' || homeMode) &&
             <BalanceRow
@@ -94,7 +93,7 @@ const AssetsBoxes = ({ account, api, asset, balanceToShow, displayLogoAOC, mode,
   );
 };
 
-function AOC({ account, accountAssets, api, balanceToShow, borderColor, displayLogoAOC, mode = 'Detail', onclick, selectedAsset }: Props) {
+function AOC ({ account, accountAssets, api, balanceToShow, borderColor, mode = 'Detail', onclick, selectedAsset }: Props) {
   const { t } = useTranslation();
   const pricesInCurrencies = usePrices3();
 
@@ -124,7 +123,6 @@ function AOC({ account, accountAssets, api, balanceToShow, borderColor, displayL
                 api={api}
                 asset={asset}
                 balanceToShow={balanceToShow}
-                displayLogoAOC={displayLogoAOC}
                 key={index}
                 mode={mode}
                 onclick={onclick}
