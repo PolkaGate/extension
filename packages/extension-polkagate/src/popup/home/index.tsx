@@ -121,8 +121,8 @@ export default function Home (): React.ReactElement {
               showBrand
               showFullScreen
               showMenu
-              text={'Polkagate'}
               style={{ '> div div:nth-child(3)': { minWidth: '23%' }, pr: '10px' }}
+              text={'Polkagate'}
             />
           </Grid>
           {hasActiveRecovery &&
