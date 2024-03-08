@@ -34,13 +34,13 @@ interface AddressDetailsProps {
   accountAssets: FetchedBalance[] | null | undefined;
   address: string | undefined;
   api: ApiPromise | undefined;
-  assetId: number | undefined;
+  selectedAsset: FetchedBalance | undefined;
   balances: BalancesInfo | undefined;
   chain: Chain | null | undefined;
   chainName: string | undefined;
   formatted: string | undefined;
   hideNumbers: boolean | undefined
-  setAssetId: React.Dispatch<React.SetStateAction<number | undefined>>;
+  setSelectedAsset: React.Dispatch<React.SetStateAction<FetchedBalance | undefined>>;
   isChild?: boolean;
 }
 
@@ -58,7 +58,7 @@ export const POPUPS_NUMBER = {
   RENAME: 2
 };
 
-export default function AccountInformation({ accountAssets, address, api, assetId, balances, chain, chainName, formatted, hideNumbers, isChild, setAssetId }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const pricesInCurrencies = usePrices3();
   const currency = useCurrency();
@@ -169,7 +169,7 @@ export default function AccountInformation({ accountAssets, address, api, assetI
     setIsRecoverable(undefined);
     setHasProxy(undefined);
 
-    if (!api || !address || !account?.genesisHash || api.genesisHash.toHex() !== account.genesisHash) {
+    if (!api || !formatted || !account?.genesisHash || api.genesisHash.toHex() !== account.genesisHash) {
       return;
     }
 
@@ -212,11 +212,7 @@ export default function AccountInformation({ accountAssets, address, api, assetI
         </Typography>
         {
           hideNumbers || hideNumbers === undefined
-            ? <Box
-              component='img'
-              src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
-              sx={{ height: '36px', width: '154px' }}
-            />
+            ? <Box component='img' src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string} sx={{ height: '36px', width: '154px' }} />
             : totalBalance !== undefined
               ? <Typography fontSize='32px' fontWeight={700}>
                 {`${currency?.sign ?? ''}${nFormatter(totalBalance ?? 0, 2)}`}
@@ -233,12 +229,12 @@ export default function AccountInformation({ accountAssets, address, api, assetI
     </Button>
   );
 
-  const assetBoxClicked = useCallback((genesisHash: string, id: number | undefined) => {
-    address && tieAccount(address, genesisHash).finally(() => {
-      id && setAssetId(id);
-      (id === undefined || id === -1) && setAssetId(undefined);
+  const onAssetBoxClicked = useCallback((asset: FetchedBalance | undefined) => {
+    address && asset && tieAccount(address, asset.genesisHash).finally(() => {
+      setSelectedAsset(asset);
+      // (asset?.assetId === undefined || asset?.assetId === -1) && setSelectedAsset(undefined);
     }).catch(console.error);
-  }, [address, setAssetId]);
+  }, [address, setSelectedAsset]);
 
   const openIdentity = useCallback(() => {
     address && onAction(`/manageIdentity/${address}`);
@@ -344,12 +340,12 @@ export default function AccountInformation({ accountAssets, address, api, assetI
                 account={account}
                 accountAssets={assetsToShow}
                 api={api}
-                assetId={assetId}
                 balanceToShow={balanceToShow}
                 borderColor={borderColor}
                 displayLogoAOC={displayLogoAOC}
                 mode='Home'
-                onclick={assetBoxClicked}
+                onclick={onAssetBoxClicked}
+                selectedAsset={selectedAsset}
               />
             }
           </Grid>
