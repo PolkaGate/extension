@@ -10,14 +10,14 @@ export default function useIsTestnetEnabled(): boolean | undefined {
 
   useEffect(() => {
     getStorage('testnet_enabled').then((res) => {
-      setTestnetIsEnabled(res as boolean);
+      setTestnetIsEnabled(!!res);
     }).catch(console.error);
 
     chrome.storage.onChanged.addListener(function (changes, areaName) {
       if (areaName === 'local' && 'testnet_enabled' in changes) {
         const newValue = changes.testnet_enabled.newValue as boolean;
 
-        setTestnetIsEnabled(newValue);
+        setTestnetIsEnabled(!!newValue);
       }
     });
   }, []);

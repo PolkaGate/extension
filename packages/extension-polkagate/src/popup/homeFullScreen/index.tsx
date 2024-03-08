@@ -21,7 +21,7 @@ export interface AccountsOrder {
   account: AccountWithChildren
 }
 
-export default function HomePageFullScreen(): React.ReactElement {
+export default function HomePageFullScreen (): React.ReactElement {
   useFullscreen();
   const theme = useTheme();
   const { accounts: accountsInExtension, hierarchy } = useContext(AccountContext);

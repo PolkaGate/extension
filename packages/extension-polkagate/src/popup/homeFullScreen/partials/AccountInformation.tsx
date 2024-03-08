@@ -218,7 +218,7 @@ export default function AccountInformation({ accountAssets, address, api, assetI
               sx={{ height: '36px', width: '154px' }}
             />
             : totalBalance !== undefined
-              ? <Typography fontSize='36px' fontWeight={700}>
+              ? <Typography fontSize='32px' fontWeight={700}>
                 {`${currency?.sign ?? ''}${nFormatter(totalBalance ?? 0, 2)}`}
               </Typography>
               : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={180} />

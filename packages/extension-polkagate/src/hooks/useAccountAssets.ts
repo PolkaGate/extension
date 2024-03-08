@@ -9,21 +9,21 @@ import { FetchedBalance } from './useAssetsOnChains2';
 import useIsTestnetEnabled from './useIsTestnetEnabled';
 
 export default function useAccountAssets (address: string | undefined): FetchedBalance[] | undefined | null {
-  const [accountAssets, setAccountAssets] = useState<FetchedBalance[] | undefined | null>();
+  const [assets, setAssets] = useState<FetchedBalance[] | undefined | null>();
   const { accountsAssets } = useContext(AccountsAssetsContext);
   const isTestnetEnabled = useIsTestnetEnabled();
 
   useEffect(() => {
-    if (!address || !accountsAssets || !accountsAssets.balances?.[address]) {
+    if (!address || !accountsAssets?.balances?.[address]) {
       return;
     }
 
     /** Filter testnets if they are disabled */
-    const assets = Object.keys(accountsAssets.balances[address]).reduce((allAssets: FetchedBalance[], genesisHash: string) => allAssets.concat(accountsAssets.balances[address][genesisHash]), []);
+    const _assets = Object.keys(accountsAssets.balances[address]).reduce((allAssets: FetchedBalance[], genesisHash: string) => allAssets.concat(accountsAssets.balances[address][genesisHash]), []);
 
-    const filteredAssets = isTestnetEnabled === false ? assets?.filter(({ genesisHash }) => !TEST_NETS.includes(genesisHash)) : assets;
+    const filteredAssets = isTestnetEnabled === false ? _assets?.filter(({ genesisHash }) => !TEST_NETS.includes(genesisHash)) : _assets;
 
-    setAccountAssets(
+    setAssets(
       filteredAssets?.length > 0
         ? filteredAssets
         : filteredAssets?.length === 0
@@ -32,5 +32,5 @@ export default function useAccountAssets (address: string | undefined): FetchedB
     );
   }, [accountsAssets, address, isTestnetEnabled]);
 
-  return accountAssets;
+  return assets;
 }
