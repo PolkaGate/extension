@@ -37,7 +37,7 @@ function AccountItem({ account, hideNumbers, id, quickActionOpen, setQuickAction
   const { accounts } = useContext(AccountContext);
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: id ?? 0 });
 
-  const hasParent = useMemo(() => accounts.find(({ address }) => address === account.parentAddress), [account.address, accounts]);
+  const hasParent = useMemo(() => accounts.find(({ address }) => address === account.parentAddress), [account.parentAddress, accounts]);
 
   const [selectedAsset, setSelectedAsset] = useState<FetchedBalance | undefined>();
 
@@ -45,11 +45,9 @@ function AccountItem({ account, hideNumbers, id, quickActionOpen, setQuickAction
     <div ref={id ? setNodeRef : null} style={{ transform: CSS.Transform.toString(transform), transition }}>
       <Grid container {...attributes} item ref={containerRef} sx={{ borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', overflow: 'hidden', position: 'relative' }} width='760px'>
         <DragIndicatorIcon {...listeners} sx={{ ':active': { cursor: 'grabbing' }, color: '#D1D1D1', cursor: 'grab', fontSize: '25px', position: 'absolute', right: '5px', top: '5px' }} />
-        {hasParent &&
-          <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', ml: 5, position: 'absolute', px: 1, width: 'fit-content' }}>
-            {label(account, hasParent.name ?? '', t)}
-          </Grid>
-        }
+        <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', ml: 5, position: 'absolute', px: 1, width: 'fit-content' }}>
+          {label(account, hasParent?.name ?? '', t)}
+        </Grid>
         <AccountInformation
           accountAssets={accountAssets}
           address={account.address}
