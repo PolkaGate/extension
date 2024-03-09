@@ -8,7 +8,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
-import { AccountContext } from '../../components';
+import { AccountContext, ActionContext } from '../../components';
 import { useFullscreen } from '../../hooks';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import HeaderComponents from './components/HeaderComponents';
@@ -21,9 +21,11 @@ export interface AccountsOrder {
   account: AccountWithChildren
 }
 
-export default function HomePageFullScreen (): React.ReactElement {
+export default function HomePageFullScreen(): React.ReactElement {
   useFullscreen();
   const theme = useTheme();
+  const onAction = useContext(ActionContext);
+
   const { accounts: accountsInExtension, hierarchy } = useContext(AccountContext);
 
   const [hideNumbers, setHideNumbers] = useState<boolean>();
@@ -37,6 +39,12 @@ export default function HomePageFullScreen (): React.ReactElement {
 
     return [account, ...flattenedChildren];
   }, []);
+
+  useEffect(() => {
+    if (accountsInExtension && accountsInExtension?.length === 0) {
+      onAction('/onboarding');
+    }
+  }, [accountsInExtension, onAction]);
 
   useEffect(() => {
     chrome.storage.local.get('addressOrder').then(({ addressOrder }: { addressOrder?: string[] }) => {

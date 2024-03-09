@@ -21,6 +21,7 @@ import { ErrorBoundary, Loading } from '../../../extension-polkagate/src/compone
 import { AccountContext, AccountsAssetsContext, ActionContext, APIContext, AuthorizeReqContext, CurrencyContext, FetchingContext, MediaContext, MetadataReqContext, PricesContext, ReferendaContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
 import { getStorage, LoginInfo, setStorage, updateStorage } from '../../../extension-polkagate/src/components/Loading';
 import { ExtensionLockProvider } from '../../../extension-polkagate/src/context/ExtensionLockContext';
+import Onboarding from '../../../extension-polkagate/src/fullscreen/onboarding';
 import { usePriceIds } from '../../../extension-polkagate/src/hooks';
 import useAssetsOnChains2, { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../extension-polkagate/src/hooks/useAssetsOnChains2';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
@@ -273,6 +274,7 @@ export default function Popup(): React.ReactElement {
                                       <Route path='/login-password'>{wrapWithErrorBoundary(<LoginPassword />, 'manage-login-password')}</Route>
                                       <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
                                       <Route path='/manageIdentity/:address'>{wrapWithErrorBoundary(<ManageIdentity />, 'manage-identity')}</Route>
+                                      <Route path='/onboarding'>{wrapWithErrorBoundary(<Onboarding />, 'onboarding')}</Route>
                                       <Route path='/pool/create/:address'>{wrapWithErrorBoundary(<CreatePool />, 'pool-create')}</Route>
                                       <Route path='/pool/join/:address'>{wrapWithErrorBoundary(<JoinPool />, 'pool-join')}</Route>
                                       <Route path='/pool/stake/:address'>{wrapWithErrorBoundary(<PoolStake />, 'pool-stake')}</Route>

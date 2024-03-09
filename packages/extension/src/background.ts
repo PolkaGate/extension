@@ -44,6 +44,14 @@ cryptoWaitReady()
 
 chrome.runtime.setUninstallURL('https://docs.google.com/forms/d/e/1FAIpQLSf2WHD0oVR0NS7tW6C1U025H1XBEZXqwxvFvPhcoFa18eHQiA/viewform');
 
+chrome.runtime.onInstalled.addListener(({ reason }) => {
+  if (reason === 'install') {
+    const url = `${chrome.runtime.getURL('index.html')}#/onboarding`;
+
+    chrome.tabs.create({ url }).catch(console.error);
+  }
+});
+
 let creating: Promise<void> | undefined; // A global promise to avoid concurrency issues
 const path = 'offscreen.html';
 
