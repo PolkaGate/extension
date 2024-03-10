@@ -47,7 +47,7 @@ export interface FetchedBalance {
 
 const DEFAULT_SAVED_ASSETS = { balances: {} as AssetsBalancesPerAddress, timeStamp: Date.now() };
 
-export const ASSETS_NAME_IN_STORAGE = 'assets';
+export const ASSETS_NAME_IN_STORAGE = 'assets7';
 const BALANCE_VALIDITY_PERIOD = 2 * 1000 * 60;
 
 function isUpToDate(date?: number): boolean | undefined {
@@ -82,27 +82,33 @@ export default function useAssetsOnChains2(accounts: AccountJson[] | null): Save
     }).catch(console.error);
   }, [workersCalled?.length]);
 
-  const handleAccountsSaving = useCallback(() => {
-    const toBeSavedAssets = fetchedAssets || DEFAULT_SAVED_ASSETS;
-    const addressesInToBeSavedAssets = Object.keys((toBeSavedAssets as SavedAssets)?.balances || []);
-    const addressesWithoutBalance = addresses!.filter((address) => !addressesInToBeSavedAssets.includes(address));
+  const handleNewAccounts = useCallback(() => {
+    getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
+      if (Object.keys(savedAssets as SavedAssets).length === 0) {
+        savedAssets = { balances: {}, timeStamp: Date.now() } as SavedAssets;
+      }
 
-    addressesWithoutBalance.forEach((address) => {
-      toBeSavedAssets.balances[address] = {};
-    });
+      const addressesInSavedAccounts = Object.keys((savedAssets as SavedAssets)?.balances || []);
+      const addressesWithoutBalance = addresses!.filter((address) => !addressesInSavedAccounts.includes(address));
 
-    setFetchedAssets(toBeSavedAssets);
-    setStorage(ASSETS_NAME_IN_STORAGE, toBeSavedAssets, true).catch(console.error);
-    setWorkersCalled(undefined);
-  }, [addresses, fetchedAssets]);
+      addressesWithoutBalance.forEach((address) => {
+        (savedAssets as SavedAssets).balances[address] = {};
+      });
+
+      setStorage(ASSETS_NAME_IN_STORAGE, savedAssets, true).catch(console.error);
+      setWorkersCalled(undefined);
+    }).catch(console.error);
+  }, [addresses]);
 
   useEffect(() => {
-    /** when one round fetch is done, we will save fetched assets in storage */
-    if (addresses && workersCalled?.length === 0) {
+    /** when one round fetch is done, we add addresses which have no assets to saved assets
+     * We set a timeout to cope with possible race condition
+     */
+    if (workersCalled?.length === 0 && addresses) {
       setWorkersCalled(undefined);
-      handleAccountsSaving();
+      setTimeout(handleNewAccounts, 10000);
     }
-  }, [accounts, addresses, handleAccountsSaving, workersCalled?.length]);
+  }, [accounts, addresses, handleNewAccounts, workersCalled?.length]);
 
   useEffect(() => {
     /** chain list may have changed */
@@ -128,9 +134,20 @@ export default function useAssetsOnChains2(accounts: AccountJson[] | null): Save
     }
 
     getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
-      if (!savedAssets || Object.keys(savedAssets).length === 0) {
+      /** handle BN issues */
+      if (!savedAssets) {
         return;
       }
+
+      // Object.keys(savedAssets).forEach((address) => {
+      //   savedAssets.balances?.[address] && Object.keys(savedAssets.balances[address]).forEach((genesisHash) => {
+      //     savedAssets.balances[address]?.[genesisHash]?.map((asset) => {
+      //       asset.totalBalance = isHexToBn(asset.totalBalance as unknown as string);
+
+      //       return asset;
+      //     });
+      //   });
+      // });
 
       setFetchedAssets(savedAssets as SavedAssets);
     }).catch(console.error);
@@ -159,24 +176,25 @@ export default function useAssetsOnChains2(accounts: AccountJson[] | null): Save
       return;
     }
 
-    setFetchedAssets((fetchedAssets) => {
-      const combinedAsset = fetchedAssets || DEFAULT_SAVED_ASSETS;
+    getStorage(ASSETS_NAME_IN_STORAGE).then((res) => {
+      const savedAssets = (res || JSON.stringify(DEFAULT_SAVED_ASSETS)) as string;
+      const parsedAssets = JSON.parse(savedAssets) as SavedAssets;
 
       Object.keys(assets).forEach((address) => {
-        if (combinedAsset.balances[address] === undefined) {
-          combinedAsset.balances[address] = {};
+        if (parsedAssets.balances[address] === undefined) {
+          parsedAssets.balances[address] = {};
         }
 
         /** to group assets by their chain's genesisHash */
         const { genesisHash } = assets[address][0];
 
-        combinedAsset.balances[address][genesisHash] = assets[address];
+        parsedAssets.balances[address][genesisHash] = assets[address];
       });
 
-      combinedAsset.timeStamp = Date.now();
-
-      return combinedAsset;
-    });
+      parsedAssets.timeStamp = Date.now();
+      /** we use JSON.stringify to cope with saving BN issue */
+      setStorage(ASSETS_NAME_IN_STORAGE, parsedAssets, true).catch(console.error);
+    }).catch(console.error);
   }, [addresses]);
 
   const fetchAssetOnRelayChain = useCallback((_addresses: string[], chainName: string) => {
