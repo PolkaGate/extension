@@ -10,13 +10,15 @@ import React, { useCallback } from 'react';
 import { SlidePopUp } from '../../components';
 import { useTranslation } from '../../hooks';
 import { SocialLinks } from '../../partials/VersionSocial';
+import { DraggableModal } from '../governance/components/DraggableModal';
 
 interface Props {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  asModal?: boolean;
 }
 
-function Privacy ({ setShow, show = false }: Props): React.ReactElement {
+function Privacy({ asModal, setShow, show = false }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const onClose = useCallback(() => {
@@ -24,7 +26,7 @@ function Privacy ({ setShow, show = false }: Props): React.ReactElement {
   }, [setShow]);
 
   const welcome = (
-    <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
+    <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt={asModal ? 0 : '46px'} sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container justifyContent='center' my='20px'>
         <Typography fontSize='20px' fontWeight={400} lineHeight={1.4}>
           {t<string>('Privacy and Security')}
@@ -74,19 +76,28 @@ function Privacy ({ setShow, show = false }: Props): React.ReactElement {
           </ListItem>
         </List>
       </Box>
-      <IconButton onClick={onClose} sx={{ left: '15px', p: 0, position: 'absolute', top: '65px' }}>
+      <IconButton onClick={onClose} sx={{ left: '15px', p: 0, position: 'absolute', top: asModal ? '15px' : '65px' }}>
         <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />
       </IconButton>
-      <Grid container justifyContent='center' sx={{ bottom: 0, position: 'absolute' }}>
+      <Grid container justifyContent='center' sx={{ bottom: asModal ? '-25px' : 0, position: 'absolute' }}>
         <SocialLinks />
       </Grid>
     </Grid>
   );
 
   return (
-    <SlidePopUp show={show}>
-      {welcome}
-    </SlidePopUp>
+    <>
+      {asModal
+        ? <DraggableModal onClose={onClose} open>
+          <Grid container position='relative'>
+            {welcome}
+          </Grid>
+        </DraggableModal>
+        : <SlidePopUp show={show}>
+          {welcome}
+        </SlidePopUp>
+      }
+    </>
   );
 }
 
