@@ -85,7 +85,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
 
   const Menu = () => (
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '20px' }}>
-      <Grid container item>
+      {/* <Grid container item>
         <Chain
           address={address}
           allowAnyChainOption
@@ -102,7 +102,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
             />}
         </Grid>
       </Grid>
-      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
+      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} /> */}
       <MenuItem
         disabled={!chain || !(PROXY_CHAINS.includes(chain.genesisHash ?? ''))}
         iconComponent={
