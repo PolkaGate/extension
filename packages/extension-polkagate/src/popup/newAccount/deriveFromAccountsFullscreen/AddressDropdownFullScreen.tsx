@@ -19,7 +19,7 @@ interface Props {
   style?: SxProps<Theme> | undefined;
 }
 
-export default function AddressDropdownFullScreen ({ allAddresses, onSelect, selectedAddress, selectedGenesis, selectedName, style }: Props): React.ReactElement<Props> {
+export default function AddressDropdownFullScreen({ allAddresses, onSelect, selectedAddress, selectedGenesis, selectedName, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const ref = useRef<HTMLDivElement>(null);
 
@@ -55,7 +55,7 @@ export default function AddressDropdownFullScreen ({ allAddresses, onSelect, sel
         </Grid>
       </Grid>
       <Grid container sx={{ position: 'absolute', top: '75px', zIndex: 10 }}>
-        <Collapse in={isDropdownVisible}>
+        <Collapse in={isDropdownVisible} sx={{ width: '100%' }}>
           <Grid container sx={{ bgcolor: 'background.paper', border: isDarkMode ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '1px', boxShadow: `0px 3px 10px ${isDarkMode ? '#ffffff40' : '#0000001A'}`, maxHeight: '250px', overflow: 'hidden', overflowY: 'scroll' }}>
             {allAddresses.map(([address, genesisHash, name]) => (
               <Grid alignItems='center' container item key={address} onClick={_selectParent(address)} sx={{ borderBottom: '1px solid', borderBottomColor: isDarkMode ? 'secondary.light' : borderColor, cursor: 'pointer', px: '25px' }}>
