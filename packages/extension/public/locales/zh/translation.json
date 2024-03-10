@@ -1105,7 +1105,6 @@
   "Pick 1 of {{totalNumberOfPools}} to join": "选择 {{totalNumberOfPools}} 个中的 1 个加入",
   "Delegate Vote ({{ step }}/3)": "代表投票 ({{ step }}/3)",
   "Comment on {{site}}": "在 {{site}} 上发表评论",
-  "Selected Validators ({{length}})": "已选验证器 ({{length}})"
   "Selected Validators ({{length}})": "已选验证器 ({{length}})",
   "🔍 Search currency": "🔍 搜索货币",
   "Hide numbers": "隐藏数字",
