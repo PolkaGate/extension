@@ -5,9 +5,9 @@
 
 import '@vaadin/icons';
 
+import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 
 import { AccountContext, ActionContext, PButton } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
@@ -108,14 +108,16 @@ function Onboarding(): React.ReactElement {
             <Divider sx={{ fontSize: '20px', fontWeight: 400, my: '30px', pl: '44px', width: '94%' }}>
               {t('Or')}
             </Divider>
-            <Grid alignItems='flex-end' container item justifyContent='center' onClick={toggleMore} pb='25px'>
-              <Typography sx={{ color: 'secondary.light', cursor: 'pointer', textDecoration: 'underline', userSelect: 'none' }}>
-                {t('I already have account(s) and wish to import my existing account(s)')}
-              </Typography>
-              <ArrowForwardIosIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: 17, ml: '7px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
-            </Grid>
+            <Collapse in={!showMore}>
+              <Grid alignItems='flex-end' container item justifyContent='center' onClick={toggleMore} pb='25px'>
+                <Typography sx={{ color: 'secondary.light', cursor: 'pointer', textDecoration: 'underline', userSelect: 'none' }}>
+                  {t('I already have account(s) and wish to import my existing account(s)')}
+                </Typography>
+                <ArrowForwardIosIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: 17, ml: '7px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
+              </Grid>
+            </Collapse>
             <Collapse in={showMore}>
-              <Grid container item justifyContent='center' mb='25px' mt='10px'>
+              <Grid container item justifyContent='center' mb='25px'>
                 <PButton
                   _mt='0'
                   _onClick={onRestoreFromJson}
@@ -149,7 +151,6 @@ function Onboarding(): React.ReactElement {
 
               </Grid>
             </Collapse>
-
             <Grid container justifyContent='center'>
               <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ cursor: 'pointer', fontSize: '12px', bottom: 0, position: 'absolute', textAlign: 'center', textDecoration: 'underline' }}>
                 {t('Privacy and Security')}
@@ -157,6 +158,7 @@ function Onboarding(): React.ReactElement {
             </Grid>
             {showPrivacyAndSecurity &&
               <Privacy
+                asModal
                 setShow={setShowPrivacyAndSecurity}
                 show={showPrivacyAndSecurity}
               />
