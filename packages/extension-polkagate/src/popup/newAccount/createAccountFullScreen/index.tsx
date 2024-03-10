@@ -108,7 +108,7 @@ function CreateAccount(): React.ReactElement {
         noChainSwitch
       />
       <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
-        <Grid container item sx={{ display: 'block', px: '10%' }}>
+        <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
               <vaadin-icon icon='vaadin:plus-circle' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
@@ -138,7 +138,7 @@ function CreateAccount(): React.ReactElement {
             // eslint-disable-next-line react/jsx-no-bind
             onEnter={isMnemonicSaved && password ? onCreate : () => null}
           />
-          <Grid alignItems='center' container item pt='40px'>
+          <Grid alignItems='center' container item pt='25px'>
             <Checkbox2
               checked={isMnemonicSaved}
               iconStyle={{ transform: 'scale(1.13)' }}
@@ -147,13 +147,13 @@ function CreateAccount(): React.ReactElement {
               onChange={onCheck}
             />
           </Grid>
-          <Grid container item justifyContent='flex-end' pt='10px'>
+          <Grid container item justifyContent='flex-end' pt='5px'>
             <Grid container item sx={{ '> div': { width: '100%' } }} xs={7}>
               <TwoButtons
                 disabled={!(name && password && seed && isMnemonicSaved)}
                 onPrimaryClick={onCreate}
                 onSecondaryClick={onCancel}
-                mt='30px'
+                mt='15px'
                 primaryBtnText={t<string>('Create account')}
                 secondaryBtnText={t<string>('Cancel')}
               />
