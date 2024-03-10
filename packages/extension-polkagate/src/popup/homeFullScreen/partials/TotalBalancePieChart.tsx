@@ -177,7 +177,7 @@ function TotalBalancePieChart ({ hideNumbers }: Props): React.ReactElement {
                 </Collapse>
                 <Divider sx={{ bgcolor: borderColor, height: '2px', mt: '10px', width: '100%' }} />
                 <Grid alignItems='center' container item onClick={toggleAssets} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
-                  <Typography fontSize='16px' fontWeight={400}>
+                  <Typography color='primary.main' fontSize='16px' fontWeight={400}>
                     {t<string>(showMore ? 'Less tokens' : 'More tokens')}
                   </Typography>
                   <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
