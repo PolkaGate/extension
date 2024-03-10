@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Grid } from '@mui/material';
+import { Collapse, Grid } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -18,25 +18,23 @@ interface Props {
   onSelect: (address: string) => void;
   selectedAddress: string | undefined;
   chainGenesis: string | undefined;
-  height: string;
-
 }
 
 export default function AddressDropdown({ api, chainGenesis, onSelect, selectedAddress }: Props): React.ReactElement<Props> {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const { hierarchy } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
   const chain = useChain(selectedAddress);
 
-  const allAddresses = useMemo(() => hierarchy.map(({ address }) => address), [hierarchy]);
+  const addressesToDisplay = useMemo(() => accounts.map(({ address }) => address).filter((address) => address !== selectedAddress), [accounts, selectedAddress]);
 
-  const _hideDropdown = useCallback(() => setDropdownVisible(false), []);
-  const _toggleDropdown = useCallback(() => setDropdownVisible(!isDropdownVisible), [isDropdownVisible]);
+  const hideDropdown = useCallback(() => setDropdownVisible(false), []);
+  const toggleDropdown = useCallback(() => addressesToDisplay.length > 0 && setDropdownVisible(!isDropdownVisible), [addressesToDisplay, isDropdownVisible]);
   const _onSelect = useCallback((addr: string) => () => {
     addr && chainGenesis && tieAccount(addr, chainGenesis).then(() => setTimeout(() => onSelect(addr), 150)).catch(console.error);
   }, [chainGenesis, onSelect]);
 
-  useOutsideClick([ref], _hideDropdown);
+  useOutsideClick([ref], hideDropdown);
 
   return (
     <Grid container style={{ position: 'relative' }}>
@@ -58,32 +56,33 @@ export default function AddressDropdown({ api, chainGenesis, onSelect, selectedA
             }}
           />
         </Grid>
-        <Grid alignItems='center' container item onClick={_toggleDropdown} ref={ref} sx={{ borderLeft: '1px solid', borderLeftColor: 'secondary.light', cursor: 'pointer', px: '10px', width: '40px' }}>
+        <Grid alignItems='center' container item onClick={toggleDropdown} ref={ref} sx={{ borderLeft: '1px solid', borderLeftColor: 'secondary.light', cursor: 'pointer', px: '10px', width: '40px' }}>
           <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: isDropdownVisible ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
         </Grid>
       </Grid>
-      <Grid container sx={{ '> .tree:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '2px solid', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '0px 3px 10px rgba(255, 255, 255, 0.25)', maxHeight: '300px', overflow: 'hidden', overflowY: 'scroll', position: 'absolute', top: '40px', transform: isDropdownVisible ? 'scaleY(1)' : 'scaleY(0)', transformOrigin: 'top', transitionDuration: '0.3s', transitionProperty: 'transform', visibility: isDropdownVisible ? 'visible' : 'hidden', zIndex: 10 }}>
-        {allAddresses.filter((address) => address !== selectedAddress).map((address) => (
-          <Grid alignItems='center' container item key={address} onClick={_onSelect(address)} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', cursor: 'pointer' }}>
-            <Identity
-              address={address}
-              // api={api}
-              chain={chain}
-              identiconSize={24}
-              showSocial={false}
-              style={{
-                border: 'none',
-                fontSize: '14px',
-                height: '40px',
-                m: 0,
-                minWidth: '150px',
-                px: '5px',
-                width: 'fit-content'
-              }}
-            />
-          </Grid>
-        ))}
-      </Grid>
+      <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={isDropdownVisible} sx={{ bgcolor: 'background.paper', border: '2px solid', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '0px 3px 10px rgba(255, 255, 255, 0.25)', maxHeight: '300px', overflow: 'hidden', overflowY: 'scroll', position: 'absolute', top: '45px', width: '100%', zIndex: 10 }}>
+        <Grid container sx={{ '> .tree:last-child': { border: 'none' } }}>
+          {addressesToDisplay.map((address) => (
+            <Grid alignItems='center' className='tree' container item key={address} onClick={_onSelect(address)} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', cursor: 'pointer' }}>
+              <Identity
+                address={address}
+                chain={chain}
+                identiconSize={24}
+                showSocial={false}
+                style={{
+                  border: 'none',
+                  fontSize: '14px',
+                  height: '40px',
+                  m: 0,
+                  minWidth: '150px',
+                  px: '5px',
+                  width: 'fit-content'
+                }}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      </Collapse>
     </Grid>
   );
 }
