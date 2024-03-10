@@ -94,12 +94,14 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
             src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
             sx={{ height: '36px', width: '154px' }}
           />
-          : <Typography sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontSize: '42px', fontWeight: 500, height: 36, lineHeight: 1 }}>
-            {allYouHaveAmount === undefined
-              ? <Skeleton animation='wave' height={38} sx={{ transform: 'none' }} variant='text' width={223} />
-              : <FormatPrice num={allYouHaveAmount || '0'} />
-            }
-          </Typography>
+          : <Grid item pr='15px'>
+            <Typography sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontSize: '42px', fontWeight: 500, height: 36, lineHeight: 1 }}>
+              {allYouHaveAmount === undefined
+                ? <Skeleton animation='wave' height={38} sx={{ transform: 'none' }} variant='text' width={223} />
+                : <FormatPrice num={allYouHaveAmount || '0'} />
+              }
+            </Typography>
+          </Grid>
         }
         <Grid alignItems='center' direction='column' item onClick={onHideClick} sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', display: 'flex', position: 'absolute', pt: '3px', right: '31px' }}>
           {hideNumbers
