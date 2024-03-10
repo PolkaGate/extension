@@ -106,6 +106,7 @@ export default function ForgetAccountModal ({ account, setDisplayPopup }: Props)
             ? <>
               <Password
                 isError={isPasswordError}
+                isFocused
                 label={t<string>('Password for this account')}
                 onChange={onChangePass}
                 onEnter={onForget}
