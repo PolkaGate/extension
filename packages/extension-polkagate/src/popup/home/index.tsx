@@ -29,7 +29,7 @@ import YouHave from './YouHave';
 
 export default function Home (): React.ReactElement {
   const { t } = useTranslation();
-  const { hierarchy } = useContext(AccountContext);
+  const { accounts, hierarchy } = useContext(AccountContext);
   const theme = useTheme();
 
   useMerkleScience(undefined, undefined, true); // to download the data file
@@ -150,7 +150,7 @@ export default function Home (): React.ReactElement {
                 setQuickActionOpen={setQuickActionOpen}
               />
             ))}
-            {sortedAccount.length < 4 &&
+            {accounts?.length < 4 &&
               <AddNewAccount />
             }
           </Container>
