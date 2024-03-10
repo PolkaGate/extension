@@ -7,7 +7,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { Backdrop, Grid, useTheme } from '@mui/material';
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
@@ -41,6 +41,14 @@ function AccountItem({ account, hideNumbers, id, quickActionOpen, setQuickAction
 
   const [selectedAsset, setSelectedAsset] = useState<FetchedBalance | undefined>();
 
+  const selectedAssetToShow = useMemo(() => {
+    if (!accountAssets) {
+      return undefined;
+    }
+
+    return accountAssets.find(({ genesisHash }) => genesisHash === chain?.genesisHash);
+  }, [accountAssets, chain?.genesisHash]);
+
   return (
     <div ref={id ? setNodeRef : null} style={{ transform: CSS.Transform.toString(transform), transition }}>
       <Grid container {...attributes} item ref={containerRef} sx={{ borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', overflow: 'hidden', position: 'relative' }} width='760px'>
@@ -58,7 +66,7 @@ function AccountItem({ account, hideNumbers, id, quickActionOpen, setQuickAction
           formatted={formatted}
           hideNumbers={hideNumbers}
           isChild={!!hasParent}
-          selectedAsset={selectedAsset}
+          selectedAsset={selectedAsset ?? selectedAssetToShow}
           setSelectedAsset={setSelectedAsset}
         />
         <Backdrop
