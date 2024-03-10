@@ -6,9 +6,9 @@
 import '@vaadin/icons';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
-import { ActionContext, PButton } from '../../components';
+import { PButton } from '../../components';
 import { useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
@@ -16,7 +16,6 @@ import Privacy from './Privacy';
 
 function Welcome(): React.ReactElement {
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
   const theme = useTheme();
 
   const [showPrivacyAndSecurity, setShowPrivacyAndSecurity] = useState(false);
@@ -40,8 +39,9 @@ function Welcome(): React.ReactElement {
   );
 
   const onAddWatchOnly = useCallback(
-    () => onAction('/import/add-watch-only'),
-    [onAction]
+    (): void => {
+      windowOpen('/import/add-watch-only-full-screen').catch(console.error);
+    }, []
   );
 
   const onImport = useCallback(
@@ -51,8 +51,9 @@ function Welcome(): React.ReactElement {
   );
 
   const onAttachQR = useCallback(
-    () => onAction('/import/attach-qr'),
-    [onAction]
+    (): void => {
+      windowOpen('/import/attach-qr-full-screen').catch(console.error);
+    }, []
   );
 
   return (
