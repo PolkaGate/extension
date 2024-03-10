@@ -782,6 +782,16 @@ export interface AccountsAssetsContextType {
   setAccountsAssets: (savedAccountAssets: SavedAssets) => void;
 }
 
+export type AlertsType = {
+  type: 'warning' | 'error';
+  message: string;
+}
+
+export interface AlertContextType {
+  alerts: AlertsType[];
+  setAlerts: (alerts: AlertsType[]) => void;
+}
+
 export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }
 export interface SoloSettings {
   controllerId: AccountId | string | undefined,

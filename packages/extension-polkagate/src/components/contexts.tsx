@@ -3,7 +3,7 @@
 
 import type { AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
-import type { AccountsAssetsContextType, APIsContext, CurrencyContextType, FetchingRequests, PricesContextType, ReferendaContextType } from '../util/types';
+import type { AccountsAssetsContextType, AlertContextType,APIsContext, CurrencyContextType, FetchingRequests, PricesContextType, ReferendaContextType } from '../util/types';
 
 import React from 'react';
 
@@ -16,6 +16,7 @@ const AccountContext = React.createContext<AccountsContext>({ accounts: [], hier
 const AccountsAssetsContext = React.createContext<AccountsAssetsContextType>({ accountsAssets: undefined, setAccountsAssets: noop });
 const ActionContext = React.createContext<(to?: string) => void>(noop);
 const APIContext = React.createContext<APIsContext>({ apis: {}, setIt: noop });
+const AlertContext = React.createContext<AlertContextType>({ alerts: [], setAlerts: noop });
 const AuthorizeReqContext = React.createContext<AuthorizeRequest[]>([]);
 const CurrencyContext = React.createContext<CurrencyContextType>({ currency: undefined, setCurrency: noop });
 const FetchingContext = React.createContext<FetchingRequests>({ fetching: {}, set: noop });
@@ -32,6 +33,7 @@ export {
   AccountsAssetsContext,
   ActionContext,
   APIContext,
+  AlertContext,
   AuthorizeReqContext,
   CurrencyContext,
   FetchingContext,
