@@ -71,7 +71,6 @@ export default function AccountInformation ({ accountAssets, address, api, balan
   const calculatePrice = useCallback((amount: BN, decimal: number, price: number) => parseFloat(amountToHuman(amount, decimal)) * price, []);
 
   const borderColor = useMemo(() => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [theme.palette.mode]);
-  const textAndIconColor = useMemo(() => theme.palette.secondary.main, [theme.palette.secondary.main]);
 
   const assetsToShow = useMemo(() => {
     if (!accountAssets || !pricesInCurrencies) {
@@ -177,7 +176,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
   );
 
   const AccountButton = ({ icon, onClick, text }: AccountButtonType) => (
-    <Button endIcon={icon} onClick={onClick} sx={{ '&:hover': { bgcolor: borderColor }, color: textAndIconColor, fontSize: '16px', fontWeight: 400, height: '53px', textTransform: 'none', width: 'fit-content' }} variant='text'>
+    <Button endIcon={icon} onClick={onClick} sx={{ '&:hover': { bgcolor: borderColor }, color: theme.palette.secondary.main, fontSize: '16px', fontWeight: 400, height: '53px', textTransform: 'none', width: 'fit-content' }} variant='text'>
       {text}
     </Button>
   );
@@ -306,12 +305,12 @@ export default function AccountInformation ({ accountAssets, address, api, balan
             <FullScreenAccountMenu
               address={address}
               baseButton={
-                <AccountButton icon={<MoreVertIcon style={{ color: textAndIconColor, fontSize: '32px' }} />} onClick={openSettings} text={t<string>('Settings')} />
+                <AccountButton icon={<MoreVertIcon style={{ color: theme.palette.secondary.light, fontSize: '32px' }} />} onClick={openSettings} text={t<string>('Settings')} />
               }
               setDisplayPopup={setDisplayPopup}
             />
             <Divider orientation='vertical' sx={{ bgcolor: borderColor, height: '34px', ml: '5px', mr: '15px', my: 'auto', width: '1px' }} />
-            <AccountButton icon={<ArrowForwardIosIcon style={{ color: textAndIconColor, fontSize: '28px' }} />} onClick={goToDetails} text={t<string>('Details')} />
+            <AccountButton icon={<ArrowForwardIosIcon style={{ color: theme.palette.secondary.light, fontSize: '28px' }} />} onClick={goToDetails} text={t<string>('Details')} />
           </Grid>
         </Grid>
       </Grid>
