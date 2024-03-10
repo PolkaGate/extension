@@ -67,7 +67,7 @@ export default function HomeMenu(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
-  const { master } = useContext(AccountContext);
+  const { accounts, master } = useContext(AccountContext);
 
   const [showImport, setShowImport] = useState<boolean>(false);
   const [showSetting, setShowSetting] = useState<boolean>(false);
@@ -75,14 +75,15 @@ export default function HomeMenu(): React.ReactElement {
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
+  const areAllExternalAccounts = useMemo(() => accounts.every(({ isExternal }) => isExternal), [accounts]);
 
   const onSend = useCallback(() => {
     onAction('/account/create');
   }, [onAction]);
 
   const onExportAll = useCallback(() => {
-    setShowExportAll(true);
-  }, []);
+    !areAllExternalAccounts && setShowExportAll(true);
+  }, [areAllExternalAccounts]);
 
   const onImportClick = useCallback(() => {
     setShowImport(!showImport);
@@ -95,8 +96,8 @@ export default function HomeMenu(): React.ReactElement {
   }, [showSetting]);
 
   const onDeriveFromAccounts = useCallback(() => {
-    master && onAction(`/fullscreenDerive/${master.address}`);
-  }, [master, onAction]);
+    !areAllExternalAccounts && master && onAction(`/fullscreenDerive/${master.address}`);
+  }, [areAllExternalAccounts, master, onAction]);
 
   return (
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px', width: '430px', position: 'relative' }}>
@@ -112,6 +113,7 @@ export default function HomeMenu(): React.ReactElement {
         />
         <TaskButton
           borderColor={borderColor}
+          disabled={areAllExternalAccounts}
           icon={
             <vaadin-icon icon='vaadin:road-branch' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
@@ -134,6 +136,7 @@ export default function HomeMenu(): React.ReactElement {
         </TaskButton>
         <TaskButton
           borderColor={borderColor}
+          disabled={areAllExternalAccounts}
           icon={
             <vaadin-icon icon='vaadin:download' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
