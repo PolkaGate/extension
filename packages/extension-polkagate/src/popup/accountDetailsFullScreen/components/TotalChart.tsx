@@ -91,7 +91,7 @@ export default function TotalChart ({ accountAssets, isDarkTheme, pricesInCurren
         }]
       },
       options: {
-        cutout: 22,
+        cutout: '75%',
         plugins: {
           tooltip: {
             callbacks: {
