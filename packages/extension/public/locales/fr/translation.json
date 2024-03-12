@@ -1129,5 +1129,6 @@
   "Most common tasks": "Tâches habituelles",
   "Account Details": "Détails du compte",
   "Account setting": "Réglages du compte",
-  "Receive Fund":"Recevoir des fonds"
+  "Receive Fund":"Recevoir des fonds",
+  "Your address on <0>{{chainName}}</0> is copied to the clipboard.": "Votre adresse sur <0>{{chainName}}</0> a été copiée dans le presse-papiers."
 }

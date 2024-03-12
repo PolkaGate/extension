@@ -1125,6 +1125,6 @@
   "Most common tasks": "Основные задачи",
   "Account Details": "Детали аккаунта",
   "Account setting": "Настройки",
-  "Receive Fund":"Получить средства"
-
+  "Receive Fund":"Получить средства",
+  "Your address on <0>{{chainName}}</0> is copied to the clipboard.": "Адрес <0>{{chainName}}</0> скопирован в буфер обмена."
 }
