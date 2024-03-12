@@ -1126,5 +1126,6 @@
   "Most common tasks": "सबसे सामान्य कार्य",
   "Account Details": "खाता विवरण",
   "Account setting": "खाता सेटिंग",
-  "Receive Fund":"फंड प्राप्त करें"
+  "Receive Fund":"फंड प्राप्त करें",
+  "Your address on <0>{{chainName}}</0> is copied to the clipboard.": "आपका <0>{{chainName}}</0> पर पता क्लिपबोर्ड पर कॉपी किया गया है।"
 }

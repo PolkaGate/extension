@@ -1133,5 +1133,6 @@
   "Most common tasks": "最常见的任务",
   "Account Details": "账户详情",
   "Account setting": "账户设置",
-  "Receive Fund":"接收资金"
+  "Receive Fund":"接收资金",
+  "Your address on <0>{{chainName}}</0> is copied to the clipboard.": "您在 <0>{{chainName}}</0> 上的地址已复制到剪贴板。"
 }

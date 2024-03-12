@@ -279,7 +279,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
               </Grid>
             </Grid>
             <Grid alignItems='center' container item sx={{ '> div div:last-child': { width: 'auto' } }} xs>
-              <ShortAddress2 address={formatted || address} charsCount={40} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
+              <ShortAddress2 address={formatted || address} chainName={chainName} charsCount={40} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
             </Grid>
           </Grid>
           <AssetsBox />

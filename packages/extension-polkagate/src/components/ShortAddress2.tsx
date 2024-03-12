@@ -18,9 +18,10 @@ interface Props {
   showCopy?: boolean;
   inParentheses?: boolean;
   clipped?: boolean;
+  chainName?: string;
 }
 
-function ShortAddress2 ({ address, clipped = false, charsCount = SHORT_ADDRESS_CHARACTERS, style, showCopy = false, inParentheses = false }: Props): React.ReactElement {
+function ShortAddress2 ({ address, clipped = false, charsCount = SHORT_ADDRESS_CHARACTERS, chainName, style, showCopy = false, inParentheses = false }: Props): React.ReactElement {
   const [charactersCount, setCharactersCount] = useState<number>(charsCount);
   const pRef = useRef<HTMLDivElement>(null);
   const cRef = useRef<HTMLDivElement>(null);
@@ -60,7 +61,7 @@ function ShortAddress2 ({ address, clipped = false, charsCount = SHORT_ADDRESS_C
       </Grid>
       {showCopy && (
         <Grid item width='fit-content'>
-          <CopyAddressButton address={String(address)} />
+          <CopyAddressButton address={String(address)} chainName={chainName} />
         </Grid>
       )}
     </Grid>
