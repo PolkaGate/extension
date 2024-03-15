@@ -9,7 +9,7 @@ import { faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon, Boy as BoyIcon } from '@mui/icons-material';
 import { Box, ClickAwayListener, Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -18,6 +18,7 @@ import { PoolStakingIcon } from '../components';
 import { useAccount, useApi, useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
+import HistoryModal from '../popup/history/modal/HistoryModal';
 
 interface Props {
   address: AccountId | string;
@@ -36,15 +37,15 @@ type QuickActionButtonType = {
 
 const ARROW_ICON_SIZE = 17;
 const ACTION_ICON_SIZE = '27px';
-const TITLE_FONT_SIZE = 13;
 
 export default function QuickActionFullScreen({ address, containerRef, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
-
   const account = useAccount(address);
   const api = useApi(address);
+
+  const [showHistory, setShowHistory] = useState<boolean>();
 
   const borderColor = useMemo(() => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [theme.palette.mode]);
 
@@ -79,8 +80,8 @@ export default function QuickActionFullScreen({ address, containerRef, quickActi
   const goToGovernanceOrHistory = useCallback(() => {
     GOVERNANCE_CHAINS.includes(account?.genesisHash ?? '')
       ? windowOpen(`/governance/${address}/referenda`).catch(console.error)
-      : account?.genesisHash && history.push({ pathname: `/history/${String(address)}` });
-  }, [account?.genesisHash, address, history]);
+      : setShowHistory(true);
+  }, [account?.genesisHash, address]);
 
   const nullF = useCallback(() => null, []);
 
@@ -205,6 +206,12 @@ export default function QuickActionFullScreen({ address, containerRef, quickActi
           </Slide>
         </Grid>
       </ClickAwayListener>
+      {showHistory &&
+        <HistoryModal
+          address={String(address)}
+          setDisplayPopup={setShowHistory}
+        />
+      }
     </Grid>
   );
 }
