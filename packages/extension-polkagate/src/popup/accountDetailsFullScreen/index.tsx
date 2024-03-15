@@ -10,7 +10,7 @@ import { useHistory } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
-import { ActionContext } from '../../components';
+import { AccountContext, ActionContext } from '../../components';
 import { useAccount, useAccountAssets, useApi, useBalances, useChain, useChainName, useCurrency, useFormatted, useFullscreen, usePrices3, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
 import { FetchedBalance } from '../../hooks/useAssetsOnChains2';
@@ -21,6 +21,7 @@ import ExportAccountModal from '../export/ExportAccountModal';
 import ForgetAccountModal from '../forgetAccount/ForgetAccountModal';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import HistoryModal from '../history/modal/HistoryModal';
+import { label } from '../home/AccountsTree';
 import DeriveAccountModal from '../newAccount/deriveAccount/modal/DeriveAccountModal';
 import ReceiveModal from '../receive/ReceiveModal';
 import RenameModal from '../rename/RenameModal';
@@ -60,6 +61,8 @@ export default function AccountDetails(): React.ReactElement {
   const { address } = useParams<{ address: string }>();
   const history = useHistory();
   const account = useAccount(address);
+  const { accounts } = useContext(AccountContext);
+
   const currency = useCurrency();
   const formatted = useFormatted(address);
   const api = useApi(address);
@@ -86,6 +89,9 @@ export default function AccountDetails(): React.ReactElement {
   const supportAssetHubs = useMemo(() => ASSET_HUBS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
   const showTotalChart = useMemo(() => accountAssets && accountAssets.length > 0 && accountAssets.filter((_asset) => pricesInCurrency && currency && pricesInCurrency.prices[_asset?.priceId]?.value > 0 && !new BN(_asset.totalBalance).isZero()), [accountAssets, currency, pricesInCurrency]);
   const currentPrice = useMemo((): number | undefined => pricesInCurrency?.prices?.[selectedAsset?.priceId || sanitizeChainName(chainName)?.toLocaleLowerCase()]?.value, [selectedAsset?.priceId, chainName, pricesInCurrency?.prices]);
+
+  const hasParent = useMemo(() => account ? accounts.find(({ address }) => address === account.parentAddress) : undefined, [account, accounts]);
+
   const nativeAssetPrice = useMemo(() => {
     if (!pricesInCurrency || !balances || !currentPrice) {
       return undefined;
@@ -138,6 +144,9 @@ export default function AccountDetails(): React.ReactElement {
           </Typography>
           <Grid container item justifyContent='space-between' mb='15px'>
             <Grid container direction='column' item rowGap='10px' width='calc(100% - 275px - 3%)'>
+              <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', ml: 5, position: 'absolute', px: 1, width: 'fit-content' }}>
+                {label(account, hasParent?.name || '', t)}
+              </Grid>
               <AccountInformation
                 accountAssets={accountAssets}
                 address={address}

@@ -77,7 +77,7 @@ const BalanceRow = ({ balanceToShow, isBalanceOutdated, isPriceOutdated, price }
 );
 
 const SelectedAsset = ({ account, balanceToShow, isBalanceOutdated, isPriceOutdated, price }: { account: AccountJson | undefined, balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined, isPriceOutdated: boolean, price: number | undefined }) => {
-  const logoInfo = useMemo(() => account?.genesisHash && getLogo2(account?.genesisHash, balanceToShow?.token), [account?.genesisHash, balanceToShow?.token]);
+  const logoInfo = useMemo(() => account?.genesisHash ? getLogo2(account?.genesisHash, balanceToShow?.token) : undefined, [account?.genesisHash, balanceToShow?.token]);
 
   return (
     <Grid alignItems='center' container item minWidth='40%'>
@@ -91,7 +91,7 @@ const SelectedAsset = ({ account, balanceToShow, isBalanceOutdated, isPriceOutda
   );
 };
 
-export default function AccountInformation({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, price, pricesInCurrency, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, price, pricesInCurrency, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
 
   const account = useAccount(address);
