@@ -4,7 +4,7 @@
 /* eslint-disable sort-keys */
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, Typography } from '@mui/material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { Chart, registerables } from 'chart.js';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
@@ -17,6 +17,7 @@ import { FetchedBalance } from '../../../hooks/useAssetsOnChains2';
 import getLogo2 from '../../../util/getLogo2';
 import { Prices3 } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
+import { adjustColor } from '../../homeFullScreen/partials/TotalBalancePieChart';
 
 interface TotalChartProps {
   isDarkTheme: boolean;
@@ -31,8 +32,9 @@ interface AssetsToShow extends FetchedBalance {
   color: string
 }
 
-export default function TotalChart ({ accountAssets, isDarkTheme, pricesInCurrency }: TotalChartProps): React.ReactElement {
+export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrency }: TotalChartProps): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const currency = useCurrency();
   const chartRef = useRef(null);
 
@@ -53,9 +55,10 @@ export default function TotalChart ({ accountAssets, isDarkTheme, pricesInCurren
       /** to add asset's worth and color */
       accountAssets.forEach((asset, index) => {
         const assetWorth = calPrice(priceOf(asset.priceId), asset.totalBalance, asset.decimal);
+        const assetColor = getLogo2(asset.genesisHash, asset.token)?.color || 'green';
 
         _assets[index].worth = assetWorth;
-        _assets[index].color = getLogo2(asset.genesisHash, asset.token)?.color || 'green';
+        _assets[index].color = adjustColor(asset.token, assetColor, theme);
 
         totalWorth += assetWorth;
       });
@@ -74,7 +77,7 @@ export default function TotalChart ({ accountAssets, isDarkTheme, pricesInCurren
     }
 
     return { assets: undefined, totalWorth: undefined };
-  }, [accountAssets, calPrice, formatNumber, priceOf]);
+  }, [accountAssets, calPrice, formatNumber, priceOf, theme]);
 
   useEffect(() => {
     const worths = assets?.map(({ worth }) => worth);
@@ -128,7 +131,7 @@ export default function TotalChart ({ accountAssets, isDarkTheme, pricesInCurren
           <canvas id='chartCanvas' ref={chartRef} />
         </Grid>
         <Grid container item xs>
-          {assets && assets.slice(0, 3).map(({ genesisHash, percentage, token }, index) => {
+          {assets && assets.slice(0, 3).map(({ color, genesisHash, percentage, token }, index) => {
             const logoInfo = getLogo2(genesisHash, token);
 
             return (
@@ -139,7 +142,7 @@ export default function TotalChart ({ accountAssets, isDarkTheme, pricesInCurren
                     {token}
                   </Typography>
                 </Grid>
-                <Divider orientation='vertical' sx={{ bgcolor: getLogo2(genesisHash, token)?.color, height: '21px', m: 'auto', width: '5px' }} />
+                <Divider orientation='vertical' sx={{ bgcolor: color, height: '21px', m: 'auto', width: '5px' }} />
                 <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
                   {`${percentage}%`}
                 </Typography>

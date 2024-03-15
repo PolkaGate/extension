@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
-import { Box, Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Box, Collapse, Divider, Grid, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
@@ -14,7 +14,7 @@ import { stars6Black, stars6White } from '../../../assets/icons';
 import { AccountsAssetsContext, DisplayLogo } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, usePrices3, useTranslation } from '../../../hooks';
-import { TEST_NETS } from '../../../util/constants';
+import { TEST_NETS, TOKENS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import { amountToHuman } from '../../../util/utils';
 import Chart from './Chart';
@@ -23,7 +23,39 @@ interface Props {
   hideNumbers: boolean | undefined;
 }
 
-function TotalBalancePieChart ({ hideNumbers }: Props): React.ReactElement {
+interface AssetsWithUiAndPrice extends FetchedBalance {
+  percent: number;
+  price: number;
+  ui: {
+    color: string | undefined;
+    logo: string | undefined;
+  };
+}
+
+export function adjustColor(token: string, color: string, theme: Theme): string {
+  if ((TOKENS_WITH_BLACK_LOGO.find((t) => t === token) && theme.palette.mode === 'dark')) {
+    const cleanedColor = color.replace(/^#/, '');
+
+    // Convert hexadecimal to RGB
+    const r = parseInt(cleanedColor.substring(0, 2), 16);
+    const g = parseInt(cleanedColor.substring(2, 4), 16);
+    const b = parseInt(cleanedColor.substring(4, 6), 16);
+
+    // Calculate inverted RGB values
+    const invertedR = 255 - r;
+    const invertedG = 255 - g;
+    const invertedB = 255 - b;
+
+    // Convert back to hexadecimal format
+    const invertedHex = `#${(1 << 24 | invertedR << 16 | invertedG << 8 | invertedB).toString(16).slice(1)}`;
+
+    return invertedHex;
+  }
+
+  return color;
+}
+
+function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const currency = useCurrency();
@@ -60,12 +92,12 @@ function TotalBalancePieChart ({ hideNumbers }: Props): React.ReactElement {
     return totalPrice;
   }, [accountsAssets, calPrice, pricesInCurrencies]);
 
-  const assets = useMemo(() => {
+  const assets = useMemo((): AssetsWithUiAndPrice[] | undefined => {
     if (!accountsAssets || !allAccountsTotalBalance || !pricesInCurrencies) {
       return undefined;
     }
 
-    let allAccountsAssets = [] as FetchedBalance[];
+    let allAccountsAssets = [] as AssetsWithUiAndPrice[];
     const balances = accountsAssets.balances;
 
     Object.keys(balances).forEach((address) => {
@@ -79,7 +111,7 @@ function TotalBalancePieChart ({ hideNumbers }: Props): React.ReactElement {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const groupedAssets = Object.groupBy(allAccountsAssets, ({ genesisHash, token }) => `${token}_${genesisHash}`);
     const aggregatedAssets = Object.keys(groupedAssets).map((index) => {
-      const assetSample = groupedAssets[index][0] as FetchedBalance;
+      const assetSample = groupedAssets[index][0] as AssetsWithUiAndPrice;
       const ui = getLogo2(assetSample?.genesisHash, assetSample?.token);
       const assetPrice = pricesInCurrencies.prices[assetSample.priceId]?.value;
       const accumulatedPricePerAsset = groupedAssets[index].reduce((sum, { totalBalance }) => sum.add(new BN(totalBalance)), BN_ZERO) as BN;
@@ -93,7 +125,7 @@ function TotalBalancePieChart ({ hideNumbers }: Props): React.ReactElement {
           price: assetPrice,
           totalBalance: balancePrice,
           ui: {
-            color: ui?.color,
+            color: adjustColor(assetSample.token, ui?.color, theme),
             logo: ui?.logo
           }
         }
@@ -111,7 +143,7 @@ function TotalBalancePieChart ({ hideNumbers }: Props): React.ReactElement {
     });
 
     return aggregatedAssets;
-  }, [accountsAssets, allAccountsTotalBalance, calPrice, formatNumber, pricesInCurrencies]);
+  }, [accountsAssets, allAccountsTotalBalance, calPrice, formatNumber, pricesInCurrencies, theme]);
 
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
@@ -136,7 +168,7 @@ function TotalBalancePieChart ({ hideNumbers }: Props): React.ReactElement {
           </Typography>
         </Grid>
       </Grid>
-    )
+    );
   };
 
   return (
