@@ -11,7 +11,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
 
-async function toGetNativeToken (addresses, api, chainName) {
+async function toGetNativeToken(addresses, api, chainName) {
   const _result = {};
 
   const balances = await Promise.all(addresses.map((address) => api.derive.balances.all(address)));
@@ -36,7 +36,7 @@ async function toGetNativeToken (addresses, api, chainName) {
   return _result;
 }
 
-async function getAssetOnAcala (addresses, assetsToBeFetched, chainName) {
+async function getAssetOnAcala(addresses, assetsToBeFetched, chainName) {
   const endpoints = getChainEndpoints(chainName);
   const { api, connections } = await fastestEndpoint(endpoints, false);
 
@@ -81,11 +81,12 @@ onmessage = async (e) => {
 
   const assetsChains = createAssets();
   const chainName = 'acala';
-  const assetsToBeFetched = assetsChains[chainName];
+  const acalaFilteredSymbols = ['lcDOT', 'GLMR', 'PARA', 'tDOT', 'INTR', 'ASTR', 'EQ', 'iBTC', 'DAI', 'USDT'];
+  const assetsToBeFetched = assetsChains[chainName].filter(({ symbol }) => !acalaFilteredSymbols.includes(symbol));
 
   /** if assetsToBeFetched === undefined then we don't fetch assets by default at first, but wil fetch them on-demand later in account details page*/
   if (!assetsToBeFetched) {
-    console.warn(`getAssetOnAcala: No assets to be fetched on ${chainName}`);
+    console.info(`getAssetOnAcala: No assets to be fetched on ${chainName}`);
 
     return postMessage(undefined);
   }

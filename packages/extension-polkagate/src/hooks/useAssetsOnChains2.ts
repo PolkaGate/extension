@@ -281,10 +281,10 @@ export default function useAssetsOnChains2(accounts: AccountJson[] | null): Save
   }, [combineAndSetAssets, handleSetWorkersCall]);
 
   const fetchMultiAssetChainAssets = useCallback((maybeMultiAssetChainName: string) => {
-    // if (maybeMultiAssetChainName === 'acala') {
-    //   fetchAssetsOnAcala(addresses!);
-    // }
-  }, []);
+    if (maybeMultiAssetChainName === 'acala') {
+      fetchAssetsOnAcala(addresses!);
+    }
+  }, [addresses, fetchAssetsOnAcala]);
 
   const fetchAssets = useCallback((genesisHash: string, isSingleTokenChain: boolean, maybeMultiAssetChainName: string | undefined) => {
     /** Checking assets balances on Relay chains */
