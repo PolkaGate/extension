@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Avatar, Grid, Popover, Typography, useTheme } from '@mui/material';
@@ -19,7 +18,7 @@ interface Props {
   chains: string[];
 }
 
-function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<Props> {
+function FullScreenChainSwitch ({ address, chains }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const options = useGenesisHashOptions();
   const currentChainNameFromAccount = useChainName(address);
@@ -35,12 +34,6 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
     setCurrentSelectedChainName(currentChainNameFromAccount);
   }, [currentChainNameFromAccount]);
 
-  // useEffect(() => {
-  //   if (!currentSelectedChainName && currentChainNameFromAccount) {
-  //     setCurrentSelectedChainName(currentChainNameFromAccount);
-  //   }
-  // }, [currentChainNameFromAccount, currentSelectedChainName]);
-
   const selectNetwork = useCallback((net: DropdownOption) => {
     setAnchorEl(null);
 
@@ -48,11 +41,11 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
       return;
     }
 
-    if (isTestnetDisabled(net.value)) {
+    if (isTestnetDisabled(net.value as string)) {
       return;
     }
 
-    tieAccount(address, net.value).catch(console.error);
+    tieAccount(address, net.value as string).catch(console.error);
     setCurrentSelectedChainName(net.text);
   }, [address, isTestnetDisabled]);
 

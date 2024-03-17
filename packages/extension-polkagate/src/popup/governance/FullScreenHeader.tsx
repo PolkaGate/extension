@@ -62,7 +62,6 @@ export function FullScreenHeader({ _otherComponents, noAccountDropDown = false, 
         return null;
     }
   }, [onAction, page, postId, topMenu]);
-  // onAction(`/${page}/${address}${topMenu ? `/${topMenu}` : page === 'socialRecovery' ? '/false' : ''}${postId ? `/${postId}` : ''}`)
 
   const goHome = useCallback(() => onAction('/'), [onAction]);
 

@@ -156,7 +156,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
     setBalanceToShow(undefined);
   }, [balances, chainName]);
 
-  const AssetsBox = () => (
+  const AccountTotal = () => (
     <Grid alignItems='center' container item xs>
       <Grid alignItems='center' container gap='15px' item justifyContent='center' width='fit-content'>
         <Typography fontSize='16px' fontWeight={400} pl='15px'>
@@ -184,7 +184,6 @@ export default function AccountInformation ({ accountAssets, address, api, balan
   const onAssetBoxClicked = useCallback((asset: FetchedBalance | undefined) => {
     address && asset && tieAccount(address, asset.genesisHash).finally(() => {
       setSelectedAsset(asset);
-      // (asset?.assetId === undefined || asset?.assetId === -1) && setSelectedAsset(undefined);
     }).catch(console.error);
   }, [address, setSelectedAsset]);
 
@@ -282,7 +281,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
               <ShortAddress2 address={formatted || address} charsCount={40} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
             </Grid>
           </Grid>
-          <AssetsBox />
+          <AccountTotal />
         </Grid>
         <Grid container item justifyContent='flex-end' minHeight='50px'>
           <Divider sx={{ bgcolor: borderColor, height: '1px', mr: '5px', my: '15px', width: '100%' }} />
