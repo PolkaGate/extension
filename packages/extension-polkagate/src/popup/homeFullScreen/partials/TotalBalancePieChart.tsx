@@ -13,7 +13,7 @@ import { FetchedBalance } from '../../..//hooks/useAssetsOnChains2';
 import { stars6Black, stars6White } from '../../../assets/icons';
 import { AccountsAssetsContext, DisplayLogo } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
-import { useCurrency, usePrices3, useTranslation } from '../../../hooks';
+import { useCurrency, usePrices3, useTranslation, useYouHave } from '../../../hooks';
 import { TEST_NETS, TOKENS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import { amountToHuman } from '../../../util/utils';
@@ -60,6 +60,7 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
   const { t } = useTranslation();
   const currency = useCurrency();
   const pricesInCurrencies = usePrices3();
+  const youHave = useYouHave();
 
   const { accountsAssets } = useContext(AccountsAssetsContext);
 
@@ -73,27 +74,8 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
 
-  const allAccountsTotalBalance = useMemo(() => {
-    if (!accountsAssets?.balances || !pricesInCurrencies) {
-      return undefined;
-    }
-
-    let totalPrice = 0;
-    const balances = accountsAssets.balances;
-
-    Object.keys(balances).forEach((address) => {
-      Object.keys(balances?.[address]).forEach((genesisHash) => {
-        balances?.[address]?.[genesisHash].forEach((asset) => {
-          totalPrice += calPrice(pricesInCurrencies.prices[asset.priceId]?.value ?? 0, asset.totalBalance, asset.decimal);
-        });
-      });
-    });
-
-    return totalPrice;
-  }, [accountsAssets, calPrice, pricesInCurrencies]);
-
   const assets = useMemo((): AssetsWithUiAndPrice[] | undefined => {
-    if (!accountsAssets || !allAccountsTotalBalance || !pricesInCurrencies) {
+    if (!accountsAssets || !youHave || !pricesInCurrencies) {
       return undefined;
     }
 
@@ -121,7 +103,7 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
       return (
         {
           ...assetSample,
-          percent: formatNumber((balancePrice / allAccountsTotalBalance) * 100),
+          percent: formatNumber((balancePrice / youHave) * 100),
           price: assetPrice,
           totalBalance: balancePrice,
           ui: {
@@ -143,7 +125,7 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
     });
 
     return aggregatedAssets;
-  }, [accountsAssets, allAccountsTotalBalance, calPrice, formatNumber, pricesInCurrencies, theme]);
+  }, [accountsAssets, youHave, calPrice, formatNumber, pricesInCurrencies, theme]);
 
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
@@ -184,10 +166,10 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
             sx={{ height: '60px', width: '154px' }}
           />
           : <Typography fontSize='40px' fontWeight={700}>
-            {`${currency?.sign ?? ''}${nFormatter(allAccountsTotalBalance ?? 0, 2)}`}
+            {`${currency?.sign ?? ''}${nFormatter(youHave ?? 0, 2)}`}
           </Typography>}
       </Grid>
-      {allAccountsTotalBalance !== 0 && assets && assets.length > 0 &&
+      {youHave !== 0 && assets && assets.length > 0 &&
         <Grid container item sx={{ borderTop: '1px solid', borderTopColor: borderColor, pt: '10px' }}>
           <Chart assets={assets} borderColor={borderColor} />
           <Grid container item pt='10px' rowGap='10px' xs>
