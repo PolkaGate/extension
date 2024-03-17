@@ -147,76 +147,6 @@ export default function AccountDetails(): React.ReactElement {
     });
   }, [account?.genesisHash, address, api, history]);
 
-  const AccountBalanceBody = () => (
-    <>
-      {supportAssetHubs &&
-        <ChangeAssets
-          address={address}
-          assetId={assetId || selectedAsset?.assetId}
-          label={t('Assets')}
-          onChange={onChangeAsset}
-          setAssetId={setAssetId}
-          style={{ '> div div div#selectChain': { borderRadius: '5px' }, '> div p': { fontSize: '16px' } }}
-        />}
-      <DisplayBalance
-        amount={balances?.availableBalance}
-        decimal={balances?.decimal}
-        isDarkTheme={isDarkTheme}
-        onClick={goToSend}
-        price={currentPrice}
-        theme={theme}
-        title={t<string>('Transferable')}
-        token={balances?.token}
-      />
-      {supportStaking &&
-        <DisplayBalance
-          amount={balances?.soloTotal}
-          decimal={balances?.decimal}
-          isDarkTheme={isDarkTheme}
-          onClick={goToSoloStaking}
-          price={currentPrice}
-          theme={theme}
-          title={t<string>('Solo Stake')}
-          token={balances?.token}
-        />}
-      {supportStaking &&
-        <DisplayBalance
-          amount={balances?.pooledBalance}
-          decimal={balances?.decimal}
-          isDarkTheme={isDarkTheme}
-          onClick={goToPoolStaking}
-          price={currentPrice}
-          theme={theme}
-          title={t<string>('Pool Stake')}
-          token={balances?.token}
-        />}
-      {supportGov &&
-        <LockedBalanceDisplay
-          address={address}
-          api={api}
-          chain={chain}
-          decimal={balances?.decimal}
-          formatted={String(formatted)}
-          isDarkTheme={isDarkTheme}
-          price={currentPrice}
-          refreshNeeded={refreshNeeded}
-          setDisplayPopup={setDisplayPopup}
-          setUnlockInformation={setUnlockInformation}
-          title={t<string>('Locked in Referenda')}
-          token={balances?.token}
-        />
-      }
-      <DisplayBalance
-        amount={balances?.reservedBalance}
-        decimal={balances?.decimal}
-        isDarkTheme={isDarkTheme}
-        price={currentPrice} // TODO: double check
-        title={t<string>('Reserved')}
-        token={balances?.token}
-      />
-    </>
-  );
-
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>
       <FullScreenHeader page='AccountDetails' />
@@ -245,7 +175,73 @@ export default function AccountDetails(): React.ReactElement {
                 setSelectedAsset={setSelectedAsset}
               />
               {account?.genesisHash &&
-                <AccountBalanceBody />
+                <>
+                  {supportAssetHubs &&
+                    <ChangeAssets
+                      address={address}
+                      assetId={assetId || selectedAsset?.assetId}
+                      label={t('Assets')}
+                      onChange={onChangeAsset}
+                      setAssetId={setAssetId}
+                      style={{ '> div div div#selectChain': { borderRadius: '5px' }, '> div p': { fontSize: '16px' } }}
+                    />}
+                  <DisplayBalance
+                    amount={balances?.availableBalance}
+                    decimal={balances?.decimal}
+                    isDarkTheme={isDarkTheme}
+                    onClick={goToSend}
+                    price={currentPrice}
+                    theme={theme}
+                    title={t<string>('Transferable')}
+                    token={balances?.token}
+                  />
+                  {supportStaking &&
+                    <DisplayBalance
+                      amount={balances?.soloTotal}
+                      decimal={balances?.decimal}
+                      isDarkTheme={isDarkTheme}
+                      onClick={goToSoloStaking}
+                      price={currentPrice}
+                      theme={theme}
+                      title={t<string>('Solo Stake')}
+                      token={balances?.token}
+                    />}
+                  {supportStaking &&
+                    <DisplayBalance
+                      amount={balances?.pooledBalance}
+                      decimal={balances?.decimal}
+                      isDarkTheme={isDarkTheme}
+                      onClick={goToPoolStaking}
+                      price={currentPrice}
+                      theme={theme}
+                      title={t<string>('Pool Stake')}
+                      token={balances?.token}
+                    />}
+                  {supportGov &&
+                    <LockedBalanceDisplay
+                      address={address}
+                      api={api}
+                      chain={chain}
+                      decimal={balances?.decimal}
+                      formatted={String(formatted)}
+                      isDarkTheme={isDarkTheme}
+                      price={currentPrice}
+                      refreshNeeded={refreshNeeded}
+                      setDisplayPopup={setDisplayPopup}
+                      setUnlockInformation={setUnlockInformation}
+                      title={t<string>('Locked in Referenda')}
+                      token={balances?.token}
+                    />
+                  }
+                  <DisplayBalance
+                    amount={balances?.reservedBalance}
+                    decimal={balances?.decimal}
+                    isDarkTheme={isDarkTheme}
+                    price={currentPrice} // TODO: double check
+                    title={t<string>('Reserved')}
+                    token={balances?.token}
+                  />
+                </>
               }
             </Grid>
             <Grid container direction='column' gap='15px' item width='275px'>
