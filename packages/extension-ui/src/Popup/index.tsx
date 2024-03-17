@@ -116,6 +116,7 @@ export default function Popup(): React.ReactElement {
   const [settingsCtx, setSettingsCtx] = useState<SettingsStruct>(startSettings);
   const [apis, setApis] = useState<APIs>({});
   const [fetching, setFetching] = useState<Fetching>({});
+  const [isFetchingPrices, setIsFetchingPrices] = useState(false);
   const [refs, setRefs] = useState<LatestRefs>({});
   const [accountsAssets, setAccountsAssets] = useState<SavedAssets | null | undefined>();
   const [currency, setCurrency] = useState<CurrencyItemType>();
@@ -153,16 +154,20 @@ export default function Popup(): React.ReactElement {
   }, [accounts, assetsOnChains2]);
 
   useEffect(() => {
-    priceIds && currency && getPrices3(priceIds, currency.code.toLowerCase()).then((newPrices) => {
-      getStorage('pricesInCurrencies').then((res) => {
-        const pricesInCurrencies = (res || {}) as PricesInCurrencies;
+    if (priceIds && currency && !isFetchingPrices) {
+      setIsFetchingPrices(true);
 
-        delete (newPrices as Prices3).currencyCode;
-        pricesInCurrencies[currency.code] = newPrices;
-        setStorage('pricesInCurrencies', pricesInCurrencies).catch(console.error);
+      getPrices3(priceIds, currency.code.toLowerCase()).then((newPrices) => {
+        getStorage('pricesInCurrencies').then((res) => {
+          const pricesInCurrencies = (res || {}) as PricesInCurrencies;
+
+          delete (newPrices as Prices3).currencyCode;
+          pricesInCurrencies[currency.code] = newPrices;
+          setStorage('pricesInCurrencies', pricesInCurrencies).catch(console.error);
+        }).catch(console.error);
       }).catch(console.error);
-    }).catch(console.error);
-  }, [currency, priceIds]);
+    }
+  }, [currency, isFetchingPrices, priceIds]);
 
   useEffect((): void => {
     Promise.all([
