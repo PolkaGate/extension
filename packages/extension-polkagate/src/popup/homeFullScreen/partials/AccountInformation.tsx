@@ -53,7 +53,7 @@ export const POPUPS_NUMBER = {
   RENAME: 2
 };
 
-export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation({ accountAssets, address, api, balances, chain, chainName, formatted, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const pricesInCurrencies = usePrices3();
   const currency = useCurrency();
@@ -211,6 +211,42 @@ export default function AccountInformation ({ accountAssets, address, api, balan
     address && onAction(`/account/${address}/`);
   }, [onAction, address]);
 
+  const AccountIcons = () => (
+    <Grid alignItems='center' container direction='column' display='grid' item justifyContent='center' justifyItems='center' width='fit-content' height='72px'>
+      <Grid item onClick={openIdentity} sx={{ border: '1px solid', borderColor: 'success.main', borderRadius: '5px', cursor: 'pointer', display: hasID ? 'inherit' : 'none', height: '24px', m: 'auto', p: '2px', width: 'fit-content' }}>
+        {hasID
+          ? accountInfo?.identity?.displayParent
+            ? <LinkIcon sx={{ bgcolor: 'success.main', border: '1px solid', borderRadius: '50%', color: 'white', fontSize: '18px', transform: 'rotate(-45deg)' }} />
+            : <CheckIcon sx={{ bgcolor: 'success.main', border: '1px solid', borderRadius: '50%', color: 'white', fontSize: '18px' }} />
+          : undefined
+        }
+      </Grid>
+      <Grid height='24px' item width='24px'>
+        <Infotip placement='right' text={t(recoverableToolTipTxt)}>
+          <IconButton
+            onClick={openSocialRecovery}
+            sx={{ height: '24px', width: '24px' }}
+          >
+            <FontAwesomeIcon
+              icon={faShieldHalved}
+              style={{ border: '1px solid', borderRadius: '5px', color: isRecoverable ? theme.palette.success.main : theme.palette.action.disabledBackground, fontSize: '16px', padding: '3px' }}
+            />
+          </IconButton>
+        </Infotip>
+      </Grid>
+      <Grid height='24px' item width='fit-content'>
+        <Infotip placement='right' text={t(proxyTooltipTxt)}>
+          <IconButton onClick={openManageProxy} sx={{ height: '16px', width: '16px' }}>
+            <FontAwesomeIcon
+              icon={faSitemap}
+              style={{ border: '1px solid', borderRadius: '5px', color: hasProxy ? theme.palette.success.main : theme.palette.action.disabledBackground, fontSize: '16px', padding: '2px' }}
+            />
+          </IconButton>
+        </Infotip>
+      </Grid>
+    </Grid>
+  );
+
   return (
     <>
       <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isChild ? '1px dashed' : theme.palette.mode === 'dark' ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', p: '20px 10px 15px 30px' }}>
@@ -224,39 +260,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
                 value={formatted || address}
               />
             </Grid>
-            <Grid alignItems='center' container direction='column' display='grid' item justifyContent='center' justifyItems='center' width='fit-content'>
-              <Grid item onClick={openIdentity} sx={{ border: '1px solid', borderColor: 'success.main', borderRadius: '5px', cursor: 'pointer', display: hasID ? 'inherit' : 'none', height: '24px', m: 'auto', p: '2px', width: 'fit-content' }}>
-                {hasID
-                  ? accountInfo?.identity?.displayParent
-                    ? <LinkIcon sx={{ bgcolor: 'success.main', border: '1px solid', borderRadius: '50%', color: 'white', fontSize: '18px', transform: 'rotate(-45deg)' }} />
-                    : <CheckIcon sx={{ bgcolor: 'success.main', border: '1px solid', borderRadius: '50%', color: 'white', fontSize: '18px' }} />
-                  : undefined
-                }
-              </Grid>
-              <Grid height='24px' item width='24px'>
-                <Infotip placement='right' text={t(recoverableToolTipTxt)}>
-                  <IconButton
-                    onClick={openSocialRecovery}
-                    sx={{ height: '24px', width: '24px' }}
-                  >
-                    <FontAwesomeIcon
-                      icon={faShieldHalved}
-                      style={{ border: '1px solid', borderRadius: '5px', color: isRecoverable ? theme.palette.success.main : theme.palette.action.disabledBackground, fontSize: '16px', padding: '3px' }}
-                    />
-                  </IconButton>
-                </Infotip>
-              </Grid>
-              <Grid height='24px' item width='fit-content'>
-                <Infotip placement='right' text={t(proxyTooltipTxt)}>
-                  <IconButton onClick={openManageProxy} sx={{ height: '16px', width: '16px' }}>
-                    <FontAwesomeIcon
-                      icon={faSitemap}
-                      style={{ border: '1px solid', borderRadius: '5px', color: hasProxy ? theme.palette.success.main : theme.palette.action.disabledBackground, fontSize: '16px', padding: '2px' }}
-                    />
-                  </IconButton>
-                </Infotip>
-              </Grid>
-            </Grid>
+            <AccountIcons />
           </Grid>
           <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: borderColor, px: '7px' }} xs={5.5}>
             <Grid container item justifyContent='space-between'>
