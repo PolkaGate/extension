@@ -8,8 +8,9 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import getPoolAccounts from '../getPoolAccounts';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
+import { TEST_NETS } from '../constants';
 
-async function getPooledBalance (api, address) {
+async function getPooledBalance(api, address) {
   const response = await api.query.nominationPools.poolMembers(address);
   const member = response && response.unwrapOr(undefined);
 
@@ -44,7 +45,7 @@ async function getPooledBalance (api, address) {
   return active.add(rewards).add(unlockingValue);
 }
 
-async function getTotalBalance (chainName, addresses) {
+async function getTotalBalance(chainName, addresses) {
   const chainEndpoints = getChainEndpoints(chainName);
 
   const { api, connections } = await fastestEndpoint(chainEndpoints, false);
@@ -67,7 +68,7 @@ async function getTotalBalance (chainName, addresses) {
   }
 }
 
-async function getAssetOnRelayChain (addresses, chainName) {
+async function getAssetOnRelayChain(addresses, chainName) {
   const results = {};
 
   await getTotalBalance(chainName, addresses)
@@ -77,11 +78,14 @@ async function getAssetOnRelayChain (addresses, chainName) {
           return undefined;
         }
 
+        const genesisHash = api.genesisHash.toString();
+        const priceId = TEST_NETS.includes(genesisHash) ? undefined : chainName; // based on the fact that relay chains price id is the same as their sanitized names,except for testnets
+
         results[address] = [{ // since some chains may have more than one asset hence we use an array here! even thought its not needed for relay chains but just to be as a general rule.
           chainName,
           decimal: api.registry.chainDecimals[0],
-          genesisHash: api.genesisHash.toString(),
-          priceId: chainName, // based on the fact that relay chains price id is the same as their sanitized names
+          genesisHash,
+          priceId,
           token: api.registry.chainTokens[0],
           totalBalance: String(totalBalance)
         }];

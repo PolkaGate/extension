@@ -88,7 +88,18 @@ export default function AccountDetails(): React.ReactElement {
   const supportStaking = useMemo(() => STAKING_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
   const supportAssetHubs = useMemo(() => ASSET_HUBS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
   const showTotalChart = useMemo(() => accountAssets && accountAssets.length > 0 && accountAssets.filter((_asset) => pricesInCurrency && currency && pricesInCurrency.prices[_asset?.priceId]?.value > 0 && !new BN(_asset.totalBalance).isZero()), [accountAssets, currency, pricesInCurrency]);
-  const currentPrice = useMemo((): number | undefined => pricesInCurrency?.prices?.[selectedAsset?.priceId || sanitizeChainName(chainName)?.toLocaleLowerCase()]?.value, [selectedAsset?.priceId, chainName, pricesInCurrency?.prices]);
+  const currentPrice = useMemo((): number | undefined => {
+    const selectedAssetPriceId = selectedAsset?.priceId;
+
+    if (selectedAsset && !selectedAssetPriceId) {
+      return 0; // price is 0 for assets with no priceId
+    }
+
+    const currentChainName = sanitizeChainName(chainName)?.toLocaleLowerCase();
+    const currentAssetPrices = pricesInCurrency?.prices?.[(selectedAssetPriceId || currentChainName) as string];
+
+    return currentAssetPrices?.value;
+  }, [selectedAsset, chainName, pricesInCurrency?.prices]);
 
   const hasParent = useMemo(() => account ? accounts.find(({ address }) => address === account.parentAddress) : undefined, [account, accounts]);
 
