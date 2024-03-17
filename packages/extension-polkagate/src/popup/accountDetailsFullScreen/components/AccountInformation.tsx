@@ -6,7 +6,7 @@
 import { faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CheckCircleOutline as CheckIcon, InsertLinkRounded as LinkIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton, Skeleton, useTheme } from '@mui/material';
+import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -76,22 +76,32 @@ const BalanceRow = ({ balanceToShow, isBalanceOutdated, isPriceOutdated, price }
   </Grid>
 );
 
-const SelectedAsset = ({ account, balanceToShow, isBalanceOutdated, isPriceOutdated, price }: { account: AccountJson | undefined, balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined, isPriceOutdated: boolean, price: number | undefined }) => {
+const SelectedAssetBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOutdated, price }: { account: AccountJson | undefined, balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined, isPriceOutdated: boolean, price: number | undefined }) => {
   const logoInfo = useMemo(() => account?.genesisHash ? getLogo2(account?.genesisHash, balanceToShow?.token) : undefined, [account?.genesisHash, balanceToShow?.token]);
+  const { t } = useTranslation();
 
   return (
-    <Grid alignItems='center' container item minWidth='40%'>
-      <Grid item pl='7px'>
-        <DisplayLogo assetSize='42px' baseTokenSize='20px' genesisHash={account?.genesisHash} logo={logoInfo?.logo as string} subLogo={logoInfo?.subLogo as string} />
-      </Grid>
-      <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
-        <BalanceRow balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} isPriceOutdated={isPriceOutdated} price={price} />
-      </Grid>
+    <Grid alignItems='center' container justifyContent='center' item minWidth='40%'>
+      {account?.genesisHash
+        ? <>
+          <Grid item pl='7px'>
+            <DisplayLogo assetSize='42px' baseTokenSize='20px' genesisHash={account?.genesisHash} logo={logoInfo?.logo as string} subLogo={logoInfo?.subLogo as string} />
+          </Grid>
+          <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
+            <BalanceRow balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} isPriceOutdated={isPriceOutdated} price={price} />
+          </Grid>
+        </>
+        : <Infotip placement='right' showInfoMark text={t('Switch chain from top right, or click on an asset if any.')}>
+          <Typography fontSize='18px' fontWeight={500} sx={{ pl: '10px' }}>
+            {t('Account is in Any Chain mode')}
+          </Typography>
+        </Infotip>
+      }
     </Grid>
   );
 };
 
-export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, price, pricesInCurrency, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, price, pricesInCurrency, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
 
   const account = useAccount(address);
@@ -274,7 +284,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
               <ShortAddress2 address={formatted || address} clipped showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
             </Grid>
           </Grid>
-          <SelectedAsset
+          <SelectedAssetBox
             account={account}
             balanceToShow={balanceToShow}
             isBalanceOutdated={isBalanceOutdated}

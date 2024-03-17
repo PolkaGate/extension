@@ -79,12 +79,12 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
   const stakingIconColor = useMemo(() => stakingDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary, [stakingDisabled, theme.palette.action.disabledBackground, theme.palette.text.primary]);
 
   const goToSend = useCallback(() => {
-    address && onAction(`/send/${address}/${assetId}`);
-  }, [address, assetId, onAction]);
+    address && genesisHash && onAction(`/send/${address}/${assetId}`);
+  }, [address, assetId, genesisHash, onAction]);
 
   const goToReceive = useCallback(() => {
-    address && setDisplayPopup(popupNumbers.RECEIVE);
-  }, [address, setDisplayPopup]);
+    address && genesisHash && setDisplayPopup(popupNumbers.RECEIVE);
+  }, [address, genesisHash, setDisplayPopup]);
 
   const goToGovernance = useCallback(() => {
     address && genesisHash && !governanceDisabled && windowOpen(`/governance/${address}/referenda`).catch(console.error);
@@ -110,8 +110,8 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
   }, [address, crowdloanDisabled, genesisHash, onAction]);
 
   const goToHistory = useCallback(() => {
-    address && setDisplayPopup(popupNumbers.HISTORY);
-  }, [address, setDisplayPopup]);
+    address && genesisHash && setDisplayPopup(popupNumbers.HISTORY);
+  }, [address, genesisHash, setDisplayPopup]);
 
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} width='275px'>
@@ -122,6 +122,7 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
       <Grid alignItems='center' container direction='column' display='block' item justifyContent='center'>
         <TaskButton
           borderColor={borderColor}
+          disabled={!genesisHash}
           icon={
             <FontAwesomeIcon
               color={theme.palette.text.primary}
@@ -135,6 +136,7 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
         />
         <TaskButton
           borderColor={borderColor}
+          disabled={!genesisHash}
           icon={
             <QrCodeIcon sx={{ color: 'text.primary', cursor: 'pointer', fontSize: '35px' }} />
           }
@@ -203,6 +205,7 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
         />
         <TaskButton
           borderColor={borderColor}
+          disabled={!genesisHash}
           icon={
             <FontAwesomeIcon
               color={`${theme.palette.text.primary}`}
