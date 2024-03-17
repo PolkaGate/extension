@@ -6,9 +6,9 @@
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
+import { TEST_NETS } from '../constants';
 import getPoolAccounts from '../getPoolAccounts';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
-import { TEST_NETS } from '../constants';
 
 async function getPooledBalance(api, address) {
   const response = await api.query.nominationPools.poolMembers(address);
