@@ -64,16 +64,6 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
     settings.set({ camera: camera ? 'on' : 'off' });
   }, [camera]);
 
-  useEffect(() => {
-    !isEnableTestnetChecked && (
-      accounts?.forEach(({ address, genesisHash }) => {
-        if (genesisHash && TEST_NETS.includes(genesisHash)) {
-          tieAccount(address, null).catch(console.error);
-        }
-      })
-    );
-  }, [accounts, isEnableTestnetChecked]);
-
   const onAuthManagement = useCallback(() => {
     setShowManageWebAccess(true);
   }, []);
