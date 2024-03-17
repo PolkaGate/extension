@@ -156,7 +156,7 @@ export default function AccountDetails(): React.ReactElement {
             {t<string>('Account Details')}
           </Typography>
           <Grid container item justifyContent='space-between' mb='15px'>
-            <Grid container direction='column' item rowGap='10px' width='calc(100% - 275px - 3%)'>
+            <Grid container direction='column' item minWidth='735px' rowGap='10px' width='calc(100% - 300px - 3%)' mb='10px'>
               <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', ml: 5, position: 'absolute', px: 1, width: 'fit-content' }}>
                 {label(account, hasParent?.name || '', t)}
               </Grid>
@@ -244,7 +244,7 @@ export default function AccountDetails(): React.ReactElement {
                 </>
               }
             </Grid>
-            <Grid container direction='column' gap='15px' item width='275px'>
+            <Grid container direction='column' gap='15px' item width='300px'>
               {showTotalChart &&
                 <TotalChart
                   accountAssets={accountAssets}

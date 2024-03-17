@@ -48,24 +48,24 @@ export const TaskButton = ({ borderColor, disabled, icon, noBorderButton = false
         <Grid container item xs={3}>
           {icon}
         </Grid>
-        <Grid container item xs={7}>
+        <Grid container item xs>
           <Typography color={disabled ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='16px' fontWeight={500}>
             {text}
           </Typography>
         </Grid>
-        <Grid alignItems='center' container item justifyContent='flex-end' xs={2}>
-          {secondaryIconType === 'page'
-            ? <ArrowForwardIosRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '26px', stroke: disabled ? theme.palette.text.disabled : theme.palette.secondary.light, strokeWidth: 1 }} />
-            : <OpenInNewRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '25px' }} />
-          }
-        </Grid>
+        {secondaryIconType === 'page' &&
+          <Grid alignItems='center' container item justifyContent='flex-end' xs={2}>
+            <ArrowForwardIosRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '26px', stroke: disabled ? theme.palette.text.disabled : theme.palette.secondary.light, strokeWidth: 1 }} />
+          </Grid>
+        }
       </Grid>
-      {!noBorderButton && <Divider sx={{ bgcolor: borderColor, height: '2px', m: '5px auto', width: '85%' }} />}
+      {!noBorderButton && <Divider sx={{ bgcolor: borderColor, height: '2px', m: '5px auto', width: '85%' }} />
+      }
     </>
   );
 };
 
-export default function CommonTasks({ address, api, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
+export default function CommonTasks ({ address, api, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
@@ -114,7 +114,7 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
   }, [address, genesisHash, setDisplayPopup]);
 
   return (
-    <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} width='275px'>
+    <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} width='inherit'>
       <Typography fontSize='22px' fontWeight={700}>
         {t<string>('Most common tasks')}
       </Typography>

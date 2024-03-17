@@ -45,12 +45,9 @@ export const TaskButton = ({ borderColor, children, disabled, extra, hasChildren
             {text}
           </Typography>
         </Grid>
-        {secondaryIconType &&
+        {secondaryIconType === 'page' &&
           <Grid alignItems='center' container item justifyContent='flex-end' xs={1}>
-            {secondaryIconType === 'page'
-              ? <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1, transform: hasChildren ? showChildren ? 'rotate(-90deg)' : 'rotate(90deg)' : 'rotate(0deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
-              : <OpenInNewRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '25px' }} />
-            }
+            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1, transform: hasChildren ? showChildren ? 'rotate(-90deg)' : 'rotate(90deg)' : 'rotate(0deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
           </Grid>
         }
       </Grid>
@@ -141,7 +138,6 @@ export default function HomeMenu(): React.ReactElement {
             <vaadin-icon icon='vaadin:download' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
           onClick={onExportAll}
-          secondaryIconType='page'
           secondaryIconType='popup'
           text={t<string>('Export all accounts')}
         />
