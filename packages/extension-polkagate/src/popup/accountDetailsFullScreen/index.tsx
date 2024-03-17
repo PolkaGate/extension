@@ -92,13 +92,15 @@ export default function AccountDetails(): React.ReactElement {
     const selectedAssetPriceId = selectedAsset?.priceId;
 
     if (selectedAsset && !selectedAssetPriceId) {
-      return 0; // price is 0 for assets with no priceId
+      // price is 0 for assets with no priceId
+      return 0;
     }
 
     const currentChainName = sanitizeChainName(chainName)?.toLocaleLowerCase();
     const currentAssetPrices = pricesInCurrency?.prices?.[(selectedAssetPriceId || currentChainName) as string];
+    const mayBeTestNetPrice = pricesInCurrency?.prices && !currentAssetPrices ? 0 : undefined;
 
-    return currentAssetPrices?.value;
+    return currentAssetPrices?.value || mayBeTestNetPrice;
   }, [selectedAsset, chainName, pricesInCurrency?.prices]);
 
   const hasParent = useMemo(() => account ? accounts.find(({ address }) => address === account.parentAddress) : undefined, [account, accounts]);
