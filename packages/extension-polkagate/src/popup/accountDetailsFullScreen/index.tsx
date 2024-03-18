@@ -149,16 +149,16 @@ export default function AccountDetails(): React.ReactElement {
   }, [account?.genesisHash, address, api, history]);
 
   const onBackClick = useCallback(() => {
-    history.push({ pathname: `/` });
-  }, [account?.genesisHash, address, api, history]);
+    history.push({ pathname: '/' });
+  }, [history]);
 
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>
       <FullScreenHeader page='AccountDetails' />
       <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '5%' }}>
-          <Grid container item alignItems='center'>
-            <Grid item>
+          <Grid alignItems='center' container item>
+            <Grid container item width='fit-content'>
               <ArrowBackIosIcon
                 onClick={onBackClick}
                 sx={{
