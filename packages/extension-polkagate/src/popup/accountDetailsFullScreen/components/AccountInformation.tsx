@@ -154,13 +154,13 @@ export default function AccountInformation({ accountAssets, address, api, balanc
               value={formatted || address}
             />
           </Grid>
+          <AccountIcons
+            address={address}
+            api={api}
+            chain={chain}
+            formatted={formatted}
+          />
         </Grid>
-        <AccountIcons
-          address={address}
-          api={api}
-          chain={chain}
-          formatted={formatted}
-        />
         <Grid container item sx={{ display: 'grid', gridTemplateColumns: 'minmax(150px, 60%) max-content' }} xs>
           <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: borderColor, px: '7px' }}>
             <Grid container item justifyContent='space-between'>
