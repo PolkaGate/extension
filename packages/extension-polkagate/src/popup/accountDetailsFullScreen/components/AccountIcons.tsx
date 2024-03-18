@@ -21,11 +21,10 @@ import { Proxy } from '../../../util/types';
 interface AddressDetailsProps {
   address: string | undefined;
   api: ApiPromise | undefined;
-  chain: Chain | null | undefined;
   formatted: string | undefined;
 }
 
-export default function AccountIcons ({ address, api, chain, formatted }: AddressDetailsProps): React.ReactElement {
+export default function AccountIcons ({ address, api, formatted }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -98,8 +97,8 @@ export default function AccountIcons ({ address, api, chain, formatted }: Addres
   }, [address]);
 
   const openManageProxy = useCallback(() => {
-    address && chain && onAction(`/manageProxies/${address}`);
-  }, [address, chain, onAction]);
+    address && onAction(`/fullscreenProxyManagement/${address}`);
+  }, [address, onAction]);
 
   return (
     <Grid alignItems='center' container direction='column' display='grid' item justifyContent='center' justifyItems='center' width='fit-content' height='72px'>

@@ -45,6 +45,7 @@ import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeed
 import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJSONFullScreen';
 import ManageIdentity from '../../../extension-polkagate/src/popup/manageIdentity';
 import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
+import FullScreenManageProxies from '../../../extension-polkagate/src/popup/manageProxiesFullScreen';
 import Metadata from '../../../extension-polkagate/src/popup/metadata';
 import CreateAccount from '../../../extension-polkagate/src/popup/newAccount/createAccountFullScreen';
 import PhishingDetected from '../../../extension-polkagate/src/popup/PhishingDetected';
@@ -257,7 +258,6 @@ export default function Popup(): React.ReactElement {
                                     <Switch>
                                       <Route path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<AccountEx />, 'account')}</Route>
                                       <Route path='/account/create'>{wrapWithErrorBoundary(<CreateAccount />, 'account-creation')}</Route>
-                                      <Route path='/fullscreenDerive/:address/'>{wrapWithErrorBoundary(<FullscreenDerive />, 'fullscreen-account-derive')}</Route>
                                       <Route path='/account/export-all'>{wrapWithErrorBoundary(<ExportAll />, 'export-all-address')}</Route>
                                       <Route path='/account/import-ledger'>{wrapWithErrorBoundary(<ImportLedger />, 'import-ledger')}</Route>
                                       <Route path='/account/import-seed'>{wrapWithErrorBoundary(<ImportSeed />, 'import-seed')}</Route>
@@ -269,6 +269,8 @@ export default function Popup(): React.ReactElement {
                                       <Route path='/derive/:address'>{wrapWithErrorBoundary(<Derive />, 'derive-address')}</Route>
                                       <Route path='/export/:address'>{wrapWithErrorBoundary(<Export />, 'export-address')}</Route>
                                       <Route path='/forget/:address/:isExternal'>{wrapWithErrorBoundary(<ForgetAccount />, 'forget-address')}</Route>
+                                      <Route path='/fullscreenDerive/:address/'>{wrapWithErrorBoundary(<FullscreenDerive />, 'fullscreen-account-derive')}</Route>
+                                      <Route path='/fullscreenProxyManagement/:address/'>{wrapWithErrorBoundary(<FullScreenManageProxies />, 'fullscreen-proxy-management')}</Route>
                                       <Route path='/governance/:address/:topMenu/:postId'>{wrapWithErrorBoundary(<ReferendumPost />, 'governance')}</Route>
                                       <Route path='/governance/:address/:topMenu'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route>
                                       <Route path='/history/:address'>{wrapWithErrorBoundary(<History />, 'history')}</Route>

@@ -17,7 +17,7 @@ import ThemeChanger from './partials/ThemeChanger';
 import { MAX_WIDTH } from './utils/consts';
 
 interface Props {
-  page?: 'governance' | 'manageIdentity' | 'send' | 'socialRecovery' | 'AccountDetails';
+  page?: 'governance' | 'manageIdentity' | 'send' | 'socialRecovery' | 'AccountDetails' | 'proxyManagement';
   noChainSwitch?: boolean;
   noAccountDropDown?: boolean;
   _otherComponents?: JSX.Element;
@@ -48,6 +48,8 @@ export function FullScreenHeader({ _otherComponents, noAccountDropDown = false, 
 
   const onAccountChange = useCallback((selectedAddress: string) => {
     switch (page) {
+      case 'proxyManagement':
+        return onAction(`/fullscreenProxyManagement/${selectedAddress}`);
       case 'governance':
         return onAction(`/governance/${selectedAddress}/${`${topMenu ?? ''}`}/${postId ?? ''}`);
       case 'manageIdentity':

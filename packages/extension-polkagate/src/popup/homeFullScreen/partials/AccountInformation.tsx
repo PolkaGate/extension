@@ -51,7 +51,7 @@ export const POPUPS_NUMBER = {
   RENAME: 2
 };
 
-export default function AccountInformation({ accountAssets, address, api, balances, chain, chainName, formatted, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const pricesInCurrencies = usePrices3();
   const currency = useCurrency();
@@ -155,7 +155,6 @@ export default function AccountInformation({ accountAssets, address, api, balanc
             <AccountIcons
               address={address}
               api={api}
-              chain={chain}
               formatted={formatted}
             />          </Grid>
           <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: borderColor, px: '7px' }} xs={5.5}>

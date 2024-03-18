@@ -99,7 +99,7 @@ const SelectedAssetBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOu
   );
 };
 
-export default function AccountInformation({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, price, pricesInCurrency, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, price, pricesInCurrency, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
 
   const account = useAccount(address);
@@ -157,7 +157,6 @@ export default function AccountInformation({ accountAssets, address, api, balanc
           <AccountIcons
             address={address}
             api={api}
-            chain={chain}
             formatted={formatted}
           />
         </Grid>
