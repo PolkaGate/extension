@@ -87,3 +87,4 @@ export { default as useCurrency } from './useCurrency';
 export { default as usePrice2 } from './usePrice2';
 export { default as usePriceIds } from './usePriceIds';
 export { default as useYouHave } from './useYouHave';
+export { default as useAccountIdOrName } from './useAccountIdOrName';

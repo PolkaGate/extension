@@ -1135,5 +1135,16 @@
   "Less tokens": "",
   "More tokens": "",
   "Switch chain from top right, or click on an asset if any.": "",
-  "Account is in Any Chain mode": ""
+  "Account is in Any Chain mode": "",
+  "You already have added this account as {{proxyType}} proxy!": "",
+  "You can not add yourself as a proxy!": "",
+  "You can add an account included in this extension as a proxy of {{accountDisplayName}} to sign certain types of transactions on {{accountDisplayName}}'s behalf.": "",
+  "Adding": "",
+  "Removing": "",
+  "No change": "",
+  "Deposit amount:": "",
+  "Proxy Management": "",
+  "The chosen blockchain does not support proxy management.": "",
+  "You can add new proxies or remove existing ones for the account here. Keep in mind that you need to reserve a deposit to have proxies.": "",
+  "Proxy changes": ""
 }

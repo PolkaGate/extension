@@ -15,7 +15,7 @@ import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { AccountContext, AddressInput, InputWithLabel, Select, TwoButtons, Warning } from '../../components';
-import { useFormatted, useTranslation } from '../../hooks';
+import { useAccountIdOrName, useFormatted, useTranslation } from '../../hooks';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
 import { DropdownOption, ProxyItem } from '../../util/types';
@@ -32,11 +32,12 @@ interface Props {
   setProxyItems: React.Dispatch<React.SetStateAction<ProxyItem[] | null | undefined>>;
 }
 
-export default function AddProxy({ api, chain, proxiedAddress, proxyItems, setProxyItems, setStep }: Props): React.ReactElement {
+export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setProxyItems, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
   const formatted = useFormatted(proxiedAddress);
+  const accountDisplayName = useAccountIdOrName(proxiedAddress);
 
   const [proxyAddress, setProxyAddress] = useState<string | null>();
   const [delay, setDelay] = useState<number>(0);
@@ -44,7 +45,6 @@ export default function AddProxy({ api, chain, proxiedAddress, proxyItems, setPr
   const [duplicateProxy, setDuplicateProxy] = useState<boolean>(false);
 
   const myselfAsProxy = useMemo(() => formatted === proxyAddress, [formatted, proxyAddress]);
-  const accountName = useMemo(() => accounts.find(({ address }) => address === proxiedAddress)?.name, [accounts, proxiedAddress]);
   const PROXY_TYPE = CHAIN_PROXY_TYPES[sanitizeChainName(chain?.name) as keyof typeof CHAIN_PROXY_TYPES];
 
   const proxyTypeOptions = PROXY_TYPE.map((type: string): DropdownOption => ({
@@ -140,7 +140,7 @@ export default function AddProxy({ api, chain, proxiedAddress, proxyItems, setPr
           </Warning>
         </Grid>}
       <Typography fontSize='14px' fontWeight={400} pt='25px'>
-        {t("You can add an account included in this extension as a proxy of {{accountName}} to sign certain types of transactions on {{accountName}}'s behalf.", { replace: { accountName: accountName ?? 'Alice' } })}
+        {t("You can add an account included in this extension as a proxy of {{accountDisplayName}} to sign certain types of transactions on {{accountDisplayName}}'s behalf.", { replace: { accountDisplayName } })}
       </Typography>
       <AddressInput
         addWithQr
