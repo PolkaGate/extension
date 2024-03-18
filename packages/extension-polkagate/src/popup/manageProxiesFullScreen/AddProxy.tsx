@@ -15,8 +15,9 @@ import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { AccountContext, AddressInput, InputWithLabel, Select, TwoButtons, Warning } from '../../components';
-import { useTranslation } from '../../hooks';
+import { useFormatted, useTranslation } from '../../hooks';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
+import getAllAddresses from '../../util/getAllAddresses';
 import { DropdownOption, ProxyItem } from '../../util/types';
 import { sanitizeChainName } from '../../util/utils';
 import ShowIdentity from '../manageProxies/partials/ShowIdentity';
@@ -31,16 +32,19 @@ interface Props {
   setProxyItems: React.Dispatch<React.SetStateAction<ProxyItem[] | null | undefined>>;
 }
 
-export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setProxyItems, setStep }: Props): React.ReactElement {
+export default function AddProxy({ api, chain, proxiedAddress, proxyItems, setProxyItems, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
+  const formatted = useFormatted(proxiedAddress);
 
   const [proxyAddress, setProxyAddress] = useState<string | null>();
-  const [delay, setDelay] = useState<string>('0');
+  const [delay, setDelay] = useState<number>(0);
   const [accountInfo, setAccountInfo] = useState<DeriveAccountRegistration | undefined | null>();
   const [duplicateProxy, setDuplicateProxy] = useState<boolean>(false);
 
+  const myselfAsProxy = useMemo(() => formatted === proxyAddress, [formatted, proxyAddress]);
+  const accountName = useMemo(() => accounts.find(({ address }) => address === proxiedAddress)?.name, [accounts, proxiedAddress]);
   const PROXY_TYPE = CHAIN_PROXY_TYPES[sanitizeChainName(chain?.name) as keyof typeof CHAIN_PROXY_TYPES];
 
   const proxyTypeOptions = PROXY_TYPE.map((type: string): DropdownOption => ({
@@ -50,11 +54,7 @@ export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setP
 
   const [proxyType, setProxyType] = useState<string | number>(proxyTypeOptions[0].value);
 
-  const allAddresses = useMemo(() => {
-    return accounts
-      .filter(({ address }) => proxiedAddress !== address)
-      .map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name]);
-  }, [accounts, proxiedAddress]);
+  const allAddresses = getAllAddresses(accounts, false, true, chain?.ss58Format, proxiedAddress);
 
   useEffect(() => {
     if (proxyAddress && api) {
@@ -86,7 +86,9 @@ export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setP
   }, [proxiedAddress, proxyAddress, proxyItems, proxyType]);
 
   const onDelayChange = useCallback((value: string) => {
-    setDelay(value);
+    const nDelay = value ? parseInt(value.replace(/\D+/g, ''), 10) : 0;
+
+    setDelay(nDelay);
   }, []);
 
   const selectProxyType = useCallback((value: string | number) => {
@@ -98,7 +100,7 @@ export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setP
   }, [setStep]);
 
   const onAddProxy = useCallback(() => {
-    if (!proxyAddress || duplicateProxy) {
+    if (!proxyAddress || duplicateProxy || myselfAsProxy) {
       return;
     }
 
@@ -111,10 +113,10 @@ export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setP
       status: 'new'
     } as unknown as ProxyItem;
 
-    setProxyItems([...(proxyItems ?? []), newProxy]);
+    setProxyItems([newProxy, ...(proxyItems ?? [])]);
 
     onBack();
-  }, [delay, duplicateProxy, onBack, proxyAddress, proxyItems, proxyType, setProxyItems]);
+  }, [delay, duplicateProxy, myselfAsProxy, onBack, proxyAddress, proxyItems, proxyType, setProxyItems]);
 
   return (
     <Grid container item>
@@ -124,7 +126,7 @@ export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setP
           {t('Add Proxy')}
         </Typography>
       </Grid>
-      {duplicateProxy &&
+      {(duplicateProxy || myselfAsProxy) &&
         <Grid container sx={{ '> div': { m: 'auto', mt: '15px' } }}>
           <Warning
             fontWeight={500}
@@ -133,11 +135,12 @@ export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setP
             marginTop={0}
             theme={theme}
           >
-            {t('You already have added this account as {{proxyType}} proxy', { replace: { proxyType } })}!
+            {duplicateProxy && t('You already have added this account as {{proxyType}} proxy!', { replace: { proxyType } })}
+            {myselfAsProxy && t('You can not add yourself as a proxy!')}
           </Warning>
         </Grid>}
       <Typography fontSize='14px' fontWeight={400} pt='25px'>
-        {t("You can add an account included in this extension as a proxy of Alice to sign certain types of transactions on Alice's behalf.")}
+        {t("You can add an account included in this extension as a proxy of {{accountName}} to sign certain types of transactions on {{accountName}}'s behalf.", { replace: { accountName: accountName ?? 'Alice' } })}
       </Typography>
       <AddressInput
         addWithQr
@@ -166,7 +169,7 @@ export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setP
               helperText={t('The announcement period required of the initial proxy. Generally will be zero.')}
               label={t('Delay')}
               onChange={onDelayChange}
-              value={delay}
+              value={String(delay)}
             />
           </Grid>
           <Grid container item pb='5px' pl='10px' width='fit-content'>
@@ -182,9 +185,9 @@ export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setP
           style={{ '> div:last-child div div p': { fontSize: '14px' }, '> div:last-child div div:last-child p': { fontSize: '16px', fontWeight: 400 }, m: '25px auto 0', width: '100%' }}
         />}
       <Grid container item sx={{ '> div': { mr: '10%' }, bottom: '25px', height: '50px', justifyContent: 'flex-end', left: 0, position: 'absolute', right: 0 }}>
-        <Divider sx={{ bgcolor: 'text.primary', height: '1px', m: '0 auto 10px', width: '80%' }} />
+        <Divider sx={{ bgcolor: '#D5CCD0', height: '1px', m: '0 auto 10px', width: '80%' }} />
         <TwoButtons
-          disabled={!proxyAddress || duplicateProxy}
+          disabled={!proxyAddress || duplicateProxy || myselfAsProxy}
           mt='1px'
           onPrimaryClick={onAddProxy}
           onSecondaryClick={onBack}

@@ -73,7 +73,7 @@ export default function Manage ({ api, chain, depositedValue, isDisabledAddProxy
   }, [isDisabledAddProxyButton, setStep]);
 
   const AddProxyButton = ({ disabled, onClick }: AddProxyButton) => (
-    <Grid container sx={{ my: '40px', opacity: disabled ? 0.5 : 1, pl: '25px' }}>
+    <Grid container sx={{ my: '40px', opacity: disabled ? 0.5 : 1 }}>
       <Grid display='inline-flex' item onClick={disabled ? nullFunction : onClick} sx={{ cursor: disabled ? 'context-menu' : 'pointer' }}>
         <AddRoundedIcon sx={{ bgcolor: 'primary.main', borderRadius: '50px', color: '#fff', fontSize: '32px' }} />
         <Typography fontSize='18px' fontWeight={400} lineHeight='36px' pl='10px' sx={{ textDecoration: 'underline' }}>
@@ -114,7 +114,7 @@ export default function Manage ({ api, chain, depositedValue, isDisabledAddProxy
         </Typography>
       </Grid>
       <Typography fontSize='14px' fontWeight={400} pt='25px'>
-        {t('You can add new proxies or remove existing ones for the account here.  Keep in mind that you need to reserve a deposit to have proxies.')}
+        {t('You can add new proxies or remove existing ones for the account here. Keep in mind that you need to reserve a deposit to have proxies.')}
       </Typography>
       <AddProxyButton
         disabled={isDisabledAddProxyButton}
@@ -155,7 +155,7 @@ export default function Manage ({ api, chain, depositedValue, isDisabledAddProxy
         }
       </Grid>
       <Grid container item sx={{ '> button': { mr: '10%' }, bottom: '25px', height: '50px', justifyContent: 'flex-end', left: 0, position: 'absolute', right: 0 }}>
-        <Divider sx={{ bgcolor: 'text.primary', height: '1px', m: '0 auto 10px', width: '80%' }} />
+        <Divider sx={{ bgcolor: '#D5CCD0', height: '1px', m: '0 auto 10px', width: '80%' }} />
         <PButton
           _mt='1px'
           _onClick={toReview}
