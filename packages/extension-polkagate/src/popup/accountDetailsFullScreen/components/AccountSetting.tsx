@@ -55,7 +55,7 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
   }, [address, account, setDisplayPopup]);
 
   const onManageProxies = useCallback(() => {
-    address && !proxyDisable && onAction(`/manageProxies/${address}`);
+    address && !proxyDisable && onAction(`/fullscreenProxyManagement/${address}`);
   }, [address, onAction, proxyDisable]);
 
   const onManageIdentity = useCallback(() => {
