@@ -7,6 +7,7 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
+import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
 
 import { BN } from '@polkadot/util';
 
@@ -147,14 +148,36 @@ export default function AccountDetails(): React.ReactElement {
     });
   }, [account?.genesisHash, address, api, history]);
 
+  const onBackClick = useCallback(() => {
+    history.push({ pathname: `/` });
+  }, [account?.genesisHash, address, api, history]);
+
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>
       <FullScreenHeader page='AccountDetails' />
       <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '5%' }}>
-          <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-            {t<string>('Account Details')}
-          </Typography>
+          <Grid container item alignItems='center'>
+            <Grid item>
+              <ArrowBackIosIcon
+                onClick={onBackClick}
+                sx={{
+                  ':hover': { opacity: 1 },
+                  color: 'secondary.light',
+                  cursor: 'pointer',
+                  fontSize: 36,
+                  opacity: 0.5,
+                  stroke: theme.palette.secondary.light,
+                  strokeWidth: 1
+                }}
+              />
+            </Grid>
+            <Grid item>
+              <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
+                {t<string>('Account Details')}
+              </Typography>
+            </Grid>
+          </Grid>
           <Grid container item justifyContent='space-between' mb='15px'>
             <Grid container direction='column' item minWidth='735px' rowGap='10px' width='calc(100% - 300px - 3%)' mb='10px'>
               <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', ml: 5, position: 'absolute', px: 1, width: 'fit-content' }}>
