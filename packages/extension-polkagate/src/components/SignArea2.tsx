@@ -52,8 +52,11 @@ interface Props {
   setRefresh?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-/** This puts usually at the end of review page where user can do enter password, choose proxy or use other alternatives like signing using ledger */
-export default function SignArea({ address, call, disabled, extraInfo, isPasswordError, onSecondaryClick, params, prevState, primaryBtn, primaryBtnText, proxyModalHeight, proxyTypeFilter, secondaryBtnText, selectedProxy, setIsPasswordError, setRefresh, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, to }: Props): React.ReactElement<Props> {
+/**
+ *  @description This puts usually at the end of review page where user can do enter password, choose proxy or use other alternatives like signing using ledger
+ *
+*/
+export default function SignArea ({ address, call, disabled, extraInfo, isPasswordError, onSecondaryClick, params, prevState, primaryBtn, primaryBtnText, proxyModalHeight, proxyTypeFilter, secondaryBtnText, selectedProxy, setIsPasswordError, setRefresh, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, to }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);

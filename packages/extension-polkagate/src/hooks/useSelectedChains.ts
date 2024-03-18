@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { getStorage, watchStorage } from '../components/Loading';
-import { DEFAULT_SELECTED_CHAINS } from '../util/defaultAssets';
+import { DEFAULT_SELECTED_CHAINS } from '../util/defaultSelectedChains';
 
 /**
  * @description get the selected chains

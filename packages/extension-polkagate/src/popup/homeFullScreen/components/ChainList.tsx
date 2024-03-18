@@ -12,7 +12,7 @@ import { getStorage, setStorage } from '../../../components/Loading';
 import { useGenesisHashOptions, useIsTestnetEnabled, useTranslation } from '../../../hooks';
 import { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../hooks/useAssetsOnChains2';
 import { TEST_NETS } from '../../../util/constants';
-import { DEFAULT_SELECTED_CHAINS } from '../../../util/defaultAssets';
+import { DEFAULT_SELECTED_CHAINS } from '../../../util/defaultSelectedChains';
 import { DropdownOption } from '../../../util/types';
 import ChainItem from './ChainItem';
 
