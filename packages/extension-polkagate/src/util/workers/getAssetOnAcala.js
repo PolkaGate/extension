@@ -4,10 +4,7 @@
 /* eslint-disable import-newlines/enforce */
 /* eslint-disable object-curly-newline */
 
-import { options } from '@acala-network/api';
 import { createAssets } from '@polkagate/apps-config/assets';
-
-import { BN_ZERO } from '@polkadot/util';
 
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
 
@@ -63,7 +60,7 @@ async function getAssetOnAcala(addresses, assetsToBeFetched, chainName) {
         genesisHash: api.genesisHash.toString(),
         priceId: asset?.priceId,
         token: asset.symbol,
-        totalBalance: String(balance)
+        totalBalance: String(totalBalance)
       };
 
       const _index = addresses[index];
