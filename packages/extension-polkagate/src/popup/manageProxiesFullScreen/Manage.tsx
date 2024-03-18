@@ -6,14 +6,14 @@
 import '@vaadin/icons';
 
 import { AddRounded as AddRoundedIcon } from '@mui/icons-material';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import { Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { PButton, ShowBalance } from '../../components';
+import { ActionContext, ShowBalance, TwoButtons } from '../../components';
 import { useTranslation } from '../../hooks';
 import { ProxyItem } from '../../util/types';
 import { nullFunction } from '../../util/utils';
@@ -37,9 +37,10 @@ interface Props {
   newDepositValue: BN | undefined;
 }
 
-export default function Manage ({ api, chain, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep }: Props): React.ReactElement {
+export default function Manage({ api, chain, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const onAction = useContext(ActionContext);
 
   const proxyDepositBase = api ? api.consts.proxy.proxyDepositBase as unknown as BN : BN_ZERO;
   const proxyDepositFactor = api ? api.consts.proxy.proxyDepositFactor as unknown as BN : BN_ZERO;
@@ -67,6 +68,10 @@ export default function Manage ({ api, chain, depositedValue, isDisabledAddProxy
   const toReview = useCallback(() => {
     setStep(STEPS.REVIEW);
   }, [setStep]);
+
+  const onCancel = useCallback(() => {
+    onAction('/');
+  }, [onAction]);
 
   const toAddProxy = useCallback(() => {
     isDisabledAddProxyButton === false && setStep(STEPS.ADD_PROXY);
@@ -154,15 +159,18 @@ export default function Manage ({ api, chain, depositedValue, isDisabledAddProxy
           </>
         }
       </Grid>
-      <Grid container item sx={{ '> button': { mr: '10%' }, bottom: '25px', height: '50px', justifyContent: 'flex-end', left: 0, position: 'absolute', right: 0 }}>
-        <Divider sx={{ bgcolor: '#D5CCD0', height: '1px', m: '0 auto 10px', width: '80%' }} />
-        <PButton
-          _mt='1px'
-          _onClick={toReview}
-          _width={30}
-          disabled={confirmDisabled}
-          text={t('Next')}
-        />
+      <Grid container item justifyContent='flex-end' sx={{ borderColor: '#D5CCD0', borderTop: 1, bottom: '25px', height: '50px', left: 0, mx: '7%', position: 'absolute', width: '85%' }}>
+        <Grid container item xs={7}>
+          <TwoButtons
+            disabled={confirmDisabled}
+            mt='10px'
+            onPrimaryClick={toReview}
+            onSecondaryClick={onCancel}
+            primaryBtnText={t<string>('Next')}
+            secondaryBtnText={t<string>('Cancel')}
+            width='100%'
+          />
+        </Grid>
       </Grid>
     </Grid>
   );
