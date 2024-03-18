@@ -45,6 +45,7 @@ export { default as Identicon } from './Identicon';
 export { default as InputAccount } from './InputAccount';
 export { default as InputFilter } from './InputFilter';
 export { default as Label } from './Label';
+export { default as Label2 } from './Label2';
 export { default as Loading } from './Loading';
 export { default as MenuItem } from './MenuItem';
 export { default as Main } from './Main';
