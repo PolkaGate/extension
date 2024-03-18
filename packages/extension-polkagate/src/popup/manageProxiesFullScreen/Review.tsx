@@ -76,8 +76,8 @@ function Review ({ address, api, chain, depositedValue, newDepositValue, proxyIt
 
     if (settingProxy) {
       return {
-        mode: 'setting proxy(ies)',
-        reviewText: `You are setting ${proxyItems && proxyItems.length > 1 ? `${proxyItems.length} proxies` : 'a proxy'}`
+        mode: 'adding proxy(ies)',
+        reviewText: `You are adding ${proxyItems && proxyItems.length > 1 ? `${proxyItems.length} proxies` : 'a proxy'}`
       };
     }
 
@@ -151,7 +151,7 @@ function Review ({ address, api, chain, depositedValue, newDepositValue, proxyIt
       <Grid alignItems='center' container item py='25px'>
         <vaadin-icon icon='vaadin:sitemap' style={{ fontSize: '25px', color: `${theme.palette.text.primary}` }} />
         <Typography fontSize='30px' fontWeight={700} pl='15px'>
-          {t('Proxy Management')}
+          {t('Review')}
         </Typography>
       </Grid>
       {(step === STEPS.REVIEW || step === STEPS.PROXY) &&

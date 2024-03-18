@@ -72,7 +72,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
   }, [address, handleClose, setDisplayPopup]);
 
   const onManageProxies = useCallback(() => {
-    address && chain && onAction(`/manageProxies/${address}`);
+    address && chain && onAction(`/fullscreenProxyManagement/${address}`);
   }, [address, chain, onAction]);
 
   const onManageId = useCallback(() => {

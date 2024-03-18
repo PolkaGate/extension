@@ -49,7 +49,7 @@ function ManageProxies (): React.ReactElement {
 
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
-  const isDisabledAddProxyButton = useMemo(() => !account || account.isExternal || account.isHardware || account.isQR || proxyItems === undefined, [account, proxyItems]);
+  const isDisabledAddProxyButton = useMemo(() => !account || proxyItems === undefined, [account, proxyItems]);
 
   const fetchProxies = useCallback((_address: string, _api: ApiPromise) => {
     setRefresh(false);
@@ -86,12 +86,12 @@ function ManageProxies (): React.ReactElement {
   }, [chain?.genesisHash, refresh]);
 
   useEffect(() => {
-    api && address && fetchProxies(address, api);
-  }, [api, chain, address, fetchProxies]);
+    api && api.genesisHash.toString() === chain?.genesisHash && address && fetchProxies(address, api);
+  }, [api, chain?.genesisHash, address, fetchProxies]);
 
   useEffect(() => {
     api && address && refresh && fetchProxies(address, api);
-  }, [api, chain, address, fetchProxies, refresh]);
+  }, [api, address, fetchProxies, refresh]);
 
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>

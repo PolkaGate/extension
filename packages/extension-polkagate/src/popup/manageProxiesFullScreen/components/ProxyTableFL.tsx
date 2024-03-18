@@ -69,7 +69,7 @@ export default function ProxyTableFL ({ api, chain, handleDelete, labelAlignment
         <Grid className='contextBox' container display='block' item sx={{ bgcolor: 'background.paper', border: theme.palette.mode === 'dark' ? 1 : 0, borderColor: 'secondary.light', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: '270px', overflow: 'scroll' }}>
           <Grid alignItems='center' container item justifyContent='flex-end' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', height: '32px', textAlign: 'center' }}>
             <Typography fontSize='14px' fontWeight={400} width='49%'>
-              {t('Identity')}
+              {t('Account')}
             </Typography>
             <Divider orientation='vertical' sx={{ bgcolor: 'secondary.light', height: '32px', width: '1px' }} />
             <Typography fontSize='14px' fontWeight={400} width='25%'>
