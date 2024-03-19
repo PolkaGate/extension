@@ -72,7 +72,6 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
   }, []);
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
-  const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
 
   const assets = useMemo((): AssetsWithUiAndPrice[] | undefined => {
     if (!accountsAssets || !youHave || !pricesInCurrencies) {
@@ -170,8 +169,8 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
           </Typography>}
       </Grid>
       {youHave !== 0 && assets && assets.length > 0 &&
-        <Grid container item sx={{ borderTop: '1px solid', borderTopColor: borderColor, pt: '10px' }}>
-          <Chart assets={assets} borderColor={borderColor} />
+        <Grid container item sx={{ borderTop: '1px solid', borderTopColor: 'divider', pt: '10px' }}>
+          <Chart assets={assets} />
           <Grid container item pt='10px' rowGap='10px' xs>
             {assets.slice(0, 3).map((asset, index) => (
               <DisplayAssetRow
@@ -189,7 +188,7 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
                     />
                   ))}
                 </Collapse>
-                <Divider sx={{ bgcolor: borderColor, height: '2px', mt: '10px', width: '100%' }} />
+                <Divider sx={{ bgcolor: 'divider', height: '2px', mt: '10px', width: '100%' }} />
                 <Grid alignItems='center' container item onClick={toggleAssets} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
                   <Typography color='primary.main' fontSize='16px' fontWeight={400}>
                     {t<string>(showMore ? t('Less tokens') : t('More tokens'))}

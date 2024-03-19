@@ -26,7 +26,6 @@ export default function AddressDropdownFullScreen({ allAddresses, onSelect, sele
   const [isDropdownVisible, setDropdownVisible] = useState(false);
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
-  const borderColor = useMemo(() => isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkMode]);
 
   const _hideDropdown = useCallback(() => setDropdownVisible(false), []);
   const _toggleDropdown = useCallback(() => setDropdownVisible(!isDropdownVisible), [isDropdownVisible]);
@@ -50,7 +49,7 @@ export default function AddressDropdownFullScreen({ allAddresses, onSelect, sele
             <ChainLogo genesisHash={selectedGenesis} />
           </Grid>
         </Grid>
-        <Grid alignItems='center' container item onClick={_toggleDropdown} ref={ref} sx={{ borderLeft: '1px solid', borderLeftColor: isDarkMode ? 'secondary.light' : borderColor, cursor: 'pointer', px: '10px', width: 'fit-content' }}>
+        <Grid alignItems='center' container item onClick={_toggleDropdown} ref={ref} sx={{ borderLeft: '1px solid', borderLeftColor: isDarkMode ? 'secondary.light' : 'divider', cursor: 'pointer', px: '10px', width: 'fit-content' }}>
           <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: isDropdownVisible ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
         </Grid>
       </Grid>
@@ -58,7 +57,7 @@ export default function AddressDropdownFullScreen({ allAddresses, onSelect, sele
         <Collapse in={isDropdownVisible} sx={{ width: '100%' }}>
           <Grid container sx={{ bgcolor: 'background.paper', border: isDarkMode ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '1px', boxShadow: `0px 3px 10px ${isDarkMode ? '#ffffff40' : '#0000001A'}`, maxHeight: '250px', overflow: 'hidden', overflowY: 'scroll' }}>
             {allAddresses.map(([address, genesisHash, name]) => (
-              <Grid alignItems='center' container item key={address} onClick={_selectParent(address)} sx={{ borderBottom: '1px solid', borderBottomColor: isDarkMode ? 'secondary.light' : borderColor, cursor: 'pointer', px: '25px' }}>
+              <Grid alignItems='center' container item key={address} onClick={_selectParent(address)} sx={{ borderBottom: '1px solid', borderBottomColor: isDarkMode ? 'secondary.light' : 'divider', cursor: 'pointer', px: '25px' }}>
                 <Grid container item xs>
                   <NewAddress
                     address={address}

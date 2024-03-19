@@ -159,7 +159,7 @@ export default function Manage({ api, chain, depositedValue, isDisabledAddProxyB
           </>
         }
       </Grid>
-      <Grid container item justifyContent='flex-end' sx={{ borderColor: '#D5CCD0', borderTop: 1, bottom: '25px', height: '50px', left: 0, mx: '7%', position: 'absolute', width: '85%' }}>
+      <Grid container item justifyContent='flex-end' sx={{ borderColor: 'divider', borderTop: 1, bottom: '25px', height: '50px', left: 0, mx: '7%', position: 'absolute', width: '85%' }}>
         <Grid container item xs={7}>
           <TwoButtons
             disabled={confirmDisabled}

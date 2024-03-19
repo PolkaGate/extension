@@ -22,7 +22,6 @@ interface TaskButtonProps {
   onClick: () => void;
   secondaryIconType?: 'popup' | 'page';
   noBorderButton?: boolean;
-  borderColor: string;
   disabled?: boolean;
   hasChildren?: boolean;
   showChildren?: boolean;
@@ -31,12 +30,12 @@ interface TaskButtonProps {
   isSubMenu?: boolean;
 }
 
-export const TaskButton = ({ borderColor, children, disabled, extra, hasChildren, icon, isSubMenu, noBorderButton = false, onClick, secondaryIconType, showChildren, text }: TaskButtonProps) => {
+export const TaskButton = ({ children, disabled, extra, hasChildren, icon, isSubMenu, noBorderButton = false, onClick, secondaryIconType, showChildren, text }: TaskButtonProps) => {
   const theme = useTheme();
 
   return (
     <>
-      <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : borderColor }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minHeight: isSubMenu ? '40px' : '45px', p: '5px 0px 5px 10px', my: '5px' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minHeight: isSubMenu ? '40px' : '45px', p: '5px 0px 5px 10px', my: '5px' }}>
         <Grid container item xs={2}>
           {icon}
         </Grid>
@@ -53,7 +52,7 @@ export const TaskButton = ({ borderColor, children, disabled, extra, hasChildren
       </Grid>
       {extra}
       <Grid container item justifyContent='flex-end'>
-        {!noBorderButton && <Divider sx={{ bgcolor: borderColor, height: '2px', width: '98%' }} />}
+        {!noBorderButton && <Divider sx={{ bgcolor: 'divider', height: '2px', width: '98%' }} />}
       </Grid>
       {children}
     </>
@@ -71,7 +70,6 @@ export default function HomeMenu(): React.ReactElement {
   const [showExportAll, setShowExportAll] = useState<boolean>(false);
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
-  const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
   const areAllExternalAccounts = useMemo(() => accounts.every(({ isExternal }) => isExternal), [accounts]);
 
   const onSend = useCallback(() => {
@@ -100,7 +98,6 @@ export default function HomeMenu(): React.ReactElement {
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px', width: '430px', position: 'relative' }}>
       <Grid alignItems='center' container direction='column' display='block' item justifyContent='center' sx={{ pb: '40px' }}>
         <TaskButton
-          borderColor={borderColor}
           icon={
             <vaadin-icon icon='vaadin:plus-circle' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
@@ -109,7 +106,6 @@ export default function HomeMenu(): React.ReactElement {
           text={t<string>('Create new account')}
         />
         <TaskButton
-          borderColor={borderColor}
           disabled={areAllExternalAccounts}
           icon={
             <vaadin-icon icon='vaadin:road-branch' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
@@ -119,7 +115,6 @@ export default function HomeMenu(): React.ReactElement {
           text={t<string>('Derive from accounts')}
         />
         <TaskButton
-          borderColor={borderColor}
           hasChildren
           icon={
             <vaadin-icon icon='vaadin:upload-alt' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
@@ -132,7 +127,6 @@ export default function HomeMenu(): React.ReactElement {
           <ImportAccSubMenuFullScreen show={showImport} toggleSettingSubMenu={onSettingClick} />
         </TaskButton>
         <TaskButton
-          borderColor={borderColor}
           disabled={areAllExternalAccounts}
           icon={
             <vaadin-icon icon='vaadin:download' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
@@ -142,7 +136,6 @@ export default function HomeMenu(): React.ReactElement {
           text={t<string>('Export all accounts')}
         />
         <TaskButton
-          borderColor={borderColor}
           hasChildren
           icon={
             <vaadin-icon icon='vaadin:cog' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />

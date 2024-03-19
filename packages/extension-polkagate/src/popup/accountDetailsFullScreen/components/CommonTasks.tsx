@@ -34,17 +34,16 @@ interface TaskButtonProps {
   onClick: () => void;
   secondaryIconType: 'popup' | 'page';
   noBorderButton?: boolean;
-  borderColor: string;
   disabled?: boolean;
 }
 
-export const TaskButton = ({ borderColor, disabled, icon, noBorderButton = false, onClick, secondaryIconType, text }: TaskButtonProps) => {
+export const TaskButton = ({ disabled, icon, noBorderButton = false, onClick, secondaryIconType, text }: TaskButtonProps) => {
   const theme = useTheme();
 
   return (
     <>
       {/* eslint-disable-next-line react/jsx-no-bind */}
-      <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : borderColor }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', m: 'auto', minHeight: '45px', p: '5px 10px' }} width='90%'>
+      <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', m: 'auto', minHeight: '45px', p: '5px 10px' }} width='90%'>
         <Grid container item xs={3}>
           {icon}
         </Grid>
@@ -59,7 +58,7 @@ export const TaskButton = ({ borderColor, disabled, icon, noBorderButton = false
           </Grid>
         }
       </Grid>
-      {!noBorderButton && <Divider sx={{ bgcolor: borderColor, height: '2px', m: '5px auto', width: '85%' }} />
+      {!noBorderButton && <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto', width: '85%' }} />
       }
     </>
   );
@@ -75,7 +74,6 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
   const stakingDisabled = useMemo(() => !STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const crowdloanDisabled = useMemo(() => !CROWDLOANS_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
-  const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
   const stakingIconColor = useMemo(() => stakingDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary, [stakingDisabled, theme.palette.action.disabledBackground, theme.palette.text.primary]);
 
   const goToSend = useCallback(() => {
@@ -118,10 +116,9 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
       <Typography fontSize='22px' fontWeight={700}>
         {t<string>('Most common tasks')}
       </Typography>
-      <Divider sx={{ bgcolor: borderColor, height: '2px', m: '5px auto 15px', width: '90%' }} />
+      <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto 15px', width: '90%' }} />
       <Grid alignItems='center' container direction='column' display='block' item justifyContent='center'>
         <TaskButton
-          borderColor={borderColor}
           disabled={!genesisHash}
           icon={
             <FontAwesomeIcon
@@ -135,7 +132,6 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
           text={t<string>('Send Fund')}
         />
         <TaskButton
-          borderColor={borderColor}
           disabled={!genesisHash}
           icon={
             <QrCodeIcon sx={{ color: 'text.primary', cursor: 'pointer', fontSize: '35px' }} />
@@ -145,7 +141,6 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
           text={t<string>('Receive Fund')}
         />
         <TaskButton
-          borderColor={borderColor}
           disabled={governanceDisabled}
           icon={
             <FontAwesomeIcon
@@ -159,7 +154,6 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
           text={t<string>('Governance')}
         />
         <TaskButton
-          borderColor={borderColor}
           disabled={stakingDisabled}
           icon={
             <Grid sx={{ position: 'relative' }}>
@@ -174,7 +168,6 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
           text={t<string>('Solo Stake')}
         />
         <TaskButton
-          borderColor={borderColor}
           disabled={stakingDisabled}
           icon={
             <Grid sx={{ position: 'relative' }}>
@@ -189,7 +182,6 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
           text={t<string>('Pool Stake')}
         />
         <TaskButton
-          borderColor={borderColor}
           disabled={crowdloanDisabled}
           icon={
             <FontAwesomeIcon
@@ -204,7 +196,6 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
           text={t<string>('Crowdloans')}
         />
         <TaskButton
-          borderColor={borderColor}
           disabled={!genesisHash}
           icon={
             <FontAwesomeIcon

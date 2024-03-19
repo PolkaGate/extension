@@ -64,8 +64,6 @@ export default function AccountInformation ({ accountAssets, address, api, balan
 
   const calculatePrice = useCallback((amount: BN, decimal: number, price: number) => parseFloat(amountToHuman(amount, decimal)) * price, []);
 
-  const borderColor = useMemo(() => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [theme.palette.mode]);
-
   const assetsToShow = useMemo(() => {
     if (!accountAssets || !pricesInCurrencies) {
       return accountAssets; // null  or undefined
@@ -116,7 +114,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
   );
 
   const AccountButton = ({ icon, onClick, text }: AccountButtonType) => (
-    <Button endIcon={icon} onClick={onClick} sx={{ '&:hover': { bgcolor: borderColor }, color: theme.palette.secondary.main, fontSize: '16px', fontWeight: 400, height: '53px', textTransform: 'none', width: 'fit-content' }} variant='text'>
+    <Button endIcon={icon} onClick={onClick} sx={{ '&:hover': { bgcolor: 'divider' }, color: theme.palette.secondary.main, fontSize: '16px', fontWeight: 400, height: '53px', textTransform: 'none', width: 'fit-content' }} variant='text'>
       {text}
     </Button>
   );
@@ -143,7 +141,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
     <>
       <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isChild ? '1px dashed' : theme.palette.mode === 'dark' ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', p: '20px 10px 15px 30px' }}>
         <Grid container item>
-          <Grid container item sx={{ borderRight: '1px solid', borderRightColor: borderColor, pr: '8px', width: 'fit-content' }}>
+          <Grid container item sx={{ borderRight: '1px solid', borderRightColor: 'divider', pr: '8px', width: 'fit-content' }}>
             <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>
               <Identicon
                 iconTheme={chain?.icon ?? 'polkadot'}
@@ -157,7 +155,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
               api={api}
               formatted={formatted}
             />          </Grid>
-          <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: borderColor, px: '7px' }} xs={5.5}>
+          <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'divider', px: '7px' }} xs={5.5}>
             <Grid container item justifyContent='space-between'>
               <Identity
                 address={address}
@@ -183,7 +181,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
           <AccountTotal />
         </Grid>
         <Grid container item justifyContent='flex-end' minHeight='50px'>
-          <Divider sx={{ bgcolor: borderColor, height: '1px', mr: '5px', my: '15px', width: '100%' }} />
+          <Divider sx={{ bgcolor: 'divider', height: '1px', mr: '5px', my: '15px', width: '100%' }} />
           <Grid container item xs>
             {(assetsToShow === undefined || (assetsToShow && assetsToShow?.length > 0)) &&
               <AOC
@@ -191,7 +189,6 @@ export default function AccountInformation ({ accountAssets, address, api, balan
                 accountAssets={assetsToShow}
                 api={api}
                 balanceToShow={balanceToShow}
-                borderColor={borderColor}
                 mode='Home'
                 onclick={onAssetBoxClicked}
                 selectedAsset={selectedAsset}
@@ -199,7 +196,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
             }
           </Grid>
           <Grid alignItems='center' container item width='fit-content'>
-            <Divider orientation='vertical' sx={{ bgcolor: borderColor, height: '34px', ml: 0, mr: '10px', my: 'auto', width: '1px' }} />
+            <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '34px', ml: 0, mr: '10px', my: 'auto', width: '1px' }} />
             <FullScreenAccountMenu
               address={address}
               baseButton={
@@ -207,7 +204,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
               }
               setDisplayPopup={setDisplayPopup}
             />
-            <Divider orientation='vertical' sx={{ bgcolor: borderColor, height: '34px', ml: '5px', mr: '15px', my: 'auto', width: '1px' }} />
+            <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '34px', ml: '5px', mr: '15px', my: 'auto', width: '1px' }} />
             <AccountButton icon={<ArrowForwardIosIcon style={{ color: theme.palette.secondary.light, fontSize: '28px' }} />} onClick={goToDetails} text={t<string>('Details')} />
           </Grid>
         </Grid>
