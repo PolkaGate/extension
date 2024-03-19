@@ -101,9 +101,6 @@ function ChainList({ anchorEl }: Props): React.ReactElement {
     setSearchedChain([..._filtered]);
   }, [allChains]);
 
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
-  const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
-
   return (
     <Grid container item sx={{ maxHeight: '650px', overflow: 'hidden', overflowY: 'scroll', transition: 'height 5000ms ease-in-out', width: '280px' }}>
       <Grid container item justifyContent='center'>
@@ -111,7 +108,7 @@ function ChainList({ anchorEl }: Props): React.ReactElement {
           {t('Select chains to view assets on')}
         </Typography>
       </Grid>
-      <Divider sx={{ bgcolor: borderColor, height: '2px', my: '10px', width: '100%' }} />
+      <Divider sx={{ bgcolor: 'divider', height: '2px', my: '10px', width: '100%' }} />
       {[...allChains.slice(0, DEFAULT_SELECTED_CHAINS_COUNT)].map((item, index) => (
         <ChainItem
           chain={item}

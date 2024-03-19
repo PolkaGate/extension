@@ -39,7 +39,8 @@ export const darkTheme: ThemeOptions = {
     text: { primary: '#D5D5D5', secondary: '#000000', disabled: '#4B4B4B' },
     action: { disabled: '#fff', disabledBackground: '#4B4B4B', focus: '#BA82A5' },
     success: { main: '#1F7720' }, // '#46890C'
-    warning: { main: '#FF002B' }
+    warning: { main: '#FF002B' },
+    divider: 'rgba(255, 255, 255, 0.1)'
   },
   components: {
     MuiSkeleton: {

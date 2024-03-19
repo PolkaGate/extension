@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowDropDown as ArrowDropDownIcon, MoreHoriz as MoreHorizIcon } from '@mui/icons-material';
-import { Collapse, Grid, Skeleton, Typography } from '@mui/material';
+import { Collapse, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -22,7 +22,6 @@ interface Props {
   selectedAsset: FetchedBalance | undefined;
   balanceToShow: BalancesInfo | undefined;
   accountAssets: FetchedBalance[] | null | undefined;
-  borderColor: string;
   onclick: (asset: FetchedBalance | undefined) => void;
   mode?: 'Home' | 'Detail';
 }
@@ -93,8 +92,9 @@ const AssetsBoxes = ({ account, api, asset, balanceToShow, mode, onclick, prices
   );
 };
 
-function AOC ({ account, accountAssets, api, balanceToShow, borderColor, mode = 'Detail', onclick, selectedAsset }: Props) {
+function AOC ({ account, accountAssets, api, balanceToShow, mode = 'Detail', onclick, selectedAsset }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const pricesInCurrencies = usePrices3();
 
   const [showMore, setShowMore] = useState<boolean>(false);
@@ -138,7 +138,7 @@ function AOC ({ account, accountAssets, api, balanceToShow, borderColor, mode = 
           {mode === 'Detail'
             ? accountAssets.length > 5 &&
             <>
-              <Typography fontSize='14px' fontWeight={400} sx={{ borderLeft: '1px solid', borderLeftColor: borderColor, height: 'fit-content', pl: '8px' }}>
+              <Typography fontSize='14px' fontWeight={400} sx={{ borderLeft: '1px solid', borderLeftColor: 'divider', height: 'fit-content', pl: '8px' }}>
                 {t<string>(showMore ? t('Less') : t('More'))}
               </Typography>
               <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />

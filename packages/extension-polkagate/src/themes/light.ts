@@ -39,7 +39,8 @@ export const lightTheme: ThemeOptions = {
     text: { primary: '#63364D', secondary: '#FFFFFF', disabled: '#747474' },
     action: { disabled: '#fff', disabledBackground: '#989898', focus: '#BA82A5' },
     success: { main: '#1F7720' },
-    warning: { main: '#FF002B' }
+    warning: { main: '#FF002B' },
+    divider: 'rgba(0, 0, 0, 0.1)'
   },
   components: {
     MuiSkeleton: {

@@ -47,8 +47,6 @@ export default function QuickActionFullScreen({ address, containerRef, quickActi
 
   const [showHistory, setShowHistory] = useState<boolean>();
 
-  const borderColor = useMemo(() => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [theme.palette.mode]);
-
   const handleOpen = useCallback(() => setQuickActionOpen(String(address)), [address, setQuickActionOpen]);
   const handleClose = useCallback(() => quickActionOpen === address && setQuickActionOpen(undefined), [address, quickActionOpen, setQuickActionOpen]);
 
@@ -90,7 +88,7 @@ export default function QuickActionFullScreen({ address, containerRef, quickActi
   const QuickActionButton = ({ disabled, divider, icon, onClick, title }: QuickActionButtonType) => {
     return (
       <>
-        <Grid alignItems='center' container direction='column' display='flex' item justifyContent='center' onClick={!disabled ? onClick : nullF} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : borderColor }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minWidth: '80px', p: '0 5px', width: 'fit-content' }}>
+        <Grid alignItems='center' container direction='column' display='flex' item justifyContent='center' onClick={!disabled ? onClick : nullF} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minWidth: '80px', p: '0 5px', width: 'fit-content' }}>
           <Grid alignItems='center' container height='40px' item justifyContent='center' width='fit-content'>
             {icon}
           </Grid>
