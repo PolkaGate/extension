@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext,useMemo, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { ActionContext, ChainLogo, Identity, Motion, ShowBalance, SignArea2, WrongPasswordAlert } from '../../components';
 import { useApi, useChain } from '../../hooks';
@@ -78,21 +78,20 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
               <WrongPasswordAlert />
             }
             <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), mb: '20px', p: '1% 3%' }}>
-              <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
-                <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('From')}
-                </Typography>
-                <Identity
-                  address={address}
-                  api={api}
-                  chain={chain}
-                  direction='row'
-                  identiconSize={31}
-                  showSocial={false}
-                  style={{ maxWidth: '100%', width: 'fit-content' }}
-                  withShortAddress
-                />
-              </Grid>
+              <DisplayValue title={t<string>('From')} topDivider={false}>
+                <Grid alignItems='center' justifyContent='center' container item sx={{ height: '42px', width: '600px' }}>
+                  <Identity
+                    address={address}
+                    api={api}
+                    chain={chain}
+                    direction='row'
+                    identiconSize={31}
+                    showSocial={false}
+                    style={{ maxWidth: '100%', width: 'fit-content' }}
+                    withShortAddress
+                  />
+                </Grid>
+              </DisplayValue>
               {selectedProxyAddress &&
                 <Grid container m='auto' maxWidth='92%'>
                   <ThroughProxy address={selectedProxyAddress} chain={chain} />
@@ -118,7 +117,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
               </DisplayValue>
               <Divider sx={{ bgcolor: 'secondary.main', height: '3px', mx: 'auto', my: '5px', width: '170px' }} />
               <DisplayValue title={t<string>('To')} topDivider={false}>
-                <Grid alignItems='center' container item sx={{ height: '42px' }}>
+                <Grid alignItems='center' container item justifyContent='center' sx={{ height: '42px', width: '600px' }}>
                   <Identity
                     address={inputs?.recipientAddress}
                     api={api}
