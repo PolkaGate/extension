@@ -12,6 +12,7 @@ import { PButton } from '../../components';
 import { useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
+import { EXTENSION_NAME } from '../../util/constants';
 
 function Reset (): React.ReactElement {
   const { t } = useTranslation();
@@ -29,7 +30,7 @@ function Reset (): React.ReactElement {
     <>
       <HeaderBrand
         showBrand
-        text={'Polkagate'}
+        text={EXTENSION_NAME}
       />
       <Typography sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, p: '25px 0 10px', textAlign: 'center' }}>
         {t('Reset Wallet')}

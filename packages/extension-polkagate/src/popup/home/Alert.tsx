@@ -9,7 +9,7 @@ import React, { useCallback, useContext } from 'react';
 import { ActionContext, PButton, Popup } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { HeaderBrand } from '../../partials';
-import { NEW_VERSION_ALERT } from '../../util/constants';
+import { EXTENSION_NAME, NEW_VERSION_ALERT } from '../../util/constants';
 
 interface Props {
   show: boolean;
@@ -52,7 +52,7 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         onClose={onClose}
         showBrand
         showClose
-        text={'Polkagate'}
+        text={EXTENSION_NAME}
       />
       <Grid container direction='column' px='15px'>
         <Grid container item justifyContent='center' pb='20px' pt='50px'>

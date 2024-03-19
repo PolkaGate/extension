@@ -19,7 +19,7 @@ import { getStorage, LoginInfo } from '../../components/Loading';
 import { useMerkleScience, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
-import { NEW_VERSION_ALERT } from '../../util/constants';
+import { EXTENSION_NAME, NEW_VERSION_ALERT } from '../../util/constants';
 import Welcome from '../welcome';
 import Reset from '../welcome/Reset';
 import AccountsTree from './AccountsTree';
@@ -122,7 +122,7 @@ export default function Home (): React.ReactElement {
               showFullScreen
               showMenu
               style={{ '> div div:nth-child(3)': { minWidth: '23%' }, pr: '10px' }}
-              text={'Polkagate'}
+              text={EXTENSION_NAME}
             />
           </Grid>
           {hasActiveRecovery &&

@@ -12,6 +12,7 @@ import { PButton } from '../../components';
 import { useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
+import { EXTENSION_NAME } from '../../util/constants';
 import Privacy from './Privacy';
 
 function Welcome(): React.ReactElement {
@@ -61,7 +62,7 @@ function Welcome(): React.ReactElement {
       <HeaderBrand
         showBrand
         showMenu
-        text={'Polkagate'}
+        text={EXTENSION_NAME}
       />
       <Typography sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '20px', pt: '25px', textAlign: 'center' }}>
         {t('Welcome!')}

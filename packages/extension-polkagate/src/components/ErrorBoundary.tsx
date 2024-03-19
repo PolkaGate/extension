@@ -6,6 +6,7 @@ import React from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import HeaderBrand from '../partials/HeaderBrand';
+import { EXTENSION_NAME } from '../util/constants';
 import translate from './translate';
 import { PButton } from '.';
 
@@ -52,7 +53,7 @@ class ErrorBoundary extends React.Component<Props> {
           <HeaderBrand
             showBrand
             showMenu
-            text={'Polkagate'}
+            text={EXTENSION_NAME}
           />
           <Grid container justifyContent='center' px='15px'>
             <Typography fontSize='18px' mt='35px'>
