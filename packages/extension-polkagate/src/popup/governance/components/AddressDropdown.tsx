@@ -20,7 +20,7 @@ interface Props {
   chainGenesis: string | undefined;
 }
 
-export default function AddressDropdown({ api, chainGenesis, onSelect, selectedAddress }: Props): React.ReactElement<Props> {
+export default function AddressDropdown ({ api, chainGenesis, onSelect, selectedAddress }: Props): React.ReactElement<Props> {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const { accounts } = useContext(AccountContext);
@@ -50,6 +50,7 @@ export default function AddressDropdown({ api, chainGenesis, onSelect, selectedA
               fontSize: '14px',
               height: '40px',
               m: 0,
+              maxWidth: '300px',
               minWidth: '150px',
               px: '5px',
               width: 'fit-content'
