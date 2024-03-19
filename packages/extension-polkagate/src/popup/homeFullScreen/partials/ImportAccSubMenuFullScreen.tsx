@@ -27,7 +27,6 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
   const onAction = useContext(ActionContext);
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
-  const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
 
   const onRestoreFromJson = useCallback((): void => {
     windowOpen('/account/restore-json').catch(console.error);
@@ -54,7 +53,6 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
       <Collapse in={show} sx={{ width: '100%' }}>
         <Grid container direction='column' display='block' item sx={{ p: '0 0 15px 40px' }}>
           <TaskButton
-            borderColor={borderColor}
             icon={
               <vaadin-icon icon='vaadin:file-text' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
             }
@@ -63,7 +61,6 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             text={t<string>('Restore from JSON file')}
           />
           <TaskButton
-            borderColor={borderColor}
             icon={
               <vaadin-icon icon='vaadin:book' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
             }
@@ -72,7 +69,6 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             text={t<string>('Import from recovery phrase')}
           />
           <TaskButton
-            borderColor={borderColor}
             icon={
               <vaadin-icon icon='vaadin:tag' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
             }
@@ -81,7 +77,6 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             text={t<string>('Add watch-only account')}
           />
           <TaskButton
-            borderColor={borderColor}
             disabled={settings.camera !== 'on'}
             extra={settings.camera !== 'on'
               ? <Grid fontSize='12px' item letterSpacing='-1.5%' onClick={toggleSettingSubMenu} sx={{ cursor: 'pointer' }} textAlign='left' ml='19.5%'>
@@ -98,7 +93,6 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             text={t<string>('Attach external QR-signer')}
           />
           <TaskButton
-            borderColor={borderColor}
             icon={
               <vaadin-icon icon='vaadin:wallet' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
             }

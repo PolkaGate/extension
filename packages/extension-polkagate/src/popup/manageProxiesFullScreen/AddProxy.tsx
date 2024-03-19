@@ -184,17 +184,18 @@ export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setP
           accountIdentity={accountInfo}
           style={{ '> div:last-child div div p': { fontSize: '14px' }, '> div:last-child div div:last-child p': { fontSize: '16px', fontWeight: 400 }, m: '25px auto 0', width: '100%' }}
         />}
-      <Grid container item sx={{ '> div': { mr: '10%' }, bottom: '25px', height: '50px', justifyContent: 'flex-end', left: 0, position: 'absolute', right: 0 }}>
-        <Divider sx={{ bgcolor: '#D5CCD0', height: '1px', m: '0 auto 10px', width: '80%' }} />
-        <TwoButtons
-          disabled={!proxyAddress || duplicateProxy || myselfAsProxy}
-          mt='1px'
-          onPrimaryClick={onAddProxy}
-          onSecondaryClick={onBack}
-          primaryBtnText={t('Add')}
-          secondaryBtnText={t('Back')}
-          width='50%'
-        />
+      <Grid container item justifyContent='flex-end' sx={{ borderColor: 'divider', borderTop: 1, bottom: '25px', height: '50px', left: 0, mx: '7%', position: 'absolute', width: '85%' }}>
+        <Grid container item xs={7}>
+          <TwoButtons
+            disabled={!proxyAddress || duplicateProxy || myselfAsProxy}
+            mt='10px'
+            onPrimaryClick={onAddProxy}
+            onSecondaryClick={onBack}
+            primaryBtnText={t<string>('Add')}
+            secondaryBtnText={t<string>('Back')}
+            width='100%'
+          />
+        </Grid>
       </Grid>
     </Grid>
   );

@@ -41,7 +41,6 @@ export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrenc
   Chart.register(...registerables);
 
   const calPrice = useCallback((assetPrice: number | undefined, balance: BN, decimal: number) => parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0), []);
-  const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
   const formatNumber = useCallback((num: number): number => parseFloat(Math.trunc(num) === 0 ? num.toFixed(2) : num.toFixed(1)), []);
@@ -87,7 +86,7 @@ export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrenc
       data: {
         datasets: [{
           backgroundColor: colors,
-          borderColor,
+          borderColor: theme.palette.divider,
           borderWidth: 0.9,
           data: worths,
           hoverOffset: 1
@@ -114,7 +113,7 @@ export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrenc
     return () => {
       chartInstance.destroy();
     };
-  }, [assets, borderColor]);
+  }, [assets, theme.palette.divider]);
 
   return (
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: '185px', p: '15px', width: 'inherit' }}>
@@ -126,7 +125,7 @@ export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrenc
           {`${currency?.sign ?? ''}${totalWorth ?? 0}`}
         </Typography>
       </Grid>
-      <Grid container item sx={{ borderTop: '1px solid', borderTopColor: borderColor, pt: '10px' }}>
+      <Grid container item sx={{ borderTop: '1px solid', borderTopColor: 'divider', pt: '10px' }}>
         <Grid container item sx={{ height: '85px', mr: '5px', width: '85px' }}>
           <canvas id='chartCanvas' ref={chartRef} />
         </Grid>

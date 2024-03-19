@@ -32,7 +32,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
   const [showAccountSettings, setShowAccountSettings] = useState<boolean>();
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
-  const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
   const identityDisable = useMemo(() => !IDENTITY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
   const proxyDisable = useMemo(() => !PROXY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
   const socialRecoveryDisable = useMemo(() => !SOCIAL_RECOVERY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
@@ -82,9 +81,8 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
       </Grid>
       <Collapse in={showAccountSettings} sx={{ width: '100%' }}>
         <Grid alignItems='center' container direction='column' item justifyContent='center'>
-          <Divider sx={{ bgcolor: borderColor, height: '2px', m: '5px auto 15px', width: '90%' }} />
+          <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto 15px', width: '90%' }} />
           <TaskButton
-            borderColor={borderColor}
             disabled={hardwareOrExternalAccount}
             icon={<vaadin-icon icon='vaadin:download-alt' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
             onClick={onExportAccount}
@@ -92,7 +90,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
             text={t<string>('Export account')}
           />
           <TaskButton
-            borderColor={borderColor}
             disabled={hardwareOrExternalAccount}
             icon={<vaadin-icon icon='vaadin:road-branch' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
             onClick={goToDeriveAcc}
@@ -100,21 +97,18 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
             text={t<string>('Derive new account')}
           />
           <TaskButton
-            borderColor={borderColor}
             icon={<vaadin-icon icon='vaadin:edit' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
             onClick={onRenameAccount}
             secondaryIconType='popup'
             text={t<string>('Rename')}
           />
           <TaskButton
-            borderColor={borderColor}
             icon={<vaadin-icon icon='vaadin:file-remove' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
             onClick={onForgetAccount}
             secondaryIconType='popup'
             text={t<string>('Forget account')}
           />
           <TaskButton
-            borderColor={borderColor}
             disabled={proxyDisable}
             icon={<vaadin-icon icon='vaadin:sitemap' style={{ height: '30px', color: `${proxyDisable ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
             onClick={onManageProxies}
@@ -122,7 +116,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
             text={t<string>('Manage proxies')}
           />
           <TaskButton
-            borderColor={borderColor}
             disabled={identityDisable}
             icon={
               <FontAwesomeIcon
@@ -136,7 +129,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
             text={t<string>('Manage Identity')}
           />
           <TaskButton
-            borderColor={borderColor}
             disabled={socialRecoveryDisable}
             icon={
               <SocialRecoveryIcon

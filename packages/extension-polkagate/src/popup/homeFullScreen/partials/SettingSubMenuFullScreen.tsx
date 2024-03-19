@@ -32,9 +32,6 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
   const { accounts } = useContext(AccountContext);
   const isTestnetEnabled = useIsTestnetEnabled();
 
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
-  const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
-
   const [isEnableTestnetChecked, setIsTestnetEnabledChecked] = useState<boolean>();
   const [testnetWarning, setShowTestnetWarning] = useState<boolean>(false);
   const [showManageWebAccess, setShowManageWebAccess] = useState<boolean>(false);
@@ -97,10 +94,9 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
     <>
       <Collapse in={show}>
         <>
-          <Divider sx={{ bgcolor: borderColor, height: '1px' }} />
+          <Divider sx={{ bgcolor: 'divider', height: '1px' }} />
           <Grid container direction='column' sx={{ p: '0px 0 15px 40px' }}>
             <TaskButton
-              borderColor={borderColor}
               icon={
                 <Box
                   component='img'
@@ -113,7 +109,6 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
               text={t('Enable testnet chains')}
             />
             <TaskButton
-              borderColor={borderColor}
               icon={
                 <Box
                   component='img'
@@ -126,7 +121,6 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
               text={t<string>('Allow QR camera access')}
             />
             <TaskButton
-              borderColor={borderColor}
               icon={
                 <vaadin-icon icon='vaadin:lines-list' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
               }
@@ -135,7 +129,6 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
               text={t<string>('Manage website access')}
             />
             <TaskButton
-              borderColor={borderColor}
               icon={
                 <vaadin-icon icon='vaadin:key' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
               }

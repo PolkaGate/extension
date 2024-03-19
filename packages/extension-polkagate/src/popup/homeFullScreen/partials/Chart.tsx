@@ -3,12 +3,11 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import { Chart, registerables } from 'chart.js';
 import React, { useEffect, useRef } from 'react';
 
 interface Props {
-  borderColor: 'rgba(255, 255, 255, 0.1)' | 'rgba(0, 0, 0, 0.1)';
   assets: {
     percent: number;
     price: number;
@@ -26,13 +25,14 @@ interface Props {
   }[] | undefined;
 }
 
-function ChartTotal ({ assets, borderColor }: Props): React.ReactElement {
+function ChartTotal ({ assets }: Props): React.ReactElement {
   const chartRef = useRef(null);
+  const theme = useTheme();
 
   Chart.register(...registerables);
 
   useEffect(() => {
-    if (!assets || !borderColor) {
+    if (!assets) {
       return;
     }
 
@@ -40,7 +40,7 @@ function ChartTotal ({ assets, borderColor }: Props): React.ReactElement {
       data: {
         datasets: [{
           backgroundColor: assets?.map((asset) => asset.ui?.color),
-          borderColor,
+          borderColor: theme.palette.divider,
           borderWidth: 0.9,
           data: assets?.map((asset) => asset.percent),
           hoverOffset: 1
@@ -68,7 +68,7 @@ function ChartTotal ({ assets, borderColor }: Props): React.ReactElement {
     return () => {
       chartInstance.destroy();
     };
-  }, [assets, borderColor]);
+  }, [assets, theme.palette.divider]);
 
   return (
     <Grid container item sx={{ height: '125px', mr: '5px', width: '125px' }}>

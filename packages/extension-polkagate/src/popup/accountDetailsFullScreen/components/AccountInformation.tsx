@@ -110,7 +110,6 @@ export default function AccountInformation ({ accountAssets, address, api, balan
     return parseFloat(amountToHuman(amount, decimal)) * _price;
   }, []);
 
-  const borderColor = useMemo(() => isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [isDarkTheme]);
   const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
   const isPriceOutdated = useMemo(() => pricesInCurrency && Date.now() - pricesInCurrency.date > BALANCES_VALIDITY_PERIOD, [pricesInCurrency]);
 
@@ -145,7 +144,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
   return (
     <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: `20px 20px ${showAOC ? '5px' : '20px'} 20px` }}>
       <Grid container item>
-        <Grid container item sx={{ borderRight: '1px solid', borderRightColor: borderColor, pr: '8px', width: 'fit-content' }}>
+        <Grid container item sx={{ borderRight: '1px solid', borderRightColor: 'divider', pr: '8px', width: 'fit-content' }}>
           <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>
             <Identicon
               iconTheme={chain?.icon ?? 'polkadot'}
@@ -161,7 +160,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
           />
         </Grid>
         <Grid container item sx={{ display: 'grid', gridTemplateColumns: 'minmax(150px, 60%) max-content' }} xs>
-          <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: borderColor, px: '7px' }}>
+          <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'divider', px: '7px' }}>
             <Grid container item justifyContent='space-between'>
               <Identity
                 address={address}
@@ -194,13 +193,12 @@ export default function AccountInformation ({ accountAssets, address, api, balan
       </Grid>
       {showAOC &&
         <>
-          <Divider sx={{ bgcolor: borderColor, height: '1px', my: '15px', width: '100%' }} />
+          <Divider sx={{ bgcolor: 'divider', height: '1px', my: '15px', width: '100%' }} />
           <AOC
             account={account}
             accountAssets={assetsToShow}
             api={api}
             balanceToShow={balanceToShow}
-            borderColor={borderColor}
             mode='Detail'
             onclick={onAssetBoxClicked}
             selectedAsset={selectedAsset}
