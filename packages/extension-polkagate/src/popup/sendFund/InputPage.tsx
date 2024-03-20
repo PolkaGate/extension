@@ -52,7 +52,7 @@ export const Title = ({ padding = '30px 0px 20px', text }: { text: string, paddi
         </Typography>
       </Grid>
     </Grid>
-  )
+  );
 };
 
 export default function InputPage({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
@@ -74,7 +74,32 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
   const [transferType, setTransferType] = useState<TransferType>('Normal');
   const [maxFee, setMaxFee] = useState<Balance>();
 
-  const noSufficientBalanceWarningCondition = balances?.availableBalance?.isZero() || (amount && balances?.availableBalance && balances.decimal && balances.availableBalance.lt(amountToMachine(amount, balances.decimal)));
+  const ED = api && api.consts.balances.existentialDeposit as unknown as BN;
+
+  const amountAsBN = useMemo(
+    () =>
+      balances?.decimal ? amountToMachine(amount, balances.decimal) : undefined
+    ,
+    [amount, balances]);
+
+  const warningMessage = useMemo(() => {
+    if (transferType !== 'All' && amountAsBN && balances && balances.decimal && ED) {
+      const totalBalance = balances.freeBalance.add(balances.reservedBalance);
+      const toTransferBalance = amountAsBN.add(estimatedFee || BN_ZERO).add(estimatedCrossChainFee || BN_ZERO);
+
+      const remainingBalanceAfterTransfer = totalBalance.sub(toTransferBalance);
+
+      if (balances.availableBalance.isZero() || balances.availableBalance.lt(toTransferBalance)) {
+        return t<string>('There is no sufficient transferable balance!');
+      }
+
+      if (remainingBalanceAfterTransfer.lt(ED) && remainingBalanceAfterTransfer.gt(BN_ZERO)) {
+        return t<string>('This transaction will drop your balance below the Existential Deposit threshold, risking account reaping.');
+      }
+    }
+
+    return undefined;
+  }, [ED, amountAsBN, balances, estimatedCrossChainFee, estimatedFee, t, transferType]);
 
   const destinationGenesisHashes = useMemo((): DropdownOption[] => {
     const currentChainOption = chain ? [{ text: chain.name, value: chain.genesisHash }] : [];
@@ -87,18 +112,6 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
   }, [assetId, chain, teleportState?.destinations]);
 
   const isCrossChain = useMemo(() => recipientChainGenesisHash !== chain?.genesisHash, [chain?.genesisHash, recipientChainGenesisHash]);
-
-  const amountAsBN = useMemo(() => {
-    if (!balances) {
-      return;
-    }
-
-    if (!isCrossChain && assetId !== undefined) {
-      return amountToMachine(amount, balances.decimal);
-    }
-
-    return amountToMachine(amount, balances.decimal);
-  }, [amount, assetId, balances, isCrossChain]);
 
   const onChainCall = useMemo(() => {
     const module = assetId !== undefined ? 'assets' : 'balances';
@@ -124,13 +137,17 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
     return onChainCall;
   }, [api, isCrossChain, onChainCall]);
 
-  const buttonDisable = useMemo(() =>
-    !address ||
-    !recipientChainGenesisHash ||
-    !(recipientAddress && inputs?.recipientAddress) ||
-    Number(amount) <= 0 ||
-    amountAsBN?.gt(new BN(balances?.availableBalance || BN_ZERO)) ||
-    !inputs?.totalFee, [address, amount, amountAsBN, balances?.availableBalance, inputs?.recipientAddress, inputs?.totalFee, recipientAddress, recipientChainGenesisHash]);
+  const buttonDisable = useMemo(
+    () =>
+      !address ||
+      !recipientChainGenesisHash ||
+      !(recipientAddress && inputs?.recipientAddress) ||
+      Number(amount) <= 0 ||
+      amountAsBN?.gt(new BN(balances?.availableBalance || BN_ZERO)) ||
+      !inputs?.totalFee ||
+      !!warningMessage
+    ,
+    [address, amount, amountAsBN, balances?.availableBalance, inputs?.recipientAddress, inputs?.totalFee, recipientAddress, recipientChainGenesisHash, warningMessage]);
 
   const calculateFee = useCallback((amount: Balance | BN, setFeeCall: (value: React.SetStateAction<Balance | undefined>) => void) => {
     /** to set Maximum fee which will be used to estimate and show max transferable amount */
@@ -228,14 +245,12 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
   }, [api, balances, calculateFee]);
 
   useEffect(() => {
-    if (!api || amount === undefined || !balances) {
+    if (!api || amountAsBN === undefined || !balances) {
       return;
     }
 
-    const value = amount ? amountToMachine(amount, balances.decimal) : BN_ZERO;
-
-    calculateFee(value, setEstimatedFee);
-  }, [amount, api, balances, calculateFee]);
+    calculateFee(amountAsBN || BN_ZERO, setEstimatedFee);
+  }, [amountAsBN, api, balances, calculateFee]);
 
   const reformatRecipientAddress = useCallback(() => {
     if (!recipientAddress || chain?.ss58Format === undefined) {
@@ -254,7 +269,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
 
   useEffect(() => {
     if (!call || !crossChainParams || !formatted) {
-      return;
+      return setEstimatedCrossChainFee(undefined);
     }
 
     isCrossChain && call(...crossChainParams).paymentInfo(formatted).then((i) => setEstimatedCrossChainFee(i?.partialFee)).catch(console.error);
@@ -389,20 +404,20 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
             sx={{
               bgcolor: 'transparent',
               border: '0.5px solid rgba(99, 54, 77, 0.2) ',
-              mt: '20px',
+              mt: '40px',
               width: '100%'
             }}
           />
         </Grid>
-        <Grid alignItems='end' container justifyContent={noSufficientBalanceWarningCondition ? 'space-between' : 'flex-end'} mt='10px'>
-          {noSufficientBalanceWarningCondition &&
+        <Grid alignItems='end' container justifyContent={warningMessage ? 'space-between' : 'flex-end'} mt='10px'>
+          {warningMessage &&
             <Warning
               fontWeight={400}
               isDanger
               marginTop={0}
               theme={theme}
             >
-              {t<string>('There is no sufficient transferable balance')}
+              {warningMessage}
             </Warning>
           }
           <Grid container item sx={{ '> div': { m: 0, width: '64%' }, justifyContent: 'flex-end', mt: '5px' }}>
