@@ -42,17 +42,16 @@ export default function useStakingAccount(address: AccountId | string | undefine
     }
 
     if (!api.derive.staking) {
-      // console.log('no staking on this chain');
-
       return setStakingInfo(null);
     }
 
-    const [accountInfo, era, fetchedToken, fetchedDecimal] = await Promise.all([
+    const [accountInfo, era] = await Promise.all([
       api.derive.staking.account(stashId),
-      api.query.staking.currentEra(),
-      api.registry.chainTokens[0],
-      api.registry.chainDecimals[0]
+      api.query.staking.currentEra()
     ]);
+
+    const fetchedDecimal = api.registry.chainDecimals[0];
+    const fetchedToken = api.registry.chainTokens[0];
 
     if (!accountInfo) {
       console.log('Can not fetch accountInfo!');
