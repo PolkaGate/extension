@@ -13,7 +13,7 @@ import { BN } from '@polkadot/util';
 
 import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, ShortAddress2 } from '../../../components';
 import { useAccount, useTranslation } from '../../../hooks';
-import { FetchedBalance } from '../../../hooks/useAssetsOnChains2';
+import { FetchedBalance } from '../../../hooks/useAssetsOnChains';
 import { showAccount, tieAccount } from '../../../messaging';
 import { BALANCES_VALIDITY_PERIOD } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';

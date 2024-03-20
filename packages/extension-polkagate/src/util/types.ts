@@ -19,7 +19,7 @@ import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { Balance } from '@polkadot/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { SavedAssets } from '../hooks/useAssetsOnChains2';
+import { SavedAssets } from '../hooks/useAssetsOnChains';
 import { LatestReferenda } from '../popup/governance/utils/types';
 import { CurrencyItemType } from '../popup/homeFullScreen/partials/Currency';
 

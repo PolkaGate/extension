@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { InputFilter } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
 import { useGenesisHashOptions, useIsTestnetEnabled, useTranslation } from '../../../hooks';
-import { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../hooks/useAssetsOnChains2';
+import { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../hooks/useAssetsOnChains';
 import { TEST_NETS } from '../../../util/constants';
 import { DEFAULT_SELECTED_CHAINS } from '../../../util/defaultSelectedChains';
 import { DropdownOption } from '../../../util/types';

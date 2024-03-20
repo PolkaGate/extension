@@ -9,7 +9,7 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { FetchedBalance } from '../../..//hooks/useAssetsOnChains2';
+import { FetchedBalance } from '../../..//hooks/useAssetsOnChains';
 import { stars6Black, stars6White } from '../../../assets/icons';
 import { AccountsAssetsContext, DisplayLogo } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';

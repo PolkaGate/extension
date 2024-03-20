@@ -23,7 +23,7 @@ import { getStorage, LoginInfo, setStorage, updateStorage } from '../../../exten
 import { ExtensionLockProvider } from '../../../extension-polkagate/src/context/ExtensionLockContext';
 import Onboarding from '../../../extension-polkagate/src/fullscreen/onboarding';
 import { usePriceIds } from '../../../extension-polkagate/src/hooks';
-import useAssetsOnChains2, { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../extension-polkagate/src/hooks/useAssetsOnChains2';
+import useAssetsOnChains, { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../extension-polkagate/src/hooks/useAssetsOnChains';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
 import AccountEx from '../../../extension-polkagate/src/popup/account';
 import AccountFL from '../../../extension-polkagate/src/popup/accountDetailsFullScreen';
@@ -105,7 +105,7 @@ function initAccountContext(accounts: AccountJson[]): AccountsContext {
 
 export default function Popup(): React.ReactElement {
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
-  const assetsOnChains2 = useAssetsOnChains2(accounts);
+  const assetsOnChains = useAssetsOnChains(accounts);
   const priceIds = usePriceIds();
 
   const [accountCtx, setAccountCtx] = useState<AccountsContext>({ accounts: [], hierarchy: [] });
@@ -139,20 +139,20 @@ export default function Popup(): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    assetsOnChains2 && setAccountsAssets(assetsOnChains2);
-  }, [assetsOnChains2]);
+    assetsOnChains && setAccountsAssets(assetsOnChains);
+  }, [assetsOnChains]);
 
   useEffect(() => {
     /** remove forgotten accounts from assetChains if any */
-    if (accounts && assetsOnChains2?.balances) {
-      Object.keys(assetsOnChains2.balances).forEach((_address) => {
+    if (accounts && assetsOnChains?.balances) {
+      Object.keys(assetsOnChains.balances).forEach((_address) => {
         const found = accounts.find(({ address }) => address === _address);
 
-        !found && delete assetsOnChains2.balances[_address];
-        setStorage(ASSETS_NAME_IN_STORAGE, assetsOnChains2, true).catch(console.error);
+        !found && delete assetsOnChains.balances[_address];
+        setStorage(ASSETS_NAME_IN_STORAGE, assetsOnChains, true).catch(console.error);
       });
     }
-  }, [accounts, assetsOnChains2]);
+  }, [accounts, assetsOnChains]);
 
   useEffect(() => {
     if (priceIds && currency && !isFetchingPrices) {

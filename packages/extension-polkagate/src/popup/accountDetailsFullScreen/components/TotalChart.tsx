@@ -13,7 +13,7 @@ import { BN } from '@polkadot/util';
 import { DisplayLogo } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, useTranslation } from '../../../hooks';
-import { FetchedBalance } from '../../../hooks/useAssetsOnChains2';
+import { FetchedBalance } from '../../../hooks/useAssetsOnChains';
 import getLogo2 from '../../../util/getLogo2';
 import { Prices3 } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';

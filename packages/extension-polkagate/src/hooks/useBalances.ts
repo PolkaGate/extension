@@ -86,12 +86,14 @@ export default function useBalances(address: string | undefined, refresh?: boole
   }, [api, formatted, isFetching.fetching[String(formatted)]?.length, setRefresh]);
 
   const getBalances = useCallback(() => {
-    if (!chainName || api?.genesisHash?.toString() !== chain?.genesisHash) {
+    if (!chainName || api?.genesisHash?.toString() !== chain?.genesisHash || !decimal || !token) {
       return;
     }
 
-    api && formatted && api.derive.balances?.all(formatted).then((b) => {
-      setNewBalances({ ...b, chainName, genesisHash: api.genesisHash.toString(), date: Date.now(), decimal, token });
+    const ED = api.consts.balances.existentialDeposit as unknown as BN;
+
+    formatted && api.derive.balances?.all(formatted).then((b) => {
+      setNewBalances({ ...b, ED, chainName, date: Date.now(), decimal, genesisHash: api.genesisHash.toString(), token });
       setRefresh && setRefresh(false);
       isFetching.fetching[String(formatted)].balances = false;
       isFetching.set(isFetching.fetching);
@@ -104,7 +106,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
       setOverall({
         ...newBalances,
         pooledBalance: pooledBalance.balance,
-        soloTotal: stakingAccount?.stakingLedger?.total
+        soloTotal: stakingAccount?.stakingLedger?.total as unknown as BN
       });
     } else {
       setOverall(undefined);
@@ -165,6 +167,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
       getBalances();
       getPoolBalances();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(isFetching?.fetching ?? {})?.length, api, chainName, decimal, formatted, getBalances, getPoolBalances, refresh, token]);
 
   useEffect(() => {

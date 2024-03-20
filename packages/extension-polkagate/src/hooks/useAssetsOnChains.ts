@@ -61,7 +61,7 @@ const assetsChains = createAssets();
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsOnChains2(accounts: AccountJson[] | null): SavedAssets | undefined | null {
+export default function useAssetsOnChains (accounts: AccountJson[] | null): SavedAssets | undefined | null {
   const isTestnetEnabled = useIsTestnetEnabled();
 
   /** We need to trigger address change when a new address is added, without affecting other account fields. Therefore, we use the length of the accounts array as a dependency. */
@@ -122,7 +122,7 @@ export default function useAssetsOnChains2(accounts: AccountJson[] | null): Save
 
   useEffect(() => {
     if (!addresses) {
-      console.info('useAssetsOnChains2: no addresses to fetch assets!');
+      console.info('useAssetsOnChains: no addresses to fetch assets!');
 
       return setFetchedAssets(null);
     }

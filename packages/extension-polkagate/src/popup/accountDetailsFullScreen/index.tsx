@@ -14,7 +14,7 @@ import { BN } from '@polkadot/util';
 import { AccountContext, ActionContext } from '../../components';
 import { useAccount, useAccountAssets, useApi, useBalances, useChain, useChainName, useCurrency, useFormatted, useFullscreen, usePrices3, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
-import { FetchedBalance } from '../../hooks/useAssetsOnChains2';
+import { FetchedBalance } from '../../hooks/useAssetsOnChains';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { amountToHuman, sanitizeChainName } from '../../util/utils';
 import { getValue } from '../account/util';

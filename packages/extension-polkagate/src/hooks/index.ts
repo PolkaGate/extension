@@ -80,7 +80,7 @@ export { default as usePendingRewards } from './usePendingRewards';
 export { default as useManifest } from './useManifest';
 export { default as useIsLoginEnabled } from './useIsLoginEnabled';
 export { default as useIsTestnetEnabled } from './useIsTestnetEnabled';
-export { default as useAssetsOnChains2 } from './useAssetsOnChains2';
+export { default as useAssetsOnChains } from './useAssetsOnChains';
 export { default as useAccountAssets } from './useAccountAssets';
 export { default as useCurrency } from './useCurrency';
 export { default as usePriceIds } from './usePriceIds';

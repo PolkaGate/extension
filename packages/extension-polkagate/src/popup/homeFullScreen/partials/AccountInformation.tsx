@@ -16,7 +16,7 @@ import { stars6Black, stars6White } from '../../../assets/icons';
 import { ActionContext, Identicon, Identity, Infotip, ShortAddress2 } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useAccount, useCurrency, usePrices3, useTranslation } from '../../../hooks';
-import { FetchedBalance } from '../../../hooks/useAssetsOnChains2';
+import { FetchedBalance } from '../../../hooks/useAssetsOnChains';
 import { showAccount, tieAccount } from '../../../messaging';
 import { BalancesInfo } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';

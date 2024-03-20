@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from 'react';
 
 import { AccountsAssetsContext } from '../components';
 import { TEST_NETS } from '../util/constants';
-import { FetchedBalance } from './useAssetsOnChains2';
+import { FetchedBalance } from './useAssetsOnChains';
 import useIsTestnetEnabled from './useIsTestnetEnabled';
 
 export default function useAccountAssets (address: string | undefined): FetchedBalance[] | undefined | null {
