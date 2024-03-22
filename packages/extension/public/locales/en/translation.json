@@ -1146,5 +1146,7 @@
   "Proxy Management": "",
   "The chosen blockchain does not support proxy management.": "",
   "You can add new proxies or remove existing ones for the account here. Keep in mind that you need to reserve a deposit to have proxies.": "",
-  "Proxy changes": ""
+  "Proxy changes": "",
+  "There is no sufficient transferable balance!": "",
+  "This transaction will drop your balance below the Existential Deposit threshold, risking account reaping.": ""
 }

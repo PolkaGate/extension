@@ -18,7 +18,7 @@ import { createAccountHardware, getMetadata } from '../../../messaging';
 import { Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
 import ledgerChains from '../../../util/legerChains';
-import { FullScreenHeader } from '../../governance/FullScreenHeader';
+import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 
 interface AccOption {
   text: string;

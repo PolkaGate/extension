@@ -13,7 +13,7 @@ import { getTxTransfers } from '../../../util/api/getTransfers';
 import { STAKING_ACTIONS, STAKING_CHAINS } from '../../../util/constants';
 import { TransactionDetail, Transfers } from '../../../util/types';
 import { getHistoryFromStorage } from '../../../util/utils';
-import { DraggableModal } from '../../governance/components/DraggableModal';
+import { DraggableModal } from '../../../fullscreen/governance/components/DraggableModal';
 import HistoryDetailModal from './HistoryDetailModal';
 import HistoryItemModal from './HistoryItemModal';
 

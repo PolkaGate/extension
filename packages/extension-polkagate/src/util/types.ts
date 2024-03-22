@@ -20,8 +20,8 @@ import { Balance } from '@polkadot/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { SavedAssets } from '../hooks/useAssetsOnChains';
-import { LatestReferenda } from '../popup/governance/utils/types';
-import { CurrencyItemType } from '../popup/homeFullScreen/partials/Currency';
+import { LatestReferenda } from '../fullscreen/governance/utils/types';
+import { CurrencyItemType } from '../fullscreen/homeFullScreen/partials/Currency';
 
 export interface TransactionStatus {
   blockNumber: string | null;

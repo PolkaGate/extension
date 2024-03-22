@@ -18,8 +18,8 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useAccount, useAccountDisplay, useApi, useChain, useFormatted, useProxies, useTranslation } from '../hooks';
-import { DraggableModal } from '../popup/governance/components/DraggableModal';
-import SelectProxyModal2 from '../popup/governance/components/SelectProxyModal2';
+import { DraggableModal } from '../fullscreen/governance/components/DraggableModal';
+import SelectProxyModal2 from '../fullscreen/governance/components/SelectProxyModal2';
 import LedgerSign from '../popup/signing/LedgerSign';
 import { send, signAndSend } from '../util/api';
 import { Proxy, ProxyItem, ProxyTypes, TxInfo, TxResult } from '../util/types';

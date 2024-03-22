@@ -14,7 +14,7 @@ import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, PB
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from '../../../messaging';
 import { Name } from '../../../partials';
-import { FullScreenHeader } from '../../governance/FullScreenHeader';
+import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 
 interface QrAccount {
   content: string;

@@ -12,8 +12,8 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { AccountContext, ActionContext, PButton } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
-import { FullScreenHeader } from '../../popup/governance/FullScreenHeader';
-import Privacy from '../../popup/welcome/Privacy';
+import { FullScreenHeader } from '../governance/FullScreenHeader';
+import Privacy from '../welcome/Privacy';
 
 function Onboarding(): React.ReactElement {
   useFullscreen();

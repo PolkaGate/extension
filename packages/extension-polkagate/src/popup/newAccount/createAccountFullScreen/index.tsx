@@ -11,7 +11,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { ActionContext, Checkbox2, InputWithLabel, TwoButtons } from '../../../components';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountSuri, createSeed } from '../../../messaging';
-import { FullScreenHeader } from '../../governance/FullScreenHeader';
+import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import CopySeedButton from './components/CopySeedButton';
 import DownloadSeedButton from './components/DownloadSeedButton';
 import Passwords2 from './components/Passwords2';

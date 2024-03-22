@@ -20,7 +20,7 @@ import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../../../messagin
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { isKeyringPairs$Json } from '../../../util/typeGuards';
 import { pgBoxShadow } from '../../../util/utils';
-import { FullScreenHeader } from '../../governance/FullScreenHeader';
+import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/resetAccounts';
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');

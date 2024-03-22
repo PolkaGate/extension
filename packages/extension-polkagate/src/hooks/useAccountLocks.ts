@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
-import { CONVICTIONS } from '../popup/governance/utils/consts';
+import { CONVICTIONS } from '../fullscreen/governance/utils/consts';
 import useApi from './useApi';
 import useCurrentBlockNumber from './useCurrentBlockNumber';
 import useFormatted from './useFormatted';

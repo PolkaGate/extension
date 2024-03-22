@@ -19,7 +19,7 @@ import { createAccountExternal, getMetadata } from '../../../messaging';
 import { Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
 import { ProxyItem } from '../../../util/types';
-import { FullScreenHeader } from '../../governance/FullScreenHeader';
+import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 
 export interface AccountInfo {
   address: string;

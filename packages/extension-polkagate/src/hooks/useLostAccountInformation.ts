@@ -10,8 +10,8 @@ import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { BN } from '@polkadot/util';
 
-import { SessionInfo, WithdrawInfo } from '../popup/socialRecovery/util/types';
-import { checkLostAccountBalance, checkLostAccountClaimedStatus, checkLostAccountIdentity, checkLostAccountPoolStakedBalance, checkLostAccountProxy, checkLostAccountRecoverability, checkLostAccountSoloStakedBalance } from '../popup/socialRecovery/util/utils';
+import { SessionInfo, WithdrawInfo } from '../fullscreen/socialRecovery/util/types';
+import { checkLostAccountBalance, checkLostAccountClaimedStatus, checkLostAccountIdentity, checkLostAccountPoolStakedBalance, checkLostAccountProxy, checkLostAccountRecoverability, checkLostAccountSoloStakedBalance } from '../fullscreen/socialRecovery/util/utils';
 
 export default function useLostAccountInformation(accountsInfo: DeriveAccountInfo[] | undefined, api: ApiPromise | undefined, lostAccountAddress: string | undefined, rescuerAccountAddress: string | undefined, sessionInfo: SessionInfo | undefined, refresh: boolean): WithdrawInfo | undefined {
   const [lostAccountInformation, setLostAccountInformation] = useState<WithdrawInfo>();

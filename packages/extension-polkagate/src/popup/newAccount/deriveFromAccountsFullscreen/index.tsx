@@ -16,7 +16,7 @@ import { useFullscreen, useTranslation } from '../../../hooks';
 import { deriveAccount, validateAccount, validateDerivationPath } from '../../../messaging';
 import { nextDerivationPath } from '../../../util/nextDerivationPath';
 import { AddressState } from '../../../util/types';
-import { FullScreenHeader } from '../../governance/FullScreenHeader';
+import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import DerivationPath from '../deriveAccount/DerivationPath';
 import AddressDropdownFullScreen from './AddressDropdownFullScreen';
 

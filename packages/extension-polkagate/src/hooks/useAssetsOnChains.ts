@@ -11,7 +11,7 @@ import { AccountJson } from '@polkadot/extension-base/background/types';
 import { BN } from '@polkadot/util';
 
 import { getStorage, setStorage, watchStorage } from '../components/Loading';
-import { toCamelCase } from '../popup/governance/utils/util';
+import { toCamelCase } from '../fullscreen/governance/utils/util';
 import allChains from '../util/chains';
 import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';

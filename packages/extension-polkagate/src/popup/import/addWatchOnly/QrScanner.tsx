@@ -12,7 +12,7 @@ import { QrScanSignature } from '@polkadot/react-qr';
 import { SlidePopUp } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import useIsExtensionPopup from '../../../hooks/useIsExtensionPopup';
-import { DraggableModal } from '../../governance/components/DraggableModal';
+import { DraggableModal } from '../../../fullscreen/governance/components/DraggableModal';
 
 interface Props {
   openCamera: boolean;
