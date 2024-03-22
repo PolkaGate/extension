@@ -17,8 +17,8 @@ import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 import { FormatPrice, ShowBalance } from '../../../components';
 import { useAccountLocks, useCurrentBlockNumber, useHasDelegated, useTranslation } from '../../../hooks';
 import { Lock } from '../../../hooks/useAccountLocks';
-import { TIME_TO_SHAKE_ICON } from '../../../util/constants';
 import blockToDate from '../../../popup/crowdloans/partials/blockToDate';
+import { TIME_TO_SHAKE_ICON } from '../../../util/constants';
 import { popupNumbers, UnlockInformationType } from '..';
 
 interface DisplayBalanceProps {

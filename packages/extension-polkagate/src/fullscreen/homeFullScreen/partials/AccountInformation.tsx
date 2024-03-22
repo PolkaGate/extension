@@ -18,14 +18,14 @@ import { nFormatter } from '../../../components/FormatPrice';
 import { useAccount, useCurrency, usePrices3, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsOnChains';
 import { showAccount, tieAccount } from '../../../messaging';
-import { BalancesInfo } from '../../../util/types';
-import { amountToHuman } from '../../../util/utils';
-import AccountIcons from '../../accountDetailsFullScreen/components/AccountIcons';
-import AOC from '../../accountDetailsFullScreen/components/AOC';
 import ExportAccountModal from '../../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../../popup/forgetAccount/ForgetAccountModal';
 import DeriveAccountModal from '../../../popup/newAccount/deriveAccount/modal/DeriveAccountModal';
 import RenameModal from '../../../popup/rename/RenameModal';
+import { BalancesInfo } from '../../../util/types';
+import { amountToHuman } from '../../../util/utils';
+import AccountIcons from '../../accountDetailsFullScreen/components/AccountIcons';
+import AOC from '../../accountDetailsFullScreen/components/AOC';
 import FullScreenAccountMenu from './FullScreenAccountMenu';
 
 interface AddressDetailsProps {

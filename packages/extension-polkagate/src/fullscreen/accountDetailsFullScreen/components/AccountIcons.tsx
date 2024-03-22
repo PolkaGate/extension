@@ -10,7 +10,6 @@ import { Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
 
 import { ActionContext, Infotip } from '../../../components';
 import { useAccount, useAccountInfo, useTranslation } from '../../../hooks';

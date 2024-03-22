@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowDropDown as ArrowDropDownIcon, MoreHoriz as MoreHorizIcon } from '@mui/icons-material';
-import { Collapse, Grid, Skeleton, Typography, useTheme } from '@mui/material';
+import { Collapse, Grid, Skeleton, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -94,7 +94,6 @@ const AssetsBoxes = ({ account, api, asset, balanceToShow, mode, onclick, prices
 
 function AOC ({ account, accountAssets, api, balanceToShow, mode = 'Detail', onclick, selectedAsset }: Props) {
   const { t } = useTranslation();
-  const theme = useTheme();
   const pricesInCurrencies = usePrices3();
 
   const [showMore, setShowMore] = useState<boolean>(false);

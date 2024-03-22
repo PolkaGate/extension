@@ -5,8 +5,8 @@
 
 import { faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, OpenInNewRounded as OpenInNewRoundedIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material';
-import { Divider, Grid, Theme, Typography, useTheme } from '@mui/material';
+import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { BalancesInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useContext, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';

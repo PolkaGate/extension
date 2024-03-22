@@ -3,11 +3,11 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
-import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
 
 import { BN } from '@polkadot/util';
 
@@ -15,17 +15,17 @@ import { AccountContext, ActionContext } from '../../components';
 import { useAccount, useAccountAssets, useApi, useBalances, useChain, useChainName, useCurrency, useFormatted, useFullscreen, usePrices3, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
 import { FetchedBalance } from '../../hooks/useAssetsOnChains';
-import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
-import { amountToHuman, sanitizeChainName } from '../../util/utils';
 import { getValue } from '../../popup/account/util';
 import ExportAccountModal from '../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../popup/forgetAccount/ForgetAccountModal';
-import { FullScreenHeader } from '../governance/FullScreenHeader';
 import HistoryModal from '../../popup/history/modal/HistoryModal';
 import { label } from '../../popup/home/AccountsTree';
 import DeriveAccountModal from '../../popup/newAccount/deriveAccount/modal/DeriveAccountModal';
 import ReceiveModal from '../../popup/receive/ReceiveModal';
 import RenameModal from '../../popup/rename/RenameModal';
+import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
+import { amountToHuman, sanitizeChainName } from '../../util/utils';
+import { FullScreenHeader } from '../governance/FullScreenHeader';
 import LockedInReferenda from './unlock/Review';
 import { AccountInformation, AccountSetting, ChangeAssets, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
 
