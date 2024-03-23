@@ -67,20 +67,34 @@ function WatchList ({ groupedAssets }: Props): React.ReactElement {
     );
   };
 
+  const uniqueAssets = useMemo(() => {
+    const seenTokens = new Set();
+
+    return groupedAssets?.filter((asset) => {
+      if (asset.price && !seenTokens.has(asset.token)) {
+        seenTokens.add(asset.token);
+
+        return true;
+      }
+
+      return false;
+    });
+  }, [groupedAssets]);
+
   return (
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '0.1px solid' : 'none', borderColor: 'secondary.main', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px', width: '430px' }}>
-      { groupedAssets && groupedAssets.length > 0 &&
+      { uniqueAssets && uniqueAssets.length > 0 &&
           <Grid container item pt='10px'>
-            {groupedAssets.slice(0, 3).map((asset, index) => (
+            {uniqueAssets.slice(0, 3).map((asset, index) => (
               <DisplayAssetRow
                 asset={asset}
                 key={index}
               />
             ))}
-            {groupedAssets.length > 3 &&
+            {uniqueAssets.length > 3 &&
               <Grid container item justifyContent='flex-end'>
                 <Collapse in={showMore} orientation='vertical' sx={{ '> .MuiCollapse-wrapper .MuiCollapse-wrapperInner': { display: 'grid', rowGap: '10px' }, width: '100%' }}>
-                  {groupedAssets.slice(3).map((asset, index) => (
+                  {uniqueAssets.slice(3).map((asset, index) => (
                     <DisplayAssetRow
                       asset={asset}
                       key={index}

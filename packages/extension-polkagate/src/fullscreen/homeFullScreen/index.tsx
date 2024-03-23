@@ -147,7 +147,11 @@ export default function HomePageFullScreen (): React.ReactElement {
             />
           </Grid>
           <Grid container item width='fit-content'>
-            <WatchList groupedAssets={groupedAssets} />
+            {groupedAssets &&
+             <WatchList
+               groupedAssets={groupedAssets}
+             />
+            }
           </Grid>
           <Grid container item width='fit-content'>
             <HomeMenu />
