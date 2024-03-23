@@ -108,8 +108,6 @@ export default function Popup (): React.ReactElement {
   const assetsOnChains = useAssetsBalances(accounts);
   const priceIds = usePriceIds();
 
-  console.log('assetsOnChains:', assetsOnChains);
-
   const [accountCtx, setAccountCtx] = useState<AccountsContext>({ accounts: [], hierarchy: [] });
   const [authRequests, setAuthRequests] = useState<null | AuthorizeRequest[]>(null);
   const [cameraOn, setCameraOn] = useState(startSettings.camera === 'on');
