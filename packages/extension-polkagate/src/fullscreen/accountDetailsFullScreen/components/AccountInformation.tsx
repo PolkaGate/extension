@@ -13,7 +13,7 @@ import { BN } from '@polkadot/util';
 
 import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, ShortAddress2 } from '../../../components';
 import { useAccount, useTranslation } from '../../../hooks';
-import { FetchedBalance } from '../../../hooks/useAssetsOnChains';
+import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { showAccount, tieAccount } from '../../../messaging';
 import { getValue } from '../../../popup/account/util';
 import { BALANCES_VALIDITY_PERIOD } from '../../../util/constants';
@@ -124,6 +124,13 @@ export default function AccountInformation ({ accountAssets, address, api, balan
   const showAOC = useMemo(() => !!(assetsToShow === undefined || (assetsToShow && assetsToShow?.length > 0)), [assetsToShow]);
 
   useEffect(() => {
+    /** if chain has been switched an its not among the selected chains */
+    if (account?.genesisHash && !accountAssets?.find(({ genesisHash }) => genesisHash === account?.genesisHash)) {
+      return setSelectedAsset(undefined);
+    }
+  }, [account?.genesisHash, accountAssets, setSelectedAsset]);
+
+  useEffect(() => {
     if (balances?.chainName === chainName) {
       return setBalanceToShow(balances);
     }
@@ -142,7 +149,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
   }, [account?.isHidden, address]);
 
   return (
-    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: `20px 20px ${showAOC ? '5px' : '20px'} 20px` }}>
+    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mb: '15px', p: `20px 20px ${showAOC ? '5px' : '20px'} 20px` }}>
       <Grid container item>
         <Grid container item sx={{ borderRight: '1px solid', borderRightColor: 'divider', pr: '8px', width: 'fit-content' }}>
           <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>
@@ -184,7 +191,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
           </Grid>
           <SelectedAssetBox
             account={account}
-            balanceToShow={balanceToShow}
+            balanceToShow={balanceToShow || selectedAsset}
             isBalanceOutdated={isBalanceOutdated}
             isPriceOutdated={!!isPriceOutdated}
             price={price}

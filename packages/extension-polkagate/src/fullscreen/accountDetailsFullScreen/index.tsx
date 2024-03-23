@@ -14,7 +14,7 @@ import { BN } from '@polkadot/util';
 import { AccountContext, ActionContext } from '../../components';
 import { useAccount, useAccountAssets, useApi, useBalances, useChain, useChainName, useCurrency, useFormatted, useFullscreen, usePrices3, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
-import { FetchedBalance } from '../../hooks/useAssetsOnChains';
+import { FetchedBalance } from '../../hooks/useAssetsBalances';
 import { getValue } from '../../popup/account/util';
 import ExportAccountModal from '../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../popup/forgetAccount/ForgetAccountModal';
@@ -55,7 +55,7 @@ export interface UnlockInformationType {
   unlockableAmount: BN;
 }
 
-export default function AccountDetails(): React.ReactElement {
+export default function AccountDetails (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -71,24 +71,26 @@ export default function AccountDetails(): React.ReactElement {
   const chainName = useChainName(address);
   const onAction = useContext(ActionContext);
   const accountAssets = useAccountAssets(address);
+  const pricesInCurrency = usePrices3();
 
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
   const [assetId, setAssetId] = useState<number>();
   const [selectedAsset, setSelectedAsset] = useState<FetchedBalance>();
-
-  const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId || selectedAsset?.assetId);
-  const pricesInCurrency = usePrices3();
-
   const [displayPopup, setDisplayPopup] = useState<number | undefined>();
   const [unlockInformation, setUnlockInformation] = useState<UnlockInformationType | undefined>();
+
+  const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId || selectedAsset?.assetId);
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette]);
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
+  const isOnAssetHub = useMemo(() => ASSET_HUBS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
   const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
   const supportStaking = useMemo(() => STAKING_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
-  const supportAssetHubs = useMemo(() => ASSET_HUBS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
   const showTotalChart = useMemo(() => accountAssets && accountAssets.length > 0 && accountAssets.filter((_asset) => pricesInCurrency && currency && pricesInCurrency.prices[_asset?.priceId]?.value > 0 && !new BN(_asset.totalBalance).isZero()), [accountAssets, currency, pricesInCurrency]);
+  const hasParent = useMemo(() => account ? accounts.find(({ address }) => address === account.parentAddress) : undefined, [account, accounts]);
+  const balancesToShow = useMemo(() => isOnAssetHub ? selectedAsset : balances || selectedAsset, [balances, isOnAssetHub, selectedAsset]);
+
   const currentPrice = useMemo((): number | undefined => {
     const selectedAssetPriceId = selectedAsset?.priceId;
 
@@ -103,8 +105,6 @@ export default function AccountDetails(): React.ReactElement {
 
     return currentAssetPrices?.value || mayBeTestNetPrice;
   }, [selectedAsset, chainName, pricesInCurrency?.prices]);
-
-  const hasParent = useMemo(() => account ? accounts.find(({ address }) => address === account.parentAddress) : undefined, [account, accounts]);
 
   const nativeAssetPrice = useMemo(() => {
     if (!pricesInCurrency || !balances || !currentPrice) {
@@ -179,7 +179,7 @@ export default function AccountDetails(): React.ReactElement {
             </Grid>
           </Grid>
           <Grid container item justifyContent='space-between' mb='15px'>
-            <Grid container direction='column' item minWidth='735px' rowGap='10px' width='calc(100% - 300px - 3%)' mb='10px'>
+            <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 300px - 3%)'>
               <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', ml: 5, position: 'absolute', px: 1, width: 'fit-content' }}>
                 {label(account, hasParent?.name || '', t)}
               </Grid>
@@ -199,7 +199,7 @@ export default function AccountDetails(): React.ReactElement {
               />
               {account?.genesisHash &&
                 <>
-                  {supportAssetHubs &&
+                  {isOnAssetHub &&
                     <ChangeAssets
                       address={address}
                       assetId={assetId || selectedAsset?.assetId}
@@ -207,45 +207,46 @@ export default function AccountDetails(): React.ReactElement {
                       onChange={onChangeAsset}
                       setAssetId={setAssetId}
                       style={{ '> div div div#selectChain': { borderRadius: '5px' }, '> div p': { fontSize: '16px' } }}
-                    />}
+                    />
+                  }
                   <DisplayBalance
-                    amount={balances?.availableBalance}
-                    decimal={balances?.decimal}
+                    amount={balancesToShow?.availableBalance}
+                    decimal={balancesToShow?.decimal}
                     isDarkTheme={isDarkTheme}
                     onClick={goToSend}
                     price={currentPrice}
                     theme={theme}
-                    title={t<string>('Transferable')}
-                    token={balances?.token}
+                    title={isOnAssetHub ? t<string>('Balance') : t<string>('Transferable')}
+                    token={balancesToShow?.token}
                   />
                   {supportStaking &&
                     <DisplayBalance
-                      amount={balances?.soloTotal}
-                      decimal={balances?.decimal}
+                      amount={balancesToShow?.soloTotal}
+                      decimal={balancesToShow?.decimal}
                       isDarkTheme={isDarkTheme}
                       onClick={goToSoloStaking}
                       price={currentPrice}
                       theme={theme}
                       title={t<string>('Solo Stake')}
-                      token={balances?.token}
+                      token={balancesToShow?.token}
                     />}
                   {supportStaking &&
                     <DisplayBalance
-                      amount={balances?.pooledBalance}
-                      decimal={balances?.decimal}
+                      amount={balancesToShow?.pooledBalance}
+                      decimal={balancesToShow?.decimal}
                       isDarkTheme={isDarkTheme}
                       onClick={goToPoolStaking}
                       price={currentPrice}
                       theme={theme}
                       title={t<string>('Pool Stake')}
-                      token={balances?.token}
+                      token={balancesToShow?.token}
                     />}
                   {supportGov &&
                     <LockedBalanceDisplay
                       address={address}
                       api={api}
                       chain={chain}
-                      decimal={balances?.decimal}
+                      decimal={balancesToShow?.decimal}
                       formatted={String(formatted)}
                       isDarkTheme={isDarkTheme}
                       price={currentPrice}
@@ -253,17 +254,18 @@ export default function AccountDetails(): React.ReactElement {
                       setDisplayPopup={setDisplayPopup}
                       setUnlockInformation={setUnlockInformation}
                       title={t<string>('Locked in Referenda')}
-                      token={balances?.token}
+                      token={balancesToShow?.token}
                     />
                   }
+                  {!isOnAssetHub &&
                   <DisplayBalance
-                    amount={balances?.reservedBalance}
-                    decimal={balances?.decimal}
+                    amount={balancesToShow?.reservedBalance}
+                    decimal={balancesToShow?.decimal}
                     isDarkTheme={isDarkTheme}
                     price={currentPrice} // TODO: double check
                     title={t<string>('Reserved')}
-                    token={balances?.token}
-                  />
+                    token={balancesToShow?.token}
+                  />}
                 </>
               }
             </Grid>
@@ -281,7 +283,7 @@ export default function AccountDetails(): React.ReactElement {
                   address={address}
                   api={api}
                   assetId={assetId}
-                  balance={balances}
+                  balance={balancesToShow}
                   genesisHash={account?.genesisHash}
                   setDisplayPopup={setDisplayPopup}
                 />

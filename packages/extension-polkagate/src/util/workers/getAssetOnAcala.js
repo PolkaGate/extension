@@ -8,7 +8,29 @@ import { createAssets } from '@polkagate/apps-config/assets';
 
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
 
-async function toGetNativeToken(addresses, api, chainName) {
+function balancify (balances) {
+  return JSON.stringify({
+    availableBalance: String(balances.availableBalance),
+    freeBalance: String(balances.freeBalance),
+    lockedBalance: String(balances.lockedBalance),
+    reservedBalance: String(balances.reservedBalance),
+    vestedBalance: String(balances.vestedBalance),
+    vestedClaimable: String(balances.vestedClaimable),
+    vestingLocked: String(balances.vestingLocked),
+    vestingTotal: String(balances.vestingTotal),
+    votingBalance: String(balances.votingBalance)
+  });
+}
+
+function balancifyAsset (balances) {
+  return JSON.stringify({
+    availableBalance: String(balances.free),
+    frozenBalance: String(balances.frozen),
+    reservedBalance: String(balances.reserved)
+  });
+}
+
+async function toGetNativeToken (addresses, api, chainName) {
   const _result = {};
 
   const balances = await Promise.all(addresses.map((address) => api.derive.balances.all(address)));
@@ -20,7 +42,8 @@ async function toGetNativeToken(addresses, api, chainName) {
       return;
     }
 
-    _result[address] = [{ // since some chains may have more than one asset hence we use an array here! even thought its not needed for relay chains but just to be as a general rule.
+    _result[address] = [{
+      balanceDetails: balancify(balances[index]),
       chainName,
       decimal: api.registry.chainDecimals[0],
       genesisHash: api.genesisHash.toString(),
@@ -33,7 +56,7 @@ async function toGetNativeToken(addresses, api, chainName) {
   return _result;
 }
 
-async function getAssetOnAcala(addresses, assetsToBeFetched, chainName) {
+async function getAssetOnAcala (addresses, assetsToBeFetched, chainName) {
   const endpoints = getChainEndpoints(chainName);
   const { api, connections } = await fastestEndpoint(endpoints, false);
 
@@ -55,6 +78,7 @@ async function getAssetOnAcala(addresses, assetsToBeFetched, chainName) {
 
       const item = {
         assetId: asset.id,
+        balanceDetails: balancifyAsset(balance),
         chainName,
         decimal: asset.decimal,
         genesisHash: api.genesisHash.toString(),
@@ -78,7 +102,10 @@ onmessage = async (e) => {
 
   const assetsChains = createAssets();
   const chainName = 'acala';
+
+  // This tokens do  not exist while using the api, hence got filtered here until TBD
   const acalaFilteredSymbols = ['lcDOT', 'GLMR', 'PARA', 'tDOT', 'INTR', 'ASTR', 'EQ', 'iBTC', 'DAI', 'USDT'];
+
   const assetsToBeFetched = assetsChains[chainName].filter(({ symbol }) => !acalaFilteredSymbols.includes(symbol));
 
   /** if assetsToBeFetched === undefined then we don't fetch assets by default at first, but wil fetch them on-demand later in account details page*/

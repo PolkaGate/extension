@@ -19,9 +19,9 @@ import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { Balance } from '@polkadot/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { SavedAssets } from '../hooks/useAssetsOnChains';
 import { LatestReferenda } from '../fullscreen/governance/utils/types';
 import { CurrencyItemType } from '../fullscreen/homeFullScreen/partials/Currency';
+import { SavedAssets } from '../hooks/useAssetsBalances';
 
 export interface TransactionStatus {
   blockNumber: string | null;

@@ -6,7 +6,7 @@
 import { Grid, SxProps, Theme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { useAssets, useTokens } from '@polkadot/extension-polkagate/src/hooks';
+import { useAssetHubAssets, useTokens } from '@polkadot/extension-polkagate/src/hooks';
 
 import Select2 from './Select2';
 
@@ -22,7 +22,7 @@ interface Props {
 
 function Assets ({ address, assetId, label, onChange, setAssetId, style }: Props) {
   const tokens = useTokens(address);
-  const assets = useAssets(address);
+  const assets = useAssetHubAssets(address);
   const options = useMemo(() => (tokens || []).concat(assets || []), [assets, tokens]);
 
   const [isLoading, setLoading] = useState<boolean>();

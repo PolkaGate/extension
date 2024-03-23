@@ -12,7 +12,7 @@ import { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { DisplayLogo, FormatPrice, ShowBalance } from '../../../components';
 import { usePrices3, useTranslation } from '../../../hooks';
-import { FetchedBalance } from '../../../hooks/useAssetsOnChains';
+import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import getLogo2 from '../../../util/getLogo2';
 import { BalancesInfo, Prices3 } from '../../../util/types';
 

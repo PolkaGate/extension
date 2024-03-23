@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export { default as useAccount } from './useAccount';
-export { default as useAssets } from './useAssets';
+export { default as useAssetHubAssets } from './useAssetHubAssets';
 export { default as useReferendum } from './useReferendum';
 export { default as useAccountDisplay } from './useAccountDisplay';
 export { default as useAccountLocks } from './useAccountLocks';
@@ -80,7 +80,7 @@ export { default as usePendingRewards } from './usePendingRewards';
 export { default as useManifest } from './useManifest';
 export { default as useIsLoginEnabled } from './useIsLoginEnabled';
 export { default as useIsTestnetEnabled } from './useIsTestnetEnabled';
-export { default as useAssetsOnChains } from './useAssetsOnChains';
+export { default as useAssetsBalances } from './useAssetsBalances';
 export { default as useAccountAssets } from './useAccountAssets';
 export { default as useCurrency } from './useCurrency';
 export { default as usePriceIds } from './usePriceIds';

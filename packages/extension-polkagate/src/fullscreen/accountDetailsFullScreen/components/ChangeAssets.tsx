@@ -7,7 +7,7 @@ import { Grid, SxProps, Theme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import Select2 from '../../../components/Select2';
-import { useAssets, useTokens } from '../../../hooks';
+import { useAssetHubAssets, useTokens } from '../../../hooks';
 
 interface Props {
   address: string | undefined;
@@ -20,7 +20,7 @@ interface Props {
 
 function ChangeAssets ({ address, assetId, label, onChange, setAssetId, style }: Props) {
   const tokens = useTokens(address);
-  const assets = useAssets(address);
+  const assets = useAssetHubAssets(address);
   const options = useMemo(() => (tokens || []).concat(assets || []), [assets, tokens]);
 
   const [isLoading, setLoading] = useState<boolean>();

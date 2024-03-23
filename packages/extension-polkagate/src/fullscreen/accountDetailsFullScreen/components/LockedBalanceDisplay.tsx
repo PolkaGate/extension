@@ -36,7 +36,7 @@ interface DisplayBalanceProps {
   setUnlockInformation: React.Dispatch<React.SetStateAction<UnlockInformationType | undefined>>;
 }
 
-export default function LockedBalanceDisplay ({ address, api, chain, decimal, formatted, isDarkTheme, price, refreshNeeded, setDisplayPopup, setUnlockInformation, title, token }: DisplayBalanceProps): React.ReactElement {
+export default function LockedBalanceDisplay({ address, api, chain, decimal, formatted, isDarkTheme, price, refreshNeeded, setDisplayPopup, setUnlockInformation, title, token }: DisplayBalanceProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -197,6 +197,7 @@ export default function LockedBalanceDisplay ({ address, api, chain, decimal, fo
                 amount={totalLocked}
                 decimals={decimal}
                 price={price}
+                skeletonHeight={20}
               />
             </Grid>
           </Grid>

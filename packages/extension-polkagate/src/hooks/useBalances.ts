@@ -10,6 +10,7 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { FetchingContext } from '../components';
 import { updateMeta } from '../messaging';
+import { ASSET_HUBS } from '../util/constants';
 import getPoolAccounts from '../util/getPoolAccounts';
 import { BalancesInfo, SavedBalances } from '../util/types';
 import { useAccount, useApi, useChain, useChainName, useDecimal, useFormatted, useStakingAccount, useToken } from '.';
@@ -233,7 +234,8 @@ export default function useBalances(address: string | undefined, refresh?: boole
   }, [Object.keys(account ?? {})?.length, address, chainName, stakingAccount]);
 
   useEffect(() => {
-    if (!api || assetId === undefined || !api?.query?.assets) {
+    /** We fetch asset hub assets via this hook for asset ids, other multi chain assets have been fetched via useAssetsOnChain hook*/
+    if (!api || assetId === undefined || !api?.query?.assets || !ASSET_HUBS.includes(chain?.genesisHash || '')) {
       return;
     }
 

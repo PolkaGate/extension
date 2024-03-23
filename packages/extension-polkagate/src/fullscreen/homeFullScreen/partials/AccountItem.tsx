@@ -13,7 +13,7 @@ import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { AccountContext } from '../../../components';
 import { useAccountAssets, useApi, useChain, useFormatted, useTranslation } from '../../../hooks';
-import { FetchedBalance } from '../../../hooks/useAssetsOnChains';
+import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import QuickActionFullScreen from '../../../partials/QuickActionFullScreen';
 import { label } from '../../../popup/home/AccountsTree';
 import AccountInformation from './AccountInformation';

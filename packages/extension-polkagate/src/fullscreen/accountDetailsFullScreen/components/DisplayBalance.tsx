@@ -46,6 +46,7 @@ export default function DisplayBalance ({ amount, decimal, isDarkTheme, onClick,
             amount={amount}
             decimals={decimal}
             price={price}
+            skeletonHeight={20}
           />
         </Grid>
         {onClick && theme &&

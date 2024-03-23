@@ -4,13 +4,20 @@
 import type { AccountJson, AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
 
-import { CurrencyItemType } from '@polkadot/extension-polkagate/src/fullscreen/homeFullScreen/partials/Currency';
 import { AnimatePresence } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Route, Switch } from 'react-router';
 
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
+import AccountFL from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen';
+import Governance from '@polkadot/extension-polkagate/src/fullscreen/governance';
+import ReferendumPost from '@polkadot/extension-polkagate/src/fullscreen/governance/post';
+import { CurrencyItemType } from '@polkadot/extension-polkagate/src/fullscreen/homeFullScreen/partials/Currency';
+import ManageIdentity from '@polkadot/extension-polkagate/src/fullscreen/manageIdentity';
+import FullScreenManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxiesFullScreen';
+import Send from '@polkadot/extension-polkagate/src/fullscreen/sendFund';
+import SocialRecovery from '@polkadot/extension-polkagate/src/fullscreen/socialRecovery';
 import AddWatchOnly from '@polkadot/extension-polkagate/src/popup/import/addWatchOnly';
 import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
 import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
@@ -23,18 +30,15 @@ import { getStorage, LoginInfo, setStorage, updateStorage } from '../../../exten
 import { ExtensionLockProvider } from '../../../extension-polkagate/src/context/ExtensionLockContext';
 import Onboarding from '../../../extension-polkagate/src/fullscreen/onboarding';
 import { usePriceIds } from '../../../extension-polkagate/src/hooks';
-import useAssetsOnChains, { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../extension-polkagate/src/hooks/useAssetsOnChains';
+import useAssetsBalances, { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../extension-polkagate/src/hooks/useAssetsBalances';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
 import AccountEx from '../../../extension-polkagate/src/popup/account';
-import AccountFL from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen';
 import AuthList from '../../../extension-polkagate/src/popup/authManagement';
 import Authorize from '../../../extension-polkagate/src/popup/authorize/index';
 import CrowdLoans from '../../../extension-polkagate/src/popup/crowdloans';
 import Export from '../../../extension-polkagate/src/popup/export/Export';
 import ExportAll from '../../../extension-polkagate/src/popup/export/ExportAll';
 import ForgetAccount from '../../../extension-polkagate/src/popup/forgetAccount';
-import Governance from '@polkadot/extension-polkagate/src/fullscreen/governance';
-import ReferendumPost from '@polkadot/extension-polkagate/src/fullscreen/governance/post';
 import History from '../../../extension-polkagate/src/popup/history';
 import Accounts from '../../../extension-polkagate/src/popup/home/ManageHome';
 import AddWatchOnlyFullScreen from '../../../extension-polkagate/src/popup/import/addWatchOnlyFullScreen';
@@ -43,17 +47,13 @@ import AttachQrFullScreen from '../../../extension-polkagate/src/popup/import/at
 import ImportLedger from '../../../extension-polkagate/src/popup/import/importLedger';
 import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeedFullScreen';
 import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJSONFullScreen';
-import ManageIdentity from '@polkadot/extension-polkagate/src/fullscreen/manageIdentity';
 import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
-import FullScreenManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxiesFullScreen';
 import Metadata from '../../../extension-polkagate/src/popup/metadata';
 import CreateAccount from '../../../extension-polkagate/src/popup/newAccount/createAccountFullScreen';
 import PhishingDetected from '../../../extension-polkagate/src/popup/PhishingDetected';
 import Receive from '../../../extension-polkagate/src/popup/receive';
 import Rename from '../../../extension-polkagate/src/popup/rename';
-import Send from '@polkadot/extension-polkagate/src/fullscreen/sendFund';
 import Signing from '../../../extension-polkagate/src/popup/signing';
-import SocialRecovery from '@polkadot/extension-polkagate/src/fullscreen/socialRecovery';
 import Pool from '../../../extension-polkagate/src/popup/staking/pool';
 import PoolInformation from '../../../extension-polkagate/src/popup/staking/pool/myPool';
 import PoolNominations from '../../../extension-polkagate/src/popup/staking/pool/nominations';
@@ -76,7 +76,7 @@ import { APIs, Fetching, LatestRefs, Prices2, Prices3, PricesInCurrencies } from
 const startSettings = uiSettings.get();
 
 // Request permission for video, based on access we can hide/show import
-async function requestMediaAccess(cameraOn: boolean): Promise<boolean> {
+async function requestMediaAccess (cameraOn: boolean): Promise<boolean> {
   if (!cameraOn) {
     return false;
   }
@@ -92,7 +92,7 @@ async function requestMediaAccess(cameraOn: boolean): Promise<boolean> {
   return false;
 }
 
-function initAccountContext(accounts: AccountJson[]): AccountsContext {
+function initAccountContext (accounts: AccountJson[]): AccountsContext {
   const hierarchy = buildHierarchy(accounts);
   const master = hierarchy.find(({ isExternal, type }) => !isExternal && canDerive(type));
 
@@ -103,10 +103,12 @@ function initAccountContext(accounts: AccountJson[]): AccountsContext {
   };
 }
 
-export default function Popup(): React.ReactElement {
+export default function Popup (): React.ReactElement {
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
-  const assetsOnChains = useAssetsOnChains(accounts);
+  const assetsOnChains = useAssetsBalances(accounts);
   const priceIds = usePriceIds();
+
+  console.log('assetsOnChains:', assetsOnChains);
 
   const [accountCtx, setAccountCtx] = useState<AccountsContext>({ accounts: [], hierarchy: [] });
   const [authRequests, setAuthRequests] = useState<null | AuthorizeRequest[]>(null);
@@ -226,7 +228,7 @@ export default function Popup(): React.ReactElement {
       .catch(console.error);
   }, [cameraOn]);
 
-  function wrapWithErrorBoundary(component: React.ReactElement, trigger?: string): React.ReactElement {
+  function wrapWithErrorBoundary (component: React.ReactElement, trigger?: string): React.ReactElement {
     return <ErrorBoundary trigger={trigger}>{component}</ErrorBoundary>;
   }
 
@@ -304,7 +306,10 @@ export default function Popup(): React.ReactElement {
                                       {/* <Route exact path='/send/review/:genesisHash/:address/:formatted/:assetId'>{wrapWithErrorBoundary(<Review />, 'review')}</Route> */}
                                       <Route path='/tuneup/:address'>{wrapWithErrorBoundary(<TuneUp />, 'tuneup')}</Route>
                                       <Route path={`${PHISHING_PAGE_REDIRECT}/:website`}>{wrapWithErrorBoundary(<PhishingDetected />, 'phishing-page-redirect')}</Route>
-                                      <Route exact path='/'>{Root}</Route>
+                                      <Route
+                                        exact
+                                        path='/'
+                                      >{Root}</Route>
                                     </Switch>
                                   </SigningReqContext.Provider>
                                 </MetadataReqContext.Provider>

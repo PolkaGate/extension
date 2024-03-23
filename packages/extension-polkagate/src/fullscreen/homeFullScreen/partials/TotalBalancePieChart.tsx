@@ -9,11 +9,11 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { FetchedBalance } from '../../../hooks/useAssetsOnChains';
 import { stars6Black, stars6White } from '../../../assets/icons';
 import { AccountsAssetsContext, DisplayLogo } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, usePrices3, useTranslation, useYouHave } from '../../../hooks';
+import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { TEST_NETS, TOKENS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import { amountToHuman } from '../../../util/utils';

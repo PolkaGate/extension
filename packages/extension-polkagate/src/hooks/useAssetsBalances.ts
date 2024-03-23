@@ -25,6 +25,21 @@ type AssetsBalancesPerChain = { [genesisHash: string]: FetchedBalance[] };
 type AssetsBalancesPerAddress = { [address: string]: AssetsBalancesPerChain };
 export interface SavedAssets { balances: AssetsBalancesPerAddress, timeStamp: number }
 
+interface BalancesDetails {
+  availableBalance: BN,
+  soloTotal: BN,
+  pooledBalance: BN,
+  lockedBalance: BN,
+  vestingLocked: BN,
+  vestedClaimable: BN,
+  vestingTotal: BN,
+  freeBalance: BN,
+  frozenFee: BN,
+  frozenMisc: BN,
+  reservedBalance: BN,
+  votingBalance: BN
+}
+
 type MessageBody = {
   assetId?: number,
   totalBalance: string,
@@ -32,8 +47,25 @@ type MessageBody = {
   decimal: string,
   genesisHash: string,
   priceId: string,
-  token: string
+  token: string,
+  balanceDetails: string,
 };
+
+export const BN_MEMBERS = [
+  'totalBalance',
+  'availableBalance',
+  'soloTotal',
+  'pooledBalance',
+  'lockedBalance',
+  'vestingLocked',
+  'vestedClaimable',
+  'vestingTotal',
+  'freeBalance',
+  'frozenFee',
+  'frozenMisc',
+  'reservedBalance',
+  'votingBalance'
+];
 
 export interface FetchedBalance {
   assetId?: number,
@@ -42,7 +74,19 @@ export interface FetchedBalance {
   decimal: number,
   genesisHash: string,
   priceId: string,
-  token: string
+  token: string,
+  availableBalance: BN,
+  soloTotal: BN,
+  pooledBalance: BN,
+  lockedBalance: BN,
+  vestingLocked: BN,
+  vestedClaimable: BN,
+  vestingTotal: BN,
+  freeBalance: BN,
+  frozenFee: BN,
+  frozenMisc: BN,
+  reservedBalance: BN,
+  votingBalance: BN
 }
 
 const DEFAULT_SAVED_ASSETS = { balances: {} as AssetsBalancesPerAddress, timeStamp: Date.now() };
@@ -50,8 +94,17 @@ const DEFAULT_SAVED_ASSETS = { balances: {} as AssetsBalancesPerAddress, timeSta
 export const ASSETS_NAME_IN_STORAGE = 'assets';
 const BALANCE_VALIDITY_PERIOD = 2 * 1000 * 60;
 
-function isUpToDate(date?: number): boolean | undefined {
-  return date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
+const isUpToDate = (date?: number): boolean | undefined => date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
+
+function allHexToBN (balances: string): BalancesDetails {
+  const parsedBalances = JSON.parse(balances) as BalancesDetails;
+  const _balances = {} as BalancesDetails;
+
+  Object.keys(parsedBalances).forEach((item) => {
+    _balances[item] = isHexToBn(parsedBalances[item] as string);
+  });
+
+  return _balances;
 }
 
 const assetsChains = createAssets();
@@ -61,7 +114,7 @@ const assetsChains = createAssets();
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsOnChains (accounts: AccountJson[] | null): SavedAssets | undefined | null {
+export default function useAssetsBalances (accounts: AccountJson[] | null): SavedAssets | undefined | null {
   const isTestnetEnabled = useIsTestnetEnabled();
 
   /** We need to trigger address change when a new address is added, without affecting other account fields. Therefore, we use the length of the accounts array as a dependency. */
@@ -122,7 +175,7 @@ export default function useAssetsOnChains (accounts: AccountJson[] | null): Save
 
   useEffect(() => {
     if (!addresses) {
-      console.info('useAssetsOnChains: no addresses to fetch assets!');
+      console.info('useAssetsBalances: no addresses to fetch assets!');
 
       return setFetchedAssets(null);
     }
@@ -206,7 +259,15 @@ export default function useAssetsOnChains (accounts: AccountJson[] | null): Save
 
       Object.keys(parsedMessage).forEach((address) => {
         /** We use index 0 because each relay chain has only one asset */
-        _assets[address] = [{ ...parsedMessage[address][0], decimal: Number(parsedMessage[address][0].decimal), totalBalance: isHexToBn(parsedMessage[address][0].totalBalance) }];
+        _assets[address] = [
+          {
+            ...parsedMessage[address][0],
+            ...allHexToBN(parsedMessage[address][0].balanceDetails),
+            decimal: Number(parsedMessage[address][0].decimal),
+            totalBalance: isHexToBn(parsedMessage[address][0].totalBalance)
+          }];
+
+        delete _assets[address][0].balanceDetails;
       });
 
       combineAndSetAssets(_assets);
@@ -249,7 +310,6 @@ export default function useAssetsOnChains (accounts: AccountJson[] | null): Save
 
   const fetchAssetsOnAcala = useCallback((_addresses: string[]) => {
     const worker: Worker = new Worker(new URL('../util/workers/getAssetOnAcala.js', import.meta.url));
-    const _assets: Assets = {};
 
     handleSetWorkersCall(worker);
     worker.postMessage({ addresses: _addresses });
@@ -270,9 +330,20 @@ export default function useAssetsOnChains (accounts: AccountJson[] | null): Save
       }
 
       const parsedMessage = JSON.parse(message) as WorkerMessage;
+      const _assets: Assets = {};
 
       Object.keys(parsedMessage).forEach((address) => {
-        _assets[address] = parsedMessage[address].map((message) => ({ ...message, decimal: Number(message.decimal), totalBalance: isHexToBn(message.totalBalance) }));
+        _assets[address] = parsedMessage[address].map(
+          (message) => {
+            const temp = { ...message,
+              ...allHexToBN(message.balanceDetails),
+              decimal: Number(message.decimal),
+              totalBalance: isHexToBn(message.totalBalance) };
+
+            delete temp.balanceDetails;
+
+            return temp;
+          });
       });
 
       combineAndSetAssets(_assets);

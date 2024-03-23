@@ -15,6 +15,7 @@ import { ApiPromise } from '@polkadot/api';
 
 import { ActionContext, PoolStakingIcon } from '../../../components';
 import { useTranslation } from '../../../hooks';
+import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { windowOpen } from '../../../messaging';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../../util/constants';
 import { popupNumbers } from '..';
@@ -22,7 +23,7 @@ import { popupNumbers } from '..';
 interface Props {
   address: string | undefined;
   assetId: number | undefined;
-  balance: BalancesInfo | undefined
+  balance: BalancesInfo | FetchedBalance | undefined;
   genesisHash: string | null | undefined;
   api: ApiPromise | undefined;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
@@ -64,7 +65,7 @@ export const TaskButton = ({ disabled, icon, noBorderButton = false, onClick, se
   );
 };
 
-export default function CommonTasks ({ address, api, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
+export default function CommonTasks({ address, api, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();

@@ -11,9 +11,9 @@ import { DropdownOption } from '../util/types';
 import { useApi, useGenesisHash } from '.';
 
 /**
- * @description To get all assets on asset hubs for an address based on its chain
+ * @description To get all available assets on asset hubs for an address based on its chain
  */
-export default function useAssets (address: AccountId | string | undefined): DropdownOption[] | undefined | null {
+export default function useAssetHubAssets (address: AccountId | string | undefined): DropdownOption[] | undefined | null {
   const api = useApi(address);
   const accountGenesisHash = useGenesisHash(address);
   const [assets, setAssets] = useState<DropdownOption[] | null>();

@@ -5,12 +5,12 @@
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { InputFilter } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
 import { useGenesisHashOptions, useIsTestnetEnabled, useTranslation } from '../../../hooks';
-import { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../hooks/useAssetsOnChains';
+import { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../hooks/useAssetsBalances';
 import { TEST_NETS } from '../../../util/constants';
 import { DEFAULT_SELECTED_CHAINS } from '../../../util/defaultSelectedChains';
 import { DropdownOption } from '../../../util/types';
