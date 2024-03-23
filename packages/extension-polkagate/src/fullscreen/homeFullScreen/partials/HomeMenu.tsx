@@ -59,7 +59,7 @@ export const TaskButton = ({ children, disabled, extra, hasChildren, icon, isSub
   );
 };
 
-export default function HomeMenu(): React.ReactElement {
+export default function HomeMenu (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -95,7 +95,7 @@ export default function HomeMenu(): React.ReactElement {
   }, [areAllExternalAccounts, master, onAction]);
 
   return (
-    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px', width: '430px', position: 'relative' }}>
+    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '0.1px solid' : 'none', borderColor: 'secondary.main', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px', width: '430px', position: 'relative' }}>
       <Grid alignItems='center' container direction='column' display='block' item justifyContent='center' sx={{ pb: '40px' }}>
         <TaskButton
           icon={
