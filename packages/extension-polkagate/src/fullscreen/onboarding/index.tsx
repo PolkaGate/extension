@@ -91,7 +91,7 @@ function Onboarding(): React.ReactElement {
               </Typography>
             </Grid>
           </Grid>
-          <Typography fontSize='16px' fontWeight={500} pb='15px' width='100%'>
+          <Typography fontSize='16px' fontWeight={500} pb='15px' pt='30px' width='100%'>
             {t<string>('Thank you for choosing Polkagate, the gateway to the Polkadot ecosystem! 🌟')}
           </Typography>
           <Typography fontSize='16px' fontWeight={400} width='100%'>
