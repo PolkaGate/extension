@@ -5,7 +5,7 @@
 
 import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
 import { Box, Collapse, Divider, Grid, Theme, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect,useMemo, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
@@ -21,6 +21,7 @@ import Chart from './Chart';
 
 interface Props {
   hideNumbers: boolean | undefined;
+  setGroupedAssets: React.Dispatch<React.SetStateAction<AssetsWithUiAndPrice[] | undefined>>
 }
 
 interface AssetsWithUiAndPrice extends FetchedBalance {
@@ -55,7 +56,7 @@ export function adjustColor(token: string, color: string, theme: Theme): string 
   return color;
 }
 
-function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
+function TotalBalancePieChart({ hideNumbers, setGroupedAssets }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const currency = useCurrency();
@@ -126,6 +127,10 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
     return aggregatedAssets;
   }, [accountsAssets, youHave, calPrice, formatNumber, pricesInCurrencies, theme]);
 
+  useEffect(() => {
+    assets && setGroupedAssets(assets);
+  }, [assets, setGroupedAssets]);
+
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
   const DisplayAssetRow = ({ asset }: { asset: FetchedBalance }) => {
@@ -153,7 +158,7 @@ function TotalBalancePieChart({ hideNumbers }: Props): React.ReactElement {
   };
 
   return (
-    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px', width: '430px' }}>
+    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '0.1px solid' : 'none', borderColor: 'secondary.main', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px', width: '430px' }}>
       <Grid alignItems='center' container gap='15px' item justifyContent='center'>
         <Typography fontSize='28px' fontWeight={400}>
           {t('You have')}

@@ -15,13 +15,14 @@ import HeaderComponents from './components/HeaderComponents';
 import DraggableAccountsList, { saveNewOrder } from './partials/DraggableAccountList';
 import HomeMenu from './partials/HomeMenu';
 import TotalBalancePieChart from './partials/TotalBalancePieChart';
+import WatchList, { AssetsWithUiAndPrice } from './partials/WatchList';
 
 export interface AccountsOrder {
   id: number,
   account: AccountWithChildren
 }
 
-export default function HomePageFullScreen(): React.ReactElement {
+export default function HomePageFullScreen (): React.ReactElement {
   useFullscreen();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -30,6 +31,7 @@ export default function HomePageFullScreen(): React.ReactElement {
 
   const [hideNumbers, setHideNumbers] = useState<boolean>();
   const [initialAccountList, setInitialAccountList] = useState<AccountsOrder[] | undefined>();
+  const [groupedAssets, setGroupedAssets] = useState<AssetsWithUiAndPrice[] | undefined>();
 
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
@@ -116,22 +118,6 @@ export default function HomePageFullScreen(): React.ReactElement {
     }).catch(console.error);
   }, [accountsInExtension, accountsInExtension.length, flattenHierarchy, hierarchy]);
 
-  // const sortedAccount = useMemo(() =>
-  //   hierarchy.sort((a, b) => {
-  //     const x = a.name.toLowerCase();
-  //     const y = b.name.toLowerCase();
-
-  //     if (x < y) {
-  //       return -1;
-  //     }
-
-  //     if (x > y) {
-  //       return 1;
-  //     }
-
-  //     return 0;
-  //   }), [hierarchy]);
-
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>
       <FullScreenHeader
@@ -157,7 +143,11 @@ export default function HomePageFullScreen(): React.ReactElement {
           <Grid container item width='fit-content'>
             <TotalBalancePieChart
               hideNumbers={hideNumbers}
+              setGroupedAssets={setGroupedAssets}
             />
+          </Grid>
+          <Grid container item width='fit-content'>
+            <WatchList groupedAssets={groupedAssets} />
           </Grid>
           <Grid container item width='fit-content'>
             <HomeMenu />
