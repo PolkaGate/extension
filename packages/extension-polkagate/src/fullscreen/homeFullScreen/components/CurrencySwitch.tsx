@@ -20,7 +20,7 @@ interface Props {
   setCurrencyToShow: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-function CurrencyList ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): React.ReactElement {
+function CurrencySwitch ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const { setCurrency } = useContext(CurrencyContext);
@@ -108,4 +108,4 @@ function CurrencyList ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): Rea
   );
 }
 
-export default React.memo(CurrencyList);
+export default React.memo(CurrencySwitch);

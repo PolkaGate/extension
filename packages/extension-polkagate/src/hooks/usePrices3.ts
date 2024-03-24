@@ -10,10 +10,10 @@ import { Prices3, PricesInCurrencies } from '../util/types';
 import { useCurrency } from '.';
 
 /** If we need to retrieve a price, and that price was fetched within the last 30 seconds, there’s no need to fetch it again; we can simply use the previously saved value. */
-const PRICE_VALIDITY_PERIOD = 5 * 1000 * 60;
+export const PRICE_VALIDITY_PERIOD = 2 * 1000 * 60;
 
-function isUpToDate(date?: number): boolean | undefined {
-  return date ? Date.now() - date < PRICE_VALIDITY_PERIOD : undefined;
+export function isPriceUpToDate(lastFetchDate?: number): boolean | undefined {
+  return lastFetchDate ? Date.now() - lastFetchDate < PRICE_VALIDITY_PERIOD : undefined;
 }
 
 /**
@@ -44,7 +44,7 @@ export default function usePrices3(): Prices3 | undefined | null {
     currency?.code && getStorage('pricesInCurrencies').then((pricesInCurrencies) => {
       const mayBeSavedPrices = (pricesInCurrencies as PricesInCurrencies)?.[currency.code];
 
-      // if (mayBeSavedPrices && isUpToDate(mayBeSavedPrices?.date)) {
+      // if (mayBeSavedPrices && isPriceUpToDate(mayBeSavedPrices?.date)) {
       mayBeSavedPrices && setSavedPrice(mayBeSavedPrices);
       // }
     }).catch(console.error);

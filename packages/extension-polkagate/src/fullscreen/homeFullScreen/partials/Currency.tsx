@@ -7,7 +7,7 @@ import { Grid, Popover, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
 
 import { getStorage } from '../../../components/Loading';
-import CurrencyList from '../components/CurrencyList';
+import CurrencySwitch from '../components/CurrencySwitch';
 
 export interface CurrencyItemType { code: string; country: string; currency: string; sign: string; }
 
@@ -64,7 +64,7 @@ export default function Currency (): React.ReactElement {
           vertical: 'top'
         }}
       >
-        <CurrencyList
+        <CurrencySwitch
           anchorEl={anchorEl}
           setAnchorEl={setAnchorEl}
           setCurrencyToShow={setCurrencyToShow}

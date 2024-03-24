@@ -5,7 +5,7 @@ import type { AccountJson, AccountsContext, AuthorizeRequest, MetadataRequest, S
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
 
 import { AnimatePresence } from 'framer-motion';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Route, Switch } from 'react-router';
 
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
@@ -31,6 +31,7 @@ import { ExtensionLockProvider } from '../../../extension-polkagate/src/context/
 import Onboarding from '../../../extension-polkagate/src/fullscreen/onboarding';
 import { usePriceIds } from '../../../extension-polkagate/src/hooks';
 import useAssetsBalances, { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../extension-polkagate/src/hooks/useAssetsBalances';
+import { isPriceUpToDate } from '../../../extension-polkagate/src/hooks/usePrices3';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
 import AccountEx from '../../../extension-polkagate/src/popup/account';
 import AuthList from '../../../extension-polkagate/src/popup/authManagement';
@@ -107,6 +108,7 @@ export default function Popup (): React.ReactElement {
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
   const assetsOnChains = useAssetsBalances(accounts);
   const priceIds = usePriceIds();
+  const isFetchingPricesRef = useRef(false);
 
   const [accountCtx, setAccountCtx] = useState<AccountsContext>({ accounts: [], hierarchy: [] });
   const [authRequests, setAuthRequests] = useState<null | AuthorizeRequest[]>(null);
@@ -155,18 +157,32 @@ export default function Popup (): React.ReactElement {
   }, [accounts, assetsOnChains]);
 
   useEffect(() => {
-    if (priceIds && currency && !isFetchingPrices) {
-      setIsFetchingPrices(true);
+    if (priceIds && currency && !isFetchingPricesRef.current) {
+      isFetchingPricesRef.current = true;
 
-      getPrices3(priceIds, currency.code.toLowerCase()).then((newPrices) => {
-        getStorage('pricesInCurrencies').then((res) => {
-          const pricesInCurrencies = (res || {}) as PricesInCurrencies;
+      getStorage('pricesInCurrencies')
+        .then((res) => {
+          const savedPricesInCurrencies = (res || {}) as PricesInCurrencies;
+          const mayBeSavedPriceInCurrentCurrencyCode = savedPricesInCurrencies[currency.code];
 
-          delete (newPrices as Prices3).currencyCode;
-          pricesInCurrencies[currency.code] = newPrices;
-          setStorage('pricesInCurrencies', pricesInCurrencies).catch(console.error);
-        }).catch(console.error);
-      }).catch(console.error);
+          if (mayBeSavedPriceInCurrentCurrencyCode && isPriceUpToDate(mayBeSavedPriceInCurrentCurrencyCode.date)) {
+            /** price in the selected currency is already updated hence no need to fetch again */
+            return;
+          }
+
+          getPrices3(priceIds, currency.code.toLowerCase())
+            .then((newPrices) => {
+              delete (newPrices as Prices3).currencyCode;
+              savedPricesInCurrencies[currency.code] = newPrices;
+              setStorage('pricesInCurrencies', savedPricesInCurrencies)
+                .catch(console.error);
+            })
+            .catch(console.error);
+        })
+        .catch(console.error)
+        .finally(() => {
+          isFetchingPricesRef.current = false;
+        });
     }
   }, [currency, isFetchingPrices, priceIds]);
 
