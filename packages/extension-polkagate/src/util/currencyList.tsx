@@ -6,6 +6,18 @@ import { USD_CURRENCY } from './constants';
 export const CURRENCY_LIST = [
   USD_CURRENCY,
   {
+    code: 'EUR',
+    country: 'European Union',
+    currency: 'Euro',
+    sign: '€'
+  },
+  {
+    code: 'GBP',
+    country: 'Great British',
+    currency: 'Pound',
+    sign: '£'
+  },
+  {
     code: 'AED',
     country: 'Emirates',
     currency: 'Dirham',
@@ -82,18 +94,6 @@ export const CURRENCY_LIST = [
     country: 'Denmark',
     currency: 'Krone',
     sign: 'kr.'
-  },
-  {
-    code: 'EUR',
-    country: 'European Union',
-    currency: 'Euro',
-    sign: '€'
-  },
-  {
-    code: 'GBP',
-    country: 'Great British',
-    currency: 'Pound',
-    sign: '£'
   },
   {
     code: 'GEL',
