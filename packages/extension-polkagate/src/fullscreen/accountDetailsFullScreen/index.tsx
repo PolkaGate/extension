@@ -23,6 +23,7 @@ import { label } from '../../popup/home/AccountsTree';
 import DeriveAccountModal from '../../popup/newAccount/deriveAccount/modal/DeriveAccountModal';
 import ReceiveModal from '../../popup/receive/ReceiveModal';
 import RenameModal from '../../popup/rename/RenameModal';
+import { EXTRA_PRICE_IDS } from '../../util/api/getPrices3';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { amountToHuman, sanitizeChainName } from '../../util/utils';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
@@ -100,7 +101,7 @@ export default function AccountDetails (): React.ReactElement {
     }
 
     const currentChainName = sanitizeChainName(chainName)?.toLocaleLowerCase();
-    const currentAssetPrices = pricesInCurrency?.prices?.[(selectedAssetPriceId || currentChainName) as string];
+    const currentAssetPrices = pricesInCurrency?.prices?.[(selectedAssetPriceId || EXTRA_PRICE_IDS[currentChainName || ''] || currentChainName) as string];
     const mayBeTestNetPrice = pricesInCurrency?.prices && !currentAssetPrices ? 0 : undefined;
 
     return currentAssetPrices?.value || mayBeTestNetPrice;
