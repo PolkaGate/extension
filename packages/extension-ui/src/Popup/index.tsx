@@ -166,6 +166,7 @@ export default function Popup (): React.ReactElement {
 
           if (mayBeSavedPriceInCurrentCurrencyCode && isPriceUpToDate(mayBeSavedPriceInCurrentCurrencyCode.date)) {
             /** price in the selected currency is already updated hence no need to fetch again */
+            // FixMe: what if user change selected chainS during price validity period?
             return;
           }
 

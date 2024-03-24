@@ -4,32 +4,30 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Grid, Skeleton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { stars6Black, stars6White } from '../../assets/icons';
 import { FormatPrice, HideIcon, ShowIcon } from '../../components';
 import { usePrices, useYouHave } from '../../hooks';
+import { PRICE_VALIDITY_PERIOD } from '../../hooks/usePrices3';
 import useTranslation from '../../hooks/useTranslation';
-import { MILLISECONDS_TO_UPDATE } from '../../util/constants';
+import { YouHaveType } from '../../hooks/useYouHave';
 
 interface Props {
   hideNumbers: boolean | undefined;
   setHideNumbers: React.Dispatch<React.SetStateAction<boolean | undefined>>
 }
 
+export const isPriceOutdated = (youHave: YouHaveType | null | undefined): boolean | undefined =>
+  youHave ? (Date.now() - youHave.date > 2 * PRICE_VALIDITY_PERIOD) : undefined;
+
 export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const youHave = useYouHave();
 
+  // TODO: replace usePrices and usePrice with usePrices3
   const pricesInfo = usePrices();
-  const isPriceOutdated = useMemo((): boolean | undefined => {
-    if (!pricesInfo) {
-      return undefined;
-    }
-
-    return (Date.now() - pricesInfo.date > MILLISECONDS_TO_UPDATE);
-  }, [pricesInfo]);
 
   const onHideClick = useCallback(() => {
     setHideNumbers(!hideNumbers);
@@ -43,7 +41,7 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
   }, [setHideNumbers]);
 
   return (
-    <Grid container pt='15px' textAlign='center' sx={{ position: 'relative', zIndex: 1 }}>
+    <Grid container pt='15px' sx={{ position: 'relative', zIndex: 1 }} textAlign='center'>
       <Grid item xs={12}>
         <Typography sx={{ fontSize: '18px' }}>
           {t('You have')}
@@ -57,10 +55,10 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
             sx={{ height: '36px', width: '154px' }}
           />
           : <Grid item pr='15px'>
-            <Typography sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontSize: '42px', fontWeight: 500, height: 36, lineHeight: 1 }}>
+            <Typography sx={{ color: isPriceOutdated(youHave) ? 'primary.light' : 'text.primary', fontSize: '42px', fontWeight: 500, height: 36, lineHeight: 1 }}>
               {youHave === undefined
                 ? <Skeleton animation='wave' height={38} sx={{ transform: 'none' }} variant='text' width={223} />
-                : <FormatPrice num={youHave || '0'} />
+                : <FormatPrice num={youHave?.portfolio || '0'} />
               }
             </Typography>
           </Grid>

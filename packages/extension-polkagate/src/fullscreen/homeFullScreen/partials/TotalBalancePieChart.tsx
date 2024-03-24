@@ -5,7 +5,7 @@
 
 import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
 import { Box, Collapse, Divider, Grid, Theme, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect,useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
@@ -14,6 +14,7 @@ import { AccountsAssetsContext, DisplayLogo } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, usePrices3, useTranslation, useYouHave } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
+import { isPriceOutdated } from '../../../popup/home/YouHave';
 import { TEST_NETS, TOKENS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import { amountToHuman } from '../../../util/utils';
@@ -33,7 +34,7 @@ interface AssetsWithUiAndPrice extends FetchedBalance {
   };
 }
 
-export function adjustColor(token: string, color: string, theme: Theme): string {
+export function adjustColor (token: string, color: string, theme: Theme): string {
   if ((TOKENS_WITH_BLACK_LOGO.find((t) => t === token) && theme.palette.mode === 'dark')) {
     const cleanedColor = color.replace(/^#/, '');
 
@@ -56,7 +57,7 @@ export function adjustColor(token: string, color: string, theme: Theme): string 
   return color;
 }
 
-function TotalBalancePieChart({ hideNumbers, setGroupedAssets }: Props): React.ReactElement {
+function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const currency = useCurrency();
@@ -103,7 +104,7 @@ function TotalBalancePieChart({ hideNumbers, setGroupedAssets }: Props): React.R
       return (
         {
           ...assetSample,
-          percent: formatNumber((balancePrice / youHave) * 100),
+          percent: formatNumber((balancePrice / youHave.portfolio) * 100),
           price: assetPrice,
           totalBalance: balancePrice,
           ui: {
@@ -169,11 +170,11 @@ function TotalBalancePieChart({ hideNumbers, setGroupedAssets }: Props): React.R
             src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
             sx={{ height: '60px', width: '154px' }}
           />
-          : <Typography fontSize='40px' fontWeight={700}>
-            {`${currency?.sign ?? ''}${nFormatter(youHave ?? 0, 2)}`}
+          : <Typography fontSize='40px' fontWeight={700} sx={{color: isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}}>
+            {`${currency?.sign ?? ''}${nFormatter(youHave?.portfolio ?? 0, 2)}`}
           </Typography>}
       </Grid>
-      {youHave !== 0 && assets && assets.length > 0 &&
+      {youHave?.portfolio !== 0 && assets && assets.length > 0 &&
         <Grid container item sx={{ borderTop: '1px solid', borderTopColor: 'divider', pt: '10px' }}>
           <Chart assets={assets} />
           <Grid container item pt='10px' rowGap='10px' xs>

@@ -9,10 +9,12 @@ import { getStorage, watchStorage } from '../components/Loading';
 import { Prices3, PricesInCurrencies } from '../util/types';
 import { useCurrency } from '.';
 
-/** If we need to retrieve a price, and that price was fetched within the last 30 seconds, there’s no need to fetch it again; we can simply use the previously saved value. */
-export const PRICE_VALIDITY_PERIOD = 2 * 1000 * 60;
+/** If we need to retrieve a price, and that price was fetched within the last PRICE_VALIDITY_PERIOD in seconds,
+ *  there’s no need to fetch it again; we can simply use the previously saved value.
+ * */
+export const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000;
 
-export function isPriceUpToDate(lastFetchDate?: number): boolean | undefined {
+export function isPriceUpToDate (lastFetchDate?: number): boolean | undefined {
   return lastFetchDate ? Date.now() - lastFetchDate < PRICE_VALIDITY_PERIOD : undefined;
 }
 
