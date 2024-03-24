@@ -5,10 +5,20 @@ import request from 'umi-request';
 
 import { PricesType3 } from '../types';
 
-export default async function getPrices3 (priceIds: string[], currencyCode = 'usd') {
-  console.log(' getting prices3 for:', priceIds);
+/** some chains have a different priceId than its sanitizedChainName,
+ * hence we will replace their price Id using  EXTRA_PRICE_IDS */
+export const EXTRA_PRICE_IDS: Record<string, string> = {
+  nodle: 'nodle-network',
+  parallel: 'parallel-finance',
+  pendulum: 'pendulum-chain'
+};
 
-  const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${priceIds}&vs_currencies=${currencyCode}&include_24hr_change=true`, {});
+export default async function getPrices3 (priceIds: string[], currencyCode = 'usd') {
+  console.log(' getting prices3 for:', priceIds.sort());
+
+  const revisedPriceIds = priceIds.map((item) => (EXTRA_PRICE_IDS[item] || item));
+
+  const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${revisedPriceIds}&vs_currencies=${currencyCode}&include_24hr_change=true`, {});
 
   const outputObjectPrices: PricesType3 = {};
 

@@ -6,6 +6,7 @@
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
+import { EXTRA_PRICE_IDS } from '../api/getPrices3';
 import { TEST_NETS } from '../constants';
 import getPoolAccounts from '../getPoolAccounts';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
@@ -104,7 +105,7 @@ async function getAssetOnRelayChain (addresses, chainName) {
         }
 
         const genesisHash = api.genesisHash.toString();
-        const priceId = TEST_NETS.includes(genesisHash) ? undefined : chainName; // based on the fact that relay chains price id is the same as their sanitized names,except for testnets
+        const priceId = TEST_NETS.includes(genesisHash) ? undefined : EXTRA_PRICE_IDS[chainName] || chainName.toLowerCase(); // based on the fact that relay chains price id is the same as their sanitized names,except for testnets and some other single asset chains
 
         results[address] = [{ // since some chains may have more than one asset hence we use an array here! even thought its not needed for relay chains but just to be as a general rule.
           balanceDetails: balancify(balances, pooledBalance, soloTotal),
