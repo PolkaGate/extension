@@ -119,7 +119,6 @@ export default function Popup (): React.ReactElement {
   const [settingsCtx, setSettingsCtx] = useState<SettingsStruct>(startSettings);
   const [apis, setApis] = useState<APIs>({});
   const [fetching, setFetching] = useState<Fetching>({});
-  const [isFetchingPrices, setIsFetchingPrices] = useState(false);
   const [refs, setRefs] = useState<LatestRefs>({});
   const [accountsAssets, setAccountsAssets] = useState<SavedAssets | null | undefined>();
   const [currency, setCurrency] = useState<CurrencyItemType>();
@@ -184,7 +183,7 @@ export default function Popup (): React.ReactElement {
           isFetchingPricesRef.current = false;
         });
     }
-  }, [currency, isFetchingPrices, priceIds]);
+  }, [currency, priceIds]);
 
   useEffect((): void => {
     Promise.all([
