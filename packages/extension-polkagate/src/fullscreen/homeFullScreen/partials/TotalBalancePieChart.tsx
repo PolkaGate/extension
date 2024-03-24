@@ -128,7 +128,7 @@ function TotalBalancePieChart({ hideNumbers, setGroupedAssets }: Props): React.R
   }, [accountsAssets, youHave, calPrice, formatNumber, pricesInCurrencies, theme]);
 
   useEffect(() => {
-    assets && setGroupedAssets(assets);
+    assets && setGroupedAssets([...assets]);
   }, [assets, setGroupedAssets]);
 
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
