@@ -27,15 +27,16 @@ interface AddressDetailsProps {
   address: string | undefined;
   api: ApiPromise | undefined;
   accountAssets: FetchedBalance[] | null | undefined;
-  chain: Chain | null | undefined;
-  formatted: string | undefined;
-  chainName: string | undefined;
-  isDarkTheme: boolean;
   balances: BalancesInfo | undefined;
-  setSelectedAsset: React.Dispatch<React.SetStateAction<FetchedBalance | undefined>>;
-  selectedAsset: FetchedBalance | undefined;
+  chain: Chain | null | undefined;
+  chainName: string | undefined;
+  formatted: string | undefined;
+  isDarkTheme: boolean;
+  label?: string | undefined;
   price: number | undefined;
   pricesInCurrency: Prices | null | undefined;
+  setSelectedAsset: React.Dispatch<React.SetStateAction<FetchedBalance | undefined>>;
+  selectedAsset: FetchedBalance | undefined;
 }
 
 const Price = ({ balanceToShow, isPriceOutdated, price }: { balanceToShow: BalancesInfo | undefined, isPriceOutdated: boolean | undefined, price: number | undefined }) => (
@@ -79,7 +80,7 @@ const SelectedAssetBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOu
   const { t } = useTranslation();
 
   return (
-    <Grid alignItems='center' container justifyContent='center' item minWidth='40%'>
+    <Grid alignItems='center' container item justifyContent='center' minWidth='40%'>
       {account?.genesisHash
         ? <>
           <Grid item pl='7px'>
@@ -99,7 +100,7 @@ const SelectedAssetBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOu
   );
 };
 
-export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, price, pricesInCurrency, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, label, price, pricesInCurrency, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
 
   const account = useAccount(address);
@@ -149,7 +150,10 @@ export default function AccountInformation ({ accountAssets, address, api, balan
   }, [account?.isHidden, address]);
 
   return (
-    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mb: '15px', p: `20px 20px ${showAOC ? '5px' : '20px'} 20px` }}>
+    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mb: '15px', p: `20px 20px ${showAOC ? '5px' : '20px'} 20px`, position: 'relative' }}>
+      <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', left: 0, ml: 4, position: 'absolute', px: 1, top: 0, width: 'fit-content' }}>
+        {label}
+      </Grid>
       <Grid container item>
         <Grid container item sx={{ borderRight: '1px solid', borderRightColor: 'divider', pr: '8px', width: 'fit-content' }}>
           <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>

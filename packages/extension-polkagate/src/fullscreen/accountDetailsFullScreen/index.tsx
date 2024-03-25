@@ -171,9 +171,6 @@ export default function AccountDetails (): React.ReactElement {
           </Grid>
           <Grid container item justifyContent='space-between' mb='15px'>
             <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 300px - 3%)'>
-              <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', ml: 5, position: 'absolute', px: 1, width: 'fit-content' }}>
-                {label(account, hasParent?.name || '', t)}
-              </Grid>
               <AccountInformation
                 accountAssets={accountAssets}
                 address={address}
@@ -183,6 +180,7 @@ export default function AccountDetails (): React.ReactElement {
                 chainName={chainName}
                 formatted={formatted}
                 isDarkTheme={isDarkTheme}
+                label= {label(account, hasParent?.name || '', t)}
                 price={currentPrice}
                 pricesInCurrency={pricesInCurrency}
                 selectedAsset={selectedAsset}
