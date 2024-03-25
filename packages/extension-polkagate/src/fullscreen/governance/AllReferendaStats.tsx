@@ -9,7 +9,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance, ShowValue } from '../../components';
-import { useApi, useChain, useChainName, useDecidingCount, useDecimal, usePrice, useToken, useTranslation } from '../../hooks';
+import { useApi, useChain, useChainName, useDecidingCount, useDecimal, useTokenPrice, useToken, useTranslation } from '../../hooks';
 import blockToDate from '../../popup/crowdloans/partials/blockToDate';
 import { pgBoxShadow } from '../../util/utils';
 import useStyles from './styles/styles';
@@ -92,7 +92,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
   const chainName = useChainName(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const price = usePrice(address);
+  const price = useTokenPrice(address);
   const myRef = useRef();
 
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined | null>();

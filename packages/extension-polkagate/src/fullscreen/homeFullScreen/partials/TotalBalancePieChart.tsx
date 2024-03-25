@@ -12,7 +12,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { stars6Black, stars6White } from '../../../assets/icons';
 import { AccountsAssetsContext, DisplayLogo } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
-import { useCurrency, usePrices3, useTranslation, useYouHave } from '../../../hooks';
+import { useCurrency, usePrices, useTranslation, useYouHave } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { isPriceOutdated } from '../../../popup/home/YouHave';
 import { TEST_NETS, TOKENS_WITH_BLACK_LOGO } from '../../../util/constants';
@@ -61,7 +61,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
   const theme = useTheme();
   const { t } = useTranslation();
   const currency = useCurrency();
-  const pricesInCurrencies = usePrices3();
+  const pricesInCurrencies = usePrices();
   const youHave = useYouHave();
 
   const { accountsAssets } = useContext(AccountsAssetsContext);

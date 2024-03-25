@@ -9,7 +9,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { DisplayLogo } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
-import { useCurrency, usePrices3, useTranslation } from '../../../hooks';
+import { useCurrency, usePrices, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import getLogo2 from '../../../util/getLogo2';
 
@@ -30,7 +30,7 @@ function WatchList ({ groupedAssets }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const currency = useCurrency();
-  const pricesInCurrencies = usePrices3();
+  const pricesInCurrencies = usePrices();
 
   const [showMore, setShowMore] = useState<boolean>(false);
 

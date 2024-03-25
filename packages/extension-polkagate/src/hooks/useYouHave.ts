@@ -7,7 +7,7 @@ import { BN } from '@polkadot/util';
 
 import { AccountsAssetsContext } from '../components';
 import { amountToHuman } from '../util/utils';
-import { usePrices3 } from '.';
+import { usePrices } from '.';
 
 export interface YouHaveType{
   portfolio: number,
@@ -20,7 +20,7 @@ export interface YouHaveType{
  * @returns null: means not balance found, undefined: when still work in progress, and number indicating user balance in selected currency
  */
 export default function useYouHave (): YouHaveType | undefined | null {
-  const pricesInCurrencies = usePrices3();
+  const pricesInCurrencies = usePrices();
   const { accountsAssets } = useContext(AccountsAssetsContext);
 
   const calPrice = useCallback(

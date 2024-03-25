@@ -12,7 +12,7 @@ import { useHistory } from 'react-router-dom';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, ActionContext } from '../../components';
-import { useAccount, useAccountAssets, useApi, useBalances, useChain, useChainName, useCurrency, useFormatted, useFullscreen, usePrices3, useTranslation } from '../../hooks';
+import { useAccount, useAccountAssets, useApi, useBalances, useChain, useChainName, useCurrency, useFormatted, useFullscreen, usePrices, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
 import { FetchedBalance } from '../../hooks/useAssetsBalances';
 import { getValue } from '../../popup/account/util';
@@ -72,7 +72,7 @@ export default function AccountDetails (): React.ReactElement {
   const chainName = useChainName(address);
   const onAction = useContext(ActionContext);
   const accountAssets = useAccountAssets(address);
-  const pricesInCurrency = usePrices3();
+  const pricesInCurrency = usePrices();
 
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
   const [assetId, setAssetId] = useState<number>();

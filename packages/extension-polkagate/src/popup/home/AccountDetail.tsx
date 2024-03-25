@@ -17,7 +17,7 @@ import { stars5Black, stars5White } from '../../assets/icons';
 import { CopyAddressButton, FormatBalance2, FormatPrice, Infotip } from '../../components';
 import { useChainName, useTranslation } from '../../hooks';
 import useBalances from '../../hooks/useBalances';
-import usePrice from '../../hooks/usePrice';
+import useTokenPrice from '../../hooks/useTokenPrice';
 import RecentChains from '../../partials/RecentChains';
 import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
 import { BalancesInfo } from '../../util/types';
@@ -59,7 +59,7 @@ export default function AccountDetail ({ address, chain, formatted, goToAccount,
   const theme = useTheme();
   const balances = useBalances(address);
   const chainName = useChainName(address);
-  const price = usePrice(address);
+  const price = useTokenPrice(address);
   const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
   const isPriceOutdated = useMemo(() => price !== undefined && Date.now() - price.date > BALANCES_VALIDITY_PERIOD, [price]);
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
