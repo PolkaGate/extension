@@ -7,31 +7,37 @@ import { EXTRA_PRICE_IDS } from '../util/api/getPrices';
 import { Price } from '../util/types';
 import { useChainName, usePrices } from '.';
 
+const DEFAULT_PRICE = {
+  price: undefined,
+  priceChainName: undefined,
+  priceDate: undefined
+};
+
 /**
  *  @description retrieve the price of a token from local storage PRICES
  * @param address : accounts substrate address
  * @returns price : price of the token which the address is already switched to
  */
-export default function useTokenPrice (address: string, currency = 'usd'): Price | undefined {
+export default function useTokenPrice (address: string): Price | typeof DEFAULT_PRICE {
   const chainName = useChainName(address)?.toLocaleLowerCase();
 
   const pricesInCurrencies = usePrices();
 
   return useMemo(() => {
     if (!chainName) {
-      return;
+      return DEFAULT_PRICE;
     }
 
     const mayBePriceValue = pricesInCurrencies?.prices?.[EXTRA_PRICE_IDS[chainName] || chainName]?.value;
 
     if (mayBePriceValue) {
       return {
-        chainName,
-        date: pricesInCurrencies.date,
-        value: mayBePriceValue
+        price: mayBePriceValue,
+        priceChainName: chainName,
+        priceDate: pricesInCurrencies.date
       };
     }
 
-    return undefined;
+    return DEFAULT_PRICE;
   }, [chainName, pricesInCurrencies]);
 }

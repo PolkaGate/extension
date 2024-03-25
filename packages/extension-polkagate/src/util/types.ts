@@ -614,10 +614,9 @@ export interface PricesInCurrencies {
 }
 
 export interface Price {
-  value: number;
-  chainName: string;
-  date: number;
-  token?: string;
+  price: number;
+  priceChainName: string;
+  priceDate: number;
 }
 
 export interface PricesContextType {

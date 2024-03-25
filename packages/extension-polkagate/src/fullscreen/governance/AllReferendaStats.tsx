@@ -9,7 +9,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance, ShowValue } from '../../components';
-import { useApi, useChain, useChainName, useDecidingCount, useDecimal, useTokenPrice, useToken, useTranslation } from '../../hooks';
+import { useApi, useChain, useChainName, useDecidingCount, useDecimal, useToken, useTokenPrice, useTranslation } from '../../hooks';
 import blockToDate from '../../popup/crowdloans/partials/blockToDate';
 import { pgBoxShadow } from '../../util/utils';
 import useStyles from './styles/styles';
@@ -92,7 +92,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
   const chainName = useChainName(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const price = useTokenPrice(address);
+  const { price } = useTokenPrice(address);
   const myRef = useRef();
 
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined | null>();
@@ -235,7 +235,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
             rowDisplay={firstBreakpoint}
             style={{ maxWidth: firstBreakpoint ? '100%' : '135px', minWidth: '120px' }}
             title={t('Available')}
-            tokenPrice={price?.value}
+            tokenPrice={price}
           />
           <TreasuryBalanceStat
             address={address}
@@ -243,7 +243,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
             rowDisplay={firstBreakpoint}
             style={{ maxWidth: firstBreakpoint ? '100%' : '115px', minWidth: '105px' }}
             title={t('Approved')}
-            tokenPrice={price?.value}
+            tokenPrice={price}
           />
           <Grid container item justifyContent={firstBreakpoint ? 'space-between' : 'flex-start'} maxWidth={firstBreakpoint ? '100%' : '250px'} width={firstBreakpoint ? '100%' : 'fit-content'}>
             <Grid alignItems='center' container item width='fit-content'>
@@ -268,7 +268,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
             rowDisplay={firstBreakpoint}
             style={{ maxWidth: firstBreakpoint ? '100%' : '115px', minWidth: '100px' }}
             title={t('Next Burn')}
-            tokenPrice={price?.value}
+            tokenPrice={price}
           />
         </Grid>
       </Grid>

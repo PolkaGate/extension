@@ -31,7 +31,7 @@ export default function LabelBalancePrice ({ address, balances, label, onClick, 
 
   const value = getValue(label, balances);
   const api = useApi(address);
-  const price = useTokenPrice(address);
+  const { price } = useTokenPrice(address);
 
   return (
     <>
@@ -57,7 +57,7 @@ export default function LabelBalancePrice ({ address, balances, label, onClick, 
               <FormatPrice
                 amount={value}
                 decimals={balances?.decimal}
-                price={price?.value}
+                price={price}
               />
             </Grid>
           </Grid>

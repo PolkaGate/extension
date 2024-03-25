@@ -15,9 +15,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { stars5Black, stars5White } from '../../assets/icons';
 import { CopyAddressButton, FormatBalance2, FormatPrice, Infotip } from '../../components';
-import { useChainName, useTranslation } from '../../hooks';
-import useBalances from '../../hooks/useBalances';
-import useTokenPrice from '../../hooks/useTokenPrice';
+import { useBalances, useChainName, useTokenPrice, useTranslation } from '../../hooks/';
 import RecentChains from '../../partials/RecentChains';
 import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
 import { BalancesInfo } from '../../util/types';
@@ -59,9 +57,9 @@ export default function AccountDetail ({ address, chain, formatted, goToAccount,
   const theme = useTheme();
   const balances = useBalances(address);
   const chainName = useChainName(address);
-  const price = useTokenPrice(address);
+  const { price, priceChainName, priceDate } = useTokenPrice(address);
   const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
-  const isPriceOutdated = useMemo(() => price !== undefined && Date.now() - price.date > BALANCES_VALIDITY_PERIOD, [price]);
+  const isPriceOutdated = useMemo(() => priceDate !== undefined && Date.now() - priceDate > BALANCES_VALIDITY_PERIOD, [priceDate]);
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
 
   useEffect(() => {
@@ -104,13 +102,13 @@ export default function AccountDetail ({ address, chain, formatted, goToAccount,
 
   const Price = () => (
     <>
-      {price === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== price?.chainName
+      {priceChainName === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== priceChainName
         ? <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
         : <Grid item sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 300 }}>
           <FormatPrice
             amount={getValue('total', balanceToShow)}
             decimals={balanceToShow.decimal}
-            price={price.value}
+            price={price}
           />
         </Grid>
       }
