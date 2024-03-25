@@ -8,8 +8,8 @@ import React, { useCallback, useEffect } from 'react';
 
 import { stars6Black, stars6White } from '../../assets/icons';
 import { FormatPrice, HideIcon, ShowIcon } from '../../components';
-import { usePrices, useYouHave } from '../../hooks';
-import { PRICE_VALIDITY_PERIOD } from '../../hooks/usePrices3';
+import { useYouHave } from '../../hooks';
+import { PRICE_VALIDITY_PERIOD } from '../../hooks/usePrices';
 import useTranslation from '../../hooks/useTranslation';
 import { YouHaveType } from '../../hooks/useYouHave';
 
@@ -25,9 +25,6 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
   const { t } = useTranslation();
   const theme = useTheme();
   const youHave = useYouHave();
-
-  // TODO: replace usePrices and usePrice with usePrices3
-  const pricesInfo = usePrices();
 
   const onHideClick = useCallback(() => {
     setHideNumbers(!hideNumbers);

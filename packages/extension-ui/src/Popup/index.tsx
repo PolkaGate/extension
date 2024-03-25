@@ -18,6 +18,7 @@ import ManageIdentity from '@polkadot/extension-polkagate/src/fullscreen/manageI
 import FullScreenManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxiesFullScreen';
 import Send from '@polkadot/extension-polkagate/src/fullscreen/sendFund';
 import SocialRecovery from '@polkadot/extension-polkagate/src/fullscreen/socialRecovery';
+import { isPriceUpToDate } from '@polkadot/extension-polkagate/src/hooks/usePrices';
 import AddWatchOnly from '@polkadot/extension-polkagate/src/popup/import/addWatchOnly';
 import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
 import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
@@ -31,7 +32,6 @@ import { ExtensionLockProvider } from '../../../extension-polkagate/src/context/
 import Onboarding from '../../../extension-polkagate/src/fullscreen/onboarding';
 import { usePriceIds } from '../../../extension-polkagate/src/hooks';
 import useAssetsBalances, { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../extension-polkagate/src/hooks/useAssetsBalances';
-import { isPriceUpToDate } from '../../../extension-polkagate/src/hooks/usePrices3';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
 import AccountEx from '../../../extension-polkagate/src/popup/account';
 import AuthList from '../../../extension-polkagate/src/popup/authManagement';
@@ -70,7 +70,7 @@ import SoloPayout from '../../../extension-polkagate/src/popup/staking/solo/rewa
 import SoloStake from '../../../extension-polkagate/src/popup/staking/solo/stake';
 import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
-import { getPrices3 } from '../../../extension-polkagate/src/util/api';
+import { getPrices } from '../../../extension-polkagate/src/util/api';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { APIs, Fetching, LatestRefs, Prices2, Prices3, PricesInCurrencies } from '../../../extension-polkagate/src/util/types';
 
@@ -170,7 +170,7 @@ export default function Popup (): React.ReactElement {
             return;
           }
 
-          getPrices3(priceIds, currency.code.toLowerCase())
+          getPrices(priceIds, currency.code.toLowerCase())
             .then((newPrices) => {
               delete (newPrices as Prices3).currencyCode;
               savedPricesInCurrencies[currency.code] = newPrices;

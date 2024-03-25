@@ -23,7 +23,7 @@ import { label } from '../../popup/home/AccountsTree';
 import DeriveAccountModal from '../../popup/newAccount/deriveAccount/modal/DeriveAccountModal';
 import ReceiveModal from '../../popup/receive/ReceiveModal';
 import RenameModal from '../../popup/rename/RenameModal';
-import { EXTRA_PRICE_IDS } from '../../util/api/getPrices3';
+import { EXTRA_PRICE_IDS } from '../../util/api/getPrices';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { amountToHuman, sanitizeChainName } from '../../util/utils';
 import { FullScreenHeader } from '../governance/FullScreenHeader';

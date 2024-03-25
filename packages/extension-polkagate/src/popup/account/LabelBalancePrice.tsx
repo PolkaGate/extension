@@ -57,7 +57,7 @@ export default function LabelBalancePrice ({ address, balances, label, onClick, 
               <FormatPrice
                 amount={value}
                 decimals={balances?.decimal}
-                price={price?.amount}
+                price={price?.value}
               />
             </Grid>
           </Grid>

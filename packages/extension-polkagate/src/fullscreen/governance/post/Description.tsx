@@ -38,7 +38,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
   const token = useToken(address);
   const price = usePrice(address);
 
-  const requestedInUSD = useMemo(() => referendum?.requested && price?.amount && decimal && (Number(referendum.requested) / 10 ** decimal) * price.amount, [decimal, price, referendum]);
+  const requestedInUSD = useMemo(() => referendum?.requested && price?.value && decimal && (Number(referendum.requested) / 10 ** decimal) * price.value, [decimal, price, referendum]);
 
   const [expanded, setExpanded] = useState<boolean>(false);
 

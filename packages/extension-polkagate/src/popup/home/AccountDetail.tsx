@@ -46,15 +46,15 @@ const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
   const theme = useTheme();
 
   return (
-    <Infotip text={isHidden && t('This account is hidden from websites')}    >
+    <Infotip text={isHidden && t('This account is hidden from websites')}>
       <IconButton onClick={toggleVisibility} sx={{ height: '15px', ml: '7px', mt: '13px', p: 0, width: '24px' }}>
         <vaadin-icon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
       </IconButton>
     </Infotip>
-  )
+  );
 };
 
-export default function AccountDetail({ address, chain, formatted, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail ({ address, chain, formatted, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const balances = useBalances(address);
@@ -110,7 +110,7 @@ export default function AccountDetail({ address, chain, formatted, goToAccount, 
           <FormatPrice
             amount={getValue('total', balanceToShow)}
             decimals={balanceToShow.decimal}
-            price={price.amount}
+            price={price.value}
           />
         </Grid>
       }

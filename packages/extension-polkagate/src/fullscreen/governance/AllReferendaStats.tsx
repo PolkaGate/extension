@@ -10,8 +10,8 @@ import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance, ShowValue } from '../../components';
 import { useApi, useChain, useChainName, useDecidingCount, useDecimal, usePrice, useToken, useTranslation } from '../../hooks';
-import { pgBoxShadow } from '../../util/utils';
 import blockToDate from '../../popup/crowdloans/partials/blockToDate';
+import { pgBoxShadow } from '../../util/utils';
 import useStyles from './styles/styles';
 import { getReferendumStatistics, Statistics } from './utils/helpers';
 import { LabelValue } from './TrackStats';
@@ -235,7 +235,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
             rowDisplay={firstBreakpoint}
             style={{ maxWidth: firstBreakpoint ? '100%' : '135px', minWidth: '120px' }}
             title={t('Available')}
-            tokenPrice={price?.amount}
+            tokenPrice={price?.value}
           />
           <TreasuryBalanceStat
             address={address}
@@ -243,7 +243,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
             rowDisplay={firstBreakpoint}
             style={{ maxWidth: firstBreakpoint ? '100%' : '115px', minWidth: '105px' }}
             title={t('Approved')}
-            tokenPrice={price?.amount}
+            tokenPrice={price?.value}
           />
           <Grid container item justifyContent={firstBreakpoint ? 'space-between' : 'flex-start'} maxWidth={firstBreakpoint ? '100%' : '250px'} width={firstBreakpoint ? '100%' : 'fit-content'}>
             <Grid alignItems='center' container item width='fit-content'>
@@ -268,7 +268,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
             rowDisplay={firstBreakpoint}
             style={{ maxWidth: firstBreakpoint ? '100%' : '115px', minWidth: '100px' }}
             title={t('Next Burn')}
-            tokenPrice={price?.amount}
+            tokenPrice={price?.value}
           />
         </Grid>
       </Grid>

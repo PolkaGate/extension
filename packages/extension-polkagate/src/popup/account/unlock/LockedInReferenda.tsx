@@ -196,7 +196,7 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
               <FormatPrice
                 amount={totalLocked}
                 decimals={decimal}
-                price={price?.amount}
+                price={price?.value}
               />
             </Grid>
           </Grid>
