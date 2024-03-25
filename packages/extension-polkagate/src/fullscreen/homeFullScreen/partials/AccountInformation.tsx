@@ -15,7 +15,7 @@ import { BN } from '@polkadot/util';
 import { stars6Black, stars6White } from '../../../assets/icons';
 import { ActionContext, Identicon, Identity, Infotip, ShortAddress2 } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
-import { useAccount, useCurrency, usePrices3, useTranslation } from '../../../hooks';
+import { useAccount, useCurrency, usePrices, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { showAccount, tieAccount } from '../../../messaging';
 import ExportAccountModal from '../../../popup/export/ExportAccountModal';
@@ -53,7 +53,7 @@ export const POPUPS_NUMBER = {
 
 export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
-  const pricesInCurrencies = usePrices3();
+  const pricesInCurrencies = usePrices();
   const currency = useCurrency();
   const account = useAccount(address);
   const theme = useTheme();

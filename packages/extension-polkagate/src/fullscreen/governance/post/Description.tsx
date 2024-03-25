@@ -14,7 +14,7 @@ import { BN } from '@polkadot/util';
 
 import { Identity, ShowBalance, ShowValue } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
-import { useApi, useChain, useDecimal, usePrice, useToken, useTranslation } from '../../../hooks';
+import { useApi, useChain, useDecimal, useToken, useTokenPrice, useTranslation } from '../../../hooks';
 import { LabelValue } from '../TrackStats';
 import { STATUS_COLOR } from '../utils/consts';
 import { Proposal, Referendum } from '../utils/types';
@@ -36,9 +36,9 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
   const chain = useChain(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const price = usePrice(address);
+  const { price } = useTokenPrice(address);
 
-  const requestedInUSD = useMemo(() => referendum?.requested && price?.amount && decimal && (Number(referendum.requested) / 10 ** decimal) * price.amount, [decimal, price, referendum]);
+  const requestedInUSD = useMemo(() => referendum?.requested && price && decimal && (Number(referendum.requested) / 10 ** decimal) * price, [decimal, price, referendum]);
 
   const [expanded, setExpanded] = useState<boolean>(false);
 

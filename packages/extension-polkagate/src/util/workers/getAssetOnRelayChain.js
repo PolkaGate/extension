@@ -6,7 +6,7 @@
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { EXTRA_PRICE_IDS } from '../api/getPrices3';
+import { EXTRA_PRICE_IDS } from '../api/getPrices';
 import { TEST_NETS } from '../constants';
 import getPoolAccounts from '../getPoolAccounts';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';

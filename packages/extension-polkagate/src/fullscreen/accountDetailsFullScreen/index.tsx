@@ -12,7 +12,7 @@ import { useHistory } from 'react-router-dom';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, ActionContext } from '../../components';
-import { useAccount, useAccountAssets, useApi, useBalances, useChain, useChainName, useCurrency, useFormatted, useFullscreen, usePrices3, useTranslation } from '../../hooks';
+import { useAccount, useAccountAssets, useApi, useBalances, useChain, useChainName, useCurrency, useFormatted, useFullscreen, usePrices, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
 import { FetchedBalance } from '../../hooks/useAssetsBalances';
 import { getValue } from '../../popup/account/util';
@@ -23,22 +23,12 @@ import { label } from '../../popup/home/AccountsTree';
 import DeriveAccountModal from '../../popup/newAccount/deriveAccount/modal/DeriveAccountModal';
 import ReceiveModal from '../../popup/receive/ReceiveModal';
 import RenameModal from '../../popup/rename/RenameModal';
-import { EXTRA_PRICE_IDS } from '../../util/api/getPrices3';
+import { EXTRA_PRICE_IDS } from '../../util/api/getPrices';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { amountToHuman, sanitizeChainName } from '../../util/utils';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import LockedInReferenda from './unlock/Review';
 import { AccountInformation, AccountSetting, ChangeAssets, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
-
-export type AssetsOnOtherChains = {
-  assetId?: number,
-  totalBalance: BN,
-  chainName: string,
-  decimal: number,
-  genesisHash: string,
-  price: number | undefined,
-  token: string
-};
 
 export const popupNumbers = {
   LOCKED_IN_REFERENDA: 1,
@@ -72,7 +62,7 @@ export default function AccountDetails (): React.ReactElement {
   const chainName = useChainName(address);
   const onAction = useContext(ActionContext);
   const accountAssets = useAccountAssets(address);
-  const pricesInCurrency = usePrices3();
+  const pricesInCurrency = usePrices();
 
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
   const [assetId, setAssetId] = useState<number>();

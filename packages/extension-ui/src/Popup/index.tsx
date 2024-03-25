@@ -18,6 +18,7 @@ import ManageIdentity from '@polkadot/extension-polkagate/src/fullscreen/manageI
 import FullScreenManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxiesFullScreen';
 import Send from '@polkadot/extension-polkagate/src/fullscreen/sendFund';
 import SocialRecovery from '@polkadot/extension-polkagate/src/fullscreen/socialRecovery';
+import { isPriceUpToDate } from '@polkadot/extension-polkagate/src/hooks/usePrices';
 import AddWatchOnly from '@polkadot/extension-polkagate/src/popup/import/addWatchOnly';
 import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
 import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
@@ -25,13 +26,12 @@ import LoginPassword from '@polkadot/extension-polkagate/src/popup/passwordManag
 import uiSettings from '@polkadot/ui-settings';
 
 import { ErrorBoundary, Loading } from '../../../extension-polkagate/src/components';
-import { AccountContext, AccountsAssetsContext, ActionContext, APIContext, AuthorizeReqContext, CurrencyContext, FetchingContext, MediaContext, MetadataReqContext, PricesContext, ReferendaContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
+import { AccountContext, AccountsAssetsContext, ActionContext, APIContext, AuthorizeReqContext, CurrencyContext, FetchingContext, MediaContext, MetadataReqContext, ReferendaContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
 import { getStorage, LoginInfo, setStorage, updateStorage } from '../../../extension-polkagate/src/components/Loading';
 import { ExtensionLockProvider } from '../../../extension-polkagate/src/context/ExtensionLockContext';
 import Onboarding from '../../../extension-polkagate/src/fullscreen/onboarding';
 import { usePriceIds } from '../../../extension-polkagate/src/hooks';
 import useAssetsBalances, { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../extension-polkagate/src/hooks/useAssetsBalances';
-import { isPriceUpToDate } from '../../../extension-polkagate/src/hooks/usePrices3';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
 import AccountEx from '../../../extension-polkagate/src/popup/account';
 import AuthList from '../../../extension-polkagate/src/popup/authManagement';
@@ -70,9 +70,9 @@ import SoloPayout from '../../../extension-polkagate/src/popup/staking/solo/rewa
 import SoloStake from '../../../extension-polkagate/src/popup/staking/solo/stake';
 import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
-import { getPrices3 } from '../../../extension-polkagate/src/util/api';
+import { getPrices } from '../../../extension-polkagate/src/util/api';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
-import { APIs, Fetching, LatestRefs, Prices2, Prices3, PricesInCurrencies } from '../../../extension-polkagate/src/util/types';
+import { APIs, Fetching, LatestRefs, Prices, PricesInCurrencies } from '../../../extension-polkagate/src/util/types';
 
 const startSettings = uiSettings.get();
 
@@ -122,7 +122,6 @@ export default function Popup (): React.ReactElement {
   const [refs, setRefs] = useState<LatestRefs>({});
   const [accountsAssets, setAccountsAssets] = useState<SavedAssets | null | undefined>();
   const [currency, setCurrency] = useState<CurrencyItemType>();
-  const [prices, setPrices] = useState<Prices2[]>();
   const [loginInfo, setLoginInfo] = useState<LoginInfo>();
 
   const set = useCallback((change: Fetching) => {
@@ -170,9 +169,9 @@ export default function Popup (): React.ReactElement {
             return;
           }
 
-          getPrices3(priceIds, currency.code.toLowerCase())
+          getPrices(priceIds, currency.code.toLowerCase())
             .then((newPrices) => {
-              delete (newPrices as Prices3).currencyCode;
+              delete (newPrices as Prices).currencyCode;
               savedPricesInCurrencies[currency.code] = newPrices;
               setStorage('pricesInCurrencies', savedPricesInCurrencies)
                 .catch(console.error);
@@ -264,8 +263,7 @@ export default function Popup (): React.ReactElement {
                 <APIContext.Provider value={{ apis, setIt }}>
                   <FetchingContext.Provider value={{ fetching, set }}>
                     <CurrencyContext.Provider value={{ currency, setCurrency }}>
-                      <PricesContext.Provider value={{ prices, setPrices }}>
-                        <AccountsAssetsContext.Provider value={{ accountsAssets, setAccountsAssets }}>
+                      <AccountsAssetsContext.Provider value={{ accountsAssets, setAccountsAssets }}>
                           <ReferendaContext.Provider value={{ refs, setRefs }}>
                             <AuthorizeReqContext.Provider value={authRequests}>
                               <MediaContext.Provider value={cameraOn && mediaAllowed}>
@@ -330,8 +328,7 @@ export default function Popup (): React.ReactElement {
                               </MediaContext.Provider>
                             </AuthorizeReqContext.Provider>
                           </ReferendaContext.Provider>
-                        </AccountsAssetsContext.Provider>
-                      </PricesContext.Provider>
+                      </AccountsAssetsContext.Provider>
                     </CurrencyContext.Provider>
                   </FetchingContext.Provider>
                 </APIContext.Provider>

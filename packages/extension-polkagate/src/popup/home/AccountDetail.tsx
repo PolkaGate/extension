@@ -15,9 +15,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { stars5Black, stars5White } from '../../assets/icons';
 import { CopyAddressButton, FormatBalance2, FormatPrice, Infotip } from '../../components';
-import { useChainName, useTranslation } from '../../hooks';
-import useBalances from '../../hooks/useBalances';
-import usePrice from '../../hooks/usePrice';
+import { useBalances, useChainName, useTokenPrice, useTranslation } from '../../hooks/';
 import RecentChains from '../../partials/RecentChains';
 import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
 import { BalancesInfo } from '../../util/types';
@@ -46,22 +44,22 @@ const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
   const theme = useTheme();
 
   return (
-    <Infotip text={isHidden && t('This account is hidden from websites')}    >
+    <Infotip text={isHidden && t('This account is hidden from websites')}>
       <IconButton onClick={toggleVisibility} sx={{ height: '15px', ml: '7px', mt: '13px', p: 0, width: '24px' }}>
         <vaadin-icon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
       </IconButton>
     </Infotip>
-  )
+  );
 };
 
-export default function AccountDetail({ address, chain, formatted, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail ({ address, chain, formatted, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const balances = useBalances(address);
   const chainName = useChainName(address);
-  const price = usePrice(address);
+  const { price, priceChainName, priceDate } = useTokenPrice(address);
   const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
-  const isPriceOutdated = useMemo(() => price !== undefined && Date.now() - price.date > BALANCES_VALIDITY_PERIOD, [price]);
+  const isPriceOutdated = useMemo(() => priceDate !== undefined && Date.now() - priceDate > BALANCES_VALIDITY_PERIOD, [priceDate]);
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
 
   useEffect(() => {
@@ -104,13 +102,13 @@ export default function AccountDetail({ address, chain, formatted, goToAccount, 
 
   const Price = () => (
     <>
-      {price === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== price?.chainName
+      {priceChainName === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== priceChainName
         ? <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
         : <Grid item sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 300 }}>
           <FormatPrice
             amount={getValue('total', balanceToShow)}
             decimals={balanceToShow.decimal}
-            price={price.amount}
+            price={price}
           />
         </Grid>
       }
