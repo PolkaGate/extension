@@ -14,7 +14,7 @@ import { DisplayLogo, FormatPrice, ShowBalance } from '../../../components';
 import { usePrices, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import getLogo2 from '../../../util/getLogo2';
-import { BalancesInfo, Prices3 } from '../../../util/types';
+import { BalancesInfo, Prices } from '../../../util/types';
 
 interface Props {
   account: AccountJson | undefined;
@@ -28,7 +28,7 @@ interface Props {
 
 interface AssetBoxProps {
   api: ApiPromise | undefined,
-  pricesInCurrencies: Prices3 | null | undefined,
+  pricesInCurrencies: Prices | null | undefined,
   account: AccountJson | undefined,
   selectedAsset: FetchedBalance | undefined,
   balanceToShow: BalancesInfo | undefined,
@@ -40,7 +40,7 @@ interface AssetBoxProps {
 interface BalanceRowProps {
   asset: FetchedBalance,
   api: ApiPromise | undefined,
-  pricesInCurrencies: Prices3 | null | undefined
+  pricesInCurrencies: Prices | null | undefined
 }
 
 const BalanceRow = ({ api, asset, pricesInCurrencies }: BalanceRowProps) => (

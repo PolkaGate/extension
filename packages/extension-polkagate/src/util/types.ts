@@ -528,16 +528,6 @@ export interface ProxyItem {
   status: 'current' | 'new' | 'remove';
 }
 
-export interface PriceAll {
-  balances: DeriveBalancesAll;
-  decimals: number;
-  price: number;
-}
-
-export interface AddressPriceAll {
-  [k: string]: PriceAll;
-}
-
 export interface RenameAcc {
   address: string;
   name: string;
@@ -579,55 +569,30 @@ export interface Step {
   total: string | number;
   style?: SxProps<Theme> | undefined;
 }
-export interface TokenPrice {
-  [chainName: string]: Price;
-}
-export interface Prices {
-  prices: Record<string, Record<string, number>>;
-  date: number;
+
+interface PriceValue {
+  value: number,
+  change: number
 }
 
-export interface PricesType { // deprecated
-  [key: string]: { price: number, change: number };
-}
-
-export interface Prices2 { // deprecated
-  date: number;
-  prices: PricesType;
-  currencyCode: string;
-}
-
-interface PriceValue { value: number, change: number }
-
-export interface PricesType3 {
+export interface PricesType {
   [priceId: string]: PriceValue;
 }
 
-export interface Prices3 {
+export interface Prices {
   date: number;
-  prices: PricesType3;
+  prices: PricesType;
   currencyCode?: string;
 }
 
 export interface PricesInCurrencies {
-  [currencyCode: string]: { date: number; prices: PricesType3; };
+  [currencyCode: string]: { date: number; prices: PricesType; };
 }
 
 export interface Price {
   price: number;
   priceChainName: string;
   priceDate: number;
-}
-
-export interface PricesContextType {
-  prices: Prices2[] | undefined;
-  setPrices: (prices: Prices2[]) => void;
-}
-
-export interface Price2 {
-  price: number;
-  timestamp: number;
-  chainName: string;
 }
 
 export interface SavedBalances {
@@ -757,7 +722,6 @@ export interface ReferendaContextType {
   setRefs: (refs: LatestRefs) => void;
 }
 
-export interface AssetsOnOtherChains { assetId?: number, totalBalance: BN, chainName: string, decimal: number, genesisHash: string, price: number | undefined, token: string }
 export interface AccountAssets {
   assetId: number | undefined;
   chainName: string;

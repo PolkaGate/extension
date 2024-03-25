@@ -18,7 +18,7 @@ import { showAccount, tieAccount } from '../../../messaging';
 import { getValue } from '../../../popup/account/util';
 import { BALANCES_VALIDITY_PERIOD } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
-import { BalancesInfo, Prices3 } from '../../../util/types';
+import { BalancesInfo, Prices } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import AccountIcons from './AccountIcons';
 import AOC from './AOC';
@@ -35,7 +35,7 @@ interface AddressDetailsProps {
   setSelectedAsset: React.Dispatch<React.SetStateAction<FetchedBalance | undefined>>;
   selectedAsset: FetchedBalance | undefined;
   price: number | undefined;
-  pricesInCurrency: Prices3 | null | undefined;
+  pricesInCurrency: Prices | null | undefined;
 }
 
 const Price = ({ balanceToShow, isPriceOutdated, price }: { balanceToShow: BalancesInfo | undefined, isPriceOutdated: boolean | undefined, price: number | undefined }) => (

@@ -15,7 +15,7 @@ import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import getLogo2 from '../../../util/getLogo2';
-import { Prices3 } from '../../../util/types';
+import { Prices } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import { adjustColor } from '../../homeFullScreen/partials/TotalBalancePieChart';
 
@@ -23,7 +23,7 @@ interface TotalChartProps {
   isDarkTheme: boolean;
   accountAssets: FetchedBalance[] | null | undefined;
   nativeAssetPrice: number | undefined;
-  pricesInCurrency: Prices3 | null | undefined
+  pricesInCurrency: Prices | null | undefined
 }
 
 interface AssetsToShow extends FetchedBalance {

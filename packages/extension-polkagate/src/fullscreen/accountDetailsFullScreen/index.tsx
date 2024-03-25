@@ -30,16 +30,6 @@ import { FullScreenHeader } from '../governance/FullScreenHeader';
 import LockedInReferenda from './unlock/Review';
 import { AccountInformation, AccountSetting, ChangeAssets, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
 
-export type AssetsOnOtherChains = {
-  assetId?: number,
-  totalBalance: BN,
-  chainName: string,
-  decimal: number,
-  genesisHash: string,
-  price: number | undefined,
-  token: string
-};
-
 export const popupNumbers = {
   LOCKED_IN_REFERENDA: 1,
   FORGET_ACCOUNT: 2,

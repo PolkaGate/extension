@@ -6,7 +6,7 @@
 import { useEffect, useState } from 'react';
 
 import { getStorage, watchStorage } from '../components/Loading';
-import { Prices3, PricesInCurrencies } from '../util/types';
+import { Prices, PricesInCurrencies } from '../util/types';
 import { useCurrency } from '.';
 
 /** If we need to retrieve a price, and that price was fetched within the last PRICE_VALIDITY_PERIOD in seconds,
@@ -23,10 +23,10 @@ export function isPriceUpToDate (lastFetchDate?: number): boolean | undefined {
  * get all selected chains assets' prices and save in local storage
  * @returns null: means not savedPrice found, happens when the first account is created
  */
-export default function usePrices (): Prices3 | undefined | null {
+export default function usePrices (): Prices | undefined | null {
   const currency = useCurrency();
 
-  const [savedPrice, setSavedPrice] = useState<Prices3 | null>();
+  const [savedPrice, setSavedPrice] = useState<Prices | null>();
   const [updatedPrice, setUpdatedPrice] = useState<PricesInCurrencies | null>();
 
   useEffect(() => {

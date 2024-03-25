@@ -3,7 +3,7 @@
 
 import request from 'umi-request';
 
-import { PricesType3 } from '../types';
+import { PricesType } from '../types';
 
 /** some chains have a different priceId than its sanitizedChainName,
  * hence we will replace their price Id using  EXTRA_PRICE_IDS */
@@ -20,7 +20,7 @@ export default async function getPrices (priceIds: string[], currencyCode = 'usd
 
   const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${revisedPriceIds}&vs_currencies=${currencyCode}&include_24hr_change=true`, {});
 
-  const outputObjectPrices: PricesType3 = {};
+  const outputObjectPrices: PricesType = {};
 
   for (const [key, value] of Object.entries(prices)) {
     outputObjectPrices[key] = { change: value[`${currencyCode}_24h_change`] as number, value: value[currencyCode] as number };
