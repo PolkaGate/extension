@@ -22,6 +22,7 @@ async function toGetNativeToken (addresses, api, chainName) {
     }
 
     _result[address] = [{ // since some chains may have more than one asset hence we use an array here! even thought its not needed for relay chains but just to be as a general rule.
+      availableBalance: String(balances[index].freeBalance),
       chainName,
       decimal: api.registry.chainDecimals[0],
       genesisHash: api.genesisHash.toString(),
@@ -62,6 +63,7 @@ async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
 
       const item = {
         assetId: asset.id,
+        availableBalance: String(balance), // TODO: needs more checks
         chainName,
         decimal,
         genesisHash: api.genesisHash.toString(),

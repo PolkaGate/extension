@@ -15,7 +15,7 @@ import { toCamelCase } from '../fullscreen/governance/utils/util';
 import allChains from '../util/chains';
 import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
-import { isHexToBn } from '../util/utils';
+import { isHexToBn, sanitizeChainName } from '../util/utils';
 import useSelectedChains from './useSelectedChains';
 import { useIsTestnetEnabled } from '.';
 
@@ -351,11 +351,58 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
     };
   }, [combineAndSetAssets, handleSetWorkersCall]);
 
+  const fetchAssetsOnHydraDx = useCallback((_addresses: string[]) => {
+    const worker: Worker = new Worker(new URL('../util/workers/getAssetOnHydraDx.js', import.meta.url));
+
+    handleSetWorkersCall(worker);
+    worker.postMessage({ addresses: _addresses });
+
+    worker.onerror = (err) => {
+      console.log(err);
+    };
+
+    worker.onmessage = (e: MessageEvent<string>) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const message = e.data;
+
+      if (!message) {
+        console.info('fetchAssetsOnHydraDx: No assets found on HydraDx');
+        handleSetWorkersCall(worker, 'terminate');
+
+        return;
+      }
+
+      const parsedMessage = JSON.parse(message) as WorkerMessage;
+      const _assets: Assets = {};
+
+      Object.keys(parsedMessage).forEach((address) => {
+        _assets[address] = parsedMessage[address].map(
+          (message) => {
+            const temp = { ...message,
+              ...allHexToBN(message.balanceDetails),
+              decimal: Number(message.decimal),
+              totalBalance: isHexToBn(message.totalBalance) };
+
+            delete temp.balanceDetails;
+
+            return temp;
+          });
+      });
+
+      combineAndSetAssets(_assets);
+      handleSetWorkersCall(worker, 'terminate');
+    };
+  }, [combineAndSetAssets, handleSetWorkersCall]);
+
   const fetchMultiAssetChainAssets = useCallback((maybeMultiAssetChainName: string) => {
     if (maybeMultiAssetChainName === 'acala') {
-      fetchAssetsOnAcala(addresses!);
+      return fetchAssetsOnAcala(addresses!);
     }
-  }, [addresses, fetchAssetsOnAcala]);
+
+    if (maybeMultiAssetChainName === 'hydradx') {
+      return fetchAssetsOnHydraDx(addresses!);
+    }
+  }, [addresses, fetchAssetsOnAcala, fetchAssetsOnHydraDx]);
 
   const fetchAssets = useCallback((genesisHash: string, isSingleTokenChain: boolean, maybeMultiAssetChainName: string | undefined) => {
     /** Checking assets balances on Relay chains */
@@ -387,7 +434,9 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
     }
 
     /** Checking assets balances on chains with more than one assets such as Acala, hydradx, etc, */
-    maybeMultiAssetChainName && fetchMultiAssetChainAssets(maybeMultiAssetChainName);
+    if (maybeMultiAssetChainName) {
+      fetchMultiAssetChainAssets(maybeMultiAssetChainName);
+    }
   }, [addresses, fetchAssetOnAssetHubs, fetchAssetOnRelayChain, fetchMultiAssetChainAssets]);
 
   useEffect(() => {
@@ -396,19 +445,19 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
     }
 
     const _selectedChains = isTestnetEnabled ? selectedChains : selectedChains.filter((genesisHash) => !TEST_NETS.includes(genesisHash));
-    const multipleAssetsChainsNames = Object.keys(assetsChains);
+    const multipleAssetsChainsNames = Object.keys(assetsChains).map((chainName) => chainName.toLowerCase());
 
     const singleAssetChains = allChains.filter(({ chain, genesisHash }) =>
       _selectedChains.includes(genesisHash) &&
       !ASSET_HUBS.includes(genesisHash) &&
       !RELAY_CHAINS_GENESISHASH.includes(genesisHash) &&
-      !multipleAssetsChainsNames.includes(toCamelCase(chain))
+      !multipleAssetsChainsNames.includes(sanitizeChainName(chain)?.toLowerCase() || '')
     );
 
     /** Fetch assets for all the selected chains by default */
     _selectedChains?.forEach((genesisHash) => {
       const isSingleTokenChain = !!singleAssetChains.find((o) => o.genesisHash === genesisHash);
-      const maybeMultiAssetChainName = multipleAssetsChainsNames.find((chainName) => chainName === getChainName(genesisHash));
+      const maybeMultiAssetChainName = multipleAssetsChainsNames.find((chainName) => chainName === getChainName(genesisHash)?.toLowerCase());
 
       fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);
     });
