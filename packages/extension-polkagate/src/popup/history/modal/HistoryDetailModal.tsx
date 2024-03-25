@@ -41,7 +41,7 @@ export default function HistoryDetailModal ({ chainName, decimal, info, setShowD
     const name = nameAddress?.name || accountName(accounts, nameAddress?.address);
 
     return (
-      <Grid container item maxWidth='85%' width='fit-content'>
+      <Grid container item maxWidth='95%' width='fit-content'>
         <Grid item sx={{ maxWidth: '60%', width: 'fit-content' }}>
           <Typography fontSize='16px' fontWeight={400} sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {title}: {name}
