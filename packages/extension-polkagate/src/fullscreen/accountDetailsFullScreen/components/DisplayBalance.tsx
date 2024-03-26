@@ -35,7 +35,7 @@ export default function DisplayBalance ({ amount, decimal, isDarkTheme, onClick,
           <ShowBalance
             balance={amount}
             decimal={decimal}
-            decimalPoint={2}
+            decimalPoint={3}
             token={token}
             withCurrency
           />
