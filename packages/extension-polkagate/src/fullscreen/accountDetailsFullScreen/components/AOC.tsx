@@ -24,6 +24,7 @@ interface Props {
   accountAssets: FetchedBalance[] | null | undefined;
   onclick: (asset: FetchedBalance | undefined) => void;
   mode?: 'Home' | 'Detail';
+  hideNumbers?: boolean | undefined
 }
 
 interface AssetBoxProps {
@@ -35,6 +36,7 @@ interface AssetBoxProps {
   asset: FetchedBalance | undefined,
   mode: 'Home' | 'Detail',
   onclick: (asset: FetchedBalance | undefined) => void;
+  hideNumbers?: boolean | undefined
 }
 
 interface BalanceRowProps {
@@ -64,21 +66,20 @@ const BalanceRow = ({ api, asset, pricesInCurrencies }: BalanceRowProps) => (
   </Grid>
 );
 
-const AssetsBoxes = ({ account, api, asset, balanceToShow, mode, onclick, pricesInCurrencies, selectedAsset }: AssetBoxProps) => {
+const AssetsBoxes = ({ account, api, asset, balanceToShow, hideNumbers, mode, onclick, pricesInCurrencies, selectedAsset }: AssetBoxProps) => {
   const isAssetSelected = (asset && asset.genesisHash === account?.genesisHash && asset.token === balanceToShow?.token) || (asset?.genesisHash === selectedAsset?.genesisHash && asset?.token === selectedAsset?.token);
 
   const homeMode = (mode === 'Home' && isAssetSelected);
   const logoInfo = useMemo(() => asset && getLogo2(asset.genesisHash, asset.token), [asset]);
 
   return (
-    // eslint-disable-next-line react/jsx-no-bind
     <Grid alignItems='center' container item justifyContent='center' onClick={() => asset ? onclick(asset) : null} sx={{ border: asset ? `${isAssetSelected ? '3px' : '1px'} solid` : 'none', borderColor: 'secondary.light', borderRadius: '8px', boxShadow: isAssetSelected ? '0px 2px 5px 2px #00000040' : 'none', cursor: asset ? 'pointer' : 'default', height: 'fit-content', p: asset ? '5px' : 0, width: 'fit-content' }}>
       {asset
         ? <>
           <Grid alignItems='center' container item width='fit-content'>
             <DisplayLogo assetSize='25px' baseTokenSize='16px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
           </Grid>
-          {(mode === 'Detail' || homeMode) &&
+          {(mode === 'Detail' || (homeMode && !hideNumbers)) &&
             <BalanceRow
               api={api}
               asset={asset}
@@ -92,7 +93,7 @@ const AssetsBoxes = ({ account, api, asset, balanceToShow, mode, onclick, prices
   );
 };
 
-function AOC ({ account, accountAssets, api, balanceToShow, mode = 'Detail', onclick, selectedAsset }: Props) {
+function AOC ({ account, accountAssets, api, balanceToShow, hideNumbers, mode = 'Detail', onclick, selectedAsset }: Props) {
   const { t } = useTranslation();
   const pricesInCurrencies = usePrices();
 
@@ -122,6 +123,7 @@ function AOC ({ account, accountAssets, api, balanceToShow, mode = 'Detail', onc
                 api={api}
                 asset={asset}
                 balanceToShow={balanceToShow}
+                hideNumbers={hideNumbers}
                 key={index}
                 mode={mode}
                 onclick={onclick}
@@ -142,7 +144,7 @@ function AOC ({ account, accountAssets, api, balanceToShow, mode = 'Detail', onc
               </Typography>
               <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
             </>
-            : accountAssets.length > 5 && 
+            : accountAssets.length > 5 &&
             <MoreHorizIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
           }
         </Grid>

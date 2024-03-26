@@ -190,6 +190,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
                 api={api}
                 balanceToShow={balanceToShow}
                 mode='Home'
+                hideNumbers={hideNumbers}
                 onclick={onAssetBoxClicked}
                 selectedAsset={selectedAsset}
               />
