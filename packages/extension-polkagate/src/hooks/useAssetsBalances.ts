@@ -11,13 +11,13 @@ import { AccountJson } from '@polkadot/extension-base/background/types';
 import { BN } from '@polkadot/util';
 
 import { getStorage, setStorage, watchStorage } from '../components/Loading';
+import { toCamelCase } from '../fullscreen/governance/utils/util';
 import allChains from '../util/chains';
 import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
-import { isHexToBn, sanitizeChainName } from '../util/utils';
+import { isHexToBn } from '../util/utils';
 import useSelectedChains from './useSelectedChains';
 import { useIsTestnetEnabled } from '.';
-import { toCamelCase } from '../fullscreen/governance/utils/util';
 
 type WorkerMessage = Record<string, MessageBody[]>;
 type Assets = Record<string, FetchedBalance[]>;

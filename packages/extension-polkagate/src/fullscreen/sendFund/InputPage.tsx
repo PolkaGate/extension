@@ -13,7 +13,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import { BN, BN_ONE, BN_ZERO, isFunction, isNumber } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { ActionContext, AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, PButton, ShowBalance, TwoButtons, Warning } from '../../components';
+import { ActionContext, AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, ShowBalance, TwoButtons, Warning } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { useApi, useChain, useFormatted, useTeleport } from '../../hooks';
 import { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
@@ -55,7 +55,7 @@ export const Title = ({ padding = '30px 0px 20px', text }: { text: string, paddi
   );
 };
 
-export default function InputPage({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function InputPage ({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
