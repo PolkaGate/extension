@@ -9,23 +9,8 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { EXTRA_PRICE_IDS } from '../api/getPrices';
 import { TEST_NETS } from '../constants';
 import getPoolAccounts from '../getPoolAccounts';
-import { closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
+import { balancify, closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
 
-function balancify (balances, pooledBalance, soloTotal) {
-  return JSON.stringify({
-    availableBalance: String(balances.availableBalance),
-    freeBalance: String(balances.freeBalance),
-    lockedBalance: String(balances.lockedBalance),
-    pooledBalance: String(pooledBalance),
-    reservedBalance: String(balances.reservedBalance),
-    soloTotal: String(soloTotal),
-    vestedBalance: String(balances.vestedBalance),
-    vestedClaimable: String(balances.vestedClaimable),
-    vestingLocked: String(balances.vestingLocked),
-    vestingTotal: String(balances.vestingTotal),
-    votingBalance: String(balances.votingBalance)
-  });
-}
 
 async function getPooledBalance (api, address) {
   const response = await api.query.nominationPools.poolMembers(address);

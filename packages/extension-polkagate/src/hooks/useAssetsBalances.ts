@@ -11,13 +11,13 @@ import { AccountJson } from '@polkadot/extension-base/background/types';
 import { BN } from '@polkadot/util';
 
 import { getStorage, setStorage, watchStorage } from '../components/Loading';
-import { toCamelCase } from '../fullscreen/governance/utils/util';
 import allChains from '../util/chains';
 import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
 import { isHexToBn, sanitizeChainName } from '../util/utils';
 import useSelectedChains from './useSelectedChains';
 import { useIsTestnetEnabled } from '.';
+import { toCamelCase } from '../fullscreen/governance/utils/util';
 
 type WorkerMessage = Record<string, MessageBody[]>;
 type Assets = Record<string, FetchedBalance[]>;
@@ -308,54 +308,11 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
     };
   }, [combineAndSetAssets, handleSetWorkersCall]);
 
-  const fetchAssetsOnAcala = useCallback((_addresses: string[]) => {
-    const worker: Worker = new Worker(new URL('../util/workers/getAssetOnAcala.js', import.meta.url));
+  const fetchAssetOnMultiAssetChain = useCallback((addresses: string[], chainName:string) => {
+    const worker: Worker = new Worker(new URL('../util/workers/getAssetOnMultiAssetChain.js', import.meta.url));
 
     handleSetWorkersCall(worker);
-    worker.postMessage({ addresses: _addresses });
-
-    worker.onerror = (err) => {
-      console.log(err);
-    };
-
-    worker.onmessage = (e: MessageEvent<string>) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const message = e.data;
-
-      if (!message) {
-        console.info('fetchAssetsOnAcala: No assets found on Acala');
-        handleSetWorkersCall(worker, 'terminate');
-
-        return;
-      }
-
-      const parsedMessage = JSON.parse(message) as WorkerMessage;
-      const _assets: Assets = {};
-
-      Object.keys(parsedMessage).forEach((address) => {
-        _assets[address] = parsedMessage[address].map(
-          (message) => {
-            const temp = { ...message,
-              ...allHexToBN(message.balanceDetails),
-              decimal: Number(message.decimal),
-              totalBalance: isHexToBn(message.totalBalance) };
-
-            delete temp.balanceDetails;
-
-            return temp;
-          });
-      });
-
-      combineAndSetAssets(_assets);
-      handleSetWorkersCall(worker, 'terminate');
-    };
-  }, [combineAndSetAssets, handleSetWorkersCall]);
-
-  const fetchAssetsOnHydraDx = useCallback((_addresses: string[]) => {
-    const worker: Worker = new Worker(new URL('../util/workers/getAssetOnHydraDx.js', import.meta.url));
-
-    handleSetWorkersCall(worker);
-    worker.postMessage({ addresses: _addresses });
+    worker.postMessage({ addresses, chainName });
 
     worker.onerror = (err) => {
       console.log(err);
@@ -394,15 +351,9 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
     };
   }, [combineAndSetAssets, handleSetWorkersCall]);
 
-  const fetchMultiAssetChainAssets = useCallback((maybeMultiAssetChainName: string) => {
-    if (maybeMultiAssetChainName === 'acala') {
-      return fetchAssetsOnAcala(addresses!);
-    }
-
-    if (maybeMultiAssetChainName === 'hydradx') {
-      return fetchAssetsOnHydraDx(addresses!);
-    }
-  }, [addresses, fetchAssetsOnAcala, fetchAssetsOnHydraDx]);
+  const fetchMultiAssetChainAssets = useCallback((chainName: string) => {
+    return addresses && fetchAssetOnMultiAssetChain(addresses, chainName);
+  }, [addresses, fetchAssetOnMultiAssetChain]);
 
   const fetchAssets = useCallback((genesisHash: string, isSingleTokenChain: boolean, maybeMultiAssetChainName: string | undefined) => {
     /** Checking assets balances on Relay chains */
@@ -445,19 +396,19 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
     }
 
     const _selectedChains = isTestnetEnabled ? selectedChains : selectedChains.filter((genesisHash) => !TEST_NETS.includes(genesisHash));
-    const multipleAssetsChainsNames = Object.keys(assetsChains).map((chainName) => chainName.toLowerCase());
+    const multipleAssetsChainsNames = Object.keys(assetsChains);
 
     const singleAssetChains = allChains.filter(({ chain, genesisHash }) =>
       _selectedChains.includes(genesisHash) &&
       !ASSET_HUBS.includes(genesisHash) &&
       !RELAY_CHAINS_GENESISHASH.includes(genesisHash) &&
-      !multipleAssetsChainsNames.includes(sanitizeChainName(chain)?.toLowerCase() || '')
+      !multipleAssetsChainsNames.includes(toCamelCase(chain) || '')
     );
 
     /** Fetch assets for all the selected chains by default */
     _selectedChains?.forEach((genesisHash) => {
       const isSingleTokenChain = !!singleAssetChains.find((o) => o.genesisHash === genesisHash);
-      const maybeMultiAssetChainName = multipleAssetsChainsNames.find((chainName) => chainName === getChainName(genesisHash)?.toLowerCase());
+      const maybeMultiAssetChainName = multipleAssetsChainsNames.find((chainName) => chainName === getChainName(genesisHash));
 
       fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);
     });

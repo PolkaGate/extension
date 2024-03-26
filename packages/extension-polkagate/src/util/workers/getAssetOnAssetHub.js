@@ -6,34 +6,7 @@
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
-
-async function toGetNativeToken (addresses, api, chainName) {
-  const tokenName = chainName.replace('AssetHub', '');
-  const _result = {};
-
-  const balances = await Promise.all(addresses.map((address) => api.derive.balances.all(address)));
-
-  addresses.forEach((address, index) => {
-    const totalBalance = balances[index].freeBalance.add(balances[index].reservedBalance);
-
-    if (totalBalance.isZero()) {
-      return;
-    }
-
-    _result[address] = [{ // since some chains may have more than one asset hence we use an array here! even thought its not needed for relay chains but just to be as a general rule.
-      availableBalance: String(balances[index].freeBalance),
-      chainName,
-      decimal: api.registry.chainDecimals[0],
-      genesisHash: api.genesisHash.toString(),
-      priceId: tokenName, // based on the fact that asset hubs native token price id is the same as their token names
-      token: api.registry.chainTokens[0],
-      totalBalance: String(totalBalance)
-    }];
-  });
-
-  return _result;
-}
+import { closeWebsockets, fastestEndpoint, getChainEndpoints,toGetNativeToken } from './utils';
 
 async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
   const endpoints = getChainEndpoints(chainName);
