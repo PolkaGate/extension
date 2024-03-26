@@ -6,7 +6,7 @@
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { closeWebsockets, fastestEndpoint, getChainEndpoints,toGetNativeToken } from './utils';
+import { closeWebsockets, fastestEndpoint, getChainEndpoints, toGetNativeToken } from './utils';
 
 async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
   const endpoints = getChainEndpoints(chainName);

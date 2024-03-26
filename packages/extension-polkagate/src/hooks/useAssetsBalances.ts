@@ -27,17 +27,17 @@ export interface SavedAssets { balances: AssetsBalancesPerAddress, timeStamp: nu
 
 interface BalancesDetails {
   availableBalance: BN,
-  soloTotal: BN,
-  pooledBalance: BN,
-  lockedBalance: BN,
-  vestingLocked: BN,
-  vestedClaimable: BN,
-  vestingTotal: BN,
+  soloTotal?: BN,
+  pooledBalance?: BN,
+  lockedBalance?: BN,
+  vestingLocked?: BN,
+  vestedClaimable?: BN,
+  vestingTotal?: BN,
   freeBalance: BN,
-  frozenFee: BN,
-  frozenMisc: BN,
+  frozenFee?: BN,
+  frozenMisc?: BN,
   reservedBalance: BN,
-  votingBalance: BN
+  votingBalance?: BN
 }
 
 type MessageBody = {
@@ -48,7 +48,7 @@ type MessageBody = {
   genesisHash: string,
   priceId: string,
   token: string,
-  balanceDetails: string,
+  balanceDetails?: string,
 };
 
 export const BN_MEMBERS = [
@@ -76,17 +76,17 @@ export interface FetchedBalance {
   priceId: string,
   token: string,
   availableBalance: BN,
-  soloTotal: BN,
-  pooledBalance: BN,
-  lockedBalance: BN,
-  vestingLocked: BN,
-  vestedClaimable: BN,
-  vestingTotal: BN,
-  freeBalance: BN,
-  frozenFee: BN,
+  soloTotal?: BN,
+  pooledBalance?: BN,
+  lockedBalance?: BN,
+  vestingLocked?: BN,
+  vestedClaimable?: BN,
+  vestingTotal?: BN,
+  freeBalance?: BN,
+  frozenFee?: BN,
   frozenMisc: BN,
-  reservedBalance: BN,
-  votingBalance: BN
+  reservedBalance?: BN,
+  votingBalance?: BN
 }
 
 const DEFAULT_SAVED_ASSETS = { balances: {} as AssetsBalancesPerAddress, timeStamp: Date.now() };
@@ -96,7 +96,11 @@ const BALANCE_VALIDITY_PERIOD = 2 * 1000 * 60;
 
 const isUpToDate = (date?: number): boolean | undefined => date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
 
-function allHexToBN (balances: string): BalancesDetails {
+function allHexToBN (balances: string | undefined): BalancesDetails | {} {
+  if (!balances) {
+    return {};
+  }
+
   const parsedBalances = JSON.parse(balances) as BalancesDetails;
   const _balances = {} as BalancesDetails;
 
@@ -300,7 +304,20 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
       const parsedMessage = JSON.parse(message) as WorkerMessage;
 
       Object.keys(parsedMessage).forEach((address) => {
-        _assets[address] = parsedMessage[address].map((message) => ({ ...message, decimal: Number(message.decimal), totalBalance: isHexToBn(message.totalBalance) }));
+        _assets[address] = parsedMessage[address]
+          .map((message) => {
+            const _asset = {
+              ...message,
+              availableBalance: isHexToBn(message.availableBalance),
+              ...allHexToBN(message.balanceDetails),
+              decimal: Number(message.decimal),
+              totalBalance: isHexToBn(message.totalBalance)
+            };
+
+            delete _asset.balanceDetails;
+
+            return _asset;
+          });
       });
 
       combineAndSetAssets(_assets);
@@ -308,7 +325,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
     };
   }, [combineAndSetAssets, handleSetWorkersCall]);
 
-  const fetchAssetOnMultiAssetChain = useCallback((addresses: string[], chainName:string) => {
+  const fetchAssetOnMultiAssetChain = useCallback((addresses: string[], chainName: string) => {
     const worker: Worker = new Worker(new URL('../util/workers/getAssetOnMultiAssetChain.js', import.meta.url));
 
     handleSetWorkersCall(worker);

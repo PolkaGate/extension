@@ -46,6 +46,11 @@ export interface UnlockInformationType {
   unlockableAmount: BN;
 }
 
+const isRelayChain = (chainName: string) =>
+  chainName.toLowerCase() === 'kusama' ||
+chainName.toLowerCase() === 'polkadot' ||
+chainName.toLowerCase() === 'westend';
+
 export default function AccountDetails (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
@@ -80,7 +85,15 @@ export default function AccountDetails (): React.ReactElement {
   const supportStaking = useMemo(() => STAKING_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
   const showTotalChart = useMemo(() => accountAssets && accountAssets.length > 0 && accountAssets.filter((_asset) => pricesInCurrency && currency && pricesInCurrency.prices[_asset?.priceId]?.value > 0 && !new BN(_asset.totalBalance).isZero()), [accountAssets, currency, pricesInCurrency]);
   const hasParent = useMemo(() => account ? accounts.find(({ address }) => address === account.parentAddress) : undefined, [account, accounts]);
-  const balancesToShow = selectedAsset || balances;
+
+  const balancesToShow = useMemo(() => {
+  // TODO: if we add solo balance to fetched assets then we can dismiss this condition and just use selectedAsset || balances
+    if (!chainName) {
+      return;
+    }
+
+    return isRelayChain(chainName) ? balances : (selectedAsset || balances);
+  }, [balances, chainName, selectedAsset]);
 
   const currentPrice = useMemo((): number | undefined => {
     const selectedAssetPriceId = selectedAsset?.priceId;
