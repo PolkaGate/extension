@@ -16,7 +16,7 @@ interface Props {
   setHideNumbers: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function HeaderComponents({ hideNumbers, setHideNumbers }: Props): React.ReactElement {
+export default function HeaderComponents ({ hideNumbers, setHideNumbers }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const onHideClick = useCallback(() => {
@@ -37,7 +37,7 @@ export default function HeaderComponents({ hideNumbers, setHideNumbers }: Props)
         : <HideIcon color='#fff' height={18} scale={1.2} width={40} />
       }
       <Typography sx={{ color: '#fff', fontSize: '12px', fontWeight: 500, textWrap: 'nowrap' }}>
-        {hideNumbers ? t('Hide numbers') : t('Show numbers')}
+        {hideNumbers ? t('Show numbers') : t('Hide numbers')}
       </Typography>
     </Grid>
   );
