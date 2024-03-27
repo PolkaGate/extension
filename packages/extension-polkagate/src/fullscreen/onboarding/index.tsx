@@ -15,7 +15,7 @@ import { windowOpen } from '../../messaging';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Privacy from '../welcome/Privacy';
 
-function Onboarding(): React.ReactElement {
+function Onboarding (): React.ReactElement {
   useFullscreen();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
@@ -95,17 +95,18 @@ function Onboarding(): React.ReactElement {
             {t<string>('Thank you for choosing Polkagate, the gateway to the Polkadot ecosystem! 🌟')}
           </Typography>
           <Typography fontSize='16px' fontWeight={400} width='100%'>
-            {t('Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started. We’re thrilled to have you here!')}😊🚀
+            {t('Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started.')}
           </Typography>
           <Grid alignItems='center' container item justifyContent='center' pt='80px'>
             <PButton
+              _ml={0}
               _mt='20px'
               _onClick={onCreate}
               _variant={'contained'}
               startIcon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.main}` }} />}
               text={t<string>('Create a new account')}
             />
-            <Divider sx={{ fontSize: '20px', fontWeight: 400, my: '30px', pl: '44px', width: '94%' }}>
+            <Divider sx={{ fontSize: '20px', fontWeight: 400, my: '30px', width: '88%' }}>
               {t('Or')}
             </Divider>
             <Collapse in={!showMore}>
@@ -119,30 +120,35 @@ function Onboarding(): React.ReactElement {
             <Collapse in={showMore}>
               <Grid container item justifyContent='center' mb='25px'>
                 <PButton
+                  _ml={0}
                   _mt='0'
                   _onClick={onRestoreFromJson}
                   _variant={'outlined'}
                   text={t<string>('Restore from JSON file')}
                 />
                 <PButton
+                  _ml={0}
                   _mt='15px'
                   _onClick={onImport}
                   _variant={'outlined'}
                   text={t<string>('Import from recovery phrase')}
                 />
                 <PButton
+                  _ml={0}
                   _mt='15px'
                   _onClick={onAddWatchOnly}
                   _variant={'outlined'}
                   text={t<string>('Add watch-only account')}
                 />
                 <PButton
+                  _ml={0}
                   _mt='15px'
                   _onClick={onAttachQR}
                   _variant={'outlined'}
                   text={t<string>('Attach QR-signer')}
                 />
                 <PButton
+                  _ml={0}
                   _mt='15px'
                   _onClick={onImportLedger}
                   _variant={'outlined'}
