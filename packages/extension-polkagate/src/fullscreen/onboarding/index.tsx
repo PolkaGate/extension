@@ -7,7 +7,7 @@ import '@vaadin/icons';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AccountContext, ActionContext, PButton } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
@@ -22,9 +22,6 @@ function Onboarding (): React.ReactElement {
 
   const { t } = useTranslation();
   const theme = useTheme();
-
-  const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
-  const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
 
   const [showPrivacyAndSecurity, setShowPrivacyAndSecurity] = useState(false);
   const [showMore, setShowMore] = useState<boolean>(false);
@@ -74,12 +71,12 @@ function Onboarding (): React.ReactElement {
   );
 
   return (
-    <Grid bgcolor={indexBgColor} container item justifyContent='center'>
+    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
@@ -158,7 +155,8 @@ function Onboarding (): React.ReactElement {
               </Grid>
             </Collapse>
             <Grid container justifyContent='center'>
-              <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ cursor: 'pointer', fontSize: '12px', bottom: 0, position: 'absolute', textAlign: 'center', textDecoration: 'underline' }}>
+              {/* eslint-disable-next-line react/jsx-no-bind */}
+              <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ bottom: 0, cursor: 'pointer', fontSize: '12px', position: 'absolute', textAlign: 'center', textDecoration: 'underline' }}>
                 {t('Privacy and Security')}
               </Typography>
             </Grid>

@@ -3,7 +3,7 @@
 /* eslint-disable header/header */
 /* eslint-disable sort-keys */
 
-import { ThemeOptions } from '@mui/material';
+import { ThemeOptions, TypeText } from '@mui/material';
 
 import { baseTheme } from './baseTheme';
 
@@ -14,6 +14,7 @@ declare module '@mui/material/styles' {
     label: Palette['primary'];
     approval: Palette['primary'];
     support: Palette['primary'];
+    backgroundFL?: Palette['primary'];
   }
   interface PaletteOptions {
     approval?: PaletteOptions['primary'];
@@ -21,6 +22,7 @@ declare module '@mui/material/styles' {
     nay?: PaletteOptions['primary'];
     label?: PaletteOptions['primary'];
     support?: PaletteOptions['primary'];
+    backgroundFL?: Partial<TypeText>;
   }
 }
 export const darkTheme: ThemeOptions = {
@@ -36,6 +38,7 @@ export const darkTheme: ThemeOptions = {
     nay: { main: '#FF5722' },
     label: { main: '#63364D' },
     background: { default: '#171717', paper: '#000000' },
+    backgroundFL: { primary: '#000000', secondary: '#171717' },
     text: { primary: '#D5D5D5', secondary: '#000000', disabled: '#4B4B4B' },
     action: { disabled: '#fff', disabledBackground: '#4B4B4B', focus: '#BA82A5' },
     success: { main: '#1F7720' }, // '#46890C'

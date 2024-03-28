@@ -47,8 +47,6 @@ function ManageProxies (): React.ReactElement {
   const [newDepositValue, setNewDepositedValue] = useState<BN | undefined>();
   const [refresh, setRefresh] = useState<boolean>(false);
 
-  const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
-  const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
   const isDisabledAddProxyButton = useMemo(() => !account || proxyItems === undefined, [account, proxyItems]);
 
   const fetchProxies = useCallback((_address: string, _api: ApiPromise) => {
@@ -94,9 +92,9 @@ function ManageProxies (): React.ReactElement {
   }, [api, address, fetchProxies, refresh]);
 
   return (
-    <Grid bgcolor={indexBgColor} container item justifyContent='center'>
+    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='proxyManagement' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
           {step === STEPS.UNSUPPORTED &&
             <Grid alignItems='center' container direction='column' display='block' item>

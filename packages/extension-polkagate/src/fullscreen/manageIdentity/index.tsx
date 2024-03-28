@@ -48,7 +48,7 @@ export type SubIdAccountsToSubmit = { address: string | undefined; name: string 
 export type SubIdsParams = (string | Data | undefined)[][] | undefined;
 export type IdJudgement = 'Reasonable' | 'KnownGood' | 'FeePaid' | null | undefined;
 
-function getRawValue(value: Data) {
+function getRawValue (value: Data) {
   const text = u8aToString(value.asRaw.toU8a(true));
 
   return text === ''
@@ -56,13 +56,13 @@ function getRawValue(value: Data) {
     : text;
 }
 
-export function setData(value: string | undefined): Data {
+export function setData (value: string | undefined): Data {
   return value
     ? { ['raw']: value }
     : { ['none']: null };
 }
 
-export default function ManageIdentity(): React.ReactElement {
+export default function ManageIdentity (): React.ReactElement {
   useFullscreen();
   const { address } = useParams<{ address: string }>();
   const api = useApi(address);
@@ -87,9 +87,6 @@ export default function ManageIdentity(): React.ReactElement {
   const [selectedRegistrarName, setSelectedRegistrarName] = useState<string>();
   const [subIdAccountsToSubmit, setSubIdAccountsToSubmit] = useState<SubIdAccountsToSubmit>();
   const [resetSubId, setResetSubId] = useState<boolean>(false);
-
-  const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
-  const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
 
   const clear = useCallback(() => {
     setIdentity(undefined);
@@ -345,9 +342,9 @@ export default function ManageIdentity(): React.ReactElement {
   };
 
   return (
-    <Grid bgcolor={indexBgColor} container item justifyContent='center'>
+    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='manageIdentity' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
         {step === STEPS.CHECK_SCREEN &&
           <IdentityCheckProgress />
         }
@@ -428,8 +425,8 @@ export default function ManageIdentity(): React.ReactElement {
             address={address}
             api={api}
             chain={chain}
-            depositValue={totalDeposit}
             depositToPay={depositToPay}
+            depositValue={totalDeposit}
             identityToSet={identityToSet}
             infoParams={infoParams}
             maxFeeAmount={maxFeeValue}

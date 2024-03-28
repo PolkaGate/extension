@@ -43,7 +43,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function SocialRecovery(): React.ReactElement {
+export default function SocialRecovery (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
 
@@ -53,9 +53,6 @@ export default function SocialRecovery(): React.ReactElement {
   const chain = useChain(address);
   const formatted = useFormatted(address);
   const accountsInfo = useAccountsInfo(api, chain);
-
-  const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette.background.paper, theme.palette.mode]);
-  const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette.background.default, theme.palette.mode]);
 
   const [step, setStep] = useState<number>(STEPS.CHECK_SCREEN);
   const [recoveryInfo, setRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined>();
@@ -83,14 +80,14 @@ export default function SocialRecovery(): React.ReactElement {
       : activeRecoveries === null
         ? null
         : undefined
-    , [activeRecoveries, formatted]);
+  , [activeRecoveries, formatted]);
   const activeLost = useMemo(() =>
     activeRecoveries && formatted
       ? activeRecoveries.filter((active) => active.lost === String(formatted)).at(-1) ?? null
       : activeRecoveries === null
         ? null
         : undefined
-    , [activeRecoveries, formatted]);
+  , [activeRecoveries, formatted]);
 
   useEffect(() => {
     unsupportedChain ? setStep(STEPS.UNSUPPORTED) : setStep(STEPS.CHECK_SCREEN);
@@ -225,9 +222,9 @@ export default function SocialRecovery(): React.ReactElement {
   }, [fetchingLostAccountInfos, lostAccountInformation, mode, withdrawInfo]);
 
   return (
-    <Grid bgcolor={indexBgColor} container item justifyContent='center'>
+    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='socialRecovery' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
         {step === STEPS.UNSUPPORTED &&
           <Grid alignItems='center' container direction='column' display='block' item>
             <Typography fontSize='30px' fontWeight={700} p='30px 0 60px 80px'>
