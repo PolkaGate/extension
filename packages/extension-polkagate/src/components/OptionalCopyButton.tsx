@@ -39,7 +39,12 @@ function OptionalCopyButton ({ address }: Props): React.ReactElement {
       </Grid>
       <Popover
         PaperProps={{
-          sx: { backgroundImage: 'none', bgcolor: 'background.paper', border: isDarkMode ? '1px solid' : 'none', borderColor: 'secondary.light', boxShadow: `0px 0px 10px 8px ${theme.palette.divider}`, pt: '5px' }
+          sx: { backgroundImage: 'none',
+            bgcolor: 'background.paper',
+            border: isDarkMode ? '1px solid' : 'none',
+            borderColor: 'secondary.light',
+            boxShadow: `0px 0px 10px 8px ${theme.palette.divider}`,
+            pt: '5px' }
         }}
         anchorEl={anchorEl}
         anchorOrigin={{

@@ -63,7 +63,7 @@ function OptionalCopyPopup ({ address, setAnchorEl }: Props): React.ReactElement
   return (
     <Grid container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', p: '10px 20px', width: '320px' }}>
       <Typography fontSize='14px' fontWeight={400} pb='15px' textAlign='left'>
-        {t('Each chain has its own address format. Select to view and copy.')}
+        {t('Each blockchain has its own address format. Choose one to view and copy.')}
       </Typography>
       <Select
         defaultValue={chain?.genesisHash ?? ''}
@@ -74,8 +74,8 @@ function OptionalCopyPopup ({ address, setAnchorEl }: Props): React.ReactElement
         showLogo
         value={selectedNetwork}
       />
-      <Grid container item sx={{ bgcolor: 'divider', borderRadius: '5px', m: '15px auto', p: '5px 10px', width: 'fit-content' }}>
-        <ShortAddress address={formattedAddress ?? defaultAddress} charsCount={8} />
+      <Grid container item sx={{ bgcolor: 'divider', borderRadius: '5px', my: '15px', p: '5px 10px' }}>
+        <ShortAddress address={formattedAddress ?? defaultAddress} charsCount={12} />
       </Grid>
       <PButton
         _ml={0}

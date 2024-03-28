@@ -1148,5 +1148,8 @@
   "You can add new proxies or remove existing ones for the account here. Keep in mind that you need to reserve a deposit to have proxies.": "",
   "Proxy changes": "",
   "There is no sufficient transferable balance!": "",
-  "This transaction will drop your balance below the Existential Deposit threshold, risking account reaping.": ""
+  "This transaction will drop your balance below the Existential Deposit threshold, risking account reaping.": "",
+  "Each chain has its own address format. Select to view and copy.": "",
+  "Select chain": "",
+  "Copy address": ""
 }
