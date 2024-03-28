@@ -6,15 +6,15 @@
 import '@vaadin/icons';
 
 import { Button, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { QrScanAddress } from '@polkadot/react-qr';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, PButton, TwoButtons, Warning } from '../../../components';
+import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, TwoButtons, Warning } from '../../../components';
+import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from '../../../messaging';
 import { Name } from '../../../partials';
-import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 
 interface QrAccount {
   content: string;
@@ -23,7 +23,7 @@ interface QrAccount {
   name?: string;
 }
 
-export default function AttachQrFullScreen(): React.ReactElement {
+export default function AttachQrFullScreen (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -33,11 +33,7 @@ export default function AttachQrFullScreen(): React.ReactElement {
   const [address, setAddress] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
-  const [genesisHash, setGenesisHash] = useState<string | null>(null);
   const [invalidQR, setInvalidQR] = useState<boolean>();
-
-  const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
-  const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
 
   useEffect((): void => {
     !accounts.length && onAction();
@@ -67,7 +63,6 @@ export default function AttachQrFullScreen(): React.ReactElement {
     (qrAccount: QrAccount) => {
       setAccount(qrAccount);
       setName(qrAccount?.name || null);
-      setGenesisHash(qrAccount.genesisHash);
 
       if (qrAccount.isAddress) {
         setAddress(qrAccount.content);
@@ -125,12 +120,12 @@ export default function AttachQrFullScreen(): React.ReactElement {
   );
 
   return (
-    <Grid bgcolor={indexBgColor} container item justifyContent='center'>
+    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>

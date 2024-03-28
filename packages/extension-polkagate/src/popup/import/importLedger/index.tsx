@@ -7,18 +7,18 @@ import '@vaadin/icons';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Grid, keyframes, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import settings from '@polkadot/ui-settings';
 
 import { AccountContext, ActionContext, Address, Select, SelectChain, TwoButtons, Warning } from '../../../components';
+import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useLedger, useTranslation } from '../../../hooks';
 import { createAccountHardware, getMetadata } from '../../../messaging';
 import { Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
 import ledgerChains from '../../../util/legerChains';
-import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 
 interface AccOption {
   text: string;
@@ -32,7 +32,7 @@ interface NetworkOption {
 
 const AVAIL: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
 
-export default function ImportLedger(): React.ReactElement {
+export default function ImportLedger (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -134,16 +134,13 @@ export default function ImportLedger(): React.ReactElement {
 
   const onCancel = useCallback(() => onAction('/'), [onAction]);
 
-  const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
-  const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
-
   return (
-    <Grid bgcolor={indexBgColor} container item justifyContent='center'>
+    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
@@ -155,14 +152,14 @@ export default function ImportLedger(): React.ReactElement {
               </Typography>
             </Grid>
           </Grid>
-          <Typography fontSize='16px' fontWeight={400} textAlign='left' width='100%' pt='15px'>
+          <Typography fontSize='16px' fontWeight={400} pt='15px' textAlign='left' width='100%'>
             <b>1</b>. {t<string>('Connect your ledger device to the computer.')}<br />
             <b>2</b>. {t<string>('Open your desired App on the ledger device.')}<br />
             <b>3</b>. {t<string>('Select the relevant chain of your desired App from below.')}<br />
           </Typography>
           <Grid container item justifyContent='space-between' mb='25px' mt='10px'>
             <SelectChain
-              address={address || 'dummy'} //dummy address just to make select enable
+              address={address || 'dummy'} // dummy address just to make select enable
               defaultValue={newChain?.genesisHash || networkOps.current[0].text}
               icon={getLogo(newChain ?? undefined)}
               label={t<string>('Select the chain')}

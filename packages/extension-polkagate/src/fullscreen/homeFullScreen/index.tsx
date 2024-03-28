@@ -3,8 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Grid } from '@mui/material';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
@@ -24,7 +24,6 @@ export interface AccountsOrder {
 
 export default function HomePageFullScreen (): React.ReactElement {
   useFullscreen();
-  const theme = useTheme();
   const onAction = useContext(ActionContext);
 
   const { accounts: accountsInExtension, hierarchy } = useContext(AccountContext);
@@ -32,9 +31,6 @@ export default function HomePageFullScreen (): React.ReactElement {
   const [hideNumbers, setHideNumbers] = useState<boolean>();
   const [initialAccountList, setInitialAccountList] = useState<AccountsOrder[] | undefined>();
   const [groupedAssets, setGroupedAssets] = useState<AssetsWithUiAndPrice[] | undefined>();
-
-  const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
-  const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
 
   const flattenHierarchy = useCallback((account: AccountWithChildren): AccountWithChildren[] => {
     const flattenedChildren = (account.children || []).flatMap(flattenHierarchy);
@@ -119,7 +115,7 @@ export default function HomePageFullScreen (): React.ReactElement {
   }, [accountsInExtension, accountsInExtension.length, flattenHierarchy, hierarchy]);
 
   return (
-    <Grid bgcolor={indexBgColor} container item justifyContent='center'>
+    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader
         _otherComponents={
           <HeaderComponents
@@ -130,7 +126,7 @@ export default function HomePageFullScreen (): React.ReactElement {
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='space-around' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', py: '40px' }}>
+      <Grid container item justifyContent='space-around' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', py: '40px' }}>
         <Grid container direction='column' item rowGap='20px' width='760px'>
           {initialAccountList &&
             <DraggableAccountsList
