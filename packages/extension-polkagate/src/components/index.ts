@@ -90,5 +90,6 @@ export { default as AssetIcon } from './AssetIcon';
 export { default as CanPayErrorAlert } from './CanPayErrorAlert';
 export { default as DisplayLogo } from './DisplayLogo';
 export { default as FullScreenIcon } from './FullScreenIcon';
+export { default as OptionalCopyButton } from './OptionalCopyButton';
 
 export * from './contexts';

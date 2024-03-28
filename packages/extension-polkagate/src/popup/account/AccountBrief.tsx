@@ -18,7 +18,7 @@ import React, { useCallback } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { subscan } from '../../assets/icons/';
-import { Infotip, ShortAddress2 } from '../../components';
+import { Infotip, OptionalCopyButton, ShortAddress2 } from '../../components';
 import { useAccount, useChainName, useFormatted, useTranslation } from '../../hooks';
 
 interface Props {
@@ -64,9 +64,14 @@ function AccountBrief({ address, identity, showDivider = true, showName = true }
           </Typography>
         </Grid>
       }
-      <Grid alignItems='center' container item justifyContent='space-between' pr='10px' pl='5px'>
-        <Grid item sx={{ width: '84%' }}>
-          <ShortAddress2 address={formatted} charsCount={19} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
+      <Grid alignItems='center' container item justifyContent='space-between' pl='5px' pr='10px'>
+        <Grid container item sx={{ width: '84%' }}>
+          <Grid container item xs>
+            <ShortAddress2 address={formatted} charsCount={19} style={{ fontSize: '10px', fontWeight: 300 }} />
+          </Grid>
+          <Grid container item width='fit-content'>
+            <OptionalCopyButton address={address} />
+          </Grid>
         </Grid>
         <Grid alignItems='center' container item justifyContent='space-around' width='16%'>
           <Infotip placement='top' text={t('Receive')}>

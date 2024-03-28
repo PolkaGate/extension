@@ -11,7 +11,7 @@ import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
-import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, ShortAddress2 } from '../../../components';
+import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, OptionalCopyButton, ShortAddress2 } from '../../../components';
 import { useAccount, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { showAccount, tieAccount } from '../../../messaging';
@@ -189,8 +189,13 @@ export default function AccountInformation ({ accountAssets, address, api, balan
                 </Infotip>
               </Grid>
             </Grid>
-            <Grid alignItems='center' container item sx={{ '> div div:last-child': { width: 'auto' } }} xs>
-              <ShortAddress2 address={formatted || address} clipped showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
+            <Grid alignItems='center' container item>
+              <Grid container item sx={{ '> div div:last-child': { width: 'auto' } }} xs>
+                <ShortAddress2 address={formatted || address} clipped style={{ fontSize: '10px', fontWeight: 300 }} />
+              </Grid>
+              <Grid container item width='fit-content'>
+                <OptionalCopyButton address={address} />
+              </Grid>
             </Grid>
           </Grid>
           <SelectedAssetBox
