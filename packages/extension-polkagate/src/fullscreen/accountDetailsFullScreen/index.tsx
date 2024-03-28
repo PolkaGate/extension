@@ -55,7 +55,7 @@ export default function AccountDetails (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-  const { address } = useParams<{ address: string }>();
+  const { address, paramAssetId } = useParams<{ address: string, paramAssetId?: string }>();
   const history = useHistory();
   const account = useAccount(address);
   const { accounts } = useContext(AccountContext);
@@ -70,12 +70,14 @@ export default function AccountDetails (): React.ReactElement {
   const pricesInCurrency = usePrices();
 
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
-  const [assetId, setAssetId] = useState<number>();
+  const [assetIdOnAssetHub, setAssetIdOnAssetHub] = useState<number>();
   const [selectedAsset, setSelectedAsset] = useState<FetchedBalance>();
   const [displayPopup, setDisplayPopup] = useState<number | undefined>();
   const [unlockInformation, setUnlockInformation] = useState<UnlockInformationType | undefined>();
 
-  const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId || selectedAsset?.assetId);
+  const assetId = assetIdOnAssetHub || selectedAsset?.assetId;
+
+  const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId);
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette]);
   const isOnAssetHub = useMemo(() => ASSET_HUBS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
@@ -119,20 +121,35 @@ export default function AccountDetails (): React.ReactElement {
   }, [balances, currentPrice, pricesInCurrency]);
 
   useEffect(() => {
-    assetId && setAssetId(undefined);
+    // reset assetId on chain switch
+    assetIdOnAssetHub && setAssetIdOnAssetHub(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chain]);
 
+  useEffect(() => {
+    onAction(`/accountfs/${address}/${assetId || '0'}`);
+  }, [address, assetId, onAction]);
+
+  useEffect(() => {
+    const mayBeAssetIdSelectedInHomePage = parseInt(paramAssetId);
+
+    if (mayBeAssetIdSelectedInHomePage && accountAssets) {
+      const found = accountAssets.find((_asset) => _asset?.assetId === mayBeAssetIdSelectedInHomePage);
+
+      setSelectedAsset(found);
+    }
+  }, [accountAssets, paramAssetId]);
+
   const onChangeAsset = useCallback((id: number) => {
     if (id === -1) { // this is the id of native token
-      return setAssetId(undefined);
+      return setAssetIdOnAssetHub(undefined);
     }
 
-    setAssetId(id);
+    setAssetIdOnAssetHub(id); // this works for assethubs atm
   }, []);
 
   const goToSend = useCallback(() => {
-    address && onAction(`/send/${address}/${assetId ?? ''}`);
+    address && onAction(`/send/${address}/${assetId || ''}`);
   }, [address, assetId, onAction]);
 
   const goToSoloStaking = useCallback(() => {
@@ -202,10 +219,10 @@ export default function AccountDetails (): React.ReactElement {
                   {isOnAssetHub &&
                     <ChangeAssets
                       address={address}
-                      assetId={assetId || selectedAsset?.assetId}
+                      assetId={assetId}
                       label={t('Assets')}
                       onChange={onChangeAsset}
-                      setAssetId={setAssetId}
+                      setAssetId={setAssetIdOnAssetHub}
                       style={{ '> div div div#selectChain': { borderRadius: '5px' }, '> div p': { fontSize: '16px' } }}
                     />
                   }
@@ -216,9 +233,18 @@ export default function AccountDetails (): React.ReactElement {
                     onClick={goToSend}
                     price={currentPrice}
                     theme={theme}
-                    title={isOnAssetHub ? t<string>('Balance') : t<string>('Transferable')}
+                    title={ t<string>('Transferable')}
                     token={balancesToShow?.token}
                   />
+                  {isOnAssetHub &&
+                  <DisplayBalance
+                    amount={balancesToShow?.lockedBalance}
+                    decimal={balancesToShow?.decimal}
+                    isDarkTheme={isDarkTheme}
+                    price={currentPrice} // TODO: double check
+                    title={t<string>('Locked')}
+                    token={balancesToShow?.token}
+                  />}
                   {supportStaking &&
                     <DisplayBalance
                       amount={balancesToShow?.soloTotal}

@@ -4,18 +4,23 @@
 import type { Balance } from '@polkadot/types/interfaces';
 import type { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
 
+import { createAssets } from '@polkagate/apps-config/assets';
+import { Asset } from '@polkagate/apps-config/assets/types';
 import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { FetchingContext } from '../components';
+import { toCamelCase } from '../fullscreen/governance/utils/util';
 import { updateMeta } from '../messaging';
 import { ASSET_HUBS } from '../util/constants';
 import getPoolAccounts from '../util/getPoolAccounts';
 import { BalancesInfo, SavedBalances } from '../util/types';
 import { useAccount, useApi, useChain, useChainName, useDecimal, useFormatted, useStakingAccount, useToken } from '.';
 
-export default function useBalances(address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: number): BalancesInfo | undefined {
+const assetsChains = createAssets();
+
+export default function useBalances (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: number): BalancesInfo | undefined {
   const stakingAccount = useStakingAccount(address);
   const account = useAccount(address);
   const api = useApi(address);
@@ -25,6 +30,9 @@ export default function useBalances(address: string | undefined, refresh?: boole
   const chainName = useChainName(address);
   const currentToken = useToken(address);
   const currentDecimal = useDecimal(address);
+
+  const mayBeAssetsOnMultiAssetChains = assetsChains[toCamelCase(chainName || '')];
+  const isAssetHub = ASSET_HUBS.includes(chain?.genesisHash || '');
 
   const [pooledBalance, setPooledBalance] = useState<{ balance: BN, genesisHash: string } | null>();
   const [balances, setBalances] = useState<BalancesInfo | undefined>();
@@ -192,7 +200,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
 
     // add this chain balances
     savedBalances[chainName] = { balances, date: Date.now(), decimal, token };
-    const metaData = JSON.stringify({ ['balances']: JSON.stringify(savedBalances) });
+    const metaData = JSON.stringify({ balances: JSON.stringify(savedBalances) });
 
     updateMeta(address, metaData).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -234,37 +242,43 @@ export default function useBalances(address: string | undefined, refresh?: boole
   }, [Object.keys(account ?? {})?.length, address, chainName, stakingAccount]);
 
   useEffect(() => {
-    /** We fetch asset hub assets via this hook for asset ids, other multi chain assets have been fetched via useAssetsOnChain hook*/
-    if (!api || assetId === undefined || !api?.query?.assets || !ASSET_HUBS.includes(chain?.genesisHash || '')) {
+    /** We fetch asset hub assets via this hook for asset ids, other multi chain assets have been fetched in the next useEffect*/
+    if (assetId === undefined || !api?.query?.assets || !ASSET_HUBS.includes(chain?.genesisHash || '')) {
       return;
     }
 
-    // eslint-disable-next-line no-void
-    void fetchAssetData();
+    fetchAssetOnAssetHub().catch(console.error);
 
-    async function fetchAssetData() {
+    async function fetchAssetOnAssetHub () {
       if (!api) {
         return;
       }
 
       try {
-        const [assetAccount, asset, metadata] = await Promise.all([
+        const [accountAsset, assetInfo, metadata] = await Promise.all([
           api.query.assets.account(assetId, formatted),
           api.query.assets.asset(assetId),
           api.query.assets.metadata(assetId)
         ]);
 
-        const ED = asset.isSome ? asset.unwrap()?.minBalance as BN : BN_ZERO;
+        const ED = assetInfo.isNone ? BN_ZERO : assetInfo.unwrap()?.minBalance as BN;
+
+        const _AccountAsset = accountAsset.isSome ? accountAsset.unwrap() : null;
+
+        const parsedAccountAsset = JSON.parse(JSON.stringify(_AccountAsset));
+        const isFrozen = parsedAccountAsset?.status === 'Frozen';
+        const balance = (_AccountAsset?.balance || BN_ZERO) as BN;
 
         const assetBalances = {
           ED,
-          availableBalance: assetAccount.isNone ? BN_ZERO : assetAccount.unwrap().balance as BN,
+          availableBalance: isFrozen ? BN_ZERO : balance,
           chainName,
           decimal: metadata.decimals.toNumber() as number,
-          freeBalance: assetAccount.isNone ? BN_ZERO : assetAccount.unwrap().balance as BN,
+          freeBalance: !isFrozen ? balance : BN_ZERO,
           genesisHash: api.genesisHash.toHex(),
           isAsset: true,
-          reservedBalance: BN_ZERO,
+          lockedBalance: isFrozen ? balance : BN_ZERO,
+          reservedBalance: isFrozen ? balance : BN_ZERO, // JUST to comply with the rule that total=available + reserve
           token: metadata.symbol.toHuman() as string
         };
 
@@ -273,7 +287,58 @@ export default function useBalances(address: string | undefined, refresh?: boole
         console.error(`Failed to fetch info for assetId ${assetId}:`, error);
       }
     }
-  }, [api, assetId, chainName, formatted]);
+  }, [api, assetId, chain?.genesisHash, chainName, formatted]);
+
+  useEffect(() => {
+    /** We fetch asset on multi chain assets here*/
+    if (api && assetId && mayBeAssetsOnMultiAssetChains && !isAssetHub) {
+      const assetInfo = mayBeAssetsOnMultiAssetChains[assetId];
+
+      assetInfo && api.query.tokens && fetchAssetOnMultiAssetChain(assetInfo).catch(console.error);
+    }
+
+    async function fetchAssetOnMultiAssetChain (assetInfo: Asset) {
+      try {
+        const assets = await api.query.tokens.accounts.entries(address);
+        const currencyIdScale = (assetInfo.extras?.currencyIdScale as string).replace('0x', '');
+
+        const found = assets.find((entry) => {
+          if (!entry.length) {
+            return false;
+          }
+
+          const storageKey = entry[0].toString();
+
+          return storageKey.endsWith(currencyIdScale);
+        });
+
+        if (!found) {
+          return;
+        }
+
+        const currencyId = found[0].toHuman()[1] as unknown;
+        const balance = found[1];
+
+        const assetBalances = {
+          ED: new BN(assetInfo.extras?.existentialDeposit as string || 0),
+          assetId: assetInfo.id,
+          availableBalance: balance.free as BN,
+          chainName,
+          currencyId,
+          decimal: assetInfo.decimal,
+          freeBalance: balance.free as BN,
+          genesisHash: api.genesisHash.toHex(),
+          isAsset: true,
+          reservedBalance: balance.reserved as BN,
+          token: assetInfo.symbol
+        };
+
+        setAssetBalance(assetBalances);
+      } catch (e) {
+        console.error('Something went wrong while fetching an asset:', e);
+      }
+    }
+  }, [address, api, assetId, chainName, isAssetHub, mayBeAssetsOnMultiAssetChains]);
 
   if (assetId !== undefined) {
     return assetBalance;

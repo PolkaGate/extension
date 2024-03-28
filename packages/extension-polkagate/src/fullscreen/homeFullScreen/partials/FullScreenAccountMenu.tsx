@@ -83,7 +83,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
     address && onAction(`/socialRecovery/${address}/false`);
   }, [address, onAction]);
 
-  const Menu = () => (
+  const AccountMenu = () => (
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '20px' }}>
       {/* <Grid container item>
         <Chain
@@ -200,7 +200,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
           vertical: 'top'
         }}
       >
-        <Menu />
+        <AccountMenu />
       </Popover>
     </>
   );

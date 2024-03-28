@@ -48,6 +48,8 @@ async function getAssets (addresses, assetsToBeFetched, chainName) {
       const address = getSubstrateAddress(formatted);
 
       results[address]?.push(asset) ?? (results[address] = [asset]);
+    } else {
+      console.log(`NOTE: There is an asset on ${chainName} for ${formatted} which is not whitelisted. assetInfo`, storageKey, balance?.toHuman());
     }
   });
 

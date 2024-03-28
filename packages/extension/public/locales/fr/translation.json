@@ -1120,7 +1120,6 @@
   "🔍 Search chain": "🔍 Rechercher une chaîne",
   "Less": "Moins",
   "More": "Plus",
-  "Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started. We’re thrilled to have you here!": "Actuellement, vous n'avez aucun compte. Commencez par créer votre premier compte ou importer des comptes existants pour démarrer. Nous sommes ravis de vous avoir ici !",
   "I already have account(s) and wish to import my existing account(s)": "J'ai déjà des compte(s) et je souhaite importer mon/ mes compte(s) existant(s)",
   "Thank you for choosing Polkagate, the gateway to the Polkadot ecosystem! 🌟": "Merci d'avoir choisi Polkagate, la passerelle vers l'écosystème Polkadot ! 🌟",
   "Assets": "Actifs",
@@ -1129,5 +1128,5 @@
   "Most common tasks": "Tâches habituelles",
   "Account Details": "Détails du compte",
   "Account setting": "Réglages du compte",
-  "Receive Fund":"Recevoir des fonds"
+  "Receive Fund": "Recevoir des fonds"
 }

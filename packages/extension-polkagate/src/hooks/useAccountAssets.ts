@@ -3,10 +3,9 @@
 
 import { useContext, useEffect, useState } from 'react';
 
-import { BN } from '@polkadot/util';
-
 import { AccountsAssetsContext } from '../components';
 import { TEST_NETS } from '../util/constants';
+import { isHexToBn } from '../util/utils';
 import { BN_MEMBERS, FetchedBalance } from './useAssetsBalances';
 import useIsTestnetEnabled from './useIsTestnetEnabled';
 
@@ -34,7 +33,7 @@ export default function useAccountAssets (address: string | undefined): FetchedB
 
       Object.keys(updatedAsset).forEach((key) => {
         if (BN_MEMBERS.includes(key)) {
-          updatedAsset[key] = new BN(updatedAsset[key] as string);
+          updatedAsset[key] = isHexToBn(updatedAsset[key] as string);
         }
       });
 

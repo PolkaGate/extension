@@ -34,15 +34,22 @@ async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
         return;
       }
 
+      const parsedAccountAsset = JSON.parse(JSON.stringify(_asset));
+      const isFrozen = parsedAccountAsset?.status === 'Frozen';
+      const _balance = String(balance);
+
       const item = {
         assetId: asset.id,
-        availableBalance: String(balance), // TODO: needs more checks
+        availableBalance: isFrozen ? 0 : _balance,
         chainName,
         decimal,
         genesisHash: api.genesisHash.toString(),
+        isAsset: true,
+        lockedBalance: isFrozen ? _balance : 0,
         priceId: asset?.priceId,
+        reservedBalance: isFrozen ? balance : 0, // JUST to comply with the rule that total=available + reserve
         token,
-        totalBalance: String(balance)
+        totalBalance: _balance
       };
 
       const _index = addresses[index];

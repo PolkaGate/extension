@@ -1124,7 +1124,7 @@
   "🔍 Search chain": "🔍 搜索链",
   "Less": "更少",
   "More": "更多",
-  "Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started. We’re thrilled to have you here!": "目前，您没有任何账户。开始创建您的第一个账户或导入现有账户以开始。我们很高兴您在这里！",
+  " ": "目前，您没有任何账户。开始创建您的第一个账户或导入现有账户以开始。我们很高兴您在这里！",
   "I already have account(s) and wish to import my existing account(s)": "我已经有账户并希望导入我的现有账户",
   "Thank you for choosing Polkagate, the gateway to the Polkadot ecosystem! 🌟": "感谢您选择Polkagate，这是进入Polkadot生态系统的门户！🌟",
   "Assets": "资产",
@@ -1133,5 +1133,5 @@
   "Most common tasks": "最常见的任务",
   "Account Details": "账户详情",
   "Account setting": "账户设置",
-  "Receive Fund":"接收资金"
+  "Receive Fund": "接收资金"
 }

@@ -1116,7 +1116,6 @@
   "🔍 Search chain": "🔍 Поиск цепочки",
   "Less": "Меньше",
   "More": "Больше",
-  "Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started. We’re thrilled to have you here!": "На данный момент у вас нет аккаунтов. Начните с создания вашего первого аккаунта или импортируйте существующие, чтобы начать. Мы рады, что вы здесь!",
   "I already have account(s) and wish to import my existing account(s)": "У меня уже есть аккаунт(ы) и я хочу импортировать мои существующие аккаунты",
   "Thank you for choosing Polkagate, the gateway to the Polkadot ecosystem! 🌟": "Спасибо, что выбрали Polkagate, вход в экосистему Polkadot! 🌟",
   "Assets": "Активы",
@@ -1125,6 +1124,5 @@
   "Most common tasks": "Основные задачи",
   "Account Details": "Детали аккаунта",
   "Account setting": "Настройки",
-  "Receive Fund":"Получить средства"
-
+  "Receive Fund": "Получить средства"
 }

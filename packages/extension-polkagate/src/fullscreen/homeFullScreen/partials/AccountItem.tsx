@@ -26,7 +26,7 @@ interface Props {
   id?: number;
 }
 
-function AccountItem({ account, hideNumbers, id, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement {
+function AccountItem ({ account, hideNumbers, id, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement {
   const api = useApi(account.address);
   const { t } = useTranslation();
   const theme = useTheme();
@@ -41,13 +41,15 @@ function AccountItem({ account, hideNumbers, id, quickActionOpen, setQuickAction
 
   const [selectedAsset, setSelectedAsset] = useState<FetchedBalance | undefined>();
 
-  const selectedAssetToShow = useMemo(() => {
+  const assetToShow = useMemo(() => {
     if (!accountAssets) {
       return undefined;
     }
 
-    return accountAssets.find(({ genesisHash }) => genesisHash === chain?.genesisHash);
-  }, [accountAssets, chain?.genesisHash]);
+    const defaultAssetToShow = accountAssets.find(({ genesisHash }) => genesisHash === chain?.genesisHash);
+
+    return selectedAsset ?? defaultAssetToShow;
+  }, [accountAssets, chain?.genesisHash, selectedAsset]);
 
   return (
     <div ref={id ? setNodeRef : null} style={{ transform: CSS.Transform.toString(transform), transition }}>
@@ -66,14 +68,20 @@ function AccountItem({ account, hideNumbers, id, quickActionOpen, setQuickAction
           formatted={formatted}
           hideNumbers={hideNumbers}
           isChild={!!hasParent}
-          selectedAsset={selectedAsset ?? selectedAssetToShow}
+          selectedAsset={assetToShow}
           setSelectedAsset={setSelectedAsset}
         />
         <Backdrop
           open={quickActionOpen !== undefined}
           sx={{ bgcolor: theme.palette.mode === 'dark' ? 'rgba(23, 23, 23, 0.8)' : 'rgba(241, 241, 241, 0.7)', borderRadius: '5px', bottom: '-1px', left: '-1px', position: 'absolute', right: '-1px', top: '-1px' }}
         />
-        <QuickActionFullScreen address={account.address} containerRef={containerRef} quickActionOpen={quickActionOpen} setQuickActionOpen={setQuickActionOpen} />
+        <QuickActionFullScreen
+          address={account.address}
+          assetId={assetToShow?.assetId}
+          containerRef={containerRef}
+          quickActionOpen={quickActionOpen}
+          setQuickActionOpen={setQuickActionOpen}
+        />
       </Grid>
     </div>
   );

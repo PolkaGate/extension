@@ -17,9 +17,9 @@ import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { useAccount, useAccountDisplay, useApi, useChain, useFormatted, useProxies, useTranslation } from '../hooks';
 import { DraggableModal } from '../fullscreen/governance/components/DraggableModal';
 import SelectProxyModal2 from '../fullscreen/governance/components/SelectProxyModal2';
+import { useAccount, useAccountDisplay, useApi, useChain, useFormatted, useProxies, useTranslation } from '../hooks';
 import LedgerSign from '../popup/signing/LedgerSign';
 import { send, signAndSend } from '../util/api';
 import { Proxy, ProxyItem, ProxyTypes, TxInfo, TxResult } from '../util/types';
@@ -46,6 +46,7 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   showBackButtonWithUseProxy?: boolean;
   to?: string;
+  token?: string | undefined
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   extraInfo: Record<string, unknown>;
   steps: Record<string, number>;
@@ -56,7 +57,7 @@ interface Props {
  *  @description This puts usually at the end of review page where user can do enter password, choose proxy or use other alternatives like signing using ledger
  *
 */
-export default function SignArea ({ address, call, disabled, extraInfo, isPasswordError, onSecondaryClick, params, prevState, primaryBtn, primaryBtnText, proxyModalHeight, proxyTypeFilter, secondaryBtnText, selectedProxy, setIsPasswordError, setRefresh, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, to }: Props): React.ReactElement<Props> {
+export default function SignArea ({ address, call, disabled, extraInfo, isPasswordError, onSecondaryClick, params, prevState, primaryBtn, primaryBtnText, proxyModalHeight, proxyTypeFilter, secondaryBtnText, selectedProxy, setIsPasswordError, setRefresh, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, to, token }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
@@ -87,7 +88,7 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
       return;
     }
 
-    const tx = params ? call(...params) : call;
+    const tx = (params ? call(...params) : call) as SubmittableExtrinsic<'promise', ISubmittableResult>;
 
     return selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
   }, [api, call, formatted, params, selectedProxy]);
@@ -165,7 +166,7 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
 
       setRefresh && setRefresh(true);
 
-      const token = api.registry.chainTokens[0];
+      const _token = token || api.registry.chainTokens[0];
       const decimal = api.registry.chainDecimals[0];
 
       const info = {
@@ -177,7 +178,7 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
         from: { address: String(formatted), name: senderName },
         success: txResult?.success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
-        token,
+        token: _token,
         txHash: txResult?.txHash || '',
         ...extraInfo
       };
@@ -188,7 +189,7 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
     } catch (e) {
       console.log('error:', e);
     }
-  }, [api, chain, extraInfo, formatted, from, selectedProxyAddress, selectedProxyName, senderName, setRefresh, setStep, setTxInfo, steps]);
+  }, [api, chain, extraInfo, formatted, from, selectedProxyAddress, selectedProxyName, senderName, setRefresh, setStep, setTxInfo, steps, token]);
 
   const onConfirm = useCallback(async () => {
     try {
@@ -244,7 +245,7 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
                 text={t('Cancel')}
               />
             </Grid>
-            <Grid item xs={8} sx={{ ' button': { m: 0, width: '100%' }, mt: '80px', position: 'relative', width: '70%' }}>
+            <Grid item sx={{ ' button': { m: 0, width: '100%' }, mt: '80px', position: 'relative', width: '70%' }} xs={8}>
               <LedgerSign
                 accountIndex={account?.accountIndex as number || 0}
                 addressOffset={account?.addressOffset as number || 0}
@@ -343,7 +344,7 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
                       </>
                     }
                   >
-                    <Grid aria-label='useProxy' item onClick={goToSelectProxy} pl='10px' pt='10px' role='button' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}              >
+                    <Grid aria-label='useProxy' item onClick={goToSelectProxy} pl='10px' pt='10px' role='button' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
                       {selectedProxy ? t('Update proxy') : t('Use proxy')}
                     </Grid>
                   </Tooltip>

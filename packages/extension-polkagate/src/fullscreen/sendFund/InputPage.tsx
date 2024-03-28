@@ -16,6 +16,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { ActionContext, AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, ShowBalance, TwoButtons, Warning } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { useApi, useChain, useFormatted, useTeleport } from '../../hooks';
+import { ASSET_HUBS } from '../../util/constants';
 import { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
 import { amountToHuman, amountToMachine } from '../../util/utils';
 import { toTitleCase } from '../governance/utils/util';
@@ -55,6 +56,8 @@ export const Title = ({ padding = '30px 0px 20px', text }: { text: string, paddi
   );
 };
 
+const isAssethub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');
+
 export default function InputPage ({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -74,7 +77,9 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
   const [transferType, setTransferType] = useState<TransferType>('Normal');
   const [maxFee, setMaxFee] = useState<Balance>();
 
-  const ED = api && api.consts.balances.existentialDeposit as unknown as BN;
+  const ED = assetId
+    ? balances?.ED
+    : api && api.consts.balances.existentialDeposit as unknown as BN;
 
   const amountAsBN = useMemo(
     () =>
@@ -85,7 +90,9 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
   const warningMessage = useMemo(() => {
     if (transferType !== 'All' && amountAsBN && balances && balances.decimal && ED) {
       const totalBalance = balances.freeBalance.add(balances.reservedBalance);
-      const toTransferBalance = amountAsBN.add(estimatedFee || BN_ZERO).add(estimatedCrossChainFee || BN_ZERO);
+      const toTransferBalance = assetId
+        ? amountAsBN
+        : amountAsBN.add(estimatedFee || BN_ZERO).add(estimatedCrossChainFee || BN_ZERO);
 
       const remainingBalanceAfterTransfer = totalBalance.sub(toTransferBalance);
 
@@ -99,7 +106,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     }
 
     return undefined;
-  }, [ED, amountAsBN, balances, estimatedCrossChainFee, estimatedFee, t, transferType]);
+  }, [ED, amountAsBN, assetId, balances, estimatedCrossChainFee, estimatedFee, t, transferType]);
 
   const destinationGenesisHashes = useMemo((): DropdownOption[] => {
     const currentChainOption = chain ? [{ text: chain.name, value: chain.genesisHash }] : [];
@@ -114,14 +121,30 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
   const isCrossChain = useMemo(() => recipientChainGenesisHash !== chain?.genesisHash, [chain?.genesisHash, recipientChainGenesisHash]);
 
   const onChainCall = useMemo(() => {
-    const module = assetId !== undefined ? 'assets' : 'balances';
+    if (!api || !chain) {
+      return undefined;
+    }
 
-    return api && api.tx?.[module] && (['Normal', 'Max'].includes(transferType)
-      ? api.tx[module].transferKeepAlive
-      : assetId !== undefined
-        ? api.tx[module].transfer
-        : api.tx[module].transferAll);
-  }, [api, assetId, transferType]);
+    const module = assetId !== undefined
+      ? isAssethub(chain.genesisHash)
+        ? 'assets'
+        : api.tx?.currencies
+          ? 'currencies'
+          : 'tokens'
+      : 'balances';
+
+    if (['currencies', 'tokens'].includes(module)) {
+      return api.tx[module].transfer;
+    }
+
+    return api.tx?.[module] && (
+      ['Normal', 'Max'].includes(transferType)
+        ? api.tx[module].transferKeepAlive
+        : assetId !== undefined
+          ? api.tx[module].transfer
+          : api.tx[module].transferAll
+    );
+  }, [api, assetId, chain, transferType]);
 
   const call = useMemo((): SubmittableExtrinsicFunction<'promise'> | undefined => {
     if (!api) {
@@ -161,7 +184,11 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
       return setFeeCall(dummyAmount);
     }
 
-    const _params = assetId !== undefined ? [assetId, formatted, amount] : [formatted, amount];
+    const _params = assetId !== undefined
+      ? ['currencies', 'tokens'].includes(onChainCall.section)
+        ? [formatted, balances.currencyId, amount]
+        : [assetId, formatted, amount]
+      : [formatted, amount];
 
     onChainCall(..._params).paymentInfo(formatted).then((i) => setFeeCall(i?.partialFee)).catch(console.error);
   }, [api, formatted, balances, onChainCall, assetId]);
@@ -215,7 +242,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
   }, [destinationGenesisHashes, isCrossChain, recipientChainGenesisHash]);
 
   useEffect(() => {
-    if (!recipientChainGenesisHash || recipientAddress === undefined || !recipientChainName || !amountAsBN) {
+    if (!recipientChainGenesisHash || !balances || recipientAddress === undefined || !recipientChainName || !amountAsBN) {
       return;
     }
 
@@ -225,7 +252,9 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
       params: isCrossChain
         ? crossChainParams
         : assetId !== undefined
-          ? [assetId, recipientAddress, amountAsBN]
+          ? ['currencies', 'tokens'].includes(onChainCall?.section || '') 
+            ? [recipientAddress, balances.currencyId, amountAsBN] // this is for transferring on mutliasset chains
+            : [assetId, recipientAddress, amountAsBN] // this is for transferring on asset hubs
           : transferType === 'All'
             ? [recipientAddress, false] // transferAll with keepalive = false
             : [recipientAddress, amountAsBN],
@@ -234,7 +263,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
       recipientGenesisHashOrParaId: recipientChainGenesisHash,
       totalFee: estimatedFee ? estimatedFee.add(estimatedCrossChainFee || BN_ZERO) : undefined
     });
-  }, [amountAsBN, estimatedFee, estimatedCrossChainFee, setInputs, call, recipientAddress, isCrossChain, crossChainParams, assetId, formatted, amount, recipientChainName, recipientChainGenesisHash, transferType]);
+  }, [amountAsBN, estimatedFee, estimatedCrossChainFee, setInputs, call, recipientAddress, isCrossChain, crossChainParams, assetId, formatted, amount, recipientChainName, recipientChainGenesisHash, transferType, onChainCall?.section, balances]);
 
   useEffect(() => {
     if (!api || !balances) {
@@ -310,7 +339,9 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     setAmount(value);
   }, [balances]);
 
-  const backToDetail = useCallback(() => onAction(`/account/${address}/`), [address, onAction]);
+  const backToDetail = useCallback(
+    () => onAction(`/accountfs/${address}/${assetId || '0'}`)
+    , [address, assetId, onAction]);
 
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>

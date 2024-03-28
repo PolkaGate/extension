@@ -173,7 +173,7 @@ export default function CrowdLoans(): React.ReactElement {
     if (chain?.genesisHash && onExtension) {
       onAction(`/account/${chain.genesisHash}/${address}/`);
     } else if (!onExtension) {
-      onAction(`/account/${address}/`);
+      onAction(`/accountfs/${address}/0`);
     } else {
       onAction('/');
     }

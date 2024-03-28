@@ -1128,10 +1128,8 @@
   "Less": "",
   "More": "",
   "Thank you for choosing Polkagate! 🌟 Your support means the world to us.": "",
-  "Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started. We’re thrilled to have you here!": "",
   "I already have account(s) and wish to import my existing account(s)": "",
   "Thank you for choosing Polkagate, the gateway to the Polkadot ecosystem! 🌟": "",
-  "Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started. We’re thrilled to have you here! 😊🚀": "",
   "Less tokens": "",
   "More tokens": "",
   "Switch chain from top right, or click on an asset if any.": "",
@@ -1149,7 +1147,7 @@
   "Proxy changes": "",
   "There is no sufficient transferable balance!": "",
   "This transaction will drop your balance below the Existential Deposit threshold, risking account reaping.": "",
-  "Each chain has its own address format. Select to view and copy.": "",
   "Select chain": "",
-  "Copy address": ""
+  "Copy address": "",
+  "Each blockchain has its own address format. Choose one to view and copy.": ""
 }

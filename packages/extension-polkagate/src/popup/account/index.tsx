@@ -165,7 +165,7 @@ export default function AccountDetails(): React.ReactElement {
           <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={40} showSocial={false} style={{ fontSize: '32px', height: '40px', lineHeight: 'initial', maxWidth: '65%' }} subIdOnly />
         }
         address={address}
-        fullScreenURL={`/account/${address}`}
+        fullScreenURL={`/accountfs/${address}/0`}
         noBorder
         onBackClick={gotToHome}
         paddingBottom={0}

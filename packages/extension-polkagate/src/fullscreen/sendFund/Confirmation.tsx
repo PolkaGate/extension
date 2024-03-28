@@ -9,10 +9,10 @@ import React from 'react';
 import { Motion, PButton, ShortAddress } from '../../components';
 import { useAccountDisplay, useTranslation } from '../../hooks';
 import { ThroughProxy } from '../../partials';
-import { NameAddress, TxInfo } from '../../util/types';
-import { pgBoxShadow } from '../../util/utils';
 import Explorer from '../../popup/history/Explorer';
 import FailSuccessIcon from '../../popup/history/partials/FailSuccessIcon';
+import { NameAddress, TxInfo } from '../../util/types';
+import { pgBoxShadow } from '../../util/utils';
 
 interface Props {
   txInfo: TxInfo;
@@ -55,8 +55,12 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
       <>{value &&
         <Grid alignItems='center' container direction='column' fontSize='16px' fontWeight={400} justifyContent='center'>
           <Grid container item width='fit-content'>
-            <Typography lineHeight='40px' pr='5px'>{caption}</Typography>
-            <Typography lineHeight='40px'>{value}</Typography>
+            <Typography lineHeight='40px' pr='5px'>
+              {caption}
+            </Typography>
+            <Typography lineHeight='40px'>
+              {value}
+            </Typography>
           </Grid>
           {showDivider &&
             <Grid alignItems='center' container item justifyContent='center'>

@@ -9,7 +9,7 @@ import { faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon, Boy as BoyIcon } from '@mui/icons-material';
 import { Box, ClickAwayListener, Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -17,14 +17,15 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { PoolStakingIcon } from '../components';
 import { useAccount, useApi, useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
-import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 import HistoryModal from '../popup/history/modal/HistoryModal';
+import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 
 interface Props {
   address: AccountId | string;
   quickActionOpen?: string | boolean;
   setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
-  containerRef: React.RefObject<HTMLElement>
+  containerRef: React.RefObject<HTMLElement>;
+  assetId?: number | undefined
 }
 
 type QuickActionButtonType = {
@@ -38,7 +39,7 @@ type QuickActionButtonType = {
 const ARROW_ICON_SIZE = 17;
 const ACTION_ICON_SIZE = '27px';
 
-export default function QuickActionFullScreen({ address, containerRef, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
+export default function QuickActionFullScreen ({ address, assetId, containerRef, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
@@ -51,8 +52,8 @@ export default function QuickActionFullScreen({ address, containerRef, quickActi
   const handleClose = useCallback(() => quickActionOpen === address && setQuickActionOpen(undefined), [address, quickActionOpen, setQuickActionOpen]);
 
   const goToSend = useCallback(() => {
-    address && account?.genesisHash && windowOpen(`/send/${String(address)}/undefined`).catch(console.error);
-  }, [account?.genesisHash, address]);
+    address && account?.genesisHash && windowOpen(`/send/${String(address)}/${assetId || ''}`).catch(console.error);
+  }, [account?.genesisHash, address, assetId]);
 
   const goToPoolStaking = useCallback(() => {
     address && STAKING_CHAINS.includes(account?.genesisHash ?? '') && history.push({

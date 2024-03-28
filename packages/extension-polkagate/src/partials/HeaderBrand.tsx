@@ -14,7 +14,6 @@ import React, { useCallback, useContext, useRef, useState } from 'react';
 import { logoBlack, logoWhite } from '../assets/logos';
 import { ActionContext, FullScreenIcon, Steps } from '../components';
 import useOutsideClick from '../hooks/useOutsideClick';
-import { windowOpen } from '../messaging';
 import { Step } from '../util/types';
 import Menu from './Menu';
 import { AccountMenu } from '.';
@@ -66,10 +65,6 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreenURL = 
   const _onClose = useCallback(() => {
     onAction('/');
   }, [onAction]);
-
-  const _onWindowOpen = useCallback((): void => {
-    address && windowOpen(`/account/${address}`).catch(console.error);
-  }, [address]);
 
   const LeftIcon = () => (
     <Grid item xs={showBrand ? 1.4 : 1}>
@@ -176,8 +171,6 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreenURL = 
       </Container>
       {isMenuOpen &&
         <Menu
-          isMenuOpen={isMenuOpen}
-          reference={setMenuRef}
           setShowMenu={setOpenMenu}
           theme={theme}
         />

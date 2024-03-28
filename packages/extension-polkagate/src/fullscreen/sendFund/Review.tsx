@@ -27,7 +27,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Review({ address, balances, inputs, setRefresh, setStep, step }: Props): React.ReactElement {
+export default function Review ({ address, balances, inputs, setRefresh, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const api = useApi(address);
   const chain = useChain(address);
@@ -54,7 +54,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
 
   const closeConfirmation = useCallback(() => {
     setRefresh(true);
-    onAction(`/account/${address}/`);
+    onAction(`/accountfs/${address}/0`); // TODO: add asset id instead of 0
   }, [address, onAction, setRefresh]);
 
   return (
@@ -79,7 +79,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
             }
             <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), mb: '20px', p: '1% 3%' }}>
               <DisplayValue title={t<string>('From')} topDivider={false}>
-                <Grid alignItems='center' justifyContent='center' container item sx={{ height: '42px', width: '600px' }}>
+                <Grid alignItems='center' container item justifyContent='center' sx={{ height: '42px', width: '600px' }}>
                   <Identity
                     address={address}
                     api={api}
@@ -167,6 +167,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
                 step={step}
                 steps={STEPS}
                 to={inputs?.recipientAddress}
+                token={balances?.token}
               />
             </Grid>
           </>

@@ -134,8 +134,8 @@ export default function AccountInformation ({ accountAssets, address, api, balan
   }, [onAction, address]);
 
   const goToDetails = useCallback((): void => {
-    address && onAction(`/account/${address}/`);
-  }, [onAction, address]);
+    address && onAction(`/accountfs/${address}/${selectedAsset?.assetId || '0'}`);
+  }, [address, onAction, selectedAsset?.assetId]);
 
   return (
     <>
@@ -194,8 +194,8 @@ export default function AccountInformation ({ accountAssets, address, api, balan
                 accountAssets={assetsToShow}
                 api={api}
                 balanceToShow={balanceToShow}
-                mode='Home'
                 hideNumbers={hideNumbers}
+                mode='Home'
                 onclick={onAssetBoxClicked}
                 selectedAsset={selectedAsset}
               />
