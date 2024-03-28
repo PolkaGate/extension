@@ -271,6 +271,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
 
         const assetBalances = {
           ED,
+          assetId,
           availableBalance: isFrozen ? BN_ZERO : balance,
           chainName,
           decimal: metadata.decimals.toNumber() as number,

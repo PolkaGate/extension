@@ -29,7 +29,7 @@ import AccountBrief from './AccountBrief';
 import LabelBalancePrice from './LabelBalancePrice';
 import Others from './Others';
 
-export default function AccountDetails(): React.ReactElement {
+export default function AccountDetails (): React.ReactElement {
   const { t } = useTranslation();
   const history = useHistory();
   const onAction = useContext(ActionContext);
@@ -46,7 +46,7 @@ export default function AccountDetails(): React.ReactElement {
 
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const [assetId, setAssetId] = useState<number>();
-  const balances = useBalances(address, refresh, setRefresh, false, assetId);
+  const balances = useBalances(address, refresh, setRefresh, false, assetId); // if assetId is undefined and chain is assethub it will fetch native token's balance
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
@@ -206,11 +206,11 @@ export default function AccountDetails(): React.ReactElement {
               ? <LabelBalancePrice address={address} balances={balanceToShow} label={'Balance'} title={t('Balance')} />
               : < >
                 <LabelBalancePrice address={address} balances={balanceToShow} label={'Total'} title={t('Total')} />
-                <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferable'} title={t('Transferable')} onClick={goToSend} />
+                <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferable'} onClick={goToSend} title={t('Transferable')} />
                 {STAKING_CHAINS.includes(genesisHash)
                   ? <>
-                    <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Stake'} title={t('Solo Stake')} onClick={goToSoloStaking} />
-                    <LabelBalancePrice address={address} balances={balanceToShow} label={'Pool Stake'} title={t('Pool Stake')} onClick={goToPoolStaking} />
+                    <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Stake'} onClick={goToSoloStaking} title={t('Solo Stake')} />
+                    <LabelBalancePrice address={address} balances={balanceToShow} label={'Pool Stake'} onClick={goToPoolStaking} title={t('Pool Stake')} />
                   </>
                   : <LabelBalancePrice address={address} balances={balanceToShow} label={'Free'} title={t('Free')} />
                 }
@@ -225,7 +225,7 @@ export default function AccountDetails(): React.ReactElement {
           </Grid>
           : <StakingOption setShowStakingOptions={setShowStakingOptions} showStakingOptions={showStakingOptions} />
         }
-        <Grid container justifyContent='space-around' sx={{ bgcolor: 'background.default', borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, height: '62px', left: '4%', position: 'absolute', pt: '7px', pb: '5px', width: '92%' }} >
+        <Grid container justifyContent='space-around' sx={{ bgcolor: 'background.default', borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, height: '62px', left: '4%', position: 'absolute', pt: '7px', pb: '5px', width: '92%' }}>
           <HorizontalMenuItem
             divider
             icon={

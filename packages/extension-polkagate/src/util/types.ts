@@ -609,6 +609,7 @@ export interface SavedIdentities {
 }
 
 export interface BalancesInfo extends DeriveBalancesAll {
+  assetId?: number;
   chainName: string;
   currencyId?: unknown;
   decimal: number;
