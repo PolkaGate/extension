@@ -13,7 +13,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
-import { ActionContext, Identicon, Identity, Infotip, ShortAddress2 } from '../../../components';
+import { ActionContext, Identicon, Identity, Infotip, OptionalCopyButton, ShortAddress2 } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useAccount, useCurrency, usePrices, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
@@ -174,8 +174,13 @@ export default function AccountInformation ({ accountAssets, address, api, balan
                 </Infotip>
               </Grid>
             </Grid>
-            <Grid alignItems='center' container item sx={{ '> div div:last-child': { width: 'auto' } }} xs>
-              <ShortAddress2 address={formatted || address} charsCount={40} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
+            <Grid alignItems='center' container item>
+              <Grid container item sx={{ '> div div:last-child': { width: 'auto' } }} xs>
+                <ShortAddress2 address={formatted || address} charsCount={40} style={{ fontSize: '10px', fontWeight: 300 }} />
+              </Grid>
+              <Grid container item width='fit-content'>
+                <OptionalCopyButton address={address} />
+              </Grid>
             </Grid>
           </Grid>
           <AccountTotal />

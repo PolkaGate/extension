@@ -14,7 +14,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { stars5Black, stars5White } from '../../assets/icons';
-import { CopyAddressButton, FormatBalance2, FormatPrice, Infotip } from '../../components';
+import { FormatBalance2, FormatPrice, Infotip,OptionalCopyButton } from '../../components';
 import { useBalances, useChainName, useTokenPrice, useTranslation } from '../../hooks/';
 import RecentChains from '../../partials/RecentChains';
 import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
@@ -52,7 +52,7 @@ const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
   );
 };
 
-export default function AccountDetail ({ address, chain, formatted, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail ({ address, chain, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const balances = useBalances(address);
@@ -151,12 +151,8 @@ export default function AccountDetail ({ address, chain, formatted, goToAccount,
             toggleVisibility={toggleVisibility}
           />
         </Grid>
-        <Grid item sx={{ m: '10px 0' }}>
-          <CopyAddressButton
-            address={formatted || address}
-            showAddress
-            size={25}
-          />
+        <Grid item sx={{ m: '10px 0', width: 'fit-content' }}>
+          <OptionalCopyButton address={address} />
         </Grid>
       </Grid>
       <Grid alignItems='center' container item>
