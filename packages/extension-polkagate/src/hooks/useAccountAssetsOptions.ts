@@ -20,7 +20,7 @@ export default function useAccountAssetsOptions (address: string | undefined): D
     const maybeAssets = accountsAssets.balances[address][genesisHash];
 
     if (maybeAssets?.length) {
-      return maybeAssets.map(({ assetId, token }) => ({ text: token, value: assetId || -1 })); // since native token does not have asset id we set 0
+      return maybeAssets.map(({ assetId, token }) => ({ text: token, value: assetId || -1 })); // since native token does not have asset id we set =1
     }
 
     return null;
