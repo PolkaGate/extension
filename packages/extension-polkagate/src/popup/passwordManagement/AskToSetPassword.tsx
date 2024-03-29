@@ -23,8 +23,7 @@ function AskToSetPassword({ setStep }: Props): React.ReactElement {
   const onMayBeLater = useCallback(() => {
     setExtensionLock(false);
 
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    setStorage('loginInfo', { lastLoginTime: Date.now(), status: 'mayBeLater' });
+    setStorage('loginInfo', { lastLoginTime: Date.now(), status: 'mayBeLater' }).catch(console.error);
   }, [setExtensionLock]);
 
   const onNoPassword = useCallback(() => {

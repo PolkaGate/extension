@@ -111,7 +111,7 @@ const FlyingLogo = ({ theme }: { theme: Theme }) => (
   />
 );
 
-export default function Loading({ children }: Props): React.ReactElement<Props> {
+export default function Loading ({ children }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const manifest = useManifest();
   const { isExtensionLocked, setExtensionLock } = useExtensionLockContext();
@@ -140,7 +140,14 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
     const handleInitLoginInfo = async () => {
       const info = await getStorage('loginInfo') as LoginInfo;
 
-      if (!info?.status || info?.status === 'reset') {
+      if (!info?.status) {
+        /** To not asking for password setting for the onboarding time */
+        setStorage('loginInfo', { lastLoginTime: Date.now(), status: 'mayBeLater' }).catch(console.error);
+
+        return setExtensionLock(false);
+      }
+
+      if (info?.status === 'reset') {
         return setStep(STEPS.ASK_TO_SET_PASSWORD);
       }
 
@@ -182,7 +189,8 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
     };
 
     handleInitLoginInfo().catch(console.error);
-  }, [setExtensionLock]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onPassChange = useCallback((pass: string | null): void => {
     if (!pass) {

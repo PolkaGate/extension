@@ -216,8 +216,7 @@ export default function Popup (): React.ReactElement {
       setLoginInfo(info);
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    fetchLoginInfo();
+    fetchLoginInfo().catch(console.error);
   }, []);
 
   useEffect((): void => {
