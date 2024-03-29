@@ -203,7 +203,15 @@ export default function AccountDetails (): React.ReactElement {
         {!showStakingOptions
           ? <Grid item pt='10px' sx={{ height: window.innerHeight - 208, overflowY: 'scroll' }} xs>
             {assetId !== undefined
-              ? <LabelBalancePrice address={address} balances={balanceToShow} label={'Balance'} title={t('Balance')} />
+              ? <>
+                <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferable'} title={t('Transferable')} />
+                { balances?.lockedBalance &&
+                  <LabelBalancePrice address={address} balances={balanceToShow} label={'Locked'} title={t('Locked')} />
+                }
+                { balances?.reservedBalance && !balances?.lockedBalance &&
+                  <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} title={t('Reserved')} />
+                }
+              </>
               : < >
                 <LabelBalancePrice address={address} balances={balanceToShow} label={'Total'} title={t('Total')} />
                 <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferable'} onClick={goToSend} title={t('Transferable')} />

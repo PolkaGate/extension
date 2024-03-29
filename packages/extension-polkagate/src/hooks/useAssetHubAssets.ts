@@ -40,7 +40,7 @@ export default function useAssetHubAssets (address: AccountId | string | undefin
 
           const assetOptions = metadata.map(({ name, symbol }, index) => {
             if (!symbol.toHuman()) {
-              return;
+              return undefined;
             }
 
             return { text: `${assetIds[index]}: ${symbol.toHuman()} (${name.toHuman()})`, value: assetIds[index].toString() };
