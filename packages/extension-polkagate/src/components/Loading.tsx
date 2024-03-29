@@ -53,21 +53,36 @@ export const updateStorage = async (label: string, newInfo: unknown) => {
   }
 };
 
-export const getStorage = (label: string) => {
+export const getStorage = (label: string, parse = false) => {
   return new Promise((resolve, reject) => {
     chrome.storage.local.get([label], (result) => {
       if (chrome.runtime.lastError) {
         reject(chrome.runtime.lastError);
       } else {
-        resolve(result[label]);
+        resolve(parse ? JSON.parse((result[label] || '{}') as string) : result[label]);
       }
     });
   });
 };
 
-export const setStorage = (label: string, data: unknown) => {
+export const watchStorage = (label: string, setChanges: ((value: any) => void), parse = false) => {
+  return new Promise((resolve, reject) => {
+    chrome.storage.onChanged.addListener(function (changes, areaName) {
+      if (areaName === 'local' && label in changes) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const newValue = changes[label].newValue;
+
+        resolve(setChanges(parse ? JSON.parse((newValue || '{}') as string) : newValue));
+      }
+    });
+  });
+};
+
+export const setStorage = (label: string, data: unknown, stringify = false) => {
   return new Promise<boolean>((resolve) => {
-    chrome.storage.local.set({ [label]: data }, () => {
+    const _data = stringify ? JSON.stringify(data) : data;
+
+    chrome.storage.local.set({ [label]: _data }, () => {
       if (chrome.runtime.lastError) {
         console.log('Error while setting storage:', chrome.runtime.lastError);
         resolve(false);

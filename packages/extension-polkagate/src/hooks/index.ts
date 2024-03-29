@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export { default as useAccount } from './useAccount';
-export { default as useAssets } from './useAssets';
+export { default as useAssetHubAssets } from './useAssetHubAssets';
 export { default as useReferendum } from './useReferendum';
 export { default as useAccountDisplay } from './useAccountDisplay';
 export { default as useAccountLocks } from './useAccountLocks';
@@ -55,7 +55,7 @@ export { default as useMinToReceiveRewardsInSolo } from './useMinToReceiveReward
 export { default as useOutsideClick } from './useOutsideClick';
 export { default as usePreImage } from './usePreImage';
 export { default as usePreImageHashes } from './usePreImageHashes';
-export { default as usePrice } from './usePrice';
+export { default as useTokenPrice } from './useTokenPrice';
 export { default as usePrices } from './usePrices';
 export { default as useProxies } from './useProxies';
 export { default as usePool } from './usePool';
@@ -79,3 +79,10 @@ export { default as usePendingRewards } from './usePendingRewards';
 export { default as useManifest } from './useManifest';
 export { default as useIsLoginEnabled } from './useIsLoginEnabled';
 export { default as useIsTestnetEnabled } from './useIsTestnetEnabled';
+export { default as useAssetsBalances } from './useAssetsBalances';
+export { default as useAccountAssets } from './useAccountAssets';
+export { default as useCurrency } from './useCurrency';
+export { default as usePriceIds } from './usePriceIds';
+export { default as useYouHave } from './useYouHave';
+export { default as useAccountIdOrName } from './useAccountIdOrName';
+export { default as useAccountAssetsOptions } from './useAccountAssetsOptions';

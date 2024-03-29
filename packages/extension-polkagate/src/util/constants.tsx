@@ -10,7 +10,6 @@ export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 export const DEFAULT_CHAIN_INDEX = 1;
 export const DEFAULT_MAX_COMMISSION = 10;
 export const DEFAULT_LIMIT_OF_VALIDATORS_PER_OPERATOR = 2;
-export const MILLISECONDS_TO_UPDATE = 5 * 60 * 1000; // to update price
 // export const EXTENSION_FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf2WHD0oVR0NS7tW6C1U025H1XBEZXqwxvFvPhcoFa18eHQiA/viewform';
 export const BALANCES_VALIDITY_PERIOD = 5 * 60 * 1000; // to show outdated balance i grey
 export const ENVIRONMENT = 'production'; // development or production
@@ -37,6 +36,7 @@ export const MAX_HISTORY_RECORD_TO_SHOW = 40;
 export const MAX_AMOUNT_LENGTH = 15;
 export const TIME_TO_SHAKE_ICON = 5000;// msec
 export const CHAINS_WITH_BLACK_LOGO = ['statescan', 'Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'Pendulum', 'Pendulum chain', 'Zeitgeist', 'Westend Collectives'];
+export const TOKENS_WITH_BLACK_LOGO = ['KSM', 'PEN', 'ZTG'];
 export const CHAINS_ON_POLKAHOLIC = ['Pendulum', 'Pendulum chain', 'Amplitude', 'Amplitude chain'];
 export const DISABLED_NETWORKS = ['3DP network', 'xx network', 'Polkadex Mainnet', 'Stafi'];
 export const RELAY_CHAINS = [
@@ -57,10 +57,17 @@ export const RELAY_CHAINS = [
 export const POLKADOT_GENESIS_HASH = '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3';
 export const KUSAMA_GENESIS_HASH = '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe';
 export const WESTEND_GENESIS_HASH = '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e';
+export const ACALA_GENESIS_HASH = '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c';
 
 export const WESTMINT_GENESIS_HASH = '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9';
 export const STATEMINE_GENESIS_HASH = '0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a'; // KUSAMA ASSET HUB
 export const STATEMINT_GENESIS_HASH = '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f';
+
+export const RELAY_CHAINS_GENESISHASH = [
+  POLKADOT_GENESIS_HASH,
+  KUSAMA_GENESIS_HASH,
+  WESTEND_GENESIS_HASH
+];
 
 export const ASSET_HUBS = [
   WESTMINT_GENESIS_HASH,
@@ -73,6 +80,12 @@ export const TEST_NETS = [
   WESTMINT_GENESIS_HASH
 ];
 
+export const PROXY_CHAINS = [
+  POLKADOT_GENESIS_HASH,
+  KUSAMA_GENESIS_HASH,
+  WESTEND_GENESIS_HASH
+];
+
 export const CROWDLOANS_CHAINS = [
   POLKADOT_GENESIS_HASH,
   KUSAMA_GENESIS_HASH
@@ -80,7 +93,8 @@ export const CROWDLOANS_CHAINS = [
 
 export const GOVERNANCE_CHAINS = [
   POLKADOT_GENESIS_HASH,
-  KUSAMA_GENESIS_HASH
+  KUSAMA_GENESIS_HASH,
+  WESTEND_GENESIS_HASH
 ];
 
 export const SOCIAL_RECOVERY_CHAINS = [
@@ -113,7 +127,7 @@ export const INITIAL_RECENT_CHAINS_GENESISHASH = [
   POLKADOT_GENESIS_HASH,
   WESTEND_GENESIS_HASH,
   KUSAMA_GENESIS_HASH,
-  '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c' // ACALA
+  ACALA_GENESIS_HASH // ACALA
 ];
 
 // used in history to categorize transactions
@@ -126,7 +140,7 @@ export const CONFIRMING_STATE = ['fail', 'success', 'confirming'];
 
 const PROXY_TYPE_POLKADOT = ['Any', 'NonTransfer', 'Staking', 'Governance', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
 const PROXY_TYPE_KUSAMA = ['Any', 'NonTransfer', 'Staking', 'Society', 'Governance', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
-const PROXY_TYPE_WESTEND = ['Any', 'NonTransfer', 'Staking', 'SudoBalances', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
+const PROXY_TYPE_WESTEND = ['Any', 'NonTransfer', 'Staking', 'Governance', 'SudoBalances', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
 
 export const CHAIN_PROXY_TYPES = { Kusama: PROXY_TYPE_KUSAMA, Polkadot: PROXY_TYPE_POLKADOT, Westend: PROXY_TYPE_WESTEND };
 
@@ -203,3 +217,10 @@ export const REGISTRARS_LIST: { addresses: string[]; index: number; name: string
 /** Login Password constants */
 export const NO_PASS_PERIOD = 30 * 60 * 1000; // in ms, the duration of time we do not ask user for password after a successful login
 export const MAYBE_LATER_PERIOD = 5 * 60 * 1000; // ms
+
+export const USD_CURRENCY = {
+  code: 'USD',
+  country: 'United States',
+  currency: 'Dollar',
+  sign: '$'
+};

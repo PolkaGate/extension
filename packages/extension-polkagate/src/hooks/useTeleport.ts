@@ -1,12 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { LinkOption } from '@polkadot/apps-config/endpoints/types';
+import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import type { ParaId } from '@polkadot/types/interfaces';
 
 import { useEffect, useState } from 'react';
 
-import { createWsEndpoints } from '@polkadot/apps-config';
+import { createWsEndpoints } from '@polkagate/apps-config';
 import { isNumber } from '@polkadot/util';
 
 import { useApi, useChain, useEndpoint } from '.';

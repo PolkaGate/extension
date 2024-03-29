@@ -120,16 +120,6 @@ export function getFormattedAddress(_address: string | null | undefined, _chain:
   return encodeAddress(publicKey, prefix);
 }
 
-// export function handleAccountBalance(balance: any): { available: bigint, feeFrozen: bigint, miscFrozen: bigint, reserved: bigint, total: bigint } {
-//   return {
-//     available: BigInt(String(balance.free)) - BigInt(String(balance.miscFrozen)),
-//     feeFrozen: BigInt(String(balance.feeFrozen)),
-//     miscFrozen: BigInt(String(balance.miscFrozen)),
-//     reserved: BigInt(String(balance.reserved)),
-//     total: BigInt(String(balance.free)) + BigInt(String(balance.reserved))
-//   };
-// }
-
 export function getSubstrateAddress(address: AccountId | string | undefined): string | undefined {
   if (!address) {
     return undefined;
@@ -383,3 +373,5 @@ export const isUrl = (input: string | undefined) => {
 };
 
 export const pgBoxShadow = (theme: Theme): string => theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '2px 3px 4px 0px rgba(0, 0, 0, 0.10)';
+
+export const nullFunction = () => null;

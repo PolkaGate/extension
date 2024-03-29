@@ -44,8 +44,9 @@ export interface AccountJson extends KeyringPair$Meta {
 
   // added for polkagate
   balances?: string;
-  stakingAccount?: string;
   identities?: string;
+  isQR?: boolean;
+  stakingAccount?: string;
 }
 
 export type AccountWithChildren = AccountJson & {

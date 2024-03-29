@@ -12,18 +12,21 @@ import { ApiPromise } from '@polkadot/api';
 import { ChromeStorageGetResponse } from '../components/RemoteNodeSelector';
 import { useAccount, useChainName, useEndpoint, useEndpoints } from '../hooks';
 import CalculateNodeDelay from '../util/calculateNodeDelay';
+import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
 
 interface Props {
   address: string | undefined;
+  iconSize?: number;
 }
 
 type EndpointsDelay = { name: string, delay: number | null | undefined, value: string }[];
 
-function FullScreenRemoteNode({ address }: Props): React.ReactElement {
+function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactElement {
   const theme = useTheme();
   const account = useAccount(address);
   const genesisHash = account?.genesisHash;
   const endpointOptions = useEndpoints(genesisHash);
+  const onExtension = useIsExtensionPopup();
 
   const endpointUrl = useEndpoint(address);
   const chainName = useChainName(address);
@@ -34,6 +37,14 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
   const [endpointsDelay, setEndpointsDelay] = useState<EndpointsDelay>();
   const [api, setApi] = useState<ApiPromise | null | undefined>(null);
   const [fetchedApiAndDelay, setFetchedApiAndDelay] = useState<{ fetchedApi: ApiPromise | null | undefined, fetchedDelay: number | undefined }>();
+
+  const bgcolorOnAccountDetail: string = useMemo(() => {
+    if (onExtension) {
+      return 'background.paper';
+    } else {
+      return 'transparent';
+    }
+  }, [onExtension]);
 
   const colors = {
     gray: theme.palette.mode === 'light' ? '#E8E0E5' : '#747474',
@@ -142,25 +153,25 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
     };
   }, [api, calculateAndSetDelay]);
 
-  const NodeStatusIcon = ({ ms }: { ms: number | null | undefined }) => {
+  const NodeStatusIcon = ({ iconSize = 35, ms }: { ms: number | null | undefined, iconSize?: number }) => {
     return (
       <>
         {ms !== undefined && ms !== null &&
           (ms <= 100
             ? (
               <SignalCellularAltIcon
-                sx={{ bottom: '2px', color: colors.green, fontSize: '35px', left: '2px', position: 'absolute' }}
+                sx={{ bottom: '2px', color: colors.green, fontSize: `${iconSize}px`, left: '2px', position: 'absolute' }}
               />
             )
             : ms <= 300
               ? (
                 <SignalCellularAlt2BarIcon
-                  sx={{ bottom: '2px', color: colors.orange, fontSize: '35px', left: '2px', position: 'absolute' }}
+                  sx={{ bottom: '2px', color: colors.orange, fontSize: `${iconSize}px`, left: '2px', position: 'absolute' }}
                 />
               )
               : (
                 <SignalCellularAlt1BarIcon
-                  sx={{ bottom: '2px', color: colors.red, fontSize: '35px', left: '2px', position: 'absolute' }}
+                  sx={{ bottom: '2px', color: colors.red, fontSize: `${iconSize}px`, left: '2px', position: 'absolute' }}
                 />
               ))}
       </>
@@ -224,14 +235,14 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
 
   return (
     <>
-      <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', cursor: 'pointer', height: '42px', position: 'relative', width: '42px', zIndex: 10 }}>
+      <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: bgcolorOnAccountDetail, border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', cursor: 'pointer', height: `${iconSize + 7}px`, position: 'relative', width: `${iconSize + 7}px`, zIndex: 10 }}>
         {isLightClient
-          ? <LightClientEndpointIcon sx={{ bottom: '2px', color: colors.orange, fontSize: '35px', left: '2px', position: 'absolute' }} />
+          ? <LightClientEndpointIcon sx={{ bottom: '2px', color: colors.orange, fontSize: `${iconSize}px`, left: '2px', position: 'absolute' }} />
           : <>
             <SignalCellularAltIcon
-              sx={{ bottom: '2px', color: colors.gray, fontSize: '35px', left: '2px', position: 'absolute' }}
+              sx={{ bottom: '2px', color: colors.gray, fontSize: `${iconSize}px`, left: '2px', position: 'absolute' }}
             />
-            <NodeStatusIcon ms={currentDelay} />
+            <NodeStatusIcon iconSize={iconSize} ms={currentDelay} />
           </>
         }
       </Grid>

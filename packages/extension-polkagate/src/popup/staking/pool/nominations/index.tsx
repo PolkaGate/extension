@@ -65,7 +65,7 @@ export default function Index (): React.ReactElement {
     allValidatorsInfo && nominatedValidatorsIds && allValidatorsInfo.current
       .concat(allValidatorsInfo.waiting)
       .filter((v: DeriveStakingQuery) => nominatedValidatorsIds.includes(v.accountId))
-    , [allValidatorsInfo, nominatedValidatorsIds]);
+  , [allValidatorsInfo, nominatedValidatorsIds]);
 
   const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv.exposure.others.find(({ who }) => who.toString() === pool?.accounts?.stashId)), [pool?.accounts?.stashId, selectedValidatorsInfo]);
 

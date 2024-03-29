@@ -13,18 +13,18 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import settings from '@polkadot/ui-settings';
 
-import { ActionContext, Checkbox2, ColorContext, Infotip2, MenuItem, Select, Switch } from '../components';
-import { updateStorage } from '../components/Loading';
+import { ActionContext, Checkbox2, ColorContext, FullScreenIcon, Infotip2, MenuItem, Select, Switch } from '../components';
+import { getStorage, updateStorage } from '../components/Loading';
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import { useIsLoginEnabled, useIsPopup, useTranslation } from '../hooks';
-import { lockExtension, setNotification, windowOpen } from '../messaging';
+import { lockExtension, setNotification } from '../messaging';
 import { NO_PASS_PERIOD } from '../util/constants';
 import getLanguageOptions from '../util/getLanguageOptions';
 import { DropdownOption } from '../util/types';
 
 interface Props {
-  isTestnetEnabled: boolean | undefined;
-  setIsTestnetEnabled: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  isTestnetEnabledChecked: boolean | undefined;
+  setTestnetEnabledChecked: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   show: boolean;
   onChange: () => void;
 }
@@ -51,7 +51,7 @@ const slideOut = keyframes`
 }
 `;
 
-export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestnetEnabled, show }: Props): React.ReactElement {
+export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setTestnetEnabledChecked, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isPopup = useIsPopup();
@@ -79,10 +79,6 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
   const prefixOptions = settings.availablePrefixes
     .filter(({ value }) => value !== -1)
     .map(({ text, value }): DropdownOption => ({ text, value: `${value}` }));
-
-  const _onWindowOpen = useCallback((): void => {
-    windowOpen('/').catch(console.error);
-  }, []);
 
   const onLockExtension = useCallback((): void => {
     updateStorage('loginInfo', { lastLoginTime: Date.now() - NO_PASS_PERIOD }).then(() => {
@@ -124,8 +120,10 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
   }, [camera]);
 
   useEffect(() => {
-    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true');
-  }, [setIsTestnetEnabled]);
+    getStorage('testnet_enabled').then((res) => {
+      setTestnetEnabledChecked(res as boolean);
+    }).catch(console.error);
+  }, [setTestnetEnabledChecked]);
 
   return (
     <Grid container display='inherit' item overflow='hidden' sx={{ animationDelay: firstTime ? '0.2s' : '0s', animationDuration: show ? '0.3s' : '0.15s', animationFillMode: 'both', animationName: `${show ? slideIn : slideOut}` }}>
@@ -166,26 +164,15 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
               <Grid item>
                 <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '20px', my: 'auto' }} />
               </Grid>
-              <Grid item>
-                <Infotip2
-                  text={t('Fullscreen')}
-                >
-                  <IconButton
-                    onClick={_onWindowOpen}
-                    sx={{ height: '35px', width: '35px' }}
-                  >
-                    <vaadin-icon icon='vaadin:expand-full' style={{ height: '19px', color: `${theme.palette.secondary.light}` }} />
-                  </IconButton>
-                </Infotip2>
-              </Grid>
+              <FullScreenIcon url='/' />
             </>
           }
         </Grid>
         <Grid item pt='15px' textAlign='left'>
           <Checkbox2
-            checked={isTestnetEnabled}
+            checked={isTestnetEnabledChecked}
             iconStyle={{ transform: 'scale(1.13)' }}
-            label={t<string>('Enable testnet chains')}
+            label={t('Enable testnet chains')}
             labelStyle={{ fontSize: '17px', fontWeight: 300, marginLeft: '7px' }}
             onChange={onChange}
           />
@@ -210,7 +197,7 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
               />
             }
             onClick={onAuthManagement}
-            text={t<string>('Manage website access')}
+            text={t('Manage website access')}
           />
         </Grid>
         <Grid container item pb={'10px'} >

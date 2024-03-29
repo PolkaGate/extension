@@ -10,7 +10,7 @@ import { TwoButtons } from '../../components';
 import { setStorage } from '../../components/Loading';
 import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import { useTranslation } from '../../hooks';
-import Passwords2 from '../createAccountFullScreen/components/Passwords2';
+import Passwords2 from '../newAccount/createAccountFullScreen/components/Passwords2';
 import { STEPS } from './constants';
 
 interface Props {

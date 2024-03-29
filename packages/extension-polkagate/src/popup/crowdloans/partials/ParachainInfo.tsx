@@ -10,7 +10,7 @@ import { Divider, Grid, IconButton, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { LinkOption } from '@polkadot/apps-config/endpoints/types';
+import { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { SlidePopUp } from '../../../components';

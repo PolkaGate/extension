@@ -18,18 +18,10 @@ interface Props {
   changeBackground?: boolean;
 }
 
-function Switch({ changeBackground = false, checkedLabel, className, fontSize = '18px', fontWeight = 300, isChecked = false, onChange, uncheckedLabel }: Props): React.ReactElement<Props> {
+function Switch({ changeBackground = false, checkedLabel, className, fontSize = '18px', fontWeight = 300, isChecked = false, onChange, theme, uncheckedLabel }: Props): React.ReactElement<Props> {
   return (
-    <Grid alignItems='center'
-      className={className}
-      container
-      item
-      width='fit-content'>
-      <Typography
-        display='inline'
-        fontSize={fontSize}
-        fontWeight={fontWeight}
-      >
+    <Grid alignItems='center' className={className} container item width='fit-content'>
+      <Typography display='inline' fontSize={fontSize} fontWeight={fontWeight}>
         {uncheckedLabel}
       </Typography>
       <label>
@@ -41,7 +33,7 @@ function Switch({ changeBackground = false, checkedLabel, className, fontSize = 
         />
         <span
           className='slider'
-          style={{ backgroundColor: isChecked && changeBackground ? '#C1FF83' : 'transparent' }} />
+          style={{ backgroundColor: isChecked && changeBackground ? 'rgb(255 239 18) ' : 'transparent' }} />
       </label>
       <Typography
         display='inline'

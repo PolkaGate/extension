@@ -9,7 +9,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { SHORT_ADDRESS_CHARACTERS } from '../util/constants';
-import ObserveResize from '../util/ObserveResize';
 import CopyAddressButton from './CopyAddressButton';
 
 interface Props {
@@ -21,14 +20,24 @@ interface Props {
   clipped?: boolean;
 }
 
-function ShortAddress({ address, clipped = false, charsCount = SHORT_ADDRESS_CHARACTERS, style, showCopy = false, inParentheses = false }: Props): React.ReactElement {
-  const [charactersCount, setCharactersCount] = useState<number>(1);
-  const pRef = useRef(null);
-  const cRef = useRef(null);
+function ShortAddress2 ({ address, clipped = false, charsCount = SHORT_ADDRESS_CHARACTERS, style, showCopy = false, inParentheses = false }: Props): React.ReactElement {
+  const [charactersCount, setCharactersCount] = useState<number>(charsCount);
+  const pRef = useRef<HTMLDivElement>(null);
+  const cRef = useRef<HTMLDivElement>(null);
 
-  const decreaseCharactersCount = useCallback(() => clipped && setCharactersCount(charactersCount - 1), [charactersCount, clipped]);
+  const resizer = useCallback(() => {
+    const offset = showCopy ? 55 : 25;
 
-  ObserveResize(pRef?.current as unknown as Element, cRef?.current?.clientHeight + 3, decreaseCharactersCount);
+    const wholeWidth = pRef.current?.offsetWidth ? pRef.current.offsetWidth - offset : 0;
+    const requiredWidth = cRef.current?.scrollWidth ?? 0;
+    const availableWidth = wholeWidth - requiredWidth;
+
+    if (availableWidth > 15 && charactersCount < String(address).length) {
+      setCharactersCount(charactersCount + 3);
+    } else if (availableWidth <= 5) {
+      setCharactersCount(charactersCount - 1);
+    }
+  }, [address, charactersCount, showCopy]);
 
   useEffect(() => {
     if (!clipped) {
@@ -37,25 +46,25 @@ function ShortAddress({ address, clipped = false, charsCount = SHORT_ADDRESS_CHA
       return;
     }
 
-    const offset = showCopy ? 55 : 25;
-
-    (cRef?.current?.offsetWidth < pRef?.current?.offsetWidth - offset) && setCharactersCount(charactersCount + 1);
-  }, [charsCount, clipped, showCopy, cRef.current?.offsetWidth, pRef.current?.offsetWidth, charactersCount]);
+    resizer();
+  }, [resizer, charsCount, clipped, pRef.current?.offsetWidth]);
 
   return (
-    <Grid alignItems='center' container justifyContent='space-between' ref={pRef} sx={{ ...style }} width='100%'>
-      <Grid item maxWidth='85%' ref={cRef} width='fit-content'>
-        {inParentheses ? '(' : ''}
-        {!charsCount || (charactersCount >= (address?.length ?? 2) / 2) ? address : `${address?.slice(0, charactersCount)}...${address?.slice(-charactersCount)}`}
-        {inParentheses ? ')' : ''}
+    <Grid alignItems='center' container justifyContent='space-between' ref={pRef} sx={style}>
+      <Grid item maxWidth='82%' ref={cRef} width='fit-content'>
+        {inParentheses && '('}
+        {!charactersCount || charactersCount >= (address?.length ?? 2) / 2
+          ? address
+          : `${String(address)?.slice(0, charactersCount)}...${String(address)?.slice(-charactersCount)}`}
+        {inParentheses && ')'}
       </Grid>
-      {showCopy &&
-        <Grid item width='13%'>
+      {showCopy && (
+        <Grid item width='fit-content'>
           <CopyAddressButton address={String(address)} />
         </Grid>
-      }
+      )}
     </Grid>
   );
 }
 
-export default React.memo(ShortAddress);
+export default React.memo(ShortAddress2);

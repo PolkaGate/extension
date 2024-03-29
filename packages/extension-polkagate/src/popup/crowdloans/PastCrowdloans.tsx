@@ -10,7 +10,7 @@ import { Grid, useTheme } from '@mui/material';
 import { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback } from 'react';
 
-import { LinkOption } from '@polkadot/apps-config/endpoints/types';
+import { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { Progress, Warning } from '../../components';

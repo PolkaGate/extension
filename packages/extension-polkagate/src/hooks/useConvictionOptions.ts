@@ -7,14 +7,14 @@
  * This hook will get and calculate the conviction options
  */
 
+import { TFunction } from '@polkagate/apps-config/types';
 import { useCallback, useEffect, useState } from 'react';
 
-import { TFunction } from '@polkadot/apps-config/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { CONVICTIONS } from '../popup/governance/utils/consts';
-import { calcBlockTime } from '../popup/governance/utils/util';
+import { CONVICTIONS } from '../fullscreen/governance/utils/consts';
+import { calcBlockTime } from '../fullscreen/governance/utils/util';
 import useApi from './useApi';
 import useChain from './useChain';
 

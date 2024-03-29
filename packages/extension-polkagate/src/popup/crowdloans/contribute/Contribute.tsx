@@ -9,7 +9,7 @@ import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { LinkOption } from '@polkadot/apps-config/endpoints/types';
+import { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';

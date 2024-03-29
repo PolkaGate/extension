@@ -10,16 +10,18 @@ import type { BN } from '@polkadot/util';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
 import { SxProps, Theme } from '@mui/material';
+import { LinkOption } from '@polkagate/apps-config/endpoints/types';
 
 import { ApiPromise } from '@polkadot/api';
-import { LinkOption } from '@polkadot/apps-config/endpoints/types';
 import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { Balance } from '@polkadot/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { LatestReferenda } from '../popup/governance/utils/types';
+import { LatestReferenda } from '../fullscreen/governance/utils/types';
+import { CurrencyItemType } from '../fullscreen/homeFullScreen/partials/Currency';
+import { SavedAssets } from '../hooks/useAssetsBalances';
 
 export interface TransactionStatus {
   blockNumber: string | null;
@@ -526,16 +528,6 @@ export interface ProxyItem {
   status: 'current' | 'new' | 'remove';
 }
 
-export interface PriceAll {
-  balances: DeriveBalancesAll;
-  decimals: number;
-  price: number;
-}
-
-export interface AddressPriceAll {
-  [k: string]: PriceAll;
-}
-
 export interface RenameAcc {
   address: string;
   name: string;
@@ -577,18 +569,30 @@ export interface Step {
   total: string | number;
   style?: SxProps<Theme> | undefined;
 }
-export interface TokenPrice {
-  [chainName: string]: Price;
+
+interface PriceValue {
+  value: number,
+  change: number
 }
+
+export interface PricesType {
+  [priceId: string]: PriceValue;
+}
+
 export interface Prices {
-  prices: Record<string, Record<string, number>>;
   date: number;
+  prices: PricesType;
+  currencyCode?: string;
 }
+
+export interface PricesInCurrencies {
+  [currencyCode: string]: { date: number; prices: PricesType; };
+}
+
 export interface Price {
-  amount: number;
-  chainName: string;
-  date: number;
-  token?: string;
+  price: number;
+  priceChainName: string;
+  priceDate: number;
 }
 
 export interface SavedBalances {
@@ -605,7 +609,9 @@ export interface SavedIdentities {
 }
 
 export interface BalancesInfo extends DeriveBalancesAll {
+  assetId?: number;
   chainName: string;
+  currencyId?: unknown;
   decimal: number;
   token: string;
   date: number;
@@ -632,6 +638,11 @@ export interface Fetching {
 
 export interface IsFetching {
   [item: string]: boolean;
+}
+
+export interface CurrencyContextType {
+  currency: CurrencyItemType | undefined;
+  setCurrency: (selectedCurrency: CurrencyItemType) => void;
 }
 
 export interface FetchingRequests {
@@ -707,9 +718,33 @@ export interface APIsContext {
 export interface LatestRefs {
   [key: string]: LatestReferenda[]
 }
+
 export interface ReferendaContextType {
   refs: LatestRefs;
   setRefs: (refs: LatestRefs) => void;
+}
+
+export interface AccountAssets {
+  assetId: number | undefined;
+  chainName: string;
+  decimal: number;
+  price?: number;
+  priceId: string;
+  genesisHash: string;
+  token: string;
+  totalBalance: BN;
+}
+
+export interface AccountsAssets {
+  address: string;
+  assets: AccountAssets[];
+}
+
+export interface SavedAccountsAssets { balances: AccountsAssets[], timestamp: number }
+
+export interface AccountsAssetsContextType {
+  accountsAssets: SavedAssets | null | undefined;
+  setAccountsAssets: (savedAccountAssets: SavedAssets) => void;
 }
 
 export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }
@@ -734,4 +769,4 @@ export enum CanPayStatements {
   CANNOTPAYFEE,
   CANNOTPAYDEPOSIT,
   PROXYCANPAYFEE,
-};
+}

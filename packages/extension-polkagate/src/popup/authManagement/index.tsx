@@ -52,7 +52,7 @@ export default function AuthManagement (): React.ReactElement {
       <HeaderBrand
         onBackClick={_onBackClick}
         showBackArrow
-        text={t<string>('Manage Website Access')}
+        text={t('Manage Website Access')}
       />
       <Typography fontSize='14px' fontWeight={300} m='20px auto' width='90%'>
         {t<string>('Allow or deny website(s) to request access to the extension\'s visible accounts')}

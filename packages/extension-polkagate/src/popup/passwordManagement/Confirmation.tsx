@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Check as CheckIcon } from '@mui/icons-material';
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
@@ -14,7 +16,7 @@ interface Props {
   onBackClick: () => void
 }
 
-function Confirmation({ onBackClick, step }: Props): React.ReactElement {
+function Confirmation ({ onBackClick, step }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -38,11 +40,12 @@ function Confirmation({ onBackClick, step }: Props): React.ReactElement {
           </Typography>
         </Grid>
       </Grid>
-      <Grid container justifyContent='center' sx={{ display: 'block', px: '10%', pt: '180px' }}>
+      <Grid container justifyContent='center' sx={{ px: '10%' }}>
         <PButton
           _ml={0}
+          _mt='300px'
           _onClick={onBackClick}
-          _width={80}
+          _width={100}
           text={t('Done')}
         />
       </Grid>

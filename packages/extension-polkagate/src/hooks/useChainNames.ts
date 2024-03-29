@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from 'react';
 
 import { AccountContext } from '../components';
 
-export default function useChainNames(): string[] | undefined {
+export default function useChainNames (): string[] | undefined {
   const { hierarchy } = useContext(AccountContext);
   const [chainNames, setChainNames] = useState<string[]>();
 

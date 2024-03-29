@@ -3,41 +3,35 @@
 
 import request from 'umi-request';
 
-import { Prices } from '../types';
+import { PricesType } from '../types';
 
-export default async function getPrices(chainNames: string[], currency = 'usd'): Promise<Prices | null> {
-  try {
-    const replaceAssetHubs = chainNames.map((item) =>
-      item.replace('westendassethub', 'westend').replace('kusamaassethub', 'kusama').replace('polkadotassethub', 'polkadot')
-        .replace('westend asset hub', 'westend').replace('kusama asset hub', 'kusama').replace('polkadot asset hub', 'polkadot')
-        .replace('westmint', 'westend').replace('statemine', 'kusama').replace('statemint', 'polkadot')
-    );
-    const nonDuplicateChainNames = [...new Set(replaceAssetHubs)];
+/** some chains have a different priceId than its sanitizedChainName,
+ * hence we will replace their price Id using  EXTRA_PRICE_IDS */
+export const EXTRA_PRICE_IDS: Record<string, string> = {
+  nodle: 'nodle-network',
+  parallel: 'parallel-finance',
+  pendulum: 'pendulum-chain'
+};
 
-    console.log(' getting prices for:', nonDuplicateChainNames);
+export default async function getPrices (priceIds: string[], currencyCode = 'usd') {
+  console.log(' getting prices3 for:', priceIds.sort());
 
-    const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${nonDuplicateChainNames}&vs_currencies=${currency}`, {});
+  const revisedPriceIds = priceIds.map((item) => (EXTRA_PRICE_IDS[item] || item));
 
-    if (chainNames.includes('pendulum')) {
-      const pendulumPrice = await getReq(`https://min-api.cryptocompare.com/data/price?fsym=PEN&tsyms=USD`, {});
+  const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${revisedPriceIds}&vs_currencies=${currencyCode}&include_24hr_change=true`, {});
 
-      if (pendulumPrice?.USD) {
-        prices.pendulum = { usd: pendulumPrice.USD };
-      }
-    }
+  const outputObjectPrices: PricesType = {};
 
-    prices.westend = { usd: 0 };
-    console.log('Prices:', prices);
-
-    return { date: Date.now(), prices };
-  } catch (e) {
-    console.log('error while fetching prices:', e);
-
-    return null;
+  for (const [key, value] of Object.entries(prices)) {
+    outputObjectPrices[key] = { change: value[`${currencyCode}_24h_change`] as number, value: value[currencyCode] as number };
   }
+
+  const price = { currencyCode, date: Date.now(), prices: outputObjectPrices };
+
+  return price;
 }
 
-function getReq(api: string, data: Record<string, any> = {}, option?: Record<string, any>): Promise<Record<string, any>> {
+function getReq (api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<Record<string, unknown>> {
   return request.get(api, {
     data,
     ...option

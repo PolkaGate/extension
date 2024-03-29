@@ -15,7 +15,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import settings from '@polkadot/ui-settings';
 
 import { useTranslation } from '../hooks';
-import QrScanner from '../popup/import/addAddressOnly/QrScanner';
+import QrScanner from '../popup/import/addWatchOnly/QrScanner';
 import isValidAddress from '../util/validateAddress';
 import Identicon from './Identicon';
 import Label from './Label';
@@ -36,7 +36,7 @@ interface Props {
   addWithQr?: boolean;
 }
 
-export default function AddressInput({ addWithQr = false, allAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
+export default function AddressInput ({ addWithQr = false, allAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [isPopperOpen, setTogglePopper] = useState<boolean>(false);
   const [focus, setFocus] = useState<boolean>(false);
@@ -112,7 +112,7 @@ export default function AddressInput({ addWithQr = false, allAddresses = [], cha
   return (
     <>
       <Grid alignItems='flex-end' container justifyContent='space-between' ref={containerRef} sx={{ position: 'relative', ...style }}>
-        <Grid item xs={showIdenticon ? 10.5 : 12}>
+        <Grid item xs>
           <Label
             helperText={helperText}
             label={label}
@@ -196,7 +196,7 @@ export default function AddressInput({ addWithQr = false, allAddresses = [], cha
           </Label>
         </Grid>
         {showIdenticon &&
-          <Grid item xs={1.2}>
+          <Grid item sx={{ width: 'fit-content', ml: '10px' }}>
             {isValidAddress(address)
               ? <Identicon
                 iconTheme={chain?.icon || 'polkadot'}

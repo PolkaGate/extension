@@ -10,7 +10,7 @@ import { Avatar, Grid, IconButton, Link, SxProps, Theme, Typography } from '@mui
 import { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useMemo } from 'react';
 
-import { LinkOption } from '@polkadot/apps-config/endpoints/types';
+import { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { useTranslation } from '../../../hooks';

@@ -70,7 +70,6 @@ export default function useApi (address: AccountId | string | undefined, stateAp
       ApiPromise.create({ provider: wsProvider })
         .then((newApi) => {
           handleNewApi(newApi, endpoint);
-          console.log('API connection established successfully.');
         })
         .catch((error) => {
           console.error('API connection failed:', error);

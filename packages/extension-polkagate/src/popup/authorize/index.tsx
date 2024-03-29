@@ -6,6 +6,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AuthorizeReqContext } from '../../components';
 import { HeaderBrand } from '../../partials';
+import { EXTENSION_NAME } from '../../util/constants';
 import TransactionIndex from '../signing/TransactionIndex';
 import Request from './Request';
 
@@ -36,7 +37,7 @@ export default function Authorize (): React.ReactElement {
     <Grid container>
       <HeaderBrand
         showBrand
-        text={'Polkagate'}
+        text={EXTENSION_NAME}
       />
       {requests.length > 1 &&
         <TransactionIndex

@@ -3,7 +3,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { getAddressVote, Vote } from '../popup/governance/post/myVote/util';
+import { getAddressVote, Vote } from '../fullscreen/governance/post/myVote/util';
 import { useApi, useFormatted } from '.';
 
 export default function useMyVote(

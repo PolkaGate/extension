@@ -11,7 +11,7 @@ import { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useState, useMemo } from 'react';
 
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import { LinkOption } from '@polkadot/apps-config/endpoints/types';
+import { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { Identity } from '../../../components';

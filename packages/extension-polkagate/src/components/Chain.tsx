@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, SxProps, Theme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { useGenesisHashOptions, useIsTestnetEnabled } from '@polkadot/extension-polkagate/src/hooks';
 import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
@@ -14,6 +14,7 @@ import Select2 from './Select2';
 
 interface Props {
   address: string | null | undefined;
+  allowAnyChainOption?: boolean;
   defaultValue?: string | undefined;
   onChange: (value: string) => void;
   label: string;
@@ -21,11 +22,11 @@ interface Props {
   disabledItems?: string[] | number[];
 }
 
-function Chain ({ address, defaultValue, disabledItems, label, onChange, style }: Props) {
+function Chain ({ address, allowAnyChainOption, defaultValue, disabledItems, label, onChange, style }: Props) {
   let options = useGenesisHashOptions();
   const isTestnetEnabled = useIsTestnetEnabled();
 
-  options = options.filter(({ text }) => text !== 'Allow use on any chain');
+  options = allowAnyChainOption ? options : options.filter(({ text }) => text !== 'Allow use on any chain');
 
   const _disabledItems = useMemo((): (string | number)[] | undefined =>
     !isTestnetEnabled

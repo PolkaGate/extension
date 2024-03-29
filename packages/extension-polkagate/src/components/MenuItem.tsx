@@ -50,7 +50,7 @@ export default function MenuItem({ children, disabled = false, fontSize, icon, i
         <Grid alignItems='center' container item sx={{ display: children ? 'inherit' : 'none' }} xs={1}>
           <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showSubMenu ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
         </Grid>
-      </Grid >
+      </Grid>
       {
         children
       }

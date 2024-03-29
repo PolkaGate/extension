@@ -19,9 +19,9 @@ import { getStorage, LoginInfo } from '../../components/Loading';
 import { useMerkleScience, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
-import { NEW_VERSION_ALERT } from '../../util/constants';
-import Welcome from '../welcome';
-import Reset from '../welcome/Reset';
+import { EXTENSION_NAME, NEW_VERSION_ALERT } from '../../util/constants';
+import Welcome from '../../fullscreen/welcome';
+import Reset from '../../fullscreen/welcome/Reset';
 import AccountsTree from './AccountsTree';
 import AiBackgroundImage from './AiBackgroundImage';
 import Alert from './Alert';
@@ -29,7 +29,7 @@ import YouHave from './YouHave';
 
 export default function Home (): React.ReactElement {
   const { t } = useTranslation();
-  const { hierarchy } = useContext(AccountContext);
+  const { accounts, hierarchy } = useContext(AccountContext);
   const theme = useTheme();
 
   useMerkleScience(undefined, undefined, true); // to download the data file
@@ -119,8 +119,10 @@ export default function Home (): React.ReactElement {
           <Grid padding='0px' textAlign='center' xs={12}>
             <HeaderBrand
               showBrand
+              showFullScreen
               showMenu
-              text={'Polkagate'}
+              style={{ '> div div:nth-child(3)': { minWidth: '23%' }, pr: '10px' }}
+              text={EXTENSION_NAME}
             />
           </Grid>
           {hasActiveRecovery &&
@@ -148,7 +150,7 @@ export default function Home (): React.ReactElement {
                 setQuickActionOpen={setQuickActionOpen}
               />
             ))}
-            {sortedAccount.length < 4 &&
+            {accounts?.length < 4 &&
               <AddNewAccount />
             }
           </Container>

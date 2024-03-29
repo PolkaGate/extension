@@ -8,10 +8,10 @@ import React, { useCallback, useState } from 'react';
 
 import { blake2AsHex } from '@polkadot/util-crypto';
 
-import { Checkbox2, Password, Switch, TwoButtons } from '../../components';
+import { Password, Switch, TwoButtons } from '../../components';
 import { setStorage } from '../../components/Loading';
 import { useTranslation } from '../../hooks';
-import Passwords2 from '../createAccountFullScreen/components/Passwords2';
+import Passwords2 from '../newAccount/createAccountFullScreen/components/Passwords2';
 import { STEPS } from './constants';
 import { isPasswordCorrect } from '.';
 
@@ -84,7 +84,7 @@ function Modify({ isPasswordError, newPassword, onBackClick, onPassChange, setIs
           </Typography>
         </Grid>
       }
-      <Grid container sx={{ bottom: '85px', display: 'block', position: 'absolute', px: '10%' }}>
+      <Grid container item sx={{ display: 'block', p: '10px' }}>
         <Password
           isFocused
           label={t('Current password')}
@@ -112,14 +112,17 @@ function Modify({ isPasswordError, newPassword, onBackClick, onPassChange, setIs
             onEnter={onUpdatePassword}
           />
         </Grid>
+        <TwoButtons
+          disabled={!currentPassword || !(newPassword || isRemovePasswordChecked)}
+          ml='0'
+          mt='20px'
+          onPrimaryClick={onSet}
+          onSecondaryClick={onBackClick}
+          primaryBtnText={t<string>('Set')}
+          secondaryBtnText={t<string>('Cancel')}
+          width='100%'
+        />
       </Grid>
-      <TwoButtons
-        disabled={!currentPassword || !(newPassword || isRemovePasswordChecked)}
-        onPrimaryClick={onSet}
-        onSecondaryClick={onBackClick}
-        primaryBtnText={t<string>('Set')}
-        secondaryBtnText={t<string>('Cancel')}
-      />
     </>
   );
 }
