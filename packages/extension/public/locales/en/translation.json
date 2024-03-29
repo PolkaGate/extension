@@ -1149,5 +1149,7 @@
   "This transaction will drop your balance below the Existential Deposit threshold, risking account reaping.": "",
   "Select chain": "",
   "Copy address": "",
-  "Each blockchain has its own address format. Choose one to view and copy.": ""
+  "Each blockchain has its own address format. Choose one to view and copy.": "",
+  "Stake Solo": "",
+  "Stake in Pool": ""
 }

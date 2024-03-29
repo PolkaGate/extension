@@ -42,7 +42,7 @@ type StepsType = typeof STEPS[keyof typeof STEPS];
 
 export default function SendFund (): React.ReactElement {
   useFullscreen();
-  const { address, assetId } = useParams<{ address: string }>();
+  const { address, assetId } = useParams<{ address: string, assetId: string }>();
   const chain = useChain(address);
   const ref = useRef(chain);
   const history = useHistory();

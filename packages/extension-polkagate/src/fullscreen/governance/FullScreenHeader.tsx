@@ -11,13 +11,13 @@ import { logoBlack } from '../../assets/logos';
 import { ActionContext } from '../../components';
 import { useApi, useChain, useGenesisHashOptions } from '../../hooks';
 import { FullScreenChainSwitch, FullScreenRemoteNode } from '../../partials';
-import { EXTENSION_NAME, GOVERNANCE_CHAINS, IDENTITY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
+import { EXTENSION_NAME, GOVERNANCE_CHAINS, IDENTITY_CHAINS, SOCIAL_RECOVERY_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import AddressDropdown from './components/AddressDropdown';
 import ThemeChanger from './partials/ThemeChanger';
 import { MAX_WIDTH } from './utils/consts';
 
 interface Props {
-  page?: 'governance' | 'manageIdentity' | 'send' | 'socialRecovery' | 'AccountDetails' | 'proxyManagement';
+  page?: 'governance' | 'manageIdentity' | 'send' | 'stake' | 'socialRecovery' | 'AccountDetails' | 'proxyManagement';
   noChainSwitch?: boolean;
   noAccountDropDown?: boolean;
   _otherComponents?: JSX.Element;
@@ -35,6 +35,8 @@ export function FullScreenHeader({ _otherComponents, noAccountDropDown = false, 
     switch (page) {
       case 'governance':
         return GOVERNANCE_CHAINS;
+      case 'stake':
+        return STAKING_CHAINS;
       case 'manageIdentity':
         return IDENTITY_CHAINS;
       case 'socialRecovery':

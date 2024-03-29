@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
+import { faCoins, faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
@@ -36,12 +36,15 @@ interface TaskButtonProps {
   secondaryIconType: 'popup' | 'page';
   noBorderButton?: boolean;
   disabled?: boolean;
+  show?: boolean;
 }
 
-export const TaskButton = ({ disabled, icon, noBorderButton = false, onClick, secondaryIconType, text }: TaskButtonProps) => {
+export const TaskButton = ({ disabled, icon, noBorderButton = false, onClick, secondaryIconType, show = true, text }: TaskButtonProps) => {
   const theme = useTheme();
 
   return (
+    <>
+      {show &&
     <>
       {/* eslint-disable-next-line react/jsx-no-bind */}
       <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', m: 'auto', minHeight: '45px', p: '5px 10px' }} width='90%'>
@@ -62,10 +65,12 @@ export const TaskButton = ({ disabled, icon, noBorderButton = false, onClick, se
       {!noBorderButton && <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto', width: '85%' }} />
       }
     </>
+      }
+    </>
   );
 };
 
-export default function CommonTasks({ address, api, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
+export default function CommonTasks ({ address, api, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
@@ -76,6 +81,10 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
   const crowdloanDisabled = useMemo(() => !CROWDLOANS_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const stakingIconColor = useMemo(() => stakingDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary, [stakingDisabled, theme.palette.action.disabledBackground, theme.palette.text.primary]);
+
+  const hasSoloStake = balance?.soloTotal && !balance.soloTotal.isZero();
+  const hasPoolStake = balance?.pooledBalance && !balance.pooledBalance.isZero();
+  const notStakedYet = !hasPoolStake && !hasSoloStake;
 
   const goToSend = useCallback(() => {
     address && genesisHash && onAction(`/send/${address}/${assetId}`);
@@ -88,6 +97,10 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
   const goToGovernance = useCallback(() => {
     address && genesisHash && !governanceDisabled && windowOpen(`/governance/${address}/referenda`).catch(console.error);
   }, [address, genesisHash, governanceDisabled]);
+
+  const goToStaking = useCallback(() => {
+    address & windowOpen(`/stake/${address}`).catch(console.error);
+  }, [address]);
 
   const goToSoloStaking = useCallback(() => {
     address && genesisHash && !stakingDisabled &&
@@ -157,30 +170,46 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
         <TaskButton
           disabled={stakingDisabled}
           icon={
+            <FontAwesomeIcon
+              color={stakingIconColor}
+              fontSize='34px'
+              icon={faCoins}
+            />
+          }
+          onClick={goToStaking}
+          secondaryIconType='page'
+          show={notStakedYet}
+          text={t<string>('Stake')}
+        />
+        <TaskButton
+          disabled={stakingDisabled}
+          icon={
             <Grid sx={{ position: 'relative' }}>
               <BoyIcon sx={{ color: stakingIconColor, fontSize: '35px' }} />
-              {balance?.soloTotal && !balance.soloTotal.isZero() &&
+              {hasSoloStake &&
                 <span style={{ backgroundColor: '#00FF00', border: `1px solid ${theme.palette.background.default}`, borderRadius: '50%', height: '10px', position: 'absolute', right: '6px', top: '33%', width: '10px' }} />
               }
             </Grid>
           }
           onClick={goToSoloStaking}
           secondaryIconType='page'
-          text={t<string>('Solo Stake')}
+          show={hasSoloStake}
+          text={t<string>('Stake Solo')}
         />
         <TaskButton
           disabled={stakingDisabled}
           icon={
             <Grid sx={{ position: 'relative' }}>
               <PoolStakingIcon color={stakingIconColor} height={35} width={35} />
-              {balance?.pooledBalance && !balance.pooledBalance.isZero() &&
+              {hasPoolStake &&
                 <span style={{ backgroundColor: '#00FF00', border: `1px solid ${theme.palette.background.default}`, borderRadius: '50%', height: '10px', position: 'absolute', right: '-1px', top: '33%', width: '10px' }} />
               }
             </Grid>
           }
           onClick={goToPoolStaking}
           secondaryIconType='page'
-          text={t<string>('Pool Stake')}
+          show={hasPoolStake}
+          text={t<string>('Stake in Pool')}
         />
         <TaskButton
           disabled={crowdloanDisabled}
