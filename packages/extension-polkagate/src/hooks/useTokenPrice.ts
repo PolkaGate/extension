@@ -38,24 +38,20 @@ export default function useTokenPrice (address: string, assetId?: number): Price
       : undefined;
 
   return useMemo(() => {
-    if (!chainName) {
+    if (!chainName || !pricesInCurrencies) {
       return DEFAULT_PRICE;
     }
 
-    const mayBePriceValue = pricesInCurrencies?.prices?.[
+    const mayBePriceValue = pricesInCurrencies.prices?.[
       _assetId !== undefined
-        ? mayBeAssetsOnMultiAssetChains[_assetId]?.priceId as string
+        ? mayBeAssetsOnMultiAssetChains?.[_assetId]?.priceId as string
         : EXTRA_PRICE_IDS[chainName?.toLocaleLowerCase()] || chainName?.toLocaleLowerCase()
-    ]?.value;
+    ]?.value || 0;
 
-    if (mayBePriceValue) {
-      return {
-        price: mayBePriceValue,
-        priceChainName: chainName?.toLocaleLowerCase(),
-        priceDate: pricesInCurrencies.date
-      };
-    }
-
-    return DEFAULT_PRICE;
-  }, [assetId, chainName, mayBeAssetsOnMultiAssetChains, pricesInCurrencies]);
+    return {
+      price: mayBePriceValue,
+      priceChainName: chainName?.toLocaleLowerCase(),
+      priceDate: pricesInCurrencies.date
+    };
+  }, [_assetId, chainName, mayBeAssetsOnMultiAssetChains, pricesInCurrencies]);
 }

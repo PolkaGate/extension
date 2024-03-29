@@ -85,3 +85,4 @@ export { default as useCurrency } from './useCurrency';
 export { default as usePriceIds } from './usePriceIds';
 export { default as useYouHave } from './useYouHave';
 export { default as useAccountIdOrName } from './useAccountIdOrName';
+export { default as useAccountAssetsOptions } from './useAccountAssetsOptions';
