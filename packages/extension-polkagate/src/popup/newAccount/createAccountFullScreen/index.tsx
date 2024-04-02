@@ -8,6 +8,8 @@ import '@vaadin/icons';
 import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
+import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { ActionContext, Checkbox2, InputWithLabel, TwoButtons } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
@@ -104,7 +106,7 @@ function CreateAccount (): React.ReactElement {
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>

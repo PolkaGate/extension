@@ -224,3 +224,5 @@ export const USD_CURRENCY = {
   currency: 'Dollar',
   sign: '$'
 };
+
+export const FULLSCREEN_WIDTH = '900px';

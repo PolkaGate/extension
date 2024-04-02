@@ -8,6 +8,7 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
+import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, ShowBalance, TwoButtons, Warning } from '../../components';
@@ -193,7 +194,7 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
 
   return (
     <>
-      <Grid container item sx={{ display: 'block', maxWidth: '840px', position: 'relative', px: '10%' }}>
+      <Grid container item sx={{ display: 'block', maxWidth: FULLSCREEN_WIDTH, position: 'relative', px: '10%' }}>
         <Typography fontSize='30px' fontWeight={700} pb={(subIdAccounts || subIdsLength > 0) ? '10px' : '45px'} pt='25px'>
           {t<string>('Set on-chain Sub-identity(ies)')}
         </Typography>

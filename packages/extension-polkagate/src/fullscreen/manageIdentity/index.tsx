@@ -20,6 +20,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { Warning } from '../../components';
 import { useApi, useChain, useChainName, useFormatted, useFullscreen, useTranslation } from '../../hooks';
+import { FULLSCREEN_WIDTH } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import PreviewIdentity from './Preview';
 import RequestJudgement from './RequestJudgement';
@@ -344,7 +345,7 @@ export default function ManageIdentity (): React.ReactElement {
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='manageIdentity' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         {step === STEPS.CHECK_SCREEN &&
           <IdentityCheckProgress />
         }

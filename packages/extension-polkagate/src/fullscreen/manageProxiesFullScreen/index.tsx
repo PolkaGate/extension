@@ -14,7 +14,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { Warning } from '../../components';
 import { useAccount, useApi, useChain, useFullscreen, useTranslation } from '../../hooks';
-import { PROXY_CHAINS } from '../../util/constants';
+import { FULLSCREEN_WIDTH, PROXY_CHAINS } from '../../util/constants';
 import { Proxy, ProxyItem } from '../../util/types';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import AddProxy from './AddProxy';
@@ -94,7 +94,7 @@ function ManageProxies (): React.ReactElement {
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='proxyManagement' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
           {step === STEPS.UNSUPPORTED &&
             <Grid alignItems='center' container direction='column' display='block' item>

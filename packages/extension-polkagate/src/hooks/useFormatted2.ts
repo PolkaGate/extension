@@ -9,6 +9,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { useChain } from './';
 
+/** We use chain here to fetch formatted address */
 export default function useFormatted2(address?: AccountId | string, formatted?: AccountId | string, chain: Chain | null | undefined): AccountId | string | undefined {
   const _chain = useChain(address, chain);
 

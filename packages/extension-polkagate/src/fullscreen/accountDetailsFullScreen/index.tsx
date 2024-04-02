@@ -27,6 +27,7 @@ import { EXTRA_PRICE_IDS } from '../../util/api/getPrices';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { amountToHuman, sanitizeChainName } from '../../util/utils';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
+import { openOrFocusTab } from './components/CommonTasks';
 import LockedInReferenda from './unlock/Review';
 import { AccountInformation, AccountSetting, ChangeAssets, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
 
@@ -168,8 +169,8 @@ export default function AccountDetails (): React.ReactElement {
   }, [account?.genesisHash, address, api, history]);
 
   const onBackClick = useCallback(() => {
-    history.push({ pathname: '/' });
-  }, [history]);
+    openOrFocusTab('/');
+  }, []);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>

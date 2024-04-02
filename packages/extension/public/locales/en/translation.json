@@ -1151,5 +1151,16 @@
   "Copy address": "",
   "Each blockchain has its own address format. Choose one to view and copy.": "",
   "Stake Solo": "",
-  "Stake in Pool": ""
+  "Stake in Pool": "",
+  "Staking Failed": "",
+  "Start your staking journey here! Stake your tokens to earn rewards while actively contributing to the security and integrity of the blockchain.": "",
+  "How much would you like to stake?": "",
+  "Select your preferred staking option": "",
+  "Easy (Automated processes for simplicity)": "",
+  "Advanced (Manual control for experienced users)": "",
+  "Please wait while we are fetching information!": "",
+  "Join a Pool": "",
+  "Create a Pool": "",
+  "Staking Options": "",
+  "Options are available to commence staking in Westend. Please select your preference, taking into consideration the minimum requirements for receiving rewards per era.": ""
 }

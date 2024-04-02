@@ -11,6 +11,7 @@ import { Collapse, Grid, IconButton, Typography, useTheme } from '@mui/material'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
+import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { objectSpread } from '@polkadot/util';
 
 import { ActionContext, Address, InputWithLabel, SelectChain, TextAreaWithLabel, TwoButtons, Warning } from '../../../components';
@@ -139,7 +140,7 @@ export default function ImportSeed (): React.ReactElement {
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>

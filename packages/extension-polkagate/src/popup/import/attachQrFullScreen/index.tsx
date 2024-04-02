@@ -8,6 +8,7 @@ import '@vaadin/icons';
 import { Button, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
+import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { QrScanAddress } from '@polkadot/react-qr';
 
 import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, TwoButtons, Warning } from '../../../components';
@@ -125,7 +126,7 @@ export default function AttachQrFullScreen (): React.ReactElement {
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>

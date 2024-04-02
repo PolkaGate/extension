@@ -749,9 +749,9 @@ export interface AccountsAssetsContextType {
 
 export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }
 export interface SoloSettings {
-  controllerId: AccountId | string | undefined,
+  controllerId?: AccountId | string | undefined,
   payee: Payee,
-  stashId: AccountId | string | undefined,
+  stashId?: AccountId | string | undefined,
 }
 
 export interface DropdownOption {

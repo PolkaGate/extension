@@ -23,7 +23,7 @@ interface Props {
   _otherComponents?: JSX.Element;
 }
 
-export function FullScreenHeader({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page }: Props): React.ReactElement {
+export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page }: Props): React.ReactElement {
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
   const allChains = useGenesisHashOptions();
 

@@ -12,6 +12,7 @@ import { useHistory } from 'react-router-dom';
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { AccountsStore } from '@polkadot/extension-base/stores';
+import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
@@ -78,7 +79,7 @@ export default function SendFund (): React.ReactElement {
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='send' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         {(step === STEPS.INDEX) &&
           <InputPage
             address={address}

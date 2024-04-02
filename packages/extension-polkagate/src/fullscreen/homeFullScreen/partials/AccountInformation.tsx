@@ -26,6 +26,7 @@ import { BalancesInfo } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import AccountIcons from '../../accountDetailsFullScreen/components/AccountIcons';
 import AOC from '../../accountDetailsFullScreen/components/AOC';
+import { openOrFocusTab } from '../../accountDetailsFullScreen/components/CommonTasks';
 import FullScreenAccountMenu from './FullScreenAccountMenu';
 
 interface AddressDetailsProps {
@@ -134,8 +135,8 @@ export default function AccountInformation ({ accountAssets, address, api, balan
   }, [onAction, address]);
 
   const goToDetails = useCallback((): void => {
-    address && onAction(`/accountfs/${address}/${selectedAsset?.assetId || '0'}`);
-  }, [address, onAction, selectedAsset?.assetId]);
+    address && openOrFocusTab(`/accountfs/${address}/${selectedAsset?.assetId || '0'}`);
+  }, [address, selectedAsset?.assetId]);
 
   return (
     <>
@@ -154,8 +155,9 @@ export default function AccountInformation ({ accountAssets, address, api, balan
               address={address}
               api={api}
               formatted={formatted}
-            />          </Grid>
-          <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'divider', px: '7px' }} xs={5.5}>
+            />
+          </Grid>
+          <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'divider', px: '7px' }} xs={5.6}>
             <Grid container item justifyContent='space-between'>
               <Identity
                 address={address}

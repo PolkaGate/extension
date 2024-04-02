@@ -9,6 +9,8 @@ import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
+import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { AccountContext, ActionContext, PButton } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
@@ -76,7 +78,7 @@ function Onboarding (): React.ReactElement {
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>

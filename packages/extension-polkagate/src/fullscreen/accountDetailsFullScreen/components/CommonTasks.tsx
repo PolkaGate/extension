@@ -8,15 +8,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { BalancesInfo } from 'extension-polkagate/src/util/types';
-import React, { useCallback, useContext, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
 
-import { ActionContext, PoolStakingIcon } from '../../../components';
+import { PoolStakingIcon } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
-import { windowOpen } from '../../../messaging';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../../util/constants';
 import { popupNumbers } from '..';
 
@@ -38,6 +37,33 @@ interface TaskButtonProps {
   disabled?: boolean;
   show?: boolean;
 }
+
+export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): void => {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    if (tabs[0] && tabs[0].url) {
+      const extensionUrl = tabs[0].url;
+      const extensionBaseUrl = extensionUrl.split('#')[0];
+
+      const tabUrl = `${extensionBaseUrl}#${relativeUrl}`;
+
+      chrome.tabs.query({}, function (allTabs) {
+        const existingTab = allTabs.find(function (tab) {
+          return tab.url === tabUrl;
+        });
+
+        closeCurrentTab && window.close();
+
+        if (existingTab && existingTab.id) {
+          chrome.tabs.update(existingTab.id, { active: true }).catch(console.error);
+        } else {
+          chrome.tabs.create({ url: tabUrl }).catch(console.error);
+        }
+      });
+    } else {
+      console.error('Unable to retrieve extension URL.');
+    }
+  });
+};
 
 export const TaskButton = ({ disabled, icon, noBorderButton = false, onClick, secondaryIconType, show = true, text }: TaskButtonProps) => {
   const theme = useTheme();
@@ -74,7 +100,6 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
-  const onAction = useContext(ActionContext);
 
   const governanceDisabled = useMemo(() => !GOVERNANCE_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const stakingDisabled = useMemo(() => !STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
@@ -87,19 +112,21 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
   const notStakedYet = !hasPoolStake && !hasSoloStake;
 
   const goToSend = useCallback(() => {
-    address && genesisHash && onAction(`/send/${address}/${assetId}`);
-  }, [address, assetId, genesisHash, onAction]);
+    address && genesisHash &&
+    openOrFocusTab(`/send/${address}/${assetId}`);
+  }, [address, assetId, genesisHash]);
 
   const goToReceive = useCallback(() => {
     address && genesisHash && setDisplayPopup(popupNumbers.RECEIVE);
   }, [address, genesisHash, setDisplayPopup]);
 
   const goToGovernance = useCallback(() => {
-    address && genesisHash && !governanceDisabled && windowOpen(`/governance/${address}/referenda`).catch(console.error);
+    address && genesisHash && !governanceDisabled &&
+    openOrFocusTab(`/governance/${address}/referenda`);
   }, [address, genesisHash, governanceDisabled]);
 
   const goToStaking = useCallback(() => {
-    address & windowOpen(`/stake/${address}`).catch(console.error);
+    address && openOrFocusTab(`/stake/${address}`);
   }, [address]);
 
   const goToSoloStaking = useCallback(() => {
@@ -118,8 +145,8 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
   }, [address, api, genesisHash, history, stakingDisabled]);
 
   const goToCrowdLoans = useCallback(() => {
-    address && genesisHash && !crowdloanDisabled && onAction(`/crowdloans/${address}/`);
-  }, [address, crowdloanDisabled, genesisHash, onAction]);
+    address && genesisHash && !crowdloanDisabled && openOrFocusTab(`/crowdloans/${address}/`);
+  }, [address, crowdloanDisabled, genesisHash]);
 
   const goToHistory = useCallback(() => {
     address && genesisHash && setDisplayPopup(popupNumbers.HISTORY);
@@ -128,7 +155,7 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} width='inherit'>
       <Typography fontSize='22px' fontWeight={700}>
-        {t<string>('Most common tasks')}
+        {t('Most common tasks')}
       </Typography>
       <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto 15px', width: '90%' }} />
       <Grid alignItems='center' container direction='column' display='block' item justifyContent='center'>
@@ -143,7 +170,7 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
           }
           onClick={goToSend}
           secondaryIconType='page'
-          text={t<string>('Send Fund')}
+          text={t('Send Fund')}
         />
         <TaskButton
           disabled={!genesisHash}
@@ -152,7 +179,7 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
           }
           onClick={goToReceive}
           secondaryIconType='popup'
-          text={t<string>('Receive Fund')}
+          text={t('Receive Fund')}
         />
         <TaskButton
           disabled={governanceDisabled}
@@ -165,7 +192,7 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
           }
           onClick={goToGovernance}
           secondaryIconType='page'
-          text={t<string>('Governance')}
+          text={t('Governance')}
         />
         <TaskButton
           disabled={stakingDisabled}
@@ -179,7 +206,7 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
           onClick={goToStaking}
           secondaryIconType='page'
           show={notStakedYet}
-          text={t<string>('Stake')}
+          text={t('Stake')}
         />
         <TaskButton
           disabled={stakingDisabled}
@@ -193,8 +220,8 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
           }
           onClick={goToSoloStaking}
           secondaryIconType='page'
-          show={hasSoloStake}
-          text={t<string>('Stake Solo')}
+          show={hasSoloStake || hasPoolStake}
+          text={t('Stake Solo')}
         />
         <TaskButton
           disabled={stakingDisabled}
@@ -208,8 +235,8 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
           }
           onClick={goToPoolStaking}
           secondaryIconType='page'
-          show={hasPoolStake}
-          text={t<string>('Stake in Pool')}
+          show={hasSoloStake || hasPoolStake}
+          text={t('Stake in Pool')}
         />
         <TaskButton
           disabled={crowdloanDisabled}
@@ -223,7 +250,7 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
           }
           onClick={goToCrowdLoans}
           secondaryIconType='page'
-          text={t<string>('Crowdloans')}
+          text={t('Crowdloans')}
         />
         <TaskButton
           disabled={!genesisHash}
@@ -237,7 +264,7 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
           noBorderButton
           onClick={goToHistory}
           secondaryIconType='popup'
-          text={t<string>('History')}
+          text={t('History')}
         />
       </Grid>
     </Grid>

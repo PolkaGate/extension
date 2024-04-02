@@ -28,24 +28,25 @@ interface Props {
   assetId: number | undefined;
   inputs: Inputs | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  setInputs: React.Dispatch<React.SetStateAction<Inputs>>
+  setInputs: React.Dispatch<React.SetStateAction<Inputs>>;
 }
 
 const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
 const INVALID_PARA_ID = Number.MAX_SAFE_INTEGER;
 
-export const Title = ({ padding = '30px 0px 20px', text }: { text: string, padding?: string }) => {
+export const Title = ({ icon, logo, padding = '30px 0px 30px', text }: { text: string, icon?: IconDefinition, logo?: any, padding?: string }) => {
   const theme = useTheme();
 
   return (
-    <Grid alignItems='baseline' container item p={padding} spacing={1}>
+    <Grid alignItems={logo ? 'center' : 'baseline'} container item p={padding} spacing={1}>
       <Grid item>
         <FontAwesomeIcon
           color={theme.palette.text.primary}
-          icon={faPaperPlane}
-          size='xl'
+          icon={icon}
+          size='2xl'
           style={{ paddingBottom: '5px' }}
         />
+        {logo}
       </Grid>
       <Grid item>
         <Typography fontSize='30px' fontWeight={700}>
@@ -252,7 +253,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
       params: isCrossChain
         ? crossChainParams
         : assetId !== undefined
-          ? ['currencies', 'tokens'].includes(onChainCall?.section || '') 
+          ? ['currencies', 'tokens'].includes(onChainCall?.section || '')
             ? [recipientAddress, balances.currencyId, amountAsBN] // this is for transferring on mutliasset chains
             : [assetId, recipientAddress, amountAsBN] // this is for transferring on asset hubs
           : transferType === 'All'
@@ -345,7 +346,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
 
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
-      <Title text={t<string>('Send Fund')} />
+      <Title icon={faPaperPlane} text={t<string>('Send Fund')} />
       <Typography fontSize='14px' fontWeight={400}>
         {t<string>('Input transfer amount and destination account. For cross-chain transfers, adjust recipient chain and consider associated fees.')}
       </Typography>
