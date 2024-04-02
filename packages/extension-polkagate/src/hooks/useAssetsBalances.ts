@@ -61,6 +61,7 @@ export const BN_MEMBERS = [
   'vestedClaimable',
   'vestingTotal',
   'freeBalance',
+  'frozenBalance',
   'frozenFee',
   'frozenMisc',
   'reservedBalance',
@@ -96,7 +97,7 @@ const BALANCE_VALIDITY_PERIOD = 2 * 1000 * 60;
 
 const isUpToDate = (date?: number): boolean | undefined => date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
 
-function allHexToBN (balances: string | undefined): BalancesDetails | {} {
+function allHexToBN (balances: string | undefined): BalancesDetails | unknown {
   if (!balances) {
     return {};
   }
@@ -105,7 +106,9 @@ function allHexToBN (balances: string | undefined): BalancesDetails | {} {
   const _balances = {} as BalancesDetails;
 
   Object.keys(parsedBalances).forEach((item) => {
-    _balances[item] = isHexToBn(parsedBalances[item] as string);
+    if (parsedBalances[item] !== 'undefined') {
+      _balances[item] = isHexToBn(parsedBalances[item] as string);
+    }
   });
 
   return _balances;
