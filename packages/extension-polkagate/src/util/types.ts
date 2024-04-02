@@ -616,6 +616,7 @@ export interface BalancesInfo extends DeriveBalancesAll {
   token: string;
   date: number;
   pooledBalance?: BN;
+  frozenBalance: BN;
   soloTotal?: BN;
   genesisHash: string;
   ED: BN;

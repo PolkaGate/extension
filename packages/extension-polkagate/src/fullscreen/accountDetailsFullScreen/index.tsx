@@ -227,7 +227,7 @@ export default function AccountDetails (): React.ReactElement {
                     />
                   }
                   <DisplayBalance
-                    amount={balancesToShow?.availableBalance}
+                    amount={getValue('Transferable', balancesToShow)}
                     decimal={balancesToShow?.decimal}
                     isDarkTheme={isDarkTheme}
                     onClick={goToSend}
