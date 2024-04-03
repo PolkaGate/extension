@@ -66,7 +66,7 @@ function OptionalCopyPopup ({ address, setAnchorEl }: Props): React.ReactElement
         {t('Each blockchain has its own address format. Choose one to view and copy.')}
       </Typography>
       <Select
-        defaultValue={chain?.genesisHash ?? ''}
+        defaultValue={chain?.genesisHash ?? 'Allow use on any chain'}
         isDisabled={!address}
         label={t('Select chain')}
         onChange={onChangeNetwork}
