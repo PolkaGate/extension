@@ -12,7 +12,7 @@ import { ThroughProxy } from '../../../partials';
 import Explorer from '../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../popup/history/partials/FailSuccessIcon';
 import { NameAddress, TxInfo } from '../../../util/types';
-import { pgBoxShadow } from '../../../util/utils';
+import { amountToHuman, pgBoxShadow } from '../../../util/utils';
 
 interface Props {
   txInfo: TxInfo;
@@ -84,7 +84,7 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
             {txInfo.failureText}
           </Typography>
         }
-        <Account info={txInfo.from} label={t<string>('From')} />
+        <Account info={txInfo.from} label={t('From')} />
         {txInfo.throughProxy &&
           <Grid container m='auto' maxWidth='92%'>
             <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
@@ -94,7 +94,7 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
         {txInfo.amount && txInfo.token &&
         <>
           <DisplayInfo
-            caption={t<string>('Amount:')}
+            caption={t('Amount:')}
             value={txInfo.amount && txInfo.token ? `${parseFloat(txInfo.amount)} ${txInfo.token}` : '00.00'}
           />
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: 'auto', width: '240px' }} />
@@ -103,8 +103,17 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
         {txInfo.poolName &&
         <>
           <DisplayInfo
-            caption={t<string>('Pool Name:')}
+            caption={t('Pool Name:')}
             value={txInfo.poolName}
+          />
+          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: 'auto', width: '240px' }} />
+        </>
+        }
+        {txInfo.fee && txInfo.token && txInfo.decimal &&
+        <>
+          <DisplayInfo
+            caption={t('Fee:')}
+            value={`${amountToHuman(txInfo.fee, txInfo.decimal)} ${txInfo.token}`}
           />
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: 'auto', width: '240px' }} />
         </>
@@ -112,7 +121,7 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
         {txInfo?.txHash &&
           <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
             <Grid container item width='fit-content'>
-              <Typography pr='5px'>{t<string>('Hash')}:</Typography>
+              <Typography pr='5px'>{t('Hash')}:</Typography>
             </Grid>
             <Grid container item width='fit-content'>
               <ShortAddress
@@ -136,7 +145,7 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
           _mt='15px'
           _onClick={handleDone}
           _width={100}
-          text={t<string>('Done')}
+          text={t('Done')}
         />
       </Grid>
     </Motion>

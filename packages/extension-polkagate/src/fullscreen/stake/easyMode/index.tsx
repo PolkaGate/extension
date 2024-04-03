@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Typography } from '@mui/material';
+import { Divider, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Balance } from '@polkadot/types/interfaces';
@@ -35,6 +35,7 @@ const SAFETY_MARGIN_FACTOR_FOR_MIN_TO_SOLO_STAKE = 1.2;
 
 export default function InputPage ({ address, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { api, chainName, decimal, formatted } = useInfo(address);
   const pool = usePool(address, POLKAGATE_POOL_IDS[chainName]);
 
@@ -74,7 +75,7 @@ export default function InputPage ({ address, balances, inputs, setInputs, setSt
             subAction: 'Stake'
           };
 
-          pool && setInputs({
+          setInputs({
             amount,
             call,
             estimatedFee,
@@ -259,7 +260,7 @@ export default function InputPage ({ address, balances, inputs, setInputs, setSt
             <Divider
               sx={{
                 bgcolor: 'transparent',
-                border: '0.5px solid rgba(99, 54, 77, 0.2) ',
+                border: `0.5px solid ${theme.palette.divider}`,
                 mt: '40px',
                 width: '100%'
               }}

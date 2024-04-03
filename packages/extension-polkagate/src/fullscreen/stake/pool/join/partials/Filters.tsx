@@ -7,6 +7,7 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
+import { getComparator } from '@polkadot/extension-polkagate/src/popup/staking/pool/stake/joinPool/partials/comparators';
 import { BN } from '@polkadot/util';
 
 import { Checkbox2, Input, Select, SlidePopUp, TwoButtons } from '../../../../../components';
@@ -14,7 +15,6 @@ import { useTranslation } from '../../../../../hooks';
 import { DEFAULT_POOL_FILTERS } from '../../../../../util/constants';
 import { PoolFilter, PoolInfo, StakingConsts } from '../../../../../util/types';
 import { amountToMachine } from '../../../../../util/utils';
-import { getComparator } from './comparators';
 
 interface Props {
   pools: PoolInfo[];

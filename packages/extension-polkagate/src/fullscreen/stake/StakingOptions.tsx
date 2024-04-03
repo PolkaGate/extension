@@ -3,16 +3,14 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faCoins } from '@fortawesome/free-solid-svg-icons';
 import { Boy as BoyIcon } from '@mui/icons-material';
 import { Collapse, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { PButton, PoolStakingIcon } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { useInfo, useMinToReceiveRewardsInSolo2, usePoolConsts } from '../../hooks';
 import { BalancesInfo } from '../../util/types';
-import { Title } from '../sendFund/InputPage';
 import StakingOptionFS from './partials/StakingOptionFS';
 import PoolOptions from './pool/PoolOptions';
 import { Inputs, STEPS } from '.';

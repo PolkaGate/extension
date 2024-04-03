@@ -13,7 +13,7 @@ export default function useCurrentEraIndex(address: AccountId | string| undefine
   const api = useApi(address);
 
   useEffect(() => {
-    api && api.query.staking.currentEra().then((i) => {
+    api && api.query.staking && api.query.staking.currentEra().then((i) => {
       setIndex(Number(i?.toString() || '0'));
     }).catch(console.error);
   }, [api]);

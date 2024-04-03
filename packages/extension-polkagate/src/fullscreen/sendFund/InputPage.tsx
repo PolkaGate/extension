@@ -38,7 +38,7 @@ export const Title = ({ icon, logo, padding = '30px 0px 30px', text }: { text: s
   const theme = useTheme();
 
   return (
-    <Grid alignItems={logo ? 'center' : 'baseline'} container item p={padding} spacing={1}>
+    <Grid alignItems={logo ? 'center' : 'baseline'} container height='113px' item p={padding} spacing={1}>
       <Grid item>
         <FontAwesomeIcon
           color={theme.palette.text.primary}

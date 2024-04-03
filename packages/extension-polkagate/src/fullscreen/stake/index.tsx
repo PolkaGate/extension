@@ -6,6 +6,7 @@
 import type { AnyTuple } from '@polkadot/types/types';
 
 import { faCoins } from '@fortawesome/free-solid-svg-icons';
+import { Boy as BoyIcon } from '@mui/icons-material';
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router';
@@ -21,10 +22,11 @@ import { FullScreenHeader } from '../governance/FullScreenHeader';
 import WaitScreen from '../governance/partials/WaitScreen';
 import { Title } from '../sendFund/InputPage';
 import Confirmation from './easyMode/Confirmation';
-import InputPage from './easyMode/InputPage';
 import Review from './easyMode/Review';
 import CreatePool from './pool/create';
 import JoinPool from './pool/join';
+import InputPage from './easyMode';
+import SoloStake from './solo';
 import StakingOptions from './StakingOptions';
 
 export const STEPS = {
@@ -56,10 +58,9 @@ export interface Inputs {
 type StepsType = typeof STEPS[keyof typeof STEPS];
 
 function Stake (): React.ReactElement {
+  useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-
-  useFullscreen();
   const { address } = useParams<{ address: string }>();
 
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -79,6 +80,8 @@ function Stake (): React.ReactElement {
         return t('Staking');
       case STEPS.STAKING_OPTIONS:
         return t('Staking Options');
+      case STEPS.STAKE_SOLO:
+        return t('Solo Staking');
       case STEPS.JOIN_POOL:
         return t('Join Pool');
       case STEPS.CREATE_POOL:
@@ -102,7 +105,10 @@ function Stake (): React.ReactElement {
       <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '900px', overflow: 'scroll', px: '6%' }}>
         <Title
           icon={[STEPS.INDEX, STEPS.EASY_REVIEW, STEPS.STAKING_OPTIONS].includes(step) && faCoins}
-          logo={ [STEPS.JOIN_POOL, STEPS.JOIN_REVIEW, STEPS.CREATE_POOL, STEPS.CREATE_REVIEW].includes(step) && <PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />}
+          logo={ [STEPS.JOIN_POOL, STEPS.JOIN_REVIEW, STEPS.CREATE_POOL, STEPS.CREATE_REVIEW].includes(step)
+            ? <PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />
+            : [STEPS.STAKE_SOLO].includes(step) &&
+             <BoyIcon sx={{ color: 'text.primary', fontSize: '62px' }} />}
           text={getHeaderText(txInfo?.success)}
         />
         {step === STEPS.INDEX &&
@@ -123,17 +129,23 @@ function Stake (): React.ReactElement {
            setStep={setStep}
          />
         }
-        {[STEPS.JOIN_POOL].includes(step) &&
+        {STEPS.JOIN_POOL === step &&
          <JoinPool
            setInputs={setInputs}
            setStep={setStep}
          />
         }
-        {[STEPS.CREATE_POOL].includes(step) &&
+        {STEPS.CREATE_POOL === step &&
          <CreatePool
-           setStep={setStep}
            setInputs={setInputs}
-           step={step}
+           setStep={setStep}
+         />
+        }
+        {step === STEPS.STAKE_SOLO &&
+         <SoloStake
+           inputs={inputs}
+           setInputs={setInputs}
+           setStep={setStep}
          />
         }
         {(inputs && [STEPS.EASY_REVIEW, STEPS.JOIN_REVIEW, STEPS.CREATE_REVIEW, STEPS.PROXY].includes(step)) &&

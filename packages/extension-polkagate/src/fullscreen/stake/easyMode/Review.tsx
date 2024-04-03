@@ -36,7 +36,6 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
   const { api, chain } = useInfo(address);
   const theme = useTheme();
 
-  console.log('inputs:', inputs);
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [showSelectedValidators, setShowSelectedValidators] = useState<boolean>(false);

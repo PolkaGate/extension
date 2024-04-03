@@ -13,7 +13,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
-import { InputFilter, ShowBalance, ShowValue } from '../../../../../components';
+import { InputFilter, ShowBalance } from '../../../../../components';
 import { useChain, useDecimal, useStakingConsts, useToken, useTranslation } from '../../../../../hooks';
 import PoolMoreInfo from '../../../../../popup/staking/partial/PoolMoreInfo';
 import { DEFAULT_POOL_FILTERS } from '../../../../../util/constants';
