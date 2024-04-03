@@ -199,20 +199,7 @@ export default function InputPage ({ address, balances, inputs, setInputs, setSt
       <Typography fontSize='16px' fontWeight={500} pb='15px' width='100%'>
         {t('Start your staking journey here! Stake your tokens to earn rewards while actively contributing to the security and integrity of the blockchain.')}
       </Typography>
-      <Grid alignItems='center' container item justifyContent='flex-start' pt='40px'>
-        <Grid item md={6.9} xs={12}>
-          <Typography fontSize='16px'>
-            {t('Available balance')}
-          </Typography>
-          <Grid alignItems='center' container item sx={{ border: 1, borderColor: 'rgba(75, 75, 75, 0.3)', fontSize: '18px', height: '48px', p: '0 5px' }}>
-            <ShowBalance balance={balances?.availableBalance} decimal={balances?.decimal} skeletonWidth={120} token={balances?.token} />
-          </Grid>
-        </Grid>
-        <Grid item md={6.9} mt='40px' xs={12}>
-          <Typography fontSize='16px'>
-            {t('How much would you like to stake?')}
-          </Typography>
-        </Grid>
+      <Grid alignItems='center' container item justifyContent='flex-start' pt='20px'>
         <AmountWithOptions
           label={t('Amount') }
           onChangeAmount={onChangeAmount}
@@ -228,6 +215,24 @@ export default function InputPage ({ address, balances, inputs, setInputs, setSt
           textSpace='15px'
           value={amount || inputs?.amount}
         />
+        <Grid container item pb='10px'>
+          <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '58.25%' }}>
+            <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
+              {t('Available Balance')}
+            </Grid>
+            <Grid item sx={{ fontSize: '14px', fontWeight: 500 }}>
+              <ShowBalance balance={balances?.availableBalance} decimal={decimal} decimalPoint={2} token={balances?.token} />
+            </Grid>
+          </Grid>
+          <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '58.25%' }}>
+            <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
+              {t('Minimum to earn rewards')}
+            </Grid>
+            <Grid item sx={{ fontSize: '14px', fontWeight: 500 }}>
+              <ShowBalance balance={poolConsts?.minJoinBond} decimal={decimal} decimalPoint={2} token={balances?.token} />
+            </Grid>
+          </Grid>
+        </Grid>
         <Grid container item justifyContent='flex-start' mt='30px' xs={12}>
           <FormControl>
             <FormLabel sx={{ '&.Mui-focused': { color: 'text.primary' }, color: 'text.primary' }}>

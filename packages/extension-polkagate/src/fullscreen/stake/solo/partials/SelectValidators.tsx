@@ -14,12 +14,11 @@ import { FilterAltOutlined as FilterIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { getComparator } from '@polkadot/extension-polkagate/src/popup/staking/partial/comparators';
 import { BN } from '@polkadot/util';
 
-import { Checkbox2, Infotip, InputFilter, Progress, Waiting } from '../../../../components';
-import { useInfo, useTranslation, useValidators, useValidatorsIdentities } from '../../../../hooks';
-import { DEFAULT_FILTERS, SYSTEM_SUGGESTION_TEXT, TEST_NETS } from '../../../../util/constants';
+import { Checkbox2, Infotip, InputFilter, Waiting } from '../../../../components';
+import { useInfo, useTranslation, useValidators, useValidatorsIdentities,useValidatorSuggestion } from '../../../../hooks';
+import { DEFAULT_FILTERS, SYSTEM_SUGGESTION_TEXT } from '../../../../util/constants';
 import { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../../util/types';
 import Filters from './Filters';
 import ValidatorsTable from './ValidatorsTable';
@@ -57,9 +56,11 @@ const TableSubInfoWithClear = ({ maxSelectable, onClearSelection, selectedCount 
 export default function SelectValidators ({ address, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, staked, stakingConsts, stashId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { chain, decimal, genesisHash, token } = useInfo(address);
+  const { token } = useInfo(address);
 
   const allValidatorsInfo = useValidators(address);
+  const selectedBestValidators = useValidatorSuggestion(address);
+
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
   const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => v.validatorPrefs.blocked === false || v.validatorPrefs.blocked?.isFalse), [allValidatorsInfo]);
@@ -147,21 +148,6 @@ export default function SelectValidators ({ address, newSelectedValidators, nomi
     });
   }, [allValidatorsIdentities]);
 
-  // TODO: use useValidatorSuggestion hook instead
-  const selectBestValidators = useCallback((allValidators: ValidatorInfo[], stakingConsts: StakingConsts): ValidatorInfo[] => {
-    const filtered1 = allValidators.filter((v) =>
-      Number(v.validatorPrefs.commission) !== 0 && // filter 0 commission validators, to exclude new and chilled validators
-      (Number(v.validatorPrefs.commission) / (10 ** 7)) < DEFAULT_FILTERS.maxCommission.value && // filter high commission validators
-      v.exposure.others.length && v.exposure.others.length < stakingConsts?.maxNominatorRewardedPerValidator// filter oversubscribed
-    );
-
-    const filtered2 = onLimitValidatorsPerOperator(filtered1, DEFAULT_FILTERS.limitOfValidatorsPerOperator.value);
-
-    const filtered3 = filtered2.filter((v) => TEST_NETS.includes(genesisHash) || v?.identity?.display); // filter has no identity
-
-    return filtered3.sort(getComparator('Commissions')).slice(0, stakingConsts?.maxNominations);
-  }, [genesisHash, onLimitValidatorsPerOperator]);
-
   const onFilters = useCallback(() => {
     if (systemSuggestion) {
       // remove system suggestions when click on filters
@@ -176,12 +162,11 @@ export default function SelectValidators ({ address, newSelectedValidators, nomi
     setSearchKeyword('');
     setSystemSuggestion(checked);
     checked
-      ? allValidators && stakingConsts && setNewSelectedValidators([...selectBestValidators(allValidators, stakingConsts)])
+      ? selectedBestValidators?.length && setNewSelectedValidators([...selectedBestValidators])
       : setNewSelectedValidators([]);
-  }, [allValidators, selectBestValidators, setNewSelectedValidators, stakingConsts]);
+  }, [selectedBestValidators, setNewSelectedValidators]);
 
   const onSearch = useCallback((filter: string) => {
-    // onSystemSuggestion(undefined, false);// to reset system suggestion on search
     setSystemSuggestion(false);
 
     setSearchKeyword(filter);

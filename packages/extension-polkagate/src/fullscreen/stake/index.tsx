@@ -71,7 +71,7 @@ function Stake (): React.ReactElement {
 
   const closeConfirmation = useCallback(() => {
     setRefresh(true);
-    openOrFocusTab(`/accountfs/${address}/0`);
+    openOrFocusTab(`/accountfs/${address}/0`, true);
   }, [address, setRefresh]);
 
   const getHeaderText = (isSuccess?: boolean) => {

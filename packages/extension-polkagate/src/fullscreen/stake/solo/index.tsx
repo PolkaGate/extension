@@ -35,7 +35,6 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
 
   const stakingConsts = useStakingConsts(address);
   const minToReceiveRewardsInSolo = useMinToReceiveRewardsInSolo2(address);
-  const autoSelectedValidators = useValidatorSuggestion(address);
 
   const [amount, setAmount] = useState<string>(inputs?.amount);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
@@ -43,18 +42,18 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
 
   const [newSelectedValidators, setNewSelectedValidators] = useState<ValidatorInfo[]>([]);
 
-  const buttonDisable = !amount || !newSelectedValidators;
+  const buttonDisable = !amount || !newSelectedValidators?.length;
   const isBusy = (!inputs?.estimatedFee || !inputs?.amount) && isNextClicked;
 
   useEffect(() => {
-    if (amount && api && autoSelectedValidators) {
+    if (amount && api && newSelectedValidators) {
       const amountAsBN = amountToMachine(amount, decimal);
 
       const bonded = api.tx.staking.bond;
       const bondParams = [amountAsBN, 'Staked'];
 
       const nominated = api.tx.staking.nominate;
-      const ids = autoSelectedValidators.map((v) => v.accountId);
+      const ids = newSelectedValidators.map((v) => v.accountId);
 
       const call = api.tx.utility.batchAll;
       const params = [[bonded(...bondParams), nominated(ids)]];
@@ -72,12 +71,12 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
         estimatedFee,
         extraInfo,
         params,
-        selectedValidators: autoSelectedValidators
+        selectedValidators: newSelectedValidators
       });
     } else {
       console.log('cant stake!');
     }
-  }, [amount, api, autoSelectedValidators, decimal, estimatedFee, minToReceiveRewardsInSolo, setInputs]);
+  }, [amount, api, newSelectedValidators, decimal, estimatedFee, minToReceiveRewardsInSolo, setInputs]);
 
   useEffect(() => {
     if (inputs?.call && inputs?.params && formatted) {
