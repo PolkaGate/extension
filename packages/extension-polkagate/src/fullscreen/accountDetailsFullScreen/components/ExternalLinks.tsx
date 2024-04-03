@@ -14,14 +14,22 @@ interface Props {
   address: string | undefined;
 }
 
-export default function ExternalLinks ({ address }: Props): React.ReactElement {
+// There are two Bifrost chains, but we only support Polkadot-Bifrost
+const SUBSQUARE_SUPPORTED_CHAINS = ['Polkadot', 'Polkadot Collectives', 'Acala', 'Bifrost', 'Centrifuge', 'Darwinia2', 'HydraDX', 'Interlay', 'Litentry', 'Phala', 'Zeitgeist', 'Kusama', 'Altair', 'Basilisk', 'Litmus', 'Karura', 'Khala', 'Turing', 'Kintsugi', 'Curst', 'Rococo'];
+
+export default function ExternalLinks({ address }: Props): React.ReactElement {
   const theme = useTheme();
   const chainName = useChainName(address);
   const formatted = useFormatted(address);
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
-  const subIDURL = useMemo(() => `https://sub.id/${formatted}`, [formatted]);
+  const subIDURL = useMemo(() => `https://sub.id/${formatted ?? address ?? ''}`, [address, formatted]);
   const subscanURL = useMemo(() => {
+    // Subscan does not support Pendulum
+    if (chainName === 'Pendulum') {
+      return undefined;
+    }
+
     if (chainName === 'WestendAssetHub') {
       return `https://westmint.statescan.io/#/accounts/${String(formatted)}`;
     }
@@ -33,8 +41,14 @@ export default function ExternalLinks ({ address }: Props): React.ReactElement {
     return `https://${chainName}.subscan.io/account/${String(formatted)}`;
   }, [chainName, formatted]);
   // TODO: subsquare does not support all networks
-  const subsquareURL = useMemo(() => `https://${chainName}.subsquare.io/user/${formatted}/votes`, [formatted, chainName]);
-  const stateScanURL = useMemo(() => `https://${chainName}.statescan.io/#/accounts/${formatted}`, [formatted, chainName]);
+  const subsquareURL = useMemo(() => {
+    if (chainName && SUBSQUARE_SUPPORTED_CHAINS.includes(chainName)) {
+      return `https://${chainName}.subsquare.io/user/${formatted ?? address ?? ''}`;
+    }
+
+    return undefined;
+  }, [chainName, formatted, address]);
+  const stateScanURL = useMemo(() => `https://${chainName}.statescan.io/#/accounts/${formatted ?? address}`, [address, formatted, chainName]);
 
   const LinkButton = ({ linkName, linkURL }: { linkName: string, linkURL: string }) => {
     const logo = getLogo(linkName);
@@ -60,14 +74,16 @@ export default function ExternalLinks ({ address }: Props): React.ReactElement {
         linkName='subid'
         linkURL={subIDURL}
       />
-      <LinkButton
-        linkName='subscan'
-        linkURL={subscanURL}
-      />
-      <LinkButton
-        linkName='subsquare'
-        linkURL={subsquareURL}
-      />
+      {subscanURL &&
+        <LinkButton
+          linkName='subscan'
+          linkURL={subscanURL}
+        />}
+      {subsquareURL &&
+        <LinkButton
+          linkName='subsquare'
+          linkURL={subsquareURL}
+        />}
       {['Kusama', 'Polkadot'].includes(chainName ?? '') &&
         <LinkButton
           linkName='statescan'
