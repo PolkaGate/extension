@@ -9,7 +9,7 @@ import { faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon, Boy as BoyIcon } from '@mui/icons-material';
 import { Box, ClickAwayListener, Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -48,6 +48,8 @@ export default function QuickActionFullScreen ({ address, assetId, containerRef,
 
   const [showHistory, setShowHistory] = useState<boolean>();
 
+  const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
+
   const handleOpen = useCallback(() => setQuickActionOpen(String(address)), [address, setQuickActionOpen]);
   const handleClose = useCallback(() => quickActionOpen === address && setQuickActionOpen(undefined), [address, quickActionOpen, setQuickActionOpen]);
 
@@ -76,11 +78,13 @@ export default function QuickActionFullScreen ({ address, assetId, containerRef,
       });
   }, [account?.genesisHash, address, history]);
 
-  const goToGovernanceOrHistory = useCallback(() => {
-    GOVERNANCE_CHAINS.includes(account?.genesisHash ?? '')
-      ? windowOpen(`/governance/${address}/referenda`).catch(console.error)
-      : setShowHistory(true);
+  const goToGovernance = useCallback(() => {
+    supportGov && windowOpen(`/governance/${address}/referenda`).catch(console.error);
   }, [account?.genesisHash, address]);
+
+  const goToHistory = useCallback(() => {
+    setShowHistory(true);
+  }, []);
 
   const nullF = useCallback(() => null, []);
 
@@ -166,6 +170,22 @@ export default function QuickActionFullScreen ({ address, assetId, containerRef,
         title={t('Crowdloans')}
       />
       <QuickActionButton
+        disabled={!account?.genesisHash || !supportGov}
+        divider
+        icon={
+          <FontAwesomeIcon
+            color={
+              supportGov
+                ? theme.palette.text.primary
+                : theme.palette.action.disabledBackground
+            }
+            icon={faVoteYea}
+            style={{ height: ACTION_ICON_SIZE }}
+          />}
+        onClick={goToGovernance}
+        title={t('Governance')}
+      />
+      <QuickActionButton
         disabled={!account?.genesisHash}
         icon={
           <FontAwesomeIcon
@@ -174,11 +194,11 @@ export default function QuickActionFullScreen ({ address, assetId, containerRef,
                 ? theme.palette.text.primary
                 : theme.palette.action.disabledBackground
             }
-            icon={GOVERNANCE_CHAINS.includes(account?.genesisHash ?? '') ? faVoteYea : faHistory}
+            icon={faHistory}
             style={{ height: ACTION_ICON_SIZE }}
           />}
-        onClick={goToGovernanceOrHistory}
-        title={t<string>(GOVERNANCE_CHAINS.includes(account?.genesisHash ?? '') ? 'Governance' : 'History')}
+        onClick={goToHistory}
+        title={t('History')}
       />
     </Grid>
   );
