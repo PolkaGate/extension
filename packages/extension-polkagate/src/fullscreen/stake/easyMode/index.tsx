@@ -213,7 +213,7 @@ export default function InputPage ({ address, balances, inputs, setInputs, setSt
             width: '73%'
           }}
           textSpace='15px'
-          value={amount || inputs?.amount}
+          value={amount}
         />
         <Grid container item pb='10px'>
           <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '58.25%' }}>

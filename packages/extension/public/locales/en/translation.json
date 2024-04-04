@@ -1162,5 +1162,12 @@
   "Join a Pool": "",
   "Create a Pool": "",
   "Staking Options": "",
-  "Options are available to commence staking in Westend. Please select your preference, taking into consideration the minimum requirements for receiving rewards per era.": ""
+  "Options are available to commence staking in Westend. Please select your preference, taking into consideration the minimum requirements for receiving rewards per era.": "",
+  "Pool Name:": "",
+  "Available Balance": "",
+  "Minimum to earn rewards": "",
+  "Review, Join Pool": "",
+  "Review, Create Pool": "",
+  "Stake your tokens to support your selected validators. You earn a share of rewards received by your active validator(s) in each era.": "",
+  "This represents a dynamically adjusted minimum threshold to qualify for rewards per era. It may fluctuate based on the total stake of other stakers and the number of stakers present.": ""
 }

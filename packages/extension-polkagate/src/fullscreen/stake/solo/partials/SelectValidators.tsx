@@ -29,7 +29,6 @@ interface Props {
   stashId: AccountId;
   stakingConsts: StakingConsts | null | undefined;
   staked: BN;
-  title: string;
   newSelectedValidators: ValidatorInfo[];
   setNewSelectedValidators: React.Dispatch<React.SetStateAction<ValidatorInfo[]>>;
 }

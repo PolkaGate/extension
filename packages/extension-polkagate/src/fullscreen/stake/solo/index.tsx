@@ -13,7 +13,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Infotip2, ShowBalance, TwoButtons } from '../../../components';
 import { useTranslation } from '../../../components/translate';
-import { useBalances, useInfo, useMinToReceiveRewardsInSolo2, useStakingAccount, useStakingConsts, useValidatorSuggestion } from '../../../hooks';
+import { useBalances, useInfo, useMinToReceiveRewardsInSolo2, useStakingAccount, useStakingConsts } from '../../../hooks';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
 import { Inputs, STEPS } from '..';
 import SelectValidators from './partials/SelectValidators';
@@ -42,10 +42,7 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
 
   const [newSelectedValidators, setNewSelectedValidators] = useState<ValidatorInfo[]>([]);
 
-  const buttonDisable = !amount || !newSelectedValidators?.length;
-  const isBusy = (!inputs?.estimatedFee || !inputs?.amount) && isNextClicked;
-
-  useEffect(() => {
+  const { call, params } = useMemo(() => {
     if (amount && api && newSelectedValidators) {
       const amountAsBN = amountToMachine(amount, decimal);
 
@@ -54,10 +51,20 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
 
       const nominated = api.tx.staking.nominate;
       const ids = newSelectedValidators.map((v) => v.accountId);
-
       const call = api.tx.utility.batchAll;
       const params = [[bonded(...bondParams), nominated(ids)]];
 
+      return { call, params };
+    }
+
+    return { call: undefined, params: undefined };
+  }, [amount, api, decimal, newSelectedValidators]);
+
+  const buttonDisable = useMemo(() => !amount || !newSelectedValidators?.length, [amount, newSelectedValidators?.length]);
+  const isBusy = useMemo(() => (!inputs?.estimatedFee || !inputs?.amount) && isNextClicked, [inputs?.amount, inputs?.estimatedFee, isNextClicked]);
+
+  useEffect(() => {
+    if (call && params && newSelectedValidators) {
       const extraInfo = {
         action: 'Solo Staking',
         amount,
@@ -76,17 +83,16 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
     } else {
       console.log('cant stake!');
     }
-  }, [amount, api, newSelectedValidators, decimal, estimatedFee, minToReceiveRewardsInSolo, setInputs]);
+  }, [amount, call, estimatedFee, newSelectedValidators, params, setInputs]);
 
   useEffect(() => {
-    if (inputs?.call && inputs?.params && formatted) {
-      inputs.call(...inputs.params)
+    if (call && params && formatted) {
+      call(...params)
         .paymentInfo(formatted)
         .then((i) => setEstimatedFee(i?.partialFee))
         .catch(console.error);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formatted, inputs?.params, inputs?.call]);
+  }, [formatted, params, call]);
 
   const onChangeAmount = useCallback((value: string) => {
     if (!balances) {
@@ -170,7 +176,7 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
             width: '73%'
           }}
           textSpace='15px'
-          value={amount || inputs?.amount}
+          value={amount}
         />
         <Grid container item pb='10px'>
           <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '58.25%' }}>
@@ -203,7 +209,6 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
             staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
             stakingConsts={stakingConsts}
             stashId={formatted}
-            title={t('Select Validators')}
           />
           <Grid container item sx={{ '> div': { m: 0, width: '64%' }, justifyContent: 'flex-end', mt: '5px' }}>
             <TwoButtons

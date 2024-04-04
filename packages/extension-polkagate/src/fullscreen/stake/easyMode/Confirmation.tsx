@@ -48,7 +48,6 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
   const theme = useTheme();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
-  const fee = txInfo.api.createType('Balance', txInfo.fee);
 
   const DisplayInfo = ({ caption, showDivider = true, value }: DisplayInfoProps) => {
     return (
