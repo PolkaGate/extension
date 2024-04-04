@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Balance } from '@polkadot/types/interfaces';
@@ -14,8 +14,8 @@ import { useTranslation } from '../../../components/translate';
 import { useInfo, useMinToReceiveRewardsInSolo2, usePool, usePoolConsts, useStakingConsts, useValidatorSuggestion } from '../../../hooks';
 import { BalancesInfo } from '../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
-import { openOrFocusTab } from '../../accountDetailsFullScreen/components/CommonTasks';
-import { Inputs, STEPS } from '..';
+import { Inputs } from '../Entry';
+import { STEPS } from '..';
 
 interface Props {
   address: string
@@ -33,7 +33,7 @@ const POLKAGATE_POOL_IDS = {
 
 const SAFETY_MARGIN_FACTOR_FOR_MIN_TO_SOLO_STAKE = 1.2;
 
-export default function InputPage ({ address, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function EasyMode ({ address, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chainName, decimal, formatted } = useInfo(address);
@@ -45,7 +45,6 @@ export default function InputPage ({ address, balances, inputs, setInputs, setSt
   const autoSelectedValidators = useValidatorSuggestion(address);
 
   const [amount, setAmount] = useState<string>(inputs?.amount);
-  const [stakingMode, setStakingMode] = useState<'easy' | 'advanced'>('easy');
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [isNextClicked, setNextIsClicked] = useState<boolean>();
 
@@ -53,7 +52,7 @@ export default function InputPage ({ address, balances, inputs, setInputs, setSt
   const isBusy = (!inputs?.estimatedFee || !inputs?.amount) && isNextClicked;
 
   useEffect(() => {
-    if (stakingMode === 'easy' && amount && minToReceiveRewardsInSolo && poolConsts) {
+    if (amount && minToReceiveRewardsInSolo && poolConsts) {
       const amountAsBN = amountToMachine(amount, decimal);
 
       if (amountAsBN.gt(minToReceiveRewardsInSolo.muln(SAFETY_MARGIN_FACTOR_FOR_MIN_TO_SOLO_STAKE))) {
@@ -80,6 +79,7 @@ export default function InputPage ({ address, balances, inputs, setInputs, setSt
             call,
             estimatedFee,
             extraInfo,
+            mode: STEPS.EASY_STAKING,
             params,
             selectedValidators: autoSelectedValidators
           });
@@ -103,6 +103,7 @@ export default function InputPage ({ address, balances, inputs, setInputs, setSt
             call,
             estimatedFee,
             extraInfo,
+            mode: STEPS.EASY_STAKING,
             params,
             pool
           });
@@ -111,7 +112,7 @@ export default function InputPage ({ address, balances, inputs, setInputs, setSt
         console.log('cant stake!');
       }
     }
-  }, [amount, api, autoSelectedValidators, decimal, estimatedFee, minToReceiveRewardsInSolo, pool, poolConsts, setInputs, stakingMode]);
+  }, [amount, api, autoSelectedValidators, decimal, estimatedFee, minToReceiveRewardsInSolo, pool, poolConsts, setInputs]);
 
   useEffect(() => {
     if (inputs?.call && inputs?.params && formatted) {
@@ -162,10 +163,6 @@ export default function InputPage ({ address, balances, inputs, setInputs, setSt
     setAmount(amountToHuman(thresholds[maxMin].toString(), decimal));
   }, [thresholds, decimal, setInputs, inputs]);
 
-  const onSelectionMethodChange = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
-    setStakingMode(event.target.value);
-  }, []);
-
   const onMaxClick = useCallback(
     () => onThresholdAmount('max')
     , [onThresholdAmount]);
@@ -175,20 +172,16 @@ export default function InputPage ({ address, balances, inputs, setInputs, setSt
     , [onThresholdAmount]);
 
   const onNextClick = useCallback(() => {
-    if (stakingMode === 'easy') {
-      setNextIsClicked(true);
-    } else {
-      setStep(STEPS.STAKING_OPTIONS);
-    }
-  }, [setStep, stakingMode]);
+    setNextIsClicked(true);
+  }, []);
 
   const goToReview = useCallback(
     () => setStep(STEPS.EASY_REVIEW)
     , [setStep]);
 
   const backToDetail = useCallback(
-    () => address && openOrFocusTab(`/accountfs/${address}/0`, true)
-    , [address]);
+    () => address && setStep(STEPS.INDEX)
+    , [address, setStep]);
 
   useEffect(() => {
     isNextClicked && !isBusy && goToReview();
@@ -201,7 +194,8 @@ export default function InputPage ({ address, balances, inputs, setInputs, setSt
       </Typography>
       <Grid alignItems='center' container item justifyContent='flex-start' pt='20px'>
         <AmountWithOptions
-          label={t('Amount') }
+          label={t('How much are you looking to stake?') }
+          labelFontSize='16px'
           onChangeAmount={onChangeAmount}
           onPrimary={onMaxClick}
           onSecondary={onMinClick}
@@ -217,50 +211,23 @@ export default function InputPage ({ address, balances, inputs, setInputs, setSt
         />
         <Grid container item pb='10px'>
           <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '58.25%' }}>
-            <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
+            <Grid item sx={{ fontSize: '16px', fontWeight: 400 }}>
               {t('Available Balance')}
             </Grid>
-            <Grid item sx={{ fontSize: '14px', fontWeight: 500 }}>
+            <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
               <ShowBalance balance={balances?.availableBalance} decimal={decimal} decimalPoint={2} token={balances?.token} />
             </Grid>
           </Grid>
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '58.25%' }}>
-            <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
+            <Grid item sx={{ fontSize: '16px', fontWeight: 400 }}>
               {t('Minimum to earn rewards')}
             </Grid>
-            <Grid item sx={{ fontSize: '14px', fontWeight: 500 }}>
+            <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
               <ShowBalance balance={poolConsts?.minJoinBond} decimal={decimal} decimalPoint={2} token={balances?.token} />
             </Grid>
           </Grid>
         </Grid>
         <Grid container item justifyContent='flex-start' mt='30px' xs={12}>
-          <FormControl>
-            <FormLabel sx={{ '&.Mui-focused': { color: 'text.primary' }, color: 'text.primary' }}>
-              {t('Select your preferred staking option')}
-            </FormLabel>
-            <RadioGroup defaultValue={stakingMode} onChange={onSelectionMethodChange}>
-              <FormControlLabel
-                control={
-                  <Radio size='small' sx={{ color: 'secondary.main', pt: '15px' }} value='easy' />
-                }
-                label={
-                  <Typography sx={{ fontSize: '17px' }}>
-                    {t('Easy (Automated processes for simplicity)')}
-                  </Typography>
-                }
-              />
-              <FormControlLabel
-                control={
-                  <Radio size='small' sx={{ color: 'secondary.main', pt: '10px' }} value='advanced' />
-                }
-                label={
-                  <Typography sx={{ fontSize: '17px' }}>
-                    {t('Advanced (Manual control for experienced users)')}
-                  </Typography>
-                }
-              />
-            </RadioGroup>
-          </FormControl>
           <Grid item xs={12}>
             <Divider
               sx={{

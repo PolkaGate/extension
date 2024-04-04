@@ -77,6 +77,7 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
         call,
         estimatedFee,
         extraInfo,
+        mode: STEPS.STAKE_SOLO,
         params,
         selectedValidators: newSelectedValidators
       });
@@ -146,11 +147,11 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
   }, []);
 
   const goToReview = useCallback(
-    () => setStep(STEPS.EASY_REVIEW)
+    () => setStep(STEPS.SOLO_REVIEW)
     , [setStep]);
 
   const onBackClick = useCallback(
-    () => setStep(STEPS.STAKING_OPTIONS)
+    () => setStep(STEPS.INDEX)
     , [setStep]);
 
   useEffect(() => {

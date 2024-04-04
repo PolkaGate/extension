@@ -3,12 +3,11 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faCoins } from '@fortawesome/free-solid-svg-icons';
 import { MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
-import { Identity, Infotip, Motion, ShowBalance, SignArea2, WrongPasswordAlert } from '../../../components';
+import { Identity, Infotip, ShowBalance, SignArea2, WrongPasswordAlert } from '../../../components';
 import { useInfo } from '../../../hooks';
 import useTranslation from '../../../hooks/useTranslation';
 import { ThroughProxy } from '../../../partials';
@@ -18,8 +17,8 @@ import { SYSTEM_SUGGESTION_TEXT } from '../../../util/constants';
 import { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
 import { amountToMachine, pgBoxShadow } from '../../../util/utils';
 import DisplayValue from '../../governance/post/castVote/partial/DisplayValue';
-import { Title } from '../../sendFund/InputPage';
-import { Inputs, STEPS } from '..';
+import { Inputs } from '../Entry';
+import { STEPS } from '..';
 
 interface Props {
   address: string;
@@ -42,9 +41,9 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
-  const handleClose = useCallback(() => {
-    setStep(STEPS.INDEX);
-  }, [setStep]);
+  const handleCancel = useCallback(() => {
+    setStep(inputs?.mode || STEPS.INDEX);
+  }, [inputs?.mode, setStep]);
 
   const openValidatorsTable = useCallback(() => setShowSelectedValidators(true), []);
 
@@ -136,7 +135,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
           // confirmStep={STEPS.EASY_CONFIRM}
           extraInfo={inputs?.extraInfo}
           isPasswordError={isPasswordError}
-          onSecondaryClick={handleClose}
+          onSecondaryClick={handleCancel}
           params={inputs?.params}
           primaryBtnText={t('Confirm')}
           proxyTypeFilter={['Any', 'NonTransfer', 'Staking']} // TODO: what abt nominationpools?

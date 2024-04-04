@@ -24,7 +24,7 @@ interface OptionProps {
   logo?: any;
 }
 
-export default function StakingPoolOptionFS ({ api, balance, balanceText, logo, onClick, style, title, warningText }: OptionProps): React.ReactElement {
+export default function StakingOption ({ api, balance, balanceText, logo, onClick, style, title, warningText }: OptionProps): React.ReactElement {
   const theme = useTheme();
 
   return (

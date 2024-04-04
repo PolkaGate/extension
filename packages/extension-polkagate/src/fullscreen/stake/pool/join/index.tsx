@@ -49,7 +49,7 @@ export default function JoinPool ({ setInputs, setStep }: Props): React.ReactEle
   const [amountAsBN, setAmountAsBN] = useState<BN>();
 
   const onBack = useCallback(() => {
-    setStep(STEPS.STAKING_OPTIONS);
+    setStep(STEPS.INDEX);
   }, [setStep]);
 
   const stakeAmountChange = useCallback((value: string) => {
@@ -173,6 +173,7 @@ export default function JoinPool ({ setInputs, setStep }: Props): React.ReactEle
       call,
       estimatedFee, // TODO: needs to include setMetadata
       extraInfo,
+      mode: STEPS.JOIN_POOL,
       params,
       pool: selectedPool
     });

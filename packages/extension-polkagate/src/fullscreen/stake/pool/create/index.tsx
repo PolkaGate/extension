@@ -86,7 +86,7 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
   }, [setStep]);
 
   const onBackClick = useCallback(() => {
-    setStep(STEPS.STAKING_OPTIONS);
+    setStep(STEPS.INDEX);
   }, [setStep]);
 
   useEffect(() => {
@@ -133,6 +133,7 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
       call,
       estimatedFee, // TODO: needs to include setMetadata
       extraInfo,
+      mode: STEPS.CREATE_POOL,
       params,
       pool
     });
