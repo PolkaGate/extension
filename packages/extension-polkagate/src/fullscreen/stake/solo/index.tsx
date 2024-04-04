@@ -15,7 +15,8 @@ import { AmountWithOptions, Infotip2, ShowBalance, TwoButtons } from '../../../c
 import { useTranslation } from '../../../components/translate';
 import { useBalances, useInfo, useMinToReceiveRewardsInSolo2, useStakingAccount, useStakingConsts } from '../../../hooks';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
-import { Inputs, STEPS } from '..';
+import { Inputs } from '../Entry';
+import { STEPS } from '..';
 import SelectValidators from './partials/SelectValidators';
 
 interface Props {
@@ -202,7 +203,7 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
         <Divider sx={{ fontSize: '16px', fontWeight: 500, mt: '20px', width: '100%' }}>
           {t('Select Validators')}
         </Divider>
-        <Grid container item justifyContent='flex-start' mt='10px' xs={12}>
+        <Grid container item justifyContent='flex-start' mt='10px'>
           <SelectValidators
             address={address}
             newSelectedValidators={newSelectedValidators}

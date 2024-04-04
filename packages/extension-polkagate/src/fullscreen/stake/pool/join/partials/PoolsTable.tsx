@@ -114,7 +114,7 @@ export default function PoolsTable ({ address, setSearchedPools, api, numberOfFe
     <Grid sx={{ ...style }}>
       <Grid alignItems='center' container item justifyContent='space-between' wrap='nowrap'>
         <Grid item textAlign='left' xs>
-          {t<string>('Pick 1 of {{totalNumberOfPools}} to join', { replace: { totalNumberOfPools: totalNumberOfPools || ' . . . ' } })}
+          {t<string>('Pick one of {{totalNumberOfPools}} staking pools to join', { replace: { totalNumberOfPools: totalNumberOfPools || '  .  .  .  ' } })}
         </Grid>
         <Grid container item width='fit-content'>
           <Div height='19px' />

@@ -220,7 +220,7 @@ export default function JoinPool ({ setInputs, setStep }: Props): React.ReactEle
         }}
         totalNumberOfPools={totalNumberOfPools}
       />
-      <Grid container item sx={{ '> div': { m: 0, width: '64%' }, justifyContent: 'flex-end', mt: '5px' }}>
+      <Grid container item sx={{ '> div': { m: 0, width: '64%' }, justifyContent: 'flex-end', mt: '10px' }}>
         <TwoButtons
           disabled={nextBtnDisabled || amountAsBN?.isZero()}
           // isBusy={isBusy}

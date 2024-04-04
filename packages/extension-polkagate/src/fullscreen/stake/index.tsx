@@ -69,16 +69,15 @@ export default function StakingOptions (): React.ReactElement {
 
   const getHeaderText = (isSuccess?: boolean) => {
     switch (step) {
+      case STEPS.INDEX:
       case STEPS.WAIT_SCREEN:
         return t('Staking');
-      case STEPS.INDEX:
-        return t('Staking Options');
       case STEPS.STAKE_SOLO:
         return t('Solo Staking');
       case STEPS.JOIN_POOL:
-        return t('Join Pool');
+        return t('Join Staking Pool');
       case STEPS.CREATE_POOL:
-        return t('Create Pool');
+        return t('Create Staking Pool');
       case STEPS.EASY_REVIEW:
         return t('Review');
       case STEPS.JOIN_REVIEW:
@@ -160,7 +159,7 @@ export default function StakingOptions (): React.ReactElement {
               </Collapse>
               <Grid container item sx={{ '> div': { m: 0, width: '64%' }, justifyContent: 'flex-end', mt: '5px' }}>
                 <PButton
-                  _mt='10px'
+                  _mt='20px'
                   _onClick={onBack}
                   _variant='outlined'
                   _width={40}

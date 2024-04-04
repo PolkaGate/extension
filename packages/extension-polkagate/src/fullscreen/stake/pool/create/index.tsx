@@ -5,7 +5,7 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Grid, Typography } from '@mui/material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
@@ -25,6 +25,7 @@ interface Props {
 
 export default function CreatePool ({ setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { address } = useParams<{ address: string }>();
 
   const { api, chain, decimal, formatted, token } = useInfo(address);
@@ -193,19 +194,19 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
       <Grid container mt='20px' width='73%'>
         <InputWithLabel
           height={50}
-          label={t<string>('Pool name')}
+          label={t('Pool name')}
           onChange={_onPoolNameChange}
           placeholder={DEFAULT_POOLNAME}
           value={poolName}
         />
       </Grid>
       <AmountWithOptions
-        label={t<string>('Amount ({{token}})', { replace: { token: token || '...' } })}
+        label={t('Amount ({{token}})', { replace: { token: token || '...' } })}
         onChangeAmount={stakeAmountChange}
         onPrimary={onMinAmount}
         onSecondary={onMaxAmount}
-        primaryBtnText={t<string>('Min amount')}
-        secondaryBtnText={t<string>('Max amount')}
+        primaryBtnText={t('Min amount')}
+        secondaryBtnText={t('Max amount')}
         style={{
           fontSize: '16px',
           mt: '25px',
@@ -216,32 +217,48 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
       />
       <Grid alignItems='end' container sx={{ mt: '10px', width: '73%' }}>
         <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
-          {t<string>('Fee:')}
+          {t('Fee:')}
         </Typography>
         <Grid fontSize='14px' fontWeight={400} item lineHeight='22px' pl='5px'>
           <ShowBalance api={api} balance={estimatedFee} decimalPoint={4} height={22} />
         </Grid>
       </Grid>
-      <Typography fontSize='16px' fontWeight={400} lineHeight='36px' sx={{ my: '10px' }} textAlign='center'>
-        {t<string>('Roles')}
-      </Typography>
-      <Typography fontSize='14px' fontWeight={300} sx={{ mt: 'auto', width: '90%' }} textAlign='left'>
-        {t<string>('All the roles (Depositor, Root, Nominator, and Bouncer) are set to the following ID by default although you can update the Nominator and Bouncer by clicking on “Update roles”.')}
-      </Typography>
-      <AddressInput address={formatted} chain={chain} disabled label={''} setAddress={() => null} showIdenticon style={{ mt: '15px', width: '92%' }} />
-      <Grid onClick={onUpdateRoles} width='fit-content'>
-        <Typography fontSize='16px' fontWeight={400} lineHeight='36px' sx={{ cursor: 'pointer', textAlign: 'left', textDecoration: 'underline' }}>
-          {t<string>('Update roles')}
+      <Grid alignItems='end' container item justifyContent='flex-start'>
+        <Divider sx={{ fontSize: '16px', fontWeight: 500, mt: '30px', mb: '20px', width: '100%' }}>
+          {t('Roles')}
+        </Divider>
+        <Typography fontSize='14px' fontWeight={300} sx={{ mt: 'auto', width: '90%' }} textAlign='left'>
+          {t('All the roles (Depositor, Root, Nominator, and Bouncer) are set to the following ID by default although you can update the Nominator and Bouncer by clicking on “Update roles”.')}
         </Typography>
+        <AddressInput address={formatted} chain={chain} disabled label={''} setAddress={() => null} showIdenticon style={{ mt: '15px', width: '92%' }} />
+        <Grid onClick={onUpdateRoles} width='fit-content'>
+          <Typography fontSize='16px' fontWeight={400} lineHeight='36px' sx={{ cursor: 'pointer', textAlign: 'left', textDecoration: 'underline' }}>
+            {t('Update roles')}
+          </Typography>
+        </Grid>
       </Grid>
-      <TwoButtons
-        disabled={toReviewDisabled}
-        mt='20px'
-        onPrimaryClick={toReview}
-        onSecondaryClick={onBackClick}
-        primaryBtnText={t('Next')}
-        secondaryBtnText={t('Back')}
-      />
+      <Grid container item justifyContent='flex-start' mt='10px' xs={12}>
+        <Grid item xs={12}>
+          <Divider
+            sx={{
+              bgcolor: 'transparent',
+              border: `0.5px solid ${theme.palette.divider}`,
+              mt: '40px',
+              width: '100%'
+            }}
+          />
+        </Grid>
+        <Grid container item sx={{ '> div': { m: 0, width: '64%' }, justifyContent: 'flex-end', mt: '5px' }}>
+          <TwoButtons
+            disabled={toReviewDisabled}
+            mt='20px'
+            onPrimaryClick={toReview}
+            onSecondaryClick={onBackClick}
+            primaryBtnText={t('Next')}
+            secondaryBtnText={t('Back')}
+          />
+        </Grid>
+      </Grid>
       {showRoles &&
         <UpdateRoles
           address={address}
