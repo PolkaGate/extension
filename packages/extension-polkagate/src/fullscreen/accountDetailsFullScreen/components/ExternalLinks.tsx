@@ -24,6 +24,7 @@ export default function ExternalLinks({ address }: Props): React.ReactElement {
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const subIDURL = useMemo(() => `https://sub.id/${formatted ?? address ?? ''}`, [address, formatted]);
+ 
   const subscanURL = useMemo(() => {
     // Subscan does not support Pendulum
     if (chainName === 'Pendulum') {
@@ -40,6 +41,7 @@ export default function ExternalLinks({ address }: Props): React.ReactElement {
 
     return `https://${chainName}.subscan.io/account/${String(formatted)}`;
   }, [chainName, formatted]);
+
   // TODO: subsquare does not support all networks
   const subsquareURL = useMemo(() => {
     if (chainName && SUBSQUARE_SUPPORTED_CHAINS.includes(chainName)) {
@@ -48,7 +50,10 @@ export default function ExternalLinks({ address }: Props): React.ReactElement {
 
     return undefined;
   }, [chainName, formatted, address]);
-  const stateScanURL = useMemo(() => `https://${chainName}.statescan.io/#/accounts/${formatted ?? address}`, [address, formatted, chainName]);
+
+  const stateScanURL = useMemo(
+    () => chainName && address && `https://${chainName}.statescan.io/#/accounts/${formatted ?? address}`
+    , [address, formatted, chainName]);
 
   const LinkButton = ({ linkName, linkURL }: { linkName: string, linkURL: string }) => {
     const logo = getLogo(linkName);
@@ -84,7 +89,7 @@ export default function ExternalLinks({ address }: Props): React.ReactElement {
           linkName='subsquare'
           linkURL={subsquareURL}
         />}
-      {['Kusama', 'Polkadot'].includes(chainName ?? '') &&
+      {['Kusama', 'Polkadot'].includes(chainName ?? '') && stateScanURL &&
         <LinkButton
           linkName='statescan'
           linkURL={stateScanURL}
