@@ -116,7 +116,7 @@ export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrenc
   }, [assets, theme.palette.divider]);
 
   return (
-    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: '185px', p: '15px', width: 'inherit' }}>
+    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: '185px', p: '15px', width: 'inherit' }}>
       <Grid alignItems='center' container gap='15px' item justifyContent='center'>
         <Typography fontSize='18px' fontWeight={400}>
           {t<string>('Total')}
@@ -125,32 +125,33 @@ export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrenc
           {`${currency?.sign ?? ''}${totalWorth ?? 0}`}
         </Typography>
       </Grid>
-      <Grid container item sx={{ borderTop: '1px solid', borderTopColor: 'divider', pt: '10px' }}>
-        <Grid container item sx={{ height: '85px', mr: '5px', width: '85px' }}>
-          <canvas id='chartCanvas' ref={chartRef} />
-        </Grid>
-        <Grid container item xs>
-          {assets && assets.slice(0, 3).map(({ color, genesisHash, percentage, token }, index) => {
-            const logoInfo = getLogo2(genesisHash, token);
+      {assets && assets.length > 0 &&
+        <Grid container item sx={{ borderTop: '1px solid', borderTopColor: 'divider', pt: '10px' }}>
+          <Grid container item sx={{ height: '85px', mr: '5px', width: '85px' }}>
+            <canvas id='chartCanvas' ref={chartRef} />
+          </Grid>
+          <Grid container item xs>
+            {assets.slice(0, 3).map(({ color, genesisHash, percentage, token }, index) => {
+              const logoInfo = getLogo2(genesisHash, token);
 
-            return (
-              <Grid container item justifyContent='space-between' key={index}>
-                <Grid alignItems='center' container item width='fit-content'>
-                  <DisplayLogo assetSize='20px' baseTokenSize='14px' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
-                  <Typography fontSize='16px' fontWeight={500} pl='5px' width='40px'>
-                    {token}
+              return (
+                <Grid container item justifyContent='space-between' key={index}>
+                  <Grid alignItems='center' container item width='fit-content'>
+                    <DisplayLogo assetSize='20px' baseTokenSize='14px' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+                    <Typography fontSize='16px' fontWeight={500} pl='5px' width='40px'>
+                      {token}
+                    </Typography>
+                  </Grid>
+                  <Divider orientation='vertical' sx={{ bgcolor: color, height: '21px', m: 'auto', width: '5px' }} />
+                  <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
+                    {`${percentage}%`}
                   </Typography>
                 </Grid>
-                <Divider orientation='vertical' sx={{ bgcolor: color, height: '21px', m: 'auto', width: '5px' }} />
-                <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
-                  {`${percentage}%`}
-                </Typography>
-              </Grid>
-            );
-          })
-          }
-        </Grid>
-      </Grid>
+              );
+            })
+            }
+          </Grid>
+        </Grid>}
     </Grid>
   );
 }
