@@ -1169,5 +1169,16 @@
   "Review, Join Pool": "",
   "Review, Create Pool": "",
   "Stake your tokens to support your selected validators. You earn a share of rewards received by your active validator(s) in each era.": "",
-  "This represents a dynamically adjusted minimum threshold to qualify for rewards per era. It may fluctuate based on the total stake of other stakers and the number of stakers present.": ""
+  "This represents a dynamically adjusted minimum threshold to qualify for rewards per era. It may fluctuate based on the total stake of other stakers and the number of stakers present.": "",
+  "Minimum for rewards": "",
+  "How much are you looking to stake?": "",
+  "Join Staking Pool": "",
+  "Create Staking Pool": "",
+  "We handle all the intricate minimum checks and pool or validator selections on your behalf.": "",
+  "Automated processes for simplicity.": "",
+  "Easy Staking": "",
+  "You are responsible for checking boundary values and selecting suitable validators or pools, but don't worry, we've still got your back.": "",
+  "Manual control for experienced users.": "",
+  "Advanced Staking": "",
+  "Pick one of {{totalNumberOfPools}} staking pools to join": ""
 }
