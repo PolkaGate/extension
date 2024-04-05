@@ -5,8 +5,36 @@ import request from 'umi-request';
 
 import { TransferRequest } from '../types';
 
+const nullObject = {
+  code: 0,
+  message: 'Success',
+  generated_at: Date.now(),
+  data: {
+    count: 0,
+    transfers: null
+  }
+};
+
 export function getTxTransfers (chainName: string, address: string, pageNum: number, pageSize: number): Promise<TransferRequest> {
-  return postReq(`https://${chainName}.api.subscan.io/api/v2/scan/transfers`, {
+  if (!chainName) {
+    return nullObject;
+  }
+
+  let network = chainName;
+
+  if (chainName.toLowerCase() === 'pendulum') {
+    return nullObject;
+  }
+
+  if (chainName === 'WestendAssetHub') {
+    network = 'westmint';
+  }
+
+  if (chainName.toLowerCase().includes('assethub')) {
+    network = `assethub-${chainName.toLowerCase().replace(/assethub/, '')}`;
+  }
+
+  return postReq(`https://${network}.api.subscan.io/api/v2/scan/transfers`, {
     address,
     // from_block: 8658091,
     // to_block: 8684569,
