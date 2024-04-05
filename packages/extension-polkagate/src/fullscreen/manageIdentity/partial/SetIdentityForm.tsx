@@ -39,12 +39,12 @@ export default function SetIdentityForm ({ discord, display, email, identity, le
     <Grid container item sx={{ borderBottom: '2px solid', borderBottomColor: '#D5CCD0', display: 'block', height: 'fit-content', py: '20px' }}>
       <IdentityInfoInput
         setter={setDisplay}
-        title={t<string>('Display Name (Mandatory)')}
+        title={t('Display Name (Mandatory)')}
         value={display ?? identity?.display}
       />
       <IdentityInfoInput
         setter={setLegal}
-        title={t<string>('Legal Name')}
+        title={t('Legal Name')}
         value={legal ?? identity?.legal}
       />
       <IdentityInfoInput
@@ -56,7 +56,7 @@ export default function SetIdentityForm ({ discord, display, email, identity, le
           />
         }
         setter={setEmail}
-        title={t<string>('Email')}
+        title={t('Email')}
         type='email'
         value={email ?? identity?.email}
       />
@@ -69,7 +69,7 @@ export default function SetIdentityForm ({ discord, display, email, identity, le
           />
         }
         setter={setWeb}
-        title={t<string>('Website')}
+        title={t('Website')}
         type='url'
         value={web ?? identity?.web}
       />
@@ -82,7 +82,7 @@ export default function SetIdentityForm ({ discord, display, email, identity, le
           />
         }
         setter={setTwitter}
-        title={t<string>('Twitter')}
+        title={t('Twitter')}
         value={twitter ?? identity?.twitter}
       />
       <IdentityInfoInput
@@ -90,7 +90,7 @@ export default function SetIdentityForm ({ discord, display, email, identity, le
           <Box component='img' src={riotIcon as string} sx={{ height: '30px', mb: '2px', width: '30px' }} />
         }
         setter={setRiot}
-        title={t<string>('Element')}
+        title={t('Element')}
         value={riot ?? identity?.riot}
       />
       <IdentityInfoInput
@@ -102,7 +102,7 @@ export default function SetIdentityForm ({ discord, display, email, identity, le
           />
         }
         setter={setDiscord}
-        title={t<string>('Discord')}
+        title={t('Discord')}
         value={discord ?? identity?.other?.discord}
       />
     </Grid>

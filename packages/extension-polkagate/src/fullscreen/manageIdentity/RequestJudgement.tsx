@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { PalletIdentityRegistrarInfo } from '@polkadot/types/lookup';
@@ -13,11 +13,11 @@ import { BN } from '@polkadot/util';
 import { PButton, Select, ShowBalance, TwoButtons } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { useChain, useChainName } from '../../hooks';
+import FailSuccessIcon from '../../popup/history/partials/FailSuccessIcon';
 import { REGISTRARS_LIST } from '../../util/constants';
 import { DropdownOption } from '../../util/types';
 import { pgBoxShadow } from '../../util/utils';
 import { toTitleCase } from '../governance/utils/util';
-import FailSuccessIcon from '../../popup/history/partials/FailSuccessIcon';
 import DisplayIdentity from './component/DisplayIdentity';
 import { IdJudgement, Mode, STEPS } from '.';
 
@@ -34,7 +34,7 @@ interface Props {
   idJudgement: IdJudgement;
 }
 
-export default function RequestJudgement({ address, api, idJudgement, maxFeeValue, selectedRegistrar, setMaxFeeValue, setMode, setSelectedRegistrar, setSelectedRegistrarName, setStep }: Props): React.ReactElement {
+export default function RequestJudgement ({ address, api, idJudgement, maxFeeValue, selectedRegistrar, setMaxFeeValue, setMode, setSelectedRegistrar, setSelectedRegistrarName, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chainName = useChainName(address);
@@ -44,6 +44,9 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
 
   const [registrarsList, setRegistrarsList] = useState<DropdownOption[] | undefined>();
   const [registrarsMaxFee, setRegistrarsMaxFee] = useState<{ text: string, fee: BN }[] | undefined>();
+
+  // Filtering out W3F as an option since their registrar is now closed!
+  const filteredRegistrarsList = useMemo(() => registrarsList?.filter(({ value }) => String(value) !== String(REGISTRARS_LIST[2].index)), [registrarsList]);
 
   useEffect(() => {
     if (!api) {
@@ -80,12 +83,12 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
   }, [api, isWestend]);
 
   useEffect(() => {
-    if (!registrarsList || selectedRegistrar !== undefined) {
+    if (!filteredRegistrarsList || selectedRegistrar !== undefined) {
       return;
     }
 
-    setSelectedRegistrar(registrarsList[0].value);
-  }, [registrarsList, selectedRegistrar, setSelectedRegistrar]);
+    setSelectedRegistrar(filteredRegistrarsList[0].value);
+  }, [filteredRegistrarsList, selectedRegistrar, setSelectedRegistrar]);
 
   useEffect(() => {
     if (!registrarsMaxFee || !registrarsList) {
@@ -120,17 +123,17 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
         {idJudgement
           ? <>
             {idJudgement === 'FeePaid'
-              ? t<string>('Judgment Requested')
-              : t<string>('Judgment Received')
+              ? t('Judgment Requested')
+              : t('Judgment Received')
             }</>
-          : t<string>('Request Judgment')
+          : t('Request Judgment')
 
         }
       </Typography>
       {(!idJudgement || idJudgement === 'FeePaid')
         ? <>
           <Typography fontSize='14px' fontWeight={400}>
-            {t<string>('{{chainName}} provides a naming system that allows participants to add personal information to their on-chain account and subsequently ask for verification of this information by registrars.', { replace: { chainName } })}
+            {t('{{chainName}} provides a naming system that allows participants to add personal information to their on-chain account and subsequently ask for verification of this information by registrars.', { replace: { chainName } })}
           </Typography>
           <DisplayIdentity
             address={address}
@@ -140,17 +143,17 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
           <Grid alignItems='flex-end' container item justifyContent='space-between' m='auto'>
             <Grid alignContent='flex-start' container justifyContent='center' sx={{ '> div div div': { fontSize: '16px', fontWeight: 400 }, position: 'relative', width: '65%' }}>
               <Select
-                defaultValue={selectedRegistrar ?? registrarsList?.at(0)?.value}
-                isDisabled={!registrarsList || idJudgement === 'FeePaid' || (idJudgement !== null && idJudgement !== 'FeePaid')}
-                label={t<string>('Registrar')}
+                defaultValue={selectedRegistrar ?? filteredRegistrarsList?.at(0)?.value}
+                isDisabled={!filteredRegistrarsList || idJudgement === 'FeePaid' || (idJudgement !== null && idJudgement !== 'FeePaid')}
+                label={t('Registrar')}
                 onChange={selectRegistrar}
-                options={registrarsList || []}
-                value={selectedRegistrar ?? registrarsList?.at(0)?.value}
+                options={filteredRegistrarsList || []}
+                value={selectedRegistrar ?? filteredRegistrarsList?.at(0)?.value}
               />
             </Grid>
             <Grid container item sx={{ pb: '4px', width: 'fit-content' }}>
               <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                {t<string>('Registration fee:')}
+                {t('Registration fee:')}
               </Typography>
               <Grid item lineHeight='22px' pl='5px'>
                 <ShowBalance
@@ -169,9 +172,9 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
               onPrimaryClick={goReview}
               onSecondaryClick={goBack}
               primaryBtnText={idJudgement !== 'FeePaid'
-                ? t<string>('Next')
-                : t<string>('Cancel request')}
-              secondaryBtnText={t<string>('Back')}
+                ? t('Next')
+                : t('Cancel request')}
+              secondaryBtnText={t('Back')}
             />
           </Grid>
         </>
@@ -184,7 +187,7 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
             />
             <Grid container item justifyContent='center'>
               <Typography fontSize='16px' fontWeight={400}>
-                {t<string>('Judgment Outcome')}:
+                {t('Judgment Outcome')}:
               </Typography>
             </Grid>
             <Grid container item justifyContent='center' pt='5px'>
@@ -195,12 +198,12 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
             <Divider sx={{ bgcolor: 'secondary.main', height: '2px', my: '15px', width: '180px' }} />
             <Grid container item justifyContent='center'>
               <Typography fontSize='16px' fontWeight={400}>
-                {t<string>('Registrar')}:
+                {t('Registrar')}:
               </Typography>
             </Grid>
             <Grid container item justifyContent='center' py='5px'>
-              <Typography fontSize='16px' fontWeight={400} >
-                {selectedRegistrar !== undefined && registrarsList?.at(selectedRegistrar)?.text}
+              <Typography fontSize='16px' fontWeight={400}>
+                {selectedRegistrar !== undefined && registrarsList?.find(({ value }) => String(value) === String(selectedRegistrar))?.text}
               </Typography>
             </Grid>
           </Grid>

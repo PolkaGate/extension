@@ -27,7 +27,7 @@ interface Props {
   error?: boolean;
 }
 
-export default function SubIdForm({ address, addressesToSelect, api, chain, error = false, index, name, onRemove, setSubAddress, setSubName }: Props): React.ReactElement {
+export default function SubIdForm ({ address, addressesToSelect, api, chain, error = false, index, name, onRemove, setSubAddress, setSubName }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -50,12 +50,12 @@ export default function SubIdForm({ address, addressesToSelect, api, chain, erro
         api={api}
         chain={chain}
         disabled={false}
-        label={t<string>('Account')}
+        label={t('Account')}
         selectableAddresses={addressesToSelect}
         setAddress={onAddressChange}
       />
       <InputWithLabel
-        label={t<string>('Sub ID')}
+        label={t('Sub ID')}
         onChange={onNameChange}
         value={name ?? ''}
       />

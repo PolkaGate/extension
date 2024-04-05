@@ -111,14 +111,14 @@ export default function SetIdentity({ api, chainName, identity, identityToSet, m
     <Grid container item sx={{ display: 'block', px: '10%' }}>
       <Typography fontSize='30px' fontWeight={700} pb='20px' pt='25px'>
         {mode === 'Set'
-          ? t<string>('Set On-chain Identity')
-          : t<string>('Modify On-chain Identity')
+          ? t('Set On-chain Identity')
+          : t('Modify On-chain Identity')
         }
       </Typography>
       <Typography fontSize='14px' fontWeight={400}>
         {mode === 'Set'
-          ? t<string>('{{chainName}} provides a naming system that allows participants to add personal information to their on-chain account and subsequently ask for verification of this information by registrars.', { replace: { chainName } })
-          : t<string>('Update your on-chain identity with new values, noting that accounts with judgments will need a fresh request for any modifications.')
+          ? t('{{chainName}} provides a naming system that allows participants to add personal information to their on-chain account and subsequently ask for verification of this information by registrars.', { replace: { chainName } })
+          : t('Update your on-chain identity with new values, noting that accounts with judgments will need a fresh request for any modifications.')
         }
 
       </Typography>
@@ -142,7 +142,7 @@ export default function SetIdentity({ api, chainName, identity, identityToSet, m
       <Grid alignItems='center' container item justifyContent='space-between' m='auto' pt='15px'>
         <Grid container item sx={{ width: 'fit-content' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t<string>('Deposit:')}
+            {t('Deposit:')}
           </Typography>
           <Grid item lineHeight='22px' pl='5px'>
             <ShowBalance
@@ -159,15 +159,15 @@ export default function SetIdentity({ api, chainName, identity, identityToSet, m
               _mt='1px'
               _onClick={goReview}
               disabled={!!nextBtnDisable}
-              text={t<string>('Next')}
+              text={t('Next')}
             />
             : <TwoButtons
               disabled={!!nextBtnDisable}
               mt={'1px'}
               onPrimaryClick={goReview}
               onSecondaryClick={goBack}
-              primaryBtnText={t<string>('Next')}
-              secondaryBtnText={t<string>('Back')}
+              primaryBtnText={t('Next')}
+              secondaryBtnText={t('Back')}
             />
           }
         </Grid>

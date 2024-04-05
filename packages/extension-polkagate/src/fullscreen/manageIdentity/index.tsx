@@ -196,14 +196,14 @@ export default function ManageIdentity (): React.ReactElement {
             } else {
               const judgementInHuman = judgements.toHuman();
               const judgementType = judgementInHuman[0][1] as string;
+              const registrar = judgementInHuman[0][0] as string;
 
               if (['Reasonable', 'KnownGood'].includes(judgementType)) {
+                setSelectedRegistrar(registrar);
                 setIdJudgement(judgementType as 'Reasonable' | 'KnownGood');
               } else {
-                const feePaidReg = judgementInHuman[0][0] as string;
-
                 setIdJudgement('FeePaid');
-                setSelectedRegistrar(feePaidReg);
+                setSelectedRegistrar(registrar);
               }
             }
 
@@ -335,7 +335,7 @@ export default function ManageIdentity (): React.ReactElement {
       <Grid alignItems='center' container direction='column' height='100%' item justifyContent='center'>
         <CubeGrid col={3} color={theme.palette.secondary.main} row={3} size={200} style={{ opacity: '0.4' }} />
         <Typography pt='15px'>
-          {t<string>('Checking account\'s on-chain Identity, please wait...')}
+          {t('Checking account\'s on-chain Identity, please wait...')}
         </Typography>
       </Grid>
     );
@@ -351,7 +351,7 @@ export default function ManageIdentity (): React.ReactElement {
         {step === STEPS.UNSUPPORTED &&
           <Grid alignItems='center' container direction='column' display='block' item>
             <Typography fontSize='30px' fontWeight={700} p='30px 0 60px 80px'>
-              {t<string>('Manage Identity')}
+              {t('Manage Identity')}
             </Typography>
             <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', width: '400px' }}>
               <Warning
@@ -359,7 +359,7 @@ export default function ManageIdentity (): React.ReactElement {
                 isBelowInput
                 theme={theme}
               >
-                {t<string>('The chosen blockchain does not support on-chain identity.')}
+                {t('The chosen blockchain does not support on-chain identity.')}
               </Warning>
             </Grid>
           </Grid>
