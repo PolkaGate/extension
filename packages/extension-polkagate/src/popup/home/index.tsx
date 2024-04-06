@@ -6,9 +6,8 @@
 
 import '@vaadin/icons';
 
-import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Container, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Container, Grid, useTheme } from '@mui/material';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
@@ -16,12 +15,12 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Warning } from '../../components';
 import { getStorage, LoginInfo } from '../../components/Loading';
-import { useMerkleScience, useTranslation } from '../../hooks';
-import { windowOpen } from '../../messaging';
-import HeaderBrand from '../../partials/HeaderBrand';
-import { EXTENSION_NAME, NEW_VERSION_ALERT } from '../../util/constants';
 import Welcome from '../../fullscreen/welcome';
 import Reset from '../../fullscreen/welcome/Reset';
+import { useMerkleScience, useTranslation } from '../../hooks';
+import AddNewAccountButton from '../../partials/AddNewAccountButton';
+import HeaderBrand from '../../partials/HeaderBrand';
+import { EXTENSION_NAME, NEW_VERSION_ALERT } from '../../util/constants';
 import AccountsTree from './AccountsTree';
 import AiBackgroundImage from './AiBackgroundImage';
 import Alert from './Alert';
@@ -75,28 +74,6 @@ export default function Home (): React.ReactElement {
       return 0;
     }), [hierarchy]);
 
-  const onCreate = useCallback((): void => {
-    windowOpen('/account/create').catch(console.error);
-  }, []);
-
-  const AddNewAccount = () => (
-    <Grid alignItems='center' container onClick={onCreate} sx={{ '&:hover': { opacity: 1 }, backgroundColor: 'background.paper', borderColor: 'secondary.main', borderRadius: '10px', borderStyle: 'solid', borderWidth: '0.5px', bottom: '20px', cursor: 'pointer', my: '10px', opacity: '0.7', padding: '8px 7px 8px 22px', position: 'absolute', transition: 'opacity 0.3s ease', width: 'inherit', zIndex: 1 }}>
-      <Grid item xs={1.5}>
-        <vaadin-icon icon='vaadin:plus-circle' style={{ height: '36px', color: `${theme.palette.secondary.light}`, width: '36px' }} />
-      </Grid>
-      <Grid item textAlign='left' xs>
-        <Typography fontSize='18px' fontWeight={500} pl='8px'>
-          {t('Create a new account')}
-        </Typography>
-      </Grid>
-      <Grid item xs={1}>
-        <IconButton sx={{ p: 0 }}>
-          <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: `${theme.palette.secondary.light}`, strokeWidth: 1.5 }} />
-        </IconButton>
-      </Grid>
-    </Grid>
-  );
-
   return (
     <>
       <Alert
@@ -114,8 +91,7 @@ export default function Home (): React.ReactElement {
               : `linear-gradient(180deg, #F1F1F1 10.79%, rgba(241, 241, 241, 0.70) 100%), url(${bgImage ?? ''})`),
           backgroundSize: '100% 100%',
           height: window.innerHeight
-        }}
-        >
+        }}>
           <Grid padding='0px' textAlign='center' xs={12}>
             <HeaderBrand
               showBrand
@@ -151,7 +127,7 @@ export default function Home (): React.ReactElement {
               />
             ))}
             {accounts?.length < 4 &&
-              <AddNewAccount />
+              <AddNewAccountButton />
             }
           </Container>
           <AiBackgroundImage

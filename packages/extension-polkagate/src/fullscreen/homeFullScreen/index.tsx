@@ -10,6 +10,7 @@ import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { AccountContext, ActionContext } from '../../components';
 import { useFullscreen } from '../../hooks';
+import AddNewAccountButton from '../../partials/AddNewAccountButton';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import HeaderComponents from './components/HeaderComponents';
 import DraggableAccountsList, { saveNewOrder } from './partials/DraggableAccountList';
@@ -133,6 +134,9 @@ export default function HomePageFullScreen (): React.ReactElement {
               hideNumbers={hideNumbers}
               initialAccountList={initialAccountList}
             />
+          }
+          {initialAccountList && initialAccountList?.length <= 2 &&
+            <AddNewAccountButton />
           }
         </Grid>
         <Grid container direction='column' item rowGap='20px' width='fit-content'>
