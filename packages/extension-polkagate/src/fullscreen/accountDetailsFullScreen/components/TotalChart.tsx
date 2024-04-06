@@ -119,7 +119,7 @@ export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrenc
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: '185px', p: '15px', width: 'inherit' }}>
       <Grid alignItems='center' container gap='15px' item justifyContent='center'>
         <Typography fontSize='18px' fontWeight={400}>
-          {t<string>('Total')}
+          {t('Total')}
         </Typography>
         <Typography fontSize='36px' fontWeight={700}>
           {`${currency?.sign ?? ''}${totalWorth ?? 0}`}
