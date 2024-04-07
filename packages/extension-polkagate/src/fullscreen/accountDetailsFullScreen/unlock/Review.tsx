@@ -131,7 +131,7 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
-              {step === STEPS.PROXY ? t<string>('Select Proxy') : t<string>('Unlocking')}
+              {step === STEPS.PROXY ? t('Select Proxy') : t('Unlocking')}
             </Typography>
           </Grid>
           <Grid item>
@@ -166,7 +166,7 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
                 <Warning
                   theme={theme}
                 >
-                  {t<string>('The rest will be available when the corresponding locks have expired.')}
+                  {t('The rest will be available when the corresponding locks have expired.')}
                 </Warning>
               }
             </Container>
@@ -177,9 +177,9 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
                 extraInfo={extraInfo}
                 isPasswordError={isPasswordError}
                 onSecondaryClick={onClose}
-                primaryBtnText={t<string>('Confirm')}
+                primaryBtnText={t('Confirm')}
                 proxyTypeFilter={GOVERNANCE_PROXY}
-                secondaryBtnText={t<string>('Back')}
+                secondaryBtnText={t('Back')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
                 setRefresh={setRefresh}
