@@ -103,7 +103,7 @@ function Onboarding (): React.ReactElement {
               startIcon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.main}` }} />}
               text={t<string>('Create a new account')}
             />
-            <Divider sx={{ fontSize: '20px', fontWeight: 400, my: '30px', width: '88%' }}>
+            <Divider sx={{ fontSize: '20px', fontWeight: 400, my: '15px', width: '88%' }}>
               {t('Or')}
             </Divider>
             <Collapse in={!showMore}>
