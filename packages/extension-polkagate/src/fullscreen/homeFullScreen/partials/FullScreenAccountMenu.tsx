@@ -84,7 +84,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
   }, [address, onAction]);
 
   const AccountMenu = () => (
-    <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '20px' }}>
+    <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
       {/* <Grid container item>
         <Chain
           address={address}
@@ -110,6 +110,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
         }
         onClick={onManageProxies}
         text={t<string>('Manage proxies')}
+        withHoverEffect
       />
       <MenuItem
         disabled={!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))}
@@ -122,6 +123,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
         }
         onClick={onManageId}
         text={t('Manage identity')}
+        withHoverEffect
       />
       <MenuItem
         disabled={!chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))}
@@ -137,6 +139,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
         }
         onClick={onSocialRecovery}
         text={t('Social Recovery')}
+        withHoverEffect
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       {hasPrivateKey &&
@@ -146,6 +149,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
           }
           onClick={onExportAccount}
           text={t('Export account')}
+          withHoverEffect
         />
       }
       {hasPrivateKey &&
@@ -155,6 +159,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
           }
           onClick={goToDeriveAcc}
           text={t('Derive new account')}
+          withHoverEffect
         />
       }
       <MenuItem
@@ -163,6 +168,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
         }
         onClick={onRenameAccount}
         text={t('Rename')}
+        withHoverEffect
       />
       <MenuItem
         iconComponent={
@@ -170,6 +176,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
         }
         onClick={onForgetAccount}
         text={t('Forget account')}
+        withHoverEffect
       />
     </Grid>
   );
