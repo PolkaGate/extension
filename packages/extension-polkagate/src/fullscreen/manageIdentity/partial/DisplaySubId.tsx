@@ -3,8 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { RegistrationJudgement } from '@polkadot/types/interfaces';
-
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForward as ArrowForwardIcon, Replay as UndoIcon } from '@mui/icons-material';
@@ -42,7 +40,7 @@ interface ManageButtonProps {
   style?: SxProps<Theme> | undefined
 }
 
-export default function DisplaySubId({ addressesToSelect, api, error = false, index, judgements, noButtons = false, onRemove, parentName, setSubAddress, setSubName, subIdInfo, toModify = false }: Props): React.ReactElement {
+export default function DisplaySubId ({ addressesToSelect, api, error = false, index, judgements, noButtons = false, onRemove, parentName, setSubAddress, setSubName, subIdInfo, toModify = false }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const params = useParams<{ address: string }>();
@@ -133,7 +131,7 @@ export default function DisplaySubId({ addressesToSelect, api, error = false, in
                     />
                   }
                   onClick={onModify}
-                  text={t<string>('Modify')}
+                  text={t('Modify')}
                 />
                 <ManageButton
                   icon={toRemove
@@ -149,8 +147,8 @@ export default function DisplaySubId({ addressesToSelect, api, error = false, in
                   onClick={onRemoveItem}
                   style={{ zIndex: toRemove ? 10 : 1 }}
                   text={toRemove
-                    ? t<string>('Undo')
-                    : t<string>('Remove')}
+                    ? t('Undo')
+                    : t('Remove')}
                 />
               </Grid>
             </Grid>
