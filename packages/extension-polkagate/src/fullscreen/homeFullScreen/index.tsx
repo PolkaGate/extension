@@ -22,7 +22,7 @@ export interface AccountsOrder {
   account: AccountWithChildren
 }
 
-export default function HomePageFullScreen (): React.ReactElement {
+export default function HomePageFullScreen(): React.ReactElement {
   useFullscreen();
   const onAction = useContext(ActionContext);
 
@@ -142,13 +142,13 @@ export default function HomePageFullScreen (): React.ReactElement {
               setGroupedAssets={setGroupedAssets}
             />
           </Grid>
-          <Grid container item width='fit-content'>
-            {groupedAssets &&
-             <WatchList
-               groupedAssets={groupedAssets}
-             />
-            }
-          </Grid>
+          {groupedAssets && groupedAssets?.length > 0 &&
+            <Grid container item width='fit-content'>
+              <WatchList
+                groupedAssets={groupedAssets}
+              />
+            </Grid>
+          }
           <Grid container item width='fit-content'>
             <HomeMenu />
           </Grid>
