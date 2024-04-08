@@ -9,7 +9,6 @@ import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, Q
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { BalancesInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
 
@@ -99,7 +98,6 @@ export const TaskButton = ({ disabled, icon, noBorderButton = false, onClick, se
 export default function CommonTasks ({ address, api, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const history = useHistory();
 
   const governanceDisabled = useMemo(() => !GOVERNANCE_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const stakingDisabled = useMemo(() => !STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
