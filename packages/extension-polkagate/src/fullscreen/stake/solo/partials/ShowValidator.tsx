@@ -42,6 +42,8 @@ function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, de
   const overSubscriptionAlert1 = t('This validator is oversubscribed but you are within the top {{max}}.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
   const overSubscriptionAlert2 = t('This validator is oversubscribed and you are not within the top {{max}} and won\'t get rewards.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
 
+  const ifOverSubscribed = isOversubscribed?.safe || isOversubscribed?.notSafe;
+
   const Div = () => (
     <Grid alignItems='center' item justifyContent='center'>
       <Divider orientation='vertical' sx={{ bgcolor: 'secondary.light', height: '15px', m: '3px 10px', width: '1px' }} />
@@ -99,7 +101,7 @@ function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, de
         </Grid>
       </Grid>
       {allInOneRow && <Div />}
-      <Grid alignItems='end' container item justifyContent={allInOneRow ? 'center' : 'space-between'} sx={{ fontSize: '14px', fontWeight: 300, lineHeight: '23px' }} width={allInOneRow ? 'fit-content' : isOversubscribed ? '90%' : '100%'}>
+      <Grid alignItems='end' container item justifyContent={allInOneRow ? 'center' : 'space-between'} sx={{ fontSize: '14px', fontWeight: 300, lineHeight: '23px' }} width={allInOneRow ? 'fit-content' : ifOverSubscribed ? '93%' : '100%'}>
         <Grid item>
           {t('Nominators')}:
         </Grid>
@@ -113,7 +115,7 @@ function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, de
               <DirectionsRunIcon sx={{ color: '#1F7720', fontSize: '18px' }} />
             </Infotip>
         }
-        {(isOversubscribed?.safe || isOversubscribed?.notSafe) &&
+        {ifOverSubscribed &&
             <Infotip text={isOversubscribed?.safe ? overSubscriptionAlert1 : overSubscriptionAlert2}>
               <WarningRoundedIcon sx={{ color: isOversubscribed?.safe ? '#FFB800' : '#FF002B', fontSize: '18px' }} />
             </Infotip>
