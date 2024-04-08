@@ -59,8 +59,10 @@ export default function Index (): React.ReactElement {
   const stakingConsts = useStakingConsts(address);
   const balances = useBalances(address, refresh, setRefresh);
 
+  
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
+  const availableToSoloStake = balances?.freeBalance && staked && balances.freeBalance.sub(staked);
 
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>();
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
@@ -127,6 +129,10 @@ export default function Index (): React.ReactElement {
     });
   }, [address, history]);
 
+  const onRedeemableWithdraw = useCallback(() => {
+    redeemable && !redeemable?.isZero() && setShowRedeemableWithdraw(true);
+  }, [redeemable]);
+
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='stake' />
@@ -157,7 +163,7 @@ export default function Index (): React.ReactElement {
                 address={address}
                 amount={redeemable}
                 icons={[faCircleDown]}
-                onClicks={[onPendingRewards]}
+                onClicks={[onRedeemableWithdraw]}
                 title={t('Redeemable')}
               />
               <DisplayBalance
@@ -170,7 +176,7 @@ export default function Index (): React.ReactElement {
               <DisplayBalance
                 actions={[t('stake')]}
                 address={address}
-                amount={getValue('available', balances)}
+                amount={availableToSoloStake}
                 icons={[faPlus]}
                 onClicks={[onUnstake]} // TODO
                 title={t('Available to stake')}
@@ -185,7 +191,6 @@ export default function Index (): React.ReactElement {
             <ActiveValidators
               address={address}
             />
-
           </Grid>
         </Grid>
         {/* <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', pt: '5px', pb: '2px', width: '92%' }}>
