@@ -1180,5 +1180,7 @@
   "You are responsible for checking boundary values and selecting suitable validators or pools, but don't worry, we've still got your back.": "",
   "Manual control for experienced users.": "",
   "Advanced Staking": "",
-  "Pick one of {{totalNumberOfPools}} staking pools to join": ""
+  "Pick one of {{totalNumberOfPools}} staking pools to join": "",
+  "Identity cleared.": "",
+  "Identity not cleared.": ""
 }

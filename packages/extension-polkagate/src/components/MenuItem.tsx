@@ -4,8 +4,10 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, SxProps, Theme, Typography } from '@mui/material';
 import React, { MouseEventHandler } from 'react';
+
+import { nullFunction } from '../util/utils';
 
 interface Props {
   disabled?: boolean;
@@ -18,12 +20,19 @@ interface Props {
   py?: string;
   fontSize?: string;
   pl?: string;
+  withHoverEffect?: boolean;
 }
 
-export default function MenuItem({ children, disabled = false, fontSize, icon, iconComponent, onClick, pl = '0', py = '8px', showSubMenu = false, text }: Props): React.ReactElement<Props> {
+export default function MenuItem ({ children, disabled = false, fontSize, icon, iconComponent, onClick, pl = '0', py = '8px', showSubMenu = false, text, withHoverEffect }: Props): React.ReactElement<Props> {
+  const hoverEffectStyles: SxProps<Theme> = {
+    '&:hover': { bgcolor: disabled ? 'none' : 'divider' },
+    borderRadius: '5px',
+    p: '8px'
+  };
+
   return (
     <>
-      <Grid alignItems='center' color={disabled ? '#4B4B4B' : 'inherit'} container item justifyContent='space-between' my='4px' onClick={disabled ? () => null : onClick} pl={pl} py={py} sx={{ cursor: disabled ? '' : 'pointer' }} textAlign='left' xs={12}>
+      <Grid alignItems='center' color={disabled ? '#4B4B4B' : 'inherit'} container item justifyContent='space-between' my='4px' onClick={disabled ? nullFunction : onClick} pl={pl} py={py} sx={{ cursor: disabled ? '' : 'pointer', ...(withHoverEffect ? hoverEffectStyles : {}) }} textAlign='left' xs={12}>
         <Grid alignItems='center' container item xs>
           <Grid alignItems='center' container item xs={1}>
             {iconComponent ??

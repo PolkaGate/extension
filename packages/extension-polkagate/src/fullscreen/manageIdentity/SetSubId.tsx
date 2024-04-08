@@ -139,7 +139,7 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
         }}
       />
       <Typography fontSize='16px' fontWeight={400} lineHeight='36px' sx={{ pl: '8px', textDecoration: 'underline' }}>
-        {t<string>('Add SubID')}
+        {t('Add SubID')}
       </Typography>
     </Grid>
   );
@@ -196,11 +196,11 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
     <>
       <Grid container item sx={{ display: 'block', maxWidth: FULLSCREEN_WIDTH, position: 'relative', px: '10%' }}>
         <Typography fontSize='30px' fontWeight={700} pb={(subIdAccounts || subIdsLength > 0) ? '10px' : '45px'} pt='25px'>
-          {t<string>('Set on-chain Sub-identity(ies)')}
+          {t('Set on-chain Sub-identity(ies)')}
         </Typography>
         {!subIdAccounts && subIdsLength === 0 &&
           <Typography fontSize='14px' fontWeight={400}>
-            {t<string>('With Sub-Identities, you can create multiple identities for privacy, security, and control. Sub-identity accounts inherit features from their parent account, such as the name and parent\'s indicators. Separate personal and business transactions, manage diverse projects, and enjoy the benefits of compartmentalization with Sub-Identities (up to {{maxSubAccounts}} per account).', { replace: { maxSubAccounts } })}
+            {t('With Sub-Identities, you can create multiple identities for privacy, security, and control. Sub-identity accounts inherit features from their parent account, such as the name and parent\'s indicators. Separate personal and business transactions, manage diverse projects, and enjoy the benefits of compartmentalization with Sub-Identities (up to {{maxSubAccounts}} per account).', { replace: { maxSubAccounts } })}
           </Typography>
         }
         <Grid container item justifyContent='space-between' mb={toRemoveSubs ? 0 : '15px'} mt='15px'>
@@ -209,7 +209,7 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
             <Grid container direction='column' item sx={{ width: 'fit-content' }}>
               <Grid container item width='fit-content'>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Deposit:')}
+                  {t('Deposit:')}
                 </Typography>
                 <Grid item lineHeight='22px' pl='5px' fontSize='20px' fontWeight={500}>
                   <ShowBalance
@@ -229,7 +229,7 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
               isBelowInput
               theme={theme}
             >
-              {t<string>('You still need to confirm deleting sub-ID(s) on the next step.')}
+              {t('You still need to confirm deleting sub-ID(s) on the next step.')}
             </Warning>
           </Grid>
         }
@@ -259,8 +259,8 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
           mt={'1px'}
           onPrimaryClick={goReview}
           onSecondaryClick={goBack}
-          primaryBtnText={t<string>('Next')}
-          secondaryBtnText={t<string>('Back')}
+          primaryBtnText={t('Next')}
+          secondaryBtnText={t('Back')}
         />
       </Grid>
     </>

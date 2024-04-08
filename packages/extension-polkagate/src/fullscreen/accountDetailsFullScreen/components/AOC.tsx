@@ -140,7 +140,7 @@ function AOC ({ account, accountAssets, api, balanceToShow, hideNumbers, mode = 
             ? accountAssets.length > 5 &&
             <>
               <Typography fontSize='14px' fontWeight={400} sx={{ borderLeft: '1px solid', borderLeftColor: 'divider', height: 'fit-content', pl: '8px' }}>
-                {t<string>(showMore ? t('Less') : t('More'))}
+                {showMore ? t('Less') : t('More')}
               </Typography>
               <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
             </>

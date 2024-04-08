@@ -26,7 +26,7 @@ interface Props {
   identity: DeriveAccountRegistration;
 }
 
-export default function DisplayIdentityInformation({ identity }: Props): React.ReactElement {
+export default function DisplayIdentityInformation ({ identity }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -41,7 +41,7 @@ export default function DisplayIdentityInformation({ identity }: Props): React.R
         </Typography>
       </Grid>
       <Typography fontSize='18px' fontWeight={value ? 700 : 400} maxWidth='70%' overflow='hidden' textOverflow='ellipsis'>
-        {value ?? t<string>('Not set yet.')}
+        {value ?? t('Not set yet.')}
       </Typography>
     </Grid>
   );
@@ -49,11 +49,11 @@ export default function DisplayIdentityInformation({ identity }: Props): React.R
   return (
     <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), display: 'block', height: 'fit-content', p: '8px 18px' }}>
       <IdentityItems
-        title={t<string>('Display Name')}
+        title={t('Display Name')}
         value={identity.display ?? null}
       />
       <IdentityItems
-        title={t<string>('Legal Name')}
+        title={t('Legal Name')}
         value={identity.legal ?? null}
       />
       <IdentityItems
@@ -64,7 +64,7 @@ export default function DisplayIdentityInformation({ identity }: Props): React.R
             icon={faGlobe}
           />
         }
-        title={t<string>('Website')}
+        title={t('Website')}
         value={identity.web ?? null}
       />
       <IdentityItems
@@ -75,7 +75,7 @@ export default function DisplayIdentityInformation({ identity }: Props): React.R
             icon={faEnvelope}
           />
         }
-        title={t<string>('Email')}
+        title={t('Email')}
         value={identity.email ?? null}
       />
       <IdentityItems
@@ -86,14 +86,14 @@ export default function DisplayIdentityInformation({ identity }: Props): React.R
             icon={faTwitter}
           />
         }
-        title={t<string>('Twitter')}
+        title={t('Twitter')}
         value={identity.twitter ?? null}
       />
       <IdentityItems
         icon={
           <Box component='img' src={riot as string} sx={{ height: '30px', mb: '2px', width: '30px' }} />
         }
-        title={t<string>('Element')}
+        title={t('Element')}
         value={identity.riot ?? null}
       />
       <IdentityItems
@@ -105,7 +105,7 @@ export default function DisplayIdentityInformation({ identity }: Props): React.R
           />
         }
         noBorder
-        title={t<string>('Discord')}
+        title={t('Discord')}
         value={identity.other?.discord ?? null}
       />
     </Grid>

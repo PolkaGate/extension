@@ -44,7 +44,7 @@ export default function Confirmation({ address, onPrimaryBtnClick, txInfo }: Pro
 
   return (
     <Container disableGutters>
-      <SubTitle label={txInfo.success ? t<string>('Completed') : t<string>('Failed')} style={{ paddingTop: '25px' }} />
+      <SubTitle label={txInfo.success ? t('Completed') : t('Failed')} style={{ paddingTop: '25px' }} />
       <FailSuccessIcon
         showLabel={false}
         style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
@@ -57,7 +57,7 @@ export default function Confirmation({ address, onPrimaryBtnClick, txInfo }: Pro
       }
       <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-          {t<string>('Account holder')}:
+          {t('Account holder')}:
         </Typography>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
           {txInfo.from.name}
@@ -75,14 +75,14 @@ export default function Confirmation({ address, onPrimaryBtnClick, txInfo }: Pro
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
       </Grid>
       <DisplayInfo
-        caption={t<string>('Unlock value:')}
-        value={t<string>(`${txInfo.amount} {{token}}`, { replace: { token } })}
+        caption={t('Unlock value:')}
+        value={t(`${txInfo.amount} {{token}}`, { replace: { token } })}
       />
-      <DisplayInfo caption={t<string>('Fee:')} value={fee?.toHuman() ?? '00.00'} />
+      <DisplayInfo caption={t('Fee:')} value={fee?.toHuman() ?? '00.00'} />
       {txInfo?.txHash &&
         <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
           <Grid container item width='fit-content'>
-            <Typography pr='5px'>{t<string>('Hash')}:</Typography>
+            <Typography pr='5px'>{t('Hash')}:</Typography>
           </Grid>
           <Grid container item width='fit-content'>
             <ShortAddress
@@ -105,7 +105,7 @@ export default function Confirmation({ address, onPrimaryBtnClick, txInfo }: Pro
         _mt='50px'
         _onClick={onPrimaryBtnClick}
         _width={100}
-        text={t<string>('Close')}
+        text={t('Close')}
       />
     </Container>
   );

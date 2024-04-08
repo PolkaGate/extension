@@ -25,7 +25,7 @@ export default function DisplayIdentity ({ address, api, chain }: Props): React.
   return (
     <Grid container item py='15px'>
       <Typography fontSize='16px' fontWeight={400}>
-        {t<string>('Identity')}
+        {t('Identity')}
       </Typography>
       <Grid container item sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', p: '8px 12px' }}>
         <Identity

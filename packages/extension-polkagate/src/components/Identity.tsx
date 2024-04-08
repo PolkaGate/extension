@@ -94,7 +94,7 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
             />
           </Grid>
         }
-        <Grid direction='column' item maxWidth='fit-content' onClick={onClick || undefined} overflow='hidden' sx={{ cursor: onClick ? 'pointer' : 'default', fontSize: style?.fontSize as string ?? '28px', fontWeight: 400, textAlign: 'left' }} textOverflow='ellipsis' whiteSpace='nowrap' xs>
+        <Grid direction='column' item maxWidth='fit-content' onClick={onClick || undefined} overflow='hidden' sx={{ cursor: onClick ? 'pointer' : 'inherit', fontSize: style?.fontSize as string ?? '28px', fontWeight: 400, textAlign: 'left' }} textOverflow='ellipsis' whiteSpace='nowrap' xs>
           {msData
             ? <Grid container item sx={{ flexWrap: 'nowrap' }}>
               <Grid display='flex' item sx={{ width: '25px' }}>

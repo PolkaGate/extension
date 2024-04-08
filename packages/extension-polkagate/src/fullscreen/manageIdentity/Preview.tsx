@@ -79,11 +79,11 @@ export default function PreviewIdentity ({ api, identity, judgement, setIdentity
     <Grid container item sx={{ display: 'block', maxWidth: FULLSCREEN_WIDTH, px: '10%' }}>
       <Grid container item justifyContent='space-between' pb='15px' pt='25px'>
         <Typography fontSize='30px' fontWeight={700}>
-          {t<string>('On-chain Identity')}
+          {t('On-chain Identity')}
         </Typography>
         <Grid alignItems='center' container item width='fit-content'>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t<string>('Total deposit:')}
+            {t('Total deposit:')}
           </Typography>
           <Grid fontSize='18px' fontWeight={500} item lineHeight='22px' pl='5px'>
             <ShowBalance
@@ -106,7 +106,7 @@ export default function PreviewIdentity ({ api, identity, judgement, setIdentity
         />
       }
       <Typography fontSize='22px' fontWeight={700} sx={{ borderBottom: '2px solid', borderBottomColor: '#D5CCD0', pb: '10px', pt: '20px' }}>
-        {t<string>('Manage Identity')}
+        {t('Manage Identity')}
       </Typography>
       <Grid container item justifyContent='space-between' p='15px 0'>
         <ManageButton
@@ -118,7 +118,7 @@ export default function PreviewIdentity ({ api, identity, judgement, setIdentity
             />
           }
           onClick={goModify}
-          title={t<string>('Modify')}
+          title={t('Modify')}
         />
         <ManageButton
           icon={
@@ -129,7 +129,7 @@ export default function PreviewIdentity ({ api, identity, judgement, setIdentity
             />
           }
           onClick={clearIdentity}
-          title={t<string>('Clear')}
+          title={t('Clear')}
         />
         <ManageButton
           icon={judgement && judgement !== 'FeePaid'
@@ -148,8 +148,8 @@ export default function PreviewIdentity ({ api, identity, judgement, setIdentity
           }
           onClick={requestJudgment}
           title={judgement && judgement !== 'FeePaid'
-            ? t<string>('Judgment')
-            : t<string>('Request Judgment')}
+            ? t('Judgment')
+            : t('Request Judgment')}
         />
         <ManageButton
           icon={
@@ -157,8 +157,8 @@ export default function PreviewIdentity ({ api, identity, judgement, setIdentity
           }
           onClick={manageSubId}
           title={subIdAccounts && subIdAccounts.length > 0
-            ? t<string>('Manage Sub-ID')
-            : t<string>('Set Sub-ID')
+            ? t('Manage Sub-ID')
+            : t('Set Sub-ID')
           }
         />
       </Grid>

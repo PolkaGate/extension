@@ -23,23 +23,13 @@ import { amountToHuman } from '../../../util/utils';
 import AccountIcons from './AccountIcons';
 import AOC from './AOC';
 
-interface AddressDetailsProps {
-  address: string | undefined;
-  api: ApiPromise | undefined;
-  accountAssets: FetchedBalance[] | null | undefined;
-  balances: BalancesInfo | undefined;
-  chain: Chain | null | undefined;
-  chainName: string | undefined;
-  formatted: string | undefined;
-  isDarkTheme: boolean;
-  label?: string | undefined;
+interface PriceJSXType {
+  balanceToShow: BalancesInfo | undefined;
+  isPriceOutdated: boolean | undefined;
   price: number | undefined;
-  pricesInCurrency: Prices | null | undefined;
-  setSelectedAsset: React.Dispatch<React.SetStateAction<FetchedBalance | undefined>>;
-  selectedAsset: FetchedBalance | undefined;
 }
 
-const Price = ({ balanceToShow, isPriceOutdated, price }: { balanceToShow: BalancesInfo | undefined, isPriceOutdated: boolean | undefined, price: number | undefined }) => (
+const Price = ({ balanceToShow, isPriceOutdated, price }: PriceJSXType) => (
   <Grid item sx={{ '> div span': { display: 'block' }, color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 400 }}>
     <FormatPrice
       amount={getValue('total', balanceToShow)}
@@ -51,7 +41,12 @@ const Price = ({ balanceToShow, isPriceOutdated, price }: { balanceToShow: Balan
   </Grid>
 );
 
-const Balance = ({ balanceToShow, isBalanceOutdated }: { balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined }) => (
+interface BalanceJSXType {
+  balanceToShow: BalancesInfo | undefined;
+  isBalanceOutdated: boolean | undefined;
+}
+
+const Balance = ({ balanceToShow, isBalanceOutdated }: BalanceJSXType) => (
   <>
     {balanceToShow?.decimal
       ? <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary', fontWeight: 500 }}>
@@ -67,7 +62,14 @@ const Balance = ({ balanceToShow, isBalanceOutdated }: { balanceToShow: Balances
   </>
 );
 
-const BalanceRow = ({ balanceToShow, isBalanceOutdated, isPriceOutdated, price }: { balanceToShow: BalancesInfo | undefined, isPriceOutdated: boolean | undefined, isBalanceOutdated: boolean | undefined, price: number | undefined }) => (
+interface BalanceRowJSXType {
+  balanceToShow: BalancesInfo | undefined;
+  isPriceOutdated: boolean | undefined;
+  isBalanceOutdated: boolean | undefined;
+  price: number | undefined;
+}
+
+const BalanceRow = ({ balanceToShow, isBalanceOutdated, isPriceOutdated, price }: BalanceRowJSXType) => (
   <Grid alignItems='center' container fontSize='28px' item xs>
     <Balance balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} />
     <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '30px', mx: '10px', my: 'auto' }} />
@@ -75,7 +77,15 @@ const BalanceRow = ({ balanceToShow, isBalanceOutdated, isPriceOutdated, price }
   </Grid>
 );
 
-const SelectedAssetBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOutdated, price }: { account: AccountJson | undefined, balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined, isPriceOutdated: boolean, price: number | undefined }) => {
+interface SelectedAssetBoxJSXType {
+  account: AccountJson | undefined;
+  balanceToShow: BalancesInfo | undefined;
+  isBalanceOutdated: boolean | undefined;
+  isPriceOutdated: boolean;
+  price: number | undefined;
+}
+
+const SelectedAssetBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOutdated, price }: SelectedAssetBoxJSXType) => {
   const logoInfo = useMemo(() => account?.genesisHash ? getLogo2(account?.genesisHash, balanceToShow?.token) : undefined, [account?.genesisHash, balanceToShow?.token]);
   const { t } = useTranslation();
 
@@ -100,7 +110,25 @@ const SelectedAssetBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOu
   );
 };
 
-export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, label, price, pricesInCurrency, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+
+interface AddressDetailsProps {
+  address: string | undefined;
+  api: ApiPromise | undefined;
+  accountAssets: FetchedBalance[] | null | undefined;
+  balances: BalancesInfo | undefined;
+  chain: Chain | null | undefined;
+  chainName: string | undefined;
+  formatted: string | undefined;
+  isDarkTheme: boolean;
+  label?: string | undefined;
+  price: number | undefined;
+  pricesInCurrency: Prices | null | undefined;
+  setSelectedAsset: React.Dispatch<React.SetStateAction<FetchedBalance | undefined>>;
+  selectedAsset: FetchedBalance | undefined;
+  setAssetIdOnAssetHub: React.Dispatch<React.SetStateAction<number | undefined>>;
+}
+
+export default function AccountInformation({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
 
   const account = useAccount(address);
@@ -118,15 +146,20 @@ export default function AccountInformation ({ accountAssets, address, api, balan
     if (!accountAssets) {
       return accountAssets; // null or undefined!
     } else {
-      return accountAssets.sort((a, b) => calculatePrice(b.totalBalance, b.decimal, pricesInCurrency?.prices?.[b.priceId]?.value ?? 0) - calculatePrice(a.totalBalance, a.decimal, pricesInCurrency?.prices?.[a.priceId]?.value ?? 0));
+      return accountAssets.sort((a, b) => {
+        const aPrice = calculatePrice(b.totalBalance, b.decimal, pricesInCurrency?.prices?.[b.priceId]?.value ?? 0);
+        const bPrice = calculatePrice(a.totalBalance, a.decimal, pricesInCurrency?.prices?.[a.priceId]?.value ?? 0);
+
+        return aPrice - bPrice;
+      });
     }
   }, [accountAssets, calculatePrice, pricesInCurrency?.prices]);
 
-  const showAOC = useMemo(() => !!(assetsToShow === undefined || (assetsToShow && assetsToShow?.length > 0)), [assetsToShow]);
+  const showAOC = useMemo(() => !!(assetsToShow === undefined || (assetsToShow && assetsToShow.length > 0)), [assetsToShow]);
 
   useEffect(() => {
-    /** if chain has been switched an its not among the selected chains */
-    if (account?.genesisHash && !accountAssets?.find(({ genesisHash }) => genesisHash === account?.genesisHash)) {
+    /** if chain has been switched and its not among the selected chains */
+    if (account?.genesisHash && !accountAssets?.find(({ genesisHash }) => genesisHash === account.genesisHash)) {
       return setSelectedAsset(undefined);
     }
   }, [account?.genesisHash, accountAssets, setSelectedAsset]);
@@ -141,9 +174,10 @@ export default function AccountInformation ({ accountAssets, address, api, balan
 
   const onAssetBoxClicked = useCallback((asset: FetchedBalance | undefined) => {
     address && asset && tieAccount(address, asset.genesisHash).finally(() => {
+      setAssetIdOnAssetHub(undefined);
       setSelectedAsset(asset);
     }).catch(console.error);
-  }, [address, setSelectedAsset]);
+  }, [address, setSelectedAsset, setAssetIdOnAssetHub]);
 
   const toggleVisibility = useCallback((): void => {
     address && showAccount(address, account?.isHidden || false).catch(console.error);
