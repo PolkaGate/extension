@@ -20,7 +20,7 @@ import { isHexToBn } from '../../../../util/utils';
 interface Props {
   api?: ApiPromise;
   accountInfo: DeriveAccountInfo | undefined;
-  check: boolean;
+  check?: boolean;
   isActive: boolean | undefined;
   isOversubscribed: {
     notSafe: boolean;
@@ -33,9 +33,10 @@ interface Props {
   stakingConsts: StakingConsts | null | undefined;
   showCheckbox?: boolean;
   token?: string;
+  allInOneRow?: boolean
 }
 
-function ShowValidator ({ accountInfo, api, chain, check, decimal, handleCheck, isActive, isOversubscribed, showCheckbox, stakingConsts, token, v }: Props): React.ReactElement {
+function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, decimal, handleCheck, isActive, isOversubscribed, showCheckbox, stakingConsts, token, v }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const overSubscriptionAlert1 = t('This validator is oversubscribed but you are within the top {{max}}.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
@@ -48,7 +49,7 @@ function ShowValidator ({ accountInfo, api, chain, check, decimal, handleCheck, 
   );
 
   return (
-    <Grid alignItems='center' container item p='3px 5px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='94%'>
+    <Grid alignItems='center' container item p='3px 5px' rowGap={!allInOneRow ? '5px' : undefined} sx={{ borderRight: allInOneRow && '1px solid', borderRightColor: allInOneRow && 'secondary.main' }} width={allInOneRow ? '94%' : '100%'}>
       {showCheckbox &&
           <Grid item width='5%'>
             <Checkbox2
@@ -57,7 +58,7 @@ function ShowValidator ({ accountInfo, api, chain, check, decimal, handleCheck, 
             />
           </Grid>
       }
-      <Grid container fontSize='14px' item maxWidth={showCheckbox ? '45%' : '500%'} textAlign='left' width='fit-content'>
+      <Grid container fontSize='14px' item maxWidth={showCheckbox ? '45%' : allInOneRow ? '50%' : '100%'} textAlign='left' width={allInOneRow ? 'fit-content' : '100%'}>
         <Identity
           accountInfo={accountInfo}
           api={api}
@@ -68,9 +69,11 @@ function ShowValidator ({ accountInfo, api, chain, check, decimal, handleCheck, 
           style={{ fontSize: '14px' }}
         />
       </Grid>
-      <Div />
-      <Grid alignItems='center' container item maxWidth='50%' sx={{ fontSize: '14px', fontWeight: 300, lineHeight: '23px' }} width='fit-content'>
-        {t<string>('Staked:')}
+      {allInOneRow && <Div />}
+      <Grid alignItems='center' container item justifyContent={allInOneRow ? 'center' : 'space-between'} maxWidth= {allInOneRow ? '50%' : '100%'} sx={{ fontSize: '14px', fontWeight: 300, lineHeight: '23px' }} width={allInOneRow ? 'fit-content' : '100%'}>
+        <Grid item>
+          {t('Staked')}:
+        </Grid>
         <Grid fontSize='14px' fontWeight={400} item pl='3px'>
           {isHexToBn(v.exposure.total.toString()).gt(BN_ZERO)
             ? <ShowBalance
@@ -86,22 +89,26 @@ function ShowValidator ({ accountInfo, api, chain, check, decimal, handleCheck, 
           }
         </Grid>
       </Grid>
-      <Div />
-      <Grid alignItems='center' container item sx={{ fontSize: '14px', fontWeight: 300, lineHeight: '23px' }} width='fit-content'>
-        {t<string>('Com.')}
+      {allInOneRow && <Div />}
+      <Grid alignItems='center' container item justifyContent={allInOneRow ? 'center' : 'space-between'} sx={{ fontSize: '14px', fontWeight: 300, lineHeight: '23px' }} width={allInOneRow ? 'fit-content' : '100%'}>
+        <Grid item>
+          {t('Commission')}:
+        </Grid>
         <Grid fontSize='14px' fontWeight={400} item lineHeight='22px' pl='3px'>
           {Number(v.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(v.validatorPrefs.commission) / (10 ** 7)}%
         </Grid>
       </Grid>
-      <Div />
-      <Grid alignItems='end' container item sx={{ fontSize: '14px', fontWeight: 300, lineHeight: '23px' }} width='fit-content'>
-        {t<string>('Nominators:')}
+      {allInOneRow && <Div />}
+      <Grid alignItems='end' container item justifyContent={allInOneRow ? 'center' : 'space-between'} sx={{ fontSize: '14px', fontWeight: 300, lineHeight: '23px' }} width={allInOneRow ? 'fit-content' : isOversubscribed ? '90%' : '100%'}>
+        <Grid item>
+          {t('Nominators')}:
+        </Grid>
         <Grid fontSize='14px' fontWeight={400} item lineHeight='22px' pl='3px'>
           {v.exposure.others.length || t('N/A')}
         </Grid>
       </Grid>
-      <Grid alignItems='center' container item justifyContent='flex-end' sx={{ lineHeight: '23px', pl: '2px' }} width='fit-content'>
-        {isActive &&
+      <Grid alignItems='center' container item justifyContent='flex-end' sx={{ lineHeight: '23px', pl: '2px' }} width= 'fit-content'>
+        {isActive && allInOneRow &&
             <Infotip text={t('Active')}>
               <DirectionsRunIcon sx={{ color: '#1F7720', fontSize: '18px' }} />
             </Infotip>

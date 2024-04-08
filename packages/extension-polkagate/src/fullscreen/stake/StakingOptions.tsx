@@ -11,9 +11,10 @@ import { PButton, PoolStakingIcon } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { useInfo, useMinToReceiveRewardsInSolo2, usePoolConsts } from '../../hooks';
 import { BalancesInfo } from '../../util/types';
+import { Inputs } from '../sendFund';
 import StakingOptionFS from './partials/StakingOptionFS';
 import PoolOptions from './pool/PoolOptions';
-import { Inputs, STEPS } from '.';
+import { STEPS } from '.';
 
 interface Props {
   address: string
@@ -46,7 +47,7 @@ export default function StakingOptions ({ address, setStep }: Props): React.Reac
     , [setStep]);
 
   return (
-    <Grid container item >
+    <Grid container item>
       <Typography fontSize='16px' fontWeight={500} pb='15px' width='100%'>
         {t('Options are available to commence staking in Westend. Please select your preference, taking into consideration the minimum requirements for receiving rewards per era.', { replace: { chainName } })}
       </Typography>

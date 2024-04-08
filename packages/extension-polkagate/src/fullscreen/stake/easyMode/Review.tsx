@@ -30,7 +30,7 @@ interface Props {
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>
 }
 
-export default function Review ({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain } = useInfo(address);
   const theme = useTheme();
@@ -68,9 +68,9 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
           </Grid>
         </DisplayValue>
         {selectedProxyAddress &&
-                <Grid container m='auto' maxWidth='92%'>
-                  <ThroughProxy address={selectedProxyAddress} chain={chain} />
-                </Grid>
+          <Grid container m='auto' maxWidth='92%'>
+            <ThroughProxy address={selectedProxyAddress} chain={chain} />
+          </Grid>
         }
         <DisplayValue dividerHeight='1px' title={t('Amount')}>
           <Grid alignItems='center' container item sx={{ height: '42px' }}>
@@ -82,43 +82,43 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
           </Grid>
         </DisplayValue>
         {inputs?.pool &&
-              <>
-                <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mx: 'auto', my: '5px', width: '170px' }} />
-                <ShowPool
-                  api={api}
-                  chain={chain}
-                  label={t('Pool')}
-                  labelPosition='center'
-                  mode='Joining'
-                  pool={inputs?.pool}
-                  showInfo
-                  style={{
-                    m: '8px auto 0',
-                    width: '92%'
-                  }}
-                />
-              </>
+          <>
+            <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mx: 'auto', my: '5px', width: '170px' }} />
+            <ShowPool
+              api={api}
+              chain={chain}
+              label={t('Pool')}
+              labelPosition='center'
+              mode='Joining'
+              pool={inputs?.pool}
+              showInfo
+              style={{
+                m: '8px auto 0',
+                width: '92%'
+              }}
+            />
+          </>
         }
         {inputs?.selectedValidators &&
-        <Grid alignContent='center' container item justifyContent='center'>
-          <Divider sx={{ bgcolor: 'secondary.main', height: '1px', width: '240px' }} />
           <Grid alignContent='center' container item justifyContent='center'>
-            <Grid item sx={{ alignSelf: 'center', mr: '20px', width: 'fit=content' }}>
-              <Infotip fontSize='13px' iconTop={5} showQuestionMark text={t<string>(SYSTEM_SUGGESTION_TEXT)}>
-                <Typography sx={{ fontWeight: 300 }}>
-                  {t('Selected Validators ({{count}})', { replace: { count: inputs.selectedValidators?.length } })}
-                </Typography>
-              </Infotip>
+            <Divider sx={{ bgcolor: 'secondary.main', height: '1px', width: '240px' }} />
+            <Grid alignContent='center' container item justifyContent='center'>
+              <Grid item sx={{ alignSelf: 'center', mr: '20px', width: 'fit=content' }}>
+                <Infotip fontSize='13px' iconTop={5} showQuestionMark text={t<string>(SYSTEM_SUGGESTION_TEXT)}>
+                  <Typography sx={{ fontWeight: 300 }}>
+                    {t('Selected Validators ({{count}})', { replace: { count: inputs.selectedValidators?.length } })}
+                  </Typography>
+                </Infotip>
+              </Grid>
+              <Grid item onClick={openValidatorsTable} sx={{ cursor: 'pointer', mt: '5px' }}>
+                <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '27px' }} />
+              </Grid>
             </Grid>
-            <Grid item onClick={openValidatorsTable} sx={{ cursor: 'pointer', mt: '5px' }}>
-              <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '27px' }} />
-            </Grid>
+            <Divider sx={{ bgcolor: 'secondary.main', height: '1px', width: '240px' }} />
+            <RewardsDestination settings={{ payee: 'Staked' }} />
           </Grid>
-          <Divider sx={{ bgcolor: 'secondary.main', height: '1px', width: '240px' }} />
-          <RewardsDestination settings={{ payee: 'Staked' }} />
-        </Grid>
         }
-        <DisplayValue dividerHeight='1px' title={ t('Fee')}>
+        <DisplayValue dividerHeight='1px' title={t('Fee')}>
           <Grid alignItems='center' container item sx={{ height: '42px' }}>
             <ShowBalance
               api={api}

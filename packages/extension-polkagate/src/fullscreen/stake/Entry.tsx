@@ -21,7 +21,7 @@ import Review from './easyMode/Review';
 import CreatePool from './pool/create';
 import JoinPool from './pool/join';
 import EasyMode from './easyMode';
-import SoloStake from './solo';
+import SoloStake from './solo/stake';
 import StakingOptions from './StakingOptions';
 import { STEPS } from '.';
 

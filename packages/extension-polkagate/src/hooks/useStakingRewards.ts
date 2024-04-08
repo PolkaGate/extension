@@ -22,7 +22,7 @@ export async function getStakingReward(chainName: string, address: AccountId | s
     return null;
   }
 
-  console.log(`Getting Staking Reward from subscan  on chain:${chainName} for address:${address} ... `);
+  console.log(`Getting Staking Reward from subscan  on ${chainName} for ${address} ... `);
 
   return new Promise((resolve) => {
     try {

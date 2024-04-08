@@ -1182,5 +1182,9 @@
   "Advanced Staking": "",
   "Pick one of {{totalNumberOfPools}} staking pools to join": "",
   "Identity cleared.": "",
-  "Identity not cleared.": ""
+  "Identity not cleared.": "",
+  "Staked in Pool": "",
+  "unstake": "",
+  "stake": "",
+  "withdraw": ""
 }

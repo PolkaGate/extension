@@ -89,3 +89,5 @@ export { default as useAccountIdOrName } from './useAccountIdOrName';
 export { default as useAccountAssetsOptions } from './useAccountAssetsOptions';
 export { default as useMinToReceiveRewardsInSolo2 } from './useMinToReceiveRewardsInSolo2';
 export { default as useAccountsOrder } from './useAccountsOrder';
+export { default as useNativeTokenPrice } from './useNativeTokenPrice';
+export { default as useActiveValidators } from './useActiveValidators';

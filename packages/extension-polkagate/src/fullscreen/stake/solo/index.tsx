@@ -1,230 +1,294 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, Typography } from '@mui/material';
-import { ValidatorInfo } from 'extension-polkagate/src/util/types';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import type { ApiPromise } from '@polkadot/api';
+import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
+
+import { faBolt, faCircleDown, faClockFour, faHand, faInfoCircle, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ArrowForwardIos as ArrowForwardIosIcon, Boy as BoyIcon } from '@mui/icons-material';
+import { Box, Container, Divider, Grid, useTheme } from '@mui/material';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
+import { useHistory, useLocation } from 'react-router-dom';
 
-import { Balance } from '@polkadot/types/interfaces';
-import { BN_ZERO } from '@polkadot/util';
+import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
-import { AmountWithOptions, Infotip2, ShowBalance, TwoButtons } from '../../../components';
-import { useTranslation } from '../../../components/translate';
-import { useBalances, useInfo, useMinToReceiveRewardsInSolo2, useStakingAccount, useStakingConsts } from '../../../hooks';
-import { amountToHuman, amountToMachine } from '../../../util/utils';
-import { Inputs } from '../Entry';
-import { STEPS } from '..';
-import SelectValidators from './partials/SelectValidators';
+import { controllerSettingBlack, controllerSettingWhite, soloSettingBlack, soloSettingWhite, stashSettingBlack, stashSettingWhite } from '../../../assets/icons';
+import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
+import { useActiveValidators, useApi, useBalances, useChain, useDecimal, useFormatted, useFullscreen, useInfo, useMyAccountIdentity, useNativeTokenPrice, useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress, useStakingRewards, useToken, useTranslation, useUnSupportedNetwork } from '../../../hooks';
+import useIsExtensionPopup from '../../../hooks/useIsExtensionPopup';
+import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, STAKING_CHAINS, TIME_TO_SHAKE_ICON } from '../../../util/constants';
+import { FullScreenHeader } from '../../governance/FullScreenHeader';
+import { Title } from '../../sendFund/InputPage';
+import DisplayBalance from '../partials/DisplayBalance';
+import ActiveValidators from './partials/ActiveValidators';
+import RewardsChart from './partials/RewardsChart';
+import ShowValidator from './partials/ShowValidator';
 
-interface Props {
-  setStep: React.Dispatch<React.SetStateAction<number>>;
-  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
-  inputs: Inputs | undefined;
+// import RewardsDetail from './rewards/RewardsDetail';
+// import Info from './Info';
+// import RedeemableWithdrawReview from './redeem';
+// import Settings from './settings';
+
+interface SessionIfo {
+  eraLength: number;
+  eraProgress: number;
+  currentEra: number;
 }
 
-export default function SoloStake ({ inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
+
+  useFullscreen();
+
+  const history = useHistory();
   const { address } = useParams<{ address: string }>();
-  const stakingAccount = useStakingAccount(address);
+
+  useUnSupportedNetwork(address, STAKING_CHAINS);
 
   const [refresh, setRefresh] = useState<boolean>(false);
-  const balances = useBalances(address, refresh, setRefresh);
-  const { api, decimal, formatted } = useInfo(address);
+  const stakingAccount = useStakingAccount(address, undefined, refresh, setRefresh);
+  const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
 
+  const rewards = useStakingRewards(address, stakingAccount);
+  const { api } = useInfo(address);
   const stakingConsts = useStakingConsts(address);
-  const minToReceiveRewardsInSolo = useMinToReceiveRewardsInSolo2(address);
+  const balances = useBalances(address, refresh, setRefresh);
 
-  const [amount, setAmount] = useState<string>(inputs?.amount);
-  const [estimatedFee, setEstimatedFee] = useState<Balance>();
-  const [isNextClicked, setNextIsClicked] = useState<boolean>();
+  const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
+  const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
 
-  const [newSelectedValidators, setNewSelectedValidators] = useState<ValidatorInfo[]>([]);
-
-  const { call, params } = useMemo(() => {
-    if (amount && api && newSelectedValidators) {
-      const amountAsBN = amountToMachine(amount, decimal);
-
-      const bonded = api.tx.staking.bond;
-      const bondParams = [amountAsBN, 'Staked'];
-
-      const nominated = api.tx.staking.nominate;
-      const ids = newSelectedValidators.map((v) => v.accountId);
-      const call = api.tx.utility.batchAll;
-      const params = [[bonded(...bondParams), nominated(ids)]];
-
-      return { call, params };
-    }
-
-    return { call: undefined, params: undefined };
-  }, [amount, api, decimal, newSelectedValidators]);
-
-  const buttonDisable = useMemo(() => !amount || !newSelectedValidators?.length, [amount, newSelectedValidators?.length]);
-  const isBusy = useMemo(() => (!inputs?.estimatedFee || !inputs?.amount) && isNextClicked, [inputs?.amount, inputs?.estimatedFee, isNextClicked]);
+  const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>();
+  const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
+  const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
+  const [showInfo, setShowInfo] = useState<boolean>(false);
+  const [showSettings, setShowSettings] = useState<boolean>(false);
+  const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
 
   useEffect(() => {
-    if (call && params && newSelectedValidators) {
-      const extraInfo = {
-        action: 'Solo Staking',
-        amount,
-        fee: String(estimatedFee || 0),
-        subAction: 'Stake'
-      };
-
-      setInputs({
-        amount,
-        call,
-        estimatedFee,
-        extraInfo,
-        mode: STEPS.STAKE_SOLO,
-        params,
-        selectedValidators: newSelectedValidators
+    api && api.derive.session?.progress().then((sessionInfo) => {
+      setSessionInfo({
+        currentEra: Number(sessionInfo.currentEra),
+        eraLength: Number(sessionInfo.eraLength),
+        eraProgress: Number(sessionInfo.eraProgress)
       });
-    } else {
-      console.log('cant stake!');
-    }
-  }, [amount, call, estimatedFee, newSelectedValidators, params, setInputs]);
+    });
+  }, [api]);
 
   useEffect(() => {
-    if (call && params && formatted) {
-      call(...params)
-        .paymentInfo(formatted)
-        .then((i) => setEstimatedFee(i?.partialFee))
-        .catch(console.error);
-    }
-  }, [formatted, params, call]);
-
-  const onChangeAmount = useCallback((value: string) => {
-    if (!balances) {
-      return;
-    }
-
-    if (value.length > balances.decimal - 1) {
-      console.log(`The amount digits is more than decimal:${balances.decimal}`);
+    if (!stakingAccount || !sessionInfo) {
+      setUnlockingAmount(undefined);
 
       return;
     }
 
-    setAmount(value);
-  }, [balances]);
+    let unlockingValue = BN_ZERO;
+    const toBeReleased = [];
 
-  const thresholds = useMemo(() => {
-    if (!stakingConsts || !decimal || !balances || !minToReceiveRewardsInSolo) {
-      return;
+    if (stakingAccount?.unlocking) {
+      for (const [_, { remainingEras, value }] of Object.entries(stakingAccount.unlocking)) {
+        if (remainingEras.gtn(0)) {
+          const amount = new BN(value as unknown as string);
+
+          unlockingValue = unlockingValue.add(amount);
+          const secToBeReleased = (Number(remainingEras.subn(1)) * sessionInfo.eraLength + (sessionInfo.eraLength - sessionInfo.eraProgress)) * 6;
+
+          toBeReleased.push({ amount, date: Date.now() + (secToBeReleased * 1000) });
+        }
+      }
     }
 
-    const ED = stakingConsts.existentialDeposit;
-    let max = balances.freeBalance.sub(ED.muln(2));
-    let min = minToReceiveRewardsInSolo.add(ED); // we have added ED just to have a kind of safety margin
+    setToBeReleased(toBeReleased);
+    setUnlockingAmount(unlockingValue);
+  }, [sessionInfo, stakingAccount]);
 
-    if (min.gt(max)) {
-      min = max = BN_ZERO;
-    }
+  const onUnstake = useCallback(() => {
+    history.push({
+      pathname: `/solo/unstake/${address}`,
+      state: { api, balances, redeemable, stakingAccount, stakingConsts, unlockingAmount }
+    });
+  }, [history, address, api, balances, redeemable, stakingConsts, unlockingAmount, stakingAccount]);
 
-    return { max, min };
-  }, [balances, decimal, minToReceiveRewardsInSolo, stakingConsts]);
+  const onFastUnstake = useCallback(() => {
+    history.push({
+      pathname: `/solo/fastUnstake/${address}`,
+      state: { api, balances, redeemable, stakingAccount, stakingConsts, unlockingAmount }
+    });
+  }, [address, api, balances, history, redeemable, stakingAccount, stakingConsts, unlockingAmount]);
 
-  const onThresholdAmount = useCallback((maxMin: 'max' | 'min') => {
-    if (!thresholds || !decimal) {
-      return;
-    }
-
-    setInputs({ ...(inputs || {}), amount: undefined });
-    setAmount(amountToHuman(thresholds[maxMin].toString(), decimal));
-  }, [thresholds, decimal, setInputs, inputs]);
-
-  const onMaxClick = useCallback(
-    () => onThresholdAmount('max')
-    , [onThresholdAmount]);
-
-  const onMinClick = useCallback(
-    () => onThresholdAmount('min')
-    , [onThresholdAmount]);
-
-  const onNextClick = useCallback(() => {
-    setNextIsClicked(true);
-  }, []);
-
-  const goToReview = useCallback(
-    () => setStep(STEPS.SOLO_REVIEW)
-    , [setStep]);
-
-  const onBackClick = useCallback(
-    () => setStep(STEPS.INDEX)
-    , [setStep]);
-
-  useEffect(() => {
-    isNextClicked && !isBusy && goToReview();
-  }, [goToReview, isBusy, isNextClicked]);
+  const onPendingRewards = useCallback(() => {
+    history.push({
+      pathname: `/solo/payout/${address}`,
+      state: {}
+    });
+  }, [address, history]);
 
   return (
-    <>
-      <Typography fontSize='16px' fontWeight={500} pb='15px' width='100%'>
-        {t('Stake your tokens to support your selected validators. You earn a share of rewards received by your active validator(s) in each era.')}
-      </Typography>
-      <Grid alignItems='center' container item justifyContent='flex-start'>
-        <AmountWithOptions
-          label={t('Amount') }
-          onChangeAmount={onChangeAmount}
-          onPrimary={onMaxClick}
-          onSecondary={onMinClick}
-          primaryBtnText={t('Max amount')}
-          secondaryBtnText={ t('Min amount')}
-          style={{
-            fontSize: '16px',
-            mt: '10px',
-            width: '73%'
-          }}
-          textSpace='15px'
-          value={amount}
-        />
-        <Grid container item pb='10px'>
-          <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '58.25%' }}>
-            <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
-              {t('Available Balance')}
-            </Grid>
-            <Grid item sx={{ fontSize: '14px', fontWeight: 500 }}>
-              <ShowBalance balance={balances?.availableBalance} decimal={decimal} decimalPoint={2} token={balances?.token} />
+    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
+      <FullScreenHeader page='stake' />
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', px: '5%' }}>
+        <Title logo={ <BoyIcon sx={{ color: 'text.primary', fontSize: '60px' }} /> } text={t('Staked Solo')} />
+        <Grid container item justifyContent='space-between' mb='15px'>
+          <Grid container direction='column' item mb='10px' minWidth='715px' rowGap='10px' width='calc(100% - 300px - 3%)'>
+            <Grid container maxHeight={window.innerHeight - 264} sx={{ overflowY: 'scroll' }}>
+              <DisplayBalance
+                actions={[t('unstake'), t('fast unstake')]}
+                address={address}
+                amount={staked}
+                icons={[faMinus, faBolt]}
+                marginTop='0px'
+                onClicks={[onUnstake, api && api.consts?.fastUnstake?.deposit && onFastUnstake]}
+                title={t('Staked')}
+              />
+              <DisplayBalance
+                actions={[t('pending')]}
+                address={address}
+                amount={rewards}
+                icons={[faClockFour]}
+                onClicks={[onPendingRewards]}
+                title={t('Rewards Paid')}
+              />
+              <DisplayBalance
+                actions={[t('withdraw')]}
+                address={address}
+                amount={redeemable}
+                icons={[faCircleDown]}
+                onClicks={[onPendingRewards]}
+                title={t('Redeemable')}
+              />
+              <DisplayBalance
+                address={address}
+                amount={unlockingAmount}
+                isUnstaking
+                title={t('Unstaking')}
+                toBeReleased={toBeReleased}
+              />
+              <DisplayBalance
+                actions={[t('stake')]}
+                address={address}
+                amount={getValue('available', balances)}
+                icons={[faPlus]}
+                onClicks={[onUnstake]} // TODO
+                title={t('Available to stake')}
+              />
             </Grid>
           </Grid>
-          <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '58.25%' }}>
-            <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
-              <Infotip2 showQuestionMark text={t('This represents a dynamically adjusted minimum threshold to qualify for rewards per era. It may fluctuate based on the total stake of other stakers and the number of stakers present.')}>
-                {t('Minimum to earn rewards')}
-              </Infotip2>
-            </Grid>
-            <Grid item sx={{ fontSize: '14px', fontWeight: 500 }}>
-              <ShowBalance balance={minToReceiveRewardsInSolo} decimal={decimal} decimalPoint={2} token={balances?.token} />
-            </Grid>
-          </Grid>
-        </Grid>
-        <Divider sx={{ fontSize: '16px', fontWeight: 500, mt: '20px', width: '100%' }}>
-          {t('Select Validators')}
-        </Divider>
-        <Grid container item justifyContent='flex-start' mt='10px'>
-          <SelectValidators
-            address={address}
-            newSelectedValidators={newSelectedValidators}
-            setNewSelectedValidators={setNewSelectedValidators}
-            staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
-            stakingConsts={stakingConsts}
-            stashId={formatted}
-          />
-          <Grid container item sx={{ '> div': { m: 0, width: '64%' }, justifyContent: 'flex-end', mt: '5px' }}>
-            <TwoButtons
-              disabled={buttonDisable}
-              isBusy={isBusy}
-              mt='1px'
-              onPrimaryClick={onNextClick}
-              onSecondaryClick={onBackClick}
-              primaryBtnText={t('Next')}
-              secondaryBtnText={t('Back')}
+          <Grid container direction='column' gap='15px' item width='320px'>
+            <RewardsChart
+              address={address}
+              rewardDestinationAddress={rewardDestinationAddress}
             />
+            <ActiveValidators
+              address={address}
+            />
+
           </Grid>
         </Grid>
+        {/* <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', pt: '5px', pb: '2px', width: '92%' }}>
+          <HorizontalMenuItem
+            divider
+            icon={
+              <FontAwesomeIcon
+                color={`${theme.palette.text.primary}`}
+                icon={faPlus}
+                shake={shake}
+                style={{ height: '34px', stroke: `${theme.palette.text.primary}`, strokeWidth: 30, width: '40px', marginBottom: '-4px' }}
+              />
+            }
+            onClick={onStake}
+            textDisabled={role() === 'Controller'}
+            title={t<string>('Stake')}
+          />
+          <HorizontalMenuItem
+            divider
+            icon={
+              <FontAwesomeIcon
+                bounce={stakingAccount !== undefined && !stakingAccount?.nominators.length && !stakingAccount?.stakingLedger.active.isZero()} // do when has stake but does not nominations
+                color={`${theme.palette.text.primary}`}
+                icon={faHand}
+                size='lg'
+              />
+            }
+            onClick={onNominations}
+            title={t<string>('Validators')}
+          />
+          {stakingAccount?.stakingLedger?.total?.gt(BN_ZERO) &&
+          <HorizontalMenuItem
+            divider
+            icon={
+              <Box
+                component='img'
+                src={
+                  (['Both', 'undefined'].includes(role())
+                    ? (theme.palette.mode === 'dark' ? soloSettingWhite : soloSettingBlack)
+                    : role() === 'Stash'
+                      ? (theme.palette.mode === 'dark' ? stashSettingWhite : stashSettingBlack)
+                      : (role() === 'Controller' && theme.palette.mode === 'dark')
+                        ? controllerSettingWhite
+                        : controllerSettingBlack
+                  ) as string
+                }
+              />
+            }
+            labelMarginTop={'-7px'}
+            onClick={onSettings}
+            title={t<string>('Setting')}
+          />
+          }
+          <HorizontalMenuItem
+            icon={
+              <FontAwesomeIcon
+                color={`${theme.palette.text.primary}`}
+                icon={faInfoCircle}
+                size='lg'
+              />
+            }
+            onClick={onInfo}
+            title={t<string>('Info')}
+          />
+        </Grid> */}
       </Grid>
-    </>
+      {/* <Info
+        address={address}
+        info={stakingConsts}
+        setShowInfo={setShowInfo}
+        showInfo={showInfo}
+      /> */}
+      {/* {showSettings && stakingAccount &&
+        <Settings
+          address={address}
+          api={api}
+          setRefresh={setRefresh}
+          setShowSettings={setShowSettings}
+          showSettings={showSettings}
+          stakingAccount={stakingAccount}
+          stakingConsts={stakingConsts}
+        />
+      } */}
+      {/* {showRedeemableWithdraw && formatted && api && getValue('available', balances) && chain && redeemable && !redeemable?.isZero() &&
+        <RedeemableWithdrawReview
+          address={address}
+          amount={redeemable}
+          api={api}
+          available={getValue('available', balances)}
+          chain={chain}
+          formatted={String(formatted)}
+          setRefresh={setRefresh}
+          setShow={setShowRedeemableWithdraw}
+          show={showRedeemableWithdraw}
+        />} */}
+      {/* {showRewardsDetail &&
+        <RewardsDetail
+          address={address}
+          rewardDestinationAddress={rewardDestinationAddress}
+          setShow={setShowRewardsDetail}
+          show={showRewardsDetail}
+        />
+      } */}
+    </Grid>
   );
 }
