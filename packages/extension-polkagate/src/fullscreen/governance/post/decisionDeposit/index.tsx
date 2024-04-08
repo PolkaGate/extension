@@ -17,11 +17,9 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { Identity, ShowBalance, SignArea2, Warning } from '../../../../components';
 import { useAccountDisplay, useApi, useBalances, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
-import { broadcast } from '../../../../util/api';
+import { getValue } from '../../../../popup/account/util';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
-import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import { DraggableModal } from '../../components/DraggableModal';
-import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal2 from '../../components/SelectProxyModal2';
 import WaitScreen from '../../partials/WaitScreen';
 import { GOVERNANCE_PROXY } from '../../utils/consts';
@@ -45,7 +43,7 @@ const STEPS = {
   PROXY: 100
 };
 
-export default function DecisionDeposit({ address, open, refIndex, setOpen, track }: Props): React.ReactElement {
+export default function DecisionDeposit ({ address, open, refIndex, setOpen, track }: Props): React.ReactElement {
   const { t } = useTranslation();
   const api = useApi(address);
   const formatted = useFormatted(address);
@@ -59,19 +57,17 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
 
   const proxyItems = useMemo(() =>
     proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[]
-    , [proxies]);
+  , [proxies]);
 
   const [step, setStep] = useState<number>(STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
-  const [password, setPassword] = useState<string | undefined>();
 
   const tx = api && api.tx.referenda.placeDecisionDeposit;
   const amount = track?.[1]?.decisionDeposit;
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   useEffect(() => {
     if (!formatted || !tx) {
@@ -107,7 +103,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
     amount,
     fee: String(estimatedFee || 0),
     from: { address: formatted, name },
-    subAction: 'Pay Decision Deposit',
+    subAction: 'Pay Decision Deposit'
   }), [amount, estimatedFee, formatted, name]);
 
   const title = useMemo(() => {
@@ -130,7 +126,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
 
   const HEIGHT = 550;
 
-  const notEnoughBalance = useMemo(() => amount && estimatedFee && balances?.availableBalance?.lt(amount.add(estimatedFee)), [amount, balances, estimatedFee]);
+  const notEnoughBalance = useMemo(() => amount && estimatedFee && getValue('transferable', balances)?.lt(amount.add(estimatedFee)), [amount, balances, estimatedFee]);
 
   return (
     <DraggableModal onClose={handleClose} open={open} width={500}>
@@ -214,7 +210,6 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
                 setTxInfo={setTxInfo}
                 step={step}
                 steps={STEPS}
-              // showBackButtonWithUs÷eProxy={false}
               />
             </Grid>
           </Grid>
@@ -222,8 +217,8 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
         {step === STEPS.PROXY &&
           <SelectProxyModal2
             address={address}
-            height={HEIGHT}
             closeSelectProxy={() => setStep(STEPS.REVIEW)}
+            height={HEIGHT}
             proxies={proxyItems}
             proxyTypeFilter={GOVERNANCE_PROXY}
             selectedProxy={selectedProxy}

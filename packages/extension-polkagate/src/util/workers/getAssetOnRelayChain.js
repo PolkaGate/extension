@@ -11,7 +11,6 @@ import { TEST_NETS } from '../constants';
 import getPoolAccounts from '../getPoolAccounts';
 import { balancify, closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
 
-
 async function getPooledBalance (api, address) {
   const response = await api.query.nominationPools.poolMembers(address);
   const member = response && response.unwrapOr(undefined);
@@ -55,6 +54,10 @@ async function getBalances (chainName, addresses) {
   if (api.isConnected && api.derive.balances) {
     const requests = addresses.map(async (address) => {
       const balances = await api.derive.balances.all(address);
+      const systemBalance = await api.query.system.account(address);
+
+      balances.frozenBalance = systemBalance.frozen;
+
       let soloTotal = BN_ZERO;
       let pooledBalance = BN_ZERO;
 

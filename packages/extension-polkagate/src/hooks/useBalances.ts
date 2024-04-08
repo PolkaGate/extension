@@ -101,11 +101,24 @@ export default function useBalances (address: string | undefined, refresh?: bool
 
     const ED = api.consts.balances.existentialDeposit as unknown as BN;
 
-    formatted && api.derive.balances?.all(formatted).then((b) => {
-      setNewBalances({ ...b, ED, chainName, date: Date.now(), decimal, genesisHash: api.genesisHash.toString(), token });
-      setRefresh && setRefresh(false);
-      isFetching.fetching[String(formatted)].balances = false;
-      isFetching.set(isFetching.fetching);
+    formatted && api.derive.balances?.all(formatted).then((allBalances) => {
+      api.query.system.account(formatted).then(({ data: systemBalance }) => {
+        const frozenBalance = systemBalance.frozen as BN;
+
+        setNewBalances({
+          ED,
+          ...allBalances,
+          chainName,
+          date: Date.now(),
+          decimal: api.registry.chainDecimals[0],
+          frozenBalance,
+          genesisHash: api.genesisHash.toString(),
+          token: api.registry.chainTokens[0]
+        });
+        setRefresh && setRefresh(false);
+        isFetching.fetching[String(formatted)].balances = false;
+        isFetching.set(isFetching.fetching);
+      }).catch(console.error);
     }).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, chain?.genesisHash, chainName, formatted, isFetching.fetching[String(formatted)]?.length, setRefresh]);
@@ -190,6 +203,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
     const balances = {
       availableBalance: overall.availableBalance.toString(),
       freeBalance: overall.freeBalance.toString(),
+      frozenBalance: overall.frozenBalance.toString(),
       lockedBalance: overall.lockedBalance.toString(),
       pooledBalance: overall.pooledBalance.toString(),
       reservedBalance: overall.reservedBalance.toString(),
@@ -223,6 +237,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
         date: savedBalances[chainName].date,
         decimal: savedBalances[chainName].decimal,
         freeBalance: new BN(sb.freeBalance),
+        frozenBalance: new BN(sb.frozenBalance),
         lockedBalance: new BN(sb.lockedBalance),
         pooledBalance: new BN(sb.pooledBalance),
         reservedBalance: new BN(sb.reservedBalance),
