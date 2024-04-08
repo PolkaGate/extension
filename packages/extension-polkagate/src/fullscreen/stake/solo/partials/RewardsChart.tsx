@@ -372,7 +372,7 @@ export default function RewardsChart ({ address, api, chain, chainName, decimal,
   );
 
   return (
-    <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'background.paper', border: theme.palette.mode === 'dark' ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: 'fit-content', p: '10px', width: 'inherit' }}>
+    <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'background.paper', border: theme.palette.mode === 'dark' ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: 'fit-content', minHeight: '310px', p: '10px', width: 'inherit' }}>
       <Grid alignItems='center' container item justifyContent='center' sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Typography color={ 'text.primary'} fontSize='18px' fontWeight={500}>
           {t('Rewards')}
