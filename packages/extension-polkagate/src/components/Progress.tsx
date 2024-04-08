@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, useTheme } from '@mui/material';
-import { Circle } from 'better-react-spinkit';
+import { Circle, WanderingCubes } from 'better-react-spinkit';
 import React from 'react';
 
 interface Props {
@@ -10,9 +10,10 @@ interface Props {
   title?: string;
   pt?: number | string;
   size?: number;
+  type?: 'circle'|'cubes';
 }
 
-function Progress({ fontSize = 13, pt = '50px', size = 25, title }: Props): React.ReactElement<Props> {
+function Progress ({ fontSize = 13, pt = '50px', size = 25, title, type = 'circle' }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (
@@ -23,9 +24,26 @@ function Progress({ fontSize = 13, pt = '50px', size = 25, title }: Props): Reac
       justifyContent='center'
       pt={pt}
     >
-      <Circle color={theme.palette.primary.main} scaleEnd={0.7} scaleStart={0.4} size={size} />
+      {type === 'circle'
+        ? <Circle
+          color={theme.palette.primary.main}
+          scaleEnd={0.7}
+          scaleStart={0.4}
+          size={size}
+        />
+        : <WanderingCubes
+          color={theme.palette.primary.main}
+          cubeSize={9}
+          duration='2s'
+          size={size}
+          timingFunction='ease-in-out'
+        />
+      }
       {title &&
-        <Grid item sx={{ fontSize, paddingTop: '20px' }}>
+        <Grid
+          item
+          sx={{ fontSize, paddingTop: '20px' }}
+        >
           {title}
         </Grid>
       }
