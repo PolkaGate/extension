@@ -162,18 +162,12 @@ export default function AccountDetails(): React.ReactElement {
 
   const goToSoloStaking = useCallback(() => {
     address && account?.genesisHash && STAKING_CHAINS.includes(account.genesisHash) &&
-      history.push({
-        pathname: `/solo/${address}/`,
-        state: { api, pathname: `account/${address}` }
-      });
-  }, [account?.genesisHash, address, api, history]);
+    openOrFocusTab(`/solofs/${address}/`);
+  }, [account?.genesisHash, address]);
 
   const goToPoolStaking = useCallback(() => {
-    address && account?.genesisHash && STAKING_CHAINS.includes(account.genesisHash) && history.push({
-      pathname: `/pool/${address}/`,
-      state: { api, pathname: `account/${address}` }
-    });
-  }, [account?.genesisHash, address, api, history]);
+    address && account?.genesisHash && STAKING_CHAINS.includes(account.genesisHash) && openOrFocusTab(`/poolfs/${address}/`);
+  }, [account?.genesisHash, address]);
 
   const onBackClick = useCallback(() => {
     openOrFocusTab('/');

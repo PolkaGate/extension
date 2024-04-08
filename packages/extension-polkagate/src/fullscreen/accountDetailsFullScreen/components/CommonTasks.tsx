@@ -130,19 +130,13 @@ export default function CommonTasks ({ address, api, assetId, balance, genesisHa
   }, [address]);
 
   const goToSoloStaking = useCallback(() => {
-    address && genesisHash && !stakingDisabled &&
-      history.push({
-        pathname: `/solo/${address}/`,
-        state: { api, pathname: `account/${address}` }
-      });
-  }, [address, api, genesisHash, history, stakingDisabled]);
+    address && !stakingDisabled &&
+    openOrFocusTab(`/solofs/${address}/`);
+  }, [address, stakingDisabled]);
 
   const goToPoolStaking = useCallback(() => {
-    address && genesisHash && !stakingDisabled && history.push({
-      pathname: `/pool/${address}/`,
-      state: { api, pathname: `account/${address}` }
-    });
-  }, [address, api, genesisHash, history, stakingDisabled]);
+    address && !stakingDisabled && openOrFocusTab(`/poolfs/${address}/`);
+  }, [address, stakingDisabled]);
 
   const goToCrowdLoans = useCallback(() => {
     address && genesisHash && !crowdloanDisabled && openOrFocusTab(`/crowdloans/${address}/`);
