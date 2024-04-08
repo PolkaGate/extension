@@ -65,7 +65,7 @@ export default function ActiveValidators ({ address }: Props): React.ReactElemen
                 ))
               }
             </>
-            : <Typography color={ 'text.primary'} fontSize='16px' fontWeight={500}>
+            : <Typography color={ 'text.primary'} fontSize='16px' fontWeight={400}>
               { t('No Active Validators Found!')}
             </Typography>
         }
