@@ -112,12 +112,7 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
 
-  const tx = useMemo(() => {
-    const extrinsic = batchAll(params);
-    const ptx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, extrinsic) : extrinsic;
-
-    return ptx;
-  }, [api.tx.proxy, batchAll, formatted, params, selectedProxy]);
+  const tx = useMemo(() => batchAll(params), [batchAll, params]);
 
   const onClose = useCallback(() => {
     setDisplayPopup(undefined);
