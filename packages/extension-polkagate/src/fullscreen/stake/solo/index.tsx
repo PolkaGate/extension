@@ -3,31 +3,23 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { ApiPromise } from '@polkadot/api';
-import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
 
-import { faBolt, faCircleDown, faClockFour, faHand, faInfoCircle, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowForwardIos as ArrowForwardIosIcon, Boy as BoyIcon } from '@mui/icons-material';
-import { Box, Container, Divider, Grid, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { faBolt, faCircleDown, faClockFour, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { Boy as BoyIcon } from '@mui/icons-material';
+import { Grid } from '@mui/material';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
-import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { controllerSettingBlack, controllerSettingWhite, soloSettingBlack, soloSettingWhite, stashSettingBlack, stashSettingWhite } from '../../../assets/icons';
-import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
-import { useActiveValidators, useApi, useBalances, useChain, useDecimal, useFormatted, useFullscreen, useInfo, useMyAccountIdentity, useNativeTokenPrice, useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress, useStakingRewards, useToken, useTranslation, useUnSupportedNetwork } from '../../../hooks';
-import useIsExtensionPopup from '../../../hooks/useIsExtensionPopup';
-import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, STAKING_CHAINS, TIME_TO_SHAKE_ICON } from '../../../util/constants';
+import { useBalances, useFullscreen, useInfo, useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress, useStakingRewards, useTranslation, useUnSupportedNetwork } from '../../../hooks';
+import { STAKING_CHAINS } from '../../../util/constants';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
 import { Title } from '../../sendFund/InputPage';
 import DisplayBalance from '../partials/DisplayBalance';
 import ActiveValidators from './partials/ActiveValidators';
 import RewardsChart from './partials/RewardsChart';
-import ShowValidator from './partials/ShowValidator';
 
 // import RewardsDetail from './rewards/RewardsDetail';
 // import Info from './Info';
