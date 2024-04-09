@@ -10,7 +10,7 @@ import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
 
 import { faArrowCircleDown, faCircleDown, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Grid, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -18,13 +18,14 @@ import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, FormatBalance, PoolStakingIcon } from '../../../components';
-import { useBalances, useFullscreen, useInfo, useMyAccountIdentity, usePool, usePoolConsts, useStakingConsts, useTranslation, useUnSupportedNetwork } from '../../../hooks';
-import useIsExtensionPopup from '../../../hooks/useIsExtensionPopup';
-import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, STAKING_CHAINS, TIME_TO_SHAKE_ICON } from '../../../util/constants';
+import { PoolStakingIcon } from '../../../components';
+import { useBalances, useFullscreen, useInfo, usePool, usePoolConsts, useStakingConsts, useTranslation, useUnSupportedNetwork } from '../../../hooks';
+import { STAKING_CHAINS } from '../../../util/constants';
+import { openOrFocusTab } from '../../accountDetailsFullScreen/components/CommonTasks';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
 import { Title } from '../../sendFund/InputPage';
 import DisplayBalance from '../partials/DisplayBalance';
+import ActiveValidators from '../solo/partials/ActiveValidators';
 
 interface SessionIfo {
   eraLength: number;
@@ -44,14 +45,11 @@ export default function Index (): React.ReactElement {
 
   useFullscreen();
 
-
-  const onAction = useContext(ActionContext);
   const history = useHistory();
   const { pathname, state } = useLocation<State>();
   const { address } = useParams<{ address: string }>();
 
-  const { api, chain, chainName, decimal, formatted, token } = useInfo(address);
-  const onExtension = useIsExtensionPopup();
+  const { api, chain } = useInfo(address);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
 
@@ -60,41 +58,26 @@ export default function Index (): React.ReactElement {
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const consts = usePoolConsts(address, state?.poolConsts);
   const balances = useBalances(address, refresh, setRefresh);
-  const identity = useMyAccountIdentity(address);
-
-  const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
-  const isPoolInfoOutdated = useMemo(() => pool && (Date.now() - pool.date) > BALANCES_VALIDITY_PERIOD, [pool]);
 
   const [redeemable, setRedeemable] = useState<BN | undefined>(state?.redeemable);
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
   const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
-  const [showUnlockings, setShowUnlockings] = useState<boolean>(false);
   const [showInfo, setShowInfo] = useState<boolean>(false);
   const [showRewardStake, setShowRewardStake] = useState<boolean>(false);
   const [showRewardWithdraw, setShowRewardWithdraw] = useState<boolean>(false);
   const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
   const [currentEraIndex, setCurrentEraIndex] = useState<number | undefined>(state?.currentEraIndex);
-  const [shake, setShake] = useState<boolean>(false); // to shake to persuade to stake ;)
 
   useEffect(() => {
-    if (staked?.isZero() && pool === null) {
-      setShake(true);
-      setTimeout(() => setShake(false), TIME_TO_SHAKE_ICON);
-    }
-  }, [pool, pool?.bondedPool?.state, shake, staked]);
-
-  const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
-
-  useEffect(() => {
-    api && api.derive.session?.progress().then((sessionInfo) => {
+    api && api.derive.session?.progress().then((info) => {
       setSessionInfo({
-        currentEra: Number(sessionInfo.currentEra),
-        eraLength: Number(sessionInfo.eraLength),
-        eraProgress: Number(sessionInfo.eraProgress)
+        currentEra: Number(info.currentEra),
+        eraLength: Number(info.eraLength),
+        eraProgress: Number(info.eraProgress)
       });
     });
   }, [api]);
@@ -140,47 +123,12 @@ export default function Index (): React.ReactElement {
     setUnlockingAmount(unlockingValue);
   }, [pool, api, currentEraIndex, sessionInfo, state?.unlockingAmount, state?.redeemable]);
 
-  const onBackClick = useCallback(() => {
-    if (chain?.genesisHash && onExtension) {
-      onAction(`/account/${chain.genesisHash}/${address}/`);
-    } else if (!onExtension) {
-      onAction(`/accountfs/${address}/0`);
-    } else {
-      onAction('/');
-    }
-  }, [address, chain?.genesisHash, onAction, onExtension]);
-
-  const goToStake = useCallback(() => {
-    history.push({
-      pathname: `/pool/stake/${address}`,
-      state: { api, consts, pathname, pool, stakingConsts }
-    });
-  }, [address, api, consts, history, pool, pathname, stakingConsts]);
-
   const onUnstake = useCallback(() => {
     staked && !staked?.isZero() && history.push({
       pathname: `/pool/unstake/${address}`,
       state: { api, balances, claimable, consts, pathname, pool, redeemable, stakingConsts, unlockingAmount }
     });
   }, [staked, history, address, api, balances, claimable, consts, pathname, pool, redeemable, stakingConsts, unlockingAmount]);
-
-  const goToNominations = useCallback(() => {
-    history.push({
-      pathname: `/pool/nominations/${address}`,
-      state: { api, balances, claimable, consts, pathname, pool, redeemable, stakingConsts, unlockingAmount }
-    });
-  }, [history, address, api, balances, claimable, consts, pool, pathname, redeemable, unlockingAmount, stakingConsts]);
-
-  const goToInfo = useCallback(() => {
-    setShowInfo(true);
-  }, []);
-
-  const goToPool = useCallback(() => {
-    history.push({
-      pathname: `/pool/myPool/${address}`,
-      state: { api, pool }
-    });
-  }, [address, api, history, pool]);
 
   const goToRewardWithdraw = useCallback(() => {
     claimable && !claimable?.isZero() && setShowRewardWithdraw(true);
@@ -194,23 +142,9 @@ export default function Index (): React.ReactElement {
     redeemable && !redeemable?.isZero() && setShowRedeemableWithdraw(true);
   }, [redeemable]);
 
-  const ToBeReleased = () => (
-    <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'secondary.main', fontSize: '16px', fontWeight: 500, ml: '7%', mt: '10px', width: '93%' }}>
-      <Grid item pt='10px' xs={12}>
-        {t('To be released')}
-      </Grid>
-      {toBeReleased?.map(({ amount, date }) => (
-        <Grid container item key={date} spacing='15px' sx={{ fontSize: '16px', fontWeight: 500 }}>
-          <Grid fontWeight={300} item>
-            {new Date(date).toLocaleDateString(undefined, DATE_OPTIONS)}
-          </Grid>
-          <Grid fontWeight={400} item>
-            <FormatBalance api={api} value={amount} />
-          </Grid>
-        </Grid>))
-      }
-    </Grid>
-  );
+  const onBackClick = useCallback(() => {
+    openOrFocusTab(`/accountfs/${address}/0`);
+  }, [address]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
@@ -218,17 +152,20 @@ export default function Index (): React.ReactElement {
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', px: '5%' }}>
         <Title
           logo={
-            <PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />}
+            <PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />
+          }
+          onBackClick={onBackClick}
           text={t('Staked in Pool')}
         />
         <Grid container item justifyContent='space-between' mb='15px'>
-          <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 300px - 3%)'>
+          <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 320px - 3%)'>
             <Grid container maxHeight={window.innerHeight - 264} sx={{ overflowY: 'scroll' }}>
               <DisplayBalance
                 actions={[t('unstake')]}
                 address={address}
                 amount={staked}
                 icons={[faMinus]}
+                marginTop='0px'
                 onClicks={[onUnstake]}
                 title={t('Staked')}
               />
@@ -263,7 +200,7 @@ export default function Index (): React.ReactElement {
                 onClicks={[onUnstake]} // TODO
                 title={t('Available to stake')}
               />
-              {pool && 
+              {pool &&
               <ShowPool
                 api={api}
                 chain={chain}
@@ -279,8 +216,14 @@ export default function Index (): React.ReactElement {
               />
               }
             </Grid>
-
           </Grid>
+          <Grid container direction='column' gap='15px' item width='320px'>
+            {/* <RewardsChart
+              address={address}
+              rewardDestinationAddress={rewardDestinationAddress}
+            /> */}
+          </Grid>
+
         </Grid>
 
       </Grid>

@@ -3,7 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-
 import { faBolt, faCircleDown, faClockFour, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Boy as BoyIcon } from '@mui/icons-material';
 import { Grid } from '@mui/material';
@@ -15,6 +14,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { useBalances, useFullscreen, useInfo, useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress, useStakingRewards, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { STAKING_CHAINS } from '../../../util/constants';
+import { openOrFocusTab } from '../../accountDetailsFullScreen/components/CommonTasks';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
 import { Title } from '../../sendFund/InputPage';
 import DisplayBalance from '../partials/DisplayBalance';
@@ -51,7 +51,6 @@ export default function Index (): React.ReactElement {
   const stakingConsts = useStakingConsts(address);
   const balances = useBalances(address, refresh, setRefresh);
 
-  
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
   const availableToSoloStake = balances?.freeBalance && staked && balances.freeBalance.sub(staked);
@@ -125,13 +124,21 @@ export default function Index (): React.ReactElement {
     redeemable && !redeemable?.isZero() && setShowRedeemableWithdraw(true);
   }, [redeemable]);
 
+  const onBackClick = useCallback(() => {
+    openOrFocusTab(`/accountfs/${address}/0`);
+  }, [address]);
+
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='stake' />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', px: '5%' }}>
-        <Title logo={ <BoyIcon sx={{ color: 'text.primary', fontSize: '60px' }} /> } text={t('Staked Solo')} />
+        <Title
+          logo={ <BoyIcon sx={{ color: 'text.primary', fontSize: '60px' }} /> }
+          onBackClick={onBackClick}
+          text={t('Staked Solo')}
+        />
         <Grid container item justifyContent='space-between' mb='15px'>
-          <Grid container direction='column' item mb='10px' minWidth='715px' rowGap='10px' width='calc(100% - 300px - 3%)'>
+          <Grid container direction='column' item mb='10px' minWidth='715px' rowGap='10px' width='calc(100% - 320px - 3%)'>
             <Grid container maxHeight={window.innerHeight - 264} sx={{ overflowY: 'scroll' }}>
               <DisplayBalance
                 actions={[t('unstake'), t('fast unstake')]}
@@ -185,69 +192,6 @@ export default function Index (): React.ReactElement {
             />
           </Grid>
         </Grid>
-        {/* <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', pt: '5px', pb: '2px', width: '92%' }}>
-          <HorizontalMenuItem
-            divider
-            icon={
-              <FontAwesomeIcon
-                color={`${theme.palette.text.primary}`}
-                icon={faPlus}
-                shake={shake}
-                style={{ height: '34px', stroke: `${theme.palette.text.primary}`, strokeWidth: 30, width: '40px', marginBottom: '-4px' }}
-              />
-            }
-            onClick={onStake}
-            textDisabled={role() === 'Controller'}
-            title={t<string>('Stake')}
-          />
-          <HorizontalMenuItem
-            divider
-            icon={
-              <FontAwesomeIcon
-                bounce={stakingAccount !== undefined && !stakingAccount?.nominators.length && !stakingAccount?.stakingLedger.active.isZero()} // do when has stake but does not nominations
-                color={`${theme.palette.text.primary}`}
-                icon={faHand}
-                size='lg'
-              />
-            }
-            onClick={onNominations}
-            title={t<string>('Validators')}
-          />
-          {stakingAccount?.stakingLedger?.total?.gt(BN_ZERO) &&
-          <HorizontalMenuItem
-            divider
-            icon={
-              <Box
-                component='img'
-                src={
-                  (['Both', 'undefined'].includes(role())
-                    ? (theme.palette.mode === 'dark' ? soloSettingWhite : soloSettingBlack)
-                    : role() === 'Stash'
-                      ? (theme.palette.mode === 'dark' ? stashSettingWhite : stashSettingBlack)
-                      : (role() === 'Controller' && theme.palette.mode === 'dark')
-                        ? controllerSettingWhite
-                        : controllerSettingBlack
-                  ) as string
-                }
-              />
-            }
-            labelMarginTop={'-7px'}
-            onClick={onSettings}
-            title={t<string>('Setting')}
-          />
-          }
-          <HorizontalMenuItem
-            icon={
-              <FontAwesomeIcon
-                color={`${theme.palette.text.primary}`}
-                icon={faInfoCircle}
-                size='lg'
-              />
-            }
-            onClick={onInfo}
-            title={t<string>('Info')}
-          />
-        </Grid> */}
       </Grid>
       {/* <Info
         address={address}

@@ -5,6 +5,7 @@
 
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
@@ -34,11 +35,28 @@ interface Props {
 const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
 const INVALID_PARA_ID = Number.MAX_SAFE_INTEGER;
 
-export const Title = ({ icon, logo, padding = '30px 0px 30px', text }: { text: string, icon?: IconDefinition, logo?: any, padding?: string }) => {
+export const Title = ({ icon, logo, onBackClick, padding = '30px 0px 30px', text }:
+ { text: string, icon?: IconDefinition, logo?: any, padding?: string, onBackClick?: () => void }) => {
   const theme = useTheme();
 
   return (
     <Grid alignItems={logo ? 'center' : 'baseline'} container height='113px' item p={padding} spacing={1}>
+      {!!onBackClick &&
+      <Grid item width='fit-content'>
+        <ArrowBackIosIcon
+          onClick={onBackClick}
+          sx={{
+            ':hover': { opacity: 1 },
+            color: 'secondary.light',
+            cursor: 'pointer',
+            fontSize: 36,
+            opacity: 0.5,
+            stroke: theme.palette.secondary.light,
+            strokeWidth: 1
+          }}
+        />
+      </Grid>
+      }
       <Grid item>
         <FontAwesomeIcon
           color={theme.palette.text.primary}
