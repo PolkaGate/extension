@@ -8,26 +8,28 @@ import '@vaadin/icons';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Container, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
+import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Warning } from '../../components';
 import { getStorage, LoginInfo } from '../../components/Loading';
-import { useMerkleScience, useTranslation } from '../../hooks';
+import Welcome from '../../fullscreen/welcome';
+import Reset from '../../fullscreen/welcome/Reset';
+import { useAccountsOrder, useMerkleScience, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { EXTENSION_NAME, NEW_VERSION_ALERT } from '../../util/constants';
-import Welcome from '../../fullscreen/welcome';
-import Reset from '../../fullscreen/welcome/Reset';
 import AccountsTree from './AccountsTree';
 import AiBackgroundImage from './AiBackgroundImage';
 import Alert from './Alert';
 import YouHave from './YouHave';
 
 export default function Home (): React.ReactElement {
+  const initialAccountList = useAccountsOrder() as AccountWithChildren[];
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
   const theme = useTheme();
@@ -59,21 +61,21 @@ export default function Home (): React.ReactElement {
     getStorage('loginInfo').then(setLoginInfo).catch(console.error);
   }, []);
 
-  const sortedAccount = useMemo(() =>
-    hierarchy.sort((a, b) => {
-      const x = a.name.toLowerCase();
-      const y = b.name.toLowerCase();
+  // const sortedAccount = useMemo(() =>
+  //   hierarchy.sort((a, b) => {
+  //     const x = a.name.toLowerCase();
+  //     const y = b.name.toLowerCase();
 
-      if (x < y) {
-        return -1;
-      }
+  //     if (x < y) {
+  //       return -1;
+  //     }
 
-      if (x > y) {
-        return 1;
-      }
+  //     if (x > y) {
+  //       return 1;
+  //     }
 
-      return 0;
-    }), [hierarchy]);
+  //     return 0;
+  //   }), [hierarchy]);
 
   const onCreate = useCallback((): void => {
     windowOpen('/account/create').catch(console.error);
@@ -140,7 +142,7 @@ export default function Home (): React.ReactElement {
           }
           <YouHave hideNumbers={hideNumbers} setHideNumbers={setHideNumbers} />
           <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`, mt: '10px', overflowY: 'scroll', p: 0, width: '92%' }]}>
-            {sortedAccount.map((json, index): React.ReactNode => (
+            {initialAccountList?.map((json, index): React.ReactNode => (
               <AccountsTree
                 {...json}
                 hideNumbers={hideNumbers}

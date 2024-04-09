@@ -12,9 +12,9 @@ import { BN } from '@polkadot/util';
 import { Motion, PButton, ShortAddress, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { ThroughProxy } from '../../../partials';
-import { TxInfo } from '../../../util/types';
 import Explorer from '../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../popup/history/partials/FailSuccessIcon';
+import { TxInfo } from '../../../util/types';
 import { Mode, SubIdAccountsToSubmit } from '..';
 
 interface Props {
@@ -33,7 +33,7 @@ interface DisplayInfoProps {
   showDivider?: boolean;
 }
 
-export default function Confirmation({ SubIdentityAccounts, handleClose, identity, maxFeeAmount, selectedRegistrarName, status, txInfo }: Props): React.ReactElement {
+export default function Confirmation ({ SubIdentityAccounts, handleClose, identity, maxFeeAmount, selectedRegistrarName, status, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
@@ -59,31 +59,31 @@ export default function Confirmation({ SubIdentityAccounts, handleClose, identit
   const ManageIdentityDetail = () => (
     <>
       <DisplayInfo
-        caption={t<string>('Display Name:')}
+        caption={t('Display Name:')}
         value={identity?.display}
       />
       <DisplayInfo
-        caption={t<string>('Legal Name:')}
+        caption={t('Legal Name:')}
         value={identity?.legal}
       />
       <DisplayInfo
-        caption={t<string>('Website:')}
+        caption={t('Website:')}
         value={identity?.web}
       />
       <DisplayInfo
-        caption={t<string>('Email:')}
+        caption={t('Email:')}
         value={identity?.email}
       />
       <DisplayInfo
-        caption={t<string>('Twitter:')}
+        caption={t('Twitter:')}
         value={identity?.twitter}
       />
       <DisplayInfo
-        caption={t<string>('Element:')}
+        caption={t('Element:')}
         value={identity?.riot}
       />
       <DisplayInfo
-        caption={t<string>('Discord:')}
+        caption={t('Discord:')}
         showDivider={false}
         value={identity?.other?.discord}
       />
@@ -93,7 +93,7 @@ export default function Confirmation({ SubIdentityAccounts, handleClose, identit
   const ManageSubIdTxDetail = () => (
     <Grid alignItems='center' container direction='column' item>
       <Typography fontSize='20px' fontWeight={400}>
-        {t<string>('Sub-identity(ies)')}:
+        {t('Sub-identity(ies)')}:
       </Typography>
       {SubIdentityAccounts?.map((sub, index) => (
         <Typography fontSize='20px' fontWeight={400} key={index}>
@@ -118,7 +118,7 @@ export default function Confirmation({ SubIdentityAccounts, handleClose, identit
         }
         <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t<string>('Account holder')}:
+            {t('Account holder')}:
           </Typography>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
             {txInfo.from.name}
@@ -141,8 +141,8 @@ export default function Confirmation({ SubIdentityAccounts, handleClose, identit
         {/* {status === 'Clear' &&
           <Typography fontSize='22px' fontWeight={400} my='8px' textAlign='center' width='100%'>
             {txInfo.success
-              ? t<string>('Identity cleared.')
-              : t<string>('Identity not cleared.')}
+              ? t('Identity cleared.')
+              : t('Identity not cleared.')}
           </Typography>
         } */}
         {status === 'ManageSubId' && SubIdentityAccounts && SubIdentityAccounts.length > 0 &&
@@ -151,20 +151,20 @@ export default function Confirmation({ SubIdentityAccounts, handleClose, identit
         {status === 'ManageSubId' && SubIdentityAccounts?.length === 0 &&
           <Typography fontSize='22px' fontWeight={400} my='8px' textAlign='center' width='100%'>
             {txInfo.success
-              ? t<string>('Sub-Identity(ies) cleared.')
-              : t<string>('Sub-Identity(ies) not cleared.')}
+              ? t('Sub-Identity(ies) cleared.')
+              : t('Sub-Identity(ies) not cleared.')}
           </Typography>
         }
         {(status === 'RequestJudgement' || status === 'CancelJudgement') &&
           <DisplayInfo
-            caption={t<string>('Registrar:')}
+            caption={t('Registrar:')}
             value={selectedRegistrarName}
           />}
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: 'auto', width: '240px' }} />
         {status === 'RequestJudgement' && maxFeeAmount &&
           <Grid container item justifyContent='center' sx={{ pt: '10px' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>('Registration fee:')}
+              {t('Registration fee:')}
             </Typography>
             <Grid item lineHeight='22px' pl='5px'>
               <ShowBalance
@@ -179,13 +179,13 @@ export default function Confirmation({ SubIdentityAccounts, handleClose, identit
             </Grid>
           </Grid>}
         <DisplayInfo
-          caption={t<string>('Fee:')}
+          caption={t('Fee:')}
           value={fee?.toHuman() ?? '00.00'}
         />
         {txInfo?.txHash &&
           <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
             <Grid container item width='fit-content'>
-              <Typography pr='5px'>{t<string>('Hash')}:</Typography>
+              <Typography pr='5px'>{t('Hash')}:</Typography>
             </Grid>
             <Grid container item width='fit-content'>
               <ShortAddress
@@ -208,7 +208,7 @@ export default function Confirmation({ SubIdentityAccounts, handleClose, identit
         _mt='30px'
         _onClick={handleClose}
         _width={100}
-        text={t<string>('Close')}
+        text={t('Close')}
       />
     </Motion>
   );

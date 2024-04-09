@@ -216,8 +216,8 @@ export default function Review({ address, api, chain, depositToPay, depositValue
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {mode === 'ManageSubId'
-                    ? t<string>('Parent account')
-                    : t<string>('Account holder')}
+                    ? t('Parent account')
+                    : t('Account holder')}
                 </Typography>
                 <Identity
                   address={address}
@@ -239,7 +239,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
               {identityToSet && (mode === 'Set' || mode === 'Modify') &&
                 <>
                   <Typography sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
-                    {t<string>('Identity')}
+                    {t('Identity')}
                   </Typography>
                   <IdentityTable
                     identity={identityToSet}
@@ -256,8 +256,8 @@ export default function Review({ address, api, chain, depositToPay, depositValue
                     theme={theme}
                   >
                     {mode === 'Clear'
-                      ? t<string>('You are about to clear the on-chain identity for this account.')
-                      : t<string>('You are about to clear the on-chain sub-identity(ies) for this account.')
+                      ? t('You are about to clear the on-chain identity for this account.')
+                      : t('You are about to clear the on-chain sub-identity(ies) for this account.')
                     }
                   </Warning>
                 </Grid>
@@ -265,7 +265,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
               {mode === 'ManageSubId' && subIdsToShow && subIdsToShow.length > 0 && parentDisplay &&
                 <Grid container item>
                   <Typography fontSize='14px' fontWeight={400} textAlign='center' width='100%'>
-                    {t<string>('Sub-identity(ies)')}
+                    {t('Sub-identity(ies)')}
                   </Typography>
                   <Grid container gap='10px' item sx={{ height: 'fit-content', maxHeight: '250px', overflow: 'hidden', overflowY: 'scroll' }}>
                     {subIdsToShow.map((subs, index) => (
@@ -281,7 +281,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
               {mode === 'RequestJudgement' &&
                 <Grid container direction='column' item>
                   <Typography fontSize='16px' fontWeight={400} textAlign='center' width='100%'>
-                    {t<string>('Registrar')}
+                    {t('Registrar')}
                   </Typography>
                   <Typography fontSize='28px' fontWeight={400} textAlign='center' width='100%'>
                     {selectedRegistrarName}
@@ -296,16 +296,16 @@ export default function Review({ address, api, chain, depositToPay, depositValue
                     isBelowInput
                     theme={theme}
                   >
-                    {t<string>('You are about to cancel your judgement request for this account.')}
+                    {t('You are about to cancel your judgement request for this account.')}
                   </Warning>
                 </Grid>
               }
               {mode !== 'CancelJudgement' &&
                 <DisplayValue title={mode === 'Clear'
-                  ? t<string>('Deposit that will be released')
+                  ? t('Deposit that will be released')
                   : mode === 'RequestJudgement'
-                    ? t<string>('Registration fee')
-                    : t<string>('Total Deposit')}
+                    ? t('Registration fee')
+                    : t('Total Deposit')}
                 >
                   <ShowBalance
                     api={api}
@@ -316,7 +316,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
                     height={22}
                   />
                 </DisplayValue>}
-              <DisplayValue title={t<string>('Fee')}>
+              <DisplayValue title={t('Fee')}>
                 <Grid alignItems='center' container item sx={{ height: '42px' }}>
                   <ShowBalance
                     api={api}
@@ -334,9 +334,9 @@ export default function Review({ address, api, chain, depositToPay, depositValue
                 extraInfo={extraInfo}
                 isPasswordError={isPasswordError}
                 onSecondaryClick={handleClose}
-                primaryBtnText={t<string>('Confirm')}
+                primaryBtnText={t('Confirm')}
                 proxyTypeFilter={['Any', 'NonTransfer']}
-                secondaryBtnText={t<string>('Cancel')}
+                secondaryBtnText={t('Cancel')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
                 setStep={setStep}
@@ -352,7 +352,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
             <Grid container item>
               <Grid alignItems='center' container item justifyContent='space-between'>
                 <Typography fontSize='22px' fontWeight={700}>
-                  {t<string>('Select Proxy')}
+                  {t('Select Proxy')}
                 </Typography>
                 <Grid item>
                   <CloseIcon onClick={closeSelectProxy} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />

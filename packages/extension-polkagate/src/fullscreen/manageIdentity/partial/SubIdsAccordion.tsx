@@ -17,7 +17,7 @@ interface Props {
   subIdAccounts: { address: string; name: string; }[];
 }
 
-export default function SubIdsAccordion({ judgements, parentNameID, subIdAccounts }: Props): React.ReactElement {
+export default function SubIdsAccordion ({ judgements, parentNameID, subIdAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

@@ -115,7 +115,7 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} width='inherit'>
       <Typography fontSize='22px' fontWeight={700}>
-        {t<string>('Most common tasks')}
+        {t('Most common tasks')}
       </Typography>
       <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto 15px', width: '90%' }} />
       <Grid alignItems='center' container direction='column' display='block' item justifyContent='center'>
@@ -130,7 +130,7 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
           }
           onClick={goToSend}
           secondaryIconType='page'
-          text={t<string>('Send Fund')}
+          text={t('Send Fund')}
         />
         <TaskButton
           disabled={!genesisHash}
@@ -139,7 +139,7 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
           }
           onClick={goToReceive}
           secondaryIconType='popup'
-          text={t<string>('Receive Fund')}
+          text={t('Receive Fund')}
         />
         <TaskButton
           disabled={governanceDisabled}
@@ -152,7 +152,7 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
           }
           onClick={goToGovernance}
           secondaryIconType='page'
-          text={t<string>('Governance')}
+          text={t('Governance')}
         />
         <TaskButton
           disabled={stakingDisabled}
@@ -166,7 +166,7 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
           }
           onClick={goToSoloStaking}
           secondaryIconType='page'
-          text={t<string>('Solo Stake')}
+          text={t('Solo Stake')}
         />
         <TaskButton
           disabled={stakingDisabled}
@@ -180,7 +180,7 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
           }
           onClick={goToPoolStaking}
           secondaryIconType='page'
-          text={t<string>('Pool Stake')}
+          text={t('Pool Stake')}
         />
         <TaskButton
           disabled={crowdloanDisabled}
@@ -194,7 +194,7 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
           }
           onClick={goToCrowdLoans}
           secondaryIconType='page'
-          text={t<string>('Crowdloans')}
+          text={t('Crowdloans')}
         />
         <TaskButton
           disabled={!genesisHash}
@@ -208,7 +208,7 @@ export default function CommonTasks({ address, api, assetId, balance, genesisHas
           noBorderButton
           onClick={goToHistory}
           secondaryIconType='popup'
-          text={t<string>('History')}
+          text={t('History')}
         />
       </Grid>
     </Grid>

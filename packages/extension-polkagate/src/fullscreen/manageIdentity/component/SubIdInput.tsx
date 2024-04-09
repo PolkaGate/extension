@@ -29,7 +29,7 @@ interface Props {
   disabled?: boolean;
 }
 
-export default function SubIdInput({ api, selectableAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label }: Props): React.ReactElement {
+export default function SubIdInput ({ api, selectableAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label }: Props): React.ReactElement {
   const { t } = useTranslation();
   const [isPopperOpen, setTogglePopper] = useState<boolean>(false);
   const [focus, setFocus] = useState<boolean>(false);
@@ -174,7 +174,7 @@ export default function SubIdInput({ api, selectableAddresses = [], chain = unde
             marginTop={0}
             theme={theme}
           >
-            {t<string>('Invalid address')}
+            {t('Invalid address')}
           </Warning>
         </Grid>
       }
