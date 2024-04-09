@@ -11,8 +11,8 @@ import { BN, hexToBn, isHex } from '@polkadot/util';
 import { useStakingAccount, useStakingConsts, useValidators, useValidatorsIdentities } from '.';
 
 export interface MyValidatorsInfo{
-  activeValidators: ValidatorInfo[] | undefined |null;
-  nonActiveValidators: ValidatorInfo[] | undefined |null;
+  activeValidators: ValidatorInfo[] | undefined | null;
+  nonActiveValidators: ValidatorInfo[] | undefined | null;
 }
 
 export default function useActiveValidators (address: string): MyValidatorsInfo {
