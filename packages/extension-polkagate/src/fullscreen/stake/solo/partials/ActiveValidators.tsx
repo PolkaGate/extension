@@ -44,7 +44,7 @@ export default function ActiveValidators ({ address }: Props): React.ReactElemen
           style={{ height: '20px', width: '20px', marginRight: '10px' }}
         />
         <Typography color={ 'text.primary'} fontSize='18px' fontWeight={500}>
-          {activeValidators?.length && activeValidators.length > 1 ? t('Active Validators') : t('Active Validator')}
+          {activeValidators?.length && activeValidators.length > 1 ? t('Active validators') : t('Active validator')}
         </Typography>
       </Grid>
       <Grid alignItems='center' container item justifyContent='center' mt='10px'>

@@ -389,7 +389,7 @@ export default function RewardsChart ({ address, api, chain, chainName, decimal,
           ? (
             <Grid container item>
               <Arrows onNext={onNext} onPrevious={onPrevious} />
-              <Grid item sx={{ p: '5px 10px 20px' }} xs={12}>
+              <Grid item sx={{ p: '5px 10px 5px' }} xs={12}>
                 <Bar data={data} options={options} />
               </Grid>
               <Grid container item justifyContent='flex-end'>
@@ -406,7 +406,7 @@ export default function RewardsChart ({ address, api, chain, chainName, decimal,
                         {t('Reward')}
                       </Typography>
                     </Grid>
-                    <Grid container sx={{ '> .MuiPaper-root': { backgroundImage: 'none', boxShadow: 'none' }, '> .MuiPaper-root::before': { bgcolor: 'transparent' }, maxHeight: parent.innerHeight - 450, overflowX: 'hidden', overflowY: 'scroll' }}>
+                    <Grid container sx={{ '> .MuiPaper-root': { backgroundImage: 'none', boxShadow: 'none' }, '> .MuiPaper-root::before': { bgcolor: 'transparent' }, maxHeight: parent.innerHeight - 425, overflowX: 'hidden', overflowY: 'scroll' }}>
                       {descSortedRewards.length
                         ? descSortedRewards.slice(0, MAX_REWARDS_INFO_TO_SHOW).map((d, index: number) =>
                           <>
