@@ -93,20 +93,30 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
         {icons?.map((_, index) =>
           (<Grid alignItems='center' container direction='column' item justifyContent='center' key={index} onClick={onClicks[index]} sx={{ cursor: 'pointer', mx: '10px' }} width='96px'>
             <FontAwesomeIcon
-              color={`${theme.palette.secondary.light}`}
+              color={`${amount?.isZero() ? theme.palette.text.disabled : theme.palette.secondary.light}`}
               icon={icons[index]}
               style={{ height: '30px', stroke: `${theme.palette.text.primary}`, strokeWidth: 5, width: '20px', marginBottom: '-4px' }}
             />
-            <Typography color={theme.palette.secondary.light} fontSize='18px' fontWeight={400}>
+            <Typography color={amount?.isZero() ? theme.palette.text.disabled : theme.palette.secondary.light} fontSize='18px' fontWeight={400}>
               {actions[index]}
             </Typography>
           </Grid>
           ))}
         {isUnstaking &&
-      <ArrowForwardIosRoundedIcon
-        onClick={toggleShowUnstaking}
-        sx={{ mr: '18%', cursor: 'pointer', color: toBeReleased?.length ? 'secondary.light' : 'text.disabled', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1, transform: toBeReleased?.length && showUnstaking ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }}
-      />
+          <ArrowForwardIosRoundedIcon
+            onClick={toggleShowUnstaking}
+            sx={{
+              mr: '18%',
+              cursor: 'pointer',
+              color: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',
+              fontSize: '26px',
+              stroke: !toBeReleased?.length ? theme.palette.text.disabled : theme.palette.secondary.light,
+              strokeWidth: 1,
+              transform: toBeReleased?.length && showUnstaking ? 'rotate(-90deg)' : 'rotate(90deg)',
+              transitionDuration: '0.3s',
+              transitionProperty: 'transform'
+            }}
+          />
         }
       </Grid>
       {showUnstaking &&
