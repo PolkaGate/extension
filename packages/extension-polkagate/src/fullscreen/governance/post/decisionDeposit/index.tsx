@@ -17,11 +17,8 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { Identity, ShowBalance, SignArea2, Warning } from '../../../../components';
 import { useAccountDisplay, useApi, useBalances, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
-import { broadcast } from '../../../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
-import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import { DraggableModal } from '../../components/DraggableModal';
-import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal2 from '../../components/SelectProxyModal2';
 import WaitScreen from '../../partials/WaitScreen';
 import { GOVERNANCE_PROXY } from '../../utils/consts';
@@ -59,19 +56,17 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
 
   const proxyItems = useMemo(() =>
     proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[]
-    , [proxies]);
+  , [proxies]);
 
   const [step, setStep] = useState<number>(STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
-  const [password, setPassword] = useState<string | undefined>();
 
   const tx = api && api.tx.referenda.placeDecisionDeposit;
   const amount = track?.[1]?.decisionDeposit;
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   useEffect(() => {
     if (!formatted || !tx) {
