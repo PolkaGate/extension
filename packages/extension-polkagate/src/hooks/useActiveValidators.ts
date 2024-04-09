@@ -10,7 +10,12 @@ import { BN, hexToBn, isHex } from '@polkadot/util';
 
 import { useStakingAccount, useStakingConsts, useValidators, useValidatorsIdentities } from '.';
 
-export default function useActiveValidators (address: string): ValidatorInfo[] | undefined {
+export interface MyValidatorsInfo{
+  activeValidators: ValidatorInfo[] | undefined |null;
+  nonActiveValidators: ValidatorInfo[] | undefined |null;
+}
+
+export default function useActiveValidators (address: string): MyValidatorsInfo {
   const allValidatorsInfo = useValidators(address);
   const stakingConsts = useStakingConsts(address);
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
@@ -19,13 +24,14 @@ export default function useActiveValidators (address: string): ValidatorInfo[] |
   const stakingAccount = useStakingAccount(address);
 
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
+
   const [nominatedValidatorsIds, setNominatedValidatorsIds] = useState< string[] | undefined | null>();
 
   useEffect(() => {
     setNominatedValidatorsIds(stakingAccount === null || stakingAccount?.nominators?.length === 0 ? null : stakingAccount?.nominators.map((item) => item.toString()));
   }, [stakingAccount]);
 
-  const selectedValidatorsInfo = useMemo(() =>
+  const nominatedValidatorsInfo = useMemo(() =>
     allValidatorsInfo && nominatedValidatorsIds && allValidatorsInfo.current
       .concat(allValidatorsInfo.waiting)
       .filter((v: DeriveStakingQuery) => nominatedValidatorsIds.includes(v.accountId))
@@ -46,20 +52,20 @@ export default function useActiveValidators (address: string): ValidatorInfo[] |
     };
   }, [staked, stakingConsts]);
 
-  const activeValidators = useMemo(
+  const activeValidatorsWithoutIdentity = useMemo(
     () =>
-      selectedValidatorsInfo?.filter(
+      nominatedValidatorsInfo?.filter(
         (sv) => sv?.exposure?.others?.find(
           ({ who }) => who?.toString() === stakingAccount?.accountId?.toString()))
-    , [selectedValidatorsInfo, stakingAccount?.accountId]);
+    , [nominatedValidatorsInfo, stakingAccount?.accountId]);
 
-  return useMemo(
+  const activeValidators = useMemo(
     () => {
       if (nominatedValidatorsIds === null) {
         return null;
       }
 
-      return activeValidators?.map(
+      return activeValidatorsWithoutIdentity?.map(
         (av) => {
           av.accountInfo = allValidatorsIdentities?.find((a) => a.accountId === av.accountId);
           av.isOversubscribed = overSubscribed(av);
@@ -67,5 +73,25 @@ export default function useActiveValidators (address: string): ValidatorInfo[] |
           return av;
         });
     }
-    , [activeValidators, allValidatorsIdentities, nominatedValidatorsIds, overSubscribed]);
+    , [activeValidatorsWithoutIdentity, allValidatorsIdentities, nominatedValidatorsIds, overSubscribed]);
+
+  const nonActiveValidators = useMemo(
+    () => {
+      if (nominatedValidatorsIds === null) {
+        return null;
+      }
+
+      return nominatedValidatorsInfo?.filter((nv) =>
+        activeValidators?.find((av) => av.accountId !== nv.accountId)
+      ).map(
+        (n) => {
+          n.accountInfo = allValidatorsIdentities?.find((a) => a.accountId === n.accountId);
+          n.isOversubscribed = overSubscribed(n);
+
+          return n;
+        });
+    }
+    , [activeValidators, allValidatorsIdentities, nominatedValidatorsIds, nominatedValidatorsInfo, overSubscribed]);
+
+  return { activeValidators, nonActiveValidators };
 }
