@@ -92,7 +92,7 @@ export default function ActiveValidators ({ address }: Props): React.ReactElemen
               <Divider sx={{ bgcolor: 'divider', height: '2px', mt: '5px', width: '100%' }} />
               <Grid alignItems='center' container item onClick={toggleDetails} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
                 <Typography color='secondary.light' fontSize='16px' fontWeight={400}>
-                  {t(showDetails ? t('hide') : t('Others ({{count}})', {replace:{count: nonActiveValidators?.length}}))}
+                  {t(showDetails ? t('Hide') : t('Others ({{count}})', {replace:{count: nonActiveValidators?.length}}))}
                 </Typography>
                 <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showDetails ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
               </Grid>
