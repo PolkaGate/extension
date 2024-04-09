@@ -6,8 +6,9 @@
 /**
  * @description to show rewards chart
  * */
-import { ExpandMore as ExpandMoreIcon, KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon } from '@mui/icons-material';
-import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
+import { faChartColumn } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ArrowDropDown as ArrowDropDownIcon, ExpandMore as ExpandMoreIcon, KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary, Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -374,6 +375,11 @@ export default function RewardsChart ({ address, api, chain, chainName, decimal,
   return (
     <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'background.paper', border: theme.palette.mode === 'dark' ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: 'fit-content', minHeight: '310px', p: '10px', width: 'inherit' }}>
       <Grid alignItems='center' container item justifyContent='center' sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <FontAwesomeIcon
+          color={`${theme.palette.text.primary}`}
+          icon={faChartColumn}
+          style={{ height: '20px', width: '20px', marginRight:'10px' }}
+        />
         <Typography color={ 'text.primary'} fontSize='18px' fontWeight={500}>
           {t('Rewards')}
         </Typography>
