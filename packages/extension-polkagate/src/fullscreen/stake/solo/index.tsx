@@ -19,6 +19,7 @@ import { FullScreenHeader } from '../../governance/FullScreenHeader';
 import { Title } from '../../sendFund/InputPage';
 import DisplayBalance from '../partials/DisplayBalance';
 import ActiveValidators from './partials/ActiveValidators';
+import Info from './partials/Info';
 import RewardsChart from './partials/RewardsChart';
 
 // import RewardsDetail from './rewards/RewardsDetail';
@@ -180,6 +181,9 @@ export default function Index (): React.ReactElement {
                 onClicks={[onUnstake]} // TODO
                 title={t('Available to stake')}
               />
+              <Info
+                address={address}
+              />
             </Grid>
           </Grid>
           <Grid container direction='column' gap='15px' item width='320px'>
@@ -193,12 +197,6 @@ export default function Index (): React.ReactElement {
           </Grid>
         </Grid>
       </Grid>
-      {/* <Info
-        address={address}
-        info={stakingConsts}
-        setShowInfo={setShowInfo}
-        showInfo={showInfo}
-      /> */}
       {/* {showSettings && stakingAccount &&
         <Settings
           address={address}
