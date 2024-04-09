@@ -113,6 +113,7 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
         from: { address: tx.from, name: tx.from_account_display?.display },
         success: tx.success,
         to: { address: tx.to, name: tx.to_account_display?.display },
+        token: tx.asset_symbol,
         txHash: tx.hash
       });
     });
@@ -322,16 +323,16 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
                       path={undefined}
                       setDetailInfo={setDetailInfo}
                       setShowDetail={setShowDetail}
-                      token={token}
+                      token={h.token ?? token}
                     />
                   ));
                 })}
-              {grouped === null &&
+              {grouped === null && transfersTx.isFetching === false &&
                 <Grid item mt='50px' mx='auto' textAlign='center'>
                   {t('Nothing to show')}
                 </Grid>
               }
-              {grouped === undefined && <Progress pt='150px' size={50} title={t('Loading history')} />}
+              {(grouped === undefined || (transfersTx.isFetching && tabHistory?.length === 0)) && <Progress pt='150px' size={50} title={t('Loading history')} />}
               {grouped &&
                 <Grid container justifyContent='center'>
                   {

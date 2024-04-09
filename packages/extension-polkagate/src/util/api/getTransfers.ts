@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable sort-keys */
+
 import request from 'umi-request';
 
 import { TransferRequest } from '../types';
@@ -13,25 +15,25 @@ const nullObject = {
     count: 0,
     transfers: null
   }
-};
+} as unknown as TransferRequest;
 
 export function getTxTransfers (chainName: string, address: string, pageNum: number, pageSize: number): Promise<TransferRequest> {
   if (!chainName) {
-    return nullObject;
+    return Promise.resolve(nullObject);
   }
 
-  let network = chainName;
+  let network = chainName.toLowerCase();
 
-  if (chainName.toLowerCase() === 'pendulum') {
-    return nullObject;
+  if (network === 'pendulum') {
+    return Promise.resolve(nullObject);
   }
 
-  if (chainName === 'WestendAssetHub') {
+  if (network === 'westendassethub') {
     network = 'westmint';
   }
 
-  if (chainName.toLowerCase().includes('assethub')) {
-    network = `assethub-${chainName.toLowerCase().replace(/assethub/, '')}`;
+  if (network.includes('assethub')) {
+    network = `assethub-${network.replace(/assethub/, '')}`;
   }
 
   return postReq(`https://${network}.api.subscan.io/api/v2/scan/transfers`, {
@@ -43,6 +45,6 @@ export function getTxTransfers (chainName: string, address: string, pageNum: num
   });
 }
 
-function postReq (api: string, data: Record<string, any> = {}, option?: Record<string, any>): Promise<TransferRequest> {
+function postReq (api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<TransferRequest> {
   return request.post(api, { data, ...option });
 }
