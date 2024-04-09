@@ -19,6 +19,7 @@ import { FullScreenHeader } from '../../governance/FullScreenHeader';
 import { Title } from '../../sendFund/InputPage';
 import DisplayBalance from '../partials/DisplayBalance';
 import ActiveValidators from './partials/ActiveValidators';
+import CommonTasks from './partials/CommonTasks';
 import Info from './partials/Info';
 import RewardsChart from './partials/RewardsChart';
 
@@ -192,6 +193,9 @@ export default function Index (): React.ReactElement {
               rewardDestinationAddress={rewardDestinationAddress}
             />
             <ActiveValidators
+              address={address}
+            />
+            <CommonTasks
               address={address}
             />
           </Grid>

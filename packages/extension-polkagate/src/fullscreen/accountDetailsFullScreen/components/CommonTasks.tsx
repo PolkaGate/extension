@@ -10,8 +10,6 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { BalancesInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useMemo } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-
 import { PoolStakingIcon } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
@@ -23,7 +21,6 @@ interface Props {
   assetId: number | undefined;
   balance: BalancesInfo | FetchedBalance | undefined;
   genesisHash: string | null | undefined;
-  api: ApiPromise | undefined;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
@@ -35,6 +32,7 @@ interface TaskButtonProps {
   noBorderButton?: boolean;
   disabled?: boolean;
   show?: boolean;
+  mr?: string;
 }
 
 export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): void => {
@@ -64,38 +62,38 @@ export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): 
   });
 };
 
-export const TaskButton = ({ disabled, icon, noBorderButton = false, onClick, secondaryIconType, show = true, text }: TaskButtonProps) => {
+export const TaskButton = ({ disabled, icon, mr = '25px', noBorderButton = false, onClick, secondaryIconType, show = true, text }: TaskButtonProps) => {
   const theme = useTheme();
 
   return (
     <>
       {show &&
-    <>
-      {/* eslint-disable-next-line react/jsx-no-bind */}
-      <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', m: 'auto', minHeight: '45px', p: '5px 10px' }} width='90%'>
-        <Grid container item xs={3}>
-          {icon}
-        </Grid>
-        <Grid container item xs>
-          <Typography color={disabled ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='16px' fontWeight={500}>
-            {text}
-          </Typography>
-        </Grid>
-        {secondaryIconType === 'page' &&
+          <>
+            {/* eslint-disable-next-line react/jsx-no-bind */}
+            <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', m: 'auto', minHeight: '45px', p: '5px 10px' }} width='90%'>
+              <Grid container item mr={mr} xs={1.5}>
+                {icon}
+              </Grid>
+              <Grid container item xs>
+                <Typography color={disabled ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='16px' fontWeight={500}>
+                  {text}
+                </Typography>
+              </Grid>
+              {secondaryIconType === 'page' &&
           <Grid alignItems='center' container item justifyContent='flex-end' xs={2}>
             <ArrowForwardIosRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '26px', stroke: disabled ? theme.palette.text.disabled : theme.palette.secondary.light, strokeWidth: 1 }} />
           </Grid>
-        }
-      </Grid>
-      {!noBorderButton && <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto', width: '85%' }} />
-      }
-    </>
+              }
+            </Grid>
+            {!noBorderButton && <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto', width: '85%' }} />
+            }
+          </>
       }
     </>
   );
 };
 
-export default function CommonTasks ({ address, api, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
+export default function CommonTasks ({ address, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

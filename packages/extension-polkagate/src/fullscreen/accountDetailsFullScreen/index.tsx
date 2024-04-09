@@ -310,7 +310,6 @@ export default function AccountDetails(): React.ReactElement {
               {account?.genesisHash &&
                 <CommonTasks
                   address={address}
-                  api={api}
                   assetId={assetId}
                   balance={balancesToShow}
                   genesisHash={account?.genesisHash}
