@@ -11,6 +11,7 @@ interface Props {
   _onClick: React.MouseEventHandler<HTMLButtonElement>;
   _mt?: string;
   disabled?: boolean;
+  left?: string;
   _fontSize?: string;
   _isBusy?: boolean;
   _ml?: number;
@@ -18,7 +19,7 @@ interface Props {
   startIcon?: React.ReactNode;
 }
 
-function PButton({ _fontSize = '16px', _isBusy, _ml = 6, _mt, _onClick, _variant = 'contained', _width = 88, disabled = false, startIcon, text }: Props): React.ReactElement<Props> {
+function PButton({ _fontSize = '16px',left, _isBusy, _ml = 6, _mt, _onClick, _variant = 'contained', _width = 88, disabled = false, startIcon, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (
@@ -30,6 +31,7 @@ function PButton({ _fontSize = '16px', _isBusy, _ml = 6, _mt, _onClick, _variant
           justifyContent='center'
           sx={{
             border: '1px solid',
+            left,
             borderColor: 'secondary.main',
             borderRadius: '5px',
             bottom: !_mt ? '25px' : 0,
@@ -56,6 +58,7 @@ function PButton({ _fontSize = '16px', _isBusy, _ml = 6, _mt, _onClick, _variant
           sx={{
             "&:disabled": { backgroundColor: '#4b4b4b' },
             borderColor: 'secondary.main',
+            left,
             borderRadius: '5px',
             bottom: !_mt ? '25px' : 0,
             color: _variant === 'text'
