@@ -3,13 +3,15 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faClipboardUser, faHand } from '@fortawesome/free-solid-svg-icons';
+import { faCog, faHand } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { TaskButton } from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen/components/CommonTasks';
 import { useInfo, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+
+import ConfigurePayee from '../configurePayee';
 
 interface Props {
   address: string | undefined;
@@ -22,7 +24,10 @@ export default function CommonTasks ({ address }: Props): React.ReactElement {
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
 
+  const [showRewardDestinationModal, setShowRewardDestinationModal] = useState<boolean>(false);
+
   const onRewardDestination = useCallback(() => {
+    setShowRewardDestinationModal(true);
   }, []);
 
   const onManageValidators = useCallback(() => {
@@ -30,43 +35,50 @@ export default function CommonTasks ({ address }: Props): React.ReactElement {
   }, []);
 
   return (
-    <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} width='inherit'>
-      <Typography fontSize='22px' fontWeight={700}>
-        {t('Most common tasks')}
-      </Typography>
-      <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto 15px', width: '90%' }} />
-      <Grid alignItems='center' container direction='column' display='block' item justifyContent='center'>
-        <TaskButton
-          disabled={!genesisHash}
-          icon={
-            <FontAwesomeIcon
-              color={`${theme.palette.text.primary}`}
-              fontSize='22px'
-              icon={faClipboardUser}
-            />
-          }
-          mr='0px'
-          noBorderButton
-          onClick={onRewardDestination}
-          secondaryIconType='popup'
-          text={t('Configure Reward Destination')}
-        />
-        <TaskButton
-          disabled={!genesisHash}
-          icon={
-            <FontAwesomeIcon
-              color={`${theme.palette.text.primary}`}
-              fontSize='22px'
-              icon={faHand}
-            />
-          }
-          mr='0px'
-          noBorderButton
-          onClick={onManageValidators}
-          secondaryIconType='popup'
-          text={t('Manage Validators')}
-        />
+    <>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} width='inherit'>
+        <Typography fontSize='22px' fontWeight={700}>
+          {t('Most common tasks')}
+        </Typography>
+        <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto 15px', width: '90%' }} />
+        <Grid alignItems='center' container direction='column' display='block' item justifyContent='center'>
+          <TaskButton
+            disabled={!genesisHash}
+            icon={
+              <FontAwesomeIcon
+                color={`${theme.palette.text.primary}`}
+                fontSize='22px'
+                icon={faCog}
+              />
+            }
+            mr='0px'
+            noBorderButton
+            onClick={onRewardDestination}
+            secondaryIconType='popup'
+            text={t('Configure Reward Destination')}
+          />
+          <TaskButton
+            disabled={!genesisHash}
+            icon={
+              <FontAwesomeIcon
+                color={`${theme.palette.text.primary}`}
+                fontSize='22px'
+                icon={faHand}
+              />
+            }
+            mr='0px'
+            noBorderButton
+            onClick={onManageValidators}
+            secondaryIconType='popup'
+            text={t('Manage Validators')}
+          />
+        </Grid>
       </Grid>
-    </Grid>
+      <ConfigurePayee
+        address={address}
+        setShow={setShowRewardDestinationModal}
+        show={showRewardDestinationModal}
+      />
+    </>
   );
 }

@@ -34,7 +34,7 @@ export default function Settings({ address, api, setRefresh, setShowSettings, sh
   const [showReview, setShowReview] = useState<boolean>(false);
 
   useEffect(() => {
-    //initialize settings
+    // initialize settings
     const parsedStakingAccount = JSON.parse(JSON.stringify(stakingAccount)) as AccountStakingInfo;
     const destinationType = Object.keys(parsedStakingAccount.rewardDestination)[0];
     let payee: Payee;

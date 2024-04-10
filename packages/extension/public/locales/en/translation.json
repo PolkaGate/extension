@@ -1186,5 +1186,15 @@
   "Staked in Pool": "",
   "unstake": "",
   "stake": "",
-  "withdraw": ""
+  "withdraw": "",
+  "Staked Solo": "",
+  "fast unstake": "",
+  "pending": "",
+  "Active validators": "",
+  "Active validator": "",
+  "Others ({{count}})": "",
+  "No Active Validators Found!": "",
+  "Configure Reward Destination": "",
+  "Manage Validators": "",
+  "Configure Reward destination": ""
 }
