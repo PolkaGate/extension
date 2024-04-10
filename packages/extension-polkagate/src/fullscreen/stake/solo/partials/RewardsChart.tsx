@@ -14,12 +14,10 @@ import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 
-import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { Identity, Progress } from '../../../../components';
-import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../../hooks';
+import { useInfo, useTranslation } from '../../../../hooks';
 import getRewardsSlashes from '../../../../util/api/getRewardsSlashes';
 import { MAX_REWARDS_TO_SHOW } from '../../../../util/constants';
 import { RewardInfo, SubscanRewardInfo } from '../../../../util/types';
@@ -42,23 +40,14 @@ interface ArrowsProps {
 }
 
 interface Props {
-  api?: ApiPromise | undefined;
-  chain?: Chain;
-  chainName?: string | undefined;
   address?: string;
-  decimal?: number | undefined
   rewardDestinationAddress: string | undefined;
-  token?: string,
 }
 
-export default function RewardsChart ({ address, api, chain, chainName, decimal, rewardDestinationAddress, token }: Props): React.ReactElement {
+export default function RewardsChart ({ address, rewardDestinationAddress }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const _api = useApi(address, api);
-  const _chain = useChain(address, chain);
-  const _chainName = useChainName(address) || chainName;
-  const _decimal = useDecimal(address) || decimal;
-  const _token = useToken(address) || token;
+  const { api, chain, chainName, decimal, token } = useInfo(address);
 
   const [rewardsInfo, setRewardsInfo] = useState<RewardInfo[]>();
   const [pageIndex, setPageIndex] = useState<number>(0);
@@ -92,7 +81,7 @@ export default function RewardsChart ({ address, api, chain, chainName, decimal,
 
   // sorted labels and rewards and removed duplicates dates and sum rewards on the same date
   const aggregatedRewards = useMemo(() => {
-    if (!ascSortedRewards?.length || !_decimal) {
+    if (!ascSortedRewards?.length || !decimal) {
       return;
     }
 
@@ -110,7 +99,7 @@ export default function RewardsChart ({ address, api, chain, chainName, decimal,
 
       temp[relatedDateIndex].amount = temp[relatedDateIndex].amount.add(item.amount);
       temp[relatedDateIndex].timestamp = temp[relatedDateIndex].timestamp ?? new Date(item.timeStamp).getTime();
-      temp[relatedDateIndex].amountInHuman = amountToHuman(temp[relatedDateIndex].amount, _decimal);
+      temp[relatedDateIndex].amountInHuman = amountToHuman(temp[relatedDateIndex].amount, decimal);
     });
 
     for (let j = 0; j < temp.length; j++) {
@@ -135,10 +124,10 @@ export default function RewardsChart ({ address, api, chain, chainName, decimal,
       }
     });
 
-    setMostPrize(Number(amountToHuman(estimatedMostPrize, _decimal)));
+    setMostPrize(Number(amountToHuman(estimatedMostPrize, decimal)));
 
     return temp;
-  }, [ascSortedRewards, _decimal, formateDate]);
+  }, [ascSortedRewards, decimal, formateDate]);
 
   const descSortedRewards = useMemo(() => {
     if (!ascSortedRewards?.length || !weeksRewards?.length) {
@@ -221,7 +210,7 @@ export default function RewardsChart ({ address, api, chain, chainName, decimal,
   }, [aggregatedRewards, formateDate]);
 
   useEffect((): void => {
-    rewardDestinationAddress && _chainName && getRewardsSlashes(_chainName, 0, MAX_REWARDS_TO_SHOW, String(rewardDestinationAddress)).then((r) => {
+    rewardDestinationAddress && chainName && getRewardsSlashes(chainName, 0, MAX_REWARDS_TO_SHOW, String(rewardDestinationAddress)).then((r) => {
       const list = r?.data.list as SubscanRewardInfo[];
       const rewardsFromSubscan: RewardInfo[] | undefined = list?.map((i: SubscanRewardInfo): RewardInfo => {
         return {
@@ -238,7 +227,7 @@ export default function RewardsChart ({ address, api, chain, chainName, decimal,
         return setRewardsInfo(rewardsFromSubscan);
       }
     });
-  }, [_chainName, rewardDestinationAddress]);
+  }, [chainName, rewardDestinationAddress]);
 
   const handleAccordionChange = useCallback((panel: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : -1);
@@ -280,10 +269,10 @@ export default function RewardsChart ({ address, api, chain, chainName, decimal,
               return;
             }
 
-            return `${TooltipItem.formattedValue} ${_token}`;
+            return `${TooltipItem.formattedValue} ${token}`;
           },
           title: function (TooltipItem: string | { label: string }[] | undefined) {
-            if (!dataToShow || !TooltipItem || !_token) {
+            if (!dataToShow || !TooltipItem || !token) {
               return;
             }
 
@@ -333,7 +322,7 @@ export default function RewardsChart ({ address, api, chain, chainName, decimal,
         borderRadius: 3,
         borderWidth: 1,
         data: dataToShow && dataToShow[pageIndex][0],
-        label: _token
+        label: token
       }
     ],
     labels: dataToShow && dataToShow[pageIndex][1]
@@ -378,14 +367,14 @@ export default function RewardsChart ({ address, api, chain, chainName, decimal,
         <FontAwesomeIcon
           color={`${theme.palette.text.primary}`}
           icon={faChartColumn}
-          style={{ height: '20px', width: '20px', marginRight:'10px' }}
+          style={{ height: '20px', width: '20px', marginRight: '10px' }}
         />
         <Typography color={ 'text.primary'} fontSize='18px' fontWeight={500}>
           {t('Rewards')}
         </Typography>
       </Grid>
       <Grid alignItems='center' container item justifyContent='center' mt='10px'>
-        {descSortedRewards && _decimal && mostPrize
+        {descSortedRewards && decimal && mostPrize
           ? (
             <Grid container item>
               <Arrows onNext={onNext} onPrevious={onPrevious} />
@@ -420,7 +409,7 @@ export default function RewardsChart ({ address, api, chain, chainName, decimal,
                                     {d.era}
                                   </Grid>
                                   <Grid item width='40%'>
-                                    {amountToHuman(d.amount, _decimal, 9)} {` ${_token}`}
+                                    {amountToHuman(d.amount, decimal, 9)} {` ${token}`}
                                   </Grid>
                                 </Grid>
                               </AccordionSummary>
@@ -432,8 +421,8 @@ export default function RewardsChart ({ address, api, chain, chainName, decimal,
                                   <Grid item width='65%'>
                                     <Identity
                                       address={d.validator}
-                                      api={_api}
-                                      chain={_chain}
+                                      api={api}
+                                      chain={chain}
                                       formatted={d.validator}
                                       identiconSize={30}
                                       showSocial={false}
