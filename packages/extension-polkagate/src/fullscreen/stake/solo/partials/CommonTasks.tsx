@@ -15,9 +15,10 @@ import ConfigurePayee from '../configurePayee';
 
 interface Props {
   address: string | undefined;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function CommonTasks ({ address }: Props): React.ReactElement {
+export default function CommonTasks ({ address, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { genesisHash } = useInfo(address);
@@ -78,6 +79,7 @@ export default function CommonTasks ({ address }: Props): React.ReactElement {
         address={address}
         setShow={setShowRewardDestinationModal}
         show={showRewardDestinationModal}
+        setRefresh={setRefresh}
       />
     </>
   );

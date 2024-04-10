@@ -197,21 +197,11 @@ export default function Index (): React.ReactElement {
             />
             <CommonTasks
               address={address}
+              setRefresh={setRefresh}
             />
           </Grid>
         </Grid>
       </Grid>
-      {/* {showSettings && stakingAccount &&
-        <Settings
-          address={address}
-          api={api}
-          setRefresh={setRefresh}
-          setShowSettings={setShowSettings}
-          showSettings={showSettings}
-          stakingAccount={stakingAccount}
-          stakingConsts={stakingConsts}
-        />
-      } */}
       {/* {showRedeemableWithdraw && formatted && api && getValue('available', balances) && chain && redeemable && !redeemable?.isZero() &&
         <RedeemableWithdrawReview
           address={address}
@@ -224,14 +214,6 @@ export default function Index (): React.ReactElement {
           setShow={setShowRedeemableWithdraw}
           show={showRedeemableWithdraw}
         />} */}
-      {/* {showRewardsDetail &&
-        <RewardsDetail
-          address={address}
-          rewardDestinationAddress={rewardDestinationAddress}
-          setShow={setShowRewardsDetail}
-          show={showRewardsDetail}
-        />
-      } */}
     </Grid>
   );
 }

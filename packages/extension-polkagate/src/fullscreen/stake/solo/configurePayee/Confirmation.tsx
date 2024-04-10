@@ -4,28 +4,38 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Container, Divider, Grid, Typography } from '@mui/material';
-import React from 'react';
+import React, { useMemo } from 'react';
 
-import { PButton, ShortAddress } from '../../../components';
-import { useChainName, useToken, useTranslation } from '../../../hooks';
-import { SubTitle, ThroughProxy } from '../../../partials';
-import Explorer from '../../../popup/history/Explorer';
-import FailSuccessIcon from '../../../popup/history/partials/FailSuccessIcon';
-import { TxInfo } from '../../../util/types';
+import { PButton, ShortAddress } from '../../../../components';
+import { useAccountName, useInfo, useTranslation } from '../../../../hooks';
+import { SubTitle, ThroughProxy } from '../../../../partials';
+import Explorer from '../../../../popup/history/Explorer';
+import FailSuccessIcon from '../../../../popup/history/partials/FailSuccessIcon';
+import { TxInfo } from '../../../../util/types';
 
 interface Props {
-  address: string | undefined;
   txInfo: TxInfo;
-  showConfirmation: boolean;
-  onPrimaryBtnClick: () => void;
+  handleDone: () => void;
 }
 
-export default function Confirmation({ address, onPrimaryBtnClick, txInfo }: Props): React.ReactElement {
+export default function Confirmation ({ handleDone, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const token = useToken(address);
-  const chainName = useChainName(address);
+  const { chainName, formatted } = useInfo(txInfo.from.address);
 
   const fee = txInfo.api.createType('Balance', txInfo.fee);
+  const maybePayeeAddress = useMemo(() => {
+    if (txInfo?.payee) {
+      return;
+    }
+
+    if (txInfo.payee === 'Stash') {
+      return formatted;
+    }
+
+    return txInfo.payee?.Account ? String(txInfo.payee.Account) : undefined;
+  }, [formatted, txInfo.payee]);
+
+  const destinationAccountName = useAccountName(maybePayeeAddress);
 
   const DisplayInfo = ({ caption, showDivider = true, value }: { caption: string, value: string, showDivider?: boolean }) => {
     return (
@@ -51,7 +61,7 @@ export default function Confirmation({ address, onPrimaryBtnClick, txInfo }: Pro
         success={txInfo.success}
       />
       {txInfo?.failureText &&
-        <Typography fontSize='16px' fontWeight={400} m='auto' sx={{ WebkitBoxOrient: 'vertical', WebkitLineClamp: '2', display: '-webkit-box', mb: '15px', overflow: 'hidden', textOverflow: 'ellipsis' }} textAlign='center' width='92%'        >
+        <Typography fontSize='16px' fontWeight={400} m='auto' sx={{ WebkitBoxOrient: 'vertical', WebkitLineClamp: '2', display: '-webkit-box', mb: '15px', overflow: 'hidden', textOverflow: 'ellipsis' }} textAlign='center' width='92%'>
           {txInfo.failureText}
         </Typography>
       }
@@ -74,11 +84,31 @@ export default function Confirmation({ address, onPrimaryBtnClick, txInfo }: Pro
       <Grid alignItems='center' container item justifyContent='center' pt='8px'>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
       </Grid>
+      {txInfo?.payee &&
+        <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+          <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+            {t<string>('Rewards destination')}:
+          </Typography>
+          {maybePayeeAddress &&
+            <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='34%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+              {destinationAccountName || t('Unknown')}
+            </Typography>
+          }
+          <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
+            {maybePayeeAddress
+              ? <ShortAddress address={maybePayeeAddress} inParentheses style={{ fontSize: '16px' }} />
+              : <>{t('Add to staked amount')} </>
+            }
+          </Grid>
+        </Grid>
+      }
+      <Grid alignItems='center' container item justifyContent='center' pt='8px'>
+        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
+      </Grid>
       <DisplayInfo
-        caption={t('Unlock value:')}
-        value={t(`${txInfo.amount} {{token}}`, { replace: { token } })}
+        caption={t('Fee:')}
+        value={fee?.toHuman() ?? '00.00'}
       />
-      <DisplayInfo caption={t('Fee:')} value={fee?.toHuman() ?? '00.00'} />
       {txInfo?.txHash &&
         <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
           <Grid container item width='fit-content'>
@@ -102,10 +132,10 @@ export default function Confirmation({ address, onPrimaryBtnClick, txInfo }: Pro
       }
       <PButton
         _ml={0}
-        _mt='50px'
-        _onClick={onPrimaryBtnClick}
-        _width={100}
-        text={t('Close')}
+        _onClick={handleDone}
+        _width={90}
+        left='5%'
+        text={t('Done')}
       />
     </Container>
   );
