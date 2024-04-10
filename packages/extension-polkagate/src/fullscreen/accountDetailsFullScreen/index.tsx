@@ -170,7 +170,7 @@ export default function AccountDetails(): React.ReactElement {
   }, [account?.genesisHash, address]);
 
   const onBackClick = useCallback(() => {
-    openOrFocusTab('/');
+    openOrFocusTab('/', true);
   }, []);
 
   return (
