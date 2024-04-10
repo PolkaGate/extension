@@ -83,7 +83,10 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
             {txInfo.failureText}
           </Typography>
         }
-        <Account info={txInfo.from} label={t('From')} />
+        <Account
+          info={txInfo.from}
+          label={t('From')}
+        />
         {txInfo.throughProxy &&
           <Grid container m='auto' maxWidth='92%'>
             <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
@@ -94,7 +97,7 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
         <>
           <DisplayInfo
             caption={t('Amount:')}
-            value={txInfo.amount && txInfo.token ? `${parseFloat(txInfo.amount)} ${txInfo.token}` : '00.00'}
+            value={ `${parseFloat(txInfo.amount)} ${txInfo.token}` }
           />
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: 'auto', width: '240px' }} />
         </>
