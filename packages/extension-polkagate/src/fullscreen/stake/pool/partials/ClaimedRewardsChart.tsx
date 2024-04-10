@@ -48,7 +48,7 @@ interface Props {
   token?: string,
 }
 
-export default function RewardsChart ({ address, chainName, decimal, token }: Props): React.ReactElement {
+export default function ClaimedRewardsChart ({ address, chainName, decimal, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const _chainName = useChainName(address) || chainName;
