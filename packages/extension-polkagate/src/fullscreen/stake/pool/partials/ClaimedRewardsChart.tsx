@@ -18,7 +18,7 @@ import { Bar } from 'react-chartjs-2';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { Progress } from '../../../../components';
-import { useChainName, useDecimal, useToken, useTranslation } from '../../../../hooks';
+import { useInfo, useTranslation } from '../../../../hooks';
 import { getNominationPoolsClaimedRewards } from '../../../../util/api';
 import { MAX_HISTORY_RECORD_TO_SHOW } from '../../../../util/constants';
 import { ClaimedRewardInfo, SubscanClaimedRewardInfo } from '../../../../util/types';
@@ -42,18 +42,13 @@ interface ArrowsProps {
 }
 
 interface Props {
-  chainName?: string | undefined;
   address?: string;
-  decimal?: number | undefined
-  token?: string,
 }
 
-export default function ClaimedRewardsChart ({ address, chainName, decimal, token }: Props): React.ReactElement {
+export default function ClaimedRewardsChart ({ address }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const _chainName = useChainName(address) || chainName;
-  const _decimal = useDecimal(address) || decimal;
-  const _token = useToken(address) || token;
+  const { chainName, decimal, token } = useInfo(address);
 
   const [claimedRewardsInfo, setClaimedRewardsInfo] = useState<ClaimedRewardInfo[] | null | undefined>();
   const [pageIndex, setPageIndex] = useState<number>(0);
@@ -87,7 +82,7 @@ export default function ClaimedRewardsChart ({ address, chainName, decimal, toke
 
   // sorted labels and rewards and removed duplicates dates and sum rewards on the same date
   const aggregatedRewards = useMemo(() => {
-    if (!ascSortedRewards?.length || !_decimal) {
+    if (!ascSortedRewards?.length || !decimal) {
       return;
     }
 
@@ -105,7 +100,7 @@ export default function ClaimedRewardsChart ({ address, chainName, decimal, toke
 
       temp[relatedDateIndex].amount = temp[relatedDateIndex].amount.add(item.amount);
       temp[relatedDateIndex].timestamp = temp[relatedDateIndex].timestamp ?? new Date(item.timeStamp).getTime();
-      temp[relatedDateIndex].amountInHuman = amountToHuman(temp[relatedDateIndex].amount, _decimal);
+      temp[relatedDateIndex].amountInHuman = amountToHuman(temp[relatedDateIndex].amount, decimal);
     });
 
     for (let j = 0; j < temp.length; j++) {
@@ -130,10 +125,10 @@ export default function ClaimedRewardsChart ({ address, chainName, decimal, toke
       }
     });
 
-    setMostPrize(Number(amountToHuman(estimatedMostPrize, _decimal)));
+    setMostPrize(Number(amountToHuman(estimatedMostPrize, decimal)));
 
     return temp;
-  }, [ascSortedRewards, _decimal, formateDate]);
+  }, [ascSortedRewards, decimal, formateDate]);
 
   const descSortedRewards = useMemo(() => {
     if (!ascSortedRewards?.length || !weeksRewards?.length) {
@@ -221,7 +216,7 @@ export default function ClaimedRewardsChart ({ address, chainName, decimal, toke
   }, [aggregatedRewards, formateDate]);
 
   useEffect((): void => {
-    address && _chainName && getNominationPoolsClaimedRewards(_chainName, String(address), MAX_HISTORY_RECORD_TO_SHOW).then((r) => {
+    address && chainName && getNominationPoolsClaimedRewards(chainName, String(address), MAX_HISTORY_RECORD_TO_SHOW).then((r) => {
       const list = r?.data.list as SubscanClaimedRewardInfo[];
       const claimedRewardsFromSubscan: ClaimedRewardInfo[] | undefined = list?.map((i: SubscanClaimedRewardInfo): ClaimedRewardInfo => {
         return {
@@ -238,7 +233,7 @@ export default function ClaimedRewardsChart ({ address, chainName, decimal, toke
         return setClaimedRewardsInfo(null);
       }
     });
-  }, [_chainName, address]);
+  }, [chainName, address]);
 
   const handleAccordionChange = useCallback((panel: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : -1);
@@ -280,10 +275,10 @@ export default function ClaimedRewardsChart ({ address, chainName, decimal, toke
               return;
             }
 
-            return `${TooltipItem.formattedValue} ${_token ?? ''}`;
+            return `${TooltipItem.formattedValue} ${token ?? ''}`;
           },
           title: function (TooltipItem: string | { label: string }[] | undefined) {
-            if (!dataToShow || !TooltipItem || !_token) {
+            if (!dataToShow || !TooltipItem || !token) {
               return;
             }
 
@@ -333,7 +328,7 @@ export default function ClaimedRewardsChart ({ address, chainName, decimal, toke
         borderRadius: 3,
         borderWidth: 1,
         data: dataToShow && dataToShow[pageIndex][0],
-        label: _token
+        label: token
       }
     ],
     labels: dataToShow && dataToShow[pageIndex][1]
@@ -385,7 +380,7 @@ export default function ClaimedRewardsChart ({ address, chainName, decimal, toke
         </Typography>
       </Grid>
       <Grid alignItems='center' container item justifyContent='center' mt='10px'>
-        {claimedRewardsInfo && descSortedRewards && _decimal && mostPrize &&
+        {claimedRewardsInfo && descSortedRewards && decimal && mostPrize &&
           <Grid container item>
             <Arrows onNext={onNext} onPrevious={onPrevious} />
             <Grid item sx={{ p: '5px 10px 5px' }} xs={12}>
@@ -413,7 +408,7 @@ export default function ClaimedRewardsChart ({ address, chainName, decimal, toke
                                   {d.timeStamp ? new Date(d.timeStamp * 1000).toDateString() : d.era}
                                 </Grid>
                                 <Grid item width='50%'>
-                                  {amountToHuman(d.amount, _decimal, 9)} {` ${_token ?? ''}`}
+                                  {amountToHuman(d.amount, decimal, 9)} {` ${token ?? ''}`}
                                 </Grid>
                               </Grid>
                             </AccordionSummary>

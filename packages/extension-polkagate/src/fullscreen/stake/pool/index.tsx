@@ -49,7 +49,7 @@ export default function Index (): React.ReactElement {
   const { pathname, state } = useLocation<State>();
   const { address } = useParams<{ address: string }>();
 
-  const { api, chain, chainName, decimal, token } = useInfo(address);
+  const { api, chain } = useInfo(address);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
 
@@ -220,12 +220,8 @@ export default function Index (): React.ReactElement {
           <Grid container direction='column' gap='15px' item width='320px'>
             <ClaimedRewardsChart
               address={address}
-              chainName={chainName}
-              decimal={decimal}
-              token={token}
             />
           </Grid>
-
         </Grid>
 
       </Grid>
