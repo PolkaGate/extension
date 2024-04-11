@@ -25,7 +25,7 @@ import { openOrFocusTab } from '../../accountDetailsFullScreen/components/Common
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
 import { Title } from '../../sendFund/InputPage';
 import DisplayBalance from '../partials/DisplayBalance';
-import ActiveValidators from '../solo/partials/ActiveValidators';
+import ClaimedRewardsChart from './partials/ClaimedRewardsChart';
 
 interface SessionIfo {
   eraLength: number;
@@ -218,12 +218,10 @@ export default function Index (): React.ReactElement {
             </Grid>
           </Grid>
           <Grid container direction='column' gap='15px' item width='320px'>
-            {/* <RewardsChart
+            <ClaimedRewardsChart
               address={address}
-              rewardDestinationAddress={rewardDestinationAddress}
-            /> */}
+            />
           </Grid>
-
         </Grid>
 
       </Grid>
