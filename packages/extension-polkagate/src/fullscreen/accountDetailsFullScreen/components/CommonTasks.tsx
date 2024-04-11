@@ -68,32 +68,32 @@ export const TaskButton = ({ disabled, icon, mr = '25px', noBorderButton = false
   return (
     <>
       {show &&
-          <>
-            {/* eslint-disable-next-line react/jsx-no-bind */}
-            <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', m: 'auto', minHeight: '45px', p: '5px 10px' }} width='90%'>
-              <Grid container item mr={mr} xs={1.5}>
-                {icon}
-              </Grid>
-              <Grid container item xs>
-                <Typography color={disabled ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='16px' fontWeight={500}>
-                  {text}
-                </Typography>
-              </Grid>
-              {secondaryIconType === 'page' &&
-          <Grid alignItems='center' container item justifyContent='flex-end' xs={2}>
-            <ArrowForwardIosRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '26px', stroke: disabled ? theme.palette.text.disabled : theme.palette.secondary.light, strokeWidth: 1 }} />
-          </Grid>
-              }
+        <>
+          {/* eslint-disable-next-line react/jsx-no-bind */}
+          <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', m: 'auto', minHeight: '45px', p: '5px 10px' }} width='90%'>
+            <Grid container item mr={mr} xs={1.5}>
+              {icon}
             </Grid>
-            {!noBorderButton && <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto', width: '85%' }} />
+            <Grid container item xs>
+              <Typography color={disabled ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='16px' fontWeight={500}>
+                {text}
+              </Typography>
+            </Grid>
+            {secondaryIconType === 'page' &&
+              <Grid alignItems='center' container item justifyContent='flex-end' xs={2}>
+                <ArrowForwardIosRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '26px', stroke: disabled ? theme.palette.text.disabled : theme.palette.secondary.light, strokeWidth: 1 }} />
+              </Grid>
             }
-          </>
+          </Grid>
+          {!noBorderButton && <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto', width: '85%' }} />
+          }
+        </>
       }
     </>
   );
 };
 
-export default function CommonTasks ({ address, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
+export default function CommonTasks({ address, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -109,7 +109,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
 
   const goToSend = useCallback(() => {
     address && genesisHash &&
-    openOrFocusTab(`/send/${address}/${assetId}`);
+      openOrFocusTab(`/send/${address}/${assetId}`);
   }, [address, assetId, genesisHash]);
 
   const goToReceive = useCallback(() => {
@@ -118,7 +118,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
 
   const goToGovernance = useCallback(() => {
     address && genesisHash && !governanceDisabled &&
-    openOrFocusTab(`/governance/${address}/referenda`);
+      openOrFocusTab(`/governance/${address}/referenda`);
   }, [address, genesisHash, governanceDisabled]);
 
   const goToStaking = useCallback(() => {
@@ -127,7 +127,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
 
   const goToSoloStaking = useCallback(() => {
     address && !stakingDisabled &&
-    openOrFocusTab(`/solofs/${address}/`);
+      openOrFocusTab(`/solofs/${address}/`);
   }, [address, stakingDisabled]);
 
   const goToPoolStaking = useCallback(() => {

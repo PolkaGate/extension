@@ -149,7 +149,7 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
     setStep(STEPS.INDEX);
   }, [setStep]);
 
-  const Title = () => (
+  const ModalTitle = () => (
     <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
       <Grid alignItems='center' container justifyContent='flex-start' sx={{ width: 'fit-content' }}>
         <Grid item>
@@ -184,7 +184,7 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
     <DraggableModal onClose={onCancel} open={show}>
       <>
         {step !== STEPS.WAIT_SCREEN &&
-          <Title />
+          <ModalTitle />
         }
         {step === STEPS.INDEX &&
           <>

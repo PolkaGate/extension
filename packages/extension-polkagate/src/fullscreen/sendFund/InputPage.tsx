@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
@@ -36,11 +38,11 @@ const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
 const INVALID_PARA_ID = Number.MAX_SAFE_INTEGER;
 
 export const Title = ({ icon, logo, onBackClick, padding = '30px 0px 30px', text }:
- { text: string, icon?: IconDefinition, logo?: any, padding?: string, onBackClick?: () => void }) => {
+{ text: string, icon?: IconDefinition, logo?: unknown, padding?: string, onBackClick?: () => void }) => {
   const theme = useTheme();
 
   return (
-    <Grid alignItems={logo ? 'center' : 'baseline'} container height='113px' item p={padding} spacing={1}>
+    <Grid alignItems={ 'center' } container height='113px' item p={padding} spacing={1}>
       {!!onBackClick &&
       <Grid item width='fit-content'>
         <ArrowBackIosIcon

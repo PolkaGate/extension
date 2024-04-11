@@ -78,7 +78,7 @@ export default function Review({ address, delegateInformation, estimatedFee, sel
     amount: delegateInformation.delegateAmount,
     fee: String(estimatedFee || 0),
     subAction: 'Delegate',
-    to: { address: delegateInformation.delegateeAddress, name: delegateeName },
+    to: { address: delegateInformation.delegateeAddress, name: delegateeName }
   }), [delegateInformation, delegateeName, estimatedFee]);
 
   const onBackClick = useCallback(() => setStep(STEPS.CHOOSE_DELEGATOR), [setStep]);

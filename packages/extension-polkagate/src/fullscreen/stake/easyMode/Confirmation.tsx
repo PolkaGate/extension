@@ -49,9 +49,16 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
 
+  const Div = () => (
+    <Grid alignItems='center' container item justifyContent='center' pt='8px'>
+      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
+    </Grid>
+  );
+
   const DisplayInfo = ({ caption, showDivider = true, value }: DisplayInfoProps) => {
     return (
-      <>{value &&
+      <>
+        {value &&
         <Grid alignItems='center' container direction='column' fontSize='16px' fontWeight={400} justifyContent='center'>
           <Grid container item width='fit-content'>
             <Typography lineHeight='40px' pr='5px'>
@@ -62,16 +69,16 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
             </Typography>
           </Grid>
           {showDivider &&
-            <Grid alignItems='center' container item justifyContent='center'>
-              <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mx: '6px', width: '240px' }} />
-            </Grid>}
+           <Div />
+          }
         </Grid>
-      }</>
+        }
+      </>
     );
   };
 
   return (
-    <Motion>
+    <>
       <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), pb: '15px' }}>
         <FailSuccessIcon
           showLabel={false}
@@ -92,33 +99,36 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
             <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
           </Grid>
         }
-        <Divider sx={{ bgcolor: 'secondary.main', height: '1px', m: 'auto', width: '240px' }} />
+        <Div />
         {txInfo.amount && txInfo.token &&
-        <>
           <DisplayInfo
             caption={t('Amount:')}
             value={ `${parseFloat(txInfo.amount)} ${txInfo.token}` }
           />
-          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: 'auto', width: '240px' }} />
-        </>
         }
         {txInfo.poolName &&
-        <>
           <DisplayInfo
             caption={t('Pool Name:')}
             value={txInfo.poolName}
           />
-          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: 'auto', width: '240px' }} />
-        </>
+        }
+        {txInfo.validatorsCount &&
+          <DisplayInfo
+            caption={t('Validators:')}
+            value={String(txInfo.validatorsCount)}
+          />
         }
         {txInfo.fee && txInfo.token && txInfo.decimal &&
-        <>
           <DisplayInfo
             caption={t('Fee:')}
             value={`${amountToHuman(txInfo.fee, txInfo.decimal)} ${txInfo.token}`}
           />
-          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: 'auto', width: '240px' }} />
-        </>
+        }
+        {txInfo.block &&
+          <DisplayInfo
+            caption={t('Block:')}
+            value={`#${txInfo.block}`}
+          />
         }
         {txInfo?.txHash &&
           <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
@@ -150,6 +160,6 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
           text={t('Done')}
         />
       </Grid>
-    </Motion>
+    </>
   );
 }

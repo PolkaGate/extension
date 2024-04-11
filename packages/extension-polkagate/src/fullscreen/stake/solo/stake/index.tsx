@@ -15,8 +15,8 @@ import { AmountWithOptions, Infotip2, ShowBalance, TwoButtons } from '../../../.
 import { useTranslation } from '../../../../components/translate';
 import { useBalances, useInfo, useMinToReceiveRewardsInSolo2, useStakingAccount, useStakingConsts } from '../../../../hooks';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import { Inputs } from '../../Entry';
 import { STEPS } from '../..';
+import { Inputs } from '../../Entry';
 import SelectValidators from '../partials/SelectValidators';
 
 interface Props {

@@ -10,6 +10,8 @@ import { Collapse, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router';
 
+import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { PButton, PoolStakingIcon } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { useFullscreen, useInfo, usePoolConsts } from '../../hooks';
@@ -28,7 +30,7 @@ export const STEPS = {
   WAIT_SCREEN: 3,
   CONFIRM: 4,
   STAKE_SOLO: 5,
-  SOLO_REVIEW:6,
+  SOLO_REVIEW: 6,
   JOIN_POOL: 7,
   JOIN_REVIEW: 8,
   CREATE_POOL: 9,
@@ -94,7 +96,7 @@ export default function StakingOptions (): React.ReactElement {
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='stake' />
-      <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '900px', overflow: 'scroll', px: '6%' }}>
+      <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '6%' }}>
         <Title
           icon={
             [STEPS.EASY_STAKING, STEPS.EASY_REVIEW, STEPS.INDEX].includes(step) &&

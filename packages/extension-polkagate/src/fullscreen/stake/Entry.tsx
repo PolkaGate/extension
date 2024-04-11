@@ -20,20 +20,20 @@ import Confirmation from './easyMode/Confirmation';
 import Review from './easyMode/Review';
 import CreatePool from './pool/create';
 import JoinPool from './pool/join';
-import EasyMode from './easyMode';
 import SoloStake from './solo/stake';
+import EasyMode from './easyMode';
 import StakingOptions from './StakingOptions';
 import { STEPS } from '.';
 
 export interface Inputs {
-  amount: string | undefined;
+  amount?: string | undefined;
   call: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   mode?: number;
   params: unknown[] | (() => unknown[]);
   pool?: MyPoolInfo,
   estimatedFee?: Balance;
   selectedValidators?: ValidatorInfo[],
-  extraInfo: Record<string, unknown>
+  extraInfo?: Record<string, unknown>
 }
 
 interface Props {

@@ -159,6 +159,8 @@ export interface TxInfo extends TransactionDetail {
   decimal?: number;
   recipientChainName?: string;
   token?: string;
+  poolName?: string;
+  validatorsCount?: number;
 }
 
 export interface Auction {

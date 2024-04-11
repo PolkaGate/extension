@@ -37,6 +37,12 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
 
   const destinationAccountName = useAccountName(maybePayeeAddress);
 
+  const Div = () => (
+    <Grid alignItems='center' container item justifyContent='center' pt='8px'>
+      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
+    </Grid>
+  );
+
   const DisplayInfo = ({ caption, showDivider = true, value }: { caption: string, value: string, showDivider?: boolean }) => {
     return (
       <Grid alignItems='center' container direction='column' fontSize='16px' fontWeight={400} justifyContent='center'>
@@ -45,9 +51,8 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
           <Typography lineHeight='40px'>{value}</Typography>
         </Grid>
         {showDivider &&
-          <Grid alignItems='center' container item justifyContent='center'>
-            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: '6px', width: '240px' }} />
-          </Grid>}
+         <Div />
+        }
       </Grid>
     );
   };
@@ -81,9 +86,7 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
           <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
         </Grid>
       }
-      <Grid alignItems='center' container item justifyContent='center' pt='8px'>
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
-      </Grid>
+      <Div />
       {txInfo?.payee &&
         <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
@@ -102,12 +105,14 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
           </Grid>
         </Grid>
       }
-      <Grid alignItems='center' container item justifyContent='center' pt='8px'>
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
-      </Grid>
+      <Div />
       <DisplayInfo
         caption={t('Fee:')}
         value={fee?.toHuman() ?? '00.00'}
+      />
+      <DisplayInfo
+        caption={t('block:')}
+        value={`#${txInfo.block}`}
       />
       {txInfo?.txHash &&
         <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>

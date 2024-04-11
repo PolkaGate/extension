@@ -17,7 +17,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BN } from '@polkadot/util';
 
 import { Checkbox2, Infotip, InputFilter, Waiting } from '../../../../components';
-import { useInfo, useTranslation, useValidators, useValidatorsIdentities,useValidatorSuggestion } from '../../../../hooks';
+import { useInfo, useTranslation, useValidators, useValidatorsIdentities, useValidatorSuggestion } from '../../../../hooks';
 import { DEFAULT_FILTERS, SYSTEM_SUGGESTION_TEXT } from '../../../../util/constants';
 import { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../../util/types';
 import Filters from './Filters';
@@ -25,15 +25,16 @@ import ValidatorsTable from './ValidatorsTable';
 
 interface Props {
   address: string;
-  nominatedValidatorsIds?: AccountId[] | null | undefined;
+  nominatedValidatorsIds?: string[] | null | undefined;
   stashId: AccountId;
   stakingConsts: StakingConsts | null | undefined;
   staked: BN;
+  tableHeight?: number;
   newSelectedValidators: ValidatorInfo[];
   setNewSelectedValidators: React.Dispatch<React.SetStateAction<ValidatorInfo[]>>;
 }
 
-const TableSubInfoWithClear = ({ maxSelectable, onClearSelection, selectedCount }: {selectedCount: number|undefined, maxSelectable: number|undefined, onClearSelection: () => void}) => {
+const TableSubInfoWithClear = ({ maxSelectable, onClearSelection, selectedCount }: { selectedCount: number | undefined, maxSelectable: number | undefined, onClearSelection: () => void }) => {
   const { t } = useTranslation();
 
   return (
@@ -52,7 +53,7 @@ const TableSubInfoWithClear = ({ maxSelectable, onClearSelection, selectedCount 
   );
 };
 
-export default function SelectValidators ({ address, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, staked, stakingConsts, stashId }: Props): React.ReactElement {
+export default function SelectValidators ({ address, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, staked, stakingConsts, stashId, tableHeight }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { token } = useInfo(address);
@@ -63,6 +64,7 @@ export default function SelectValidators ({ address, newSelectedValidators, nomi
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
   const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => v.validatorPrefs.blocked === false || v.validatorPrefs.blocked?.isFalse), [allValidatorsInfo]);
+
   const [systemSuggestion, setSystemSuggestion] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [filteredValidators, setFilteredValidators] = useState<ValidatorInfo[] | undefined>(allValidators);
@@ -177,9 +179,10 @@ export default function SelectValidators ({ address, newSelectedValidators, nomi
     setSystemSuggestion(false);
   }, [setNewSelectedValidators]);
 
-  const isSelected = useCallback((v: ValidatorInfo) =>
-    !!newSelectedValidators.find((n) => n.accountId === v.accountId)
-  , [newSelectedValidators]);
+  const isSelected = useCallback(
+    (v: ValidatorInfo) =>
+      !!newSelectedValidators.find((n) => n.accountId === v.accountId)
+    , [newSelectedValidators]);
 
   const handleCheck = useCallback((e: React.ChangeEvent<HTMLInputElement>, validator: ValidatorInfo) => {
     const checked = e.target.checked;
@@ -206,11 +209,13 @@ export default function SelectValidators ({ address, newSelectedValidators, nomi
     setNewSelectedValidators([...newSelected]);
   }, [newSelectedValidators, setNewSelectedValidators, stakingConsts?.maxNominations]);
 
+  const _tableHeight=tableHeight || window.innerHeight - 570;
+
   return (
     <>
       {allValidators === undefined || !nominatedValidatorsIds === undefined
         ? <Waiting
-          height={window.innerHeight - 630}
+          height={_tableHeight - 90}
         />
         : <>
           <Grid container sx={{ justifyContent: 'flex-start' }}>
@@ -242,49 +247,49 @@ export default function SelectValidators ({ address, newSelectedValidators, nomi
             </Grid>
             <Grid item xs={12}>
               {validatorsToList &&
-                    <ValidatorsTable
-                      allValidatorsIdentities={allValidatorsIdentities}
-                      address={address}
-                      formatted={stashId}
-                      handleCheck={handleCheck}
-                      height={window.innerHeight - 570}
-                      isSelected={isSelected}
-                      maxSelected={newSelectedValidators.length === stakingConsts?.maxNominations}
-                      nominatedValidatorsIds={nominatedValidatorsIds}
-                      setSelectedValidators={setNewSelectedValidators}
-                      showCheckbox
-                      staked={staked}
-                      stakingConsts={stakingConsts}
-                      token={token}
-                      validatorsToList={validatorsToList}
-                    />
+                <ValidatorsTable
+                  address={address}
+                  allValidatorsIdentities={allValidatorsIdentities}
+                  formatted={stashId}
+                  handleCheck={handleCheck}
+                  height={_tableHeight}
+                  isSelected={isSelected}
+                  maxSelected={newSelectedValidators.length === stakingConsts?.maxNominations}
+                  nominatedValidatorsIds={nominatedValidatorsIds}
+                  setSelectedValidators={setNewSelectedValidators}
+                  showCheckbox
+                  staked={staked}
+                  stakingConsts={stakingConsts}
+                  token={token}
+                  validatorsToList={validatorsToList}
+                />
               }
             </Grid>
             <TableSubInfoWithClear
-              maxSelectable={ stakingConsts?.maxNominations}
+              maxSelectable={stakingConsts?.maxNominations}
               onClearSelection={onClearSelection}
-              selectedCount={ newSelectedValidators?.length}
+              selectedCount={newSelectedValidators?.length}
             />
             {showFilters &&
-                  <Grid ml='-15px' position='absolute'>
-                    <Filters
-                      allValidators={searchKeyword ? searchedValidators : allValidators}
-                      allValidatorsIdentities={allValidatorsIdentities}
-                      apply={apply}
-                      filters={filters}
-                      newSelectedValidators={newSelectedValidators}
-                      onLimitValidatorsPerOperator={onLimitValidatorsPerOperator}
-                      setApply={setApply}
-                      setFilteredValidators={setFilteredValidators}
-                      setFilters={setFilters}
-                      setNewSelectedValidators={setNewSelectedValidators}
-                      setShow={setShowFilters}
-                      setSortValue={setSortValue}
-                      show={showFilters}
-                      sortValue={sortValue}
-                      stakingConsts={stakingConsts}
-                    />
-                  </Grid>
+              <Grid ml='-15px' position='absolute'>
+                <Filters
+                  allValidators={searchKeyword ? searchedValidators : allValidators}
+                  allValidatorsIdentities={allValidatorsIdentities}
+                  apply={apply}
+                  filters={filters}
+                  newSelectedValidators={newSelectedValidators}
+                  onLimitValidatorsPerOperator={onLimitValidatorsPerOperator}
+                  setApply={setApply}
+                  setFilteredValidators={setFilteredValidators}
+                  setFilters={setFilters}
+                  setNewSelectedValidators={setNewSelectedValidators}
+                  setShow={setShowFilters}
+                  setSortValue={setSortValue}
+                  show={showFilters}
+                  sortValue={sortValue}
+                  stakingConsts={stakingConsts}
+                />
+              </Grid>
             }
           </Grid>
         </>

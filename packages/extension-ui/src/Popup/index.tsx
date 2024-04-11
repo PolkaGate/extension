@@ -21,6 +21,7 @@ import SocialRecovery from '@polkadot/extension-polkagate/src/fullscreen/socialR
 import Stake from '@polkadot/extension-polkagate/src/fullscreen/stake';
 import PoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/pool';
 import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/solo';
+import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/manageValidators';
 import { isPriceUpToDate } from '@polkadot/extension-polkagate/src/hooks/usePrices';
 import AddWatchOnly from '@polkadot/extension-polkagate/src/popup/import/addWatchOnly';
 import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
@@ -306,6 +307,7 @@ export default function Popup (): React.ReactElement {
                                     <Route path='/pool/unstake/:address'>{wrapWithErrorBoundary(<PoolUnstake />, 'pool-unstake')}</Route>
                                     <Route path='/pool/:address'>{wrapWithErrorBoundary(<Pool />, 'pool-staking')}</Route>
                                     <Route path='/poolfs/:address'>{wrapWithErrorBoundary(<PoolFS />, 'pool-staking-fullscreen')}</Route>
+                                    <Route path='/manageValidators/:address'>{wrapWithErrorBoundary(<ManageValidators />, 'manage-validators-fullscreen')}</Route>
                                     <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
                                     <Route path='/receive/:address'>{wrapWithErrorBoundary(<Receive />, 'receive')}</Route>
                                     <Route path='/send/:address/:assetId'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>

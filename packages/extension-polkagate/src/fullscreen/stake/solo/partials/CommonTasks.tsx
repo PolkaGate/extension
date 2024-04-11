@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { TaskButton } from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen/components/CommonTasks';
+import { openOrFocusTab, TaskButton } from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen/components/CommonTasks';
 import { useInfo, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 
 import ConfigurePayee from '../configurePayee';
@@ -32,8 +32,8 @@ export default function CommonTasks ({ address, setRefresh }: Props): React.Reac
   }, []);
 
   const onManageValidators = useCallback(() => {
-
-  }, []);
+    address && openOrFocusTab(`/manageValidators/${address}/0`, true);
+  }, [address]);
 
   return (
     <>
@@ -70,16 +70,16 @@ export default function CommonTasks ({ address, setRefresh }: Props): React.Reac
             mr='0px'
             noBorderButton
             onClick={onManageValidators}
-            secondaryIconType='popup'
+            secondaryIconType='page'
             text={t('Manage Validators')}
           />
         </Grid>
       </Grid>
       <ConfigurePayee
         address={address}
+        setRefresh={setRefresh}
         setShow={setShowRewardDestinationModal}
         show={showRewardDestinationModal}
-        setRefresh={setRefresh}
       />
     </>
   );
