@@ -10,6 +10,7 @@ import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { AccountContext, ActionContext } from '../../components';
 import { useAccountsOrder, useFullscreen } from '../../hooks';
+import { AddNewAccountButton } from '../../partials';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import HeaderComponents from './components/HeaderComponents';
 import DraggableAccountsList from './partials/DraggableAccountList';
@@ -22,7 +23,7 @@ export interface AccountsOrder {
   account: AccountWithChildren
 }
 
-export default function HomePageFullScreen(): React.ReactElement {
+export default function HomePageFullScreen (): React.ReactElement {
   useFullscreen();
   const initialAccountList = useAccountsOrder(true) as AccountsOrder[];
   const onAction = useContext(ActionContext);
@@ -56,6 +57,9 @@ export default function HomePageFullScreen(): React.ReactElement {
               hideNumbers={hideNumbers}
               initialAccountList={initialAccountList}
             />
+          }
+          {initialAccountList && initialAccountList?.length <= 2 &&
+            <AddNewAccountButton />
           }
         </Grid>
         <Grid container direction='column' item rowGap='20px' width='fit-content'>
