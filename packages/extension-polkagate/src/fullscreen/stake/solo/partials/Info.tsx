@@ -5,10 +5,10 @@
 
 import { faInfoCircle, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Collapse, Container, Divider, Grid, useTheme } from '@mui/material';
+import { Collapse, Container, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { ShowValue } from '@polkadot/extension-polkagate/src/components';
+import { Infotip, Infotip2, ShowValue } from '@polkadot/extension-polkagate/src/components';
 import { useInfo, useMinToReceiveRewardsInSolo, useStakingConsts, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, bnMax } from '@polkadot/util';
@@ -54,13 +54,12 @@ export default function Info ({ address }: Props): React.ReactElement {
   }, [setShow, show]);
 
   return (
-    <Grid alignItems='end' container item justifyItems='flex-end'>
-      <FontAwesomeIcon
-        color={ theme.palette.secondary.light}
-        icon={faInfoCircle}
-        onClick={onClick}
-        style={{ cursor: 'pointer', height: '20px', margin: '10px 0 0 10px', width: '20px' }}
-      />
+    <Grid alignItems='end' container item justifyItems='flex-end' sx={{ mt: '15px' }}>
+      <Infotip2 showInfoMark text={t('click to view')}>
+        <Typography fontSize='14px' onClick={onClick} sx={{ color:'secondary.light',cursor: 'pointer', ml: '40px' }} width='100%'>
+          {t('on-chain staking info')}
+        </Typography>
+      </Infotip2>
       <Collapse in={show} orientation='vertical' sx={{ '> .MuiCollapse-wrapper .MuiCollapse-wrapperInner': { display: 'grid', rowGap: '10px' }, width: '100%' }}>
         <Grid container item sx={{ backgroundColor: 'backgroundFL.primary', borderRadius: '5px', pt: '5px', px: '10px' }}>
           <Row label={t('Max validators you can select')} value={info?.maxNominations} />
