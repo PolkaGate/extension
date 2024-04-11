@@ -143,7 +143,7 @@ export default function Index (): React.ReactElement {
   }, [redeemable]);
 
   const onBackClick = useCallback(() => {
-    openOrFocusTab(`/accountfs/${address}/0`);
+    openOrFocusTab(`/accountfs/${address}/0`, true);
   }, [address]);
 
   return (
