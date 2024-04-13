@@ -22,11 +22,7 @@ import ActiveValidators from './partials/ActiveValidators';
 import CommonTasks from './partials/CommonTasks';
 import Info from './partials/Info';
 import RewardsChart from './partials/RewardsChart';
-
-// import RewardsDetail from './rewards/RewardsDetail';
-// import Info from './Info';
-// import RedeemableWithdrawReview from './redeem';
-// import Settings from './settings';
+import Unstake from './unstake';
 
 interface SessionIfo {
   eraLength: number;
@@ -34,7 +30,7 @@ interface SessionIfo {
   currentEra: number;
 }
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
 
   useFullscreen();
@@ -61,7 +57,7 @@ export default function Index (): React.ReactElement {
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
   const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
   const [showInfo, setShowInfo] = useState<boolean>(false);
-  const [showSettings, setShowSettings] = useState<boolean>(false);
+  const [showUnstake, setShowUnstake] = useState<boolean>(false);
   const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
 
   useEffect(() => {
@@ -102,11 +98,8 @@ export default function Index (): React.ReactElement {
   }, [sessionInfo, stakingAccount]);
 
   const onUnstake = useCallback(() => {
-    history.push({
-      pathname: `/solo/unstake/${address}`,
-      state: { api, balances, redeemable, stakingAccount, stakingConsts, unlockingAmount }
-    });
-  }, [history, address, api, balances, redeemable, stakingConsts, unlockingAmount, stakingAccount]);
+    setShowUnstake(true);
+  }, []);
 
   const onFastUnstake = useCallback(() => {
     history.push({
@@ -135,7 +128,7 @@ export default function Index (): React.ReactElement {
       <FullScreenHeader page='stake' />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', px: '5%' }}>
         <Title
-          logo={ <BoyIcon sx={{ color: 'text.primary', fontSize: '60px' }} /> }
+          logo={<BoyIcon sx={{ color: 'text.primary', fontSize: '60px' }} />}
           onBackClick={onBackClick}
           text={t('Staked Solo')}
         />
@@ -202,18 +195,12 @@ export default function Index (): React.ReactElement {
           </Grid>
         </Grid>
       </Grid>
-      {/* {showRedeemableWithdraw && formatted && api && getValue('available', balances) && chain && redeemable && !redeemable?.isZero() &&
-        <RedeemableWithdrawReview
-          address={address}
-          amount={redeemable}
-          api={api}
-          available={getValue('available', balances)}
-          chain={chain}
-          formatted={String(formatted)}
-          setRefresh={setRefresh}
-          setShow={setShowRedeemableWithdraw}
-          show={showRedeemableWithdraw}
-        />} */}
+      <Unstake
+        address={address}
+        setRefresh={setRefresh}
+        setShow={setShowUnstake}
+        show={showUnstake}
+      />
     </Grid>
   );
 }

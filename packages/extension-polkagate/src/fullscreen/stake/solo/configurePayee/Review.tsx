@@ -5,29 +5,26 @@
 
 /**
  * @description
- * this component opens stake review page
+ * this component opens review page
  * */
 
-import type { SubmittableExtrinsic } from '@polkadot/api/types';
-
-import { Container, Divider, Grid, Typography } from '@mui/material';
+import { Container, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
-import { Balance } from '@polkadot/types/interfaces';
-import { ISubmittableResult } from '@polkadot/types/types';
-import { BN_ONE, BN_ZERO } from '@polkadot/util';
+import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
 
-import { Identity, ShortAddress, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../components';
-import { useInfo, useProxies, useTranslation } from '../../../../hooks';
-import { SubTitle } from '../../../../partials';
+import { Identity, ShortAddress, ShowBalance, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../components';
+import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../../hooks';
+import { SubTitle, ThroughProxy } from '../../../../partials';
 import { Payee, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import { Inputs } from '../../Entry';
 import { STEPS } from '.';
 
 interface Props {
   address: string | undefined;
-  payee: Payee | undefined;
   step: number;
+  inputs: Inputs | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>
@@ -59,42 +56,22 @@ function RewardsDestination ({ address, payee }: { address: string | undefined, 
           </Grid>
         }
       </Grid>
-      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
+      {/* <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} /> */}
     </Grid>
   );
 }
 
-export default function Review ({ address, payee, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review ({ address, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
-
-  const { api, formatted } = useInfo(address);
+  const { api, chain, formatted, token } = useInfo(address);
   const proxies = useProxies(api, formatted);
+  const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
 
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
-  const [estimatedFee, setEstimatedFee] = useState<Balance>();
-  const [tx, setTx] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>>();
 
-  const setPayee = api && api.tx.staking.setPayee;
-
-  useEffect(() => {
-    if (!setPayee || !api || !formatted) {
-      return;
-    }
-
-    if (!api?.call?.transactionPaymentApi) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
-    }
-
-    const _tx = setPayee(payee);
-
-    setTx(_tx);
-
-    _tx && _tx.paymentInfo(formatted)
-      .then((i) => setEstimatedFee(api.createType('Balance', i?.partialFee ?? BN_ZERO)))
-      .catch(console.error);
-  }, [api, formatted, payee, setPayee]);
+  const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -102,12 +79,14 @@ export default function Review ({ address, payee, setRefresh, setStep, setTxInfo
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
 
-  const extraInfo = useMemo(() => ({
-    action: 'Solo Staking',
-    fee: String(estimatedFee || 0),
-    payee,
-    subAction: 'Config reward destination'
-  }), [estimatedFee, payee]);
+  const extraInfo = useMemo(() => {
+    if (inputs?.extraInfo) {
+      return {
+        fee: String(estimatedFee || 0),
+        ...inputs.extraInfo
+      };
+    }
+  }, [estimatedFee, inputs]);
 
   const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
 
@@ -118,58 +97,78 @@ export default function Review ({ address, payee, setRefresh, setStep, setTxInfo
   return (
     <Grid alignItems='center' container justifyContent='center' maxHeight='650px' overflow='hidden'>
       {isPasswordError &&
-          <WrongPasswordAlert />
+        <WrongPasswordAlert />
       }
       {step === STEPS.REVIEW &&
-          <>
-            <SubTitle label={t('Review')} style={{ paddingTop: isPasswordError ? '10px' : '25px' }} />
-            <Container disableGutters sx={{ px: '30px' }}>
-              {payee &&
-               <RewardsDestination
-                 address={address}
-                 payee={payee}
-               />
-              }
-              <Grid alignItems='center' container item justifyContent='center' lineHeight='20px' mt='10px'>
-                <Grid item>
-                  {t('Fee')}:
-                </Grid>
-                <Grid item sx={{ pl: '5px' }}>
-                  <ShowValue height={16} value={estimatedFee?.toHuman()} />
-                </Grid>
+        <>
+          <SubTitle label={t('Review')} style={{ paddingTop: isPasswordError ? '10px' : '25px' }} />
+          <Container disableGutters sx={{ px: '30px' }}>
+            {selectedProxyAddress &&
+              <Grid container m='auto' maxWidth='92%'>
+                <ThroughProxy
+                  address={selectedProxyAddress}
+                  chain={chain}
+                />
               </Grid>
-            </Container>
-            <Grid container item sx={{ bottom: '10px', left: '4%', position: 'absolute', width: '92%' }}>
-              <SignArea2
+            }
+            {inputs?.extraInfo?.payee &&
+              <RewardsDestination
                 address={address}
-                call={tx}
-                extraInfo={extraInfo}
-                isPasswordError={isPasswordError}
-                onSecondaryClick={onClose}
-                primaryBtnText={t('Confirm')}
-                proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
-                secondaryBtnText={t('Back')}
-                selectedProxy={selectedProxy}
-                setIsPasswordError={setIsPasswordError}
-                setRefresh={setRefresh}
-                setStep={setStep}
-                setTxInfo={setTxInfo}
-                step={step}
-                steps={STEPS}
+                payee={inputs.extraInfo.payee}
               />
-            </Grid>
-          </>
+            }
+            {inputs?.amount &&
+              <DisplayValue title={t('Amount')} dividerHeight='1px' topDivider={!!selectedProxyAddress}>
+                <Grid alignItems='center' container item sx={{ height: '42px' }}>
+                  <ShowValue
+                    unit={token}
+                    value={inputs?.amount}
+                  />
+                </Grid>
+              </DisplayValue>
+            }
+            <DisplayValue dividerHeight='1px' title={t('Fee')}>
+              <Grid alignItems='center' container item sx={{ height: '42px' }}>
+                <ShowBalance
+                  api={api}
+                  balance={estimatedFee}
+                  decimalPoint={4}
+                />
+              </Grid>
+            </DisplayValue>
+          </Container>
+          <Grid container item sx={{ bottom: '10px', left: '4%', position: 'absolute', width: '92%' }}>
+            <SignArea2
+              address={address}
+              call={inputs?.call}
+              extraInfo={extraInfo}
+              isPasswordError={isPasswordError}
+              onSecondaryClick={onClose}
+              params={inputs?.params}
+              primaryBtnText={t('Confirm')}
+              proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+              secondaryBtnText={t('Back')}
+              selectedProxy={selectedProxy}
+              setIsPasswordError={setIsPasswordError}
+              setRefresh={setRefresh}
+              setStep={setStep}
+              setTxInfo={setTxInfo}
+              step={step}
+              steps={STEPS}
+            />
+          </Grid>
+        </>
       }
       {step === STEPS.PROXY &&
-          <SelectProxyModal2
-            address={address}
-            closeSelectProxy={closeProxy}
-            height={500}
-            proxies={proxyItems}
-            proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
-            selectedProxy={selectedProxy}
-            setSelectedProxy={setSelectedProxy}
-          />
+        <SelectProxyModal2
+          address={address}
+          closeSelectProxy={closeProxy}
+          height={500}
+          proxies={proxyItems}
+          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+          selectedProxy={selectedProxy}
+          setSelectedProxy={setSelectedProxy}
+        />
       }
     </Grid>
   );

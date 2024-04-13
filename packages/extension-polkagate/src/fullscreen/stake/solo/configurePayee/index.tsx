@@ -3,11 +3,13 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+
 import { faCog } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
-import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, SxProps, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Skeleton, SxProps, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
@@ -16,6 +18,7 @@ import { amountToHuman, upperCaseFirstChar } from '@polkadot/extension-polkagate
 
 import { AccountInputWithIdentity, TwoButtons, Warning } from '../../../../components';
 import { useInfo, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
+import { Inputs } from '../../Entry';
 import Confirmation from './Confirmation';
 import Review from './Review';
 
@@ -34,19 +37,64 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function ConfigurePayee({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export const ModalTitle = ({ icon, onCancel, setStep, step, text }: {text: string, onCancel: () => void, setStep: React.Dispatch<React.SetStateAction<number>>, icon: IconDefinition, step: number}): React.ReactElement<Props> => {
+  const theme = useTheme();
+  const { t } = useTranslation();
+
+  const closeProxy = useCallback(
+    () => setStep(STEPS.REVIEW)
+    , [setStep]);
+
+  const onClose = useCallback(() => {
+    setStep(STEPS.INDEX);
+  }, [setStep]);
+
+  return (
+    <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
+      <Grid alignItems='center' container justifyContent='flex-start' sx={{ width: 'fit-content' }}>
+        <Grid item>
+          <FontAwesomeIcon
+            color={`${theme.palette.text.primary}`}
+            fontSize='25px'
+            icon={icon}
+          />
+        </Grid>
+        <Grid item sx={{ pl: '10px' }}>
+          <Typography fontSize='18px' fontWeight={700}>
+            {step === STEPS.PROXY ? t('Select Proxy') : text}
+          </Typography>
+        </Grid>
+      </Grid>
+      <Grid item>
+        <CloseIcon
+          onClick={
+            step === STEPS.INDEX
+              ? onCancel
+              : step === STEPS.PROXY
+                ? closeProxy
+                : onClose
+          }
+          sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }}
+        />
+      </Grid>
+    </Grid>
+  );
+};
+
+export default function ConfigurePayee ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { chain, decimal, token } = useInfo(address);
+  const { api, chain, decimal, token } = useInfo(address);
 
   const stakingConsts = useStakingConsts(address);
-  const stakingAccount = useStakingAccount(address);
+  const stakingAccount = useStakingAccount(address, undefined, undefined, undefined, true);
 
   const [rewardDestinationValue, setRewardDestinationValue] = useState<'Staked' | 'Others'>();
   const [rewardDestinationAccount, setRewardDestinationAccount] = useState<string | undefined>();
   const [newPayee, setNewPayee] = useState();
   const [step, setStep] = useState(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
+  const [inputs, setInputs] = useState<Inputs>();
 
   const settings = useMemo(() => {
     if (!stakingAccount) {
@@ -81,6 +129,29 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
   const getOptionLabel = useCallback((s: SoloSettings): 'Staked' | 'Others' => s?.payee === 'Staked' ? 'Staked' : 'Others', []);
   const optionDefaultVal = useMemo(() => settings && getOptionLabel(settings), [getOptionLabel, settings]);
 
+  const setPayee = api && api.tx.staking.setPayee;
+
+  useEffect(() => {
+    if (!setPayee || !api || !address || !newPayee) {
+      return;
+    }
+
+    const call = setPayee;
+    const params = [newPayee];
+
+    const extraInfo = {
+      action: 'Solo Staking',
+      payee: newPayee,
+      subAction: 'Config reward destination'
+    };
+
+    setInputs({
+      call,
+      extraInfo,
+      params
+    });
+  }, [address, api, newPayee, setPayee]);
+
   const ED = useMemo(() => stakingConsts?.existentialDeposit && decimal && amountToHuman(stakingConsts.existentialDeposit, decimal), [decimal, stakingConsts?.existentialDeposit]);
 
   const onSelectionMethodChange = useCallback((event: React.ChangeEvent<HTMLInputElement>, value: 'Staked' | 'Others'): void => {
@@ -114,7 +185,7 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
       settings && rewardDestinationValue && JSON.stringify(settings.payee) === JSON.stringify(makePayee(rewardDestinationValue, rewardDestinationAccount))
     , [makePayee, rewardDestinationAccount, rewardDestinationValue, settings]);
 
-  const onNext = useCallback(() => {
+  useEffect(() => {
     if (!rewardDestinationValue || !settings) {
       return;
     }
@@ -123,9 +194,11 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
     const payee = mayBeNew && JSON.stringify(settings.payee) !== JSON.stringify(mayBeNew) ? mayBeNew : undefined;
 
     setNewPayee(payee);
-
-    setStep(STEPS.REVIEW); // can be left open when settings accessed from home
   }, [makePayee, rewardDestinationAccount, rewardDestinationValue, settings]);
+
+  const onNext = useCallback(() => {
+    setStep(STEPS.REVIEW);
+  }, []);
 
   const onCancel = useCallback(() => {
     setStep(STEPS.INDEX);
@@ -143,48 +216,17 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
     </Grid>
   );
 
-  const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
-
-  const onClose = useCallback(() => {
-    setStep(STEPS.INDEX);
-  }, [setStep]);
-
-  const ModalTitle = () => (
-    <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
-      <Grid alignItems='center' container justifyContent='flex-start' sx={{ width: 'fit-content' }}>
-        <Grid item>
-          <FontAwesomeIcon
-            color={`${theme.palette.text.primary}`}
-            fontSize='25px'
-            icon={faCog}
-          />
-        </Grid>
-        <Grid item sx={{ pl: '10px' }}>
-          <Typography fontSize='22px' fontWeight={700}>
-            {step === STEPS.PROXY ? t('Select Proxy') : t('Configuring Reward Destination')}
-          </Typography>
-        </Grid>
-      </Grid>
-      <Grid item>
-        <CloseIcon
-          onClick={
-            step === STEPS.INDEX
-              ? onCancel
-              : step === STEPS.PROXY
-                ? closeProxy
-                : onClose
-          }
-          sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }}
-        />
-      </Grid>
-    </Grid>
-  );
-
   return (
     <DraggableModal onClose={onCancel} open={show}>
       <>
         {step !== STEPS.WAIT_SCREEN &&
-          <ModalTitle />
+          <ModalTitle
+            icon={faCog}
+            onCancel={onCancel}
+            setStep={setStep}
+            step={step}
+            text={t('Configuring Reward Destination')}
+          />
         }
         {step === STEPS.INDEX &&
           <>
@@ -194,10 +236,17 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
                   <FormLabel sx={{ '&.Mui-focused': { color: 'text.primary' }, color: 'text.primary', fontSize: '16px' }}>
                     {t('Reward destination')}
                   </FormLabel>
-                  <RadioGroup defaultValue={rewardDestinationValue || optionDefaultVal} onChange={onSelectionMethodChange}>
-                    <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main' }} value='Staked' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Add to staked amount')}</Typography>} />
-                    <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main', py: '2px' }} value='Others' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Transfer to a specific account')}</Typography>} />
-                  </RadioGroup>
+                  { rewardDestinationValue || optionDefaultVal
+                    ? <RadioGroup defaultValue={rewardDestinationValue || optionDefaultVal} onChange={onSelectionMethodChange}>
+                      <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main' }} value='Staked' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Add to staked amount')}</Typography>} />
+                      <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main', py: '2px' }} value='Others' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Transfer to a specific account')}</Typography>} />
+                    </RadioGroup>
+                    : <Skeleton
+                      animation='wave'
+                      height={20}
+                      sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '200px', mt: '10px' }}
+                    />
+                  }
                 </FormControl>
               </Grid>
               {rewardDestinationValue === 'Others' &&
@@ -227,7 +276,7 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
         {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
           <Review
             address={address}
-            payee={newPayee}
+            inputs={inputs}
             setRefresh={setRefresh}
             setStep={setStep}
             setTxInfo={setTxInfo}

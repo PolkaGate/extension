@@ -29,7 +29,7 @@ BN.prototype.toJSON = function () {
  * @param setRefresh 
  * @returns account staking Info
  */
-export default function useStakingAccount(address: AccountId | string | undefined, stateInfo?: AccountStakingInfo, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): AccountStakingInfo | null | undefined {
+export default function useStakingAccount(address: AccountId | string | undefined, stateInfo?: AccountStakingInfo, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew?: boolean): AccountStakingInfo | null | undefined {
   const account = useAccount(address);
   const api = useApi(address);
   const stashId = useStashId(address);
@@ -131,7 +131,7 @@ export default function useStakingAccount(address: AccountId | string | undefine
   }, [address, api, stakingInfo, Object.keys(account ?? {})?.length]);
 
   useEffect(() => {
-    if (!account || !addressCurrentToken) {
+    if (!account || !addressCurrentToken || onlyNew) {
       return;
     }
 
@@ -149,7 +149,7 @@ export default function useStakingAccount(address: AccountId | string | undefine
       setStakingInfo(sa);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Object.keys(account ?? {})?.length, addressCurrentToken]);
+  }, [Object.keys(account ?? {})?.length, addressCurrentToken, onlyNew]);
 
   return stakingInfo && stakingInfo.token === addressCurrentToken
     ? stakingInfo

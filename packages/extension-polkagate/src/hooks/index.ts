@@ -91,3 +91,4 @@ export { default as useMinToReceiveRewardsInSolo2 } from './useMinToReceiveRewar
 export { default as useAccountsOrder } from './useAccountsOrder';
 export { default as useNativeTokenPrice } from './useNativeTokenPrice';
 export { default as useActiveValidators } from './useActiveValidators';
+export { default as useEstimatedFee } from './useEstimatedFee';

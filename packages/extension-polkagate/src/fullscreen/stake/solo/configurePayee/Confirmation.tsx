@@ -20,7 +20,7 @@ interface Props {
 
 export default function Confirmation ({ handleDone, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const { chainName, formatted } = useInfo(txInfo.from.address);
+  const { chainName, formatted, token } = useInfo(txInfo.from.address);
 
   const fee = txInfo.api.createType('Balance', txInfo.fee);
   const maybePayeeAddress = useMemo(() => {
@@ -58,7 +58,7 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
   };
 
   return (
-    <Container disableGutters>
+    <Grid container item>
       <SubTitle label={txInfo.success ? t('Completed') : t('Failed')} style={{ paddingTop: '25px' }} />
       <FailSuccessIcon
         showLabel={false}
@@ -84,10 +84,11 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
       {txInfo.throughProxy &&
         <Grid container m='auto' maxWidth='92%'>
           <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
+          <Div />
         </Grid>
       }
-      <Div />
       {txInfo?.payee &&
+      <>
         <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
             {t<string>('Rewards destination')}:
@@ -104,14 +105,24 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
             }
           </Grid>
         </Grid>
+        <Div />
+      </>
       }
-      <Div />
+      {txInfo?.amount &&
+      <>
+        <DisplayInfo
+          caption={t('Amount:')}
+          value={`${txInfo.amount} ${token}`}
+        />
+      </>
+      }
       <DisplayInfo
         caption={t('Fee:')}
         value={fee?.toHuman() ?? '00.00'}
       />
       <DisplayInfo
         caption={t('block:')}
+        showDivider={false}
         value={`#${txInfo.block}`}
       />
       {txInfo?.txHash &&
@@ -142,6 +153,6 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
         left='5%'
         text={t('Done')}
       />
-    </Container>
+    </Grid>
   );
 }
