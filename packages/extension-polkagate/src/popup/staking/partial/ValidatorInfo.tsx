@@ -10,6 +10,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import { BN } from '@polkadot/util';
 
 import { Identity, Label, ShowBalance, SlidePopUp } from '../../../components';
@@ -21,6 +22,7 @@ interface Props {
   api: ApiPromise;
   stakerAddress?: string;
   chain: Chain;
+  isFullscreen?: boolean;
   staked: BN | undefined;
   showValidatorInfo: boolean;
   validatorInfo?: DeriveStakingQuery;
@@ -28,7 +30,7 @@ interface Props {
   setShowValidatorInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showValidatorInfo, staked, stakerAddress, validatorInfo, validatorsIdentities }: Props): React.ReactElement<Props> {
+export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowValidatorInfo, showValidatorInfo, staked, stakerAddress, validatorInfo, validatorsIdentities }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [accountInfo, setAccountInfo] = useState<DeriveAccountInfo | undefined>();
 
@@ -43,7 +45,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
     if (staked && myIndex === -1 && sortedNominators) {
       const index = sortedNominators.findIndex((n) => isHexToBn(String(n.value)).lt(staked));
 
-      if (index === -1) {/** will be the last nominator */
+      if (index === -1) { /** will be the last nominator */
         return sortedNominators.length;
       }
 
@@ -53,7 +55,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
     return -1;
   }, [myIndex, sortedNominators, staked]);
 
-  const closeMenu = useCallback(
+  const onClose = useCallback(
     () => setShowValidatorInfo(false),
     [setShowValidatorInfo]
   );
@@ -74,7 +76,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
   const ValidatorInformation = () => (
     <Grid container direction='column' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', m: '20px auto', p: '10px', pb: '5px', width: '92%' }}>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderColor: 'secondary.main', mb: '5px', pb: '2px' }}>
-        <Grid item lineHeight={1} width='fit-content' maxWidth='85%'>
+        <Grid item lineHeight={1} maxWidth='85%' width='fit-content'>
           <Identity accountInfo={accountInfo} address={validatorInfo?.accountId} api={api} chain={chain} formatted={validatorInfo?.accountId?.toString()} identiconSize={25} style={{ fontSize: '16px' }} withShortAddress />
         </Grid>
         <Grid item width='15%'>
@@ -226,18 +228,27 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
       <ValidatorInformation />
       <NominatorTableWithLabel />
       <IconButton
-        onClick={closeMenu}
+        onClick={onClose}
         sx={{
-          left: '15px',
+          left: isFullscreen ? undefined : '15px',
+          right: isFullscreen ? '15px' : undefined,
           p: 0,
           position: 'absolute',
-          top: '65px'
+          top: isFullscreen ? '15px' : '65px'
         }}
       >
         <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />
       </IconButton>
     </Grid>
   );
+
+  if (isFullscreen) {
+    return (
+      <DraggableModal onClose={onClose} open={showValidatorInfo}>
+        {page}
+      </DraggableModal>
+    );
+  }
 
   return (
     <SlidePopUp show={showValidatorInfo}>

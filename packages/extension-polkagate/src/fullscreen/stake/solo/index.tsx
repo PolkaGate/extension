@@ -145,7 +145,7 @@ export default function Index (): React.ReactElement {
               <DisplayBalance
                 actions={[t('unstake'), t('fast unstake')]}
                 address={address}
-                amount={staked}
+                amount={staked as unknown as BN}
                 icons={[faMinus, faBolt]}
                 marginTop='0px'
                 onClicks={[onUnstake, api && api.consts?.fastUnstake?.deposit && onFastUnstake]}

@@ -13,11 +13,11 @@ import { FixedSizeList as List } from 'react-window';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { useInfo } from '@polkadot/extension-polkagate/src/hooks';
+import ValidatorInfoPage from '@polkadot/extension-polkagate/src/popup/staking/partial/ValidatorInfo';
 import { BN, hexToBn, isHex } from '@polkadot/util';
 
 import { StakingConsts, ValidatorInfo } from '../../../../util/types';
 import ShowValidator from './ShowValidator';
-import ValidatorInfoPage from './ValidatorInfo';
 
 interface Props {
   activeValidators?: ValidatorInfo[] | undefined;
@@ -36,7 +36,7 @@ interface Props {
   nominatedValidatorsIds?: AccountId[] | null | undefined;
 }
 
-export default function ValidatorsTable ({ activeValidators, address, allValidatorsIdentities, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTable({ activeValidators, address, allValidatorsIdentities, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
   const theme = useTheme();
   const ref = useRef();
   const { api, chain, decimal, token } = useInfo(address);
@@ -127,18 +127,17 @@ export default function ValidatorsTable ({ activeValidators, address, allValidat
         }
       </Grid>
       {showValidatorInfo && validatorToShowInfo && api && chain &&
-        <Grid ml='-15px'>
-          <ValidatorInfoPage
-            api={api}
-            chain={chain}
-            setShowValidatorInfo={setShowValidatorInfo}
-            showValidatorInfo={showValidatorInfo}
-            staked={staked}
-            stakerAddress={String(formatted)}
-            validatorInfo={validatorToShowInfo}
-            validatorsIdentities={allValidatorsIdentities}
-          />
-        </Grid>
+        <ValidatorInfoPage
+          api={api}
+          chain={chain}
+          isFullscreen
+          setShowValidatorInfo={setShowValidatorInfo}
+          showValidatorInfo={showValidatorInfo}
+          staked={staked}
+          stakerAddress={String(formatted)}
+          validatorInfo={validatorToShowInfo}
+          validatorsIdentities={allValidatorsIdentities}
+        />
       }
     </Grid>
   );

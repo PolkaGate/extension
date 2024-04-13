@@ -5,7 +5,7 @@
 
 /**
  * @description
- * this component opens unstake review page
+ * this component opens Select Validators page
  * */
 
 import type { AccountId } from '@polkadot/types/interfaces';
@@ -14,13 +14,13 @@ import { FilterAltOutlined as FilterIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import Filters from '@polkadot/extension-polkagate/src/popup/staking/partial/Filters';
 import { BN } from '@polkadot/util';
 
 import { Checkbox2, Infotip, InputFilter, Waiting } from '../../../../components';
 import { useInfo, useTranslation, useValidators, useValidatorsIdentities, useValidatorSuggestion } from '../../../../hooks';
 import { DEFAULT_FILTERS, SYSTEM_SUGGESTION_TEXT } from '../../../../util/constants';
 import { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../../util/types';
-import Filters from './Filters';
 import ValidatorsTable from './ValidatorsTable';
 
 interface Props {
@@ -209,7 +209,7 @@ export default function SelectValidators ({ address, newSelectedValidators, nomi
     setNewSelectedValidators([...newSelected]);
   }, [newSelectedValidators, setNewSelectedValidators, stakingConsts?.maxNominations]);
 
-  const _tableHeight=tableHeight || window.innerHeight - 570;
+  const _tableHeight = tableHeight || window.innerHeight - 570;
 
   return (
     <>
@@ -271,25 +271,24 @@ export default function SelectValidators ({ address, newSelectedValidators, nomi
               selectedCount={newSelectedValidators?.length}
             />
             {showFilters &&
-              <Grid ml='-15px' position='absolute'>
-                <Filters
-                  allValidators={searchKeyword ? searchedValidators : allValidators}
-                  allValidatorsIdentities={allValidatorsIdentities}
-                  apply={apply}
-                  filters={filters}
-                  newSelectedValidators={newSelectedValidators}
-                  onLimitValidatorsPerOperator={onLimitValidatorsPerOperator}
-                  setApply={setApply}
-                  setFilteredValidators={setFilteredValidators}
-                  setFilters={setFilters}
-                  setNewSelectedValidators={setNewSelectedValidators}
-                  setShow={setShowFilters}
-                  setSortValue={setSortValue}
-                  show={showFilters}
-                  sortValue={sortValue}
-                  stakingConsts={stakingConsts}
-                />
-              </Grid>
+             <Filters
+               allValidators={searchKeyword ? searchedValidators : allValidators}
+               allValidatorsIdentities={allValidatorsIdentities}
+               apply={apply}
+               filters={filters}
+               isFullscreen
+               newSelectedValidators={newSelectedValidators}
+               onLimitValidatorsPerOperator={onLimitValidatorsPerOperator}
+               setApply={setApply}
+               setFilteredValidators={setFilteredValidators}
+               setFilters={setFilters}
+               setNewSelectedValidators={setNewSelectedValidators}
+               setShow={setShowFilters}
+               setSortValue={setSortValue}
+               show={showFilters}
+               sortValue={sortValue}
+               stakingConsts={stakingConsts}
+             />
             }
           </Grid>
         </>
