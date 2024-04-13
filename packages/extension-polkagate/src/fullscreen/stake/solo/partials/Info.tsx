@@ -3,12 +3,10 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faInfoCircle, faSitemap } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Collapse, Container, Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Collapse, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { Infotip, Infotip2, ShowValue } from '@polkadot/extension-polkagate/src/components';
+import { Infotip2, ShowValue } from '@polkadot/extension-polkagate/src/components';
 import { useInfo, useMinToReceiveRewardsInSolo, useStakingConsts, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, bnMax } from '@polkadot/util';
@@ -19,7 +17,6 @@ interface Props {
 
 export default function Info ({ address }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const info = useStakingConsts(address);
   const minimumActiveStake = useMinToReceiveRewardsInSolo(address);
   const { decimal, token } = useInfo(address);
@@ -56,7 +53,7 @@ export default function Info ({ address }: Props): React.ReactElement {
   return (
     <Grid alignItems='end' container item justifyItems='flex-end' sx={{ mt: '15px' }}>
       <Infotip2 showInfoMark text={t('click to view')}>
-        <Typography fontSize='14px' onClick={onClick} sx={{ color:'secondary.light',cursor: 'pointer', ml: '40px' }} width='100%'>
+        <Typography fontSize='14px' onClick={onClick} sx={{ color: 'secondary.light', cursor: 'pointer', ml: '40px' }} width='100%'>
           {t('on-chain staking info')}
         </Typography>
       </Infotip2>
