@@ -29,7 +29,7 @@ export interface Inputs {
   amount?: string | undefined;
   call: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   mode?: number;
-  params: unknown[] | (() => unknown[]);
+  params: unknown[] | (() => unknown)[];
   pool?: MyPoolInfo,
   estimatedFee?: Balance;
   selectedValidators?: ValidatorInfo[],
