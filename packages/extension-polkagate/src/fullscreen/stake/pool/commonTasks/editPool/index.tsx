@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { MyPoolInfo, Proxy, TxInfo } from '../../../../util/types';
+import type { MyPoolInfo, Proxy, TxInfo } from '../../../../../util/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -14,8 +14,8 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 
-import { useFormatted, useTranslation } from '../../../../hooks';
-import Confirmation from '../partials/Confirmation';
+import { useFormatted, useTranslation } from '../../../../../hooks';
+import Confirmation from '../../partials/Confirmation';
 import Edit from './Edit';
 import Review from './Review';
 import TxDetail from './TxDetail';

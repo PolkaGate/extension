@@ -8,8 +8,8 @@ import React from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { Identity } from '../../../../components';
-import { useTranslation } from '../../../../hooks';
+import { Identity } from '../../../../../components';
+import { useTranslation } from '../../../../../hooks';
 
 interface Props {
   roleTitle: string;
