@@ -12,9 +12,9 @@ import { Chain } from '@polkadot/extension-chains/types';
 import CollapseIt from '@polkadot/extension-polkagate/src/popup/staking/pool/myPool/editPool/CollapseIt';
 import getAllAddresses from '@polkadot/extension-polkagate/src/util/getAllAddresses';
 
-import { AccountContext, AddressInput, AutoResizeTextarea, ButtonWithCancel, Input, ShowValue } from '../../../../components';
-import { useTranslation } from '../../../../hooks';
-import { MyPoolInfo } from '../../../../util/types';
+import { AccountContext, AddressInput, AutoResizeTextarea, ButtonWithCancel, Input, ShowValue } from '../../../../../components';
+import { useTranslation } from '../../../../../hooks';
+import { MyPoolInfo } from '../../../../../util/types';
 import { ChangesProps, STEPS } from '.';
 
 interface Props {

@@ -14,9 +14,9 @@ import { Balance } from '@polkadot/types/interfaces';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { Infotip, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../components';
-import { useTranslation } from '../../../../hooks';
-import { MyPoolInfo, Proxy, TxInfo } from '../../../../util/types';
+import { Infotip, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../../components';
+import { useTranslation } from '../../../../../hooks';
+import { MyPoolInfo, Proxy, TxInfo } from '../../../../../util/types';
 import ShowPoolRole from './ShowPoolRole';
 import { ChangesProps, STEPS } from '.';
 

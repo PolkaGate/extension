@@ -11,10 +11,12 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { MenuItem } from '@polkadot/extension-polkagate/src/components';
 import { TaskButton } from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen/components/CommonTasks';
-import { useFormatted, useInfo, usePool, useTranslation, useUnSupportedNetwork } from '@polkadot/extension-polkagate/src/hooks';
-import { STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
+import { useInfo, usePool, useTranslation, useUnSupportedNetwork } from '@polkadot/extension-polkagate/src/hooks';
 import ManageValidators from '@polkadot/extension-polkagate/src/popup/staking/pool/nominations/index';
-import EditPool from '../editPool';
+import { STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
+
+import EditPool from '../commonTasks/editPool';
+import SetState from '../commonTasks/SetState';
 
 interface Props {
   address: string | undefined;
@@ -23,8 +25,11 @@ interface Props {
 const MODALS_NUMBER = {
   NO_MODALS: 0,
   MANAGE_VALIDATORS: 1,
-  EDIT_POOL: 2
+  EDIT_POOL: 2,
+  CHANGE_STATE: 3
 };
+
+export type PoolState = 'Destroying' | 'Open' | 'Blocked';
 
 export default function PoolCommonTasks({ address }: Props): React.ReactElement {
   useUnSupportedNetwork(address, STAKING_CHAINS);
@@ -34,6 +39,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
 
   const [showManagePool, setShowManagePool] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<number>(MODALS_NUMBER.NO_MODALS);
+  const [state, setState] = useState<PoolState>();
   const [refresh, setRefresh] = useState<boolean>(false);
 
   const pool = usePool(address, undefined, refresh);
@@ -58,11 +64,18 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
   }, []);
 
   const onLockPool = useCallback(() => {
-    console.log('Lock Pool');
+    setState('Blocked');
+    setShowModal(MODALS_NUMBER.CHANGE_STATE);
   }, []);
 
   const onUnlockPool = useCallback(() => {
-    console.log('Unlock Pool');
+    setState('Open');
+    setShowModal(MODALS_NUMBER.CHANGE_STATE);
+  }, []);
+
+  const onDestroyPool = useCallback(() => {
+    setState('Destroying');
+    setShowModal(MODALS_NUMBER.CHANGE_STATE);
   }, []);
 
   const onRemoveAll = useCallback(() => {
@@ -119,12 +132,12 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
             show={!justMember}
             text={t('Manage Validators')}
           />
-          {!justMember &&
+          {!justMember && canChangeState &&
             <Grid container item sx={{ '> div': { px: '12px' }, mx: 'auto', width: '90%' }}>
               <MenuItem
                 iconComponent={
                   <FontAwesomeIcon
-                    color={`${poolState === 'Destroying' || !poolRoot ? theme.palette.action.disabledBackground : theme.palette.text.primary}`}
+                    color={`${!poolRoot ? theme.palette.action.disabledBackground : theme.palette.text.primary}`}
                     fontSize='22px'
                     icon={faWrench}
                   />
@@ -165,10 +178,10 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
                     text={t('Remove All')}
                   />
                   <TaskButton
-                    disabled={!poolRoot && !poolBouncer}
+                    disabled={poolState === 'Destroying' || (!poolRoot && !poolBouncer)}
                     icon={
                       <FontAwesomeIcon
-                        color={!poolRoot && !poolBouncer ? theme.palette.action.disabledBackground : theme.palette.text.primary}
+                        color={poolState === 'Destroying' || (!poolRoot && !poolBouncer) ? theme.palette.action.disabledBackground : theme.palette.text.primary}
                         fontSize='20px'
                         icon={poolState !== 'Block' ? faLock : faLockOpen}
                       />
@@ -187,7 +200,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
                     }
                     mr='0px'
                     noBorderButton
-                    onClick={onManageValidators}
+                    onClick={onDestroyPool}
                     secondaryIconType='popup'
                     text={t('Destroy Pool')}
                   />
@@ -207,6 +220,18 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
           onClose={resetModal}
           pool={pool}
           setRefresh={setRefresh}
+        />
+      }
+      {MODALS_NUMBER.CHANGE_STATE === showModal && pool && address && state && formatted && chain &&
+        <SetState
+          address={address}
+          api={api}
+          chain={chain}
+          formatted={formatted}
+          onClose={resetModal}
+          pool={pool}
+          setRefresh={setRefresh}
+          state={state}
         />
       }
     </>
