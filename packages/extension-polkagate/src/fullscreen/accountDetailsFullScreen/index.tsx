@@ -7,12 +7,11 @@ import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
 import { AccountContext, ActionContext } from '../../components';
-import { useAccount, useAccountAssets, useApi, useBalances, useChain, useChainName, useCurrency, useFormatted, useFullscreen, usePrices, useTranslation } from '../../hooks';
+import { useAccount, useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
 import { FetchedBalance } from '../../hooks/useAssetsBalances';
 import { getValue } from '../../popup/account/util';
@@ -52,20 +51,16 @@ const isRelayChain = (chainName: string) =>
   chainName.toLowerCase() === 'polkadot' ||
   chainName.toLowerCase() === 'westend';
 
-export default function AccountDetails(): React.ReactElement {
+export default function AccountDetails (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
   const { address, paramAssetId } = useParams<{ address: string, paramAssetId?: string }>();
-  const history = useHistory();
   const account = useAccount(address);
   const { accounts } = useContext(AccountContext);
 
   const currency = useCurrency();
-  const formatted = useFormatted(address);
-  const api = useApi(address);
-  const chain = useChain(address);
-  const chainName = useChainName(address);
+  const { api, chain, chainName, formatted } = useInfo(address);
   const onAction = useContext(ActionContext);
   const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();
