@@ -247,6 +247,7 @@ export default function AccountDetails (): React.ReactElement {
                     <DisplayBalance
                       amount={balancesToShow?.soloTotal}
                       decimal={balancesToShow?.decimal}
+                      disabled={!balancesToShow?.soloTotal || balancesToShow?.soloTotal?.isZero()}
                       isDarkTheme={isDarkTheme}
                       onClick={goToSoloStaking}
                       price={currentPrice}
@@ -258,6 +259,7 @@ export default function AccountDetails (): React.ReactElement {
                     <DisplayBalance
                       amount={balancesToShow?.pooledBalance}
                       decimal={balancesToShow?.decimal}
+                      disabled={!balancesToShow?.pooledBalance || balancesToShow?.pooledBalance?.isZero()}
                       isDarkTheme={isDarkTheme}
                       onClick={goToPoolStaking}
                       price={currentPrice}

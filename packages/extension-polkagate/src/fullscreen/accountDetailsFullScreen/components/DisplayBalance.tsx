@@ -22,9 +22,12 @@ interface DisplayBalanceProps {
   onClick?: () => void;
   theme?: Theme;
   isDarkTheme: boolean;
+  disabled?: boolean;
 }
 
-export default function DisplayBalance ({ amount, decimal, isDarkTheme, onClick, price, theme, title, token }: DisplayBalanceProps): React.ReactElement {
+const noop = () => null;
+
+export default function DisplayBalance ({ amount, decimal, disabled, isDarkTheme, onClick, price, theme, title, token }: DisplayBalanceProps): React.ReactElement {
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px 40px' }}>
       <Typography fontSize='18px' fontWeight={400}>
@@ -52,14 +55,14 @@ export default function DisplayBalance ({ amount, decimal, isDarkTheme, onClick,
         {onClick && theme &&
           <Grid item m='auto' pl='8px'>
             <IconButton
-              onClick={onClick}
+              onClick={disabled ? noop : onClick}
               sx={{ p: '8px' }}
             >
               <ArrowForwardIosRoundedIcon
                 sx={{
-                  color: 'secondary.light',
+                  color: disabled ? 'text,disabled' : 'secondary.light',
                   fontSize: '24px',
-                  stroke: `${theme.palette.secondary.light}`,
+                  stroke: `${disabled ? theme.palette.text.disabled : theme.palette.secondary.light}`,
                   strokeWidth: 1.5
                 }}
               />
