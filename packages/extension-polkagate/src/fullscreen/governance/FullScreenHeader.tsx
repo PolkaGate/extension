@@ -12,6 +12,7 @@ import { ActionContext } from '../../components';
 import { useApi, useChain, useGenesisHashOptions } from '../../hooks';
 import { FullScreenChainSwitch, FullScreenRemoteNode } from '../../partials';
 import { EXTENSION_NAME, GOVERNANCE_CHAINS, IDENTITY_CHAINS, SOCIAL_RECOVERY_CHAINS, STAKING_CHAINS } from '../../util/constants';
+import { openOrFocusTab } from '../accountDetailsFullScreen/components/CommonTasks';
 import AddressDropdown from './components/AddressDropdown';
 import ThemeChanger from './partials/ThemeChanger';
 import { MAX_WIDTH } from './utils/consts';
@@ -67,7 +68,9 @@ export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false,
     }
   }, [onAction, page, postId, topMenu]);
 
-  const goHome = useCallback(() => onAction('/'), [onAction]);
+  const goHome = useCallback(
+    () => openOrFocusTab('/', true)
+    , []);
 
   return (
     <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ bgcolor: '#000000', borderBottom: '1px solid', borderBottomColor: 'secondary.light', color: 'text.secondary', fontSize: '42px', fontWeight: 400, height: '70px', minWidth: '810px', px: '40px' }}>
