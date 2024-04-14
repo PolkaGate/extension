@@ -103,6 +103,12 @@ export default function ConfigurePayee ({ address, setRefresh, setShow, show }: 
 
     // initialize settings
     const parsedStakingAccount = JSON.parse(JSON.stringify(stakingAccount)) as AccountStakingInfo;
+
+    /** in Westend it is null recently if user has not staked yet */
+    if (!parsedStakingAccount.rewardDestination) {
+      return;
+    }
+
     const destinationType = Object.keys(parsedStakingAccount.rewardDestination)[0];
 
     let payee: Payee;
