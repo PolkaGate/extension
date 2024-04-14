@@ -118,7 +118,7 @@ export default function Review ({ address, inputs, setRefresh, setStep, setTxInf
               />
             }
             {inputs?.amount &&
-              <DisplayValue title={t('Amount')} dividerHeight='1px' topDivider={!!selectedProxyAddress}>
+              <DisplayValue dividerHeight='1px' title={t('Amount')} topDivider={!!selectedProxyAddress}>
                 <Grid alignItems='center' container item sx={{ height: '42px' }}>
                   <ShowValue
                     unit={token}
@@ -136,6 +136,17 @@ export default function Review ({ address, inputs, setRefresh, setStep, setTxInf
                 />
               </Grid>
             </DisplayValue>
+            {inputs?.extraInfo?.availableBalanceAfter &&
+            <DisplayValue dividerHeight='1px' title={t('Available Balance After')}>
+              <Grid alignItems='center' container item sx={{ height: '42px' }}>
+                <ShowBalance
+                  api={api}
+                  balance={inputs.extraInfo.availableBalanceAfter}
+                  decimalPoint={4}
+                />
+              </Grid>
+            </DisplayValue>
+            }
           </Container>
           <Grid container item sx={{ bottom: '10px', left: '4%', position: 'absolute', width: '92%' }}>
             <SignArea2

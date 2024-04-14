@@ -22,6 +22,7 @@ import ActiveValidators from './partials/ActiveValidators';
 import CommonTasks from './partials/CommonTasks';
 import Info from './partials/Info';
 import RewardsChart from './partials/RewardsChart';
+import FastUnstake from './fastUnstake';
 import Unstake from './unstake';
 
 interface SessionIfo {
@@ -58,6 +59,7 @@ export default function Index(): React.ReactElement {
   const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
   const [showInfo, setShowInfo] = useState<boolean>(false);
   const [showUnstake, setShowUnstake] = useState<boolean>(false);
+  const [showFastUnstake, setShowFastUnstake] = useState<boolean>(false);
   const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
 
   useEffect(() => {
@@ -102,11 +104,8 @@ export default function Index(): React.ReactElement {
   }, []);
 
   const onFastUnstake = useCallback(() => {
-    history.push({
-      pathname: `/solo/fastUnstake/${address}`,
-      state: { api, balances, redeemable, stakingAccount, stakingConsts, unlockingAmount }
-    });
-  }, [address, api, balances, history, redeemable, stakingAccount, stakingConsts, unlockingAmount]);
+    setShowFastUnstake(true);
+  }, []);
 
   const onPendingRewards = useCallback(() => {
     history.push({
@@ -141,7 +140,7 @@ export default function Index(): React.ReactElement {
                 amount={staked as unknown as BN}
                 icons={[faMinus, faBolt]}
                 marginTop='0px'
-                onClicks={[onUnstake, api && api.consts?.fastUnstake?.deposit && onFastUnstake]}
+                onClicks={[onUnstake, onFastUnstake]}
                 title={t('Staked')}
               />
               <DisplayBalance
@@ -200,6 +199,12 @@ export default function Index(): React.ReactElement {
         setRefresh={setRefresh}
         setShow={setShowUnstake}
         show={showUnstake}
+      />
+      <FastUnstake
+        address={address}
+        setRefresh={setRefresh}
+        setShow={setShowFastUnstake}
+        show={showFastUnstake}
       />
     </Grid>
   );

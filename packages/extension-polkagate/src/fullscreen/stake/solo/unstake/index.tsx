@@ -49,11 +49,11 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
 
   const [step, setStep] = useState(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
+  const [inputs, setInputs] = useState<Inputs>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [amount, setAmount] = useState<string>();
   const [alert, setAlert] = useState<string | undefined>();
   const [isUnstakeAll, setIsUnstakeAll] = useState<boolean>(false);
-  const [inputs, setInputs] = useState<Inputs>();
 
   const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active as unknown as BN, [stakingAccount]);
   const unlockingLen = stakingAccount?.stakingLedger?.unlocking?.length;
@@ -108,7 +108,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
         const extraInfo = {
           action: 'Solo Staking',
           amount,
-          subAction: 'unstake'
+          subAction: 'Unstake'
         };
 
         setInputs({

@@ -41,6 +41,12 @@ export default function SetPayee ({ address, setShow, setShowReview, show }: Pro
 
     // initialize settings
     const parsedStakingAccount = JSON.parse(JSON.stringify(stakingAccount)) as AccountStakingInfo;
+    
+    /** in Westend it is null recently if user has not staked yet */
+    if (!parsedStakingAccount.rewardDestination) {
+      return;
+    }
+    
     const destinationType = Object.keys(parsedStakingAccount.rewardDestination)[0];
 
     console.log('parsedStakingAccount:', parsedStakingAccount);
