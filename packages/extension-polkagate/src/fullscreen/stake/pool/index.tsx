@@ -26,6 +26,7 @@ import { FullScreenHeader } from '../../governance/FullScreenHeader';
 import { Title } from '../../sendFund/InputPage';
 import DisplayBalance from '../partials/DisplayBalance';
 import ClaimedRewardsChart from './partials/ClaimedRewardsChart';
+import PoolCommonTasks from './partials/PoolCommonTasks';
 
 interface SessionIfo {
   eraLength: number;
@@ -39,7 +40,7 @@ interface State {
   poolConsts?: PoolStakingConsts;
 }
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -159,7 +160,7 @@ export default function Index (): React.ReactElement {
         />
         <Grid container item justifyContent='space-between' mb='15px'>
           <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 320px - 3%)'>
-            <Grid container maxHeight={window.innerHeight - 264} sx={{ overflowY: 'scroll' }}>
+            <Grid container sx={{ overflowY: 'scroll' }}>
               <DisplayBalance
                 actions={[t('unstake')]}
                 address={address}
@@ -201,24 +202,27 @@ export default function Index (): React.ReactElement {
                 title={t('Available to stake')}
               />
               {pool &&
-              <ShowPool
-                api={api}
-                chain={chain}
-                label={t('Pool')}
-                labelPosition='center'
-                mode='Default'
-                pool={pool}
-                showInfo
-                style={{
-                  m: '40px auto 0',
-                  width: '100%'
-                }}
-              />
+                <ShowPool
+                  api={api}
+                  chain={chain}
+                  label={t('Pool')}
+                  labelPosition='center'
+                  mode='Default'
+                  pool={pool}
+                  showInfo
+                  style={{
+                    m: '20px auto 0',
+                    width: '100%'
+                  }}
+                />
               }
             </Grid>
           </Grid>
           <Grid container direction='column' gap='15px' item width='320px'>
             <ClaimedRewardsChart
+              address={address}
+            />
+            <PoolCommonTasks
               address={address}
             />
           </Grid>
