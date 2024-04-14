@@ -93,7 +93,7 @@ export default function FastUnstake ({ address, setRefresh, setShow, show }: Pro
       extraInfo,
       params
     });
-  }, [api, availableBalance, decimal, estimatedFee, myBalances, staked]);
+  }, [api, availableBalance, decimal, myBalances, staked]);
 
   useEffect((): void => {
     if (!api) {
