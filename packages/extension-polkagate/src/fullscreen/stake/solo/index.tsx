@@ -24,6 +24,7 @@ import Info from './partials/Info';
 import RewardsChart from './partials/RewardsChart';
 import FastUnstake from './fastUnstake';
 import Unstake from './unstake';
+import Pending from './pending';
 
 interface SessionIfo {
   eraLength: number;
@@ -60,6 +61,7 @@ export default function Index(): React.ReactElement {
   const [showInfo, setShowInfo] = useState<boolean>(false);
   const [showUnstake, setShowUnstake] = useState<boolean>(false);
   const [showFastUnstake, setShowFastUnstake] = useState<boolean>(false);
+  const [showPending, setShowPending] = useState<boolean>(false);
   const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
 
   useEffect(() => {
@@ -108,11 +110,8 @@ export default function Index(): React.ReactElement {
   }, []);
 
   const onPendingRewards = useCallback(() => {
-    history.push({
-      pathname: `/solo/payout/${address}`,
-      state: {}
-    });
-  }, [address, history]);
+    setShowPending(true);
+  }, []);
 
   const onRedeemableWithdraw = useCallback(() => {
     redeemable && !redeemable?.isZero() && setShowRedeemableWithdraw(true);
@@ -205,6 +204,12 @@ export default function Index(): React.ReactElement {
         setRefresh={setRefresh}
         setShow={setShowFastUnstake}
         show={showFastUnstake}
+      />
+      <Pending
+        address={address}
+        setRefresh={setRefresh}
+        setShow={setShowPending}
+        show={showPending}
       />
     </Grid>
   );
