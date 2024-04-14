@@ -150,6 +150,7 @@ export interface TransactionDetail extends TxResult {
   amount?: string;
   date: number;
   to?: NameAddress;
+  token?: string;
   throughProxy?: NameAddress;
 }
 
