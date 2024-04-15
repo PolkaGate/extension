@@ -8,7 +8,6 @@ import { Boy as BoyIcon } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
@@ -26,6 +25,7 @@ import FastUnstake from './fastUnstake';
 import Pending from './pending';
 import Redeem from './redeem';
 import Restake from './restake';
+import StakeMore from './stakeExtra';
 import Unstake from './unstake';
 
 interface SessionIfo {
@@ -34,12 +34,11 @@ interface SessionIfo {
   currentEra: number;
 }
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
 
   useFullscreen();
 
-  const history = useHistory();
   const { address } = useParams<{ address: string }>();
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
@@ -64,6 +63,7 @@ export default function Index (): React.ReactElement {
   const [showPending, setShowPending] = useState<boolean>(false);
   const [showRedeem, setShowRedeem] = useState<boolean>(false);
   const [showRestake, setShowRestake] = useState<boolean>(false);
+  const [showStakeMore, setShowStakeMore] = useState<boolean>(false);
 
   useEffect(() => {
     api && api.derive.session?.progress().then((sessionInfo) => {
@@ -104,6 +104,10 @@ export default function Index (): React.ReactElement {
 
   const onUnstake = useCallback(() => {
     setShowUnstake(true);
+  }, []);
+
+  const onStakeExtra = useCallback(() => {
+    setShowStakeMore(true);
   }, []);
 
   const onFastUnstake = useCallback(() => {
@@ -174,11 +178,11 @@ export default function Index (): React.ReactElement {
                 toBeReleased={toBeReleased}
               />
               <DisplayBalance
-                actions={[t('stake')]}
+                actions={[t('stake extra')]}
                 address={address}
                 amount={availableToSoloStake}
                 icons={[faPlus]}
-                onClicks={[onUnstake]} // TODO
+                onClicks={[onStakeExtra]}
                 title={t('Available to stake')}
               />
               <Info
@@ -201,37 +205,49 @@ export default function Index (): React.ReactElement {
           </Grid>
         </Grid>
       </Grid>
-      <Unstake
-        address={address}
-        setRefresh={setRefresh}
-        setShow={setShowUnstake}
-        show={showUnstake}
-      />
-      <FastUnstake
-        address={address}
-        setRefresh={setRefresh}
-        setShow={setShowFastUnstake}
-        show={showFastUnstake}
-      />
-      <Pending
-        address={address}
-        setRefresh={setRefresh}
-        setShow={setShowPending}
-        show={showPending}
-      />
-      <Redeem
-        address={address}
-        redeemable={redeemable}
-        setRefresh={setRefresh}
-        setShow={setShowRedeem}
-        show={showRedeem}
-      />
-      <Restake
-        address={address}
-        setRefresh={setRefresh}
-        setShow={setShowRestake}
-        show={showRestake}
-      />
+      {showUnstake &&
+        <Unstake
+          address={address}
+          setRefresh={setRefresh}
+          setShow={setShowUnstake}
+          show={showUnstake}
+        />}
+      {showFastUnstake &&
+        <FastUnstake
+          address={address}
+          setRefresh={setRefresh}
+          setShow={setShowFastUnstake}
+          show={showFastUnstake}
+        />}
+      {showPending &&
+        <Pending
+          address={address}
+          setRefresh={setRefresh}
+          setShow={setShowPending}
+          show={showPending}
+        />}
+      {showRedeem &&
+        <Redeem
+          address={address}
+          redeemable={redeemable}
+          setRefresh={setRefresh}
+          setShow={setShowRedeem}
+          show={showRedeem}
+        />}
+      {showRestake &&
+        <Restake
+          address={address}
+          setRefresh={setRefresh}
+          setShow={setShowRestake}
+          show={showRestake}
+        />}
+      {showStakeMore &&
+        <StakeMore
+          address={address}
+          setRefresh={setRefresh}
+          setShow={setShowStakeMore}
+          show={showStakeMore}
+        />}
     </Grid>
   );
 }
