@@ -112,7 +112,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
           <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '8px', width: '90%' }}>
             <Infotip showQuestionMark text={changes?.newPoolName}>
               <Typography fontSize='16px' fontWeight={300} lineHeight='23px'>
-                {t<string>('Pool name')}
+                {t('Pool name')}
               </Typography>
             </Infotip>
             <Typography fontSize='25px' fontWeight={400} lineHeight='42px' maxWidth='100%' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
@@ -127,7 +127,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
         <ShowPoolRole
           chain={chain}
           roleAddress={changes?.newRoles?.newRoot}
-          roleTitle={t<string>('Root')}
+          roleTitle={t('Root')}
           showDivider
         />
       }
@@ -135,7 +135,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
         <ShowPoolRole
           chain={chain}
           roleAddress={changes?.newRoles?.newNominator}
-          roleTitle={t<string>('Nominator')}
+          roleTitle={t('Nominator')}
           showDivider
         />
       }
@@ -143,7 +143,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
         <ShowPoolRole
           chain={chain}
           roleAddress={changes?.newRoles?.newBouncer}
-          roleTitle={t<string>('Bouncer')}
+          roleTitle={t('Bouncer')}
           showDivider
         />
       }
@@ -164,7 +164,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
         <ShowPoolRole
           chain={chain}
           roleAddress={changes.commission.payee || maybeCurrentCommissionPayee}
-          roleTitle={t<string>('Commission payee')}
+          roleTitle={t('Commission payee')}
           showDivider
         />
       }
@@ -183,9 +183,9 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
           extraInfo={extraInfo}
           isPasswordError={isPasswordError}
           onSecondaryClick={onBackClick}
-          primaryBtnText={t<string>('Confirm')}
+          primaryBtnText={t('Confirm')}
           proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
-          secondaryBtnText={t<string>('Back')}
+          secondaryBtnText={t('Back')}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setRefresh={setRefresh}

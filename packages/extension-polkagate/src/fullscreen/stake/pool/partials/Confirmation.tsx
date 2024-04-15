@@ -16,9 +16,12 @@ interface Props {
   txInfo: TxInfo;
   handleClose: () => void;
   children: React.ReactNode;
+  popupHeight: number;
 }
 
-export default function Confirmation ({ children, handleClose, txInfo }: Props): React.ReactElement {
+const PADDINGS = 120;
+
+export default function Confirmation({ children, handleClose, txInfo, popupHeight }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
@@ -40,7 +43,7 @@ export default function Confirmation ({ children, handleClose, txInfo }: Props):
   };
 
   return (
-    <Motion>
+    <Motion style={{ height: `${popupHeight - PADDINGS}px`, position: 'relative' }}>
       <FailSuccessIcon
         showLabel={false}
         style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
@@ -52,11 +55,11 @@ export default function Confirmation ({ children, handleClose, txInfo }: Props):
         </Typography>
       }
       {children}
-      <DisplayInfo caption={t<string>('Fee:')} value={fee?.toHuman() ?? '00.00'} />
+      <DisplayInfo caption={t('Fee:')} value={fee?.toHuman() ?? '00.00'} />
       {txInfo?.txHash &&
         <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
           <Grid container item width='fit-content'>
-            <Typography pr='5px'>{t<string>('Hash')}:</Typography>
+            <Typography pr='5px'>{t('Hash')}:</Typography>
           </Grid>
           <Grid container item width='fit-content'>
             <ShortAddress
@@ -73,13 +76,15 @@ export default function Confirmation ({ children, handleClose, txInfo }: Props):
           <Explorer chainName={chainName} txHash={txInfo?.txHash} />
         </Grid>
       }
-      <PButton
-        _ml={0}
-        _mt='30px'
-        _onClick={handleClose}
-        _width={100}
-        text={t<string>('Close')}
-      />
+      <Grid container item sx={{ bottom: 0, height: '120px', position: 'absolute' }}>
+        <PButton
+          _ml={0}
+          _mt='30px'
+          _onClick={handleClose}
+          _width={100}
+          text={t('Close')}
+        />
+      </Grid>
     </Motion>
   );
 }

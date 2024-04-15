@@ -16,7 +16,8 @@ import { useInfo, usePoolConsts, usePools, useTranslation, useUnSupportedNetwork
 import { MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME, STAKING_CHAINS } from '../../../../util/constants';
 import { PoolInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import { Inputs, STEPS } from '../..';
+import { STEPS } from '../..';
+import { Inputs } from '../../Entry';
 import PoolsTable from './partials/PoolsTable';
 
 interface Props {
@@ -47,6 +48,9 @@ export default function JoinPool ({ setInputs, setStep }: Props): React.ReactEle
   const [numberOfFetchedPools, setNumberOfFetchedPools] = useState<number>(0);
   const [incrementalPools, setIncrementalPools] = useState<PoolInfo[] | null>();
   const [amountAsBN, setAmountAsBN] = useState<BN>();
+  const [params, setParams] = useState<(number | BN | undefined)[]>();
+
+  const joinTX = api && api.tx.nominationPools.join;
 
   const onBack = useCallback(() => {
     setStep(STEPS.INDEX);
@@ -116,7 +120,7 @@ export default function JoinPool ({ setInputs, setStep }: Props): React.ReactEle
   }, [filteredPools, incrementalPools, searchedPools, selectedPool]);
 
   useEffect(() => {
-    if (!api || !availableBalance || !formatted) {
+    if (!api || !availableBalance || !formatted || !joinTX || !params) {
       return;
     }
 
@@ -124,16 +128,16 @@ export default function JoinPool ({ setInputs, setStep }: Props): React.ReactEle
       return setEstimatedFee(api.createType('Balance', BN_ONE));
     }
 
-    const mayBeAmount = amountAsBN || poolStakingConsts?.minJoinBond;
+    // const mayBeAmount = amountAsBN || poolStakingConsts?.minJoinBond;
 
-    api && mayBeAmount && api.tx.nominationPools.join(mayBeAmount.toString(), BN_ONE).paymentInfo(formatted).then((i) => {
+    joinTX(...params).paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee));
-    });
+    }).catch(console.error);
 
     api && api.tx.nominationPools.join(String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     });
-  }, [formatted, api, availableBalance, selectedPool, amountAsBN, poolStakingConsts]);
+  }, [formatted, joinTX, api, params, availableBalance, selectedPool, amountAsBN, poolStakingConsts]);
 
   useEffect(() => {
     api && formatted && api.derive.balances?.all(formatted).then((b) => {
@@ -154,12 +158,14 @@ export default function JoinPool ({ setInputs, setStep }: Props): React.ReactEle
   }, [amountAsBN, availableBalance, estimatedMaxFee, poolStakingConsts?.minJoinBond, selectedPool, stakeAmount]);
 
   useEffect(() => {
-    if (!api || !selectedPool || !stakeAmount ) {
+    if (!api || !selectedPool || !stakeAmount || !joinTX) {
       return;
     }
 
-    const call = api.tx.nominationPools.join;
-    const params = [amountAsBN, selectedPool.poolId];
+    const _params = [amountAsBN, selectedPool.poolId];
+
+    setParams(_params);
+
     const extraInfo = {
       action: 'Pool Staking',
       amount: stakeAmount,
@@ -169,14 +175,14 @@ export default function JoinPool ({ setInputs, setStep }: Props): React.ReactEle
     };
 
     setInputs({
-      call,
+      call: joinTX,
       estimatedFee, // TODO: needs to include setMetadata
       extraInfo,
       mode: STEPS.JOIN_POOL,
-      params,
+      params: _params,
       pool: selectedPool
     });
-  }, [amountAsBN, api, decimal, estimatedFee, selectedPool, setInputs, stakeAmount]);
+  }, [amountAsBN, api, decimal, estimatedFee, joinTX, selectedPool, setInputs, stakeAmount]);
 
   return (
     <>

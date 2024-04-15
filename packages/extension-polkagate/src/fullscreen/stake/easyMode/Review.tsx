@@ -104,7 +104,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
             <Divider sx={{ bgcolor: 'secondary.main', height: '1px', width: '240px' }} />
             <Grid alignContent='center' container item justifyContent='center'>
               <Grid item sx={{ alignSelf: 'center', mr: '20px', width: 'fit=content' }}>
-                <Infotip fontSize='13px' iconTop={5} showQuestionMark text={t<string>(SYSTEM_SUGGESTION_TEXT)}>
+                <Infotip fontSize='13px' iconTop={5} showQuestionMark text={t(SYSTEM_SUGGESTION_TEXT)}>
                   <Typography sx={{ fontWeight: 300 }}>
                     {t('Selected Validators ({{count}})', { replace: { count: inputs.selectedValidators?.length } })}
                   </Typography>

@@ -42,7 +42,7 @@ const STEPS = {
   WAIT_SCREEN: 2
 };
 
-export default function SetState ({ address, api, chain, formatted, onClose, pool, setRefresh, state }: Props): React.ReactElement {
+export default function SetState({ address, api, chain, formatted, onClose, pool, setRefresh, state }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const [isPasswordError, setIsPasswordError] = useState(false);
@@ -62,7 +62,7 @@ export default function SetState ({ address, api, chain, formatted, onClose, poo
       : state === 'Open'
         ? t('The pool state will be changed to Open, and any member will be able to join the pool.')
         : t('No one can join and all members can be removed without permissions. Once in destroying state, it cannot be reverted to another state.')
-  , [state, t]);
+    , [state, t]);
 
   const extraInfo = useMemo(() => ({
     action: 'Pool Staking',
@@ -100,7 +100,7 @@ export default function SetState ({ address, api, chain, formatted, onClose, poo
         <Grid alignItems='center' container justifyContent='space-between' pt='15px'>
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
-              {t<string>('Change State')}
+              {t('Change State')}
             </Typography>
           </Grid>
           <Grid item>
@@ -167,6 +167,7 @@ export default function SetState ({ address, api, chain, formatted, onClose, poo
         {txInfo && step === STEPS.CONFIRM && (
           <Confirmation
             handleClose={onClose}
+            popupHeight={550}
             txInfo={txInfo}
           >
             <>

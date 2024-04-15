@@ -67,7 +67,7 @@ export default function ManageEditPool ({ address, api, chain, onClose, pool, se
           <Grid alignItems='center' container justifyContent='space-between' pt='15px'>
             <Grid item>
               <Typography fontSize='22px' fontWeight={700}>
-                {t<string>('Edit Pool')}
+                {t('Edit Pool')}
               </Typography>
             </Grid>
             <Grid item>
@@ -110,10 +110,11 @@ export default function ManageEditPool ({ address, api, chain, onClose, pool, se
           {step === STEPS.CONFIRM && txInfo &&
             <Confirmation
               handleClose={onClose}
+              popupHeight={670}
               txInfo={txInfo}
             >
               <TxDetail
-                pool={pool}
+                changes={changes}
                 txInfo={txInfo}
               />
             </Confirmation>

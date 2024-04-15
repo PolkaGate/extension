@@ -4,6 +4,8 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
+import { ISubmittableResult } from '@polkadot/types/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -15,7 +17,8 @@ import { AddressInput, AmountWithOptions, InputWithLabel, ShowBalance, TwoButton
 import { useInfo, usePoolConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import { Inputs, STEPS } from '../..';
+import { STEPS } from '../..';
+import { Inputs } from '../../Entry';
 import UpdateRoles from './UpdateRoles';
 
 interface Props {
@@ -43,10 +46,13 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
   const [toReviewDisabled, setToReviewDisabled] = useState<boolean>(true);
   const [nominatorId, setNominatorId] = useState<string>();
   const [bouncerId, setBouncerId] = useState<string>();
+  const [params, setParams] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>[][]>();
+
+  const batchAll = api && api.tx.utility.batchAll;
 
   const ED = api && api.consts.balances.existentialDeposit as unknown as BN;
   const nextPoolId = poolStakingConsts && poolStakingConsts.lastPoolId.toNumber() + 1;
-  const DEFAULT_POOLNAME = `Polkagate 💜${nextPoolId ? ` - ${nextPoolId}` : ''}`;
+  const DEFAULT_POOL_NAME = `Polkagate 💜${nextPoolId ? ` - ${nextPoolId}` : ''}`;
   const amountAsBN = useMemo(() => amountToMachine(createAmount, decimal), [createAmount, decimal]);
 
   const stakeAmountChange = useCallback((value: string) => {
@@ -91,7 +97,7 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
   }, [setStep]);
 
   useEffect(() => {
-    if (!api) {
+    if (!api || !batchAll) {
       return;
     }
 
@@ -107,7 +113,7 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
         },
         state: 'Creating'
       },
-      metadata: poolName ?? DEFAULT_POOLNAME,
+      metadata: poolName ?? DEFAULT_POOL_NAME,
       poolId: poolStakingConsts?.lastPoolId?.addn(1),
       rewardPool: null
     };
@@ -116,10 +122,11 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
     const createParams = [amountAsBN, formatted, nominatorId, bouncerId];
 
     const setMetadata = api.tx.nominationPools.setMetadata;
-    const setMetaDataParams = [poolStakingConsts?.lastPoolId?.addn(1), poolName];
+    const setMetaDataParams = [poolStakingConsts?.lastPoolId?.addn(1), pool.metadata];
 
-    const call = api.tx.utility.batch;
-    const params = [[create(...createParams), setMetadata(...setMetaDataParams)]];
+    const _params = [[create(...createParams), setMetadata(...setMetaDataParams)]];
+
+    setParams(_params);
 
     const extraInfo = {
       action: 'Pool Staking',
@@ -130,14 +137,14 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
     };
 
     setInputs({
-      call,
+      call: batchAll,
       estimatedFee, // TODO: needs to include setMetadata
       extraInfo,
       mode: STEPS.CREATE_POOL,
-      params,
+      params: _params,
       pool
     });
-  }, [DEFAULT_POOLNAME, amountAsBN, api, bouncerId, createAmount, estimatedFee, formatted, nominatorId, poolName, poolStakingConsts?.lastPoolId, setInputs]);
+  }, [batchAll, DEFAULT_POOL_NAME, amountAsBN, api, bouncerId, createAmount, estimatedFee, formatted, nominatorId, poolName, poolStakingConsts?.lastPoolId, setInputs]);
 
   useEffect(() => {
     !nominatorId && formatted && setNominatorId(String(formatted));
@@ -171,7 +178,7 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
   }, [formatted, api]);
 
   useEffect(() => {
-    if (!api || !availableBalance || !formatted) {
+    if (!api || !availableBalance || !formatted || !batchAll || !params) {
       return;
     }
 
@@ -179,14 +186,14 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
       return setEstimatedFee(api.createType('Balance', BN_ONE));
     }
 
-    api && api.tx.nominationPools.create(String(amountAsBN.gte(BN_ONE) ? amountAsBN : BN_ONE), formatted, nominatorId, bouncerId).paymentInfo(formatted).then((i) => {
+    batchAll(...params).paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee));
     }).catch(console.error);
 
     api && api.tx.nominationPools.create(String(availableBalance), formatted, nominatorId, bouncerId).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     }).catch(console.error);
-  }, [amountAsBN, api, availableBalance, formatted, nominatorId, bouncerId]);
+  }, [amountAsBN, api, availableBalance, batchAll, formatted, params, nominatorId, bouncerId]);
 
   return (
     <>
@@ -195,7 +202,7 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
           height={50}
           label={t('Pool name')}
           onChange={_onPoolNameChange}
-          placeholder={DEFAULT_POOLNAME}
+          placeholder={DEFAULT_POOL_NAME}
           value={poolName}
         />
       </Grid>
