@@ -57,7 +57,7 @@ export default function Info ({ address }: Props): React.ReactElement {
           {t('on-chain staking info')}
         </Typography>
       </Infotip2>
-      <Collapse in={show} orientation='vertical' sx={{ '> .MuiCollapse-wrapper .MuiCollapse-wrapperInner': { display: 'grid', rowGap: '10px' }, width: '100%' }}>
+      <Collapse in={show} orientation='vertical' sx={{ '> .MuiCollapse-wrapper .MuiCollapse-wrapperInner': { display: 'grid', rowGap: '10px', mt: '1%' }, width: '100%' }}>
         <Grid container item sx={{ backgroundColor: 'backgroundFL.primary', borderRadius: '5px', pt: '5px', px: '10px' }}>
           <Row label={t('Max validators you can select')} value={info?.maxNominations} />
           <Row label={t('Min {{token}} to be a staker', { replace: { token } })} value={info?.minNominatorBond} />
