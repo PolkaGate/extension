@@ -14,6 +14,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
 import { useInfo, useNativeTokenPrice } from '@polkadot/extension-polkagate/src/hooks';
 import { DATE_OPTIONS } from '@polkadot/extension-polkagate/src/util/constants';
+import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance } from '../../../components';
@@ -98,10 +99,10 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
           <ArrowForwardIosRoundedIcon
             onClick={toggleShowUnstaking}
             sx={{
-              m: '2% 18% 0 0',
-              cursor: 'pointer',
               color: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',
+              cursor: 'pointer',
               fontSize: '26px',
+              m: '2% 18% 0 0',
               stroke: !toBeReleased?.length ? theme.palette.text.disabled : theme.palette.secondary.light,
               strokeWidth: 1,
               transform: toBeReleased?.length && showUnstaking ? 'rotate(-90deg)' : 'rotate(90deg)',
@@ -110,18 +111,23 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
             }}
           />
           }
-          {icons?.map((_, index) =>
-            (<Grid alignItems='center' container direction='column' item justifyContent='center' key={index} onClick={onClicks[index]} sx={{ cursor: 'pointer', mx: '10px' }} width='96px'>
+          {icons?.map((_, index) => {
+            const noValueToAct = !amount || amount?.isZero();
+
+            return (actions &&
+            <Grid alignItems='center' container direction='column' item justifyContent='center' key={index} onClick={noValueToAct ? noop : onClicks && onClicks[index]} sx={{ cursor: 'pointer', mx: '10px' }} width='96px'>
               <FontAwesomeIcon
-                color={`${amount?.isZero() ? theme.palette.text.disabled : theme.palette.secondary.light}`}
+                color={`${noValueToAct ? theme.palette.text.disabled : theme.palette.secondary.light}`}
                 icon={icons[index]}
-                style={{ height: '30px', stroke: `${theme.palette.text.primary}`, strokeWidth: 5, width: '20px', marginBottom: '-4px' }}
+                style={{ height: '30px', marginBottom: '-4px', stroke: `${theme.palette.text.primary}`, strokeWidth: 5, width: '20px' }}
               />
-              <Typography color={amount?.isZero() ? theme.palette.text.disabled : theme.palette.secondary.light} fontSize='18px' fontWeight={400}>
+              <Typography color={noValueToAct? theme.palette.text.disabled : theme.palette.secondary.light} fontSize='18px' fontWeight={400}>
                 {actions[index]}
               </Typography>
             </Grid>
-            ))
+            );
+          }
+          )
           }
         </Grid>
       </Grid>
