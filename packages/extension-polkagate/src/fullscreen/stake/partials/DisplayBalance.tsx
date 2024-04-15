@@ -3,11 +3,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
@@ -47,66 +48,57 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
   }, [showUnstaking, toBeReleased?.length]);
 
   const ToBeReleased = () => (
-    <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'secondary.main', fontSize: '16px', fontWeight: 500, ml: '7%', mt: '10px', width: '93%' }}>
-      <Grid item pt='10px' xs={12}>
-        {t('To be released')}
+    <Collapse in={showUnstaking} sx={{ width: '100%' }}>
+      <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'divider', fontSize: '16px', fontWeight: 500, ml: '7%', mt: '10px', width: '93%' }}>
+        <Grid item pt='10px' xs={12}>
+          {t('To be released')}
+        </Grid>
+        {toBeReleased?.map(({ amount, date }) => (
+          <Grid container item key={date} spacing='15px' sx={{ fontSize: '16px', fontWeight: 500 }}>
+            <Grid fontWeight={300} item>
+              {new Date(date).toLocaleDateString(undefined, DATE_OPTIONS)}
+            </Grid>
+            <Grid fontWeight={400} item>
+              <ShowBalance balance={amount} decimal={decimal} token={token} />
+            </Grid>
+          </Grid>))
+        }
       </Grid>
-      {toBeReleased?.map(({ amount, date }) => (
-        <Grid container item key={date} spacing='15px' sx={{ fontSize: '16px', fontWeight: 500 }}>
-          <Grid fontWeight={300} item>
-            {new Date(date).toLocaleDateString(undefined, DATE_OPTIONS)}
-          </Grid>
-          <Grid fontWeight={400} item>
-            <ShowBalance balance={amount} decimal={decimal} token={token} />
-          </Grid>
-        </Grid>))
-      }
-    </Grid>
+    </Collapse>
   );
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' sx={{ minHeight: '67px', bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mt: { marginTop }, p: '5px 40px' }}>
-      <Typography fontSize='18px' fontWeight={400} width='25%'>
-        {title}
-      </Typography>
-      <Grid alignItems='center' container item width='40%'>
-        <Grid item sx={{ fontSize: '22px', fontWeight: 600 }}>
-          <ShowBalance
-            balance={amount}
-            decimal={decimal}
-            decimalPoint={3}
-            token={token}
-            withCurrency
-          />
-        </Grid>
-        <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '35px', mx: '10px', my: 'auto' }} />
-        <Grid item sx={{ '> div span': { display: 'block' }, fontSize: '22px', fontWeight: 400 }}>
-          <FormatPrice
-            amount={amount}
-            decimals={decimal}
-            price={price}
-            skeletonHeight={20}
-          />
-        </Grid>
-      </Grid>
-      <Grid container item justifyContent='flex-end' width='35%'>
-        {icons?.map((_, index) =>
-          (<Grid alignItems='center' container direction='column' item justifyContent='center' key={index} onClick={onClicks[index]} sx={{ cursor: 'pointer', mx: '10px' }} width='96px'>
-            <FontAwesomeIcon
-              color={`${amount?.isZero() ? theme.palette.text.disabled : theme.palette.secondary.light}`}
-              icon={icons[index]}
-              style={{ height: '30px', stroke: `${theme.palette.text.primary}`, strokeWidth: 5, width: '20px', marginBottom: '-4px' }}
+    <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mt: { marginTop }, p: '5px 40px' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' sx={{ minHeight: '67px' }}>
+        <Typography fontSize='18px' fontWeight={400} width='25%'>
+          {title}
+        </Typography>
+        <Grid alignItems='center' container item width='40%'>
+          <Grid item sx={{ fontSize: '22px', fontWeight: 600 }}>
+            <ShowBalance
+              balance={amount}
+              decimal={decimal}
+              decimalPoint={3}
+              token={token}
+              withCurrency
             />
-            <Typography color={amount?.isZero() ? theme.palette.text.disabled : theme.palette.secondary.light} fontSize='18px' fontWeight={400}>
-              {actions[index]}
-            </Typography>
           </Grid>
-          ))}
-        {isUnstaking &&
+          <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '35px', mx: '10px', my: 'auto' }} />
+          <Grid item sx={{ '> div span': { display: 'block' }, fontSize: '22px', fontWeight: 400 }}>
+            <FormatPrice
+              amount={amount}
+              decimals={decimal}
+              price={price}
+              skeletonHeight={20}
+            />
+          </Grid>
+        </Grid>
+        <Grid container item justifyContent='flex-end' width='35%'>
+          {isUnstaking &&
           <ArrowForwardIosRoundedIcon
             onClick={toggleShowUnstaking}
             sx={{
-              mr: '18%',
+              m: '2% 18% 0 0',
               cursor: 'pointer',
               color: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',
               fontSize: '26px',
@@ -117,7 +109,21 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
               transitionProperty: 'transform'
             }}
           />
-        }
+          }
+          {icons?.map((_, index) =>
+            (<Grid alignItems='center' container direction='column' item justifyContent='center' key={index} onClick={onClicks[index]} sx={{ cursor: 'pointer', mx: '10px' }} width='96px'>
+              <FontAwesomeIcon
+                color={`${amount?.isZero() ? theme.palette.text.disabled : theme.palette.secondary.light}`}
+                icon={icons[index]}
+                style={{ height: '30px', stroke: `${theme.palette.text.primary}`, strokeWidth: 5, width: '20px', marginBottom: '-4px' }}
+              />
+              <Typography color={amount?.isZero() ? theme.palette.text.disabled : theme.palette.secondary.light} fontSize='18px' fontWeight={400}>
+                {actions[index]}
+              </Typography>
+            </Grid>
+            ))
+          }
+        </Grid>
       </Grid>
       {showUnstaking &&
       <ToBeReleased />

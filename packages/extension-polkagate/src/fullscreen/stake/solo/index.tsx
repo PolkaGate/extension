@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faBolt, faCircleDown, faClockFour, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRotateLeft, faBolt, faCircleDown, faClockFour, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Boy as BoyIcon } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -12,7 +12,7 @@ import { useHistory } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { useBalances, useFullscreen, useInfo, useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress, useStakingRewards, useTranslation, useUnSupportedNetwork } from '../../../hooks';
+import { useBalances, useFullscreen, useInfo, useStakingAccount, useStakingRewardDestinationAddress, useStakingRewards, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { STAKING_CHAINS } from '../../../util/constants';
 import { openOrFocusTab } from '../../accountDetailsFullScreen/components/CommonTasks';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
@@ -23,8 +23,10 @@ import CommonTasks from './partials/CommonTasks';
 import Info from './partials/Info';
 import RewardsChart from './partials/RewardsChart';
 import FastUnstake from './fastUnstake';
-import Unstake from './unstake';
 import Pending from './pending';
+import Redeem from './redeem';
+import Restake from './restake';
+import Unstake from './unstake';
 
 interface SessionIfo {
   eraLength: number;
@@ -32,7 +34,7 @@ interface SessionIfo {
   currentEra: number;
 }
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
 
   useFullscreen();
@@ -48,7 +50,6 @@ export default function Index(): React.ReactElement {
 
   const rewards = useStakingRewards(address, stakingAccount);
   const { api } = useInfo(address);
-  const stakingConsts = useStakingConsts(address);
   const balances = useBalances(address, refresh, setRefresh);
 
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
@@ -58,11 +59,11 @@ export default function Index(): React.ReactElement {
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>();
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
   const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
-  const [showInfo, setShowInfo] = useState<boolean>(false);
   const [showUnstake, setShowUnstake] = useState<boolean>(false);
   const [showFastUnstake, setShowFastUnstake] = useState<boolean>(false);
   const [showPending, setShowPending] = useState<boolean>(false);
-  const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
+  const [showRedeem, setShowRedeem] = useState<boolean>(false);
+  const [showRestake, setShowRestake] = useState<boolean>(false);
 
   useEffect(() => {
     api && api.derive.session?.progress().then((sessionInfo) => {
@@ -114,8 +115,12 @@ export default function Index(): React.ReactElement {
   }, []);
 
   const onRedeemableWithdraw = useCallback(() => {
-    redeemable && !redeemable?.isZero() && setShowRedeemableWithdraw(true);
+    redeemable && !redeemable?.isZero() && setShowRedeem(true);
   }, [redeemable]);
+
+  const onReStake = useCallback(() => {
+    unlockingAmount && !unlockingAmount?.isZero() && setShowRestake(true);
+  }, [unlockingAmount]);
 
   const onBackClick = useCallback(() => {
     openOrFocusTab(`/accountfs/${address}/0`, true);
@@ -159,9 +164,12 @@ export default function Index(): React.ReactElement {
                 title={t('Redeemable')}
               />
               <DisplayBalance
+                actions={[t('restake')]}
                 address={address}
                 amount={unlockingAmount}
+                icons={[faArrowRotateLeft]}
                 isUnstaking
+                onClicks={[onReStake]}
                 title={t('Unstaking')}
                 toBeReleased={toBeReleased}
               />
@@ -210,6 +218,19 @@ export default function Index(): React.ReactElement {
         setRefresh={setRefresh}
         setShow={setShowPending}
         show={showPending}
+      />
+      <Redeem
+        address={address}
+        redeemable={redeemable}
+        setRefresh={setRefresh}
+        setShow={setShowRedeem}
+        show={showRedeem}
+      />
+      <Restake
+        address={address}
+        setRefresh={setRefresh}
+        setShow={setShowRestake}
+        show={showRestake}
       />
     </Grid>
   );
