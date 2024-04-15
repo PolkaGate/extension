@@ -18,7 +18,7 @@ import ThemeChanger from './partials/ThemeChanger';
 import { MAX_WIDTH } from './utils/consts';
 
 interface Props {
-  page?: 'governance' | 'manageIdentity' | 'send' | 'stake' | 'socialRecovery' | 'AccountDetails' | 'proxyManagement';
+  page?: 'governance' | 'manageIdentity' | 'send' | 'stake' | 'socialRecovery' | 'accountDetails' | 'proxyManagement';
   noChainSwitch?: boolean;
   noAccountDropDown?: boolean;
   _otherComponents?: JSX.Element;
