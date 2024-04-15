@@ -69,7 +69,6 @@ export function DraggableModal({ children, maxHeight = 740, minHeight = 570, onC
     top: modalPosition.y,
     border: 1,
     borderColor: 'secondary.light',
-    // transform: 'translate(-50%, -50%)',
     width: `${width}px`
   };
 
