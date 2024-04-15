@@ -179,7 +179,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
             onCancel={onCancel}
             setStep={setStep}
             step={step}
-            text={t('Restake')}
+            text={t('Restaking')}
           />
         }
         {step === STEPS.INDEX &&
