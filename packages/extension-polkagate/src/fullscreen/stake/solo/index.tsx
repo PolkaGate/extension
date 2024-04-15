@@ -137,7 +137,7 @@ export default function Index (): React.ReactElement {
         />
         <Grid container item justifyContent='space-between' mb='15px'>
           <Grid container direction='column' item mb='10px' minWidth='715px' rowGap='10px' width='calc(100% - 320px - 3%)'>
-            <Grid container maxHeight={window.innerHeight - 264} sx={{ overflowY: 'scroll' }}>
+            <Grid container item>
               <DisplayBalance
                 actions={[t('unstake'), t('fast unstake')]}
                 address={address}
