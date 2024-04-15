@@ -6,7 +6,7 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { faMinus } from '@fortawesome/free-solid-svg-icons';
-import { Grid, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
@@ -39,7 +39,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function Unstake ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function Unstake({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, decimal, formatted, token } = useInfo(address);
@@ -112,7 +112,6 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
         };
 
         setInputs({
-          amount,
           call,
           extraInfo,
           params
@@ -204,6 +203,9 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
         {step === STEPS.INDEX &&
           <>
             <Grid container item>
+              <Typography fontSize='16px' py='20px' textAlign='left' width='100%'>
+                {t('Your unstaked amount will be redeemable after {{unbondingDuration}} days.', { replace: { unbondingDuration: stakingConsts?.unbondingDuration } })}
+              </Typography>
               <Asset
                 address={address}
                 api={api}

@@ -1196,5 +1196,22 @@
   "No Active Validators Found!": "",
   "Configure Reward Destination": "",
   "Manage Validators": "",
-  "Configure Reward destination": ""
+  "Configure Reward destination": "",
+  "Validators:": "",
+  "Checking your staking status...": "",
+  "No Claim Rewards History!": "",
+  "Leave Pool": "",
+  "Manage Pool": "",
+  "Unlock Pool": "",
+  "Lock Pool": "",
+  "block:": "",
+  "Configuring Reward Destination": "",
+  "Available Balance After": "",
+  "some": "",
+  "Manage your nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.": "",
+  "Review the newly selected validators": "",
+  "click to view": "",
+  "on-chain staking info": "",
+  "New pool state:": "",
+  "Change State": ""
 }

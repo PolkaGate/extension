@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import { Chain } from '@substrate/connect';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
@@ -26,10 +26,8 @@ interface Props {
 }
 
 export default function UpdateRoles ({ address, bouncerId, chain, nominatorId, setBouncerId, setNominatorId, setShow, show }: Props): React.ReactElement {
-  const containerRef = useRef(null);
-  const theme = useTheme();
   const { t } = useTranslation();
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { hierarchy } = useContext(AccountContext);
   const [updateBtnDisable, setUpdateBtnDisable] = useState<boolean>(false);
   const [newNominatorId, setNewNominatorId] = useState<string | null | undefined>(nominatorId);
   const [newBouncerId, setNewBouncerId] = useState<string | null | undefined>(bouncerId);

@@ -98,7 +98,7 @@ export default function Pending ({ address, setRefresh, setShow, show }: Props):
   }, [selectedToPayout]);
 
   useEffect(() => {
-    if (!api || !totalSelectedPending|| totalSelectedPending?.isZero() || !decimal || !selectedToPayout) {
+    if (!api || !totalSelectedPending || totalSelectedPending?.isZero() || !decimal || !selectedToPayout) {
       return;
     }
 
@@ -123,7 +123,6 @@ export default function Pending ({ address, setRefresh, setShow, show }: Props):
     };
 
     setInputs({
-      amount,
       call,
       extraInfo,
       params
@@ -216,12 +215,10 @@ export default function Pending ({ address, setRefresh, setShow, show }: Props):
         {step === STEPS.INDEX &&
           <>
             <Grid container item>
-              <Grid container direction='column' m='20px auto' width='90%'>
-                <Typography fontSize='16px'>
-                  {t('Validators usually pay rewards regularly. If not received within the set period, rewards expire. You can manually initiate the payout if desired.')}
-                </Typography>
-              </Grid>
-              <Grid alignContent='flex-start' alignItems='center' container item sx={{ border: `1px solid ${theme.palette.primary.main}`, borderBottom: 0, borderTopLeftRadius: '5px', borderTopRightRadius: '5px', p: '5px', mx: '2%', width: '96%' }}>
+              <Typography fontSize='16px' py='20px' textAlign='left'>
+                {t('Validators usually pay rewards regularly. If not received within the set period, rewards expire. You can manually initiate the payout if desired.')}
+              </Typography>
+              <Grid alignContent='flex-start' alignItems='center' container item sx={{ border: `1px solid ${theme.palette.primary.main}`, borderBottom: 0, borderTopLeftRadius: '5px', borderTopRightRadius: '5px', p: '5px', width: '100%' }}>
                 <Grid item sx={{ fontSize: '13px' }} xs={4.75}>
                   <Checkbox2
                     checked={!!rewards?.length && selectedToPayout?.length === rewards?.length}
@@ -238,7 +235,7 @@ export default function Pending ({ address, setRefresh, setShow, show }: Props):
                   {t('Expires')}
                 </Grid>
               </Grid>
-              <Grid alignContent='flex-start' container height={TABLE_HEIGHT} sx={{ border: 1, borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px', borderColor: 'primary.main', mx: '2%', overflow: 'scroll', width: '96%' }}>
+              <Grid alignContent='flex-start' container height={TABLE_HEIGHT} sx={{ border: 1, borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px', borderColor: 'primary.main', overflow: 'scroll', width: '100%' }}>
                 {!rewards
                   ? <Grid container justifyContent='center'>
                     {Array.from({ length: TABLE_HEIGHT / SKELETON_HEIGHT }).map((_, index) => (

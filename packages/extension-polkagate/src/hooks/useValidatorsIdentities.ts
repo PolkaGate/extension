@@ -74,8 +74,6 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
 
     // eslint-disable-next-line no-void
     void chrome.storage.local.get('validatorsIdentities', (res: { [key: string]: SavedValidatorsIdentities }) => {
-      console.log('Validators Identities in local storage:', res);
-
       if (res?.validatorsIdentities?.[chainName]) {
         setValidatorsIdentities(res.validatorsIdentities[chainName]?.accountsInfo);
         setSavedEraIndex(res.validatorsIdentities[chainName]?.eraIndex);
