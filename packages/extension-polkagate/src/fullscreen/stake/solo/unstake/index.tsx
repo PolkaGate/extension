@@ -225,7 +225,6 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
               {alert &&
                 <Warn belowInput iconDanger text={alert} />
               }
-
             </Grid>
             <TwoButtons
               disabled={!inputs}
