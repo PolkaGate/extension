@@ -14,6 +14,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { useAccount, useCanPayFee, useMetadata, useTranslation } from '../hooks';
 import SelectProxy from '../partials/SelectProxy';
 import { Proxy, ProxyItem, ProxyTypes } from '../util/types';
+import { noop } from '../util/utils';
 import { Identity, Password, PButton, Warning } from '.';
 
 interface Props {
@@ -35,10 +36,6 @@ interface Props {
   selectedProxy: Proxy | undefined;
   setIsPasswordError: React.Dispatch<React.SetStateAction<boolean>>;
   onConfirmClick: () => Promise<void>
-}
-
-function noop() {
-  // This function does nothing.
 }
 
 export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmText, disabled, estimatedFee, genesisHash, isPasswordError, label = '', onChange, onConfirmClick, prevState, proxiedAddress, proxies, proxyTypeFilter, selectedProxy, setIsPasswordError, setSelectedProxy, style }: Props): React.ReactElement<Props> {

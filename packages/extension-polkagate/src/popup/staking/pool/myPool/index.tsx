@@ -15,6 +15,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
+import { noop } from '@polkadot/extension-polkagate/src/util/utils';
+
 import { PButton, Select, Warning } from '../../../../components';
 import { useApi, useChain, useFormatted, useMyPools, usePool, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
@@ -42,9 +44,6 @@ interface ArrowsProps {
   onPrevious: () => void;
   onNext: () => void;
 }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => { };
 
 export default function Pool (): React.ReactElement {
   const { t } = useTranslation();

@@ -9,6 +9,7 @@ import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons
 import { Divider, Grid, IconButton, Theme, Typography } from '@mui/material';
 import React from 'react';
 
+import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance } from '../../../components';
@@ -24,8 +25,6 @@ interface DisplayBalanceProps {
   isDarkTheme: boolean;
   disabled?: boolean;
 }
-
-const noop = () => null;
 
 export default function DisplayBalance ({ amount, decimal, disabled, isDarkTheme, onClick, price, theme, title, token }: DisplayBalanceProps): React.ReactElement {
   return (

@@ -11,6 +11,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Box, Divider, Grid, Pagination, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
 import { Identity, InputFilter, Progress, ShowBalance } from '../../../../components';
@@ -37,10 +38,6 @@ export const VOTE_TYPE_MAP = {
   // eslint-disable-next-line sort-keys
   ABSTAIN: 3
 };
-
-function noop() {
-  // This function does nothing.
-}
 
 export default function Standards({ address, allVotes, filteredVotes, handleClose, open, page, setFilteredVotes, setPage, setShowDelegators }: Props): React.ReactElement {
   const { t } = useTranslation();

@@ -16,7 +16,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { ActionContext, ShowBalance, TwoButtons } from '../../components';
 import { useTranslation } from '../../hooks';
 import { ProxyItem } from '../../util/types';
-import { nullFunction } from '../../util/utils';
+import { noop } from '../../util/utils';
 import ProxyTableFL from './components/ProxyTableFL';
 import { STEPS } from '.';
 
@@ -79,7 +79,7 @@ export default function Manage({ api, chain, depositedValue, isDisabledAddProxyB
 
   const AddProxyButton = ({ disabled, onClick }: AddProxyButton) => (
     <Grid container sx={{ my: '40px', opacity: disabled ? 0.5 : 1 }}>
-      <Grid display='inline-flex' item onClick={disabled ? nullFunction : onClick} sx={{ cursor: disabled ? 'context-menu' : 'pointer' }}>
+      <Grid display='inline-flex' item onClick={disabled ? noop : onClick} sx={{ cursor: disabled ? 'context-menu' : 'pointer' }}>
         <AddRoundedIcon sx={{ bgcolor: 'primary.main', borderRadius: '50px', color: '#fff', fontSize: '32px' }} />
         <Typography fontSize='18px' fontWeight={400} lineHeight='36px' pl='10px' sx={{ textDecoration: 'underline' }}>
           {t('Add proxy')}

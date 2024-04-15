@@ -15,6 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance, ShowValue } from '../../../components';
@@ -29,8 +30,6 @@ interface Props {
   refresh: boolean | undefined;
   setRefresh: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
-
-const noop = () => null;
 
 export default function LockedInReferenda({ address, refresh, setRefresh }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
