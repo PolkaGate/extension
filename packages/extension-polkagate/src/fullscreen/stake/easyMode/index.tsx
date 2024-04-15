@@ -75,7 +75,6 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
           };
 
           setInputs({
-            amount,
             call,
             estimatedFee,
             extraInfo,
@@ -159,9 +158,8 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
       return;
     }
 
-    setInputs({ ...(inputs || {}), amount: undefined });
     setAmount(amountToHuman(thresholds[maxMin].toString(), decimal));
-  }, [thresholds, decimal, setInputs, inputs]);
+  }, [thresholds, decimal]);
 
   const onMaxClick = useCallback(
     () => onThresholdAmount('max')

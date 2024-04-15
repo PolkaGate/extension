@@ -117,12 +117,12 @@ export default function Review ({ address, inputs, setRefresh, setStep, setTxInf
                 payee={inputs.extraInfo.payee}
               />
             }
-            {inputs?.amount &&
+            {inputs?.extraInfo?.amount &&
               <DisplayValue dividerHeight='1px' title={t('Amount')} topDivider={!!selectedProxyAddress}>
                 <Grid alignItems='center' container item sx={{ height: '42px' }}>
                   <ShowValue
                     unit={token}
-                    value={inputs?.amount}
+                    value={inputs.extraInfo.amount}
                   />
                 </Grid>
               </DisplayValue>

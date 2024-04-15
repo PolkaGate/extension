@@ -130,7 +130,6 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
     };
 
     setInputs({
-      amount: createAmount,
       call,
       estimatedFee, // TODO: needs to include setMetadata
       extraInfo,

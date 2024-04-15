@@ -26,7 +26,7 @@ import StakingOptions from './StakingOptions';
 import { STEPS } from '.';
 
 export interface Inputs {
-  amount?: string | undefined;
+  amount?: string | undefined; // deprecated, moved to extraInfo
   call: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   mode?: number;
   params: unknown[] | (() => unknown)[];

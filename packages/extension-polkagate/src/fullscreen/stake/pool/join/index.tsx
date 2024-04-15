@@ -169,7 +169,6 @@ export default function JoinPool ({ setInputs, setStep }: Props): React.ReactEle
     };
 
     setInputs({
-      amount: stakeAmount,
       call,
       estimatedFee, // TODO: needs to include setMetadata
       extraInfo,

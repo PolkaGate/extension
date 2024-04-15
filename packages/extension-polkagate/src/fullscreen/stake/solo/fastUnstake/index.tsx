@@ -83,12 +83,12 @@ export default function FastUnstake ({ address, setRefresh, setShow, show }: Pro
 
     const extraInfo = {
       action: 'Solo Staking',
+      amount: amountToHuman(staked, decimal),
       availableBalanceAfter,
       subAction: 'Fast Unstake'
     };
 
     setInputs({
-      amount: amountToHuman(staked, decimal),
       call,
       extraInfo,
       params

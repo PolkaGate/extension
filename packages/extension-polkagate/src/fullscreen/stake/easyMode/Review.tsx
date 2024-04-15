@@ -76,7 +76,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
           <Grid alignItems='center' container item sx={{ height: '42px' }}>
             <ShowBalance
               api={api}
-              balance={inputs?.amount && balances?.decimal && amountToMachine(inputs.amount, balances?.decimal)}
+              balance={inputs?.extraInfo?.amount && balances?.decimal && amountToMachine(inputs.extraInfo.amount, balances.decimal)}
               decimalPoint={4}
             />
           </Grid>

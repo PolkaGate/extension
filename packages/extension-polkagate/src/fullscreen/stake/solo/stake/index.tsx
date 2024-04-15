@@ -74,7 +74,6 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
       };
 
       setInputs({
-        amount,
         call,
         estimatedFee,
         extraInfo,
@@ -131,9 +130,8 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
       return;
     }
 
-    setInputs({ ...(inputs || {}), amount: undefined });
     setAmount(amountToHuman(thresholds[maxMin].toString(), decimal));
-  }, [thresholds, decimal, setInputs, inputs]);
+  }, [thresholds, decimal]);
 
   const onMaxClick = useCallback(
     () => onThresholdAmount('max')
