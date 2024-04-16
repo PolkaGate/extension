@@ -14,8 +14,10 @@ import { TaskButton } from '@polkadot/extension-polkagate/src/fullscreen/account
 import { useInfo, usePool, useTranslation, useUnSupportedNetwork } from '@polkadot/extension-polkagate/src/hooks';
 import ManageValidators from '@polkadot/extension-polkagate/src/popup/staking/pool/nominations/index';
 import { STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
+import { BN } from '@polkadot/util';
 
 import EditPool from '../commonTasks/editPool';
+import LeavePool from '../commonTasks/leavePool';
 import RemoveAll from '../commonTasks/removeAll';
 import SetState from '../commonTasks/SetState';
 
@@ -28,7 +30,8 @@ const MODALS_NUMBER = {
   MANAGE_VALIDATORS: 1,
   EDIT_POOL: 2,
   CHANGE_STATE: 3,
-  REMOVE_ALL: 4
+  LEAVE: 4,
+  REMOVE_ALL: 5
 };
 
 export type PoolState = 'Destroying' | 'Open' | 'Blocked';
@@ -52,10 +55,15 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
   const poolRoot = useMemo(() => pool?.bondedPool && formatted && String(pool?.bondedPool?.roles?.root) === (String(formatted)), [pool?.bondedPool, formatted]);
   const poolBouncer = useMemo(() => pool?.bondedPool && formatted && String(pool?.bondedPool?.roles?.bouncer) === (String(formatted)), [formatted, pool?.bondedPool]);
   const isRemoveAllDisabled = !['Destroying', 'Blocked'].includes(poolState ?? '') || (pool && Number(pool?.bondedPool?.memberCounter) === 1);
-  const isPoolBlocked = useMemo(() => pool?.bondedPool?.state === 'Blocked', [pool?.bondedPool?.state]);
+  const isPoolBlocked = useMemo(() => pool?.bondedPool?.state.toString() === 'Blocked', [pool?.bondedPool?.state]);
   const justMember = useMemo(() => !([String(pool?.bondedPool?.roles?.root), String(pool?.bondedPool?.roles?.bouncer), String(pool?.bondedPool?.roles?.nominator), String(pool?.bondedPool?.roles?.depositor)].includes(String(formatted))), [formatted, pool?.bondedPool?.roles?.bouncer, pool?.bondedPool?.roles?.depositor, pool?.bondedPool?.roles?.nominator, pool?.bondedPool?.roles?.root]);
+  const staked = useMemo(() => {
+    if (!justMember || !pool) {
+      return undefined;
+    }
 
-  console.log('pool?.bondedPool?.state:', pool?.bondedPool?.state);
+    return new BN(pool.member?.points ?? '0');
+  }, [justMember, pool]);
 
   const onManageValidators = useCallback(() => {
     setShowModal(MODALS_NUMBER.MANAGE_VALIDATORS);
@@ -85,7 +93,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
   }, []);
 
   const onLeavePool = useCallback(() => {
-    console.log('Leave Pool');
+    setShowModal(MODALS_NUMBER.LEAVE);
   }, []);
 
   const resetModal = useCallback(() => {
@@ -105,7 +113,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
         <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto 15px', width: '90%' }} />
         <Grid alignItems='center' container direction='column' display='block' item justifyContent='center'>
           <TaskButton
-            disabled={false}
+            disabled={!justMember || !staked || staked.isZero()}
             icon={
               <FontAwesomeIcon
                 color={poolState === 'Destroying' || !poolRoot ? theme.palette.action.disabledBackground : theme.palette.text.primary}
@@ -234,6 +242,14 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
           pool={pool}
           setRefresh={setRefresh}
           state={state}
+        />
+      }
+      {MODALS_NUMBER.LEAVE === showModal && address && pool &&
+        <LeavePool
+          address={address}
+          onClose={resetModal}
+          pool={pool}
+          setRefresh={setRefresh}
         />
       }
       {MODALS_NUMBER.REMOVE_ALL === showModal && address && pool &&
