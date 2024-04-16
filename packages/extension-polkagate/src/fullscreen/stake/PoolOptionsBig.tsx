@@ -12,8 +12,8 @@ import { useTranslation } from '../../components/translate';
 import { useInfo, useMinToReceiveRewardsInSolo2, usePoolConsts } from '../../hooks';
 import { BalancesInfo } from '../../util/types';
 import { Inputs } from '../sendFund';
-import StakingOptionFS from './partials/StakingOptionFS';
-import PoolOptions from './pool/PoolOptions';
+import PoolOptionsSmall from './partials/PoolOptionsSmall';
+import StakingOption from './partials/StakingOption';
 import { STEPS } from '.';
 
 interface Props {
@@ -24,7 +24,7 @@ interface Props {
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>
 }
 
-export default function StakingOptions ({ address, setStep }: Props): React.ReactElement {
+export default function PoolOptionsBig({ address, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chainName } = useInfo(address);
@@ -52,7 +52,7 @@ export default function StakingOptions ({ address, setStep }: Props): React.Reac
         {t('Options are available to commence staking in Westend. Please select your preference, taking into consideration the minimum requirements for receiving rewards per era.', { replace: { chainName } })}
       </Typography>
       <Grid alignItems='center' container item justifyContent='flex-start' pt='40px'>
-        <StakingOptionFS
+        <StakingOption
           api={api}
           balance={poolConsts?.minJoinBond}
           balanceText={t('Minimum to receive rewards')}
@@ -71,9 +71,9 @@ export default function StakingOptions ({ address, setStep }: Props): React.Reac
           title={t('Pool Staking')}
         />
         <Collapse in={showPoolOptions} sx={{ width: '100%' }}>
-          <PoolOptions address={address} setStep={setStep} />
+          <PoolOptionsSmall address={address} setStep={setStep} />
         </Collapse>
-        <StakingOptionFS
+        <StakingOption
           api={api}
           balance={minToReceiveRewardsInSolo}
           balanceText={t('Minimum to receive rewards')}

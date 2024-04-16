@@ -227,7 +227,6 @@ export default function Index(): React.ReactElement {
             />
           </Grid>
         </Grid>
-
       </Grid>
       {/* <Info
         address={address}

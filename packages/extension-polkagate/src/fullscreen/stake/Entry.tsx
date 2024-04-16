@@ -22,7 +22,6 @@ import CreatePool from './pool/create';
 import JoinPool from './pool/join';
 import SoloStake from './solo/stake';
 import EasyMode from './easyMode';
-import StakingOptions from './StakingOptions';
 import { STEPS } from '.';
 
 export interface Inputs {
@@ -67,15 +66,6 @@ function Entry ({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.Reac
            setStep={setStep}
          />
       }
-      {/* {step === STEPS.INDEX &&
-         <StakingOptions
-           address={address}
-           balances={balances}
-           inputs={inputs}
-           setInputs={setInputs}
-           setStep={setStep}
-         />
-      } */}
       {STEPS.JOIN_POOL === step &&
          <JoinPool
            setInputs={setInputs}

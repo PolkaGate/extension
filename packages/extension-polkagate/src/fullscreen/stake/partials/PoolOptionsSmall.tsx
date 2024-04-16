@@ -3,35 +3,30 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faHand, faRightToBracket, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+import { faRightToBracket, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { useTranslation } from '../../components/translate';
-import { useInfo, useMinToReceiveRewardsInSolo2, usePoolConsts } from '../../hooks';
-import StakingOption from './partials/StakingOption';
-import { STEPS } from '.';
+import { useTranslation } from '../../../components/translate';
+import { useInfo, usePoolConsts } from '../../../hooks';
+import StakingSubOption from './StakingSubOption';
+import { STEPS } from '..';
 
 interface Props {
   address: string;
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function AdvancedOptions ({ address, setStep }: Props): React.ReactElement {
+export default function PoolOptionsSmall({ address, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api } = useInfo(address);
 
   const poolConsts = usePoolConsts(address);
-  const minToReceiveRewardsInSolo = useMinToReceiveRewardsInSolo2(address);
 
   const onJoinPool = useCallback(() => {
     setStep(STEPS.JOIN_POOL);
-  }, [setStep]);
-
-  const onSoloStake = useCallback(() => {
-    setStep(STEPS.STAKE_SOLO);
   }, [setStep]);
 
   const onCreatePool = useCallback(() => {
@@ -39,34 +34,15 @@ export default function AdvancedOptions ({ address, setStep }: Props): React.Rea
   }, [setStep]);
 
   return (
-    <Grid container justifyContent='flex-end' pt='5px'>
-      <StakingOption
-        api={api}
-        balance={minToReceiveRewardsInSolo}
-        balanceText={t('Minimum for rewards')}
-        logo={
-          <FontAwesomeIcon
-            color={`${theme.palette.secondary.light}`}
-            fontSize='30px'
-            icon={faHand}
-          />
-        }
-        onClick={onSoloStake}
-        style={{
-          my: '5px',
-          pr: '6%',
-          width: '87%'
-        }}
-        title={t('Stake Solo')}
-      />
-      <StakingOption
+    <Grid container justifyContent='flex-end'>
+      <StakingSubOption
         api={api}
         balance={poolConsts?.minJoinBond}
         balanceText={t('Minimum to join')}
         logo={
           <FontAwesomeIcon
             color={`${theme.palette.secondary.light}`}
-            fontSize='30px'
+            fontSize='38px'
             icon={faRightToBracket}
           />
         }
@@ -78,14 +54,14 @@ export default function AdvancedOptions ({ address, setStep }: Props): React.Rea
         }}
         title={t('Join a Pool')}
       />
-      <StakingOption
+      <StakingSubOption
         api={api}
         balance={poolConsts?.minCreationBond}
         balanceText={t('Minimum to create')}
         logo={
           <FontAwesomeIcon
             color={`${theme.palette.secondary.light}`}
-            fontSize='30px'
+            fontSize='38px'
             icon={faSquarePlus}
           />
         }

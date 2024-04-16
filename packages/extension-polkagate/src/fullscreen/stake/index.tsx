@@ -19,8 +19,8 @@ import { TxInfo } from '../../util/types';
 import { openOrFocusTab } from '../accountDetailsFullScreen/components/CommonTasks';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import { Title } from '../sendFund/InputPage';
-import StakingModeOption from './partials/StakingModeOption';
-import AdvancedOptions from './AdvancedOptions';
+import AdvancedOptions from './partials/AdvancedOptions';
+import StakingMode from './partials/StakingMode';
 import Entry from './Entry';
 
 export const STEPS = {
@@ -43,7 +43,7 @@ export const STEPS = {
 
 export type StepsType = typeof STEPS[keyof typeof STEPS];
 
-export default function StakingOptions (): React.ReactElement {
+export default function StakingOptions(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -105,7 +105,7 @@ export default function StakingOptions (): React.ReactElement {
             [STEPS.JOIN_POOL, STEPS.JOIN_REVIEW, STEPS.CREATE_POOL, STEPS.CREATE_REVIEW].includes(step)
               ? <PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />
               : [STEPS.STAKE_SOLO].includes(step) &&
-           <BoyIcon sx={{ color: 'text.primary', fontSize: '62px' }} />}
+              <BoyIcon sx={{ color: 'text.primary', fontSize: '62px' }} />}
           text={getHeaderText(txInfo?.success)}
         />
         {step === STEPS.INDEX
@@ -114,7 +114,7 @@ export default function StakingOptions (): React.ReactElement {
               {t('Options are available to commence staking in Westend. Please select your preference, taking into consideration the minimum requirements for receiving rewards per era.', { replace: { chainName } })}
             </Typography>
             <Grid alignItems='center' container item justifyContent='flex-start' pt='40px'>
-              <StakingModeOption
+              <StakingMode
                 api={api}
                 balance={poolConsts?.minJoinBond}
                 balanceText={t('Minimum to receive rewards')}
@@ -135,7 +135,7 @@ export default function StakingOptions (): React.ReactElement {
                 text={t('Automated processes for simplicity.')}
                 title={t('Easy Staking')}
               />
-              <StakingModeOption
+              <StakingMode
                 api={api}
                 helperText={t('You are responsible for checking boundary values and selecting suitable validators or pools, but don\'t worry, we\'ve still got your back.')}
                 logo={
