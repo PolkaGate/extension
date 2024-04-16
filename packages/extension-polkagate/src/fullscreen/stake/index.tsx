@@ -172,7 +172,9 @@ export default function StakingOptions (): React.ReactElement {
           </Grid>
           : <Entry
             setStep={setStep}
+            setTxInfo={setTxInfo}
             step={step}
+            txInfo={txInfo}
           />
         }
       </Grid>

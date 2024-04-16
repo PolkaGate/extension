@@ -39,16 +39,17 @@ export interface Inputs {
 interface Props {
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  onBack?: () => void
+  onBack?: () => void;
+  setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
+  txInfo: TxInfo | undefined
 }
 
-function Entry ({ onBack, setStep, step }: Props): React.ReactElement {
+function Entry ({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.ReactElement {
   const { address } = useParams<{ address: string }>();
 
   const [refresh, setRefresh] = useState<boolean>(false);
   const balances = useBalances(address, refresh, setRefresh);
   const [inputs, setInputs] = useState<Inputs>();
-  const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
 
   const closeConfirmation = useCallback(() => {
     setRefresh(true);

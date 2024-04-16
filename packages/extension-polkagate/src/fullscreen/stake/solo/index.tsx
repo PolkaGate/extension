@@ -8,6 +8,8 @@ import { Grid } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
+import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+
 import { useFullscreen, useStakingAccount, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { FULLSCREEN_WIDTH, STAKING_CHAINS } from '../../../util/constants';
 import { openOrFocusTab } from '../../accountDetailsFullScreen/components/CommonTasks';
@@ -49,6 +51,7 @@ export default function Index (): React.ReactElement {
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const [showId, setShow] = useState<number>(MODAL_IDS.NONE);
   const [step, setStep] = useState<number>(STEPS.STAKE_SOLO);
+  const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
 
   const onBack = useCallback(() => {
     openOrFocusTab(`/solofs/${address}/`, true);
@@ -112,13 +115,14 @@ export default function Index (): React.ReactElement {
             ? t('Staking Review')
             : step === STEPS.CONFIRM
               ? t('Staking Confirmation')
-              : t('Solo Staking')
-          }
+              : t('Solo Staking')}
         />
         <Entry
           onBack={onBack}
           setStep={setStep}
+          setTxInfo={setTxInfo}
           step={step}
+          txInfo={txInfo}
         />
       </Grid>
       }
