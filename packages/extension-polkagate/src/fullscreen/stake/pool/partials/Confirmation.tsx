@@ -16,9 +16,10 @@ interface Props {
   txInfo: TxInfo;
   handleClose: () => void;
   children: React.ReactNode;
+  modalHeight?: number;
 }
 
-export default function Confirmation ({ children, handleClose, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ children, handleClose, modalHeight, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
@@ -40,46 +41,48 @@ export default function Confirmation ({ children, handleClose, txInfo }: Props):
   };
 
   return (
-    <Motion>
-      <FailSuccessIcon
-        showLabel={false}
-        style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
-        success={txInfo.success}
-      />
-      {txInfo?.failureText &&
-        <Typography fontSize='16px' fontWeight={400} m='auto' sx={{ WebkitBoxOrient: 'vertical', WebkitLineClamp: '2', display: '-webkit-box', mb: '15px', overflow: 'hidden', textOverflow: 'ellipsis' }} textAlign='center' width='92%'>
-          {txInfo.failureText}
-        </Typography>
-      }
-      {children}
-      <DisplayInfo caption={t<string>('Fee:')} value={fee?.toHuman() ?? '00.00'} />
-      {txInfo?.txHash &&
-        <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
-          <Grid container item width='fit-content'>
-            <Typography pr='5px'>{t<string>('Hash')}:</Typography>
+    <Motion style={{ height: modalHeight ? `${modalHeight - 120}px` : 'auto' }}>
+      <Grid>
+        <FailSuccessIcon
+          showLabel={false}
+          style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
+          success={txInfo.success}
+        />
+        {txInfo?.failureText &&
+          <Typography fontSize='16px' fontWeight={400} m='auto' sx={{ WebkitBoxOrient: 'vertical', WebkitLineClamp: '2', display: '-webkit-box', mb: '15px', overflow: 'hidden', textOverflow: 'ellipsis' }} textAlign='center' width='92%'>
+            {txInfo.failureText}
+          </Typography>
+        }
+        {children}
+        <DisplayInfo caption={t<string>('Fee:')} value={fee?.toHuman() ?? '00.00'} />
+        {txInfo?.txHash &&
+          <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
+            <Grid container item width='fit-content'>
+              <Typography pr='5px'>{t<string>('Hash')}:</Typography>
+            </Grid>
+            <Grid container item width='fit-content'>
+              <ShortAddress
+                address={txInfo.txHash}
+                charsCount={6}
+                showCopy
+                style={{ fontSize: '16px' }}
+              />
+            </Grid>
           </Grid>
-          <Grid container item width='fit-content'>
-            <ShortAddress
-              address={txInfo.txHash}
-              charsCount={6}
-              showCopy
-              style={{ fontSize: '16px' }}
-            />
+        }
+        {txInfo?.txHash &&
+          <Grid container justifyContent='center' pt='5px'>
+            <Explorer chainName={chainName} txHash={txInfo?.txHash} />
           </Grid>
-        </Grid>
-      }
-      {txInfo?.txHash &&
-        <Grid container justifyContent='center' pt='5px'>
-          <Explorer chainName={chainName} txHash={txInfo?.txHash} />
-        </Grid>
-      }
-      <PButton
-        _ml={0}
-        _mt='30px'
-        _onClick={handleClose}
-        _width={100}
-        text={t<string>('Close')}
-      />
+        }
+        <PButton
+          _ml={0}
+          _mt='30px'
+          _onClick={handleClose}
+          _width={100}
+          text={t<string>('Close')}
+        />
+      </Grid>
     </Motion>
   );
 }

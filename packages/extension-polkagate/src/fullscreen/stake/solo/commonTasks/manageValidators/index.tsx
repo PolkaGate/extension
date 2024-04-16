@@ -14,11 +14,11 @@ import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/Inp
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 
-import { useTranslation } from '../../../../components/translate';
-import { useFullscreen } from '../../../../hooks';
-import WaitScreen from '../../../governance/partials/WaitScreen';
-import Confirmation from '../../easyMode/Confirmation';
-import { Inputs } from '../../Entry';
+import { useTranslation } from '../../../../../components/translate';
+import { useFullscreen } from '../../../../../hooks';
+import WaitScreen from '../../../../governance/partials/WaitScreen';
+import Confirmation from '../../../easyMode/Confirmation';
+import { Inputs } from '../../../Entry';
 import InputPage from './InputPage';
 import Review from './Review';
 
@@ -30,7 +30,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function ManageValidators (): React.ReactElement {
+export default function ManageValidators(): React.ReactElement {
   const { t } = useTranslation();
 
   useFullscreen();
@@ -55,30 +55,30 @@ export default function ManageValidators (): React.ReactElement {
         />
         <Grid alignItems='center' container item justifyContent='flex-start'>
           {step === STEPS.INDEX &&
-          <InputPage
-            address={address}
-            inputs={inputs}
-            setInputs={setInputs}
-            setStep={setStep}
-          />
+            <InputPage
+              address={address}
+              inputs={inputs}
+              setInputs={setInputs}
+              setStep={setStep}
+            />
           }
           {[STEPS.REVIEW, STEPS.PROXY].includes(step) && inputs &&
-          <Review
-            address={address}
-            inputs={inputs}
-            setStep={setStep}
-            setTxInfo={setTxInfo}
-            step={step}
-          />
+            <Review
+              address={address}
+              inputs={inputs}
+              setStep={setStep}
+              setTxInfo={setTxInfo}
+              step={step}
+            />
           }
           {step === STEPS.WAIT_SCREEN &&
-          <WaitScreen />
+            <WaitScreen />
           }
           {txInfo && step === STEPS.CONFIRM &&
-          <Confirmation
-            handleDone={onClose}
-            txInfo={txInfo}
-          />
+            <Confirmation
+              handleDone={onClose}
+              txInfo={txInfo}
+            />
           }
         </Grid>
       </Grid>

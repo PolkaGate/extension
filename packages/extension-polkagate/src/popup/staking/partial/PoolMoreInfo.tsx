@@ -11,6 +11,8 @@ import { useParams } from 'react-router';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import useIsExtensionPopup from '@polkadot/extension-polkagate/src/hooks/useIsExtensionPopup';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { Identity, PButton, Progress, ShowBalance, SlidePopUp } from '../../../components';
@@ -19,6 +21,7 @@ import { FormattedAddressState, MemberPoints, MyPoolInfo, PoolInfo } from '../..
 import ClaimCommission from '../pool/claimCommission';
 import ShowPool from './ShowPool';
 import ShowRoles from './ShowRoles';
+import ClaimCommissionModal from '../pool/claimCommission/ClaimCommissionModal';
 
 interface Props {
   address?: string;
@@ -41,6 +44,7 @@ interface CollapseProps {
 
 export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const isExtensionPopup = useIsExtensionPopup();
   const { address } = useParams<FormattedAddressState>();
   const formatted = useFormatted(address);
   const poolToShow = usePool(address, poolId, false, pool);
@@ -203,7 +207,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
   );
 
   const page = (
-    <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
+    <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt={isExtensionPopup ? '46px' : 0} sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container justifyContent='center' my='20px'>
         <Typography fontSize='28px' fontWeight={400} lineHeight={1.4}>
           {t<string>('Pool Info')}
@@ -272,15 +276,22 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
         </>
         : <Progress pt='95px' size={125} title={t('Loading pool information...')} />
       }
-      <IconButton onClick={_closeMenu} sx={{ left: '15px', p: 0, position: 'absolute', top: '65px' }}>
+      <IconButton onClick={_closeMenu} sx={{ left: isExtensionPopup ? '15px' : '30px', p: 0, position: 'absolute', top: isExtensionPopup ? '65px' : '35px' }}>
         <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />
       </IconButton>
     </Grid>
   );
 
   return (
-    <SlidePopUp show={showPoolInfo}>
-      {page}
-    </SlidePopUp>
+    <>
+      {isExtensionPopup
+        ? <SlidePopUp show={showPoolInfo}>
+          {page}
+        </SlidePopUp>
+        : <DraggableModal minHeight={650} onClose={_closeMenu} open={showPoolInfo}>
+          {page}
+        </DraggableModal>
+      }
+    </>
   );
 }

@@ -11,12 +11,12 @@ import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governanc
 import { Balance } from '@polkadot/types/interfaces';
 import { BN_ZERO } from '@polkadot/util';
 
-import { ShowBalance, SignArea2, WrongPasswordAlert } from '../../../../components';
-import { useTranslation } from '../../../../components/translate';
-import { useInfo, useStakingAccount, useStakingConsts, useValidators, useValidatorsIdentities } from '../../../../hooks';
-import { Proxy, TxInfo } from '../../../../util/types';
-import { Inputs } from '../../Entry';
-import ValidatorsTable from '../partials/ValidatorsTable';
+import { ShowBalance, SignArea2, WrongPasswordAlert } from '../../../../../components';
+import { useTranslation } from '../../../../../components/translate';
+import { useInfo, useStakingAccount, useStakingConsts, useValidators, useValidatorsIdentities } from '../../../../../hooks';
+import { Proxy, TxInfo } from '../../../../../util/types';
+import { Inputs } from '../../../Entry';
+import ValidatorsTable from '../../partials/ValidatorsTable';
 import { STEPS } from '.';
 
 interface Props {
@@ -27,7 +27,7 @@ interface Props {
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>
 }
 
-export default function Review ({ address, inputs, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, inputs, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const stakingConsts = useStakingConsts(address);
@@ -70,7 +70,7 @@ export default function Review ({ address, inputs, setStep, setTxInfo, step }: P
         {t('Review the newly selected validators')}
       </Typography>
       {isPasswordError &&
-            <WrongPasswordAlert />
+        <WrongPasswordAlert />
       }
       <Grid item mt='10px' xs={12}>
         <ValidatorsTable

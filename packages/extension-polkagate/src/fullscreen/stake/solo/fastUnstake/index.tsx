@@ -21,9 +21,9 @@ import { BN, BN_MAX_INTEGER, BN_ONE } from '@polkadot/util';
 import { PButton, Warning } from '../../../../components';
 import { useBalances, useInfo, useIsExposed, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
-import { ModalTitle } from '../configurePayee';
-import Confirmation from '../configurePayee/Confirmation';
-import Review from '../configurePayee/Review';
+import { ModalTitle } from '../commonTasks/configurePayee';
+import Confirmation from '../commonTasks/configurePayee/Confirmation';
+import Review from '../commonTasks/configurePayee/Review';
 
 interface Props {
   address: string | undefined;

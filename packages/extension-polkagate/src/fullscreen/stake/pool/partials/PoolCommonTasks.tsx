@@ -18,6 +18,7 @@ import { STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants
 
 import EditPool from '../commonTasks/editPool';
 import LeavePool from '../commonTasks/leavePool';
+import RemoveAll from '../commonTasks/removeAll';
 import SetState from '../commonTasks/SetState';
 
 interface Props {
@@ -29,7 +30,8 @@ const MODALS_NUMBER = {
   MANAGE_VALIDATORS: 1,
   EDIT_POOL: 2,
   CHANGE_STATE: 3,
-  LEAVE: 4
+  LEAVE: 4,
+  REMOVE_ALL: 5
 };
 
 export type PoolState = 'Destroying' | 'Open' | 'Blocked';
@@ -87,7 +89,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
   }, []);
 
   const onRemoveAll = useCallback(() => {
-    console.log('Remove All');
+    setShowModal(MODALS_NUMBER.REMOVE_ALL);
   }, []);
 
   const onLeavePool = useCallback(() => {
@@ -245,6 +247,16 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
       {MODALS_NUMBER.LEAVE === showModal &&
         <LeavePool
           address={address}
+          onClose={resetModal}
+          pool={pool}
+          setRefresh={setRefresh}
+        />
+      }
+      {MODALS_NUMBER.REMOVE_ALL === showModal && address && pool &&
+        <RemoveAll
+          address={address}
+          api={api}
+          chain={chain}
           onClose={resetModal}
           pool={pool}
           setRefresh={setRefresh}
