@@ -20,9 +20,9 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
 import { useInfo, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
-import { ModalTitle } from '../configurePayee';
-import Confirmation from '../configurePayee/Confirmation';
-import Review from '../configurePayee/Review';
+import { ModalTitle } from '../commonTasks/configurePayee';
+import Confirmation from '../commonTasks/configurePayee/Confirmation';
+import Review from '../commonTasks/configurePayee/Review';
 
 interface Props {
   address: string | undefined;

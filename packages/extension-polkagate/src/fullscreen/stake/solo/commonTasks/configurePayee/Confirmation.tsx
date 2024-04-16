@@ -3,22 +3,22 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Container, Divider, Grid, Typography } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import React, { useMemo } from 'react';
 
-import { PButton, ShortAddress } from '../../../../components';
-import { useAccountName, useInfo, useTranslation } from '../../../../hooks';
-import { SubTitle, ThroughProxy } from '../../../../partials';
-import Explorer from '../../../../popup/history/Explorer';
-import FailSuccessIcon from '../../../../popup/history/partials/FailSuccessIcon';
-import { TxInfo } from '../../../../util/types';
+import { PButton, ShortAddress } from '../../../../../components';
+import { useAccountName, useInfo, useTranslation } from '../../../../../hooks';
+import { SubTitle, ThroughProxy } from '../../../../../partials';
+import Explorer from '../../../../../popup/history/Explorer';
+import FailSuccessIcon from '../../../../../popup/history/partials/FailSuccessIcon';
+import { TxInfo } from '../../../../../util/types';
 
 interface Props {
   txInfo: TxInfo;
   handleDone: () => void;
 }
 
-export default function Confirmation({ handleDone, txInfo }: Props): React.ReactElement {
+export default function Confirmation ({ handleDone, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { chainName, formatted, token } = useInfo(txInfo.from.address);
 

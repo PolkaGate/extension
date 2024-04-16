@@ -16,9 +16,9 @@ import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/
 import { AccountStakingInfo, Payee, SoloSettings, TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman, upperCaseFirstChar } from '@polkadot/extension-polkagate/src/util/utils';
 
-import { AccountInputWithIdentity, TwoButtons, Warning } from '../../../../components';
-import { useInfo, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
-import { Inputs } from '../../Entry';
+import { AccountInputWithIdentity, TwoButtons, Warning } from '../../../../../components';
+import { useInfo, useStakingAccount, useStakingConsts, useTranslation } from '../../../../../hooks';
+import { Inputs } from '../../../Entry';
 import Confirmation from './Confirmation';
 import Review from './Review';
 

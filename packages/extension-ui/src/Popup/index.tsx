@@ -21,7 +21,7 @@ import SocialRecovery from '@polkadot/extension-polkagate/src/fullscreen/socialR
 import Stake from '@polkadot/extension-polkagate/src/fullscreen/stake';
 import PoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/pool';
 import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/solo';
-import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/manageValidators';
+import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/commonTasks/manageValidators';
 import { isPriceUpToDate } from '@polkadot/extension-polkagate/src/hooks/usePrices';
 import AddWatchOnly from '@polkadot/extension-polkagate/src/popup/import/addWatchOnly';
 import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';

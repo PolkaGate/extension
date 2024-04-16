@@ -17,9 +17,9 @@ import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { Progress } from '../../../../components';
 import { useInfo, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
-import { ModalTitle } from '../configurePayee';
-import Confirmation from '../configurePayee/Confirmation';
-import Review from '../configurePayee/Review';
+import { ModalTitle } from '../commonTasks/configurePayee';
+import Confirmation from '../commonTasks/configurePayee/Confirmation';
+import Review from '../commonTasks/configurePayee/Review';
 
 interface Props {
   address: string | undefined;

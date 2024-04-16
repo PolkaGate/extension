@@ -14,11 +14,11 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
 
-import { Identity, ShortAddress, ShowBalance, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../components';
-import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../../hooks';
-import { SubTitle, ThroughProxy } from '../../../../partials';
-import { Payee, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
-import { Inputs } from '../../Entry';
+import { Identity, ShortAddress, ShowBalance, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../../components';
+import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../../../hooks';
+import { SubTitle, ThroughProxy } from '../../../../../partials';
+import { Payee, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
+import { Inputs } from '../../../Entry';
 import { STEPS } from '.';
 
 interface Props {

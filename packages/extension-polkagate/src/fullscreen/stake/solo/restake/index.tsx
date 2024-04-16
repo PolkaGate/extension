@@ -6,7 +6,7 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
@@ -18,11 +18,11 @@ import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/sr
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
-import { useInfo, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
+import { useInfo, useStakingAccount, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
-import { ModalTitle } from '../configurePayee';
-import Confirmation from '../configurePayee/Confirmation';
-import Review from '../configurePayee/Review';
+import { ModalTitle } from '../commonTasks/configurePayee';
+import Confirmation from '../commonTasks/configurePayee/Confirmation';
+import Review from '../commonTasks/configurePayee/Review';
 
 interface Props {
   address: string | undefined;

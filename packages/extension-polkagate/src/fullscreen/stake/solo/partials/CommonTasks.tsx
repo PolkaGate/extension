@@ -11,7 +11,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { openOrFocusTab, TaskButton } from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen/components/CommonTasks';
 import { useInfo, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 
-import ConfigurePayee from '../configurePayee';
+import ConfigurePayee from '../commonTasks/configurePayee';
 
 interface Props {
   address: string | undefined;
