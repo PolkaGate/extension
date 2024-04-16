@@ -23,10 +23,11 @@ import { Inputs } from '../../Entry';
 import { ModalTitle } from '../commonTasks/configurePayee';
 import Confirmation from '../commonTasks/configurePayee/Confirmation';
 import Review from '../commonTasks/configurePayee/Review';
+import { MODAL_IDS } from '..';
 
 interface Props {
   address: string | undefined;
-  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  setShow: React.Dispatch<React.SetStateAction<number>>;
   show: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -171,7 +172,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
 
   const onCancel = useCallback(() => {
     setStep(STEPS.INDEX);
-    setShow(false);
+    setShow(MODAL_IDS.NONE);
   }, [setShow]);
 
   const Warn = ({ belowInput, iconDanger, isDanger, text }: { belowInput?: boolean, text: string, isDanger?: boolean, iconDanger?: boolean }) => (

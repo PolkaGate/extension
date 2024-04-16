@@ -7,6 +7,8 @@ import { MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
+import ShowValidators from '@polkadot/extension-polkagate/src/popup/staking/solo/stake/partials/ShowValidators';
+
 import { Identity, Infotip, ShowBalance, SignArea2, WrongPasswordAlert } from '../../../components';
 import { useInfo } from '../../../hooks';
 import useTranslation from '../../../hooks/useTranslation';
@@ -30,7 +32,7 @@ interface Props {
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>
 }
 
-export default function Review({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review ({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain } = useInfo(address);
   const theme = useTheme();
@@ -132,16 +134,16 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
         <SignArea2
           address={address}
           call={inputs?.call}
-          // confirmStep={STEPS.EASY_CONFIRM}
           extraInfo={inputs?.extraInfo}
           isPasswordError={isPasswordError}
           onSecondaryClick={handleCancel}
           params={inputs?.params}
           primaryBtnText={t('Confirm')}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']} // TODO: what abt nominationpools?
+          proxyTypeFilter={inputs?.pool ? ['Any', 'NonTransfer', 'Staking', 'NominationPools'] : ['Any', 'NonTransfer', 'Staking']} // TODO: nomination pools needs test
           secondaryBtnText={t('Cancel')}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
+          setRefresh={setRefresh}
           setSelectedProxy={setSelectedProxy}
           setStep={setStep}
           setTxInfo={setTxInfo}
@@ -150,6 +152,17 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
           token={balances?.token}
         />
       </Grid>
+      {showSelectedValidators && !!inputs?.selectedValidators?.length &&
+          <ShowValidators
+            address={address}
+            api={api}
+            chain={chain}
+            selectedValidators={inputs.selectedValidators}
+            setShowSelectedValidators={setShowSelectedValidators}
+            showSelectedValidators={showSelectedValidators}
+            staked={inputs?.extraInfo?.amount && balances?.decimal && amountToMachine(inputs.extraInfo.amount, balances.decimal)}
+          />
+      }
     </>
   );
 }

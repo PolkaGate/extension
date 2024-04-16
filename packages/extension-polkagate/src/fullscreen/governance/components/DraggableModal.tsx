@@ -15,7 +15,7 @@ interface Props {
   onClose: () => void
 }
 
-export function DraggableModal({ children, maxHeight = 740, minHeight = 570, onClose, open, width = 500 }: Props): React.ReactElement<Props> {
+export function DraggableModal ({ children, maxHeight = 740, minHeight = 615, onClose, open, width = 500 }: Props): React.ReactElement<Props> {
   const [isDragging, setIsDragging] = useState(false);
   const initialX = (window.innerWidth - width) / 2;
   const initialY = (window.innerHeight - maxHeight) / 2;
@@ -55,7 +55,8 @@ export function DraggableModal({ children, maxHeight = 740, minHeight = 570, onC
 
   const style = {
     bgcolor: 'background.default',
-    border: '2px solid #000',
+    border: 1,
+    borderColor: 'secondary.light',
     borderRadius: '10px',
     boxShadow: 24,
     cursor: isDragging ? 'grabbing' : 'grab',
@@ -67,8 +68,6 @@ export function DraggableModal({ children, maxHeight = 740, minHeight = 570, onC
     pt: 2,
     px: 4,
     top: modalPosition.y,
-    border: 1,
-    borderColor: 'secondary.light',
     width: `${width}px`
   };
 

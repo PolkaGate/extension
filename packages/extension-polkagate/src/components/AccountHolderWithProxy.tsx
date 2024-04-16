@@ -31,6 +31,7 @@ function AccountHolderWithProxy ({ address, chain, selectedProxyAddress, showDiv
         <ThroughProxy
           address={selectedProxyAddress}
           chain={chain}
+          showDivider
           style={{ pb: '5px' }}
         />
       }

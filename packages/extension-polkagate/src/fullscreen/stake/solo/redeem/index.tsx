@@ -20,17 +20,18 @@ import { Inputs } from '../../Entry';
 import { ModalTitle } from '../commonTasks/configurePayee';
 import Confirmation from '../commonTasks/configurePayee/Confirmation';
 import Review from '../commonTasks/configurePayee/Review';
+import { MODAL_IDS } from '..';
 
 interface Props {
   address: string | undefined;
-  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  setShow: React.Dispatch<React.SetStateAction<number>>;
   show: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
   redeemable: Balance | undefined
 }
 
 export const STEPS = {
-  INDEX: 1,
+  PROGRESS: 1,
   REVIEW: 2,
   WAIT_SCREEN: 3,
   CONFIRM: 4,
@@ -41,13 +42,9 @@ export default function Pending ({ address, redeemable, setRefresh, setShow, sho
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
 
-  const [step, setStep] = useState(STEPS.INDEX);
+  const [step, setStep] = useState(STEPS.PROGRESS);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [inputs, setInputs] = useState<Inputs>();
-
-  const onNext = useCallback(() => {
-    setStep(STEPS.REVIEW);
-  }, []);
 
   useEffect(() => {
     const handleInputs = async () => {
@@ -69,23 +66,21 @@ export default function Pending ({ address, redeemable, setRefresh, setShow, sho
           extraInfo,
           params
         });
-
-        onNext();
       }
     };
 
-    show && step === STEPS.INDEX && handleInputs().catch(console.error);
-  }, [api, decimal, formatted, onNext, redeemable, show, step]);
+    show && step === STEPS.PROGRESS &&
+    handleInputs()
+      .then(
+        () => setStep(STEPS.REVIEW)
+      )
+      .catch(console.error);
+  }, [api, decimal, formatted, redeemable, show, step]);
 
   const onCancel = useCallback(() => {
-    setShow(false);
+    setShow(MODAL_IDS.NONE);
     setInputs(undefined);
-    setStep(STEPS.INDEX);
   }, [setShow]);
-
-  useEffect(() => {
-    !!inputs && step === STEPS.INDEX && onCancel();
-  }, [inputs, onCancel, step]);
 
   return (
     <DraggableModal onClose={onCancel} open={show}>
@@ -99,7 +94,7 @@ export default function Pending ({ address, redeemable, setRefresh, setShow, sho
             text={t('Withdraw Redeemable')}
           />
         }
-        {step === STEPS.INDEX &&
+        {step === STEPS.PROGRESS &&
             <Grid container item p='30px'>
               <Progress
                 fontSize={16}

@@ -23,9 +23,10 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
   inputs: Inputs | undefined;
+  onBack?: (() => void) | undefined
 }
 
-export default function SoloStake ({ inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const stakingAccount = useStakingAccount(address);
@@ -37,7 +38,7 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
   const stakingConsts = useStakingConsts(address);
   const minToReceiveRewardsInSolo = useMinToReceiveRewardsInSolo2(address);
 
-  const [amount, setAmount] = useState<string>(inputs?.amount);
+  const [amount, setAmount] = useState<string>(inputs?.extraInfo?.amount);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [isNextClicked, setNextIsClicked] = useState<boolean>();
 
@@ -62,7 +63,7 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
   }, [amount, api, decimal, newSelectedValidators]);
 
   const buttonDisable = useMemo(() => !amount || !newSelectedValidators?.length, [amount, newSelectedValidators?.length]);
-  const isBusy = useMemo(() => (!inputs?.estimatedFee || !inputs?.amount) && isNextClicked, [inputs?.amount, inputs?.estimatedFee, isNextClicked]);
+  const isBusy = useMemo(() => (!inputs?.estimatedFee || !inputs?.extraInfo?.amount) && isNextClicked, [inputs?.extraInfo?.amount, inputs?.estimatedFee, isNextClicked]);
 
   useEffect(() => {
     if (call && params && newSelectedValidators) {
@@ -141,7 +142,7 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
     () => onThresholdAmount('min')
     , [onThresholdAmount]);
 
-  const onNextClick = useCallback(() => {
+  const onNext = useCallback(() => {
     setNextIsClicked(true);
   }, []);
 
@@ -149,7 +150,7 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
     () => setStep(STEPS.SOLO_REVIEW)
     , [setStep]);
 
-  const onBackClick = useCallback(
+  const _onBack = useCallback(
     () => setStep(STEPS.INDEX)
     , [setStep]);
 
@@ -215,8 +216,8 @@ export default function SoloStake ({ inputs, setInputs, setStep }: Props): React
               disabled={buttonDisable}
               isBusy={isBusy}
               mt='1px'
-              onPrimaryClick={onNextClick}
-              onSecondaryClick={onBackClick}
+              onPrimaryClick={onNext}
+              onSecondaryClick={onBack || _onBack}
               primaryBtnText={t('Next')}
               secondaryBtnText={t('Back')}
             />

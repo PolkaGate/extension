@@ -15,9 +15,10 @@ interface Props {
   address: string;
   chain: Chain | null;
   style?: SxProps<Theme> | undefined;
+  showDivider?: boolean;
 }
 
-function ThroughProxy({ address, chain, style = {} }: Props): React.ReactElement {
+function ThroughProxy ({ address, chain, style = {}, showDivider = true }: Props): React.ReactElement {
   const { t } = useTranslation();
   const api = useApi(address);
 
@@ -37,8 +38,9 @@ function ThroughProxy({ address, chain, style = {} }: Props): React.ReactElement
         style={{ fontSize: '22px', maxWidth: '65%', px: '8px', width: 'fit-content' }}
         withShortAddress
       />
-      <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '1px', mt: '4px', width: '1px' }} />
-      <Grid item sx={{ fontSize: '12px', fontWeight: 300, textAlign: 'center', ml: '5px' }} >
+      { showDivider &&
+       <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '1px', mt: '4px', width: '1px' }} />
+      }      <Grid item sx={{ fontSize: '12px', fontWeight: 300, textAlign: 'center', ml: '5px' }}>
         {t('as proxy')}
       </Grid>
     </Grid>

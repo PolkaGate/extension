@@ -8,15 +8,15 @@
  * this component opens review page
  * */
 
-import { Container, Grid, Typography } from '@mui/material';
+import { Container, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
 
-import { Identity, ShortAddress, ShowBalance, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../../components';
+import { AccountHolderWithProxy, Identity, ShortAddress, ShowBalance, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../../components';
 import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../../../hooks';
-import { SubTitle, ThroughProxy } from '../../../../../partials';
+import { SubTitle } from '../../../../../partials';
 import { Payee, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { Inputs } from '../../../Entry';
 import { STEPS } from '.';
@@ -55,8 +55,8 @@ function RewardsDestination ({ address, payee }: { address: string | undefined, 
             <ShortAddress address={destinationAddress} />
           </Grid>
         }
+        <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mt: '5px', width: '240px' }} />
       </Grid>
-      {/* <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} /> */}
     </Grid>
   );
 }
@@ -103,14 +103,14 @@ export default function Review ({ address, inputs, setRefresh, setStep, setTxInf
         <>
           <SubTitle label={t('Review')} style={{ paddingTop: isPasswordError ? '10px' : '25px' }} />
           <Container disableGutters sx={{ px: '30px' }}>
-            {selectedProxyAddress &&
-              <Grid container m='auto' maxWidth='92%'>
-                <ThroughProxy
-                  address={selectedProxyAddress}
-                  chain={chain}
-                />
-              </Grid>
-            }
+            <AccountHolderWithProxy
+              address={address}
+              chain={chain}
+              selectedProxyAddress={selectedProxyAddress}
+              showDivider
+              style={{ mt: 'auto' }}
+              title={t('Account holder')}
+            />
             {inputs?.extraInfo?.payee &&
               <RewardsDestination
                 address={address}
@@ -118,8 +118,8 @@ export default function Review ({ address, inputs, setRefresh, setStep, setTxInf
               />
             }
             {inputs?.extraInfo?.amount &&
-              <DisplayValue dividerHeight='1px' title={t('Amount')} topDivider={!!selectedProxyAddress}>
-                <Grid alignItems='center' container item sx={{ height: '42px' }}>
+              <DisplayValue dividerHeight='1px' title={t('Amount')} topDivider={false}>
+                <Grid alignItems='center' container justifyContent='center' item sx={{ height: '42px' }}>
                   <ShowValue
                     unit={token}
                     value={inputs.extraInfo.amount}

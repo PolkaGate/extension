@@ -92,3 +92,4 @@ export { default as useAccountsOrder } from './useAccountsOrder';
 export { default as useNativeTokenPrice } from './useNativeTokenPrice';
 export { default as useActiveValidators } from './useActiveValidators';
 export { default as useEstimatedFee } from './useEstimatedFee';
+export { default as useIsExtensionPopup } from './useIsExtensionPopup';

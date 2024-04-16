@@ -38,10 +38,11 @@ export interface Inputs {
 
 interface Props {
   step: number;
-  setStep: React.Dispatch<React.SetStateAction<number>>
+  setStep: React.Dispatch<React.SetStateAction<number>>;
+  onBack?: () => void
 }
 
-function Entry ({ setStep, step }: Props): React.ReactElement {
+function Entry ({ onBack, setStep, step }: Props): React.ReactElement {
   const { address } = useParams<{ address: string }>();
 
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -65,7 +66,7 @@ function Entry ({ setStep, step }: Props): React.ReactElement {
            setStep={setStep}
          />
       }
-      {step === STEPS.INDEX &&
+      {/* {step === STEPS.INDEX &&
          <StakingOptions
            address={address}
            balances={balances}
@@ -73,7 +74,7 @@ function Entry ({ setStep, step }: Props): React.ReactElement {
            setInputs={setInputs}
            setStep={setStep}
          />
-      }
+      } */}
       {STEPS.JOIN_POOL === step &&
          <JoinPool
            setInputs={setInputs}
@@ -89,6 +90,7 @@ function Entry ({ setStep, step }: Props): React.ReactElement {
       {step === STEPS.STAKE_SOLO &&
          <SoloStake
            inputs={inputs}
+           onBack={onBack}
            setInputs={setInputs}
            setStep={setStep}
          />

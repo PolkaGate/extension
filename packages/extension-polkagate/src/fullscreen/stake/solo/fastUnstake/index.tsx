@@ -24,10 +24,11 @@ import { Inputs } from '../../Entry';
 import { ModalTitle } from '../commonTasks/configurePayee';
 import Confirmation from '../commonTasks/configurePayee/Confirmation';
 import Review from '../commonTasks/configurePayee/Review';
+import { MODAL_IDS } from '..';
 
 interface Props {
   address: string | undefined;
-  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  setShow: React.Dispatch<React.SetStateAction<number>>;
   show: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -113,12 +114,12 @@ export default function FastUnstake ({ address, setRefresh, setShow, show }: Pro
 
   const onCancel = useCallback(() => {
     setStep(STEPS.INDEX);
-    setShow(false);
+    setShow(MODAL_IDS.NONE);
   }, [setShow]);
 
   const goTo = useCallback(() => {
     isEligible === true && onNext();
-    isEligible === false && onCancel();
+    !isEligible && onCancel();
   }, [isEligible, onCancel, onNext]);
 
   const NumberPassFail = ({ condition, no }: { condition: boolean | undefined, no: number }) => (

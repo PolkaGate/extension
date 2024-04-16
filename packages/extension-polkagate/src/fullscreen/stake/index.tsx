@@ -41,7 +41,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-type StepsType = typeof STEPS[keyof typeof STEPS];
+export type StepsType = typeof STEPS[keyof typeof STEPS];
 
 export default function StakingOptions (): React.ReactElement {
   const { t } = useTranslation();
