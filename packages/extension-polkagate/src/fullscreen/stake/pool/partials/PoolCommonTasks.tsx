@@ -8,13 +8,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AutoDelete as AutoDeleteIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
-import { BN } from '@polkadot/util';
 
 import { MenuItem } from '@polkadot/extension-polkagate/src/components';
 import { TaskButton } from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen/components/CommonTasks';
 import { useInfo, usePool, useTranslation, useUnSupportedNetwork } from '@polkadot/extension-polkagate/src/hooks';
 import ManageValidators from '@polkadot/extension-polkagate/src/popup/staking/pool/nominations/index';
 import { STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
+import { BN } from '@polkadot/util';
 
 import EditPool from '../commonTasks/editPool';
 import LeavePool from '../commonTasks/leavePool';
@@ -244,7 +244,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
           state={state}
         />
       }
-      {MODALS_NUMBER.LEAVE === showModal &&
+      {MODALS_NUMBER.LEAVE === showModal && address && pool &&
         <LeavePool
           address={address}
           onClose={resetModal}

@@ -186,6 +186,7 @@ export default function LeavePool({ address, onClose, pool, setRefresh }: Props)
             txInfo={txInfo}
           >
             <TxDetail
+              decimal={decimal}
               pool={pool}
               token={token}
               txInfo={txInfo}
