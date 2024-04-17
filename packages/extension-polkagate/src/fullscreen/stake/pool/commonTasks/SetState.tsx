@@ -159,10 +159,7 @@ export default function SetState ({ address, api, chain, formatted, onClose, poo
             </Grid>
           </>}
         {step === STEPS.WAIT_SCREEN &&
-          <WaitScreen
-            defaultText={t('Checking your staking status...')}
-            showCube
-          />
+          <WaitScreen />
         }
         {txInfo && step === STEPS.CONFIRM && (
           <Confirmation

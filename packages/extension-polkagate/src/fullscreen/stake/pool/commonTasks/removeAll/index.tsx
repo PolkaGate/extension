@@ -308,10 +308,7 @@ export default function RemoveAll ({ address, api, chain, onClose, pool, setRefr
             step={step}
           />}
         {step === STEPS.WAIT_SCREEN &&
-          <WaitScreen
-            defaultText={t('Checking your staking status...')}
-            showCube
-          />
+          <WaitScreen />
         }
         {txInfo && step === STEPS.CONFIRM &&
           <Confirmation
