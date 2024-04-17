@@ -113,7 +113,7 @@ export default function ManageEditPool ({ address, api, chain, onClose, pool, se
               txInfo={txInfo}
             >
               <TxDetail
-                pool={pool}
+                changes={changes}
                 txInfo={txInfo}
               />
             </Confirmation>
