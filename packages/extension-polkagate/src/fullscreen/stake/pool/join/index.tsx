@@ -12,21 +12,24 @@ import { useParams } from 'react-router';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, ShowBalance, TwoButtons } from '../../../../components';
-import { useInfo, usePoolConsts, usePools, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
+import { useEstimatedFee, useInfo, usePoolConsts, usePools, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME, STAKING_CHAINS } from '../../../../util/constants';
 import { PoolInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import { Inputs, STEPS } from '../..';
+import { STEPS } from '../..';
+import { Inputs } from '../../Entry';
 import PoolsTable from './partials/PoolsTable';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>
+  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
+  inputs: Inputs | undefined;
 }
 
-export default function JoinPool ({ setInputs, setStep }: Props): React.ReactElement {
+export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
+  const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
   const { api, decimal, formatted, token } = useInfo(address);
@@ -37,7 +40,6 @@ export default function JoinPool ({ setInputs, setStep }: Props): React.ReactEle
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();
   const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
   const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
-  const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [nextBtnDisabled, setNextBtnDisabled] = useState<boolean>(true);
   const [selectedPool, setSelectedPool] = useState<PoolInfo | undefined>();
   const [filteredPools, setFilteredPools] = useState<PoolInfo[] | null | undefined>();
@@ -119,16 +121,6 @@ export default function JoinPool ({ setInputs, setStep }: Props): React.ReactEle
     if (!api || !availableBalance || !formatted) {
       return;
     }
-
-    if (!api?.call?.transactionPaymentApi) {
-      return setEstimatedFee(api.createType('Balance', BN_ONE));
-    }
-
-    const mayBeAmount = amountAsBN || poolStakingConsts?.minJoinBond;
-
-    api && mayBeAmount && api.tx.nominationPools.join(mayBeAmount.toString(), BN_ONE).paymentInfo(formatted).then((i) => {
-      setEstimatedFee(api.createType('Balance', i?.partialFee));
-    });
 
     api && api.tx.nominationPools.join(String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
