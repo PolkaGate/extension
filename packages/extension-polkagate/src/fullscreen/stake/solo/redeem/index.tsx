@@ -31,10 +31,11 @@ interface Props {
 }
 
 export const STEPS = {
-  PROGRESS: 1,
+  INDEX: 1,
   REVIEW: 2,
   WAIT_SCREEN: 3,
   CONFIRM: 4,
+  PROGRESS: 5,
   PROXY: 100
 };
 
@@ -69,18 +70,22 @@ export default function Pending ({ address, redeemable, setRefresh, setShow, sho
       }
     };
 
-    show && step === STEPS.PROGRESS &&
-    handleInputs()
-      .then(
-        () => setStep(STEPS.REVIEW)
-      )
-      .catch(console.error);
-  }, [api, decimal, formatted, redeemable, show, step]);
+    api &&
+      handleInputs()
+        .catch(console.error);
+  }, [api, decimal, formatted, redeemable]);
 
   const onCancel = useCallback(() => {
     setShow(MODAL_IDS.NONE);
-    setInputs(undefined);
   }, [setShow]);
+
+  console.log('step:', step);
+
+  useEffect(() => {
+    step === STEPS.INDEX && onCancel();
+
+    step === STEPS.PROGRESS && inputs && setStep(STEPS.REVIEW);
+  }, [inputs, onCancel, step]);
 
   return (
     <DraggableModal onClose={onCancel} open={show}>
@@ -95,19 +100,19 @@ export default function Pending ({ address, redeemable, setRefresh, setShow, sho
           />
         }
         {step === STEPS.PROGRESS &&
-            <Grid container item p='30px'>
-              <Progress
-                fontSize={16}
-                pt={10}
-                size={150}
-                title={t('Loading information, please wait ...')}
-              />
-            </Grid>
+          <Progress
+            fontSize={16}
+            pt={20}
+            size={150}
+            title={t('Loading information, please wait ...')}
+            type='cubeGrid'
+          />
         }
         {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
           <Review
             address={address}
             inputs={inputs}
+            onClose={onCancel}
             setRefresh={setRefresh}
             setStep={setStep}
             setTxInfo={setTxInfo}

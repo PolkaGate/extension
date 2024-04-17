@@ -94,15 +94,13 @@ export default function StakeRewards ({ address, pool, setRefresh, setShow, show
           />
         }
         {step === STEPS.PROGRESS &&
-          <Grid container item>
-            <Progress
-              fontSize={16}
-              pt={20}
-              size={150}
-              title={t('Loading information, please wait ...')}
-              type='cubeGrid'
-            />
-          </Grid>
+          <Progress
+            fontSize={16}
+            pt={20}
+            size={150}
+            title={t('Loading information, please wait ...')}
+            type='cubeGrid'
+          />
         }
         {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
           <Review
