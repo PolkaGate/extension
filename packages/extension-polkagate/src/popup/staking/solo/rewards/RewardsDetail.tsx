@@ -574,7 +574,7 @@ export default function RewardsDetail ({ address, api, chain, chainName, decimal
                 token={_token}
               />
             </>
-            : <Progress pt='120px' size={125} title={t('Loading rewards...')} />
+            : <Progress pt={'220px'} size={125} title={t('Loading rewards...')} />
           }
         </DraggableModal>
       }
