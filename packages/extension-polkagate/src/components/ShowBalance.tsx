@@ -29,7 +29,7 @@ export interface Props {
   withCurrency?: boolean;
 }
 
-export default function ShowBalance({ api, balance, decimalPoint, withCurrency = true, height = 20, skeletonWidth = 90, decimal = undefined, token = undefined }: Props): React.ReactElement<Props> {
+export default function ShowBalance ({ api, balance, decimalPoint, withCurrency = true, height = 20, skeletonWidth = 90, decimal = undefined, token = undefined }: Props): React.ReactElement<Props> {
   return (
     <Grid alignItems='center' container justifyContent='center' width='fit-content'>
       {
