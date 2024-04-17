@@ -116,7 +116,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
             disabled={!justMember || !staked || staked.isZero()}
             icon={
               <FontAwesomeIcon
-                color={poolState === 'Destroying' || !poolRoot ? theme.palette.action.disabledBackground : theme.palette.text.primary}
+                color={!justMember || !staked || staked.isZero() ? theme.palette.action.disabledBackground : theme.palette.text.primary}
                 fontSize='22px'
                 icon={faRightFromBracket}
               />
