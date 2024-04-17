@@ -4,9 +4,10 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import { Chain } from '@substrate/connect';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { Divider, Grid, IconButton, Typography } from '@mui/material';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+
+import { Chain } from '@polkadot/extension-chains/types';
 
 import { AccountContext, AddressInput, PButton } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
@@ -53,19 +54,19 @@ export default function UpdateRoles ({ address, bouncerId, chain, nominatorId, s
   }, [newNominatorId, newBouncerId, nominatorId, bouncerId]);
 
   return (
-    <DraggableModal onClose={show} open>
-      <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='10px' sx={{ borderRadius: '10px 10px 0px 0px' }} width='100%'>
-        <Grid container justifyContent='center' mb='0' my='20px'>
+    <DraggableModal onClose={closeMenu} open>
+      <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item px='10px' sx={{ borderRadius: '10px 10px 0px 0px' }} width='100%'>
+        <Grid container justifyContent='center' mb='0' my='25px'>
           <Typography fontSize='20px' fontWeight={400}>
-            {t<string>('Update Roles')}
+            {t('Update Roles')}
           </Typography>
-          <Divider sx={{ bgcolor: 'secondary.light', height: '1px', m: '30px auto 5px', width: '80%' }} />
+          <Divider sx={{ bgcolor: 'secondary.light', height: '1px', mt: '15px', width: '100%' }} />
         </Grid>
         <AddressInput
           address={newNominatorId}
           allAddresses={allAddresses}
           chain={chain}
-          label={t<string>('Nominator')}
+          label={t('Nominator')}
           setAddress={setNewNominatorId}
           showIdenticon
           style={{
@@ -77,7 +78,7 @@ export default function UpdateRoles ({ address, bouncerId, chain, nominatorId, s
           address={newBouncerId}
           allAddresses={allAddresses}
           chain={chain}
-          label={t<string>('Bouncer')}
+          label={t('Bouncer')}
           setAddress={setNewBouncerId}
           showIdenticon
           style={{
@@ -91,16 +92,16 @@ export default function UpdateRoles ({ address, bouncerId, chain, nominatorId, s
             _onClick={onUpdateRoles}
             _width={84}
             disabled={updateBtnDisable}
-            text={t<string>('Update')}
+            text={t('Update')}
           />
         </Grid>
         <IconButton
           onClick={closeMenu}
           sx={{
-            left: '15px',
             p: 0,
             position: 'absolute',
-            top: '65px'
+            right: '30px',
+            top: '35px'
           }}
         >
           <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />
