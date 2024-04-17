@@ -68,12 +68,14 @@ function Entry ({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.Reac
       }
       {STEPS.JOIN_POOL === step &&
          <JoinPool
+           inputs={inputs}
            setInputs={setInputs}
            setStep={setStep}
          />
       }
       {STEPS.CREATE_POOL === step &&
          <CreatePool
+           inputs={inputs}
            setInputs={setInputs}
            setStep={setStep}
          />
