@@ -14,12 +14,12 @@ import { MyPoolInfo, TxInfo } from '@polkadot/extension-polkagate/src/util/types
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
-import { useInfo, useTranslation } from '../../../../hooks';
-import { Inputs } from '../../Entry';
-import { ModalTitle } from '../../solo/commonTasks/configurePayee';
-import Confirmation from '../../solo/commonTasks/configurePayee/Confirmation';
-import Review from '../../solo/commonTasks/configurePayee/Review';
-import { MODAL_IDS } from '..';
+import { useInfo, useTranslation } from '../../../../../hooks';
+import { Inputs } from '../../../Entry';
+import { ModalTitle } from '../../../solo/commonTasks/configurePayee';
+import Confirmation from '../../../solo/commonTasks/configurePayee/Confirmation';
+import Review from '../../../solo/commonTasks/configurePayee/Review';
+import { MODAL_IDS } from '../..';
 
 interface Props {
   address: string | undefined;
@@ -38,7 +38,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function StakeRewards ({ address, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function StakeRewards({ address, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
 

@@ -12,8 +12,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { BN, BN_ZERO } from '@polkadot/util';
-import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
-
 
 import { PoolStakingIcon } from '../../../components';
 import { useBalances, useFullscreen, useInfo, usePool, useTranslation, useUnSupportedNetwork } from '../../../hooks';
@@ -24,10 +22,11 @@ import { Title } from '../../sendFund/InputPage';
 import Entry from '../Entry';
 import PoolOptionsBig from '../partials/PoolOptionsBig';
 import { STEPS } from '..';
+import StakeRewards from './rewards/stake';
+import WithdrawRewards from './rewards/withdraw';
 import PoolStaked from './PoolStaked';
 import WithdrawRedeem from './redeem';
 import Stake from './stake';
-import StakeRewards from './stakeRewards';
 import Unstake from './unstake';
 
 interface SessionIfo {
@@ -192,10 +191,19 @@ export default function Index(): React.ReactElement {
           redeemable={redeemable}
           setRefresh={setRefresh}
           setShow={setShow}
-    />
+        />
       }
       {showId === MODAL_IDS.STAKE_REWARDS &&
         <StakeRewards
+          address={address}
+          pool={pool}
+          setRefresh={setRefresh}
+          setShow={setShow}
+          show={true}
+        />
+      }
+      {showId === MODAL_IDS.WITHDRAW_REWARDS &&
+        <WithdrawRewards
           address={address}
           pool={pool}
           setRefresh={setRefresh}
