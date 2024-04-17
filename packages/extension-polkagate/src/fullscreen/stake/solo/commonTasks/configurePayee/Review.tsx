@@ -120,7 +120,7 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
             }
             {inputs?.extraInfo?.amount &&
               <DisplayValue dividerHeight='1px' title={t('Amount')} topDivider={false}>
-                <Grid alignItems='center' container justifyContent='center' item sx={{ height: '42px' }}>
+                <Grid alignItems='center' container item justifyContent='center' sx={{ height: '42px' }}>
                   <ShowValue
                     unit={token}
                     value={inputs.extraInfo.amount}
@@ -129,24 +129,31 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
               </DisplayValue>
             }
             <DisplayValue dividerHeight='1px' title={t('Fee')}>
-              <Grid alignItems='center' container item sx={{ height: '42px' }}>
-                <ShowBalance
-                  api={api}
-                  balance={estimatedFee}
-                  decimalPoint={4}
-                />
+              <Grid alignItems='center' container item sx={{ fontSize: 'large', height: '42px' }}>
+                <ShowValue height={16} value={estimatedFee?.toHuman()} width='150px' />
               </Grid>
             </DisplayValue>
             {inputs?.extraInfo?.availableBalanceAfter &&
-            <DisplayValue dividerHeight='1px' title={t('Available Balance After')}>
-              <Grid alignItems='center' container item sx={{ height: '42px' }}>
-                <ShowBalance
-                  api={api}
-                  balance={inputs.extraInfo.availableBalanceAfter}
-                  decimalPoint={4}
-                />
-              </Grid>
-            </DisplayValue>
+              <DisplayValue dividerHeight='1px' title={t('Available Balance After')}>
+                <Grid alignItems='center' container item sx={{ height: '42px' }}>
+                  <ShowBalance
+                    api={api}
+                    balance={inputs.extraInfo.availableBalanceAfter}
+                    decimalPoint={4}
+                  />
+                </Grid>
+              </DisplayValue>
+            }
+            {inputs?.extraInfo?.totalStakeAfter &&
+              <DisplayValue dividerHeight='1px' title={t('Total Stake After')}>
+                <Grid alignItems='center' container item sx={{ height: '42px' }}>
+                  <ShowBalance
+                    api={api}
+                    balance={inputs.extraInfo.totalStakeAfter}
+                    decimalPoint={4}
+                  />
+                </Grid>
+              </DisplayValue>
             }
           </Container>
           <Grid container item sx={{ bottom: '10px', left: '4%', position: 'absolute', width: '92%' }}>

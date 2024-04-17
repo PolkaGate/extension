@@ -22,6 +22,7 @@ import PoolOptionsBig from '../partials/PoolOptionsBig';
 import { STEPS } from '..';
 import PoolStaked from './PoolStaked';
 import Stake from './stake';
+import Unstake from './unstake';
 
 export const MODAL_IDS = {
   NONE: 0,
@@ -105,6 +106,14 @@ export default function Index (): React.ReactElement {
       }
       {showId === MODAL_IDS.STAKE_EXTRA &&
         <Stake
+          address={address}
+          setRefresh={setRefresh}
+          setShow={setShow}
+          show={true}
+        />
+      }
+      {showId === MODAL_IDS.UNSTAKE &&
+        <Unstake
           address={address}
           setRefresh={setRefresh}
           setShow={setShow}
