@@ -38,7 +38,7 @@ interface Props {
   pool: MyPoolInfo | null | undefined;
 }
 
-export default function PoolStaked ({ address, balances, pool, setShow }: Props): React.ReactElement {
+export default function PoolStaked({ address, balances, pool, setShow }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain } = useInfo(address);
@@ -102,10 +102,10 @@ export default function PoolStaked ({ address, balances, pool, setShow }: Props)
   }, [setShow, staked]);
 
   const onStakeOrExtra = useCallback(() => {
-    staked && !staked.isZero()
-      ? setShow(MODAL_IDS.STAKE_EXTRA)
-      : setShow(MODAL_IDS.STAKE);
-  }, [setShow, staked]);
+    staked?.isZero() && redeemable?.isZero() && unlockingAmount?.isZero()
+      ? setShow(MODAL_IDS.STAKE)
+      : setShow(MODAL_IDS.STAKE_EXTRA);
+  }, [redeemable, setShow, staked, unlockingAmount]);
 
   const goToRewardWithdraw = useCallback(() => {
     claimable && !claimable?.isZero() && setShow(MODAL_IDS.WITHDRAW_REWARDS);
@@ -170,7 +170,8 @@ export default function PoolStaked ({ address, balances, pool, setShow }: Props)
             <DisplayBalance
               actions={[staked && !staked.isZero() ? t('stake extra') : t('stake')]}
               address={address}
-              amount={getValue('available', balances)}
+              /** to disable action button until fetching has done */
+              amount={!staked || !redeemable || !unlockingAmount ? undefined : getValue('available', balances)}
               icons={[faPlus]}
               onClicks={[onStakeOrExtra]}
               title={t('Available to stake')}
