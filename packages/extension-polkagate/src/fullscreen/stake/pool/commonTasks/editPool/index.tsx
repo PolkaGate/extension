@@ -110,6 +110,7 @@ export default function ManageEditPool ({ address, api, chain, onClose, pool, se
           {step === STEPS.CONFIRM && txInfo &&
             <Confirmation
               handleClose={onClose}
+              popupHeight={670}
               txInfo={txInfo}
             >
               <TxDetail

@@ -167,6 +167,7 @@ export default function SetState ({ address, api, chain, formatted, onClose, poo
         {txInfo && step === STEPS.CONFIRM && (
           <Confirmation
             handleClose={onClose}
+            popupHeight={550}
             txInfo={txInfo}
           >
             <>
