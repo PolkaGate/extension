@@ -12,6 +12,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { BN, BN_ZERO } from '@polkadot/util';
+import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
+
 
 import { PoolStakingIcon } from '../../../components';
 import { useBalances, useFullscreen, useInfo, usePool, useTranslation, useUnSupportedNetwork } from '../../../hooks';
@@ -25,6 +27,7 @@ import { STEPS } from '..';
 import PoolStaked from './PoolStaked';
 import WithdrawRedeem from './redeem';
 import Stake from './stake';
+import StakeRewards from './stakeRewards';
 import Unstake from './unstake';
 
 interface SessionIfo {
@@ -189,6 +192,15 @@ export default function Index(): React.ReactElement {
           redeemable={redeemable}
           setRefresh={setRefresh}
           setShow={setShow}
+    />
+      }
+      {showId === MODAL_IDS.STAKE_REWARDS &&
+        <StakeRewards
+          address={address}
+          pool={pool}
+          setRefresh={setRefresh}
+          setShow={setShow}
+          show={true}
         />
       }
       {/* <Info
@@ -197,42 +209,6 @@ export default function Index(): React.ReactElement {
         setShowInfo={setShowInfo}
         showInfo={showInfo}
       /> */}
-      {/* {showRewardStake && formatted && api && claimable && staked && chain &&
-        <RewardsStakeReview
-          address={address}
-          amount={claimable}
-          api={api}
-          chain={chain}
-          formatted={formatted}
-          setRefresh={setRefresh}
-          setShow={setShowRewardStake}
-          show={showRewardStake}
-          staked={staked}
-        />} */}
-      {/* {showRewardWithdraw && formatted && api && getValue('available', balances) && chain && claimable &&
-        <RewardsWithdrawReview
-          address={address}
-          amount={claimable}
-          api={api}
-          available={getValue('available', balances)}
-          chain={chain}
-          formatted={formatted}
-          setRefresh={setRefresh}
-          setShow={setShowRewardWithdraw}
-          show={showRewardWithdraw}
-        />} */}
-      {/* {showRedeemableWithdraw && formatted && api && getValue('available', balances) && chain && redeemable && !redeemable?.isZero() &&
-        <RedeemableWithdrawReview
-          address={address}
-          amount={redeemable}
-          api={api}
-          available={getValue('available', balances)}
-          chain={chain}
-          formatted={formatted}
-          setRefresh={setRefresh}
-          setShow={setShowRedeemableWithdraw}
-          show={showRedeemableWithdraw}
-        />} */}
     </Grid>
   );
 }

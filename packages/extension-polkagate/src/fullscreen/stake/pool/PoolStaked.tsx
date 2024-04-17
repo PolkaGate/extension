@@ -7,6 +7,7 @@ import '@vaadin/icons';
 
 import type { BalancesInfo, MyPoolInfo } from '../../../util/types';
 
+import { faSquarePlus } from '@fortawesome/free-regular-svg-icons';
 import { faArrowCircleDown, faCircleDown, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
@@ -59,7 +60,7 @@ export default function PoolStaked ({ address, balances, pool, redeemable, setSh
     claimable && !claimable?.isZero() && setShow(MODAL_IDS.WITHDRAW_REWARDS);
   }, [claimable, setShow]);
 
-  const goToRewardStake = useCallback(() => {
+  const onStakeRewards = useCallback(() => {
     claimable && !claimable?.isZero() && setShow(MODAL_IDS.STAKE_REWARDS);
   }, [claimable, setShow]);
 
@@ -96,8 +97,8 @@ export default function PoolStaked ({ address, balances, pool, redeemable, setSh
               actions={[t('stake'), t('withdraw')]}
               address={address}
               amount={claimable}
-              icons={[faPlus, faCircleDown]}
-              onClicks={[goToRewardStake, goToRewardWithdraw]}
+              icons={[faSquarePlus, faCircleDown]}
+              onClicks={[onStakeRewards, goToRewardWithdraw]}
               title={t('Rewards')}
             />
             <DisplayBalance
