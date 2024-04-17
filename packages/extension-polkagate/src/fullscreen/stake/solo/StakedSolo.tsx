@@ -11,24 +11,15 @@ import { useParams } from 'react-router';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { useBalances, useFullscreen, useInfo, useStakingAccount, useStakingRewardDestinationAddress, useStakingRewards, useTranslation, useUnSupportedNetwork } from '../../../hooks';
-import { FULLSCREEN_WIDTH, STAKING_CHAINS } from '../../../util/constants';
+import { useBalances, useInfo, useStakingAccount, useStakingRewardDestinationAddress, useStakingRewards, useTranslation, useUnSupportedNetwork } from '../../../hooks';
+import { STAKING_CHAINS } from '../../../util/constants';
 import { openOrFocusTab } from '../../accountDetailsFullScreen/components/CommonTasks';
-import { FullScreenHeader } from '../../governance/FullScreenHeader';
 import { Title } from '../../sendFund/InputPage';
-import Entry from '../Entry';
 import DisplayBalance from '../partials/DisplayBalance';
-import { STEPS, StepsType } from '..';
 import ActiveValidators from './partials/ActiveValidators';
 import CommonTasks from './partials/CommonTasks';
 import Info from './partials/Info';
 import RewardsChart from './partials/RewardsChart';
-import FastUnstake from './fastUnstake';
-import Pending from './pending';
-import Redeem from './redeem';
-import Restake from './restake';
-import StakeMore from './stakeExtra';
-import Unstake from './unstake';
 import { MODAL_IDS } from '.';
 
 interface SessionIfo {

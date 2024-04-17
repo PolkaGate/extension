@@ -6,7 +6,7 @@
 import '@vaadin/icons';
 
 import type { ApiPromise } from '@polkadot/api';
-import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
+import type { PoolStakingConsts, StakingConsts, TxInfo } from '../../../util/types';
 
 import { faArrowCircleDown, faCircleDown, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Grid, useTheme } from '@mui/material';
@@ -20,13 +20,17 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { PoolStakingIcon } from '../../../components';
 import { useBalances, useFullscreen, useInfo, usePool, usePoolConsts, useStakingConsts, useTranslation, useUnSupportedNetwork } from '../../../hooks';
-import { STAKING_CHAINS } from '../../../util/constants';
+import { FULLSCREEN_WIDTH, STAKING_CHAINS } from '../../../util/constants';
 import { openOrFocusTab } from '../../accountDetailsFullScreen/components/CommonTasks';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
 import { Title } from '../../sendFund/InputPage';
+import Entry, { Inputs } from '../Entry';
 import DisplayBalance from '../partials/DisplayBalance';
+import PoolOptionsBig from '../partials/PoolOptionsBig';
+import { STEPS } from '..';
 import ClaimedRewardsChart from './partials/ClaimedRewardsChart';
 import PoolCommonTasks from './partials/PoolCommonTasks';
+import Stake from './stake';
 
 interface SessionIfo {
   eraLength: number;
@@ -40,7 +44,17 @@ interface State {
   poolConsts?: PoolStakingConsts;
 }
 
-export default function Index(): React.ReactElement {
+export const MODAL_IDS = {
+  NONE: 0,
+  UNSTAKE: 1,
+  STAKE_REWARDS: 2,
+  WITHDRAW_REWARDS: 3,
+  REDEEM: 4,
+  STAKE: 5,
+  STAKE_EXTRA: 6
+};
+
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -72,6 +86,10 @@ export default function Index(): React.ReactElement {
   const [showRewardWithdraw, setShowRewardWithdraw] = useState<boolean>(false);
   const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
   const [currentEraIndex, setCurrentEraIndex] = useState<number | undefined>(state?.currentEraIndex);
+  const [showId, setShow] = useState<number>(MODAL_IDS.NONE);
+  const [step, setStep] = useState<number>(STEPS.INDEX);
+  const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
+  const [inputs, setInputs] = useState<Inputs>();
 
   useEffect(() => {
     api && api.derive.session?.progress().then((info) => {
@@ -131,6 +149,12 @@ export default function Index(): React.ReactElement {
     });
   }, [staked, history, address, api, balances, claimable, consts, pathname, pool, redeemable, stakingConsts, unlockingAmount]);
 
+  const onStakeOrExtra = useCallback(() => {
+    staked && !staked.isZero()
+      ? setShow(MODAL_IDS.STAKE_EXTRA)
+      : setShow(MODAL_IDS.STAKE);
+  }, [staked]);
+
   const goToRewardWithdraw = useCallback(() => {
     claimable && !claimable?.isZero() && setShowRewardWithdraw(true);
   }, [claimable]);
@@ -143,91 +167,139 @@ export default function Index(): React.ReactElement {
     redeemable && !redeemable?.isZero() && setShowRedeemableWithdraw(true);
   }, [redeemable]);
 
-  const onBackClick = useCallback(() => {
+  const onBack = useCallback(() => {
     openOrFocusTab(`/accountfs/${address}/0`, true);
   }, [address]);
+
+  const getTitle = useCallback((step): string => {
+    switch (step) {
+      case STEPS.JOIN_POOL:
+        return t('Join Pool');
+      case STEPS.CREATE_POOL:
+        return t('Create Pool');
+      case STEPS.CREATE_REVIEW:
+      case STEPS.JOIN_REVIEW:
+        return t('Review');
+      case STEPS.JOIN_CONFIRM:
+      case STEPS.CREATE_CONFIRM:
+        return t('Confirm');
+      default:
+        return t('Pool Staking');
+    }
+  }, [t]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='stake' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', px: '5%' }}>
-        <Title
-          logo={
-            <PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />
-          }
-          onBackClick={onBackClick}
-          text={t('Staked in Pool')}
-        />
-        <Grid container item justifyContent='space-between' mb='15px'>
-          <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 320px - 3%)'>
-            <Grid container sx={{ overflowY: 'scroll' }}>
-              <DisplayBalance
-                actions={[t('unstake')]}
-                address={address}
-                amount={staked}
-                icons={[faMinus]}
-                marginTop='0px'
-                onClicks={[onUnstake]}
-                title={t('Staked')}
-              />
-              <DisplayBalance
-                actions={[t('stake'), t('withdraw')]}
-                address={address}
-                amount={claimable}
-                icons={[faPlus, faCircleDown]}
-                onClicks={[goToRewardStake, goToRewardWithdraw]}
-                title={t('Rewards')}
-              />
-              <DisplayBalance
-                actions={[t('withdraw')]}
-                address={address}
-                amount={redeemable}
-                icons={[faArrowCircleDown]}
-                onClicks={[goToRedeemableWithdraw]}
-                title={t('Redeemable')}
-              />
-              <DisplayBalance
-                address={address}
-                amount={unlockingAmount}
-                isUnstaking
-                title={t('Unstaking')}
-                toBeReleased={toBeReleased}
-              />
-              <DisplayBalance
-                actions={[t('stake')]}
-                address={address}
-                amount={getValue('available', balances)}
-                icons={[faPlus]}
-                onClicks={[onUnstake]} // TODO
-                title={t('Available to stake')}
-              />
-              {pool &&
-                <ShowPool
-                  api={api}
-                  chain={chain}
-                  label={t('Pool')}
-                  labelPosition='center'
-                  mode='Default'
-                  pool={pool}
-                  showInfo
-                  style={{
-                    m: '20px auto 0',
-                    width: '100%'
-                  }}
+      {showId !== MODAL_IDS.STAKE &&
+        <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', px: '5%' }}>
+          <Title
+            logo={
+              <PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />
+            }
+            onBackClick={onBack}
+            text={t('Staked in Pool')}
+          />
+          <Grid container item justifyContent='space-between' mb='15px'>
+            <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 320px - 3%)'>
+              <Grid container sx={{ overflowY: 'scroll' }}>
+                <DisplayBalance
+                  actions={[t('unstake')]}
+                  address={address}
+                  amount={staked}
+                  icons={[faMinus]}
+                  marginTop='0px'
+                  onClicks={[onUnstake]}
+                  title={t('Staked')}
                 />
-              }
+                <DisplayBalance
+                  actions={[t('stake'), t('withdraw')]}
+                  address={address}
+                  amount={claimable}
+                  icons={[faPlus, faCircleDown]}
+                  onClicks={[goToRewardStake, goToRewardWithdraw]}
+                  title={t('Rewards')}
+                />
+                <DisplayBalance
+                  actions={[t('withdraw')]}
+                  address={address}
+                  amount={redeemable}
+                  icons={[faArrowCircleDown]}
+                  onClicks={[goToRedeemableWithdraw]}
+                  title={t('Redeemable')}
+                />
+                <DisplayBalance
+                  address={address}
+                  amount={unlockingAmount}
+                  isUnstaking
+                  title={t('Unstaking')}
+                  toBeReleased={toBeReleased}
+                />
+                <DisplayBalance
+                  actions={[staked && !staked.isZero() ? t('stake extra') : t('stake')]}
+                  address={address}
+                  amount={getValue('available', balances)}
+                  icons={[faPlus]}
+                  onClicks={[onStakeOrExtra]}
+                  title={t('Available to stake')}
+                />
+                {pool &&
+                  <ShowPool
+                    api={api}
+                    chain={chain}
+                    label={t('Pool')}
+                    labelPosition='center'
+                    mode='Default'
+                    pool={pool}
+                    showInfo
+                    style={{
+                      m: '20px auto 0',
+                      width: '100%'
+                    }}
+                  />
+                }
+              </Grid>
+            </Grid>
+            <Grid container direction='column' gap='15px' item width='320px'>
+              <ClaimedRewardsChart
+                address={address}
+              />
+              <PoolCommonTasks
+                address={address}
+              />
             </Grid>
           </Grid>
-          <Grid container direction='column' gap='15px' item width='320px'>
-            <ClaimedRewardsChart
-              address={address}
-            />
-            <PoolCommonTasks
-              address={address}
-            />
-          </Grid>
         </Grid>
-      </Grid>
+      }
+      {showId === MODAL_IDS.STAKE &&
+        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '6%' }}>
+          <Title
+            logo={<PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />}
+            text={getTitle(step)}
+          />
+          {step === STEPS.INDEX
+            ? <PoolOptionsBig
+              address={address}
+              setStep={setStep}
+            />
+            : <Entry
+              onBack={onBack}
+              setStep={setStep}
+              setTxInfo={setTxInfo}
+              step={step}
+              txInfo={txInfo}
+              />
+          }
+        </Grid>
+      }
+      {showId === MODAL_IDS.STAKE_EXTRA &&
+      <Stake
+        address={address}
+        setRefresh={setRefresh}
+        setShow={setShow}
+        show={true}
+      />
+      }
       {/* <Info
         address={address}
         info={consts}

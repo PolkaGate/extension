@@ -10,8 +10,8 @@ import React, { useCallback } from 'react';
 
 import { useTranslation } from '../../../components/translate';
 import { useInfo, usePoolConsts } from '../../../hooks';
-import StakingSubOption from './StakingSubOption';
 import { STEPS } from '..';
+import StakingSubOption from './StakingSubOption';
 
 interface Props {
   address: string;
@@ -25,11 +25,11 @@ export default function PoolOptionsSmall({ address, setStep }: Props): React.Rea
 
   const poolConsts = usePoolConsts(address);
 
-  const onJoinPool = useCallback(() => {
+  const onJoin = useCallback(() => {
     setStep(STEPS.JOIN_POOL);
   }, [setStep]);
 
-  const onCreatePool = useCallback(() => {
+  const onCreate = useCallback(() => {
     setStep(STEPS.CREATE_POOL);
   }, [setStep]);
 
@@ -46,7 +46,7 @@ export default function PoolOptionsSmall({ address, setStep }: Props): React.Rea
             icon={faRightToBracket}
           />
         }
-        onClick={onJoinPool}
+        onClick={onJoin}
         style={{
           my: '5px',
           pr: '6%',
@@ -65,7 +65,7 @@ export default function PoolOptionsSmall({ address, setStep }: Props): React.Rea
             icon={faSquarePlus}
           />
         }
-        onClick={onCreatePool}
+        onClick={onCreate}
         style={{
           my: '5px',
           pr: '6%',
