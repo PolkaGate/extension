@@ -121,7 +121,7 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
                 icon={icons[index]}
                 style={{ height: '30px', marginBottom: '-4px', stroke: `${theme.palette.text.primary}`, strokeWidth: 5, width: '20px' }}
               />
-              <Typography color={noValueToAct? theme.palette.text.disabled : theme.palette.secondary.light} fontSize='18px' fontWeight={400}>
+              <Typography color={noValueToAct ? theme.palette.text.disabled : theme.palette.secondary.light} fontSize='18px' fontWeight={400}>
                 {actions[index]}
               </Typography>
             </Grid>

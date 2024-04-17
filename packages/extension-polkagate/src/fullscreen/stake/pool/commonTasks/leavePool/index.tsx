@@ -175,10 +175,7 @@ export default function LeavePool({ address, onClose, pool, setRefresh }: Props)
           </>
         }
         {step === STEPS.WAIT_SCREEN &&
-          <WaitScreen
-            defaultText={t('Checking your staking status...')}
-            showCube
-          />
+          <WaitScreen />
         }
         {txInfo && step === STEPS.CONFIRM && (
           <Confirmation

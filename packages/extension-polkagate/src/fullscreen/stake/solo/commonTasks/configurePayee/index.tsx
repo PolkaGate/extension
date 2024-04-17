@@ -37,16 +37,16 @@ export const STEPS = {
   PROXY: 100
 };
 
-export const ModalTitle = ({ icon, onCancel, setStep, step, text }: {text: string, onCancel: () => void, setStep: React.Dispatch<React.SetStateAction<number>>, icon: IconDefinition, step: number}): React.ReactElement<Props> => {
+export const ModalTitle = ({ icon, onCancel, setStep, step, text }: { text: string, onCancel: () => void, setStep?: React.Dispatch<React.SetStateAction<number>>, icon: IconDefinition, step: number }): React.ReactElement<Props> => {
   const theme = useTheme();
   const { t } = useTranslation();
 
   const closeProxy = useCallback(
-    () => setStep(STEPS.REVIEW)
+    () => setStep && setStep(STEPS.REVIEW)
     , [setStep]);
 
   const onClose = useCallback(() => {
-    setStep(STEPS.INDEX);
+    setStep && setStep(STEPS.INDEX);
   }, [setStep]);
 
   return (
@@ -81,7 +81,7 @@ export const ModalTitle = ({ icon, onCancel, setStep, step, text }: {text: strin
   );
 };
 
-export default function ConfigurePayee ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function ConfigurePayee({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);
@@ -242,7 +242,7 @@ export default function ConfigurePayee ({ address, setRefresh, setShow, show }: 
                   <FormLabel sx={{ '&.Mui-focused': { color: 'text.primary' }, color: 'text.primary', fontSize: '16px' }}>
                     {t('Reward destination')}
                   </FormLabel>
-                  { rewardDestinationValue || optionDefaultVal
+                  {rewardDestinationValue || optionDefaultVal
                     ? <RadioGroup defaultValue={rewardDestinationValue || optionDefaultVal} onChange={onSelectionMethodChange}>
                       <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main' }} value='Staked' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Add to staked amount')}</Typography>} />
                       <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main', py: '2px' }} value='Others' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Transfer to a specific account')}</Typography>} />

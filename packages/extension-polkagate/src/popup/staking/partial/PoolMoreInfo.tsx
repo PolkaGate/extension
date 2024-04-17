@@ -45,6 +45,7 @@ interface CollapseProps {
 export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const isExtensionPopup = useIsExtensionPopup();
+  
   const { address } = useParams<FormattedAddressState>();
   const formatted = useFormatted(address);
   const poolToShow = usePool(address, poolId, false, pool);

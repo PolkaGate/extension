@@ -6,6 +6,7 @@
 /**
  * @description to show rewards chart
  * */
+import { faChartSimple } from '@fortawesome/free-solid-svg-icons';
 import { ExpandMore as ExpandMoreIcon, KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary, Divider, Grid, Typography, useTheme } from '@mui/material';
 import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
@@ -14,10 +15,12 @@ import { Bar } from 'react-chartjs-2';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { ModalTitle } from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/commonTasks/configurePayee';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ChainLogo, Identity, PButton, Popup, Progress } from '../../../../components';
-import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../../hooks';
+import { useApi, useChain, useChainName, useDecimal, useIsExtensionPopup, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
 import getRewardsSlashes from '../../../../util/api/getRewardsSlashes';
 import { MAX_REWARDS_TO_SHOW } from '../../../../util/constants';
@@ -38,8 +41,54 @@ const MAX_REWARDS_INFO_TO_SHOW = 50;
 interface ArrowsProps {
   onPrevious: () => void;
   onNext: () => void;
+  pageIndex: number;
+  dataToShow: [string[], string[]][] | undefined;
+  nextPrevWeek: (next: boolean) => string | undefined;
 }
 
+interface ChartBodyProps extends ArrowsProps {
+  data: {
+    datasets: {
+      backgroundColor: string;
+      barThickness: number;
+      borderColor: string;
+      borderRadius: number;
+      borderWidth: number;
+      data: string[] | undefined;
+      label: string | undefined;
+    }[];
+    labels: string[] | undefined;
+  };
+  options: {
+    aspectRatio: number;
+    plugins: {
+      legend: {
+        display: boolean;
+      };
+      tooltip: {
+        backgroundColor: string;
+        bodyColor: string;
+        bodyFont: {
+          displayColors: boolean;
+          family: string;
+          size: number;
+          weight: string;
+        };
+
+        displayColors: boolean;
+        titleColor: string;
+      };
+    };
+    responsive: boolean;
+  };
+  descSortedRewards: RewardInfo[] | undefined;
+  handleAccordionChange: (panel: number) => (event: React.SyntheticEvent, isExpanded: boolean) => void;
+  expanded: number;
+  api: ApiPromise | undefined;
+  decimal: number | undefined;
+  chain: Chain | null | undefined;
+  token: string | undefined;
+}
 interface Props {
   api?: ApiPromise | undefined;
   chain?: Chain;
@@ -52,8 +101,111 @@ interface Props {
   show: boolean;
 }
 
-export default function RewardsDetail({ address, api, chain, chainName, decimal, rewardDestinationAddress, setShow, show, token }: Props): React.ReactElement {
+const Arrows = ({ dataToShow, nextPrevWeek, onNext, onPrevious, pageIndex }: ArrowsProps) => {
   const { t } = useTranslation();
+
+  return (
+    <Grid container justifyContent='space-between' m='auto' width='96%'>
+      <Grid alignItems='center' container item justifyContent='flex-start' maxWidth='48%' onClick={onPrevious} sx={{ cursor: pageIndex === dataToShow?.length - 1 ? 'default' : 'pointer' }} width='fit_content'>
+        <KeyboardDoubleArrowLeftIcon sx={{ color: pageIndex === dataToShow?.length - 1 ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
+        <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '3px', mr: '7px', my: 'auto', width: '1px' }} />
+        <Grid container direction='column' item xs={7}>
+          <Typography color={pageIndex === dataToShow?.length - 1 ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t('Previous')}</Typography>
+          <Typography color={pageIndex === dataToShow?.length - 1 ? 'secondary.contrastText' : 'text.primary'} fontSize='12px' fontWeight={300}>{nextPrevWeek(false)}</Typography>
+        </Grid>
+      </Grid>
+      <Grid alignItems='center' container item justifyContent='flex-end' maxWidth='48%' onClick={onNext} sx={{ cursor: pageIndex === 0 ? 'default' : 'pointer' }} width='fit_content'>
+        <Grid container direction='column' item textAlign='right' xs={7}>
+          <Typography color={pageIndex === 0 ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t('Next')}</Typography>
+          <Typography color={pageIndex === 0 ? 'secondary.contrastText' : 'text.primary'} fontSize='12px' fontWeight={300}>{nextPrevWeek(true)}</Typography>
+        </Grid>
+        <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '7px', mr: '3px', my: 'auto', width: '1px' }} />
+        <KeyboardDoubleArrowRightIcon sx={{ color: pageIndex === 0 ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
+      </Grid>
+    </Grid>
+  );
+};
+
+const ChartBody = ({ api, chain, data, dataToShow, decimal, descSortedRewards, expanded, handleAccordionChange, nextPrevWeek, onNext, onPrevious, options, pageIndex, token }: ChartBodyProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <Arrows
+        dataToShow={dataToShow}
+        nextPrevWeek={nextPrevWeek}
+        onNext={onNext}
+        onPrevious={onPrevious}
+        pageIndex={pageIndex}
+      />
+      <Grid item sx={{ p: '5px 10px 20px' }} xs={12}>
+        <Bar data={data} options={options} />
+      </Grid>
+      <Grid container sx={{ borderBottom: '2px solid', borderBottomColor: 'secondary.light', m: 'auto', width: '92%' }}>
+        <Typography fontSize='18px' fontWeight={400} width='37%'>
+          {t('Date')}
+        </Typography>
+        <Typography fontSize='18px' fontWeight={400} width='18%'>
+          {t('Era')}
+        </Typography>
+        <Typography fontSize='18px' fontWeight={400} width='45%'>
+          {t('Reward')}
+        </Typography>
+      </Grid>
+      <Grid container sx={{ '> .MuiPaper-root': { backgroundImage: 'none', boxShadow: 'none' }, '> .MuiPaper-root::before': { bgcolor: 'transparent' }, maxHeight: parent.innerHeight - 450, overflowX: 'hidden', overflowY: 'scroll' }}>
+        {descSortedRewards?.length
+          ? descSortedRewards.slice(0, MAX_REWARDS_INFO_TO_SHOW).map((d, index: number) =>
+            <>
+              <Accordion disableGutters expanded={expanded === index} key={index} onChange={handleAccordionChange(index)} sx={{ bgcolor: 'transparent', flexGrow: 1, fontSize: 12 }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: 'secondary.light', fontSize: '35px' }} />} sx={{ height: '35px', m: 'auto', minHeight: '35px' }}>
+                  <Grid container item key={index} sx={{ textAlign: 'left' }}>
+                    <Grid item width='40%'>
+                      {d.timeStamp ? new Date(d.timeStamp * 1000).toDateString() : d.era}
+                    </Grid>
+                    <Grid item width='20%'>
+                      {d.era}
+                    </Grid>
+                    <Grid item width='40%'>
+                      {amountToHuman(d.amount, decimal, 9)} {` ${token}`}
+                    </Grid>
+                  </Grid>
+                </AccordionSummary>
+                <AccordionDetails sx={{ p: 0 }}>
+                  <Grid alignItems='center' container height='50px' m='auto' width='92%'>
+                    <Typography fontSize='14px' fontWeight={400} textAlign='center' width='35%'>
+                      {t('Received from')}:
+                    </Typography>
+                    <Grid item width='65%'>
+                      {chain && <Identity
+                        address={d.validator}
+                        api={api}
+                        chain={chain}
+                        formatted={d.validator}
+                        identiconSize={30}
+                        showSocial={false}
+                        style={{ fontSize: '14px' }}
+                        withShortAddress
+                      />}
+                    </Grid>
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
+              <Divider sx={{ bgcolor: 'secondary.light', height: '1.5px', m: 'auto', width: '92%' }} />
+            </>
+          )
+          : <Typography fontSize='18px' fontWeight={400} lineHeight='40px' m='30px auto 0' textAlign='center' width='92%'>
+            {t('No reward this week!')}
+          </Typography>
+        }
+      </Grid>
+    </>
+  );
+};
+
+export default function RewardsDetail ({ address, api, chain, chainName, decimal, rewardDestinationAddress, setShow, show, token }: Props): React.ReactElement {
+  const { t } = useTranslation();
+  const isExtensionPopup = useIsExtensionPopup();
+
   const theme = useTheme();
   const _api = useApi(address, api);
   const _chain = useChain(address, chain);
@@ -352,112 +504,81 @@ export default function RewardsDetail({ address, api, chain, chainName, decimal,
     dataToShow && pageIndex !== (dataToShow.length - 1) && setPageIndex(pageIndex + 1);
   }, [dataToShow, pageIndex]);
 
-  const Arrows = ({ onNext, onPrevious }: ArrowsProps) => (
-    <Grid container justifyContent='space-between' m='auto' width='96%'>
-      <Grid alignItems='center' container item justifyContent='flex-start' maxWidth='48%' onClick={onPrevious} sx={{ cursor: pageIndex === dataToShow?.length - 1 ? 'default' : 'pointer' }} width='fit_content'>
-        <KeyboardDoubleArrowLeftIcon sx={{ color: pageIndex === dataToShow?.length - 1 ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
-        <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '3px', mr: '7px', my: 'auto', width: '1px' }} />
-        <Grid container direction='column' item xs={7}>
-          <Typography color={pageIndex === dataToShow?.length - 1 ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t<string>('Previous')}</Typography>
-          <Typography color={pageIndex === dataToShow?.length - 1 ? 'secondary.contrastText' : 'text.primay'} fontSize='12px' fontWeight={300}>{nextPrevWeek(false)}</Typography>
-        </Grid>
-      </Grid>
-      <Grid alignItems='center' container item justifyContent='flex-end' maxWidth='48%' onClick={onNext} sx={{ cursor: pageIndex === 0 ? 'default' : 'pointer' }} width='fit_content'>
-        <Grid container direction='column' item textAlign='right' xs={7}>
-          <Typography color={pageIndex === 0 ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t<string>('Next')}</Typography>
-          <Typography color={pageIndex === 0 ? 'secondary.contrastText' : 'text.primary'} fontSize='12px' fontWeight={300}>{nextPrevWeek(true)}</Typography>
-        </Grid>
-        <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '7px', mr: '3px', my: 'auto', width: '1px' }} />
-        <KeyboardDoubleArrowRightIcon sx={{ color: pageIndex === 0 ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
-      </Grid>
-    </Grid>
-  );
-
   return (
-    <Popup show={show}>
-      <HeaderBrand
-        onBackClick={backToStakingHome}
-        shortBorder
-        showBackArrow
-        showClose
-        text={t<string>('Received Rewards')}
-      />
-      {descSortedRewards && _decimal && mostPrize
-        ? (
-          <>
-            <Grid container justifyContent='center'>
-              <Grid item>
-                <ChainLogo genesisHash={_chain?.genesisHash} size={31} />
-              </Grid>
-              <Typography fontSize='20px' fontWeight={400} lineHeight='35px' pl='8px'>
-                {_token}
-              </Typography>
-            </Grid>
-            <Arrows onNext={onNext} onPrevious={onPrevious} />
-            <Grid item sx={{ p: '5px 10px 20px' }} xs={12}>
-              <Bar data={data} options={options} />
-            </Grid>
-            <Grid container sx={{ borderBottom: '2px solid', borderBottomColor: 'secondary.light', m: 'auto', width: '92%' }}>
-              <Typography fontSize='18px' fontWeight={400} width='37%'>
-                {t('Date')}
-              </Typography>
-              <Typography fontSize='18px' fontWeight={400} width='18%'>
-                {t('Era')}
-              </Typography>
-              <Typography fontSize='18px' fontWeight={400} width='45%'>
-                {t('Reward')}
-              </Typography>
-            </Grid>
-            <Grid container sx={{ '> .MuiPaper-root': { backgroundImage: 'none', boxShadow: 'none' }, '> .MuiPaper-root::before': { bgcolor: 'transparent' }, maxHeight: parent.innerHeight - 450, overflowX: 'hidden', overflowY: 'scroll' }}>
-              {descSortedRewards.length
-                ? descSortedRewards.slice(0, MAX_REWARDS_INFO_TO_SHOW).map((d, index: number) =>
-                  <>
-                    <Accordion disableGutters expanded={expanded === index} key={index} onChange={handleAccordionChange(index)} sx={{ bgcolor: 'transparent', flexGrow: 1, fontSize: 12 }}>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: 'secondary.light', fontSize: '35px' }} />} sx={{ height: '35px', m: 'auto', minHeight: '35px' }}>
-                        <Grid container item key={index} sx={{ textAlign: 'left' }}>
-                          <Grid item width='40%'>
-                            {d.timeStamp ? new Date(d.timeStamp * 1000).toDateString() : d.era}
-                          </Grid>
-                          <Grid item width='20%'>
-                            {d.era}
-                          </Grid>
-                          <Grid item width='40%'>
-                            {amountToHuman(d.amount, _decimal, 9)} {` ${_token}`}
-                          </Grid>
-                        </Grid>
-                      </AccordionSummary>
-                      <AccordionDetails sx={{ p: 0 }}>
-                        <Grid alignItems='center' container height='50px' m='auto' width='92%'>
-                          <Typography fontSize='14px' fontWeight={400} textAlign='center' width='35%'>
-                            {t('Received from')}:
-                          </Typography>
-                          <Grid item width='65%'>
-                            <Identity
-                              address={d.validator}
-                              api={_api}
-                              chain={_chain}
-                              formatted={d.validator}
-                              identiconSize={30}
-                              showSocial={false}
-                              style={{ fontSize: '14px' }}
-                              withShortAddress
-                            />
-                          </Grid>
-                        </Grid>
-                      </AccordionDetails>
-                    </Accordion>
-                    <Divider sx={{ bgcolor: 'secondary.light', height: '1.5px', m: 'auto', width: '92%' }} />
-                  </>
-                )
-                : <Typography fontSize='18px' fontWeight={400} lineHeight='40px' m='30px auto 0' textAlign='center' width='92%'>
-                  {t('No reward this week!')}
+
+    <>
+      {isExtensionPopup
+        ? <Popup show={show}>
+          <HeaderBrand
+            onBackClick={backToStakingHome}
+            shortBorder
+            showBackArrow
+            showClose
+            text={t('Received Rewards')}
+          />
+          {descSortedRewards && _decimal && mostPrize
+            ? <>
+              <Grid container justifyContent='center'>
+                <Grid item>
+                  <ChainLogo genesisHash={_chain?.genesisHash} size={31} />
+                </Grid>
+                <Typography fontSize='20px' fontWeight={400} lineHeight='35px' pl='8px'>
+                  {_token}
                 </Typography>
-              }
-            </Grid>
-            <PButton _onClick={backToStakingHome} text={t<string>('Back')} />
-          </>)
-        : <Progress pt='120px' size={125} title={t<string>('Loading rewards...')} />
+              </Grid>
+              <ChartBody
+                api={_api}
+                chain={_chain}
+                data={data}
+                dataToShow={dataToShow}
+                decimal={_decimal}
+                descSortedRewards={descSortedRewards}
+                expanded={expanded}
+                handleAccordionChange={handleAccordionChange}
+                nextPrevWeek={nextPrevWeek}
+                onNext={onNext}
+                onPrevious={onPrevious}
+                options={options}
+                pageIndex={pageIndex}
+                token={_token}
+              />
+              <PButton _onClick={backToStakingHome} text={t('Back')} />
+            </>
+            : <Progress pt='120px' size={125} title={t('Loading rewards...')} />
+          }
+        </Popup>
+        : <DraggableModal minHeight={650} onClose={backToStakingHome} open={show}>
+          {descSortedRewards && _decimal && mostPrize
+            ? <>
+              <ModalTitle
+                icon={faChartSimple}
+                onCancel={backToStakingHome}
+                step={1}
+                text={t('Pool Rewards')}
+              />
+              <div style={{ marginTop: '20px' }} />
+              <ChartBody
+                api={_api}
+                chain={_chain}
+                data={data}
+                dataToShow={dataToShow}
+                decimal={_decimal}
+                descSortedRewards={descSortedRewards}
+                expanded={expanded}
+                handleAccordionChange={handleAccordionChange}
+                nextPrevWeek={nextPrevWeek}
+                onNext={onNext}
+                onPrevious={onPrevious}
+                options={options}
+                pageIndex={pageIndex}
+                token={_token}
+              />
+            </>
+            : <Progress pt={'220px'} size={125} title={t('Loading rewards...')} />
+          }
+        </DraggableModal>
       }
-    </Popup>
+    </>
+
   );
 }

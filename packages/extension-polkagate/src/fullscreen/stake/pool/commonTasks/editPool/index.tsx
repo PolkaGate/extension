@@ -102,10 +102,7 @@ export default function ManageEditPool ({ address, api, chain, onClose, pool, se
             />
           }
           {step === STEPS.WAIT_SCREEN &&
-            <WaitScreen
-              defaultText={t('Checking your staking status...')}
-              showCube
-            />
+            <WaitScreen />
           }
           {step === STEPS.CONFIRM && txInfo &&
             <Confirmation
@@ -114,7 +111,7 @@ export default function ManageEditPool ({ address, api, chain, onClose, pool, se
               txInfo={txInfo}
             >
               <TxDetail
-                pool={pool}
+                changes={changes}
                 txInfo={txInfo}
               />
             </Confirmation>

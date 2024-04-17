@@ -41,7 +41,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function StakeExtra ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function StakeExtra({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);
@@ -179,7 +179,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
         {step === STEPS.INDEX &&
           <>
             {pool?.member?.points === '0' &&
-        <Warn isDanger text={t('The account is fully unstaked, so can\'t stake until you withdraw entire unstaked/redeemable amount.')} />
+              <Warn isDanger text={t('The account is fully unstaked, so can\'t stake until you withdraw entire unstaked/redeemable amount.')} />
             }
             <Asset
               address={address}
@@ -200,15 +200,15 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
               value={amount}
             />
             {pool &&
-            <ShowPool
-              api={api}
-              chain={chain}
-              label={t('Pool')}
-              mode='Default'
-              pool={pool}
-              showInfo
-              style={{ m: '20px auto 0' }}
-            />}
+              <ShowPool
+                api={api}
+                chain={chain}
+                label={t('Pool')}
+                mode='Default'
+                pool={pool}
+                showInfo
+                style={{ m: '20px auto 0' }}
+              />}
             <Typography fontSize='14px' fontWeight={400} m='20px 0 0' textAlign='center'>
               {t('Outstanding rewards automatically withdrawn after transaction')}
             </Typography>

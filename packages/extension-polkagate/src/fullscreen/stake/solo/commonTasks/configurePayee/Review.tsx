@@ -27,7 +27,8 @@ interface Props {
   inputs: Inputs | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-  setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>
+  setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
+  onClose?: () => void
 }
 
 function RewardsDestination ({ address, payee }: { address: string | undefined, payee: Payee }) {
@@ -61,7 +62,7 @@ function RewardsDestination ({ address, payee }: { address: string | undefined, 
   );
 }
 
-export default function Review ({ address, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review ({ address, inputs, onClose, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, formatted, token } = useInfo(address);
   const proxies = useProxies(api, formatted);
@@ -90,7 +91,7 @@ export default function Review ({ address, inputs, setRefresh, setStep, setTxInf
 
   const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
 
-  const onClose = useCallback(() => {
+  const _onClose = useCallback(() => {
     setStep(STEPS.INDEX);
   }, [setStep]);
 
@@ -119,7 +120,7 @@ export default function Review ({ address, inputs, setRefresh, setStep, setTxInf
             }
             {inputs?.extraInfo?.amount &&
               <DisplayValue dividerHeight='1px' title={t('Amount')} topDivider={false}>
-                <Grid alignItems='center' container justifyContent='center' item sx={{ height: '42px' }}>
+                <Grid alignItems='center' container item justifyContent='center' sx={{ height: '42px' }}>
                   <ShowValue
                     unit={token}
                     value={inputs.extraInfo.amount}
@@ -128,24 +129,31 @@ export default function Review ({ address, inputs, setRefresh, setStep, setTxInf
               </DisplayValue>
             }
             <DisplayValue dividerHeight='1px' title={t('Fee')}>
-              <Grid alignItems='center' container item sx={{ height: '42px' }}>
-                <ShowBalance
-                  api={api}
-                  balance={estimatedFee}
-                  decimalPoint={4}
-                />
+              <Grid alignItems='center' container item sx={{ fontSize: 'large', height: '42px' }}>
+                <ShowValue height={16} value={estimatedFee?.toHuman()} width='150px' />
               </Grid>
             </DisplayValue>
             {inputs?.extraInfo?.availableBalanceAfter &&
-            <DisplayValue dividerHeight='1px' title={t('Available Balance After')}>
-              <Grid alignItems='center' container item sx={{ height: '42px' }}>
-                <ShowBalance
-                  api={api}
-                  balance={inputs.extraInfo.availableBalanceAfter}
-                  decimalPoint={4}
-                />
-              </Grid>
-            </DisplayValue>
+              <DisplayValue dividerHeight='1px' title={t('Available Balance After')}>
+                <Grid alignItems='center' container item sx={{ height: '42px' }}>
+                  <ShowBalance
+                    api={api}
+                    balance={inputs.extraInfo.availableBalanceAfter}
+                    decimalPoint={4}
+                  />
+                </Grid>
+              </DisplayValue>
+            }
+            {inputs?.extraInfo?.totalStakeAfter &&
+              <DisplayValue dividerHeight='1px' title={t('Total Stake After')}>
+                <Grid alignItems='center' container item sx={{ height: '42px' }}>
+                  <ShowBalance
+                    api={api}
+                    balance={inputs.extraInfo.totalStakeAfter}
+                    decimalPoint={4}
+                  />
+                </Grid>
+              </DisplayValue>
             }
           </Container>
           <Grid container item sx={{ bottom: '10px', left: '4%', position: 'absolute', width: '92%' }}>
@@ -154,7 +162,7 @@ export default function Review ({ address, inputs, setRefresh, setStep, setTxInf
               call={inputs?.call}
               extraInfo={extraInfo}
               isPasswordError={isPasswordError}
-              onSecondaryClick={onClose}
+              onSecondaryClick={onClose || _onClose}
               params={inputs?.params}
               primaryBtnText={t('Confirm')}
               proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
