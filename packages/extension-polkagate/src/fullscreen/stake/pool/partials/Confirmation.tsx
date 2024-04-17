@@ -41,7 +41,7 @@ export default function Confirmation({ children, handleClose, modalHeight, txInf
   };
 
   return (
-    <Motion style={{ height: modalHeight ? `${modalHeight - 120}px` : 'auto' }}>
+    <Motion style={{ height: modalHeight ? `${modalHeight - 120}px` : 'auto', width: '100%' }}>
       <Grid>
         <FailSuccessIcon
           showLabel={false}

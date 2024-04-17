@@ -8,11 +8,13 @@ import '@vaadin/icons';
 import type { TxInfo } from '../../../util/types';
 
 import { Grid, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
+import { BN, BN_ZERO } from '@polkadot/util';
+
 import { PoolStakingIcon } from '../../../components';
-import { useBalances, useFullscreen, usePool, useTranslation, useUnSupportedNetwork } from '../../../hooks';
+import { useBalances, useFullscreen, useInfo, usePool, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { FULLSCREEN_WIDTH, STAKING_CHAINS } from '../../../util/constants';
 import { openOrFocusTab } from '../../accountDetailsFullScreen/components/CommonTasks';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
@@ -21,8 +23,15 @@ import Entry from '../Entry';
 import PoolOptionsBig from '../partials/PoolOptionsBig';
 import { STEPS } from '..';
 import PoolStaked from './PoolStaked';
+import WithdrawRedeem from './redeem';
 import Stake from './stake';
 import Unstake from './unstake';
+
+interface SessionIfo {
+  eraLength: number;
+  eraProgress: number;
+  currentEra: number;
+}
 
 export const MODAL_IDS = {
   NONE: 0,
@@ -34,12 +43,14 @@ export const MODAL_IDS = {
   STAKE_EXTRA: 6
 };
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   useFullscreen();
 
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
+
+  const { api } = useInfo(address);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
 
@@ -50,6 +61,54 @@ export default function Index (): React.ReactElement {
   const [showId, setShow] = useState<number>(MODAL_IDS.NONE);
   const [step, setStep] = useState<number>(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
+  const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
+  const [currentEraIndex, setCurrentEraIndex] = useState<number | undefined>();
+
+  useEffect(() => {
+    api && api.derive.session?.progress().then((info) => {
+      setSessionInfo({
+        currentEra: Number(info.currentEra),
+        eraLength: Number(info.eraLength),
+        eraProgress: Number(info.eraProgress)
+      });
+    });
+  }, [api]);
+
+  useEffect((): void => {
+    api && api.query.staking && api.query.staking.currentEra().then((ce) => {
+      setCurrentEraIndex(Number(ce));
+    });
+  }, [api]);
+
+  const { redeemable, toBeReleased, unlockingAmount } = useMemo(() => {
+    if (pool === undefined || !api || !currentEraIndex || !sessionInfo) {
+      return { redeemable: undefined, toBeReleased: undefined, unlockingAmount: undefined };
+    }
+
+    let unlockingValue = BN_ZERO;
+    let redeemValue = BN_ZERO;
+    const toBeReleased = [];
+
+    if (pool !== null && pool.member?.unbondingEras) { // if pool is fetched but account belongs to no pool then pool===null
+      for (const [era, unbondingPoint] of Object.entries(pool.member?.unbondingEras)) {
+        const remainingEras = Number(era) - currentEraIndex;
+
+        if (remainingEras < 0) {
+          redeemValue = redeemValue.add(new BN(unbondingPoint as string));
+        } else {
+          const amount = new BN(unbondingPoint as string);
+
+          unlockingValue = unlockingValue.add(amount);
+
+          const secToBeReleased = (remainingEras * sessionInfo.eraLength + (sessionInfo.eraLength - sessionInfo.eraProgress)) * 6;
+
+          toBeReleased.push({ amount, date: Date.now() + (secToBeReleased * 1000) });
+        }
+      }
+    }
+
+    return { redeemable: redeemValue, toBeReleased, unlockingAmount: unlockingValue };
+  }, [api, currentEraIndex, pool, sessionInfo]);
 
   const onBack = useCallback(() => {
     openOrFocusTab(`/accountfs/${address}/0`, true);
@@ -80,7 +139,10 @@ export default function Index (): React.ReactElement {
           address={address}
           balances={balances}
           pool={pool}
+          redeemable={redeemable}
           setShow={setShow}
+          toBeReleased={toBeReleased}
+          unlockingAmount={unlockingAmount}
         />
       }
       {showId === MODAL_IDS.STAKE &&
@@ -118,6 +180,15 @@ export default function Index (): React.ReactElement {
           setRefresh={setRefresh}
           setShow={setShow}
           show={true}
+        />
+      }
+      {showId === MODAL_IDS.REDEEM &&
+        <WithdrawRedeem
+          address={address}
+          availableBalance={balances?.availableBalance}
+          redeemable={redeemable}
+          setRefresh={setRefresh}
+          setShow={setShow}
         />
       }
       {/* <Info

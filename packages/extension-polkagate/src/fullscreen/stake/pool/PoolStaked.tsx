@@ -9,11 +9,11 @@ import type { BalancesInfo, MyPoolInfo } from '../../../util/types';
 
 import { faArrowCircleDown, faCircleDown, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Grid, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 
 import { PoolStakingIcon } from '../../../components';
 import { useInfo, useTranslation, useUnSupportedNetwork } from '../../../hooks';
@@ -25,20 +25,17 @@ import ClaimedRewardsChart from './partials/ClaimedRewardsChart';
 import PoolCommonTasks from './partials/PoolCommonTasks';
 import { MODAL_IDS } from '.';
 
-interface SessionIfo {
-  eraLength: number;
-  eraProgress: number;
-  currentEra: number;
-}
-
 interface Props {
   address: string;
   setShow: React.Dispatch<React.SetStateAction<number>>;
   balances: BalancesInfo | undefined;
   pool: MyPoolInfo | null | undefined;
+  redeemable: BN | undefined;
+  toBeReleased: { amount: BN; date: number; }[] | undefined;
+  unlockingAmount: BN | undefined;
 }
 
-export default function PoolStaked({ address, balances, pool, setShow }: Props): React.ReactElement {
+export default function PoolStaked ({ address, balances, pool, redeemable, setShow, toBeReleased, unlockingAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain } = useInfo(address);
@@ -47,55 +44,6 @@ export default function PoolStaked({ address, balances, pool, setShow }: Props):
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
-
-  const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
-  const [currentEraIndex, setCurrentEraIndex] = useState<number | undefined>();
-
-  const { redeemable, toBeReleased, unlockingAmount } = useMemo(() => {
-    if (pool === undefined || !api || !currentEraIndex || !sessionInfo) {
-      return { redeemable: undefined, toBeReleased: undefined, unlockingAmount: undefined };
-    }
-
-    let unlockingValue = BN_ZERO;
-    let redeemValue = BN_ZERO;
-    const toBeReleased = [];
-
-    if (pool !== null && pool.member?.unbondingEras) { // if pool is fetched but account belongs to no pool then pool===null
-      for (const [era, unbondingPoint] of Object.entries(pool.member?.unbondingEras)) {
-        const remainingEras = Number(era) - currentEraIndex;
-
-        if (remainingEras < 0) {
-          redeemValue = redeemValue.add(new BN(unbondingPoint as string));
-        } else {
-          const amount = new BN(unbondingPoint as string);
-
-          unlockingValue = unlockingValue.add(amount);
-
-          const secToBeReleased = (remainingEras * sessionInfo.eraLength + (sessionInfo.eraLength - sessionInfo.eraProgress)) * 6;
-
-          toBeReleased.push({ amount, date: Date.now() + (secToBeReleased * 1000) });
-        }
-      }
-    }
-
-    return { redeemable: redeemValue, toBeReleased, unlockingAmount: unlockingValue };
-  }, [api, currentEraIndex, pool, sessionInfo]);
-
-  useEffect(() => {
-    api && api.derive.session?.progress().then((info) => {
-      setSessionInfo({
-        currentEra: Number(info.currentEra),
-        eraLength: Number(info.eraLength),
-        eraProgress: Number(info.eraProgress)
-      });
-    });
-  }, [api]);
-
-  useEffect((): void => {
-    api && api.query.staking && api.query.staking.currentEra().then((ce) => {
-      setCurrentEraIndex(Number(ce));
-    });
-  }, [api]);
 
   const onUnstake = useCallback(() => {
     staked && !staked?.isZero() && setShow(MODAL_IDS.UNSTAKE);
