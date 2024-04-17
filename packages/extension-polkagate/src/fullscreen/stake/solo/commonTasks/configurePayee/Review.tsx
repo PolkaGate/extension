@@ -98,7 +98,9 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
   return (
     <Grid alignItems='center' container justifyContent='center' maxHeight='650px' overflow='hidden'>
       {isPasswordError &&
-        <WrongPasswordAlert />
+        <WrongPasswordAlert
+          fontSize='14px'
+        />
       }
       {step === STEPS.REVIEW &&
         <>

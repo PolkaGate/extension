@@ -7,6 +7,7 @@ import '@vaadin/icons';
 
 import type { BalancesInfo, MyPoolInfo } from '../../../util/types';
 
+import { faSquarePlus } from '@fortawesome/free-regular-svg-icons';
 import { faArrowCircleDown, faCircleDown, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -38,7 +39,7 @@ interface Props {
   pool: MyPoolInfo | null | undefined;
 }
 
-export default function PoolStaked({ address, balances, pool, setShow }: Props): React.ReactElement {
+export default function PoolStaked ({ address, balances, pool, setShow }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain } = useInfo(address);
@@ -111,7 +112,7 @@ export default function PoolStaked({ address, balances, pool, setShow }: Props):
     claimable && !claimable?.isZero() && setShow(MODAL_IDS.WITHDRAW_REWARDS);
   }, [claimable, setShow]);
 
-  const goToRewardStake = useCallback(() => {
+  const onStakeRewards = useCallback(() => {
     claimable && !claimable?.isZero() && setShow(MODAL_IDS.STAKE_REWARDS);
   }, [claimable, setShow]);
 
@@ -148,8 +149,8 @@ export default function PoolStaked({ address, balances, pool, setShow }: Props):
               actions={[t('stake'), t('withdraw')]}
               address={address}
               amount={claimable}
-              icons={[faPlus, faCircleDown]}
-              onClicks={[goToRewardStake, goToRewardWithdraw]}
+              icons={[faSquarePlus, faCircleDown]}
+              onClicks={[onStakeRewards, goToRewardWithdraw]}
               title={t('Rewards')}
             />
             <DisplayBalance

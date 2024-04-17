@@ -9,13 +9,14 @@ import React from 'react';
 import { useTranslation } from '../hooks';
 import { Warning } from '.';
 
-export default function WrongPasswordAlert({ bgcolor }: { bgcolor?: SystemStyleObject<Theme> }): React.ReactElement {
+export default function WrongPasswordAlert ({ bgcolor, fontSize }: { bgcolor?: SystemStyleObject<Theme>, fontSize?: string;}): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
 
   return (
     <Grid container height='35px' sx={{ bgcolor }}>
       <Warning
+        fontSize={fontSize}
         fontWeight={400}
         isDanger
         marginTop={0}

@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 /**
  * @description
  * this component opens stake rewards review page
@@ -16,7 +18,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
+import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
 import { useAccountDisplay, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
@@ -37,11 +39,12 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function RewardsStakeReview({ address, amount, api, chain, formatted, setRefresh, setShow, show, staked }: Props): React.ReactElement {
+export default function RewardsStakeReview ({ address, amount, api, chain, formatted, setRefresh, setShow, show, staked }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
+
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
