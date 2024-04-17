@@ -27,7 +27,8 @@ interface Props {
   inputs: Inputs | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-  setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>
+  setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
+  onClose?: () => void
 }
 
 function RewardsDestination ({ address, payee }: { address: string | undefined, payee: Payee }) {
@@ -61,7 +62,7 @@ function RewardsDestination ({ address, payee }: { address: string | undefined, 
   );
 }
 
-export default function Review ({ address, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review ({ address, inputs, onClose, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, formatted, token } = useInfo(address);
   const proxies = useProxies(api, formatted);
@@ -90,7 +91,7 @@ export default function Review ({ address, inputs, setRefresh, setStep, setTxInf
 
   const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
 
-  const onClose = useCallback(() => {
+  const _onClose = useCallback(() => {
     setStep(STEPS.INDEX);
   }, [setStep]);
 
@@ -154,7 +155,7 @@ export default function Review ({ address, inputs, setRefresh, setStep, setTxInf
               call={inputs?.call}
               extraInfo={extraInfo}
               isPasswordError={isPasswordError}
-              onSecondaryClick={onClose}
+              onSecondaryClick={onClose || _onClose}
               params={inputs?.params}
               primaryBtnText={t('Confirm')}
               proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}

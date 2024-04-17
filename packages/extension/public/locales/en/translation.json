@@ -1213,5 +1213,20 @@
   "click to view": "",
   "on-chain staking info": "",
   "New pool state:": "",
-  "Change State": ""
+  "Change State": "",
+  "Options are available to commence pool staking in Westend. Please select your preference, taking into consideration the minimum requirements for receiving rewards per era.": "",
+  "You can join existing pools, which will be shown to you in a list,": "",
+  "You can create a pool yourself and should manage pool and nominate validators for the pool yourself.": "",
+  "Create a pool": "",
+  "You are unstaking all your {{token}}s from this pool!": "",
+  "Unstake All": "",
+  "stake extra": "",
+  "Stake extra": "",
+  "Staking Review": "",
+  "Staking Confirmation": "",
+  "Loading information, please wait ...": "",
+  "restake": "",
+  "Stake Extra": "",
+  "Increase your staking amount to earn more rewards. Don’t forget to keep some tokens in your account to cover fees.": "",
+  "Your unstaked amount will be redeemable after {{unbondingDuration}} days.": ""
 }
