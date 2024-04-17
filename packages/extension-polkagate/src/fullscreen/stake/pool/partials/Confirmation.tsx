@@ -80,7 +80,7 @@ export default function Confirmation({ children, handleClose, modalHeight, txInf
           _mt='30px'
           _onClick={handleClose}
           _width={100}
-          text={t<string>('Close')}
+          text={t<string>('Done')}
         />
       </Grid>
     </Motion>
