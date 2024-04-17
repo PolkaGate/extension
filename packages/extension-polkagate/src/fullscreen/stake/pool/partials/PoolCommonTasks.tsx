@@ -143,7 +143,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
             text={t('Manage Validators')}
           />
           {!justMember && canChangeState &&
-            <Grid container item sx={{ '> div': { px: '12px' }, mx: 'auto', width: '90%' }}>
+            <Grid container item sx={{ '& p': { fontSize: '16px', fontWeight: 500 }, '> div': { px: '12px' }, mx: 'auto', width: '90%' }}>
               <MenuItem
                 iconComponent={
                   <FontAwesomeIcon
@@ -157,7 +157,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
                 text={t('Manage Pool')}
                 withHoverEffect
               >
-                <Collapse in={showManagePool} sx={{ width: '100%' }}>
+                <Collapse in={showManagePool} sx={{ '& p': { pl: '5px' }, width: '100%' }}>
                   <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto', width: '100%' }} />
                   <TaskButton
                     disabled={poolState === 'Destroying' || !poolRoot}
