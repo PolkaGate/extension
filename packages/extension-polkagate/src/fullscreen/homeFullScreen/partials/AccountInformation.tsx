@@ -135,7 +135,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
   }, [onAction, address]);
 
   const goToDetails = useCallback((): void => {
-    address && openOrFocusTab(`/accountfs/${address}/${selectedAsset?.assetId || '0'}`);
+    address && openOrFocusTab(`/accountfs/${address}/${selectedAsset?.assetId || '0'}`, true);
   }, [address, selectedAsset?.assetId]);
 
   return (
