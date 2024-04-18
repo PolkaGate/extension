@@ -43,6 +43,7 @@ function RewardsDestination({ address, payee }: { address: string | undefined, p
 
   return (
     <Grid container item justifyContent='center' sx={{ alignSelf: 'center', my: '5px' }}>
+      <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mt: '5px', width: '240px' }} />
       <Typography sx={{ fontWeight: 300 }}>
         {t('Rewards destination')}
       </Typography>
@@ -56,7 +57,6 @@ function RewardsDestination({ address, payee }: { address: string | undefined, p
             <ShortAddress address={destinationAddress} />
           </Grid>
         }
-        <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mt: '5px', width: '240px' }} />
       </Grid>
     </Grid>
   );
@@ -110,7 +110,6 @@ export default function Review({ address, inputs, onClose, setRefresh, setStep, 
               address={address}
               chain={chain}
               selectedProxyAddress={selectedProxyAddress}
-              showDivider
               style={{ mt: 'auto' }}
               title={t('Account holder')}
             />
@@ -121,7 +120,7 @@ export default function Review({ address, inputs, onClose, setRefresh, setStep, 
               />
             }
             {inputs?.extraInfo?.amount &&
-              <DisplayValue dividerHeight='1px' title={t('Amount')} topDivider={false}>
+              <DisplayValue dividerHeight='1px' title={t('Amount')}>
                 <Grid alignItems='center' container item justifyContent='center' sx={{ height: '42px' }}>
                   <ShowValue
                     unit={token}
