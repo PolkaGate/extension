@@ -120,6 +120,9 @@ const assetsChains = createAssets();
  */
 export default function useAssetsBalances (accounts: AccountJson[] | null): SavedAssets | undefined | null {
   const isTestnetEnabled = useIsTestnetEnabled();
+  const selectedChains = useSelectedChains();
+
+  const SHOULD_FETCH_ASSETS = window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs');
 
   /** We need to trigger address change when a new address is added, without affecting other account fields. Therefore, we use the length of the accounts array as a dependency. */
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -129,15 +132,14 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
   const [isWorking, setIsWorking] = useState<boolean>(false);
   const [workersCalled, setWorkersCalled] = useState<Worker[]>();
   const [isUpdate, setIsUpdate] = useState<boolean>();
-  const selectedChains = useSelectedChains();
 
   useEffect(() => {
-    getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
+    SHOULD_FETCH_ASSETS && getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
       const _timeStamp = (savedAssets as SavedAssets)?.timeStamp;
 
       setIsUpdate(isUpToDate(_timeStamp));
     }).catch(console.error);
-  }, [workersCalled?.length]);
+  }, [SHOULD_FETCH_ASSETS, workersCalled?.length]);
 
   const handleAccountsSaving = useCallback(() => {
     const toBeSavedAssets = fetchedAssets || DEFAULT_SAVED_ASSETS;
@@ -178,6 +180,10 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
   }, [workersCalled?.length]);
 
   useEffect(() => {
+    if (!SHOULD_FETCH_ASSETS) {
+      return;
+    }
+
     if (!addresses) {
       console.info('useAssetsBalances: no addresses to fetch assets!');
 
@@ -193,7 +199,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
     }).catch(console.error);
 
     watchStorage(ASSETS_NAME_IN_STORAGE, setFetchedAssets, true).catch(console.error);
-  }, [addresses]);
+  }, [SHOULD_FETCH_ASSETS, addresses]);
 
   const handleSetWorkersCall = useCallback((worker: Worker, terminate?: 'terminate') => {
     terminate && worker.terminate();
@@ -408,7 +414,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
   }, [addresses, fetchAssetOnAssetHubs, fetchAssetOnRelayChain, fetchMultiAssetChainAssets]);
 
   useEffect(() => {
-    if (!addresses || addresses.length === 0 || isWorking || isUpdate || !selectedChains || isTestnetEnabled === undefined) {
+    if (!SHOULD_FETCH_ASSETS || !addresses || addresses.length === 0 || isWorking || isUpdate || !selectedChains || isTestnetEnabled === undefined) {
       return;
     }
 
@@ -429,7 +435,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
 
       fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);
     });
-  }, [addresses, fetchAssets, isTestnetEnabled, isUpdate, isWorking, selectedChains]);
+  }, [SHOULD_FETCH_ASSETS, addresses, fetchAssets, isTestnetEnabled, isUpdate, isWorking, selectedChains]);
 
   return fetchedAssets;
 }
