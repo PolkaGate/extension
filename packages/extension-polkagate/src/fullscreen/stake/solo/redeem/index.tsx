@@ -17,9 +17,9 @@ import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { Progress } from '../../../../components';
 import { useInfo, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
+import Confirmation from '../../partials/Confirmation';
+import Review from '../../partials/Review';
 import { ModalTitle } from '../commonTasks/configurePayee';
-import Confirmation from '../commonTasks/configurePayee/Confirmation';
-import Review from '../commonTasks/configurePayee/Review';
 import { MODAL_IDS } from '..';
 
 interface Props {
@@ -39,7 +39,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function Pending ({ address, redeemable, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function Pending({ address, redeemable, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
 

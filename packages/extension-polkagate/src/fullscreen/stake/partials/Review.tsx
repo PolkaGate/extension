@@ -14,12 +14,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
 
-import { AccountHolderWithProxy, Identity, ShortAddress, ShowBalance, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../../components';
-import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../../../hooks';
-import { SubTitle } from '../../../../../partials';
-import { Payee, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
-import { Inputs } from '../../../Entry';
-import { STEPS } from '.';
+import { AccountHolderWithProxy, Identity, ShortAddress, ShowBalance, ShowValue, SignArea2, WrongPasswordAlert } from '../../../components';
+import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../hooks';
+import { SubTitle } from '../../../partials';
+import { Payee, Proxy, ProxyItem, TxInfo } from '../../../util/types';
+import { Inputs } from '../Entry';
+import { STEPS } from '../solo/commonTasks/configurePayee';
 
 interface Props {
   address: string | undefined;
@@ -31,7 +31,7 @@ interface Props {
   onClose?: () => void
 }
 
-function RewardsDestination ({ address, payee }: { address: string | undefined, payee: Payee }) {
+function RewardsDestination({ address, payee }: { address: string | undefined, payee: Payee }) {
   const { t } = useTranslation();
   const { chain, formatted } = useInfo(address);
 
@@ -39,7 +39,7 @@ function RewardsDestination ({ address, payee }: { address: string | undefined, 
     payee === 'Stash'
       ? formatted
       : payee.Account as string
-  , [formatted, payee]);
+    , [formatted, payee]);
 
   return (
     <Grid container item justifyContent='center' sx={{ alignSelf: 'center', my: '5px' }}>
@@ -62,7 +62,7 @@ function RewardsDestination ({ address, payee }: { address: string | undefined, 
   );
 }
 
-export default function Review ({ address, inputs, onClose, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, inputs, onClose, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, formatted, token } = useInfo(address);
   const proxies = useProxies(api, formatted);

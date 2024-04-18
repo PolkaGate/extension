@@ -24,9 +24,9 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
 import { useInfo, usePool, usePoolConsts, useStakingConsts, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
+import Confirmation from '../../partials/Confirmation';
+import Review from '../../partials/Review';
 import { ModalTitle } from '../../solo/commonTasks/configurePayee';
-import Confirmation from '../../solo/commonTasks/configurePayee/Confirmation';
-import Review from '../../solo/commonTasks/configurePayee/Review';
 import { MODAL_IDS } from '..';
 
 interface Props {
@@ -44,7 +44,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function Unstake ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function Unstake({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);

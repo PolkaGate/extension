@@ -16,9 +16,9 @@ import { BN } from '@polkadot/util';
 
 import { useInfo, useTranslation } from '../../../../../hooks';
 import { Inputs } from '../../../Entry';
+import Confirmation from '../../../partials/Confirmation';
+import Review from '../../../partials/Review';
 import { ModalTitle } from '../../../solo/commonTasks/configurePayee';
-import Confirmation from '../../../solo/commonTasks/configurePayee/Confirmation';
-import Review from '../../../solo/commonTasks/configurePayee/Review';
 import { MODAL_IDS } from '../..';
 
 interface Props {
@@ -51,7 +51,7 @@ export default function WithdrawRewards ({ address, pool, setRefresh, setShow, s
   useEffect(() => {
     if (claimable && api) {
       const call = api.tx.nominationPools.claimPayout;
-      const params = [] as unknown [];
+      const params = [] as unknown[];
 
       const extraInfo = {
         action: 'Pool Staking',

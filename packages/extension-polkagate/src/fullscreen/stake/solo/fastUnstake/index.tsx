@@ -21,9 +21,9 @@ import { BN, BN_MAX_INTEGER, BN_ONE } from '@polkadot/util';
 import { PButton, Warning } from '../../../../components';
 import { useBalances, useInfo, useIsExposed, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
+import Confirmation from '../../partials/Confirmation';
+import Review from '../../partials/Review';
 import { ModalTitle } from '../commonTasks/configurePayee';
-import Confirmation from '../commonTasks/configurePayee/Confirmation';
-import Review from '../commonTasks/configurePayee/Review';
 import { MODAL_IDS } from '..';
 
 interface Props {
@@ -41,7 +41,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function FastUnstake ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function FastUnstake({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, decimal, formatted, token } = useInfo(address);
@@ -54,7 +54,7 @@ export default function FastUnstake ({ address, setRefresh, setShow, show }: Pro
   const [step, setStep] = useState(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [inputs, setInputs] = useState<Inputs>();
-  
+
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const fastUnstakeDeposit = api && api.consts.fastUnstake.deposit as unknown as BN;
   const availableBalance = getValue('available', myBalances);
