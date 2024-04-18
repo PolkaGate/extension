@@ -8,9 +8,9 @@ import { Box, Divider, Grid, IconButton, List, ListItem, ListItemIcon, ListItemT
 import React, { useCallback } from 'react';
 
 import { SlidePopUp } from '../../components';
+import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
 import { useTranslation } from '../../hooks';
 import { SocialLinks } from '../../partials/VersionSocial';
-import { DraggableModal } from '../governance/components/DraggableModal';
 
 interface Props {
   show: boolean;

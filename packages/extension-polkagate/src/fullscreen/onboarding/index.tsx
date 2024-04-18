@@ -14,8 +14,8 @@ import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constan
 import { AccountContext, ActionContext, PButton } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
+import Privacy from '../../popup/welcome/Privacy';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
-import Privacy from '../welcome/Privacy';
 
 function Onboarding (): React.ReactElement {
   useFullscreen();
