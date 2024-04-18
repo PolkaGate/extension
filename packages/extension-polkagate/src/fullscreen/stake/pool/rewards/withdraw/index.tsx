@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faCircleDown } from '@fortawesome/free-regular-svg-icons';
+import { faArrowCircleDown } from '@fortawesome/free-solid-svg-icons';
 import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -84,7 +84,7 @@ export default function WithdrawRewards ({ address, pool, setRefresh, setShow, s
       <Grid container>
         {step !== STEPS.WAIT_SCREEN &&
           <ModalTitle
-            icon={faCircleDown}
+            icon={faArrowCircleDown}
             onCancel={onCancel}
             setStep={setStep}
             step={step}
