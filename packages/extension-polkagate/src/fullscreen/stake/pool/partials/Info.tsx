@@ -7,9 +7,9 @@ import { Collapse, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { Infotip2, ShowValue } from '@polkadot/extension-polkagate/src/components';
-import { useInfo, useMinToReceiveRewardsInSolo, usePoolConsts, useStakingConsts, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useInfo, usePoolConsts, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
-import { BN, bnMax } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 
 interface Props {
   address: string;
