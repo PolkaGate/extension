@@ -128,6 +128,7 @@ const Arrows = ({ dataToShow, nextPrevWeek, onNext, onPrevious, pageIndex }: Arr
 
 const ChartBody = ({ api, chain, data, dataToShow, decimal, descSortedRewards, expanded, handleAccordionChange, nextPrevWeek, onNext, onPrevious, options, pageIndex, token }: ChartBodyProps) => {
   const { t } = useTranslation();
+  const isExtensionPopup = useIsExtensionPopup();
 
   return (
     <>
@@ -152,7 +153,7 @@ const ChartBody = ({ api, chain, data, dataToShow, decimal, descSortedRewards, e
           {t('Reward')}
         </Typography>
       </Grid>
-      <Grid container sx={{ '> .MuiPaper-root': { backgroundImage: 'none', boxShadow: 'none' }, '> .MuiPaper-root::before': { bgcolor: 'transparent' }, maxHeight: parent.innerHeight - 450, overflowX: 'hidden', overflowY: 'scroll' }}>
+      <Grid container sx={{ '> .MuiPaper-root': { backgroundImage: 'none', boxShadow: 'none' }, '> .MuiPaper-root::before': { bgcolor: 'transparent' }, maxHeight: parent.innerHeight - (isExtensionPopup ? 450 : 588), overflowX: 'hidden', overflowY: 'scroll' }}>
         {descSortedRewards?.length
           ? descSortedRewards.slice(0, MAX_REWARDS_INFO_TO_SHOW).map((d, index: number) =>
             <>
@@ -202,7 +203,7 @@ const ChartBody = ({ api, chain, data, dataToShow, decimal, descSortedRewards, e
   );
 };
 
-export default function RewardsDetail ({ address, api, chain, chainName, decimal, rewardDestinationAddress, setShow, show, token }: Props): React.ReactElement {
+export default function RewardsDetail({ address, api, chain, chainName, decimal, rewardDestinationAddress, setShow, show, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtensionPopup = useIsExtensionPopup();
 
