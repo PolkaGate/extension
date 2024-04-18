@@ -42,7 +42,7 @@ export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false,
         return IDENTITY_CHAINS;
       case 'socialRecovery':
         return SOCIAL_RECOVERY_CHAINS;
-      case 'AccountDetails':
+      case 'accountDetails':
         return allChains.filter((chain) => chain.value !== '').map((chainOption) => chainOption.value);
       default:
         return [];
@@ -59,7 +59,7 @@ export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false,
         return onAction(`/manageIdentity/${selectedAddress}`);
       case 'socialRecovery':
         return onAction(`/socialRecovery/${selectedAddress}/false`);
-      case 'AccountDetails':
+      case 'accountDetails':
         return onAction(`/accountfs/${selectedAddress}/0`);
       case 'send':
         return onAction(`/send/${selectedAddress}/`);

@@ -170,7 +170,7 @@ export default function AccountDetails (): React.ReactElement {
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
-      <FullScreenHeader page='AccountDetails' />
+      <FullScreenHeader page='accountDetails' />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '5%' }}>
           <Grid alignItems='center' container item>
