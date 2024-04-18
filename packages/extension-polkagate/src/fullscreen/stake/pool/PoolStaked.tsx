@@ -64,7 +64,7 @@ export default function PoolStaked ({ address, balances, pool, redeemable, setSh
     claimable && !claimable?.isZero() && setShow(MODAL_IDS.STAKE_REWARDS);
   }, [claimable, setShow]);
 
-  const goToRedeemableWithdraw = useCallback(() => {
+  const onWithdrawRedeemable = useCallback(() => {
     redeemable && !redeemable?.isZero() && setShow(MODAL_IDS.REDEEM);
   }, [redeemable, setShow]);
 
@@ -97,7 +97,7 @@ export default function PoolStaked ({ address, balances, pool, redeemable, setSh
               actions={[t('stake'), t('withdraw')]}
               address={address}
               amount={claimable}
-              icons={[faSquarePlus, faCircleDown]}
+              icons={[faSquarePlus, faArrowCircleDown]}
               onClicks={[onStakeRewards, onWithdrawRewards]}
               title={t('Rewards')}
             />
@@ -105,8 +105,8 @@ export default function PoolStaked ({ address, balances, pool, redeemable, setSh
               actions={[t('withdraw')]}
               address={address}
               amount={redeemable}
-              icons={[faArrowCircleDown]}
-              onClicks={[goToRedeemableWithdraw]}
+              icons={[faCircleDown]}
+              onClicks={[onWithdrawRedeemable]}
               title={t('Redeemable')}
             />
             <DisplayBalance

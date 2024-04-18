@@ -5,8 +5,8 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { faCircleDown } from '@fortawesome/free-solid-svg-icons';
+import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
@@ -20,6 +20,7 @@ import { BN } from '@polkadot/util';
 import { Progress, ShortAddress, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../components';
 import { useEstimatedFee, useInfo, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
+import { ModalTitle } from '../../solo/commonTasks/configurePayee';
 import Confirmation from '../partials/Confirmation';
 import { MODAL_IDS } from '..';
 
@@ -32,16 +33,16 @@ interface Props {
 }
 
 export const STEPS = {
-  PROGRESS: 1,
+  INDEX: 1,
   REVIEW: 2,
   WAIT_SCREEN: 3,
   CONFIRM: 4,
+  PROGRESS: 5,
   PROXY: 100
 };
 
 export default function WithdrawRedeem ({ address, availableBalance, redeemable, setRefresh, setShow }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { api, decimal, formatted, token } = useInfo(address);
 
   const [step, setStep] = useState(STEPS.PROGRESS);
@@ -97,30 +98,32 @@ export default function WithdrawRedeem ({ address, availableBalance, redeemable,
 
     step === STEPS.PROGRESS &&
       handleInputs()
-        .then(
-          () => setStep(STEPS.REVIEW)
-        )
         .catch(console.error);
   }, [api, decimal, formatted, redeemable, step]);
 
   const onCancel = useCallback(() => {
     setShow(MODAL_IDS.NONE);
-    setInputs(undefined);
   }, [setShow]);
+
+  useEffect(() => {
+    step === STEPS.INDEX && onCancel();
+
+    step === STEPS.PROGRESS && inputs && setStep(STEPS.REVIEW);
+  }, [inputs, onCancel, step]);
+
 
   return (
     <DraggableModal minHeight={600} onClose={onCancel} open>
       <Grid container>
-        <Grid alignItems='center' container justifyContent='space-between' py='15px'>
-          <Grid item>
-            <Typography fontSize='22px' fontWeight={700}>
-              {t('Withdraw Redeemable')}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <CloseIcon onClick={onClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-          </Grid>
-        </Grid>
+        {step !== STEPS.WAIT_SCREEN &&
+          <ModalTitle
+            icon={faCircleDown}
+            onCancel={onCancel}
+            setStep={setStep}
+            step={step}
+            text={t('Withdraw Redeemable')}
+          />
+        }
         {step === STEPS.PROGRESS &&
           <Grid container item p='30px'>
             <Progress
