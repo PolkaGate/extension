@@ -24,13 +24,14 @@ interface Props {
   _otherComponents?: JSX.Element;
 }
 
-export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page }: Props): React.ReactElement {
+export function FullScreenHeader({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page }: Props): React.ReactElement {
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
   const allChains = useGenesisHashOptions();
 
   const api = useApi(address);
   const chain = useChain(address);
   const onAction = useContext(ActionContext);
+  const isThisHome = window.location.hash === '#/';
 
   const filteredChains = useMemo(() => {
     switch (page) {
@@ -69,8 +70,8 @@ export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false,
   }, [onAction, page, postId, topMenu]);
 
   const goHome = useCallback(
-    () => openOrFocusTab('/', true)
-    , []);
+    () => !isThisHome && openOrFocusTab('/', true)
+    , [isThisHome]);
 
   return (
     <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ bgcolor: '#000000', borderBottom: '1px solid', borderBottomColor: 'secondary.light', color: 'text.secondary', fontSize: '42px', fontWeight: 400, height: '70px', minWidth: '810px', px: '40px' }}>
