@@ -60,22 +60,6 @@ export default function Home(): React.ReactElement {
     getStorage('loginInfo').then(setLoginInfo).catch(console.error);
   }, []);
 
-  // const sortedAccount = useMemo(() =>
-  //   hierarchy.sort((a, b) => {
-  //     const x = a.name.toLowerCase();
-  //     const y = b.name.toLowerCase();
-
-  //     if (x < y) {
-  //       return -1;
-  //     }
-
-  //     if (x > y) {
-  //       return 1;
-  //     }
-
-  //     return 0;
-  //   }), [hierarchy]);
-
   return (
     <>
       <Alert
