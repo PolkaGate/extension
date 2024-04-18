@@ -8,8 +8,9 @@ import '@vaadin/icons';
 import type { BalancesInfo, MyPoolInfo } from '../../../util/types';
 
 import { faSquarePlus } from '@fortawesome/free-regular-svg-icons';
-import { faArrowCircleDown, faCircleDown, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { Grid, useTheme } from '@mui/material';
+import { faArrowCircleDown, faCircleDown, faGrip, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
@@ -25,6 +26,7 @@ import DisplayBalance from '../partials/DisplayBalance';
 import ClaimedRewardsChart from './partials/ClaimedRewardsChart';
 import PoolCommonTasks from './partials/PoolCommonTasks';
 import { MODAL_IDS } from '.';
+import Info from './partials/Info';
 
 interface Props {
   address: string;
@@ -126,20 +128,34 @@ export default function PoolStaked ({ address, balances, pool, redeemable, setSh
               title={t('Available to stake')}
             />
             {pool &&
-              <ShowPool
-                api={api}
-                chain={chain}
-                label={t('Pool')}
-                labelPosition='center'
-                mode='Default'
-                pool={pool}
-                showInfo
-                style={{
-                  m: '20px auto 0',
-                  width: '100%'
-                }}
-              />
+              <>
+                <Grid container item justifyContent='center' sx={{ mt: '25px', ml: '2%' }}>
+                  <FontAwesomeIcon
+                    color={`${theme.palette.text.primary}`}
+                    fontSize='25px'
+                    icon={faGrip}
+                  />
+                  <Typography fontSize='18px' fontWeight={500} ml='1%'>
+                    {t('Pool information')}
+                  </Typography>
+                </Grid>
+                <ShowPool
+                  api={api}
+                  chain={chain}
+                  labelPosition='center'
+                  mode='Default'
+                  pool={pool}
+                  showInfo
+                  style={{
+                    m: '5px auto 0',
+                    width: '100%'
+                  }}
+                />
+              </>
             }
+            <Info
+              address={address}
+            />
           </Grid>
         </Grid>
         <Grid container direction='column' gap='15px' item width='320px'>
