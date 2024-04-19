@@ -40,7 +40,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function StakeExtra({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function StakeExtra ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, decimal, token } = useInfo(address);
@@ -74,13 +74,16 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
   }, [amountAsBN, t, availableToSoloStake]);
 
   useEffect(() => {
-    if (api && amount && call) {
+    if (api && amountAsBN && call && staked) {
       const params = [amountAsBN];
+
+      const totalStakeAfter = staked.add(amountAsBN);
 
       const extraInfo = {
         action: 'Solo Staking',
         amount,
-        subAction: 'Stake Extra'
+        subAction: 'Stake Extra',
+        totalStakeAfter
       };
 
       setInputs({
@@ -89,7 +92,7 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
         params
       });
     }
-  }, [amount, amountAsBN, api, call]);
+  }, [amount, amountAsBN, api, call, staked]);
 
   useEffect(() => {
     if (api && !api?.call?.transactionPaymentApi) {
