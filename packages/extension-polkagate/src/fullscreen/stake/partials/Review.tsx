@@ -13,6 +13,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
+import { BN } from '@polkadot/util';
 
 import { AccountHolderWithProxy, Identity, ShortAddress, ShowBalance, ShowValue, SignArea2, WrongPasswordAlert } from '../../../components';
 import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../hooks';
@@ -150,7 +151,7 @@ export default function Review({ address, inputs, onClose, setRefresh, setStep, 
                 <Grid alignItems='center' container item sx={{ height: '42px' }}>
                   <ShowBalance
                     api={api}
-                    balance={inputs.extraInfo.totalStakeAfter}
+                    balance={inputs.extraInfo.totalStakeAfter as BN}
                     decimalPoint={4}
                   />
                 </Grid>
