@@ -11,7 +11,7 @@ import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
-import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, OptionalCopyButton, ShortAddress2 } from '../../../components';
+import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, Infotip2, OptionalCopyButton, ShortAddress2 } from '../../../components';
 import { useAccount, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { showAccount, tieAccount } from '../../../messaging';
@@ -46,21 +46,29 @@ interface BalanceJSXType {
   isBalanceOutdated: boolean | undefined;
 }
 
-const Balance = ({ balanceToShow, isBalanceOutdated }: BalanceJSXType) => (
-  <>
-    {balanceToShow?.decimal
-      ? <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary', fontWeight: 500 }}>
-        <FormatBalance2
-          decimalPoint={2}
-          decimals={[balanceToShow.decimal]}
-          tokens={[balanceToShow.token]}
-          value={getValue('total', balanceToShow)}
-        />
-      </Grid>
-      : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
-    }
-  </>
-);
+const Balance = ({ balanceToShow, isBalanceOutdated }: BalanceJSXType) => {
+  const balance = getValue('total', balanceToShow);
+  const decimal = balanceToShow?.decimal;
+  const token = balanceToShow?.token;
+
+  return (
+    <>
+      {balanceToShow?.decimal
+        ? <Infotip2 text={`${amountToHuman(balance, decimal, decimal, true)}`}>
+          <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary', fontWeight: 500 }}>
+            <FormatBalance2
+              decimalPoint={2}
+              decimals={[decimal]}
+              tokens={[token]}
+              value={balance}
+            />
+          </Grid>
+        </Infotip2>
+        : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
+      }
+    </>
+  )
+}
 
 interface BalanceRowJSXType {
   balanceToShow: BalancesInfo | undefined;
