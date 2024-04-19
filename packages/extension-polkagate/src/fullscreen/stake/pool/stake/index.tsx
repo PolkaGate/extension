@@ -41,7 +41,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function StakeExtra({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function StakeExtra ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);
@@ -58,17 +58,21 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
   const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
   const [nextBtnDisabled, setNextBtnDisabled] = useState<boolean>(true);
 
+  const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
 
   useEffect(() => {
-    if (amount && api && amountAsBN) {
+    if (amount && api && staked && amountAsBN) {
       const call = api.tx.nominationPools.bondExtra;
       const params = [{ FreeBalance: amountAsBN.toString() }];
+
+      const totalStakeAfter = staked.add(amountAsBN);
 
       const extraInfo = {
         action: 'Pool Staking',
         amount,
-        subAction: 'stake extra'
+        subAction: 'stake extra',
+        totalStakeAfter
       };
 
       setInputs({
@@ -77,7 +81,7 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
         params
       });
     }
-  }, [amount, amountAsBN, api]);
+  }, [amount, amountAsBN, api, staked]);
 
   const onMaxAmount = useCallback(() => {
     if (!api || !availableBalance || !estimatedMaxFee) {

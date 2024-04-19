@@ -24,9 +24,9 @@ import { openOrFocusTab } from '../../accountDetailsFullScreen/components/Common
 import { Title } from '../../sendFund/InputPage';
 import DisplayBalance from '../partials/DisplayBalance';
 import ClaimedRewardsChart from './partials/ClaimedRewardsChart';
+import Info from './partials/Info';
 import PoolCommonTasks from './partials/PoolCommonTasks';
 import { MODAL_IDS } from '.';
-import Info from './partials/Info';
 
 interface Props {
   address: string;
