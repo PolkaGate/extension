@@ -131,11 +131,13 @@ export default function useValidators (address: string, validators?: AllValidato
       const currentNominators: Record<string, Others[]> = {};
 
       validatorsPaged.forEach((pages) => {
-        const validatorAddress = pages[0][0].toHuman()[1] as string;
+        if (pages[0]) {
+          const validatorAddress = pages[0][0].toHuman()[1] as string;
 
-        currentNominators[validatorAddress] = [];
+          currentNominators[validatorAddress] = [];
 
-        pages.forEach(([, value]) => currentNominators[validatorAddress].push(...value.unwrap().others));
+          pages.forEach(([, value]) => currentNominators[validatorAddress].push(...value.unwrap().others));
+        }
       });
 
       const current: ValidatorInfo[] = [];
