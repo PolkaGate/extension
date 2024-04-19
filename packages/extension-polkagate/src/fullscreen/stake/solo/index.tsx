@@ -10,7 +10,7 @@ import { useParams } from 'react-router';
 
 import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 
-import { useFullscreen, useStakingAccount, useTranslation, useUnSupportedNetwork } from '../../../hooks';
+import { useBalances, useFullscreen, useStakingAccount, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { FULLSCREEN_WIDTH, STAKING_CHAINS } from '../../../util/constants';
 import { openOrFocusTab } from '../../accountDetailsFullScreen/components/CommonTasks';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
@@ -47,6 +47,7 @@ export default function Index (): React.ReactElement {
 
   const [refresh, setRefresh] = useState<boolean>(false);
   const stakingAccount = useStakingAccount(address, undefined, refresh, setRefresh);
+  const balances = useBalances(address, refresh, setRefresh);
 
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const [showId, setShow] = useState<number>(MODAL_IDS.NONE);
@@ -62,7 +63,10 @@ export default function Index (): React.ReactElement {
       <FullScreenHeader page='stake' />
       {showId !== MODAL_IDS.STAKE &&
         <StakedSolo
+          balances={balances}
+          setRefresh={setRefresh}
           setShow={setShow}
+          stakingAccount={stakingAccount}
         />}
       {showId === MODAL_IDS.UNSTAKE &&
         <Unstake

@@ -9,9 +9,10 @@ import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
+import { AccountStakingInfo, BalancesInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { useBalances, useInfo, useStakingAccount, useStakingRewardDestinationAddress, useStakingRewards, useTranslation, useUnSupportedNetwork } from '../../../hooks';
+import { useInfo, useStakingRewardDestinationAddress, useStakingRewards, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { STAKING_CHAINS } from '../../../util/constants';
 import { openOrFocusTab } from '../../accountDetailsFullScreen/components/CommonTasks';
 import { Title } from '../../sendFund/InputPage';
@@ -28,23 +29,23 @@ interface SessionIfo {
   currentEra: number;
 }
 
-interface Props{
-  setShow: React.Dispatch<React.SetStateAction<number>>
+interface Props {
+  setShow: React.Dispatch<React.SetStateAction<number>>;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  stakingAccount: AccountStakingInfo | null | undefined;
+  balances: BalancesInfo | undefined
 }
 
-export default function StakedSolo ({ setShow }: Props): React.ReactElement {
+export default function StakedSolo({ balances, setRefresh, setShow, stakingAccount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
+  const { api } = useInfo(address);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
 
-  const [refresh, setRefresh] = useState<boolean>(false);
-  const stakingAccount = useStakingAccount(address, undefined, refresh, setRefresh);
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
 
   const rewards = useStakingRewards(address, stakingAccount);
-  const { api } = useInfo(address);
-  const balances = useBalances(address, refresh, setRefresh);
 
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active as unknown as BN, [stakingAccount?.stakingLedger?.active]);
