@@ -57,7 +57,7 @@ export default function ManageValidators (): React.ReactElement {
       <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '6%' }}>
         <Title
           icon={faHand}
-          text={t('Manage Validators')}
+          text={t('Manage Pool Validators')}
         />
         <Grid alignItems='center' container item justifyContent='flex-start'>
           {step === STEPS.INDEX &&
