@@ -36,7 +36,7 @@ const SAFETY_MARGIN_FACTOR_FOR_MIN_TO_SOLO_STAKE = 1.2;
 export default function EasyMode ({ address, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { api, chainName, decimal, formatted } = useInfo(address);
+  const { api, chainName, decimal } = useInfo(address);
   const pool = usePool(address, POLKAGATE_POOL_IDS[chainName]);
 
   const poolConsts = usePoolConsts(address);
@@ -44,12 +44,11 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
   const minToReceiveRewardsInSolo = useMinToReceiveRewardsInSolo2(address);
   const autoSelectedValidators = useValidatorSuggestion(address);
 
-  const [amount, setAmount] = useState<string>(inputs?.amount);
-  const [estimatedFee, setEstimatedFee] = useState<Balance>();
+  const [amount, setAmount] = useState<string>(inputs?.extraInfo?.amount);
   const [isNextClicked, setNextIsClicked] = useState<boolean>();
 
   const buttonDisable = !amount;
-  const isBusy = (!inputs?.estimatedFee || !inputs?.amount) && isNextClicked;
+  const isBusy = !inputs?.extraInfo?.amount && isNextClicked;
 
   useEffect(() => {
     if (amount && minToReceiveRewardsInSolo && poolConsts) {
@@ -70,13 +69,11 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
           const extraInfo = {
             action: 'Solo Staking',
             amount,
-            fee: String(estimatedFee || 0),
             subAction: 'Stake'
           };
 
           setInputs({
             call,
-            estimatedFee,
             extraInfo,
             mode: STEPS.EASY_STAKING,
             params,
@@ -92,15 +89,12 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
           const extraInfo = {
             action: 'Pool Staking',
             amount,
-            fee: String(estimatedFee || 0),
             poolName: pool.metadata,
             subAction: 'Join'
           };
 
           pool && setInputs({
-            amount,
             call,
-            estimatedFee,
             extraInfo,
             mode: STEPS.EASY_STAKING,
             params,
@@ -111,17 +105,7 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
         console.log('cant stake!');
       }
     }
-  }, [amount, api, autoSelectedValidators, decimal, estimatedFee, minToReceiveRewardsInSolo, pool, poolConsts, setInputs]);
-
-  useEffect(() => {
-    if (inputs?.call && inputs?.params && formatted) {
-      inputs.call(...inputs.params)
-        .paymentInfo(formatted)
-        .then((i) => setEstimatedFee(i?.partialFee))
-        .catch(console.error);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formatted, inputs?.params, inputs?.call]);
+  }, [amount, api, autoSelectedValidators, decimal, minToReceiveRewardsInSolo, pool, poolConsts, setInputs]);
 
   const onChangeAmount = useCallback((value: string) => {
     if (!balances) {
@@ -134,8 +118,9 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
       return;
     }
 
+    setInputs(undefined);
     setAmount(value);
-  }, [balances]);
+  }, [balances, setInputs]);
 
   const thresholds = useMemo(() => {
     if (!stakingConsts || !decimal || !balances || !poolConsts) {
@@ -158,8 +143,10 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
       return;
     }
 
+    setInputs(undefined);
+
     setAmount(amountToHuman(thresholds[maxMin].toString(), decimal));
-  }, [thresholds, decimal]);
+  }, [thresholds, decimal, setInputs]);
 
   const onMaxClick = useCallback(
     () => onThresholdAmount('max')

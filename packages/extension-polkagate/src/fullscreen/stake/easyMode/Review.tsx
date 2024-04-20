@@ -5,12 +5,12 @@
 
 import { MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import ShowValidators from '@polkadot/extension-polkagate/src/popup/staking/solo/stake/partials/ShowValidators';
 
 import { Identity, Infotip, ShowBalance, SignArea2, WrongPasswordAlert } from '../../../components';
-import { useInfo } from '../../../hooks';
+import { useEstimatedFee, useInfo } from '../../../hooks';
 import useTranslation from '../../../hooks/useTranslation';
 import { ThroughProxy } from '../../../partials';
 import ShowPool from '../../../popup/staking/partial/ShowPool';
@@ -37,11 +37,24 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
   const { api, chain } = useInfo(address);
   const theme = useTheme();
 
+  const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
+
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [showSelectedValidators, setShowSelectedValidators] = useState<boolean>(false);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
+
+  const _extraInfo = useMemo(() => {
+    if (inputs?.extraInfo && estimatedFee) {
+      return {
+        fee: estimatedFee,
+        ...inputs.extraInfo
+      };
+    }
+
+    return undefined;
+  }, [estimatedFee, inputs]);
 
   const handleCancel = useCallback(() => {
     setStep(inputs?.mode || STEPS.INDEX);
@@ -124,7 +137,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
           <Grid alignItems='center' container item sx={{ height: '42px' }}>
             <ShowBalance
               api={api}
-              balance={inputs?.estimatedFee}
+              balance={_extraInfo?.fee}
               decimalPoint={4}
             />
           </Grid>
@@ -134,7 +147,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
         <SignArea2
           address={address}
           call={inputs?.call}
-          extraInfo={inputs?.extraInfo}
+          extraInfo={_extraInfo}
           isPasswordError={isPasswordError}
           onSecondaryClick={handleCancel}
           params={inputs?.params}
