@@ -100,7 +100,7 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
         <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='50%'>
           <Grid display='inline-flex' fontSize='12px' fontWeight={400} item>
             <Typography fontSize='12px' fontWeight={300} lineHeight='25px' pr='5px'>
-              {t<string>('Own')}:
+              {t('Own')}:
             </Typography>
             <ShowBalance
               api={api}
@@ -111,7 +111,7 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
           </Grid>
           <Grid display='inline-flex' item>
             <Typography fontSize='12px' fontWeight={300} lineHeight='16px' pr='5px'>
-              {t<string>('Commission')}:
+              {t('Commission')}:
             </Typography>
             <Typography fontSize='12px' fontWeight={400} lineHeight='16px'>
               {commission} %
@@ -121,11 +121,11 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
         <Grid container direction='column' item justifyContent='center' width='50%'>
           <Grid display='inline-flex' fontSize='12px' fontWeight={400} item justifyContent='flex-end'>
             <Typography fontSize='12px' fontWeight={300} lineHeight='25px' pr='5px'>
-              {t<string>('Total')}:
+              {t('Total')}:
             </Typography>
             {total.isZero()
               ? <Typography fontSize='12px' fontWeight={400} lineHeight='22px' pr='5px'>
-                {t<string>('N/A')}
+                {t('N/A')}
               </Typography>
               : <ShowBalance
                 api={api}
@@ -138,7 +138,7 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
           {!staked?.isZero() &&
             <Grid display='inline-flex' item justifyContent='end'>
               <Typography fontSize='12px' fontWeight={300} lineHeight='16px' pr='5px'>
-                {t<string>(`${myIndex !== -1 ? 'My rank' : 'My possible rank'}`)}:
+                {t(`${myIndex !== -1 ? 'My rank' : 'My possible rank'}`)}:
               </Typography>
               <Typography fontSize='12px' fontWeight={400} lineHeight='16px'>
                 {myIndex !== -1 ? (myIndex + 1) : myPossibleIndex !== -1 ? (myPossibleIndex + 1) : 'N/A'}
@@ -176,17 +176,17 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
             <Grid container item sx={{ '> :last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
               <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='50%'>
                 <Typography fontSize='12px' fontWeight={300} lineHeight='30px'>
-                  {t<string>('Account')}
+                  {t('Account')}
                 </Typography>
               </Grid>
               <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='30%'>
                 <Typography fontSize='12px' fontWeight={300} lineHeight='30px'>
-                  {t<string>('Staked')}
+                  {t('Staked')}
                 </Typography>
               </Grid>
               <Grid container item justifyContent='center' width='20%'>
                 <Typography fontSize='12px' fontWeight={300} lineHeight='30px'>
-                  {t<string>('Percent')}
+                  {t('Percent')}
                 </Typography>
               </Grid>
             </Grid>
@@ -211,7 +211,7 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
           </>
           )
           : (<Typography fontSize='16px' fontWeight={400} m='auto' py='20px' textAlign='center' width='92%'>
-            {t<string>('The list of nominators is not available to be displayed as this validator is in the waiting status.')}
+            {t('The list of nominators is not available to be displayed as this validator is in the waiting status.')}
           </Typography>)
         }
       </Grid>
@@ -222,7 +222,7 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt={isFullscreen ? 0 : '46px'} sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container justifyContent='center' my='20px'>
         <Typography fontSize='28px' fontWeight={400} lineHeight={1.4} sx={{ borderBottom: '2px solid', borderColor: 'secondary.main' }}>
-          {t<string>('Validator’s Info')}
+          {t('Validator’s Info')}
         </Typography>
       </Grid>
       <ValidatorInformation />
