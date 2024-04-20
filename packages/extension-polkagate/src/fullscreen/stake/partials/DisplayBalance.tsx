@@ -34,7 +34,7 @@ interface DisplayBalanceProps {
   marginTop?: string;
 }
 
-export default function DisplayBalance({ actions, address, amount, icons, isUnstaking, marginTop = '15px', onClicks, title, toBeReleased }: DisplayBalanceProps): React.ReactElement {
+export default function DisplayBalance ({ actions, address, amount, icons, isUnstaking, marginTop = '10px', onClicks, title, toBeReleased }: DisplayBalanceProps): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const price = useNativeTokenPrice(address);
@@ -71,74 +71,68 @@ export default function DisplayBalance({ actions, address, amount, icons, isUnst
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mt: { marginTop }, p: '5px 30px' }}>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ minHeight: '67px' }}>
-        <Grid alignItems='center' container item justifyContent='space-between' width={isUnstaking ? '90%' : '100%'}>
-          <Grid alignItems='center' container item width='fit-content'>
-            <Typography fontSize='18px' fontWeight={400}>
-              {title}
-            </Typography>
+        <Typography fontSize='18px' fontWeight={400} width='25%'>
+          {title}
+        </Typography>
+        <Grid alignItems='center' container item width='37%'>
+          <Grid item sx={{ fontSize: '22px', fontWeight: 600 }}>
+            <ShowBalance
+              balance={amount}
+              decimal={decimal}
+              decimalPoint={3}
+              token={token}
+              withCurrency
+            />
           </Grid>
-          <Grid alignItems='center' container item justifyContent='flex-end' xs>
-            <Grid item sx={{ fontSize: '22px', fontWeight: 600 }}>
-              <ShowBalance
-                balance={amount}
-                decimal={decimal}
-                decimalPoint={3}
-                token={token}
-                withCurrency
-              />
-            </Grid>
-            <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '35px', mx: '10px', my: 'auto' }} />
-            <Grid item sx={{ '> div span': { display: 'block' }, fontSize: '22px', fontWeight: 400 }}>
-              <FormatPrice
-                amount={amount}
-                decimals={decimal}
-                price={price}
-                skeletonHeight={20}
-              />
-            </Grid>
+          <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '35px', mx: '10px', my: 'auto' }} />
+          <Grid item sx={{ '> div span': { display: 'block' }, fontSize: '22px', fontWeight: 400 }}>
+            <FormatPrice
+              amount={amount}
+              decimals={decimal}
+              price={price}
+              skeletonHeight={20}
+            />
           </Grid>
         </Grid>
-        <Grid container item justifyContent='flex-end' mt='5px' width={isUnstaking ? '90%' : '100%'}>
+        <Grid container item justifyContent='flex-end' width='38%'>
+          {isUnstaking &&
+          <ArrowForwardIosRoundedIcon
+            onClick={toggleShowUnstaking}
+            sx={{
+              color: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',
+              cursor: 'pointer',
+              fontSize: '26px',
+              m: '2% 18% 0 0',
+              stroke: !toBeReleased?.length ? theme.palette.text.disabled : theme.palette.secondary.light,
+              strokeWidth: 1,
+              transform: toBeReleased?.length && showUnstaking ? 'rotate(-90deg)' : 'rotate(90deg)',
+              transitionDuration: '0.3s',
+              transitionProperty: 'transform'
+            }}
+          />
+          }
           {icons?.map((_, index) => {
             const noValueToAct = !amount || amount?.isZero();
 
             return (actions &&
-              <Grid alignItems='center' container item justifyContent='flex-end' key={index} onClick={noValueToAct ? noop : onClicks && onClicks[index]} sx={{ cursor: 'pointer', ml: '10px', width: 'fit-content' }}>
-                <FontAwesomeIcon
-                  color={`${noValueToAct ? theme.palette.text.disabled : theme.palette.secondary.light}`}
-                  icon={icons[index]}
-                  style={{ height: '20px', stroke: `${theme.palette.text.primary}`, strokeWidth: 5, width: '20px' }}
-                />
-                <Typography color={noValueToAct ? theme.palette.text.disabled : theme.palette.secondary.light} fontSize='18px' fontWeight={400} ml='10px' textAlign='right'>
-                  {actions[index]}
-                </Typography>
-              </Grid>
+            <Grid alignItems='center' container direction='column' item justifyContent='center' key={index} minWidth='96px' onClick={noValueToAct ? noop : onClicks && onClicks[index]} sx={{ cursor: 'pointer', mx: '10px', width: 'inherit' }}>
+              <FontAwesomeIcon
+                color={`${noValueToAct ? theme.palette.text.disabled : theme.palette.secondary.light}`}
+                icon={icons[index]}
+                style={{ height: '30px', marginBottom: '-4px', stroke: `${theme.palette.text.primary}`, strokeWidth: 5, width: '20px' }}
+              />
+              <Typography color={noValueToAct ? theme.palette.text.disabled : theme.palette.secondary.light} fontSize='18px' fontWeight={400} textAlign='center'>
+                {actions[index]}
+              </Typography>
+            </Grid>
             );
           }
           )
           }
         </Grid>
-        {isUnstaking &&
-          <Grid container item justifyContent='flex-end' mt='-35px' width='10%'>
-            <ArrowForwardIosRoundedIcon
-              onClick={toggleShowUnstaking}
-              sx={{
-                color: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',
-                cursor: 'pointer',
-                fontSize: '26px',
-                m: '2% 18% 0 0',
-                stroke: !toBeReleased?.length ? theme.palette.text.disabled : theme.palette.secondary.light,
-                strokeWidth: 1,
-                transform: toBeReleased?.length && showUnstaking ? 'rotate(-90deg)' : 'rotate(90deg)',
-                transitionDuration: '0.3s',
-                transitionProperty: 'transform'
-              }}
-            />
-          </Grid>
-        }
       </Grid>
       {showUnstaking &&
-        <ToBeReleased />
+      <ToBeReleased />
       }
     </Grid>
   );
