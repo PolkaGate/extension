@@ -132,21 +132,20 @@ export default function LeavePool({ address, onClose, pool, setRefresh }: Props)
             {isPasswordError &&
               <WrongPasswordAlert />
             }
-            <Grid container item justifyContent='center' sx={{ fontSize: '14px', fontWeight: 400, pt: '10px', textAlign: 'center' }}>
+            <Grid container item justifyContent='center' sx={{ fontSize: '14px', fontWeight: 400, pt: '15px', textAlign: 'center' }}>
               {t('You are unstaking all your {{token}}s from this pool!', { replace: { token } })}
             </Grid>
             <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '10px auto', width: '240px' }} />
             <AmountFee
               address={address}
               amount={amountToHuman(staked?.toString(), decimal)}
-              // amount={staked?.toString()}
               fee={estimatedFee}
               label={t('Amount')}
               style={{ pt: '5px' }}
               token={token}
               withFee
             >
-              <Grid container item justifyContent='center' sx={{ fontSize: '12px', pt: '10px', textAlign: 'center' }}>
+              <Grid container item justifyContent='center' sx={{ fontSize: '14px', pt: '10px', textAlign: 'center' }}>
                 {t('This amount will be redeemable on {{redeemDate}}, and your rewards will be automatically claimed.', { replace: { redeemDate } })}
               </Grid>
             </AmountFee>
