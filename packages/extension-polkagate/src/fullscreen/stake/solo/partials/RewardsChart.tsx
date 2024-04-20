@@ -409,7 +409,7 @@ export default function RewardsChart ({ address, rewardDestinationAddress }: Pro
                                     {d.era}
                                   </Grid>
                                   <Grid item width='40%'>
-                                    {amountToHuman(d.amount, decimal, 9)} {` ${token}`}
+                                    {amountToHuman(d.amount, decimal, 4)} {` ${token}`}
                                   </Grid>
                                 </Grid>
                               </AccordionSummary>
