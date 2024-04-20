@@ -5,8 +5,8 @@
 
 import type { AnyTuple } from '@polkadot/types/types';
 
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { Divider, Grid, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
@@ -20,6 +20,7 @@ import { BN } from '@polkadot/util';
 
 import { MyPoolInfo, Proxy, TxInfo } from '../../../../../util/types';
 import { Inputs } from '../../../Entry';
+import { ModalTitle } from '../../../solo/commonTasks/configurePayee';
 import Confirmation from '../../partials/Confirmation';
 import TxDetail from './TxDetail';
 
@@ -117,16 +118,15 @@ export default function LeavePool({ address, onClose, pool, setRefresh }: Props)
   return (
     <DraggableModal minHeight={550} onClose={onClose} open>
       <>
-        <Grid alignItems='center' container justifyContent='space-between' py='15px'>
-          <Grid item>
-            <Typography fontSize='22px' fontWeight={700}>
-              {t('Leave Pool')}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <CloseIcon onClick={onClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-          </Grid>
-        </Grid>
+        {step !== STEPS.WAIT_SCREEN &&
+          <ModalTitle
+            icon={faRightFromBracket}
+            onCancel={onClose}
+            setStep={setStep}
+            step={step}
+            text={t('Leave Pool')}
+          />
+        }
         {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
           <>
             {isPasswordError &&
