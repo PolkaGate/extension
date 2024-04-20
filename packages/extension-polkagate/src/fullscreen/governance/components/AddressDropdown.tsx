@@ -18,9 +18,10 @@ interface Props {
   onSelect: (address: string) => void;
   selectedAddress: string | undefined;
   chainGenesis: string | undefined;
+  unableToChangeAccount?: boolean;
 }
 
-export default function AddressDropdown ({ api, chainGenesis, onSelect, selectedAddress }: Props): React.ReactElement<Props> {
+export default function AddressDropdown({ api, chainGenesis, onSelect, selectedAddress, unableToChangeAccount = false }: Props): React.ReactElement<Props> {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const { accounts } = useContext(AccountContext);
@@ -57,11 +58,13 @@ export default function AddressDropdown ({ api, chainGenesis, onSelect, selected
             }}
           />
         </Grid>
-        <Grid alignItems='center' container item onClick={toggleDropdown} ref={ref} sx={{ borderLeft: '1px solid', borderLeftColor: 'secondary.light', cursor: 'pointer', px: '10px', width: '40px' }}>
-          <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: isDropdownVisible ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
-        </Grid>
+        {!unableToChangeAccount &&
+          <Grid alignItems='center' container item onClick={toggleDropdown} ref={ref} sx={{ borderLeft: '1px solid', borderLeftColor: 'secondary.light', cursor: 'pointer', px: '10px', width: '40px' }}>
+            <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: isDropdownVisible ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
+          </Grid>
+        }
       </Grid>
-      <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={isDropdownVisible} sx={{ bgcolor: 'background.paper', border: '2px solid', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '0px 3px 10px rgba(255, 255, 255, 0.25)', maxHeight: '300px', overflow: 'hidden', overflowY: 'scroll', position: 'absolute', top: '45px', width: '100%', zIndex: 10 }}>
+      <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={isDropdownVisible && !unableToChangeAccount} sx={{ bgcolor: 'background.paper', border: '2px solid', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '0px 3px 10px rgba(255, 255, 255, 0.25)', maxHeight: '300px', overflow: 'hidden', overflowY: 'scroll', position: 'absolute', top: '45px', width: '100%', zIndex: 10 }}>
         <Grid container py='5px'>
           {addressesToDisplay.map((address, index) => {
             const theLastItem = index === addressesToDisplay.length - 1;
