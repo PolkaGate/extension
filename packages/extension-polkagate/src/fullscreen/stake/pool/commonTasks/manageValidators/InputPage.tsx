@@ -51,14 +51,8 @@ export default function InputPage ({ address, inputs, pool, setInputs, setStep, 
 
   const { api, formatted } = useInfo(address);
 
-  const [newSelectedValidators, setNewSelectedValidators] = useState<ValidatorInfo[]>([]);
+  const [newSelectedValidators, setNewSelectedValidators] = useState<ValidatorInfo[]>(inputs?.selectedValidators || []);
   const [nominatedValidatorsIds, setNominatedValidatorsIds] = useState<string[] | undefined | null>();
-
-  // const selectedValidatorsInfo = useMemo(() =>
-  //   allValidatorsInfo && nominatedValidatorsIds && allValidatorsInfo.current
-  //     .concat(allValidatorsInfo.waiting)
-  //     .filter((v: DeriveStakingQuery) => nominatedValidatorsIds.includes(String(v.accountId)))
-  // , [allValidatorsInfo, nominatedValidatorsIds]);
 
   const { call, params } = useMemo(() => {
     if (api && newSelectedValidators?.length && pool) {
