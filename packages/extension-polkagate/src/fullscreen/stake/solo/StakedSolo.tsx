@@ -130,7 +130,7 @@ export default function StakedSolo({ balances, setRefresh, setShow, stakingAccou
         text={t('Staked Solo')}
       />
       <Grid container item justifyContent='space-between' mb='15px'>
-        <Grid container direction='column' item mb='10px' minWidth='715px' rowGap='10px' width='calc(100% - 320px - 3%)'>
+        <Grid container direction='column' item mb='10px' minWidth='715px' rowGap='10px' width='calc(100% - 350px - 3%)'>
           <Grid container item>
             <DisplayBalance
               actions={[t('unstake'), t('fast unstake')]}
@@ -180,7 +180,7 @@ export default function StakedSolo({ balances, setRefresh, setShow, stakingAccou
             />
           </Grid>
         </Grid>
-        <Grid container direction='column' gap='15px' item width='320px'>
+        <Grid container direction='column' gap='15px' item width='350px'>
           <RewardsChart
             address={address}
             rewardDestinationAddress={rewardDestinationAddress}
