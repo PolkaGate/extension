@@ -76,7 +76,7 @@ function Privacy({ asModal, setShow, show = false }: Props): React.ReactElement 
           </ListItem>
         </List>
       </Box>
-      <IconButton onClick={onClose} sx={{ left: '15px', p: 0, position: 'absolute', top: asModal ? '15px' : '65px' }}>
+      <IconButton onClick={onClose} sx={{ left: asModal ? undefined : '15px', p: 0, position: 'absolute', right: asModal ? '15px' : undefined, top: asModal ? '15px' : '65px' }}>
         <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />
       </IconButton>
       <Grid container justifyContent='center' sx={{ bottom: asModal ? '-25px' : 0, position: 'absolute' }}>
