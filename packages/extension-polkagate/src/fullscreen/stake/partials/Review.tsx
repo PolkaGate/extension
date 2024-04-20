@@ -9,16 +9,15 @@
  * */
 
 import { Container, Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
-import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
 import { BN } from '@polkadot/util';
 
 import { AccountHolderWithProxy, Identity, ShortAddress, ShowBalance, ShowValue, SignArea2, WrongPasswordAlert } from '../../../components';
-import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../hooks';
+import { useEstimatedFee, useInfo, useTranslation } from '../../../hooks';
 import { SubTitle } from '../../../partials';
-import { Payee, Proxy, ProxyItem, TxInfo } from '../../../util/types';
+import { Payee, Proxy, TxInfo } from '../../../util/types';
 import { Inputs } from '../Entry';
 import { STEPS } from '../solo/commonTasks/configurePayee';
 
@@ -65,21 +64,13 @@ function RewardsDestination({ address, payee }: { address: string | undefined, p
 
 export default function Review({ address, inputs, onClose, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const { api, chain, formatted, token } = useInfo(address);
-  const proxies = useProxies(api, formatted);
+  const { api, chain, token } = useInfo(address);
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
 
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
-  const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-
-  useEffect((): void => {
-    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
-
-    setProxyItems(fetchedProxyItems);
-  }, [proxies]);
 
   const extraInfo = useMemo(() => {
     if (inputs?.extraInfo) {
@@ -89,8 +80,6 @@ export default function Review({ address, inputs, onClose, setRefresh, setStep, 
       };
     }
   }, [estimatedFee, inputs]);
-
-  const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
 
   const _onClose = useCallback(() => {
     setStep(STEPS.INDEX);
@@ -103,94 +92,80 @@ export default function Review({ address, inputs, onClose, setRefresh, setStep, 
           fontSize='14px'
         />
       }
-      {step === STEPS.REVIEW &&
-        <>
-          <SubTitle label={t('Review')} style={{ paddingTop: isPasswordError ? '10px' : '25px' }} />
-          <Container disableGutters sx={{ px: '30px' }}>
-            <AccountHolderWithProxy
-              address={address}
-              chain={chain}
-              selectedProxyAddress={selectedProxyAddress}
-              style={{ mt: 'auto' }}
-              title={t('Account holder')}
-            />
-            {inputs?.extraInfo?.payee &&
-              <RewardsDestination
-                address={address}
-                payee={inputs.extraInfo.payee}
-              />
-            }
-            {inputs?.extraInfo?.amount &&
-              <DisplayValue dividerHeight='1px' title={t('Amount')}>
-                <Grid alignItems='center' container item justifyContent='center' sx={{ height: '42px' }}>
-                  <ShowValue
-                    unit={token}
-                    value={inputs.extraInfo.amount}
-                  />
-                </Grid>
-              </DisplayValue>
-            }
-            <DisplayValue dividerHeight='1px' title={t('Fee')}>
-              <Grid alignItems='center' container item sx={{ fontSize: 'large', height: '42px' }}>
-                <ShowValue height={16} value={estimatedFee?.toHuman()} width='150px' />
-              </Grid>
-            </DisplayValue>
-            {inputs?.extraInfo?.availableBalanceAfter &&
-              <DisplayValue dividerHeight='1px' title={t('Available Balance After')}>
-                <Grid alignItems='center' container item sx={{ height: '42px' }}>
-                  <ShowBalance
-                    api={api}
-                    balance={inputs.extraInfo.availableBalanceAfter}
-                    decimalPoint={4}
-                  />
-                </Grid>
-              </DisplayValue>
-            }
-            {inputs?.extraInfo?.totalStakeAfter &&
-              <DisplayValue dividerHeight='1px' title={t('Total Stake After')}>
-                <Grid alignItems='center' container item sx={{ height: '42px' }}>
-                  <ShowBalance
-                    api={api}
-                    balance={inputs.extraInfo.totalStakeAfter as BN}
-                    decimalPoint={4}
-                  />
-                </Grid>
-              </DisplayValue>
-            }
-          </Container>
-          <Grid container item sx={{ bottom: '10px', left: '4%', position: 'absolute', width: '92%' }}>
-            <SignArea2
-              address={address}
-              call={inputs?.call}
-              extraInfo={extraInfo}
-              isPasswordError={isPasswordError}
-              onSecondaryClick={onClose || _onClose}
-              params={inputs?.params}
-              primaryBtnText={t('Confirm')}
-              proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
-              secondaryBtnText={t('Back')}
-              selectedProxy={selectedProxy}
-              setIsPasswordError={setIsPasswordError}
-              setRefresh={setRefresh}
-              setStep={setStep}
-              setTxInfo={setTxInfo}
-              step={step}
-              steps={STEPS}
-            />
-          </Grid>
-        </>
-      }
-      {step === STEPS.PROXY &&
-        <SelectProxyModal2
+      <SubTitle label={t('Review')} style={{ paddingTop: isPasswordError ? '10px' : '25px' }} />
+      <Container disableGutters sx={{ px: '30px' }}>
+        <AccountHolderWithProxy
           address={address}
-          closeSelectProxy={closeProxy}
-          height={500}
-          proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
-          selectedProxy={selectedProxy}
-          setSelectedProxy={setSelectedProxy}
+          chain={chain}
+          selectedProxyAddress={selectedProxyAddress}
+          style={{ mt: 'auto' }}
+          title={t('Account holder')}
         />
-      }
+        {inputs?.extraInfo?.payee &&
+          <RewardsDestination
+            address={address}
+            payee={inputs.extraInfo.payee}
+          />
+        }
+        {inputs?.extraInfo?.amount &&
+          <DisplayValue dividerHeight='1px' title={t('Amount')}>
+            <Grid alignItems='center' container item justifyContent='center' sx={{ height: '42px' }}>
+              <ShowValue
+                unit={token}
+                value={inputs.extraInfo.amount}
+              />
+            </Grid>
+          </DisplayValue>
+        }
+        <DisplayValue dividerHeight='1px' title={t('Fee')}>
+          <Grid alignItems='center' container item sx={{ fontSize: 'large', height: '42px' }}>
+            <ShowValue height={16} value={estimatedFee?.toHuman()} width='150px' />
+          </Grid>
+        </DisplayValue>
+        {inputs?.extraInfo?.availableBalanceAfter &&
+          <DisplayValue dividerHeight='1px' title={t('Available Balance After')}>
+            <Grid alignItems='center' container item sx={{ height: '42px' }}>
+              <ShowBalance
+                api={api}
+                balance={inputs.extraInfo.availableBalanceAfter}
+                decimalPoint={4}
+              />
+            </Grid>
+          </DisplayValue>
+        }
+        {inputs?.extraInfo?.totalStakeAfter &&
+          <DisplayValue dividerHeight='1px' title={t('Total Stake After')}>
+            <Grid alignItems='center' container item sx={{ height: '42px' }}>
+              <ShowBalance
+                api={api}
+                balance={inputs.extraInfo.totalStakeAfter as BN}
+                decimalPoint={4}
+              />
+            </Grid>
+          </DisplayValue>
+        }
+      </Container>
+      <Grid container item sx={{ bottom: '10px', left: '4%', position: 'absolute', width: '92%' }}>
+        <SignArea2
+          address={address}
+          call={inputs?.call}
+          extraInfo={extraInfo}
+          isPasswordError={isPasswordError}
+          onSecondaryClick={onClose || _onClose}
+          params={inputs?.params}
+          primaryBtnText={t('Confirm')}
+          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+          secondaryBtnText={t('Back')}
+          selectedProxy={selectedProxy}
+          setIsPasswordError={setIsPasswordError}
+          setRefresh={setRefresh}
+          setSelectedProxy={setSelectedProxy}
+          setStep={setStep}
+          setTxInfo={setTxInfo}
+          step={step}
+          steps={STEPS}
+        />
+      </Grid>
     </Grid>
   );
 }
