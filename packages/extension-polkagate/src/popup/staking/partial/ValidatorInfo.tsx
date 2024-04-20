@@ -231,10 +231,10 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
         onClick={onClose}
         sx={{
           left: isFullscreen ? undefined : '15px',
-          right: isFullscreen ? '15px' : undefined,
+          right: isFullscreen ? '35px' : undefined,
           p: 0,
           position: 'absolute',
-          top: isFullscreen ? '15px' : '65px'
+          top: isFullscreen ? '35px' : '65px'
         }}
       >
         <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />
