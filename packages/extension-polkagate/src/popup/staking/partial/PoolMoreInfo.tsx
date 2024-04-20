@@ -19,9 +19,9 @@ import { Identity, PButton, Progress, ShowBalance, SlidePopUp } from '../../../c
 import { useFormatted, usePool, usePoolMembers, useTranslation } from '../../../hooks';
 import { FormattedAddressState, MemberPoints, MyPoolInfo, PoolInfo } from '../../../util/types';
 import ClaimCommission from '../pool/claimCommission';
+import ClaimCommissionModal from '../pool/claimCommission/ClaimCommissionModal';
 import ShowPool from './ShowPool';
 import ShowRoles from './ShowRoles';
-import ClaimCommissionModal from '../pool/claimCommission/ClaimCommissionModal';
 
 interface Props {
   address?: string;
@@ -42,10 +42,10 @@ interface CollapseProps {
   open: () => void;
 }
 
-export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
+export default function PoolMoreInfo ({ api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const isExtensionPopup = useIsExtensionPopup();
-  
+
   const { address } = useParams<FormattedAddressState>();
   const formatted = useFormatted(address);
   const poolToShow = usePool(address, poolId, false, pool);
@@ -90,17 +90,17 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
       <Grid container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
         <Grid item width='50%'>
           <Typography fontSize='12px' fontWeight={300} lineHeight='30px' textAlign='center'>
-            {t<string>('Identity')}
+            {t('Identity')}
           </Typography>
         </Grid>
         <Grid item sx={{ borderInline: '1px solid', borderColor: 'secondary.light' }} width='30%'>
           <Typography fontSize='12px' fontWeight={300} lineHeight='30px' textAlign='center'>
-            {t<string>('Staked')}
+            {t('Staked')}
           </Typography>
         </Grid>
         <Grid item width='20%'>
           <Typography fontSize='12px' fontWeight={300} lineHeight='30px' textAlign='center'>
-            {t<string>('Percent')}
+            {t('Percent')}
           </Typography>
         </Grid>
       </Grid>
@@ -126,7 +126,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
             <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
           </Grid>
           <Typography fontSize='13px' lineHeight='40px' pl='10px'>
-            {t<string>('Loading pool members...')}
+            {t('Loading pool members...')}
           </Typography>
         </Grid>
       }
@@ -137,7 +137,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
     <Grid container sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', my: '10px' }}>
       <Grid container item justifyContent='center' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
         <Typography fontSize='12px' fontWeight={300} lineHeight='25px'>
-          {t<string>('Pool Claimable')}
+          {t('Pool Claimable')}
         </Typography>
       </Grid>
       <Grid alignItems='center' container height='37px' item justifyContent='center'>
@@ -157,7 +157,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
     <Grid container sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', my: '10px', pb: '5px' }}>
       <Grid container item justifyContent='center' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
         <Typography fontSize='12px' fontWeight={300} lineHeight='25px'>
-          {t<string>('Claimable Commission')}
+          {t('Claimable Commission')}
         </Typography>
       </Grid>
       <Grid alignItems='center' container height='37px' item justifyContent='center'>
@@ -211,7 +211,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt={isExtensionPopup ? '46px' : 0} sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container justifyContent='center' my='20px'>
         <Typography fontSize='28px' fontWeight={400} lineHeight={1.4}>
-          {t<string>('Pool Info')}
+          {t('Pool Info')}
         </Typography>
       </Grid>
       {poolToShow
@@ -228,7 +228,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
             open={() => openTab('Roles')}
             pool={poolToShow}
             show={itemToShow === 'Roles'}
-            title={t<string>('Roles')}
+            title={t('Roles')}
           />
           {poolToShow.accounts?.rewardId &&
             <CollapseData
@@ -236,7 +236,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
               open={() => openTab('Ids')}
               pool={poolToShow}
               show={itemToShow === 'Ids'}
-              title={t<string>('Ids')}
+              title={t('Ids')}
             />
           }
           {poolToShow.accounts?.rewardId &&
@@ -245,7 +245,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
               open={() => openTab('Members')}
               pool={poolToShow}
               show={itemToShow === 'Members'}
-              title={t<string>('Members')}
+              title={t('Members')}
             />
           }
           {poolToShow.accounts?.rewardId &&
@@ -254,7 +254,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
               open={() => openTab('Reward')}
               pool={poolToShow}
               show={itemToShow === 'Reward'}
-              title={t<string>('Rewards')}
+              title={t('Rewards')}
             />
           }
           {poolToShow.bondedPool?.roles && Object.values(poolToShow.bondedPool.roles).includes(formatted) &&
@@ -263,7 +263,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
               open={() => openTab('Commission')}
               pool={poolToShow}
               show={itemToShow === 'Commission'}
-              title={t<string>('Commission')}
+              title={t('Commission')}
             />
           }
           {showClaimCommission && poolToShow &&
@@ -277,7 +277,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
         </>
         : <Progress pt='95px' size={125} title={t('Loading pool information...')} />
       }
-      <IconButton onClick={_closeMenu} sx={{ left: isExtensionPopup ? '15px' : '30px', p: 0, position: 'absolute', top: isExtensionPopup ? '65px' : '35px' }}>
+      <IconButton onClick={_closeMenu} sx={{ left: isExtensionPopup ? '15px' : undefined, right: isExtensionPopup ? undefined : '15px', p: 0, position: 'absolute', top: isExtensionPopup ? '65px' : '35px' }}>
         <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />
       </IconButton>
     </Grid>
