@@ -30,7 +30,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function ManageValidators(): React.ReactElement {
+export default function ManageValidators (): React.ReactElement {
   const { t } = useTranslation();
 
   useFullscreen();

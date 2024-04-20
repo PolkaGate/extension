@@ -132,7 +132,7 @@ export default function useValidators (address: string, validators?: AllValidato
 
       validatorsPaged.forEach((pages) => {
         if (pages[0]) {
-          const validatorAddress = pages[0][0].toHuman()[1] as string;
+          const validatorAddress = pages[0][0].args[1].toString();
 
           currentNominators[validatorAddress] = [];
 
