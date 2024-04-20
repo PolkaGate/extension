@@ -71,10 +71,10 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mt: { marginTop }, p: '5px 30px' }}>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ minHeight: '67px' }}>
-        <Typography fontSize='18px' fontWeight={400} width='27%'>
+        <Typography fontSize='18px' fontWeight={400} width='28%'>
           {title}
         </Typography>
-        <Grid alignItems='center' container item width='35%'>
+        <Grid alignItems='center' container item width='34%'>
           <Grid item sx={{ fontSize: '22px', fontWeight: 600 }}>
             <ShowBalance
               balance={amount}
@@ -96,35 +96,37 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
         </Grid>
         <Grid container item justifyContent='flex-end' width='38%'>
           {isUnstaking &&
-          <ArrowForwardIosRoundedIcon
-            onClick={toggleShowUnstaking}
-            sx={{
-              color: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',
-              cursor: 'pointer',
-              fontSize: '26px',
-              m: '2% 18% 0 0',
-              stroke: !toBeReleased?.length ? theme.palette.text.disabled : theme.palette.secondary.light,
-              strokeWidth: 1,
-              transform: toBeReleased?.length && showUnstaking ? 'rotate(-90deg)' : 'rotate(90deg)',
-              transitionDuration: '0.3s',
-              transitionProperty: 'transform'
-            }}
-          />
+            <Grid alignItems='center' container direction='column' item justifyContent='center' minWidth='96px' sx={{ ml: '10px', width: 'fit-content' }}>
+              <ArrowForwardIosRoundedIcon
+                onClick={toggleShowUnstaking}
+                sx={{
+                  color: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',
+                  cursor: 'pointer',
+                  fontSize: '26px',
+                  stroke: !toBeReleased?.length ? theme.palette.text.disabled : theme.palette.secondary.light,
+                  strokeWidth: 1,
+                  transform: toBeReleased?.length && showUnstaking ? 'rotate(-90deg)' : 'rotate(90deg)',
+                  transitionDuration: '0.3s',
+                  transitionProperty: 'transform'
+                }}
+              />
+            </Grid>
+
           }
           {icons?.map((_, index) => {
             const noValueToAct = !amount || amount?.isZero();
 
             return (actions &&
-            <Grid alignItems='center' container direction='column' item justifyContent='center' key={index} minWidth='96px' onClick={noValueToAct ? noop : onClicks && onClicks[index]} sx={{ cursor: 'pointer', ml: '10px', width: 'fit-content' }}>
-              <FontAwesomeIcon
-                color={`${noValueToAct ? theme.palette.text.disabled : theme.palette.secondary.light}`}
-                icon={icons[index]}
-                style={{ height: '30px', marginBottom: '-4px', stroke: `${theme.palette.text.primary}`, strokeWidth: 5, width: '20px' }}
-              />
-              <Typography color={noValueToAct ? theme.palette.text.disabled : theme.palette.secondary.light} fontSize='18px' fontWeight={400} textAlign='center'>
-                {actions[index]}
-              </Typography>
-            </Grid>
+              <Grid alignItems='center' container direction='column' item justifyContent='center' key={index} minWidth='96px' onClick={noValueToAct ? noop : onClicks && onClicks[index]} sx={{ cursor: 'pointer', ml: '10px', width: 'fit-content' }}>
+                <FontAwesomeIcon
+                  color={`${noValueToAct ? theme.palette.text.disabled : theme.palette.secondary.light}`}
+                  icon={icons[index]}
+                  style={{ height: '30px', marginBottom: '-4px', stroke: `${theme.palette.text.primary}`, strokeWidth: 5, width: '20px' }}
+                />
+                <Typography color={noValueToAct ? theme.palette.text.disabled : theme.palette.secondary.light} fontSize='18px' fontWeight={400} textAlign='center'>
+                  {actions[index]}
+                </Typography>
+              </Grid>
             );
           }
           )
@@ -132,7 +134,7 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
         </Grid>
       </Grid>
       {showUnstaking &&
-      <ToBeReleased />
+        <ToBeReleased />
       }
     </Grid>
   );
