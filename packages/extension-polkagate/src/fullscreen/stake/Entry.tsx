@@ -52,41 +52,43 @@ function Entry ({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.Reac
 
   const closeConfirmation = useCallback(() => {
     setRefresh(true);
-    openOrFocusTab(`/accountfs/${address}/0`, true);
-  }, [address, setRefresh]);
+    inputs?.pool
+      ? openOrFocusTab(`/poolfs/${address}/`, true)
+      : openOrFocusTab(`/solofs/${address}/`, true);
+  }, [address, inputs?.pool]);
 
   return (
     <Grid container item>
       {step === STEPS.EASY_STAKING &&
-         <EasyMode
-           address={address}
-           balances={balances}
-           inputs={inputs}
-           setInputs={setInputs}
-           setStep={setStep}
-         />
+        <EasyMode
+          address={address}
+          balances={balances}
+          inputs={inputs}
+          setInputs={setInputs}
+          setStep={setStep}
+        />
       }
       {STEPS.JOIN_POOL === step &&
-         <JoinPool
-           inputs={inputs}
-           setInputs={setInputs}
-           setStep={setStep}
-         />
+        <JoinPool
+          inputs={inputs}
+          setInputs={setInputs}
+          setStep={setStep}
+        />
       }
       {STEPS.CREATE_POOL === step &&
-         <CreatePool
-           inputs={inputs}
-           setInputs={setInputs}
-           setStep={setStep}
-         />
+        <CreatePool
+          inputs={inputs}
+          setInputs={setInputs}
+          setStep={setStep}
+        />
       }
       {step === STEPS.STAKE_SOLO &&
-         <SoloStake
-           inputs={inputs}
-           onBack={onBack}
-           setInputs={setInputs}
-           setStep={setStep}
-         />
+        <SoloStake
+          inputs={inputs}
+          onBack={onBack}
+          setInputs={setInputs}
+          setStep={setStep}
+        />
       }
       {(inputs && [STEPS.EASY_REVIEW, STEPS.SOLO_REVIEW, STEPS.JOIN_REVIEW, STEPS.CREATE_REVIEW, STEPS.PROXY].includes(step)) &&
         <Review
@@ -100,13 +102,13 @@ function Entry ({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.Reac
         />
       }
       {step === STEPS.WAIT_SCREEN &&
-          <WaitScreen />
+        <WaitScreen />
       }
       {txInfo && step === STEPS.CONFIRM &&
-          <Confirmation
-            handleDone={closeConfirmation}
-            txInfo={txInfo}
-          />
+        <Confirmation
+          handleDone={closeConfirmation}
+          txInfo={txInfo}
+        />
       }
     </Grid>
   );
