@@ -57,7 +57,6 @@ export default function ManageEditPool ({ address, api, chain, onClose, pool, se
   const [step, setStep] = useState<number>(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [changes, setChanges] = useState<ChangesProps | undefined>();
-  const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
 
   return (
     <>
@@ -91,9 +90,7 @@ export default function ManageEditPool ({ address, api, chain, onClose, pool, se
               changes={changes}
               formatted={String(formatted)}
               pool={pool}
-              selectedProxy={selectedProxy}
               setRefresh={setRefresh}
-              setSelectedProxy={setSelectedProxy}
               setStep={setStep}
               setTxInfo={setTxInfo}
               step={step}

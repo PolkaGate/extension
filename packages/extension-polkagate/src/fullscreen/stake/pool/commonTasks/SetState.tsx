@@ -7,19 +7,20 @@ import type { ApiPromise } from '@polkadot/api';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
 import { Balance } from '@polkadot/types/interfaces';
 import { BN_ONE } from '@polkadot/util';
 
 import { ShortAddress, ShowBalance, SignArea2, WrongPasswordAlert } from '../../../../components';
-import { useTranslation } from '../../../../hooks';
+import { useProxies, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
-import { MyPoolInfo, Proxy, TxInfo } from '../../../../util/types';
+import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import Confirmation from '../partials/Confirmation';
 import { PoolState } from '../partials/PoolCommonTasks';
 
@@ -45,12 +46,14 @@ const STEPS = {
 export default function SetState ({ address, api, chain, formatted, onClose, pool, setRefresh, state }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const proxies = useProxies(api, formatted);
+
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [step, setStep] = useState<number>(STEPS.INDEX);
-
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
+  const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
 
   const batchAll = api && api.tx.utility.batchAll;
   const chilled = api && api.tx.nominationPools.chill;
@@ -81,6 +84,12 @@ export default function SetState ({ address, api, chain, formatted, onClose, poo
     return calls;
   }, [batchAll, chilled, formatted, pool.bondedPool?.roles.nominator, pool.bondedPool?.roles.root, pool.poolId, pool.stashIdAccount?.nominators?.length, poolSetState, state]);
 
+  useEffect((): void => {
+    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+
+    setProxyItems(fetchedProxyItems);
+  }, [proxies]);
+
   useEffect(() => {
     if (!api) {
       return;
@@ -93,6 +102,8 @@ export default function SetState ({ address, api, chain, formatted, onClose, poo
     // eslint-disable-next-line no-void
     void poolSetState?.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
   }, [api, formatted, poolSetState]);
+
+  const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
 
   return (
     <DraggableModal minHeight={550} onClose={onClose} open>
@@ -149,7 +160,6 @@ export default function SetState ({ address, api, chain, formatted, onClose, poo
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
                 setRefresh={setRefresh}
-                setSelectedProxy={setSelectedProxy}
                 setStep={setStep}
                 setTxInfo={setTxInfo}
                 showBackButtonWithUseProxy
@@ -158,6 +168,17 @@ export default function SetState ({ address, api, chain, formatted, onClose, poo
               />
             </Grid>
           </>}
+        {step === STEPS.PROXY &&
+          <SelectProxyModal2
+            address={address}
+            closeSelectProxy={closeProxy}
+            height={500}
+            proxies={proxyItems}
+            proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+            selectedProxy={selectedProxy}
+            setSelectedProxy={setSelectedProxy}
+          />
+        }
         {step === STEPS.WAIT_SCREEN &&
           <WaitScreen />
         }

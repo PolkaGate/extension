@@ -6,19 +6,20 @@
 import type { AnyTuple } from '@polkadot/types/types';
 
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
-import { Divider, Grid, useTheme } from '@mui/material';
-import React, { useEffect, useMemo, useState } from 'react';
+import { Divider, Grid } from '@mui/material';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
 import { AmountFee, SignArea2, WrongPasswordAlert } from '@polkadot/extension-polkagate/src/components';
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
-import { useEstimatedFee, useInfo, useStakingConsts, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useEstimatedFee, useInfo, useProxies, useStakingConsts, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { DATE_OPTIONS } from '@polkadot/extension-polkagate/src/util/constants';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
-import { MyPoolInfo, Proxy, TxInfo } from '../../../../../util/types';
+import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { Inputs } from '../../../Entry';
 import { ModalTitle } from '../../../solo/commonTasks/configurePayee';
 import Confirmation from '../../partials/Confirmation';
@@ -38,11 +39,11 @@ const STEPS = {
   PROXY: 100
 };
 
-export default function LeavePool({ address, onClose, pool, setRefresh }: Props): React.ReactElement {
+export default function LeavePool ({ address, onClose, pool, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
   const stakingConsts = useStakingConsts(address);
-  const theme = useTheme();
   const { api, decimal, formatted, token } = useInfo(address);
+  const proxies = useProxies(api, formatted);
 
   const [step, setStep] = useState<number>(STEPS.REVIEW);
   const [isPasswordError, setIsPasswordError] = useState(false);
@@ -50,6 +51,7 @@ export default function LeavePool({ address, onClose, pool, setRefresh }: Props)
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [inputs, setInputs] = useState<Inputs>();
   const [spanCount, setSpanCount] = useState<number>();
+  const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
 
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
 
@@ -73,6 +75,12 @@ export default function LeavePool({ address, onClose, pool, setRefresh }: Props)
     amount: staked,
     subAction: 'Unstake'
   };
+
+  useEffect((): void => {
+    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+
+    setProxyItems(fetchedProxyItems);
+  }, [proxies]);
 
   useEffect(() => {
     api && api.query.staking.slashingSpans(formatted).then((optSpans) => {
@@ -114,6 +122,8 @@ export default function LeavePool({ address, onClose, pool, setRefresh }: Props)
       params
     });
   }, [address, api, decimal, formatted, maxUnlockingChunks, pool.poolId, spanCount, staked, unlockingLen]);
+
+  const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
 
   return (
     <DraggableModal minHeight={550} onClose={onClose} open>
@@ -163,7 +173,6 @@ export default function LeavePool({ address, onClose, pool, setRefresh }: Props)
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
                 setRefresh={setRefresh}
-                setSelectedProxy={setSelectedProxy}
                 setStep={setStep}
                 setTxInfo={setTxInfo}
                 showBackButtonWithUseProxy
@@ -172,6 +181,17 @@ export default function LeavePool({ address, onClose, pool, setRefresh }: Props)
               />
             </Grid>
           </>
+        }
+        {step === STEPS.PROXY &&
+          <SelectProxyModal2
+            address={address}
+            closeSelectProxy={closeProxy}
+            height={500}
+            proxies={proxyItems}
+            proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+            selectedProxy={selectedProxy}
+            setSelectedProxy={setSelectedProxy}
+          />
         }
         {step === STEPS.WAIT_SCREEN &&
           <WaitScreen />

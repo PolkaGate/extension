@@ -6,15 +6,15 @@
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen/components/CommonTasks';
+import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
 import { Balance } from '@polkadot/types/interfaces';
 import { BN_ZERO } from '@polkadot/util';
 
 import { ShowBalance, SignArea2, WrongPasswordAlert } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
-import { useInfo, useStakingAccount, useStakingConsts, useValidators, useValidatorsIdentities } from '../../../../../hooks';
-import { Proxy, TxInfo } from '../../../../../util/types';
+import { useInfo, useProxies, useStakingAccount, useStakingConsts, useValidators, useValidatorsIdentities } from '../../../../../hooks';
+import { Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { Inputs } from '../../../Entry';
 import ValidatorsTable from '../../partials/ValidatorsTable';
 import { STEPS } from '.';
@@ -27,7 +27,7 @@ interface Props {
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>
 }
 
-export default function Review({ address, inputs, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review ({ address, inputs, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const stakingConsts = useStakingConsts(address);
@@ -37,7 +37,9 @@ export default function Review({ address, inputs, setStep, setTxInfo, step }: Pr
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
 
   const { api, formatted, token } = useInfo(address);
+  const proxies = useProxies(api, formatted);
 
+  const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -51,6 +53,12 @@ export default function Review({ address, inputs, setStep, setTxInfo, step }: Pr
     validatorsCount: selectedValidators?.length
   }), [estimatedFee, selectedValidators?.length]);
 
+  useEffect((): void => {
+    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+
+    setProxyItems(fetchedProxyItems);
+  }, [proxies]);
+
   useEffect(() => {
     if (call && params && formatted) {
       call(...params)
@@ -60,60 +68,72 @@ export default function Review({ address, inputs, setStep, setTxInfo, step }: Pr
     }
   }, [formatted, params, call]);
 
-  const handleCancel = useCallback(
-    () => setStep(STEPS.INDEX)
-    , [setStep]);
+  const handleCancel = useCallback(() => setStep(STEPS.INDEX), [setStep]);
+  const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='flex-start'>
-      <Typography fontSize='14px' pb='15px' width='100%'>
-        {t('Review the newly selected validators')}
-      </Typography>
-      {isPasswordError &&
-        <WrongPasswordAlert />
-      }
-      <Grid item mt='10px' xs={12}>
-        <ValidatorsTable
-          address={address}
-          allValidatorsIdentities={allValidatorsIdentities}
-          formatted={formatted}
-          height={window.innerHeight - 444}
-          staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
-          stakingConsts={stakingConsts}
-          token={token}
-          validatorsToList={selectedValidators}
-        />
-        <DisplayValue dividerHeight='1px' title={t('Fee')}>
-          <Grid alignItems='center' container item sx={{ height: '42px' }}>
-            <ShowBalance
-              api={api}
-              balance={estimatedFee}
-              decimalPoint={4}
+    <>
+      {step === STEPS.REVIEW &&
+        <Grid alignItems='center' container item justifyContent='flex-start'>
+          <Typography fontSize='14px' pb='15px' width='100%'>
+            {t('Review the newly selected validators')}
+          </Typography>
+          {isPasswordError &&
+            <WrongPasswordAlert />
+          }
+          <Grid item mt='10px' xs={12}>
+            <ValidatorsTable
+              address={address}
+              allValidatorsIdentities={allValidatorsIdentities}
+              formatted={formatted}
+              height={window.innerHeight - 444}
+              staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
+              stakingConsts={stakingConsts}
+              token={token}
+              validatorsToList={selectedValidators}
             />
+            <DisplayValue dividerHeight='1px' title={t('Fee')}>
+              <Grid alignItems='center' container item sx={{ height: '42px' }}>
+                <ShowBalance
+                  api={api}
+                  balance={estimatedFee}
+                  decimalPoint={4}
+                />
+              </Grid>
+            </DisplayValue>
+            <Grid container item sx={{ '> div #TwoButtons': { '> div': { justifyContent: 'space-between', width: '450px' }, justifyContent: 'flex-end' }, pb: '20px' }}>
+              <SignArea2
+                address={address}
+                call={call}
+                extraInfo={extraInfo}
+                isPasswordError={isPasswordError}
+                onSecondaryClick={handleCancel}
+                params={params}
+                primaryBtnText={t('Confirm')}
+                proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+                secondaryBtnText={t('Back')}
+                selectedProxy={selectedProxy}
+                setIsPasswordError={setIsPasswordError}
+                setStep={setStep}
+                setTxInfo={setTxInfo}
+                step={step}
+                steps={STEPS}
+                token={token}
+              />
+            </Grid>
           </Grid>
-        </DisplayValue>
-        <Grid container item sx={{ '> div #TwoButtons': { '> div': { justifyContent: 'space-between', width: '450px' }, justifyContent: 'flex-end' }, pb: '20px' }}>
-          <SignArea2
-            address={address}
-            call={call}
-            extraInfo={extraInfo}
-            isPasswordError={isPasswordError}
-            onSecondaryClick={handleCancel}
-            params={params}
-            primaryBtnText={t('Confirm')}
-            proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
-            secondaryBtnText={t('Back')}
-            selectedProxy={selectedProxy}
-            setIsPasswordError={setIsPasswordError}
-            setSelectedProxy={setSelectedProxy}
-            setStep={setStep}
-            setTxInfo={setTxInfo}
-            step={step}
-            steps={STEPS}
-            token={token}
-          />
-        </Grid>
-      </Grid>
-    </Grid>
+        </Grid>}
+      {step === STEPS.PROXY &&
+        <SelectProxyModal2
+          address={address}
+          closeSelectProxy={closeProxy}
+          height={500}
+          proxies={proxyItems}
+          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+          selectedProxy={selectedProxy}
+          setSelectedProxy={setSelectedProxy}
+        />
+      }
+    </>
   );
 }
