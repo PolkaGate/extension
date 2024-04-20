@@ -10,7 +10,7 @@ import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { MenuItem } from '@polkadot/extension-polkagate/src/components';
-import { TaskButton } from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen/components/CommonTasks';
+import { openOrFocusTab, TaskButton } from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen/components/CommonTasks';
 import { useInfo, usePool, useTranslation, useUnSupportedNetwork } from '@polkadot/extension-polkagate/src/hooks';
 import ManageValidators from '@polkadot/extension-polkagate/src/popup/staking/pool/nominations/index';
 import { STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
@@ -66,8 +66,8 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
   }, [justMember, pool]);
 
   const onManageValidators = useCallback(() => {
-    setShowModal(MODALS_NUMBER.MANAGE_VALIDATORS);
-  }, []);
+    address && openOrFocusTab(`/poolfsManageValidators/${address}`, true);
+  }, [address]);
 
   const onEditPool = useCallback(() => {
     setShowModal(MODALS_NUMBER.EDIT_POOL);
@@ -127,21 +127,6 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
             secondaryIconType='popup'
             text={t('Leave Pool')}
           />
-          <TaskButton
-            disabled={poolState === 'Destroying' || !poolRoot}
-            icon={
-              <FontAwesomeIcon
-                color={`${poolState === 'Destroying' || !poolRoot ? theme.palette.action.disabledBackground : theme.palette.text.primary}`}
-                fontSize='22px'
-                icon={faHand}
-              />
-            }
-            mr='0px'
-            onClick={onManageValidators}
-            secondaryIconType='popup'
-            show={!justMember}
-            text={t('Manage Validators')}
-          />
           {!justMember && canChangeState &&
             <Grid container item sx={{ '& p': { fontSize: '16px', fontWeight: 500 }, '> div': { px: '12px' }, mx: 'auto', width: '90%' }}>
               <MenuItem
@@ -157,8 +142,23 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
                 text={t('Manage Pool')}
                 withHoverEffect
               >
-                <Collapse in={showManagePool} sx={{ '& p': { pl: '5px' }, width: '100%' }}>
-                  <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto', width: '100%' }} />
+                <Collapse in={showManagePool} style={{ paddingRight: 0 }} sx={{ '& p': { pl: '5px' }, width: '100%' }}>
+                  <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto', width: 'calc(100% - 8px)' }} />
+                  <TaskButton
+                    disabled={poolState === 'Destroying' || !poolRoot}
+                    icon={
+                      <FontAwesomeIcon
+                        color={`${poolState === 'Destroying' || !poolRoot ? theme.palette.action.disabledBackground : theme.palette.text.primary}`}
+                        fontSize='22px'
+                        icon={faHand}
+                      />
+                    }
+                    mr='0px'
+                    onClick={onManageValidators}
+                    secondaryIconType='page'
+                    show={!justMember}
+                    text={t('Manage Validators')}
+                  />
                   <TaskButton
                     disabled={poolState === 'Destroying' || !poolRoot}
                     icon={
