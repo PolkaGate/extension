@@ -219,7 +219,7 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
   );
 
   const page = (
-    <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
+    <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt={isFullscreen?0:'46px'} sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container justifyContent='center' my='20px'>
         <Typography fontSize='28px' fontWeight={400} lineHeight={1.4} sx={{ borderBottom: '2px solid', borderColor: 'secondary.main' }}>
           {t<string>('Validator’s Info')}
