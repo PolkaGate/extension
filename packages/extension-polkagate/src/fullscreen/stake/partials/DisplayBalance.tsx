@@ -69,12 +69,12 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
   );
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mt: { marginTop }, p: '5px 40px' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mt: { marginTop }, p: '5px 30px' }}>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ minHeight: '67px' }}>
         <Typography fontSize='18px' fontWeight={400} width='25%'>
           {title}
         </Typography>
-        <Grid alignItems='center' container item width='40%'>
+        <Grid alignItems='center' container item width='37%'>
           <Grid item sx={{ fontSize: '22px', fontWeight: 600 }}>
             <ShowBalance
               balance={amount}
@@ -94,7 +94,7 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
             />
           </Grid>
         </Grid>
-        <Grid container item justifyContent='flex-end' width='35%'>
+        <Grid container item justifyContent='flex-end' width='38%'>
           {isUnstaking &&
           <ArrowForwardIosRoundedIcon
             onClick={toggleShowUnstaking}
