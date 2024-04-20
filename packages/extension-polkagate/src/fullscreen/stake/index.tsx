@@ -111,7 +111,7 @@ export default function StakingOptions(): React.ReactElement {
         {step === STEPS.INDEX
           ? <Grid container item>
             <Typography fontSize='16px' fontWeight={500} pb='15px' width='100%'>
-              {t('Options are available to commence staking in Westend. Please select your preference, taking into consideration the minimum requirements for receiving rewards per era.', { replace: { chainName } })}
+              {t('Options are available to commence staking in {{chainName}}. Please select your preference, taking into consideration the minimum requirements for receiving rewards per era.', { replace: { chainName } })}
             </Typography>
             <Grid alignItems='center' container item justifyContent='flex-start' pt='40px'>
               <StakingMode
