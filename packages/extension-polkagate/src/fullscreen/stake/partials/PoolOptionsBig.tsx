@@ -42,7 +42,7 @@ export default function PoolOptionsBig({ address, setStep }: Props): React.React
   return (
     <Grid container item>
       <Typography fontSize='16px' fontWeight={500} pb='15px' width='100%'>
-        {t('Options are available to commence pool staking in Westend. Please select your preference, taking into consideration the minimum requirements for receiving rewards per era.', { replace: { chainName } })}
+        {t('Options are available to commence pool staking in {{chainName}}. Please select your preference, taking into consideration the minimum requirements for receiving rewards per era.', { replace: { chainName } })}
       </Typography>
       <Grid alignItems='center' container item justifyContent='flex-start' pt='40px'>
         <StakingOption

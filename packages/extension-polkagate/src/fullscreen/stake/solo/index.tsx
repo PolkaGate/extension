@@ -60,7 +60,7 @@ export default function Index (): React.ReactElement {
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
-      <FullScreenHeader page='stake' />
+      <FullScreenHeader page='stake' unableToChangeAccount />
       {showId !== MODAL_IDS.STAKE &&
         <StakedSolo
           balances={balances}
