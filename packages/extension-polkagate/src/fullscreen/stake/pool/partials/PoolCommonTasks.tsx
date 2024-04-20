@@ -127,21 +127,6 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
             secondaryIconType='popup'
             text={t('Leave Pool')}
           />
-          <TaskButton
-            disabled={poolState === 'Destroying' || !poolRoot}
-            icon={
-              <FontAwesomeIcon
-                color={`${poolState === 'Destroying' || !poolRoot ? theme.palette.action.disabledBackground : theme.palette.text.primary}`}
-                fontSize='22px'
-                icon={faHand}
-              />
-            }
-            mr='0px'
-            onClick={onManageValidators}
-            secondaryIconType='page'
-            show={!justMember}
-            text={t('Manage Validators')}
-          />
           {!justMember && canChangeState &&
             <Grid container item sx={{ '& p': { fontSize: '16px', fontWeight: 500 }, '> div': { px: '12px' }, mx: 'auto', width: '90%' }}>
               <MenuItem
@@ -157,8 +142,23 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
                 text={t('Manage Pool')}
                 withHoverEffect
               >
-                <Collapse in={showManagePool} sx={{ '& p': { pl: '5px' }, width: '100%' }}>
-                  <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto', width: '100%' }} />
+                <Collapse in={showManagePool} style={{ paddingRight: 0 }} sx={{ '& p': { pl: '5px' }, width: '100%' }}>
+                  <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto', width: 'calc(100% - 8px)' }} />
+                  <TaskButton
+                    disabled={poolState === 'Destroying' || !poolRoot}
+                    icon={
+                      <FontAwesomeIcon
+                        color={`${poolState === 'Destroying' || !poolRoot ? theme.palette.action.disabledBackground : theme.palette.text.primary}`}
+                        fontSize='22px'
+                        icon={faHand}
+                      />
+                    }
+                    mr='0px'
+                    onClick={onManageValidators}
+                    secondaryIconType='page'
+                    show={!justMember}
+                    text={t('Manage Validators')}
+                  />
                   <TaskButton
                     disabled={poolState === 'Destroying' || !poolRoot}
                     icon={
