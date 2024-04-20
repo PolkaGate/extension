@@ -5,8 +5,7 @@
 
 import type { MyPoolInfo, Proxy, TxInfo } from '../../../../../util/types';
 
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -15,6 +14,7 @@ import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/gov
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 
 import { useFormatted, useTranslation } from '../../../../../hooks';
+import { ModalTitle } from '../../../solo/commonTasks/configurePayee';
 import Confirmation from '../../partials/Confirmation';
 import Edit from './Edit';
 import Review from './Review';
@@ -52,7 +52,6 @@ export const STEPS = {
 
 export default function ManageEditPool ({ address, api, chain, onClose, pool, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const formatted = useFormatted(address);
 
   const [step, setStep] = useState<number>(STEPS.INDEX);
@@ -64,16 +63,15 @@ export default function ManageEditPool ({ address, api, chain, onClose, pool, se
     <>
       <DraggableModal minHeight={670} onClose={onClose} open>
         <>
-          <Grid alignItems='center' container justifyContent='space-between' pt='15px'>
-            <Grid item>
-              <Typography fontSize='22px' fontWeight={700}>
-                {t<string>('Edit Pool')}
-              </Typography>
-            </Grid>
-            <Grid item>
-              <CloseIcon onClick={onClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-            </Grid>
-          </Grid>
+          {step !== STEPS.WAIT_SCREEN &&
+            <ModalTitle
+              icon={faPenToSquare}
+              onCancel={onClose}
+              setStep={setStep}
+              step={step}
+              text={t('Edit Pool')}
+            />
+          }
           {step === STEPS.INDEX &&
             <Edit
               api={api}
