@@ -408,7 +408,7 @@ export default function ClaimedRewardsChart ({ address }: Props): React.ReactEle
                                   {d.timeStamp ? new Date(d.timeStamp * 1000).toDateString() : d.era}
                                 </Grid>
                                 <Grid item width='50%'>
-                                  {amountToHuman(d.amount, decimal, 9)} {` ${token ?? ''}`}
+                                  {amountToHuman(d.amount, decimal, 4)} {` ${token ?? ''}`}
                                 </Grid>
                               </Grid>
                             </AccordionSummary>
