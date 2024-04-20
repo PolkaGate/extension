@@ -50,7 +50,7 @@ export default function ShowValidators({ address, api, chain, selectedValidators
         api={api}
         chain={chain}
         decimal={decimal}
-        height={tableHeight}
+        height={isExtensionPopup ? tableHeight : MODAL_HEIGHT - 50}
         staked={staked}
         style={{ m: '15px auto', width: '92%' }}
         token={token}
