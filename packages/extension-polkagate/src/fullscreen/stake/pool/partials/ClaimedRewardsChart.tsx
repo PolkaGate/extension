@@ -376,7 +376,7 @@ export default function ClaimedRewardsChart ({ address }: Props): React.ReactEle
           style={{ height: '20px', marginRight: '10px', width: '20px' }}
         />
         <Typography color={'text.primary'} fontSize='18px' fontWeight={500}>
-          {t('Rewards')}
+          {t('Claimed Rewards')}
         </Typography>
       </Grid>
       <Grid alignItems='center' container item justifyContent='center' mt='10px'>
