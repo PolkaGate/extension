@@ -38,7 +38,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function StakeRewards ({ address, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function StakeRewards({ address, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
 
@@ -99,7 +99,7 @@ export default function StakeRewards ({ address, pool, setRefresh, setShow, show
             pt={20}
             size={150}
             title={t('Loading information, please wait ...')}
-            type='cubeGrid'
+            type='grid'
           />
         }
         {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&

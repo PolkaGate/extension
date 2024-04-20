@@ -42,7 +42,7 @@ interface CollapseProps {
   open: () => void;
 }
 
-export default function PoolMoreInfo ({ api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
+export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const isExtensionPopup = useIsExtensionPopup();
 
@@ -269,13 +269,13 @@ export default function PoolMoreInfo ({ api, chain, pool, poolId, setShowPoolInf
           {showClaimCommission && poolToShow &&
             <ClaimCommission
               address={address}
-              pool= {poolToShow}
+              pool={poolToShow}
               setShow={setShowClaimCommission}
               show={showClaimCommission}
             />
           }
         </>
-        : <Progress pt='95px' size={125} title={t('Loading pool information...')} />
+        : <Progress pt='95px' size={125} title={t('Loading pool information...')} type='grid' />
       }
       <IconButton onClick={_closeMenu} sx={{ left: isExtensionPopup ? '15px' : undefined, p: 0, position: 'absolute', right: isExtensionPopup ? undefined : '30px', top: isExtensionPopup ? '65px' : '35px' }}>
         <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />

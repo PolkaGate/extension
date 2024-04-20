@@ -545,7 +545,7 @@ export default function RewardsDetail({ address, api, chain, chainName, decimal,
               />
               <PButton _onClick={backToStakingHome} text={t('Back')} />
             </>
-            : <Progress pt='120px' size={125} title={t('Loading rewards...')} />
+            : <Progress pt='120px' size={125} title={t('Loading rewards...')} type='grid' />
           }
         </Popup>
         : <DraggableModal minHeight={650} onClose={backToStakingHome} open={show}>
@@ -575,7 +575,7 @@ export default function RewardsDetail({ address, api, chain, chainName, decimal,
                 token={_token}
               />
             </>
-            : <Progress pt={'220px'} size={125} title={t('Loading rewards...')} />
+            : <Progress pt={'220px'} size={125} title={t('Loading rewards...')} type='grid' />
           }
         </DraggableModal>
       }

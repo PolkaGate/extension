@@ -10,10 +10,10 @@ interface Props {
   title?: string;
   pt?: number | string;
   size?: number;
-  type?: 'circle' | 'cubes' | 'cubeGrid';
+  type?: 'circle' | 'cubes' | 'grid';
 }
 
-function Progress ({ fontSize = 13, pt = '50px', size = 25, title, type = 'circle' }: Props): React.ReactElement<Props> {
+function Progress({ fontSize = 13, pt = '50px', size = 25, title, type = 'circle' }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (
@@ -41,14 +41,14 @@ function Progress ({ fontSize = 13, pt = '50px', size = 25, title, type = 'circl
           timingFunction='ease-in-out'
         />
       }
-      {type === 'cubeGrid' &&
-       <CubeGrid
-         col={3}
-         color={theme.palette.secondary.main}
-         row={3}
-         size={135}
-         style={{ margin: 'auto', opacity: '0.4' }}
-       />
+      {type === 'grid' &&
+        <CubeGrid
+          col={3}
+          color={theme.palette.secondary.main}
+          row={3}
+          size={135}
+          style={{ margin: 'auto', opacity: '0.4' }}
+        />
       }
       {title &&
         <Grid

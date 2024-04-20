@@ -105,7 +105,7 @@ export default function Pending({ address, redeemable, setRefresh, setShow, show
             pt={20}
             size={150}
             title={t('Loading information, please wait ...')}
-            type='cubeGrid'
+            type='grid'
           />
         }
         {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
