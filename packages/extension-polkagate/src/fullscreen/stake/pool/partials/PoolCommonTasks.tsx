@@ -10,7 +10,7 @@ import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { MenuItem } from '@polkadot/extension-polkagate/src/components';
-import { TaskButton } from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen/components/CommonTasks';
+import { openOrFocusTab, TaskButton } from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen/components/CommonTasks';
 import { useInfo, usePool, useTranslation, useUnSupportedNetwork } from '@polkadot/extension-polkagate/src/hooks';
 import ManageValidators from '@polkadot/extension-polkagate/src/popup/staking/pool/nominations/index';
 import { STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
@@ -66,8 +66,8 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
   }, [justMember, pool]);
 
   const onManageValidators = useCallback(() => {
-    setShowModal(MODALS_NUMBER.MANAGE_VALIDATORS);
-  }, []);
+    address && openOrFocusTab(`/poolfsManageValidators/${address}`, true);
+  }, [address]);
 
   const onEditPool = useCallback(() => {
     setShowModal(MODALS_NUMBER.EDIT_POOL);
@@ -138,7 +138,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
             }
             mr='0px'
             onClick={onManageValidators}
-            secondaryIconType='popup'
+            secondaryIconType='page'
             show={!justMember}
             text={t('Manage Validators')}
           />
