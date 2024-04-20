@@ -123,7 +123,7 @@ export default function StakedSolo({ balances, setRefresh, setShow, stakingAccou
   }, [address]);
 
   return (
-    <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', px: '5%' }}>
+    <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', px: '2%' }}>
       <Title
         logo={<BoyIcon sx={{ color: 'text.primary', fontSize: '60px' }} />}
         onBackClick={onBack}

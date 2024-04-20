@@ -71,10 +71,10 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mt: { marginTop }, p: '5px 30px' }}>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ minHeight: '67px' }}>
-        <Typography fontSize='18px' fontWeight={400} width='25%'>
+        <Typography fontSize='18px' fontWeight={400} width='27%'>
           {title}
         </Typography>
-        <Grid alignItems='center' container item width='37%'>
+        <Grid alignItems='center' container item width='35%'>
           <Grid item sx={{ fontSize: '22px', fontWeight: 600 }}>
             <ShowBalance
               balance={amount}
@@ -115,7 +115,7 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
             const noValueToAct = !amount || amount?.isZero();
 
             return (actions &&
-            <Grid alignItems='center' container direction='column' item justifyContent='center' key={index} minWidth='96px' onClick={noValueToAct ? noop : onClicks && onClicks[index]} sx={{ cursor: 'pointer', mx: '10px', width: 'inherit' }}>
+            <Grid alignItems='center' container direction='column' item justifyContent='center' key={index} minWidth='96px' onClick={noValueToAct ? noop : onClicks && onClicks[index]} sx={{ cursor: 'pointer', ml: '10px', width: 'fit-content' }}>
               <FontAwesomeIcon
                 color={`${noValueToAct ? theme.palette.text.disabled : theme.palette.secondary.light}`}
                 icon={icons[index]}
