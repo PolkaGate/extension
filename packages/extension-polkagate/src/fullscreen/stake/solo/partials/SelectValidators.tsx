@@ -189,7 +189,7 @@ export default function SelectValidators ({ address, newSelectedValidators, nomi
 
     setSystemSuggestion(false);
 
-    if (newSelectedValidators.length >= stakingConsts?.maxNominations && checked) {
+    if (stakingConsts?.maxNominations && newSelectedValidators.length >= stakingConsts?.maxNominations && checked) {
       console.log('Max validators are selected !');
 
       return;
@@ -223,11 +223,11 @@ export default function SelectValidators ({ address, newSelectedValidators, nomi
               <Infotip
                 placement='top'
                 showQuestionMark
-                text={t<string>(SYSTEM_SUGGESTION_TEXT)}
+                text={t(SYSTEM_SUGGESTION_TEXT)}
               >
                 <Checkbox2
                   checked={systemSuggestion}
-                  label={t<string>('System Suggestions')}
+                  label={t('System Suggestions')}
                   labelStyle={{ fontSize: '16px', fontWeight: 400 }}
                   onChange={onSystemSuggestion}
                 />
@@ -237,7 +237,7 @@ export default function SelectValidators ({ address, newSelectedValidators, nomi
               <InputFilter
                 autoFocus={false}
                 onChange={onSearch}
-                placeholder={t<string>('🔍 Search validator')}
+                placeholder={t('🔍 Search validator')}
                 theme={theme}
                 value={searchKeyword ?? ''}
               />
