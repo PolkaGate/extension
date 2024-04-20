@@ -277,7 +277,7 @@ export default function PoolMoreInfo ({ api, chain, pool, poolId, setShowPoolInf
         </>
         : <Progress pt='95px' size={125} title={t('Loading pool information...')} />
       }
-      <IconButton onClick={_closeMenu} sx={{ left: isExtensionPopup ? '15px' : undefined, right: isExtensionPopup ? undefined : '15px', p: 0, position: 'absolute', top: isExtensionPopup ? '65px' : '35px' }}>
+      <IconButton onClick={_closeMenu} sx={{ left: isExtensionPopup ? '15px' : undefined, p: 0, position: 'absolute', right: isExtensionPopup ? undefined : '30px', top: isExtensionPopup ? '65px' : '35px' }}>
         <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />
       </IconButton>
     </Grid>
