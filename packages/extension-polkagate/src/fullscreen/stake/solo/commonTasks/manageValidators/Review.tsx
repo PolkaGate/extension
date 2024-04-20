@@ -61,8 +61,8 @@ export default function Review({ address, inputs, setStep, setTxInfo, step }: Pr
   }, [formatted, params, call]);
 
   const handleCancel = useCallback(
-    () => openOrFocusTab(`/solofs/${address}`, true)
-    , [address]);
+    () => setStep(STEPS.INDEX)
+    , [setStep]);
 
   return (
     <Grid alignItems='center' container item justifyContent='flex-start'>
@@ -102,7 +102,7 @@ export default function Review({ address, inputs, setStep, setTxInfo, step }: Pr
             params={params}
             primaryBtnText={t('Confirm')}
             proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
-            secondaryBtnText={t('Cancel')}
+            secondaryBtnText={t('Back')}
             selectedProxy={selectedProxy}
             setIsPasswordError={setIsPasswordError}
             setSelectedProxy={setSelectedProxy}

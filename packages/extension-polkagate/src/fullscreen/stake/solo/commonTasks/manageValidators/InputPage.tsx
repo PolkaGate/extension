@@ -48,13 +48,13 @@ export default function InputPage({ address, inputs, setInputs, setStep }: Props
   const stakingAccount = useStakingAccount(address);
   const { api, formatted } = useInfo(address);
 
-  const [newSelectedValidators, setNewSelectedValidators] = useState<ValidatorInfo[]>([]);
+  const [newSelectedValidators, setNewSelectedValidators] = useState<ValidatorInfo[]>(inputs?.selectedValidators || []);
 
   const nominatedValidatorsIds = useMemo(() =>
     stakingAccount === null || stakingAccount?.nominators?.length === 0
       ? null
       : stakingAccount?.nominators.map((item) => item.toString())
-    , [stakingAccount]);
+  , [stakingAccount]);
 
   const { call, params } = useMemo(() => {
     if (api && newSelectedValidators?.length) {
