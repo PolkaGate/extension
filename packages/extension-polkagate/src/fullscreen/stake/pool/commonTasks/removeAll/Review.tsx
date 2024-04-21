@@ -5,16 +5,18 @@
 
 import type { ApiPromise } from '@polkadot/api';
 
-import { Grid, Typography } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
+import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
+import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
 import { BN } from '@polkadot/util';
 
-import { Motion, ShowBalance, SignArea2, WrongPasswordAlert } from '../../../../../components';
-import { useEstimatedFee, useFormatted, useTranslation } from '../../../../../hooks';
-import { MemberPoints, MyPoolInfo, Proxy, TxInfo } from '../../../../../util/types';
+import { AccountHolderWithProxy, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../../components';
+import { useEstimatedFee, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
+import { MemberPoints, MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { Inputs } from '../../../Entry';
 import { Mode, STEPS } from '.';
 
@@ -35,7 +37,9 @@ interface Props {
 export default function Review ({ address, api, chain, mode, pool, poolMembers, setMode, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
+  const proxies = useProxies(api, formatted);
 
+  const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [membersToUnboundAll, setMembersToUnboundAll] = useState<MemberPoints[] | undefined>();
@@ -43,6 +47,7 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
   const [inputs, setInputs] = useState<Inputs | undefined>();
 
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
+  const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
   // const poolWithdrawUnbonded = api.tx.nominationPools.poolWithdrawUnbonded;
   const poolDepositorAddr = String(pool.bondedPool?.roles.depositor);
@@ -55,6 +60,12 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
     fee: String(estimatedFee || 0),
     subAction: mode === 'UnbondAll' ? 'Unstake All' : 'Remove All'
   }), [estimatedFee, mode]);
+
+  useEffect((): void => {
+    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+
+    setProxyItems(fetchedProxyItems);
+  }, [proxies]);
 
   const onBackClick = useCallback(() => {
     setMode(undefined);
@@ -123,70 +134,83 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
     }
   }, [api, formatted, membersToRemoveAll, membersToUnboundAll, mode, setInputs]);
 
+  const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
+
   return (
     <Motion>
-      <Grid container direction='column' item pt='15px'>
-        {isPasswordError &&
-          <WrongPasswordAlert />
-        }
-        {mode === 'UnbondAll'
-          ? (<Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
-            {t<string>('Unstaking all members of the pool except yourself forcefully.')}
-          </Typography>)
-          : (<>
-            <Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }} textAlign='center'>
-              {t<string>('Removing all members from the pool')}
-            </Typography>
-            <Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
-              {t<string>('When you confirm, you will be able to unstake your tokens')}
-            </Typography>
-          </>)
-        }
-        <ShowPool
-          api={api}
-          chain={chain}
-          label=''
-          mode='Default'
-          pool={pool}
-          showInfo
-          style={{ m: '15px auto' }}
-        />
-        <Grid container item m='auto'>
-          <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
-            {t<string>('Fee:')}
-          </Typography>
-          <Grid item lineHeight='22px' pl='5px'>
-            <ShowBalance
-              api={api}
-              balance={estimatedFee}
-              decimalPoint={4}
-              height={22}
+      {step === STEPS.REVIEW &&
+        <Grid container direction='column' item pt='15px'>
+          {isPasswordError &&
+            <WrongPasswordAlert />
+          }
+          <AccountHolderWithProxy
+            address={address}
+            chain={chain}
+            selectedProxyAddress={selectedProxyAddress}
+            style={{ mt: 'auto' }}
+            title={t('Account holder')}
+          />
+          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
+          {mode === 'UnbondAll'
+            ? (<Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
+              {t<string>('Unstaking all members of the pool except yourself forcefully.')}
+            </Typography>)
+            : (<>
+              <Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }} textAlign='center'>
+                {t<string>('Removing all members from the pool')}
+              </Typography>
+              <Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
+                {t<string>('When you confirm, you will be able to unstake your tokens')}
+              </Typography>
+            </>)
+          }
+          <ShowPool
+            api={api}
+            chain={chain}
+            label=''
+            mode='Default'
+            pool={pool}
+            showInfo
+            style={{ m: '15px auto' }}
+          />
+          <DisplayValue dividerHeight='1px' title={t('Fee')}>
+            <Grid alignItems='center' container item sx={{ fontSize: 'large', height: '42px' }}>
+              <ShowValue height={16} value={estimatedFee?.toHuman()} width='150px' />
+            </Grid>
+          </DisplayValue>
+          <Grid container item sx={{ bottom: '15px', height: '120px', position: 'absolute', width: '86%' }}>
+            <SignArea2
+              address={address}
+              call={inputs?.call}
+              extraInfo={extraInfo}
+              isPasswordError={isPasswordError}
+              onSecondaryClick={onBackClick}
+              params={inputs?.params}
+              primaryBtnText={t('Confirm')}
+              proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+              secondaryBtnText={t('Back')}
+              selectedProxy={selectedProxy}
+              setIsPasswordError={setIsPasswordError}
+              setRefresh={setRefresh}
+              setStep={setStep}
+              setTxInfo={setTxInfo}
+              showBackButtonWithUseProxy
+              step={step}
+              steps={STEPS}
             />
           </Grid>
-        </Grid>
-        <Grid container item sx={{ bottom: '15px', height: '120px', position: 'absolute', width: '86%' }}>
-          <SignArea2
-            address={address}
-            call={inputs?.call}
-            extraInfo={extraInfo}
-            isPasswordError={isPasswordError}
-            onSecondaryClick={onBackClick}
-            params={inputs?.params}
-            primaryBtnText={t('Confirm')}
-            proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
-            secondaryBtnText={t('Back')}
-            selectedProxy={selectedProxy}
-            setIsPasswordError={setIsPasswordError}
-            setRefresh={setRefresh}
-            setSelectedProxy={setSelectedProxy}
-            setStep={setStep}
-            setTxInfo={setTxInfo}
-            showBackButtonWithUseProxy
-            step={step}
-            steps={STEPS}
-          />
-        </Grid>
-      </Grid>
+        </Grid>}
+      {step === STEPS.PROXY &&
+        <SelectProxyModal2
+          address={address}
+          closeSelectProxy={closeProxy}
+          height={500}
+          proxies={proxyItems}
+          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+          selectedProxy={selectedProxy}
+          setSelectedProxy={setSelectedProxy}
+        />
+      }
     </Motion>
   );
 }
