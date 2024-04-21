@@ -79,8 +79,6 @@ export default function Pending({ address, redeemable, setRefresh, setShow, show
     setShow(MODAL_IDS.NONE);
   }, [setShow]);
 
-  console.log('step:', step);
-
   useEffect(() => {
     step === STEPS.INDEX && onCancel();
 
