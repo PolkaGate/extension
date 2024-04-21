@@ -178,7 +178,7 @@ export default function ManageIdentity (): React.ReactElement {
       api?.query.identity.identityOf(address)
         .then((id) => {
           if (!id.isEmpty) {
-            const { info, judgements } = id.unwrap() as PalletIdentityRegistration;
+            const { info, judgements } = id.unwrap()[0] as PalletIdentityRegistration;
 
             const idToSet: DeriveAccountRegistration | null = {
               display: getRawValue(info.display),

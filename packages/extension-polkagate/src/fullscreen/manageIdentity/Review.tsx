@@ -330,7 +330,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
               <SignArea2
                 address={address}
                 call={tx}
-                disabled={feeAndDeposit.isAbleToPay !== true}
+                disabled={feeAndDeposit.isAbleToPay === true}
                 extraInfo={extraInfo}
                 isPasswordError={isPasswordError}
                 onSecondaryClick={handleClose}
