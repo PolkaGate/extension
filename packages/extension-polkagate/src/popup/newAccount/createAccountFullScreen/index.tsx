@@ -96,9 +96,7 @@ function CreateAccount (): React.ReactElement {
     }
   }, [name, onAction, password, seed]);
 
-  const onCancel = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
+  const onCancel = useCallback(() => window.close(), []);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>

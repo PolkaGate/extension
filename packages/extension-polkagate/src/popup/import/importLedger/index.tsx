@@ -133,7 +133,7 @@ export default function ImportLedger (): React.ReactElement {
     !accounts.length && onAction();
   }, [accounts, onAction]);
 
-  const onCancel = useCallback(() => onAction('/'), [onAction]);
+  const onCancel = useCallback(() => window.close(), []);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>

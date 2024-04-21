@@ -12,6 +12,7 @@ import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { u8aToString } from '@polkadot/util';
 
@@ -30,7 +31,6 @@ export default function RestoreJson (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-  const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
   const [stepOne, setStep] = useState(true);
   const [accountsInfo, setAccountsInfo] = useState<ResponseJsonGetAccountInfo[]>([]);
@@ -102,14 +102,14 @@ export default function RestoreJson (): React.ReactElement {
 
     (isKeyringPairs$Json(file) ? batchRestore(file, password) : jsonRestore(file, password))
       .then(() => {
-        onAction('/');
+        openOrFocusTab('/', true);
       })
       .catch((e) => {
         console.error(e);
         setIsBusy(false);
         setIsPasswordError(true);
       });
-  }, [file, onAction, password, requirePassword]);
+  }, [file, password, requirePassword]);
 
   const onBack = useCallback(() => {
     setFile(undefined);
@@ -118,7 +118,7 @@ export default function RestoreJson (): React.ReactElement {
     setPassword('');
   }, []);
 
-  const onCancel = useCallback(() => onAction('/'), [onAction]);
+  const onCancel = useCallback(() => window.close(), []);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>

@@ -131,7 +131,7 @@ export default function ImportSeed (): React.ReactElement {
     setPassword(pass);
   }, []);
 
-  const onCancel = useCallback(() => onAction('/'), [onAction]);
+  const onCancel = useCallback(() => window.close(), []);
   const toggleMore = useCallback(() => setShowMore(!showMore), [showMore]);
 
   return (
