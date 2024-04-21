@@ -8,7 +8,7 @@ import type { AccountId } from '@polkadot/types/interfaces';
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen/components/CommonTasks';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { MyPoolInfo, StakingConsts, ValidatorInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 

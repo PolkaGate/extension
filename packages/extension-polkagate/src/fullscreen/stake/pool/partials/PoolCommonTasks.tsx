@@ -10,7 +10,7 @@ import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { MenuItem } from '@polkadot/extension-polkagate/src/components';
-import { openOrFocusTab, TaskButton } from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen/components/CommonTasks';
+import { openOrFocusTab, TaskButton } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { useInfo, usePool, useTranslation, useUnSupportedNetwork } from '@polkadot/extension-polkagate/src/hooks';
 import ManageValidators from '@polkadot/extension-polkagate/src/popup/staking/pool/nominations/index';
 import { STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';

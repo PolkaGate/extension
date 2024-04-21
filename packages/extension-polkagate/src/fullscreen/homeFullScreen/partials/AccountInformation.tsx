@@ -24,9 +24,9 @@ import DeriveAccountModal from '../../../popup/newAccount/deriveAccount/modal/De
 import RenameModal from '../../../popup/rename/RenameModal';
 import { BalancesInfo } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
-import AccountIcons from '../../accountDetailsFullScreen/components/AccountIcons';
-import AOC from '../../accountDetailsFullScreen/components/AOC';
-import { openOrFocusTab } from '../../accountDetailsFullScreen/components/CommonTasks';
+import AccountIcons from '../../accountDetails/components/AccountIcons';
+import AOC from '../../accountDetails/components/AOC';
+import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import FullScreenAccountMenu from './FullScreenAccountMenu';
 
 interface AddressDetailsProps {
@@ -52,7 +52,7 @@ export const POPUPS_NUMBER = {
   RENAME: 2
 };
 
-export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation({ accountAssets, address, api, balances, chain, chainName, formatted, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();

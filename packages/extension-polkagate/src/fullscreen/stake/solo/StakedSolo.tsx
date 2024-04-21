@@ -14,7 +14,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { useInfo, useStakingRewardDestinationAddress, useStakingRewards, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { STAKING_CHAINS } from '../../../util/constants';
-import { openOrFocusTab } from '../../accountDetailsFullScreen/components/CommonTasks';
+import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import { Title } from '../../sendFund/InputPage';
 import DisplayBalance from '../partials/DisplayBalance';
 import ActiveValidators from './partials/ActiveValidators';

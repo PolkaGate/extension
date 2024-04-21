@@ -7,7 +7,7 @@ import { Grid, Typography } from '@mui/material';
 import { ValidatorInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen/components/CommonTasks';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { BN_ZERO } from '@polkadot/util';
 
 import { TwoButtons } from '../../../../../components';

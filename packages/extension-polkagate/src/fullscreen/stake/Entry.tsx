@@ -14,7 +14,7 @@ import { Balance } from '@polkadot/types/interfaces';
 
 import { useBalances } from '../../hooks';
 import { MyPoolInfo, TxInfo, ValidatorInfo } from '../../util/types';
-import { openOrFocusTab } from '../accountDetailsFullScreen/components/CommonTasks';
+import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import WaitScreen from '../governance/partials/WaitScreen';
 import Confirmation from './easyMode/Confirmation';
 import Review from './easyMode/Review';
@@ -43,7 +43,7 @@ interface Props {
   txInfo: TxInfo | undefined
 }
 
-function Entry ({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.ReactElement {
+function Entry({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.ReactElement {
   const { address } = useParams<{ address: string }>();
 
   const [refresh, setRefresh] = useState<boolean>(false);

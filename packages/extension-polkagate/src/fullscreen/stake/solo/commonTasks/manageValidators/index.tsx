@@ -8,7 +8,7 @@ import { Grid } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen/components/CommonTasks';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { FullScreenHeader } from '@polkadot/extension-polkagate/src/fullscreen/governance/FullScreenHeader';
 import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';

@@ -10,12 +10,12 @@ import { Route, Switch } from 'react-router';
 
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
-import AccountFS from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen';
+import AccountFS from '@polkadot/extension-polkagate/src/fullscreen/accountDetails';
 import Governance from '@polkadot/extension-polkagate/src/fullscreen/governance';
 import ReferendumPost from '@polkadot/extension-polkagate/src/fullscreen/governance/post';
 import { CurrencyItemType } from '@polkadot/extension-polkagate/src/fullscreen/homeFullScreen/partials/Currency';
 import ManageIdentity from '@polkadot/extension-polkagate/src/fullscreen/manageIdentity';
-import FullScreenManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxiesFullScreen';
+import FullScreenManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxies';
 import Send from '@polkadot/extension-polkagate/src/fullscreen/sendFund';
 import SocialRecovery from '@polkadot/extension-polkagate/src/fullscreen/socialRecovery';
 import Stake from '@polkadot/extension-polkagate/src/fullscreen/stake';

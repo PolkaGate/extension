@@ -12,7 +12,7 @@ import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 
 import { useBalances, useFullscreen, useStakingAccount, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { FULLSCREEN_WIDTH, STAKING_CHAINS } from '../../../util/constants';
-import { openOrFocusTab } from '../../accountDetailsFullScreen/components/CommonTasks';
+import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
 import { Title } from '../../sendFund/InputPage';
 import Entry from '../Entry';
@@ -36,7 +36,7 @@ export const MODAL_IDS = {
   STAKE_EXTRA: 7
 };
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
 
   useFullscreen();
@@ -112,23 +112,23 @@ export default function Index (): React.ReactElement {
           show={true}
         />}
       {showId === MODAL_IDS.STAKE &&
-      <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '6%' }}>
-        <Title
-          logo={<BoyIcon sx={{ color: 'text.primary', fontSize: '62px' }} />}
-          text={step === STEPS.SOLO_REVIEW
-            ? t('Staking Review')
-            : step === STEPS.CONFIRM
-              ? t('Staking Confirmation')
-              : t('Solo Staking')}
-        />
-        <Entry
-          onBack={onBack}
-          setStep={setStep}
-          setTxInfo={setTxInfo}
-          step={step}
-          txInfo={txInfo}
-        />
-      </Grid>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '6%' }}>
+          <Title
+            logo={<BoyIcon sx={{ color: 'text.primary', fontSize: '62px' }} />}
+            text={step === STEPS.SOLO_REVIEW
+              ? t('Staking Review')
+              : step === STEPS.CONFIRM
+                ? t('Staking Confirmation')
+                : t('Solo Staking')}
+          />
+          <Entry
+            onBack={onBack}
+            setStep={setStep}
+            setTxInfo={setTxInfo}
+            step={step}
+            txInfo={txInfo}
+          />
+        </Grid>
       }
     </Grid>
   );

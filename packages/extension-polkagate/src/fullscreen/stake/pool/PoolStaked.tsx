@@ -20,7 +20,7 @@ import { BN } from '@polkadot/util';
 import { PoolStakingIcon } from '../../../components';
 import { useInfo, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { STAKING_CHAINS } from '../../../util/constants';
-import { openOrFocusTab } from '../../accountDetailsFullScreen/components/CommonTasks';
+import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import { Title } from '../../sendFund/InputPage';
 import DisplayBalance from '../partials/DisplayBalance';
 import ClaimedRewardsChart from './partials/ClaimedRewardsChart';
@@ -38,7 +38,7 @@ interface Props {
   unlockingAmount: BN | undefined;
 }
 
-export default function PoolStaked ({ address, balances, pool, redeemable, setShow, toBeReleased, unlockingAmount }: Props): React.ReactElement {
+export default function PoolStaked({ address, balances, pool, redeemable, setShow, toBeReleased, unlockingAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain } = useInfo(address);

@@ -12,7 +12,7 @@ import { ActionContext } from '../../components';
 import { useApi, useChain, useGenesisHashOptions } from '../../hooks';
 import { FullScreenChainSwitch, FullScreenRemoteNode } from '../../partials';
 import { EXTENSION_NAME, GOVERNANCE_CHAINS, IDENTITY_CHAINS, SOCIAL_RECOVERY_CHAINS, STAKING_CHAINS } from '../../util/constants';
-import { openOrFocusTab } from '../accountDetailsFullScreen/components/CommonTasks';
+import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import AddressDropdown from './components/AddressDropdown';
 import ThemeChanger from './partials/ThemeChanger';
 import { MAX_WIDTH } from './utils/consts';

@@ -1235,5 +1235,6 @@
   "on-chain pool staking info": "",
   "Claimable Rewards": "",
   "Pool information": "",
-  "Pool Rewards": ""
+  "Pool Rewards": "",
+  "Change State to {{state}}": ""
 }

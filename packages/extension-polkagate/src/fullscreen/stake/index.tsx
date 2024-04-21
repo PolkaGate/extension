@@ -16,7 +16,7 @@ import { PButton, PoolStakingIcon } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { useFullscreen, useInfo, usePoolConsts } from '../../hooks';
 import { TxInfo } from '../../util/types';
-import { openOrFocusTab } from '../accountDetailsFullScreen/components/CommonTasks';
+import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import { Title } from '../sendFund/InputPage';
 import AdvancedOptions from './partials/AdvancedOptions';

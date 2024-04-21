@@ -1236,5 +1236,6 @@
   "on-chain pool staking info": "链上池抵押信息",
   "Claimable Rewards": "可领取奖励",
   "Pool information": "池信息",
-  "Pool Rewards": "池奖励"
+  "Pool Rewards": "池奖励",
+  "Change State to {{state}}": "将状态更改为{{state}}"
 }

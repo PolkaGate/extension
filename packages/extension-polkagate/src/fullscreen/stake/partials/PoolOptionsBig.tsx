@@ -11,7 +11,7 @@ import React, { useCallback } from 'react';
 import { PButton } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 import { useInfo, usePoolConsts } from '../../../hooks';
-import { openOrFocusTab } from '../../accountDetailsFullScreen/components/CommonTasks';
+import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import { STEPS } from '..';
 import StakingOption from './StakingOption';
 

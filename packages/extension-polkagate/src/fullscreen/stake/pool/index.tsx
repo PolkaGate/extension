@@ -16,7 +16,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { PoolStakingIcon } from '../../../components';
 import { useBalances, useFullscreen, useInfo, usePool, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { FULLSCREEN_WIDTH, STAKING_CHAINS } from '../../../util/constants';
-import { openOrFocusTab } from '../../accountDetailsFullScreen/components/CommonTasks';
+import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
 import { Title } from '../../sendFund/InputPage';
 import Entry from '../Entry';
