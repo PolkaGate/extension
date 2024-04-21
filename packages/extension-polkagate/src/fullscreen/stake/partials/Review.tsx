@@ -91,6 +91,13 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
     }
   }, [estimatedFee, inputs]);
 
+  const proxyTypeFilter = useMemo(
+    () =>
+      inputs?.extraInfo?.pool
+        ? ['Any', 'NonTransfer', 'NominationPools']
+        : ['Any', 'NonTransfer', 'Staking']
+    , [inputs]);
+
   const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
 
   const _onClose = useCallback(() => {
@@ -184,7 +191,7 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
               onSecondaryClick={onClose || _onClose}
               params={inputs?.params}
               primaryBtnText={t('Confirm')}
-              proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+              proxyTypeFilter={proxyTypeFilter}
               secondaryBtnText={t('Back')}
               selectedProxy={selectedProxy}
               setIsPasswordError={setIsPasswordError}
@@ -203,7 +210,7 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
           closeSelectProxy={closeProxy}
           height={500}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+          proxyTypeFilter={proxyTypeFilter}
           selectedProxy={selectedProxy}
           setSelectedProxy={setSelectedProxy}
         />
