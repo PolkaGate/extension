@@ -13,16 +13,12 @@ import type { Balance } from '@polkadot/types/interfaces';
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import keyring from '@polkadot/ui-keyring';
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useAccountInfo, useApi, useChain, useDecimal, useToken, useTracks, useTranslation } from '../../../../hooks';
+import { useApi, useChain, useDecimal, useToken, useTracks, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
-import { signAndSend } from '../../../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
-import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
-import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoButtonsAndUseProxy';
 import DisplayValue from '../../post/castVote/partial/DisplayValue';
 import { GOVERNANCE_PROXY } from '../../utils/consts';
 import ReferendaTable from '../partial/ReferendaTable';
@@ -47,7 +43,6 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const name = useAccountDisplay(address);
   const api = useApi(address);
   const chain = useChain(address);
   const { tracks } = useTracks(address);
@@ -56,15 +51,13 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
     : mixedDelegateInformation
       ? mixedDelegateInformation.delegatee
       : undefined;
-  const delegateeName = useAccountInfo(api, delegateeAddress)?.identity.display;
+  const delegateeName = useAccountInfo2(api, delegateeAddress)?.identity?.display;
   const ref = useRef(null);
 
-  const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const undelegate = api && api.tx.convictionVoting.undelegate;
   const batch = api && api.tx.utility.batchAll;
