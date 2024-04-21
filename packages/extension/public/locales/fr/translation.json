@@ -493,7 +493,6 @@
   "Import": "Importer",
   "More ...": "Plus ...",
   "Import ledger account": "Importer un compte Ledger",
-  "Close tab": "Fermer l'onglet",
   "Enter a mnemonic seed (recovery phrase) of an account to import it.": "Saisissez une phrase mnémonique (phrase de récupération) d'un compte pour l'importer.",
   "Invalid recovery phrase or derivation path": "Phrase de récupération ou chemin de dérivation invalide",
   "Invalid recovery phrase": "Phrase de récupération invalide",

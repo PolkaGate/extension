@@ -492,7 +492,6 @@
   "Import": "Импортировать",
   "More ...": "Еще...",
   "Import ledger account": "Импортировать аккаунт Ledger",
-  "Close tab": "Закрыть вкладку",
   "Enter a mnemonic seed (recovery phrase) of an account to import it.": "Введите мнемоническую фразу (фразу восстановления) аккаунта для его импорта.",
   "Invalid recovery phrase or derivation path": "Недействительная мнемоническая фраза или путь происхождения",
   "Invalid recovery phrase": "Недействительная мнемоническая фраза",

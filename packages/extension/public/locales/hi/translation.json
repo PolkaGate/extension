@@ -494,7 +494,6 @@
   "Import": "आयात करें",
   "More ...": "और अधिक...",
   "Import ledger account": "लेजर खाता आयात करें",
-  "Close tab": "टैब बंद करें",
   "Enter a mnemonic seed (recovery phrase) of an account to import it.": "इसे आयात करने के लिए खाते की एक म्नेमोनिक सीड (पुनर्स्थापना वाक्यांश) दर्ज करें।",
   "Invalid recovery phrase or derivation path": "अमान्य पुनर्स्थापना वाक्यांश या उत्पन्न मार्ग।",
   "Invalid recovery phrase": "अवैध पुनर्स्थापना वाक्यांश",
