@@ -221,7 +221,7 @@ export default function AccountInformation({ accountAssets, address, api, balanc
                 chain={chain}
                 noIdenticon
                 style={{ width: 'calc(100% - 40px)' }}
-                subIdOnly
+                // subIdOnly
               />
               <Grid item width='40px'>
                 <Infotip text={account?.isHidden && t('This account is hidden from websites')}>

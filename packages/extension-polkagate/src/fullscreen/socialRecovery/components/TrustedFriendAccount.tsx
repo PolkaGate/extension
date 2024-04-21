@@ -17,7 +17,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { riot } from '../../../assets/icons';
 import { Identicon, ShortAddress } from '../../../components';
-import { useAccountInfo, useAccountName } from '../../../hooks';
+import { useAccountInfo2, useAccountName } from '../../../hooks';
 import { AddressWithIdentity } from './SelectTrustedFriend';
 
 interface Props {
@@ -46,11 +46,9 @@ const IdentityInformation = ({ icon, value }: { value: string | undefined, icon:
 };
 
 export default function TrustedFriendAccount({ accountInfo, api, chain, formatted, iconType, onSelect, style }: Props): React.ReactElement {
-  const identity = useAccountInfo(api, String(formatted), accountInfo)?.identity;
+  const identity = useAccountInfo2(api, String(formatted), accountInfo)?.identity;
   const accountNameInExtension = useAccountName(formatted);
   const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
-  // const xs = [3, 4, 6, 12][[identity?.email, identity?.web, identity?.riot, identity?.twitter].filter((item) => item !== undefined).length];
-  // const linksWidth = [identity?.email, identity?.web, identity?.riot, identity?.twitter].filter((item) => item !== undefined).length;
 
   return (
     // eslint-disable-next-line react/jsx-no-bind

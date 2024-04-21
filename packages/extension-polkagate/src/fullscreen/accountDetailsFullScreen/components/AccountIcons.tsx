@@ -12,7 +12,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { ApiPromise } from '@polkadot/api';
 
 import { ActionContext, Infotip } from '../../../components';
-import { useAccount, useAccountInfo, useTranslation } from '../../../hooks';
+import { useAccount, useAccountInfo2, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 import { Proxy } from '../../../util/types';
@@ -28,7 +28,7 @@ export default function AccountIcons ({ address, api, formatted }: AddressDetail
   const theme = useTheme();
   const onAction = useContext(ActionContext);
   const account = useAccount(address);
-  const accountInfo = useAccountInfo(api, formatted);
+  const accountInfo = useAccountInfo2(api, formatted);
 
   const [hasID, setHasID] = useState<boolean | undefined>();
   const [isRecoverable, setIsRecoverable] = useState<boolean | undefined>();
