@@ -6,8 +6,9 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { MemberPoints, MyPoolInfo, TxInfo } from '../../../../../util/types';
 
-import { CheckCircleOutlineSharp as CheckCircleOutlineSharpIcon, Close as CloseIcon } from '@mui/icons-material';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { faPersonCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { CheckCircleOutlineSharp as CheckCircleOutlineSharpIcon } from '@mui/icons-material';
+import { Divider, Grid, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -20,6 +21,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { PButton, ShortAddress } from '../../../../../components';
 import { useFormatted, useTranslation } from '../../../../../hooks';
 import { usePoolMembers } from '../../../../../hooks/usePoolMembers';
+import { ModalTitle } from '../../../solo/commonTasks/configurePayee';
 import Confirmation from '../../partials/Confirmation';
 import Review from './Review';
 
@@ -71,7 +73,6 @@ export type Mode = 'UnbondAll' | 'RemoveAll';
 
 export default function RemoveAll ({ address, api, chain, onClose, pool, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const formatted = useFormatted(address);
 
   const [status, setStatus] = useState<number>(0);
@@ -210,16 +211,15 @@ export default function RemoveAll ({ address, api, chain, onClose, pool, setRefr
   return (
     <DraggableModal minHeight={670} onClose={onClose} open>
       <>
-        <Grid alignItems='center' container justifyContent='space-between' pt='15px'>
-          <Grid item>
-            <Typography fontSize='22px' fontWeight={700}>
-              {mode === 'UnbondAll' ? t('Unstake All') : t('Remove All')}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <CloseIcon onClick={onClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-          </Grid>
-        </Grid>
+        {step !== STEPS.WAIT_SCREEN &&
+          <ModalTitle
+            icon={faPersonCircleXmark}
+            onCancel={onClose}
+            setStep={setStep}
+            step={step}
+            text={mode === 'UnbondAll' ? t('Unstake All') : t('Remove All')}
+          />
+        }
         {step === STEPS.INDEX &&
           <>
             <Grid container direction='column' m='20px auto'>
