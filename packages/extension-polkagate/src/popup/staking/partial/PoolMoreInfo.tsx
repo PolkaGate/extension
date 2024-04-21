@@ -174,7 +174,8 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
         _mt={2}
         _onClick={onClaimCommission}
         _variant='contained'
-        disabled={poolToShow?.rewardPool?.totalCommissionPending === 0 || poolToShow?.bondedPool?.roles?.root !== formatted}
+        /** We disabled claim commission in fullscreen */
+        disabled={!isExtensionPopup || poolToShow?.rewardPool?.totalCommissionPending === 0 || poolToShow?.bondedPool?.roles?.root !== formatted}
         text={t('Claim')}
       />
     </Grid>
