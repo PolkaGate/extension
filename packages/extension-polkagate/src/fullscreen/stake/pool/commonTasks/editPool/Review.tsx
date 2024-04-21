@@ -4,19 +4,21 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
+import type { AnyTuple } from '@polkadot/types/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { SubmittableExtrinsic } from '@polkadot/api/types';
+import { SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
 import { Chain } from '@polkadot/extension-chains/types';
+import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import { Balance } from '@polkadot/types/interfaces';
-import { ISubmittableResult } from '@polkadot/types/types';
-import { BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN_ONE } from '@polkadot/util';
 
-import { Infotip, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../../components';
-import { useTranslation } from '../../../../../hooks';
-import { MyPoolInfo, Proxy, TxInfo } from '../../../../../util/types';
+import { AccountHolderWithProxy, Infotip, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../../components';
+import { useProxies, useTranslation } from '../../../../../hooks';
+import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
+import { Inputs } from '../../../Entry';
 import ShowPoolRole from './ShowPoolRole';
 import { ChangesProps, STEPS } from '.';
 
@@ -31,29 +33,44 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   step: number;
-  selectedProxy: Proxy | undefined;
-  setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
 }
 
-export default function Review({ address, api, chain, changes, formatted, pool, selectedProxy, setRefresh, setSelectedProxy, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, api, chain, changes, formatted, pool, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const proxies = useProxies(api, formatted);
 
+  const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
+  const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [isPasswordError, setIsPasswordError] = useState(false);
-
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
-  const [transaction, setTransaction] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>>();
+  const [inputs, setInputs] = useState<Inputs>();
 
-  const batchAll = api && api.tx.utility.batchAll;
-  const setMetadata = api && api.tx.nominationPools.setMetadata;
-
+  const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const maybeCurrentCommissionPayee = pool?.bondedPool?.commission?.current?.[1]?.toString() as string | undefined;
 
+  useEffect((): void => {
+    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+
+    setProxyItems(fetchedProxyItems);
+  }, [proxies]);
+
+  const extraInfo = useMemo(() => ({
+    action: 'Pool Staking',
+    fee: String(estimatedFee || 0),
+    subAction: 'Edit Pool'
+  }), [estimatedFee]);
+
   useEffect(() => {
-    if (!api || !setMetadata || !batchAll) {
+    if (!api || !changes) {
       return;
     }
 
-    const calls = [];
+    const batchAll = api.tx.utility.batchAll;
+    const setMetadata = api.tx.nominationPools.setMetadata;
+    const updateRoles = api.tx.nominationPools.updateRoles;
+    const setCommission = api.tx.nominationPools.setCommission;
+
+    const txs: { call: SubmittableExtrinsicFunction<'promise', AnyTuple>, params: unknown[] }[] = [];
 
     const getRole = (role: string | undefined | null) => {
       if (role === undefined) {
@@ -65,37 +82,42 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       }
     };
 
-    changes?.newPoolName !== undefined &&
-      calls.push(setMetadata(pool.poolId, changes?.newPoolName));
+    changes.newPoolName !== undefined &&
+      txs.push({ call: setMetadata, params: [pool.poolId, changes?.newPoolName] });
 
-    changes?.newRoles !== undefined && !Object.values(changes.newRoles).every((value) => value === undefined) &&
-      calls.push(api.tx.nominationPools.updateRoles(pool.poolId, getRole(changes.newRoles.newRoot), getRole(changes.newRoles.newNominator), getRole(changes.newRoles.newBouncer)));
+    changes.newRoles !== undefined && !Object.values(changes.newRoles).every((value) => value === undefined) &&
+      txs.push({ call: updateRoles, params: [pool.poolId, getRole(changes.newRoles.newRoot), getRole(changes.newRoles.newNominator), getRole(changes.newRoles.newBouncer)] });
 
-    changes?.commission !== undefined && (changes.commission.value !== undefined || changes.commission.payee) &&
-      calls.push(api.tx.nominationPools.setCommission(pool.poolId, [(changes.commission.value || 0) * 10 ** 7, changes.commission.payee || maybeCurrentCommissionPayee]));
+    changes.commission !== undefined && (changes.commission.value !== undefined || changes.commission.payee) &&
+      txs.push({ call: setCommission, params: [pool.poolId, [(changes.commission.value || 0) * 10 ** 7, changes.commission.payee || maybeCurrentCommissionPayee]] });
 
-    const tx = calls.length > 1 ? batchAll(calls) : calls[0];
+    const call = txs.length > 1 ? batchAll : txs[0].call;
+    const params = txs.length > 1
+      ? [txs.map(({ call, params }) => call(...params))]
+      : txs[0].params;
 
-    setTransaction(tx);
+    setInputs({
+      call,
+      extraInfo,
+      params
+    });
+  }, [api, changes, extraInfo, maybeCurrentCommissionPayee, pool.poolId]);
+
+  useEffect(() => {
+    if (!api || !inputs?.call) {
+      return;
+    }
 
     if (!api?.call?.transactionPaymentApi) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
-    calls.length && calls[0].paymentInfo(formatted).then((i) => {
+    inputs.call(...inputs.params)?.paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee));
     }).catch(console.error);
+  }, [api, formatted, inputs]);
 
-    calls.length > 1 && calls[1].paymentInfo(formatted).then((i) => {
-      setEstimatedFee((prevEstimatedFee) => api.createType('Balance', (prevEstimatedFee ?? BN_ZERO).add(i?.partialFee)));
-    }).catch(console.error);
-  }, [api, batchAll, changes, formatted, maybeCurrentCommissionPayee, pool?.bondedPool?.commission, pool?.poolId, setMetadata]);
-
-  const extraInfo = useMemo(() => ({
-    action: 'Pool Staking',
-    fee: String(estimatedFee || 0),
-    subAction: 'Edit Pool'
-  }), [estimatedFee]);
+  const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
 
   const onBackClick = useCallback(() => {
     setSelectedProxy(undefined);
@@ -104,99 +126,122 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
 
   return (
     <Grid container direction='column' item pt='15px'>
-      {isPasswordError &&
-        <WrongPasswordAlert />
-      }
-      {changes?.newPoolName !== undefined &&
+      {step === STEPS.REVIEW &&
         <>
-          <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '8px', width: '90%' }}>
-            <Infotip showQuestionMark text={changes?.newPoolName}>
-              <Typography fontSize='16px' fontWeight={300} lineHeight='23px'>
-                {t<string>('Pool name')}
-              </Typography>
-            </Infotip>
-            <Typography fontSize='25px' fontWeight={400} lineHeight='42px' maxWidth='100%' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
-              {changes?.newPoolName}
-            </Typography>
-          </Grid>
-          {changes?.newRoles &&
-            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
+          {isPasswordError &&
+            <WrongPasswordAlert />
           }
-        </>}
-      {changes?.newRoles?.newRoot !== undefined &&
-        <ShowPoolRole
-          chain={chain}
-          roleAddress={changes?.newRoles?.newRoot}
-          roleTitle={t<string>('Root')}
-          showDivider
-        />
-      }
-      {changes?.newRoles?.newNominator !== undefined &&
-        <ShowPoolRole
-          chain={chain}
-          roleAddress={changes?.newRoles?.newNominator}
-          roleTitle={t<string>('Nominator')}
-          showDivider
-        />
-      }
-      {changes?.newRoles?.newBouncer !== undefined &&
-        <ShowPoolRole
-          chain={chain}
-          roleAddress={changes?.newRoles?.newBouncer}
-          roleTitle={t<string>('Bouncer')}
-          showDivider
-        />
-      }
-      {changes?.commission?.value !== undefined &&
-        <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-          <Grid item>
-            <Typography fontSize='16px' fontWeight={300} lineHeight='23px'>
-              {t('Commission value')}
-            </Typography>
-          </Grid>
-          <Grid fontSize='28px' fontWeight={400} item>
-            {changes.commission.value}%
-          </Grid>
+          <AccountHolderWithProxy
+            address={address}
+            chain={chain}
+            selectedProxyAddress={selectedProxyAddress}
+            style={{ mt: 'auto' }}
+            title={t('Account holder')}
+          />
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
-        </Grid>
-      }
-      {changes?.commission?.payee !== undefined &&
-        <ShowPoolRole
-          chain={chain}
-          roleAddress={changes.commission.payee || maybeCurrentCommissionPayee}
-          roleTitle={t<string>('Commission payee')}
-          showDivider
-        />
-      }
-      <Grid alignItems='center' container item justifyContent='center' lineHeight='20px'>
-        <Grid item>
-          {t('Fee')}:
-        </Grid>
-        <Grid item sx={{ pl: '5px' }}>
-          <ShowValue height={16} value={estimatedFee?.toHuman()} />
-        </Grid>
-      </Grid>
-      <Grid container item sx={{ bottom: '15px', height: '120px', position: 'absolute', width: '86%' }}>
-        <SignArea2
+          {changes?.newPoolName !== undefined &&
+            <>
+              <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '8px', width: '90%' }}>
+                <Infotip showQuestionMark text={changes?.newPoolName}>
+                  <Typography fontSize='16px' fontWeight={300} lineHeight='23px'>
+                    {t<string>('Pool name')}
+                  </Typography>
+                </Infotip>
+                <Typography fontSize='25px' fontWeight={400} lineHeight='42px' maxWidth='100%' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+                  {changes?.newPoolName}
+                </Typography>
+              </Grid>
+              {changes?.newRoles &&
+                <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
+              }
+            </>}
+          {changes?.newRoles?.newRoot !== undefined &&
+            <ShowPoolRole
+              chain={chain}
+              roleAddress={changes?.newRoles?.newRoot}
+              roleTitle={t<string>('Root')}
+              showDivider
+            />
+          }
+          {changes?.newRoles?.newNominator !== undefined &&
+            <ShowPoolRole
+              chain={chain}
+              roleAddress={changes?.newRoles?.newNominator}
+              roleTitle={t<string>('Nominator')}
+              showDivider
+            />
+          }
+          {changes?.newRoles?.newBouncer !== undefined &&
+            <ShowPoolRole
+              chain={chain}
+              roleAddress={changes?.newRoles?.newBouncer}
+              roleTitle={t<string>('Bouncer')}
+              showDivider
+            />
+          }
+          {changes?.commission?.value !== undefined &&
+            <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+              <Grid item>
+                <Typography fontSize='16px' fontWeight={300} lineHeight='23px'>
+                  {t('Commission value')}
+                </Typography>
+              </Grid>
+              <Grid fontSize='28px' fontWeight={400} item>
+                {changes.commission.value}%
+              </Grid>
+              <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
+            </Grid>
+          }
+          {changes?.commission?.payee !== undefined &&
+            <ShowPoolRole
+              chain={chain}
+              roleAddress={changes.commission.payee || maybeCurrentCommissionPayee}
+              roleTitle={t<string>('Commission payee')}
+              showDivider
+            />
+          }
+          <Grid alignItems='center' container item justifyContent='center' lineHeight='20px'>
+            <Grid item>
+              {t('Fee')}:
+            </Grid>
+            <Grid item sx={{ pl: '5px' }}>
+              <ShowValue height={16} value={estimatedFee?.toHuman()} />
+            </Grid>
+          </Grid>
+          <Grid container item sx={{ bottom: '15px', height: '120px', position: 'absolute', width: '86%' }}>
+            <SignArea2
+              address={address}
+              call={inputs?.call}
+              extraInfo={extraInfo}
+              isPasswordError={isPasswordError}
+              onSecondaryClick={onBackClick}
+              params={inputs?.params}
+              primaryBtnText={t<string>('Confirm')}
+              proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+              secondaryBtnText={t<string>('Back')}
+              selectedProxy={selectedProxy}
+              setIsPasswordError={setIsPasswordError}
+              setRefresh={setRefresh}
+              setSelectedProxy={setSelectedProxy}
+              setStep={setStep}
+              setTxInfo={setTxInfo}
+              showBackButtonWithUseProxy
+              step={step}
+              steps={STEPS}
+            />
+          </Grid>
+        </>}
+      {step === STEPS.PROXY &&
+        <SelectProxyModal2
           address={address}
-          call={transaction}
-          extraInfo={extraInfo}
-          isPasswordError={isPasswordError}
-          onSecondaryClick={onBackClick}
-          primaryBtnText={t<string>('Confirm')}
+          closeSelectProxy={closeProxy}
+          height={500}
+          proxies={proxyItems}
           proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
-          secondaryBtnText={t<string>('Back')}
           selectedProxy={selectedProxy}
-          setIsPasswordError={setIsPasswordError}
-          setRefresh={setRefresh}
           setSelectedProxy={setSelectedProxy}
-          setStep={setStep}
-          setTxInfo={setTxInfo}
-          showBackButtonWithUseProxy
-          step={step}
-          steps={STEPS}
         />
-      </Grid>
+      }
     </Grid>
   );
 }
