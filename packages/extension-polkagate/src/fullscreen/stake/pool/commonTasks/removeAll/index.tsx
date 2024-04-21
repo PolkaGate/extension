@@ -313,7 +313,7 @@ export default function RemoveAll ({ address, api, chain, onClose, pool, setRefr
         {txInfo && step === STEPS.CONFIRM &&
           <Confirmation
             handleClose={onClose}
-            modalHeight={670}
+            popupHeight={670}
             txInfo={txInfo}
           >
             <>
