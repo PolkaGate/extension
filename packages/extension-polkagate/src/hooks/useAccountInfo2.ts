@@ -18,7 +18,7 @@ export default function useAccountInfo2 (api: ApiPromise | undefined, formatted:
   const [info, setInfo] = useState<DeriveAccountInfo | undefined>();
 
   const getIdentityOf = useCallback(async (accountId: string) => {
-    if (!api || !accountId) {
+    if (!api?.query?.identity?.identityOf || !accountId) {
       return;
     }
 
