@@ -83,8 +83,6 @@ export default function useValidators (address: string, validators?: AllValidato
 
     // eslint-disable-next-line no-void
     void chrome.storage.local.get('validatorsInfo', (res: { [key: string]: Validators }) => {
-      console.log('ValidatorsInfo in local storage:', res);
-
       if (res?.validatorsInfo?.[chainName]) {
         setValidatorsInfo(res.validatorsInfo[chainName]);
       }
@@ -133,11 +131,13 @@ export default function useValidators (address: string, validators?: AllValidato
       const currentNominators: Record<string, Others[]> = {};
 
       validatorsPaged.forEach((pages) => {
-        const validatorAddress = pages[0][0].toHuman()[1] as string;
+        if (pages[0]) {
+          const validatorAddress = pages[0][0].args[1].toString();
 
-        currentNominators[validatorAddress] = [];
+          currentNominators[validatorAddress] = [];
 
-        pages.forEach(([, value]) => currentNominators[validatorAddress].push(...value.unwrap().others));
+          pages.forEach(([, value]) => currentNominators[validatorAddress].push(...value.unwrap().others));
+        }
       });
 
       const current: ValidatorInfo[] = [];

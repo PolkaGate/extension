@@ -7,13 +7,15 @@ import '@vaadin/icons';
 
 import type { BalancesInfo, MyPoolInfo } from '../../../util/types';
 
-import { faArrowCircleDown, faCircleDown, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { Grid, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { faSquarePlus } from '@fortawesome/free-regular-svg-icons';
+import { faArrowCircleDown, faCircleDown, faGrip, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useMemo } from 'react';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 
 import { PoolStakingIcon } from '../../../components';
 import { useInfo, useTranslation, useUnSupportedNetwork } from '../../../hooks';
@@ -22,23 +24,21 @@ import { openOrFocusTab } from '../../accountDetailsFullScreen/components/Common
 import { Title } from '../../sendFund/InputPage';
 import DisplayBalance from '../partials/DisplayBalance';
 import ClaimedRewardsChart from './partials/ClaimedRewardsChart';
+import Info from './partials/Info';
 import PoolCommonTasks from './partials/PoolCommonTasks';
 import { MODAL_IDS } from '.';
-
-interface SessionIfo {
-  eraLength: number;
-  eraProgress: number;
-  currentEra: number;
-}
 
 interface Props {
   address: string;
   setShow: React.Dispatch<React.SetStateAction<number>>;
   balances: BalancesInfo | undefined;
   pool: MyPoolInfo | null | undefined;
+  redeemable: BN | undefined;
+  toBeReleased: { amount: BN; date: number; }[] | undefined;
+  unlockingAmount: BN | undefined;
 }
 
-export default function PoolStaked({ address, balances, pool, setShow }: Props): React.ReactElement {
+export default function PoolStaked ({ address, balances, pool, redeemable, setShow, toBeReleased, unlockingAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain } = useInfo(address);
@@ -47,55 +47,6 @@ export default function PoolStaked({ address, balances, pool, setShow }: Props):
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
-
-  const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
-  const [currentEraIndex, setCurrentEraIndex] = useState<number | undefined>();
-
-  const { redeemable, toBeReleased, unlockingAmount } = useMemo(() => {
-    if (pool === undefined || !api || !currentEraIndex || !sessionInfo) {
-      return { redeemable: undefined, toBeReleased: undefined, unlockingAmount: undefined };
-    }
-
-    let unlockingValue = BN_ZERO;
-    let redeemValue = BN_ZERO;
-    const toBeReleased = [];
-
-    if (pool !== null && pool.member?.unbondingEras) { // if pool is fetched but account belongs to no pool then pool===null
-      for (const [era, unbondingPoint] of Object.entries(pool.member?.unbondingEras)) {
-        const remainingEras = Number(era) - currentEraIndex;
-
-        if (remainingEras < 0) {
-          redeemValue = redeemValue.add(new BN(unbondingPoint as string));
-        } else {
-          const amount = new BN(unbondingPoint as string);
-
-          unlockingValue = unlockingValue.add(amount);
-
-          const secToBeReleased = (remainingEras * sessionInfo.eraLength + (sessionInfo.eraLength - sessionInfo.eraProgress)) * 6;
-
-          toBeReleased.push({ amount, date: Date.now() + (secToBeReleased * 1000) });
-        }
-      }
-    }
-
-    return { redeemable: redeemValue, toBeReleased, unlockingAmount: unlockingValue };
-  }, [api, currentEraIndex, pool, sessionInfo]);
-
-  useEffect(() => {
-    api && api.derive.session?.progress().then((info) => {
-      setSessionInfo({
-        currentEra: Number(info.currentEra),
-        eraLength: Number(info.eraLength),
-        eraProgress: Number(info.eraProgress)
-      });
-    });
-  }, [api]);
-
-  useEffect((): void => {
-    api && api.query.staking && api.query.staking.currentEra().then((ce) => {
-      setCurrentEraIndex(Number(ce));
-    });
-  }, [api]);
 
   const onUnstake = useCallback(() => {
     staked && !staked?.isZero() && setShow(MODAL_IDS.UNSTAKE);
@@ -107,15 +58,15 @@ export default function PoolStaked({ address, balances, pool, setShow }: Props):
       : setShow(MODAL_IDS.STAKE_EXTRA);
   }, [redeemable, setShow, staked, unlockingAmount]);
 
-  const goToRewardWithdraw = useCallback(() => {
+  const onWithdrawRewards = useCallback(() => {
     claimable && !claimable?.isZero() && setShow(MODAL_IDS.WITHDRAW_REWARDS);
   }, [claimable, setShow]);
 
-  const goToRewardStake = useCallback(() => {
+  const onStakeRewards = useCallback(() => {
     claimable && !claimable?.isZero() && setShow(MODAL_IDS.STAKE_REWARDS);
   }, [claimable, setShow]);
 
-  const goToRedeemableWithdraw = useCallback(() => {
+  const onWithdrawRedeemable = useCallback(() => {
     redeemable && !redeemable?.isZero() && setShow(MODAL_IDS.REDEEM);
   }, [redeemable, setShow]);
 
@@ -124,7 +75,7 @@ export default function PoolStaked({ address, balances, pool, setShow }: Props):
   }, [address]);
 
   return (
-    <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', px: '5%' }}>
+    <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', px: '2%' }}>
       <Title
         logo={
           <PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />
@@ -148,16 +99,16 @@ export default function PoolStaked({ address, balances, pool, setShow }: Props):
               actions={[t('stake'), t('withdraw')]}
               address={address}
               amount={claimable}
-              icons={[faPlus, faCircleDown]}
-              onClicks={[goToRewardStake, goToRewardWithdraw]}
-              title={t('Rewards')}
+              icons={[faSquarePlus, faArrowCircleDown]}
+              onClicks={[onStakeRewards, onWithdrawRewards]}
+              title={t('Claimable Rewards')}
             />
             <DisplayBalance
               actions={[t('withdraw')]}
               address={address}
               amount={redeemable}
-              icons={[faArrowCircleDown]}
-              onClicks={[goToRedeemableWithdraw]}
+              icons={[faCircleDown]}
+              onClicks={[onWithdrawRedeemable]}
               title={t('Redeemable')}
             />
             <DisplayBalance
@@ -177,20 +128,34 @@ export default function PoolStaked({ address, balances, pool, setShow }: Props):
               title={t('Available to stake')}
             />
             {pool &&
-              <ShowPool
-                api={api}
-                chain={chain}
-                label={t('Pool')}
-                labelPosition='center'
-                mode='Default'
-                pool={pool}
-                showInfo
-                style={{
-                  m: '20px auto 0',
-                  width: '100%'
-                }}
-              />
+              <>
+                <Grid container item justifyContent='center' sx={{ mt: '25px', ml: '2%' }}>
+                  <FontAwesomeIcon
+                    color={`${theme.palette.text.primary}`}
+                    fontSize='25px'
+                    icon={faGrip}
+                  />
+                  <Typography fontSize='18px' fontWeight={500} ml='1%'>
+                    {t('Pool information')}
+                  </Typography>
+                </Grid>
+                <ShowPool
+                  api={api}
+                  chain={chain}
+                  labelPosition='center'
+                  mode='Default'
+                  pool={pool}
+                  showInfo
+                  style={{
+                    m: '5px auto 0',
+                    width: '95%'
+                  }}
+                />
+              </>
             }
+            <Info
+              address={address}
+            />
           </Grid>
         </Grid>
         <Grid container direction='column' gap='15px' item width='320px'>

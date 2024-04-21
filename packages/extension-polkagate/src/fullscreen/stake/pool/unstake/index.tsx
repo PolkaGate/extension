@@ -24,9 +24,9 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
 import { useInfo, usePool, usePoolConsts, useStakingConsts, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
+import Confirmation from '../../partials/Confirmation';
+import Review from '../../partials/Review';
 import { ModalTitle } from '../../solo/commonTasks/configurePayee';
-import Confirmation from '../../solo/commonTasks/configurePayee/Confirmation';
-import Review from '../../solo/commonTasks/configurePayee/Review';
 import { MODAL_IDS } from '..';
 
 interface Props {
@@ -235,7 +235,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
 
   useEffect(() => {
     const handleInput = async () => {
-      if (amount && api && maxUnlockingChunks && unlockingLen && myPool?.poolId && unbonded && poolWithdrawUnbonded) {
+      if (amount && api && maxUnlockingChunks && unlockingLen !== undefined && myPool?.poolId && unbonded && poolWithdrawUnbonded) {
         const amountAsBN = amountToMachine(amount, decimal);
 
         const batch = api.tx.utility.batchAll;
@@ -269,7 +269,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
     };
 
     handleInput().catch(console.error);
-  }, [amount, api, decimal, formatted, maxUnlockingChunks, myPool?.poolId, poolWithdrawUnbonded, unbonded, unlockingLen]);
+  }, [amount, api, decimal, formatted, maxUnlockingChunks, myPool?.poolId, poolWithdrawUnbonded, totalStakeAfter, unbonded, unlockingLen]);
 
   const Warn = ({ belowInput, iconDanger, isDanger, text }: { belowInput?: boolean, text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
     <Grid container sx={{ '> div': { mr: '0', mt: '5px', pl: '5px' }, mt: isDanger ? '15px' : 0 }}>

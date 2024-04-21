@@ -55,7 +55,7 @@ export function DraggableModal ({ children, maxHeight = 740, minHeight = 615, on
 
   const style = {
     bgcolor: 'background.default',
-    border: 1,
+    border: '0.5',
     borderColor: 'secondary.light',
     borderRadius: '10px',
     boxShadow: 24,
@@ -68,7 +68,10 @@ export function DraggableModal ({ children, maxHeight = 740, minHeight = 615, on
     pt: 2,
     px: 4,
     top: modalPosition.y,
-    width: `${width}px`
+    width: `${width}px`,
+    '&:focus': {
+      outline: 'none' // Remove outline when Box is focused
+    }
   };
 
   return (

@@ -8,7 +8,6 @@ import type { Balance } from '@polkadot/types/interfaces';
 import { faBolt } from '@fortawesome/free-solid-svg-icons';
 import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
 import { Grid, Typography, useTheme } from '@mui/material';
-import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
@@ -18,12 +17,12 @@ import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_MAX_INTEGER, BN_ONE } from '@polkadot/util';
 
-import { PButton, Warning } from '../../../../components';
+import { PButton, Progress, Warning } from '../../../../components';
 import { useBalances, useInfo, useIsExposed, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
+import Confirmation from '../../partials/Confirmation';
+import Review from '../../partials/Review';
 import { ModalTitle } from '../commonTasks/configurePayee';
-import Confirmation from '../commonTasks/configurePayee/Confirmation';
-import Review from '../commonTasks/configurePayee/Review';
 import { MODAL_IDS } from '..';
 
 interface Props {
@@ -41,7 +40,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function FastUnstake ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function FastUnstake({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, decimal, formatted, token } = useInfo(address);
@@ -54,7 +53,7 @@ export default function FastUnstake ({ address, setRefresh, setShow, show }: Pro
   const [step, setStep] = useState(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [inputs, setInputs] = useState<Inputs>();
-  
+
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const fastUnstakeDeposit = api && api.consts.fastUnstake.deposit as unknown as BN;
   const availableBalance = getValue('available', myBalances);
@@ -169,14 +168,7 @@ export default function FastUnstake ({ address, setRefresh, setShow, show }: Pro
                 </Grid>
               </Grid>
               {isEligible === undefined &&
-                <>
-                  <Grid alignItems='center' container justifyContent='center' mt='60px'>
-                    <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={115} />
-                  </Grid>
-                  <Typography align='center' fontSize='18px' fontWeight={300} mt='20px' px='20px' width='fit-content'>
-                    {t('Please wait a few seconds and don\'t close the extension.')}
-                  </Typography>
-                </>
+                <Progress pt={'60px'} size={115} title={t('Please wait a few seconds and don\'t close the extension.')} type='grid' />
               }
               <Grid bottom='70px' item position='absolute'>
                 {isEligible !== undefined &&

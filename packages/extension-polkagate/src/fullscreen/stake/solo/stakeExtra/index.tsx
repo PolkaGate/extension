@@ -20,9 +20,9 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
 import { useBalances, useInfo, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
+import Confirmation from '../../partials/Confirmation';
+import Review from '../../partials/Review';
 import { ModalTitle } from '../commonTasks/configurePayee';
-import Confirmation from '../commonTasks/configurePayee/Confirmation';
-import Review from '../commonTasks/configurePayee/Review';
 import { MODAL_IDS } from '..';
 
 interface Props {
@@ -74,13 +74,16 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
   }, [amountAsBN, t, availableToSoloStake]);
 
   useEffect(() => {
-    if (api && amount && call) {
+    if (api && amountAsBN && call && staked) {
       const params = [amountAsBN];
+
+      const totalStakeAfter = staked.add(amountAsBN);
 
       const extraInfo = {
         action: 'Solo Staking',
         amount,
-        subAction: 'Stake Extra'
+        subAction: 'Stake Extra',
+        totalStakeAfter
       };
 
       setInputs({
@@ -89,7 +92,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
         params
       });
     }
-  }, [amount, amountAsBN, api, call]);
+  }, [amount, amountAsBN, api, call, staked]);
 
   useEffect(() => {
     if (api && !api?.call?.transactionPaymentApi) {

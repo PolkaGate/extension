@@ -20,9 +20,9 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
 import { useInfo, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
+import Confirmation from '../../partials/Confirmation';
+import Review from '../../partials/Review';
 import { ModalTitle } from '../commonTasks/configurePayee';
-import Confirmation from '../commonTasks/configurePayee/Confirmation';
-import Review from '../commonTasks/configurePayee/Review';
 import { MODAL_IDS } from '..';
 
 interface Props {
@@ -86,7 +86,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
 
   useEffect(() => {
     const handleInputs = async () => {
-      if (amount && redeem && chilled && unbonded && maxUnlockingChunks !== undefined && unlockingLen !== undefined && formatted && staked) {
+      if (amountAsBN && redeem && chilled && unbonded && maxUnlockingChunks !== undefined && unlockingLen !== undefined && formatted && staked) {
         const txs = [];
 
         if (unlockingLen >= maxUnlockingChunks) {
@@ -106,10 +106,13 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
         const call = txs.length > 1 ? api.tx.utility.batchAll : unbonded;
         const params = txs.length > 1 ? [txs] : [amountAsBN];
 
+        const totalStakeAfter = staked.sub(amountAsBN);
+
         const extraInfo = {
           action: 'Solo Staking',
           amount,
-          subAction: 'Unstake'
+          subAction: 'Unstake',
+          totalStakeAfter
         };
 
         setInputs({

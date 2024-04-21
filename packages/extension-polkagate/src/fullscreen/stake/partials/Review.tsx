@@ -13,13 +13,15 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
+import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
+import { BN } from '@polkadot/util';
 
-import { AccountHolderWithProxy, Identity, ShortAddress, ShowBalance, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../../components';
-import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../../../hooks';
-import { SubTitle } from '../../../../../partials';
-import { Payee, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
-import { Inputs } from '../../../Entry';
-import { STEPS } from '.';
+import { AccountHolderWithProxy, Identity, ShortAddress, ShowBalance, ShowValue, SignArea2, WrongPasswordAlert } from '../../../components';
+import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../hooks';
+import { SubTitle } from '../../../partials';
+import { MyPoolInfo, Payee, Proxy, ProxyItem, TxInfo } from '../../../util/types';
+import { Inputs } from '../Entry';
+import { STEPS } from '../solo/commonTasks/configurePayee';
 
 interface Props {
   address: string | undefined;
@@ -43,6 +45,7 @@ function RewardsDestination ({ address, payee }: { address: string | undefined, 
 
   return (
     <Grid container item justifyContent='center' sx={{ alignSelf: 'center', my: '5px' }}>
+      <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mt: '5px', width: '240px' }} />
       <Typography sx={{ fontWeight: 300 }}>
         {t('Rewards destination')}
       </Typography>
@@ -56,7 +59,6 @@ function RewardsDestination ({ address, payee }: { address: string | undefined, 
             <ShortAddress address={destinationAddress} />
           </Grid>
         }
-        <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mt: '5px', width: '240px' }} />
       </Grid>
     </Grid>
   );
@@ -89,6 +91,13 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
     }
   }, [estimatedFee, inputs]);
 
+  const proxyTypeFilter = useMemo(
+    () =>
+      inputs?.extraInfo?.pool
+        ? ['Any', 'NonTransfer', 'NominationPools']
+        : ['Any', 'NonTransfer', 'Staking']
+    , [inputs]);
+
   const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
 
   const _onClose = useCallback(() => {
@@ -98,7 +107,9 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
   return (
     <Grid alignItems='center' container justifyContent='center' maxHeight='650px' overflow='hidden'>
       {isPasswordError &&
-        <WrongPasswordAlert />
+        <WrongPasswordAlert
+          fontSize='14px'
+        />
       }
       {step === STEPS.REVIEW &&
         <>
@@ -108,7 +119,6 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
               address={address}
               chain={chain}
               selectedProxyAddress={selectedProxyAddress}
-              showDivider
               style={{ mt: 'auto' }}
               title={t('Account holder')}
             />
@@ -119,7 +129,7 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
               />
             }
             {inputs?.extraInfo?.amount &&
-              <DisplayValue dividerHeight='1px' title={t('Amount')} topDivider={false}>
+              <DisplayValue dividerHeight='1px' title={t('Amount')}>
                 <Grid alignItems='center' container item justifyContent='center' sx={{ height: '42px' }}>
                   <ShowValue
                     unit={token}
@@ -127,6 +137,22 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
                   />
                 </Grid>
               </DisplayValue>
+            }
+            {inputs?.extraInfo?.helperText && inputs?.extraInfo?.pool &&
+              <>
+                <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mx: 'auto', my: '5px', width: '170px' }} />
+                <Typography fontSize='14px' fontWeight={400} m='20px auto' textAlign='left' width='100%'>
+                  {inputs.extraInfo.helperText}
+                </Typography>
+                <ShowPool
+                  api={api}
+                  chain={chain}
+                  mode='Default'
+                  pool={inputs.extraInfo.pool as MyPoolInfo}
+                  showInfo
+                  style={{ m: '20px auto' }}
+                />
+              </>
             }
             <DisplayValue dividerHeight='1px' title={t('Fee')}>
               <Grid alignItems='center' container item sx={{ fontSize: 'large', height: '42px' }}>
@@ -149,7 +175,7 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
                 <Grid alignItems='center' container item sx={{ height: '42px' }}>
                   <ShowBalance
                     api={api}
-                    balance={inputs.extraInfo.totalStakeAfter}
+                    balance={inputs.extraInfo.totalStakeAfter as BN}
                     decimalPoint={4}
                   />
                 </Grid>
@@ -165,7 +191,7 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
               onSecondaryClick={onClose || _onClose}
               params={inputs?.params}
               primaryBtnText={t('Confirm')}
-              proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+              proxyTypeFilter={proxyTypeFilter}
               secondaryBtnText={t('Back')}
               selectedProxy={selectedProxy}
               setIsPasswordError={setIsPasswordError}
@@ -184,7 +210,7 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
           closeSelectProxy={closeProxy}
           height={500}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+          proxyTypeFilter={proxyTypeFilter}
           selectedProxy={selectedProxy}
           setSelectedProxy={setSelectedProxy}
         />

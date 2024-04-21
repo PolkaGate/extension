@@ -7,27 +7,28 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { faCircleDown } from '@fortawesome/free-solid-svg-icons';
 import { Grid } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
+import { BN } from '@polkadot/util';
 
 import { Progress } from '../../../../components';
 import { useInfo, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
-import { ModalTitle } from '../commonTasks/configurePayee';
+import { ModalTitle } from '../../solo/commonTasks/configurePayee';
 import { MODAL_IDS } from '..';
 
 interface Props {
   address: string | undefined;
   setShow: React.Dispatch<React.SetStateAction<number>>;
-  show: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
-  redeemable: Balance | undefined
+  redeemable: BN | undefined;
+  availableBalance: Balance | undefined;
 }
 
 export const STEPS = {
@@ -39,47 +40,56 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function Pending({ address, redeemable, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function WithdrawRedeem({ address, availableBalance, redeemable, setRefresh, setShow }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const { api, decimal, formatted } = useInfo(address);
+  const { api, decimal, formatted, token } = useInfo(address);
 
   const [step, setStep] = useState(STEPS.PROGRESS);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [inputs, setInputs] = useState<Inputs>();
 
+  const availableBalanceAfter = useMemo(() => {
+    if (!redeemable || !availableBalance) {
+      return undefined;
+    }
+
+    return redeemable?.add(availableBalance);
+  }, [availableBalance, redeemable]);
+
   useEffect(() => {
+    if (!api) {
+      return;
+    }
+
     const handleInputs = async () => {
-      if (api) {
-        const call = api.tx.staking.withdrawUnbonded; // sign by controller
+      const call = api.tx.nominationPools.withdrawUnbonded;
 
-        const optSpans = await api.query.staking.slashingSpans(formatted);
-        const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
-        const params = [spanCount];
+      const optSpans = await api.query.staking.slashingSpans(formatted);
+      const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
+      const params = [formatted, spanCount];
 
-        const extraInfo = {
-          action: 'Solo Staking',
-          amount: amountToHuman(redeemable, decimal),
-          subAction: 'Redeem'
-        };
+      const extraInfo = {
+        action: 'Pool Staking',
+        amount: amountToHuman(redeemable, decimal),
+        availableBalanceAfter,
+        subAction: 'Redeem'
+      };
 
-        setInputs({
-          call,
-          extraInfo,
-          params
-        });
-      }
+      setInputs({
+        call,
+        extraInfo,
+        params
+      });
     };
 
-    api &&
+    step === STEPS.PROGRESS &&
       handleInputs()
         .catch(console.error);
-  }, [api, decimal, formatted, redeemable]);
+  }, [api, availableBalanceAfter, decimal, formatted, redeemable, step]);
 
   const onCancel = useCallback(() => {
     setShow(MODAL_IDS.NONE);
   }, [setShow]);
-
-  console.log('step:', step);
 
   useEffect(() => {
     step === STEPS.INDEX && onCancel();
@@ -88,7 +98,7 @@ export default function Pending({ address, redeemable, setRefresh, setShow, show
   }, [inputs, onCancel, step]);
 
   return (
-    <DraggableModal onClose={onCancel} open={show}>
+    <DraggableModal minHeight={600} onClose={onCancel} open>
       <Grid container>
         {step !== STEPS.WAIT_SCREEN &&
           <ModalTitle

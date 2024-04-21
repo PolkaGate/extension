@@ -40,7 +40,7 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
       if (info && identities?.length && info.eraIndex !== savedEraIndex) {
         console.log(`setting new identities #old was: ${validatorsIdentities?.length || '0'}`);
 
-        setNewValidatorsIdentities(info.accountsInfo);
+        setNewValidatorsIdentities(identities);
 
         chrome.storage.local.get('validatorsIdentities', (res) => {
           const k = `${chainName}`;

@@ -6,7 +6,7 @@
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { Motion, PButton, ShortAddress } from '../../../components';
+import { PButton, ShortAddress } from '../../../components';
 import { useAccountDisplay, useTranslation } from '../../../hooks';
 import { ThroughProxy } from '../../../partials';
 import Explorer from '../../../popup/history/Explorer';

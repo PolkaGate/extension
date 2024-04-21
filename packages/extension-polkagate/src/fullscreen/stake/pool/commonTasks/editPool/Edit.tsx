@@ -130,8 +130,8 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
 
   return (
     <>
-      <Grid container m='20px auto'>
-        <AutoResizeTextarea label={t('Pool name')} onChange={_onPoolNameChange} value={newPoolName} />
+      <Grid container m='25px auto'>
+        <AutoResizeTextarea width='435px' label={t('Pool name')} onChange={_onPoolNameChange} value={newPoolName} />
       </Grid>
       <CollapseIt
         fullWidth

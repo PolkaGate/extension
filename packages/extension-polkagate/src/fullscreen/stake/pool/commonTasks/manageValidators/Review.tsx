@@ -6,17 +6,17 @@
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen/components/CommonTasks';
+import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
 import { Balance } from '@polkadot/types/interfaces';
-import { BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ShowBalance, SignArea2, WrongPasswordAlert } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
-import { useInfo, useStakingAccount, useStakingConsts, useValidators, useValidatorsIdentities } from '../../../../../hooks';
-import { Proxy, TxInfo } from '../../../../../util/types';
+import { useInfo } from '../../../../../hooks';
+import { Proxy, StakingConsts, TxInfo } from '../../../../../util/types';
 import { Inputs } from '../../../Entry';
-import ValidatorsTable from '../../partials/ValidatorsTable';
+import ValidatorsTable from '../../../solo/partials/ValidatorsTable';
 import { STEPS } from '.';
 
 interface Props {
@@ -24,17 +24,14 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   inputs: Inputs;
   step: number;
-  setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>
+  setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
+  staked: BN | undefined;
+  stakingConsts: StakingConsts | null | undefined;
+  allValidatorsIdentities: DeriveAccountInfo[] | null | undefined;
 }
 
-export default function Review({ address, inputs, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review ({ address, allValidatorsIdentities, inputs, setStep, setTxInfo, staked, stakingConsts, step }: Props): React.ReactElement {
   const { t } = useTranslation();
-
-  const stakingConsts = useStakingConsts(address);
-  const stakingAccount = useStakingAccount(address);
-  const allValidatorsInfo = useValidators(address);
-  const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
-  const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
 
   const { api, formatted, token } = useInfo(address);
 
@@ -45,7 +42,7 @@ export default function Review({ address, inputs, setStep, setTxInfo, step }: Pr
   const { call, params, selectedValidators } = inputs;
 
   const extraInfo = useMemo(() => ({
-    action: 'Solo Staking',
+    action: 'Pool Staking',
     fee: String(estimatedFee || 0),
     subAction: 'Select Validator',
     validatorsCount: selectedValidators?.length
@@ -60,9 +57,7 @@ export default function Review({ address, inputs, setStep, setTxInfo, step }: Pr
     }
   }, [formatted, params, call]);
 
-  const handleCancel = useCallback(
-    () => setStep(STEPS.INDEX)
-    , [setStep]);
+  const handleCancel = useCallback(() => setStep(STEPS.INDEX), [setStep]);
 
   return (
     <Grid alignItems='center' container item justifyContent='flex-start'>
@@ -78,9 +73,8 @@ export default function Review({ address, inputs, setStep, setTxInfo, step }: Pr
           allValidatorsIdentities={allValidatorsIdentities}
           formatted={formatted}
           height={window.innerHeight - 444}
-          staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
+          staked={staked ?? BN_ZERO}
           stakingConsts={stakingConsts}
-          token={token}
           validatorsToList={selectedValidators}
         />
         <DisplayValue dividerHeight='1px' title={t('Fee')}>
@@ -101,7 +95,7 @@ export default function Review({ address, inputs, setStep, setTxInfo, step }: Pr
             onSecondaryClick={handleCancel}
             params={params}
             primaryBtnText={t('Confirm')}
-            proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+            proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
             secondaryBtnText={t('Back')}
             selectedProxy={selectedProxy}
             setIsPasswordError={setIsPasswordError}

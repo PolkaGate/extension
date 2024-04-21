@@ -22,15 +22,17 @@ interface Props {
   noChainSwitch?: boolean;
   noAccountDropDown?: boolean;
   _otherComponents?: JSX.Element;
+  unableToChangeAccount?: boolean;
 }
 
-export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page }: Props): React.ReactElement {
+export function FullScreenHeader({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
   const allChains = useGenesisHashOptions();
 
   const api = useApi(address);
   const chain = useChain(address);
   const onAction = useContext(ActionContext);
+  const isThisHome = window.location.hash === '#/';
 
   const filteredChains = useMemo(() => {
     switch (page) {
@@ -42,7 +44,7 @@ export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false,
         return IDENTITY_CHAINS;
       case 'socialRecovery':
         return SOCIAL_RECOVERY_CHAINS;
-      case 'AccountDetails':
+      case 'accountDetails':
         return allChains.filter((chain) => chain.value !== '').map((chainOption) => chainOption.value);
       default:
         return [];
@@ -59,7 +61,7 @@ export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false,
         return onAction(`/manageIdentity/${selectedAddress}`);
       case 'socialRecovery':
         return onAction(`/socialRecovery/${selectedAddress}/false`);
-      case 'AccountDetails':
+      case 'accountDetails':
         return onAction(`/accountfs/${selectedAddress}/0`);
       case 'send':
         return onAction(`/send/${selectedAddress}/`);
@@ -69,8 +71,8 @@ export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false,
   }, [onAction, page, postId, topMenu]);
 
   const goHome = useCallback(
-    () => openOrFocusTab('/', true)
-    , []);
+    () => !isThisHome && openOrFocusTab('/', true)
+    , [isThisHome]);
 
   return (
     <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ bgcolor: '#000000', borderBottom: '1px solid', borderBottomColor: 'secondary.light', color: 'text.secondary', fontSize: '42px', fontWeight: 400, height: '70px', minWidth: '810px', px: '40px' }}>
@@ -100,6 +102,7 @@ export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false,
                   height='40px'
                   onSelect={onAccountChange}
                   selectedAddress={address}
+                  unableToChangeAccount={unableToChangeAccount}
                 />
               </Grid>}
             {!noChainSwitch &&

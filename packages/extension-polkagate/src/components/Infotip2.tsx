@@ -11,7 +11,7 @@ import React from 'react';
 
 interface Props {
   text: NonNullable<React.ReactNode> | string | null | undefined;
-  children: React.ReactElement<any, any>;
+  children: React.ReactElement<unknown, any>;
   placement?: 'top' | 'bottom' | 'left' | 'right' | 'bottom-end' | 'bottom-start' | 'left-end' | 'left-start' | 'right-end' | 'right-start' | 'top-end' | 'top-start' | undefined
   showQuestionMark?: boolean;
   showInfoMark?: boolean;
@@ -19,7 +19,7 @@ interface Props {
   fontSize?: string;
 }
 
-function Infotip2({ children, fontSize = '14px', placement = 'top', showInfoMark = false, showQuestionMark = false, showWarningMark, text }: Props): React.ReactElement<Props> {
+function Infotip2 ({ children, fontSize = '14px', placement = 'top', showInfoMark = false, showQuestionMark = false, showWarningMark, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (

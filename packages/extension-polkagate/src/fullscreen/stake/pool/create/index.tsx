@@ -9,26 +9,29 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AddressInput, AmountWithOptions, InputWithLabel, ShowBalance, TwoButtons } from '../../../../components';
-import { useInfo, usePoolConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
+import { useEstimatedFee, useInfo, usePoolConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import { Inputs, STEPS } from '../..';
+import { STEPS } from '../..';
+import { Inputs } from '../../Entry';
 import UpdateRoles from './UpdateRoles';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>
+  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
+  inputs: Inputs | undefined;
 }
 
-export default function CreatePool ({ setInputs, setStep }: Props): React.ReactElement {
+export default function CreatePool ({ inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
-
   const { api, chain, decimal, formatted, token } = useInfo(address);
+
+  const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
 
@@ -37,8 +40,6 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
   const [poolName, setPoolName] = useState<string | undefined>();
   const [createAmount, setCreateAmount] = useState<string | undefined>();
   const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
-  const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
-  const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [showRoles, setShowRoles] = useState<boolean>(false);
   const [toReviewDisabled, setToReviewDisabled] = useState<boolean>(true);
   const [nominatorId, setNominatorId] = useState<string>();
@@ -60,15 +61,15 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
   }, [decimal]);
 
   const onMaxAmount = useCallback(() => {
-    if (!api || !availableBalance || !estimatedMaxFee || !ED) {
+    if (!api || !availableBalance || !estimatedFee || !ED) {
       return;
     }
 
-    const max = new BN(availableBalance.toString()).sub(ED.muln(3)).sub(new BN(estimatedMaxFee));
+    const max = new BN(availableBalance.toString()).sub(ED.muln(3)).sub(new BN(estimatedFee));
     const maxToHuman = amountToHuman(max.toString(), decimal);
 
     maxToHuman && setCreateAmount(maxToHuman);
-  }, [ED, api, availableBalance, decimal, estimatedMaxFee]);
+  }, [ED, api, availableBalance, decimal, estimatedFee]);
 
   const onMinAmount = useCallback(() => {
     poolStakingConsts?.minCreationBond && setCreateAmount(amountToHuman(poolStakingConsts.minCreationBond.toString(), decimal));
@@ -116,7 +117,7 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
     const createParams = [amountAsBN, formatted, nominatorId, bouncerId];
 
     const setMetadata = api.tx.nominationPools.setMetadata;
-    const setMetaDataParams = [poolStakingConsts?.lastPoolId?.addn(1), poolName];
+    const setMetaDataParams = [poolStakingConsts?.lastPoolId?.addn(1), pool.metadata];
 
     const call = api.tx.utility.batch;
     const params = [[create(...createParams), setMetadata(...setMetaDataParams)]];
@@ -157,10 +158,10 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
     }
 
     const goTo = !(formatted && nominatorId && bouncerId && createAmount);
-    const isAmountInRange = amountAsBN?.gt(availableBalance?.sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN?.gte(poolStakingConsts.minCreateBond);
+    const isAmountInRange = amountAsBN?.gt(availableBalance?.sub(estimatedFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN?.gte(poolStakingConsts.minCreateBond);
 
     setToReviewDisabled(goTo || isAmountInRange);
-  }, [amountAsBN, availableBalance, createAmount, estimatedMaxFee, formatted, nominatorId, poolStakingConsts?.minCreateBond, bouncerId]);
+  }, [amountAsBN, availableBalance, createAmount, estimatedFee, formatted, nominatorId, poolStakingConsts?.minCreateBond, bouncerId]);
 
   useEffect(() => {
     api && formatted && api.derive.balances?.all(formatted)
@@ -169,24 +170,6 @@ export default function CreatePool ({ setInputs, setStep }: Props): React.ReactE
       })
       .catch(console.error);
   }, [formatted, api]);
-
-  useEffect(() => {
-    if (!api || !availableBalance || !formatted) {
-      return;
-    }
-
-    if (!api?.call?.transactionPaymentApi) {
-      return setEstimatedFee(api.createType('Balance', BN_ONE));
-    }
-
-    api && api.tx.nominationPools.create(String(amountAsBN.gte(BN_ONE) ? amountAsBN : BN_ONE), formatted, nominatorId, bouncerId).paymentInfo(formatted).then((i) => {
-      setEstimatedFee(api.createType('Balance', i?.partialFee));
-    }).catch(console.error);
-
-    api && api.tx.nominationPools.create(String(availableBalance), formatted, nominatorId, bouncerId).paymentInfo(formatted).then((i) => {
-      setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
-    }).catch(console.error);
-  }, [amountAsBN, api, availableBalance, formatted, nominatorId, bouncerId]);
 
   return (
     <>

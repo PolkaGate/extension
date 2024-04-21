@@ -40,7 +40,7 @@ export default function ShowValidators({ address, api, chain, selectedValidators
 
   const page = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item ml={isExtensionPopup ? '-15px' : 0} mt={isExtensionPopup ? '46px' : 0} sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
-      <Grid container justifyContent='center' mb='20px' mt='40px'>
+      <Grid container justifyContent='center' mb='20px' mt={isExtensionPopup ? '40px' : '20px'}>
         <Typography fontSize='20px' fontWeight={400} sx={{ textAlign: 'center', width: '100%' }}>
           {t('Selected Validators ({{length}})', { replace: { length: selectedValidators.length } })}
         </Typography>

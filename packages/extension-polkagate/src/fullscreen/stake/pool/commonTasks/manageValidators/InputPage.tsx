@@ -3,18 +3,20 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { AccountId } from '@polkadot/types/interfaces';
+
 import { Grid, Typography } from '@mui/material';
-import { ValidatorInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen/components/CommonTasks';
-import { BN_ZERO } from '@polkadot/util';
+import { MyPoolInfo, StakingConsts, ValidatorInfo } from '@polkadot/extension-polkagate/src/util/types';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { TwoButtons } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
-import { useInfo, useStakingAccount, useStakingConsts } from '../../../../../hooks';
+import { useInfo } from '../../../../../hooks';
 import { Inputs } from '../../../Entry';
-import SelectValidators from '../../partials/SelectValidators';
+import SelectValidators from '../../../solo/partials/SelectValidators';
 import { STEPS } from '.';
 
 interface Props {
@@ -22,9 +24,12 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
   inputs: Inputs | undefined;
+  pool: MyPoolInfo | null | undefined;
+  staked: BN | undefined;
+  stakingConsts: StakingConsts | null | undefined;
 }
 
-function arraysAreEqual(arr1: string[], arr2: string[]): boolean {
+function arraysAreEqual (arr1: string[], arr2: string[]): boolean {
   if (arr1.length !== arr2.length) {
     return false;
   }
@@ -41,39 +46,44 @@ function arraysAreEqual(arr1: string[], arr2: string[]): boolean {
   return true;
 }
 
-export default function InputPage({ address, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function InputPage ({ address, inputs, pool, setInputs, setStep, staked, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
 
-  const stakingConsts = useStakingConsts(address);
-  const stakingAccount = useStakingAccount(address);
   const { api, formatted } = useInfo(address);
 
   const [newSelectedValidators, setNewSelectedValidators] = useState<ValidatorInfo[]>(inputs?.selectedValidators || []);
-
-  const nominatedValidatorsIds = useMemo(() =>
-    stakingAccount === null || stakingAccount?.nominators?.length === 0
-      ? null
-      : stakingAccount?.nominators.map((item) => item.toString())
-  , [stakingAccount]);
+  const [nominatedValidatorsIds, setNominatedValidatorsIds] = useState<string[] | undefined | null>();
 
   const { call, params } = useMemo(() => {
-    if (api && newSelectedValidators?.length) {
-      const call = api.tx.staking.nominate;
-      const params = newSelectedValidators.map((v) => v.accountId.toString());
+    if (api && newSelectedValidators?.length && pool) {
+      const call = api.tx.nominationPools.nominate;
+      const ids = newSelectedValidators.map((v) => v.accountId.toString());
 
-      return { call, params: [params] };
+      const params = [pool.poolId, ids];
+
+      return { call, params };
     }
 
     return { call: undefined, params: undefined };
-  }, [api, newSelectedValidators]);
+  }, [api, newSelectedValidators, pool]);
 
   const buttonDisable = !newSelectedValidators?.length || !inputs;
+
+  useEffect(() => {
+    setNominatedValidatorsIds(
+      pool === null || pool?.stashIdAccount?.nominators?.length === 0
+        ? null
+        : pool?.stashIdAccount?.nominators.map((id) => id.toString())
+    );
+  }, [pool]);
 
   useEffect(() => {
     if (call && params && formatted && newSelectedValidators?.length) {
       const selectedValidatorsId = newSelectedValidators.map(({ accountId }) => accountId.toString());
 
       if (nominatedValidatorsIds && arraysAreEqual(selectedValidatorsId, nominatedValidatorsIds)) {
+        setInputs(undefined);
+
         return; // no new validators are selected
       }
 
@@ -89,9 +99,7 @@ export default function InputPage({ address, inputs, setInputs, setStep }: Props
     setStep(STEPS.REVIEW);
   }, [setStep]);
 
-  const onBackClick = useCallback(
-    () => openOrFocusTab(`/solofs/${address}`, true)
-    , [address]);
+  const onBackClick = useCallback(() => openOrFocusTab(`/poolfs/${address}`, true), [address]);
 
   return (
     <Grid alignItems='center' container item justifyContent='flex-start'>
@@ -104,9 +112,9 @@ export default function InputPage({ address, inputs, setInputs, setStep }: Props
           newSelectedValidators={newSelectedValidators}
           nominatedValidatorsIds={nominatedValidatorsIds}
           setNewSelectedValidators={setNewSelectedValidators}
-          staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
+          staked={staked ?? BN_ZERO}
           stakingConsts={stakingConsts}
-          stashId={formatted}
+          stashId={pool?.accounts?.stashId as unknown as AccountId}
           tableHeight={window.innerHeight - 400}
         />
         <Grid container item sx={{ '> div': { m: 0, width: '64%' }, justifyContent: 'flex-end', mt: '5px' }}>
