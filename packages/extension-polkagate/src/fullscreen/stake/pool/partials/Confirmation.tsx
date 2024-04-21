@@ -43,7 +43,7 @@ export default function Confirmation ({ children, handleClose, popupHeight, txIn
   };
 
   return (
-    <Motion style={{ height: `${popupHeight - unAvailableSpace}px`, position: 'relative' }}>
+    <Motion style={{ height: `${popupHeight - unAvailableSpace}px`, position: 'relative', width: '100%' }}>
       <FailSuccessIcon
         showLabel={false}
         style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
