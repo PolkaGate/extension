@@ -6,9 +6,6 @@
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 
-import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
-import { BN } from '@polkadot/util';
-
 import { ShortAddress } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 import { ThroughProxy } from '../../../../../partials';
@@ -18,10 +15,9 @@ interface Props {
   txInfo: TxInfo;
   pool: MyPoolInfo;
   token: string | undefined;
-  decimal: number | undefined;
 }
 
-export default function TxDetail({ decimal, pool, token, txInfo }: Props): React.ReactElement {
+export default function TxDetail({ pool, token, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -61,7 +57,7 @@ export default function TxDetail({ decimal, pool, token, txInfo }: Props): React
           {t<string>('Unstaked')}:
         </Typography>
         <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-          {`${amountToHuman(new BN(txInfo.amount ?? '0'), decimal)} ${token ?? ''}`}
+          {`${txInfo?.amount || ''} ${token || ''}`}
         </Grid>
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />

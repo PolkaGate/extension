@@ -128,6 +128,12 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
                 payee={inputs.extraInfo.payee}
               />
             }
+            {inputs?.extraInfo?.redeemText && inputs?.extraInfo?.helperText &&
+              <Grid container item justifyContent='center' sx={{ fontSize: '14px', fontWeight: 400, pt: '15px', textAlign: 'center' }}>
+                <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mx: 'auto', my: '5px', width: '170px' }} />
+                {inputs?.extraInfo?.helperText}
+              </Grid>
+            }
             {inputs?.extraInfo?.amount &&
               <DisplayValue dividerHeight='1px' title={t('Amount')}>
                 <Grid alignItems='center' container item justifyContent='center' sx={{ height: '42px' }}>
@@ -137,6 +143,11 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
                   />
                 </Grid>
               </DisplayValue>
+            }
+            {inputs?.extraInfo?.redeemText &&
+              <Grid container item justifyContent='center' sx={{ fontSize: '14px', pt: '10px', textAlign: 'center' }}>
+                {inputs?.extraInfo?.redeemText}
+              </Grid>
             }
             {inputs?.extraInfo?.helperText && inputs?.extraInfo?.pool &&
               <>
