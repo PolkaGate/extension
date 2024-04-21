@@ -60,7 +60,7 @@ export default function ManageEditPool ({ address, api, chain, onClose, pool, se
 
   return (
     <>
-      <DraggableModal minHeight={690} onClose={onClose} open>
+      <DraggableModal minHeight={600} onClose={onClose} open>
         <>
           {step !== STEPS.WAIT_SCREEN &&
             <ModalTitle

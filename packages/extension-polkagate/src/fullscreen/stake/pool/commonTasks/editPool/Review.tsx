@@ -127,7 +127,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
   return (
     <Grid container direction='column' item pt='15px'>
       {step === STEPS.REVIEW &&
-        <>
+        <Grid container item sx={{ maxHeight: '420px', overflow: 'scroll' }}>
           {isPasswordError &&
             <WrongPasswordAlert />
           }
@@ -230,7 +230,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
               steps={STEPS}
             />
           </Grid>
-        </>}
+        </Grid>}
       {step === STEPS.PROXY &&
         <SelectProxyModal2
           address={address}
