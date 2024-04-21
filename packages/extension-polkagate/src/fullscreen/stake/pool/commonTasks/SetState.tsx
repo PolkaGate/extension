@@ -5,28 +5,28 @@
 
 import type { ApiPromise } from '@polkadot/api';
 
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { faLock, faLockOpen, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { Divider, Grid, Typography } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
-import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
 import { Balance } from '@polkadot/types/interfaces';
 import { BN_ONE } from '@polkadot/util';
 
-import { ShortAddress, ShowBalance, SignArea2, WrongPasswordAlert } from '../../../../components';
+import { ShortAddress } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
-import { MyPoolInfo, Proxy, TxInfo } from '../../../../util/types';
+import { MyPoolInfo, TxInfo } from '../../../../util/types';
+import { Inputs } from '../../Entry';
+import Review from '../../partials/Review';
+import { ModalTitle } from '../../solo/commonTasks/configurePayee';
 import Confirmation from '../partials/Confirmation';
 import { PoolState } from '../partials/PoolCommonTasks';
 
 interface Props {
   address: string;
   api: ApiPromise | undefined;
-  chain: Chain;
   formatted: string;
   pool: MyPoolInfo;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
@@ -35,26 +35,20 @@ interface Props {
 }
 
 const STEPS = {
-  CONFIRM: 3,
+  CONFIRM: 4,
   INDEX: 1,
   PROXY: 100,
-  REVIEW: 1,
-  WAIT_SCREEN: 2
+  REVIEW: 2,
+  WAIT_SCREEN: 3
 };
 
-export default function SetState ({ address, api, chain, formatted, onClose, pool, setRefresh, state }: Props): React.ReactElement {
+export default function SetState ({ address, api, formatted, onClose, pool, setRefresh, state }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const [isPasswordError, setIsPasswordError] = useState(false);
-  const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
+
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [step, setStep] = useState<number>(STEPS.INDEX);
-
+  const [step, setStep] = useState<number>(STEPS.REVIEW);
+  const [inputs, setInputs] = useState<Inputs>();
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
-
-  const batchAll = api && api.tx.utility.batchAll;
-  const chilled = api && api.tx.nominationPools.chill;
-  const poolSetState = api && api.tx.nominationPools.setState(pool.poolId.toString(), state); // (poolId, state)
 
   const helperText = useMemo(() =>
     state === 'Blocked'
@@ -67,22 +61,40 @@ export default function SetState ({ address, api, chain, formatted, onClose, poo
   const extraInfo = useMemo(() => ({
     action: 'Pool Staking',
     fee: String(estimatedFee || 0),
+    helperText,
+    pool,
     subAction: state === 'Destroying' ? 'Destroy Pool' : state === 'Open' ? 'Unblock Pool' : 'Block Pool'
-  }), [estimatedFee, state]);
-
-  const transaction = useMemo(() => {
-    if (!chilled || !batchAll) {
-      return;
-    }
-
-    const mayNeedChill = state === 'Destroying' && pool.stashIdAccount?.nominators?.length && (String(pool.bondedPool?.roles.root) === String(formatted) || String(pool.bondedPool?.roles.nominator) === String(formatted)) ? chilled(pool.poolId) : undefined;
-    const calls = mayNeedChill ? batchAll([mayNeedChill, poolSetState]) : poolSetState;
-
-    return calls;
-  }, [batchAll, chilled, formatted, pool.bondedPool?.roles.nominator, pool.bondedPool?.roles.root, pool.poolId, pool.stashIdAccount?.nominators?.length, poolSetState, state]);
+  }), [estimatedFee, helperText, state, pool]);
 
   useEffect(() => {
     if (!api) {
+      return;
+    }
+
+    const batchAll = api && api.tx.utility.batchAll;
+    const chilled = api && api.tx.nominationPools.chill;
+    const poolSetState = api && api.tx.nominationPools.setState; // (poolId, state)
+
+    const poolId = pool.poolId.toString();
+
+    const mayNeedChill =
+      state === 'Destroying' &&
+      pool.stashIdAccount?.nominators &&
+      pool.stashIdAccount.nominators.length > 0 &&
+      [String(pool.bondedPool?.roles.root), String(pool.bondedPool?.roles.nominator)].includes(String(formatted));
+
+    const call = mayNeedChill ? batchAll : poolSetState;
+    const params = mayNeedChill ? [[chilled(poolId), poolSetState(poolId, state)]] : [poolId, state];
+
+    setInputs({
+      call,
+      extraInfo,
+      params
+    });
+  }, [api, extraInfo, formatted, pool.bondedPool?.roles.nominator, pool.bondedPool?.roles.root, pool.poolId, pool.stashIdAccount?.nominators, state]);
+
+  useEffect(() => {
+    if (!api || !inputs?.call) {
       return;
     }
 
@@ -91,73 +103,37 @@ export default function SetState ({ address, api, chain, formatted, onClose, poo
     }
 
     // eslint-disable-next-line no-void
-    void poolSetState?.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
-  }, [api, formatted, poolSetState]);
+    void inputs?.call(...inputs.params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
+  }, [api, formatted, inputs]);
+
+  // this page doesn't have an INDEX, When the ModalTitle close button is clicked, it will set the step to STEPS.INDEX, triggering the modal to close
+  useEffect(() => {
+    step === STEPS.INDEX && onClose();
+  }, [onClose, step]);
 
   return (
-    <DraggableModal minHeight={550} onClose={onClose} open>
+    <DraggableModal minHeight={650} onClose={onClose} open>
       <>
-        <Grid alignItems='center' container justifyContent='space-between' pt='15px'>
-          <Grid item>
-            <Typography fontSize='22px' fontWeight={700}>
-              {t<string>('Change State')}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <CloseIcon onClick={onClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-          </Grid>
-        </Grid>
-        {[STEPS.INDEX, STEPS.REVIEW, STEPS.PROXY].includes(step) &&
-          <>
-            {isPasswordError &&
-              <WrongPasswordAlert />
-            }
-            <Typography fontSize='14px' fontWeight={400} m='20px auto' textAlign='left' width='100%'>
-              {helperText}
-            </Typography>
-            <ShowPool
-              api={api}
-              chain={chain}
-              mode='Default'
-              pool={pool}
-              showInfo
-              style={{ m: '20px auto' }}
-            />
-            <Grid container item>
-              <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
-                {t('Fee:')}
-              </Typography>
-              <Grid item lineHeight='22px' pl='5px'>
-                <ShowBalance
-                  api={api}
-                  balance={estimatedFee}
-                  decimalPoint={4}
-                  height={22}
-                />
-              </Grid>
-            </Grid>
-            <Grid container item sx={{ bottom: '15px', height: '120px', position: 'absolute', width: '86%' }}>
-              <SignArea2
-                address={address}
-                call={transaction}
-                extraInfo={extraInfo}
-                isPasswordError={isPasswordError}
-                onSecondaryClick={onClose}
-                primaryBtnText={t('Confirm')}
-                proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
-                secondaryBtnText={t('Cancel')}
-                selectedProxy={selectedProxy}
-                setIsPasswordError={setIsPasswordError}
-                setRefresh={setRefresh}
-                setSelectedProxy={setSelectedProxy}
-                setStep={setStep}
-                setTxInfo={setTxInfo}
-                showBackButtonWithUseProxy
-                step={step}
-                steps={STEPS}
-              />
-            </Grid>
-          </>}
+        {step !== STEPS.WAIT_SCREEN &&
+          <ModalTitle
+            icon={state === 'Blocked' ? faLock : state === 'Open' ? faLockOpen : faTrashCan}
+            onCancel={onClose}
+            setStep={setStep}
+            step={step}
+            text={t('Change State to {{state}}', { replace: { state } })}
+          />
+        }
+        {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
+          <Review
+            address={address}
+            inputs={inputs}
+            onClose={onClose}
+            setRefresh={setRefresh}
+            setStep={setStep}
+            setTxInfo={setTxInfo}
+            step={step}
+          />
+        }
         {step === STEPS.WAIT_SCREEN &&
           <WaitScreen />
         }

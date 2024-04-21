@@ -14,6 +14,7 @@ export { default as useCurrentApprovalThreshold } from './useCurrentApprovalThre
 export { default as useCurrentSupportThreshold } from './useCurrentSupportThreshold';
 export { default as useAccountName } from './useAccountName';
 export { default as useAccountInfo } from './useAccountInfo';
+export { default as useAccountInfo2 } from './useAccountInfo2';
 export { default as useApi } from './useApi';
 export { default as useInfo } from './useInfo';
 export { default as useMerkleScience } from './useMerkleScience';
