@@ -120,7 +120,7 @@ export default function SetState ({ address, api, formatted, onClose, pool, setR
             onCancel={onClose}
             setStep={setStep}
             step={step}
-            text={t('Change State')}
+            text={t('Change State to {{state}}', { replace: { state } })}
           />
         }
         {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
