@@ -13,12 +13,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
+import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
 import { BN } from '@polkadot/util';
 
 import { AccountHolderWithProxy, Identity, ShortAddress, ShowBalance, ShowValue, SignArea2, WrongPasswordAlert } from '../../../components';
 import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../hooks';
 import { SubTitle } from '../../../partials';
-import { Payee, Proxy, ProxyItem, TxInfo } from '../../../util/types';
+import { MyPoolInfo, Payee, Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { Inputs } from '../Entry';
 import { STEPS } from '../solo/commonTasks/configurePayee';
 
@@ -32,7 +33,7 @@ interface Props {
   onClose?: () => void
 }
 
-function RewardsDestination({ address, payee }: { address: string | undefined, payee: Payee }) {
+function RewardsDestination ({ address, payee }: { address: string | undefined, payee: Payee }) {
   const { t } = useTranslation();
   const { chain, formatted } = useInfo(address);
 
@@ -40,7 +41,7 @@ function RewardsDestination({ address, payee }: { address: string | undefined, p
     payee === 'Stash'
       ? formatted
       : payee.Account as string
-    , [formatted, payee]);
+  , [formatted, payee]);
 
   return (
     <Grid container item justifyContent='center' sx={{ alignSelf: 'center', my: '5px' }}>
@@ -63,7 +64,7 @@ function RewardsDestination({ address, payee }: { address: string | undefined, p
   );
 }
 
-export default function Review({ address, inputs, onClose, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review ({ address, inputs, onClose, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, formatted, token } = useInfo(address);
   const proxies = useProxies(api, formatted);
@@ -129,6 +130,22 @@ export default function Review({ address, inputs, onClose, setRefresh, setStep, 
                   />
                 </Grid>
               </DisplayValue>
+            }
+            {inputs?.extraInfo?.helperText && inputs?.extraInfo?.pool &&
+              <>
+                <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mx: 'auto', my: '5px', width: '170px' }} />
+                <Typography fontSize='14px' fontWeight={400} m='20px auto' textAlign='left' width='100%'>
+                  {inputs.extraInfo.helperText}
+                </Typography>
+                <ShowPool
+                  api={api}
+                  chain={chain}
+                  mode='Default'
+                  pool={inputs.extraInfo.pool as MyPoolInfo}
+                  showInfo
+                  style={{ m: '20px auto' }}
+                />
+              </>
             }
             <DisplayValue dividerHeight='1px' title={t('Fee')}>
               <Grid alignItems='center' container item sx={{ fontSize: 'large', height: '42px' }}>
