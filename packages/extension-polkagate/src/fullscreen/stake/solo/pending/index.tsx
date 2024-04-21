@@ -325,7 +325,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
               </Grid>
 
             </Grid>
-            <Grid container item sx={{ '> div': { m: 0, width: '64%' }, justifyContent: 'flex-end', mt: '5px' }}>
+            <Grid container item sx={{ '> div': { m: 0, width: '100%' }, justifyContent: 'flex-end', mt: '5px' }}>
               <TwoButtons
                 disabled={!inputs}
                 mt='1px'
