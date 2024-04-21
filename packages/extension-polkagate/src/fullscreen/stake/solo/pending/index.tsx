@@ -220,7 +220,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
                 {t('Validators usually pay rewards regularly. If not received within the set period, rewards expire. You can manually initiate the payout if desired.')}
               </Typography>
               <Grid alignContent='flex-start' alignItems='center' container item sx={{ border: `1px solid ${theme.palette.primary.main}`, borderBottom: 0, borderTopLeftRadius: '5px', borderTopRightRadius: '5px', p: '5px', width: '100%' }}>
-                <Grid item sx={{ fontSize: '13px' }} xs={4.75}>
+                <Grid item textAlign='left' sx={{ fontSize: '13px' }} xs={4.75}>
                   <Checkbox2
                     checked={!!rewards?.length && selectedToPayout?.length === rewards?.length}
                     iconStyle={{ transform: 'scale(0.9)' }}
