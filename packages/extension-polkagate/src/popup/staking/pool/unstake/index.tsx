@@ -37,7 +37,7 @@ interface State {
   myPool: MyPoolInfo | undefined;
 }
 
-const CONDITION_MAP = {
+export const CONDITION_MAP = {
   DESTROY: 1,
   REMOVE_ALL: 2
 };

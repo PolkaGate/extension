@@ -14,12 +14,12 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, PButton, Warning } from '../../../../../components';
-import { useAccount, useChain, useDecimal, useToken, useTranslation } from '../../../../../hooks';
+import { useInfo, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
+import Asset from '../../../../../partials/Asset';
 import { MAX_AMOUNT_LENGTH } from '../../../../../util/constants';
 import { MyPoolInfo } from '../../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../../util/utils';
-import Asset from '../../../../../partials/Asset';
 import ShowPool from '../../../partial/ShowPool';
 import Review from './Review';
 
@@ -33,8 +33,7 @@ interface Props {
 
 export default function BondExtra({ address, api, balances, formatted, pool }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const account = useAccount(address);
-  const chain = useChain(address);
+  const {chain, decimal, token} = useInfo(address);
   const history = useHistory();
   const theme = useTheme();
 
@@ -44,9 +43,6 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
   const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
   const [nextBtnDisabled, setNextBtnDisabled] = useState<boolean>(true);
   const [showReview, setShowReview] = useState<boolean>(false);
-
-  const decimal = useDecimal(address);
-  const token = useToken(address);
 
   const amountAsBN = useMemo(() => amountToMachine(bondAmount, decimal), [bondAmount, decimal]);
 

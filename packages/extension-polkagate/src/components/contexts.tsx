@@ -9,8 +9,7 @@ import React from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const noop = (): void => undefined;
+import { noop } from '../util/utils';
 
 const AccountContext = React.createContext<AccountsContext>({ accounts: [], hierarchy: [], master: undefined });
 const AccountsAssetsContext = React.createContext<AccountsAssetsContextType>({ accountsAssets: undefined, setAccountsAssets: noop });

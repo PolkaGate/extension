@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { useApi, useChain, useChainName, useCurrentEraIndex, useEndpoint } from '.';
+import { useCurrentEraIndex, useEndpoint, useInfo } from '.';
 
 export interface ExposureOverview {
   total: BN;
@@ -34,11 +34,8 @@ export interface Others {
 export default function useValidators (address: string, validators?: AllValidators): AllValidators | null | undefined {
   const [info, setValidatorsInfo] = useState<AllValidators | undefined | null>();
   const [newInfo, setNewValidatorsInfo] = useState<AllValidators | undefined | null>();
-  const endpoint = useEndpoint(address);
-  const chain = useChain(address);
+  const { api, chain, chainName, endpoint } = useInfo(address);
   const currentEraIndex = useCurrentEraIndex(address);
-  const chainName = useChainName(address);
-  const api = useApi(address);
 
   const saveValidatorsInfoInStorage = useCallback((inf: AllValidators) => {
     chrome.storage.local.get('validatorsInfo', (res) => {
@@ -86,8 +83,6 @@ export default function useValidators (address: string, validators?: AllValidato
 
     // eslint-disable-next-line no-void
     void chrome.storage.local.get('validatorsInfo', (res: { [key: string]: Validators }) => {
-      console.log('ValidatorsInfo in local storage:', res);
-
       if (res?.validatorsInfo?.[chainName]) {
         setValidatorsInfo(res.validatorsInfo[chainName]);
       }
@@ -136,11 +131,13 @@ export default function useValidators (address: string, validators?: AllValidato
       const currentNominators: Record<string, Others[]> = {};
 
       validatorsPaged.forEach((pages) => {
-        const validatorAddress = pages[0][0].toHuman()[1] as string;
+        if (pages[0]) {
+          const validatorAddress = pages[0][0].args[1].toString();
 
-        currentNominators[validatorAddress] = [];
+          currentNominators[validatorAddress] = [];
 
-        pages.forEach(([, value]) => currentNominators[validatorAddress].push(...value.unwrap().others));
+          pages.forEach(([, value]) => currentNominators[validatorAddress].push(...value.unwrap().others));
+        }
       });
 
       const current: ValidatorInfo[] = [];

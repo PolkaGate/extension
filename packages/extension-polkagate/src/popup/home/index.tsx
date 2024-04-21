@@ -16,18 +16,18 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Warning } from '../../components';
 import { getStorage, LoginInfo } from '../../components/Loading';
-import Welcome from '../../fullscreen/welcome';
-import Reset from '../../fullscreen/welcome/Reset';
 import { useAccountsOrder, useMerkleScience, useTranslation } from '../../hooks';
 import { AddNewAccountButton } from '../../partials';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { EXTENSION_NAME, NEW_VERSION_ALERT } from '../../util/constants';
+import Welcome from '../welcome';
+import Reset from '../welcome/Reset';
 import AccountsTree from './AccountsTree';
 import AiBackgroundImage from './AiBackgroundImage';
 import Alert from './Alert';
 import YouHave from './YouHave';
 
-export default function Home (): React.ReactElement {
+export default function Home(): React.ReactElement {
   const initialAccountList = useAccountsOrder() as AccountWithChildren[];
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
@@ -59,22 +59,6 @@ export default function Home (): React.ReactElement {
 
     getStorage('loginInfo').then(setLoginInfo).catch(console.error);
   }, []);
-
-  // const sortedAccount = useMemo(() =>
-  //   hierarchy.sort((a, b) => {
-  //     const x = a.name.toLowerCase();
-  //     const y = b.name.toLowerCase();
-
-  //     if (x < y) {
-  //       return -1;
-  //     }
-
-  //     if (x > y) {
-  //       return 1;
-  //     }
-
-  //     return 0;
-  //   }), [hierarchy]);
 
   return (
     <>

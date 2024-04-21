@@ -55,7 +55,7 @@ function AmountFee({ address, amount, children, fee, label, style = {}, showDivi
               {t('Fee')}:
             </Grid>
             <Grid item sx={{ pl: '5px' }}>
-              <ShowValue value={fee?.toHuman()} height={16} />
+              <ShowValue height={16} value={fee?.toHuman()} />
             </Grid>
           </Grid>
         }

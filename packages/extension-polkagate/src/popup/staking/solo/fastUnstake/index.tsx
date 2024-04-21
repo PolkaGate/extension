@@ -9,14 +9,13 @@ import type { AccountStakingInfo, StakingConsts } from '../../../../util/types';
 
 import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
 import { Grid, Typography, useTheme } from '@mui/material';
-import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { Motion, PButton, Warning } from '../../../../components';
+import { Motion, PButton, Progress, Warning } from '../../../../components';
 import { useApi, useBalances, useChain, useDecimal, useFormatted, useIsExposed, useStakingAccount, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { STAKING_CHAINS } from '../../../../util/constants';
@@ -128,7 +127,7 @@ export default function Index(): React.ReactElement {
           </Typography>
         </Grid>
         <Grid alignItems='center' container item lineHeight='28px' pl='5px'>
-          <NumberPassFail condition={hasUnlockingAndRedeemable === undefined ? undefined : hasUnlockingAndRedeemable === false } no={2} />
+          <NumberPassFail condition={hasUnlockingAndRedeemable === undefined ? undefined : hasUnlockingAndRedeemable === false} no={2} />
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
             {t<string>('No redeemable or unstaking funds')}
           </Typography>
@@ -141,14 +140,7 @@ export default function Index(): React.ReactElement {
         </Grid>
       </Grid>
       {isEligible === undefined &&
-        <>
-          <Grid alignItems='center' container justifyContent='center' mt='60px'>
-            <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={115} />
-          </Grid>
-          <Typography fontSize='18px' fontWeight={300} mt='20px' px='20px' width='fit-content' align='center'>
-            {t<string>('Please wait a few seconds and don\'t close the extension.')}
-          </Typography>
-        </>
+        <Progress pt={'60px'} size={115} title={t('Please wait a few seconds and don\'t close the extension.')} type='grid' />
       }
       <Grid bottom='70px' item position='absolute'>
         {isEligible === true &&

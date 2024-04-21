@@ -59,7 +59,7 @@ export default function ExportAllModal({ open, setDisplayPopup }: Props): React.
   const onCancel = useCallback(() => setDisplayPopup(false), [setDisplayPopup]);
 
   return (
-    <DraggableModal onClose={onCancel} open={open}>
+    <DraggableModal minHeight={500} onClose={onCancel} open={open}>
       <Grid container item>
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid alignItems='flex-start' container justifyContent='flex-start' sx={{ width: 'fit-content' }}>

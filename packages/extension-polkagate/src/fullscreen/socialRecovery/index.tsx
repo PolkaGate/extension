@@ -16,7 +16,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { Warning } from '../../components';
 import { useAccountsInfo, useActiveRecoveries, useApi, useChain, useFormatted, useFullscreen, useLostAccountInformation, useTranslation } from '../../hooks';
-import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
+import { FULLSCREEN_WIDTH, SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import { AddressWithIdentity } from './components/SelectTrustedFriend';
 import RecoveryCheckProgress from './partial/RecoveryCheckProgress';
@@ -224,7 +224,7 @@ export default function SocialRecovery (): React.ReactElement {
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='socialRecovery' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         {step === STEPS.UNSUPPORTED &&
           <Grid alignItems='center' container direction='column' display='block' item>
             <Typography fontSize='30px' fontWeight={700} p='30px 0 60px 80px'>

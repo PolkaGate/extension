@@ -24,8 +24,9 @@ import DeriveAccountModal from '../../../popup/newAccount/deriveAccount/modal/De
 import RenameModal from '../../../popup/rename/RenameModal';
 import { BalancesInfo } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
-import AccountIcons from '../../accountDetailsFullScreen/components/AccountIcons';
-import AOC from '../../accountDetailsFullScreen/components/AOC';
+import AccountIcons from '../../accountDetails/components/AccountIcons';
+import AOC from '../../accountDetails/components/AOC';
+import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import FullScreenAccountMenu from './FullScreenAccountMenu';
 
 interface AddressDetailsProps {
@@ -51,7 +52,7 @@ export const POPUPS_NUMBER = {
   RENAME: 2
 };
 
-export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation({ accountAssets, address, api, balances, chain, chainName, formatted, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();
@@ -134,8 +135,8 @@ export default function AccountInformation ({ accountAssets, address, api, balan
   }, [onAction, address]);
 
   const goToDetails = useCallback((): void => {
-    address && onAction(`/accountfs/${address}/${selectedAsset?.assetId || '0'}`);
-  }, [address, onAction, selectedAsset?.assetId]);
+    address && openOrFocusTab(`/accountfs/${address}/${selectedAsset?.assetId || '0'}`, true);
+  }, [address, selectedAsset?.assetId]);
 
   return (
     <>
@@ -154,8 +155,9 @@ export default function AccountInformation ({ accountAssets, address, api, balan
               address={address}
               api={api}
               formatted={formatted}
-            />          </Grid>
-          <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'divider', px: '7px' }} xs={5.5}>
+            />
+          </Grid>
+          <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'divider', px: '7px' }} xs={5.6}>
             <Grid container item justifyContent='space-between'>
               <Identity
                 address={address}

@@ -10,6 +10,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import { BN } from '@polkadot/util';
 
 import { Identity, Label, ShowBalance, SlidePopUp } from '../../../components';
@@ -21,6 +22,7 @@ interface Props {
   api: ApiPromise;
   stakerAddress?: string;
   chain: Chain;
+  isFullscreen?: boolean;
   staked: BN | undefined;
   showValidatorInfo: boolean;
   validatorInfo?: DeriveStakingQuery;
@@ -28,7 +30,7 @@ interface Props {
   setShowValidatorInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showValidatorInfo, staked, stakerAddress, validatorInfo, validatorsIdentities }: Props): React.ReactElement<Props> {
+export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowValidatorInfo, showValidatorInfo, staked, stakerAddress, validatorInfo, validatorsIdentities }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [accountInfo, setAccountInfo] = useState<DeriveAccountInfo | undefined>();
 
@@ -43,7 +45,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
     if (staked && myIndex === -1 && sortedNominators) {
       const index = sortedNominators.findIndex((n) => isHexToBn(String(n.value)).lt(staked));
 
-      if (index === -1) {/** will be the last nominator */
+      if (index === -1) { /** will be the last nominator */
         return sortedNominators.length;
       }
 
@@ -53,7 +55,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
     return -1;
   }, [myIndex, sortedNominators, staked]);
 
-  const closeMenu = useCallback(
+  const onClose = useCallback(
     () => setShowValidatorInfo(false),
     [setShowValidatorInfo]
   );
@@ -74,7 +76,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
   const ValidatorInformation = () => (
     <Grid container direction='column' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', m: '20px auto', p: '10px', pb: '5px', width: '92%' }}>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderColor: 'secondary.main', mb: '5px', pb: '2px' }}>
-        <Grid item lineHeight={1} width='fit-content' maxWidth='85%'>
+        <Grid item lineHeight={1} maxWidth='85%' width='fit-content'>
           <Identity accountInfo={accountInfo} address={validatorInfo?.accountId} api={api} chain={chain} formatted={validatorInfo?.accountId?.toString()} identiconSize={25} style={{ fontSize: '16px' }} withShortAddress />
         </Grid>
         <Grid item width='15%'>
@@ -98,7 +100,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
         <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='50%'>
           <Grid display='inline-flex' fontSize='12px' fontWeight={400} item>
             <Typography fontSize='12px' fontWeight={300} lineHeight='25px' pr='5px'>
-              {t<string>('Own')}:
+              {t('Own')}:
             </Typography>
             <ShowBalance
               api={api}
@@ -109,7 +111,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
           </Grid>
           <Grid display='inline-flex' item>
             <Typography fontSize='12px' fontWeight={300} lineHeight='16px' pr='5px'>
-              {t<string>('Commission')}:
+              {t('Commission')}:
             </Typography>
             <Typography fontSize='12px' fontWeight={400} lineHeight='16px'>
               {commission} %
@@ -119,11 +121,11 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
         <Grid container direction='column' item justifyContent='center' width='50%'>
           <Grid display='inline-flex' fontSize='12px' fontWeight={400} item justifyContent='flex-end'>
             <Typography fontSize='12px' fontWeight={300} lineHeight='25px' pr='5px'>
-              {t<string>('Total')}:
+              {t('Total')}:
             </Typography>
             {total.isZero()
               ? <Typography fontSize='12px' fontWeight={400} lineHeight='22px' pr='5px'>
-                {t<string>('N/A')}
+                {t('N/A')}
               </Typography>
               : <ShowBalance
                 api={api}
@@ -136,7 +138,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
           {!staked?.isZero() &&
             <Grid display='inline-flex' item justifyContent='end'>
               <Typography fontSize='12px' fontWeight={300} lineHeight='16px' pr='5px'>
-                {t<string>(`${myIndex !== -1 ? 'My rank' : 'My possible rank'}`)}:
+                {t(`${myIndex !== -1 ? 'My rank' : 'My possible rank'}`)}:
               </Typography>
               <Typography fontSize='12px' fontWeight={400} lineHeight='16px'>
                 {myIndex !== -1 ? (myIndex + 1) : myPossibleIndex !== -1 ? (myPossibleIndex + 1) : 'N/A'}
@@ -174,17 +176,17 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
             <Grid container item sx={{ '> :last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
               <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='50%'>
                 <Typography fontSize='12px' fontWeight={300} lineHeight='30px'>
-                  {t<string>('Account')}
+                  {t('Account')}
                 </Typography>
               </Grid>
               <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='30%'>
                 <Typography fontSize='12px' fontWeight={300} lineHeight='30px'>
-                  {t<string>('Staked')}
+                  {t('Staked')}
                 </Typography>
               </Grid>
               <Grid container item justifyContent='center' width='20%'>
                 <Typography fontSize='12px' fontWeight={300} lineHeight='30px'>
-                  {t<string>('Percent')}
+                  {t('Percent')}
                 </Typography>
               </Grid>
             </Grid>
@@ -209,7 +211,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
           </>
           )
           : (<Typography fontSize='16px' fontWeight={400} m='auto' py='20px' textAlign='center' width='92%'>
-            {t<string>('The list of nominators is not available to be displayed as this validator is in the waiting status.')}
+            {t('The list of nominators is not available to be displayed as this validator is in the waiting status.')}
           </Typography>)
         }
       </Grid>
@@ -217,27 +219,36 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
   );
 
   const page = (
-    <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
+    <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt={isFullscreen ? 0 : '46px'} sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container justifyContent='center' my='20px'>
         <Typography fontSize='28px' fontWeight={400} lineHeight={1.4} sx={{ borderBottom: '2px solid', borderColor: 'secondary.main' }}>
-          {t<string>('Validator’s Info')}
+          {t('Validator’s Info')}
         </Typography>
       </Grid>
       <ValidatorInformation />
       <NominatorTableWithLabel />
       <IconButton
-        onClick={closeMenu}
+        onClick={onClose}
         sx={{
-          left: '15px',
+          left: isFullscreen ? undefined : '15px',
+          right: isFullscreen ? '35px' : undefined,
           p: 0,
           position: 'absolute',
-          top: '65px'
+          top: isFullscreen ? '35px' : '65px'
         }}
       >
         <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />
       </IconButton>
     </Grid>
   );
+
+  if (isFullscreen) {
+    return (
+      <DraggableModal onClose={onClose} open={showValidatorInfo}>
+        {page}
+      </DraggableModal>
+    );
+  }
 
   return (
     <SlidePopUp show={showValidatorInfo}>

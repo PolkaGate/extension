@@ -10,14 +10,19 @@ import { Route, Switch } from 'react-router';
 
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
-import AccountFS from '@polkadot/extension-polkagate/src/fullscreen/accountDetailsFullScreen';
+import AccountFS from '@polkadot/extension-polkagate/src/fullscreen/accountDetails';
 import Governance from '@polkadot/extension-polkagate/src/fullscreen/governance';
 import ReferendumPost from '@polkadot/extension-polkagate/src/fullscreen/governance/post';
 import { CurrencyItemType } from '@polkadot/extension-polkagate/src/fullscreen/homeFullScreen/partials/Currency';
 import ManageIdentity from '@polkadot/extension-polkagate/src/fullscreen/manageIdentity';
-import FullScreenManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxiesFullScreen';
+import FullScreenManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxies';
 import Send from '@polkadot/extension-polkagate/src/fullscreen/sendFund';
 import SocialRecovery from '@polkadot/extension-polkagate/src/fullscreen/socialRecovery';
+import Stake from '@polkadot/extension-polkagate/src/fullscreen/stake';
+import PoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/pool';
+import ManageValidatorsPoolfs from '@polkadot/extension-polkagate/src/fullscreen/stake/pool/commonTasks/manageValidators';
+import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/solo';
+import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/commonTasks/manageValidators';
 import { isPriceUpToDate } from '@polkadot/extension-polkagate/src/hooks/usePrices';
 import AddWatchOnly from '@polkadot/extension-polkagate/src/popup/import/addWatchOnly';
 import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
@@ -302,10 +307,14 @@ export default function Popup (): React.ReactElement {
                                     <Route path='/pool/nominations/:address'>{wrapWithErrorBoundary(<PoolNominations />, 'pool-nominations')}</Route>
                                     <Route path='/pool/unstake/:address'>{wrapWithErrorBoundary(<PoolUnstake />, 'pool-unstake')}</Route>
                                     <Route path='/pool/:address'>{wrapWithErrorBoundary(<Pool />, 'pool-staking')}</Route>
+                                    <Route path='/poolfs/:address'>{wrapWithErrorBoundary(<PoolFS />, 'pool-staking-fullscreen')}</Route>
+                                    <Route path='/manageValidators/:address'>{wrapWithErrorBoundary(<ManageValidators />, 'manage-validators-fullscreen')}</Route>
+                                    <Route path='/poolfsManageValidators/:address'>{wrapWithErrorBoundary(<ManageValidatorsPoolfs />, 'manage-validators-fullscreen')}</Route>
                                     <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
                                     <Route path='/receive/:address'>{wrapWithErrorBoundary(<Receive />, 'receive')}</Route>
                                     <Route path='/send/:address/:assetId'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
                                     <Route path='/send/:address'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
+                                    <Route path='/stake/:address'>{wrapWithErrorBoundary(<Stake />, 'stake')}</Route>
                                     <Route path='/socialRecovery/:address/:closeRecovery'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route>
                                     <Route path='/solo/fastUnstake/:address'>{wrapWithErrorBoundary(<FastUnstake />, 'solo-fast-unstake')}</Route>
                                     <Route path='/solo/nominations/:address'>{wrapWithErrorBoundary(<SoloNominations />, 'solo-nominations')}</Route>
@@ -314,7 +323,7 @@ export default function Popup (): React.ReactElement {
                                     <Route path='/solo/stake/:address'>{wrapWithErrorBoundary(<SoloStake />, 'solo-stake')}</Route>
                                     <Route path='/solo/unstake/:address'>{wrapWithErrorBoundary(<SoloUnstake />, 'solo-unstake')}</Route>
                                     <Route path='/solo/:address'>{wrapWithErrorBoundary(<Solo />, 'solo-staking')}</Route>
-                                    {/* <Route exact path='/send/review/:genesisHash/:address/:formatted/:assetId'>{wrapWithErrorBoundary(<Review />, 'review')}</Route> */}
+                                    <Route path='/solofs/:address'>{wrapWithErrorBoundary(<SoloFS />, 'solo-staking-fullscreen')}</Route>
                                     <Route path='/tuneup/:address'>{wrapWithErrorBoundary(<TuneUp />, 'tuneup')}</Route>
                                     <Route path={`${PHISHING_PAGE_REDIRECT}/:website`}>{wrapWithErrorBoundary(<PhishingDetected />, 'phishing-page-redirect')}</Route>
                                     <Route

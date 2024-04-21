@@ -22,7 +22,7 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountInputWithIdentity, AmountWithOptions, From, Motion, PButton } from '../../components';
-import { useAccountInfo, useAccountName, useApi, useChain, useDecimal, useFormatted, useTranslation } from '../../hooks';
+import { useAccountInfo2, useAccountName, useApi, useChain, useDecimal, useFormatted, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import Asset from '../../partials/Asset';
 import { MAX_AMOUNT_LENGTH } from '../../util/constants';
@@ -43,7 +43,7 @@ export default function Send(): React.ReactElement {
   const [maxFee, setMaxFee] = useState<Balance>();
   const [recipientAddress, setRecipientAddress] = useState<string | undefined>();
   const recipientNameIfIsInExtension = useAccountName(recipientAddress);
-  const recipientInfo = useAccountInfo(api, recipientAddress);
+  const recipientInfo = useAccountInfo2(api, recipientAddress);
   const [amount, setAmount] = useState<string>();
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>();
   const [transferType, setTransferType] = useState<TransferType | undefined>();

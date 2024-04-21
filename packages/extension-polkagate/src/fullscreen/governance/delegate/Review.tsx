@@ -14,7 +14,7 @@ import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../components';
-import { useAccountInfo, useApi, useChain, useToken, useTracks, useTranslation } from '../../../hooks';
+import { useAccountInfo2, useApi, useChain, useToken, useTracks, useTranslation } from '../../../hooks';
 import { ThroughProxy } from '../../../partials';
 import { Proxy, TxInfo } from '../../../util/types';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
@@ -42,7 +42,7 @@ export default function Review({ address, delegateInformation, estimatedFee, sel
   const chain = useChain(address);
   const ref = useRef(null);
   const { tracks } = useTracks(address);
-  const delegateeName = useAccountInfo(api, delegateInformation.delegateeAddress)?.identity.display;
+  const delegateeName = useAccountInfo2(api, delegateInformation.delegateeAddress)?.identity?.display;
 
   const [isPasswordError, setIsPasswordError] = useState(false);
 
@@ -78,7 +78,7 @@ export default function Review({ address, delegateInformation, estimatedFee, sel
     amount: delegateInformation.delegateAmount,
     fee: String(estimatedFee || 0),
     subAction: 'Delegate',
-    to: { address: delegateInformation.delegateeAddress, name: delegateeName },
+    to: { address: delegateInformation.delegateeAddress, name: delegateeName }
   }), [delegateInformation, delegateeName, estimatedFee]);
 
   const onBackClick = useCallback(() => setStep(STEPS.CHOOSE_DELEGATOR), [setStep]);

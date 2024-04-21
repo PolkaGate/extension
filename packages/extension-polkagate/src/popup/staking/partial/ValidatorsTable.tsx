@@ -14,6 +14,7 @@ import { FixedSizeList as List } from 'react-window';
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
+import { useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
 import { BN, hexToBn, isHex } from '@polkadot/util';
 
 import { StakingConsts, ValidatorInfo } from '../../../util/types';
@@ -40,9 +41,10 @@ interface Props {
   nominatedValidatorsIds?: AccountId[] | null | undefined;
 }
 
-export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTable ({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
   const theme = useTheme();
   const ref = useRef();
+  const isExtensionMode = useIsExtensionPopup();
 
   const [showValidatorInfo, setShowValidatorInfo] = useState<boolean>(false);
   const [validatorToShowInfo, setValidatorToShowInfo] = useState<ValidatorInfo>();
@@ -134,6 +136,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
           <ValidatorInfoPage
             api={api}
             chain={chain}
+            isFullscreen={!isExtensionMode}
             setShowValidatorInfo={setShowValidatorInfo}
             showValidatorInfo={showValidatorInfo}
             staked={staked}

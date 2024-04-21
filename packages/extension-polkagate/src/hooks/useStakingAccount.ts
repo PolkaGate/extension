@@ -1,9 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/** 
+/**
  * @description
- * this hook returns a 
+ * this hook returns a
  * */
 
 import { useCallback, useEffect, useState } from 'react';
@@ -22,14 +22,14 @@ BN.prototype.toJSON = function () {
 
 /**
  * @description get all staking info for an account in solo staking
- * 
- * @param stashId 
- * @param stateInfo 
- * @param refresh 
- * @param setRefresh 
+ *
+ * @param stashId
+ * @param stateInfo
+ * @param refresh
+ * @param setRefresh
  * @returns account staking Info
  */
-export default function useStakingAccount(address: AccountId | string | undefined, stateInfo?: AccountStakingInfo, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): AccountStakingInfo | null | undefined {
+export default function useStakingAccount (address: AccountId | string | undefined, stateInfo?: AccountStakingInfo, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew?: boolean): AccountStakingInfo | null | undefined {
   const account = useAccount(address);
   const api = useApi(address);
   const stashId = useStashId(address);
@@ -101,6 +101,7 @@ export default function useStakingAccount(address: AccountId | string | undefine
     // console.log('stakingInfo in useStakingAccount, parsed:', JSON.parse(JSON.stringify(stakingInfo)));
 
     const temp = {} as AccountStakingInfo;
+
     temp.accountId = stakingInfo.accountId;
     temp.controllerId = stakingInfo.controllerId;
     temp.date = stakingInfo.date;
@@ -113,10 +114,10 @@ export default function useStakingAccount(address: AccountId | string | undefine
     temp.stakingLedger.active = stakingInfo.stakingLedger.active.toString();
     temp.stakingLedger.total = stakingInfo.stakingLedger.total.toString();
     temp.stakingLedger.stash = stakingInfo.stakingLedger.stash;
-    temp.stakingLedger.unlocking = stakingInfo.stakingLedger?.unlocking?.map(({ value, era }) => ({ value: value.toString(), era: era.toString() }));
+    temp.stakingLedger.unlocking = stakingInfo.stakingLedger?.unlocking?.map(({ era, value }) => ({ value: value.toString(), era: era.toString() }));
     temp.stashId = stakingInfo.stashId;
     temp.token = stakingInfo.token;
-    temp.unlocking = stakingInfo?.unlocking?.map(({ value, remainingEras }) => ({ value: value.toString(), remainingEras: remainingEras.toString() }));
+    temp.unlocking = stakingInfo?.unlocking?.map(({ remainingEras, value }) => ({ value: value.toString(), remainingEras: remainingEras.toString() }));
     temp.validatorPrefs = stakingInfo.validatorPrefs;
 
     // load save balances of different chains
@@ -124,14 +125,14 @@ export default function useStakingAccount(address: AccountId | string | undefine
 
     // add this chain balances
     savedStakingAccount[stakingInfo.token] = { ...temp, date: Date.now() };
-    const metaData = JSON.stringify({ ['stakingAccount']: JSON.stringify(savedStakingAccount) });
+    const metaData = JSON.stringify({ stakingAccount: JSON.stringify(savedStakingAccount) });
 
     updateMeta(String(address), metaData).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, api, stakingInfo, Object.keys(account ?? {})?.length]);
 
   useEffect(() => {
-    if (!account || !addressCurrentToken) {
+    if (!account || !addressCurrentToken || onlyNew) {
       return;
     }
 
@@ -144,12 +145,12 @@ export default function useStakingAccount(address: AccountId | string | undefine
       sa.stakingLedger.active = new BN(sa.stakingLedger.active);
       sa.stakingLedger.total = new BN(sa.stakingLedger.total);
       sa.stakingLedger.unlocking = sa.stakingLedger?.unlocking?.map(({ era, value }) => ({ era: new BN(era), value: new BN(value) }));
-      sa.unlocking = sa?.unlocking?.map(({ value, remainingEras }) => ({ remainingEras: new BN(remainingEras), value: new BN(value) }));
+      sa.unlocking = sa?.unlocking?.map(({ remainingEras, value }) => ({ remainingEras: new BN(remainingEras), value: new BN(value) }));
 
       setStakingInfo(sa);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Object.keys(account ?? {})?.length, addressCurrentToken]);
+  }, [Object.keys(account ?? {})?.length, addressCurrentToken, onlyNew]);
 
   return stakingInfo && stakingInfo.token === addressCurrentToken
     ? stakingInfo

@@ -12,6 +12,7 @@ import React, { useCallback } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { subId } from '@polkadot/extension-polkagate/src/assets/icons';
+import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN } from '@polkadot/util';
 
 import { ShowBalance } from '../../components';
@@ -37,7 +38,7 @@ interface ManageButtonProps {
   onClick: () => void;
 }
 
-export default function PreviewIdentity({ api, identity, judgement, setIdentityToSet, setMode, setStep, subIdAccounts, totalDeposit }: Props): React.ReactElement {
+export default function PreviewIdentity ({ api, identity, judgement, setIdentityToSet, setMode, setStep, subIdAccounts, totalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
@@ -75,7 +76,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
   }, [setStep]);
 
   return (
-    <Grid container item sx={{ display: 'block', maxWidth: '840px', px: '10%' }}>
+    <Grid container item sx={{ display: 'block', maxWidth: FULLSCREEN_WIDTH, px: '10%' }}>
       <Grid container item justifyContent='space-between' pb='15px' pt='25px'>
         <Typography fontSize='30px' fontWeight={700}>
           {t('On-chain Identity')}

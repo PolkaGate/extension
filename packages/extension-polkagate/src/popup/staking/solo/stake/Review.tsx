@@ -127,7 +127,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
         failureText,
         fee: fee || String(estimatedFee || 0),
         from: { address: formatted, name },
-        subAction: isFirstTimeStaking && selectedValidators ? 'Stake/Nominate' : 'Stake',
+        subAction: isFirstTimeStaking && selectedValidators ? 'Stake/Nominate' : 'Stake',  // TODO: should be Stake Extra?
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash

@@ -3,6 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
@@ -62,13 +63,13 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
       <>
         <Grid container>
           {(step === STEPS.REVIEW || step === STEPS.PROXY) && (
-            <Title padding='30px 0 0' text={t<string>('Review')} />
+            <Title icon={faPaperPlane} padding='30px 0 0' text={t('Review')} />
           )}
           {step === STEPS.WAIT_SCREEN && (
-            <Title text={t<string>('Sending Fund')} />
+            <Title icon={faPaperPlane} text={t('Sending Fund')} />
           )}
           {step === STEPS.CONFIRM && (
-            <Title text={t<string>(txInfo?.success ? t('Fund Sent') : t('Fund Send Failed'))} />
+            <Title icon={faPaperPlane} text={t(txInfo?.success ? t('Fund Sent') : t('Fund Send Failed'))} />
 
           )}
         </Grid>
@@ -78,7 +79,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
               <WrongPasswordAlert />
             }
             <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), mb: '20px', p: '1% 3%' }}>
-              <DisplayValue title={t<string>('From')} topDivider={false}>
+              <DisplayValue title={t('From')} topDivider={false}>
                 <Grid alignItems='center' container item justifyContent='center' sx={{ height: '42px', width: '600px' }}>
                   <Identity
                     address={address}
@@ -97,7 +98,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
                   <ThroughProxy address={selectedProxyAddress} chain={chain} />
                 </Grid>
               }
-              <DisplayValue dividerHeight='1px' title={t<string>('Amount')}>
+              <DisplayValue dividerHeight='1px' title={t('Amount')}>
                 <Grid alignItems='center' container item sx={{ height: '42px' }}>
                   <ShowBalance
                     balance={inputs?.amount && balances?.decimal && amountToMachine(inputs.amount, balances?.decimal)}
@@ -107,7 +108,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
                   />
                 </Grid>
               </DisplayValue>
-              <DisplayValue dividerHeight='1px' title={t<string>('Chain')}>
+              <DisplayValue dividerHeight='1px' title={t('Chain')}>
                 <Grid alignItems='center' container item sx={{ height: '42px' }}>
                   <ChainLogo chainName={chain?.name} size={31} />
                   <Typography fontSize='26px' pl='10px'>
@@ -116,7 +117,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
                 </Grid>
               </DisplayValue>
               <Divider sx={{ bgcolor: 'secondary.main', height: '3px', mx: 'auto', my: '5px', width: '170px' }} />
-              <DisplayValue title={t<string>('To')} topDivider={false}>
+              <DisplayValue title={t('To')} topDivider={false}>
                 <Grid alignItems='center' container item justifyContent='center' sx={{ height: '42px', width: '600px' }}>
                   <Identity
                     address={inputs?.recipientAddress}
@@ -130,7 +131,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
                   />
                 </Grid>
               </DisplayValue>
-              <DisplayValue dividerHeight='1px' title={t<string>('Chain')}>
+              <DisplayValue dividerHeight='1px' title={t('Chain')}>
                 <Grid alignItems='center' container item sx={{ height: '42px' }}>
                   <ChainLogo chainName={inputs?.recipientChainName} size={31} />
                   <Typography fontSize='26px' pl='10px'>
@@ -138,7 +139,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
                   </Typography>
                 </Grid>
               </DisplayValue>
-              <DisplayValue dividerHeight='3px' title={inputs?.recipientChainName === chain?.name ? t<string>('Fee') : t<string>('Total transaction fee')}>
+              <DisplayValue dividerHeight='3px' title={inputs?.recipientChainName === chain?.name ? t('Fee') : t('Total transaction fee')}>
                 <Grid alignItems='center' container item sx={{ height: '42px' }}>
                   <ShowBalance
                     api={api}
@@ -156,9 +157,9 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
                 isPasswordError={isPasswordError}
                 onSecondaryClick={handleClose}
                 params={inputs?.params}
-                primaryBtnText={t<string>('Confirm')}
+                primaryBtnText={t('Confirm')}
                 proxyTypeFilter={['Any', 'NonTransfer']}
-                secondaryBtnText={t<string>('Cancel')}
+                secondaryBtnText={t('Cancel')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
                 setSelectedProxy={setSelectedProxy}

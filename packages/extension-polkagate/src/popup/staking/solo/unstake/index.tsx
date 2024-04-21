@@ -197,19 +197,17 @@ export default function Index(): React.ReactElement {
           fee={estimatedFee}
           style={{ pt: '20px' }}
         />
-        <div style={{ paddingTop: '30px' }}>
-          <AmountWithOptions
-            label={t<string>('Amount ({{token}})', { replace: { token } })}
-            onChangeAmount={onChangeAmount}
-            onPrimary={onAllAmount}
-            primaryBtnText={t<string>('All amount')}
-            value={amount}
-          />
-          {alert &&
-            <Warn belowInput iconDanger text={alert} />
-          }
-        </div>
-
+        <AmountWithOptions
+          label={t<string>('Amount ({{token}})', { replace: { token } })}
+          onChangeAmount={onChangeAmount}
+          onPrimary={onAllAmount}
+          primaryBtnText={t<string>('All amount')}
+          style={{ paddingTop: '30px' }}
+          value={amount}
+        />
+        {alert &&
+          <Warn belowInput iconDanger text={alert} />
+        }
       </Grid>
       <PButton
         _onClick={goToReview}
@@ -220,7 +218,6 @@ export default function Index(): React.ReactElement {
         <Review
           address={address}
           amount={amount}
-          staked={staked}
           chilled={chilled}
           estimatedFee={estimatedFee}
           hasNominator={!!stakingAccount?.nominators?.length}
@@ -230,6 +227,7 @@ export default function Index(): React.ReactElement {
           redeemDate={redeemDate}
           setShow={setShowReview}
           show={showReview}
+          staked={staked}
           total={totalAfterUnstake}
           unbonded={unbonded}
           unlockingLen={unlockingLen ?? 0}

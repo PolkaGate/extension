@@ -160,6 +160,8 @@ export interface TxInfo extends TransactionDetail {
   decimal?: number;
   recipientChainName?: string;
   token?: string;
+  poolName?: string;
+  validatorsCount?: number;
 }
 
 export interface Auction {
@@ -510,6 +512,25 @@ export interface RewardInfo {
   stash: string
 }
 
+export interface SubscanClaimedRewardInfo {
+  era: number,
+  pool_id: number,
+  account_display: { address: string },
+  amount: string,
+  block_timestamp: number,
+  event_index: string,
+  module_id: string,
+  event_id: string,
+  extrinsic_index: string
+}
+
+export interface ClaimedRewardInfo {
+  era: number;
+  amount: BN;
+  date?: string;
+  timeStamp: number;
+}
+
 export interface AlertType {
   text: string;
   severity: 'error' | 'warning' | 'info' | 'success'
@@ -750,9 +771,9 @@ export interface AccountsAssetsContextType {
 
 export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }
 export interface SoloSettings {
-  controllerId: AccountId | string | undefined,
+  controllerId?: AccountId | string | undefined,
   payee: Payee,
-  stashId: AccountId | string | undefined,
+  stashId?: AccountId | string | undefined,
 }
 
 export interface DropdownOption {

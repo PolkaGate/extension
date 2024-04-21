@@ -59,9 +59,10 @@ export default function QrScanner ({ openCamera, setAddress, setOpenCamera }: Pr
       <IconButton
         onClick={onClose}
         sx={{
-          left: '15px',
+          left: !isExtension ? undefined : '15px',
           p: 0,
           position: 'absolute',
+          right: !isExtension ? '15px' : undefined,
           top: isExtension ? '65px' : '10px'
         }}
       >

@@ -15,7 +15,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
-import { useApi, useChain, useDecimal, useFormatted, useStakingAccount, useToken, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
+import { useInfo, useStakingAccount, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import Asset from '../../../../partials/Asset';
 import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
@@ -35,15 +35,11 @@ export default function Index (): React.ReactElement {
   const { state } = useLocation<State>();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
-  const api = useApi(address, state?.api);
-  const chain = useChain(address);
-  const decimal = useDecimal(address);
-  const formatted = useFormatted(address);
+  const { api, chain, decimal, formatted, token } = useInfo(address);
   const history = useHistory();
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
-  const token = useToken(address);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [amount, setAmount] = useState<string>();
@@ -162,12 +158,12 @@ export default function Index (): React.ReactElement {
         label={t('Restake')}
         withSteps={{ current: 1, total: 2 }}
       />
-      <Grid item xs={12} sx={{ mx: '15px' }}>
+      <Grid item sx={{ mx: '15px' }} xs={12}>
         <Asset
           address={address}
           api={api}
           balance={unlockingAmount}
-          balanceLabel={t('Unlocking')}
+          balanceLabel={t('Unstaking')}
           fee={estimatedFee}
           style={{ pt: '20px' }}
         />
@@ -183,7 +179,6 @@ export default function Index (): React.ReactElement {
             <Warn text={alert} />
           }
         </div>
-
       </Grid>
       <PButton
         _onClick={goToReview}

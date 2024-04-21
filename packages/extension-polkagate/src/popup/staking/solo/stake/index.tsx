@@ -12,14 +12,14 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
-import { useApi, useBalances, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork, useValidatorSuggestion } from '../../../../hooks';
+import { useBalances, useInfo, useStakingAccount, useStakingConsts, useTranslation, useUnSupportedNetwork, useValidatorSuggestion } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
+import Asset from '../../../../partials/Asset';
 import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import Asset from '../../../../partials/Asset';
 import SelectValidators from '../../partial/SelectValidators';
 import Review from './Review';
 import Settings from './Settings';
@@ -31,17 +31,13 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
-  const token = useToken(address);
-  const decimal = useDecimal(address);
+  const { api, chain, decimal, formatted, token } = useInfo(address);
   const history = useHistory();
-  const api = useApi(address, state?.api);
-  const chain = useChain(address);
-  const formatted = useFormatted(address);
   const balances = useBalances(address);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
@@ -64,8 +60,7 @@ export default function Index (): React.ReactElement {
     setSettings({ controllerId: formatted, payee: 'Staked', stashId: formatted });
   }, [formatted]);
 
-  // const VALIDATOR_SELECTION_OPTIONS = [{ text: t('Auto'), value: 1 }, { text: t('Manual'), value: 2 }];
-  const staked = useMemo(() => stakingAccount ? stakingAccount.stakingLedger.active : BN_ZERO, [stakingAccount]);
+  const staked = useMemo(() => stakingAccount ? stakingAccount.stakingLedger.active as BN : BN_ZERO, [stakingAccount]);
   const totalAfterStake = useMemo(() => decimal ? staked?.add(amountToMachine(amount, decimal)) : BN_ZERO, [amount, decimal, staked]);
   const isFirstTimeStaking = !!stakingAccount?.stakingLedger?.total?.isZero();
   const availableToSoloStake = balances?.freeBalance && staked && balances.freeBalance.sub(staked);
@@ -103,7 +98,7 @@ export default function Index (): React.ReactElement {
       ? [amountAsBN, settings.payee]
       : [settings.stashId, amountAsBN, settings.payee]
     : [amountAsBN]
-    , [amountAsBN, settings.payee, settings.stashId, stakingAccount?.stakingLedger?.total, isControllerDeprecated]);
+  , [amountAsBN, settings.payee, settings.stashId, stakingAccount?.stakingLedger?.total, isControllerDeprecated]);
 
   /** Staking is the default payee,can be changed in the advanced section **/
   /** payee:

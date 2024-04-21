@@ -7,7 +7,7 @@ import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Box, Grid, SxProps, Theme, Typography } from '@mui/material';
 import React, { MouseEventHandler } from 'react';
 
-import { nullFunction } from '../util/utils';
+import { noop } from '../util/utils';
 
 interface Props {
   disabled?: boolean;
@@ -32,7 +32,7 @@ export default function MenuItem ({ children, disabled = false, fontSize, icon, 
 
   return (
     <>
-      <Grid alignItems='center' color={disabled ? '#4B4B4B' : 'inherit'} container item justifyContent='space-between' my='4px' onClick={disabled ? nullFunction : onClick} pl={pl} py={py} sx={{ cursor: disabled ? '' : 'pointer', ...(withHoverEffect ? hoverEffectStyles : {}) }} textAlign='left' xs={12}>
+      <Grid alignItems='center' color={disabled ? '#4B4B4B' : 'inherit'} container item justifyContent='space-between' my='4px' onClick={disabled ? noop : onClick} pl={pl} py={py} sx={{ cursor: disabled ? '' : 'pointer', ...(withHoverEffect ? hoverEffectStyles : {}) }} textAlign='left' xs={12}>
         <Grid alignItems='center' container item xs>
           <Grid alignItems='center' container item xs={1}>
             {iconComponent ??

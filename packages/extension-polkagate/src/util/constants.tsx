@@ -173,7 +173,7 @@ export const PASS_MAP = {
 };
 
 // export const DATE_OPTIONS = { year: '2-digit', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-export const DATE_OPTIONS = { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+export const DATE_OPTIONS = { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' } as Intl.DateTimeFormatOptions;
 
 export const DEFAULT_FILTERS = {
   limitOfValidatorsPerOperator: { check: false, value: 2 },
@@ -224,3 +224,5 @@ export const USD_CURRENCY = {
   currency: 'Dollar',
   sign: '$'
 };
+
+export const FULLSCREEN_WIDTH = '900px';
