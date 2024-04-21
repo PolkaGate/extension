@@ -193,7 +193,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
                       <FontAwesomeIcon
                         color={poolState === 'Destroying' || (!poolRoot && !poolBouncer) ? theme.palette.action.disabledBackground : theme.palette.text.primary}
                         fontSize='20px'
-                        icon={poolState !== 'Block' ? faLock : faLockOpen}
+                        icon={poolState === 'Blocked' ? faLockOpen : faLock}
                       />
                     }
                     mr='0px'

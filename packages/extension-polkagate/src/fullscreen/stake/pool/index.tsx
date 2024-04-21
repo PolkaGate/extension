@@ -211,12 +211,6 @@ export default function Index(): React.ReactElement {
           show={true}
         />
       }
-      {/* <Info
-        address={address}
-        info={consts}
-        setShowInfo={setShowInfo}
-        showInfo={showInfo}
-      /> */}
     </Grid>
   );
 }
