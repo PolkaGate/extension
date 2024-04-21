@@ -35,7 +35,7 @@ interface Props {
   step: number;
 }
 
-export default function Review({ address, api, chain, changes, formatted, pool, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review ({ address, api, chain, changes, formatted, pool, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
 
@@ -127,85 +127,87 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
   return (
     <Grid container direction='column' item pt='15px'>
       {step === STEPS.REVIEW &&
-        <Grid container item sx={{ maxHeight: '420px', overflow: 'scroll' }}>
-          {isPasswordError &&
-            <WrongPasswordAlert />
-          }
-          <AccountHolderWithProxy
-            address={address}
-            chain={chain}
-            selectedProxyAddress={selectedProxyAddress}
-            style={{ mt: 'auto' }}
-            title={t('Account holder')}
-          />
-          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
-          {changes?.newPoolName !== undefined &&
-            <>
-              <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '8px', width: '90%' }}>
-                <Infotip showQuestionMark text={changes?.newPoolName}>
-                  <Typography fontSize='16px' fontWeight={300} lineHeight='23px'>
-                    {t<string>('Pool name')}
+        <>
+          <Grid container item sx={{ maxHeight: '405px', overflow: 'scroll' }}>
+            {isPasswordError &&
+              <WrongPasswordAlert />
+            }
+            <AccountHolderWithProxy
+              address={address}
+              chain={chain}
+              selectedProxyAddress={selectedProxyAddress}
+              style={{ mt: 'auto' }}
+              title={t('Account holder')}
+            />
+            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
+            {changes?.newPoolName !== undefined &&
+              <>
+                <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '8px', width: '90%' }}>
+                  <Infotip showQuestionMark text={changes?.newPoolName}>
+                    <Typography fontSize='16px' fontWeight={300} lineHeight='23px'>
+                      {t<string>('Pool name')}
+                    </Typography>
+                  </Infotip>
+                  <Typography fontSize='25px' fontWeight={400} lineHeight='42px' maxWidth='100%' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+                    {changes?.newPoolName}
                   </Typography>
-                </Infotip>
-                <Typography fontSize='25px' fontWeight={400} lineHeight='42px' maxWidth='100%' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
-                  {changes?.newPoolName}
-                </Typography>
-              </Grid>
-              {changes?.newRoles &&
+                </Grid>
+                {changes?.newRoles &&
+                  <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
+                }
+              </>}
+            {changes?.newRoles?.newRoot !== undefined &&
+              <ShowPoolRole
+                chain={chain}
+                roleAddress={changes?.newRoles?.newRoot}
+                roleTitle={t<string>('Root')}
+                showDivider
+              />
+            }
+            {changes?.newRoles?.newNominator !== undefined &&
+              <ShowPoolRole
+                chain={chain}
+                roleAddress={changes?.newRoles?.newNominator}
+                roleTitle={t<string>('Nominator')}
+                showDivider
+              />
+            }
+            {changes?.newRoles?.newBouncer !== undefined &&
+              <ShowPoolRole
+                chain={chain}
+                roleAddress={changes?.newRoles?.newBouncer}
+                roleTitle={t<string>('Bouncer')}
+                showDivider
+              />
+            }
+            {changes?.commission?.value !== undefined &&
+              <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+                <Grid item>
+                  <Typography fontSize='16px' fontWeight={300} lineHeight='23px'>
+                    {t('Commission value')}
+                  </Typography>
+                </Grid>
+                <Grid fontSize='28px' fontWeight={400} item>
+                  {changes.commission.value}%
+                </Grid>
                 <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
-              }
-            </>}
-          {changes?.newRoles?.newRoot !== undefined &&
-            <ShowPoolRole
-              chain={chain}
-              roleAddress={changes?.newRoles?.newRoot}
-              roleTitle={t<string>('Root')}
-              showDivider
-            />
-          }
-          {changes?.newRoles?.newNominator !== undefined &&
-            <ShowPoolRole
-              chain={chain}
-              roleAddress={changes?.newRoles?.newNominator}
-              roleTitle={t<string>('Nominator')}
-              showDivider
-            />
-          }
-          {changes?.newRoles?.newBouncer !== undefined &&
-            <ShowPoolRole
-              chain={chain}
-              roleAddress={changes?.newRoles?.newBouncer}
-              roleTitle={t<string>('Bouncer')}
-              showDivider
-            />
-          }
-          {changes?.commission?.value !== undefined &&
-            <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+              </Grid>
+            }
+            {changes?.commission?.payee !== undefined &&
+              <ShowPoolRole
+                chain={chain}
+                roleAddress={changes.commission.payee || maybeCurrentCommissionPayee}
+                roleTitle={t<string>('Commission payee')}
+                showDivider
+              />
+            }
+            <Grid alignItems='center' container item justifyContent='center' lineHeight='20px'>
               <Grid item>
-                <Typography fontSize='16px' fontWeight={300} lineHeight='23px'>
-                  {t('Commission value')}
-                </Typography>
+                {t('Fee')}:
               </Grid>
-              <Grid fontSize='28px' fontWeight={400} item>
-                {changes.commission.value}%
+              <Grid item sx={{ pl: '5px' }}>
+                <ShowValue height={16} value={estimatedFee?.toHuman()} />
               </Grid>
-              <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
-            </Grid>
-          }
-          {changes?.commission?.payee !== undefined &&
-            <ShowPoolRole
-              chain={chain}
-              roleAddress={changes.commission.payee || maybeCurrentCommissionPayee}
-              roleTitle={t<string>('Commission payee')}
-              showDivider
-            />
-          }
-          <Grid alignItems='center' container item justifyContent='center' lineHeight='20px'>
-            <Grid item>
-              {t('Fee')}:
-            </Grid>
-            <Grid item sx={{ pl: '5px' }}>
-              <ShowValue height={16} value={estimatedFee?.toHuman()} />
             </Grid>
           </Grid>
           <Grid container item sx={{ bottom: '15px', height: '120px', position: 'absolute', width: '86%' }}>
@@ -230,7 +232,8 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
               steps={STEPS}
             />
           </Grid>
-        </Grid>}
+        </>
+      }
       {step === STEPS.PROXY &&
         <SelectProxyModal2
           address={address}
