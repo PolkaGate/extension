@@ -427,7 +427,7 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
       </Grid>
       <PButton
         _ml={0}
-        _mt='50px'
+        _mt='125px'
         _onClick={onCastVote}
         _width={100}
         disabled={goVoteDisabled}

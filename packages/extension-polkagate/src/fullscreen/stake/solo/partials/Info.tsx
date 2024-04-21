@@ -53,7 +53,7 @@ export default function Info ({ address }: Props): React.ReactElement {
   return (
     <Grid alignItems='end' container item justifyItems='flex-end' sx={{ mt: '15px' }}>
       <Infotip2 showInfoMark text={t('click to view')}>
-        <Typography fontSize='14px' onClick={onClick} sx={{ color: 'secondary.light', cursor: 'pointer', ml: '40px' }} width='100%'>
+        <Typography fontSize='14px' onClick={onClick} sx={{ color: 'secondary.light', cursor: 'pointer', ml: '30px' }} width='100%'>
           {t('on-chain staking info')}
         </Typography>
       </Infotip2>
