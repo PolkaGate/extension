@@ -113,7 +113,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
     const params =
       selectedToPayout.length === 1
         ? [selectedToPayout[0][0], selectedToPayout[0][1]]
-        : selectedToPayout.map((p) => payoutStakers(p[0], p[1]));
+        : [selectedToPayout.map((p) => payoutStakers(p[0], p[1]))];
 
     const amount = amountToHuman(totalSelectedPending, decimal);
 
