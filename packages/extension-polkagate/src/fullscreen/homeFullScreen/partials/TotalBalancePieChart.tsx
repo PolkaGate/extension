@@ -34,7 +34,7 @@ interface AssetsWithUiAndPrice extends FetchedBalance {
   };
 }
 
-export function adjustColor (token: string, color: string, theme: Theme): string {
+export function adjustColor(token: string, color: string, theme: Theme): string {
   if ((TOKENS_WITH_BLACK_LOGO.find((t) => t === token) && theme.palette.mode === 'dark')) {
     const cleanedColor = color.replace(/^#/, '');
 
@@ -57,7 +57,7 @@ export function adjustColor (token: string, color: string, theme: Theme): string
   return color;
 }
 
-function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.ReactElement {
+function TotalBalancePieChart({ hideNumbers, setGroupedAssets }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const currency = useCurrency();
@@ -69,9 +69,10 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
   const [showMore, setShowMore] = useState<boolean>(false);
 
   const calPrice = useCallback((assetPrice: number | undefined, balance: BN, decimal: number) => parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0), []);
-  const formatNumber = useCallback((num: number) => {
-    return parseFloat(Math.trunc(num) === 0 ? num.toFixed(2) : num.toFixed(1));
-  }, []);
+  const formatNumber = useCallback(
+    (num: number, decimal = 2) =>
+      parseFloat(Math.trunc(num) === 0 ? num.toFixed(decimal) : num.toFixed(1))
+    , []);
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
 
@@ -101,11 +102,14 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
 
       const balancePrice = calPrice(assetPrice, accumulatedPricePerAsset, assetSample.decimal ?? 0);
 
+      const _percent = (balancePrice / youHave.portfolio) * 100;
+
       return (
         {
           ...assetSample,
-          percent: formatNumber((balancePrice / youHave.portfolio) * 100),
+          percent: formatNumber(_percent),
           price: assetPrice,
+          sortItem: formatNumber(_percent, 6),
           totalBalance: balancePrice,
           ui: {
             color: adjustColor(assetSample.token, ui?.color, theme),
@@ -116,9 +120,9 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
     });
 
     aggregatedAssets.sort((a, b) => {
-      if (a.percent < b.percent) {
+      if (a.sortItem < b.sortItem) {
         return 1;
-      } else if (a.percent > b.percent) {
+      } else if (a.sortItem > b.sortItem) {
         return -1;
       }
 
@@ -170,7 +174,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
             src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
             sx={{ height: '60px', width: '154px' }}
           />
-          : <Typography fontSize='40px' fontWeight={700} sx={{color: isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}}>
+          : <Typography fontSize='40px' fontWeight={700} sx={{ color: isPriceOutdated(youHave) ? 'primary.light' : 'text.primary' }}>
             {`${currency?.sign ?? ''}${nFormatter(youHave?.portfolio ?? 0, 2)}`}
           </Typography>}
       </Grid>
