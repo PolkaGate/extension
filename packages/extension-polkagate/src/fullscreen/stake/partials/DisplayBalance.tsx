@@ -34,6 +34,34 @@ interface DisplayBalanceProps {
   marginTop?: string;
 }
 
+interface ToBeReleasedType {
+  showUnstaking: boolean;
+  decimal: number | undefined;
+  token: string | undefined;
+  toBeReleased: { date: number; amount: BN; }[] | undefined;
+  text: string;
+}
+
+const ToBeReleased = ({ decimal, showUnstaking, text, toBeReleased, token }: ToBeReleasedType) => (
+  <Collapse in={showUnstaking} sx={{ width: '100%' }}>
+    <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'divider', fontSize: '16px', fontWeight: 500, ml: '7%', mt: '10px', width: '93%' }}>
+      <Grid item pt='10px' xs={12}>
+        {text}
+      </Grid>
+      {toBeReleased?.map(({ amount, date }) => (
+        <Grid container item key={date} spacing='15px' sx={{ fontSize: '16px', fontWeight: 500 }}>
+          <Grid fontWeight={300} item>
+            {new Date(date).toLocaleDateString(undefined, DATE_OPTIONS)}
+          </Grid>
+          <Grid fontWeight={400} item>
+            <ShowBalance balance={amount} decimal={decimal} token={token} />
+          </Grid>
+        </Grid>))
+      }
+    </Grid>
+  </Collapse>
+);
+
 export default function DisplayBalance ({ actions, address, amount, icons, isUnstaking, marginTop = '10px', onClicks, title, toBeReleased }: DisplayBalanceProps): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -47,26 +75,6 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
   const toggleShowUnstaking = useCallback(() => {
     toBeReleased?.length && setShowUnstaking(!showUnstaking);
   }, [showUnstaking, toBeReleased?.length]);
-
-  const ToBeReleased = () => (
-    <Collapse in={showUnstaking} sx={{ width: '100%' }}>
-      <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'divider', fontSize: '16px', fontWeight: 500, ml: '7%', mt: '10px', width: '93%' }}>
-        <Grid item pt='10px' xs={12}>
-          {t('To be released')}
-        </Grid>
-        {toBeReleased?.map(({ amount, date }) => (
-          <Grid container item key={date} spacing='15px' sx={{ fontSize: '16px', fontWeight: 500 }}>
-            <Grid fontWeight={300} item>
-              {new Date(date).toLocaleDateString(undefined, DATE_OPTIONS)}
-            </Grid>
-            <Grid fontWeight={400} item>
-              <ShowBalance balance={amount} decimal={decimal} token={token} />
-            </Grid>
-          </Grid>))
-        }
-      </Grid>
-    </Collapse>
-  );
 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mt: { marginTop }, p: '5px 30px' }}>
@@ -101,7 +109,7 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
                 onClick={toggleShowUnstaking}
                 sx={{
                   color: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',
-                  cursor: 'pointer',
+                  cursor: toBeReleased?.length ? 'pointer' : 'unset',
                   fontSize: '26px',
                   stroke: !toBeReleased?.length ? theme.palette.text.disabled : theme.palette.secondary.light,
                   strokeWidth: 1,
@@ -117,7 +125,7 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
             const noValueToAct = !amount || amount?.isZero();
 
             return (actions &&
-              <Grid alignItems='center' container direction='column' item justifyContent='center' key={index} minWidth='96px' onClick={noValueToAct ? noop : onClicks && onClicks[index]} sx={{ cursor: 'pointer', ml: '10px', width: 'fit-content' }}>
+              <Grid alignItems='center' container direction='column' item justifyContent='center' key={index} minWidth='96px' onClick={noValueToAct ? noop : onClicks && onClicks[index]} sx={{ '&:hover': { bgcolor: noValueToAct ? 'unset' : 'divider' }, borderRadius: '5px', cursor: noValueToAct ? 'unset' : 'pointer', ml: '10px', width: 'fit-content' }}>
                 <FontAwesomeIcon
                   color={`${noValueToAct ? theme.palette.text.disabled : theme.palette.secondary.light}`}
                   icon={icons[index]}
@@ -133,9 +141,14 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
           }
         </Grid>
       </Grid>
-      {showUnstaking &&
-        <ToBeReleased />
-      }
+      {isUnstaking &&
+        <ToBeReleased
+          decimal={decimal}
+          showUnstaking={showUnstaking}
+          text={t('To be released')}
+          toBeReleased={toBeReleased}
+          token={token}
+        />}
     </Grid>
   );
 }
