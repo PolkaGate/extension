@@ -5,7 +5,7 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
@@ -146,7 +146,7 @@ export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.
   }, [amountAsBN, availableBalance, estimatedMaxFee, poolStakingConsts?.minJoinBond, selectedPool, stakeAmount]);
 
   useEffect(() => {
-    if (!api || !selectedPool || !stakeAmount ) {
+    if (!api || !selectedPool || !stakeAmount) {
       return;
     }
 
@@ -187,11 +187,23 @@ export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.
         textSpace='15px'
         value={stakeAmount}
       />
-      <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '38px', width: '57.5%' }}>
-        <Typography fontSize='16px' fontWeight={400}>
-          {t('Network fee')}
-        </Typography>
-        <ShowBalance api={api} balance={estimatedFee} />
+      <Grid alignItems='center' container item justifyContent='space-between' sx={{ width: '57.5%' }}>
+        <Grid container item justifyContent='space-between' sx={{ mt: '10px' }}>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 400 }}>
+            {t('Available Balance')}
+          </Grid>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
+            <ShowBalance balance={availableBalance} decimal={decimal} decimalPoint={2} token={token} />
+          </Grid>
+        </Grid>
+        <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px' }}>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 400 }}>
+            {t('Network fee')}
+          </Grid>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
+            <ShowBalance api={api} balance={estimatedFee} />
+          </Grid>
+        </Grid>
       </Grid>
       <PoolsTable
         address={address}
