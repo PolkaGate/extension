@@ -125,7 +125,7 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
             const noValueToAct = !amount || amount?.isZero();
 
             return (actions &&
-              <Grid alignItems='center' container direction='column' item justifyContent='center' key={index} minWidth='96px' onClick={noValueToAct ? noop : onClicks && onClicks[index]} sx={{ '&:hover': { bgcolor: noValueToAct ? 'unset' : 'divider' }, borderRadius: '5px', cursor: noValueToAct ? 'unset' : 'pointer', ml: '10px', width: 'fit-content' }}>
+              <Grid alignItems='center' container direction='column' item justifyContent='center' key={index} minWidth='96px' onClick={noValueToAct ? noop : onClicks && onClicks[index]} sx={{ cursor: noValueToAct ? 'unset' : 'pointer', ml: '10px', width: 'fit-content' }}>
                 <FontAwesomeIcon
                   color={`${noValueToAct ? theme.palette.text.disabled : theme.palette.secondary.light}`}
                   icon={icons[index]}
