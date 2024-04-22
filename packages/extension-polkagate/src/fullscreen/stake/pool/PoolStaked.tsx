@@ -85,7 +85,7 @@ export default function PoolStaked({ address, balances, pool, redeemable, setSho
       />
       <Grid container item justifyContent='space-between' mb='15px'>
         <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 320px - 3%)'>
-          <Grid container sx={{ overflowY: 'scroll' }}>
+          <Grid container sx={{ overflowY: 'scroll', px: '5px' }}>
             <DisplayBalance
               actions={[t('unstake')]}
               address={address}
