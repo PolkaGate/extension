@@ -3,8 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Modal } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import { Box, Modal, useTheme } from '@mui/material';
+import React, { useCallback, useMemo, useState } from 'react';
 
 interface Props {
   width?: number;
@@ -16,6 +16,10 @@ interface Props {
 }
 
 export function DraggableModal ({ children, maxHeight = 740, minHeight = 615, onClose, open, width = 500 }: Props): React.ReactElement<Props> {
+  const theme = useTheme();
+
+  const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
+
   const [isDragging, setIsDragging] = useState(false);
   const initialX = (window.innerWidth - width) / 2;
   const initialY = (window.innerHeight - maxHeight) / 2;
@@ -55,7 +59,7 @@ export function DraggableModal ({ children, maxHeight = 740, minHeight = 615, on
 
   const style = {
     bgcolor: 'background.default',
-    border: '0.5',
+    border: isDarkMode ? '1px solid' : 'none',
     borderColor: 'secondary.light',
     borderRadius: '10px',
     boxShadow: 24,
