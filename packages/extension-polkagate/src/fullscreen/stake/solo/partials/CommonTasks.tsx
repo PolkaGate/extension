@@ -53,7 +53,6 @@ export default function CommonTasks ({ address, setRefresh }: Props): React.Reac
               />
             }
             mr='0px'
-            noBorderButton
             onClick={onRewardDestination}
             secondaryIconType='popup'
             text={t('Configure Reward Destination')}
