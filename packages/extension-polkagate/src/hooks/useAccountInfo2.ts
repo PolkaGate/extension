@@ -88,9 +88,9 @@ export default function useAccountInfo2 (api: ApiPromise | undefined, formatted:
       }
     }).catch(console.error);
 
-    api && formatted && api.derive.accounts.info(formatted).then((i) => {
-      i && setInfo(i);
-    }).catch(console.error);
+    // api && formatted && api.derive.accounts.info(formatted).then((i) => {
+    //   i && setInfo(i);
+    // }).catch(console.error);
   }, [accountInfo, api, formatted, getIdentityOf, getSubIdentityOf]);
 
   return info;
