@@ -99,7 +99,7 @@ export default function AccountDetails (): React.ReactElement {
       return 0;
     }
 
-    const currentChainName = sanitizeChainName(chainName)?.toLocaleLowerCase();
+    const currentChainName = sanitizeChainName(chainName)?.toLocaleLowerCase()?.replace('assethub', '');
     const currentAssetPrices = pricesInCurrency?.prices?.[(selectedAssetPriceId || EXTRA_PRICE_IDS[currentChainName || ''] || currentChainName) as string];
     const mayBeTestNetPrice = pricesInCurrency?.prices && !currentAssetPrices ? 0 : undefined;
 
@@ -157,7 +157,7 @@ export default function AccountDetails (): React.ReactElement {
 
   const goToSoloStaking = useCallback(() => {
     address && account?.genesisHash && STAKING_CHAINS.includes(account.genesisHash) &&
-    openOrFocusTab(`/solofs/${address}/`);
+      openOrFocusTab(`/solofs/${address}/`);
   }, [account?.genesisHash, address]);
 
   const goToPoolStaking = useCallback(() => {
