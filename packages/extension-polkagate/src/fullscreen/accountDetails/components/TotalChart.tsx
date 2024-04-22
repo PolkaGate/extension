@@ -126,7 +126,7 @@ export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrenc
         </Typography>
       </Grid>
       {assets && assets.length > 0 &&
-        <Grid container item sx={{ borderTop: '1px solid', borderTopColor: 'divider', pt: '10px' }}>
+        <Grid container item sx={{ borderTop: '1px solid', borderTopColor: 'divider', py: '5px' }}>
           <Grid container item sx={{ height: '85px', mr: '5px', width: '85px' }}>
             <canvas id='chartCanvas' ref={chartRef} />
           </Grid>
