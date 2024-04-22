@@ -135,7 +135,7 @@ export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrenc
               const logoInfo = getLogo2(genesisHash, token);
 
               return (
-                <Grid container item justifyContent='space-between' key={index}>
+                <Grid container item justifyContent='space-between' key={index} mt='5px'>
                   <Grid alignItems='center' container item width='fit-content'>
                     <DisplayLogo assetSize='20px' baseTokenSize='14px' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
                     <Typography fontSize='16px' fontWeight={500} pl='5px' width='40px'>
