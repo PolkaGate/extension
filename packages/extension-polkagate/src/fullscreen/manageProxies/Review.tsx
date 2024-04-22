@@ -205,7 +205,7 @@ function Review ({ address, api, chain, depositedValue, newDepositValue, proxyIt
           </Grid>
           <Grid container item sx={{ '> div #TwoButtons': { '> div': { justifyContent: 'space-between', width: '450px' }, justifyContent: 'flex-end' }, pb: '20px' }}>
             <SignArea2
-              address={formatted ?? address}
+              address={address}
               call={call}
               disabled={!depositToPay || feeAndDeposit.isAbleToPay !== true || !changedItems || changedItems.length === 0}
               extraInfo={extraInfo}
