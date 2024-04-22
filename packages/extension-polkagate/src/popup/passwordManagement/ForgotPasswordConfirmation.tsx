@@ -12,7 +12,7 @@ import { Checkbox2, Header, Popup, TwoButtons } from '../../components';
 import { updateStorage } from '../../components/Loading';
 import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import useTranslation from '../../hooks/useTranslation';
-import { STEPS } from '../passwordManagement/constants';
+import { STEPS } from './constants';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
@@ -49,7 +49,7 @@ export default function ForgotPasswordConfirmation({ setStep }: Props): React.Re
     <Popup show={show}>
       <Header
         onClose={onClose}
-        text={t<string>('Forgot Password')}
+        text={t('Forgot Password')}
       />
       <Grid container direction='column' px='15px'>
         <Grid container direction='column' item justifyContent='center' pb='20px' pt='50px'>
@@ -62,16 +62,16 @@ export default function ForgotPasswordConfirmation({ setStep }: Props): React.Re
           </Grid>
           <Grid item textAlign='center'>
             <Typography fontSize='16px' fontWeight={400} sx={{ color: 'warning.main' }}>
-              {t<string>('Are you sure you want to proceed?')}
+              {t('Are you sure you want to proceed?')}
             </Typography>
           </Grid>
           <Typography fontSize='16px' fontWeight={400} mt='25px' px='15px'>
-            {t<string>('This action will permanently delete your account(s), and password recovery will not be possible. You can reset your wallet by importing from a backup (JSON file or recovery phrase). ')}
+            {t('This action will permanently delete your account(s), and password recovery will not be possible. You can reset your wallet by importing from a backup (JSON file or recovery phrase). ')}
           </Typography>
         </Grid>
         <Checkbox2
           checked={isChecked}
-          label={t<string>('I acknowledge permanent account(s) deletion.')}
+          label={t('I acknowledge permanent account(s) deletion.')}
           labelStyle={{ fontSize: '14px' }}
           onChange={onCheckChange}
           style={{ bottom: 75, pl: '5px', position: 'absolute' }}
@@ -81,8 +81,8 @@ export default function ForgotPasswordConfirmation({ setStep }: Props): React.Re
         disabled={!isChecked}
         onPrimaryClick={_onConfirmForgotPassword}
         onSecondaryClick={onClose}
-        primaryBtnText={t<string>('Proceed')}
-        secondaryBtnText={t<string>('Cancel')}
+        primaryBtnText={t('Proceed')}
+        secondaryBtnText={t('Cancel')}
       />
     </Popup>
   );

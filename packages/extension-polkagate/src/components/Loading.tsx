@@ -12,11 +12,11 @@ import { logoBlack, logoMotionDark, logoMotionLight, logoWhite } from '../assets
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import { useManifest } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
-import ForgotPasswordConfirmation from '../popup/home/ForgotPasswordConfirmation';
 import { isPasswordCorrect } from '../popup/passwordManagement';
 import AskToSetPassword from '../popup/passwordManagement/AskToSetPassword';
 import { STEPS } from '../popup/passwordManagement/constants';
 import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPassword';
+import ForgotPasswordConfirmation from '../popup/passwordManagement/ForgotPasswordConfirmation';
 import Login from '../popup/passwordManagement/Login';
 import PasswordSettingAlert from '../popup/passwordManagement/PasswordSettingAlert';
 import { MAYBE_LATER_PERIOD, NO_PASS_PERIOD } from '../util/constants';
@@ -25,7 +25,7 @@ interface Props {
   children?: React.ReactNode;
 }
 
-const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed'];
+const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed', '/forgot-password', '/reset-wallet'];
 
 export type LoginInfo = {
   status: 'noLogin' | 'mayBeLater' | 'justSet' | 'set' | 'forgot' | 'reset';
@@ -114,6 +114,7 @@ const FlyingLogo = ({ theme }: { theme: Theme }) => (
 export default function Loading ({ children }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const manifest = useManifest();
+
   const { isExtensionLocked, setExtensionLock } = useExtensionLockContext();
   const isPopupOpenedByExtension = useIsExtensionPopup();
 
@@ -189,7 +190,7 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
     };
 
     handleInitLoginInfo().catch(console.error);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onPassChange = useCallback((pass: string | null): void => {

@@ -21,7 +21,7 @@ import { AddNewAccountButton } from '../../partials';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { EXTENSION_NAME, NEW_VERSION_ALERT } from '../../util/constants';
 import Welcome from '../welcome';
-import Reset from '../welcome/Reset';
+import Reset from '../passwordManagement/Reset';
 import AccountsTree from './AccountsTree';
 import AiBackgroundImage from './AiBackgroundImage';
 import Alert from './Alert';
