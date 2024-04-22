@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { useCurrentEraIndex, useEndpoint, useInfo } from '.';
+import { useCurrentEraIndex, useInfo } from '.';
 
 export interface ExposureOverview {
   total: BN;
@@ -32,10 +32,11 @@ export interface Others {
  */
 
 export default function useValidators (address: string, validators?: AllValidators): AllValidators | null | undefined {
-  const [info, setValidatorsInfo] = useState<AllValidators | undefined | null>();
-  const [newInfo, setNewValidatorsInfo] = useState<AllValidators | undefined | null>();
   const { api, chain, chainName, endpoint } = useInfo(address);
   const currentEraIndex = useCurrentEraIndex(address);
+
+  const [info, setValidatorsInfo] = useState<AllValidators | undefined | null>();
+  const [newInfo, setNewValidatorsInfo] = useState<AllValidators | undefined | null>();
 
   const saveValidatorsInfoInStorage = useCallback((inf: AllValidators) => {
     chrome.storage.local.get('validatorsInfo', (res) => {
