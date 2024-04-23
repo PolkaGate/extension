@@ -120,14 +120,12 @@ export default class Extension {
 
   private lockExtension(): boolean {
     const currentDomain = chrome.runtime.getURL('/');
-    console.log('currentDomain:', currentDomain);
 
     chrome.tabs.query({}, function (tabs) {
       for (let i = 0; i < tabs.length; i++) {
         const tabParsedUrl = new URL(tabs[i].url);
 
         const tabDomain = `${tabParsedUrl?.protocol}//${tabParsedUrl?.hostname}/`;
-        console.log('tabDomain:', tabDomain);
 
         if (tabDomain === currentDomain) {
           chrome.tabs.reload(tabs[i].id).catch(console.error);
