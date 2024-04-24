@@ -117,9 +117,7 @@ export default function Popup (): React.ReactElement {
   const priceIds = usePriceIds();
   const isFetchingPricesRef = useRef(false);
 
-  const { pathname } = useLocation();
-
-  console.log('location:', pathname);
+  useLocation();// just to trigger component to fix forgot pass issue
 
   const [accountCtx, setAccountCtx] = useState<AccountsContext>({ accounts: [], hierarchy: [] });
   const [authRequests, setAuthRequests] = useState<null | AuthorizeRequest[]>(null);
