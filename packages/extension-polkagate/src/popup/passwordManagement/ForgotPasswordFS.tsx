@@ -12,15 +12,14 @@ import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/acc
 import { FullScreenHeader } from '@polkadot/extension-polkagate/src/fullscreen/governance/FullScreenHeader';
 import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 import { useFullscreen } from '@polkadot/extension-polkagate/src/hooks';
-import { lockExtension } from '@polkadot/extension-polkagate/src/messaging';
-import { FULLSCREEN_WIDTH, NO_PASS_PERIOD } from '@polkadot/extension-polkagate/src/util/constants';
+import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { ActionContext, Checkbox2, TwoButtons } from '../../components';
 import { updateStorage } from '../../components/Loading';
 import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import useTranslation from '../../hooks/useTranslation';
 
-export default function ForgotPasswordFS(): React.ReactElement {
+export default function ForgotPasswordFS (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -38,12 +37,8 @@ export default function ForgotPasswordFS(): React.ReactElement {
   }, [setExtensionLock]);
 
   const onClose = useCallback(() => {
-    updateStorage('loginInfo', { lastLoginTime: Date.now() - NO_PASS_PERIOD }).then(() => {
-      setExtensionLock(true);
-      lockExtension().catch(console.error);
-      onAction('/');
-    }).catch(console.error);
-  }, [onAction, setExtensionLock]);
+    onAction('/');
+  }, [onAction]);
 
   const onCheckChange = useCallback(() => {
     setChecked(!isChecked);
