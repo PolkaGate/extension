@@ -19,13 +19,12 @@ import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPasswo
 import ForgotPasswordConfirmation from '../popup/passwordManagement/ForgotPasswordConfirmation';
 import Login from '../popup/passwordManagement/Login';
 import PasswordSettingAlert from '../popup/passwordManagement/PasswordSettingAlert';
-import { MAYBE_LATER_PERIOD, NO_PASS_PERIOD } from '../util/constants';
+import { ALLOWED_URL_ON_RESET_PASSWORD, MAYBE_LATER_PERIOD, NO_PASS_PERIOD } from '../util/constants';
 
 interface Props {
   children?: React.ReactNode;
 }
 
-const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed', '/forgot-password', '/reset-wallet'];
 
 export type LoginInfo = {
   status: 'noLogin' | 'mayBeLater' | 'justSet' | 'set' | 'forgot' | 'reset';
