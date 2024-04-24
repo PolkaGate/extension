@@ -226,3 +226,4 @@ export const USD_CURRENCY = {
 };
 
 export const FULLSCREEN_WIDTH = '900px';
+export const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed', '/forgot-password', '/reset-wallet'];

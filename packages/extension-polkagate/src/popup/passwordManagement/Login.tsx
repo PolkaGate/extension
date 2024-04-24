@@ -6,8 +6,10 @@
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+
 import { Password, PButton, WrongPasswordAlert } from '../../components';
-import { useTranslation } from '../../hooks';
+import { useIsExtensionPopup, useTranslation } from '../../hooks';
 import { STEPS } from './constants';
 
 interface Props {
@@ -20,10 +22,16 @@ interface Props {
 function Login ({ isPasswordError, onPassChange, onUnlock, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isPopup = useIsExtensionPopup();
 
   const onForgotPassword = useCallback((): void => {
-    setStep(STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION);
-  }, [setStep]);
+    if (isPopup) {
+      return setStep(STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION);
+    }
+
+    setStep(STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION_FS);
+    openOrFocusTab('/forgot-password', true);
+  }, [isPopup, setStep]);
 
   return (
     <>

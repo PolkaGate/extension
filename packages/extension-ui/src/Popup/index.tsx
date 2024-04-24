@@ -6,7 +6,7 @@ import type { SettingsStruct } from '@polkadot/ui-settings/types';
 
 import { AnimatePresence } from 'framer-motion';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Route, Switch } from 'react-router';
+import { Route, Switch, useLocation } from 'react-router';
 
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
@@ -28,6 +28,8 @@ import AddWatchOnly from '@polkadot/extension-polkagate/src/popup/import/addWatc
 import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
 import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
 import LoginPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement';
+import ForgotPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement/ForgotPasswordFS';
+import ResetWallet from '@polkadot/extension-polkagate/src/popup/passwordManagement/ResetFS';
 import uiSettings from '@polkadot/ui-settings';
 
 import { ErrorBoundary, Loading } from '../../../extension-polkagate/src/components';
@@ -114,6 +116,8 @@ export default function Popup (): React.ReactElement {
   const assetsOnChains = useAssetsBalances(accounts);
   const priceIds = usePriceIds();
   const isFetchingPricesRef = useRef(false);
+
+  useLocation();// just to trigger component to fix forgot pass issue
 
   const [accountCtx, setAccountCtx] = useState<AccountsContext>({ accounts: [], hierarchy: [] });
   const [authRequests, setAuthRequests] = useState<null | AuthorizeRequest[]>(null);
@@ -287,6 +291,8 @@ export default function Popup (): React.ReactElement {
                                     <Route path='/derive/:address'>{wrapWithErrorBoundary(<Derive />, 'derive-address')}</Route>
                                     <Route path='/export/:address'>{wrapWithErrorBoundary(<Export />, 'export-address')}</Route>
                                     <Route path='/forget/:address/:isExternal'>{wrapWithErrorBoundary(<ForgetAccount />, 'forget-address')}</Route>
+                                    <Route path='/forgot-password'>{wrapWithErrorBoundary(<ForgotPassword />, 'forgot-password')}</Route>
+                                    <Route path='/reset-wallet'>{wrapWithErrorBoundary(<ResetWallet />, 'reset-wallet')}</Route>
                                     <Route path='/fullscreenDerive/:address/'>{wrapWithErrorBoundary(<FullscreenDerive />, 'fullscreen-account-derive')}</Route>
                                     <Route path='/fullscreenProxyManagement/:address/'>{wrapWithErrorBoundary(<FullScreenManageProxies />, 'fullscreen-proxy-management')}</Route>
                                     <Route path='/governance/:address/:topMenu/:postId'>{wrapWithErrorBoundary(<ReferendumPost />, 'governance')}</Route>
