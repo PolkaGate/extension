@@ -10,7 +10,7 @@ import { blake2AsHex } from '@polkadot/util-crypto';
 
 import { TwoButtons } from '../../components';
 import { setStorage } from '../../components/Loading';
-import { useTranslation } from '../../hooks';
+import { useIsExtensionPopup, useTranslation } from '../../hooks';
 import Passwords2 from '../newAccount/createAccountFullScreen/components/Passwords2';
 import { STEPS } from './constants';
 import PasswordSettingAlert from './PasswordSettingAlert';
@@ -25,6 +25,7 @@ interface Props {
 
 function SetPassword({ isPasswordError, newPassword, onBackClick, onPassChange, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const isExtensionMode = useIsExtensionPopup();
 
   const onSetPassword = useCallback(async () => {
     if (newPassword) {
@@ -38,11 +39,11 @@ function SetPassword({ isPasswordError, newPassword, onBackClick, onPassChange, 
   return (
     <>
       {!isPasswordError &&
-        <Grid container sx={{ height: '120px', top: '30px' }}>
+        <Grid container sx={{ height: '135px' }}>
           <PasswordSettingAlert />
         </Grid>
       }
-      <Grid container justifyContent='center' sx={{ display: 'block', pt: '180px', px: '10%' }}>
+      <Grid container justifyContent='center' sx={{ display: 'block', mb: '30px', pt: '170px', px: isExtensionMode ? '8%' : 0 }}>
         <Passwords2
           firstPassStyle={{ marginBlock: '8px' }}
           isFocussed
@@ -52,15 +53,17 @@ function SetPassword({ isPasswordError, newPassword, onBackClick, onPassChange, 
           onEnter={onSetPassword}
         />
       </Grid>
-      <Grid container justifyContent='center' sx={{ px: '2%' }}>
+      <Grid container justifyContent='center' sx={{ bottom: isExtensionMode ? '15px' : '25px', height: '40px', ml: isExtensionMode ? '8%' : 0, position: 'absolute', width: isExtensionMode ? '84%' : '87%' }}>
         <TwoButtons
           disabled={!newPassword}
-          mt='20px'
+          ml='0px'
+          mt='0px'
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onPrimaryClick={onSetPassword}
           onSecondaryClick={onBackClick}
           primaryBtnText={t<string>('Set')}
           secondaryBtnText={t<string>('Cancel')}
+          width='100%'
         />
       </Grid>
     </>

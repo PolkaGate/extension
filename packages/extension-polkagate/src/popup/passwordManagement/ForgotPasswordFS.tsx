@@ -6,7 +6,7 @@
 import { faExclamationTriangle, faUnlockKeyhole } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { FullScreenHeader } from '@polkadot/extension-polkagate/src/fullscreen/governance/FullScreenHeader';
@@ -14,7 +14,7 @@ import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/Inp
 import { useFullscreen } from '@polkadot/extension-polkagate/src/hooks';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { Checkbox2, TwoButtons } from '../../components';
+import { ActionContext, Checkbox2, TwoButtons } from '../../components';
 import { updateStorage } from '../../components/Loading';
 import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import useTranslation from '../../hooks/useTranslation';
@@ -22,6 +22,7 @@ import useTranslation from '../../hooks/useTranslation';
 export default function ForgotPasswordFS (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const onAction = useContext(ActionContext);
 
   useFullscreen();
 
@@ -36,8 +37,8 @@ export default function ForgotPasswordFS (): React.ReactElement {
   }, [setExtensionLock]);
 
   const onClose = useCallback(() => {
-    window.close();
-  }, []);
+    onAction('/');
+  }, [onAction]);
 
   const onCheckChange = useCallback(() => {
     setChecked(!isChecked);
@@ -78,17 +79,17 @@ export default function ForgotPasswordFS (): React.ReactElement {
             label={t('I acknowledge permanent account(s) deletion.')}
             labelStyle={{ fontSize: '14px' }}
             onChange={onCheckChange}
-            style={{ bottom: 75, pl: '5px', position: 'absolute' }}
+            style={{ bottom: '80px', pl: '35px', position: 'absolute' }}
           />
         </Grid>
-        <Grid container item sx={{ justifyContent: 'flex-end', mt: '5px' }}>
+        <Grid container justifyContent='center' sx={{ bottom: 0, height: '60px', ml: '33px', position: 'absolute', width: '615px' }}>
           <TwoButtons
             disabled={!isChecked}
             onPrimaryClick={onProceed}
             onSecondaryClick={onClose}
             primaryBtnText={t('Proceed')}
             secondaryBtnText={t('Cancel')}
-            width='39%'
+            width='100%'
           />
         </Grid>
       </Grid>
