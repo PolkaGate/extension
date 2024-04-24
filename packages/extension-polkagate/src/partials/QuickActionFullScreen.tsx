@@ -18,7 +18,7 @@ import { PoolStakingIcon } from '../components';
 import { useAccount, useApi, useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 import HistoryModal from '../popup/history/modal/HistoryModal';
-import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
+import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 
 interface Props {
   address: AccountId | string;
@@ -71,16 +71,9 @@ export default function QuickActionFullScreen ({ address, assetId, containerRef,
     });
   }, [account?.genesisHash, address, api, history]);
 
-  const goToCrowdLoans = useCallback(() => {
-    address && CROWDLOANS_CHAINS.includes(account?.genesisHash ?? '') &&
-      history.push({
-        pathname: `/crowdloans/${String(address)}`
-      });
-  }, [account?.genesisHash, address, history]);
-
   const goToGovernance = useCallback(() => {
     supportGov && windowOpen(`/governance/${address}/referenda`).catch(console.error);
-  }, [account?.genesisHash, address]);
+  }, [address, supportGov]);
 
   const goToHistory = useCallback(() => {
     setShowHistory(true);
@@ -159,15 +152,6 @@ export default function QuickActionFullScreen ({ address, assetId, containerRef,
         }
         onClick={goToSoloStaking}
         title={t('Solo Staking')}
-      />
-      <QuickActionButton
-        disabled={!CROWDLOANS_CHAINS.includes(account?.genesisHash ?? '')}
-        divider
-        icon={
-          <vaadin-icon icon='vaadin:piggy-bank-coin' style={{ height: '30px', color: `${CROWDLOANS_CHAINS.includes(account?.genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}` }} />
-        }
-        onClick={goToCrowdLoans}
-        title={t('Crowdloans')}
       />
       <QuickActionButton
         disabled={!account?.genesisHash || !supportGov}

@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faCoins, faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
+import { faCoins, faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
@@ -13,7 +13,7 @@ import React, { useCallback, useMemo } from 'react';
 import { PoolStakingIcon } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
-import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../../util/constants';
+import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../../util/constants';
 import { popupNumbers } from '..';
 
 interface Props {
@@ -93,13 +93,12 @@ export const TaskButton = ({ disabled, icon, mr = '25px', noBorderButton = false
   );
 };
 
-export default function CommonTasks({ address, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
+export default function CommonTasks ({ address, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
   const governanceDisabled = useMemo(() => !GOVERNANCE_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const stakingDisabled = useMemo(() => !STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
-  const crowdloanDisabled = useMemo(() => !CROWDLOANS_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const stakingIconColor = useMemo(() => stakingDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary, [stakingDisabled, theme.palette.action.disabledBackground, theme.palette.text.primary]);
 
@@ -133,10 +132,6 @@ export default function CommonTasks({ address, assetId, balance, genesisHash, se
   const goToPoolStaking = useCallback(() => {
     address && !stakingDisabled && openOrFocusTab(`/poolfs/${address}/`);
   }, [address, stakingDisabled]);
-
-  const goToCrowdLoans = useCallback(() => {
-    address && genesisHash && !crowdloanDisabled && openOrFocusTab(`/crowdloans/${address}/`);
-  }, [address, crowdloanDisabled, genesisHash]);
 
   const goToHistory = useCallback(() => {
     address && genesisHash && setDisplayPopup(popupNumbers.HISTORY);
@@ -227,20 +222,6 @@ export default function CommonTasks({ address, assetId, balance, genesisHash, se
           secondaryIconType='page'
           show={hasSoloStake || hasPoolStake}
           text={t('Stake in Pool')}
-        />
-        <TaskButton
-          disabled={crowdloanDisabled}
-          icon={
-            <FontAwesomeIcon
-              color={crowdloanDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary}
-              flip='horizontal'
-              fontSize='28px'
-              icon={faPiggyBank}
-            />
-          }
-          onClick={goToCrowdLoans}
-          secondaryIconType='page'
-          text={t('Crowdloans')}
         />
         <TaskButton
           disabled={!genesisHash}
