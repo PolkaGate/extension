@@ -4,8 +4,8 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import { Button, Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { InputFilter } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
@@ -22,7 +22,7 @@ interface Props {
 
 const DEFAULT_SELECTED_CHAINS_COUNT = 10;
 
-function ChainList({ anchorEl }: Props): React.ReactElement {
+function ChainList ({ anchorEl }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const allChains = useGenesisHashOptions(false);
@@ -32,6 +32,19 @@ function ChainList({ anchorEl }: Props): React.ReactElement {
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [searchedChain, setSearchedChain] = useState<DropdownOption[]>();
   const [selectedChains, setSelectedChains] = useState<Set<string>>(new Set());
+
+  const sortedChainsToShow = useMemo(() => [...allChains].sort((a, b) => {
+    const aInSet = selectedChains.has(a.value as string);
+    const bInSet = selectedChains.has(b.value as string);
+
+    if (aInSet && !bInSet) {
+      return -1; // Move 'a' before 'b'
+    } else if (!aInSet && bInSet) {
+      return 1; // Move 'b' before 'a'
+    } else {
+      return 0; // Keep the original order
+    }
+  }), [allChains, selectedChains]);
 
   useEffect(() => {
     const defaultSelectedGenesisHashes = DEFAULT_SELECTED_CHAINS.map(({ value }) => value as string);
@@ -101,15 +114,26 @@ function ChainList({ anchorEl }: Props): React.ReactElement {
     setSearchedChain([..._filtered]);
   }, [allChains]);
 
+  const onReset = useCallback(() => {
+    const defaultSelectedGenesisHashes = DEFAULT_SELECTED_CHAINS.map(({ value }) => value as string);
+
+    setSelectedChains(new Set(defaultSelectedGenesisHashes));
+    setStorage('selectedChains', defaultSelectedGenesisHashes).catch(console.error);
+    updateSavedAssetsInStorage();
+  }, [updateSavedAssetsInStorage]);
+
   return (
     <Grid container item sx={{ maxHeight: '650px', overflow: 'hidden', overflowY: 'scroll', transition: 'height 5000ms ease-in-out', width: '280px' }}>
-      <Grid container item justifyContent='center'>
-        <Typography fontSize='16px' fontWeight={500} pt='10px'>
+      <Grid container item justifyContent='flex-end'>
+        <Typography fontSize='16px' fontWeight={500} pt='10px' textAlign='center' width='100%'>
           {t('Select chains to view assets on')}
         </Typography>
+        <Button onClick={onReset} sx={{ '&:hover': { bgcolor: 'divider' }, color: theme.palette.secondary.main, fontSize: '12px', fontWeight: 300, mr: '10px', mt: '5px', p: 0, textTransform: 'none', width: 'fit-content' }} variant='text'>
+          {t('reset to default')}
+        </Button>
       </Grid>
-      <Divider sx={{ bgcolor: 'divider', height: '2px', my: '10px', width: '100%' }} />
-      {[...allChains.slice(0, DEFAULT_SELECTED_CHAINS_COUNT)].map((item, index) => (
+      <Divider sx={{ bgcolor: 'divider', height: '2px', my: '5px', width: '100%' }} />
+      {[...sortedChainsToShow.slice(0, DEFAULT_SELECTED_CHAINS_COUNT)].map((item, index) => (
         <ChainItem
           chain={item}
           disabled={!isTestnetEnabled && TEST_NETS.includes(item.value as string)}
@@ -141,7 +165,7 @@ function ChainList({ anchorEl }: Props): React.ReactElement {
             value={searchKeyword ?? ''}
           />
         </Grid>
-        {[...(searchedChain ?? allChains.slice(DEFAULT_SELECTED_CHAINS_COUNT))].map((item, index) => (
+        {[...(searchedChain ?? sortedChainsToShow.slice(DEFAULT_SELECTED_CHAINS_COUNT))].map((item, index) => (
           <ChainItem
             chain={item}
             disabled={!isTestnetEnabled && TEST_NETS.includes(item.value as string)}
