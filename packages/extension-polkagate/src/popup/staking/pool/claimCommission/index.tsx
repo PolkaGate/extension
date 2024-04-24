@@ -16,7 +16,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useApi, useChain, useDecimal, useFormatted, useProxies, useTranslation } from '../../../../hooks';
+import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
@@ -32,15 +32,12 @@ interface Props {
   setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function ClaimCommission({ address, pool, setShow, show }: Props): React.ReactElement {
+export default function ClaimCommission ({ address, pool, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const formatted = useFormatted(address);
-  const api = useApi(address);
-  const chain = useChain(address);
+  const { api, chain, decimal, formatted } = useInfo(address);
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
-  const decimal = useDecimal(address);
 
   const poolId = pool.poolId;
   const amount = useMemo(() => new BN(pool.rewardPool?.totalCommissionPending || 0), [pool.rewardPool?.totalCommissionPending]);
@@ -157,7 +154,7 @@ export default function ClaimCommission({ address, pool, setShow, show }: Props)
             style={{ pt: '5px' }}
             withFee
           />
-         <To
+          <To
             chain={chain}
             formatted={payee}
             label={t('Payee')}

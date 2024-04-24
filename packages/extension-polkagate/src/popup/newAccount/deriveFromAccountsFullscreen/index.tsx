@@ -10,13 +10,14 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useParams } from 'react-router';
 
 import { canDerive } from '@polkadot/extension-base/utils';
+import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { AccountContext, AccountNamePasswordCreation, ActionContext, Label, Password, Warning } from '../../../components';
+import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { deriveAccount, validateAccount, validateDerivationPath } from '../../../messaging';
 import { nextDerivationPath } from '../../../util/nextDerivationPath';
 import { AddressState } from '../../../util/types';
-import { FullScreenHeader } from '../../governance/FullScreenHeader';
 import DerivationPath from '../deriveAccount/DerivationPath';
 import AddressDropdownFullScreen from './AddressDropdownFullScreen';
 
@@ -28,7 +29,7 @@ function DeriveFromAccounts (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
   const { address: parentAddress } = useParams<AddressState>();
   const defaultPath = useMemo(() => nextDerivationPath(accounts, parentAddress), [accounts, parentAddress]);
   const [suriPath, setSuriPath] = useState<null | string>(defaultPath);
@@ -37,9 +38,6 @@ function DeriveFromAccounts (): React.ReactElement {
   const [parentPassword, setParentPassword] = useState<string>('');
   const [isProperParentPassword, setIsProperParentPassword] = useState(false);
   const [pathError, setPathError] = useState('');
-
-  const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
-  const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
 
   const allowSoftDerivation = useMemo(() => {
     const parent = accounts.find(({ address }) => address === parentAddress);
@@ -132,18 +130,13 @@ function DeriveFromAccounts (): React.ReactElement {
     onAction('/');
   }, [onAction]);
 
-  // TODO: FixMe
-  const onPassword = useCallback(() => {
-
-  }, []);
-
   return (
-    <Grid bgcolor={indexBgColor} container item justifyContent='center'>
+    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll', position: 'relative' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', position: 'relative' }}>
         <Grid container item sx={{ display: 'block', mb: '20px', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>

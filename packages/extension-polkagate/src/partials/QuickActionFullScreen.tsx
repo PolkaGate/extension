@@ -9,7 +9,7 @@ import { faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon, Boy as BoyIcon } from '@mui/icons-material';
 import { Box, ClickAwayListener, Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -17,13 +17,15 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { PoolStakingIcon } from '../components';
 import { useAccount, useApi, useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
+import HistoryModal from '../popup/history/modal/HistoryModal';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 
 interface Props {
   address: AccountId | string;
   quickActionOpen?: string | boolean;
   setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
-  containerRef: React.RefObject<HTMLElement>
+  containerRef: React.RefObject<HTMLElement>;
+  assetId?: number | undefined
 }
 
 type QuickActionButtonType = {
@@ -36,24 +38,24 @@ type QuickActionButtonType = {
 
 const ARROW_ICON_SIZE = 17;
 const ACTION_ICON_SIZE = '27px';
-const TITLE_FONT_SIZE = 13;
 
-export default function QuickActionFullScreen({ address, containerRef, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
+export default function QuickActionFullScreen ({ address, assetId, containerRef, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
-
   const account = useAccount(address);
   const api = useApi(address);
 
-  const borderColor = useMemo(() => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)', [theme.palette.mode]);
+  const [showHistory, setShowHistory] = useState<boolean>();
+
+  const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
 
   const handleOpen = useCallback(() => setQuickActionOpen(String(address)), [address, setQuickActionOpen]);
   const handleClose = useCallback(() => quickActionOpen === address && setQuickActionOpen(undefined), [address, quickActionOpen, setQuickActionOpen]);
 
   const goToSend = useCallback(() => {
-    address && account?.genesisHash && windowOpen(`/send/${String(address)}/undefined`).catch(console.error);
-  }, [account?.genesisHash, address]);
+    address && account?.genesisHash && windowOpen(`/send/${String(address)}/${assetId || ''}`).catch(console.error);
+  }, [account?.genesisHash, address, assetId]);
 
   const goToPoolStaking = useCallback(() => {
     address && STAKING_CHAINS.includes(account?.genesisHash ?? '') && history.push({
@@ -76,11 +78,13 @@ export default function QuickActionFullScreen({ address, containerRef, quickActi
       });
   }, [account?.genesisHash, address, history]);
 
-  const goToGovernanceOrHistory = useCallback(() => {
-    GOVERNANCE_CHAINS.includes(account?.genesisHash ?? '')
-      ? windowOpen(`/governance/${address}/referenda`).catch(console.error)
-      : account?.genesisHash && history.push({ pathname: `/history/${String(address)}` });
-  }, [account?.genesisHash, address, history]);
+  const goToGovernance = useCallback(() => {
+    supportGov && windowOpen(`/governance/${address}/referenda`).catch(console.error);
+  }, [account?.genesisHash, address]);
+
+  const goToHistory = useCallback(() => {
+    setShowHistory(true);
+  }, []);
 
   const nullF = useCallback(() => null, []);
 
@@ -89,7 +93,7 @@ export default function QuickActionFullScreen({ address, containerRef, quickActi
   const QuickActionButton = ({ disabled, divider, icon, onClick, title }: QuickActionButtonType) => {
     return (
       <>
-        <Grid alignItems='center' container direction='column' display='flex' item justifyContent='center' onClick={!disabled ? onClick : nullF} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : borderColor }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minWidth: '80px', p: '0 5px', width: 'fit-content' }}>
+        <Grid alignItems='center' container direction='column' display='flex' item justifyContent='center' onClick={!disabled ? onClick : nullF} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minWidth: '80px', p: '0 5px', width: 'fit-content' }}>
           <Grid alignItems='center' container height='40px' item justifyContent='center' width='fit-content'>
             {icon}
           </Grid>
@@ -166,6 +170,22 @@ export default function QuickActionFullScreen({ address, containerRef, quickActi
         title={t('Crowdloans')}
       />
       <QuickActionButton
+        disabled={!account?.genesisHash || !supportGov}
+        divider
+        icon={
+          <FontAwesomeIcon
+            color={
+              supportGov
+                ? theme.palette.text.primary
+                : theme.palette.action.disabledBackground
+            }
+            icon={faVoteYea}
+            style={{ height: ACTION_ICON_SIZE }}
+          />}
+        onClick={goToGovernance}
+        title={t('Governance')}
+      />
+      <QuickActionButton
         disabled={!account?.genesisHash}
         icon={
           <FontAwesomeIcon
@@ -174,11 +194,11 @@ export default function QuickActionFullScreen({ address, containerRef, quickActi
                 ? theme.palette.text.primary
                 : theme.palette.action.disabledBackground
             }
-            icon={GOVERNANCE_CHAINS.includes(account?.genesisHash ?? '') ? faVoteYea : faHistory}
+            icon={faHistory}
             style={{ height: ACTION_ICON_SIZE }}
           />}
-        onClick={goToGovernanceOrHistory}
-        title={t<string>(GOVERNANCE_CHAINS.includes(account?.genesisHash ?? '') ? 'Governance' : 'History')}
+        onClick={goToHistory}
+        title={t('History')}
       />
     </Grid>
   );
@@ -205,6 +225,12 @@ export default function QuickActionFullScreen({ address, containerRef, quickActi
           </Slide>
         </Grid>
       </ClickAwayListener>
+      {showHistory &&
+        <HistoryModal
+          address={String(address)}
+          setDisplayPopup={setShowHistory}
+        />
+      }
     </Grid>
   );
 }

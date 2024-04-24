@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 
 import useIsExtensionPopup from '../../hooks/useIsExtensionPopup';
-import HomePageFullScreen from '../homeFullScreen';
+import HomePageFullScreen from '../../fullscreen/homeFullScreen';
 import Home from '.';
 
 export default function ManageHome (): React.ReactElement {

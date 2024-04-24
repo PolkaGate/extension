@@ -8,7 +8,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { getSubstrateAddress } from '../util/utils';
 import { useAccount } from '.';
 
-export default function useAccountName (address: string | AccountId | undefined): string | undefined {
+export default function useAccountName(address: string | AccountId | undefined): string | undefined {
   const [name, setName] = useState<string | undefined>();
   const substrateAddress = getSubstrateAddress(address);
 

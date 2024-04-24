@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { toCamelCase } from '../popup/governance/utils/util';
+import { toCamelCase } from '../fullscreen/governance/utils/util';
 import allChains from './chains';
 import { sanitizeChainName } from './utils';
 

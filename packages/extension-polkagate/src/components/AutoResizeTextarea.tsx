@@ -12,9 +12,10 @@ interface Props {
   onChange?: (value: string) => void;
   value?: string;
   style?: React.CSSProperties | undefined;
+  width?: string;
 }
 
-export default function AutoResizeTextarea({ label, maxRows = 3, onChange, style, value }: Props): React.ReactElement<Props> {
+export default function AutoResizeTextarea ({ label, maxRows = 3, onChange, style, value, width = '327px' }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const _onChange = useCallback(
@@ -29,7 +30,8 @@ export default function AutoResizeTextarea({ label, maxRows = 3, onChange, style
       label={label}
       style={style}
     >
-      <Grid container
+      <Grid
+        container
         sx={{
           '> ::-webkit-scrollbar': { display: 'none', width: 0 },
           '> :focus': { outline: `2px solid ${theme.palette.action.focus}` }
@@ -53,7 +55,7 @@ export default function AutoResizeTextarea({ label, maxRows = 3, onChange, style
             padding: '0 10px',
             resize: 'none',
             scrollbarWidth: 'none',
-            width: '327px'
+            width
           }}
         />
       </Grid>

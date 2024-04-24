@@ -6,8 +6,11 @@
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
+import { EXTRA_PRICE_IDS } from '../api/getPrices';
+import { TEST_NETS } from '../constants';
 import getPoolAccounts from '../getPoolAccounts';
-import { closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
+import { balancify, closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
+
 
 async function getPooledBalance (api, address) {
   const response = await api.query.nominationPools.poolMembers(address);
@@ -44,7 +47,7 @@ async function getPooledBalance (api, address) {
   return active.add(rewards).add(unlockingValue);
 }
 
-async function getTotalBalance (chainName, addresses) {
+async function getBalances (chainName, addresses) {
   const chainEndpoints = getChainEndpoints(chainName);
 
   const { api, connections } = await fastestEndpoint(chainEndpoints, false);
@@ -52,36 +55,49 @@ async function getTotalBalance (chainName, addresses) {
   if (api.isConnected && api.derive.balances) {
     const requests = addresses.map(async (address) => {
       const balances = await api.derive.balances.all(address);
-      let totalBalance = balances.freeBalance.add(balances.reservedBalance);
+      let soloTotal = BN_ZERO;
+      let pooledBalance = BN_ZERO;
 
       if (api.query.nominationPools) {
-        const pooledBalance = await getPooledBalance(api, address);
-
-        totalBalance = totalBalance.add(pooledBalance);
+        pooledBalance = await getPooledBalance(api, address);
       }
 
-      return { address, totalBalance };
+      if (api.query.staking?.ledger) {
+        const ledger = await api.query.staking.ledger(address);
+
+        if (ledger.isSome) {
+          soloTotal = ledger?.unwrap()?.total?.toString();
+        }
+      }
+
+      return { address, balances, pooledBalance, soloTotal };
     });
 
-    return { api, balances: await Promise.all(requests), connectionsToBeClosed: connections };
+    return { api, balanceInfo: await Promise.all(requests), connectionsToBeClosed: connections };
   }
 }
 
 async function getAssetOnRelayChain (addresses, chainName) {
   const results = {};
 
-  await getTotalBalance(chainName, addresses)
-    .then(({ api, balances, connectionsToBeClosed }) => {
-      balances.forEach(({ address, totalBalance }) => {
+  await getBalances(chainName, addresses)
+    .then(({ api, balanceInfo, connectionsToBeClosed }) => {
+      balanceInfo.forEach(({ address, balances, pooledBalance, soloTotal }) => {
+        const totalBalance = balances.freeBalance.add(balances.reservedBalance).add(pooledBalance);
+
         if (totalBalance.isZero()) {
           return undefined;
         }
 
+        const genesisHash = api.genesisHash.toString();
+        const priceId = TEST_NETS.includes(genesisHash) ? undefined : EXTRA_PRICE_IDS[chainName] || chainName.toLowerCase(); // based on the fact that relay chains price id is the same as their sanitized names,except for testnets and some other single asset chains
+
         results[address] = [{ // since some chains may have more than one asset hence we use an array here! even thought its not needed for relay chains but just to be as a general rule.
+          balanceDetails: balancify(balances, pooledBalance, soloTotal),
           chainName,
           decimal: api.registry.chainDecimals[0],
-          genesisHash: api.genesisHash.toString(),
-          priceId: chainName, // based on the fact that relay chains price id is the same as their sanitized names
+          genesisHash,
+          priceId,
           token: api.registry.chainTokens[0],
           totalBalance: String(totalBalance)
         }];

@@ -5,7 +5,7 @@ import { createWsEndpoints, externalLinks } from '@polkagate/apps-config';
 import { createAssets } from '@polkagate/apps-config/assets';
 
 import { Chain } from '../../../extension-chains/src/types';
-import { toCamelCase } from '../popup/governance/utils/util';
+import { toCamelCase } from '../fullscreen/governance/utils/util';
 import getNetworkMap from './getNetworkMap';
 import { sanitizeChainName } from './utils';
 

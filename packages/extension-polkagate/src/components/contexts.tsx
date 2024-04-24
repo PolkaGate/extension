@@ -3,14 +3,13 @@
 
 import type { AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
-import type { AccountsAssetsContextType, AlertContextType,APIsContext, CurrencyContextType, FetchingRequests, PricesContextType, ReferendaContextType } from '../util/types';
+import type { AccountsAssetsContextType, AlertContextType,APIsContext, CurrencyContextType, FetchingRequests, ReferendaContextType } from '../util/types';
 
 import React from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const noop = (): void => undefined;
+import { noop } from '../util/utils';
 
 const AccountContext = React.createContext<AccountsContext>({ accounts: [], hierarchy: [], master: undefined });
 const AccountsAssetsContext = React.createContext<AccountsAssetsContextType>({ accountsAssets: undefined, setAccountsAssets: noop });
@@ -20,7 +19,6 @@ const AlertContext = React.createContext<AlertContextType>({ alerts: [], setAler
 const AuthorizeReqContext = React.createContext<AuthorizeRequest[]>([]);
 const CurrencyContext = React.createContext<CurrencyContextType>({ currency: undefined, setCurrency: noop });
 const FetchingContext = React.createContext<FetchingRequests>({ fetching: {}, set: noop });
-const PricesContext = React.createContext<PricesContextType>({ prices: undefined, setPrices: noop });
 const ReferendaContext = React.createContext<ReferendaContextType>({ refs: {}, setRefs: noop });
 const MediaContext = React.createContext<boolean>(false);
 const MetadataReqContext = React.createContext<MetadataRequest[]>([]);
@@ -39,7 +37,6 @@ export {
   FetchingContext,
   MediaContext,
   MetadataReqContext,
-  PricesContext,
   ReferendaContext,
   SettingsContext,
   SigningReqContext,

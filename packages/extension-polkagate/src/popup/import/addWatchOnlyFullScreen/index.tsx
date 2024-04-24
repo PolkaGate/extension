@@ -10,16 +10,17 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { Chain } from '@polkadot/extension-chains/types';
+import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { ActionContext, AddressInput, ProxyTable, SelectChain, TwoButtons } from '../../../components';
+import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useApiWithChain, useFullscreen, useGenesisHashOptions, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata } from '../../../messaging';
 import { Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
 import { ProxyItem } from '../../../util/types';
-import { FullScreenHeader } from '../../governance/FullScreenHeader';
 
 export interface AccountInfo {
   address: string;
@@ -41,8 +42,6 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
 
   const api = useApiWithChain(chain);
   const genesisOptions = useGenesisHashOptions();
-  const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
-  const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
   const disabledItems = useMemo(() => (['Allow use on any chain']), []);
 
   useEffect(() => {
@@ -77,7 +76,7 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
     }
   }, [chain?.genesisHash, name, onAction, realAddress]);
 
-  const onCancel = useCallback(() => onAction('/'), [onAction]);
+  const onCancel = useCallback(() => window.close(), []);
 
   const onNameChange = useCallback((name: string | null) => setName(name), []);
 
@@ -89,12 +88,12 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
   }, []);
 
   return (
-    <Grid bgcolor={indexBgColor} container item justifyContent='center'>
+    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>

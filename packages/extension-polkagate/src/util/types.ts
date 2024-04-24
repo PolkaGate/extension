@@ -19,9 +19,9 @@ import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { Balance } from '@polkadot/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { SavedAssets } from '../hooks/useAssetsOnChains2';
-import { LatestReferenda } from '../popup/governance/utils/types';
-import { CurrencyItemType } from '../popup/homeFullScreen/partials/Currency';
+import { LatestReferenda } from '../fullscreen/governance/utils/types';
+import { CurrencyItemType } from '../fullscreen/homeFullScreen/partials/Currency';
+import { SavedAssets } from '../hooks/useAssetsBalances';
 
 export interface TransactionStatus {
   blockNumber: string | null;
@@ -150,6 +150,7 @@ export interface TransactionDetail extends TxResult {
   amount?: string;
   date: number;
   to?: NameAddress;
+  token?: string;
   throughProxy?: NameAddress;
 }
 
@@ -159,6 +160,8 @@ export interface TxInfo extends TransactionDetail {
   decimal?: number;
   recipientChainName?: string;
   token?: string;
+  poolName?: string;
+  validatorsCount?: number;
 }
 
 export interface Auction {
@@ -509,6 +512,25 @@ export interface RewardInfo {
   stash: string
 }
 
+export interface SubscanClaimedRewardInfo {
+  era: number,
+  pool_id: number,
+  account_display: { address: string },
+  amount: string,
+  block_timestamp: number,
+  event_index: string,
+  module_id: string,
+  event_id: string,
+  extrinsic_index: string
+}
+
+export interface ClaimedRewardInfo {
+  era: number;
+  amount: BN;
+  date?: string;
+  timeStamp: number;
+}
+
 export interface AlertType {
   text: string;
   severity: 'error' | 'warning' | 'info' | 'success'
@@ -526,16 +548,6 @@ export interface Proxy {
 export interface ProxyItem {
   proxy: Proxy;
   status: 'current' | 'new' | 'remove';
-}
-
-export interface PriceAll {
-  balances: DeriveBalancesAll;
-  decimals: number;
-  price: number;
-}
-
-export interface AddressPriceAll {
-  [k: string]: PriceAll;
 }
 
 export interface RenameAcc {
@@ -579,56 +591,30 @@ export interface Step {
   total: string | number;
   style?: SxProps<Theme> | undefined;
 }
-export interface TokenPrice {
-  [chainName: string]: Price;
-}
-export interface Prices {
-  prices: Record<string, Record<string, number>>;
-  date: number;
+
+interface PriceValue {
+  value: number,
+  change: number
 }
 
-export interface PricesType { // deprecated
-  [key: string]: { price: number, change: number };
-}
-
-export interface Prices2 { // deprecated
-  date: number;
-  prices: PricesType;
-  currencyCode: string;
-}
-
-interface PriceValue { value: number, change: number }
-
-export interface PricesType3 {
+export interface PricesType {
   [priceId: string]: PriceValue;
 }
 
-export interface Prices3 {
+export interface Prices {
   date: number;
-  prices: PricesType3;
+  prices: PricesType;
   currencyCode?: string;
 }
 
 export interface PricesInCurrencies {
-  [currencyCode: string]: { date: number; prices: PricesType3; };
+  [currencyCode: string]: { date: number; prices: PricesType; };
 }
 
 export interface Price {
-  amount: number;
-  chainName: string;
-  date: number;
-  token?: string;
-}
-
-export interface PricesContextType {
-  prices: Prices2[] | undefined;
-  setPrices: (prices: Prices2[]) => void;
-}
-
-export interface Price2 {
   price: number;
-  timestamp: number;
-  chainName: string;
+  priceChainName: string;
+  priceDate: number;
 }
 
 export interface SavedBalances {
@@ -645,7 +631,9 @@ export interface SavedIdentities {
 }
 
 export interface BalancesInfo extends DeriveBalancesAll {
+  assetId?: number;
   chainName: string;
+  currencyId?: unknown;
   decimal: number;
   token: string;
   date: number;
@@ -758,7 +746,6 @@ export interface ReferendaContextType {
   setRefs: (refs: LatestRefs) => void;
 }
 
-export interface AssetsOnOtherChains { assetId?: number, totalBalance: BN, chainName: string, decimal: number, genesisHash: string, price: number | undefined, token: string }
 export interface AccountAssets {
   assetId: number | undefined;
   chainName: string;
@@ -794,9 +781,9 @@ export interface AlertContextType {
 
 export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }
 export interface SoloSettings {
-  controllerId: AccountId | string | undefined,
+  controllerId?: AccountId | string | undefined,
   payee: Payee,
-  stashId: AccountId | string | undefined,
+  stashId?: AccountId | string | undefined,
 }
 
 export interface DropdownOption {

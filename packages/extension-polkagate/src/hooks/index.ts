@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export { default as useAccount } from './useAccount';
-export { default as useAssets } from './useAssets';
+export { default as useAssetHubAssets } from './useAssetHubAssets';
 export { default as useReferendum } from './useReferendum';
 export { default as useAccountDisplay } from './useAccountDisplay';
 export { default as useAccountLocks } from './useAccountLocks';
@@ -14,7 +14,9 @@ export { default as useCurrentApprovalThreshold } from './useCurrentApprovalThre
 export { default as useCurrentSupportThreshold } from './useCurrentSupportThreshold';
 export { default as useAccountName } from './useAccountName';
 export { default as useAccountInfo } from './useAccountInfo';
+export { default as useAccountInfo2 } from './useAccountInfo2';
 export { default as useApi } from './useApi';
+export { default as useInfo } from './useInfo';
 export { default as useMerkleScience } from './useMerkleScience';
 export { default as useAuction } from './useAuction';
 export { default as useApiWithChain } from './useApiWithChain';
@@ -55,9 +57,8 @@ export { default as useMinToReceiveRewardsInSolo } from './useMinToReceiveReward
 export { default as useOutsideClick } from './useOutsideClick';
 export { default as usePreImage } from './usePreImage';
 export { default as usePreImageHashes } from './usePreImageHashes';
-export { default as usePrice } from './usePrice';
+export { default as useTokenPrice } from './useTokenPrice';
 export { default as usePrices } from './usePrices';
-export { default as usePrices3 } from './usePrices3';
 export { default as useProxies } from './useProxies';
 export { default as usePool } from './usePool';
 export { default as usePools } from './usePools';
@@ -80,9 +81,16 @@ export { default as usePendingRewards } from './usePendingRewards';
 export { default as useManifest } from './useManifest';
 export { default as useIsLoginEnabled } from './useIsLoginEnabled';
 export { default as useIsTestnetEnabled } from './useIsTestnetEnabled';
-export { default as useAssetsOnChains } from './useAssetsOnChains';
-export { default as useAssetsOnChains2 } from './useAssetsOnChains2';
+export { default as useAssetsBalances } from './useAssetsBalances';
 export { default as useAccountAssets } from './useAccountAssets';
 export { default as useCurrency } from './useCurrency';
-export { default as usePrice2 } from './usePrice2';
 export { default as usePriceIds } from './usePriceIds';
+export { default as useYouHave } from './useYouHave';
+export { default as useAccountIdOrName } from './useAccountIdOrName';
+export { default as useAccountAssetsOptions } from './useAccountAssetsOptions';
+export { default as useMinToReceiveRewardsInSolo2 } from './useMinToReceiveRewardsInSolo2';
+export { default as useAccountsOrder } from './useAccountsOrder';
+export { default as useNativeTokenPrice } from './useNativeTokenPrice';
+export { default as useActiveValidators } from './useActiveValidators';
+export { default as useEstimatedFee } from './useEstimatedFee';
+export { default as useIsExtensionPopup } from './useIsExtensionPopup';

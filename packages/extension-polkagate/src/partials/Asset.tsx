@@ -32,7 +32,7 @@ interface Props {
   style?: SxProps<Theme> | undefined;
 }
 
-function Asset({ api, balance, address, balanceLabel, balanceType, balances, fee, style = { pt: '10px' } }: Props): React.ReactElement<Props> {
+function Asset ({ api, balance, address, balanceLabel, balanceType, balances, fee, style = { pt: '10px' } }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const chain = useChain(address);
@@ -46,10 +46,11 @@ function Asset({ api, balance, address, balanceLabel, balanceType, balances, fee
         <Grid container item xs={1.5}>
           <ChainLogo genesisHash={chain?.genesisHash} size={31} />
         </Grid>
-        <Grid container item sx={{ fontSize: '16px', fontWeight: 300 }} xs={5}>
-          <Grid item>
+        <Grid container direction='column' item justifyContent='flex-start' sx={{ fontSize: '16px', fontWeight: 300 }} xs={5}>
+          <Grid item width='fit-content'>
             {balanceLabel}
-            <br />
+          </Grid>
+          <Grid item width='fit-content'>
             {t('Fee')}
           </Grid>
         </Grid>

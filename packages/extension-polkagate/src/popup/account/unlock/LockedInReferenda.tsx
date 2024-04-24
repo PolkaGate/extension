@@ -15,10 +15,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance, ShowValue } from '../../../components';
-import { useAccountLocks, useApi, useChain, useCurrentBlockNumber, useDecimal, useFormatted, useHasDelegated, usePrice, useToken, useTranslation } from '../../../hooks';
+import { useAccountLocks, useApi, useChain, useCurrentBlockNumber, useDecimal, useFormatted, useHasDelegated, useToken, useTokenPrice, useTranslation } from '../../../hooks';
 import { Lock } from '../../../hooks/useAccountLocks';
 import { TIME_TO_SHAKE_ICON } from '../../../util/constants';
 import blockToDate from '../../crowdloans/partials/blockToDate';
@@ -30,13 +31,11 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-const noop = () => null;
-
 export default function LockedInReferenda({ address, refresh, setRefresh }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
-  const price = usePrice(address);
+  const { price } = useTokenPrice(address);
   const formatted = useFormatted(address);
   const decimal = useDecimal(address);
   const chain = useChain(address);
@@ -196,7 +195,7 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
               <FormatPrice
                 amount={totalLocked}
                 decimals={decimal}
-                price={price?.amount}
+                price={price}
               />
             </Grid>
           </Grid>

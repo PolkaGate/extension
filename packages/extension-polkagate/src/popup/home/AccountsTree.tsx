@@ -7,7 +7,7 @@ import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/
 
 import { Backdrop, Container, Grid, useTheme } from '@mui/material';
 import { TFunction } from '@polkagate/apps-config/types';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { PButton } from '../../components';
 import { useActiveRecoveries, useApi, useTranslation } from '../../hooks';
@@ -24,7 +24,7 @@ interface Props extends AccountWithChildren {
   setHasActiveRecovery: React.Dispatch<React.SetStateAction<string | null | undefined>>;
 }
 
-export const label = (account: AccountJson, parentNameSuri: string, t: TFunction): string | undefined => {
+export const label = (account: AccountJson | undefined, parentName: string | undefined, t: TFunction): string | undefined => {
   if (account?.isHardware) {
     return t('Ledger');
   }
@@ -38,7 +38,7 @@ export const label = (account: AccountJson, parentNameSuri: string, t: TFunction
   }
 
   if (account?.parentAddress) {
-    return t('Derived from {{parentNameSuri}}', { replace: { parentNameSuri } });
+    return t('Derived from {{parentName}}', { replace: { parentName } });
   }
 
   return undefined;

@@ -10,7 +10,6 @@ export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 export const DEFAULT_CHAIN_INDEX = 1;
 export const DEFAULT_MAX_COMMISSION = 10;
 export const DEFAULT_LIMIT_OF_VALIDATORS_PER_OPERATOR = 2;
-export const MILLISECONDS_TO_UPDATE = 5 * 60 * 1000; // to update price
 // export const EXTENSION_FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf2WHD0oVR0NS7tW6C1U025H1XBEZXqwxvFvPhcoFa18eHQiA/viewform';
 export const BALANCES_VALIDITY_PERIOD = 5 * 60 * 1000; // to show outdated balance i grey
 export const ENVIRONMENT = 'production'; // development or production
@@ -37,6 +36,7 @@ export const MAX_HISTORY_RECORD_TO_SHOW = 40;
 export const MAX_AMOUNT_LENGTH = 15;
 export const TIME_TO_SHAKE_ICON = 5000;// msec
 export const CHAINS_WITH_BLACK_LOGO = ['statescan', 'Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'Pendulum', 'Pendulum chain', 'Zeitgeist', 'Westend Collectives'];
+export const TOKENS_WITH_BLACK_LOGO = ['KSM', 'PEN', 'ZTG'];
 export const CHAINS_ON_POLKAHOLIC = ['Pendulum', 'Pendulum chain', 'Amplitude', 'Amplitude chain'];
 export const DISABLED_NETWORKS = ['3DP network', 'xx network', 'Polkadex Mainnet', 'Stafi'];
 export const RELAY_CHAINS = [
@@ -173,7 +173,7 @@ export const PASS_MAP = {
 };
 
 // export const DATE_OPTIONS = { year: '2-digit', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-export const DATE_OPTIONS = { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+export const DATE_OPTIONS = { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' } as Intl.DateTimeFormatOptions;
 
 export const DEFAULT_FILTERS = {
   limitOfValidatorsPerOperator: { check: false, value: 2 },
@@ -224,3 +224,5 @@ export const USD_CURRENCY = {
   currency: 'Dollar',
   sign: '$'
 };
+
+export const FULLSCREEN_WIDTH = '900px';

@@ -5,7 +5,7 @@
 
 import { Avatar, CircularProgress, FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
-import React, { useCallback, useEffect, useState, useLayoutEffect } from 'react';
+import React, { useCallback, useLayoutEffect,useState } from 'react';
 
 import { CHAINS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
 
@@ -51,7 +51,6 @@ const BootstrapInput = styled(InputBase)<{ isDisabled?: boolean }>(({ isDisabled
 
 function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = false, isItemsLoading, label, onChange, options, showIcons = true, showLogo = false, value }: Props) {
   const theme = useTheme();
-
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<string>();
 

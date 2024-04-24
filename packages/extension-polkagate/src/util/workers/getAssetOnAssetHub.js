@@ -6,33 +6,7 @@
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
-
-async function toGetNativeToken (addresses, api, chainName) {
-  const tokenName = chainName.replace('AssetHub', '');
-  const _result = {};
-
-  const balances = await Promise.all(addresses.map((address) => api.derive.balances.all(address)));
-
-  addresses.forEach((address, index) => {
-    const totalBalance = balances[index].freeBalance.add(balances[index].reservedBalance);
-
-    if (totalBalance.isZero()) {
-      return;
-    }
-
-    _result[address] = [{ // since some chains may have more than one asset hence we use an array here! even thought its not needed for relay chains but just to be as a general rule.
-      chainName,
-      decimal: api.registry.chainDecimals[0],
-      genesisHash: api.genesisHash.toString(),
-      priceId: tokenName, // based on the fact that asset hubs native token price id is the same as their token names
-      token: api.registry.chainTokens[0],
-      totalBalance: String(totalBalance)
-    }];
-  });
-
-  return _result;
-}
+import { closeWebsockets, fastestEndpoint, getChainEndpoints, toGetNativeToken } from './utils';
 
 async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
   const endpoints = getChainEndpoints(chainName);
@@ -60,14 +34,22 @@ async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
         return;
       }
 
+      const parsedAccountAsset = JSON.parse(JSON.stringify(_asset));
+      const isFrozen = parsedAccountAsset?.status === 'Frozen';
+      const _balance = String(balance);
+
       const item = {
         assetId: asset.id,
+        availableBalance: isFrozen ? 0 : _balance,
         chainName,
         decimal,
         genesisHash: api.genesisHash.toString(),
+        isAsset: true,
+        lockedBalance: isFrozen ? _balance : 0,
         priceId: asset?.priceId,
+        reservedBalance: isFrozen ? balance : 0, // JUST to comply with the rule that total=available + reserve
         token,
-        totalBalance: String(balance)
+        totalBalance: _balance
       };
 
       const _index = addresses[index];

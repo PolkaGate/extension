@@ -1,0 +1,252 @@
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+/* eslint-disable react/jsx-max-props-per-line */
+
+import type { Balance } from '@polkadot/types/interfaces';
+
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
+import Asset from '@polkadot/extension-polkagate/src/partials/Asset';
+import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
+import { MAX_AMOUNT_LENGTH } from '@polkadot/extension-polkagate/src/util/constants';
+import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util/utils';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+
+import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
+import { useBalances, useInfo, usePool, useTranslation } from '../../../../hooks';
+import { Inputs } from '../../Entry';
+import Confirmation from '../../partials/Confirmation';
+import Review from '../../partials/Review';
+import { ModalTitle } from '../../solo/commonTasks/configurePayee';
+import { MODAL_IDS } from '..';
+
+interface Props {
+  address: string | undefined;
+  setShow: React.Dispatch<React.SetStateAction<number>>;
+  show: boolean;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export const STEPS = {
+  INDEX: 1,
+  REVIEW: 2,
+  WAIT_SCREEN: 3,
+  CONFIRM: 4,
+  PROXY: 100
+};
+
+export default function StakeExtra ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const { api, chain, decimal, formatted, token } = useInfo(address);
+  const balances = useBalances(address);
+  const pool = usePool(address);
+
+  const [step, setStep] = useState(STEPS.INDEX);
+  const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
+  const [inputs, setInputs] = useState<Inputs>();
+
+  const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
+  const [amount, setAmount] = useState<string | undefined>();
+  const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
+  const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
+  const [nextBtnDisabled, setNextBtnDisabled] = useState<boolean>(true);
+
+  const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
+  const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
+
+  useEffect(() => {
+    if (amount && api && staked && amountAsBN) {
+      const call = api.tx.nominationPools.bondExtra;
+      const params = [{ FreeBalance: amountAsBN.toString() }];
+
+      const totalStakeAfter = staked.add(amountAsBN);
+
+      const extraInfo = {
+        action: 'Pool Staking',
+        amount,
+        subAction: 'stake extra',
+        totalStakeAfter
+      };
+
+      setInputs({
+        call,
+        extraInfo,
+        params
+      });
+    }
+  }, [amount, amountAsBN, api, staked]);
+
+  const onMaxAmount = useCallback(() => {
+    if (!api || !availableBalance || !estimatedMaxFee) {
+      return;
+    }
+
+    const ED = api.consts.balances.existentialDeposit as unknown as BN;
+    const max = new BN(availableBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
+    const maxToHuman = amountToHuman(max.toString(), decimal);
+
+    maxToHuman && setAmount(maxToHuman);
+  }, [api, availableBalance, decimal, estimatedMaxFee]);
+
+  const bondAmountChange = useCallback((value: string) => {
+    if (!decimal) {
+      return;
+    }
+
+    if (value.length > decimal - 1) {
+      console.log(`The amount digits is more than decimal:${decimal}`);
+
+      return;
+    }
+
+    setAmount(value.slice(0, MAX_AMOUNT_LENGTH));
+  }, [decimal]);
+
+  useEffect(() => {
+    if (!balances) {
+      return;
+    }
+
+    setAvailableBalance(balances.availableBalance);
+  }, [balances]);
+
+  useEffect(() => {
+    if (!api || !availableBalance || !formatted) {
+      return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api.createType('Balance', BN_ONE));
+    }
+
+    amountAsBN && api.tx.nominationPools.bondExtra({ FreeBalance: amountAsBN.toString() }).paymentInfo(formatted).then((i) => {
+      setEstimatedFee(api.createType('Balance', i?.partialFee));
+    });
+
+    amountAsBN && api.tx.nominationPools.bondExtra({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
+      setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
+    });
+  }, [formatted, api, availableBalance, amount, decimal, amountAsBN]);
+
+  useEffect(() => {
+    if (!amountAsBN || !api || !availableBalance) {
+      return;
+    }
+
+    const ED = api.consts.balances.existentialDeposit as unknown as BN;
+    const isAmountInRange = amountAsBN.lt(availableBalance.sub(ED.muln(2)).sub(estimatedMaxFee || BN_ZERO));
+
+    setNextBtnDisabled(!amount || amount === '0' || !isAmountInRange || !pool || pool?.member?.points === '0');
+  }, [amountAsBN, availableBalance, decimal, estimatedMaxFee, amount, api, pool]);
+
+  const Warn = ({ iconDanger, isDanger, text }: { text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
+    <Grid container sx={{ 'div.danger': { mr: '10px', mt: 0, pl: '10px' }, mt: '25px' }}>
+      <Warning
+        fontWeight={400}
+        iconDanger={iconDanger}
+        isDanger={isDanger}
+        theme={theme}
+      >
+        {text}
+      </Warning>
+    </Grid>
+  );
+
+  const onCancel = useCallback(() => {
+    setStep(STEPS.INDEX);
+    setShow(MODAL_IDS.NONE);
+  }, [setShow]);
+
+  const onNext = useCallback(() => {
+    setStep(STEPS.REVIEW);
+  }, []);
+
+  return (
+    <DraggableModal minHeight={615} onClose={onCancel} open={show}>
+      <Grid container>
+        {step !== STEPS.WAIT_SCREEN &&
+          <ModalTitle
+            icon={faPlus}
+            onCancel={onCancel}
+            setStep={setStep}
+            step={step}
+            text={t('Stake extra')}
+          />
+        }
+        {step === STEPS.INDEX &&
+          <>
+            {pool?.member?.points === '0' &&
+              <Warn isDanger text={t('The account is fully unstaked, so can\'t stake until you withdraw entire unstaked/redeemable amount.')} />
+            }
+            <Asset
+              address={address}
+              api={api}
+              balance={availableBalance}
+              balanceLabel={t('Available balance')}
+              fee={estimatedFee}
+              style={{
+                m: '20px auto',
+                width: '92%'
+              }}
+            />
+            <AmountWithOptions
+              label={t('Amount ({{token}})', { replace: { token: token || '...' } })}
+              onChangeAmount={bondAmountChange}
+              onPrimary={onMaxAmount}
+              primaryBtnText={t('Max amount')}
+              value={amount}
+            />
+            {pool &&
+              <ShowPool
+                api={api}
+                chain={chain}
+                label={t('Pool')}
+                mode='Default'
+                pool={pool}
+                showInfo
+                style={{ m: '20px auto 0' }}
+              />}
+            <Typography fontSize='14px' fontWeight={400} m='20px 0 0' textAlign='center'>
+              {t('Outstanding rewards automatically withdrawn after transaction')}
+            </Typography>
+            <TwoButtons
+              disabled={!inputs || nextBtnDisabled}
+              ml='0'
+              onPrimaryClick={onNext}
+              onSecondaryClick={onCancel}
+              primaryBtnText={t('Next')}
+              secondaryBtnText={t('Cancel')}
+              width='87%'
+            />
+          </>
+        }
+        {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
+          <Review
+            address={address}
+            inputs={inputs}
+            setRefresh={setRefresh}
+            setStep={setStep}
+            setTxInfo={setTxInfo}
+            step={step}
+          />
+        }
+        {step === STEPS.WAIT_SCREEN &&
+          <WaitScreen />
+        }
+        {step === STEPS.CONFIRM && txInfo &&
+          <Confirmation
+            handleDone={onCancel}
+            txInfo={txInfo}
+          />
+        }
+      </Grid>
+    </DraggableModal>
+  );
+}

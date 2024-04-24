@@ -3,9 +3,17 @@
 
 const ALLOWED_PATH = ['/', '/account/import-ledger', '/account/restore-json'] as const;
 // Added for Polkagate
-const START_WITH_PATH = ['/import/', '/governance/', '/manageIdentity/', '/send/', '/account/', '/socialRecovery/'] as const;
+const START_WITH_PATH = [
+  '/account/',
+  '/accountfs/',
+  '/import/',
+  '/governance/',
+  '/manageIdentity/',
+  '/send/',
+  '/stake/',
+  '/socialRecovery/'
+] as const;
 const PHISHING_PAGE_REDIRECT = '/phishing-page-detected';
-// const EXTENSION_PREFIX = process.env.EXTENSION_PREFIX as string || '';
 const EXTENSION_PREFIX = 'POLKAGATE';
 const PORT_CONTENT = `${EXTENSION_PREFIX}content`;
 const PORT_EXTENSION = `${EXTENSION_PREFIX}extension`;

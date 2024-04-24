@@ -13,7 +13,7 @@ import { Divider, Grid, IconButton, useTheme } from '@mui/material';
 import React from 'react';
 
 import { FormatPrice, ShowBalance } from '../../components';
-import { useApi, usePrice } from '../../hooks';
+import { useApi, useTokenPrice } from '../../hooks';
 import { BalancesInfo } from '../../util/types';
 import { getValue } from './util';
 
@@ -31,7 +31,7 @@ export default function LabelBalancePrice ({ address, balances, label, onClick, 
 
   const value = getValue(label, balances);
   const api = useApi(address);
-  const price = usePrice(address);
+  const { price } = useTokenPrice(address, balances?.assetId);
 
   return (
     <>
@@ -57,7 +57,7 @@ export default function LabelBalancePrice ({ address, balances, label, onClick, 
               <FormatPrice
                 amount={value}
                 decimals={balances?.decimal}
-                price={price?.amount}
+                price={price}
               />
             </Grid>
           </Grid>

@@ -5,7 +5,7 @@ import { useContext, useEffect } from 'react';
 
 import { CurrencyContext } from '../components';
 import { getStorage, watchStorage } from '../components/Loading';
-import { CurrencyItemType } from '../popup/homeFullScreen/partials/Currency';
+import { CurrencyItemType } from '../fullscreen/homeFullScreen/partials/Currency';
 import { USD_CURRENCY } from '../util/constants';
 
 /**

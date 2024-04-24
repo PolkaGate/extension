@@ -18,14 +18,14 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, Checkbox2, Identity, Motion, PButton, ShowBalance } from '../../../../components';
-import { useApi, useChain, useCurrentBlockNumber, usePendingRewards, useToken, useTranslation } from '../../../../hooks';
+import { useCurrentBlockNumber, useInfo, usePendingRewards, useTranslation } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
 import blockToDate from '../../../crowdloans/partials/blockToDate';
 import Review from './Review';
 
 export type ValidatorEra = [string, number, BN]
 
-const LabelBalance = ({ api, balance, label }: { api: ApiPromise | undefined, label: string, balance: BN }) => (
+export const LabelBalance = ({ api, balance, label }: { api: ApiPromise | undefined, label: string, balance: BN }) => (
   <Grid container item sx={{ fontSize: '13px' }}>
     <Grid item>
       <Typography fontSize='14px'>
@@ -48,9 +48,7 @@ export default function PendingRewards(): React.ReactElement {
 
   const { address } = useParams<{ address: string }>();
 
-  const api = useApi(address);
-  const token = useToken(address);
-  const chain = useChain(address);
+  const {api, chain, token} = useInfo(address);
   const rewards = usePendingRewards(address);
   const currentBlock = useCurrentBlockNumber(address);
 

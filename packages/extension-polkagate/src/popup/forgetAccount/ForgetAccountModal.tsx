@@ -16,7 +16,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { ActionContext, ButtonWithCancel, Checkbox2 as Checkbox, NewAddress, Password, Warning, WrongPasswordAlert } from '../../components';
 import { useTranslation } from '../../hooks';
 import { forgetAccount } from '../../messaging';
-import { DraggableModal } from '../governance/components/DraggableModal';
+import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
 
 interface Props {
   account: AccountJson;
@@ -106,6 +106,7 @@ export default function ForgetAccountModal ({ account, setDisplayPopup }: Props)
             ? <>
               <Password
                 isError={isPasswordError}
+                isFocused
                 label={t<string>('Password for this account')}
                 onChange={onChangePass}
                 onEnter={onForget}

@@ -10,26 +10,27 @@ import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { u8aToString } from '@polkadot/util';
 
 import { ActionContext, Address, InputFileWithLabel, Label, Password, TwoButtons, Warning, WrongPasswordAlert } from '../../../components';
+import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { isKeyringPairs$Json } from '../../../util/typeGuards';
 import { pgBoxShadow } from '../../../util/utils';
-import { FullScreenHeader } from '../../governance/FullScreenHeader';
 import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/resetAccounts';
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
-export default function RestoreJson(): React.ReactElement {
+export default function RestoreJson (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-  const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
   const [stepOne, setStep] = useState(true);
   const [accountsInfo, setAccountsInfo] = useState<ResponseJsonGetAccountInfo[]>([]);
@@ -41,9 +42,6 @@ export default function RestoreJson(): React.ReactElement {
   // don't use the info from the file directly
   // rather use what comes from the background from jsonGetAccountInfo
   const [file, setFile] = useState<KeyringPair$Json | KeyringPairs$Json | undefined>(undefined);
-
-  const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
-  const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
 
   const passChange = useCallback((pass: string): void => {
     setPassword(pass);
@@ -104,14 +102,14 @@ export default function RestoreJson(): React.ReactElement {
 
     (isKeyringPairs$Json(file) ? batchRestore(file, password) : jsonRestore(file, password))
       .then(() => {
-        onAction('/');
+        openOrFocusTab('/', true);
       })
       .catch((e) => {
         console.error(e);
         setIsBusy(false);
         setIsPasswordError(true);
       });
-  }, [file, onAction, password, requirePassword]);
+  }, [file, password, requirePassword]);
 
   const onBack = useCallback(() => {
     setFile(undefined);
@@ -120,15 +118,15 @@ export default function RestoreJson(): React.ReactElement {
     setPassword('');
   }, []);
 
-  const onCancel = useCallback(() => onAction('/'), [onAction]);
+  const onCancel = useCallback(() => window.close(), []);
 
   return (
-    <Grid bgcolor={indexBgColor} container item justifyContent='center'>
+    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>

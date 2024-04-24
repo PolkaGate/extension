@@ -14,6 +14,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
+import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { controllerSettingBlack, controllerSettingWhite, soloSettingBlack, soloSettingWhite, stashSettingBlack, stashSettingWhite } from '../../../assets/icons';
@@ -41,9 +42,7 @@ interface State {
   poolConsts?: PoolStakingConsts;
 }
 
-const noop = () => null;
-
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();
@@ -76,7 +75,7 @@ export default function Index(): React.ReactElement {
         : String(formatted) === String(stakingAccount?.controllerId)
           ? 'Controller'
           : 'undefined' // default
-    , [formatted, stakingAccount?.controllerId, stakingAccount?.stashId]);
+  , [formatted, stakingAccount?.controllerId, stakingAccount?.stashId]);
 
   const canStake = ['Both', 'Stash'].includes(role());
   const canUnstake = ['Both', 'Controller'].includes(role());
@@ -146,7 +145,7 @@ export default function Index(): React.ReactElement {
     if (chain?.genesisHash && onExtension) {
       onAction(`/account/${chain.genesisHash}/${address}/`);
     } else if (!onExtension) {
-      onAction(`/account/${address}/`);
+      onAction(`/accountfs/${address}/0`);
     } else {
       onAction('/');
     }
@@ -229,8 +228,7 @@ export default function Index(): React.ReactElement {
     </Grid>
   );
 
-  const Row = ({ isUnstaking, label, link1Text, link2Disabled, link2Text, onLink1, onLink2, showDivider = true, value }
-  : { label: string, value: BN | undefined, link1Text?: string, onLink1?: () => void, link2Disabled?: boolean, link2Text?: string, onLink2?: () => void, showDivider?: boolean, isUnstaking?: boolean }) => {
+  const Row = ({ isUnstaking, label, link1Text, link2Disabled, link2Text, onLink1, onLink2, showDivider = true, value }: { label: string, value: BN | undefined, link1Text?: string, onLink1?: () => void, link2Disabled?: boolean, link2Text?: string, onLink2?: () => void, showDivider?: boolean, isUnstaking?: boolean }) => {
     const _link1Disable = (!value || value?.isZero() || formatted !== stakingAccount?.controllerId) && link1Text !== t('Pending');
     const _link2Disable = _link1Disable || link2Disabled;
 
@@ -242,12 +240,12 @@ export default function Index(): React.ReactElement {
           </Grid>
           <Grid container item justifyContent='flex-end' xs>
             <Grid alignItems='flex-end' container direction='column' item xs>
-              <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary', fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} >
+              <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary', fontSize: '20px', fontWeight: 400, lineHeight: '20px' }}>
                 <ShowBalance api={api} balance={value} decimal={decimal} decimalPoint={4} token={token} />
               </Grid>
               <Grid container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em' }}>
                 {link1Text &&
-                  <Grid item onClick={_link1Disable ? noop : onLink1} sx={{ color: _link1Disable ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
+                  <Grid item onClick={_link1Disable ? noop : onLink1} sx={{ color: _link1Disable ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }}>
                     {link1Text}
                   </Grid>
                 }
@@ -256,7 +254,7 @@ export default function Index(): React.ReactElement {
                     <Grid alignItems='center' item justifyContent='center' mx='6px'>
                       <Divider orientation='vertical' sx={{ bgcolor: _link2Disable ? 'text.disabled' : 'text.primary', height: '19px', mt: '10px', width: '2px' }} />
                     </Grid>
-                    <Grid item onClick={_link2Disable ? noop : onLink2} sx={{ color: _link2Disable ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
+                    <Grid item onClick={_link2Disable ? noop : onLink2} sx={{ color: _link2Disable ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }}>
                       {link2Text}
                     </Grid>
                   </>

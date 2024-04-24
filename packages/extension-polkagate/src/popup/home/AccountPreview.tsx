@@ -76,7 +76,7 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isHi
     if (chain?.genesisHash && onExtension) {
       onAction(`/account/${chain.genesisHash}/${address}/`);
     } else if (!onExtension) {
-      onAction(`/account/${address}/`);
+      onAction(`/accountfs/${address}/0`);
     }
   }, [address, chain?.genesisHash, onAction, onExtension]);
 

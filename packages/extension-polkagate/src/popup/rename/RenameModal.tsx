@@ -11,7 +11,7 @@ import { ButtonWithCancel, NewAddress } from '../../components';
 import { useAccountName, useTranslation } from '../../hooks';
 import { editAccount } from '../../messaging';
 import { Name } from '../../partials';
-import { DraggableModal } from '../governance/components/DraggableModal';
+import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
 
 interface Props {
   address: string;

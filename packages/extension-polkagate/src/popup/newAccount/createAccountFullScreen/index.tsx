@@ -6,12 +6,14 @@
 import '@vaadin/icons';
 
 import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+
+import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { ActionContext, Checkbox2, InputWithLabel, TwoButtons } from '../../../components';
+import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountSuri, createSeed } from '../../../messaging';
-import { FullScreenHeader } from '../../governance/FullScreenHeader';
 import CopySeedButton from './components/CopySeedButton';
 import DownloadSeedButton from './components/DownloadSeedButton';
 import Passwords2 from './components/Passwords2';
@@ -41,7 +43,7 @@ const MnemonicSeedDisplay = ({ seed, style }: { style?: SxProps<Theme>, seed: nu
   );
 };
 
-function CreateAccount(): React.ReactElement {
+function CreateAccount (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -52,9 +54,6 @@ function CreateAccount(): React.ReactElement {
   const [password, setPassword] = useState<string | null>(null);
   const [isBusy, setIsBusy] = useState<boolean>(false);
   const [isMnemonicSaved, setIsMnemonicSaved] = useState(false);
-
-  const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
-  const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
 
   useEffect((): void => {
     createSeed(undefined)
@@ -97,18 +96,16 @@ function CreateAccount(): React.ReactElement {
     }
   }, [name, onAction, password, seed]);
 
-  const onCancel = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
+  const onCancel = useCallback(() => window.close(), []);
 
   return (
-    <Grid bgcolor={indexBgColor} container item justifyContent='center'>
+    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
-        <Grid container item sx={{ display: 'block', px: '10%' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
+        <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
               <vaadin-icon icon='vaadin:plus-circle' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
@@ -122,7 +119,7 @@ function CreateAccount(): React.ReactElement {
           <Typography fontSize='16px' fontWeight={400} width='100%'>
             {t<string>('In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your wallet. Keep it carefully to not lose your assets.')}
           </Typography>
-          <MnemonicSeedDisplay style={{ marginBlock: '20px' }} seed={seed} />
+          <MnemonicSeedDisplay seed={seed} style={{ marginBlock: '20px' }} />
           <InputWithLabel
             isError={name === null || name?.length === 0}
             isFocused
@@ -138,7 +135,7 @@ function CreateAccount(): React.ReactElement {
             // eslint-disable-next-line react/jsx-no-bind
             onEnter={isMnemonicSaved && password ? onCreate : () => null}
           />
-          <Grid alignItems='center' container item pt='40px'>
+          <Grid alignItems='center' container item pt='25px'>
             <Checkbox2
               checked={isMnemonicSaved}
               iconStyle={{ transform: 'scale(1.13)' }}
@@ -147,13 +144,14 @@ function CreateAccount(): React.ReactElement {
               onChange={onCheck}
             />
           </Grid>
-          <Grid container item justifyContent='flex-end' pt='10px'>
+          <Grid container item justifyContent='flex-end' pt='5px'>
             <Grid container item sx={{ '> div': { width: '100%' } }} xs={7}>
               <TwoButtons
                 disabled={!(name && password && seed && isMnemonicSaved)}
+                isBusy={isBusy}
+                mt='15px'
                 onPrimaryClick={onCreate}
                 onSecondaryClick={onCancel}
-                mt='30px'
                 primaryBtnText={t<string>('Create account')}
                 secondaryBtnText={t<string>('Cancel')}
               />

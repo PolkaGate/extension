@@ -11,11 +11,11 @@ import { formatNumber, hexToU8a, isHex, u8aToString } from '@polkadot/util';
 
 import { upload } from '../assets/icons';
 import useTranslation from '../hooks/useTranslation';
-import { pgBoxShadow } from '../util/utils';
+import { noop, pgBoxShadow } from '../util/utils';
 import Label from './Label';
 import PButton from './PButton';
 
-function classes(...classNames: (boolean | null | string | undefined)[]): string {
+function classes (...classNames: (boolean | null | string | undefined)[]): string {
   return classNames
     .filter((className): boolean => !!className)
     .join(' ');
@@ -96,8 +96,6 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
 
   );
 
-  const nullFunction = useCallback(() => null, []);
-
   const dropZone = (
     <Dropzone
       accept={accept}
@@ -124,7 +122,7 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
                   <PButton
                     _fontSize='18px'
                     _mt='21px'
-                    _onClick={nullFunction}
+                    _onClick={noop}
                     _variant='outlined'
                     text={t<string>('Browse file')}
                   />

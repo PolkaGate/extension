@@ -40,7 +40,7 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
       if (info && identities?.length && info.eraIndex !== savedEraIndex) {
         console.log(`setting new identities #old was: ${validatorsIdentities?.length || '0'}`);
 
-        setNewValidatorsIdentities(info.accountsInfo);
+        setNewValidatorsIdentities(identities);
 
         chrome.storage.local.get('validatorsIdentities', (res) => {
           const k = `${chainName}`;
@@ -74,8 +74,6 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
 
     // eslint-disable-next-line no-void
     void chrome.storage.local.get('validatorsIdentities', (res: { [key: string]: SavedValidatorsIdentities }) => {
-      console.log('Validators Identities in local storage:', res);
-
       if (res?.validatorsIdentities?.[chainName]) {
         setValidatorsIdentities(res.validatorsIdentities[chainName]?.accountsInfo);
         setSavedEraIndex(res.validatorsIdentities[chainName]?.eraIndex);

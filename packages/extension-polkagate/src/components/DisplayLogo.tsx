@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Grid, useTheme } from '@mui/material';
 import React from 'react';
 
-import { convertToCamelCase } from '../popup/governance/utils/util';
+import { convertToCamelCase } from '../fullscreen/governance/utils/util';
 import allChains from '../util/chains';
 import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
 import { sanitizeChainName } from '../util/utils';

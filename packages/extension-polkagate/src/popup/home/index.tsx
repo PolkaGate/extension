@@ -6,20 +6,20 @@
 
 import '@vaadin/icons';
 
-import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Container, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Container, Grid, useTheme } from '@mui/material';
+import React, { useContext, useEffect, useState } from 'react';
 
+import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Warning } from '../../components';
 import { getStorage, LoginInfo } from '../../components/Loading';
-import { useMerkleScience, useTranslation } from '../../hooks';
-import { windowOpen } from '../../messaging';
+import { useAccountsOrder, useMerkleScience, useTranslation } from '../../hooks';
+import { AddNewAccountButton } from '../../partials';
 import HeaderBrand from '../../partials/HeaderBrand';
-import { NEW_VERSION_ALERT } from '../../util/constants';
+import { EXTENSION_NAME, NEW_VERSION_ALERT } from '../../util/constants';
 import Welcome from '../welcome';
 import Reset from '../welcome/Reset';
 import AccountsTree from './AccountsTree';
@@ -27,9 +27,10 @@ import AiBackgroundImage from './AiBackgroundImage';
 import Alert from './Alert';
 import YouHave from './YouHave';
 
-export default function Home (): React.ReactElement {
+export default function Home(): React.ReactElement {
+  const initialAccountList = useAccountsOrder() as AccountWithChildren[];
   const { t } = useTranslation();
-  const { hierarchy } = useContext(AccountContext);
+  const { accounts, hierarchy } = useContext(AccountContext);
   const theme = useTheme();
 
   useMerkleScience(undefined, undefined, true); // to download the data file
@@ -59,44 +60,6 @@ export default function Home (): React.ReactElement {
     getStorage('loginInfo').then(setLoginInfo).catch(console.error);
   }, []);
 
-  const sortedAccount = useMemo(() =>
-    hierarchy.sort((a, b) => {
-      const x = a.name.toLowerCase();
-      const y = b.name.toLowerCase();
-
-      if (x < y) {
-        return -1;
-      }
-
-      if (x > y) {
-        return 1;
-      }
-
-      return 0;
-    }), [hierarchy]);
-
-  const onCreate = useCallback((): void => {
-    windowOpen('/account/create').catch(console.error);
-  }, []);
-
-  const AddNewAccount = () => (
-    <Grid alignItems='center' container onClick={onCreate} sx={{ '&:hover': { opacity: 1 }, backgroundColor: 'background.paper', borderColor: 'secondary.main', borderRadius: '10px', borderStyle: 'solid', borderWidth: '0.5px', bottom: '20px', cursor: 'pointer', my: '10px', opacity: '0.7', padding: '8px 7px 8px 22px', position: 'absolute', transition: 'opacity 0.3s ease', width: 'inherit', zIndex: 1 }}>
-      <Grid item xs={1.5}>
-        <vaadin-icon icon='vaadin:plus-circle' style={{ height: '36px', color: `${theme.palette.secondary.light}`, width: '36px' }} />
-      </Grid>
-      <Grid item textAlign='left' xs>
-        <Typography fontSize='18px' fontWeight={500} pl='8px'>
-          {t('Create a new account')}
-        </Typography>
-      </Grid>
-      <Grid item xs={1}>
-        <IconButton sx={{ p: 0 }}>
-          <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: `${theme.palette.secondary.light}`, strokeWidth: 1.5 }} />
-        </IconButton>
-      </Grid>
-    </Grid>
-  );
-
   return (
     <>
       <Alert
@@ -122,7 +85,7 @@ export default function Home (): React.ReactElement {
               showFullScreen
               showMenu
               style={{ '> div div:nth-child(3)': { minWidth: '23%' }, pr: '10px' }}
-              text={'Polkagate'}
+              text={EXTENSION_NAME}
             />
           </Grid>
           {hasActiveRecovery &&
@@ -140,7 +103,7 @@ export default function Home (): React.ReactElement {
           }
           <YouHave hideNumbers={hideNumbers} setHideNumbers={setHideNumbers} />
           <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`, mt: '10px', overflowY: 'scroll', p: 0, width: '92%' }]}>
-            {sortedAccount.map((json, index): React.ReactNode => (
+            {initialAccountList?.map((json, index): React.ReactNode => (
               <AccountsTree
                 {...json}
                 hideNumbers={hideNumbers}
@@ -150,8 +113,8 @@ export default function Home (): React.ReactElement {
                 setQuickActionOpen={setQuickActionOpen}
               />
             ))}
-            {sortedAccount.length < 4 &&
-              <AddNewAccount />
+            {accounts?.length < 4 &&
+              <AddNewAccountButton />
             }
           </Container>
           <AiBackgroundImage

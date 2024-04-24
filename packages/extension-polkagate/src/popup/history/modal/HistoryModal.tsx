@@ -8,12 +8,12 @@ import { Box, Divider, Grid, Tab, Tabs, Typography, useTheme } from '@mui/materi
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
 import { Progress } from '../../../components';
+import { DraggableModal } from '../../../fullscreen/governance/components/DraggableModal';
 import { useChain, useChainName, useDecimal, useFormatted, useToken, useTranslation } from '../../../hooks';
 import { getTxTransfers } from '../../../util/api/getTransfers';
 import { STAKING_ACTIONS, STAKING_CHAINS } from '../../../util/constants';
 import { TransactionDetail, Transfers } from '../../../util/types';
 import { getHistoryFromStorage } from '../../../util/utils';
-import { DraggableModal } from '../../governance/components/DraggableModal';
 import HistoryDetailModal from './HistoryDetailModal';
 import HistoryItemModal from './HistoryItemModal';
 
@@ -55,10 +55,9 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
   const theme = useTheme();
 
   const [tabIndex, setTabIndex] = useState<number>(1);
-  const [isRefreshing, setRefresh] = useState<boolean>(false);
-  const [fetchedHistoriesFromSubscan, setFetchedHistoriesFromSubscan] = React.useState<TransactionDetail[] | []>([]);
-  const [tabHistory, setTabHistory] = useState<TransactionDetail[] | null>([]);
-  const [localHistories, setLocalHistories] = useState<TransactionDetail[]>([]);
+  const [fetchedHistoriesFromSubscan, setFetchedHistoriesFromSubscan] = React.useState<TransactionDetail[] | null | undefined>();
+  const [tabHistory, setTabHistory] = useState<TransactionDetail[] | null | undefined>();
+  const [localHistories, setLocalHistories] = useState<TransactionDetail[] | undefined>();
   const [detailInfo, setDetailInfo] = useState<TransactionDetail>();
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
@@ -72,15 +71,19 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
 
   receivingTransfers.current = transfersTx;
 
-  const grouped = useMemo((): Record<string, TransactionDetail[]> | undefined => {
+  const grouped = useMemo((): Record<string, TransactionDetail[]> | null | undefined => {
     if (!tabHistory) {
       return undefined;
+    }
+
+    if (tabHistory.length === 0) {
+      return null;
     }
 
     const temp = {};
     const options = { day: 'numeric', month: 'short', year: 'numeric' };
 
-    tabHistory?.forEach((h) => {
+    tabHistory.forEach((h) => {
       const day = new Date(h.date).toLocaleDateString(undefined, options);
 
       if (!temp[day]) {
@@ -110,6 +113,7 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
         from: { address: tx.from, name: tx.from_account_display?.display },
         success: tx.success,
         to: { address: tx.to, name: tx.to_account_display?.display },
+        token: tx.asset_symbol,
         txHash: tx.hash
       });
     });
@@ -134,36 +138,35 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
   }, [formatted, transfersTx]);
 
   useEffect(() => {
-    const filteredLocalHistories = localHistories?.filter((h1) => !fetchedHistoriesFromSubscan.find((h2) => h1.txHash === h2.txHash));
+    if (!localHistories && !fetchedHistoriesFromSubscan) {
+      return;
+    }
 
-    let history = filteredLocalHistories.concat(fetchedHistoriesFromSubscan);
+    const filteredLocalHistories = localHistories?.filter((h1) => !fetchedHistoriesFromSubscan?.find((h2) => h1.txHash === h2.txHash));
 
-    history = history.sort((a, b) => b.date - a.date);
+    let history = filteredLocalHistories?.concat(fetchedHistoriesFromSubscan ?? []);
+
+    history = history?.sort((a, b) => b.date - a.date);
 
     switch (tabIndex) {
       case (TAB_MAP.TRANSFERS):
-        history = history.filter((h) => ['send', 'receive'].includes(h.action.toLowerCase()));
+        history = history?.filter((h) => ['send', 'receive'].includes(h.action.toLowerCase()));
         break;
       case (TAB_MAP.STAKING):
-        history = history.filter((h) => STAKING_ACTIONS.includes(h.action));
+        history = history?.filter((h) => STAKING_ACTIONS.includes(h.action));
         break;
       default:
         break;
     }
 
     setTabHistory(history);
-    setRefresh(false);
   }, [tabIndex, fetchedHistoriesFromSubscan, localHistories]);
-
-  const onRefresh = useCallback(() => {
-    setRefresh(true);
-  }, []);
 
   useEffect(() => {
     formatted && getHistoryFromStorage(String(formatted)).then((h) => {
       setLocalHistories(h || []);
     }).catch(console.error);
-  }, [formatted, chainName, isRefreshing]);
+  }, [formatted, chainName]);
 
   const getTransfers = useCallback(async (outerState: RecordTabStatus): Promise<void> => {
     const { pageNum, transactions } = outerState;
@@ -173,7 +176,7 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
       pageNum
     });
 
-    const res = await getTxTransfers(chainName, String(formatted), pageNum, SINGLE_PAGE_SIZE);
+    const res = await getTxTransfers(chainName ?? '', String(formatted), pageNum, SINGLE_PAGE_SIZE);
 
     const { count, transfers } = res.data || {};
     const nextPageNum = pageNum + 1;
@@ -239,7 +242,6 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
         </Grid>
         {!showDetail &&
           <>
-
             <Box sx={{ borderBottom: 1, borderColor: 'secondary.light' }}>
               <Tabs centered onChange={handleTabChange} sx={{ 'span.MuiTabs-indicator': { bgcolor: 'secondary.light', height: '4px' } }} value={tabIndex}>
                 <Tab
@@ -257,7 +259,12 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
                   }}
                   value={1}
                 />
-                <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ minWidth: '1px', p: '0', width: '1px' }} value={4} />
+                <Tab
+                  disabled
+                  icon={<Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />}
+                  sx={{ minWidth: '1px', p: '0', width: '1px' }}
+                  value={4}
+                />
                 <Tab
                   label={t<string>('Transfers')}
                   sx={{
@@ -273,10 +280,15 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
                   }}
                   value={2}
                 />
-                {STAKING_CHAINS.includes(chain?.genesisHash) &&
-                  <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ minWidth: '1px', p: '0', width: '1px' }} value={5} />
+                {STAKING_CHAINS.includes(chain?.genesisHash ?? '') &&
+                  <Tab
+                    disabled
+                    icon={<Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />}
+                    sx={{ minWidth: '1px', p: '0', width: '1px' }}
+                    value={5}
+                  />
                 }
-                {STAKING_CHAINS.includes(chain?.genesisHash) &&
+                {STAKING_CHAINS.includes(chain?.genesisHash ?? '') &&
                   <Tab
                     label={t<string>('Staking')}
                     sx={{
@@ -295,49 +307,46 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
                 }
               </Tabs>
             </Box>
-            <Grid container item sx={{ gap: '5px', height: '70%', maxHeight: window.innerHeight - 145, overflowY: 'auto', px: '15px' }} xs={12}>
-              {Object.keys(grouped).length !== 0
-                ? <>
-                  {Object.entries(grouped)?.map((group) => {
-                    const [date, info] = group;
+            <Grid container item sx={{ gap: '5px', height: '70%', maxHeight: 650 - 145, overflowY: 'auto', px: '15px' }} xs={12}>
+              {grouped && Object.keys(grouped).length > 0 &&
+                Object.entries(grouped)?.map((group) => {
+                  const [date, info] = group;
 
-                    return info.map((h, index) => (
-                      <HistoryItemModal
-                        anotherDay={index === 0}
-                        chainName={chainName}
-                        date={date}
-                        decimal={decimal}
-                        formatted={formatted}
-                        info={h}
-                        key={index}
-                        path={undefined}
-                        setDetailInfo={setDetailInfo}
-                        setShowDetail={setShowDetail}
-                        token={token}
-                      />
-                    ));
-                  })}
-                  {tabHistory === null &&
-                    <Grid item mt='50px' textAlign='center'>
-                      {t('Nothing to show')}
-                    </Grid>
-                  }
-                  <Grid container justifyContent='center'>
-                    {
-                      // staking transaction history is saved locally
-                      tabIndex !== TAB_MAP.STAKING &&
-                      ((transfersTx?.hasMore)
-                        ? 'loading...'
-                        : !!tabHistory?.length &&
-                        <Box fontSize={11}>
-                          {t('No more transactions to load')}
-                        </Box>
-                      )
-                    }
-                  </Grid>
-                </>
-                : <Progress pt='150px' size={50} title={t('Loading history')} />
+                  return info.map((h, index) => (
+                    <HistoryItemModal
+                      anotherDay={index === 0}
+                      date={date}
+                      decimal={decimal}
+                      formatted={formatted ?? ''}
+                      info={h}
+                      key={index}
+                      path={undefined}
+                      setDetailInfo={setDetailInfo}
+                      setShowDetail={setShowDetail}
+                      token={h.token ?? token}
+                    />
+                  ));
+                })}
+              {grouped === null && transfersTx.isFetching === false &&
+                <Grid item mt='50px' mx='auto' textAlign='center'>
+                  {t('Nothing to show')}
+                </Grid>
               }
+              {(grouped === undefined || (transfersTx.isFetching && tabHistory?.length === 0)) && <Progress pt='150px' size={50} title={t('Loading history')} />}
+              {grouped &&
+                <Grid container justifyContent='center'>
+                  {
+                    // staking transaction history is saved locally
+                    tabIndex !== TAB_MAP.STAKING &&
+                    ((transfersTx?.hasMore)
+                      ? 'loading...'
+                      : !!tabHistory?.length &&
+                      <Box fontSize={11}>
+                        {t('No more transactions to load')}
+                      </Box>
+                    )
+                  }
+                </Grid>}
               <div id='observerObj' />
             </Grid>
           </>

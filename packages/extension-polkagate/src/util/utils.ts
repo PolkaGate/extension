@@ -373,3 +373,5 @@ export const isUrl = (input: string | undefined) => {
 };
 
 export const pgBoxShadow = (theme: Theme): string => theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '2px 3px 4px 0px rgba(0, 0, 0, 0.10)';
+
+export const noop = () => null;

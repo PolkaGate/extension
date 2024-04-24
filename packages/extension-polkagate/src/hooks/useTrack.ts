@@ -3,8 +3,8 @@
 
 import { useMemo } from 'react';
 
-import { Track } from '../popup/governance/utils/types';
-import { toSnakeCase } from '../popup/governance/utils/util';
+import { Track } from '../fullscreen/governance/utils/types';
+import { toSnakeCase } from '../fullscreen/governance/utils/util';
 import { useTracks } from '.';
 
 export default function useTrack(address: string | undefined, trackName: string | undefined): Track | undefined {

@@ -12,7 +12,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { AccountContext, AddressInput, InputWithLabel, PButton, Select, Warning } from '../../components';
-import { useFormatted, useTranslation } from '../../hooks';
+import { useAccountIdOrName, useFormatted, useTranslation } from '../../hooks';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
 import { Proxy, ProxyItem } from '../../util/types';
@@ -43,6 +43,8 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);
   const formatted = useFormatted(address);
+  const accountDisplayName = useAccountIdOrName(formatted);
+
   const theme = useTheme();
 
   const [realAddress, setRealAddress] = useState<string | undefined>();
@@ -112,7 +114,7 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
   return (
     <>
       <Typography fontSize='14px' fontWeight={300} m='20px auto 15px' textAlign='left' width='90%'>
-        {t<string>("You can add an account included in this extension as a proxy of Alice to sign certain types of transactions on Alice's behalf.")}
+        {t<string>("You can add an account included in this extension as a proxy of {{accountDisplayName}} to sign certain types of transactions on {{accountDisplayName}}'s behalf.", { replace: { accountDisplayName } })}
       </Typography>
       <AddressInput
         address={realAddress}

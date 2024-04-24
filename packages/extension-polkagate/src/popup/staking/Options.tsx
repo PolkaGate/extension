@@ -12,7 +12,7 @@ import { BN, bnMax } from '@polkadot/util';
 import { PoolStakingIcon } from '../../components';
 import { useApi, useMinToReceiveRewardsInSolo, usePoolConsts, useStakingConsts, useTranslation, useUnSupportedNetwork } from '../../hooks';
 import { STAKING_CHAINS } from '../../util/constants';
-import Option from './partial/StakingOption';
+import StakingOption from './partial/StakingOption';
 
 interface Props {
   showStakingOptions: boolean;
@@ -61,7 +61,7 @@ export default function Options({ setShowStakingOptions, showStakingOptions }: P
   return (
     <Slide direction='up' in={showStakingOptions} mountOnEnter unmountOnExit>
       <Box sx={{ zIndex: -1 }}>
-        <Option
+        <StakingOption
           api={api}
           balance={poolConsts?.minJoinBond}
           balanceText={t('Minimum to join a pool')}
@@ -77,7 +77,7 @@ export default function Options({ setShowStakingOptions, showStakingOptions }: P
           text={t('Stakers (members) with a small amount of tokens can pool their funds together.')}
           title={t('Pool Staking')}
         />
-        <Option
+        <StakingOption
           api={api}
           balance={minToReceiveRewardsInSolo}
           balanceText={t('Minimum to receive rewards')}

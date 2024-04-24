@@ -10,7 +10,7 @@ import React, { useCallback, useContext, useState } from 'react';
 import { ActionContext } from '../../../../components';
 import { useAccount, useTranslation } from '../../../../hooks';
 import { deriveAccount } from '../../../../messaging';
-import { DraggableModal } from '../../../governance/components/DraggableModal';
+import { DraggableModal } from '../../../../fullscreen/governance/components/DraggableModal';
 import CreateNewDerivedAccount from './CreateNewDerivedAccount';
 import SelectParent from './SelectParent';
 

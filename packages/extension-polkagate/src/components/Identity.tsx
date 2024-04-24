@@ -14,7 +14,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { ms, msGreen, msWarning, riot } from '../assets/icons';
-import { useAccountInfo, useAccountName, useChain, useFormatted2, useMerkleScience, useTranslation } from '../hooks';
+import { useAccountInfo2, useAccountName, useChain, useFormatted2, useMerkleScience, useTranslation } from '../hooks';
 import { getSubstrateAddress, isValidAddress } from '../util/utils';
 import { ChainLogo, Identicon, Infotip, ShortAddress } from '.';
 
@@ -51,7 +51,7 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
   const isMSwarning = ['Scam', 'High Risk Organization', 'Theft', 'Sanctions'].includes(msData?.tag_type_verbose);
   const _showSocial = msData ? false : showSocial;
 
-  const _accountInfo = useAccountInfo(_api, _formatted, accountInfo);
+  const _accountInfo = useAccountInfo2(_api, _formatted, accountInfo);
   const _judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
 
   const merkleScienceTooltip = useMemo(() => (msData &&
@@ -94,7 +94,7 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
             />
           </Grid>
         }
-        <Grid direction='column' item maxWidth='fit-content' onClick={onClick || undefined} overflow='hidden' sx={{ cursor: onClick ? 'pointer' : 'default', fontSize: style?.fontSize as string ?? '28px', fontWeight: 400, textAlign: 'left' }} textOverflow='ellipsis' whiteSpace='nowrap' xs>
+        <Grid direction='column' item maxWidth='fit-content' onClick={onClick || undefined} overflow='hidden' sx={{ cursor: onClick ? 'pointer' : 'inherit', fontSize: style?.fontSize as string ?? '28px', fontWeight: 400, textAlign: 'left' }} textOverflow='ellipsis' whiteSpace='nowrap' xs>
           {msData
             ? <Grid container item sx={{ flexWrap: 'nowrap' }}>
               <Grid display='flex' item sx={{ width: '25px' }}>

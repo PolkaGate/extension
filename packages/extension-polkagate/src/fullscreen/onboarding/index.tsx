@@ -7,24 +7,23 @@ import '@vaadin/icons';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+
+import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { AccountContext, ActionContext, PButton } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
-import { FullScreenHeader } from '../../popup/governance/FullScreenHeader';
 import Privacy from '../../popup/welcome/Privacy';
+import { FullScreenHeader } from '../governance/FullScreenHeader';
 
-function Onboarding(): React.ReactElement {
+function Onboarding (): React.ReactElement {
   useFullscreen();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
 
   const { t } = useTranslation();
   const theme = useTheme();
-
-  const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
-  const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
 
   const [showPrivacyAndSecurity, setShowPrivacyAndSecurity] = useState(false);
   const [showMore, setShowMore] = useState<boolean>(false);
@@ -74,12 +73,12 @@ function Onboarding(): React.ReactElement {
   );
 
   return (
-    <Grid bgcolor={indexBgColor} container item justifyContent='center'>
+    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
@@ -91,21 +90,22 @@ function Onboarding(): React.ReactElement {
               </Typography>
             </Grid>
           </Grid>
-          <Typography fontSize='16px' fontWeight={500} pb='15px' width='100%'>
+          <Typography fontSize='16px' fontWeight={500} pb='15px' pt='30px' width='100%'>
             {t<string>('Thank you for choosing Polkagate, the gateway to the Polkadot ecosystem! 🌟')}
           </Typography>
           <Typography fontSize='16px' fontWeight={400} width='100%'>
-            {t<string>('Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started. We’re thrilled to have you here! 😊🚀')}
+            {t('Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started.')}
           </Typography>
           <Grid alignItems='center' container item justifyContent='center' pt='80px'>
             <PButton
+              _ml={0}
               _mt='20px'
               _onClick={onCreate}
               _variant={'contained'}
               startIcon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.main}` }} />}
               text={t<string>('Create a new account')}
             />
-            <Divider sx={{ fontSize: '20px', fontWeight: 400, my: '30px', pl: '44px', width: '94%' }}>
+            <Divider sx={{ fontSize: '20px', fontWeight: 400, my: '15px', width: '88%' }}>
               {t('Or')}
             </Divider>
             <Collapse in={!showMore}>
@@ -119,30 +119,35 @@ function Onboarding(): React.ReactElement {
             <Collapse in={showMore}>
               <Grid container item justifyContent='center' mb='25px'>
                 <PButton
+                  _ml={0}
                   _mt='0'
                   _onClick={onRestoreFromJson}
                   _variant={'outlined'}
                   text={t<string>('Restore from JSON file')}
                 />
                 <PButton
+                  _ml={0}
                   _mt='15px'
                   _onClick={onImport}
                   _variant={'outlined'}
                   text={t<string>('Import from recovery phrase')}
                 />
                 <PButton
+                  _ml={0}
                   _mt='15px'
                   _onClick={onAddWatchOnly}
                   _variant={'outlined'}
                   text={t<string>('Add watch-only account')}
                 />
                 <PButton
+                  _ml={0}
                   _mt='15px'
                   _onClick={onAttachQR}
                   _variant={'outlined'}
                   text={t<string>('Attach QR-signer')}
                 />
                 <PButton
+                  _ml={0}
                   _mt='15px'
                   _onClick={onImportLedger}
                   _variant={'outlined'}
@@ -152,7 +157,8 @@ function Onboarding(): React.ReactElement {
               </Grid>
             </Collapse>
             <Grid container justifyContent='center'>
-              <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ cursor: 'pointer', fontSize: '12px', bottom: 0, position: 'absolute', textAlign: 'center', textDecoration: 'underline' }}>
+              {/* eslint-disable-next-line react/jsx-no-bind */}
+              <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ bottom: 0, cursor: 'pointer', fontSize: '12px', position: 'absolute', textAlign: 'center', textDecoration: 'underline' }}>
                 {t('Privacy and Security')}
               </Typography>
             </Grid>

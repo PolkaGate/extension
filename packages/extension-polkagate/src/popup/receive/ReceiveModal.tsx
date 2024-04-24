@@ -10,7 +10,7 @@ import React, { useCallback } from 'react';
 
 import { Identity, PButton } from '../../components';
 import { useApi, useFormatted, useTranslation } from '../../hooks';
-import { DraggableModal } from '../governance/components/DraggableModal';
+import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
 
 interface Props {
   address: string;

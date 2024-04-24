@@ -12,11 +12,12 @@ interface Props {
   show: boolean;
   open: (title: 'Roles' | 'Commission') => void;
   children?: React.ReactElement;
+  fullWidth?: boolean;
 }
 
-export default function CollapseIt({ children, open, show, title }: Props): React.ReactElement {
+export default function CollapseIt ({ children, fullWidth, open, show, title }: Props): React.ReactElement {
   return (
-    <Grid container direction='column' m='auto' width='92%'>
+    <Grid container direction='column' m='auto' width={fullWidth ? '100%' : '92%'}>
       <Grid container item justifyContent='space-between' onClick={() => open(title)} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', cursor: 'pointer' }}>
         <Typography fontSize='18px' fontWeight={400} lineHeight='40px'>
           {title}
