@@ -3,7 +3,7 @@
 
 import type { AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
-import type { AccountsAssetsContextType, AlertContextType,APIsContext, CurrencyContextType, FetchingRequests, ReferendaContextType } from '../util/types';
+import type { AccountsAssetsContextType, AlertContextType, APIsContext, CurrencyContextType, FetchingRequests, ReferendaContextType } from '../util/types';
 
 import React from 'react';
 
