@@ -6,7 +6,7 @@ import type { SettingsStruct } from '@polkadot/ui-settings/types';
 
 import { AnimatePresence } from 'framer-motion';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Route, Switch } from 'react-router';
+import { Route, Switch, useLocation } from 'react-router';
 
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
@@ -116,6 +116,10 @@ export default function Popup (): React.ReactElement {
   const assetsOnChains = useAssetsBalances(accounts);
   const priceIds = usePriceIds();
   const isFetchingPricesRef = useRef(false);
+
+  const { pathname } = useLocation();
+
+  console.log('location:', pathname);
 
   const [accountCtx, setAccountCtx] = useState<AccountsContext>({ accounts: [], hierarchy: [] });
   const [authRequests, setAuthRequests] = useState<null | AuthorizeRequest[]>(null);
