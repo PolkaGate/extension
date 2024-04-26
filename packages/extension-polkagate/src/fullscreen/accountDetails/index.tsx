@@ -51,7 +51,7 @@ const isRelayChain = (chainName: string) =>
   chainName.toLowerCase() === 'polkadot' ||
   chainName.toLowerCase() === 'westend';
 
-export default function AccountDetails (): React.ReactElement {
+export default function AccountDetails(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -128,8 +128,8 @@ export default function AccountDetails (): React.ReactElement {
   }, [selectedAsset]);
 
   useEffect(() => {
-    onAction(`/accountfs/${address}/${assetId || '0'}`);
-  }, [address, assetId, onAction]);
+    accountAssets !== undefined && onAction(`/accountfs/${address}/${assetId || '0'}`);
+  }, [accountAssets, address, assetId, onAction]);
 
   useEffect(() => {
     const mayBeAssetIdSelectedInHomePage = parseInt(paramAssetId);
