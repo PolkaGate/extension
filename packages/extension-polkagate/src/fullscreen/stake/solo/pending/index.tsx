@@ -13,10 +13,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
-import { EraUnclaimedPayouts } from '@polkadot/extension-polkagate/src/hooks/usePendingRewards2';
 import blockToDate from '@polkadot/extension-polkagate/src/popup/crowdloans/partials/blockToDate';
-import { LabelBalance, ValidatorEra } from '@polkadot/extension-polkagate/src/popup/staking/solo/rewards/PendingRewards';
-import { amountToHuman, toBN } from '@polkadot/extension-polkagate/src/util/utils';
+import { LabelBalance } from '@polkadot/extension-polkagate/src/popup/staking/solo/rewards/PendingRewards';
+import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { Checkbox2, Identity, ShowBalance, TwoButtons } from '../../../../components';
@@ -250,6 +249,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
                 <Grid item sx={{ fontSize: '13px' }} textAlign='left' xs={4.75}>
                   <Checkbox2
                     checked={!!expandedRewards?.length && selectedToPayout?.length === expandedRewards?.length}
+                    // disabled={!expandedRewards?.length}
                     iconStyle={{ transform: 'scale(0.9)' }}
                     onChange={onSelectAll}
                     style={{ paddingRight: '5px' }}
