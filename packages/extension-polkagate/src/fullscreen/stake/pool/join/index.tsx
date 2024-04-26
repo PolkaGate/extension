@@ -210,6 +210,7 @@ export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.
         api={api}
         filteredPools={filteredPools}
         maxHeight={window.innerHeight - 420}
+        minHeight={window.innerHeight - 420}
         numberOfFetchedPools={numberOfFetchedPools}
         pools={incrementalPools}
         poolsToShow={poolsToShow}

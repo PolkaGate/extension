@@ -7,14 +7,14 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
+import { Checkbox2, Input, Select, SlidePopUp, TwoButtons } from '@polkadot/extension-polkagate/src/components';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { useIsExtensionPopup, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { getComparator } from '@polkadot/extension-polkagate/src/popup/staking/pool/stake/joinPool/partials/comparators';
+import { DEFAULT_POOL_FILTERS } from '@polkadot/extension-polkagate/src/util/constants';
+import { PoolFilter, PoolInfo, StakingConsts } from '@polkadot/extension-polkagate/src/util/types';
+import { amountToMachine } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
-
-import { Checkbox2, Input, Select, SlidePopUp, TwoButtons } from '../../../../../../components';
-import { useTranslation } from '../../../../../../hooks';
-import { DEFAULT_POOL_FILTERS } from '../../../../../../util/constants';
-import { PoolFilter, PoolInfo, StakingConsts } from '../../../../../../util/types';
-import { amountToMachine } from '../../../../../../util/utils';
-import { getComparator } from './comparators';
 
 interface Props {
   pools: PoolInfo[];
@@ -32,9 +32,10 @@ interface Props {
   stakingConsts: StakingConsts | null | undefined;
 }
 
-export default function Filters({ apply, decimal, filters, pools, setApply, setFilteredPools, setFilters, setShow, setSortValue, show, sortValue, stakingConsts, token }: Props): React.ReactElement<Props> {
+export default function Filters ({ apply, decimal, filters, pools, setApply, setFilteredPools, setFilters, setShow, setSortValue, show, sortValue, stakingConsts, token }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isExtensionPopup = useIsExtensionPopup();
 
   const SORT_OPTIONS = useMemo(() => [
     { text: t('Index (Default)'), value: 0 },
@@ -136,7 +137,7 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
   }, [onFilters, setSortValue]);
 
   const page = (
-    <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
+    <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt={isExtensionPopup ? '46px' : 0} sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container justifyContent='center' my='20px'>
         <Typography fontSize='20px' fontWeight={400} lineHeight={1.4}>
           {t<string>('Filters')}
@@ -237,6 +238,7 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
         </div>
       </Grid>
       <TwoButtons
+        ml={isExtensionPopup ? '0' : undefined}
         onPrimaryClick={onApply}
         onSecondaryClick={onClear}
         primaryBtnText={t<string>('Apply')}
@@ -246,10 +248,11 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
       <IconButton
         onClick={onCloseFilter}
         sx={{
-          left: '15px',
+          left: isExtensionPopup ? '15px' : undefined,
           p: 0,
           position: 'absolute',
-          top: '65px'
+          right: isExtensionPopup ? undefined : '30px',
+          top: isExtensionPopup ? '65px' : '35px'
         }}
       >
         <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />
@@ -258,8 +261,15 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
   );
 
   return (
-    <SlidePopUp show={show}>
-      {page}
-    </SlidePopUp>
+    <>
+      {isExtensionPopup
+        ? <SlidePopUp show={show}>
+          {page}
+        </SlidePopUp>
+        : <DraggableModal minHeight={650} onClose={onCloseFilter} open={show}>
+          {page}
+        </DraggableModal>
+      }
+    </>
   );
 }
