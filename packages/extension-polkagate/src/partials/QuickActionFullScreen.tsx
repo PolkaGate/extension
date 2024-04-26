@@ -10,15 +10,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon, Boy as BoyIcon } from '@mui/icons-material';
 import { Box, ClickAwayListener, Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { PoolStakingIcon } from '../components';
-import { useAccount, useApi, useTranslation } from '../hooks';
-import { windowOpen } from '../messaging';
+import { openOrFocusTab } from '../fullscreen/accountDetails/components/CommonTasks';
+import { useAccount, useTranslation } from '../hooks';
 import HistoryModal from '../popup/history/modal/HistoryModal';
-import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
+import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 
 interface Props {
   address: AccountId | string;
@@ -42,9 +41,7 @@ const ACTION_ICON_SIZE = '27px';
 export default function QuickActionFullScreen ({ address, assetId, containerRef, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const history = useHistory();
   const account = useAccount(address);
-  const api = useApi(address);
 
   const [showHistory, setShowHistory] = useState<boolean>();
 
@@ -54,33 +51,20 @@ export default function QuickActionFullScreen ({ address, assetId, containerRef,
   const handleClose = useCallback(() => quickActionOpen === address && setQuickActionOpen(undefined), [address, quickActionOpen, setQuickActionOpen]);
 
   const goToSend = useCallback(() => {
-    address && account?.genesisHash && windowOpen(`/send/${String(address)}/${assetId || ''}`).catch(console.error);
+    address && account?.genesisHash && openOrFocusTab(`/send/${String(address)}/${assetId || ''}`);
   }, [account?.genesisHash, address, assetId]);
 
   const goToPoolStaking = useCallback(() => {
-    address && STAKING_CHAINS.includes(account?.genesisHash ?? '') && history.push({
-      pathname: `/pool/${String(address)}/`,
-      state: { api }
-    });
-  }, [account?.genesisHash, address, api, history]);
+    address && openOrFocusTab(`/poolfs/${String(address)}/`);
+  }, [address]);
 
   const goToSoloStaking = useCallback(() => {
-    address && STAKING_CHAINS.includes(account?.genesisHash ?? '') && history.push({
-      pathname: `/solo/${String(address)}/`,
-      state: { api }
-    });
-  }, [account?.genesisHash, address, api, history]);
-
-  const goToCrowdLoans = useCallback(() => {
-    address && CROWDLOANS_CHAINS.includes(account?.genesisHash ?? '') &&
-      history.push({
-        pathname: `/crowdloans/${String(address)}`
-      });
-  }, [account?.genesisHash, address, history]);
+    address && openOrFocusTab(`/solofs/${String(address)}/`);
+  }, [address]);
 
   const goToGovernance = useCallback(() => {
-    supportGov && windowOpen(`/governance/${address}/referenda`).catch(console.error);
-  }, [account?.genesisHash, address]);
+    supportGov && address && openOrFocusTab(`/governance/${address}/referenda`);
+  }, [address, supportGov]);
 
   const goToHistory = useCallback(() => {
     setShowHistory(true);
@@ -159,15 +143,6 @@ export default function QuickActionFullScreen ({ address, assetId, containerRef,
         }
         onClick={goToSoloStaking}
         title={t('Solo Staking')}
-      />
-      <QuickActionButton
-        disabled={!CROWDLOANS_CHAINS.includes(account?.genesisHash ?? '')}
-        divider
-        icon={
-          <vaadin-icon icon='vaadin:piggy-bank-coin' style={{ height: '30px', color: `${CROWDLOANS_CHAINS.includes(account?.genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}` }} />
-        }
-        onClick={goToCrowdLoans}
-        title={t('Crowdloans')}
       />
       <QuickActionButton
         disabled={!account?.genesisHash || !supportGov}
