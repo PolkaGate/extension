@@ -132,6 +132,10 @@ export default function AccountDetails(): React.ReactElement {
   }, [accountAssets, address, assetId, onAction]);
 
   useEffect(() => {
+    if (!paramAssetId) {
+      return;
+    }
+
     const mayBeAssetIdSelectedInHomePage = parseInt(paramAssetId);
 
     if (mayBeAssetIdSelectedInHomePage && accountAssets) {
