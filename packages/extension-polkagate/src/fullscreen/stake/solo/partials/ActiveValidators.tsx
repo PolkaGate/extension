@@ -43,12 +43,12 @@ export default function ActiveValidators ({ address }: Props): React.ReactElemen
           icon={faRunning}
           style={{ height: '20px', width: '20px', marginRight: '10px' }}
         />
-        <Typography color={ 'text.primary'} fontSize='18px' fontWeight={500}>
+        <Typography color={'text.primary'} fontSize='18px' fontWeight={500}>
           {activeValidators?.length && activeValidators.length > 1 ? t('Active validators') : t('Active validator')}
         </Typography>
       </Grid>
       <Grid alignItems='center' container item justifyContent='center' mt='10px'>
-        { activeValidators
+        {activeValidators?.length
           ? <>
             {activeValidators.map((v, index) => (
               <Grid container item key={index} sx={{ borderTop: index > 0 ? '1px solid' : undefined, borderTopColor: 'divider', overflowY: 'scroll' }}>
@@ -71,7 +71,7 @@ export default function ActiveValidators ({ address }: Props): React.ReactElemen
               <Collapse in={showDetails} orientation='vertical' sx={{ '> .MuiCollapse-wrapper .MuiCollapse-wrapperInner': { display: 'grid', rowGap: '10px' }, width: '100%' }}>
                 <Grid container sx={{ '> .MuiPaper-root': { backgroundImage: 'none', boxShadow: 'none' }, '> .MuiPaper-root::before': { bgcolor: 'transparent' }, maxHeight: parent.innerHeight - 450, overflowX: 'hidden', overflowY: 'scroll' }}>
                   {nonActiveValidators?.map((v, index) => (
-                    <Grid container item key={index} sx={{ backgroundColor:'backgroundFL.secondary', borderTop: '1px solid', borderTopColor: 'divider', overflowY: 'scroll' }}>
+                    <Grid container item key={index} sx={{ backgroundColor: 'backgroundFL.secondary', borderTop: '1px solid', borderTopColor: 'divider', overflowY: 'scroll' }}>
                       <ShowValidator
                         accountInfo={v.accountInfo}
                         allInOneRow={false}
@@ -89,15 +89,18 @@ export default function ActiveValidators ({ address }: Props): React.ReactElemen
                   }
                 </Grid>
               </Collapse>
-              <Divider sx={{ bgcolor: 'divider', height: '2px', mt: '5px', width: '100%' }} />
-              <Grid alignItems='center' container item onClick={toggleDetails} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
-                <Typography color='secondary.light' fontSize='16px' fontWeight={400}>
-                  {t(showDetails ? t('Hide') : t('Others ({{count}})', {replace:{count: nonActiveValidators?.length}}))}
-                </Typography>
-                <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showDetails ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
-              </Grid>
+              {!!nonActiveValidators?.length &&
+                <>
+                  <Divider sx={{ bgcolor: 'divider', height: '2px', mt: '5px', width: '100%' }} />
+                  <Grid alignItems='center' container item onClick={toggleDetails} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
+                    <Typography color='secondary.light' fontSize='16px' fontWeight={400}>
+                      {t(showDetails ? t('Hide') : t('Others ({{count}})', { replace: { count: nonActiveValidators?.length } }))}
+                    </Typography>
+                    <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showDetails ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+                  </Grid>
+                </>
+              }
             </Grid>
-
           </>
           : activeValidators === undefined
             ? <>
@@ -113,8 +116,8 @@ export default function ActiveValidators ({ address }: Props): React.ReactElemen
                 ))
               }
             </>
-            : <Typography color={ 'text.primary'} fontSize='16px' fontWeight={400}>
-              { t('No Active Validators Found!')}
+            : <Typography color={'text.primary'} fontSize='16px' fontWeight={400}>
+              {t('No Active Validators Found!')}
             </Typography>
         }
       </Grid>
