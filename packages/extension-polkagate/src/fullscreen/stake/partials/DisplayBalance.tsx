@@ -119,10 +119,9 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
                 }}
               />
             </Grid>
-
           }
           {icons?.map((_, index) => {
-            const noValueToAct = !amount || amount?.isZero();
+            const noValueToAct = (!amount || amount?.isZero()) && actions && actions[index] !== t('pending');
 
             return (actions &&
               <Grid alignItems='center' container direction='column' item justifyContent='center' key={index} minWidth='96px' onClick={noValueToAct ? noop : onClicks && onClicks[index]} sx={{ cursor: noValueToAct ? 'unset' : 'pointer', ml: '10px', width: 'fit-content' }}>
