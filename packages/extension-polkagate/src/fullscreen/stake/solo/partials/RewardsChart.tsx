@@ -49,7 +49,7 @@ export default function RewardsChart ({ address, rewardDestinationAddress }: Pro
   const theme = useTheme();
   const { api, chain, chainName, decimal, token } = useInfo(address);
 
-  const [rewardsInfo, setRewardsInfo] = useState<RewardInfo[]>();
+  const [rewardsInfo, setRewardsInfo] = useState<RewardInfo[] | null>();
   const [pageIndex, setPageIndex] = useState<number>(0);
   const [mostPrize, setMostPrize] = useState<number>(0);
   const [dataToShow, setDataToShow] = useState<[string[], string[]][]>();
@@ -224,7 +224,9 @@ export default function RewardsChart ({ address, rewardDestinationAddress }: Pro
       });
 
       if (rewardsFromSubscan?.length) {
-        return setRewardsInfo(rewardsFromSubscan);
+        setRewardsInfo(rewardsFromSubscan);
+      } else if (list === null) {
+        setRewardsInfo(null);
       }
     });
   }, [chainName, rewardDestinationAddress]);
@@ -369,7 +371,7 @@ export default function RewardsChart ({ address, rewardDestinationAddress }: Pro
           icon={faChartColumn}
           style={{ height: '20px', width: '20px', marginRight: '10px' }}
         />
-        <Typography color={ 'text.primary'} fontSize='18px' fontWeight={500}>
+        <Typography color={'text.primary'} fontSize='18px' fontWeight={500}>
           {t('Rewards')}
         </Typography>
       </Grid>
@@ -452,7 +454,11 @@ export default function RewardsChart ({ address, rewardDestinationAddress }: Pro
                 </Grid>
               </Grid>
             </Grid>)
-          : <Progress pt='20px' size={125} title={t('Loading rewards...')} type='cubes' />
+          : rewardsInfo === null
+            ? <Typography fontSize='16px' fontWeight={400}>
+              {t('No Data Available to Illustrate the Chart.')}
+            </Typography>
+            : <Progress pt='20px' size={125} title={t('Loading rewards...')} type='cubes' />
         }
       </Grid>
     </Grid>
