@@ -23,7 +23,7 @@ export interface Prefs {
 
 export interface Others {
   who: string;
-  value: string;
+  value: BN;
 }
 
 /**
@@ -33,7 +33,7 @@ export interface Others {
 
 export default function useValidators (address: string, validators?: AllValidators): AllValidators | null | undefined {
   const { api, chain, chainName, endpoint } = useInfo(address);
-  const currentEraIndex = useCurrentEraIndex(address);
+  const currentEraIndex = useCurrentEraIndex(address); // TODO: Should we use active era index?
 
   const [info, setValidatorsInfo] = useState<AllValidators | undefined | null>();
   const [newInfo, setNewValidatorsInfo] = useState<AllValidators | undefined | null>();
@@ -107,12 +107,14 @@ export default function useValidators (address: string, validators?: AllValidato
         api.query.staking.validators.entries(),
         api.query.staking.erasStakersOverview.entries(currentEraIndex)
       ]);
+
       const validatorPrefs: Record<string, Prefs> = Object.fromEntries(
         prefs.map(([key, value]) => {
           const validatorAddress = key.toHuman() as string;
 
           return [validatorAddress, value as unknown as Prefs];
         }));
+
       const currentEraValidatorsOverview: Record<string, ExposureOverview> = Object.fromEntries(
         overview.map(([keys, value]) => {
           const validatorAddress = keys.toHuman()[1] as string;
@@ -137,7 +139,7 @@ export default function useValidators (address: string, validators?: AllValidato
 
           currentNominators[validatorAddress] = [];
 
-          pages.forEach(([, value]) => currentNominators[validatorAddress].push(...value.unwrap().others));
+          pages.forEach(([, value]) => currentNominators[validatorAddress].push(...(value.unwrap()?.others || [])));
         }
       });
 
