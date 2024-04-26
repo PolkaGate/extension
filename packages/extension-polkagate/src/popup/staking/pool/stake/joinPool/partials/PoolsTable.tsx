@@ -7,13 +7,12 @@ import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FilterAltOutlined as FilterIcon, MoreVert as MoreVertIcon, SearchOff as SearchOffIcon, SearchOutlined as SearchOutlinedIcon } from '@mui/icons-material';
 import { Divider, FormControlLabel, Grid, LinearProgress, Radio, SxProps, Theme, Typography, useTheme } from '@mui/material';
-import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useRef, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
-import { InputFilter, ShowBalance, ShowValue } from '../../../../../../components';
+import { InputFilter, Progress, ShowBalance } from '../../../../../../components';
 import { useChain, useDecimal, useStakingConsts, useToken, useTranslation } from '../../../../../../hooks';
 import { DEFAULT_POOL_FILTERS } from '../../../../../../util/constants';
 import { PoolFilter, PoolInfo } from '../../../../../../util/types';
@@ -36,7 +35,7 @@ interface Props {
   setSearchedPools: React.Dispatch<React.SetStateAction<PoolInfo[] | null | undefined>>;
 }
 
-export default function PoolsTable({ address, setSearchedPools, api, numberOfFetchedPools, totalNumberOfPools, pools, poolsToShow, filteredPools, setFilteredPools, selected, setSelected, maxHeight = window.innerHeight / 2.4, style }: Props): React.ReactElement {
+export default function PoolsTable ({ address, setSearchedPools, api, numberOfFetchedPools, totalNumberOfPools, pools, poolsToShow, filteredPools, setFilteredPools, selected, setSelected, maxHeight = window.innerHeight / 2.4, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef(null);
   const chain = useChain(address);
@@ -146,7 +145,7 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
         {poolsToShow
           ? poolsToShow.length
             ? poolsToShow.map((pool, index) => {
-              const mayBeCommission = pool.bondedPool.commission.current.isSome ? pool.bondedPool.commission.current.value[0] : 0
+              const mayBeCommission = pool.bondedPool.commission.current.isSome ? pool.bondedPool.commission.current.value[0] : 0;
               const commission = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
 
               return (
@@ -200,7 +199,7 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
                     <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
                   </Grid>
                 </Grid>
-              )
+              );
             })
             : <Grid display='inline-flex' p='10px'>
               <FontAwesomeIcon className='warningImage' icon={faExclamationTriangle} />
@@ -208,14 +207,7 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
                 {t<string>('There is no pool to join!')}
               </Typography>
             </Grid>
-          : <Grid alignItems='center' container justifyContent='center'>
-            <Grid item>
-              <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
-            </Grid>
-            <Typography fontSize='13px' lineHeight='59px' pl='10px'>
-              {t<string>('Loading pools...')}
-            </Typography>
-          </Grid>
+          : <Progress title={t<string>('Loading pools...')} type='grid' />
         }
       </Grid>
       {
