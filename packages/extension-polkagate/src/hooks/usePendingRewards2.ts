@@ -284,7 +284,5 @@ export default function usePendingRewards2 (address: string): UnclaimedPayouts |
     }).catch(console.error);
   }, [address, api, activeEra, formatted, getAllExposures, handleUnclaimedRewards]);
 
-  console.log('pendingRewards:', pendingRewards);
-
   return pendingRewards;
 }
