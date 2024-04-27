@@ -1228,5 +1228,6 @@
 "Claimable Rewards": "Заявляемые награды",
 "Pool information": "Информация о пуле",
 "Pool Rewards": "Награды пула",
-"Change State to {{state}}": "Изменить состояние на {{state}}"
+"Change State to {{state}}": "Изменить состояние на {{state}}",
+"No Data Available to Illustrate the Chart.": "Нет данных для отображения на графике."
 }

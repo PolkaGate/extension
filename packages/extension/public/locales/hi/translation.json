@@ -1229,5 +1229,6 @@
   "Claimable Rewards": "दावाप्राप्त पुरस्कार",
   "Pool information": "पूल सूचना",
   "Pool Rewards": "पूल पुरस्कार",
-  "Change State to {{state}}": "स्थिति बदलें {{state}} में"
+  "Change State to {{state}}": "स्थिति बदलें {{state}} में",
+  "No Data Available to Illustrate the Chart.": "चार्ट को विस्तारित करने के लिए कोई डेटा उपलब्ध नहीं है।"
 }

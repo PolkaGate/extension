@@ -1232,5 +1232,6 @@
   "Claimable Rewards": "Récompenses réclamables",
   "Pool information": "Informations sur la piscine",
   "Pool Rewards": "Récompenses de la piscine",
-  "Change State to {{state}}": "Changer l'état en {{state}}"
+  "Change State to {{state}}": "Changer l'état en {{state}}",
+  "No Data Available to Illustrate the Chart.": "Aucune donnée disponible pour illustrer le graphique."
 }
