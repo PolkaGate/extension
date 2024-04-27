@@ -164,7 +164,7 @@ export default function Popup (): React.ReactElement {
   }, [accounts, assetsOnChains]);
 
   useEffect(() => {
-    if (priceIds && currency && !isFetchingPricesRef.current) {
+    if (priceIds && currency?.code && !isFetchingPricesRef.current) {
       isFetchingPricesRef.current = true;
 
       getStorage('pricesInCurrencies')
@@ -174,7 +174,7 @@ export default function Popup (): React.ReactElement {
 
           if (mayBeSavedPriceInCurrentCurrencyCode && isPriceUpToDate(mayBeSavedPriceInCurrentCurrencyCode.date)) {
             /** price in the selected currency is already updated hence no need to fetch again */
-            // FixMe: what if user change selected chainS during price validity period?
+            // TODO: FixMe: what if users change selected chainS during price validity period?
             return;
           }
 
@@ -192,7 +192,7 @@ export default function Popup (): React.ReactElement {
           isFetchingPricesRef.current = false;
         });
     }
-  }, [currency, priceIds]);
+  }, [currency?.code, priceIds]);
 
   useEffect((): void => {
     Promise.all([
