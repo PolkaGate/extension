@@ -194,6 +194,7 @@ export default function RestoreJson (): React.ReactElement {
             <Grid container item>
               <Password
                 isError={isPasswordError}
+                isFocused
                 label={t<string>('Password for this file')}
                 onChange={passChange}
                 onEnter={onRestore}
