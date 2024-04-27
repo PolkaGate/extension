@@ -26,7 +26,7 @@ interface Props {
   direction?: 'row' | 'column';
   formatted?: string | AccountId;
   identiconSize?: number;
-  judgement?: any;
+  judgement?: unknown;
   name?: string;
   noIdenticon?: boolean;
   onClick?: () => void;
