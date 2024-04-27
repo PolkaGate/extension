@@ -63,8 +63,8 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Sync your stakings on the Westend testnet with the latest chain updates',
-              'बेहतर अनुभव के लिए मेनू/सेटिंग्स में हिंदी भाषा का चयन करें.',
+              'PolkaGate Dashboard at your fingertips - Manage accounts in full-screen mode.',
+              'Resolved staking pending rewards issue.',
               'Enjoy enhanced smoothness and benefit from bug fixes.'
 
             ]}
