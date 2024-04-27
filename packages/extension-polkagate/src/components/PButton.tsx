@@ -6,20 +6,20 @@ import { Circle } from 'better-react-spinkit';
 import React from 'react';
 
 interface Props {
-  text: string;
-  _variant?: 'text' | 'contained' | 'outlined';
-  _onClick: React.MouseEventHandler<HTMLButtonElement>;
-  _mt?: string;
   disabled?: boolean;
-  left?: string;
   _fontSize?: string;
   _isBusy?: boolean;
+  left?: string;
   _ml?: number;
-  _width?: number;
+  _mt?: string;
+  _onClick: React.MouseEventHandler<HTMLButtonElement>;
   startIcon?: React.ReactNode;
+  text: string;
+  _variant?: 'text' | 'contained' | 'outlined';
+  _width?: number;
 }
 
-function PButton({ _fontSize = '16px',left, _isBusy, _ml = 6, _mt, _onClick, _variant = 'contained', _width = 88, disabled = false, startIcon, text }: Props): React.ReactElement<Props> {
+function PButton ({ _fontSize = '16px', _isBusy, _ml = 6, _mt, _onClick, _variant = 'contained', _width = 88, disabled = false, left, startIcon, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (
@@ -30,15 +30,15 @@ function PButton({ _fontSize = '16px',left, _isBusy, _ml = 6, _mt, _onClick, _va
           container
           justifyContent='center'
           sx={{
+            backgroundColor: 'secondary.main',
             border: '1px solid',
-            left,
             borderColor: 'secondary.main',
             borderRadius: '5px',
             bottom: !_mt ? '25px' : 0,
-            backgroundColor: 'secondary.main',
             fontSize: _fontSize,
             fontWeight: 400,
             height: '36px',
+            left,
             ml: `${_ml}%`,
             mt: _mt ?? 0,
             position: !_mt ? 'absolute' : 'inherit',
@@ -49,16 +49,16 @@ function PButton({ _fontSize = '16px',left, _isBusy, _ml = 6, _mt, _onClick, _va
             color='white'
             scaleEnd={0.7}
             scaleStart={0.4}
-            size={25} />
+            size={25}
+          />
         </Grid>
         : <Button
           disabled={disabled}
           onClick={_onClick}
           startIcon={startIcon}
           sx={{
-            "&:disabled": { backgroundColor: '#4b4b4b' },
+            '&:disabled': { backgroundColor: '#4b4b4b' },
             borderColor: 'secondary.main',
-            left,
             borderRadius: '5px',
             bottom: !_mt ? '25px' : 0,
             color: _variant === 'text'
@@ -71,6 +71,7 @@ function PButton({ _fontSize = '16px',left, _isBusy, _ml = 6, _mt, _onClick, _va
             fontSize: _fontSize,
             fontWeight: 400,
             height: '36px',
+            left,
             ml: `${_ml}%`,
             mt: _mt ?? 0,
             position: !_mt ? 'absolute' : 'inherit',
