@@ -14,12 +14,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import blockToDate from '@polkadot/extension-polkagate/src/popup/crowdloans/partials/blockToDate';
-import { LabelBalance, ValidatorEra } from '@polkadot/extension-polkagate/src/popup/staking/solo/rewards/PendingRewards';
+import { LabelBalance } from '@polkadot/extension-polkagate/src/popup/staking/solo/rewards/PendingRewards';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { Checkbox2, Identity, ShowBalance, TwoButtons } from '../../../../components';
-import { useCurrentBlockNumber, useInfo, usePendingRewards, useTranslation } from '../../../../hooks';
+import { useCurrentBlockNumber, useInfo, usePendingRewards2, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
@@ -41,16 +41,23 @@ export const STEPS = {
   PROXY: 100
 };
 
+export interface ExpandedRewards {
+  eraIndex: number;
+  validator: string;
+  page: number;
+  value: BN;
+}
+
 export default function Pending({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
   const { api, chain, decimal, token } = useInfo(address);
-  const rewards = usePendingRewards(address);
   const currentBlock = useCurrentBlockNumber(address);
+  const rewards = usePendingRewards2(address);
 
-  const [selectedToPayout, setSelectedToPayout] = useState<ValidatorEra[]>([]);
-  const [erasHistoric, setErasHistoric] = useState<number>();
+  const [expandedRewards, setExpandedRewards] = useState<ExpandedRewards[] | undefined>(undefined);
+  const [selectedToPayout, setSelectedToPayout] = useState<ExpandedRewards[]>([]);
   const [progress, setProgress] = useState<DeriveSessionProgress>();
   const [forcing, setForcing] = useState<Forcing>();
   const [historyDepth, setHistoryDepth] = useState<BN>();
@@ -63,7 +70,6 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
       return;
     }
 
-    api.derive.staking.erasHistoric().then((res) => setErasHistoric(res.length)).catch(console.error);
     api.derive.session.progress().then(setProgress).catch(console.error);
     api.query.staking.forceEra().then(setForcing).catch(console.error);
 
@@ -72,27 +78,54 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
       : setHistoryDepth(api.consts.staking.historyDepth);
   }, [api]);
 
+  useEffect(() => {
+    if (!rewards) {
+      return;
+    }
+
+    const rewardsArray: [string, string, number, BN][] = Object.entries(rewards || {}).reduce<[string, string, number, BN][]>(
+      (acc, [era, eraRewards]) => {
+        const eraRewardsArray = Object.entries(eraRewards || {}).reduce<[string, string, number, BN][]>(
+          (eraAcc, [validator, [page, amount]]) => {
+            eraAcc.push([era, validator, page, amount]);
+
+            return eraAcc;
+          },
+          []
+        );
+
+        return acc.concat(eraRewardsArray);
+      },
+      []
+    );
+
+    setExpandedRewards(rewardsArray);
+  }, [rewards]);
+
   const totalPending = useMemo(() => {
     if (!rewards) {
       return BN_ZERO;
     }
 
-    return rewards.reduce((sum, { validators }) => {
-      Object.values(validators).forEach(({ value }) => {
-        sum = sum.add(value);
-      });
+    const validatorRewards = Object.values(rewards || {});
+    const pageRewards = validatorRewards.map((item) => Object.values(item || {})).flat();
+
+    const total = pageRewards.reduce((sum: BN, [_, value]: [number, BN]) => {
+      sum = sum.add(value);
 
       return sum;
     }, BN_ZERO);
+
+    return total;
   }, [rewards]);
 
   const totalSelectedPending = useMemo(() => {
-    if (!selectedToPayout) {
+    if (!selectedToPayout?.length) {
       return BN_ZERO;
     }
 
-    return selectedToPayout.reduce((sum, sel) => {
-      sum = sum.add(sel[2]);
+    return selectedToPayout.reduce((sum: BN, value: ExpandedRewards) => {
+      sum = sum.add(value[3] as BN);
 
       return sum;
     }, BN_ZERO);
@@ -103,7 +136,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
       return;
     }
 
-    const payoutStakers = api.tx.staking.payoutStakers;
+    const payoutStakers = api.tx.staking.payoutStakersByPage;
     const batch = api.tx.utility.batchAll;
 
     const call = selectedToPayout.length === 1
@@ -112,8 +145,8 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
 
     const params =
       selectedToPayout.length === 1
-        ? [selectedToPayout[0][0], selectedToPayout[0][1]]
-        : [selectedToPayout.map((p) => payoutStakers(p[0], p[1]))];
+        ? [selectedToPayout[0][1], Number(selectedToPayout[0][0]), selectedToPayout[0][2]]
+        : [selectedToPayout.map((p) => payoutStakers(p[1], Number(p[0]), p[2]))];
 
     const amount = amountToHuman(totalSelectedPending, decimal);
 
@@ -130,8 +163,8 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
     });
   }, [api, decimal, selectedToPayout, totalSelectedPending]);
 
-  const isIncluded = useCallback((v: ValidatorEra): boolean => {
-    const _isIncluded = !!selectedToPayout.find((s) => s.every((value, index) => value === v[index]));
+  const isIncluded = useCallback((info: ExpandedRewards): boolean => {
+    const _isIncluded = !!selectedToPayout.find((s) => s === info);
 
     return _isIncluded;
   }, [selectedToPayout]);
@@ -159,25 +192,18 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
   }, [currentBlock, forcing, historyDepth, progress]);
 
   const onSelectAll = useCallback((_, checked: boolean) => {
-    if (checked) {
-      const _selected: ValidatorEra[] = [];
-
-      rewards?.forEach((r) => {
-        Object.keys(r.validators).forEach((v) => {
-          _selected.push([v, r.era.toNumber(), r.validators[v].value]);
-        });
-      });
-      setSelectedToPayout(_selected);
+    if (checked && expandedRewards?.length) {
+      setSelectedToPayout([...expandedRewards]);
     } else {
       setSelectedToPayout([]);
     }
-  }, [rewards]);
+  }, [expandedRewards]);
 
-  const onSelect = useCallback((validatorEra: ValidatorEra, checked: boolean) => {
+  const onSelect = useCallback((info: ExpandedRewards, checked: boolean) => {
     if (checked) {
-      setSelectedToPayout((prev) => prev.concat([validatorEra]));
+      setSelectedToPayout((prev) => prev.concat([info]));
     } else {
-      const index = selectedToPayout.findIndex((s) => s.every((value, index) => value === validatorEra[index]));
+      const index = selectedToPayout.findIndex((s: ExpandedRewards) => s === info);
 
       setSelectedToPayout((prev) => {
         const newArray = [...prev];
@@ -189,7 +215,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
     }
   }, [selectedToPayout]);
 
-  const TABLE_HEIGHT = window.innerHeight - 600;
+  const TABLE_HEIGHT = 375;
   const SKELETON_HEIGHT = 25;
 
   const onNext = useCallback(() => {
@@ -220,9 +246,10 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
                 {t('Validators usually pay rewards regularly. If not received within the set period, rewards expire. You can manually initiate the payout if desired.')}
               </Typography>
               <Grid alignContent='flex-start' alignItems='center' container item sx={{ border: `1px solid ${theme.palette.primary.main}`, borderBottom: 0, borderTopLeftRadius: '5px', borderTopRightRadius: '5px', p: '5px', width: '100%' }}>
-                <Grid item textAlign='left' sx={{ fontSize: '13px' }} xs={4.75}>
+                <Grid item sx={{ fontSize: '13px' }} textAlign='left' xs={4.75}>
                   <Checkbox2
-                    checked={!!rewards?.length && selectedToPayout?.length === rewards?.length}
+                    checked={!!expandedRewards?.length && selectedToPayout?.length === expandedRewards?.length}
+                    // disabled={!expandedRewards?.length}
                     iconStyle={{ transform: 'scale(0.9)' }}
                     onChange={onSelectAll}
                     style={{ paddingRight: '5px' }}
@@ -237,37 +264,39 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
                 </Grid>
               </Grid>
               <Grid alignContent='flex-start' container height={TABLE_HEIGHT} sx={{ border: 1, borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px', borderColor: 'primary.main', overflow: 'scroll', width: '100%' }}>
-                {!rewards
+                {!expandedRewards
                   ? <Grid container justifyContent='center'>
                     {Array.from({ length: TABLE_HEIGHT / SKELETON_HEIGHT }).map((_, index) => (
                       <Skeleton animation='wave' height={SKELETON_HEIGHT} key={index} sx={{ display: 'inline-block', transform: 'none', width: '96%', my: '5px' }} />
                     ))}
                   </Grid>
-                  : !rewards.length
+                  : !expandedRewards.length
                     ? <Grid container justifyContent='center' sx={{ mt: '70px' }}>
                       <Typography>
                         {t('No pending rewards found!')}
                       </Typography>
                     </Grid>
-                    : <> {rewards?.map((info, index) => (
-                      <Grid container item key={index}>
-                        {
-                          Object.keys(info.validators).map((v, index) => (
-                            <Grid alignContent='flex-start' alignItems='center' container item key={index} sx={{ borderColor: 'primary.main', borderTop: 1, px: '5px' }}>
+                    : <> {expandedRewards?.map((info, index) => {
+                      const [eraIndex, validator, page, value] = info;
+
+                      return (
+                        <Grid container item key={index}>
+                          {
+                            <Grid alignContent='flex-start' alignItems='center' container item sx={{ borderColor: 'primary.main', borderTop: 1, px: '5px' }}>
                               <Grid container item sx={{ fontSize: '13px' }} xs={4}>
                                 <Grid item>
                                   <Checkbox2
-                                    checked={isIncluded([v, info.era.toNumber(), info.validators[v].value])}
+                                    checked={isIncluded(info)}
                                     iconStyle={{ transform: 'scale(0.8)' }}
                                     // eslint-disable-next-line react/jsx-no-bind
-                                    onChange={(_event, checked) => onSelect([v, info.era.toNumber(), info.validators[v].value], checked)}
+                                    onChange={(_event, checked) => onSelect(info, checked)}
                                     style={{ paddingRight: '10px' }}
                                   />
                                 </Grid>
                                 <Grid item>
                                   <ShowBalance
                                     api={api}
-                                    balance={info.validators[v].value}
+                                    balance={value}
                                     withCurrency={false}
                                   />
                                 </Grid>
@@ -276,7 +305,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
                                 <Identity
                                   api={api}
                                   chain={chain}
-                                  formatted={v}
+                                  formatted={validator}
                                   identiconSize={20}
                                   showSocial={false}
                                   style={{
@@ -289,13 +318,13 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
                                 />
                               </Grid>
                               <Grid item sx={{ fontSize: '13px', textAlign: 'right' }} xs={2}>
-                                {eraToDate(info.era.toNumber())}
+                                {eraToDate(Number(eraIndex))}
                               </Grid>
                             </Grid>
-                          ))
-                        }
-                      </Grid>
-                    ))}
+                          }
+                        </Grid>
+                      );
+                    })}
                     </>
                 }
               </Grid>
@@ -323,11 +352,10 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
                     </>
                 }
               </Grid>
-
             </Grid>
             <Grid container item sx={{ '> div': { m: 0, width: '100%' }, justifyContent: 'flex-end', mt: '5px' }}>
               <TwoButtons
-                disabled={!inputs}
+                disabled={!inputs || !selectedToPayout.length}
                 mt='1px'
                 onPrimaryClick={onNext}
                 onSecondaryClick={onCancel}

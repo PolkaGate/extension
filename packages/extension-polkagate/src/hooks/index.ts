@@ -94,3 +94,5 @@ export { default as useNativeTokenPrice } from './useNativeTokenPrice';
 export { default as useActiveValidators } from './useActiveValidators';
 export { default as useEstimatedFee } from './useEstimatedFee';
 export { default as useIsExtensionPopup } from './useIsExtensionPopup';
+export { default as usePendingRewards2 } from './usePendingRewards2';
+export { default as useActiveEraIndex } from './useActiveEraIndex';
