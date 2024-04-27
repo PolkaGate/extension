@@ -61,7 +61,7 @@ export default function useAccountInfo2 (api: ApiPromise | undefined, formatted:
 
     api && formatted && getIdentityOf(formatted).then((identity) => {
       if (identity) {
-         setInfo({
+        setInfo({
           accountId: api.createType('AccountId', formatted),
           identity
         });
@@ -87,10 +87,6 @@ export default function useAccountInfo2 (api: ApiPromise | undefined, formatted:
         }).catch(console.error);
       }
     }).catch(console.error);
-
-    // api && formatted && api.derive.accounts.info(formatted).then((i) => {
-    //   i && setInfo(i);
-    // }).catch(console.error);
   }, [accountInfo, api, formatted, getIdentityOf, getSubIdentityOf]);
 
   return info;
