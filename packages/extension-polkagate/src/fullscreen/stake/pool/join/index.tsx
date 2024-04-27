@@ -32,7 +32,7 @@ export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
-  const { api, decimal, formatted, token } = useInfo(address);
+  const { api, decimal, formatted, genesisHash, token } = useInfo(address);
   const poolStakingConsts = usePoolConsts(address);
 
   usePools(address);
@@ -53,6 +53,13 @@ export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.
   const onBack = useCallback(() => {
     setStep(STEPS.INDEX);
   }, [setStep]);
+
+  useEffect(() => {
+    // go back on chain switch
+    if (genesisHash && api?.genesisHash && String(api.genesisHash) !== genesisHash) {
+      onBack();
+    }
+  }, [api?.genesisHash, genesisHash, onBack]);
 
   const stakeAmountChange = useCallback((value: string) => {
     if (!decimal) {
