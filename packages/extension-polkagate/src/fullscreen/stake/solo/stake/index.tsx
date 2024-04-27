@@ -26,14 +26,14 @@ interface Props {
   onBack?: (() => void) | undefined
 }
 
-export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props): React.ReactElement {
+export default function SoloStake({ inputs, onBack, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
+  const { api, decimal, formatted, genesisHash } = useInfo(address);
   const stakingAccount = useStakingAccount(address);
 
   const [refresh, setRefresh] = useState<boolean>(false);
   const balances = useBalances(address, refresh, setRefresh);
-  const { api, decimal, formatted } = useInfo(address);
 
   const stakingConsts = useStakingConsts(address);
   const minToReceiveRewardsInSolo = useMinToReceiveRewardsInSolo2(address);
@@ -158,6 +158,13 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
     isNextClicked && !isBusy && goToReview();
   }, [goToReview, isBusy, isNextClicked]);
 
+  useEffect(() => {
+    // go back on chain switch
+    if (genesisHash && api?.genesisHash && String(api.genesisHash) !== genesisHash) {
+      onBack ? onBack() : _onBack();
+    }
+  }, [_onBack, api?.genesisHash, genesisHash, onBack]);
+
   return (
     <>
       <Typography fontSize='16px' fontWeight={500} pb='15px' width='100%'>
@@ -165,12 +172,12 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
       </Typography>
       <Grid alignItems='center' container item justifyContent='flex-start'>
         <AmountWithOptions
-          label={t('Amount') }
+          label={t('Amount')}
           onChangeAmount={onChangeAmount}
           onPrimary={onMaxClick}
           onSecondary={onMinClick}
           primaryBtnText={t('Max amount')}
-          secondaryBtnText={ t('Min amount')}
+          secondaryBtnText={t('Min amount')}
           style={{
             fontSize: '16px',
             mt: '10px',
