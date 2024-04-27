@@ -70,10 +70,10 @@ export default function useValidatorSuggestion (address: string): ValidatorInfo[
     );
     const filtered2 = onLimitValidatorsPerOperator(filtered1, DEFAULT_FILTERS.limitOfValidatorsPerOperator.value);
 
-    const filtered3 = chainName === 'Westend' ? filtered2 : filtered2.filter((v) => v?.identity?.display && v?.identity?.judgements?.length); // filter has no verified identity
+    const filtered3 = filtered2.filter((v) => v?.identity?.display && v?.identity?.judgements?.length); // filter those who has no verified identity
 
     return filtered3.sort(getComparator('Commissions')).slice(0, stakingConsts?.maxNominations);
-  }, [chainName, onLimitValidatorsPerOperator]);
+  }, [onLimitValidatorsPerOperator]);
 
   useEffect(() => {
     if (!allValidators || !stakingConsts) {
