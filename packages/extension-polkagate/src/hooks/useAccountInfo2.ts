@@ -39,7 +39,7 @@ export default function useAccountInfo2 (api: ApiPromise | undefined, formatted:
   }, [api]);
 
   const getSubIdentityOf = useCallback(async (): Promise<SubIdentity | undefined> => {
-    if (!api || !formatted) {
+    if (!api?.query?.identity?.superOf || !formatted) {
       return;
     }
 
