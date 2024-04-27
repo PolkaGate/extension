@@ -81,7 +81,7 @@ export const ModalTitle = ({ icon, onCancel, setStep, step, text }: { text: stri
   );
 };
 
-export default function ConfigurePayee({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function ConfigurePayee ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);
@@ -184,6 +184,8 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
     if (account) {
       return { Account: account };
     }
+
+    return undefined;
   }, [settings]);
 
   const payeeNotChanged = useMemo(
