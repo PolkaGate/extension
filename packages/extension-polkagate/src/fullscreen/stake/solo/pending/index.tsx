@@ -215,7 +215,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
     }
   }, [selectedToPayout]);
 
-  const TABLE_HEIGHT = window.innerHeight - 600;
+  const TABLE_HEIGHT = 375;
   const SKELETON_HEIGHT = 25;
 
   const onNext = useCallback(() => {
