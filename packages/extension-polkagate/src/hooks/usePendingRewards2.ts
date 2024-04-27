@@ -54,7 +54,11 @@ export const PAGED_REWARD_START_ERA: Record<string, number> = {
 export type AnyApi = any;
 export type AnyJson = any;
 
-const isRewardsPaged = (chainName: string, era: number): boolean => {
+const isRewardsPaged = (chainName: string | undefined, era: number): boolean => {
+  if (!chainName) {
+    return false;
+  }
+
   const startEra = PAGED_REWARD_START_ERA[chainName];
 
   return startEra ? era >= startEra : false;
