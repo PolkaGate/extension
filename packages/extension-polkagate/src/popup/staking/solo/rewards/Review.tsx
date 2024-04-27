@@ -8,10 +8,11 @@
  * this component opens unstake review page
  * */
 
-import { Container,Grid, useTheme } from '@mui/material';
+import { Container, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
+import { ExpandedRewards } from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/pending';
 import { Balance } from '@polkadot/types/interfaces';
 import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
@@ -24,7 +25,6 @@ import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
-import { ValidatorEra } from './PendingRewards';
 import TxDetail from './TxDetail';
 
 interface Props {
@@ -32,10 +32,10 @@ interface Props {
   amount: BN;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
-  selectedToPayout: ValidatorEra[]
+  selectedToPayout: ExpandedRewards[]
 }
 
-export default function Review({ address, amount, selectedToPayout, setShow, show }: Props): React.ReactElement {
+export default function Review ({ address, amount, selectedToPayout, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -61,7 +61,7 @@ export default function Review({ address, amount, selectedToPayout, setShow, sho
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
-  const payoutStakers = api && api.tx.staking.payoutStakers;
+  const payoutStakers = api && api.tx.staking.payoutStakersByPage;
   const batch = api && api.tx.utility.batchAll;
 
   const goToStakingHome = useCallback(() => {
@@ -82,8 +82,8 @@ export default function Review({ address, amount, selectedToPayout, setShow, sho
     }
 
     const _tx = selectedToPayout.length === 1
-      ? payoutStakers(selectedToPayout[0][0], selectedToPayout[0][1])
-      : batch(selectedToPayout.map((p) => payoutStakers(p[0], p[1])));
+      ? payoutStakers(selectedToPayout[0][1], Number(selectedToPayout[0][0]), selectedToPayout[0][2])
+      : batch(selectedToPayout.map((p) => payoutStakers(p[1], Number(p[0]), p[2])));
 
     setTx(_tx);
   }, [batch, payoutStakers, selectedToPayout]);
