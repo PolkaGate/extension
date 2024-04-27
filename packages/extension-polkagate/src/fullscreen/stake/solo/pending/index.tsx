@@ -48,7 +48,7 @@ export interface ExpandedRewards {
   value: BN;
 }
 
-export default function Pending({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function Pending ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -307,6 +307,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
                                   chain={chain}
                                   formatted={validator}
                                   identiconSize={20}
+                                  showShortAddress
                                   showSocial={false}
                                   style={{
                                     fontSize: '13px',
