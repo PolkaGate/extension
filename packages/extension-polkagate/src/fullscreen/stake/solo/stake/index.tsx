@@ -146,8 +146,8 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
     setNextIsClicked(true);
   }, []);
 
-  const goToReview = useCallback(
-    () => setStep(STEPS.SOLO_REVIEW)
+  const goToSetPayee = useCallback(
+    () => setStep(STEPS.STAKE_SOLO_SET_PAYEE)
     , [setStep]);
 
   const _onBack = useCallback(
@@ -155,8 +155,8 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
     , [setStep]);
 
   useEffect(() => {
-    isNextClicked && !isBusy && goToReview();
-  }, [goToReview, isBusy, isNextClicked]);
+    isNextClicked && !isBusy && goToSetPayee();
+  }, [goToSetPayee, isBusy, isNextClicked]);
 
   return (
     <>

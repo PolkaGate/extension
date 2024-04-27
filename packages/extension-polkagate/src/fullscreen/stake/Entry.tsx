@@ -23,6 +23,7 @@ import JoinPool from './pool/join';
 import SoloStake from './solo/stake';
 import EasyMode from './easyMode';
 import { STEPS } from '.';
+import ConfigurePayee from './solo/stake/ConfigurePayee';
 
 export interface Inputs {
   amount?: string | undefined; // deprecated, moved to extraInfo
@@ -43,7 +44,7 @@ interface Props {
   txInfo: TxInfo | undefined
 }
 
-function Entry({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.ReactElement {
+function Entry ({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.ReactElement {
   const { address } = useParams<{ address: string }>();
 
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -86,6 +87,12 @@ function Entry({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.React
         <SoloStake
           inputs={inputs}
           onBack={onBack}
+          setInputs={setInputs}
+          setStep={setStep}
+        />
+      }
+      {step === STEPS.STAKE_SOLO_SET_PAYEE &&
+        <ConfigurePayee
           setInputs={setInputs}
           setStep={setStep}
         />
