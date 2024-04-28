@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
 import { useEffect, useState } from 'react';
 
@@ -10,25 +10,17 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { updateMeta } from '../messaging';
 import { SavedIdentities } from '../util/types';
 import useFormatted from './useFormatted';
-import { useAccount, useApi, useChainName } from '.';
+import { useAccount, useAccountInfo2, useApi, useChainName } from '.';
 
 /** This hook is going to be used for users account existing in the extension */
-export default function useMyAccountIdentity(address: AccountId | string | undefined): DeriveAccountRegistration | null | undefined {
+export default function useMyAccountIdentity (address: AccountId | string | undefined): DeriveAccountRegistration | null | undefined {
   const formatted = useFormatted(address);
   const api = useApi(address);
   const account = useAccount(address);
   const chainName = useChainName(address);
+  const info = useAccountInfo2(api, formatted);
 
-  const [info, setInfo] = useState<DeriveAccountInfo | null | undefined>();
   const [oldIdentity, setOldIdentity] = useState<DeriveAccountRegistration | null | undefined>();
-
-  useEffect(() => {
-    api && formatted && api.derive.accounts.info(formatted).then((info) => {
-      info?.identity?.display
-        ? setInfo(JSON.parse(JSON.stringify(info)) as DeriveAccountInfo)
-        : setInfo(null);
-    }).catch(console.error);
-  }, [api, formatted]);
 
   useEffect(() => {
     if (!account || !chainName || info === undefined || !address || (info && info.accountId !== formatted)) {
