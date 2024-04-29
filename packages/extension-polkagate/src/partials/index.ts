@@ -15,3 +15,4 @@ export { default as Confirmation } from './Confirmation';
 export { default as FullScreenChainSwitch } from './FullScreenChainSwitch';
 export { default as FullScreenRemoteNode } from './FullScreenRemoteNode';
 export { default as AddNewAccountButton } from './AddNewAccountButton';
+export { default as NavigationPaths } from './NavigationPaths';
