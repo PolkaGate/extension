@@ -3,8 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import type { BalancesInfo, MyPoolInfo } from '../../../util/types';
 
 import { faSquarePlus } from '@fortawesome/free-regular-svg-icons';
@@ -13,15 +11,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
+import { NavigationPaths } from '@polkadot/extension-polkagate/src/partials';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
 import { BN } from '@polkadot/util';
 
-import { PoolStakingIcon } from '../../../components';
 import { useInfo, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { STAKING_CHAINS } from '../../../util/constants';
-import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
-import { Title } from '../../sendFund/InputPage';
 import DisplayBalance from '../partials/DisplayBalance';
 import ClaimedRewardsChart from './partials/ClaimedRewardsChart';
 import Info from './partials/Info';
@@ -70,19 +66,9 @@ export default function PoolStaked({ address, balances, pool, redeemable, setSho
     redeemable && !redeemable?.isZero() && setShow(MODAL_IDS.REDEEM);
   }, [redeemable, setShow]);
 
-  const onBack = useCallback(() => {
-    openOrFocusTab(`/accountfs/${address}/0`, true);
-  }, [address]);
-
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', px: '2%' }}>
-      <Title
-        logo={
-          <PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />
-        }
-        onBackClick={onBack}
-        text={t('Staked in Pool')}
-      />
+      <NavigationPaths address={address} />
       <Grid container item justifyContent='space-between' mb='15px'>
         <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 320px - 3%)'>
           <Grid container sx={{ overflowY: 'scroll', px: '5px' }}>

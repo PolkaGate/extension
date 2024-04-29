@@ -4,18 +4,16 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { faArrowRotateLeft, faBolt, faCircleDown, faClockFour, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { Boy as BoyIcon } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
+import { NavigationPaths } from '@polkadot/extension-polkagate/src/partials';
 import { AccountStakingInfo, BalancesInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { useInfo, useStakingRewardDestinationAddress, useStakingRewards, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { STAKING_CHAINS } from '../../../util/constants';
-import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
-import { Title } from '../../sendFund/InputPage';
 import DisplayBalance from '../partials/DisplayBalance';
 import ActiveValidators from './partials/ActiveValidators';
 import CommonTasks from './partials/CommonTasks';
@@ -36,7 +34,7 @@ interface Props {
   balances: BalancesInfo | undefined
 }
 
-export default function StakedSolo({ balances, setRefresh, setShow, stakingAccount }: Props): React.ReactElement {
+export default function StakedSolo ({ balances, setRefresh, setShow, stakingAccount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const { api } = useInfo(address);
@@ -118,17 +116,9 @@ export default function StakedSolo({ balances, setRefresh, setShow, stakingAccou
     unlockingAmount && !unlockingAmount?.isZero() && setShow(MODAL_IDS.RE_STAKE);
   }, [setShow, unlockingAmount]);
 
-  const onBack = useCallback(() => {
-    openOrFocusTab(`/accountfs/${address}/0`, true);
-  }, [address]);
-
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', px: '2%' }}>
-      <Title
-        logo={<BoyIcon sx={{ color: 'text.primary', fontSize: '60px' }} />}
-        onBackClick={onBack}
-        text={t('Staked Solo')}
-      />
+      <NavigationPaths address={address} />
       <Grid container item justifyContent='space-between' mb='15px'>
         <Grid container direction='column' item mb='10px' minWidth='715px' rowGap='10px' width='calc(100% - 320px - 3%)'>
           <Grid container item>

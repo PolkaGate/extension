@@ -3,8 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
@@ -14,6 +13,7 @@ import { AccountContext, ActionContext } from '../../components';
 import { useAccount, useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
 import { FetchedBalance } from '../../hooks/useAssetsBalances';
+import { NavigationPaths } from '../../partials';
 import { getValue } from '../../popup/account/util';
 import ExportAccountModal from '../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../popup/forgetAccount/ForgetAccountModal';
@@ -51,7 +51,7 @@ const isRelayChain = (chainName: string) =>
   chainName.toLowerCase() === 'polkadot' ||
   chainName.toLowerCase() === 'westend';
 
-export default function AccountDetails(): React.ReactElement {
+export default function AccountDetails (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -168,36 +168,12 @@ export default function AccountDetails(): React.ReactElement {
     address && account?.genesisHash && STAKING_CHAINS.includes(account.genesisHash) && openOrFocusTab(`/poolfs/${address}/`);
   }, [account?.genesisHash, address]);
 
-  const onBackClick = useCallback(() => {
-    openOrFocusTab('/', true);
-  }, []);
-
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='accountDetails' />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '5%' }}>
-          <Grid alignItems='center' container item>
-            <Grid container item width='fit-content'>
-              <ArrowBackIosIcon
-                onClick={onBackClick}
-                sx={{
-                  ':hover': { opacity: 1 },
-                  color: 'secondary.light',
-                  cursor: 'pointer',
-                  fontSize: 36,
-                  opacity: 0.5,
-                  stroke: theme.palette.secondary.light,
-                  strokeWidth: 1
-                }}
-              />
-            </Grid>
-            <Grid item>
-              <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t('Account Details')}
-              </Typography>
-            </Grid>
-          </Grid>
+          <NavigationPaths address={address} />
           <Grid container item justifyContent='space-between' mb='15px'>
             <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 300px - 3%)'>
               <AccountInformation
