@@ -83,6 +83,14 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
     address && onAction(`/socialRecovery/${address}/false`);
   }, [address, onAction]);
 
+  const isDisable = useCallback((supportedChains: string[]) => {
+    if (!chain) {
+      return true;
+    } else {
+      return !supportedChains.includes(chain.genesisHash ?? '');
+    }
+  }, [chain]);
+
   const AccountMenu = () => (
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
       {/* <Grid container item>
@@ -104,19 +112,19 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} /> */}
       <MenuItem
-        disabled={!chain || !(PROXY_CHAINS.includes(chain.genesisHash ?? ''))}
+        disabled={isDisable(PROXY_CHAINS)}
         iconComponent={
-          <vaadin-icon icon='vaadin:sitemap' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+          <vaadin-icon icon='vaadin:sitemap' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
         }
         onClick={onManageProxies}
         text={t<string>('Manage proxies')}
         withHoverEffect
       />
       <MenuItem
-        disabled={!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))}
+        disabled={isDisable(IDENTITY_CHAINS)}
         iconComponent={
           <FontAwesomeIcon
-            color={(!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))) ? theme.palette.text.disabled : theme.palette.text.primary}
+            color={isDisable(IDENTITY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}
             fontSize={20}
             icon={faAddressCard}
           />
@@ -126,11 +134,11 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
         withHoverEffect
       />
       <MenuItem
-        disabled={!chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))}
+        disabled={isDisable(SOCIAL_RECOVERY_CHAINS)}
         iconComponent={
           <SocialRecoveryIcon
             color={
-              !chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))
+              isDisable(SOCIAL_RECOVERY_CHAINS)
                 ? theme.palette.text.disabled
                 : theme.palette.text.primary}
             height={24}
