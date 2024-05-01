@@ -14,7 +14,7 @@ import React, { useCallback, useContext, useState } from 'react';
 import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain, SocialRecoveryIcon } from '../components';
 import { useAccount, useApi, useChain, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
-import { IDENTITY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../util/constants';
+import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
 
 interface Props {
@@ -24,7 +24,7 @@ interface Props {
   noMargin?: boolean;
 }
 
-function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): React.ReactElement<Props> {
+function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const options = useGenesisHashOptions();
@@ -70,7 +70,7 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
   }, [address, onAction]);
 
   const _onManageProxies = useCallback(() => {
-    address && chain && onAction(`/manageProxies/${address}`);
+    address && chain && PROXY_CHAINS.includes(chain.genesisHash ?? '') && onAction(`/manageProxies/${address}`);
   }, [address, chain, onAction]);
 
   const _onManageId = useCallback(() => {
@@ -81,6 +81,14 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
     address && windowOpen(`/socialRecovery/${address}/false`).catch(console.error);
   }, [address]);
 
+  const isDisabled = useCallback((supportedChains: string[]) => {
+    if (!chain) {
+      return true;
+    }
+
+    return !supportedChains.includes(chain.genesisHash ?? '');
+  }, [chain]);
+
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container item justifyContent='center' my='20px' pl='8px'>
@@ -88,18 +96,18 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
-        disabled={!chain}
+        disabled={isDisabled(PROXY_CHAINS)}
         iconComponent={
-          <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${isDisabled(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
         }
         onClick={_onManageProxies}
         text={t('Manage proxies')}
       />
       <MenuItem
-        disabled={!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))}
+        disabled={isDisabled(IDENTITY_CHAINS)}
         iconComponent={
           <FontAwesomeIcon
-            color={(!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))) ? theme.palette.text.disabled : theme.palette.text.primary}
+            color={isDisabled(IDENTITY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}
             fontSize={19}
             icon={faAddressCard}
           />
@@ -108,11 +116,11 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
         text={t('Manage identity')}
       />
       <MenuItem
-        disabled={!chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))}
+        disabled={isDisabled(SOCIAL_RECOVERY_CHAINS)}
         iconComponent={
           <SocialRecoveryIcon
             color={
-              !chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))
+              isDisabled(SOCIAL_RECOVERY_CHAINS)
                 ? theme.palette.text.disabled
                 : theme.palette.text.primary}
             height={22}
