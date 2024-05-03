@@ -18,7 +18,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { stakingClose } from '../../assets/icons';
 import { ActionContext, Assets, Chain, HorizontalMenuItem, Identity, Motion } from '../../components';
-import { useApi, useBalances, useChain, useChainName, useFormatted, useGenesisHashOptions, useMyAccountIdentity, useTranslation } from '../../hooks';
+import { useBalances, useGenesisHashOptions, useInfo, useMyAccountIdentity, useTranslation } from '../../hooks';
 import { tieAccount, windowOpen } from '../../messaging';
 import { FullScreenRemoteNode, HeaderBrand } from '../../partials';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
@@ -34,17 +34,14 @@ export default function AccountDetails (): React.ReactElement {
   const history = useHistory();
   const onAction = useContext(ActionContext);
   const theme = useTheme();
-  const { pathname, state } = useLocation();
+  const { pathname } = useLocation();
   const { address, genesisHash } = useParams<FormattedAddressState>();
-  const api = useApi(address, state?.api);
+  const { api, chain, chainName, formatted } = useInfo(address);
   const identity = useMyAccountIdentity(address);
-  const formatted = useFormatted(address);
-  const chain = useChain(address);
-  const chainName = useChainName(address);
 
   const genesisOptions = useGenesisHashOptions();
 
-  const [refresh, setRefresh] = useState<boolean | undefined>(false);
+  const [refresh, setRefresh] = useState<boolean>(false);
   const [assetId, setAssetId] = useState<number>();
   const balances = useBalances(address, refresh, setRefresh, false, assetId); // if assetId is undefined and chain is assethub it will fetch native token's balance
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
