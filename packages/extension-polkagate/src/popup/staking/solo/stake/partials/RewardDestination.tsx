@@ -20,10 +20,10 @@ interface Props {
   settings: SoloSettings
 }
 
-export default function RewardsDestination({ settings }: Props): React.ReactElement {
+export default function RewardsDestination ({ settings }: Props): React.ReactElement {
   const { t } = useTranslation();
   const address = getPayee(settings);
-  const payeeName = useAccountName(address)
+  const payeeName = useAccountName(address);
   const payeeIdentity = useMyAccountIdentity(address);
 
   return (
@@ -33,7 +33,7 @@ export default function RewardsDestination({ settings }: Props): React.ReactElem
       </Typography>
       <Grid container item justifyContent='center' mt='5px'>
         {settings.payee === 'Staked'
-          ? <Typography sx={{ fontWeight: 400}}>
+          ? <Typography sx={{ fontWeight: 400 }}>
             {t('Add to staked amount')}
           </Typography>
           : <Grid container item justifyContent='center'>
