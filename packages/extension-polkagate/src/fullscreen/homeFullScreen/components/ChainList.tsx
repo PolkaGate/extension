@@ -32,10 +32,11 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [searchedChain, setSearchedChain] = useState<DropdownOption[]>();
   const [selectedChains, setSelectedChains] = useState<Set<string>>(new Set());
+  const [initialChains, setInitialChains] = useState<Set<string>>(new Set());
 
   const sortedChainsToShow = useMemo(() => [...allChains].sort((a, b) => {
-    const aInSet = selectedChains.has(a.value as string);
-    const bInSet = selectedChains.has(b.value as string);
+    const aInSet = initialChains.has(a.value as string);
+    const bInSet = initialChains.has(b.value as string);
 
     if (aInSet && !bInSet) {
       return -1; // Move 'a' before 'b'
@@ -44,15 +45,15 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
     } else {
       return 0; // Keep the original order
     }
-  }), [allChains, selectedChains]);
+  }), [allChains, initialChains]);
 
   useEffect(() => {
     const defaultSelectedGenesisHashes = DEFAULT_SELECTED_CHAINS.map(({ value }) => value as string);
 
     getStorage('selectedChains').then((res) => {
       (res as string[])?.length
-        ? setSelectedChains(new Set(res as string[]))
-        : setSelectedChains(new Set(defaultSelectedGenesisHashes));
+        ? setInitialChains(new Set(res as string[]))
+        : setInitialChains(new Set(defaultSelectedGenesisHashes));
     }).catch(console.error);
   }, [allChains]);
 
@@ -82,6 +83,10 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
         handleChainsChanges();
     }
   }, [anchorEl, handleChainsChanges, selectedChains]);
+
+  useEffect(() => {
+    initialChains?.size && setSelectedChains(initialChains);
+  }, [initialChains]);
 
   const onChainSelect = useCallback((chain: DropdownOption) => {
     setSelectedChains((prevChains) => {
@@ -117,7 +122,7 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
   const onReset = useCallback(() => {
     const defaultSelectedGenesisHashes = DEFAULT_SELECTED_CHAINS.map(({ value }) => value as string);
 
-    setSelectedChains(new Set(defaultSelectedGenesisHashes));
+    setInitialChains(new Set(defaultSelectedGenesisHashes));
     setStorage('selectedChains', defaultSelectedGenesisHashes).catch(console.error);
     updateSavedAssetsInStorage();
   }, [updateSavedAssetsInStorage]);
