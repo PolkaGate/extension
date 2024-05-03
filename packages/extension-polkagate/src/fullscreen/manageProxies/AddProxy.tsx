@@ -5,22 +5,20 @@
 
 import '@vaadin/icons';
 
-import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
-
 import { AddRounded as AddRoundedIcon } from '@mui/icons-material';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { AccountContext, AddressInput, InputWithLabel, Select, TwoButtons, Warning } from '../../components';
-import { useAccountIdOrName, useFormatted, useTranslation } from '../../hooks';
+import { useAccountIdOrName, useAccountInfo2, useFormatted, useTranslation } from '../../hooks';
+import ShowIdentity from '../../popup/manageProxies/partials/ShowIdentity';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
 import { DropdownOption, ProxyItem } from '../../util/types';
 import { sanitizeChainName } from '../../util/utils';
-import ShowIdentity from '../../popup/manageProxies/partials/ShowIdentity';
 import { STEPS } from '.';
 
 interface Props {
@@ -41,8 +39,9 @@ export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setP
 
   const [proxyAddress, setProxyAddress] = useState<string | null>();
   const [delay, setDelay] = useState<number>(0);
-  const [accountInfo, setAccountInfo] = useState<DeriveAccountRegistration | undefined | null>();
   const [duplicateProxy, setDuplicateProxy] = useState<boolean>(false);
+
+  const proxyAccountIdentity = useAccountInfo2(api, proxyAddress ?? undefined);
 
   const myselfAsProxy = useMemo(() => formatted === proxyAddress, [formatted, proxyAddress]);
   const PROXY_TYPE = CHAIN_PROXY_TYPES[sanitizeChainName(chain?.name) as keyof typeof CHAIN_PROXY_TYPES];
@@ -55,20 +54,6 @@ export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setP
   const [proxyType, setProxyType] = useState<string | number>(proxyTypeOptions[0].value);
 
   const allAddresses = getAllAddresses(accounts, false, true, chain?.ss58Format, proxiedAddress);
-
-  useEffect(() => {
-    if (proxyAddress && api) {
-      api.derive.accounts.info(proxyAddress).then((info) => {
-        if (info.identity.display) {
-          setAccountInfo(info.identity);
-        } else {
-          setAccountInfo(null);
-        }
-      }).catch(console.error);
-    } else {
-      setAccountInfo(undefined);
-    }
-  }, [api, proxyAddress]);
 
   useEffect(() => {
     duplicateProxy && setDuplicateProxy(false);
@@ -181,7 +166,7 @@ export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setP
       </Grid>
       {proxyAddress &&
         <ShowIdentity
-          accountIdentity={accountInfo}
+          accountIdentity={proxyAccountIdentity?.identity}
           style={{ '> div:last-child div div p': { fontSize: '14px' }, '> div:last-child div div:last-child p': { fontSize: '16px', fontWeight: 400 }, m: '25px auto 0', width: '100%' }}
         />}
       <Grid container item justifyContent='flex-end' sx={{ borderColor: 'divider', borderTop: 1, bottom: '25px', height: '50px', left: 0, mx: '7%', position: 'absolute', width: '85%' }}>
@@ -191,8 +176,8 @@ export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setP
             mt='10px'
             onPrimaryClick={onAddProxy}
             onSecondaryClick={onBack}
-            primaryBtnText={t<string>('Add')}
-            secondaryBtnText={t<string>('Back')}
+            primaryBtnText={t('Add')}
+            secondaryBtnText={t('Back')}
             width='100%'
           />
         </Grid>
