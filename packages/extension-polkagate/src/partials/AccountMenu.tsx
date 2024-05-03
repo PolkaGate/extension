@@ -94,6 +94,7 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
         }
         onClick={_onManageProxies}
         text={t('Manage proxies')}
+        withHoverEffect
       />
       <MenuItem
         disabled={!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))}
@@ -106,6 +107,7 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
         }
         onClick={_onManageId}
         text={t('Manage identity')}
+        withHoverEffect
       />
       <MenuItem
         disabled={!chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))}
@@ -121,6 +123,7 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
         }
         onClick={_onSocialRecovery}
         text={t('Social Recovery')}
+        withHoverEffect
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
@@ -129,6 +132,7 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
         }
         onClick={_onExportAccount}
         text={t('Export account')}
+        withHoverEffect
       />
       {canDerive &&
         <MenuItem
@@ -137,6 +141,7 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
           }
           onClick={_goToDeriveAcc}
           text={t('Derive new account')}
+          withHoverEffect
         />
       }
       <MenuItem
@@ -145,6 +150,7 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
         }
         onClick={_onRenameAccount}
         text={t('Rename')}
+        withHoverEffect
       />
       <MenuItem
         iconComponent={
@@ -152,6 +158,7 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
         }
         onClick={_onForgetAccount}
         text={t('Forget account')}
+        withHoverEffect
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <SelectChain
