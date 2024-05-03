@@ -62,13 +62,13 @@ function NavigationPaths ({ address }: { address: string }): React.ReactElement 
     }
   }, [currentPath, navigationPaths]);
 
-  const onClick = useCallback((link: string) => () => {
-    openOrFocusTab(link, true);
+  const onClick = useCallback((link: string, currentPath: boolean) => () => {
+    !currentPath && openOrFocusTab(link, true);
   }, []);
 
   const NavigationLink = ({ currentPath, icon, link, title }: NavigationLink) => {
     return (
-      <Grid alignItems='center' container item onClick={onClick(link)} width='fit-content'>
+      <Grid alignItems='center' container item onClick={onClick(link, currentPath)} width='fit-content'>
         <Grid alignItems='center' container item sx={{ '&:hover': { bgcolor: currentPath ? 'none' : 'divider', textDecoration: currentPath ? 'none' : 'underline' }, borderRadius: '5px', cursor: currentPath ? 'auto' : 'pointer', p: '5px' }} width='fit-content'>
           {icon}
           <Typography fontSize={currentPath ? '20px' : '16px'} fontWeight={currentPath ? 600 : 500}>
