@@ -190,6 +190,7 @@ export default function StakedSolo({ balances, setRefresh, setShow, stakingAccou
           />
           <CommonTasks
             address={address}
+            staked={staked}
             setRefresh={setRefresh}
           />
         </Grid>

@@ -10,15 +10,18 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { openOrFocusTab, TaskButton } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { useInfo, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { BN } from '@polkadot/util';
 
 import ConfigurePayee from '../commonTasks/configurePayee';
 
 interface Props {
   address: string | undefined;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  staked: BN | undefined;
+
 }
 
-export default function CommonTasks ({ address, setRefresh }: Props): React.ReactElement {
+export default function CommonTasks ({ address, setRefresh, staked }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { genesisHash } = useInfo(address);
@@ -26,6 +29,8 @@ export default function CommonTasks ({ address, setRefresh }: Props): React.Reac
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
 
   const [showRewardDestinationModal, setShowRewardDestinationModal] = useState<boolean>(false);
+
+  const isDisabled = useMemo((): boolean => !genesisHash || !staked || staked?.isZero(), [genesisHash, staked]);
 
   const onRewardDestination = useCallback(() => {
     setShowRewardDestinationModal(true);
@@ -44,7 +49,7 @@ export default function CommonTasks ({ address, setRefresh }: Props): React.Reac
         <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto 15px', width: '90%' }} />
         <Grid alignItems='center' container direction='column' display='block' item justifyContent='center'>
           <TaskButton
-            disabled={!genesisHash}
+            disabled={isDisabled}
             icon={
               <FontAwesomeIcon
                 color={`${theme.palette.text.primary}`}
@@ -58,7 +63,7 @@ export default function CommonTasks ({ address, setRefresh }: Props): React.Reac
             text={t('Configure Reward Destination')}
           />
           <TaskButton
-            disabled={!genesisHash}
+            disabled={isDisabled}
             icon={
               <FontAwesomeIcon
                 color={`${theme.palette.text.primary}`}
