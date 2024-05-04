@@ -10,9 +10,9 @@ import React, { useCallback } from 'react';
 import { QrScanSignature } from '@polkadot/react-qr';
 
 import { SlidePopUp } from '../../../components';
+import { DraggableModal } from '../../../fullscreen/governance/components/DraggableModal';
 import { useTranslation } from '../../../hooks';
 import useIsExtensionPopup from '../../../hooks/useIsExtensionPopup';
-import { DraggableModal } from '../../../fullscreen/governance/components/DraggableModal';
 
 interface Props {
   openCamera: boolean;
@@ -28,6 +28,15 @@ export default function QrScanner ({ openCamera, setAddress, setOpenCamera }: Pr
 
   const _onSignature = useCallback(({ signature }: { signature: string }): void => {
     if (!signature) {
+      return;
+    }
+
+    if (signature.startsWith('0x')) { // NOVA WALLET QR CODE
+      const formatted = signature.slice(2);
+
+      setAddress(formatted);
+      setOpenCamera(false);
+
       return;
     }
 
