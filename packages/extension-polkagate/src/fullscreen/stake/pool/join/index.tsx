@@ -18,7 +18,7 @@ import { PoolInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
 import { Inputs } from '../../Entry';
-import PoolsTable from './partials/PoolsTable';
+import PoolsTable from '../partials/PoolsTable';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;

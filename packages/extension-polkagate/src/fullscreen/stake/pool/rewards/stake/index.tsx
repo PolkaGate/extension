@@ -20,6 +20,7 @@ import Confirmation from '../../../partials/Confirmation';
 import Review from '../../../partials/Review';
 import { ModalTitle } from '../../../solo/commonTasks/configurePayee';
 import { MODAL_IDS } from '../..';
+import { STEPS } from '../../stake';
 
 interface Props {
   address: string | undefined;
@@ -28,15 +29,6 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   pool: MyPoolInfo | null | undefined;
 }
-
-export const STEPS = {
-  INDEX: 1,
-  REVIEW: 2,
-  WAIT_SCREEN: 3,
-  CONFIRM: 4,
-  PROGRESS: 5,
-  PROXY: 100
-};
 
 export default function StakeRewards({ address, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
@@ -102,7 +94,7 @@ export default function StakeRewards({ address, pool, setRefresh, setShow, show 
             type='grid'
           />
         }
-        {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <Review
             address={address}
             inputs={inputs}

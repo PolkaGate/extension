@@ -21,6 +21,7 @@ import { useInfo, useStakingAccount, useStakingConsts, useTranslation } from '..
 import { Inputs } from '../../../Entry';
 import Confirmation from '../../../partials/Confirmation';
 import Review from '../../../partials/Review';
+import { STEPS } from '../../../pool/stake';
 
 interface Props {
   address: string | undefined;
@@ -28,14 +29,6 @@ interface Props {
   show: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
-
-export const STEPS = {
-  INDEX: 1,
-  REVIEW: 2,
-  WAIT_SCREEN: 3,
-  CONFIRM: 4,
-  PROXY: 100
-};
 
 export const ModalTitle = ({ icon, onCancel, setStep, step, text }: { text: string, onCancel: () => void, setStep?: React.Dispatch<React.SetStateAction<number>>, icon: IconDefinition, step: number }): React.ReactElement<Props> => {
   const theme = useTheme();
@@ -281,7 +274,7 @@ export default function ConfigurePayee ({ address, setRefresh, setShow, show }: 
             />
           </>
         }
-        {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <Review
             address={address}
             inputs={inputs}

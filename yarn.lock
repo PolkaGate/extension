@@ -4269,7 +4269,7 @@ __metadata:
     "@polkadot/keyring": latest
     "@polkadot/networks": latest
     "@polkadot/react-identicon": latest
-    "@polkadot/react-qr": latest
+    "@polkadot/react-qr": ^3.6.6
     "@polkadot/types": latest
     "@polkadot/types-augment": latest
     "@polkadot/ui-keyring": latest
@@ -4449,24 +4449,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/react-qr@npm:latest":
-  version: 2.9.14
-  resolution: "@polkadot/react-qr@npm:2.9.14"
+"@polkadot/react-qr@npm:^3.6.6":
+  version: 3.6.6
+  resolution: "@polkadot/react-qr@npm:3.6.6"
   dependencies:
-    "@babel/runtime": ^7.20.6
-    "@polkadot/ui-settings": 2.9.14
-    "@polkadot/util": ^10.2.1
-    "@polkadot/util-crypto": ^10.2.1
+    "@polkadot/ui-settings": 3.6.6
+    "@polkadot/util": ^12.6.2
+    "@polkadot/util-crypto": ^12.6.2
     qrcode-generator: ^1.4.4
     react-qr-reader: ^2.2.1
-    styled-components: ^5.3.6
+    styled-components: ^6.1.1
+    tslib: ^2.6.2
   peerDependencies:
     "@polkadot/util": "*"
     "@polkadot/util-crypto": "*"
     react: "*"
     react-dom: "*"
-    styled-components: "*"
-  checksum: 72abf971c912471954f7c61c5741984a4c7926fd569f0340bc63790af9d190d75dd02e5ed54bb01f2acd1a3959128b5b6f051365917e02aafd07c1eb6b3bef21
+    react-is: "*"
+  checksum: b0613f94d5b2b850977a830744715c2cc9b9deb3eb7f4cadcc296dd9affe298f09f9fa923c000e86763b9f5ab4e2e29ae0114c43cecda5cebea97b69d9c991fa
   languageName: node
   linkType: hard
 
@@ -4800,6 +4800,22 @@ __metadata:
     "@polkadot/networks": "*"
     "@polkadot/util": "*"
   checksum: 77aa9b6f63c6f01a69cd19830961b17293f7a84acb4f9d01bae5af8315fae8540d64f170c99d9d8dd1c7ac774a31d3a5f524db5e34af05affe3c9ded81513279
+  languageName: node
+  linkType: hard
+
+"@polkadot/ui-settings@npm:3.6.6":
+  version: 3.6.6
+  resolution: "@polkadot/ui-settings@npm:3.6.6"
+  dependencies:
+    "@polkadot/networks": ^12.6.2
+    "@polkadot/util": ^12.6.2
+    eventemitter3: ^5.0.1
+    store: ^2.0.12
+    tslib: ^2.6.2
+  peerDependencies:
+    "@polkadot/networks": "*"
+    "@polkadot/util": "*"
+  checksum: 27bb900e7a1d78745f5d3f65e298e4eb4aabbdef2768d45dc33f6d845f6b6c8a825b20e0ac80c3b728f87ccb2e3ec992252f975eb29c01710ef0e630c95786ab
   languageName: node
   linkType: hard
 

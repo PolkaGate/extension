@@ -124,7 +124,7 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
             value={`${amountToHuman(txInfo.fee, txInfo.decimal)} ${txInfo.token}`}
           />
         }
-        {txInfo.block &&
+        {!!txInfo.block &&
           <DisplayInfo
             caption={t('Block:')}
             value={`#${txInfo.block}`}

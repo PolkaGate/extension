@@ -19,8 +19,9 @@ import { AccountHolderWithProxy, Infotip, ShowValue, SignArea2, WrongPasswordAle
 import { useProxies, useTranslation } from '../../../../../hooks';
 import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { Inputs } from '../../../Entry';
+import { STEPS } from '../../stake';
 import ShowPoolRole from './ShowPoolRole';
-import { ChangesProps, STEPS } from '.';
+import { ChangesProps } from '.';
 
 interface Props {
   address: string;
@@ -126,7 +127,7 @@ export default function Review ({ address, api, chain, changes, formatted, pool,
 
   return (
     <Grid container direction='column' item pt='15px'>
-      {step === STEPS.REVIEW &&
+      {[STEPS.REVIEW, STEPS.SIGN_QR].includes(step) &&
         <>
           <Grid container item sx={{ maxHeight: '405px', overflow: 'scroll' }}>
             {isPasswordError &&

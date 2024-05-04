@@ -14,8 +14,8 @@ import { TwoButtons } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
 import { useInfo, useStakingAccount, useStakingConsts } from '../../../../../hooks';
 import { Inputs } from '../../../Entry';
+import { STEPS } from '../../../pool/stake';
 import SelectValidators from '../../partials/SelectValidators';
-import { STEPS } from '.';
 
 interface Props {
   address: string;

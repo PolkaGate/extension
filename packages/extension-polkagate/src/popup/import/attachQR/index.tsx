@@ -86,7 +86,7 @@ export default function AttachQR(): React.ReactElement {
     }
   }, [onAction, stepOne]);
 
-  const _onError = useCallback((error: string) => {
+  const _onError = useCallback((error: Error) => {
     setInvalidQR(String(error).includes('Invalid prefix'));
   }, []);
 

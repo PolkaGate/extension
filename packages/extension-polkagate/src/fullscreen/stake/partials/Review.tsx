@@ -21,7 +21,7 @@ import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../h
 import { SubTitle } from '../../../partials';
 import { MyPoolInfo, Payee, Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { Inputs } from '../Entry';
-import { STEPS } from '../solo/commonTasks/configurePayee';
+import { STEPS } from '../pool/stake';
 
 interface Props {
   address: string | undefined;
@@ -111,7 +111,7 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
           fontSize='14px'
         />
       }
-      {step === STEPS.REVIEW &&
+      {[STEPS.REVIEW, STEPS.SIGN_QR].includes(step) &&
         <>
           <SubTitle label={t('Review')} style={{ paddingTop: isPasswordError ? '10px' : '25px' }} />
           <Container disableGutters sx={{ px: '30px' }}>

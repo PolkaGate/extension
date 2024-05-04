@@ -17,7 +17,7 @@ import { useInfo } from '../../../../../hooks';
 import { Proxy, StakingConsts, TxInfo } from '../../../../../util/types';
 import { Inputs } from '../../../Entry';
 import ValidatorsTable from '../../../solo/partials/ValidatorsTable';
-import { STEPS } from '.';
+import { STEPS } from '../../stake';
 
 interface Props {
   address: string;

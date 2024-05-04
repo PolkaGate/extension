@@ -38,12 +38,13 @@ export const STEPS = {
   EASY_CONFIRM: 11,
   JOIN_CONFIRM: 12,
   CREATE_CONFIRM: 13,
-  PROXY: 100
+  PROXY: 100,
+  SIGN_QR: 200
 };
 
 export type StepsType = typeof STEPS[keyof typeof STEPS];
 
-export default function StakingOptions(): React.ReactElement {
+export default function StakingOptions (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

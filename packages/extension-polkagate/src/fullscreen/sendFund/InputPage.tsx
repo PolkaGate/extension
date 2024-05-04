@@ -5,7 +5,6 @@
 
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
-import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
@@ -18,12 +17,13 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { ActionContext, AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, ShowBalance, TwoButtons, Warning } from '../../components';
 import { useTranslation } from '../../components/translate';
-import { useApi, useChain, useFormatted, useTeleport } from '../../hooks';
+import { useInfo, useTeleport } from '../../hooks';
 import { ASSET_HUBS } from '../../util/constants';
 import { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
 import { amountToHuman, amountToMachine } from '../../util/utils';
 import { toTitleCase } from '../governance/utils/util';
-import { Inputs, STEPS } from '.';
+import { STEPS } from '../stake/pool/stake';
+import { Inputs } from '.';
 
 interface Props {
   address: string
@@ -82,9 +82,7 @@ const isAssethub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || 
 export default function InputPage ({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const api = useApi(address);
-  const formatted = useFormatted(address);
-  const chain = useChain(address);
+  const {api, chain, formatted} = useInfo(address);
   const teleportState = useTeleport(address);
   const onAction = useContext(ActionContext);
 
@@ -365,8 +363,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     , [address, assetId, onAction]);
 
   return (
-    <Grid container item sx={{ display: 'block', px: '10%' }}>
-      <Title icon={faPaperPlane} text={t<string>('Send Fund')} />
+    <Grid container item>
       <Typography fontSize='14px' fontWeight={400}>
         {t<string>('Input transfer amount and destination account. For cross-chain transfers, adjust recipient chain and consider associated fees.')}
       </Typography>

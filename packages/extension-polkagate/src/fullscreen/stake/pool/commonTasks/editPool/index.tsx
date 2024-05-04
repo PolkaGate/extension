@@ -19,6 +19,7 @@ import Confirmation from '../../partials/Confirmation';
 import Edit from './Edit';
 import Review from './Review';
 import TxDetail from './TxDetail';
+import { STEPS } from '../../stake';
 
 interface Props {
   address: string;
@@ -41,14 +42,6 @@ export interface ChangesProps {
     newBouncer: string | undefined | null;
   } | undefined
 }
-
-export const STEPS = {
-  INDEX: 1,
-  REVIEW: 2,
-  WAIT_SCREEN: 3,
-  CONFIRM: 4,
-  PROXY: 100
-};
 
 export default function ManageEditPool ({ address, api, chain, onClose, pool, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
@@ -82,7 +75,7 @@ export default function ManageEditPool ({ address, api, chain, onClose, pool, se
               setStep={setStep}
             />
           }
-          {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
+          {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
             <Review
               address={address}
               api={api}

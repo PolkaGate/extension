@@ -22,14 +22,7 @@ import Confirmation from '../../../easyMode/Confirmation';
 import { Inputs } from '../../../Entry';
 import InputPage from './InputPage';
 import Review from './Review';
-
-export const STEPS = {
-  INDEX: 0,
-  REVIEW: 1,
-  CONFIRM: 2,
-  WAIT_SCREEN: 3,
-  PROXY: 100
-};
+import { STEPS } from '../../stake';
 
 export default function ManageValidators (): React.ReactElement {
   useFullscreen();
@@ -71,7 +64,7 @@ export default function ManageValidators (): React.ReactElement {
               stakingConsts={stakingConsts}
             />
           }
-          {[STEPS.REVIEW, STEPS.PROXY].includes(step) && inputs &&
+          {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) && inputs &&
             <Review
               address={address}
               allValidatorsIdentities={allValidatorsIdentities}

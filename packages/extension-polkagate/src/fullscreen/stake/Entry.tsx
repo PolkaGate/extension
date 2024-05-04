@@ -90,7 +90,7 @@ function Entry({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.React
           setStep={setStep}
         />
       }
-      {(inputs && [STEPS.EASY_REVIEW, STEPS.SOLO_REVIEW, STEPS.JOIN_REVIEW, STEPS.CREATE_REVIEW, STEPS.PROXY].includes(step)) &&
+      {(inputs && [STEPS.EASY_REVIEW, STEPS.SOLO_REVIEW, STEPS.JOIN_REVIEW, STEPS.CREATE_REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step)) &&
         <Review
           address={address}
           balances={balances}

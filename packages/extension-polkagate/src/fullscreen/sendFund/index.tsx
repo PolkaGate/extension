@@ -5,30 +5,28 @@
 
 import type { AnyTuple } from '@polkadot/types/types';
 
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { Grid } from '@mui/material';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
+import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { useBalances, useChain, useFullscreen } from '../../hooks';
+import { useBalances, useChain, useFullscreen, useTranslation } from '../../hooks';
+import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
-import InputPage from './InputPage';
+import WaitScreen from '../governance/partials/WaitScreen';
+import { STEPS } from '../stake/pool/stake';
+import Confirmation from './Confirmation';
+import InputPage, { Title } from './InputPage';
 import Review from './Review';
-
-export const STEPS = {
-  INDEX: 0,
-  REVIEW: 1,
-  WAIT_SCREEN: 2,
-  CONFIRM: 3,
-  PROXY: 100
-};
 
 export interface Inputs {
   amount: string | undefined;
@@ -42,6 +40,8 @@ export interface Inputs {
 type StepsType = typeof STEPS[keyof typeof STEPS];
 
 export default function SendFund (): React.ReactElement {
+  const { t } = useTranslation();
+
   useFullscreen();
   const { address, assetId } = useParams<{ address: string, assetId: string }>();
   const chain = useChain(address);
@@ -54,6 +54,7 @@ export default function SendFund (): React.ReactElement {
 
   const [step, setStep] = useState<StepsType>(STEPS.INDEX);
   const [inputs, setInputs] = useState<Inputs>();
+  const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
 
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
@@ -76,10 +77,29 @@ export default function SendFund (): React.ReactElement {
     ref.current = chain;
   }, [address, chain, history]);
 
+  const closeConfirmation = useCallback(() => {
+    setRefresh(true);
+    openOrFocusTab(`/accountfs/${address}/0`, true); // TODO: add asset id instead of 0
+  }, [address, setRefresh]);
+
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='send' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', display: 'block', px: '5%' }}>
+        <Title
+          icon={faPaperPlane}
+          text={
+            step === STEPS.INDEX
+              ? t('Send Fund')
+              : [STEPS.REVIEW, STEPS.PROXY].includes(step)
+                ? t('Review')
+                : step === STEPS.WAIT_SCREEN
+                  ? t('Sending Fund')
+                  : t(txInfo?.success
+                    ? t('Fund Sent')
+                    : t('Fund Send Failed'))
+          }
+        />
         {(step === STEPS.INDEX) &&
           <InputPage
             address={address}
@@ -90,14 +110,24 @@ export default function SendFund (): React.ReactElement {
             setStep={setStep}
           />
         }
-        {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <Review
             address={address}
             balances={balances}
             inputs={inputs}
             setRefresh={setRefresh}
             setStep={setStep}
+            setTxInfo={setTxInfo}
             step={step}
+          />
+        }
+        {step === STEPS.WAIT_SCREEN &&
+          <WaitScreen />
+        }
+        {txInfo && step === STEPS.CONFIRM &&
+          <Confirmation
+            handleDone={closeConfirmation}
+            txInfo={txInfo}
           />
         }
       </Grid>

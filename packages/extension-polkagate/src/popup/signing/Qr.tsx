@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
 
@@ -23,9 +25,10 @@ interface Props {
   genesisHash: string;
   onSignature: ({ signature }: { signature: HexString }) => void;
   payload: ExtrinsicPayload | string;
+  buttonLeft?: string;
 }
 
-function Qr({ address, className, cmd, genesisHash, onSignature, payload }: Props): React.ReactElement<Props> {
+function Qr ({ address, buttonLeft, className, cmd, genesisHash, onSignature, payload }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [isScanning, setIsScanning] = useState(false);
 
@@ -88,12 +91,13 @@ function Qr({ address, className, cmd, genesisHash, onSignature, payload }: Prop
           {t<string>('Hold the QR code in front of the device’s camera.')}
         </Typography>
       }
-      {!isScanning && (
+      {!isScanning &&
         <PButton
           _onClick={_onShowQr}
+          left={buttonLeft}
           text={t<string>('Next')}
         />
-      )}
+      }
     </div>
   );
 }
