@@ -91,7 +91,7 @@ export default function SendFund (): React.ReactElement {
           text={
             step === STEPS.INDEX
               ? t('Send Fund')
-              : [STEPS.REVIEW, STEPS.PROXY].includes(step)
+              : [STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step)
                 ? t('Review')
                 : step === STEPS.WAIT_SCREEN
                   ? t('Sending Fund')
