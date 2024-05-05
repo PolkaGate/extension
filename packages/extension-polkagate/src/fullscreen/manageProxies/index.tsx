@@ -28,6 +28,7 @@ export const STEPS = {
   MANAGE: 2,
   PROXY: 100,
   REVIEW: 4,
+  SIGN_QR: 200,
   UNSUPPORTED: 1,
   WAIT_SCREEN: 5
 };
@@ -135,7 +136,7 @@ function ManageProxies (): React.ReactElement {
               setStep={setStep}
             />
           }
-          {(step === STEPS.REVIEW || step === STEPS.PROXY || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM) &&
+          {[STEPS.REVIEW, STEPS.PROXY, STEPS.WAIT_SCREEN, STEPS.CONFIRM, STEPS.SIGN_QR].includes(step) &&
             <Review
               address={address}
               api={api}
