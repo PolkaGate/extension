@@ -143,7 +143,7 @@ export default function Filters ({ apply, decimal, filters, pools, setApply, set
           {t<string>('Filters')}
         </Typography>
       </Grid>
-      <Grid alignItems='center' container justifyContent='center' >
+      <Grid alignItems='center' container justifyContent='center'>
         <Divider sx={{ bgcolor: 'secondary.main', width: '80%' }} />
         <Grid alignItems='center' container item m='3px 34px 3px'>
           <Checkbox2
@@ -226,7 +226,7 @@ export default function Filters ({ apply, decimal, filters, pools, setApply, set
             width='20%'
           />
         </Grid>
-        <div style={{ paddingTop: '10px', width: '80%' }}>
+        <div style={{ paddingTop: '10px', width: isExtensionPopup ? '80%' : '85%' }}>
           {(filters.sortBy || DEFAULT_POOL_FILTERS.sortBy) &&
             <Select
               label={t('Sort by')}
@@ -238,7 +238,7 @@ export default function Filters ({ apply, decimal, filters, pools, setApply, set
         </div>
       </Grid>
       <TwoButtons
-        ml={isExtensionPopup ? '0' : undefined}
+        ml={isExtensionPopup ? undefined : '0'}
         onPrimaryClick={onApply}
         onSecondaryClick={onClear}
         primaryBtnText={t<string>('Apply')}
