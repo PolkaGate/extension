@@ -17,7 +17,7 @@ import { useTranslation } from '../../../../../components/translate';
 import { useInfo } from '../../../../../hooks';
 import { Inputs } from '../../../Entry';
 import SelectValidators from '../../../solo/partials/SelectValidators';
-import { STEPS } from '.';
+import { STEPS } from '../../stake';
 
 interface Props {
   address: string;
