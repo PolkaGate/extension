@@ -136,13 +136,13 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
           </Grid>
         }
       </Grid>
-      <Grid container sx={{ '> div': { ml: '30%', mt: '15px', width: '100%' } }}>
-        <PButton
-          _mt='15px'
-          _onClick={handleDone}
-          text={t<string>('Done')}
-        />
-      </Grid>
+      <PButton
+        _ml={0}
+        _mt='15px'
+        _onClick={handleDone}
+        _width={100}
+        text={t<string>('Done')}
+      />
     </Motion>
   );
 }

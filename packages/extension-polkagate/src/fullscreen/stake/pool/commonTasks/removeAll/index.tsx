@@ -23,6 +23,7 @@ import { useFormatted, useTranslation } from '../../../../../hooks';
 import { usePoolMembers } from '../../../../../hooks/usePoolMembers';
 import { ModalTitle } from '../../../solo/commonTasks/configurePayee';
 import Confirmation from '../../partials/Confirmation';
+import { STEPS } from '../../stake';
 import Review from './Review';
 
 interface Props {
@@ -59,14 +60,6 @@ const remainingTime = (seconds: number) => {
     minCounter,
     secCounter
   });
-};
-
-export const STEPS = {
-  INDEX: 1,
-  REVIEW: 2,
-  WAIT_SCREEN: 3,
-  CONFIRM: 4,
-  PROXY: 100
 };
 
 export type Mode = 'UnbondAll' | 'RemoveAll';
@@ -293,7 +286,7 @@ export default function RemoveAll ({ address, api, chain, onClose, pool, setRefr
                 </Grid>}
             </Grid>
           </>}
-        {[STEPS.REVIEW, STEPS.PROXY].includes(step) && mode && members && api && chain &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) && mode && members && api && chain &&
           <Review
             address={address}
             api={api}

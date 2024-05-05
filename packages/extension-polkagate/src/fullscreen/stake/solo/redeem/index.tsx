@@ -19,6 +19,7 @@ import { useInfo, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
+import { STEPS } from '../../pool/stake';
 import { ModalTitle } from '../commonTasks/configurePayee';
 import { MODAL_IDS } from '..';
 
@@ -29,15 +30,6 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
   redeemable: Balance | undefined
 }
-
-export const STEPS = {
-  INDEX: 1,
-  REVIEW: 2,
-  WAIT_SCREEN: 3,
-  CONFIRM: 4,
-  PROGRESS: 5,
-  PROXY: 100
-};
 
 export default function Pending({ address, redeemable, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
@@ -106,7 +98,7 @@ export default function Pending({ address, redeemable, setRefresh, setShow, show
             type='grid'
           />
         }
-        {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <Review
             address={address}
             inputs={inputs}

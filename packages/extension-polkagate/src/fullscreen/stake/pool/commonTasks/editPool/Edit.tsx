@@ -6,7 +6,7 @@
 import type { ApiPromise } from '@polkadot/api';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import CollapseIt from '@polkadot/extension-polkagate/src/popup/staking/pool/myPool/editPool/CollapseIt';
@@ -15,7 +15,8 @@ import getAllAddresses from '@polkadot/extension-polkagate/src/util/getAllAddres
 import { AccountContext, AddressInput, AutoResizeTextarea, ButtonWithCancel, Input, ShowValue } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 import { MyPoolInfo } from '../../../../../util/types';
-import { ChangesProps, STEPS } from '.';
+import { STEPS } from '../../stake';
+import { ChangesProps } from '.';
 
 interface Props {
   api: ApiPromise | undefined;
@@ -27,7 +28,7 @@ interface Props {
   changes: ChangesProps | undefined;
 }
 
-export default function Edit({ api, chain, changes, onClose, pool, setChanges, setStep }: Props): React.ReactElement {
+export default function Edit ({ api, chain, changes, onClose, pool, setChanges, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { hierarchy } = useContext(AccountContext);
@@ -131,7 +132,7 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
   return (
     <>
       <Grid container m='25px auto'>
-        <AutoResizeTextarea width='435px' label={t('Pool name')} onChange={_onPoolNameChange} value={newPoolName} />
+        <AutoResizeTextarea label={t('Pool name')} onChange={_onPoolNameChange} value={newPoolName} width='435px' />
       </Grid>
       <CollapseIt
         fullWidth

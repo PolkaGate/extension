@@ -22,6 +22,7 @@ import { useBalances, useInfo, useStakingAccount, useStakingConsts, useTranslati
 import { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
+import { STEPS } from '../../pool/stake';
 import { ModalTitle } from '../commonTasks/configurePayee';
 import { MODAL_IDS } from '..';
 
@@ -31,14 +32,6 @@ interface Props {
   show: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
-
-export const STEPS = {
-  INDEX: 1,
-  REVIEW: 2,
-  WAIT_SCREEN: 3,
-  CONFIRM: 4,
-  PROXY: 100
-};
 
 export default function StakeExtra ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
@@ -203,7 +196,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
             />
           </>
         }
-        {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <Review
             address={address}
             inputs={inputs}

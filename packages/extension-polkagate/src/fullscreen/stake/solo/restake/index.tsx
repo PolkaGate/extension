@@ -22,6 +22,7 @@ import { useInfo, useStakingAccount, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
+import { STEPS } from '../../pool/stake';
 import { ModalTitle } from '../commonTasks/configurePayee';
 import { MODAL_IDS } from '..';
 
@@ -32,15 +33,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const STEPS = {
-  INDEX: 1,
-  REVIEW: 2,
-  WAIT_SCREEN: 3,
-  CONFIRM: 4,
-  PROXY: 100
-};
-
-export default function Unstake({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function Unstake ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, decimal, formatted, token } = useInfo(address);
@@ -57,8 +50,8 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
 
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active as BN | undefined, [stakingAccount?.stakingLedger?.active]);
-  const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
-  const totalStakeAfter = useMemo(() => staked && unlockingAmount && staked.add(amountAsBN), [amountAsBN, staked, unlockingAmount]);
+  const amountAsBN = useMemo(() => restakeAllAmount ? unlockingAmount : amountToMachine(amount, decimal), [amount, decimal, restakeAllAmount, unlockingAmount]);
+  const totalStakeAfter = useMemo(() => staked && unlockingAmount && amountAsBN && staked.add(amountAsBN), [amountAsBN, staked, unlockingAmount]);
 
   const rebonded = api && api.tx.staking.rebond; // signer: Controller
 
@@ -137,7 +130,8 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
       const extraInfo = {
         action: 'Solo Staking',
         amount,
-        subAction: 'Re-stake'
+        subAction: 'Re-stake',
+        totalStakeAfter
       };
 
       setInputs({
@@ -146,7 +140,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
         params
       });
     }
-  }, [amount, amountAsBN, api]);
+  }, [amount, amountAsBN, api, totalStakeAfter]);
 
   const onNext = useCallback(() => {
     setStep(STEPS.REVIEW);
@@ -217,7 +211,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
             />
           </>
         }
-        {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <Review
             address={address}
             inputs={inputs}

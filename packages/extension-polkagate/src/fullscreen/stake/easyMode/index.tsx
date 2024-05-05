@@ -6,7 +6,6 @@
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Balance } from '@polkadot/types/interfaces';
 import { BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, ShowBalance, TwoButtons } from '../../../components';

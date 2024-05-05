@@ -255,6 +255,5 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
         />
       }
     </>
-
   );
 }

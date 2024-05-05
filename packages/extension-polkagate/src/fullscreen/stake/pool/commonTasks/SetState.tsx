@@ -23,6 +23,7 @@ import Review from '../../partials/Review';
 import { ModalTitle } from '../../solo/commonTasks/configurePayee';
 import Confirmation from '../partials/Confirmation';
 import { PoolState } from '../partials/PoolCommonTasks';
+import { STEPS } from '../stake';
 
 interface Props {
   address: string;
@@ -33,14 +34,6 @@ interface Props {
   state: PoolState;
   onClose: () => void;
 }
-
-const STEPS = {
-  CONFIRM: 4,
-  INDEX: 1,
-  PROXY: 100,
-  REVIEW: 2,
-  WAIT_SCREEN: 3
-};
 
 export default function SetState ({ address, api, formatted, onClose, pool, setRefresh, state }: Props): React.ReactElement {
   const { t } = useTranslation();
@@ -123,7 +116,7 @@ export default function SetState ({ address, api, formatted, onClose, pool, setR
             text={t('Change State to {{state}}', { replace: { state } })}
           />
         }
-        {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <Review
             address={address}
             inputs={inputs}

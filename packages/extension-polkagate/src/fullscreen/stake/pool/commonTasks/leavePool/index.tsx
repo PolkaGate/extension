@@ -21,6 +21,7 @@ import { Inputs } from '../../../Entry';
 import Review from '../../../partials/Review';
 import { ModalTitle } from '../../../solo/commonTasks/configurePayee';
 import Confirmation from '../../partials/Confirmation';
+import { STEPS } from '../../stake';
 import TxDetail from './TxDetail';
 
 interface Props {
@@ -30,15 +31,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const STEPS = {
-  CONFIRM: 4,
-  INDEX: 1,
-  PROXY: 100,
-  REVIEW: 2,
-  WAIT_SCREEN: 3
-};
-
-export default function LeavePool ({ address, onClose, pool, setRefresh }: Props): React.ReactElement {
+export default function LeavePool({ address, onClose, pool, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
   const stakingConsts = useStakingConsts(address);
   const { api, decimal, formatted, token } = useInfo(address);
@@ -125,7 +118,7 @@ export default function LeavePool ({ address, onClose, pool, setRefresh }: Props
             text={t('Leave Pool')}
           />
         }
-        {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <Review
             address={address}
             inputs={inputs}
