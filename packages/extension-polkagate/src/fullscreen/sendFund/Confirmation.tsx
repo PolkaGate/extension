@@ -8,7 +8,7 @@ import React from 'react';
 
 import { Motion, PButton, ShortAddress } from '../../components';
 import { useAccountDisplay, useTranslation } from '../../hooks';
-import { ThroughProxy } from '../../partials';
+import { SubTitle, ThroughProxy } from '../../partials';
 import Explorer from '../../popup/history/Explorer';
 import FailSuccessIcon from '../../popup/history/partials/FailSuccessIcon';
 import { NameAddress, TxInfo } from '../../util/types';
@@ -52,28 +52,31 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
 
   const DisplayInfo = ({ caption, showDivider = true, value }: DisplayInfoProps) => {
     return (
-      <>{value &&
-        <Grid alignItems='center' container direction='column' fontSize='16px' fontWeight={400} justifyContent='center'>
-          <Grid container item width='fit-content'>
-            <Typography lineHeight='40px' pr='5px'>
-              {caption}
-            </Typography>
-            <Typography lineHeight='40px'>
-              {value}
-            </Typography>
+      <>
+        {value &&
+          <Grid alignItems='center' container direction='column' fontSize='16px' fontWeight={400} justifyContent='center'>
+            <Grid container item width='fit-content'>
+              <Typography lineHeight='40px' pr='5px'>
+                {caption}
+              </Typography>
+              <Typography lineHeight='40px'>
+                {value}
+              </Typography>
+            </Grid>
+            {showDivider &&
+              <Grid alignItems='center' container item justifyContent='center'>
+                <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mx: '6px', width: '240px' }} />
+              </Grid>}
           </Grid>
-          {showDivider &&
-            <Grid alignItems='center' container item justifyContent='center'>
-              <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mx: '6px', width: '240px' }} />
-            </Grid>}
-        </Grid>
-      }</>
+        }
+      </>
     );
   };
 
   return (
     <Motion>
       <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), pb: '15px' }}>
+        <SubTitle label={txInfo.success ? t('Completed') : t('Failed')} style={{ paddingTop: '25px' }} />
         <FailSuccessIcon
           showLabel={false}
           style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
