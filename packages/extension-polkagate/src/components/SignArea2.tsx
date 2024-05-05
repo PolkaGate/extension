@@ -477,7 +477,7 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
                 />
               </Grid>
             </Grid>
-            <Grid alignItems='center' container item justifyContent='center' sx={{ '> div': { width: 'inherit' }, pt: '30px' }}>
+            <Grid alignItems='center' container item justifyContent='center' sx={{ '> div': { width: 'inherit' }, pt: '20px' }}>
               {formatted && (account?.genesisHash || api?.genesisHash?.toHex()) && payload &&
                 <Qr
                   address={formatted}
