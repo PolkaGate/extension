@@ -13,13 +13,12 @@ import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import useIsExtensionPopup from '@polkadot/extension-polkagate/src/hooks/useIsExtensionPopup';
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE } from '@polkadot/util';
 
 import { Identity, PButton, Progress, ShowBalance, SlidePopUp } from '../../../components';
-import { useFormatted, usePool, usePoolMembers, useTranslation } from '../../../hooks';
+import { useInfo, usePool, usePoolMembers, useTranslation } from '../../../hooks';
 import { FormattedAddressState, MemberPoints, MyPoolInfo, PoolInfo } from '../../../util/types';
 import ClaimCommission from '../pool/claimCommission';
-import ClaimCommissionModal from '../pool/claimCommission/ClaimCommissionModal';
 import ShowPool from './ShowPool';
 import ShowRoles from './ShowRoles';
 
@@ -42,14 +41,14 @@ interface CollapseProps {
   open: () => void;
 }
 
-export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
+export default function PoolMoreInfo ({ api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const isExtensionPopup = useIsExtensionPopup();
 
   const { address } = useParams<FormattedAddressState>();
-  const formatted = useFormatted(address);
+  const { decimal, formatted, token } = useInfo(address);
   const poolToShow = usePool(address, poolId, false, pool);
-  const poolMembers = usePoolMembers(api, poolToShow?.poolId);
+  const poolMembers = usePoolMembers(api, poolToShow?.poolId?.toString());
   const poolPoints = useMemo(() => (poolToShow?.bondedPool ? new BN(String(poolToShow.bondedPool.points)) : BN_ONE), [poolToShow]);
   const [itemToShow, setShow] = useState<TabTitles>('None');
   const [showClaimCommission, setShowClaimCommission] = useState<boolean>();
@@ -67,7 +66,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
     [setShowPoolInfo]
   );
 
-  const openTab = useCallback((tab: TabTitles) => {
+  const openTab = useCallback((tab: TabTitles) => () => {
     setShow(tab === itemToShow ? 'None' : tab);
   }, [itemToShow]);
 
@@ -86,14 +85,14 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
   }, []);
 
   const ShowMembers = () => (
-    <Grid container direction='column' display='block' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: window.innerHeight - 450, minHeight: '80px', mt: '10px', overflowX: 'hidden', overflowY: 'scroll' }}>
+    <Grid container direction='column' display='block' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: isExtensionPopup ? '130px' : '220px', minHeight: '80px', mt: '10px', overflowX: 'hidden', overflowY: 'scroll' }}>
       <Grid container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
         <Grid item width='50%'>
           <Typography fontSize='12px' fontWeight={300} lineHeight='30px' textAlign='center'>
             {t('Identity')}
           </Typography>
         </Grid>
-        <Grid item sx={{ borderInline: '1px solid', borderColor: 'secondary.light' }} width='30%'>
+        <Grid item sx={{ borderColor: 'secondary.light', borderInline: '1px solid' }} width='30%'>
           <Typography fontSize='12px' fontWeight={300} lineHeight='30px' textAlign='center'>
             {t('Staked')}
           </Typography>
@@ -108,12 +107,13 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
         ? membersToShow.map((member, index) => (
           <Grid container item key={index} sx={{ '&:last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
             <Identity address={member.accountId} api={api} chain={chain} formatted={member.accountId} identiconSize={25} showShortAddress style={{ fontSize: '14px', minHeight: '45px', pl: '10px', width: '50%' }} />
-            <Grid alignItems='center' container fontSize='14px' fontWeight='400' item justifyContent='center' sx={{ borderInline: '1px solid', borderColor: 'secondary.light' }} width='30%'>
+            <Grid alignItems='center' container fontSize='14px' fontWeight='400' item justifyContent='center' sx={{ borderColor: 'secondary.light', borderInline: '1px solid' }} width='30%'>
               <ShowBalance
-                api={api}
                 balance={toBalance(member.points)}
+                decimal={decimal}
                 decimalPoint={2}
                 height={22}
+                token={token}
               />
             </Grid>
             <Typography fontSize='14px' fontWeight='400' lineHeight='45px' textAlign='center' width='20%'>
@@ -142,12 +142,11 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
       </Grid>
       <Grid alignItems='center' container height='37px' item justifyContent='center'>
         <ShowBalance
-          api={api}
           balance={poolToShow?.rewardClaimable?.toString()}
-          decimal={poolToShow?.decimal}
+          decimal={decimal}
           decimalPoint={4}
           height={22}
-          token={poolToShow?.token}
+          token={token}
         />
       </Grid>
     </Grid>
@@ -162,12 +161,11 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
       </Grid>
       <Grid alignItems='center' container height='37px' item justifyContent='center'>
         <ShowBalance
-          api={api}
           balance={poolToShow?.rewardPool?.totalCommissionPending?.toString()}
-          decimal={poolToShow?.decimal}
+          decimal={decimal}
           decimalPoint={4}
           height={22}
-          token={poolToShow?.token}
+          token={token}
         />
       </Grid>
       <PButton
@@ -182,8 +180,8 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
   );
 
   const CollapseData = ({ mode, open, pool, show, title }: CollapseProps) => (
-    <Grid container direction='column' sx={{ cursor: 'pointer', m: 'auto', width: '92%' }}>
-      <Grid container item justifyContent='space-between' onClick={open} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
+    <Grid container direction='column' sx={{ m: 'auto', width: '92%' }}>
+      <Grid container item justifyContent='space-between' onClick={open} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', cursor: 'pointer' }}>
         <Typography fontSize='18px' fontWeight={400} lineHeight='40px'>
           {title}
         </Typography>
@@ -191,7 +189,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
           <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: show ? 'rotate(-90deg)' : 'rotate(90deg)' }} />
         </Grid>
       </Grid>
-      <Collapse in={show} sx={{ width: '100%' }} timeout='auto' unmountOnExit>
+      <Collapse in={show} sx={{ width: '100%' }}>
         {(mode === 'Ids' || mode === 'Roles') &&
           <ShowRoles api={api} chain={chain} mode={mode} pool={pool} style={{ my: '10px' }} />
         }
@@ -216,17 +214,17 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
         </Typography>
       </Grid>
       {poolToShow
-        ? <>
+        ? <Grid container direction='column' item rowGap='5px'>
           <ShowPool
             api={api}
             chain={chain}
             mode='Default'
             pool={poolToShow}
-            style={{ m: '20px auto', width: '92%' }}
+            style={{ m: '10px auto', width: '92%' }}
           />
           <CollapseData
             mode={itemToShow}
-            open={() => openTab('Roles')}
+            open={openTab('Roles')}
             pool={poolToShow}
             show={itemToShow === 'Roles'}
             title={t('Roles')}
@@ -234,7 +232,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
           {poolToShow.accounts?.rewardId &&
             <CollapseData
               mode={itemToShow}
-              open={() => openTab('Ids')}
+              open={openTab('Ids')}
               pool={poolToShow}
               show={itemToShow === 'Ids'}
               title={t('Ids')}
@@ -243,7 +241,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
           {poolToShow.accounts?.rewardId &&
             <CollapseData
               mode={itemToShow}
-              open={() => openTab('Members')}
+              open={openTab('Members')}
               pool={poolToShow}
               show={itemToShow === 'Members'}
               title={t('Members')}
@@ -252,7 +250,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
           {poolToShow.accounts?.rewardId &&
             <CollapseData
               mode={itemToShow}
-              open={() => openTab('Reward')}
+              open={openTab('Reward')}
               pool={poolToShow}
               show={itemToShow === 'Reward'}
               title={t('Rewards')}
@@ -261,7 +259,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
           {poolToShow.bondedPool?.roles && Object.values(poolToShow.bondedPool.roles).includes(formatted) &&
             <CollapseData
               mode={itemToShow}
-              open={() => openTab('Commission')}
+              open={openTab('Commission')}
               pool={poolToShow}
               show={itemToShow === 'Commission'}
               title={t('Commission')}
@@ -275,7 +273,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
               show={showClaimCommission}
             />
           }
-        </>
+        </Grid>
         : <Progress pt='95px' size={125} title={t('Loading pool information...')} type='grid' />
       }
       <IconButton onClick={_closeMenu} sx={{ left: isExtensionPopup ? '15px' : undefined, p: 0, position: 'absolute', right: isExtensionPopup ? undefined : '30px', top: isExtensionPopup ? '65px' : '35px' }}>
