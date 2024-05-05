@@ -15,7 +15,7 @@ import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/gov
 import useIsExtensionPopup from '@polkadot/extension-polkagate/src/hooks/useIsExtensionPopup';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { Identicon, Identity, PButton, Progress, ShortAddress2, ShowBalance, SlidePopUp } from '../../../components';
+import { Identity, PButton, Progress, ShowBalance, SlidePopUp } from '../../../components';
 import { useInfo, usePool, usePoolMembers, useTranslation } from '../../../hooks';
 import { FormattedAddressState, MemberPoints, MyPoolInfo, PoolInfo } from '../../../util/types';
 import ClaimCommission from '../pool/claimCommission';
@@ -106,19 +106,7 @@ export default function PoolMoreInfo ({ api, chain, pool, poolId, setShowPoolInf
       {membersToShow?.length
         ? membersToShow.map((member, index) => (
           <Grid container item key={index} sx={{ '&:last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
-            <Grid container item pl='2%' width='50%'>
-              <Grid item m='auto 0' pr='5px' width='fit-content'>
-                <Identicon
-                  iconTheme={chain?.icon ?? 'polkadot'}
-                  prefix={chain?.ss58Format ?? 42}
-                  size={25}
-                  value={member.accountId}
-                />
-              </Grid>
-              <Grid container item sx={{ '> div div:last-child': { width: 'auto' } }} xs>
-                <ShortAddress2 address={member.accountId} charsCount={6} style={{ fontSize: '12px', fontWeight: 300 }} />
-              </Grid>
-            </Grid>
+            <Identity address={member.accountId} api={api} chain={chain} formatted={member.accountId} identiconSize={25} showShortAddress style={{ fontSize: '14px', minHeight: '45px', pl: '10px', width: '50%' }} />
             <Grid alignItems='center' container fontSize='14px' fontWeight='400' item justifyContent='center' sx={{ borderColor: 'secondary.light', borderInline: '1px solid' }} width='30%'>
               <ShowBalance
                 balance={toBalance(member.points)}
