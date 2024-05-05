@@ -36,7 +36,7 @@ interface Props {
   setSearchedPools: React.Dispatch<React.SetStateAction<PoolInfo[] | null | undefined>>;
 }
 
-export default function PoolsTable({ address, setSearchedPools, api, numberOfFetchedPools, totalNumberOfPools, pools, poolsToShow, filteredPools, setFilteredPools, selected, setSelected, minHeight, maxHeight = window.innerHeight / 2.4, style }: Props): React.ReactElement {
+export default function PoolsTable ({ address, setSearchedPools, api, numberOfFetchedPools, totalNumberOfPools, pools, poolsToShow, filteredPools, setFilteredPools, selected, setSelected, minHeight, maxHeight = window.innerHeight / 2.4, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef(null);
   const chain = useChain(address);
