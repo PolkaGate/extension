@@ -41,7 +41,7 @@ export default function JoinPool (): React.ReactElement {
   const poolStakingConsts = usePoolConsts(address, state?.poolStakingConsts);
   const history = useHistory();
 
-  usePools(address);
+  const { incrementalPools, numberOfFetchedPools, totalNumberOfPools } = usePools(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
 
@@ -55,9 +55,6 @@ export default function JoinPool (): React.ReactElement {
   const [filteredPools, setFilteredPools] = useState<PoolInfo[] | null | undefined>();
   const [searchedPools, setSearchedPools] = useState<PoolInfo[] | null | undefined>();
   const [poolsToShow, setPoolsToShow] = useState<PoolInfo[] | null | undefined>(); // filtered with selected at first
-  const [totalNumberOfPools, setTotalNumberOfPools] = useState<number | undefined>();
-  const [numberOfFetchedPools, setNumberOfFetchedPools] = useState<number>(0);
-  const [incrementalPools, setIncrementalPools] = useState<PoolInfo[] | null>();
   const [amountAsBN, setAmountAsBN] = useState<BN>();
 
   const backToStake = useCallback(() => {
@@ -107,12 +104,6 @@ export default function JoinPool (): React.ReactElement {
   const toReview = useCallback(() => {
     api && selectedPool && setShowReview(!showReview);
   }, [api, selectedPool, showReview]);
-
-  useEffect(() => {
-    window.addEventListener('totalNumberOfPools', (res) => setTotalNumberOfPools(res.detail));
-    window.addEventListener('numberOfFetchedPools', (res) => setNumberOfFetchedPools(res.detail));
-    window.addEventListener('incrementalPools', (res) => setIncrementalPools(res.detail));
-  }, []);
 
   useEffect(() => {
     if (!incrementalPools) {

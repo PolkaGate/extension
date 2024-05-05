@@ -35,7 +35,7 @@ export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.
   const { api, decimal, formatted, genesisHash, token } = useInfo(address);
   const poolStakingConsts = usePoolConsts(address);
 
-  usePools(address);
+  const { incrementalPools, numberOfFetchedPools, totalNumberOfPools } = usePools(address);
 
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();
   const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
@@ -45,9 +45,6 @@ export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.
   const [filteredPools, setFilteredPools] = useState<PoolInfo[] | null | undefined>();
   const [searchedPools, setSearchedPools] = useState<PoolInfo[] | null | undefined>();
   const [poolsToShow, setPoolsToShow] = useState<PoolInfo[] | null | undefined>(); // filtered with selected at first
-  const [totalNumberOfPools, setTotalNumberOfPools] = useState<number | undefined>();
-  const [numberOfFetchedPools, setNumberOfFetchedPools] = useState<number>(0);
-  const [incrementalPools, setIncrementalPools] = useState<PoolInfo[] | null>();
   const [amountAsBN, setAmountAsBN] = useState<BN>();
 
   const onBack = useCallback(() => {
@@ -101,12 +98,6 @@ export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.
   const toReview = useCallback(() => {
     api && selectedPool && setStep(STEPS.JOIN_REVIEW);
   }, [api, selectedPool, setStep]);
-
-  useEffect(() => {
-    window.addEventListener('totalNumberOfPools', (res) => setTotalNumberOfPools(res.detail));
-    window.addEventListener('numberOfFetchedPools', (res) => setNumberOfFetchedPools(res.detail));
-    window.addEventListener('incrementalPools', (res) => setIncrementalPools(res.detail));
-  }, []);
 
   useEffect(() => {
     if (!incrementalPools) {
