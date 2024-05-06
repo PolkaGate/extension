@@ -19,12 +19,12 @@ import { ISubmittableResult } from '@polkadot/types/types';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { CanPayErrorAlert, EndRecoveryIcon, Identity, Infotip2, MakeRecoverableIcon, Motion, RescueRecoveryIcon, ShortAddress, ShowBalance, SignArea2, VouchRecoveryIcon, Warning, WrongPasswordAlert } from '../../components';
-import { useCanPayFeeAndDeposit, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useProxies } from '../../hooks';
+import { useCanPayFeeAndDeposit, useCurrentBlockNumber, useInfo } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import blockToDate from '../../popup/crowdloans/partials/blockToDate';
-import { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import { Proxy, TxInfo } from '../../util/types';
 import { pgBoxShadow } from '../../util/utils';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
@@ -60,18 +60,14 @@ const dateTimeFormat = { day: 'numeric', hour: '2-digit', hourCycle: 'h23', minu
 
 export default function Review ({ activeLost, address, allActiveRecoveries, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setMode, setRefresh, setStep, specific, step, vouchRecoveryInfo, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const formatted = useFormatted(address);
-  const proxies = useProxies(api, formatted);
   const theme = useTheme();
-  const decimal = useDecimal(address);
+  const { chainName, decimal, formatted } = useInfo(address);
   const currentBlockNumber = useCurrentBlockNumber(address);
-  const chainName = useChainName(address);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
-  const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [nothingToWithdrawNow, setNothingToWithdrawNow] = useState<boolean>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
@@ -168,12 +164,6 @@ export default function Review ({ activeLost, address, allActiveRecoveries, api,
 
     return undefined;
   }, [activeLost, batchAll, closeRecovery, createRecovery, initiateRecovery, lostAccountAddress, mode, recoveryConfig, removeRecovery, vouchRecovery, vouchRecoveryInfo, withdrawInfo, withdrawTXs]);
-
-  useEffect((): void => {
-    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
-
-    setProxyItems(fetchedProxyItems);
-  }, [proxies]);
 
   useEffect(() => {
     if (!formatted || !call) {
