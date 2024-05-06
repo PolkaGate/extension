@@ -378,7 +378,7 @@ export default function Review ({ activeLost, address, allActiveRecoveries, api,
               }
             </Grid>
             <Typography fontSize='30px' fontWeight={700}>
-              {(step === STEPS.REVIEW || step === STEPS.PROXY) && (
+              {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) && (
                 <>
                   {mode === 'RemoveRecovery' && t('Making account unrecoverable')}
                   {mode === 'SetRecovery' && t('Make your account recoverable')}
@@ -423,7 +423,7 @@ export default function Review ({ activeLost, address, allActiveRecoveries, api,
               )}
             </Typography>
           </Grid>
-          {(step === STEPS.REVIEW || step === STEPS.PROXY) && ['SetRecovery', 'InitiateRecovery', 'ModifyRecovery', 'VouchRecovery'].includes(mode) &&
+          {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) && mode && ['SetRecovery', 'InitiateRecovery', 'ModifyRecovery', 'VouchRecovery'].includes(mode) &&
             <Typography fontSize='22px' fontWeight={700}>
               {['InitiateRecovery', 'VouchRecovery'].includes(mode)
                 ? t('Step 2 of 2: Review')
@@ -431,13 +431,13 @@ export default function Review ({ activeLost, address, allActiveRecoveries, api,
               }
             </Typography>
           }
-          {(step === STEPS.REVIEW || step === STEPS.PROXY) && mode === 'CloseRecovery' &&
+          {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) && mode === 'CloseRecovery' &&
             <Typography fontSize='14px' fontWeight={400}>
               {t('By terminating the recovery process, you will receive the tokens deposited by the suspected malicious account')}
             </Typography>
           }
         </Grid>
-        {(step === STEPS.REVIEW || step === STEPS.PROXY) &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <>
             {isPasswordError &&
               <WrongPasswordAlert />
