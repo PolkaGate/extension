@@ -28,7 +28,7 @@ import { CMD_MORTAL } from '../popup/signing/Request';
 import { send, signAndSend } from '../util/api';
 import { Proxy, ProxyItem, ProxyTypes, TxInfo, TxResult } from '../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../util/utils';
-import { Identity, Password, PButton, TwoButtons, Warning } from '.';
+import { Identity, Password, PButton, Progress, TwoButtons, Warning } from '.';
 
 interface Props {
   address: string;
@@ -478,15 +478,17 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
               </Grid>
             </Grid>
             <Grid alignItems='center' container item justifyContent='center' sx={{ '> div': { width: 'inherit' }, pt: '30px' }}>
-              {formatted && (account?.genesisHash || api?.genesisHash?.toHex()) && payload &&
-                <Qr
+              {formatted && (account?.genesisHash || api?.genesisHash?.toHex()) && payload
+                ? <Qr
                   address={formatted}
                   buttonLeft='0px'
                   cmd={CMD_MORTAL}
                   genesisHash={account?.genesisHash || api?.genesisHash?.toHex()}
                   onSignature={onSignature}
                   payload={payload}
-                />}
+                />
+                : <Progress pt='20px' title={t('API is not connected yet ...')} type='grid'/>
+              }
             </Grid>
           </Grid>
         </DraggableModal>
