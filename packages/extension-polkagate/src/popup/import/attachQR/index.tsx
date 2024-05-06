@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { HexString } from '@polkadot/util/types';
+
 import { Button, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
@@ -14,19 +16,19 @@ import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from
 import HeaderBrand from '../../../partials/HeaderBrand';
 import Name from '../../../partials/Name';
 
-interface QrAccount {
-  content: string;
-  genesisHash: string;
+export interface ScanType {
   isAddress: boolean;
-  name?: string;
+  content: string;
+  genesisHash: HexString | null;
+  name?: string | undefined;
 }
 
-export default function AttachQR(): React.ReactElement {
+export default function AttachQR (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
-  const [account, setAccount] = useState<QrAccount | null>(null);
+  const [account, setAccount] = useState<ScanType | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
@@ -60,7 +62,7 @@ export default function AttachQR(): React.ReactElement {
   }, [account, name, password, setQrLabelAndGoToHome]);
 
   const _setAccount = useCallback(
-    (qrAccount: QrAccount) => {
+    (qrAccount: ScanType) => {
       setAccount(qrAccount);
       setName(qrAccount?.name || null);
       setGenesisHash(qrAccount.genesisHash);

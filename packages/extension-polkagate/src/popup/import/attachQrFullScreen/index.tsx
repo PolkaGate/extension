@@ -16,13 +16,7 @@ import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeade
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from '../../../messaging';
 import { Name } from '../../../partials';
-
-interface QrAccount {
-  content: string;
-  genesisHash: string;
-  isAddress: boolean;
-  name?: string;
-}
+import { ScanType } from '../attachQR';
 
 export default function AttachQrFullScreen (): React.ReactElement {
   useFullscreen();
@@ -30,7 +24,7 @@ export default function AttachQrFullScreen (): React.ReactElement {
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
-  const [account, setAccount] = useState<QrAccount | null>(null);
+  const [account, setAccount] = useState<ScanType | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
@@ -61,7 +55,7 @@ export default function AttachQrFullScreen (): React.ReactElement {
   }, [account, name, password, setQrLabelAndGoToHome]);
 
   const _setAccount = useCallback(
-    (qrAccount: QrAccount) => {
+    (qrAccount: ScanType) => {
       setAccount(qrAccount);
       setName(qrAccount?.name || null);
 
@@ -80,7 +74,7 @@ export default function AttachQrFullScreen (): React.ReactElement {
     onAction('/');
   }, [onAction]);
 
-  const _onError = useCallback((error: string) => {
+  const _onError = useCallback((error: Error) => {
     setInvalidQR(String(error).includes('Invalid prefix'));
   }, []);
 
