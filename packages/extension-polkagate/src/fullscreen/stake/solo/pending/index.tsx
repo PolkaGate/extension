@@ -7,7 +7,7 @@ import type { DeriveSessionProgress } from '@polkadot/api-derive/types';
 import type { Forcing } from '@polkadot/types/interfaces';
 
 import { faClockFour } from '@fortawesome/free-solid-svg-icons';
-import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
+import { Grid, LinearProgress, Skeleton, Typography, useTheme } from '@mui/material';
 import { TxInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -57,6 +57,11 @@ export default function Pending ({ address, setRefresh, setShow, show }: Props):
   const [step, setStep] = useState(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [inputs, setInputs] = useState<Inputs>();
+  const [percentOfEraFetched, setPercentOfEraFetched] = useState<number>();
+
+  useEffect(() => {
+    window.addEventListener('percentOfErasCheckedForPendingRewards', (res) => setPercentOfEraFetched(res.detail as number));
+  }, []);
 
   useEffect(() => {
     if (!api?.derive?.staking) {
@@ -256,7 +261,10 @@ export default function Pending ({ address, setRefresh, setShow, show }: Props):
                   {t('Expires')}
                 </Grid>
               </Grid>
-              <Grid alignContent='flex-start' container height={TABLE_HEIGHT} sx={{ border: 1, borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px', borderColor: 'primary.main', overflow: 'scroll', width: '100%' }}>
+              <Grid alignContent='flex-start' container height={TABLE_HEIGHT} sx={{ border: 1, borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px', borderColor: 'primary.main', display: 'block', overflow: 'scroll', width: '100%' }}>
+                {!!percentOfEraFetched && percentOfEraFetched !== 1 &&
+                  <LinearProgress color='success' sx={{ position: 'sticky', top: 0 }} value={percentOfEraFetched ? percentOfEraFetched * 100 : 0} variant='determinate' />
+                }
                 {!expandedRewards
                   ? <Grid container justifyContent='center'>
                     {Array.from({ length: TABLE_HEIGHT / SKELETON_HEIGHT }).map((_, index) => (

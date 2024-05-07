@@ -145,6 +145,8 @@ export default function usePendingRewards2 (address: string): UnclaimedPayouts |
       }
 
       console.log('eraExposureInfo:', eraExposureInfo);
+      window.dispatchEvent(new CustomEvent('percentOfErasCheckedForPendingRewards', { detail: (MAX_SUPPORTED_PAYOUT_ERAS - (currentEra - endEra) + 1) / MAX_SUPPORTED_PAYOUT_ERAS }));
+
       currentEra -= 1;
     }
 
