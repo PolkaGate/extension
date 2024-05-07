@@ -40,7 +40,8 @@ export const STEPS = {
   WAIT_SCREEN: 8,
   CONFIRM: 9,
   UNSUPPORTED: 10,
-  PROXY: 100
+  PROXY: 100,
+  SIGN_QR: 200
 };
 
 type SubAccounts = [string, string[]];
@@ -59,8 +60,8 @@ function getRawValue (value: Data) {
 
 export function setData (value: string | undefined): Data {
   return value
-    ? { ['raw']: value }
-    : { ['none']: null };
+    ? { raw: value }
+    : { none: null };
 }
 
 export default function ManageIdentity (): React.ReactElement {
@@ -239,7 +240,7 @@ export default function ManageIdentity (): React.ReactElement {
 
     setInfoParams({
       additional: identityToSet.other?.discord ? [[{ raw: 'Discord' }, { raw: identityToSet.other?.discord }]] : [],
-      display: { ['raw']: identityToSet?.display },
+      display: { raw: identityToSet?.display },
       email: setData(identityToSet?.email),
       legal: setData(identityToSet?.legal),
       riot: setData(identityToSet?.riot),
@@ -421,7 +422,7 @@ export default function ManageIdentity (): React.ReactElement {
             setStep={setStep}
           />
         }
-        {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) &&
+        {[STEPS.REVIEW, STEPS.WAIT_SCREEN, STEPS.CONFIRM, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <Review
             address={address}
             api={api}
