@@ -16,7 +16,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../components';
-import { useApi, useChain, useDecimal, useToken, useTracks, useTranslation } from '../../../../hooks';
+import { useAccountInfo2, useApi, useChain, useDecimal, useToken, useTracks, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import DisplayValue from '../../post/castVote/partial/DisplayValue';
