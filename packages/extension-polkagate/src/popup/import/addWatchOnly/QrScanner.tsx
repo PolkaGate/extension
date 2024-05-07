@@ -31,20 +31,18 @@ export default function QrScanner ({ openCamera, setAddress, setOpenCamera }: Pr
       return;
     }
 
-    if (signature.startsWith('0x')) { // NOVA WALLET QR CODE
-      const formatted = signature.slice(2);
+    let address: string;
 
-      setAddress(formatted);
-      setOpenCamera(false);
+    if (signature.includes(':')) {
+      const firstColon = signature.indexOf(':');
+      const secondColon = signature.indexOf(':', firstColon + 1);
 
-      return;
+      address = signature.substring(firstColon + 1, secondColon);
+    } else if (signature.startsWith('0x')) { // NOVA WALLET QR CODE
+      address = signature.slice(2);
     }
 
-    const firstColon = signature.indexOf(':');
-    const secondColon = signature.indexOf(':', firstColon + 1);
-    const address = signature.substring(firstColon + 1, secondColon);
-
-    setAddress(address);
+    setAddress(address ?? signature);
     setOpenCamera(false);
   }, [setAddress, setOpenCamera]);
 
