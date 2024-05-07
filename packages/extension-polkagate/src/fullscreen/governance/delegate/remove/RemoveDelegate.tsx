@@ -39,7 +39,7 @@ interface Props {
   proxyItems: ProxyItem[] | undefined;
 }
 
-export default function RemoveDelegate({ address, classicDelegateInformation, formatted, mixedDelegateInformation, proxyItems, selectedProxy, setModalHeight, setSelectedTracksLength, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
+export default function RemoveDelegate ({ address, classicDelegateInformation, formatted, mixedDelegateInformation, proxyItems, selectedProxy, setModalHeight, setSelectedTracksLength, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
@@ -110,7 +110,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
     amount: '0',
     fee: String(estimatedFee || 0),
     subAction: 'Remove Delegate',
-    to: { address: delegateeAddress, name: delegateeName },
+    to: { address: delegateeAddress, name: delegateeName }
   }), [delegateeAddress, delegateeName, estimatedFee]);
 
   const tx = useMemo(() => {
