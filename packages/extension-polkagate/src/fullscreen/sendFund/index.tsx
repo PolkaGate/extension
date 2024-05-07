@@ -84,7 +84,7 @@ export default function SendFund (): React.ReactElement {
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
-      <FullScreenHeader page='send' />
+      <FullScreenHeader page='send' unableToChangeAccount={step !== STEPS.INDEX} />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', display: 'block', px: '5%' }}>
         <Title
           icon={faPaperPlane}
