@@ -14,7 +14,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { useApi, useDecimal, useFormatted, useProxies, useTranslation } from '../../../../hooks';
+import { useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { DraggableModal } from '../../components/DraggableModal';
@@ -65,26 +65,25 @@ export const STEPS = {
   REVIEW: 6,
   WAIT_SCREEN: 7,
   CONFIRM: 8,
-  PROXY: 100
+  PROXY: 100,
+  SIGN_QR: 200
 };
 
-export default function Index({ address, cantModify, hasVoted, myVote, notVoted, open, refIndex, setOpen, setRefresh, showAbout, status, trackId }: Props): React.ReactElement {
+export default function Index ({ address, cantModify, hasVoted, myVote, notVoted, open, refIndex, setOpen, setRefresh, showAbout, status, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const api = useApi(address);
-  const decimal = useDecimal(address);
-  const formatted = useFormatted(address);
+  const { api, decimal, formatted } = useInfo(address);
   const proxies = useProxies(api, formatted);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [voteInformation, setVoteInformation] = useState<VoteInformation | undefined>();
-  const vote = api && api.tx.convictionVoting.vote;
   const [step, setStep] = useState<number>(showAbout ? STEPS.ABOUT : STEPS.CHECK_SCREEN);
   const [alterType, setAlterType] = useState<'modify' | 'remove'>();
   const [reviewModalHeight, setReviewModalHeight] = useState<number | undefined>();
 
+  const vote = api && api.tx.convictionVoting.vote;
   const voteTx = api && api.tx.convictionVoting.vote;
   const removeTx = api && api.tx.convictionVoting.removeVote;
 
@@ -157,44 +156,44 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
       <Grid item>
         <Typography fontSize='22px' fontWeight={700}>
           {step === STEPS.ABOUT &&
-            t<string>('About Voting')
+            t('About Voting')
           }
           {step === STEPS.INDEX &&
             <>
               {
                 hasVoted
-                  ? t<string>('Modify Your Vote')
-                  : t<string>('Cast Your Vote')
+                  ? t('Modify Your Vote')
+                  : t('Cast Your Vote')
               }
             </>
           }
           {step === STEPS.REMOVE &&
-            t<string>('Remove Your Vote')
+            t('Remove Your Vote')
           }
           {step === STEPS.PREVIEW &&
-            t<string>('Vote Details')
+            t('Vote Details')
           }
           {step === STEPS.REVIEW &&
-            t<string>('Review Your Vote')
+            t('Review Your Vote')
           }
           {step === STEPS.WAIT_SCREEN &&
             <>
               {alterType === 'remove'
-                ? t<string>('Removing vote')
-                : t<string>('Voting')
+                ? t('Removing vote')
+                : t('Voting')
               }
             </>
           }
           {step === STEPS.CONFIRM &&
             <>
               {alterType === 'remove'
-                ? t<string>('Vote has been removed')
-                : t<string>('Voting Completed')
+                ? t('Vote has been removed')
+                : t('Voting Completed')
               }
             </>
           }
           {step === STEPS.PROXY &&
-            t<string>('Select Proxy')
+            t('Select Proxy')
           }
         </Typography>
       </Grid>
@@ -240,7 +239,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
             trackId={trackId}
           />
         }
-        {((step === STEPS.REVIEW && voteInformation) || (step === STEPS.REMOVE && votedInfo)) && (
+        {((step === STEPS.REVIEW && voteInformation) || (step === STEPS.REMOVE && votedInfo) || step === STEPS.SIGN_QR) &&
           <Review
             address={address}
             estimatedFee={estimatedFee}
@@ -256,7 +255,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
             tx={alterType === 'remove' ? removeTx : voteTx}
             voteInformation={voteInformation || votedInfo}
           />
-        )}
+        }
         {step === STEPS.PREVIEW &&
           <Preview
             address={address}
@@ -269,8 +268,9 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
         {step === STEPS.PROXY &&
           <SelectProxyModal2
             address={address}
-            height={reviewModalHeight}
+            // eslint-disable-next-line react/jsx-no-bind
             closeSelectProxy={() => setStep(alterType === 'remove' ? STEPS.REMOVE : STEPS.REVIEW)}
+            height={reviewModalHeight}
             proxies={proxyItems}
             proxyTypeFilter={GOVERNANCE_PROXY}
             selectedProxy={selectedProxy}
