@@ -15,7 +15,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { Warning } from '../../components';
-import { useAccountsInfo, useActiveRecoveries, useApi, useChain, useFormatted, useFullscreen, useLostAccountInformation, useTranslation } from '../../hooks';
+import { useAccountsInfo, useActiveRecoveries, useFullscreen, useInfo, useLostAccountInformation, useTranslation } from '../../hooks';
 import { FULLSCREEN_WIDTH, SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import { AddressWithIdentity } from './components/SelectTrustedFriend';
@@ -40,18 +40,16 @@ export const STEPS = {
   WAIT_SCREEN: 8,
   CONFIRM: 9,
   UNSUPPORTED: 10,
-  PROXY: 100
+  PROXY: 100,
+  SIGN_QR: 200
 };
 
 export default function SocialRecovery (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
-
-  const { address, closeRecovery } = useParams<{ address: string, closeRecovery: string }>();
-  const api = useApi(address);
   const theme = useTheme();
-  const chain = useChain(address);
-  const formatted = useFormatted(address);
+  const { address, closeRecovery } = useParams<{ address: string, closeRecovery: string }>();
+  const { api, chain, formatted } = useInfo(address);
   const accountsInfo = useAccountsInfo(api, chain);
 
   const [step, setStep] = useState<number>(STEPS.CHECK_SCREEN);
@@ -307,7 +305,7 @@ export default function SocialRecovery (): React.ReactElement {
             setVouchRecoveryInfo={setVouchRecoveryInfo}
           />
         }
-        {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) && chain && recoveryInfo !== undefined &&
+        {[STEPS.REVIEW, STEPS.WAIT_SCREEN, STEPS.CONFIRM, STEPS.PROXY, STEPS.SIGN_QR].includes(step) && chain && recoveryInfo !== undefined &&
           <Review
             activeLost={activeLost}
             address={address}

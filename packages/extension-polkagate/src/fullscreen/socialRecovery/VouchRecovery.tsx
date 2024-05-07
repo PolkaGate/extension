@@ -4,8 +4,8 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
-import { Check as CheckIcon } from '@mui/icons-material';
 
+import { Check as CheckIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
