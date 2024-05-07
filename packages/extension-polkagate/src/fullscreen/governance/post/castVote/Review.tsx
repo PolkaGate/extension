@@ -78,7 +78,7 @@ export default function Review ({ address, estimatedFee, selectedProxy, setModal
   };
 
   const params = useMemo(() => {
-    if (step === STEPS.REVIEW) {
+    if ([STEPS.REVIEW, STEPS.SIGN_QR].includes(step)) {
       if (['Aye', 'Nay'].includes(voteInformation.voteType)) {
         return ([voteInformation.refIndex, {
           Standard: {
