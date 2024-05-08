@@ -1230,5 +1230,11 @@
   "Pool information": "पूल सूचना",
   "Pool Rewards": "पूल पुरस्कार",
   "Change State to {{state}}": "स्थिति बदलें {{state}} में",
-  "No Data Available to Illustrate the Chart.": "चार्ट को विस्तारित करने के लिए कोई डेटा उपलब्ध नहीं है।"
+  "No Data Available to Illustrate the Chart.": "चार्ट को विस्तारित करने के लिए कोई डेटा उपलब्ध नहीं है।",
+  "reset to default": "डिफ़ॉल्ट पर रीसेट करें",
+  "This is a QR-attached account. To complete this transaction, you need to use your QR-signer.": "यह एक QR-संलग्न खाता है। इस लेन-देन को पूरा करने के लिए, आपको अपना QR-साइनर उपयोग करना होगा।",
+  "Use QR-Signer": "QR-साइनर का उपयोग करें",
+  "Sign with QR code": "QR कोड के साथ साइन करें",
+  "API is not connected yet ...": "API अभी तक कनेक्ट नहीं है...",
+  "Confirmation": "पुष्टि"
 }
