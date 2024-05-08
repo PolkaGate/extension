@@ -46,10 +46,7 @@ function Qr ({ address, buttonLeft, className, cmd, genesisHash, onSignature, pa
     [cmd, payload]
   );
 
-  const _onShowQr = useCallback(
-    () => setIsScanning(true),
-    []
-  );
+  const onClick = useCallback(() => setIsScanning(!isScanning), [isScanning]);
 
   if (!payloadU8a) {
     return (
@@ -65,10 +62,10 @@ function Qr ({ address, buttonLeft, className, cmd, genesisHash, onSignature, pa
     <div className={className}>
       {!isScanning
         ? <Typography fontSize='14px' fontWeight={300} m='5px auto' width='90%'>
-          {t<string>('First scan the QR code with your mobile wallet. Then scan the generated QR code by your mobile wallet on the next screen.')}
+          {t('First scan the QR code with your mobile wallet. Then scan the generated QR code by your mobile wallet on the next screen.')}
         </Typography>
         : <Typography fontSize='14px' fontWeight={300} m='5px auto' textAlign='center' width='90%'>
-          {t<string>('Scan your mobile wallet generated QR code.')}
+          {t('Scan your mobile wallet generated QR code.')}
         </Typography>
       }
       {isScanning
@@ -88,16 +85,16 @@ function Qr ({ address, buttonLeft, className, cmd, genesisHash, onSignature, pa
       }
       {isScanning &&
         <Typography fontSize='14px' fontWeight={300} m='5px auto' textAlign='center' width='90%'>
-          {t<string>('Hold the QR code in front of the device’s camera.')}
+          {t('Hold the QR code in front of the device’s camera.')}
         </Typography>
       }
-      {!isScanning &&
-        <PButton
-          _onClick={_onShowQr}
-          left={buttonLeft}
-          text={t<string>('Next')}
-        />
-      }
+      <PButton
+        _onClick={onClick}
+        left={buttonLeft}
+        text={isScanning
+          ? t('Back')
+          : t('Next')}
+      />
     </div>
   );
 }
