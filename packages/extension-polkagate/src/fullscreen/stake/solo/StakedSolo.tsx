@@ -14,7 +14,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { useInfo, useStakingRewardDestinationAddress, useStakingRewards, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { STAKING_CHAINS } from '../../../util/constants';
-import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
+import Bread from '../../partials/Bread';
 import { Title } from '../../sendFund/InputPage';
 import DisplayBalance from '../partials/DisplayBalance';
 import ActiveValidators from './partials/ActiveValidators';
@@ -36,7 +36,7 @@ interface Props {
   balances: BalancesInfo | undefined
 }
 
-export default function StakedSolo({ balances, setRefresh, setShow, stakingAccount }: Props): React.ReactElement {
+export default function StakedSolo ({ balances, setRefresh, setShow, stakingAccount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const { api } = useInfo(address);
@@ -118,15 +118,15 @@ export default function StakedSolo({ balances, setRefresh, setShow, stakingAccou
     unlockingAmount && !unlockingAmount?.isZero() && setShow(MODAL_IDS.RE_STAKE);
   }, [setShow, unlockingAmount]);
 
-  const onBack = useCallback(() => {
-    openOrFocusTab(`/accountfs/${address}/0`, true);
-  }, [address]);
-
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', px: '2%' }}>
+      <Bread />
       <Title
+        height='85px'
         logo={<BoyIcon sx={{ color: 'text.primary', fontSize: '60px' }} />}
-        onBackClick={onBack}
+        ml='-20px'
+        padding='0px'
+        spacing={0}
         text={t('Staked Solo')}
       />
       <Grid container item justifyContent='space-between' mb='15px'>
@@ -190,8 +190,8 @@ export default function StakedSolo({ balances, setRefresh, setShow, stakingAccou
           />
           <CommonTasks
             address={address}
-            staked={staked}
             setRefresh={setRefresh}
+            staked={staked}
           />
         </Grid>
       </Grid>

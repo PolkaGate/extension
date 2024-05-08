@@ -66,7 +66,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
   }, [justMember, pool]);
 
   const onManageValidators = useCallback(() => {
-    address && openOrFocusTab(`/poolfsManageValidators/${address}`, true);
+    address && openOrFocusTab(`/managePoolValidators/${address}`, true);
   }, [address]);
 
   const onEditPool = useCallback(() => {
