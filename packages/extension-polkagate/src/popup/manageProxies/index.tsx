@@ -80,34 +80,46 @@ export default function ManageProxies (): React.ReactElement {
       anyChanges && setEnableToConfirmButton(true);
     }
 
-    setAvailable(proxyItems?.filter((item) => item.status !== 'remove')?.length);
+    setAvailable(proxyItems?.filter((item) => item.status !== 'remove')?.length || 0);
   }, [disableAddProxyButton, proxyItems]);
 
   const onSelect = useCallback((selected: Proxy) => {
-    const toDeleteIndex = proxyItems?.indexOf(proxyItems?.find((item) => item.proxy.delegate === selected.delegate && item.proxy.proxyType === selected.proxyType));
+    if (!proxyItems) {
+      return;
+    }
 
-    if (toDeleteIndex !== undefined || toDeleteIndex !== -1) {
-      if (proxyItems[toDeleteIndex].status === 'current') {
-        proxyItems[toDeleteIndex].status = 'remove';
-        setProxyItems(proxyItems);
-        checkForChanges();
+    const found = proxyItems.find((item) => item.proxy.delegate === selected.delegate && item.proxy.proxyType === selected.proxyType);
 
-        return;
-      }
+    if (!found) {
+      return;
+    }
 
-      if (proxyItems[toDeleteIndex].status === 'remove') {
-        proxyItems[toDeleteIndex].status = 'current';
-        setProxyItems(proxyItems);
-        checkForChanges();
+    const toDeleteIndex = proxyItems.indexOf(found);
 
-        return;
-      }
+    if (toDeleteIndex === -1) {
+      return;
+    }
 
-      if (proxyItems[toDeleteIndex].status === 'new') {
-        proxyItems.splice(toDeleteIndex, 1);
-        setProxyItems(proxyItems);
-        checkForChanges();
-      }
+    if (proxyItems[toDeleteIndex].status === 'current') {
+      proxyItems[toDeleteIndex].status = 'remove';
+      setProxyItems(proxyItems);
+      checkForChanges();
+
+      return;
+    }
+
+    if (proxyItems[toDeleteIndex].status === 'remove') {
+      proxyItems[toDeleteIndex].status = 'current';
+      setProxyItems(proxyItems);
+      checkForChanges();
+
+      return;
+    }
+
+    if (proxyItems[toDeleteIndex].status === 'new') {
+      proxyItems.splice(toDeleteIndex, 1);
+      setProxyItems(proxyItems);
+      checkForChanges();
     }
   }, [checkForChanges, proxyItems]);
 
