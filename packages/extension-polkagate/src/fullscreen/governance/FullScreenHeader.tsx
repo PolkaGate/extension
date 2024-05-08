@@ -25,7 +25,7 @@ interface Props {
   unableToChangeAccount?: boolean;
 }
 
-export function FullScreenHeader({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
+export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
   const allChains = useGenesisHashOptions();
 
@@ -99,7 +99,6 @@ export function FullScreenHeader({ _otherComponents, noAccountDropDown = false, 
                 <AddressDropdown
                   api={api}
                   chainGenesis={chain?.genesisHash}
-                  height='40px'
                   onSelect={onAccountChange}
                   selectedAddress={address}
                   unableToChangeAccount={unableToChangeAccount}

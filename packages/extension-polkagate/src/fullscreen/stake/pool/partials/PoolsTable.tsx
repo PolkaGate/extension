@@ -14,7 +14,7 @@ import Filters from '@polkadot/extension-polkagate/src/popup/staking/pool/stake/
 import { BN } from '@polkadot/util';
 
 import { InputFilter, Progress, ShowBalance } from '../../../../components';
-import { useChain, useDecimal, useStakingConsts, useToken, useTranslation } from '../../../../hooks';
+import { useInfo, useStakingConsts, useTranslation } from '../../../../hooks';
 import PoolMoreInfo from '../../../../popup/staking/partial/PoolMoreInfo';
 import { DEFAULT_POOL_FILTERS } from '../../../../util/constants';
 import { PoolFilter, PoolInfo } from '../../../../util/types';
@@ -36,12 +36,10 @@ interface Props {
   setSearchedPools: React.Dispatch<React.SetStateAction<PoolInfo[] | null | undefined>>;
 }
 
-export default function PoolsTable({ address, setSearchedPools, api, numberOfFetchedPools, totalNumberOfPools, pools, poolsToShow, filteredPools, setFilteredPools, selected, setSelected, minHeight, maxHeight = window.innerHeight / 2.4, style }: Props): React.ReactElement {
+export default function PoolsTable ({ address, setSearchedPools, api, numberOfFetchedPools, totalNumberOfPools, pools, poolsToShow, filteredPools, setFilteredPools, selected, setSelected, minHeight, maxHeight = window.innerHeight / 2.4, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef(null);
-  const chain = useChain(address);
-  const decimal = useDecimal(address);
-  const token = useToken(address);
+  const { chain, decimal, token } = useInfo(address);
   const theme = useTheme();
   const stakingConsts = useStakingConsts(address);
 

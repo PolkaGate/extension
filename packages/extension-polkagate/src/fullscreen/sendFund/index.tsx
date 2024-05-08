@@ -84,14 +84,14 @@ export default function SendFund (): React.ReactElement {
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
-      <FullScreenHeader page='send' />
+      <FullScreenHeader page='send' unableToChangeAccount={step !== STEPS.INDEX} />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', display: 'block', px: '5%' }}>
         <Title
           icon={faPaperPlane}
           text={
             step === STEPS.INDEX
               ? t('Send Fund')
-              : [STEPS.REVIEW, STEPS.PROXY].includes(step)
+              : [STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step)
                 ? t('Review')
                 : step === STEPS.WAIT_SCREEN
                   ? t('Sending Fund')

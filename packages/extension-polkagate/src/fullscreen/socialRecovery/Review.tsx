@@ -19,12 +19,12 @@ import { ISubmittableResult } from '@polkadot/types/types';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { CanPayErrorAlert, EndRecoveryIcon, Identity, Infotip2, MakeRecoverableIcon, Motion, RescueRecoveryIcon, ShortAddress, ShowBalance, SignArea2, VouchRecoveryIcon, Warning, WrongPasswordAlert } from '../../components';
-import { useCanPayFeeAndDeposit, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useProxies } from '../../hooks';
+import { useCanPayFeeAndDeposit, useCurrentBlockNumber, useInfo } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import blockToDate from '../../popup/crowdloans/partials/blockToDate';
-import { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import { Proxy, TxInfo } from '../../util/types';
 import { pgBoxShadow } from '../../util/utils';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
@@ -60,18 +60,14 @@ const dateTimeFormat = { day: 'numeric', hour: '2-digit', hourCycle: 'h23', minu
 
 export default function Review ({ activeLost, address, allActiveRecoveries, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setMode, setRefresh, setStep, specific, step, vouchRecoveryInfo, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const formatted = useFormatted(address);
-  const proxies = useProxies(api, formatted);
   const theme = useTheme();
-  const decimal = useDecimal(address);
+  const { chainName, decimal, formatted } = useInfo(address);
   const currentBlockNumber = useCurrentBlockNumber(address);
-  const chainName = useChainName(address);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
-  const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [nothingToWithdrawNow, setNothingToWithdrawNow] = useState<boolean>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
@@ -168,12 +164,6 @@ export default function Review ({ activeLost, address, allActiveRecoveries, api,
 
     return undefined;
   }, [activeLost, batchAll, closeRecovery, createRecovery, initiateRecovery, lostAccountAddress, mode, recoveryConfig, removeRecovery, vouchRecovery, vouchRecoveryInfo, withdrawInfo, withdrawTXs]);
-
-  useEffect((): void => {
-    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
-
-    setProxyItems(fetchedProxyItems);
-  }, [proxies]);
 
   useEffect(() => {
     if (!formatted || !call) {
@@ -388,7 +378,7 @@ export default function Review ({ activeLost, address, allActiveRecoveries, api,
               }
             </Grid>
             <Typography fontSize='30px' fontWeight={700}>
-              {(step === STEPS.REVIEW || step === STEPS.PROXY) && (
+              {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) && (
                 <>
                   {mode === 'RemoveRecovery' && t('Making account unrecoverable')}
                   {mode === 'SetRecovery' && t('Make your account recoverable')}
@@ -433,7 +423,7 @@ export default function Review ({ activeLost, address, allActiveRecoveries, api,
               )}
             </Typography>
           </Grid>
-          {(step === STEPS.REVIEW || step === STEPS.PROXY) && ['SetRecovery', 'InitiateRecovery', 'ModifyRecovery', 'VouchRecovery'].includes(mode) &&
+          {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) && mode && ['SetRecovery', 'InitiateRecovery', 'ModifyRecovery', 'VouchRecovery'].includes(mode) &&
             <Typography fontSize='22px' fontWeight={700}>
               {['InitiateRecovery', 'VouchRecovery'].includes(mode)
                 ? t('Step 2 of 2: Review')
@@ -441,13 +431,13 @@ export default function Review ({ activeLost, address, allActiveRecoveries, api,
               }
             </Typography>
           }
-          {(step === STEPS.REVIEW || step === STEPS.PROXY) && mode === 'CloseRecovery' &&
+          {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) && mode === 'CloseRecovery' &&
             <Typography fontSize='14px' fontWeight={400}>
               {t('By terminating the recovery process, you will receive the tokens deposited by the suspected malicious account')}
             </Typography>
           }
         </Grid>
-        {(step === STEPS.REVIEW || step === STEPS.PROXY) &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <>
             {isPasswordError &&
               <WrongPasswordAlert />

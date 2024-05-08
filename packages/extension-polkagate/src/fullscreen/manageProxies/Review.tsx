@@ -23,6 +23,7 @@ import { pgBoxShadow } from '../../util/utils';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
 import { toTitleCase } from '../governance/utils/util';
+import { Title } from '../sendFund/InputPage';
 import ProxyTableFL from './components/ProxyTableFL';
 import Confirmation from './Confirmation';
 import { STEPS } from '.';
@@ -148,13 +149,19 @@ function Review ({ address, api, chain, depositedValue, newDepositValue, proxyIt
 
   return (
     <Grid container item>
-      <Grid alignItems='center' container item py='25px'>
-        <vaadin-icon icon='vaadin:sitemap' style={{ fontSize: '25px', color: `${theme.palette.text.primary}` }} />
-        <Typography fontSize='30px' fontWeight={700} pl='15px'>
-          {t('Review')}
-        </Typography>
-      </Grid>
-      {(step === STEPS.REVIEW || step === STEPS.PROXY) &&
+      <Title
+        logo={
+          <vaadin-icon icon='vaadin:sitemap' style={{ fontSize: '25px', color: `${theme.palette.text.primary}` }} />
+        }
+        text={
+          [STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step)
+            ? t('Review')
+            : step === STEPS.WAIT_SCREEN
+              ? t('Waiting')
+              : t('Confirmation')
+        }
+      />
+      {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
         <>
           <Grid container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), mb: '20px', p: '1% 3%' }}>
             {isPasswordError &&
@@ -223,7 +230,8 @@ function Review ({ address, api, chain, depositedValue, newDepositValue, proxyIt
               steps={STEPS}
             />
           </Grid>
-        </>}
+        </>
+      }
       {step === STEPS.WAIT_SCREEN &&
         <WaitScreen />
       }
