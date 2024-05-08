@@ -99,7 +99,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
     amount,
     fee: String(estimatedFee || 0),
     from: { address: formatted, name },
-    subAction: 'Pay Decision Deposit',
+    subAction: 'Pay Decision Deposit'
   }), [amount, estimatedFee, formatted, name]);
 
   const title = useMemo(() => {
@@ -138,9 +138,9 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
           </Grid>
         </Grid>
         {[STEPS.REVIEW, STEPS.SIGN_QR].includes(step) &&
-          <Grid container item sx={{ height: '550px' }}>
+          <Grid container item sx={{ display: 'block', height: '550px', mt:'20px' }}>
             {notEnoughBalance &&
-              <Grid container height='42px' item justifyContent='center' mt='15px'>
+              <Grid container height='42px' item justifyContent='center' my='15px'>
                 <Warning
                   fontWeight={400}
                   isDanger
@@ -188,7 +188,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
                 </Grid>
               </DisplayValue>
             </Grid>
-            <Grid alignItems='center' container item sx={{ '> div #TwoButtons': { '> div': { justifyContent: 'space-between', width: '450px' }, justifyContent: 'flex-end' }, pb: '20px' }}>
+            <Grid container item sx={{ bottom: '20px', left: '4%', position: 'absolute', width: '92%' }}>
               <SignArea2
                 address={address}
                 call={tx}
@@ -199,7 +199,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
                 params={[refIndex]}
                 primaryBtnText={t('Confirm')}
                 proxyTypeFilter={GOVERNANCE_PROXY}
-                secondaryBtnText={t('Reject')}
+                secondaryBtnText={t('Close')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
                 setStep={setStep}
