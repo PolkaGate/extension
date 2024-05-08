@@ -54,7 +54,7 @@ interface Props {
   extraInfo: Record<string, unknown>;
   steps: Record<string, number>;
   setRefresh?: React.Dispatch<React.SetStateAction<boolean>>;
-  perviousStep?:number;
+  previousStep?:number;
 }
 
 /**
@@ -63,7 +63,7 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-export default function SignArea ({ address, call, disabled, extraInfo, isPasswordError, onSecondaryClick, params, perviousStep, prevState, primaryBtn, primaryBtnText, proxyModalHeight, proxyTypeFilter, secondaryBtnText, selectedProxy, setIsPasswordError, setRefresh, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, token }: Props): React.ReactElement<Props> {
+export default function SignArea ({ address, call, disabled, extraInfo, isPasswordError, onSecondaryClick, params, previousStep, prevState, primaryBtn, primaryBtnText, proxyModalHeight, proxyTypeFilter, secondaryBtnText, selectedProxy, setIsPasswordError, setRefresh, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, token }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, formatted } = useInfo(address);
@@ -194,8 +194,8 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
 
   const closeQrModal = useCallback(() => {
     setShowQR(false);
-    perviousStep !== undefined && setStep(perviousStep);
-  }, [perviousStep, setStep]);
+    previousStep !== undefined && setStep(previousStep);
+  }, [previousStep, setStep]);
 
   const handleTxResult = useCallback((txResult: TxResult) => {
     try {
