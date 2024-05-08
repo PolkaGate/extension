@@ -8,7 +8,7 @@ import React from 'react';
 
 import { Motion, PButton, ShortAddress } from '../../../../components';
 import { useToken, useTranslation } from '../../../../hooks';
-import { ThroughProxy } from '../../../../partials';
+import { SubTitle, ThroughProxy } from '../../../../partials';
 import Explorer from '../../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../../popup/history/partials/FailSuccessIcon';
 import { TxInfo } from '../../../../util/types';
@@ -24,7 +24,7 @@ interface Props {
   status: 'Delegate' | 'Remove' | 'Modify';
 }
 
-export default function Confirmation({ address, allCategoriesLength, delegateInformation, handleClose, txInfo, status, removedTracksLength }: Props): React.ReactElement {
+export default function Confirmation ({ address, allCategoriesLength, delegateInformation, handleClose, txInfo, status, removedTracksLength }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = useToken(address);
 
@@ -48,6 +48,7 @@ export default function Confirmation({ address, allCategoriesLength, delegateInf
 
   return (
     <Motion>
+      <SubTitle label={txInfo.success ? t('Completed') : t('Failed')} style={{ paddingTop: '25px' }} />
       <FailSuccessIcon
         showLabel={false}
         style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
@@ -61,7 +62,7 @@ export default function Confirmation({ address, allCategoriesLength, delegateInf
       {/* <AccountHolderWithProxy address={address} chain={txInfo.chain} showDivider selectedProxyAddress={txInfo.throughProxy?.address} /> */}
       <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-          {status === 'Remove' ? t<string>('Account holder') : t<string>('Delegation from')}:
+          {status === 'Remove' ? t('Account holder') : t('Delegation from')}:
         </Typography>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
           {txInfo.from.name}
@@ -82,7 +83,7 @@ export default function Confirmation({ address, allCategoriesLength, delegateInf
         <>
           <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {status === 'Remove' ? t<string>('Remove delegation from') : t<string>('Delegation to')}:
+              {status === 'Remove' ? t('Remove delegation from') : t('Delegation to')}:
             </Typography>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
               {txInfo.to?.name}
@@ -98,25 +99,25 @@ export default function Confirmation({ address, allCategoriesLength, delegateInf
       }
       {status !== 'Remove' && delegateInformation.delegateAmount &&
         <DisplayInfo
-          caption={t<string>('Vote value:')}
-          value={t<string>(`${delegateInformation.delegateAmount} {{token}}`, { replace: { token } })}
+          caption={t('Vote value:')}
+          value={t(`${delegateInformation.delegateAmount} {{token}}`, { replace: { token } })}
         />
       }
       {status !== 'Remove' && delegateInformation?.delegateConviction === undefined &&
         <DisplayInfo
-          caption={t<string>('Vote multiplier:')}
-          value={t<string>(`${delegateInformation.delegateConviction === 0 ? 0.1 : delegateInformation.delegateConviction}x`)}
+          caption={t('Vote multiplier:')}
+          value={t(`${delegateInformation.delegateConviction === 0 ? 0.1 : delegateInformation.delegateConviction}x`)}
         />
       }
       <DisplayInfo
-        caption={t<string>('Number of referenda categories:')}
-        value={t<string>(`${status === 'Remove' && removedTracksLength ? removedTracksLength : delegateInformation.delegatedTracks.length} of ${allCategoriesLength}`, { replace: { token } })}
+        caption={t('Number of referenda categories:')}
+        value={t(`${status === 'Remove' && removedTracksLength ? removedTracksLength : delegateInformation.delegatedTracks.length} of ${allCategoriesLength}`, { replace: { token } })}
       />
-      <DisplayInfo caption={t<string>('Fee:')} value={fee?.toHuman() ?? '00.00'} />
+      <DisplayInfo caption={t('Fee:')} value={fee?.toHuman() ?? '00.00'} />
       {txInfo?.txHash &&
         <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
           <Grid container item width='fit-content'>
-            <Typography pr='5px'>{t<string>('Hash')}:</Typography>
+            <Typography pr='5px'>{t('Hash')}:</Typography>
           </Grid>
           <Grid container item width='fit-content'>
             <ShortAddress
@@ -128,18 +129,17 @@ export default function Confirmation({ address, allCategoriesLength, delegateInf
           </Grid>
         </Grid>
       }
-      {
-        txInfo?.txHash &&
+      {txInfo?.txHash &&
         <Grid container justifyContent='center' pt='5px'>
           <Explorer chainName={chainName} txHash={txInfo?.txHash} />
         </Grid>
       }
       <PButton
         _ml={0}
-        _mt='30px'
         _onClick={handleClose}
-        _width={100}
-        text={t<string>('Close')}
+        _width={90}
+        left='5%'
+        text={txInfo.success ? t('Done') : t('Close')}
       />
     </Motion>
   );
