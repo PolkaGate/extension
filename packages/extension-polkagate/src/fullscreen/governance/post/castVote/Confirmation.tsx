@@ -8,7 +8,7 @@ import React from 'react';
 
 import { Motion, PButton, ShortAddress, ShowBalance } from '../../../../components';
 import { useDecimal, useToken, useTranslation } from '../../../../hooks';
-import { ThroughProxy } from '../../../../partials';
+import { SubTitle, ThroughProxy } from '../../../../partials';
 import Explorer from '../../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../../popup/history/partials/FailSuccessIcon';
 import { TxInfo } from '../../../../util/types';
@@ -22,7 +22,7 @@ interface Props {
   alterType: 'modify' | 'remove' | undefined;
 }
 
-export default function Confirmation({ address, alterType, handleClose, txInfo, voteInformation }: Props): React.ReactElement {
+export default function Confirmation ({ address, alterType, handleClose, txInfo, voteInformation }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = useToken(address);
   const decimal = useDecimal(address);
@@ -47,9 +47,10 @@ export default function Confirmation({ address, alterType, handleClose, txInfo, 
 
   return (
     <Motion>
+      <SubTitle label={txInfo.success ? t('Completed') : t('Failed')} style={{ paddingTop: '25px' }} />
       <FailSuccessIcon
         showLabel={false}
-        style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
+        style={{ fontSize: '87px', m: '5px auto', textAlign: 'center', width: 'fit-content' }}
         success={txInfo.success}
       />
       {txInfo?.failureText &&
@@ -134,7 +135,7 @@ export default function Confirmation({ address, alterType, handleClose, txInfo, 
         _onClick={handleClose}
         _width={90}
         left='5%'
-        text={t('Done')}
+        text={txInfo.success ? t('Done') : t('Close')}
       />
     </Motion>
   );

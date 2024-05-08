@@ -116,7 +116,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
     }
 
     if (step === STEPS.CONFIRM) {
-      return t('Paying Completed');
+      return t('Paying Confirmation');
     }
   }, [step, t]);
 
@@ -228,7 +228,6 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
         }
         {step === STEPS.CONFIRM && txInfo && refIndex &&
           <Confirmation
-            address={address}
             handleClose={handleClose}
             refIndex={refIndex}
             txInfo={txInfo}
