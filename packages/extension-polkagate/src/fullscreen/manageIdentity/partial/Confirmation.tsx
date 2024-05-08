@@ -208,7 +208,7 @@ export default function Confirmation ({ SubIdentityAccounts, handleClose, identi
         _mt='30px'
         _onClick={handleClose}
         _width={100}
-        text={t('Close')}
+        text={txInfo.success ? t('Done') : t('Close')}
       />
     </Motion>
   );

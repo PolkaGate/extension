@@ -20,7 +20,7 @@ interface Props {
   onPrimaryBtnClick: () => void;
 }
 
-export default function Confirmation({ address, onPrimaryBtnClick, txInfo }: Props): React.ReactElement {
+export default function Confirmation ({ address, onPrimaryBtnClick, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = useToken(address);
   const chainName = useChainName(address);
@@ -51,7 +51,7 @@ export default function Confirmation({ address, onPrimaryBtnClick, txInfo }: Pro
         success={txInfo.success}
       />
       {txInfo?.failureText &&
-        <Typography fontSize='16px' fontWeight={400} m='auto' sx={{ WebkitBoxOrient: 'vertical', WebkitLineClamp: '2', display: '-webkit-box', mb: '15px', overflow: 'hidden', textOverflow: 'ellipsis' }} textAlign='center' width='92%'        >
+        <Typography fontSize='16px' fontWeight={400} m='auto' sx={{ WebkitBoxOrient: 'vertical', WebkitLineClamp: '2', display: '-webkit-box', mb: '15px', overflow: 'hidden', textOverflow: 'ellipsis' }} textAlign='center' width='92%'>
           {txInfo.failureText}
         </Typography>
       }
@@ -76,7 +76,7 @@ export default function Confirmation({ address, onPrimaryBtnClick, txInfo }: Pro
       </Grid>
       <DisplayInfo
         caption={t('Unlock value:')}
-        value={t(`${txInfo.amount} {{token}}`, { replace: { token } })}
+        value={t(`${txInfo.amount || ''} {{token}}`, { replace: { token } })}
       />
       <DisplayInfo caption={t('Fee:')} value={fee?.toHuman() ?? '00.00'} />
       {txInfo?.txHash &&
@@ -105,7 +105,7 @@ export default function Confirmation({ address, onPrimaryBtnClick, txInfo }: Pro
         _mt='50px'
         _onClick={onPrimaryBtnClick}
         _width={100}
-        text={t('Close')}
+        text={txInfo.success ? t('Done') : t('Close')}
       />
     </Container>
   );

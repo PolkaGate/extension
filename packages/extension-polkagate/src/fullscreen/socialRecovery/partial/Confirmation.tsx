@@ -13,10 +13,10 @@ import { Identity, Motion, PButton, ShortAddress } from '../../../components';
 import { useToken, useTranslation } from '../../../hooks';
 import { ActiveRecoveryFor } from '../../../hooks/useActiveRecoveries';
 import { ThroughProxy } from '../../../partials';
-import { TxInfo } from '../../../util/types';
-import { amountToHuman, pgBoxShadow } from '../../../util/utils';
 import Explorer from '../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../popup/history/partials/FailSuccessIcon';
+import { TxInfo } from '../../../util/types';
+import { amountToHuman, pgBoxShadow } from '../../../util/utils';
 import { AddressWithIdentity } from '../components/SelectTrustedFriend';
 import recoveryDelayPeriod from '../util/recoveryDelayPeriod';
 import { RecoveryConfigType, SocialRecoveryModes } from '../util/types';
@@ -68,7 +68,7 @@ export const DisplayInfo = ({ caption, fontSize, fontWeight, showDivider = true,
   );
 };
 
-export default function Confirmation({ activeLost, decimal, depositValue, handleClose, lostAccountAddress, mode, recoveryConfig, txInfo, vouchRecoveryInfo, WithdrawDetails }: Props): React.ReactElement {
+export default function Confirmation ({ WithdrawDetails, activeLost, decimal, depositValue, handleClose, lostAccountAddress, mode, recoveryConfig, txInfo, vouchRecoveryInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const token = useToken(txInfo.from.address);
@@ -248,7 +248,7 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
           _mt='25px'
           _onClick={handleClose}
           _width={100}
-          text={t('Done')}
+          text={txInfo.success ? t('Done') : t('Close')}
         />
       </Grid>
     </Motion>
