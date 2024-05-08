@@ -11,14 +11,20 @@ import { useParams } from 'react-router-dom';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, PButton, ProxyTable, ShowBalance } from '../../components';
-import { useAccount, useApi, useMetadata, useTranslation } from '../../hooks';
+import { useAccount, useInfo, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { Proxy, ProxyItem } from '../../util/types';
 import { getFormattedAddress } from '../../util/utils';
 import AddProxy from './AddProxy';
 import Review from './Review';
 
-export default function ManageProxies(): React.ReactElement {
+export default function ManageProxies (): React.ReactElement {
+  const onAction = useContext(ActionContext);
+  const { t } = useTranslation();
+  const { address } = useParams<{ address: string; }>();
+  const { api, chain } = useInfo(address);
+  const account = useAccount(address);
+
   const [proxyItems, setProxyItems] = useState<ProxyItem[] | undefined>();
   const [showAddProxy, setShowAddProxy] = useState<boolean>(false);
   const [showReviewProxy, setShowReviewProxy] = useState<boolean>(false);
@@ -28,13 +34,6 @@ export default function ManageProxies(): React.ReactElement {
   const [disableAddProxyButton, setEnableAddProxyButton] = useState<boolean>(true);
   const [disableToConfirmButton, setEnableToConfirmButton] = useState<boolean>(true);
   const [available, setAvailable] = useState<number>(0);
-
-  const onAction = useContext(ActionContext);
-  const { t } = useTranslation();
-  const { address } = useParams<{ address: string; }>();
-  const account = useAccount(address);
-  const chain = useMetadata(account?.genesisHash, true);
-  const api = useApi(account?.address);
 
   const proxyDepositBase = api ? api.consts.proxy.proxyDepositBase as unknown as BN : BN_ZERO;
   const proxyDepositFactor = api ? api.consts.proxy.proxyDepositFactor as unknown as BN : BN_ZERO;
@@ -61,15 +60,15 @@ export default function ManageProxies(): React.ReactElement {
     }
   }, [depositValue, proxyDepositBase, proxyDepositFactor, proxyItems]);
 
-  const _onBackClick = useCallback(() => {
+  const onBackClick = useCallback(() => {
     showReviewProxy ? setShowReviewProxy(!showReviewProxy) : onAction('/');
   }, [onAction, showReviewProxy]);
 
-  const _openAddProxy = useCallback(() => {
+  const openAddProxy = useCallback(() => {
     !disableAddProxyButton && setShowAddProxy(!showAddProxy);
   }, [disableAddProxyButton, showAddProxy]);
 
-  const _toConfirm = useCallback(() => {
+  const toConfirm = useCallback(() => {
     setShowReviewProxy(!showReviewProxy);
   }, [showReviewProxy]);
 
@@ -119,14 +118,14 @@ export default function ManageProxies(): React.ReactElement {
   }, [address, api, available, chain, checkForChanges, formatted, proxyDepositBase, proxyDepositFactor, proxyItems]);
 
   useEffect(() => {
-    proxyItems !== undefined && !(account?.isExternal && proxyItems.length === 0) && setEnableAddProxyButton(false);
+    proxyItems !== undefined && setEnableAddProxyButton(false);
     checkForChanges();
   }, [account?.isExternal, checkForChanges, proxyItems]);
 
   useEffect(() => {
-    setHelperText(t<string>('Add new proxies or select existing ones to remove for this account, and please consider the deposit that will be reserved.'));
-    proxyItems !== undefined && disableAddProxyButton && setHelperText(t<string>('This is a watch-only account and cannot sign transactions, and there is no proxy associated with this account.'));
-    !disableToConfirmButton && setHelperText(t<string>("You can still modify the proxies you're adding, add new proxies, or select existing proxies to remove them. Once done, click 'Next' to confirm all transactions."));
+    setHelperText(t('Add new proxies or select existing ones to remove for this account, and please consider the deposit that will be reserved.'));
+    proxyItems !== undefined && disableAddProxyButton && setHelperText(t('This is a watch-only account and cannot sign transactions, and there is no proxy associated with this account.'));
+    !disableToConfirmButton && setHelperText(t("You can still modify the proxies you're adding, add new proxies, or select existing proxies to remove them. Once done, click 'Next' to confirm all transactions."));
   }, [disableAddProxyButton, disableToConfirmButton, proxyItems, t]);
 
   useEffect(() => {
@@ -140,10 +139,10 @@ export default function ManageProxies(): React.ReactElement {
   return (
     <>
       <HeaderBrand
-        onBackClick={showAddProxy ? _openAddProxy : _onBackClick}
+        onBackClick={showAddProxy ? openAddProxy : onBackClick}
         showBackArrow
         showClose
-        text={showAddProxy ? t<string>('Add Proxy') : t<string>('Manage Proxies')}
+        text={showAddProxy ? t('Add Proxy') : t('Manage Proxies')}
       />
       {!showAddProxy && !showReviewProxy &&
         <>
@@ -151,7 +150,7 @@ export default function ManageProxies(): React.ReactElement {
             {helperText}
           </Typography>
           <Grid container m='auto' sx={{ opacity: disableAddProxyButton ? 0.5 : 1 }} width='92%'>
-            <Grid display='inline-flex' item onClick={_openAddProxy} sx={{ cursor: disableAddProxyButton ? 'context-menu' : 'pointer' }}>
+            <Grid display='inline-flex' item onClick={openAddProxy} sx={{ cursor: disableAddProxyButton ? 'context-menu' : 'pointer' }}>
               <AddRoundedIcon
                 sx={{
                   bgcolor: 'primary.main',
@@ -161,16 +160,16 @@ export default function ManageProxies(): React.ReactElement {
                 }}
               />
               <Typography fontSize='16px' fontWeight={400} lineHeight='36px' pl='10px' sx={{ textDecoration: 'underline' }}>
-                {t<string>('Add proxy')}
+                {t('Add proxy')}
               </Typography>
             </Grid>
           </Grid>
           <ProxyTable
             chain={chain}
-            label={t<string>('Proxies')}
+            label={t('Proxies')}
             maxHeight={window.innerHeight / 2.5}
             mode='Delete'
-            notFoundText={t<string>('No proxies found.')}
+            notFoundText={t('No proxies found.')}
             onSelect={onSelect}
             proxies={proxyItems}
             style={{
@@ -184,7 +183,7 @@ export default function ManageProxies(): React.ReactElement {
               fontWeight={300}
               lineHeight='23px'
             >
-              {t<string>('Deposit:')}
+              {t('Deposit:')}
             </Typography>
             <Grid item lineHeight='22px' pl='5px'>
               <ShowBalance
@@ -196,9 +195,9 @@ export default function ManageProxies(): React.ReactElement {
             </Grid>
           </Grid>
           <PButton
-            _onClick={_toConfirm}
+            _onClick={toConfirm}
             disabled={disableToConfirmButton}
-            text={t<string>('Next')}
+            text={t('Next')}
           />
         </>
       }
