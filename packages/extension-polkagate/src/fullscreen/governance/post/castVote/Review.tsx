@@ -180,7 +180,7 @@ export default function Review ({ address, estimatedFee, selectedProxy, setModal
             isPasswordError={isPasswordError}
             onSecondaryClick={onBackClick}
             params={params}
-            perviousStep={txType === 'Vote' ? STEPS.REVIEW : STEPS.REMOVE}
+            previousStep={txType === 'Vote' ? STEPS.REVIEW : STEPS.REMOVE}
             primaryBtnText={t('Confirm')}
             proxyTypeFilter={GOVERNANCE_PROXY}
             secondaryBtnText={t('Back')}

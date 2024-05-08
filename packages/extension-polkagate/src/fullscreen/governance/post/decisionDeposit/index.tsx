@@ -197,6 +197,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
                 isPasswordError={isPasswordError}
                 onSecondaryClick={handleClose}
                 params={[refIndex]}
+                previousStep={STEPS.REVIEW}
                 primaryBtnText={t('Confirm')}
                 proxyTypeFilter={GOVERNANCE_PROXY}
                 secondaryBtnText={t('Close')}
