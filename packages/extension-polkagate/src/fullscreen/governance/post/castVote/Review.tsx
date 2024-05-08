@@ -41,7 +41,7 @@ interface Props {
   txType: 'Remove' | 'Vote';
 }
 
-export default function Review ({ address, estimatedFee, selectedProxy, setModalHeight, setRefresh, setStep, setTxInfo, status, step, txType, tx, voteInformation }: Props): React.ReactElement<Props> {
+export default function Review ({ address, estimatedFee, selectedProxy, setModalHeight, setRefresh, setStep, setTxInfo, status, step, tx, txType, voteInformation }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);
@@ -55,7 +55,7 @@ export default function Review ({ address, estimatedFee, selectedProxy, setModal
     action: 'Governance',
     amount: voteInformation.voteBalance,
     fee: String(estimatedFee || 0),
-    subAction: step === STEPS.REMOVE ? 'Remove vote' : 'Vote',
+    subAction: step === STEPS.REMOVE ? 'Remove vote' : 'Vote'
   }), [estimatedFee, step, voteInformation.voteBalance]);
 
   const VoteStatus = ({ vote }: { vote: 'Aye' | 'Nay' | 'Abstain' }) => {
@@ -124,6 +124,7 @@ export default function Review ({ address, estimatedFee, selectedProxy, setModal
           <Warning
             fontWeight={400}
             isBelowInput
+            marginRight={40}
             theme={theme}
           >
             {t('Think twice before removing your vote. It may affect the outcome.')}
