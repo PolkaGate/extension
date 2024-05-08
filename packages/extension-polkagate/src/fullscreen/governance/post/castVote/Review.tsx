@@ -37,10 +37,11 @@ interface Props {
   tx: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   status: string | undefined;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-  setModalHeight: React.Dispatch<React.SetStateAction<number | undefined>>
+  setModalHeight: React.Dispatch<React.SetStateAction<number | undefined>>;
+  txType: 'Remove' | 'Vote';
 }
 
-export default function Review ({ address, estimatedFee, selectedProxy, setModalHeight, setRefresh, setStep, setTxInfo, status, step, tx, voteInformation }: Props): React.ReactElement<Props> {
+export default function Review ({ address, estimatedFee, selectedProxy, setModalHeight, setRefresh, setStep, setTxInfo, status, step, txType, tx, voteInformation }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);
@@ -78,7 +79,7 @@ export default function Review ({ address, estimatedFee, selectedProxy, setModal
   };
 
   const params = useMemo(() => {
-    if ([STEPS.REVIEW, STEPS.SIGN_QR].includes(step)) {
+    if (txType === 'Vote') {
       if (['Aye', 'Nay'].includes(voteInformation.voteType)) {
         return ([voteInformation.refIndex, {
           Standard: {
@@ -98,10 +99,10 @@ export default function Review ({ address, estimatedFee, selectedProxy, setModal
           }
         }]);
       }
-    } else if (step === STEPS.REMOVE) {
+    } else if (txType === 'Remove') {
       return [voteInformation.trackId, voteInformation.refIndex];
     }
-  }, [step, voteInformation]);
+  }, [txType, voteInformation.refIndex, voteInformation.trackId, voteInformation.voteAmountBN, voteInformation.voteConvictionValue, voteInformation.voteType]);
 
   useEffect(() => {
     if (ref) {
@@ -110,8 +111,8 @@ export default function Review ({ address, estimatedFee, selectedProxy, setModal
   }, [setModalHeight]);
 
   const onBackClick = useCallback(() =>
-    setStep(step === STEPS.REVIEW ? STEPS.INDEX : STEPS.PREVIEW)
-  , [setStep, step]);
+    setStep(txType === 'Vote' ? STEPS.INDEX : STEPS.PREVIEW)
+  , [setStep, txType]);
 
   return (
     <Motion style={{ height: '100%' }}>
@@ -179,6 +180,7 @@ export default function Review ({ address, estimatedFee, selectedProxy, setModal
             isPasswordError={isPasswordError}
             onSecondaryClick={onBackClick}
             params={params}
+            perviousStep={txType === 'Vote' ? STEPS.REVIEW : STEPS.REMOVE}
             primaryBtnText={t('Confirm')}
             proxyTypeFilter={GOVERNANCE_PROXY}
             secondaryBtnText={t('Back')}

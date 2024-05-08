@@ -83,7 +83,6 @@ export default function Index ({ address, cantModify, hasVoted, myVote, notVoted
   const [alterType, setAlterType] = useState<'modify' | 'remove'>();
   const [reviewModalHeight, setReviewModalHeight] = useState<number | undefined>();
 
-  const vote = api && api.tx.convictionVoting.vote;
   const voteTx = api && api.tx.convictionVoting.vote;
   const removeTx = api && api.tx.convictionVoting.removeVote;
 
@@ -116,7 +115,7 @@ export default function Index ({ address, cantModify, hasVoted, myVote, notVoted
   }, [decimal, myVote, refIndex, trackId]);
 
   useEffect(() => {
-    if (!formatted || !vote) {
+    if (!formatted || !voteTx) {
       return;
     }
 
@@ -128,8 +127,8 @@ export default function Index ({ address, cantModify, hasVoted, myVote, notVoted
     const dummyVote = undefined;
     const feeDummyParams = ['1', dummyVote];
 
-    vote(...feeDummyParams).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [api, formatted, vote]);
+    voteTx(...feeDummyParams).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+  }, [api, formatted, voteTx]);
 
   const handleClose = useCallback(() => {
     if (step === STEPS.PROXY) {
@@ -253,6 +252,7 @@ export default function Index ({ address, cantModify, hasVoted, myVote, notVoted
             status={status}
             step={step}
             tx={alterType === 'remove' ? removeTx : voteTx}
+            txType={alterType === 'remove' ? 'Remove' : 'Vote'}
             voteInformation={voteInformation || votedInfo}
           />
         }
