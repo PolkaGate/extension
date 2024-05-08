@@ -46,7 +46,7 @@ function Qr ({ address, buttonLeft, className, cmd, genesisHash, onSignature, pa
     [cmd, payload]
   );
 
-  const onShowQr = useCallback(() => setIsScanning(!isScanning), [isScanning]);
+  const onClick = useCallback(() => setIsScanning(!isScanning), [isScanning]);
 
   if (!payloadU8a) {
     return (
@@ -89,7 +89,7 @@ function Qr ({ address, buttonLeft, className, cmd, genesisHash, onSignature, pa
         </Typography>
       }
       <PButton
-        _onClick={onShowQr}
+        _onClick={onClick}
         left={buttonLeft}
         text={isScanning
           ? t('Back')
