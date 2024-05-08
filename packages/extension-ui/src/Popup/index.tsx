@@ -229,10 +229,16 @@ export default function Popup (): React.ReactElement {
   }, []);
 
   useEffect((): void => {
-    if (!loginInfo) {
+    if (!loginInfo?.status) {
       return;
     }
 
+    if (loginInfo.status === 'set') {
+      /** to consider user activity, and extend no login period */
+      updateStorage('loginInfo', { lastLoginTime: Date.now() }).catch(console.error);
+    }
+
+    /** to decide on initialization of accounts */
     if (loginInfo.status !== 'forgot') {
       setAccountCtx(initAccountContext(accounts || []));
     } else if (loginInfo.status === 'forgot') {
@@ -241,7 +247,7 @@ export default function Popup (): React.ReactElement {
 
       updateStorage('loginInfo', { addressesToForget: addresses }).catch(console.error);
     }
-  }, [accounts, loginInfo]);
+  }, [accounts, loginInfo?.status]);
 
   useEffect((): void => {
     requestMediaAccess(cameraOn)
