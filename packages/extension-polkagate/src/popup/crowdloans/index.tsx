@@ -11,11 +11,11 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { Language as LanguageIcon } from '@mui/icons-material';
 import { Avatar, Box, Container, Divider, Grid, Link, Typography, useTheme } from '@mui/material';
+import { createWsEndpoints } from '@polkagate/apps-config';
 import { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { createWsEndpoints } from '@polkagate/apps-config';
 import { Chain } from '@polkadot/extension-chains/types';
 import { SettingsStruct } from '@polkadot/ui-settings/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
@@ -23,7 +23,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { auctionBlack, auctionRed, auctionWhite, crowdloanHomeBlack, crowdloanHomeRed, crowdloanHomeWhite, pastCrowdloanBlack, pastCrowdloanRed, pastCrowdloanWhite } from '../../assets/icons';
 import { ActionContext, HorizontalMenuItem, Identicon, Identity, Progress, ShowBalance, Warning } from '../../components';
 import { SettingsContext } from '../../components/contexts';
-import { useAccount, useApi, useAuction, useChain, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useMyAccountIdentity, useToken, useTranslation } from '../../hooks';
+import { useAuction, useCurrentBlockNumber, useInfo, useMyAccountIdentity, useTranslation } from '../../hooks';
 import useIsExtensionPopup from '../../hooks/useIsExtensionPopup';
 import { ChainSwitch, HeaderBrand } from '../../partials';
 import BouncingSubTitle from '../../partials/BouncingSubTitle';
@@ -49,7 +49,7 @@ const TAB_MAP = {
   PAST_CROWDLOANS: 3
 };
 
-export default function CrowdLoans(): React.ReactElement {
+export default function CrowdLoans (): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();
@@ -57,14 +57,8 @@ export default function CrowdLoans(): React.ReactElement {
   const { address } = useParams<{ address: string }>();
   const currentBlockNumber = useCurrentBlockNumber(address);
   const auction = useAuction(address);
-  const account = useAccount(address);
-  const formatted = useFormatted(address);
-  const chain = useChain(address);
-  const api = useApi(address);
+  const { account, api, chain, chainName, decimal, formatted, token } = useInfo(address);
   const identity = useMyAccountIdentity(address);
-  const token = useToken(address);
-  const decimal = useDecimal(address);
-  const chainName = useChainName(address);
   const onExtension = useIsExtensionPopup();
 
   const [myContributions, setMyContributions] = useState<Map<string, Balance> | undefined>();
@@ -357,7 +351,7 @@ export default function CrowdLoans(): React.ReactElement {
                 >
                   {t<string>('No contribution yet.')}
                 </Warning>
-                <Typography fontWeight={400} fontSize='14px' p='7px 41px' align='center'>
+                <Typography align='center' fontSize='14px' fontWeight={400} p='7px 41px'>
                   {t('You can find Crowdloans to contribute by clicking on “Active” button below.')}
                 </Typography>
               </Grid>
@@ -448,7 +442,8 @@ export default function CrowdLoans(): React.ReactElement {
                   : theme.palette.mode === 'light'
                     ? crowdloanHomeBlack as string
                     : crowdloanHomeWhite as string}
-              sx={{ height: '35px' }} />
+              sx={{ height: '35px' }}
+            />
           }
           onClick={showMyContribution}
           textSelected={itemShow === TAB_MAP.MY_CONTRIBUTION}
@@ -484,7 +479,8 @@ export default function CrowdLoans(): React.ReactElement {
                   : theme.palette.mode === 'light'
                     ? auctionBlack as string
                     : auctionWhite as string}
-              sx={{ height: '35px' }} />}
+              sx={{ height: '35px' }}
+            />}
           onClick={showAuction}
           textSelected={itemShow === TAB_MAP.AUCTION}
           title={t<string>('Auction')}
@@ -501,7 +497,8 @@ export default function CrowdLoans(): React.ReactElement {
                     ? pastCrowdloanBlack as string
                     : pastCrowdloanWhite as string
               }
-              sx={{ height: '35px' }} />}
+              sx={{ height: '35px' }}
+            />}
           onClick={showPastCrowdloans}
           textSelected={itemShow === TAB_MAP.PAST_CROWDLOANS}
           title={t<string>('Past')}

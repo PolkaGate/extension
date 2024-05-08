@@ -11,7 +11,7 @@ import { useParams } from 'react-router';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, ActionContext } from '../../components';
-import { useAccount, useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
+import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
 import { FetchedBalance } from '../../hooks/useAssetsBalances';
 import { getValue } from '../../popup/account/util';
@@ -56,11 +56,10 @@ export default function AccountDetails(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address, paramAssetId } = useParams<{ address: string, paramAssetId?: string }>();
-  const account = useAccount(address);
   const { accounts } = useContext(AccountContext);
 
   const currency = useCurrency();
-  const { api, chain, chainName, formatted } = useInfo(address);
+  const { account, api, chain, chainName, formatted } = useInfo(address);
   const onAction = useContext(ActionContext);
   const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();

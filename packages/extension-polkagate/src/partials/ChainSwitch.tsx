@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { twoItemCurveBackgroundBlack, twoItemCurveBackgroundWhite } from '../assets/icons';
-import { useAccount, useChainName, useGenesisHashOptions, useIsTestnetEnabled } from '../hooks';
+import { useGenesisHashOptions, useInfo, useIsTestnetEnabled } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CHAINS_WITH_BLACK_LOGO, CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
@@ -24,16 +24,16 @@ interface Props {
   externalChainNamesToShow?: (string | undefined)[] | undefined;
 }
 
-function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Props): React.ReactElement<Props> {
+function ChainSwitch ({ address, children, externalChainNamesToShow, invert }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { pathname } = useLocation();
-  const account = useAccount(address);
+  const { account, chainName: currentChainNameFromAccount } = useInfo(address);
+  const genesisHashes = useGenesisHashOptions();
+  const isTestnetEnabled = useIsTestnetEnabled();
+
   const [showOtherChains, setShowOtherChains] = useState<boolean>(false);
   const [notFirstTime, setFirstTime] = useState<boolean>(false);
-  const genesisHashes = useGenesisHashOptions();
-  const currentChainNameFromAccount = useChainName(address);
   const [currentChainName, setCurrentChainName] = useState<string | undefined>(currentChainNameFromAccount);
-  const isTestnetEnabled = useIsTestnetEnabled();
 
   const isTestnetDisabled = useCallback((name: string | undefined) => !isTestnetEnabled && name?.toLowerCase() === 'westend', [isTestnetEnabled]);
 
@@ -161,7 +161,7 @@ function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Pr
     chainNamesToShow && (chainNamesToShow.length > 1
       ? setShowOtherChains(!showOtherChains)
       : selectNetwork(chainNamesToShow[0]))
-    , [chainNamesToShow, selectNetwork, showOtherChains]);
+  , [chainNamesToShow, selectNetwork, showOtherChains]);
   const closeChainSwitch = useCallback(() => setShowOtherChains(false), [setShowOtherChains]);
 
   return (
@@ -195,7 +195,8 @@ function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Pr
                   sx={{
                     borderRadius: '50%',
                     filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '',
-                    height: '28px', width: '28px'
+                    height: '28px',
+                    width: '28px'
                   }}
                 />
               </Grid>

@@ -4,13 +4,15 @@
 import { useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
+import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { sanitizeChainName } from '../util/utils';
-import { useApi, useChain, useDecimal, useEndpoint, useFormatted, useToken } from '.';
+import { useAccount, useApi, useChain, useDecimal, useEndpoint, useFormatted, useToken } from '.';
 
 interface AddressInfo {
+  account: AccountJson | undefined;
   api: ApiPromise | undefined;
   chain: Chain | null | undefined;
   chainName: string | undefined;
@@ -22,14 +24,16 @@ interface AddressInfo {
 }
 
 export default function useInfo (address: AccountId | string | undefined): AddressInfo {
-  const token = useToken(address);
-  const decimal = useDecimal(address);
+  const account = useAccount(address);
   const api = useApi(address);
   const chain = useChain(address);
-  const formatted = useFormatted(address);
+  const decimal = useDecimal(address);
   const endpoint = useEndpoint(address);
+  const formatted = useFormatted(address);
+  const token = useToken(address);
 
   return useMemo(() => ({
+    account,
     api,
     chain,
     chainName: sanitizeChainName(chain?.name),
@@ -38,5 +42,5 @@ export default function useInfo (address: AccountId | string | undefined): Addre
     formatted,
     genesisHash: chain?.genesisHash,
     token
-  }), [api, chain, decimal, endpoint, formatted, token]);
+  }), [account, api, chain, decimal, endpoint, formatted, token]);
 }

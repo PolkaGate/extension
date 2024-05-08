@@ -22,12 +22,13 @@ interface Props {
   currentChainName: string | undefined;
 }
 
-function RecentChains({ address, currentChainName }: Props): React.ReactElement<Props> {
+function RecentChains ({ address, currentChainName }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const account = useAccount(address);
+  const genesisHashes = useGenesisHashOptions();
+
   const [showRecentChains, setShowRecentChains] = useState<boolean>(false);
   const [notFirstTime, setFirstTime] = useState<boolean>(false);
-  const genesisHashes = useGenesisHashOptions();
   const [recentChains, setRecentChains] = useState<string[]>();
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
   const [currentSelectedChain, setCurrentSelectedChain] = useState<string | undefined>(currentChainName);

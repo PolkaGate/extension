@@ -21,7 +21,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { DraggableModal } from '../fullscreen/governance/components/DraggableModal';
 import SelectProxyModal2 from '../fullscreen/governance/components/SelectProxyModal2';
-import { useAccount, useAccountDisplay, useInfo, useProxies, useTranslation } from '../hooks';
+import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../hooks';
 import LedgerSign from '../popup/signing/LedgerSign';
 import Qr from '../popup/signing/Qr';
 import { CMD_MORTAL } from '../popup/signing/Request';
@@ -66,10 +66,9 @@ interface Props {
 export default function SignArea ({ address, call, disabled, extraInfo, isPasswordError, onSecondaryClick, params, previousStep, prevState, primaryBtn, primaryBtnText, proxyModalHeight, proxyTypeFilter, secondaryBtnText, selectedProxy, setIsPasswordError, setRefresh, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, token }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { api, chain, formatted } = useInfo(address);
+  const { account, api, chain, formatted } = useInfo(address);
   const senderName = useAccountDisplay(address);
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxy?.delegate));
-  const account = useAccount(address);
   const proxies = useProxies(api, formatted);
 
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();

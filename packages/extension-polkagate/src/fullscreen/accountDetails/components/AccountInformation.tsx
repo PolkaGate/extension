@@ -67,8 +67,8 @@ const Balance = ({ balanceToShow, isBalanceOutdated }: BalanceJSXType) => {
         : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
       }
     </>
-  )
-}
+  );
+};
 
 interface BalanceRowJSXType {
   balanceToShow: BalancesInfo | undefined;
@@ -118,7 +118,6 @@ const SelectedAssetBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOu
   );
 };
 
-
 interface AddressDetailsProps {
   address: string | undefined;
   api: ApiPromise | undefined;
@@ -136,11 +135,11 @@ interface AddressDetailsProps {
   setAssetIdOnAssetHub: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function AccountInformation({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
-
-  const account = useAccount(address);
   const theme = useTheme();
+  const account = useAccount(address);
+
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
 
   const calculatePrice = useCallback((amount: BN, decimal: number, _price: number) => {

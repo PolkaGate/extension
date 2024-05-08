@@ -19,7 +19,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { subscan } from '../../assets/icons/';
 import { Infotip, OptionalCopyButton, ShortAddress2 } from '../../components';
-import { useAccount, useChainName, useFormatted, useTranslation } from '../../hooks';
+import { useInfo, useTranslation } from '../../hooks';
 
 interface Props {
   address: string;
@@ -28,11 +28,9 @@ interface Props {
   showDivider?: boolean;
 }
 
-function AccountBrief({ address, identity, showDivider = true, showName = true }: Props): React.ReactElement<Props> {
+function AccountBrief ({ address, identity, showDivider = true, showName = true }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const formatted = useFormatted(address);
-  const account = useAccount(address);
-  const chainName = useChainName(address);
+  const { account, chainName, formatted } = useInfo(address);
   const history = useHistory();
   const { pathname } = useLocation();
 

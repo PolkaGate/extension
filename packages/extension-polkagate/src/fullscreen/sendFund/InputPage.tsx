@@ -82,7 +82,7 @@ const isAssethub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || 
 export default function InputPage ({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const {api, chain, formatted} = useInfo(address);
+  const { api, chain, formatted } = useInfo(address);
   const teleportState = useTeleport(address);
   const onAction = useContext(ActionContext);
 
