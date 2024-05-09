@@ -6,12 +6,11 @@ import type { MyPoolInfo } from '../util/types';
 import { useCallback, useEffect, useState } from 'react';
 
 import { isHexToBn } from '../util/utils';
-import { useEndpoint, useFormatted } from '.';
+import { useInfo } from '.';
 
-export default function useMyPools(address: string): MyPoolInfo[] | null | undefined {
+export default function useMyPools (address: string): MyPoolInfo[] | null | undefined {
   const [myPools, setMyPools] = useState<MyPoolInfo[] | undefined | null>();
-  const endpoint = useEndpoint(address);
-  const formatted = useFormatted(address);
+  const { endpoint, formatted } = useInfo(address);
 
   const getMyPools = useCallback((formatted: string, endpoint: string) => {
     const getMyPoolsWorker: Worker = new Worker(new URL('../util/workers/getMyPools.js', import.meta.url));

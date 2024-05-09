@@ -4,12 +4,12 @@
 import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import type { ParaId } from '@polkadot/types/interfaces';
 
+import { createWsEndpoints } from '@polkagate/apps-config';
 import { useEffect, useState } from 'react';
 
-import { createWsEndpoints } from '@polkagate/apps-config';
 import { isNumber } from '@polkadot/util';
 
-import { useApi, useChain, useEndpoint } from '.';
+import { useInfo } from '.';
 
 interface Teleport {
   allowTeleport: boolean;
@@ -31,7 +31,7 @@ const DEFAULT_STATE: Teleport = {
 
 const endpoints = createWsEndpoints((k, v) => v?.toString() || k).filter((v): v is ExtLinkOption => !!v.teleport);
 
-function extractRelayDestinations(relayGenesis: string, filter: (l: ExtLinkOption) => boolean): ExtLinkOption[] {
+function extractRelayDestinations (relayGenesis: string, filter: (l: ExtLinkOption) => boolean): ExtLinkOption[] {
   return endpoints
     .filter((l) =>
       (
@@ -60,14 +60,11 @@ function extractRelayDestinations(relayGenesis: string, filter: (l: ExtLinkOptio
     );
 }
 
-export default function useTeleport(address: string | undefined): Teleport {
-  const api = useApi(address);
-  const endpointUrl = useEndpoint(address);
-  const chain = useChain(address);
+export default function useTeleport (address: string | undefined): Teleport {
+  const { api, chain, endpoint: endpointUrl } = useInfo(address);
 
   const [state, setState] = useState<Teleport>(() => ({ ...DEFAULT_STATE }));
   const [paraId, setParaId] = useState<ParaId>();
-
   const [firstEndpoint, setFirstEndpoint] = useState<ExtLinkOption | undefined>(undefined);
   const [secondEndpoint, setSecondEndpoint] = useState<ExtLinkOption | undefined>(undefined);
 
