@@ -64,6 +64,7 @@ export default function Alert ({ setShowAlert, show }: Props): React.ReactElemen
           <UL
             notes={[
               'Introducing Polkadot Vault support in full-screen mode.',
+              'Add Breadcrumbs for easier navigation in full-screen mode.',
               'Experience improved performance and benefit from bug fixes.'
 
             ]}
