@@ -11,14 +11,19 @@ import { useParams } from 'react-router-dom';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, PButton, ProxyTable, ShowBalance } from '../../components';
-import { useAccount, useApi, useMetadata, useTranslation } from '../../hooks';
+import { useInfo, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { Proxy, ProxyItem } from '../../util/types';
 import { getFormattedAddress } from '../../util/utils';
 import AddProxy from './AddProxy';
 import Review from './Review';
 
-export default function ManageProxies(): React.ReactElement {
+export default function ManageProxies (): React.ReactElement {
+  const { t } = useTranslation();
+  const onAction = useContext(ActionContext);
+  const { address } = useParams<{ address: string }>();
+  const { account, api, chain } = useInfo(address);
+
   const [proxyItems, setProxyItems] = useState<ProxyItem[] | undefined>();
   const [showAddProxy, setShowAddProxy] = useState<boolean>(false);
   const [showReviewProxy, setShowReviewProxy] = useState<boolean>(false);
@@ -28,13 +33,6 @@ export default function ManageProxies(): React.ReactElement {
   const [disableAddProxyButton, setEnableAddProxyButton] = useState<boolean>(true);
   const [disableToConfirmButton, setEnableToConfirmButton] = useState<boolean>(true);
   const [available, setAvailable] = useState<number>(0);
-
-  const onAction = useContext(ActionContext);
-  const { t } = useTranslation();
-  const { address } = useParams<{ address: string; }>();
-  const account = useAccount(address);
-  const chain = useMetadata(account?.genesisHash, true);
-  const api = useApi(account?.address);
 
   const proxyDepositBase = api ? api.consts.proxy.proxyDepositBase as unknown as BN : BN_ZERO;
   const proxyDepositFactor = api ? api.consts.proxy.proxyDepositFactor as unknown as BN : BN_ZERO;

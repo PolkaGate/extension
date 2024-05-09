@@ -12,7 +12,7 @@ import { Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
 import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain, SocialRecoveryIcon } from '../components';
-import { useAccount, useGenesisHashOptions, useInfo, useTranslation } from '../hooks';
+import { useGenesisHashOptions, useInfo, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
@@ -28,8 +28,7 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
   const { t } = useTranslation();
   const theme = useTheme();
   const options = useGenesisHashOptions();
-  const { api, chain, formatted } = useInfo(address);
-  const account = useAccount(address);
+  const { account, api, chain, formatted } = useInfo(address);
 
   const [genesisHash, setGenesis] = useState<string | undefined>();
 

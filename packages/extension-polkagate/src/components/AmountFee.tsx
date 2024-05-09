@@ -24,7 +24,7 @@ interface Props {
   withFee?: boolean;
 }
 
-function AmountFee({ address, amount, children, fee, label, style = {}, showDivider = false, token, withFee }: Props): React.ReactElement {
+function AmountFee ({ address, amount, children, fee, label, style = {}, showDivider = false, token, withFee }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
 

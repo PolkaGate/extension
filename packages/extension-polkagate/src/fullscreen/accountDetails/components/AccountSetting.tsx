@@ -12,7 +12,7 @@ import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { ActionContext, SocialRecoveryIcon } from '../../../components';
-import { useAccount, useChain, useTranslation } from '../../../hooks';
+import { useInfo, useTranslation } from '../../../hooks';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 import { popupNumbers } from '..';
 import { TaskButton } from './CommonTasks';
@@ -25,9 +25,8 @@ interface Props {
 export default function AccountSetting ({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const account = useAccount(address);
+  const { account, chain } = useInfo(address);
   const onAction = useContext(ActionContext);
-  const chain = useChain(address);
 
   const [showAccountSettings, setShowAccountSettings] = useState<boolean>();
 

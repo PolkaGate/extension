@@ -16,20 +16,14 @@ import { updateMeta } from '../messaging';
 import { ASSET_HUBS } from '../util/constants';
 import getPoolAccounts from '../util/getPoolAccounts';
 import { BalancesInfo, SavedBalances } from '../util/types';
-import { useAccount, useApi, useChain, useChainName, useDecimal, useFormatted, useStakingAccount, useToken } from '.';
+import { useInfo, useStakingAccount } from '.';
 
 const assetsChains = createAssets();
 
 export default function useBalances (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: number): BalancesInfo | undefined {
   const stakingAccount = useStakingAccount(address);
-  const account = useAccount(address);
-  const api = useApi(address);
-  const chain = useChain(address);
-  const formatted = useFormatted(address);
+  const { account, api, chain, chainName, decimal: currentDecimal, formatted, token: currentToken } = useInfo(address);
   const isFetching = useContext(FetchingContext);
-  const chainName = useChainName(address);
-  const currentToken = useToken(address);
-  const currentDecimal = useDecimal(address);
 
   const mayBeAssetsOnMultiAssetChains = assetsChains[toCamelCase(chainName || '')];
   const isAssetHub = ASSET_HUBS.includes(chain?.genesisHash || '');
