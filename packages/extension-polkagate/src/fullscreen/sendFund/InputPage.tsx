@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
@@ -40,7 +40,7 @@ const INVALID_PARA_ID = Number.MAX_SAFE_INTEGER;
 interface TitleProps {
   height?: string;
   text: string;
-  icon?: IconDefinition;
+  icon?: IconProp;
   logo?: unknown;
   ml?: string;
   padding?: string;
@@ -70,12 +70,14 @@ export const Title = ({ height, icon, logo, ml, onBackClick, padding = '30px 0px
         </Grid>
       }
       <Grid item>
+        {icon &&
         <FontAwesomeIcon
           color={theme.palette.text.primary}
           icon={icon}
           size='2xl'
           style={{ paddingBottom: '5px' }}
         />
+        }
         {logo}
       </Grid>
       <Grid item>
