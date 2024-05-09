@@ -74,7 +74,7 @@ export default function PoolStaked ({ address, balances, pool, redeemable, setSh
     <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', px: '2%' }}>
       <Bread />
       <Title
-        height='85px'
+        height='70px'
         logo={
           <PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />
         }

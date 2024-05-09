@@ -122,7 +122,7 @@ export default function StakedSolo ({ balances, setRefresh, setShow, stakingAcco
     <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', px: '2%' }}>
       <Bread />
       <Title
-        height='85px'
+        height='70px'
         logo={<BoyIcon sx={{ color: 'text.primary', fontSize: '60px' }} />}
         ml='-20px'
         padding='0px'

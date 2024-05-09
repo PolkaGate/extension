@@ -71,12 +71,12 @@ export const Title = ({ height, icon, logo, ml, onBackClick, padding = '30px 0px
       }
       <Grid item>
         {icon &&
-        <FontAwesomeIcon
-          color={theme.palette.text.primary}
-          icon={icon}
-          size='2xl'
-          style={{ paddingBottom: '5px' }}
-        />
+         <FontAwesomeIcon
+           color={theme.palette.text.primary}
+           icon={icon}
+           size='2xl'
+           style={{ paddingBottom: '5px' }}
+         />
         }
         {logo}
       </Grid>
