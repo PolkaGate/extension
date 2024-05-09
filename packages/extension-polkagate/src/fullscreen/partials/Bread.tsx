@@ -39,7 +39,7 @@ export default function Bread (): React.ReactElement {
       case (`${t('Home')} /`):
         return openOrFocusTab('/', true);
       case (t('Account Details')):
-        return openOrFocusTab(`accountfs/${address}/0`, true);
+        return openOrFocusTab(`/accountfs/${address}/0`, true);
       case (t('Staked Solo')):
         return openOrFocusTab(`solofs/${address}/`, true);
       case (t('Staked in Pool')):
