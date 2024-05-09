@@ -18,6 +18,7 @@ import { useFullscreen, useInfo, usePoolConsts } from '../../hooks';
 import { TxInfo } from '../../util/types';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
+import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
 import AdvancedOptions from './partials/AdvancedOptions';
 import StakingMode from './partials/StakingMode';
@@ -98,15 +99,21 @@ export default function StakingOptions (): React.ReactElement {
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='stake' unableToChangeAccount />
       <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '6%' }}>
+        <Bread />
         <Title
+          height='85px'
           icon={
-            [STEPS.EASY_STAKING, STEPS.EASY_REVIEW, STEPS.INDEX].includes(step) &&
-            faCoins}
+            [STEPS.EASY_STAKING, STEPS.EASY_REVIEW, STEPS.INDEX].includes(step)
+              ? faCoins
+              : undefined
+          }
           logo={
             [STEPS.JOIN_POOL, STEPS.JOIN_REVIEW, STEPS.CREATE_POOL, STEPS.CREATE_REVIEW].includes(step)
               ? <PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />
               : [STEPS.STAKE_SOLO].includes(step) &&
               <BoyIcon sx={{ color: 'text.primary', fontSize: '62px' }} />}
+          ml={[STEPS.EASY_STAKING, STEPS.EASY_REVIEW, STEPS.INDEX].includes(step) ? undefined : '-25px'}
+          padding='0px'
           text={getHeaderText(txInfo?.success)}
         />
         {step === STEPS.INDEX
