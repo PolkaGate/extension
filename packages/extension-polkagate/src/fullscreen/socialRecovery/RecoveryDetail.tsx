@@ -90,7 +90,7 @@ export default function RecoveryDetail ({ api, chain, recoveryInformation, setMo
   );
 
   return (
-    <Grid container item sx={{ display: 'block', px: '10%' }}>
+    <Grid container item sx={{ display: 'block' }}>
       <Grid alignItems='center' container item pt='25px'>
         <FontAwesomeIcon
           color={theme.palette.success.main}

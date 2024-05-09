@@ -158,7 +158,7 @@ export default function Vouch({ activeRecoveries, address, api, setMode, setStep
   }, [lostAccount, rescuerAccount, setMode, setStep, setVouchRecoveryInfo]);
 
   return (
-    <Grid container item sx={{ display: 'block', px: '10%' }}>
+    <Grid container item sx={{ display: 'block' }}>
       <Grid alignContent='center' alignItems='center' container item>
         <Grid item sx={{ mr: '20px' }}>
           <VouchRecoveryIcon

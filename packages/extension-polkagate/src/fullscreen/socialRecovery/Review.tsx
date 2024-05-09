@@ -336,7 +336,7 @@ export default function Review ({ activeLost, address, allActiveRecoveries, api,
   );
 
   return (
-    <Motion style={{ height: '100%', paddingInline: '10%', width: '100%' }}>
+    <Motion style={{ height: '100%', width: '100%' }}>
       <>
         <Grid container direction='column' py='20px'>
           <Grid alignItems='center' container item mb='15px'>

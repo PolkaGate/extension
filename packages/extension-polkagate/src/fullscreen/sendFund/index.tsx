@@ -23,6 +23,7 @@ import { useBalances, useChain, useFullscreen, useTranslation } from '../../hook
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import WaitScreen from '../governance/partials/WaitScreen';
+import Bread from '../partials/Bread';
 import { STEPS } from '../stake/pool/stake';
 import Confirmation from './Confirmation';
 import InputPage, { Title } from './InputPage';
@@ -86,7 +87,9 @@ export default function SendFund (): React.ReactElement {
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='send' unableToChangeAccount={step !== STEPS.INDEX} />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', display: 'block', px: '5%' }}>
+        <Bread />
         <Title
+          height='100px'
           icon={faPaperPlane}
           text={
             step === STEPS.INDEX

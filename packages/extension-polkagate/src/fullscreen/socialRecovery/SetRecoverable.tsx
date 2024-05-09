@@ -223,7 +223,7 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
   const delayFocus = useCallback(() => setFocus(2), []);
 
   return (
-    <Grid container item sx={{ display: 'block', px: '10%' }}>
+    <Grid container item sx={{ display: 'block' }}>
       <Grid alignContent='center' alignItems='center' container item>
         <Grid item sx={{ mr: '20px' }}>
           <MakeRecoverableIcon
