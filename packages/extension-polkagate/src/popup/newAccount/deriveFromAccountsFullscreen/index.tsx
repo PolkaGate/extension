@@ -10,6 +10,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useParams } from 'react-router';
 
 import { canDerive } from '@polkadot/extension-base/utils';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { AccountContext, AccountNamePasswordCreation, ActionContext, Label, Password, Warning } from '../../../components';
@@ -99,12 +100,12 @@ function DeriveFromAccounts (): React.ReactElement {
 
     setIsBusy(true);
     deriveAccount(parentAddress, account.suri, validatedParentPassword, name, password, parentGenesis)
-      .then(() => onAction('/'))
+      .then(() => openOrFocusTab('/', true))
       .catch((error): void => {
         setIsBusy(false);
         console.error(error);
       });
-  }, [onAction, parentAddress, parentGenesis, parentPassword, suriPath, t]);
+  }, [parentAddress, parentGenesis, parentPassword, suriPath, t]);
 
   const onParentChange = useCallback((address: string) => {
     setParentPassword('');
