@@ -6,15 +6,16 @@
 import '@vaadin/icons';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { Chain } from '@polkadot/extension-chains/types';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { ActionContext, AddressInput, ProxyTable, SelectChain, TwoButtons } from '../../../components';
+import { AddressInput, ProxyTable, SelectChain, TwoButtons } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useApiWithChain, useFullscreen, useGenesisHashOptions, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata } from '../../../messaging';
@@ -32,7 +33,6 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-  const onAction = useContext(ActionContext);
 
   const [isBusy, setIsBusy] = useState(false);
   const [realAddress, setRealAddress] = useState<string | undefined>();
@@ -68,13 +68,13 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
       setIsBusy(true);
 
       createAccountExternal(name, realAddress, chain.genesisHash)
-        .then(() => onAction('/'))
+        .then(() => openOrFocusTab('/', true))
         .catch((error: Error) => {
           setIsBusy(false);
           console.error(error);
         });
     }
-  }, [chain?.genesisHash, name, onAction, realAddress]);
+  }, [chain?.genesisHash, name, realAddress]);
 
   const onCancel = useCallback(() => window.close(), []);
 
