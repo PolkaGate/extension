@@ -72,7 +72,7 @@ export default function HomeMenu (): React.ReactElement {
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const areAllExternalAccounts = useMemo(() => accounts.every(({ isExternal }) => isExternal), [accounts]);
 
-  const onSend = useCallback(() => {
+  const onCreate = useCallback(() => {
     openOrFocusTab('/account/create');
   }, []);
 
@@ -103,7 +103,7 @@ export default function HomeMenu (): React.ReactElement {
           icon={
             <vaadin-icon icon='vaadin:plus-circle' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
-          onClick={onSend}
+          onClick={onCreate}
           secondaryIconType='page'
           text={t('Create new account')}
         />
