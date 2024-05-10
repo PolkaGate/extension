@@ -1237,5 +1237,13 @@
   "Pool Rewards": "",
   "Change State to {{state}}": "",
   "No Data Available to Illustrate the Chart.": "",
-  "reset to default": ""
+  "reset to default": "",
+  "This is a QR-attached account. To complete this transaction, you need to use your QR-signer.": "",
+  "Use QR-Signer": "",
+  "Sign with QR code": "",
+  "API is not connected yet ...": "",
+  "Confirmation": "",
+  "Pay Decision Deposit": "",
+  "Paying": "",
+  "Paying Confirmation": ""
 }

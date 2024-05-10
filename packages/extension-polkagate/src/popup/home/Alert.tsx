@@ -16,7 +16,7 @@ interface Props {
   setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Alert({ setShowAlert, show }: Props): React.ReactElement<Props> {
+export default function Alert ({ setShowAlert, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -63,9 +63,9 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'PolkaGate Dashboard at your fingertips - Manage accounts in full-screen mode.',
-              'Resolved staking pending rewards issue.',
-              'Enjoy enhanced smoothness and benefit from bug fixes.'
+              'Introducing Polkadot Vault support in full-screen mode.',
+              'Add Breadcrumbs for easier navigation in full-screen mode.',
+              'Experience improved performance and benefit from bug fixes.'
 
             ]}
           />

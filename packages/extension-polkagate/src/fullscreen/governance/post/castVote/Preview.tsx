@@ -25,7 +25,7 @@ interface Props {
   cantModify: boolean;
 }
 
-export default function Preview({ address, cantModify, setAlterType, setStep, vote }: Props): React.ReactElement<Props> {
+export default function Preview ({ address, cantModify, setAlterType, setStep, vote }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const token = useToken(address);
   const decimal = useDecimal(address);
@@ -82,7 +82,7 @@ export default function Preview({ address, cantModify, setAlterType, setStep, vo
       <Grid alignItems='center' container>
         <Grid item>
           <Typography fontSize='28px' fontWeight={500}>
-            {t<string>(vote)}
+            {t(vote)}
           </Typography>
         </Grid>
         <Grid alignItems='center' container item width='fit-content'>
@@ -102,7 +102,7 @@ export default function Preview({ address, cantModify, setAlterType, setStep, vo
       <Grid container pt='30px' ref={ref}>
         <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t<string>('Account')}
+            {t('Account')}
           </Typography>
           <Identity
             address={address}
@@ -115,22 +115,22 @@ export default function Preview({ address, cantModify, setAlterType, setStep, vo
             withShortAddress
           />
         </Grid>
-        <DisplayValue title={t<string>('Vote')}>
+        <DisplayValue title={t('Vote')}>
           <VoteStatus vote={voteType} />
         </DisplayValue>
-        <DisplayValue title={t<string>('Vote Value ({{token}})', { replace: { token } })}>
+        <DisplayValue title={t('Vote Value ({{token}})', { replace: { token } })}>
           <Typography fontSize='28px' fontWeight={400}>
             <ShowBalance balance={voteBalance} decimal={decimal} decimalPoint={2} token={token} />
           </Typography>
         </DisplayValue>
         {voteType && ['Aye', 'Nay'].includes(voteType) &&
-          <DisplayValue title={t<string>('Vote Multiplier')}>
+          <DisplayValue title={t('Vote Multiplier')}>
             <Typography fontSize='28px' fontWeight={400}>
               {voteConviction}
             </Typography>
           </DisplayValue>
         }
-        <DisplayValue title={myDelegations ? t<string>('Final vote power (including delegations)') : t<string>('Final vote power')}>
+        <DisplayValue title={myDelegations ? t('Final vote power (including delegations)') : t('Final vote power')}>
           <Typography fontSize='28px' fontWeight={400}>
             <ShowBalance balance={votePower} decimal={decimal} decimalPoint={2} token={token} />
           </Typography>
@@ -142,14 +142,14 @@ export default function Preview({ address, cantModify, setAlterType, setStep, vo
             _onClick={onRemoveClick}
             _variant='contained'
             _width={100}
-            text={t<string>('Remove')}
+            text={t('Remove')}
           />
           : <TwoButtons
-            mt='40px'
+            ml='0px'
             onPrimaryClick={onModifyClick}
             onSecondaryClick={onRemoveClick}
-            primaryBtnText={t<string>('Modify')}
-            secondaryBtnText={t<string>('Remove')}
+            primaryBtnText={t('Modify')}
+            secondaryBtnText={t('Remove')}
           />
         }
       </Grid>

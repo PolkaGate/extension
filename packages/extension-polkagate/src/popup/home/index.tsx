@@ -20,14 +20,14 @@ import { useAccountsOrder, useMerkleScience, useTranslation } from '../../hooks'
 import { AddNewAccountButton } from '../../partials';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { EXTENSION_NAME, NEW_VERSION_ALERT } from '../../util/constants';
-import Welcome from '../welcome';
 import Reset from '../passwordManagement/Reset';
+import Welcome from '../welcome';
 import AccountsTree from './AccountsTree';
 import AiBackgroundImage from './AiBackgroundImage';
 import Alert from './Alert';
 import YouHave from './YouHave';
 
-export default function Home(): React.ReactElement {
+export default function Home (): React.ReactElement {
   const initialAccountList = useAccountsOrder() as AccountWithChildren[];
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);

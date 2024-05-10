@@ -9,7 +9,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useEndpoint, useStashId } from '.';
 
-export default function useNeedsPutInFrontOf(address: string): PutInFrontInfo | undefined {
+export default function useNeedsPutInFrontOf (address: string): PutInFrontInfo | undefined {
   const endpoint = useEndpoint(address);
   const stashId = useStashId(address);
 

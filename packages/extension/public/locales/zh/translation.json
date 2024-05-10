@@ -1237,5 +1237,11 @@
   "Pool information": "池信息",
   "Pool Rewards": "池奖励",
   "Change State to {{state}}": "将状态更改为{{state}}",
-  "No Data Available to Illustrate the Chart.": "没有数据可用于图表展示。"
+  "No Data Available to Illustrate the Chart.": "没有数据可用于图表展示。",
+  "reset to default": "重置为默认值",
+  "This is a QR-attached account. To complete this transaction, you need to use your QR-signer.": "这是一个附有二维码的账户。要完成此交易,您需要使用您的二维码签名器。",
+  "Use QR-Signer": "使用二维码签名器",
+  "Sign with QR code": "使用二维码签名",
+  "API is not connected yet ...": "API 尚未连接...",
+  "Confirmation": "确认"
 }

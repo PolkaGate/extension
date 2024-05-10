@@ -145,7 +145,7 @@ function AOC ({ account, accountAssets, api, balanceToShow, hideNumbers, mode = 
               <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
             </>
             : accountAssets.length > 5 &&
-            <MoreHorizIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
+            <MoreHorizIcon sx={{ color: 'secondary.light', fontSize: '27px' }} />
           }
         </Grid>
       }

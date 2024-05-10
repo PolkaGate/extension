@@ -9,17 +9,15 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { FetchingContext } from '../components';
 import { isHexToBn } from '../util/utils';
-import { useDecimal, useEndpoint, useFormatted, useToken } from '.';
+import { useInfo } from '.';
 
-export default function usePool(address?: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
-  const formatted = useFormatted(address);
-  const endpoint = useEndpoint(address);
+export default function usePool (address?: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
+  const { decimal: currentDecimal, endpoint, formatted, token: currentToken } = useInfo(address);
   const isFetching = useContext(FetchingContext);
+
   const [savedPool, setSavedPool] = useState<MyPoolInfo | undefined | null>();
   const [newPool, setNewPool] = useState<MyPoolInfo | undefined | null>();
   const [waiting, setWaiting] = useState<boolean>();
-  const currentToken = useToken(address);
-  const currentDecimal = useDecimal(address);
 
   const getPoolInfo = useCallback((endpoint: string, stakerAddress: AccountId | string, id: number | undefined = undefined) => {
     const getPoolWorker: Worker = new Worker(new URL('../util/workers/getPool.js', import.meta.url));

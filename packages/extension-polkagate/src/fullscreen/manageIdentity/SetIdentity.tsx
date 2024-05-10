@@ -13,6 +13,7 @@ import { BN } from '@polkadot/util';
 import { PButton, ShowBalance, TwoButtons } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { isEmail, isUrl } from '../../util/utils';
+import Bread from '../partials/Bread';
 import SetIdentityForm from './partial/SetIdentityForm';
 import { Mode, STEPS } from '.';
 
@@ -109,7 +110,8 @@ export default function SetIdentity({ api, chainName, identity, identityToSet, m
 
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
-      <Typography fontSize='30px' fontWeight={700} pb='20px' pt='25px'>
+      <Bread />
+      <Typography fontSize='30px' fontWeight={700} pb='15px' pt='25px'>
         {mode === 'Set'
           ? t('Set On-chain Identity')
           : t('Modify On-chain Identity')

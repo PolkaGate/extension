@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
@@ -26,7 +26,7 @@ import { STEPS } from '../stake/pool/stake';
 import { Inputs } from '.';
 
 interface Props {
-  address: string
+  address: string;
   balances: BalancesInfo | undefined;
   assetId: number | undefined;
   inputs: Inputs | undefined;
@@ -37,35 +37,47 @@ interface Props {
 const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
 const INVALID_PARA_ID = Number.MAX_SAFE_INTEGER;
 
-export const Title = ({ icon, logo, onBackClick, padding = '30px 0px 30px', text }:
-{ text: string, icon?: IconDefinition, logo?: unknown, padding?: string, onBackClick?: () => void }) => {
+interface TitleProps {
+  height?: string;
+  text: string;
+  icon?: IconProp;
+  logo?: unknown;
+  ml?: string;
+  padding?: string;
+  onBackClick?: () => void;
+  spacing?: number;
+}
+
+export const Title = ({ height, icon, logo, ml, onBackClick, padding = '30px 0px 30px', spacing = 1, text }: TitleProps): React.ReactElement => {
   const theme = useTheme();
 
   return (
-    <Grid alignItems={ 'center' } container height='113px' item p={padding} spacing={1}>
+    <Grid alignItems={'center'} container height={height || '113px'} item ml={ml} p={padding} spacing={spacing}>
       {!!onBackClick &&
-      <Grid item width='fit-content'>
-        <ArrowBackIosIcon
-          onClick={onBackClick}
-          sx={{
-            ':hover': { opacity: 1 },
-            color: 'secondary.light',
-            cursor: 'pointer',
-            fontSize: 36,
-            opacity: 0.5,
-            stroke: theme.palette.secondary.light,
-            strokeWidth: 1
-          }}
-        />
-      </Grid>
+        <Grid item width='fit-content'>
+          <ArrowBackIosIcon
+            onClick={onBackClick}
+            sx={{
+              ':hover': { opacity: 1 },
+              color: 'secondary.light',
+              cursor: 'pointer',
+              fontSize: 36,
+              opacity: 0.5,
+              stroke: theme.palette.secondary.light,
+              strokeWidth: 1
+            }}
+          />
+        </Grid>
       }
       <Grid item>
-        <FontAwesomeIcon
-          color={theme.palette.text.primary}
-          icon={icon}
-          size='2xl'
-          style={{ paddingBottom: '5px' }}
-        />
+        {icon &&
+         <FontAwesomeIcon
+           color={theme.palette.text.primary}
+           icon={icon}
+           size='2xl'
+           style={{ paddingBottom: '5px' }}
+         />
+        }
         {logo}
       </Grid>
       <Grid item>
@@ -82,7 +94,7 @@ const isAssethub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || 
 export default function InputPage ({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const {api, chain, formatted} = useInfo(address);
+  const { api, chain, formatted } = useInfo(address);
   const teleportState = useTeleport(address);
   const onAction = useContext(ActionContext);
 

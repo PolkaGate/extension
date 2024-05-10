@@ -15,7 +15,7 @@ import { BN_ONE } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { Identity, ShowBalance, SignArea2, Warning } from '../../../../components';
-import { useAccountDisplay, useApi, useBalances, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
+import { useAccountDisplay, useBalances, useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { DraggableModal } from '../../components/DraggableModal';
@@ -39,16 +39,13 @@ const STEPS = {
   REVIEW: 1,
   CONFIRM: 2,
   WAIT_SCREEN: 3,
-  PROXY: 100
+  PROXY: 100,
+  SIGN_QR: 200
 };
 
-export default function DecisionDeposit({ address, open, refIndex, setOpen, track }: Props): React.ReactElement {
+export default function DecisionDeposit ({ address, open, refIndex, setOpen, track }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const api = useApi(address);
-  const formatted = useFormatted(address);
-  const chain = useChain(address);
-  const decimal = useDecimal(address);
-  const token = useToken(address);
+  const { api, chain, decimal, formatted, token } = useInfo(address);
   const theme = useTheme();
   const name = useAccountDisplay(address);
   const balances = useBalances(address);
@@ -102,26 +99,26 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
     amount,
     fee: String(estimatedFee || 0),
     from: { address: formatted, name },
-    subAction: 'Pay Decision Deposit',
+    subAction: 'Pay Decision Deposit'
   }), [amount, estimatedFee, formatted, name]);
 
   const title = useMemo(() => {
     if (step === STEPS.REVIEW) {
-      return 'Pay Decision Deposit';
+      return t('Pay Decision Deposit');
     }
 
     if (step === STEPS.PROXY) {
-      return 'Select Proxy';
+      return t('Select Proxy');
     }
 
     if (step === STEPS.WAIT_SCREEN) {
-      return 'Paying';
+      return t('Paying');
     }
 
     if (step === STEPS.CONFIRM) {
-      return 'Paying Completed';
+      return t('Paying Confirmation');
     }
-  }, [step]);
+  }, [step, t]);
 
   const HEIGHT = 550;
 
@@ -140,24 +137,24 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
             <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
           </Grid>
         </Grid>
-        {step === STEPS.REVIEW &&
-          <Grid container item sx={{ height: '550px' }}>
+        {[STEPS.REVIEW, STEPS.SIGN_QR].includes(step) &&
+          <Grid container item sx={{ display: 'block', height: '550px', mt:'20px' }}>
             {notEnoughBalance &&
-              <Grid container height='42px' item justifyContent='center' mt='15px'>
+              <Grid container height='42px' item justifyContent='center' my='15px'>
                 <Warning
                   fontWeight={400}
                   isDanger
                   marginTop={0}
                   theme={theme}
                 >
-                  {t<string>('You don\'t have sufficient funds available to complete this transaction.')}
+                  {t('You don\'t have sufficient funds available to complete this transaction.')}
                 </Warning>
               </Grid>
             }
             <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Account')}
+                  {t('Account')}
                 </Typography>
                 <Identity
                   address={address}
@@ -175,23 +172,23 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
                   <ThroughProxy address={selectedProxyAddress} chain={chain} />
                 </Grid>
               }
-              <DisplayValue title={t<string>('Referendum')}>
+              <DisplayValue title={t('Referendum')}>
                 <Typography fontSize='28px' fontWeight={400}>
                   #{refIndex}
                 </Typography>
               </DisplayValue>
-              <DisplayValue title={t<string>('Decision Deposit')}>
+              <DisplayValue title={t('Decision Deposit')}>
                 <Grid alignItems='center' container height={42} item>
                   <ShowBalance balance={amount} decimal={decimal} skeletonWidth={130} token={token} />
                 </Grid>
               </DisplayValue>
-              <DisplayValue title={t<string>('Fee')}>
+              <DisplayValue title={t('Fee')}>
                 <Grid alignItems='center' container height={42} item>
                   <ShowBalance balance={estimatedFee} decimal={decimal} skeletonWidth={130} token={token} />
                 </Grid>
               </DisplayValue>
             </Grid>
-            <Grid alignItems='center' container item sx={{ '> div #TwoButtons': { '> div': { justifyContent: 'space-between', width: '450px' }, justifyContent: 'flex-end' }, pb: '20px' }}>
+            <Grid container item sx={{ bottom: '20px', left: '4%', position: 'absolute', width: '92%' }}>
               <SignArea2
                 address={address}
                 call={tx}
@@ -200,16 +197,16 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
                 isPasswordError={isPasswordError}
                 onSecondaryClick={handleClose}
                 params={[refIndex]}
-                primaryBtnText={t<string>('Confirm')}
+                previousStep={STEPS.REVIEW}
+                primaryBtnText={t('Confirm')}
                 proxyTypeFilter={GOVERNANCE_PROXY}
-                secondaryBtnText={t<string>('Reject')}
+                secondaryBtnText={t('Close')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
                 setStep={setStep}
                 setTxInfo={setTxInfo}
                 step={step}
                 steps={STEPS}
-              // showBackButtonWithUs÷eProxy={false}
               />
             </Grid>
           </Grid>
@@ -217,8 +214,9 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
         {step === STEPS.PROXY &&
           <SelectProxyModal2
             address={address}
-            height={HEIGHT}
+            // eslint-disable-next-line react/jsx-no-bind
             closeSelectProxy={() => setStep(STEPS.REVIEW)}
+            height={HEIGHT}
             proxies={proxyItems}
             proxyTypeFilter={GOVERNANCE_PROXY}
             selectedProxy={selectedProxy}
@@ -230,7 +228,6 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
         }
         {step === STEPS.CONFIRM && txInfo && refIndex &&
           <Confirmation
-            address={address}
             handleClose={handleClose}
             refIndex={refIndex}
             txInfo={txInfo}

@@ -20,7 +20,7 @@ import { BN } from '@polkadot/util';
 import { PoolStakingIcon } from '../../../components';
 import { useInfo, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { STAKING_CHAINS } from '../../../util/constants';
-import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
+import Bread from '../../partials/Bread';
 import { Title } from '../../sendFund/InputPage';
 import DisplayBalance from '../partials/DisplayBalance';
 import ClaimedRewardsChart from './partials/ClaimedRewardsChart';
@@ -38,7 +38,7 @@ interface Props {
   unlockingAmount: BN | undefined;
 }
 
-export default function PoolStaked({ address, balances, pool, redeemable, setShow, toBeReleased, unlockingAmount }: Props): React.ReactElement {
+export default function PoolStaked ({ address, balances, pool, redeemable, setShow, toBeReleased, unlockingAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain } = useInfo(address);
@@ -70,22 +70,22 @@ export default function PoolStaked({ address, balances, pool, redeemable, setSho
     redeemable && !redeemable?.isZero() && setShow(MODAL_IDS.REDEEM);
   }, [redeemable, setShow]);
 
-  const onBack = useCallback(() => {
-    openOrFocusTab(`/accountfs/${address}/0`, true);
-  }, [address]);
-
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', px: '2%' }}>
+      <Bread />
       <Title
+        height='70px'
         logo={
           <PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />
         }
-        onBackClick={onBack}
+        ml='-10px'
+        padding='0px'
+        spacing={0}
         text={t('Staked in Pool')}
       />
       <Grid container item justifyContent='space-between' mb='15px'>
         <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 320px - 3%)'>
-          <Grid container sx={{ overflowY: 'scroll', px: '5px' }}>
+          <Grid container item sx={{ overflowY: 'scroll' }}>
             <DisplayBalance
               actions={[t('unstake')]}
               address={address}

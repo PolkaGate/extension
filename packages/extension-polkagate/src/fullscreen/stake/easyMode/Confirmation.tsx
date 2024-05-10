@@ -157,7 +157,7 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
           _mt='15px'
           _onClick={handleDone}
           _width={100}
-          text={t('Done')}
+          text={txInfo.success ? t('Done') : t('Close')}
         />
       </Grid>
     </>

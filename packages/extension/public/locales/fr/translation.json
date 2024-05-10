@@ -1115,7 +1115,7 @@
   "Scan account QR code": "Scanner le code QR du compte",
   "The account fetched via the scanned QR code.": "Le compte récupéré via le code QR scanné.",
   "All your accounts will be encrypted with a password and stored in a JSON file inside your browser’s download history.": "Tous vos comptes seront chiffrés avec un mot de passe et stockés dans un fichier JSON à l'intérieur de l'historique de téléchargement de votre navigateur.",
-  "Select chains to view assets on": "Sélectionnez les chaînes pour afficher les actifs",
+  "Select chains to view assets on": "Voir actifs sur les chaînes",
   "🔍 Search chain": "🔍 Rechercher une chaîne",
   "Less": "Moins",
   "More": "Plus",
@@ -1233,5 +1233,11 @@
   "Pool information": "Informations sur la piscine",
   "Pool Rewards": "Récompenses de la piscine",
   "Change State to {{state}}": "Changer l'état en {{state}}",
-  "No Data Available to Illustrate the Chart.": "Aucune donnée disponible pour illustrer le graphique."
+  "No Data Available to Illustrate the Chart.": "Aucune donnée disponible pour illustrer le graphique.",
+  "reset to default": "Réinitialiser par défaut",
+  "This is a QR-attached account. To complete this transaction, you need to use your QR-signer.": "Ceci est un compte lié à un QR code. Pour finaliser cette transaction, vous devez utiliser votre signataire QR.",
+  "Use QR-Signer": "Utiliser le signataire QR",
+  "Sign with QR code": "Signer avec un code QR",
+  "API is not connected yet ...": "L'API n'est pas encore connectée...",
+  "Confirmation": "Confirmation"
 }

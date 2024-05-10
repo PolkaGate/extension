@@ -18,6 +18,7 @@ import { Warning } from '../../components';
 import { useAccountsInfo, useActiveRecoveries, useFullscreen, useInfo, useLostAccountInformation, useTranslation } from '../../hooks';
 import { FULLSCREEN_WIDTH, SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
+import Bread from '../partials/Bread';
 import { AddressWithIdentity } from './components/SelectTrustedFriend';
 import RecoveryCheckProgress from './partial/RecoveryCheckProgress';
 import { InitiateRecoveryConfig, RecoveryConfigType, SessionInfo, SocialRecoveryModes, WithdrawInfo } from './util/types';
@@ -222,7 +223,8 @@ export default function SocialRecovery (): React.ReactElement {
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='socialRecovery' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
+      <Grid container item sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '3%' }}>
+        <Bread />
         {step === STEPS.UNSUPPORTED &&
           <Grid alignItems='center' container direction='column' display='block' item>
             <Typography fontSize='30px' fontWeight={700} p='30px 0 60px 80px'>

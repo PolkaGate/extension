@@ -82,7 +82,7 @@ export default function Confirmation ({ children, handleClose, popupHeight, txIn
           _mt='30px'
           _onClick={handleClose}
           _width={100}
-          text={t('Done')}
+          text={txInfo.success ? t('Done') : t('Close')}
         />
       </Grid>
     </Motion>

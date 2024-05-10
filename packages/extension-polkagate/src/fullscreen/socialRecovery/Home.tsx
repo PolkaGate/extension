@@ -81,7 +81,7 @@ export default function Home ({ accountsInfo, activeLost, activeProxy, activeRes
   }, [setLostAccount, setMode, setStep]);
 
   return (
-    <Grid container item sx={{ display: 'block', px: '10%' }}>
+    <Grid container item sx={{ display: 'block' }}>
       <Grid container item justifyContent='space-between' pb='20px' pt='35px'>
         <Grid alignItems='center' container item width='fit-content'>
           <SocialRecoveryIcon

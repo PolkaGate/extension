@@ -152,7 +152,7 @@ export default function InitiateRecovery ({ accountsInfo, activeProxy, address, 
   }, [lostAccountRecoveryInfo, setMode, setTotalDeposit]);
 
   return (
-    <Grid container item sx={{ display: 'block', px: '10%' }}>
+    <Grid container item sx={{ display: 'block' }}>
       {initiatedRecovery || activeProxy
         ? <>
           <Grid alignItems='center' container item pt='20px' width='fit-content'>
