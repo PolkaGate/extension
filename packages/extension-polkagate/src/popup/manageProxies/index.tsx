@@ -18,7 +18,7 @@ import { getFormattedAddress } from '../../util/utils';
 import AddProxy from './AddProxy';
 import Review from './Review';
 
-export default function ManageProxies (): React.ReactElement {
+export default function ManageProxies(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const { address } = useParams<{ address: string }>();
@@ -87,7 +87,7 @@ export default function ManageProxies (): React.ReactElement {
       return;
     }
 
-    const found = proxyItems.find((item) => item.proxy.delegate === selected.delegate && item.proxy.proxyType === selected.proxyType);
+    const found = proxyItems.find(({ proxy }) => proxy.delegate === selected.delegate && proxy.proxyType === selected.proxyType);
 
     if (!found) {
       return;
