@@ -25,7 +25,7 @@ interface Props {
   cantModify: boolean;
 }
 
-export default function Preview({ address, cantModify, setAlterType, setStep, vote }: Props): React.ReactElement<Props> {
+export default function Preview ({ address, cantModify, setAlterType, setStep, vote }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const token = useToken(address);
   const decimal = useDecimal(address);
