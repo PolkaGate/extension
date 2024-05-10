@@ -11,7 +11,8 @@ const START_WITH_PATH = [
   '/manageIdentity/',
   '/send/',
   '/stake/',
-  '/socialRecovery/'
+  '/socialRecovery/',
+  '/fullscreenDerive/'
 ] as const;
 const PHISHING_PAGE_REDIRECT = '/phishing-page-detected';
 const EXTENSION_PREFIX = 'POLKAGATE';

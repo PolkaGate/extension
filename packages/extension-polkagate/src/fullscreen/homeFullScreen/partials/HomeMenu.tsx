@@ -5,12 +5,13 @@
 
 import '@vaadin/icons';
 
-import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, OpenInNewRounded as OpenInNewRoundedIcon } from '@mui/icons-material';
+import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
-import { AccountContext, ActionContext } from '../../../components';
+import { AccountContext } from '../../../components';
 import { useTranslation } from '../../../hooks';
+import { windowOpen } from '../../../messaging';
 import VersionSocial from '../../../partials/VersionSocial';
 import ExportAllModal from './ExportAllModal';
 import ImportAccSubMenuFullScreen from './ImportAccSubMenuFullScreen';
@@ -62,7 +63,6 @@ export const TaskButton = ({ children, disabled, extra, hasChildren, icon, isSub
 export default function HomeMenu (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const onAction = useContext(ActionContext);
   const { accounts, master } = useContext(AccountContext);
 
   const [showImport, setShowImport] = useState<boolean>(false);
@@ -73,8 +73,8 @@ export default function HomeMenu (): React.ReactElement {
   const areAllExternalAccounts = useMemo(() => accounts.every(({ isExternal }) => isExternal), [accounts]);
 
   const onSend = useCallback(() => {
-    onAction('/account/create');
-  }, [onAction]);
+    windowOpen('/account/create').catch(console.error);
+  }, []);
 
   const onExportAll = useCallback(() => {
     !areAllExternalAccounts && setShowExportAll(true);
@@ -91,8 +91,10 @@ export default function HomeMenu (): React.ReactElement {
   }, [showSetting]);
 
   const onDeriveFromAccounts = useCallback(() => {
-    !areAllExternalAccounts && master && onAction(`/fullscreenDerive/${master.address}`);
-  }, [areAllExternalAccounts, master, onAction]);
+    if (!areAllExternalAccounts && master) {
+      windowOpen(`/fullscreenDerive/${master.address}`).catch(console.error);
+    }
+  }, [areAllExternalAccounts, master]);
 
   return (
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '0.1px solid' : 'none', borderColor: 'secondary.main', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px', width: '430px', position: 'relative' }}>
@@ -103,7 +105,7 @@ export default function HomeMenu (): React.ReactElement {
           }
           onClick={onSend}
           secondaryIconType='page'
-          text={t<string>('Create new account')}
+          text={t('Create new account')}
         />
         <TaskButton
           disabled={areAllExternalAccounts}
@@ -112,7 +114,7 @@ export default function HomeMenu (): React.ReactElement {
           }
           onClick={onDeriveFromAccounts}
           secondaryIconType='page'
-          text={t<string>('Derive from accounts')}
+          text={t('Derive from accounts')}
         />
         <TaskButton
           hasChildren
@@ -122,7 +124,7 @@ export default function HomeMenu (): React.ReactElement {
           onClick={onImportClick}
           secondaryIconType='page'
           showChildren={showImport}
-          text={t<string>('Import account')}
+          text={t('Import account')}
         >
           <ImportAccSubMenuFullScreen show={showImport} toggleSettingSubMenu={onSettingClick} />
         </TaskButton>
@@ -133,7 +135,7 @@ export default function HomeMenu (): React.ReactElement {
           }
           onClick={onExportAll}
           secondaryIconType='popup'
-          text={t<string>('Export all accounts')}
+          text={t('Export all accounts')}
         />
         <TaskButton
           hasChildren
@@ -144,7 +146,7 @@ export default function HomeMenu (): React.ReactElement {
           onClick={onSettingClick}
           secondaryIconType='page'
           showChildren={showSetting}
-          text={t<string>('Settings')}
+          text={t('Settings')}
         >
           <SettingSubMenuFullScreen show={showSetting} />
         </TaskButton>

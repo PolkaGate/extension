@@ -121,14 +121,12 @@ function DeriveFromAccounts (): React.ReactElement {
     setIsProperParentPassword(false);
   }, [onParentPasswordEnter]);
 
-  const _onSuriPathChange = useCallback((path: string): void => {
+  const onSuriPathChange = useCallback((path: string): void => {
     setSuriPath(path);
     setPathError('');
   }, []);
 
-  const onBackClick = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
+  const onBackClick = useCallback(() => window.close(), []);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
@@ -144,16 +142,16 @@ function DeriveFromAccounts (): React.ReactElement {
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t<string>('Derive from accounts')}
+                {t('Derive from accounts')}
               </Typography>
             </Grid>
           </Grid>
           <Typography fontSize='16px' fontWeight={400} width='100%'>
-            {t<string>('A derived account inherits the recovery phrase from its parent, but has a unique derivation path. Please select a parent account and enter its password to proceed.')}
+            {t('A derived account inherits the recovery phrase from its parent, but has a unique derivation path. Please select a parent account and enter its password to proceed.')}
           </Typography>
           <Grid container item justifyContent='space-around' sx={{ my: '30px' }}>
             <Label
-              label={t<string>('Choose parent account')}
+              label={t('Choose parent account')}
               style={{ margin: 'auto', width: '100%' }}
             >
               <AddressDropdownFullScreen
@@ -169,7 +167,7 @@ function DeriveFromAccounts (): React.ReactElement {
             data-input-password
             isError={!!parentPassword && !isProperParentPassword}
             isFocused
-            label={t<string>('Password for the account to derive from')}
+            label={t('Password for the account to derive from')}
             onChange={onParentPasswordEnter}
             value={parentPassword}
           />
@@ -185,7 +183,7 @@ function DeriveFromAccounts (): React.ReactElement {
           <DerivationPath
             defaultPath={defaultPath}
             isError={!!pathError}
-            onChange={_onSuriPathChange}
+            onChange={onSuriPathChange}
             parentAddress={parentAddress}
             parentPassword={parentPassword}
             withSoftPath={allowSoftDerivation}

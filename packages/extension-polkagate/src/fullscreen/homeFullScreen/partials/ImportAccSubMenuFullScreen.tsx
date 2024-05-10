@@ -7,11 +7,10 @@ import '@vaadin/icons';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Collapse, Grid, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useMemo } from 'react';
+import React, { useCallback } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-import { ActionContext } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { TaskButton } from './HomeMenu';
@@ -24,9 +23,6 @@ interface Props {
 function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const onAction = useContext(ActionContext);
-
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
 
   const onRestoreFromJson = useCallback((): void => {
     windowOpen('/account/restore-json').catch(console.error);
@@ -37,12 +33,12 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
   }, []);
 
   const onAddWatchOnlyFullScreen = useCallback(() => {
-    onAction('/import/add-watch-only-full-screen');
-  }, [onAction]);
+    windowOpen('/import/add-watch-only-full-screen').catch(console.error);
+  }, []);
 
   const onAttachQrFullScreen = useCallback(() => {
-    onAction('/import/attach-qr-full-screen');
-  }, [onAction]);
+    windowOpen('/import/attach-qr-full-screen').catch(console.error);
+  }, []);
 
   const onImportLedger = useCallback((): void => {
     windowOpen('/account/import-ledger').catch(console.error);
@@ -58,7 +54,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             }
             isSubMenu
             onClick={onRestoreFromJson}
-            text={t<string>('Restore from JSON file')}
+            text={t('Restore from JSON file')}
           />
           <TaskButton
             icon={
@@ -66,7 +62,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             }
             isSubMenu
             onClick={onImportFromSeed}
-            text={t<string>('Import from recovery phrase')}
+            text={t('Import from recovery phrase')}
           />
           <TaskButton
             icon={
@@ -74,7 +70,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             }
             isSubMenu
             onClick={onAddWatchOnlyFullScreen}
-            text={t<string>('Add watch-only account')}
+            text={t('Add watch-only account')}
           />
           <TaskButton
             disabled={settings.camera !== 'on'}
@@ -90,7 +86,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             }
             isSubMenu
             onClick={onAttachQrFullScreen}
-            text={t<string>('Attach external QR-signer')}
+            text={t('Attach external QR-signer')}
           />
           <TaskButton
             icon={
@@ -98,7 +94,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             }
             isSubMenu
             onClick={onImportLedger}
-            text={t<string>('Attach ledger device')}
+            text={t('Attach ledger device')}
           />
         </Grid>
       </Collapse>
