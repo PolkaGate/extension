@@ -11,8 +11,8 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { AccountContext } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { windowOpen } from '../../../messaging';
 import VersionSocial from '../../../partials/VersionSocial';
+import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import ExportAllModal from './ExportAllModal';
 import ImportAccSubMenuFullScreen from './ImportAccSubMenuFullScreen';
 import SettingSubMenuFullScreen from './SettingSubMenuFullScreen';
@@ -73,7 +73,7 @@ export default function HomeMenu (): React.ReactElement {
   const areAllExternalAccounts = useMemo(() => accounts.every(({ isExternal }) => isExternal), [accounts]);
 
   const onSend = useCallback(() => {
-    windowOpen('/account/create').catch(console.error);
+    openOrFocusTab('/account/create');
   }, []);
 
   const onExportAll = useCallback(() => {
@@ -92,7 +92,7 @@ export default function HomeMenu (): React.ReactElement {
 
   const onDeriveFromAccounts = useCallback(() => {
     if (!areAllExternalAccounts && master) {
-      windowOpen(`/fullscreenDerive/${master.address}`).catch(console.error);
+      openOrFocusTab(`/fullscreenDerive/${master.address}`);
     }
   }, [areAllExternalAccounts, master]);
 

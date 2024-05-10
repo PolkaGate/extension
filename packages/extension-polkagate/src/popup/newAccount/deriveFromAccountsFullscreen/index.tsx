@@ -127,7 +127,7 @@ function DeriveFromAccounts (): React.ReactElement {
     setPathError('');
   }, []);
 
-  const onBackClick = useCallback(() => window.close(), []);
+  const onBackClick = useCallback(() => openOrFocusTab('/', true), []);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>

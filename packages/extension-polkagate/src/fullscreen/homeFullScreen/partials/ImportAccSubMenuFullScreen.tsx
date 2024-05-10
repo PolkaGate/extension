@@ -12,7 +12,7 @@ import React, { useCallback } from 'react';
 import settings from '@polkadot/ui-settings';
 
 import { useTranslation } from '../../../hooks';
-import { windowOpen } from '../../../messaging';
+import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import { TaskButton } from './HomeMenu';
 
 interface Props {
@@ -25,23 +25,23 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
   const theme = useTheme();
 
   const onRestoreFromJson = useCallback((): void => {
-    windowOpen('/account/restore-json').catch(console.error);
+    openOrFocusTab('/account/restore-json');
   }, []);
 
   const onImportFromSeed = useCallback(() => {
-    windowOpen('/account/import-seed').catch(console.error);
+    openOrFocusTab('/account/import-seed');
   }, []);
 
   const onAddWatchOnlyFullScreen = useCallback(() => {
-    windowOpen('/import/add-watch-only-full-screen').catch(console.error);
+    openOrFocusTab('/import/add-watch-only-full-screen');
   }, []);
 
   const onAttachQrFullScreen = useCallback(() => {
-    windowOpen('/import/attach-qr-full-screen').catch(console.error);
+    openOrFocusTab('/import/attach-qr-full-screen');
   }, []);
 
   const onImportLedger = useCallback((): void => {
-    windowOpen('/account/import-ledger').catch(console.error);
+    openOrFocusTab('/account/import-ledger');
   }, []);
 
   return (
@@ -75,7 +75,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
           <TaskButton
             disabled={settings.camera !== 'on'}
             extra={settings.camera !== 'on'
-              ? <Grid fontSize='12px' item letterSpacing='-1.5%' onClick={toggleSettingSubMenu} sx={{ cursor: 'pointer' }} textAlign='left' ml='19.5%'>
+              ? <Grid fontSize='12px' item letterSpacing='-1.5%' ml='19.5%' onClick={toggleSettingSubMenu} sx={{ cursor: 'pointer' }} textAlign='left'>
                 {t('Allow QR camera access in the extension’s setting in order to use this feature')}
                 <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 12, mb: '-2px', stroke: '#BA2882' }} />
               </Grid>

@@ -76,7 +76,7 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
     }
   }, [chain?.genesisHash, name, realAddress]);
 
-  const onCancel = useCallback(() => window.close(), []);
+  const onCancel = useCallback(() => openOrFocusTab('/', true), []);
 
   const onNameChange = useCallback((name: string | null) => setName(name), []);
 
