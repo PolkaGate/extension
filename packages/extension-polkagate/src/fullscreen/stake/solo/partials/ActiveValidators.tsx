@@ -13,7 +13,7 @@ import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { useActiveValidators, useInfo, useStakingConsts, useTranslation } from '../../../../hooks';
+import { useActiveValidators, useInfo, useIsValidator, useStakingConsts, useTranslation } from '../../../../hooks';
 import ShowValidator from './ShowValidator';
 
 interface Props {
@@ -24,6 +24,7 @@ export default function ActiveValidators ({ address }: Props): React.ReactElemen
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);
+  const isValidator = useIsValidator(address);
 
   const { activeValidators, nonActiveValidators } = useActiveValidators(address);
   const stakingConsts = useStakingConsts(address);
@@ -102,7 +103,7 @@ export default function ActiveValidators ({ address }: Props): React.ReactElemen
               }
             </Grid>
           </>
-          : activeValidators === undefined
+          : activeValidators === undefined || isValidator === undefined
             ? <>
               {
                 Array.from({ length: SKELETON_COUNT }, (_, index) => (
@@ -116,9 +117,13 @@ export default function ActiveValidators ({ address }: Props): React.ReactElemen
                 ))
               }
             </>
-            : <Typography color={'text.primary'} fontSize='16px' fontWeight={400}>
-              {t('No Active Validators Found!')}
-            </Typography>
+            : isValidator
+              ? <Typography color={'text.primary'} fontSize='16px' fontWeight={400}>
+                {t('This account is a validator!')}
+              </Typography>
+              : <Typography color={'text.primary'} fontSize='16px' fontWeight={400}>
+                {t('No Active Validators Found!')}
+              </Typography>
         }
       </Grid>
     </Grid>
