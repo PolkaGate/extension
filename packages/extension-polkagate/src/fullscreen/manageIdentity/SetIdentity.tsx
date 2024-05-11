@@ -29,7 +29,7 @@ interface Props {
   identityToSet: DeriveAccountRegistration | null | undefined;
 }
 
-export default function SetIdentity({ api, chainName, identity, identityToSet, mode, setIdentityToSet, setMode, setStep, totalDeposit }: Props): React.ReactElement {
+export default function SetIdentity ({ api, chainName, identity, identityToSet, mode, setIdentityToSet, setMode, setStep, totalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [display, setDisplay] = useState<string | undefined>();
@@ -109,8 +109,7 @@ export default function SetIdentity({ api, chainName, identity, identityToSet, m
   }, [setMode, setStep]);
 
   return (
-    <Grid container item sx={{ display: 'block', px: '10%' }}>
-      <Bread />
+    <Grid container item sx={{ display: 'block' }}>
       <Typography fontSize='30px' fontWeight={700} pb='15px' pt='25px'>
         {mode === 'Set'
           ? t('Set On-chain Identity')

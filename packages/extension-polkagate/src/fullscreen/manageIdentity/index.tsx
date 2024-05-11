@@ -19,9 +19,10 @@ import { BN, BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { Warning } from '../../components';
-import { useApi, useChain, useChainName, useFormatted, useFullscreen, useTranslation } from '../../hooks';
+import { useFullscreen, useInfo, useTranslation } from '../../hooks';
 import { FULLSCREEN_WIDTH } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
+import Bread from '../partials/Bread';
 import PreviewIdentity from './Preview';
 import RequestJudgement from './RequestJudgement';
 import Review from './Review';
@@ -67,12 +68,9 @@ export function setData (value: string | undefined): Data {
 export default function ManageIdentity (): React.ReactElement {
   useFullscreen();
   const { address } = useParams<{ address: string }>();
-  const api = useApi(address);
   const { t } = useTranslation();
   const theme = useTheme();
-  const chain = useChain(address);
-  const chainName = useChainName(address);
-  const formatted = useFormatted(address);
+  const { api, chain, chainName, formatted } = useInfo(address);
 
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null | undefined>();
   const [identityToSet, setIdentityToSet] = useState<DeriveAccountRegistration | null | undefined>();
@@ -346,7 +344,8 @@ export default function ManageIdentity (): React.ReactElement {
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='manageIdentity' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
+      <Grid container item justifyContent='flex-start' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '3%' }}>
+        <Bread />
         {step === STEPS.CHECK_SCREEN &&
           <IdentityCheckProgress />
         }

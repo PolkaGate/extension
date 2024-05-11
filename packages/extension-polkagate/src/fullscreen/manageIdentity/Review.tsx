@@ -156,7 +156,7 @@ export default function Review ({ address, api, chain, depositToPay, depositValu
   }, [setRefresh, setStep]);
 
   return (
-    <Motion style={{ height: '100%', paddingInline: '10%', width: '100%' }}>
+    <Motion style={{ height: '100%', width: '100%' }}>
       <>
         <Grid container py='25px'>
           <Typography fontSize='30px' fontWeight={700}>
