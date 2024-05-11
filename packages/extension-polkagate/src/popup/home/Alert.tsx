@@ -63,9 +63,9 @@ export default function Alert ({ setShowAlert, show }: Props): React.ReactElemen
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Introducing Polkadot Vault support in full-screen mode.',
-              'Add Breadcrumbs for easier navigation in full-screen mode.',
-              'Experience improved performance and benefit from bug fixes.'
+              'Introducing support for Polkadot Vault in full-screen mode.',
+              'Added Breadcrumbs for easier navigation in full-screen mode.',
+              'Experience enhanced performance and benefit from bug fixes.'
 
             ]}
           />
