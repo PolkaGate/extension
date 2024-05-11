@@ -376,3 +376,20 @@ export const isUrl = (input: string | undefined) => {
 export const pgBoxShadow = (theme: Theme): string => theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '2px 3px 4px 0px rgba(0, 0, 0, 0.10)';
 
 export const noop = () => null;
+
+export const truncString32Bytes = (input: string | null | undefined): string | null | undefined => {
+  if (!input) {
+    return input;
+  }
+
+  const encoder = new TextEncoder();
+  let byteLength = encoder.encode(input).length;
+  let inputVal = input;
+
+  while (byteLength > 32) {
+    inputVal = inputVal.substring(0, inputVal.length - 1);
+    byteLength = encoder.encode(inputVal).length;
+  }
+
+  return inputVal;
+};
