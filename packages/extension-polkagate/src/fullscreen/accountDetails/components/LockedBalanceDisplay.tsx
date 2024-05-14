@@ -175,7 +175,7 @@ export default function LockedBalanceDisplay({ address, api, chain, decimal, for
   }, [classToUnlock, isDisable, setDisplayPopup, setUnlockInformation, totalLocked, unlockableAmount]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: '85px', p: '15px 40px' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: '85px', p: '15px 40px' }}>
       <Typography fontSize='18px' fontWeight={400}>
         {title}
       </Typography>
