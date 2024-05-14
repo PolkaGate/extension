@@ -44,16 +44,15 @@ export default function StakedSolo ({ balances, setRefresh, setShow, stakingAcco
   useUnSupportedNetwork(address, STAKING_CHAINS);
 
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
-
   const rewards = useStakingRewards(address, stakingAccount);
-
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active as unknown as BN, [stakingAccount?.stakingLedger?.active]);
-  const availableToSoloStake = balances?.freeBalance && staked && balances.freeBalance.sub(staked);
 
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>();
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
   const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
+
+  const availableToSoloStake = balances?.freeBalance && staked && unlockingAmount && balances.freeBalance.sub(staked).sub(unlockingAmount);
 
   useEffect(() => {
     api && api.derive.session?.progress().then((sessionInfo) => {
