@@ -8,7 +8,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Box, Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
@@ -71,13 +71,27 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
   const [showUnstaking, setShowUnstaking] = useState<boolean>(false);
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette]);
+  const triangleColor = useMemo(() => {
+    switch (title) {
+      case (t('Staked')):
+        return theme.palette.aye.main;
+      case (t('Redeemable')):
+        return theme.palette.approval.main;
+      case (t('Unstaking')):
+        return theme.palette.support.main;
+      case (t('Available to stake')):
+        return theme.palette.warning.main;
+      default:
+        return undefined;
+    }
+  }, [t, theme, title]);
 
   const toggleShowUnstaking = useCallback(() => {
     toBeReleased?.length && setShowUnstaking(!showUnstaking);
   }, [showUnstaking, toBeReleased?.length]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mt: { marginTop }, p: '5px 30px' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: isDarkTheme ? 'secondary.light' : undefined, borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mt: { marginTop }, p: '5px 30px', position: 'relative' }}>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ minHeight: '67px' }}>
         <Typography fontSize='18px' fontWeight={400} width='28%'>
           {title}
@@ -148,6 +162,25 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
           toBeReleased={toBeReleased}
           token={token}
         />}
+      {amount && !amount.isZero() &&
+      <Box
+        sx={{
+          '&::before': {
+            borderBottom: `20px solid ${triangleColor}`,
+            borderBottomLeftRadius: '20%',
+            borderRight: '20px solid transparent',
+            bottom: 0,
+            content: '""',
+            height: 0,
+            left: 0,
+            position: 'absolute',
+            width: 0
+          },
+          bottom: 0,
+          left: 0,
+          position: 'absolute'
+        }}
+      />}
     </Grid>
   );
 }
