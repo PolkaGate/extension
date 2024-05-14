@@ -8,7 +8,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Box, Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
@@ -69,6 +69,21 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
 
   const { decimal, token } = useInfo(address);
   const [showUnstaking, setShowUnstaking] = useState<boolean>(false);
+
+  const triangleColor = useMemo(() => {
+    switch (title) {
+      case (t('Staked')):
+        return theme.palette.aye.main;
+      case (t('Redeemable')):
+        return theme.palette.approval.main;
+      case (t('Unstaking')):
+        return theme.palette.support.main;
+      case (t('Available to stake')):
+        return theme.palette.warning.main;
+      default:
+        return undefined;
+    }
+  }, [t, theme, title]);
 
   const toggleShowUnstaking = useCallback(() => {
     toBeReleased?.length && setShowUnstaking(!showUnstaking);
@@ -146,6 +161,25 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
           toBeReleased={toBeReleased}
           token={token}
         />}
+      {amount && !amount.isZero() &&
+      <Box
+        sx={{
+          '&::before': {
+            borderBottom: `20px solid ${triangleColor}`,
+            borderBottomLeftRadius: '20%',
+            borderRight: '20px solid transparent',
+            bottom: 0,
+            content: '""',
+            height: 0,
+            left: 0,
+            position: 'absolute',
+            width: 0
+          },
+          bottom: 0,
+          left: 0,
+          position: 'absolute'
+        }}
+      />}
     </Grid>
   );
 }

@@ -23,6 +23,7 @@ import { STAKING_CHAINS } from '../../../util/constants';
 import Bread from '../../partials/Bread';
 import { Title } from '../../sendFund/InputPage';
 import DisplayBalance from '../partials/DisplayBalance';
+import StakedBar from '../solo/StakedBar';
 import ClaimedRewardsChart from './partials/ClaimedRewardsChart';
 import Info from './partials/Info';
 import PoolCommonTasks from './partials/PoolCommonTasks';
@@ -47,6 +48,7 @@ export default function PoolStaked ({ address, balances, pool, redeemable, setSh
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
+  const availableBalance = useMemo(() => getValue('available', balances), [balances]);
 
   const onUnstake = useCallback(() => {
     staked && !staked?.isZero() && setShow(MODAL_IDS.UNSTAKE);
@@ -85,6 +87,13 @@ export default function PoolStaked ({ address, balances, pool, redeemable, setSh
       />
       <Grid container item justifyContent='space-between' mb='15px'>
         <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 320px - 3%)'>
+          <StakedBar
+            availableBalance={availableBalance}
+            balances={balances}
+            redeemable={redeemable}
+            staked={staked}
+            unlockingAmount={unlockingAmount}
+          />
           <Grid container item sx={{ overflowY: 'scroll' }}>
             <DisplayBalance
               actions={[t('unstake')]}
@@ -122,7 +131,7 @@ export default function PoolStaked ({ address, balances, pool, redeemable, setSh
               actions={[staked && !staked.isZero() ? t('stake extra') : t('stake')]}
               address={address}
               /** to disable action button until fetching has done */
-              amount={!staked || !redeemable || !unlockingAmount ? undefined : getValue('available', balances)}
+              amount={!staked || !redeemable || !unlockingAmount ? undefined : availableBalance}
               icons={[faPlus]}
               onClicks={[onStakeOrExtra]}
               title={t('Available to stake')}
