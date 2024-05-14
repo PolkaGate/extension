@@ -16,6 +16,7 @@ export async function toGetNativeToken (addresses, api, chainName) {
     }
 
     _result[address] = [{
+      assetId: 0, // Rule: we set asset id 0 for native tokens
       balanceDetails: balancify(balances[index]),
       chainName,
       decimal: api.registry.chainDecimals[0],
