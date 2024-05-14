@@ -6,7 +6,7 @@
 import { Grid, SxProps, Theme, Typography } from '@mui/material';
 import React from 'react';
 
-import { useApi, useFormatted, useTranslation } from '../hooks';
+import { useInfo, useIsExtensionPopup, useTranslation } from '../hooks';
 import { Identity, ShortAddress } from '.';
 
 interface Props {
@@ -17,13 +17,14 @@ interface Props {
 
 function AccountHolder ({ address, style, title }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const formatted = useFormatted(address);
-  const api = useApi(address);
+  const isExtensionPopup = useIsExtensionPopup();
+
+  const { api, formatted } = useInfo(address);
 
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center' py='5px' sx={style}>
-      <Typography fontSize='16px' fontWeight={300} height='18px' textAlign='center'>
-        {title ?? t<string>('Account holder')}
+      <Typography fontSize='16px' fontWeight={isExtensionPopup ? 300 : 400} height='18px' textAlign='center'>
+        {title ?? t('Account holder')}
       </Typography>
       <Identity
         address={address}
