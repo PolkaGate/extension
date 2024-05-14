@@ -70,7 +70,6 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
   const { decimal, token } = useInfo(address);
   const [showUnstaking, setShowUnstaking] = useState<boolean>(false);
 
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette]);
   const triangleColor = useMemo(() => {
     switch (title) {
       case (t('Staked')):
@@ -91,7 +90,7 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
   }, [showUnstaking, toBeReleased?.length]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: isDarkTheme ? 'secondary.light' : undefined, borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mt: { marginTop }, p: '5px 30px', position: 'relative' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mt: { marginTop }, p: '5px 30px' }}>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ minHeight: '67px' }}>
         <Typography fontSize='18px' fontWeight={400} width='28%'>
           {title}
