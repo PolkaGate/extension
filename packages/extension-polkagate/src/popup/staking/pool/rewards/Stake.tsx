@@ -158,7 +158,7 @@ export default function RewardsStakeReview ({ address, amount, api, chain, forma
           />
           <AmountFee
             address={address}
-            amount={<ShowBalance2 address={address} balance={amount.add(staked).sub(estimatedFee ?? BN_ZERO)} />}
+            amount={<ShowBalance2 address={address} balance={amount.add(staked)} />}
             label={t('Total stake after')}
             style={{ pt: '5px' }}
           />
