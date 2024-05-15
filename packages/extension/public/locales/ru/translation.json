@@ -1234,5 +1234,9 @@
   "Use QR-Signer": "QR-подписчик",
   "Sign with QR code": "Подписать с помощью QR-кода",
   "API is not connected yet ...": "API еще не подключен...",
-  "Confirmation": "Подтверждение"
+  "Confirmation": "Подтверждение",
+  "Welcome to {{extensionName}}!": "Добро пожаловать в {{extensionName}}!",
+  "We appreciate your choice in selecting Polkagate as your gateway to the Polkadot ecosystem! 🌟": "Мы благодарим вас за выбор Polkagate в качестве вашего шлюза в экосистему Polkadot! 🌟",
+  "At present, you do not have any accounts. To begin your journey, you can create your first account or import existing accounts to get started.": "На данный момент у вас нет учетных записей. Чтобы начать свое путешествие, вы можете создать свою первую учетную запись или импортировать существующие учетные записи, чтобы начать.",
+  "This account is a validator!": "Этот аккаунт является валидатором!"
 }

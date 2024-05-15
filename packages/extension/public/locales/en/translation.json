@@ -1245,5 +1245,9 @@
   "Confirmation": "",
   "Pay Decision Deposit": "",
   "Paying": "",
-  "Paying Confirmation": ""
+  "Paying Confirmation": "",
+  "Welcome to {{extensionName}}!": "",
+  "We appreciate your choice in selecting Polkagate as your gateway to the Polkadot ecosystem! 🌟": "",
+  "At present, you do not have any accounts. To begin your journey, you can create your first account or import existing accounts to get started.": "",
+  "This account is a validator!": ""
 }

@@ -27,9 +27,6 @@ function Onboarding (): React.ReactElement {
   const theme = useTheme();
 
   const [showPrivacyAndSecurity, setShowPrivacyAndSecurity] = useState(false);
-  const [showMore, setShowMore] = useState<boolean>(false);
-
-  const toggleMore = useCallback(() => setShowMore(!showMore), [showMore]);
 
   useEffect(() => {
     if (accounts?.length > 0) {
@@ -92,15 +89,15 @@ function Onboarding (): React.ReactElement {
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t('Welcome!')}
+                {t('Welcome to {{extensionName}}!', { replace: { extensionName: 'Polkagate' } })}
               </Typography>
             </Grid>
           </Grid>
           <Typography fontSize='16px' fontWeight={500} pb='15px' pt='30px' width='100%'>
-            {t('Thank you for choosing Polkagate, the gateway to the Polkadot ecosystem! 🌟')}
+            {t('We appreciate your choice in selecting Polkagate as your gateway to the Polkadot ecosystem! 🌟')}
           </Typography>
           <Typography fontSize='16px' fontWeight={400} width='100%'>
-            {t('Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started.')}
+            {t('At present, you do not have any accounts. To begin your journey, you can create your first account or import existing accounts to get started.')}
           </Typography>
           <Grid alignItems='center' container item justifyContent='center' pt='80px'>
             <PButton
