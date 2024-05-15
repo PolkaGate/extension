@@ -1054,7 +1054,7 @@
   "Payout": "支付",
   "Usually, validators pay out the pending rewards themselves, but you can initiate the payout yourself if you prefer.": "通常，验证器会自行支付待处理的奖励，但如果您愿意，您也可以自行发起支付。",
   "Received Rewards": "已收到奖励",
-  "Rewards Paid": "奖励已支付",
+  "Rewards paid": "奖励已支付",
   "Chart": "图表",
   "Available to Stake": "可用于质押",
   "Rewards are typically paid out by validators on a regular basis. However, if not paid within the determined period, they will expire and be forfeited.": "通常，验证器会定期支付奖励。然而，如果在确定的期限内未支付，奖励将过期并被放弃。",

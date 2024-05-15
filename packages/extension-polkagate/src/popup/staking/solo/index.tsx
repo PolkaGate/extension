@@ -325,7 +325,7 @@ export default function Index (): React.ReactElement {
             value={staked}
           />
           <Row
-            label={t('Rewards Paid')}
+            label={t('Rewards paid')}
             link1Text={t('Chart')}
             link2Text={t('Pending')}
             onLink1={onReceivedRewards}

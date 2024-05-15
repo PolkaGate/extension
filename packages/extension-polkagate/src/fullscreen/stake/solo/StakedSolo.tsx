@@ -21,6 +21,7 @@ import ActiveValidators from './partials/ActiveValidators';
 import CommonTasks from './partials/CommonTasks';
 import Info from './partials/Info';
 import RewardsChart from './partials/RewardsChart';
+import StakedBar from './StakedBar';
 import { MODAL_IDS } from '.';
 
 interface SessionIfo {
@@ -44,16 +45,15 @@ export default function StakedSolo ({ balances, setRefresh, setShow, stakingAcco
   useUnSupportedNetwork(address, STAKING_CHAINS);
 
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
-
   const rewards = useStakingRewards(address, stakingAccount);
-
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active as unknown as BN, [stakingAccount?.stakingLedger?.active]);
-  const availableToSoloStake = balances?.freeBalance && staked && balances.freeBalance.sub(staked);
 
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>();
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
   const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
+
+  const availableToSoloStake = balances?.freeBalance && staked && unlockingAmount && balances.freeBalance.sub(staked).sub(unlockingAmount);
 
   useEffect(() => {
     api && api.derive.session?.progress().then((sessionInfo) => {
@@ -131,6 +131,13 @@ export default function StakedSolo ({ balances, setRefresh, setShow, stakingAcco
       />
       <Grid container item justifyContent='space-between' mb='15px'>
         <Grid container direction='column' item mb='10px' minWidth='715px' rowGap='10px' width='calc(100% - 320px - 3%)'>
+          <StakedBar
+            availableBalance={availableToSoloStake}
+            balances={balances}
+            redeemable={redeemable}
+            staked={staked}
+            unlockingAmount={unlockingAmount}
+          />
           <Grid container item>
             <DisplayBalance
               actions={[t('unstake'), t('fast unstake')]}
@@ -147,7 +154,7 @@ export default function StakedSolo ({ balances, setRefresh, setShow, stakingAcco
               amount={rewards}
               icons={[faClockFour]}
               onClicks={[onPendingRewards]}
-              title={t('Rewards Paid')}
+              title={t('Rewards paid')}
             />
             <DisplayBalance
               actions={[t('withdraw')]}

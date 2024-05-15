@@ -12,6 +12,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { InputWithLabel } from '../../../components';
 import { useTranslation } from '../../../components/translate';
+import { truncString32Bytes } from '../../../util/utils';
 import SubIdInput from '../component/SubIdInput';
 
 interface Props {
@@ -32,7 +33,7 @@ export default function SubIdForm ({ address, addressesToSelect, api, chain, err
   const theme = useTheme();
 
   const onNameChange = useCallback((value: string | null) => {
-    setSubName && setSubName(value, index);
+    setSubName && setSubName(truncString32Bytes(value), index);
   }, [index, setSubName]);
 
   const onAddressChange = useCallback((value: string | null) => {
@@ -69,7 +70,7 @@ export default function SubIdForm ({ address, addressesToSelect, api, chain, err
             />
           </Grid>
           <Typography fontSize='16px' fontWeight={400} sx={{ textDecoration: 'underline' }}>
-            {t<string>('Remove')}
+            {t('Remove')}
           </Typography>
         </Grid>
       </Grid>

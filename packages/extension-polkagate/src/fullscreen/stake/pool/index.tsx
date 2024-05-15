@@ -45,7 +45,7 @@ export const MODAL_IDS = {
   STAKE_EXTRA: 6
 };
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   useFullscreen();
 
   const { t } = useTranslation();
@@ -205,6 +205,7 @@ export default function Index(): React.ReactElement {
       {showId === MODAL_IDS.WITHDRAW_REWARDS &&
         <WithdrawRewards
           address={address}
+          balances={balances}
           pool={pool}
           setRefresh={setRefresh}
           setShow={setShow}
