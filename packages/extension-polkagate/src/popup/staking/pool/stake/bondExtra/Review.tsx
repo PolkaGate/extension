@@ -152,7 +152,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
         <AmountFee
           address={address}
-          amount={<ShowBalance2 address={address} balance={bondAmount?.add(totalStaked)}/>}
+          amount={<ShowBalance2 address={address} balance={bondAmount?.add(totalStaked)} />}
           label={t('Total stake after')}
           style={{ pt: '2px' }}
         />
