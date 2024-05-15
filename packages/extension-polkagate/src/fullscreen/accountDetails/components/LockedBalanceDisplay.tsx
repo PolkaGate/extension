@@ -30,13 +30,12 @@ interface DisplayBalanceProps {
   token: string | undefined;
   decimal: number | undefined;
   price: number | undefined;
-  isDarkTheme: boolean;
   refreshNeeded?: boolean;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
   setUnlockInformation: React.Dispatch<React.SetStateAction<UnlockInformationType | undefined>>;
 }
 
-export default function LockedBalanceDisplay({ address, api, chain, decimal, formatted, isDarkTheme, price, refreshNeeded, setDisplayPopup, setUnlockInformation, title, token }: DisplayBalanceProps): React.ReactElement {
+export default function LockedBalanceDisplay ({ address, api, chain, decimal, formatted, price, refreshNeeded, setDisplayPopup, setUnlockInformation, title, token }: DisplayBalanceProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -53,6 +52,9 @@ export default function LockedBalanceDisplay({ address, api, chain, decimal, for
 
   const classToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock) && ref.classId.lt(BN_MAX_INTEGER)) : undefined;
   const isDisable = useMemo(() => !unlockableAmount || unlockableAmount.isZero() || !classToUnlock || !totalLocked, [classToUnlock, totalLocked, unlockableAmount]);
+  const hasDescription = useMemo(() =>
+    (unlockableAmount && !unlockableAmount.isZero()) || (delegatedBalance && !delegatedBalance.isZero()) || timeToUnlock
+  , [delegatedBalance, timeToUnlock, unlockableAmount]);
 
   useEffect(() => {
     if (unlockableAmount && !unlockableAmount.isZero()) {
@@ -175,7 +177,7 @@ export default function LockedBalanceDisplay({ address, api, chain, decimal, for
   }, [classToUnlock, isDisable, setDisplayPopup, setUnlockInformation, totalLocked, unlockableAmount]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: '85px', p: '15px 40px' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: hasDescription ? '85px' : '70px', p: '15px 40px' }}>
       <Typography fontSize='18px' fontWeight={400}>
         {title}
       </Typography>

@@ -261,7 +261,6 @@ export default function AccountDetails (): React.ReactElement {
                       chain={chain}
                       decimal={balancesToShow?.decimal}
                       formatted={String(formatted)}
-                      isDarkTheme={isDarkTheme}
                       price={currentPrice}
                       refreshNeeded={refreshNeeded}
                       setDisplayPopup={setDisplayPopup}
