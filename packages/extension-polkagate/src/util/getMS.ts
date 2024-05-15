@@ -35,7 +35,7 @@ const OWNER = 'Nick-1979';
 const REPO = 'mScience';
 const FILE_PATH = 'data.json';
 
-export async function getLastMsUpdateTime(): Promise<string> {
+export async function getLastMsUpdateTime (): Promise<string> {
   const url = `https://api.github.com/repos/${OWNER}/${REPO}/commits?path=${FILE_PATH}`;
 
   try {
@@ -46,18 +46,18 @@ export async function getLastMsUpdateTime(): Promise<string> {
       const lastCommit = commits[0];
       const lastUpdate = lastCommit.commit.author.date;
 
-      console.log('Last update time:', lastUpdate);
+      console.log('Merkle Science: Last update time:', lastUpdate);
 
       return lastUpdate;
     }
   } catch (error) {
-    console.error('Error occurred while fetching the last update time:', error.message);
+    console.error('Merkle Science: Error occurred while fetching the last update time:', error?.message);
   }
 
   return '';
 }
 
-export async function getJsonFileFromRepo(): Promise<MsData[] | undefined> {
+export async function getJsonFileFromRepo (): Promise<MsData[] | undefined> {
   const url = `https://raw.githubusercontent.com/${OWNER}/${REPO}/master/${FILE_PATH}`;
 
   try {
@@ -68,9 +68,9 @@ export async function getJsonFileFromRepo(): Promise<MsData[] | undefined> {
 
       return json?.results;
     } else {
-      throw new Error(`Failed to fetch JSON file. Status: ${response.status}`);
+      throw new Error(`Merkle Science: Failed to fetch JSON file. Status: ${response.status}`);
     }
   } catch (error) {
-    throw new Error(`Failed to fetch JSON file: ${error.message}`);
+    throw new Error(`Merkle Science: Failed to fetch JSON file: ${error?.message}`);
   }
 }
