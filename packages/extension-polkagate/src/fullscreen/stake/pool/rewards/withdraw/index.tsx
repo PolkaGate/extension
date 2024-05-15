@@ -10,7 +10,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Progress } from '@polkadot/extension-polkagate/src/components';
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
-import { MyPoolInfo, TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
+import { BalancesInfo, MyPoolInfo, TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
@@ -24,30 +25,33 @@ import { STEPS } from '../../stake';
 
 interface Props {
   address: string | undefined;
+  balances: BalancesInfo | undefined;
   setShow: React.Dispatch<React.SetStateAction<number>>;
   show: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   pool: MyPoolInfo | null | undefined;
 }
 
-export default function WithdrawRewards ({ address, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function WithdrawRewards ({ address, balances, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
 
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
+  const availableBalance = useMemo(() => getValue('available', balances), [balances]);
 
   const [step, setStep] = useState(STEPS.PROGRESS);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [inputs, setInputs] = useState<Inputs>();
 
   useEffect(() => {
-    if (claimable && api) {
+    if (claimable && api && availableBalance) {
       const call = api.tx.nominationPools.claimPayout;
       const params = [] as unknown[];
 
       const extraInfo = {
         action: 'Pool Staking',
         amount: amountToHuman(claimable, decimal),
+        availableBalanceAfter: availableBalance.add(claimable),
         subAction: 'Withdraw Rewards'
       };
 
@@ -57,7 +61,7 @@ export default function WithdrawRewards ({ address, pool, setRefresh, setShow, s
         params
       });
     }
-  }, [api, claimable, decimal, formatted]);
+  }, [api, availableBalance, claimable, decimal, formatted]);
 
   const onCancel = useCallback(() => {
     setShow(MODAL_IDS.NONE);
