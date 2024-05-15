@@ -1044,7 +1044,7 @@
   "Payout": "Paiement",
   "Usually, validators pay out the pending rewards themselves, but you can initiate the payout yourself if you prefer.": "Normalement, les validateurs paient eux-mêmes les récompenses en attente, mais vous pouvez initier le paiement vous-même si vous préférez.",
   "Received Rewards": "Récompenses reçues",
-  "Rewards Paid": "Récompenses payées",
+  "Rewards paid": "Récompenses payées",
   "Chart": "Graphique",
   "Available to Stake": "Disponible pour miser",
   "Rewards are typically paid out by validators on a regular basis. However, if not paid within the determined period, they will expire and be forfeited.": "Les récompenses sont généralement payées par les validateurs sur une base régulière. Cependant, si elles ne sont pas payées dans le délai déterminé, elles expireront et seront perdues.",

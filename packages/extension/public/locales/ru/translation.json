@@ -1045,7 +1045,7 @@
   "Payout": "Выплата",
   "Usually, validators pay out the pending rewards themselves, but you can initiate the payout yourself if you prefer.": "Обычно валидаторы сами выплачивают ожидающие награды, но вы можете инициировать выплату сами, если хотите.",
   "Received Rewards": "Полученные награды",
-  "Rewards Paid": "Награды выплачены",
+  "Rewards paid": "Награды выплачены",
   "Chart": "График",
   "Available to Stake": "Доступно для ставок",
   "Rewards are typically paid out by validators on a regular basis. However, if not paid within the determined period, they will expire and be forfeited.": "Награды обычно выплачиваются валидаторами регулярно. Однако, если они не выплачиваются в течение установленного периода, они истекут и будут утрачены.",

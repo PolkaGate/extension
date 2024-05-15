@@ -1046,7 +1046,7 @@
   "Payout": "भुगतान",
   "Usually, validators pay out the pending rewards themselves, but you can initiate the payout yourself if you prefer.": "आमतौर पर, वैधक स्वयं लंबित पुरस्कारों को भुगतान करते हैं, लेकिन आप चाहें तो खुद ही भुगतान को प्रारंभ कर सकते हैं।",
   "Received Rewards": "प्राप्त पुरस्कार",
-  "Rewards Paid": "पुरस्कार भुगतान",
+  "Rewards paid": "पुरस्कार भुगतान",
   "Chart": "चार्ट",
   "Available to Stake": "स्टेक के लिए उपलब्ध",
   "Rewards are typically paid out by validators on a regular basis. However, if not paid within the determined period, they will expire and be forfeited.": "आमतौर पर, वैधक नियमित अंतराल पर पुरस्कार भुगतान करते हैं। हालांकि, यदि निर्धारित अवधि के भीतर न भुगतान किया गया हो, तो वे समाप्त हो जाएंगे और फाइनल हो जाएंगे।",

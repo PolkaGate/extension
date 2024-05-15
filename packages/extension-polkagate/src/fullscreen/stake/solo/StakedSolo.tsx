@@ -154,7 +154,7 @@ export default function StakedSolo ({ balances, setRefresh, setShow, stakingAcco
               amount={rewards}
               icons={[faClockFour]}
               onClicks={[onPendingRewards]}
-              title={t('Rewards Paid')}
+              title={t('Rewards paid')}
             />
             <DisplayBalance
               actions={[t('withdraw')]}

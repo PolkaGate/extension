@@ -1046,7 +1046,7 @@
   "Payout": "",
   "Usually, validators pay out the pending rewards themselves, but you can initiate the payout yourself if you prefer.": "",
   "Received Rewards": "",
-  "Rewards Paid": "",
+  "Rewards paid": "",
   "Chart": "",
   "Available to Stake": "",
   "Rewards are typically paid out by validators on a regular basis. However, if not paid within the determined period, they will expire and be forfeited.": "",
