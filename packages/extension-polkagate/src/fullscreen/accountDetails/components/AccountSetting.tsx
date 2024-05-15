@@ -72,7 +72,7 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
     <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} width='inherit'>
       <Grid alignItems='center' container item onClick={toggleAccountSetting} sx={{ cursor: 'pointer', width: 'fit-content' }}>
         <Typography fontSize='22px' fontWeight={700} sx={{ mr: '20px' }}>
-          {t('Account setting')}
+          {t('Account settings')}
         </Typography>
         <ArrowForwardIosRoundedIcon
           sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1, transform: showAccountSettings ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }}
@@ -99,7 +99,7 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
             }
             onClick={onManageIdentity}
             secondaryIconType='page'
-            text={t('Manage Identity')}
+            text={t('Manage identity')}
           />
           <TaskButton
             disabled={socialRecoveryDisable}

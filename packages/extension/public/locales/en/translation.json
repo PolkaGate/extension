@@ -1051,7 +1051,7 @@
   "Available to Stake": "",
   "Rewards are typically paid out by validators on a regular basis. However, if not paid within the determined period, they will expire and be forfeited.": "",
   "Checking pending rewards ...": "",
-  "Account setting": "",
+  "Account settings": "",
   "Most common tasks": "",
   "Receive Fund": "",
   "Account Details": "",
@@ -1249,5 +1249,8 @@
   "Welcome to {{extensionName}}!": "",
   "We appreciate your choice in selecting Polkagate as your gateway to the Polkadot ecosystem! 🌟": "",
   "At present, you do not have any accounts. To begin your journey, you can create your first account or import existing accounts to get started.": "",
-  "This account is a validator!": ""
+  "This account is a validator!": "",
+  "Social recovery": "",
+  "Send fund": "",
+  "Receive fund": ""
 }

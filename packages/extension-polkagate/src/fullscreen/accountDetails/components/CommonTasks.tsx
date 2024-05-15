@@ -155,7 +155,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
           }
           onClick={goToSend}
           secondaryIconType='page'
-          text={t('Send Fund')}
+          text={t('Send fund')}
         />
         <TaskButton
           disabled={!genesisHash}
@@ -164,7 +164,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
           }
           onClick={goToReceive}
           secondaryIconType='popup'
-          text={t('Receive Fund')}
+          text={t('Receive fund')}
         />
         <TaskButton
           disabled={governanceDisabled}

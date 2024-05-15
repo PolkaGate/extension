@@ -125,7 +125,7 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
           />
         }
         onClick={onSocialRecovery}
-        text={t('Social Recovery')}
+        text={t('Social recovery')}
         withHoverEffect
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />

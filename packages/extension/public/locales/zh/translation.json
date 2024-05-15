@@ -1131,7 +1131,7 @@
   "More tokens": "更多代币",
   "Most common tasks": "最常见的任务",
   "Account Details": "账户详情",
-  "Account setting": "账户设置",
+  "Account settings": "账户设置",
   "Receive Fund": "接收资金",
   "Switch chain from top right, or click on an asset if any.": "从右上角切换链，或者点击资产（如果有的话）。",
   "Account is in Any Chain mode": "帐户处于任意链模式。",
@@ -1247,5 +1247,8 @@
   "Welcome to {{extensionName}}!": "欢迎来到{{extensionName}}！",
   "We appreciate your choice in selecting Polkagate as your gateway to the Polkadot ecosystem! 🌟": "感谢您选择 Polkagate 作为通往 Polkadot 生态系统的门户！🌟",
   "At present, you do not have any accounts. To begin your journey, you can create your first account or import existing accounts to get started.": "目前，您没有任何帐户。要开始您的旅程，您可以创建您的第一个帐户或导入现有帐户以开始。",
-  "This account is a validator!": "此帐户是验证者！"
+  "This account is a validator!": "此帐户是验证者！",
+  "Social recovery": "社会恢复",
+  "Send fund": "发送资金",
+  "Receive fund": "接收资金"
 }
