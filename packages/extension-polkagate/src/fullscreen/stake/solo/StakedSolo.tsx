@@ -38,7 +38,7 @@ export default function StakedSolo ({ balances, refresh, setRefresh, setShow, st
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
 
-  const availableToSoloStake = useAvailableToSoloStake(address);
+  const availableToSoloStake = useAvailableToSoloStake(address, refresh);
   const { toBeReleased, unlockingAmount } = useUnstakingAmount(address, refresh);
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
   const rewards = useStakingRewards(address, stakingAccount);

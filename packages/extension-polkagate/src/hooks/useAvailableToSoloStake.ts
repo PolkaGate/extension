@@ -13,9 +13,9 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { useBalances, useStakingAccount, useUnstakingAmount } from '.';
 
-export default function useAvailableToSoloStake (address: AccountId | string | undefined): BN | undefined {
-  const stakingAccount = useStakingAccount(address);
-  const balances = useBalances(address);
+export default function useAvailableToSoloStake (address: AccountId | string | undefined, refresh?:boolean): BN | undefined {
+  const stakingAccount = useStakingAccount(address, undefined, refresh);
+  const balances = useBalances(address, refresh);
   const { unlockingAmount } = useUnstakingAmount(address);
 
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active as unknown as BN, [stakingAccount?.stakingLedger?.active]);
