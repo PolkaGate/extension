@@ -32,7 +32,7 @@ export default function AddNewAccountButton (): React.ReactElement {
         <Grid item width='fit-content'>
           <vaadin-icon icon='vaadin:plus-circle' style={{ height: '36px', color: `${theme.palette.secondary.light}`, width: '36px' }} />
         </Grid>
-        <Grid container alignItems='center' item textAlign='left' width='fit-content'>
+        <Grid alignItems='center' container item textAlign='left' width='fit-content'>
           <Typography fontSize='18px' fontWeight={500} pl='8px'>
             {t('Create a new account')}
           </Typography>
