@@ -5,8 +5,9 @@
 
 import '@vaadin/icons';
 
-import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
+import { faHome } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
@@ -82,7 +83,12 @@ function Onboarding (): React.ReactElement {
         <Grid container item sx={{ display: 'block', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
-              <vaadin-icon icon='vaadin:lightbulb' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
+              <FontAwesomeIcon
+                color={theme.palette.primary.main}
+                fontSize='30px'
+                icon={faHome}
+              />
+
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
