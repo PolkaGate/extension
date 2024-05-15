@@ -108,7 +108,7 @@ const SelectedAssetBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOu
             <BalanceRow balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} isPriceOutdated={isPriceOutdated} price={price} />
           </Grid>
         </>
-        : <Infotip placement='right' showInfoMark text={t('Switch chain from top right, or click on an asset if any.')}>
+        : <Infotip iconTop={7} placement='right' showInfoMark text={t('Switch chain from top right, or click on an asset if any.')}>
           <Typography fontSize='18px' fontWeight={500} sx={{ pl: '10px' }}>
             {t('Account is in Any Chain mode')}
           </Typography>
