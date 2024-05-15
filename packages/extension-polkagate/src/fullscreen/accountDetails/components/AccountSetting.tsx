@@ -82,32 +82,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
         <Grid alignItems='center' container direction='column' item justifyContent='center'>
           <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto 15px', width: '90%' }} />
           <TaskButton
-            disabled={hardwareOrExternalAccount}
-            icon={<vaadin-icon icon='vaadin:download-alt' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
-            onClick={onExportAccount}
-            secondaryIconType='popup'
-            text={t('Export account')}
-          />
-          <TaskButton
-            disabled={hardwareOrExternalAccount}
-            icon={<vaadin-icon icon='vaadin:road-branch' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
-            onClick={goToDeriveAcc}
-            secondaryIconType='popup'
-            text={t('Derive new account')}
-          />
-          <TaskButton
-            icon={<vaadin-icon icon='vaadin:edit' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
-            onClick={onRenameAccount}
-            secondaryIconType='popup'
-            text={t('Rename')}
-          />
-          <TaskButton
-            icon={<vaadin-icon icon='vaadin:file-remove' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
-            onClick={onForgetAccount}
-            secondaryIconType='popup'
-            text={t('Forget account')}
-          />
-          <TaskButton
             disabled={proxyDisable}
             icon={<vaadin-icon icon='vaadin:sitemap' style={{ height: '30px', color: `${proxyDisable ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
             onClick={onManageProxies}
@@ -139,10 +113,36 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
                 width={30}
               />
             }
-            noBorderButton
             onClick={onSocialRecovery}
             secondaryIconType='page'
-            text={t('Social Recovery')}
+            text={t('Social recovery')}
+          />
+          <TaskButton
+            disabled={hardwareOrExternalAccount}
+            icon={<vaadin-icon icon='vaadin:download-alt' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
+            onClick={onExportAccount}
+            secondaryIconType='popup'
+            text={t('Export account')}
+          />
+          <TaskButton
+            disabled={hardwareOrExternalAccount}
+            icon={<vaadin-icon icon='vaadin:road-branch' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
+            onClick={goToDeriveAcc}
+            secondaryIconType='popup'
+            text={t('Derive new account')}
+          />
+          <TaskButton
+            icon={<vaadin-icon icon='vaadin:edit' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
+            onClick={onRenameAccount}
+            secondaryIconType='popup'
+            text={t('Rename')}
+          />
+          <TaskButton
+            icon={<vaadin-icon icon='vaadin:file-remove' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
+            noBorderButton
+            onClick={onForgetAccount}
+            secondaryIconType='popup'
+            text={t('Forget account')}
           />
         </Grid>
       </Collapse>
