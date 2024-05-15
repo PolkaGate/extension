@@ -63,6 +63,7 @@ export default function Index (): React.ReactElement {
       {showId !== MODAL_IDS.STAKE &&
         <StakedSolo
           balances={balances}
+          refresh={refresh}
           setRefresh={setRefresh}
           setShow={setShow}
           stakingAccount={stakingAccount}

@@ -96,3 +96,5 @@ export { default as useIsExtensionPopup } from './useIsExtensionPopup';
 export { default as usePendingRewards2 } from './usePendingRewards2';
 export { default as useActiveEraIndex } from './useActiveEraIndex';
 export { default as useIsValidator } from './useIsValidator';
+export { default as useUnstakingAmount } from './useUnstakingAmount';
+export { default as useAvailableToSoloStake } from './useAvailableToSoloStake';
