@@ -7,7 +7,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { faCircleDown } from '@fortawesome/free-solid-svg-icons';
 import { Grid } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
@@ -15,7 +15,7 @@ import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 
 import { Progress } from '../../../../components';
-import { useInfo, useTranslation } from '../../../../hooks';
+import { useAvailableToSoloStake, useInfo, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
@@ -31,13 +31,18 @@ interface Props {
   redeemable: Balance | undefined
 }
 
-export default function Pending({ address, redeemable, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function WithdrawRedeemable ({ address, redeemable, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
+  const availableToSoloStake = useAvailableToSoloStake(address);
 
   const [step, setStep] = useState(STEPS.PROGRESS);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [inputs, setInputs] = useState<Inputs>();
+
+  const availableBalanceAfter = useMemo(() =>
+    redeemable && availableToSoloStake && redeemable.add(availableToSoloStake)
+  , [availableToSoloStake, redeemable]);
 
   useEffect(() => {
     const handleInputs = async () => {
@@ -51,6 +56,7 @@ export default function Pending({ address, redeemable, setRefresh, setShow, show
         const extraInfo = {
           action: 'Solo Staking',
           amount: amountToHuman(redeemable, decimal),
+          availableBalanceAfter,
           subAction: 'Redeem'
         };
 
@@ -65,7 +71,7 @@ export default function Pending({ address, redeemable, setRefresh, setShow, show
     api &&
       handleInputs()
         .catch(console.error);
-  }, [api, decimal, formatted, redeemable]);
+  }, [api, availableBalanceAfter, decimal, formatted, redeemable]);
 
   const onCancel = useCallback(() => {
     setShow(MODAL_IDS.NONE);
