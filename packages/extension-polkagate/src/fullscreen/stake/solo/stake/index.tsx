@@ -3,17 +3,17 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, Typography } from '@mui/material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { ValidatorInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { Balance } from '@polkadot/types/interfaces';
-import { BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
-import { AmountWithOptions, Infotip2, ShowBalance, TwoButtons } from '../../../../components';
+import { AmountWithOptions, Infotip2, ShowBalance, TwoButtons, Warning } from '../../../../components';
 import { useTranslation } from '../../../../components/translate';
-import { useBalances, useInfo, useMinToReceiveRewardsInSolo2, useStakingAccount, useStakingConsts } from '../../../../hooks';
+import { useAvailableToSoloStake, useBalances, useInfo, useMinToReceiveRewardsInSolo2, useStakingAccount, useStakingConsts } from '../../../../hooks';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
 import { Inputs } from '../../Entry';
@@ -26,28 +26,47 @@ interface Props {
   onBack?: (() => void) | undefined
 }
 
-export default function SoloStake({ inputs, onBack, setInputs, setStep }: Props): React.ReactElement {
+const Warn = ({ text }: { text: string }) => {
+  const theme = useTheme();
+
+  return (
+    <Grid container sx={{ '> div': { mr: '0', mt: 0, pl: '5px' } }}>
+      <Warning
+        fontWeight={400}
+        iconDanger
+        isBelowInput
+        theme={theme}
+      >
+        {text}
+      </Warning>
+    </Grid>
+  );
+};
+
+export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const { api, decimal, formatted, genesisHash } = useInfo(address);
   const stakingAccount = useStakingAccount(address);
-
-  const [refresh, setRefresh] = useState<boolean>(false);
-  const balances = useBalances(address, refresh, setRefresh);
-
   const stakingConsts = useStakingConsts(address);
   const minToReceiveRewardsInSolo = useMinToReceiveRewardsInSolo2(address);
+
+  const [refresh, setRefresh] = useState<boolean>(false);
+
+  const balances = useBalances(address, refresh, setRefresh);
+  const availableToSoloStake = useAvailableToSoloStake(address, refresh);
 
   const [amount, setAmount] = useState<string>(inputs?.extraInfo?.amount);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [isNextClicked, setNextIsClicked] = useState<boolean>();
+  const [alert, setAlert] = useState<string | undefined>();
 
   const [newSelectedValidators, setNewSelectedValidators] = useState<ValidatorInfo[]>([]);
 
-  const { call, params } = useMemo(() => {
-    if (amount && api && newSelectedValidators) {
-      const amountAsBN = amountToMachine(amount, decimal);
+  const amountAsBN = useMemo(() => amount && decimal && amountToMachine(amount, decimal), [amount, decimal]);
 
+  const { call, params } = useMemo(() => {
+    if (amountAsBN && api && newSelectedValidators) {
       const bonded = api.tx.staking.bond;
       const bondParams = [amountAsBN, 'Staked'];
 
@@ -60,10 +79,28 @@ export default function SoloStake({ inputs, onBack, setInputs, setStep }: Props)
     }
 
     return { call: undefined, params: undefined };
-  }, [amount, api, decimal, newSelectedValidators]);
+  }, [amountAsBN, api, newSelectedValidators]);
 
-  const buttonDisable = useMemo(() => !amount || !newSelectedValidators?.length, [amount, newSelectedValidators?.length]);
+  const buttonDisable = useMemo(() => !!alert || !amount || !newSelectedValidators?.length, [alert, amount, newSelectedValidators?.length]);
   const isBusy = useMemo(() => (!inputs?.estimatedFee || !inputs?.extraInfo?.amount) && isNextClicked, [inputs?.extraInfo?.amount, inputs?.estimatedFee, isNextClicked]);
+
+  useEffect(() => {
+    if (!amountAsBN || !amount) {
+      return setAlert(undefined);
+    }
+
+    if (amountAsBN.gt(availableToSoloStake ?? BN_ZERO)) {
+      return setAlert(t('It is more than available balance.'));
+    }
+
+    const isFirstTimeStaking = !!(stakingAccount?.stakingLedger?.total as unknown as BN)?.isZero();
+
+    if (api && stakingConsts?.minNominatorBond && isFirstTimeStaking && (stakingConsts.minNominatorBond.gt(amountAsBN) || availableToSoloStake?.lt(stakingConsts.minNominatorBond))) {
+      const minNominatorBond = api.createType('Balance', stakingConsts.minNominatorBond).toHuman();
+
+      return setAlert(t('The minimum to be a staker is: {{minNominatorBond}}', { replace: { minNominatorBond } }));
+    }
+  }, [api, availableToSoloStake, t, amountAsBN, stakingConsts?.minNominatorBond, amount, stakingAccount?.stakingLedger?.total]);
 
   useEffect(() => {
     if (call && params && newSelectedValidators) {
@@ -186,6 +223,9 @@ export default function SoloStake({ inputs, onBack, setInputs, setStep }: Props)
           textSpace='15px'
           value={amount}
         />
+        {alert &&
+            <Warn text={alert} />
+        }
         <Grid container item pb='10px'>
           <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '58.25%' }}>
             <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
