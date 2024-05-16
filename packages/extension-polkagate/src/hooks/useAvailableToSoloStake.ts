@@ -21,8 +21,11 @@ export default function useAvailableToSoloStake (address: AccountId | string | u
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active as unknown as BN, [stakingAccount?.stakingLedger?.active]);
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
 
-  return useMemo(() =>
-    balances?.freeBalance && staked && unlockingAmount &&
-    balances.freeBalance.sub(staked).sub(unlockingAmount).sub(redeemable || BN_ZERO)
-  , [balances?.freeBalance, redeemable, staked, unlockingAmount]);
+  return useMemo(() => {
+    if (!balances?.freeBalance || !staked || !unlockingAmount) {
+      return undefined;
+    }
+    return balances.freeBalance.sub(staked).sub(unlockingAmount).sub(redeemable || BN_ZERO);
+  }, [balances?.freeBalance, redeemable, staked, unlockingAmount]);
+}
 }
