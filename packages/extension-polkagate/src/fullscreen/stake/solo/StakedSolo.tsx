@@ -6,13 +6,13 @@
 import { faArrowRotateLeft, faBolt, faCircleDown, faClockFour, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Boy as BoyIcon } from '@mui/icons-material';
 import { Grid } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router';
 
 import { AccountStakingInfo, BalancesInfo } from '@polkadot/extension-polkagate/src/util/types';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 
-import { useInfo, useStakingRewardDestinationAddress, useStakingRewards, useTranslation, useUnSupportedNetwork } from '../../../hooks';
+import { useAvailableToSoloStake, useStakingRewardDestinationAddress, useStakingRewards, useTranslation, useUnstakingAmount, useUnSupportedNetwork } from '../../../hooks';
 import { STAKING_CHAINS } from '../../../util/constants';
 import Bread from '../../partials/Bread';
 import { Title } from '../../sendFund/InputPage';
@@ -24,73 +24,27 @@ import RewardsChart from './partials/RewardsChart';
 import StakedBar from './StakedBar';
 import { MODAL_IDS } from '.';
 
-interface SessionIfo {
-  eraLength: number;
-  eraProgress: number;
-  currentEra: number;
-}
-
 interface Props {
   setShow: React.Dispatch<React.SetStateAction<number>>;
+  refresh: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   stakingAccount: AccountStakingInfo | null | undefined;
   balances: BalancesInfo | undefined
 }
 
-export default function StakedSolo ({ balances, setRefresh, setShow, stakingAccount }: Props): React.ReactElement {
+export default function StakedSolo ({ balances, refresh, setRefresh, setShow, stakingAccount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
-  const { api } = useInfo(address);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
 
+  const availableToSoloStake = useAvailableToSoloStake(address, refresh);
+  const { toBeReleased, unlockingAmount } = useUnstakingAmount(address, refresh);
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
   const rewards = useStakingRewards(address, stakingAccount);
+
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active as unknown as BN, [stakingAccount?.stakingLedger?.active]);
-
-  const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>();
-  const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
-  const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
-
-  const availableToSoloStake = balances?.freeBalance && staked && unlockingAmount && balances.freeBalance.sub(staked).sub(unlockingAmount);
-
-  useEffect(() => {
-    api && api.derive.session?.progress().then((sessionInfo) => {
-      setSessionInfo({
-        currentEra: Number(sessionInfo.currentEra),
-        eraLength: Number(sessionInfo.eraLength),
-        eraProgress: Number(sessionInfo.eraProgress)
-      });
-    });
-  }, [api]);
-
-  useEffect(() => {
-    if (!stakingAccount || !sessionInfo) {
-      setUnlockingAmount(undefined);
-
-      return;
-    }
-
-    let unlockingValue = BN_ZERO;
-    const toBeReleased = [];
-
-    if (stakingAccount?.unlocking) {
-      for (const [_, { remainingEras, value }] of Object.entries(stakingAccount.unlocking)) {
-        if (remainingEras.gtn(0)) {
-          const amount = new BN(value as unknown as string);
-
-          unlockingValue = unlockingValue.add(amount);
-          const secToBeReleased = (Number(remainingEras.subn(1)) * sessionInfo.eraLength + (sessionInfo.eraLength - sessionInfo.eraProgress)) * 6;
-
-          toBeReleased.push({ amount, date: Date.now() + (secToBeReleased * 1000) });
-        }
-      }
-    }
-
-    setToBeReleased(toBeReleased);
-    setUnlockingAmount(unlockingValue);
-  }, [sessionInfo, stakingAccount]);
 
   const onUnstake = useCallback(() => {
     setShow(MODAL_IDS.UNSTAKE);

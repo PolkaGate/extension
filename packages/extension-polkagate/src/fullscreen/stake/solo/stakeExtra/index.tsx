@@ -18,7 +18,7 @@ import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/sr
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
-import { useBalances, useInfo, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
+import { useAvailableToSoloStake, useInfo, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
@@ -39,8 +39,8 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
   const { api, decimal, token } = useInfo(address);
 
   const stakingAccount = useStakingAccount(address);
-  const balances = useBalances(address);
   const stakingConsts = useStakingConsts(address);
+  const availableToSoloStake = useAvailableToSoloStake(address);
 
   const [alert, setAlert] = useState<string | undefined>();
   const [step, setStep] = useState(STEPS.INDEX);
@@ -51,7 +51,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
 
   const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active as unknown as BN, [stakingAccount]);
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
-  const availableToSoloStake = balances?.freeBalance && staked && balances.freeBalance.sub(staked);
+
   const call = api && api.tx.staking.bondExtra;
 
   useEffect(() => {
@@ -118,7 +118,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
 
     const ED = stakingConsts.existentialDeposit;
 
-    const max = availableToSoloStake.sub(ED.muln(3));
+    const max = availableToSoloStake.sub(ED.muln(2));
     const maxToShow = amountToHuman(max.toString(), decimal);
 
     setAmount(maxToShow);
