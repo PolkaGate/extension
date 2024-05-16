@@ -6,11 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { useInfo, useStakingAccount } from '.';
-
-BN.prototype.toJSON = function () {
-  return this.toString();
-};
+import { useApi, useStakingAccount } from '.';
 
 interface SessionIfo {
   eraLength: number;
@@ -33,7 +29,7 @@ interface UnstakingType {
  *
  */
 export default function useUnstakingAmount (address: AccountId | string | undefined, refresh?: boolean): UnstakingType {
-  const { api } = useInfo(address);
+  const api = useApi(address);
   const stakingAccount = useStakingAccount(address, undefined, refresh);
 
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
