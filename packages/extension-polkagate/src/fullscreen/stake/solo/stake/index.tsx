@@ -100,6 +100,8 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
 
       return setAlert(t('The minimum to be a staker is: {{minNominatorBond}}', { replace: { minNominatorBond } }));
     }
+
+    return setAlert(undefined);
   }, [api, availableToSoloStake, t, amountAsBN, stakingConsts?.minNominatorBond, amount, stakingAccount?.stakingLedger?.total]);
 
   useEffect(() => {
