@@ -25,7 +25,7 @@ export default function useAvailableToSoloStake (address: AccountId | string | u
     if (!balances?.freeBalance || !staked || !unlockingAmount) {
       return undefined;
     }
+
     return balances.freeBalance.sub(staked).sub(unlockingAmount).sub(redeemable || BN_ZERO);
   }, [balances?.freeBalance, redeemable, staked, unlockingAmount]);
-}
 }
