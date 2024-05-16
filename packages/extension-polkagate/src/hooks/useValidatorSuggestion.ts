@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getComparator } from '../popup/staking/partial/comparators';
 import { DEFAULT_FILTERS } from '../util/constants';
-import { useChainName, useStakingConsts, useValidators, useValidatorsIdentities } from '.';
+import { useStakingConsts, useValidators, useValidatorsIdentities } from '.';
 
 /**
  * @description
@@ -19,7 +19,6 @@ export default function useValidatorSuggestion (address: string): ValidatorInfo[
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
   const stakingConsts = useStakingConsts(address);
-  const chainName = useChainName(address);
 
   const [selected, setSelected] = useState<ValidatorInfo[] | undefined>();
 
@@ -70,10 +69,12 @@ export default function useValidatorSuggestion (address: string): ValidatorInfo[
     );
     const filtered2 = onLimitValidatorsPerOperator(filtered1, DEFAULT_FILTERS.limitOfValidatorsPerOperator.value);
 
-    const filtered3 = filtered2.filter((v) => v?.identity?.display && v?.identity?.judgements?.length); // filter those who has no verified identity
+    const filtered3 = allValidatorsIdentities?.length
+      ? filtered2.filter((v) => v?.identity?.display && v?.identity?.judgements?.length) // filter those who has no verified identity
+      : filtered2;
 
     return filtered3.sort(getComparator('Commissions')).slice(0, stakingConsts?.maxNominations);
-  }, [onLimitValidatorsPerOperator]);
+  }, [allValidatorsIdentities?.length, onLimitValidatorsPerOperator]);
 
   useEffect(() => {
     if (!allValidators || !stakingConsts) {
