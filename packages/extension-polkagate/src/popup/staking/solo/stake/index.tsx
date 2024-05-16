@@ -131,7 +131,7 @@ export default function Index (): React.ReactElement {
 
   useEffect(() => {
     if (!amountAsBN || !amount) {
-      return;
+      return setAlert(undefined);
     }
 
     if (amountAsBN.gt(availableToSoloStake ?? BN_ZERO)) {
@@ -143,8 +143,6 @@ export default function Index (): React.ReactElement {
 
       return setAlert(t('The minimum to be a staker is: {{minNominatorBond}}', { replace: { minNominatorBond } }));
     }
-
-    setAlert(undefined);
   }, [api, availableToSoloStake, t, amountAsBN, stakingConsts?.minNominatorBond, isFirstTimeStaking, amount]);
 
   const onBackClick = useCallback(() => {
