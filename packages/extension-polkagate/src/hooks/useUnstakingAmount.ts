@@ -1,20 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/**
- * @description
- * this hook returns a
- * */
-
 import { useEffect, useMemo, useState } from 'react';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { updateMeta } from '../messaging';
-import { AccountStakingInfo } from '../util/types';
-import { isHexToBn } from '../util/utils';
-import { useInfo, useStakingAccount, useStashId } from '.';
+import { useInfo, useStakingAccount } from '.';
 
 BN.prototype.toJSON = function () {
   return this.toString();
