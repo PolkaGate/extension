@@ -116,6 +116,7 @@ function AOC ({ account, accountAssets, api, balanceToShow, hideNumbers, mode = 
       </Typography>
       <Grid alignItems='center' container item xs>
         <Collapse collapsedSize={53} in={showMore} orientation='vertical' sx={{ width: '100%' }}>
+          <Grid container gap='15px' item justifyContent='flex-start' sx={{ height: 'fit-content', minHeight: '50px', overflow: 'hidden', p: '5px 1%' }}>
             {assets.map((asset, index) => (
               <AssetsBoxes
                 account={account}
