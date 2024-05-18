@@ -88,7 +88,9 @@ export default function AccountDetails (): React.ReactElement {
       return;
     }
 
-    return { ...(balances || {}), ...(selectedAsset || {}) };
+    return balances?.date > selectedAsset?.date
+      ? { ...(selectedAsset || {}), ...(balances || {}) }
+      : { ...(balances || {}), ...(selectedAsset || {}) };
   }, [balances, chainName, selectedAsset]);
 
   const currentPrice = useMemo((): number | undefined => {
@@ -176,9 +178,9 @@ export default function AccountDetails (): React.ReactElement {
           <Bread />
           <Title
             height='70px'
-            icon={ faFileInvoice }
+            icon={faFileInvoice}
             padding='0px'
-            text= {t('Account Details')}
+            text={t('Account Details')}
           />
           <Grid container item justifyContent='space-between' mb='15px'>
             <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 300px - 3%)'>

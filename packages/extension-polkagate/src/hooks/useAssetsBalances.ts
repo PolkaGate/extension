@@ -71,6 +71,7 @@ export interface FetchedBalance {
   assetId?: number,
   totalBalance: BN,
   chainName: string,
+  date?: number,
   decimal: number,
   genesisHash: string,
   priceId: string,
@@ -122,6 +123,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
   const isTestnetEnabled = useIsTestnetEnabled();
   const selectedChains = useSelectedChains();
 
+  /** to limit calling of this heavy call on just home and account details */
   const SHOULD_FETCH_ASSETS = window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs');
 
   /** We need to trigger address change when a new address is added, without affecting other account fields. Therefore, we use the length of the accounts array as a dependency. */
@@ -268,15 +270,17 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
       const parsedMessage = JSON.parse(message) as WorkerMessage;
 
       Object.keys(parsedMessage).forEach((address) => {
-        /** We use index 0 because each relay chain has only one asset */
+        /** We use index 0 because we consider each relay chain has only one asset */
         _assets[address] = [
           {
             ...parsedMessage[address][0],
             ...allHexToBN(parsedMessage[address][0].balanceDetails),
+            date: Date.now(),
             decimal: Number(parsedMessage[address][0].decimal),
             totalBalance: isHexToBn(parsedMessage[address][0].totalBalance)
           }];
 
+        /** since balanceDetails is already converted all to BN, hence we can delete that field */
         delete _assets[address][0].balanceDetails;
       });
 
@@ -314,8 +318,9 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
           .map((message) => {
             const _asset = {
               ...message,
-              availableBalance: isHexToBn(message.availableBalance),
+              availableBalance: isHexToBn(message.availableBalance as string),
               ...allHexToBN(message.balanceDetails),
+              date: Date.now(),
               decimal: Number(message.decimal),
               totalBalance: isHexToBn(message.totalBalance)
             };
@@ -358,10 +363,13 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
       Object.keys(parsedMessage).forEach((address) => {
         _assets[address] = parsedMessage[address].map(
           (message) => {
-            const temp = { ...message,
+            const temp = {
+              ...message,
               ...allHexToBN(message.balanceDetails),
+              date: Date.now(),
               decimal: Number(message.decimal),
-              totalBalance: isHexToBn(message.totalBalance) };
+              totalBalance: isHexToBn(message.totalBalance)
+            };
 
             delete temp.balanceDetails;
 
