@@ -12,7 +12,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { ApiPromise } from '@polkadot/api';
 
 import { ActionContext, Infotip } from '../../../components';
-import { useAccount, useAccountInfo2, useTranslation } from '../../../hooks';
+import { useAccountInfo2, useInfo, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 import { Proxy } from '../../../util/types';
@@ -27,7 +27,7 @@ export default function AccountIcons ({ address, api, formatted }: AddressDetail
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
-  const account = useAccount(address);
+  const { account, chain } = useInfo(address);
   const accountInfo = useAccountInfo2(api, formatted);
 
   const [hasID, setHasID] = useState<boolean | undefined>();
@@ -35,6 +35,10 @@ export default function AccountIcons ({ address, api, formatted }: AddressDetail
   const [hasProxy, setHasProxy] = useState<boolean | undefined>();
 
   const recoverableToolTipTxt = useMemo(() => {
+    if (!chain) {
+      return 'Account is in Any Chain mode';
+    }
+
     switch (isRecoverable) {
       case true:
         return 'Recoverable';
@@ -43,17 +47,22 @@ export default function AccountIcons ({ address, api, formatted }: AddressDetail
       default:
         return 'Checking';
     }
-  }, [isRecoverable]);
+  }, [chain, isRecoverable]);
 
   const proxyTooltipTxt = useMemo(() => {
-    if (hasProxy) {
-      return 'Has Proxy';
-    } else if (hasProxy === false) {
-      return 'No Proxy';
-    } else {
-      return 'Checking';
+    if (!chain) {
+      return 'Account is in Any Chain mode';
     }
-  }, [hasProxy]);
+
+    switch (hasProxy) {
+      case true:
+        return 'Has Proxy';
+      case false:
+        return 'No Proxy';
+      default:
+        return 'Checking';
+    }
+  }, [chain, hasProxy]);
 
   useEffect((): void => {
     setHasID(undefined);
@@ -88,19 +97,19 @@ export default function AccountIcons ({ address, api, formatted }: AddressDetail
   }, [api, address, formatted, account?.genesisHash]);
 
   const openIdentity = useCallback(() => {
-    address && windowOpen(`/manageIdentity/${address}`);
-  }, [address]);
+    address && chain && windowOpen(`/manageIdentity/${address}`);
+  }, [address, chain]);
 
   const openSocialRecovery = useCallback(() => {
-    address && windowOpen(`/socialRecovery/${address}/false`);
-  }, [address]);
+    address && chain && windowOpen(`/socialRecovery/${address}/false`);
+  }, [address, chain]);
 
   const openManageProxy = useCallback(() => {
-    address && onAction(`/fullscreenProxyManagement/${address}`);
-  }, [address, onAction]);
+    address && chain && onAction(`/fullscreenProxyManagement/${address}`);
+  }, [address, chain, onAction]);
 
   return (
-    <Grid alignItems='center' container direction='column' display='grid' item justifyContent='center' justifyItems='center' width='fit-content' height='72px'>
+    <Grid alignItems='center' container direction='column' display='grid' height='72px' item justifyContent='center' justifyItems='center' width='fit-content'>
       <Grid item onClick={openIdentity} sx={{ border: '1px solid', borderColor: 'success.main', borderRadius: '5px', cursor: 'pointer', display: hasID ? 'inherit' : 'none', height: '24px', m: 'auto', p: '2px', width: 'fit-content' }}>
         {hasID
           ? accountInfo?.identity?.displayParent
@@ -133,6 +142,5 @@ export default function AccountIcons ({ address, api, formatted }: AddressDetail
         </Infotip>
       </Grid>
     </Grid>
-  )
-
+  );
 }
