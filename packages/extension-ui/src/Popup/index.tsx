@@ -53,6 +53,7 @@ import AddWatchOnlyFullScreen from '../../../extension-polkagate/src/popup/impor
 import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
 import AttachQrFullScreen from '../../../extension-polkagate/src/popup/import/attachQrFullScreen';
 import ImportLedger from '../../../extension-polkagate/src/popup/import/importLedger';
+import ImportProxied from '../../../extension-polkagate/src/popup/import/importProxied';
 import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeedFullScreen';
 import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJSONFullScreen';
 import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
@@ -302,6 +303,7 @@ export default function Popup (): React.ReactElement {
                                     <Route path='/import/add-watch-only-full-screen'>{wrapWithErrorBoundary(<AddWatchOnlyFullScreen />, 'import-add-watch-only-full-screen')}</Route>
                                     <Route path='/import/attach-qr'>{wrapWithErrorBoundary(<AttachQR />, 'attach-qr')}</Route>
                                     <Route path='/import/attach-qr-full-screen'>{wrapWithErrorBoundary(<AttachQrFullScreen />, 'attach-qr-full-screen')}</Route>
+                                    <Route path='/import/proxied'>{wrapWithErrorBoundary(<ImportProxied />, 'import-proxied')}</Route>
                                     <Route path='/login-password'>{wrapWithErrorBoundary(<LoginPassword />, 'manage-login-password')}</Route>
                                     <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
                                     <Route path='/manageIdentity/:address'>{wrapWithErrorBoundary(<ManageIdentity />, 'manage-identity')}</Route>
