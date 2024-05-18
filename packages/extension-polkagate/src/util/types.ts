@@ -769,6 +769,7 @@ export interface AccountsAssetsContextType {
   setAccountsAssets: (savedAccountAssets: SavedAssets) => void;
 }
 
+// TODO: FixMe, Controller is deprecated
 export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }
 export interface SoloSettings {
   controllerId?: AccountId | string | undefined,
