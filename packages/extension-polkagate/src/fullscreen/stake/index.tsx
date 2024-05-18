@@ -59,6 +59,9 @@ export default function StakingOptions (): React.ReactElement {
   const [step, setStep] = useState<StepsType>(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
 
+  const poolSteps = [STEPS.JOIN_POOL, STEPS.JOIN_REVIEW, STEPS.CREATE_POOL, STEPS.CREATE_REVIEW];
+  const generalSteps = [STEPS.EASY_STAKING, STEPS.EASY_REVIEW, STEPS.INDEX, STEPS.CONFIRM, STEPS.WAIT_SCREEN];
+
   const OnEasyStaking = useCallback(
     () => setStep(STEPS.EASY_STAKING)
     , []);
@@ -83,11 +86,11 @@ export default function StakingOptions (): React.ReactElement {
       case STEPS.CREATE_POOL:
         return t('Create Staking Pool');
       case STEPS.EASY_REVIEW:
+      case STEPS.SOLO_REVIEW:
         return t('Review');
       case STEPS.JOIN_REVIEW:
-        return t('Review, Join Pool');
       case STEPS.CREATE_REVIEW:
-        return t('Review, Create Pool');
+        return t('Review');
       case STEPS.CONFIRM:
         return isSuccess ? t('Staked') : t('Staking Failed');
       default:
@@ -103,16 +106,16 @@ export default function StakingOptions (): React.ReactElement {
         <Title
           height='85px'
           icon={
-            [STEPS.EASY_STAKING, STEPS.EASY_REVIEW, STEPS.INDEX].includes(step)
+            generalSteps.includes(step)
               ? faCoins
               : undefined
           }
           logo={
-            [STEPS.JOIN_POOL, STEPS.JOIN_REVIEW, STEPS.CREATE_POOL, STEPS.CREATE_REVIEW].includes(step)
+            poolSteps.includes(step)
               ? <PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />
-              : [STEPS.STAKE_SOLO].includes(step) &&
+              : [STEPS.STAKE_SOLO, STEPS.SOLO_REVIEW].includes(step) &&
               <BoyIcon sx={{ color: 'text.primary', fontSize: '62px' }} />}
-          ml={[STEPS.EASY_STAKING, STEPS.EASY_REVIEW, STEPS.INDEX].includes(step) ? undefined : '-25px'}
+          ml={generalSteps.includes(step) ? undefined : '-25px'}
           padding='0px'
           text={getHeaderText(txInfo?.success)}
         />
