@@ -48,10 +48,11 @@ export default function Index (): React.ReactElement {
   const stakingAccount = useStakingAccount(address, undefined, refresh, setRefresh);
   const balances = useBalances(address, refresh, setRefresh);
 
-  const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const [showId, setShow] = useState<number>(MODAL_IDS.NONE);
   const [step, setStep] = useState<number>(STEPS.STAKE_SOLO);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
+ 
+  const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
 
   const onBack = useCallback(() => {
     openOrFocusTab(`/solofs/${address}/`, true);
@@ -63,6 +64,7 @@ export default function Index (): React.ReactElement {
       {showId !== MODAL_IDS.STAKE &&
         <StakedSolo
           balances={balances}
+          refresh={refresh}
           setRefresh={setRefresh}
           setShow={setShow}
           stakingAccount={stakingAccount}

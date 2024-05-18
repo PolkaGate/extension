@@ -43,7 +43,7 @@ interface Props {
   txInfo: TxInfo | undefined
 }
 
-function Entry({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.ReactElement {
+function Entry ({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.ReactElement {
   const { address } = useParams<{ address: string }>();
 
   const [refresh, setRefresh] = useState<boolean>(false);

@@ -55,7 +55,7 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
 
       if (amountAsBN.gt(minToReceiveRewardsInSolo.muln(SAFETY_MARGIN_FACTOR_FOR_MIN_TO_SOLO_STAKE))) {
         // can stake solo
-        if (api && autoSelectedValidators) {
+        if (api && autoSelectedValidators?.length) {
           const bonded = api.tx.staking.bond;
           const bondParams = [amountAsBN, 'Staked'];
 

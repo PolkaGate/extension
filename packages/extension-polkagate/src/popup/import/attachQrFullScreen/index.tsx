@@ -11,7 +11,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { QrScanAddress } from '@polkadot/react-qr';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, TwoButtons, Warning } from '../../../components';
+import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, PButton, TwoButtons, Warning } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from '../../../messaging';
@@ -70,9 +70,7 @@ export default function AttachQrFullScreen (): React.ReactElement {
     []
   );
 
-  const onCancel = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
+  const onCancel = useCallback(() => window.close(), []);
 
   const _onError = useCallback((error: Error) => {
     setInvalidQR(String(error).includes('Invalid prefix'));
@@ -150,6 +148,14 @@ export default function AttachQrFullScreen (): React.ReactElement {
               <Typography fontSize='16px' fontWeight={300} m='auto' pt='20px' textAlign='center' width='92%'>
                 {t('Hold the QR code in front of the device’s camera')}
               </Typography>
+              <PButton
+                _ml={0}
+                _mt='30px'
+                _onClick={onCancel}
+                _variant='contained'
+                _width={100}
+                text={t('Cancel')}
+              />
             </Grid>
           }
           {account &&

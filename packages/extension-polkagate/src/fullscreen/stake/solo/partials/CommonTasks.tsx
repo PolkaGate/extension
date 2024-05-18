@@ -9,7 +9,7 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { openOrFocusTab, TaskButton } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
-import { useInfo, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useInfo, useStakingAccount, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { BN } from '@polkadot/util';
 
 import ConfigurePayee from '../commonTasks/configurePayee';
@@ -26,7 +26,18 @@ export default function CommonTasks ({ address, setRefresh, staked }: Props): Re
   const theme = useTheme();
   const { genesisHash } = useInfo(address);
 
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
+  const stakingAccount = useStakingAccount(address);
+
+  const stakedButNoValidators = useMemo(() => {
+    if (stakingAccount?.stakingLedger?.active) {
+      const hasStaked = !(stakingAccount.stakingLedger.active as unknown as BN).isZero();
+      const hasNotSelectedValidators = stakingAccount.nominators?.length === 0;
+
+      return hasStaked && hasNotSelectedValidators;
+    }
+
+    return undefined;
+  }, [stakingAccount]);
 
   const [showRewardDestinationModal, setShowRewardDestinationModal] = useState<boolean>(false);
 
@@ -66,7 +77,8 @@ export default function CommonTasks ({ address, setRefresh, staked }: Props): Re
             disabled={isDisabled}
             icon={
               <FontAwesomeIcon
-                color={`${theme.palette.text.primary}`}
+                bounce={!!stakedButNoValidators}
+                color={stakedButNoValidators ? `${theme.palette.warning.main}` : `${theme.palette.text.primary}`}
                 fontSize='22px'
                 icon={faHand}
               />

@@ -40,7 +40,7 @@ export default function StakedBar ({ availableBalance, balances, redeemable, sta
   );
 
   return (
-    <Grid container item>
+    <Grid container item sx={{flexWrap: 'nowrap' }}>
       <Bar
         bgcolor={theme.palette.aye.main}
         percent ={stakedPercent }

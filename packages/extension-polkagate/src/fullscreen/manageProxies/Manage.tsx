@@ -168,8 +168,8 @@ export default function Manage ({ api, chain, depositedValue, isDisabledAddProxy
             mt='10px'
             onPrimaryClick={toReview}
             onSecondaryClick={onCancel}
-            primaryBtnText={t<string>('Next')}
-            secondaryBtnText={t<string>('Cancel')}
+            primaryBtnText={t('Next')}
+            secondaryBtnText={t('Cancel')}
             width='100%'
           />
         </Grid>

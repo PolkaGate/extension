@@ -59,7 +59,7 @@ export function DraggableModal ({ children, maxHeight = 740, minHeight = 615, on
 
   const style = {
     bgcolor: 'background.default',
-    border: isDarkMode ? '1px solid' : 'none',
+    border: isDarkMode ? '0.5px solid' : 'none',
     borderColor: 'secondary.light',
     borderRadius: '10px',
     boxShadow: 24,

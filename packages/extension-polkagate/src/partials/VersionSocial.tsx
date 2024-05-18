@@ -17,7 +17,7 @@ interface Props {
   iconSize?: number;
 }
 
-export const SocialLinks = ({ iconSize = 15 }: { iconSize: number }) => (
+export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => (
   <Grid container width='fit-content'>
     <Grid item>
       <Link href={'mailto:polkagate@outlook.com'}>
