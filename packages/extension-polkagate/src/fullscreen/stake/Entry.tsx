@@ -13,7 +13,7 @@ import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { Balance } from '@polkadot/types/interfaces';
 
 import { useBalances } from '../../hooks';
-import { MyPoolInfo, TxInfo, ValidatorInfo } from '../../util/types';
+import { MyPoolInfo, Payee, TxInfo, ValidatorInfo } from '../../util/types';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import WaitScreen from '../governance/partials/WaitScreen';
 import Confirmation from './easyMode/Confirmation';
@@ -28,6 +28,7 @@ export interface Inputs {
   amount?: string | undefined; // deprecated, moved to extraInfo
   call: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   mode?: number;
+  payee?: Payee;
   params: unknown[] | (() => unknown)[];
   pool?: MyPoolInfo,
   estimatedFee?: Balance;
