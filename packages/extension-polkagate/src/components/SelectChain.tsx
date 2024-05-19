@@ -28,9 +28,10 @@ interface Props {
   icon?: string;
   style: SxProps<Theme> | undefined;
   disabledItems?: string[] | number[];
+  fullWidthDropdown?: boolean;
 }
 
-function SelectChain({ address, defaultValue, disabledItems, icon = undefined, label, onChange, options, style }: Props) {
+function SelectChain({ address, defaultValue, disabledItems, fullWidthDropdown, icon = undefined, label, onChange, options, style }: Props) {
   const currentChainName = useChainName(address !== 'dummy' ? address : undefined);
   const theme = useTheme();
   const isTestnetEnabled = useIsTestnetEnabled();
@@ -85,6 +86,7 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
         <Select
           defaultValue={defaultValue}
           disabledItems={_disabledItems}
+          fullWidthDropdown={fullWidthDropdown}
           isDisabled={!address}
           label={label}
           onChange={onChangeNetwork}
