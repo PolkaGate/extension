@@ -59,7 +59,6 @@ export default function AccountDetails (): React.ReactElement {
   const theme = useTheme();
   const { address, paramAssetId } = useParams<{ address: string, paramAssetId?: string }>();
   const { accounts } = useContext(AccountContext);
-
   const currency = useCurrency();
   const { account, api, chain, chainName, formatted } = useInfo(address);
   const onAction = useContext(ActionContext);
@@ -74,7 +73,7 @@ export default function AccountDetails (): React.ReactElement {
 
   const assetId = useMemo(() => assetIdOnAssetHub || selectedAsset?.assetId, [assetIdOnAssetHub, selectedAsset?.assetId]);
 
-  const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId);
+  const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId || undefined);
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette]);
   const isOnAssetHub = useMemo(() => ASSET_HUBS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
@@ -89,7 +88,9 @@ export default function AccountDetails (): React.ReactElement {
       return;
     }
 
-    return isRelayChain(chainName) ? balances : (selectedAsset || balances);
+    return balances?.date > selectedAsset?.date
+      ? { ...(selectedAsset || {}), ...(balances || {}) }
+      : { ...(balances || {}), ...(selectedAsset || {}) };
   }, [balances, chainName, selectedAsset]);
 
   const currentPrice = useMemo((): number | undefined => {
@@ -133,13 +134,13 @@ export default function AccountDetails (): React.ReactElement {
   }, [accountAssets, address, assetId, onAction]);
 
   useEffect(() => {
-    if (!paramAssetId) {
+    if (paramAssetId === undefined) {
       return;
     }
 
     const mayBeAssetIdSelectedInHomePage = parseInt(paramAssetId);
 
-    if (mayBeAssetIdSelectedInHomePage && accountAssets) {
+    if (mayBeAssetIdSelectedInHomePage >= 0 && accountAssets) {
       const found = accountAssets.find(({ assetId, genesisHash }) => assetId === mayBeAssetIdSelectedInHomePage && account?.genesisHash === genesisHash);
 
       setSelectedAsset(found);
@@ -177,9 +178,9 @@ export default function AccountDetails (): React.ReactElement {
           <Bread />
           <Title
             height='70px'
-            icon={ faFileInvoice }
+            icon={faFileInvoice}
             padding='0px'
-            text= {t('Account Details')}
+            text={t('Account Details')}
           />
           <Grid container item justifyContent='space-between' mb='15px'>
             <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 300px - 3%)'>
@@ -187,7 +188,7 @@ export default function AccountDetails (): React.ReactElement {
                 accountAssets={accountAssets}
                 address={address}
                 api={api}
-                balances={balances}
+                balances={balancesToShow}
                 chain={chain}
                 chainName={chainName}
                 formatted={formatted}
