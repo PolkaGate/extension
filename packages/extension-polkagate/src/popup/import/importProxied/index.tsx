@@ -10,12 +10,11 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { AccountContext, ActionContext, Label, PButton, SelectChain } from '../../../components';
-import { useApiWithChain, useGenesisHashOptions, useProxiedAccounts, useTranslation } from '../../../hooks';
-import { createAccountExternal, getMetadata } from '../../../messaging';
+import { useGenesisHashOptions, useInfo, useProxiedAccounts, useTranslation } from '../../../hooks';
+import { createAccountExternal, getMetadata, tieAccount } from '../../../messaging';
 import HeaderBrand from '../../../partials/HeaderBrand';
 import { PROXY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
 import getLogo from '../../../util/getLogo';
-import { getFormattedAddress } from '../../../util/utils';
 import AddressDropdown from '../../newAccount/deriveAccount/AddressDropdown';
 import ProxiedTable from './ProxiedTable';
 
@@ -40,9 +39,8 @@ function ImportProxied (): React.ReactElement {
   const [chain, setChain] = useState<Chain | null>(null);
   const [isBusy, setIsBusy] = useState(false);
 
-  const formatted = selectedAddress && getFormattedAddress(selectedAddress, chain, 42);
-  const proxiedAccounts = useProxiedAccounts(selectedAddress, chain);
-  const api = useApiWithChain(chain);
+  const proxiedAccounts = useProxiedAccounts(chain ? selectedAddress : undefined);
+  const { api, formatted } = useInfo(chain ? selectedAddress : undefined);
 
   const { accountGenesishash, accountName } = useMemo(() => {
     const selectedAccount = accounts.find(({ address }) => address === selectedAddress);
@@ -53,10 +51,11 @@ function ImportProxied (): React.ReactElement {
   const onChangeGenesis = useCallback((genesisHash?: string | null) => {
     setSelectedProxied([]);
 
-    genesisHash && getMetadata(genesisHash, true)
+    genesisHash && tieAccount(selectedAddress ?? '', genesisHash)
+      .then(() => getMetadata(genesisHash, true))
       .then(setChain)
       .catch(console.error);
-  }, []);
+  }, [selectedAddress]);
 
   const onParentChange = useCallback((address: string) => {
     setSelectedProxied([]);
@@ -106,6 +105,7 @@ function ImportProxied (): React.ReactElement {
       </Label>
       <SelectChain
         address={selectedAddress}
+        fullWidthDropdown
         icon={getLogo(chain ?? undefined)}
         label={t('Select the chain')}
         onChange={onChangeGenesis}
