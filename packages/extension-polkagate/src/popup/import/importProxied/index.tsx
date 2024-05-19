@@ -112,7 +112,7 @@ function ImportProxied (): React.ReactElement {
           api={api}
           chain={chain}
           label={t('Proxied account(s)')}
-          maxHeight='155px'
+          maxHeight='140px'
           proxiedAccounts={proxiedAccounts?.proxy === formatted ? proxiedAccounts?.proxied : undefined}
           selectedProxied={selectedProxied}
           setSelectedProxied={setSelectedProxied}
