@@ -80,7 +80,7 @@ export default function ImportRawSeed (): React.ReactElement {
     if (!(seed.startsWith('0x') && seed.length === 66)) {
       setAddress('');
       setAccount(null);
-      setError(t('Invalid recovery phrase')
+      setError(t('The raw seed is invalid. It should be 66 characters long and start with 0x')
       );
 
       return;
