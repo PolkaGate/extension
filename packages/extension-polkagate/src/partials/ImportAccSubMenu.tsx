@@ -5,6 +5,8 @@
 
 import '@vaadin/icons';
 
+import { faSitemap } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
@@ -49,6 +51,10 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
     windowOpen('/account/import-ledger').catch(console.error);
   }, []);
 
+  const onImportProxied = useCallback((): void => {
+    onAction('/import/proxied');
+  }, [onAction]);
+
   return (
     <Collapse easing={{ enter: '200ms', exit: '100ms' }} in={show} sx={{ width: '100%' }}>
       <Grid container item>
@@ -92,6 +98,21 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
             onClick={onAddWatchOnly}
             py='4px'
             text={t('Add watch-only account')}
+            withHoverEffect
+          />
+          <MenuItem
+            fontSize='17px'
+            iconComponent={
+              <FontAwesomeIcon
+                color={theme.palette.text.primary}
+                fontSize='18px'
+                icon={faSitemap}
+                style={{ transform: 'rotate(180deg)' }}
+              />
+            }
+            onClick={onImportProxied}
+            py='4px'
+            text={t('Import proxied account(s)')}
             withHoverEffect
           />
           <MenuItem

@@ -1252,5 +1252,17 @@
   "This account is a validator!": "",
   "Social recovery": "",
   "Send fund": "",
-  "Receive fund": ""
+  "Receive fund": "",
+  "Import proxied accounts": "",
+  "Import proxied account(s)": "",
+  "Import Proxied": "",
+  "Import proxied account(s) to have it as watch-only account in the extension.": "",
+  "Choose proxy account": "",
+  "Proxied account(s)": "",
+  "Import selected": "",
+  "Proxied Account(s)": "",
+  "Looking for proxied accounts ...": "",
+  "This isn't a proxy account on {{chainName}}!": "",
+  "{{selectedCount}} of {{proxiedCount}} is selected": "",
+  "Select an account": ""
 }

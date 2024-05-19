@@ -98,3 +98,4 @@ export { default as useActiveEraIndex } from './useActiveEraIndex';
 export { default as useIsValidator } from './useIsValidator';
 export { default as useUnstakingAmount } from './useUnstakingAmount';
 export { default as useAvailableToSoloStake } from './useAvailableToSoloStake';
+export { default as useProxiedAccounts } from './useProxiedAccounts';

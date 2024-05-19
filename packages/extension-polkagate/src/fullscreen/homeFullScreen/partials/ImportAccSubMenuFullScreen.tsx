@@ -5,6 +5,8 @@
 
 import '@vaadin/icons';
 
+import { faSitemap } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Collapse, Grid, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
@@ -38,6 +40,10 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
 
   const onAddWatchOnlyFullScreen = useCallback(() => {
     openOrFocusTab('/import/add-watch-only-full-screen');
+  }, []);
+
+  const onImportProxiedFullScreen = useCallback(() => {
+    openOrFocusTab('/import/proxied-full-screen');
   }, []);
 
   const onAttachQrFullScreen = useCallback(() => {
@@ -83,6 +89,19 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             isSubMenu
             onClick={onAddWatchOnlyFullScreen}
             text={t('Add watch-only account')}
+          />
+          <TaskButton
+            icon={
+              <FontAwesomeIcon
+                color={theme.palette.text.primary}
+                fontSize='18px'
+                icon={faSitemap}
+                style={{ transform: 'rotate(180deg)' }}
+              />
+            }
+            isSubMenu
+            onClick={onImportProxiedFullScreen}
+            text={t('Import proxied accounts')}
           />
           <TaskButton
             disabled={settings.camera !== 'on'}

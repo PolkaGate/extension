@@ -10,10 +10,11 @@ interface Props {
   title?: string;
   pt?: number | string;
   size?: number;
+  gridSize?: number;
   type?: 'circle' | 'cubes' | 'grid';
 }
 
-function Progress({ fontSize = 13, pt = '50px', size = 25, title, type = 'circle' }: Props): React.ReactElement<Props> {
+function Progress ({ fontSize = 13, gridSize = 135, pt = '50px', size = 25, title, type = 'circle' }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (
@@ -46,7 +47,7 @@ function Progress({ fontSize = 13, pt = '50px', size = 25, title, type = 'circle
           col={3}
           color={theme.palette.secondary.main}
           row={3}
-          size={135}
+          size={gridSize}
           style={{ margin: 'auto', opacity: '0.4' }}
         />
       }

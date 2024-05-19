@@ -793,3 +793,8 @@ export enum CanPayStatements {
   CANNOTPAYDEPOSIT,
   PROXYCANPAYFEE,
 }
+
+export type ProxiedAccounts = {
+  proxy: string;
+  proxied: string[];
+};
