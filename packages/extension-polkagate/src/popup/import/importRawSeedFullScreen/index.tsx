@@ -86,18 +86,24 @@ export default function ImportRawSeed (): React.ReactElement {
       return;
     }
 
-    const { pair } = keyring.addUri(seed, password, { name }, type);
+    try {
+      const { pair } = keyring.addUri(seed, password, { name }, type);
 
-    const validatedAccount = {
-      address: pair.address,
-      suri: seed
-    };
+      const validatedAccount = {
+        address: pair.address,
+        suri: seed
+      };
 
-    setError(undefined);
-    setAddress(pair.address);
-    setAccount(
-      objectSpread<AccountInfo>({}, validatedAccount, { genesis, type })
-    );
+      setError(undefined);
+      setAddress(pair.address);
+      setAccount(
+        objectSpread<AccountInfo>({}, validatedAccount, { genesis, type })
+      );
+    } catch (error) {
+      setAddress('');
+      setAccount(null);
+      setError(`${error}`);
+    }
   }, [t, genesis, seed, setAccount, type, name, password]);
 
   const onImport = useCallback(async (): Promise<void> => {
