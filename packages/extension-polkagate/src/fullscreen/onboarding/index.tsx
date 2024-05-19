@@ -64,6 +64,12 @@ function Onboarding (): React.ReactElement {
     }, []
   );
 
+  const onImportRawSeed = useCallback(
+    (): void => {
+      windowOpen('/account/import-raw-seed').catch(console.error);
+    }, []
+  );
+
   const onAttachQR = useCallback(
     (): void => {
       windowOpen('/import/attach-qr-full-screen').catch(console.error);
@@ -125,6 +131,13 @@ function Onboarding (): React.ReactElement {
                 _onClick={onImport}
                 _variant={'outlined'}
                 text={t('Import from recovery phrase')}
+              />
+              <PButton
+                _ml={0}
+                _mt='15px'
+                _onClick={onImportRawSeed}
+                _variant={'outlined'}
+                text={t('Import from raw seed')}
               />
               <PButton
                 _ml={0}

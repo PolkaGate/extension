@@ -53,6 +53,7 @@ import AddWatchOnlyFullScreen from '../../../extension-polkagate/src/popup/impor
 import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
 import AttachQrFullScreen from '../../../extension-polkagate/src/popup/import/attachQrFullScreen';
 import ImportLedger from '../../../extension-polkagate/src/popup/import/importLedger';
+import ImportRawSeed from '../../../extension-polkagate/src/popup/import/importRawSeedFullScreen';
 import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeedFullScreen';
 import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJSONFullScreen';
 import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
@@ -283,6 +284,7 @@ export default function Popup (): React.ReactElement {
                                     <Route path='/account/export-all'>{wrapWithErrorBoundary(<ExportAll />, 'export-all-address')}</Route>
                                     <Route path='/account/import-ledger'>{wrapWithErrorBoundary(<ImportLedger />, 'import-ledger')}</Route>
                                     <Route path='/account/import-seed'>{wrapWithErrorBoundary(<ImportSeed />, 'import-seed')}</Route>
+                                    <Route path='/account/import-raw-seed'>{wrapWithErrorBoundary(<ImportRawSeed />, 'import-raw-seed')}</Route>
                                     <Route path='/account/restore-json'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json')}</Route>
                                     <Route path='/accountfs/:address/:paramAssetId'>{wrapWithErrorBoundary(<AccountFS />, 'account')}</Route>
                                     <Route path='/auth-list'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
