@@ -63,10 +63,10 @@ export default function Alert ({ setShowAlert, show }: Props): React.ReactElemen
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Introducing support for Polkadot Vault in full-screen mode.',
-              'Added Breadcrumbs for easier navigation in full-screen mode.',
-              'Experience enhanced performance and benefit from bug fixes.'
-
+              'You can now import proxied accounts associated with a proxy account.',
+              'The option to import from a raw seed is now accessible.',
+              'Introducing a vibrant staking bar for enhanced visual representation of amounts.',
+              'Enjoy improved performance and benefit from bug fixes.'
             ]}
           />
         </Grid>
