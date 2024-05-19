@@ -72,7 +72,7 @@ export default function ProxiedTable ({ api, chain, label, maxHeight = '120px', 
               </Grid>
             </Grid>
             <Typography fontSize={'14px'} fontWeight={isExtensionMode ? 300 : 400} lineHeight={isExtensionMode ? '25px' : '35px'} pl={isExtensionMode ? '30px' : '35px'}>
-              {t('Proxied Account(s)')}
+              {t('account(s)')}
             </Typography>
           </Grid>
           {proxiedAccounts === undefined &&
