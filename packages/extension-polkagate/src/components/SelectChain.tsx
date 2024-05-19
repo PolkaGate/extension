@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import { faQuestion } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Grid, SxProps, Theme, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
@@ -93,7 +95,13 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
       <Grid item sx={{ ml: '10px', width: 'fit-content' }}>
         {icon
           ? <Avatar src={icon} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 31, width: 31 }} variant='square' />
-          : <Grid sx={{ bgcolor: 'action.disabledBackground', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', height: '31px', width: '31px' }}>
+          : <Grid sx={{ bgcolor: 'divider', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', height: '31px', width: '31px' }}>
+            <FontAwesomeIcon
+              color={theme.palette.secondary.light}
+              fontSize='22px'
+              icon={faQuestion}
+              style={{ paddingLeft: '8px', paddingTop: '4px' }}
+            />
           </Grid>
         }
       </Grid>
