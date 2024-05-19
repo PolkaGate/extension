@@ -120,7 +120,7 @@ export const IDENTITY_CHAINS = [
   '0xe61a41c53f5dcd0beb09df93b34402aada44cb05117b71059cce40a2723a4e97', // Parallel
   '0x1bb969d85965e4bb5a651abbedf21a54b6b31a21f66b5401cc3f1e286268d736', // Phala
   '0x6811a339673c9daa897944dcdac99c6e2939cc88245ed21951a0a3c9a2be75bc', // Picaso
-  '0x6d8d9f145c2177fa83512492cdd80a71e29f22473f4a8943a6292149ac319fb9', // SORA
+  '0x6d8d9f145c2177fa83512492cdd80a71e29f22473f4a8943a6292149ac319fb9' // SORA
 ];
 
 export const INITIAL_RECENT_CHAINS_GENESISHASH = [
@@ -194,7 +194,7 @@ export const DEFAULT_POOL_FILTERS = {
 };
 
 export const TOTAL_STAKE_HELPER_TEXT = 'Your total amount of stake after completing this transaction.';
-export const SYSTEM_SUGGESTION_TEXT = 'Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.'// which not slashed before.' //TODO: add a disclaimer to the text too
+export const SYSTEM_SUGGESTION_TEXT = 'Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.';// which not slashed before.' //TODO: add a disclaimer to the text too
 
 export const REGISTRARS_LIST: { addresses: string[]; index: number; name: string }[] = [
   {
@@ -226,4 +226,4 @@ export const USD_CURRENCY = {
 };
 
 export const FULLSCREEN_WIDTH = '900px';
-export const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed', '/forgot-password', '/reset-wallet'];
+export const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed', '/account/import-raw-seed', '/forgot-password', '/reset-wallet'];
