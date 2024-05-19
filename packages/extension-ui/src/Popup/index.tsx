@@ -55,6 +55,7 @@ import AttachQrFullScreen from '../../../extension-polkagate/src/popup/import/at
 import ImportLedger from '../../../extension-polkagate/src/popup/import/importLedger';
 import ImportProxied from '../../../extension-polkagate/src/popup/import/importProxied';
 import ImportProxiedFullScreen from '../../../extension-polkagate/src/popup/import/importProxiedFullScreen';
+import ImportRawSeed from '../../../extension-polkagate/src/popup/import/importRawSeedFullScreen';
 import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeedFullScreen';
 import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJSONFullScreen';
 import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
