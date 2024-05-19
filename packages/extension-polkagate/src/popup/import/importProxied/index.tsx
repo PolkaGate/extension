@@ -30,7 +30,7 @@ function ImportProxied (): React.ReactElement {
 
   const allAddresses = useMemo(() =>
     hierarchy
-      .filter(({ isExternal }) => !isExternal)
+      .filter(({ isExternal, isHardware, isQR }) => !isExternal || isQR || isHardware)
       .map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name])
   , [hierarchy]);
 
