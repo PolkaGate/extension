@@ -103,7 +103,7 @@ function ImportProxied (): React.ReactElement {
           withoutChainLogo
         />
       </Label>
-      <SelectChain
+      {selectedAddress && <SelectChain
         address={selectedAddress}
         fullWidthDropdown
         icon={getLogo(chain ?? undefined)}
@@ -111,7 +111,7 @@ function ImportProxied (): React.ReactElement {
         onChange={onChangeGenesis}
         options={selectableChains}
         style={{ m: '15px auto', width: '92%' }}
-      />
+      />}
       {selectedAddress && chain &&
         <ProxiedTable
           api={api}
