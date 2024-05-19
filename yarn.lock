@@ -9124,6 +9124,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chance@npm:^1.1.11":
+  version: 1.1.11
+  resolution: "chance@npm:1.1.11"
+  checksum: 2e871fcc76584d274f860f0f25380b6ab547caf0d22d8b043a313be73d5c3db38941373241f83aeba049e7511f752f9746dc722a0f2b0182020d493c4e11da84
+  languageName: node
+  linkType: hard
+
 "changelog-parser@npm:^2.0.0":
   version: 2.8.0
   resolution: "changelog-parser@npm:2.8.0"
@@ -19673,6 +19680,7 @@ resolve@^2.0.0-next.3:
     "@vaadin/icons": ^23.2.3
     babel-plugin-transform-import-meta: ^2.1.1
     better-react-spinkit: ^2.0.4
+    chance: ^1.1.11
     chart.js: ^4.2.1
     country-flag-icons: ^1.5.9
     css-loader: ^6.7.3

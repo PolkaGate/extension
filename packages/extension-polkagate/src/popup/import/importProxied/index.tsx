@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Typography } from '@mui/material';
+import Chance from 'chance';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
@@ -23,6 +24,8 @@ function ImportProxied (): React.ReactElement {
   const onAction = useContext(ActionContext);
   const { accounts, hierarchy } = useContext(AccountContext);
   const genesisOptions = useGenesisHashOptions();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  const chance = new Chance();
 
   const selectableChains = useMemo(() => genesisOptions.filter(({ value }) => PROXY_CHAINS.includes(value as string)), [genesisOptions]);
 
@@ -63,14 +66,16 @@ function ImportProxied (): React.ReactElement {
   const onImport = useCallback(() => {
     setIsBusy(true);
     selectedProxied.forEach((address, index) => {
-      createAccountExternal(`Proxied ${index + 1}`, address, chain?.genesisHash ?? WESTEND_GENESIS_HASH).catch((error: Error) => {
+      const randomName = (chance?.name() as string)?.split(' ')?.[0] || `Proxied ${index + 1}`;
+
+      createAccountExternal(randomName, address, chain?.genesisHash ?? WESTEND_GENESIS_HASH).catch((error: Error) => {
         setIsBusy(false);
         console.error(error);
       });
     });
 
     onAction('/');
-  }, [chain?.genesisHash, onAction, selectedProxied]);
+  }, [chain?.genesisHash, chance, onAction, selectedProxied]);
 
   const onBackClick = useCallback(() => {
     onAction('/');
