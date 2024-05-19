@@ -63,7 +63,7 @@ function ImportProxied (): React.ReactElement {
   const onImport = useCallback(() => {
     setIsBusy(true);
     selectedProxied.forEach((address, index) => {
-      createAccountExternal(`Proxied Address ${index}`, address, chain?.genesisHash ?? WESTEND_GENESIS_HASH).catch((error: Error) => {
+      createAccountExternal(`Proxied ${index + 1}`, address, chain?.genesisHash ?? WESTEND_GENESIS_HASH).catch((error: Error) => {
         setIsBusy(false);
         console.error(error);
       });
