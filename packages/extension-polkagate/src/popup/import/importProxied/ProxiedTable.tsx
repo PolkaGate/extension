@@ -7,13 +7,14 @@ import { faSquare, faSquareCheck } from '@fortawesome/free-regular-svg-icons';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Checkbox, FormControlLabel, Grid, Skeleton, SxProps, Theme, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { Identity, Label, Progress } from '../../../components';
+import { AccountContext, Identity, Label, Progress } from '../../../components';
 import { useIsExtensionPopup, useTranslation } from '../../../hooks';
+import { getSubstrateAddress } from '../../../util/utils';
 
 interface Props {
   api: ApiPromise | undefined;
@@ -31,13 +32,12 @@ export default function ProxiedTable ({ api, chain, label, maxHeight = '120px', 
   const { t } = useTranslation();
   const isExtensionMode = useIsExtensionPopup();
   const theme = useTheme();
+  const { accounts } = useContext(AccountContext);
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const allSelected = useMemo(() => selectedProxied.length === proxiedAccounts?.length, [proxiedAccounts?.length, selectedProxied.length]);
 
-  // const isAvailable = useCallback((proxy: Proxy): NameAddress | undefined =>
-  //   accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate) && (proxyTypeFilter ? proxyTypeFilter.includes(proxy.proxyType) : true))
-  //   , [accounts, proxyTypeFilter]);
+  const isAvailable = useCallback((proxied: string): boolean => !!accounts?.find(({ address }) => address === getSubstrateAddress(proxied)), [accounts]);
 
   const handleSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const proxied = proxiedAccounts && proxiedAccounts[Number(event.target.value)];
@@ -50,7 +50,7 @@ export default function ProxiedTable ({ api, chain, label, maxHeight = '120px', 
     }
   }, [proxiedAccounts, selectedProxied, setSelectedProxied]);
 
-  const Select = ({ index, proxied }: { proxied: string, index: number }) => (
+  const Select = ({ disabled, index, proxied }: { proxied: string, index: number, disabled: boolean }) => (
     <FormControlLabel
       checked={selectedProxied.includes(proxied)}
       control={
@@ -61,6 +61,7 @@ export default function ProxiedTable ({ api, chain, label, maxHeight = '120px', 
           value={index}
         />
       }
+      disabled={disabled}
       label=''
       sx={{ m: 'auto' }}
       value={index}
@@ -68,8 +69,10 @@ export default function ProxiedTable ({ api, chain, label, maxHeight = '120px', 
   );
 
   const onSelect = useCallback((selectAll: boolean) => () => {
-    proxiedAccounts && setSelectedProxied(selectAll ? proxiedAccounts : []);
-  }, [proxiedAccounts, setSelectedProxied]);
+    const toSelect = proxiedAccounts?.filter((proxied) => !isAvailable(proxied));
+
+    proxiedAccounts && setSelectedProxied(selectAll ? toSelect ?? [] : []);
+  }, [isAvailable, proxiedAccounts, setSelectedProxied]);
 
   // const fade = (toCheck: ProxyItem) => {
   //   if (mode === 'Delete') {
@@ -115,9 +118,9 @@ export default function ProxiedTable ({ api, chain, label, maxHeight = '120px', 
             </Grid>
           }
           {proxiedAccounts && proxiedAccounts.length > 0 && proxiedAccounts.map((proxiedAccount, index) =>
-            <Grid container item key={index} sx={{ height: isExtensionMode ? '41px' : '50px', textAlign: 'center' }}>
+            <Grid container item key={index} sx={{ height: isExtensionMode ? '41px' : '50px', opacity: isAvailable(proxiedAccount) ? '0.5' : 1, textAlign: 'center' }}>
               <Grid alignItems='center' container height='100%' item justifyContent='center' xs={isExtensionMode ? 2 : 1}>
-                <Select index={index} proxied={proxiedAccount} />
+                <Select disabled={isAvailable(proxiedAccount)} index={index} proxied={proxiedAccount} />
               </Grid>
               <Grid alignItems='center' container item justifyContent='left' pl='10px' xs={isExtensionMode ? 10 : 11}>
                 <Identity api={api} chain={chain} formatted={proxiedAccount} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: isExtensionMode ? '12px' : '16px', maxWidth: '100%' }} subIdOnly />
