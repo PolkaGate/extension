@@ -84,7 +84,7 @@ export default function ConfigurePayee ({ address, setRefresh, setShow, show }: 
 
   const [rewardDestinationValue, setRewardDestinationValue] = useState<'Staked' | 'Others'>();
   const [rewardDestinationAccount, setRewardDestinationAccount] = useState<string | undefined>();
-  const [newPayee, setNewPayee] = useState();
+  const [newPayee, setNewPayee] = useState<Payee>();
   const [step, setStep] = useState(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [inputs, setInputs] = useState<Inputs>();

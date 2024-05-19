@@ -35,6 +35,10 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
     windowOpen('/account/import-seed').catch(console.error);
   }, []);
 
+  const onImportRawSeed = useCallback(() => {
+    windowOpen('/account/import-raw-seed').catch(console.error);
+  }, []);
+
   const onAddWatchOnly = useCallback(() => {
     onAction('/import/add-watch-only');
   }, [onAction]);
@@ -74,6 +78,16 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
             onClick={onImportAcc}
             py='4px'
             text={t('Import from recovery phrase')}
+            withHoverEffect
+          />
+          <MenuItem
+            fontSize='17px'
+            iconComponent={
+              <vaadin-icon icon='vaadin:book-dollar' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            }
+            onClick={onImportRawSeed}
+            py='4px'
+            text={t('Import from raw seed')}
             withHoverEffect
           />
           <MenuItem

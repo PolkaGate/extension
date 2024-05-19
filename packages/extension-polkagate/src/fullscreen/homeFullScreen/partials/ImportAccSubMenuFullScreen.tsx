@@ -34,6 +34,10 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
     openOrFocusTab('/account/import-seed');
   }, []);
 
+  const onImportFromRawSeed = useCallback(() => {
+    openOrFocusTab('/account/import-raw-seed');
+  }, []);
+
   const onAddWatchOnlyFullScreen = useCallback(() => {
     openOrFocusTab('/import/add-watch-only-full-screen');
   }, []);
@@ -69,6 +73,14 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             isSubMenu
             onClick={onImportFromSeed}
             text={t('Import from recovery phrase')}
+          />
+          <TaskButton
+            icon={
+              <vaadin-icon icon='vaadin:book-dollar' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+            }
+            isSubMenu
+            onClick={onImportFromRawSeed}
+            text={t('Import from raw seed')}
           />
           <TaskButton
             icon={
