@@ -84,24 +84,19 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
           />
           <TaskButton
             icon={
+              <vaadin-icon icon='vaadin:sitemap' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px', transform: 'rotate(180deg)' }} />
+            }
+            isSubMenu
+            onClick={onImportProxiedFullScreen}
+            text={t('Import proxied account(s)')}
+          />
+          <TaskButton
+            icon={
               <vaadin-icon icon='vaadin:tag' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
             }
             isSubMenu
             onClick={onAddWatchOnlyFullScreen}
             text={t('Add watch-only account')}
-          />
-          <TaskButton
-            icon={
-              <FontAwesomeIcon
-                color={theme.palette.text.primary}
-                fontSize='18px'
-                icon={faSitemap}
-                style={{ transform: 'rotate(180deg)' }}
-              />
-            }
-            isSubMenu
-            onClick={onImportProxiedFullScreen}
-            text={t('Import proxied accounts')}
           />
           <TaskButton
             disabled={settings.camera !== 'on'}

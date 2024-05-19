@@ -92,12 +92,7 @@ function ImportProxiedFS (): React.ReactElement {
         <Grid container item sx={{ display: 'block', mb: '20px', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
-              <FontAwesomeIcon
-                color={theme.palette.text.primary}
-                fontSize='38px'
-                icon={faSitemap}
-                style={{ transform: 'rotate(180deg)' }}
-              />
+              <vaadin-icon icon='vaadin:sitemap' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px', transform: 'rotate(180deg)' }} />
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>

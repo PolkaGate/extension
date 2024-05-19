@@ -93,26 +93,21 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
           <MenuItem
             fontSize='17px'
             iconComponent={
-              <vaadin-icon icon='vaadin:tag' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+              <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}`, transform: 'rotate(180deg)' }} />
             }
-            onClick={onAddWatchOnly}
+            onClick={onImportProxied}
             py='4px'
-            text={t('Add watch-only account')}
+            text={t('Import proxied account(s)')}
             withHoverEffect
           />
           <MenuItem
             fontSize='17px'
             iconComponent={
-              <FontAwesomeIcon
-                color={theme.palette.text.primary}
-                fontSize='18px'
-                icon={faSitemap}
-                style={{ transform: 'rotate(180deg)' }}
-              />
+              <vaadin-icon icon='vaadin:tag' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
             }
-            onClick={onImportProxied}
+            onClick={onAddWatchOnly}
             py='4px'
-            text={t('Import proxied account(s)')}
+            text={t('Add watch-only account')}
             withHoverEffect
           />
           <MenuItem
