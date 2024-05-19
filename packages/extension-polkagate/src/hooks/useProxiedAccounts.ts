@@ -3,20 +3,16 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-
 import { ProxiedAccounts, Proxy } from '../util/types';
-import { getFormattedAddress } from '../util/utils';
-import useApiWithChain from './useApiWithChain';
+import useInfo from './useInfo';
 
 /**
  * @description
- * this hook returns proxied accounts on a proxy account
+ * this hook returns proxied accounts of a proxy account
  * */
 
-export default function useProxiedAccounts (address: string | undefined, chain: Chain | null | undefined): ProxiedAccounts | undefined {
-  const api = useApiWithChain(chain);
-  const formatted = address && getFormattedAddress(address, chain, 42);
+export default function useProxiedAccounts (address: string | undefined): ProxiedAccounts | undefined {
+  const { api, formatted } = useInfo(address);
 
   const [proxied, setProxied] = useState<ProxiedAccounts>();
 
@@ -46,7 +42,7 @@ export default function useProxiedAccounts (address: string | undefined, chain: 
   }, [api, formatted]);
 
   useEffect(() => {
-    if (!address || !chain || !api || !formatted || (proxied && proxied.proxy === formatted)) {
+    if (!address || !api || !formatted || (proxied && proxied.proxy === formatted)) {
       return;
     }
 
@@ -55,7 +51,7 @@ export default function useProxiedAccounts (address: string | undefined, chain: 
     }
 
     getProxiedAccounts();
-  }, [address, api, chain, formatted, getProxiedAccounts, proxied]);
+  }, [address, api, formatted, getProxiedAccounts, proxied]);
 
   return proxied;
 }
