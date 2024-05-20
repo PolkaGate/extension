@@ -48,11 +48,6 @@ export interface UnlockInformationType {
   unlockableAmount: BN;
 }
 
-const isRelayChain = (chainName: string) =>
-  chainName.toLowerCase() === 'kusama' ||
-  chainName.toLowerCase() === 'polkadot' ||
-  chainName.toLowerCase() === 'westend';
-
 export default function AccountDetails (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
@@ -83,8 +78,7 @@ export default function AccountDetails (): React.ReactElement {
   const hasParent = useMemo(() => account ? accounts.find(({ address }) => address === account.parentAddress) : undefined, [account, accounts]);
 
   const balancesToShow = useMemo(() => {
-    // TODO: if we add solo balance to fetched assets then we can dismiss this condition and just use selectedAsset || balances
-    if (!chainName) {
+    if (!chainName || (balances?.genesisHash && selectedAsset?.genesisHash && balances.genesisHash !== selectedAsset.genesisHash)) {
       return;
     }
 
@@ -130,11 +124,14 @@ export default function AccountDetails (): React.ReactElement {
   }, [selectedAsset]);
 
   useEffect(() => {
-    accountAssets !== undefined && onAction(`/accountfs/${address}/${assetId || '0'}`);
-  }, [accountAssets, address, assetId, onAction]);
+    if (selectedAsset !== undefined && paramAssetId && assetId !== undefined && assetId !== parseInt(paramAssetId)) {
+      onAction(`/accountfs/${address}/${assetId}`);
+    }
+  }, [accountAssets, address, assetId, onAction, paramAssetId, selectedAsset]);
 
   useEffect(() => {
-    if (paramAssetId === undefined) {
+    /** This will run once when just visited account details and selectedAsset === undefined utilizing paramAssetId */
+    if (paramAssetId === undefined || !paramAssetId || !account?.genesisHash || selectedAsset) {
       return;
     }
 
@@ -143,9 +140,9 @@ export default function AccountDetails (): React.ReactElement {
     if (mayBeAssetIdSelectedInHomePage >= 0 && accountAssets) {
       const found = accountAssets.find(({ assetId, genesisHash }) => assetId === mayBeAssetIdSelectedInHomePage && account?.genesisHash === genesisHash);
 
-      setSelectedAsset(found);
+      found && setSelectedAsset(found);
     }
-  }, [account?.genesisHash, accountAssets, paramAssetId]);
+  }, [account?.genesisHash, accountAssets, paramAssetId, selectedAsset]);
 
   const onChangeAsset = useCallback((id: number) => {
     if (id === -1) { // this is the id of native token
@@ -187,16 +184,10 @@ export default function AccountDetails (): React.ReactElement {
               <AccountInformation
                 accountAssets={accountAssets}
                 address={address}
-                api={api}
-                balances={balancesToShow}
-                chain={chain}
-                chainName={chainName}
-                formatted={formatted}
-                isDarkTheme={isDarkTheme}
                 label={label(account, hasParent?.name || '', t)}
                 price={currentPrice}
                 pricesInCurrency={pricesInCurrency}
-                selectedAsset={selectedAsset}
+                selectedAsset={balancesToShow}
                 setAssetIdOnAssetHub={setAssetIdOnAssetHub}
                 setSelectedAsset={setSelectedAsset}
               />

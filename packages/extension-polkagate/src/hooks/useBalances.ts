@@ -193,6 +193,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
     const balances = {
       availableBalance: overall.availableBalance.toString(),
       freeBalance: overall.freeBalance.toString(),
+      genesisHash: overall.genesisHash,
       lockedBalance: overall.lockedBalance.toString(),
       pooledBalance: overall.pooledBalance.toString(),
       reservedBalance: overall.reservedBalance.toString(),
@@ -226,6 +227,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
         date: savedBalances[chainName].date,
         decimal: savedBalances[chainName].decimal,
         freeBalance: new BN(sb.freeBalance),
+        genesisHash: sb.genesisHash,
         lockedBalance: new BN(sb.lockedBalance),
         pooledBalance: new BN(sb.pooledBalance),
         reservedBalance: new BN(sb.reservedBalance),

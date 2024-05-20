@@ -4,15 +4,13 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
 import { AccountJson } from '@polkadot/extension-base/background/types';
-import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
 import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, Infotip2, OptionalCopyButton, ShortAddress2 } from '../../../components';
-import { useAccount, useTranslation } from '../../../hooks';
+import { useInfo, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { showAccount, tieAccount } from '../../../messaging';
 import { getValue } from '../../../popup/account/util';
@@ -94,15 +92,16 @@ interface SelectedAssetBoxJSXType {
 }
 
 const SelectedAssetBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOutdated, price }: SelectedAssetBoxJSXType) => {
-  const logoInfo = useMemo(() => account?.genesisHash ? getLogo2(account?.genesisHash, balanceToShow?.token) : undefined, [account?.genesisHash, balanceToShow?.token]);
   const { t } = useTranslation();
+
+  const logoInfo = useMemo(() => getLogo2(balanceToShow?.genesisHash, balanceToShow?.token), [balanceToShow]);
 
   return (
     <Grid alignItems='center' container item justifyContent='center' minWidth='40%'>
       {account?.genesisHash
         ? <>
           <Grid item pl='7px'>
-            <DisplayLogo assetSize='42px' baseTokenSize='20px' genesisHash={account?.genesisHash} logo={logoInfo?.logo as string} subLogo={logoInfo?.subLogo as string} />
+            <DisplayLogo assetSize='42px' baseTokenSize='20px' genesisHash={balanceToShow?.genesisHash} logo={logoInfo?.logo as string} subLogo={logoInfo?.subLogo as string} />
           </Grid>
           <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
             <BalanceRow balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} isPriceOutdated={isPriceOutdated} price={price} />
@@ -119,34 +118,26 @@ const SelectedAssetBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOu
 };
 
 interface AddressDetailsProps {
-  address: string | undefined;
-  api: ApiPromise | undefined;
   accountAssets: FetchedBalance[] | null | undefined;
-  balances: BalancesInfo | undefined;
-  chain: Chain | null | undefined;
-  chainName: string | undefined;
-  formatted: string | undefined;
-  isDarkTheme: boolean;
+  address: string | undefined;
   label?: string | undefined;
   price: number | undefined;
   pricesInCurrency: Prices | null | undefined;
-  setSelectedAsset: React.Dispatch<React.SetStateAction<FetchedBalance | undefined>>;
   selectedAsset: FetchedBalance | undefined;
+  setSelectedAsset: React.Dispatch<React.SetStateAction<FetchedBalance | undefined>>;
   setAssetIdOnAssetHub: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation ({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const account = useAccount(address);
-
-  const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
+  const { account, api, chain, formatted } = useInfo(address);
 
   const calculatePrice = useCallback((amount: BN, decimal: number, _price: number) => {
     return parseFloat(amountToHuman(amount, decimal)) * _price;
   }, []);
 
-  const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
+  const isBalanceOutdated = useMemo(() => selectedAsset && Date.now() - selectedAsset.date > BALANCES_VALIDITY_PERIOD, [selectedAsset]);
   const isPriceOutdated = useMemo(() => pricesInCurrency && Date.now() - pricesInCurrency.date > BALANCES_VALIDITY_PERIOD, [pricesInCurrency]);
 
   const assetsToShow = useMemo(() => {
@@ -170,14 +161,6 @@ export default function AccountInformation ({ accountAssets, address, api, balan
       return setSelectedAsset(undefined);
     }
   }, [account?.genesisHash, accountAssets, setSelectedAsset]);
-
-  useEffect(() => {
-    if (balances?.chainName === chainName) {
-      return setBalanceToShow(balances);
-    }
-
-    setBalanceToShow(undefined);
-  }, [balances, chainName]);
 
   const onAssetBoxClicked = useCallback((asset: FetchedBalance | undefined) => {
     address && asset && tieAccount(address, asset.genesisHash).finally(() => {
@@ -241,7 +224,7 @@ export default function AccountInformation ({ accountAssets, address, api, balan
           </Grid>
           <SelectedAssetBox
             account={account}
-            balanceToShow={balanceToShow || selectedAsset}
+            balanceToShow={ selectedAsset}
             isBalanceOutdated={isBalanceOutdated}
             isPriceOutdated={!!isPriceOutdated}
             price={price}
@@ -252,10 +235,8 @@ export default function AccountInformation ({ accountAssets, address, api, balan
         <>
           <Divider sx={{ bgcolor: 'divider', height: '1px', my: '15px', width: '100%' }} />
           <AOC
-            account={account}
             accountAssets={assetsToShow}
             api={api}
-            balanceToShow={balanceToShow}
             mode='Detail'
             onclick={onAssetBoxClicked}
             selectedAsset={selectedAsset}
