@@ -55,7 +55,7 @@ export default function AccountDetails (): React.ReactElement {
   const { address, paramAssetId } = useParams<{ address: string, paramAssetId?: string }>();
   const { accounts } = useContext(AccountContext);
   const currency = useCurrency();
-  const { account, api, chain, chainName, formatted } = useInfo(address);
+  const { account, api, chainName, genesisHash } = useInfo(address);
   const onAction = useContext(ActionContext);
   const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();
