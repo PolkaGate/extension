@@ -42,7 +42,8 @@ export default function CommonTasks ({ address, setRefresh, staked }: Props): Re
   const [showRewardDestinationModal, setShowRewardDestinationModal] = useState<boolean>(false);
 
   const isDisabled = useMemo((): boolean => !genesisHash || !staked || staked?.isZero(), [genesisHash, staked]);
-
+  const iconColor = isDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary
+  
   const onRewardDestination = useCallback(() => {
     setShowRewardDestinationModal(true);
   }, []);
@@ -63,7 +64,7 @@ export default function CommonTasks ({ address, setRefresh, staked }: Props): Re
             disabled={isDisabled}
             icon={
               <FontAwesomeIcon
-                color={`${theme.palette.text.primary}`}
+                color={`${iconColor}`}
                 fontSize='22px'
                 icon={faCog}
               />
@@ -78,7 +79,7 @@ export default function CommonTasks ({ address, setRefresh, staked }: Props): Re
             icon={
               <FontAwesomeIcon
                 bounce={!!stakedButNoValidators}
-                color={stakedButNoValidators ? `${theme.palette.warning.main}` : `${theme.palette.text.primary}`}
+                color={stakedButNoValidators ? `${theme.palette.warning.main}` : `${iconColor}`}
                 fontSize='22px'
                 icon={faHand}
               />

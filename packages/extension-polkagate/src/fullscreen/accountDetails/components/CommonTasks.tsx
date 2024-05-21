@@ -99,11 +99,10 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
 
   const governanceDisabled = useMemo(() => !GOVERNANCE_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const stakingDisabled = useMemo(() => !STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const stakingIconColor = useMemo(() => stakingDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary, [stakingDisabled, theme.palette.action.disabledBackground, theme.palette.text.primary]);
 
-  const hasSoloStake = balance?.soloTotal && !balance.soloTotal.isZero();
-  const hasPoolStake = balance?.pooledBalance && !balance.pooledBalance.isZero();
+  const hasSoloStake = Boolean(balance?.soloTotal && !balance.soloTotal.isZero());
+  const hasPoolStake = Boolean(balance?.pooledBalance && !balance.pooledBalance.isZero());
   const notStakedYet = !hasPoolStake && !hasSoloStake;
 
   const goToSend = useCallback(() => {
@@ -205,7 +204,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
           }
           onClick={goToSoloStaking}
           secondaryIconType='page'
-          show={hasSoloStake || hasPoolStake}
+          show={(hasSoloStake || hasPoolStake) && !stakingDisabled}
           text={t('Stake Solo')}
         />
         <TaskButton
@@ -220,7 +219,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
           }
           onClick={goToPoolStaking}
           secondaryIconType='page'
-          show={hasSoloStake || hasPoolStake}
+          show={(hasSoloStake || hasPoolStake) && !stakingDisabled}
           text={t('Stake in Pool')}
         />
         <TaskButton
