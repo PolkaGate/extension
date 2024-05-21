@@ -6,6 +6,11 @@ import { useEffect, useState } from 'react';
 import useAccountName from './useAccountName';
 import useMyAccountIdentity from './useMyAccountIdentity';
 
+/**
+ * @description A hook that returns either the display name from the account's identity or the account name.
+ * @param address The account address or ID.
+ * @returns The account display name, if available.
+ */
 export default function useAccountDisplay (address: string | undefined): string | undefined {
   const [name, setName] = useState<string | undefined>();
 

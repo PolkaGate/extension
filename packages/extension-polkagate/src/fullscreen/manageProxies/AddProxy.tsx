@@ -13,7 +13,7 @@ import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { AccountContext, AddressInput, InputWithLabel, Select, TwoButtons, Warning } from '../../components';
-import { useAccountIdOrName, useAccountInfo2, useFormatted, useTranslation } from '../../hooks';
+import { useAccountDisplay, useAccountInfo2, useFormatted, useTranslation } from '../../hooks';
 import ShowIdentity from '../../popup/manageProxies/partials/ShowIdentity';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
@@ -35,7 +35,7 @@ export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setP
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
   const formatted = useFormatted(proxiedAddress);
-  const accountDisplayName = useAccountIdOrName(proxiedAddress);
+  const accountDisplayName = useAccountDisplay(proxiedAddress);
 
   const [proxyAddress, setProxyAddress] = useState<string | null>();
   const [delay, setDelay] = useState<number>(0);

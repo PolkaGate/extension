@@ -11,7 +11,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { AccountContext, AddressInput, InputWithLabel, PButton, Select, Warning } from '../../components';
-import { useAccountIdOrName, useAccountInfo2, useFormatted, useTranslation } from '../../hooks';
+import { useAccountDisplay, useAccountInfo2, useFormatted, useTranslation } from '../../hooks';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
 import { Proxy, ProxyItem } from '../../util/types';
@@ -42,7 +42,7 @@ export default function AddProxy ({ address, api, chain, onChange, proxyItems, s
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);
   const formatted = useFormatted(address);
-  const accountDisplayName = useAccountIdOrName(formatted);
+  const accountDisplayName = useAccountDisplay(formatted);
 
   const theme = useTheme();
 
