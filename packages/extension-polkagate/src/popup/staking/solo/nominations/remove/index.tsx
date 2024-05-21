@@ -36,11 +36,12 @@ interface Props {
   show: boolean;
 }
 
-export default function RemoveValidators({ address, api, chain, formatted, setShow, show, title }: Props): React.ReactElement {
+export default function RemoveValidators ({ address, api, chain, formatted, setShow, show, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
+
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -124,7 +125,7 @@ export default function RemoveValidators({ address, api, chain, formatted, setSh
     }
   }, [api, chain, chilled, estimatedFee, formatted, name, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
-  const _onBackClick = useCallback(() => {
+  const onBackClick = useCallback(() => {
     setShow(false);
   }, [setShow]);
 
@@ -132,7 +133,7 @@ export default function RemoveValidators({ address, api, chain, formatted, setSh
     <Motion>
       <Popup show={show}>
         <HeaderBrand
-          onBackClick={_onBackClick}
+          onBackClick={onBackClick}
           shortBorder
           showBackArrow
           showClose
@@ -158,7 +159,7 @@ export default function RemoveValidators({ address, api, chain, formatted, setSh
               {t('Fee')}:
             </Grid>
             <Grid item sx={{ pl: '5px' }}>
-              <ShowValue value={estimatedFee?.toHuman()} height={16} />
+              <ShowValue height={16} value={estimatedFee?.toHuman()} />
             </Grid>
           </Grid>
         </Grid>

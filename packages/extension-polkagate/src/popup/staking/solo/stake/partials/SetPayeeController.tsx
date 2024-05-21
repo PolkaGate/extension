@@ -9,7 +9,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { AccountInputWithIdentity, PButton, Warning } from '../../../../../components';
-import { useApi, useChain, useDecimal, useFormatted, useToken, useTranslation } from '../../../../../hooks';
+import { useInfo, useTranslation } from '../../../../../hooks';
 import { SoloSettings, StakingConsts } from '../../../../../util/types';
 import { amountToHuman } from '../../../../../util/utils';
 import getPayee from './util';
@@ -25,18 +25,16 @@ interface Props {
   newSettings?: SoloSettings; // will be used when user is already has staked
 }
 
-export default function SetPayeeController({ address, buttonLabel, newSettings, set, setShow, setShowReview, settings, stakingConsts }: Props): React.ReactElement<Props> {
+export default function SetPayeeController ({ address, buttonLabel, newSettings, set, setShow, setShowReview, settings, stakingConsts }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const chain = useChain(address);
-  const api = useApi(address);
-  const token = useToken(address);
-  const decimal = useDecimal(address);
-  const formatted = useFormatted(address);
-  const isSettingAtBonding = useMemo(() => !newSettings, [newSettings]);
+  const { api, chain, decimal, formatted, token } = useInfo(address);
+
   const [controllerId, setControllerId] = useState<AccountId | string | undefined>(settings.controllerId);
   const [rewardDestinationValue, setRewardDestinationValue] = useState<'Staked' | 'Others'>(settings.payee === 'Staked' ? 'Staked' : 'Others');
   const [rewardDestinationAccount, setRewardDestinationAccount] = useState<string | undefined>(getPayee(settings));
+
+  const isSettingAtBonding = useMemo(() => !newSettings, [newSettings]);
 
   const getOptionLabel = useCallback((s: SoloSettings): 'Staked' | 'Others' => s.payee === 'Staked' ? 'Staked' : 'Others', []);
   const isControllerDeprecated = api ? api.tx.staking.setController.meta.args.length === 0 : undefined;
@@ -149,10 +147,10 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
         <>
           <Grid item mt='15px' mx='15px' width='100%'>
             <FormControl>
-              <FormLabel sx={{ color: 'text.primary', fontSize: '16px', '&.Mui-focused': { color: 'text.primary' } }}>
+              <FormLabel sx={{ '&.Mui-focused': { color: 'text.primary' }, color: 'text.primary', fontSize: '16px' }}>
                 {t('Reward destination')}
               </FormLabel>
-              <RadioGroup defaultValue={optionDefaultVal} onChange={onSelectionMethodChange} >
+              <RadioGroup defaultValue={optionDefaultVal} onChange={onSelectionMethodChange}>
                 <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main' }} value='Staked' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Add to staked amount')}</Typography>} />
                 <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main', py: '2px' }} value='Others' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Transfer to a specific account')}</Typography>} />
               </RadioGroup>
@@ -167,7 +165,7 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
                 setAddress={setRewardDestinationAccount}
                 style={{ pt: '15px', px: '15px' }}
               />
-              <Warn style={{ mt: '-20px' }} text={t<string>('The balance for the recipient must be at least {{ED}} in order to keep the amount.', { replace: { ED: `${ED} ${token}` } })} />
+              <Warn style={{ mt: '-20px' }} text={t('The balance for the recipient must be at least {{ED}} in order to keep the amount.', { replace: { ED: `${ED} ${token}` } })} />
             </>
           }
         </>
@@ -185,7 +183,7 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
                 ? !controllerId || controllerId === settings.controllerId
                 : payeeNotChanged || (rewardDestinationValue === 'Others' && !rewardDestinationAccount)
         }
-        text={buttonLabel || t<string>('Set')}
+        text={buttonLabel || t('Set')}
       />
     </Grid>
   );

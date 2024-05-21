@@ -19,7 +19,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, Warning, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useApi, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
+import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
@@ -38,13 +38,9 @@ interface Props {
 export default function Review ({ address, amount, selectedToPayout, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const api = useApi(address);
-  const chain = useChain(address);
-  const formatted = useFormatted(address);
-  const decimal = useDecimal(address);
+  const { api, chain, decimal, formatted, token } = useInfo(address);
   const name = useAccountDisplay(address);
   const proxies = useProxies(api, formatted);
-  const token = useToken(address);
   const onAction = useContext(ActionContext);
 
   const [password, setPassword] = useState<string | undefined>();
@@ -146,7 +142,7 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
     }
   }, [amountInHuman, api, chain, estimatedFee, formatted, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, tx]);
 
-  const _onBackClick = useCallback(() => {
+  const onBackClick = useCallback(() => {
     setShow(false);
   }, [setShow]);
 
@@ -154,11 +150,11 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
     <Motion>
       <Popup show={show}>
         <HeaderBrand
-          onBackClick={_onBackClick}
+          onBackClick={onBackClick}
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Payout')}
+          text={t('Payout')}
           withSteps={{
             current: 2,
             total: 2
@@ -190,7 +186,7 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
               marginTop={2}
               theme={theme}
             >
-              {t<string>('Usually, validators pay out the pending rewards themselves, but you can initiate the payout yourself if you prefer.')}
+              {t('Usually, validators pay out the pending rewards themselves, but you can initiate the payout yourself if you prefer.')}
             </Warning>
           </Grid>
         </Container>
@@ -199,7 +195,7 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
+          label={t('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={unstake}
           proxiedAddress={formatted}

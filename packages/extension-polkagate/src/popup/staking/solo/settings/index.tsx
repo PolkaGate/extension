@@ -26,9 +26,10 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function Settings({ address, api, setRefresh, setShowSettings, showSettings, stakingAccount, stakingConsts }: Props): React.ReactElement {
+export default function Settings ({ address, api, setRefresh, setShowSettings, showSettings, stakingAccount, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
+
   const [settings, setSettings] = useState<SoloSettings>();
   const [newSettings, setNewSettings] = useState<SoloSettings>({ controllerId: undefined, payee: undefined, stashId: undefined });
   const [showReview, setShowReview] = useState<boolean>(false);
@@ -67,7 +68,7 @@ export default function Settings({ address, api, setRefresh, setShowSettings, sh
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Solo Staking')}
+          text={t('Solo Staking')}
         />
         <SubTitle label={t('Settings')} withSteps={{ current: 1, total: 2 }} />
         <Grid container sx={{ mt: '15px' }}>

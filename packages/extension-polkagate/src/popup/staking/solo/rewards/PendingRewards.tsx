@@ -42,7 +42,7 @@ export const LabelBalance = ({ api, balance, label }: { api: ApiPromise | undefi
   </Grid>
 );
 
-export default function PendingRewards(): React.ReactElement {
+export default function PendingRewards (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -196,7 +196,7 @@ export default function PendingRewards(): React.ReactElement {
         shortBorder
         showBackArrow
         showClose
-        text={t<string>('Pending Rewards')}
+        text={t('Pending Rewards')}
         withSteps={{
           current: 1,
           total: 2

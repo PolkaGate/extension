@@ -129,7 +129,7 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
     }
   }, [formatted, selectedProxyAddress, password, api, tx, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain]);
 
-  const _onBackClick = useCallback(() => {
+  const onBackClick = useCallback(() => {
     setShow(false);
   }, [setShow]);
 
@@ -137,11 +137,11 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
     <Motion>
       <Popup show={show}>
         <HeaderBrand
-          onBackClick={_onBackClick}
+          onBackClick={onBackClick}
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Withdraw Redeemable')}
+          text={t('Withdraw Redeemable')}
         />
         {isPasswordError &&
           <WrongPasswordAlert />
@@ -175,7 +175,7 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
+          label={t('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={submit}
           proxiedAddress={formatted}
@@ -204,7 +204,7 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
             txInfo={txInfo}
           >
             <TxDetail
-              label={t<string>('Withdrawn amount')}
+              label={t('Withdrawn amount')}
               txInfo={txInfo}
             />
           </Confirmation>)
