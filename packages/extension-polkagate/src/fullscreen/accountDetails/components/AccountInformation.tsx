@@ -84,21 +84,22 @@ const BalanceRow = ({ balanceToShow, isBalanceOutdated, isPriceOutdated, price }
 );
 
 interface SelectedAssetBoxJSXType {
-  account: AccountJson | undefined;
+  token: string | undefined;
+  genesisHash: string | undefined;
   balanceToShow: BalancesInfo | undefined;
   isBalanceOutdated: boolean | undefined;
   isPriceOutdated: boolean;
   price: number | undefined;
 }
 
-const SelectedAssetBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOutdated, price }: SelectedAssetBoxJSXType) => {
+const SelectedAssetBox = ({ balanceToShow, genesisHash, isBalanceOutdated, isPriceOutdated, price, token }: SelectedAssetBoxJSXType) => {
   const { t } = useTranslation();
 
-  const logoInfo = useMemo(() => getLogo2(balanceToShow?.genesisHash, balanceToShow?.token), [balanceToShow]);
+  const logoInfo = useMemo(() => getLogo2(balanceToShow?.genesisHash || genesisHash, balanceToShow?.token || token), [genesisHash, balanceToShow?.genesisHash, token, balanceToShow?.token]);
 
   return (
     <Grid alignItems='center' container item justifyContent='center' minWidth='40%'>
-      {account?.genesisHash
+      {genesisHash
         ? <>
           <Grid item pl='7px'>
             <DisplayLogo assetSize='42px' baseTokenSize='20px' genesisHash={balanceToShow?.genesisHash} logo={logoInfo?.logo as string} subLogo={logoInfo?.subLogo as string} />
@@ -131,7 +132,7 @@ interface AddressDetailsProps {
 export default function AccountInformation ({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { account, api, chain, formatted } = useInfo(address);
+  const { account, api, chain, formatted, genesisHash, token } = useInfo(address);
 
   const calculatePrice = useCallback((amount: BN, decimal: number, _price: number) => {
     return parseFloat(amountToHuman(amount, decimal)) * _price;
@@ -223,11 +224,12 @@ export default function AccountInformation ({ accountAssets, address, label, pri
             </Grid>
           </Grid>
           <SelectedAssetBox
-            account={account}
             balanceToShow={ selectedAsset}
+            genesisHash={genesisHash}
             isBalanceOutdated={isBalanceOutdated}
             isPriceOutdated={!!isPriceOutdated}
             price={price}
+            token={token}
           />
         </Grid>
       </Grid>

@@ -66,26 +66,37 @@ export default function AccountDetails (): React.ReactElement {
   const [displayPopup, setDisplayPopup] = useState<number | undefined>();
   const [unlockInformation, setUnlockInformation] = useState<UnlockInformationType | undefined>();
 
-  const assetId = useMemo(() => assetIdOnAssetHub || selectedAsset?.assetId, [assetIdOnAssetHub, selectedAsset?.assetId]);
+  const assetId = useMemo(() => assetIdOnAssetHub !== undefined ? assetIdOnAssetHub : selectedAsset?.assetId, [assetIdOnAssetHub, selectedAsset?.assetId]);
 
   const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId || undefined);
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette]);
-  const isOnAssetHub = useMemo(() => ASSET_HUBS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
-  const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
-  const supportStaking = useMemo(() => STAKING_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
+  const isOnAssetHub = useMemo(() => ASSET_HUBS.includes(genesisHash ?? ''), [genesisHash]);
+  const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
+  const supportStaking = useMemo(() => STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const showTotalChart = useMemo(() => accountAssets && accountAssets.length > 0 && accountAssets.filter((_asset) => pricesInCurrency && currency && pricesInCurrency.prices[_asset?.priceId]?.value > 0 && !new BN(_asset.totalBalance).isZero()), [accountAssets, currency, pricesInCurrency]);
   const hasParent = useMemo(() => account ? accounts.find(({ address }) => address === account.parentAddress) : undefined, [account, accounts]);
 
   const balancesToShow = useMemo(() => {
+    /** when there is only one we show that one */
+    if ((selectedAsset === undefined && balances) || (selectedAsset && balances === undefined)) {
+      return selectedAsset || balances;
+    }
+
+    /** when both exist but are inconsistent, we show that which matches chain asset id */
+    if (selectedAsset && balances && (selectedAsset.genesisHash !== balances.genesisHash || (selectedAsset.genesisHash === balances.genesisHash && selectedAsset.assetId !== balances.assetId))) {
+      return selectedAsset?.assetId === assetId ? selectedAsset : balances;
+    }
+
     if (!chainName || (balances?.genesisHash && selectedAsset?.genesisHash && balances.genesisHash !== selectedAsset.genesisHash)) {
       return;
     }
 
+    /** when both exists on the same chain, we show one which is more recent */
     return balances?.date > selectedAsset?.date
       ? { ...(selectedAsset || {}), ...(balances || {}) }
       : { ...(balances || {}), ...(selectedAsset || {}) };
-  }, [balances, chainName, selectedAsset]);
+  }, [assetId, balances, chainName, selectedAsset]);
 
   const currentPrice = useMemo((): number | undefined => {
     const selectedAssetPriceId = selectedAsset?.priceId;
@@ -115,13 +126,11 @@ export default function AccountDetails (): React.ReactElement {
   useEffect(() => {
     // reset assetId on chain switch
     assetIdOnAssetHub && setAssetIdOnAssetHub(undefined);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chain]);
 
-  useEffect(() => {
-    // will match the selected assetId when you select another asset through AOC
-    selectedAsset && setAssetIdOnAssetHub(selectedAsset?.assetId);
-  }, [selectedAsset]);
+    // reset selected asset on a chain switch only if its differ from current selected asset's chain
+    genesisHash !== selectedAsset?.genesisHash && setSelectedAsset(undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [genesisHash]);
 
   useEffect(() => {
     if (selectedAsset !== undefined && paramAssetId && assetId !== undefined && assetId !== parseInt(paramAssetId)) {
@@ -130,28 +139,27 @@ export default function AccountDetails (): React.ReactElement {
   }, [accountAssets, address, assetId, onAction, paramAssetId, selectedAsset]);
 
   useEffect(() => {
-    /** This will run once when just visited account details and selectedAsset === undefined utilizing paramAssetId */
-    if (paramAssetId === undefined || !paramAssetId || !account?.genesisHash || selectedAsset) {
+    if (paramAssetId === undefined || !paramAssetId || !genesisHash || selectedAsset) {
       return;
     }
 
-    const mayBeAssetIdSelectedInHomePage = parseInt(paramAssetId);
+    const mayBeAssetIdSelectedInHomePage = assetId !== undefined ? assetId : parseInt(paramAssetId);
 
     if (mayBeAssetIdSelectedInHomePage >= 0 && accountAssets) {
-      const found = accountAssets.find(({ assetId, genesisHash }) => assetId === mayBeAssetIdSelectedInHomePage && account?.genesisHash === genesisHash);
+      const found = accountAssets.find(({ assetId, genesisHash: _genesisHash }) => assetId === mayBeAssetIdSelectedInHomePage && genesisHash === _genesisHash);
 
       found && setSelectedAsset(found);
     }
-  }, [account?.genesisHash, accountAssets, paramAssetId, selectedAsset]);
+  }, [genesisHash, accountAssets, assetId, paramAssetId, selectedAsset]);
 
   const onChangeAsset = useCallback((id: number) => {
     if (id === -1) { // this is the id of native token
-      setSelectedAsset(undefined);
+      setAssetIdOnAssetHub(0);
 
-      return setAssetIdOnAssetHub(undefined);
+      return;
     }
 
-    setAssetIdOnAssetHub(id); // this works for assethubs atm
+    setAssetIdOnAssetHub(id); // this works for asset hubs atm
   }, []);
 
   const goToSend = useCallback(() => {
@@ -159,13 +167,13 @@ export default function AccountDetails (): React.ReactElement {
   }, [address, assetId, onAction]);
 
   const goToSoloStaking = useCallback(() => {
-    address && account?.genesisHash && STAKING_CHAINS.includes(account.genesisHash) &&
+    address && genesisHash && STAKING_CHAINS.includes(genesisHash) &&
       openOrFocusTab(`/solofs/${address}/`);
-  }, [account?.genesisHash, address]);
+  }, [genesisHash, address]);
 
   const goToPoolStaking = useCallback(() => {
-    address && account?.genesisHash && STAKING_CHAINS.includes(account.genesisHash) && openOrFocusTab(`/poolfs/${address}/`);
-  }, [account?.genesisHash, address]);
+    address && genesisHash && STAKING_CHAINS.includes(genesisHash) && openOrFocusTab(`/poolfs/${address}/`);
+  }, [genesisHash, address]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
@@ -191,7 +199,7 @@ export default function AccountDetails (): React.ReactElement {
                 setAssetIdOnAssetHub={setAssetIdOnAssetHub}
                 setSelectedAsset={setSelectedAsset}
               />
-              {account?.genesisHash &&
+              {genesisHash &&
                 <>
                   {isOnAssetHub &&
                     <ChangeAssets
@@ -249,10 +257,7 @@ export default function AccountDetails (): React.ReactElement {
                   {supportGov &&
                     <LockedBalanceDisplay
                       address={address}
-                      api={api}
-                      chain={chain}
                       decimal={balancesToShow?.decimal}
-                      formatted={String(formatted)}
                       price={currentPrice}
                       refreshNeeded={refreshNeeded}
                       setDisplayPopup={setDisplayPopup}
@@ -282,12 +287,12 @@ export default function AccountDetails (): React.ReactElement {
                   pricesInCurrency={pricesInCurrency}
                 />
               }
-              {account?.genesisHash &&
+              {genesisHash &&
                 <CommonTasks
                   address={address}
                   assetId={assetId}
                   balance={balancesToShow}
-                  genesisHash={account?.genesisHash}
+                  genesisHash={genesisHash}
                   setDisplayPopup={setDisplayPopup}
                 />
               }
@@ -295,7 +300,7 @@ export default function AccountDetails (): React.ReactElement {
                 address={address}
                 setDisplayPopup={setDisplayPopup}
               />
-              {account?.genesisHash &&
+              {genesisHash &&
                 <ExternalLinks
                   address={address}
                 />
