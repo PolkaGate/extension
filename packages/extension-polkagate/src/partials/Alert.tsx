@@ -6,7 +6,7 @@
 import '@vaadin/icons';
 
 import { Alert as _Alert, Slide } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useTranslation } from '../hooks';
 import { AlertsType } from '../util/types';
@@ -15,10 +15,26 @@ interface Props {
   alert: AlertsType;
 }
 
-function Alert({ alert }: Props): React.ReactElement {
+function Alert ({ alert }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [showAlert, setShowAlert] = useState<boolean>(true);
+
+  const { bgcolor, borderColor } = useMemo(() => {
+    switch (alert.type) {
+      case 'warning':
+        return { bgcolor: '#FFBF00', borderColor: '#FF5722 ' };
+
+      case 'error':
+        return { bgcolor: '#DC143C', borderColor: '#FF5252 ' };
+
+      case 'info':
+        return { bgcolor: '#89CFF0', borderColor: '#6495ED' };
+
+      default:
+        return { bgcolor: '#fff', borderColor: '#fff' };
+    }
+  }, [alert.type]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -26,9 +42,15 @@ function Alert({ alert }: Props): React.ReactElement {
     }, 10000);
   }, []);
 
+  const closeAlert = useCallback(() => setShowAlert(false), []);
+
   return (
     <Slide direction='left' in={showAlert} mountOnEnter unmountOnExit>
-      <_Alert severity={alert.type} sx={{ bgcolor: alert.type === 'warning' ? '#FFBF00' : '#DC143C', border: '2px solid', borderColor: 'warning.main', color: 'black', width: '100%' }}>
+      <_Alert
+        onClose={closeAlert}
+        severity={alert.type}
+        sx={{ bgcolor, border: '2px solid', borderColor, color: 'black', width: '100%' }}
+      >
         {t(alert.message)}
       </_Alert>
     </Slide>

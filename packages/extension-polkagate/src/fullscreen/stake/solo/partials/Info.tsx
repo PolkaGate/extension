@@ -4,9 +4,9 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Collapse, Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
-import { AlertContext, Infotip2, ShowValue } from '@polkadot/extension-polkagate/src/components';
+import { Infotip2, ShowValue } from '@polkadot/extension-polkagate/src/components';
 import { useInfo, useMinToReceiveRewardsInSolo, useStakingConsts, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, bnMax } from '@polkadot/util';
@@ -20,7 +20,6 @@ export default function Info ({ address }: Props): React.ReactElement {
   const info = useStakingConsts(address);
   const minimumActiveStake = useMinToReceiveRewardsInSolo(address);
   const { decimal, token } = useInfo(address);
-  const { setAlerts } = useContext(AlertContext);
 
   const [show, setShow] = useState<boolean>();
 
@@ -48,9 +47,8 @@ export default function Info ({ address }: Props): React.ReactElement {
   };
 
   const onClick = useCallback(() => {
-    setAlerts((perv) => [...perv, { type: 'warning', message: 'hello' }]);
     setShow(!show);
-  }, [setAlerts, show]);
+  }, [show]);
 
   return (
     <Grid alignItems='end' container item justifyItems='flex-end' sx={{ mt: '15px' }}>

@@ -15,7 +15,7 @@ function AlertBox (): React.ReactElement {
   const { alerts } = useContext(AlertContext);
 
   return (
-    <Grid container display='flex' item sx={{ position: 'absolute', right: '20px', rowGap: '15px', top: '85px', width: '275px', zIndex: 100 }}>
+    <Grid container display='flex' item sx={{ position: 'absolute', right: '20px', rowGap: '15px', top: '85px', width: '300px', zIndex: 100 }}>
       {alerts.map((alert, index) =>
         <Alert
           alert={alert}

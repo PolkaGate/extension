@@ -770,7 +770,7 @@ export interface AccountsAssetsContextType {
 }
 
 export type AlertsType = {
-  type: 'warning' | 'error';
+  type: 'warning' | 'error' | 'info';
   message: string;
 }
 

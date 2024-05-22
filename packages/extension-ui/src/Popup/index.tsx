@@ -117,7 +117,6 @@ function initAccountContext(accounts: AccountJson[]): AccountsContext {
 
 export default function Popup(): React.ReactElement {
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
-  const assetsOnChains = useAssetsBalances(accounts);
   const priceIds = usePriceIds();
   const isFetchingPricesRef = useRef(false);
 
@@ -137,6 +136,8 @@ export default function Popup(): React.ReactElement {
   const [currency, setCurrency] = useState<CurrencyItemType>();
   const [loginInfo, setLoginInfo] = useState<LoginInfo>();
   const [alerts, setAlerts] = useState<AlertsType[]>([]);
+
+  const assetsOnChains = useAssetsBalances(accounts, alerts, setAlerts);
 
   const set = useCallback((change: Fetching) => {
     setFetching(change);
@@ -295,7 +296,7 @@ export default function Popup(): React.ReactElement {
                                       <Route path='/account/import-ledger'>{wrapWithErrorBoundary(<ImportLedger />, 'import-ledger')}</Route>
                                       <Route path='/account/import-seed'>{wrapWithErrorBoundary(<ImportSeed />, 'import-seed')}</Route>
                                       <Route path='/account/import-raw-seed'>{wrapWithErrorBoundary(<ImportRawSeed />, 'import-raw-seed')}</Route>
-                                    <Route path='/account/restore-json'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json')}</Route>
+                                      <Route path='/account/restore-json'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json')}</Route>
                                       <Route path='/accountfs/:address/:paramAssetId'>{wrapWithErrorBoundary(<AccountFS />, 'account')}</Route>
                                       <Route path='/auth-list'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
                                       <Route path='/crowdloans/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
@@ -304,8 +305,8 @@ export default function Popup(): React.ReactElement {
                                       <Route path='/export/:address'>{wrapWithErrorBoundary(<Export />, 'export-address')}</Route>
                                       <Route path='/forget/:address/:isExternal'>{wrapWithErrorBoundary(<ForgetAccount />, 'forget-address')}</Route>
                                       <Route path='/forgot-password'>{wrapWithErrorBoundary(<ForgotPassword />, 'forgot-password')}</Route>
-                                    <Route path='/reset-wallet'>{wrapWithErrorBoundary(<ResetWallet />, 'reset-wallet')}</Route>
-                                    <Route path='/fullscreenDerive/:address/'>{wrapWithErrorBoundary(<FullscreenDerive />, 'fullscreen-account-derive')}</Route>
+                                      <Route path='/reset-wallet'>{wrapWithErrorBoundary(<ResetWallet />, 'reset-wallet')}</Route>
+                                      <Route path='/fullscreenDerive/:address/'>{wrapWithErrorBoundary(<FullscreenDerive />, 'fullscreen-account-derive')}</Route>
                                       <Route path='/fullscreenProxyManagement/:address/'>{wrapWithErrorBoundary(<FullScreenManageProxies />, 'fullscreen-proxy-management')}</Route>
                                       <Route path='/governance/:address/:topMenu/:postId'>{wrapWithErrorBoundary(<ReferendumPost />, 'governance')}</Route>
                                       <Route path='/governance/:address/:topMenu'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route>
@@ -315,8 +316,8 @@ export default function Popup(): React.ReactElement {
                                       <Route path='/import/attach-qr'>{wrapWithErrorBoundary(<AttachQR />, 'attach-qr')}</Route>
                                       <Route path='/import/attach-qr-full-screen'>{wrapWithErrorBoundary(<AttachQrFullScreen />, 'attach-qr-full-screen')}</Route>
                                       <Route path='/import/proxied'>{wrapWithErrorBoundary(<ImportProxied />, 'import-proxied')}</Route>
-                                    <Route path='/import/proxied-full-screen'>{wrapWithErrorBoundary(<ImportProxiedFullScreen />, 'import-add-watch-only-full-screen')}</Route>
-                                    <Route path='/login-password'>{wrapWithErrorBoundary(<LoginPassword />, 'manage-login-password')}</Route>
+                                      <Route path='/import/proxied-full-screen'>{wrapWithErrorBoundary(<ImportProxiedFullScreen />, 'import-add-watch-only-full-screen')}</Route>
+                                      <Route path='/login-password'>{wrapWithErrorBoundary(<LoginPassword />, 'manage-login-password')}</Route>
                                       <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
                                       <Route path='/manageIdentity/:address'>{wrapWithErrorBoundary(<ManageIdentity />, 'manage-identity')}</Route>
                                       <Route path='/onboarding'>{wrapWithErrorBoundary(<Onboarding />, 'onboarding')}</Route>
