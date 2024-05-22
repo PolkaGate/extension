@@ -18,10 +18,11 @@ import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/sr
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
-import { useBalances, useInfo, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
+import { useAvailableToSoloStake, useInfo, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
+import { STEPS } from '../../pool/stake';
 import { ModalTitle } from '../commonTasks/configurePayee';
 import { MODAL_IDS } from '..';
 
@@ -32,22 +33,14 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const STEPS = {
-  INDEX: 1,
-  REVIEW: 2,
-  WAIT_SCREEN: 3,
-  CONFIRM: 4,
-  PROXY: 100
-};
-
 export default function StakeExtra ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, decimal, token } = useInfo(address);
 
   const stakingAccount = useStakingAccount(address);
-  const balances = useBalances(address);
   const stakingConsts = useStakingConsts(address);
+  const availableToSoloStake = useAvailableToSoloStake(address);
 
   const [alert, setAlert] = useState<string | undefined>();
   const [step, setStep] = useState(STEPS.INDEX);
@@ -58,7 +51,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
 
   const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active as unknown as BN, [stakingAccount]);
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
-  const availableToSoloStake = balances?.freeBalance && staked && balances.freeBalance.sub(staked);
+
   const call = api && api.tx.staking.bondExtra;
 
   useEffect(() => {
@@ -125,7 +118,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
 
     const ED = stakingConsts.existentialDeposit;
 
-    const max = availableToSoloStake.sub(ED.muln(3));
+    const max = availableToSoloStake.sub(ED.muln(2));
     const maxToShow = amountToHuman(max.toString(), decimal);
 
     setAmount(maxToShow);
@@ -203,7 +196,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
             />
           </>
         }
-        {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <Review
             address={address}
             inputs={inputs}

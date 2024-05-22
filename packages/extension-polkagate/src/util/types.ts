@@ -631,16 +631,16 @@ export interface SavedIdentities {
 }
 
 export interface BalancesInfo extends DeriveBalancesAll {
+  ED: BN;
   assetId?: number;
   chainName: string;
   currencyId?: unknown;
-  decimal: number;
-  token: string;
   date: number;
+  decimal: number;
+  genesisHash: string;
   pooledBalance?: BN;
   soloTotal?: BN;
-  genesisHash: string;
-  ED: BN;
+  token: string;
 }
 export interface AccountStakingInfo extends DeriveStakingAccount {
   era: number;
@@ -779,6 +779,7 @@ export interface AlertContextType {
   setAlerts: (alerts: AlertsType[]) => void;
 }
 
+// TODO: FixMe, Controller is deprecated
 export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }
 export interface SoloSettings {
   controllerId?: AccountId | string | undefined,
@@ -802,3 +803,8 @@ export enum CanPayStatements {
   CANNOTPAYDEPOSIT,
   PROXYCANPAYFEE,
 }
+
+export type ProxiedAccounts = {
+  proxy: string;
+  proxied: string[];
+};

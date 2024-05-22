@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
+
 import '@vaadin/icons';
 
 import { Close as CloseIcon } from '@mui/icons-material';
@@ -11,11 +12,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { WrongPasswordAlert } from '../../../components';
 import { getStorage, LoginInfo } from '../../../components/Loading';
 import { useTranslation } from '../../../hooks';
-import { DraggableModal } from '../../governance/components/DraggableModal';
 import Confirmation from '../../../popup/passwordManagement/Confirmation';
 import { STEPS } from '../../../popup/passwordManagement/constants';
 import Modify from '../../../popup/passwordManagement/Modify';
 import SetPassword from '../../../popup/passwordManagement/SetPassword';
+import { DraggableModal } from '../../governance/components/DraggableModal';
 
 interface Props {
   open: boolean;

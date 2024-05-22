@@ -134,13 +134,13 @@ export default function RestoreJson (): React.ReactElement {
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t<string>('Restore from file')}
+                {t('Restore from file')}
               </Typography>
             </Grid>
           </Grid>
           {stepOne &&
             <Typography fontSize='16px' fontWeight={400} width='100%'>
-              {t<string>('Upload a JSON file containing the account(s) you previously exported from this extension or other compatible extensions/wallets.')}
+              {t('Upload a JSON file containing the account(s) you previously exported from this extension or other compatible extensions/wallets.')}
             </Typography>
           }
           {isPasswordError && !stepOne &&
@@ -148,7 +148,7 @@ export default function RestoreJson (): React.ReactElement {
           }
           {!stepOne && accountsInfo.length &&
             <Label
-              label={t<string>('Accounts')}
+              label={t('Accounts')}
               style={{ margin: '20px auto 0' }}
             >
               <Grid container direction='column' sx={{ '> .tree:first-child': { borderTopLeftRadius: '5px', borderTopRightRadius: '5px' }, '> .tree:last-child': { border: 'none', borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px' }, border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: pgBoxShadow(theme), display: 'block', maxHeight: parent.innerHeight * 2 / 5, overflowY: 'scroll' }}>
@@ -176,7 +176,7 @@ export default function RestoreJson (): React.ReactElement {
           <InputFileWithLabel
             accept={acceptedFormats}
             isError={isFileError}
-            label={stepOne ? t<string>('Upload your file') : t<string>('File name')}
+            label={stepOne ? t('Upload your file') : t('File name')}
             labelStyle={{ marginBlock: '20px', width: '100%' }}
             onChange={onChangeFile}
             reset={stepOne}
@@ -187,14 +187,15 @@ export default function RestoreJson (): React.ReactElement {
               isDanger
               theme={theme}
             >
-              {t<string>('Invalid Json file')}
+              {t('Invalid Json file')}
             </Warning>
           )}
           {requirePassword && !stepOne && (
             <Grid container item>
               <Password
                 isError={isPasswordError}
-                label={t<string>('Password for this file')}
+                isFocused
+                label={t('Password for this file')}
                 onChange={passChange}
                 onEnter={onRestore}
                 style={{ marginTop: '15px', width: '100%' }}
@@ -211,10 +212,10 @@ export default function RestoreJson (): React.ReactElement {
                 onSecondaryClick={stepOne
                   ? onCancel
                   : onBack}
-                primaryBtnText={t<string>('Restore')}
+                primaryBtnText={t('Restore')}
                 secondaryBtnText={stepOne
-                  ? t<string>('Cancel')
-                  : t<string>('Back')}
+                  ? t('Cancel')
+                  : t('Back')}
               />
             </Grid>
           </Grid>

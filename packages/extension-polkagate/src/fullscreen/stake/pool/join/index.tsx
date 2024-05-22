@@ -18,7 +18,7 @@ import { PoolInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
 import { Inputs } from '../../Entry';
-import PoolsTable from './partials/PoolsTable';
+import PoolsTable from '../partials/PoolsTable';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
@@ -32,10 +32,10 @@ export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
-  const { api, decimal, formatted, token } = useInfo(address);
+  const { api, decimal, formatted, genesisHash, token } = useInfo(address);
   const poolStakingConsts = usePoolConsts(address);
 
-  usePools(address);
+  const { incrementalPools, numberOfFetchedPools, totalNumberOfPools } = usePools(address);
 
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();
   const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
@@ -45,14 +45,18 @@ export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.
   const [filteredPools, setFilteredPools] = useState<PoolInfo[] | null | undefined>();
   const [searchedPools, setSearchedPools] = useState<PoolInfo[] | null | undefined>();
   const [poolsToShow, setPoolsToShow] = useState<PoolInfo[] | null | undefined>(); // filtered with selected at first
-  const [totalNumberOfPools, setTotalNumberOfPools] = useState<number | undefined>();
-  const [numberOfFetchedPools, setNumberOfFetchedPools] = useState<number>(0);
-  const [incrementalPools, setIncrementalPools] = useState<PoolInfo[] | null>();
   const [amountAsBN, setAmountAsBN] = useState<BN>();
 
   const onBack = useCallback(() => {
     setStep(STEPS.INDEX);
   }, [setStep]);
+
+  useEffect(() => {
+    // go back on chain switch
+    if (genesisHash && api?.genesisHash && String(api.genesisHash) !== genesisHash) {
+      onBack();
+    }
+  }, [api?.genesisHash, genesisHash, onBack]);
 
   const stakeAmountChange = useCallback((value: string) => {
     if (!decimal) {
@@ -94,12 +98,6 @@ export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.
   const toReview = useCallback(() => {
     api && selectedPool && setStep(STEPS.JOIN_REVIEW);
   }, [api, selectedPool, setStep]);
-
-  useEffect(() => {
-    window.addEventListener('totalNumberOfPools', (res) => setTotalNumberOfPools(res.detail));
-    window.addEventListener('numberOfFetchedPools', (res) => setNumberOfFetchedPools(res.detail));
-    window.addEventListener('incrementalPools', (res) => setIncrementalPools(res.detail));
-  }, []);
 
   useEffect(() => {
     if (!incrementalPools) {
@@ -210,6 +208,7 @@ export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.
         api={api}
         filteredPools={filteredPools}
         maxHeight={window.innerHeight - 420}
+        minHeight={window.innerHeight - 420}
         numberOfFetchedPools={numberOfFetchedPools}
         pools={incrementalPools}
         poolsToShow={poolsToShow}

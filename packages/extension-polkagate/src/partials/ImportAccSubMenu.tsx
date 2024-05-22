@@ -5,6 +5,8 @@
 
 import '@vaadin/icons';
 
+import { faSitemap } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
@@ -33,6 +35,10 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
     windowOpen('/account/import-seed').catch(console.error);
   }, []);
 
+  const onImportRawSeed = useCallback(() => {
+    windowOpen('/account/import-raw-seed').catch(console.error);
+  }, []);
+
   const onAddWatchOnly = useCallback(() => {
     onAction('/import/add-watch-only');
   }, [onAction]);
@@ -44,6 +50,10 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
   const onImportLedger = useCallback((): void => {
     windowOpen('/account/import-ledger').catch(console.error);
   }, []);
+
+  const onImportProxied = useCallback((): void => {
+    onAction('/import/proxied');
+  }, [onAction]);
 
   return (
     <Collapse easing={{ enter: '200ms', exit: '100ms' }} in={show} sx={{ width: '100%' }}>
@@ -68,6 +78,26 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
             onClick={onImportAcc}
             py='4px'
             text={t('Import from recovery phrase')}
+            withHoverEffect
+          />
+          <MenuItem
+            fontSize='17px'
+            iconComponent={
+              <vaadin-icon icon='vaadin:book-dollar' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            }
+            onClick={onImportRawSeed}
+            py='4px'
+            text={t('Import from raw seed')}
+            withHoverEffect
+          />
+          <MenuItem
+            fontSize='17px'
+            iconComponent={
+              <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}`, transform: 'rotate(180deg)' }} />
+            }
+            onClick={onImportProxied}
+            py='4px'
+            text={t('Import proxied account(s)')}
             withHoverEffect
           />
           <MenuItem

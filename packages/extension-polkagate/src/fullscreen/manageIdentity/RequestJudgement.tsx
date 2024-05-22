@@ -118,7 +118,7 @@ export default function RequestJudgement ({ address, api, idJudgement, maxFeeVal
   }, [setMode, setStep]);
 
   return (
-    <Grid container item sx={{ display: 'block', px: '10%' }}>
+    <Grid container item sx={{ display: 'block'}}>
       <Typography fontSize='30px' fontWeight={700} pb='25px' pt='25px'>
         {idJudgement
           ? <>

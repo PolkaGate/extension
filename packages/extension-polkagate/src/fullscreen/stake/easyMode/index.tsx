@@ -6,7 +6,6 @@
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Balance } from '@polkadot/types/interfaces';
 import { BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, ShowBalance, TwoButtons } from '../../../components';
@@ -56,7 +55,7 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
 
       if (amountAsBN.gt(minToReceiveRewardsInSolo.muln(SAFETY_MARGIN_FACTOR_FOR_MIN_TO_SOLO_STAKE))) {
         // can stake solo
-        if (api && autoSelectedValidators) {
+        if (api && autoSelectedValidators?.length) {
           const bonded = api.tx.staking.bond;
           const bondParams = [amountAsBN, 'Staked'];
 

@@ -34,7 +34,7 @@ interface Props {
   totalSubIdsDeposit: BN;
 }
 
-export default function SetSubId({ api, mode, parentAddress, parentDisplay, resetSubIds, setMode, setStep, setSubIdAccountsToSubmit, setSubIdsParams, subIdAccounts, subIdAccountsToSubmit, subIdsParams, totalSubIdsDeposit }: Props): React.ReactElement {
+export default function SetSubId ({ api, mode, parentAddress, parentDisplay, resetSubIds, setMode, setStep, setSubIdAccountsToSubmit, setSubIdsParams, subIdAccounts, subIdAccountsToSubmit, subIdsParams, totalSubIdsDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(parentAddress);
@@ -194,7 +194,7 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
 
   return (
     <>
-      <Grid container item sx={{ display: 'block', maxWidth: FULLSCREEN_WIDTH, position: 'relative', px: '10%' }}>
+      <Grid container item sx={{ display: 'block', maxWidth: FULLSCREEN_WIDTH, position: 'relative' }}>
         <Typography fontSize='30px' fontWeight={700} pb={(subIdAccounts || subIdsLength > 0) ? '10px' : '45px'} pt='25px'>
           {t('Set on-chain Sub-identity(ies)')}
         </Typography>

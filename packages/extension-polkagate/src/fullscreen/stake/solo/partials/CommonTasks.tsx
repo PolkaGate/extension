@@ -9,24 +9,41 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { openOrFocusTab, TaskButton } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
-import { useInfo, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useInfo, useStakingAccount, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { BN } from '@polkadot/util';
 
 import ConfigurePayee from '../commonTasks/configurePayee';
 
 interface Props {
   address: string | undefined;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  staked: BN | undefined;
+
 }
 
-export default function CommonTasks ({ address, setRefresh }: Props): React.ReactElement {
+export default function CommonTasks ({ address, setRefresh, staked }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { genesisHash } = useInfo(address);
 
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
+  const stakingAccount = useStakingAccount(address);
+
+  const stakedButNoValidators = useMemo(() => {
+    if (stakingAccount?.stakingLedger?.active) {
+      const hasStaked = !(stakingAccount.stakingLedger.active as unknown as BN).isZero();
+      const hasNotSelectedValidators = stakingAccount.nominators?.length === 0;
+
+      return hasStaked && hasNotSelectedValidators;
+    }
+
+    return undefined;
+  }, [stakingAccount]);
 
   const [showRewardDestinationModal, setShowRewardDestinationModal] = useState<boolean>(false);
 
+  const isDisabled = useMemo((): boolean => !genesisHash || !staked || staked?.isZero(), [genesisHash, staked]);
+  const iconColor = isDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary
+  
   const onRewardDestination = useCallback(() => {
     setShowRewardDestinationModal(true);
   }, []);
@@ -37,17 +54,17 @@ export default function CommonTasks ({ address, setRefresh }: Props): React.Reac
 
   return (
     <>
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} width='inherit'>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} width='inherit'>
         <Typography fontSize='22px' fontWeight={700}>
           {t('Most common tasks')}
         </Typography>
         <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto 15px', width: '90%' }} />
         <Grid alignItems='center' container direction='column' display='block' item justifyContent='center'>
           <TaskButton
-            disabled={!genesisHash}
+            disabled={isDisabled}
             icon={
               <FontAwesomeIcon
-                color={`${theme.palette.text.primary}`}
+                color={`${iconColor}`}
                 fontSize='22px'
                 icon={faCog}
               />
@@ -58,10 +75,11 @@ export default function CommonTasks ({ address, setRefresh }: Props): React.Reac
             text={t('Configure Reward Destination')}
           />
           <TaskButton
-            disabled={!genesisHash}
+            disabled={isDisabled}
             icon={
               <FontAwesomeIcon
-                color={`${theme.palette.text.primary}`}
+                bounce={!!stakedButNoValidators}
+                color={stakedButNoValidators ? `${theme.palette.warning.main}` : `${iconColor}`}
                 fontSize='22px'
                 icon={faHand}
               />

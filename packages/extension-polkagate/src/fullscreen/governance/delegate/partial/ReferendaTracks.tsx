@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Skeleton, Typography, useTheme } from '@mui/material';
+import { Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Skeleton, Typography, alpha, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
 import { BN } from '@polkadot/util';
@@ -170,7 +170,7 @@ export default function ReferendaTracks({ filterDelegatedTracks, filterLockedTra
               <ListItem
                 disablePadding
                 key={index}
-                sx={{ bgcolor: deselected ? '#EBCCDC' : 'inherit', height: '25px' }}
+                sx={{ bgcolor: deselected ? alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.4 : 0.2) : 'inherit', height: '25px' }}
               >
                 <ListItemButton dense onClick={handleToggle(value[0], !!trackVotes || !!filterTrack)} role={undefined} sx={{ py: 0 }}>
                   <ListItemText

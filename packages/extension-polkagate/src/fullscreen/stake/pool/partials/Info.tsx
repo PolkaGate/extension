@@ -15,7 +15,7 @@ interface Props {
   address: string;
 }
 
-export default function Info({ address }: Props): React.ReactElement {
+export default function Info ({ address }: Props): React.ReactElement {
   const { t } = useTranslation();
   const info = usePoolConsts(address);
   const { decimal, token } = useInfo(address);
@@ -54,7 +54,14 @@ export default function Info({ address }: Props): React.ReactElement {
   return (
     <Grid alignItems='end' container item justifyItems='flex-end' sx={{ mt: '15px' }}>
       <Infotip2 showInfoMark text={t('click to view')}>
-        <Typography fontSize='14px' onClick={onClick} sx={{ color: 'secondary.light', cursor: 'pointer' }} width='100%'>
+        <Typography
+          fontSize='14px' onClick={onClick}
+          sx={{ '&:hover': {
+            textDecoration: 'underline'
+          },
+          color: 'secondary.light',
+          cursor: 'pointer' }} width='100%'
+        >
           {t('on-chain pool staking info')}
         </Typography>
       </Infotip2>

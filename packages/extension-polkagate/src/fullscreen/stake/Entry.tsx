@@ -13,7 +13,7 @@ import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { Balance } from '@polkadot/types/interfaces';
 
 import { useBalances } from '../../hooks';
-import { MyPoolInfo, TxInfo, ValidatorInfo } from '../../util/types';
+import { MyPoolInfo, Payee, TxInfo, ValidatorInfo } from '../../util/types';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import WaitScreen from '../governance/partials/WaitScreen';
 import Confirmation from './easyMode/Confirmation';
@@ -28,6 +28,7 @@ export interface Inputs {
   amount?: string | undefined; // deprecated, moved to extraInfo
   call: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   mode?: number;
+  payee?: Payee;
   params: unknown[] | (() => unknown)[];
   pool?: MyPoolInfo,
   estimatedFee?: Balance;
@@ -43,7 +44,7 @@ interface Props {
   txInfo: TxInfo | undefined
 }
 
-function Entry({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.ReactElement {
+function Entry ({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.ReactElement {
   const { address } = useParams<{ address: string }>();
 
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -90,7 +91,7 @@ function Entry({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.React
           setStep={setStep}
         />
       }
-      {(inputs && [STEPS.EASY_REVIEW, STEPS.SOLO_REVIEW, STEPS.JOIN_REVIEW, STEPS.CREATE_REVIEW, STEPS.PROXY].includes(step)) &&
+      {(inputs && [STEPS.EASY_REVIEW, STEPS.SOLO_REVIEW, STEPS.JOIN_REVIEW, STEPS.CREATE_REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step)) &&
         <Review
           address={address}
           balances={balances}

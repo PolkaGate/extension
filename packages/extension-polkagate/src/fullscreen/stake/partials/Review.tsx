@@ -14,14 +14,14 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountHolderWithProxy, Identity, ShortAddress, ShowBalance, ShowValue, SignArea2, WrongPasswordAlert } from '../../../components';
 import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../hooks';
 import { SubTitle } from '../../../partials';
 import { MyPoolInfo, Payee, Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { Inputs } from '../Entry';
-import { STEPS } from '../solo/commonTasks/configurePayee';
+import { STEPS } from '../pool/stake';
 
 interface Props {
   address: string | undefined;
@@ -111,7 +111,7 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
           fontSize='14px'
         />
       }
-      {step === STEPS.REVIEW &&
+      {[STEPS.REVIEW, STEPS.SIGN_QR].includes(step) &&
         <>
           <SubTitle label={t('Review')} style={{ paddingTop: isPasswordError ? '10px' : '25px' }} />
           <Container disableGutters sx={{ px: '30px' }}>
@@ -175,7 +175,7 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
                 <Grid alignItems='center' container item sx={{ height: '42px' }}>
                   <ShowBalance
                     api={api}
-                    balance={inputs.extraInfo.availableBalanceAfter}
+                    balance={(inputs.extraInfo.availableBalanceAfter as BN).sub(estimatedFee || BN_ZERO)}
                     decimalPoint={4}
                   />
                 </Grid>

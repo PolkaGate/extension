@@ -52,7 +52,7 @@ export const POPUPS_NUMBER = {
   RENAME: 2
 };
 
-export default function AccountInformation({ accountAssets, address, api, balances, chain, chainName, formatted, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();
@@ -140,7 +140,7 @@ export default function AccountInformation({ accountAssets, address, api, balanc
 
   return (
     <>
-      <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isChild ? '0.1px dashed' : theme.palette.mode === 'dark' ? '0.1px solid' : 'none', borderColor: 'secondary.main', borderRadius: '5px', p: '20px 10px 15px 30px' }}>
+      <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isChild ? '0.1px dashed' : 'none', borderColor: 'secondary.main', borderRadius: '5px', p: '20px 10px 15px 30px' }}>
         <Grid container item>
           <Grid container item sx={{ borderRight: '1px solid', borderRightColor: 'divider', pr: '8px', width: 'fit-content' }}>
             <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>

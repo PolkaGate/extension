@@ -38,7 +38,9 @@ export const STEPS = {
   REVIEW: 2,
   WAIT_SCREEN: 3,
   CONFIRM: 4,
-  PROXY: 100
+  PROGRESS: 5,
+  PROXY: 100,
+  SIGN_QR: 200
 };
 
 export default function StakeExtra ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
@@ -227,7 +229,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
             />
           </>
         }
-        {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <Review
             address={address}
             inputs={inputs}

@@ -51,6 +51,12 @@ function Welcome(): React.ReactElement {
     }, []
   );
 
+  const onImportRawSeed = useCallback(
+    (): void => {
+      windowOpen('/account/import-raw-seed').catch(console.error);
+    }, []
+  );
+
   const onAttachQR = useCallback(
     (): void => {
       windowOpen('/import/attach-qr-full-screen').catch(console.error);
@@ -64,7 +70,7 @@ function Welcome(): React.ReactElement {
         showMenu
         text={EXTENSION_NAME}
       />
-      <Typography sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '20px', pt: '25px', textAlign: 'center' }}>
+      <Typography sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '5px', pt: '20px', textAlign: 'center' }}>
         {t('Welcome!')}
       </Typography>
       <Typography sx={{ fontSize: '14px', fontWeight: 400, px: '24px' }}>
@@ -91,6 +97,12 @@ function Welcome(): React.ReactElement {
         _onClick={onImport}
         _variant={'outlined'}
         text={t<string>('Import from recovery phrase')}
+      />
+      <PButton
+        _mt='10px'
+        _onClick={onImportRawSeed}
+        _variant={'outlined'}
+        text={t<string>('Import from raw seed')}
       />
       <PButton
         _mt='10px'

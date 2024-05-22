@@ -14,7 +14,7 @@ export const EXTRA_PRICE_IDS: Record<string, string> = {
 };
 
 export default async function getPrices (priceIds: string[], currencyCode = 'usd') {
-  console.log(' getting prices3 for:', priceIds.sort());
+  console.log(' getting prices for:', priceIds.sort());
 
   const revisedPriceIds = priceIds.map((item) => (EXTRA_PRICE_IDS[item] || item));
 

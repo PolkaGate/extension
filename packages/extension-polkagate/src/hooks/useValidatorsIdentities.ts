@@ -8,11 +8,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
 import { SavedValidatorsIdentities, ValidatorsIdentities } from '../util/types';
-import { useChainName, useCurrentEraIndex, useEndpoint } from '.';
+import { useCurrentEraIndex, useInfo } from '.';
 
-export default function useValidatorsIdentities(address: string, allValidatorsIds: AccountId[] | null | undefined, identities?: DeriveAccountInfo[]): DeriveAccountInfo[] | null | undefined {
-  const endpoint = useEndpoint(address);
-  const chainName = useChainName(address);
+export default function useValidatorsIdentities (address: string, allValidatorsIds: AccountId[] | null | undefined, identities?: DeriveAccountInfo[]): DeriveAccountInfo[] | null | undefined {
+  const { chainName, endpoint } = useInfo(address);
   const currentEraIndex = useCurrentEraIndex(address);
 
   const [validatorsIdentities, setValidatorsIdentities] = useState<DeriveAccountInfo[] | null | undefined>();

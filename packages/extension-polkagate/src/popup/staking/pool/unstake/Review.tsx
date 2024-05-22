@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 /**
  * @description
  * this component opens unstake review page
@@ -47,7 +49,7 @@ interface Props {
   pool: MyPoolInfo
 }
 
-export default function Review({ address, amount, api, chain, estimatedFee, formatted, maxUnlockingChunks, pool, poolWithdrawUnbonded, redeemDate, setShow, show, total, unbonded, unlockingLen, unstakeAllAmount }: Props): React.ReactElement {
+export default function Review ({ address, amount, api, chain, estimatedFee, formatted, maxUnlockingChunks, pool, poolWithdrawUnbonded, redeemDate, setShow, show, total, unbonded, unlockingLen, unstakeAllAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);

@@ -13,10 +13,10 @@ import { Identity, Motion, PButton, ShortAddress } from '../../../components';
 import { useToken, useTranslation } from '../../../hooks';
 import { ActiveRecoveryFor } from '../../../hooks/useActiveRecoveries';
 import { ThroughProxy } from '../../../partials';
-import { TxInfo } from '../../../util/types';
-import { amountToHuman, pgBoxShadow } from '../../../util/utils';
 import Explorer from '../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../popup/history/partials/FailSuccessIcon';
+import { TxInfo } from '../../../util/types';
+import { amountToHuman, pgBoxShadow } from '../../../util/utils';
 import { AddressWithIdentity } from '../components/SelectTrustedFriend';
 import recoveryDelayPeriod from '../util/recoveryDelayPeriod';
 import { RecoveryConfigType, SocialRecoveryModes } from '../util/types';
@@ -68,7 +68,7 @@ export const DisplayInfo = ({ caption, fontSize, fontWeight, showDivider = true,
   );
 };
 
-export default function Confirmation({ activeLost, decimal, depositValue, handleClose, lostAccountAddress, mode, recoveryConfig, txInfo, vouchRecoveryInfo, WithdrawDetails }: Props): React.ReactElement {
+export default function Confirmation ({ WithdrawDetails, activeLost, decimal, depositValue, handleClose, lostAccountAddress, mode, recoveryConfig, txInfo, vouchRecoveryInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const token = useToken(txInfo.from.address);
@@ -103,7 +103,7 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
             <AccountWithTitle
               accountInformation={recoveryConfig.friends.infos?.at(index)}
               address={friend}
-              title={t<string>(`Trusted friend ${index + 1}`)}
+              title={t(`Trusted friend ${index + 1}`)}
             />
           </Grid>
         ))}
@@ -113,11 +113,11 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
       {(mode === 'SetRecovery' || mode === 'ModifyRecovery') && recoveryConfig &&
         <>
           <DisplayInfo
-            caption={t<string>('Recovery Threshold:')}
+            caption={t('Recovery Threshold:')}
             value={`${recoveryConfig.threshold} of ${recoveryConfig.friends.addresses.length}`}
           />
           <DisplayInfo
-            caption={t<string>('Recovery Delay:')}
+            caption={t('Recovery Delay:')}
             value={recoveryDelayPeriod(recoveryConfig.delayPeriod)}
           />
         </>
@@ -145,8 +145,8 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
               ? txInfo.from.address
               : vouchRecoveryInfo?.rescuer.address}
             title={mode === 'VouchRecovery'
-              ? t<string>('Rescuer account')
-              : t<string>('Account holder')}
+              ? t('Rescuer account')
+              : t('Account holder')}
           />
         </Grid>
         {txInfo.throughProxy &&
@@ -164,8 +164,8 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
                 accountInformation={mode === 'VouchRecovery' ? vouchRecoveryInfo?.lost?.accountIdentity : undefined}
                 address={vouchRecoveryInfo?.lost?.address ?? activeLost?.rescuer}
                 title={mode === 'VouchRecovery'
-                  ? t<string>('Lost account')
-                  : t<string>('Account that initiated the recovery')}
+                  ? t('Lost account')
+                  : t('Account that initiated the recovery')}
               />
             </Grid>
             <Grid alignItems='center' container item justifyContent='center' pt='8px'>
@@ -179,7 +179,7 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
               <AccountWithTitle
                 accountInformation={lostAccountAddress?.accountIdentity}
                 address={lostAccountAddress?.address}
-                title={t<string>('Lost account')}
+                title={t('Lost account')}
               />
               {mode === 'Withdraw' && !txInfo.success &&
                 <Grid alignItems='center' container item justifyContent='center' pt='8px'>
@@ -193,7 +193,7 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
                   <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
                 </Grid>
                 <DisplayInfo
-                  caption={t<string>('Initiation Deposit:')}
+                  caption={t('Initiation Deposit:')}
                   value={`${amountToHuman(depositValue, decimal, 3)} ${token ?? ''}`}
                 />
               </>
@@ -213,18 +213,18 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
         }
         {(mode === 'RemoveRecovery' || mode === 'CloseRecovery') &&
           <DisplayInfo
-            caption={mode === 'CloseRecovery' ? t<string>('Deposit they made:') : t<string>('Released deposit:')}
+            caption={mode === 'CloseRecovery' ? t('Deposit they made:') : t('Released deposit:')}
             value={`${amountToHuman(depositValue, decimal, 3)} ${token ?? ''}`}
           />
         }
         <DisplayInfo
-          caption={t<string>('Fee:')}
+          caption={t('Fee:')}
           value={fee?.toHuman() ?? '00.00'}
         />
         {txInfo?.txHash &&
           <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
             <Grid container item width='fit-content'>
-              <Typography pr='5px'>{t<string>('Hash')}:</Typography>
+              <Typography pr='5px'>{t('Hash')}:</Typography>
             </Grid>
             <Grid container item width='fit-content'>
               <ShortAddress
@@ -247,8 +247,8 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
           _ml={0}
           _mt='25px'
           _onClick={handleClose}
-          _width={30}
-          text={t<string>('Done')}
+          _width={100}
+          text={txInfo.success ? t('Done') : t('Close')}
         />
       </Grid>
     </Motion>

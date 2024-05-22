@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 /**
  * @description
  * this component opens withdraw rewards review page
@@ -28,17 +30,17 @@ import TxDetail from '../partials/TxDetail';
 
 interface Props {
   address: AccountId;
-  show: boolean;
-  formatted: string;
-  api: ApiPromise;
   amount: BN;
+  available: BN | undefined;
+  api: ApiPromise;
   chain: Chain;
+  formatted: string;
+  show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  available: BN;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function RedeemableWithdrawReview({ address, amount, api, available, chain, formatted, setRefresh, setShow, show }: Props): React.ReactElement {
+export default function RedeemableWithdrawReview ({ address, amount, api, available, chain, formatted, setRefresh, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(String(address));
@@ -163,7 +165,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
           />
           <AmountFee
             address={address}
-            amount={<ShowBalance2 address={address} balance={amount.add(available).sub(estimatedFee ?? BN_ZERO)} />}
+            amount={<ShowBalance2 address={address} balance={amount.add(available || BN_ZERO).sub(estimatedFee || BN_ZERO)} />}
             label={t('Available balance after')}
             style={{ pt: '5px' }}
           />

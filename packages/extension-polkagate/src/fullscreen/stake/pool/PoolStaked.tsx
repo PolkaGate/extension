@@ -20,9 +20,10 @@ import { BN } from '@polkadot/util';
 import { PoolStakingIcon } from '../../../components';
 import { useInfo, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { STAKING_CHAINS } from '../../../util/constants';
-import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
+import Bread from '../../partials/Bread';
 import { Title } from '../../sendFund/InputPage';
 import DisplayBalance from '../partials/DisplayBalance';
+import StakedBar from '../solo/StakedBar';
 import ClaimedRewardsChart from './partials/ClaimedRewardsChart';
 import Info from './partials/Info';
 import PoolCommonTasks from './partials/PoolCommonTasks';
@@ -38,7 +39,7 @@ interface Props {
   unlockingAmount: BN | undefined;
 }
 
-export default function PoolStaked({ address, balances, pool, redeemable, setShow, toBeReleased, unlockingAmount }: Props): React.ReactElement {
+export default function PoolStaked ({ address, balances, pool, redeemable, setShow, toBeReleased, unlockingAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain } = useInfo(address);
@@ -47,6 +48,7 @@ export default function PoolStaked({ address, balances, pool, redeemable, setSho
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
+  const availableBalance = useMemo(() => getValue('available', balances), [balances]);
 
   const onUnstake = useCallback(() => {
     staked && !staked?.isZero() && setShow(MODAL_IDS.UNSTAKE);
@@ -70,22 +72,29 @@ export default function PoolStaked({ address, balances, pool, redeemable, setSho
     redeemable && !redeemable?.isZero() && setShow(MODAL_IDS.REDEEM);
   }, [redeemable, setShow]);
 
-  const onBack = useCallback(() => {
-    openOrFocusTab(`/accountfs/${address}/0`, true);
-  }, [address]);
-
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', px: '2%' }}>
+      <Bread />
       <Title
+        height='70px'
         logo={
           <PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />
         }
-        onBackClick={onBack}
+        ml='-10px'
+        padding='0px'
+        spacing={0}
         text={t('Staked in Pool')}
       />
       <Grid container item justifyContent='space-between' mb='15px'>
         <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 320px - 3%)'>
-          <Grid container sx={{ overflowY: 'scroll', px: '5px' }}>
+          <StakedBar
+            availableBalance={availableBalance}
+            balances={balances}
+            redeemable={redeemable}
+            staked={staked}
+            unlockingAmount={unlockingAmount}
+          />
+          <Grid container item sx={{ overflowY: 'scroll' }}>
             <DisplayBalance
               actions={[t('unstake')]}
               address={address}
@@ -122,7 +131,7 @@ export default function PoolStaked({ address, balances, pool, redeemable, setSho
               actions={[staked && !staked.isZero() ? t('stake extra') : t('stake')]}
               address={address}
               /** to disable action button until fetching has done */
-              amount={!staked || !redeemable || !unlockingAmount ? undefined : getValue('available', balances)}
+              amount={!staked || !redeemable || !unlockingAmount ? undefined : availableBalance}
               icons={[faPlus]}
               onClicks={[onStakeOrExtra]}
               title={t('Available to stake')}

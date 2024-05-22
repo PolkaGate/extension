@@ -13,7 +13,7 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { Warning } from '../../components';
-import { useAccount, useApi, useChain, useFullscreen, useTranslation } from '../../hooks';
+import { useFullscreen, useInfo, useTranslation } from '../../hooks';
 import { FULLSCREEN_WIDTH, PROXY_CHAINS } from '../../util/constants';
 import { Proxy, ProxyItem } from '../../util/types';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
@@ -28,6 +28,7 @@ export const STEPS = {
   MANAGE: 2,
   PROXY: 100,
   REVIEW: 4,
+  SIGN_QR: 200,
   UNSUPPORTED: 1,
   WAIT_SCREEN: 5
 };
@@ -37,9 +38,7 @@ function ManageProxies (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string; }>();
-  const account = useAccount(address);
-  const api = useApi(address);
-  const chain = useChain(address);
+  const { account, api, chain } = useInfo(address);
 
   const [step, setStep] = useState<number>(0);
   const [proxyItems, setProxyItems] = useState<ProxyItem[] | null | undefined>();
@@ -135,7 +134,7 @@ function ManageProxies (): React.ReactElement {
               setStep={setStep}
             />
           }
-          {(step === STEPS.REVIEW || step === STEPS.PROXY || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM) &&
+          {[STEPS.REVIEW, STEPS.PROXY, STEPS.WAIT_SCREEN, STEPS.CONFIRM, STEPS.SIGN_QR].includes(step) &&
             <Review
               address={address}
               api={api}

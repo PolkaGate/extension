@@ -6,11 +6,12 @@
 import '@vaadin/icons';
 
 import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { ActionContext, Checkbox2, InputWithLabel, TwoButtons } from '../../../components';
+import { Checkbox2, InputWithLabel, TwoButtons } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountSuri, createSeed } from '../../../messaging';
@@ -47,7 +48,6 @@ function CreateAccount (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-  const onAction = useContext(ActionContext);
 
   const [seed, setSeed] = useState<null | string>(null);
   const [name, setName] = useState<string | null | undefined>();
@@ -88,13 +88,13 @@ function CreateAccount (): React.ReactElement {
       setIsBusy(true);
 
       createAccountSuri(name, password, seed)
-        .then(() => onAction('/'))
+        .then(() => openOrFocusTab('/', true))
         .catch((error: Error): void => {
           setIsBusy(false);
           console.error(error);
         });
     }
-  }, [name, onAction, password, seed]);
+  }, [name, password, seed]);
 
   const onCancel = useCallback(() => window.close(), []);
 

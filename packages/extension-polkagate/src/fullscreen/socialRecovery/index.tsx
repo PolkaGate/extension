@@ -15,9 +15,10 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { Warning } from '../../components';
-import { useAccountsInfo, useActiveRecoveries, useApi, useChain, useFormatted, useFullscreen, useLostAccountInformation, useTranslation } from '../../hooks';
+import { useAccountsInfo, useActiveRecoveries, useFullscreen, useInfo, useLostAccountInformation, useTranslation } from '../../hooks';
 import { FULLSCREEN_WIDTH, SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
+import Bread from '../partials/Bread';
 import { AddressWithIdentity } from './components/SelectTrustedFriend';
 import RecoveryCheckProgress from './partial/RecoveryCheckProgress';
 import { InitiateRecoveryConfig, RecoveryConfigType, SessionInfo, SocialRecoveryModes, WithdrawInfo } from './util/types';
@@ -40,18 +41,16 @@ export const STEPS = {
   WAIT_SCREEN: 8,
   CONFIRM: 9,
   UNSUPPORTED: 10,
-  PROXY: 100
+  PROXY: 100,
+  SIGN_QR: 200
 };
 
 export default function SocialRecovery (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
-
-  const { address, closeRecovery } = useParams<{ address: string, closeRecovery: string }>();
-  const api = useApi(address);
   const theme = useTheme();
-  const chain = useChain(address);
-  const formatted = useFormatted(address);
+  const { address, closeRecovery } = useParams<{ address: string, closeRecovery: string }>();
+  const { api, chain, formatted } = useInfo(address);
   const accountsInfo = useAccountsInfo(api, chain);
 
   const [step, setStep] = useState<number>(STEPS.CHECK_SCREEN);
@@ -224,7 +223,8 @@ export default function SocialRecovery (): React.ReactElement {
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='socialRecovery' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
+      <Grid container item sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '3%' }}>
+        <Bread />
         {step === STEPS.UNSUPPORTED &&
           <Grid alignItems='center' container direction='column' display='block' item>
             <Typography fontSize='30px' fontWeight={700} p='30px 0 60px 80px'>
@@ -307,7 +307,7 @@ export default function SocialRecovery (): React.ReactElement {
             setVouchRecoveryInfo={setVouchRecoveryInfo}
           />
         }
-        {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) && chain && recoveryInfo !== undefined &&
+        {[STEPS.REVIEW, STEPS.WAIT_SCREEN, STEPS.CONFIRM, STEPS.PROXY, STEPS.SIGN_QR].includes(step) && chain && recoveryInfo !== undefined &&
           <Review
             activeLost={activeLost}
             address={address}

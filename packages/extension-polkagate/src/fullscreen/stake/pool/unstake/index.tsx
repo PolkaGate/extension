@@ -16,17 +16,18 @@ import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/
 import Asset from '@polkadot/extension-polkagate/src/partials/Asset';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
 import { CONDITION_MAP } from '@polkadot/extension-polkagate/src/popup/staking/pool/unstake';
-import { DATE_OPTIONS, MAX_AMOUNT_LENGTH } from '@polkadot/extension-polkagate/src/util/constants';
+import { MAX_AMOUNT_LENGTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
-import { useInfo, usePool, usePoolConsts, useStakingConsts, useTranslation } from '../../../../hooks';
+import { useInfo, usePool, usePoolConsts, useTranslation } from '../../../../hooks';
 import { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { ModalTitle } from '../../solo/commonTasks/configurePayee';
+import { STEPS } from '../stake';
 import { MODAL_IDS } from '..';
 
 interface Props {
@@ -36,26 +37,16 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const STEPS = {
-  INDEX: 1,
-  REVIEW: 2,
-  WAIT_SCREEN: 3,
-  CONFIRM: 4,
-  PROXY: 100
-};
-
-export default function Unstake({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function Unstake ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);
+  const myPool = usePool(address, undefined);
+  const poolConsts = usePoolConsts(address);
 
   const [step, setStep] = useState(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [inputs, setInputs] = useState<Inputs>();
-
-  const myPool = usePool(address, undefined);
-  const poolConsts = usePoolConsts(address);
-  const stakingConsts = useStakingConsts(address);
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [amount, setAmount] = useState<string>();
   const [alert, setAlert] = useState<string | undefined>();
@@ -96,19 +87,9 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
   const isPoolDepositor = useMemo(() => String(formatted) === String(myPool?.bondedPool?.roles?.depositor), [formatted, myPool?.bondedPool?.roles?.depositor]);
   const poolState = useMemo(() => String(myPool?.bondedPool?.state), [myPool?.bondedPool?.state]);
   const poolMemberCounter = useMemo(() => Number(myPool?.bondedPool?.memberCounter), [myPool?.bondedPool?.memberCounter]);
-  const destroyHelperText = t<string>('No one can join and all members can be removed without permissions. Once in destroying state, it cannot be reverted to another state.');
 
   const unbonded = api && api.tx.nominationPools.unbond;
   const poolWithdrawUnbonded = api && api.tx.nominationPools.poolWithdrawUnbonded;
-  const redeemDate = useMemo(() => {
-    if (stakingConsts) {
-      const date = Date.now() + stakingConsts.unbondingDuration * 24 * 60 * 60 * 1000;
-
-      return new Date(date).toLocaleDateString(undefined, DATE_OPTIONS);
-    }
-
-    return undefined;
-  }, [stakingConsts]);
 
   useEffect(() => {
     if (!amount) {
@@ -387,7 +368,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
             />
           </>
         }
-        {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <Review
             address={address}
             inputs={inputs}

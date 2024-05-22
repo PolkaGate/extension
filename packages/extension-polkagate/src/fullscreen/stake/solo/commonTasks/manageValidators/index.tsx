@@ -10,6 +10,7 @@ import { useParams } from 'react-router';
 
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { FullScreenHeader } from '@polkadot/extension-polkagate/src/fullscreen/governance/FullScreenHeader';
+import Bread from '@polkadot/extension-polkagate/src/fullscreen/partials/Bread';
 import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
@@ -19,16 +20,9 @@ import { useFullscreen } from '../../../../../hooks';
 import WaitScreen from '../../../../governance/partials/WaitScreen';
 import Confirmation from '../../../easyMode/Confirmation';
 import { Inputs } from '../../../Entry';
+import { STEPS } from '../../../pool/stake';
 import InputPage from './InputPage';
 import Review from './Review';
-
-export const STEPS = {
-  INDEX: 0,
-  REVIEW: 1,
-  CONFIRM: 2,
-  WAIT_SCREEN: 3,
-  PROXY: 100
-};
 
 export default function ManageValidators (): React.ReactElement {
   const { t } = useTranslation();
@@ -48,8 +42,10 @@ export default function ManageValidators (): React.ReactElement {
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='stake' unableToChangeAccount />
-      <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '6%' }}>
+      <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '4%' }}>
+        <Bread />
         <Title
+          height='100px'
           icon={faHand}
           text={t('Manage Validators')}
         />
@@ -62,7 +58,7 @@ export default function ManageValidators (): React.ReactElement {
               setStep={setStep}
             />
           }
-          {[STEPS.REVIEW, STEPS.PROXY].includes(step) && inputs &&
+          {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) && inputs &&
             <Review
               address={address}
               inputs={inputs}

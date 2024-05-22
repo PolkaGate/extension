@@ -143,8 +143,7 @@ export default function Confirmation({ handleDone, txInfo }: Props): React.React
           </Grid>
         </Grid>
       }
-      {
-        txInfo?.txHash &&
+      {txInfo?.txHash && chainName &&
         <Grid container justifyContent='center' pt='5px'>
           <Explorer chainName={chainName} txHash={txInfo?.txHash} />
         </Grid>
@@ -154,7 +153,7 @@ export default function Confirmation({ handleDone, txInfo }: Props): React.React
         _onClick={handleDone}
         _width={90}
         left='5%'
-        text={t('Done')}
+        text={txInfo.success ? t('Done') : t('Close')}
       />
     </Grid>
   );

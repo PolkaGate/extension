@@ -21,6 +21,7 @@ import { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { ModalTitle } from '../../solo/commonTasks/configurePayee';
+import { STEPS } from '../stake';
 import { MODAL_IDS } from '..';
 
 interface Props {
@@ -31,18 +32,9 @@ interface Props {
   availableBalance: Balance | undefined;
 }
 
-export const STEPS = {
-  INDEX: 1,
-  REVIEW: 2,
-  WAIT_SCREEN: 3,
-  CONFIRM: 4,
-  PROGRESS: 5,
-  PROXY: 100
-};
-
-export default function WithdrawRedeem({ address, availableBalance, redeemable, setRefresh, setShow }: Props): React.ReactElement<Props> {
+export default function WithdrawRedeem ({ address, availableBalance, redeemable, setRefresh, setShow }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const { api, decimal, formatted, token } = useInfo(address);
+  const { api, decimal, formatted } = useInfo(address);
 
   const [step, setStep] = useState(STEPS.PROGRESS);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
@@ -53,7 +45,7 @@ export default function WithdrawRedeem({ address, availableBalance, redeemable, 
       return undefined;
     }
 
-    return redeemable?.add(availableBalance);
+    return redeemable.add(availableBalance);
   }, [availableBalance, redeemable]);
 
   useEffect(() => {
@@ -118,7 +110,7 @@ export default function WithdrawRedeem({ address, availableBalance, redeemable, 
             type='grid'
           />
         }
-        {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <Review
             address={address}
             inputs={inputs}

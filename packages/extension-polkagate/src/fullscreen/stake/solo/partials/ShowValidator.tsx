@@ -60,7 +60,7 @@ function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, de
             />
           </Grid>
       }
-      <Grid container fontSize='14px' item maxWidth={showCheckbox ? '45%' : allInOneRow ? '50%' : '100%'} textAlign='left' width={allInOneRow ? 'fit-content' : '100%'}>
+      <Grid container fontSize='14px' item maxWidth={showCheckbox ? '40%' : allInOneRow ? '50%' : '100%'} textAlign='left' width={allInOneRow ? 'fit-content' : '100%'}>
         <Identity
           accountInfo={accountInfo}
           api={api}

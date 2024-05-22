@@ -15,7 +15,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { useAccountLocks, useApi, useBalances, useFormatted, useProxies, useTracks, useTranslation } from '../../../hooks';
+import { useAccountLocks, useBalances, useInfo, useProxies, useTracks, useTranslation } from '../../../hooks';
 import { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { DraggableModal } from '../components/DraggableModal';
 import SelectProxyModal2 from '../components/SelectProxyModal2';
@@ -69,15 +69,17 @@ export const STEPS = {
   REVIEW: 7,
   WAIT_SCREEN: 8,
   CONFIRM: 9,
-  PROXY: 100
+  PROXY: 100,
+  SIGN_QR: 200
 };
 
-export function Delegate({ address, open, setOpen, showDelegationNote }: Props): React.ReactElement<Props> {
+export type DelegationStatus = 'Delegate' | 'Remove' | 'Modify';
+
+export function Delegate ({ address, open, setOpen, showDelegationNote }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const api = useApi(address);
+  const { api, formatted } = useInfo(address);
   const tracksList = useTracks(address);
-  const formatted = useFormatted(address);
   const balances = useBalances(address, undefined, undefined, true);
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
   const accountLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
@@ -89,7 +91,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   const [delegateInformation, setDelegateInformation] = useState<DelegateInformation | undefined>();
   const [alreadyDelegationInfo, setAlreadyDelegationInfo] = useState<DelegationInfo[] | null | undefined>();
   const [filteredDelegation, setFilteredDelegation] = useState<AlreadyDelegateInformation[] | undefined>();
-  const [status, setStatus] = useState<'Delegate' | 'Remove' | 'Modify'>('Delegate');
+  const [status, setStatus] = useState<DelegationStatus>('Delegate');
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [selectedTracksLength, setSelectedTracksLength] = useState<number | undefined>();
   const [modalHeight, setModalHeight] = useState<number | undefined>();
@@ -233,47 +235,47 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
               {step === STEPS.ABOUT &&
-                t<string>('Delegate Vote')
+                t('Delegate Vote')
               }
-              {(step === STEPS.INDEX || step === STEPS.CHOOSE_DELEGATOR) &&
-                t<string>('Delegate Vote ({{ step }}/3)', { replace: { step: step === STEPS.INDEX ? 1 : 2 } })
+              {[STEPS.INDEX, STEPS.CHOOSE_DELEGATOR].includes(step) &&
+                t('Delegate Vote ({{ step }}/3)', { replace: { step: step === STEPS.INDEX ? 1 : 2 } })
               }
               {step === STEPS.PREVIEW &&
-                t<string>('Delegation details')
+                t('Delegation details')
               }
-              {step === STEPS.REVIEW &&
-                t<string>('Review Your Delegation (3/3)')
+              {[STEPS.REVIEW, STEPS.SIGN_QR].includes(step) && status === 'Delegate' &&
+                t('Review Your Delegation (3/3)')
               }
-              {step === STEPS.REMOVE &&
-                t<string>('Remove Delegate')
+              {[STEPS.REMOVE, STEPS.SIGN_QR].includes(step) && status === 'Remove' &&
+                t('Remove Delegate')
               }
-              {step === STEPS.MODIFY &&
-                t<string>('Modify Delegate')
+              {[STEPS.MODIFY, STEPS.SIGN_QR].includes(step) && status === 'Modify' &&
+                t('Modify Delegate')
               }
               {step === STEPS.WAIT_SCREEN
                 ? status === 'Delegate'
-                  ? t<string>('Delegating')
+                  ? t('Delegating')
                   : status === 'Modify'
-                    ? t<string>('Modifying Delegation')
-                    : t<string>('Removing Delegation')
+                    ? t('Modifying Delegation')
+                    : t('Removing Delegation')
                 : undefined
               }
               {step === STEPS.CONFIRM
                 ? status === 'Delegate'
                   ? txInfo?.success
-                    ? t<string>('Delegation Completed')
-                    : t<string>('Delegation Failed')
+                    ? t('Delegation Completed')
+                    : t('Delegation Failed')
                   : status === 'Modify'
                     ? txInfo?.success
-                      ? t<string>('Delegations Modified')
-                      : t<string>('Modifying Delegations Failed')
+                      ? t('Delegations Modified')
+                      : t('Modifying Delegations Failed')
                     : txInfo?.success
-                      ? t<string>('Delegations Removed')
-                      : t<string>('Removing Delegations Failed')
+                      ? t('Delegations Removed')
+                      : t('Removing Delegations Failed')
                 : undefined
               }
               {step === STEPS.PROXY &&
-                t<string>('Select Proxy')
+                t('Select Proxy')
               }
             </Typography>
           </Grid>
@@ -313,7 +315,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
             setStep={setStep}
           />
         }
-        {(step === STEPS.PREVIEW || step === STEPS.REMOVE || step === STEPS.MODIFY) &&
+        {(([STEPS.REMOVE, STEPS.MODIFY, STEPS.SIGN_QR].includes(step) && ['Remove', 'Modify'].includes(status)) || step === STEPS.PREVIEW) &&
           <DelegationDetails
             accountLocks={accountLocks}
             address={address}
@@ -322,7 +324,6 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
             formatted={String(formatted)}
             lockedAmount={lockedAmount}
             mode={mode}
-            proxyItems={proxyItems}
             selectedProxy={selectedProxy}
             setDelegateInformation={setDelegateInformation}
             setModalHeight={setModalHeight}
@@ -331,17 +332,17 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
             setStatus={setStatus}
             setStep={setStep}
             setTxInfo={setTxInfo}
+            status={status}
             step={step}
           />
         }
-        {step === STEPS.REVIEW && delegateInformation &&
+        {[STEPS.REVIEW, STEPS.SIGN_QR].includes(step) && status === 'Delegate' && delegateInformation &&
           <Review
             address={address}
             delegateInformation={delegateInformation}
             estimatedFee={estimatedFee}
             formatted={String(formatted)}
             handleClose={handleClose}
-            proxyItems={proxyItems}
             selectedProxy={selectedProxy}
             setModalHeight={setModalHeight}
             setStep={setStep}
@@ -352,8 +353,9 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
         {step === STEPS.PROXY &&
           <SelectProxyModal2
             address={address}
-            height={modalHeight}
+            // eslint-disable-next-line react/jsx-no-bind
             closeSelectProxy={() => setStep(proxyStep)}
+            height={modalHeight}
             proxies={proxyItems}
             proxyTypeFilter={GOVERNANCE_PROXY}
             selectedProxy={selectedProxy}

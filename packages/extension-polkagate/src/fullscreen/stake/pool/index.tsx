@@ -18,6 +18,7 @@ import { useBalances, useFullscreen, useInfo, usePool, useTranslation, useUnSupp
 import { FULLSCREEN_WIDTH, STAKING_CHAINS } from '../../../util/constants';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
+import Bread from '../../partials/Bread';
 import { Title } from '../../sendFund/InputPage';
 import Entry from '../Entry';
 import PoolOptionsBig from '../partials/PoolOptionsBig';
@@ -45,7 +46,7 @@ export const MODAL_IDS = {
   STAKE_EXTRA: 6
 };
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   useFullscreen();
 
   const { t } = useTranslation();
@@ -127,7 +128,8 @@ export default function Index(): React.ReactElement {
         return t('Review');
       case STEPS.JOIN_CONFIRM:
       case STEPS.CREATE_CONFIRM:
-        return t('Confirm');
+      case STEPS.CONFIRM:
+        return t('Confirmation');
       default:
         return t('Pool Staking');
     }
@@ -147,10 +149,15 @@ export default function Index(): React.ReactElement {
           unlockingAmount={unlockingAmount}
         />
       }
-      {showId === MODAL_IDS.STAKE &&
+      {showId === MODAL_IDS.STAKE && // this is not a modal
         <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '6%' }}>
+          <Bread />
           <Title
+            height='85px'
             logo={<PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />}
+            ml='-9px'
+            padding='0px'
+            spacing={0}
             text={getTitle(step)}
           />
           {step === STEPS.INDEX
@@ -205,6 +212,7 @@ export default function Index(): React.ReactElement {
       {showId === MODAL_IDS.WITHDRAW_REWARDS &&
         <WithdrawRewards
           address={address}
+          balances={balances}
           pool={pool}
           setRefresh={setRefresh}
           setShow={setShow}

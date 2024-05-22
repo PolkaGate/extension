@@ -4269,7 +4269,7 @@ __metadata:
     "@polkadot/keyring": latest
     "@polkadot/networks": latest
     "@polkadot/react-identicon": latest
-    "@polkadot/react-qr": latest
+    "@polkadot/react-qr": ^3.6.6
     "@polkadot/types": latest
     "@polkadot/types-augment": latest
     "@polkadot/ui-keyring": latest
@@ -4449,24 +4449,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/react-qr@npm:latest":
-  version: 2.9.14
-  resolution: "@polkadot/react-qr@npm:2.9.14"
+"@polkadot/react-qr@npm:^3.6.6":
+  version: 3.6.6
+  resolution: "@polkadot/react-qr@npm:3.6.6"
   dependencies:
-    "@babel/runtime": ^7.20.6
-    "@polkadot/ui-settings": 2.9.14
-    "@polkadot/util": ^10.2.1
-    "@polkadot/util-crypto": ^10.2.1
+    "@polkadot/ui-settings": 3.6.6
+    "@polkadot/util": ^12.6.2
+    "@polkadot/util-crypto": ^12.6.2
     qrcode-generator: ^1.4.4
     react-qr-reader: ^2.2.1
-    styled-components: ^5.3.6
+    styled-components: ^6.1.1
+    tslib: ^2.6.2
   peerDependencies:
     "@polkadot/util": "*"
     "@polkadot/util-crypto": "*"
     react: "*"
     react-dom: "*"
-    styled-components: "*"
-  checksum: 72abf971c912471954f7c61c5741984a4c7926fd569f0340bc63790af9d190d75dd02e5ed54bb01f2acd1a3959128b5b6f051365917e02aafd07c1eb6b3bef21
+    react-is: "*"
+  checksum: b0613f94d5b2b850977a830744715c2cc9b9deb3eb7f4cadcc296dd9affe298f09f9fa923c000e86763b9f5ab4e2e29ae0114c43cecda5cebea97b69d9c991fa
   languageName: node
   linkType: hard
 
@@ -4803,6 +4803,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polkadot/ui-settings@npm:3.6.6":
+  version: 3.6.6
+  resolution: "@polkadot/ui-settings@npm:3.6.6"
+  dependencies:
+    "@polkadot/networks": ^12.6.2
+    "@polkadot/util": ^12.6.2
+    eventemitter3: ^5.0.1
+    store: ^2.0.12
+    tslib: ^2.6.2
+  peerDependencies:
+    "@polkadot/networks": "*"
+    "@polkadot/util": "*"
+  checksum: 27bb900e7a1d78745f5d3f65e298e4eb4aabbdef2768d45dc33f6d845f6b6c8a825b20e0ac80c3b728f87ccb2e3ec992252f975eb29c01710ef0e630c95786ab
+  languageName: node
+  linkType: hard
+
 "@polkadot/ui-shared@npm:2.9.14":
   version: 2.9.14
   resolution: "@polkadot/ui-shared@npm:2.9.14"
@@ -5111,9 +5127,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkagate/apps-config@npm:^0.133.82":
-  version: 0.133.82
-  resolution: "@polkagate/apps-config@npm:0.133.82"
+"@polkagate/apps-config@npm:^0.133.84":
+  version: 0.133.84
+  resolution: "@polkagate/apps-config@npm:0.133.84"
   dependencies:
     "@acala-network/type-definitions": 5.1.2
     "@bifrost-finance/type-definitions": 1.11.3
@@ -5160,7 +5176,7 @@ __metadata:
     pontem-types-bundle: 1.0.15
     rxjs: ^7.8.1
     tslib: ^2.6.2
-  checksum: 24503ba0e6639ec116c0694ba90b9446655277faab39e53aefb288eab4f255e451cfb2540c29bc8488b7f1073f229b5ad5bf0080e3faaa810a5214337495842b
+  checksum: bd32d0c72add6db7be47f3b3687f9f80709fea308cd0a7dd6ec77be9cb809b7856e44c9ca663dacc0ceda7829d5349d2492f4f24ec08f38cd09128e2f0d08774
   languageName: node
   linkType: hard
 
@@ -9105,6 +9121,13 @@ __metadata:
     ansi-styles: ^4.1.0
     supports-color: ^7.1.0
   checksum: 8e3ddf3981c4da405ddbd7d9c8d91944ddf6e33d6837756979f7840a29272a69a5189ecae0ff84006750d6d1e92368d413335eab4db5476db6e6703a1d1e0505
+  languageName: node
+  linkType: hard
+
+"chance@npm:^1.1.11":
+  version: 1.1.11
+  resolution: "chance@npm:1.1.11"
+  checksum: 2e871fcc76584d274f860f0f25380b6ab547caf0d22d8b043a313be73d5c3db38941373241f83aeba049e7511f752f9746dc722a0f2b0182020d493c4e11da84
   languageName: node
   linkType: hard
 
@@ -19650,13 +19673,14 @@ resolve@^2.0.0-next.3:
     "@polkadot/api": ^10.11.2
     "@polkadot/dev": latest
     "@polkadot/rpc-provider": ^10.9.1
-    "@polkagate/apps-config": ^0.133.82
+    "@polkagate/apps-config": ^0.133.84
     "@substrate/connect": ^0.7.32
     "@testing-library/react": latest
     "@types/jest": latest
     "@vaadin/icons": ^23.2.3
     babel-plugin-transform-import-meta: ^2.1.1
     better-react-spinkit: ^2.0.4
+    chance: ^1.1.11
     chart.js: ^4.2.1
     country-flag-icons: ^1.5.9
     css-loader: ^6.7.3

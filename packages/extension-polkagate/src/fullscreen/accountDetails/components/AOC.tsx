@@ -76,7 +76,7 @@ const AssetsBoxes = ({ account, api, asset, balanceToShow, hideNumbers, mode, on
     <Grid alignItems='center' container item justifyContent='center' onClick={() => asset ? onclick(asset) : null} sx={{ border: asset ? `${isAssetSelected ? '3px' : '1px'} solid` : 'none', borderColor: 'secondary.light', borderRadius: '8px', boxShadow: isAssetSelected ? '0px 2px 5px 2px #00000040' : 'none', cursor: asset ? 'pointer' : 'default', height: 'fit-content', p: asset ? '5px' : 0, width: 'fit-content' }}>
       {asset
         ? <>
-          <Grid alignItems='center' container item width='fit-content'>
+          <Grid alignItems='center' container item mr={logoInfo?.subLogo && '2px'} width='fit-content'>
             <DisplayLogo assetSize='25px' baseTokenSize='16px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
           </Grid>
           {(mode === 'Detail' || (homeMode && !hideNumbers)) &&
@@ -116,7 +116,7 @@ function AOC ({ account, accountAssets, api, balanceToShow, hideNumbers, mode = 
       </Typography>
       <Grid alignItems='center' container item xs>
         <Collapse collapsedSize={53} in={showMore} orientation='vertical' sx={{ width: '100%' }}>
-          <Grid container gap='15px' item justifyContent='flex-start' sx={{ height: 'fit-content', minHeight: '50px', overflow: 'hidden', p: '5px 3%' }}>
+          <Grid container gap='15px' item justifyContent='flex-start' sx={{ height: 'fit-content', minHeight: '50px', overflow: 'hidden', p: '5px 1%' }}>
             {assets.map((asset, index) => (
               <AssetsBoxes
                 account={account}
@@ -144,8 +144,8 @@ function AOC ({ account, accountAssets, api, balanceToShow, hideNumbers, mode = 
               </Typography>
               <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
             </>
-            : accountAssets.length > 5 &&
-            <MoreHorizIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
+            : accountAssets.length > 6 &&
+            <MoreHorizIcon sx={{ color: 'secondary.light', fontSize: '27px' }} />
           }
         </Grid>
       }

@@ -21,6 +21,7 @@ import { useInfo, useStakingAccount, useStakingConsts, useTranslation } from '..
 import { Inputs } from '../../../Entry';
 import Confirmation from '../../../partials/Confirmation';
 import Review from '../../../partials/Review';
+import { STEPS } from '../../../pool/stake';
 
 interface Props {
   address: string | undefined;
@@ -28,14 +29,6 @@ interface Props {
   show: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
-
-export const STEPS = {
-  INDEX: 1,
-  REVIEW: 2,
-  WAIT_SCREEN: 3,
-  CONFIRM: 4,
-  PROXY: 100
-};
 
 export const ModalTitle = ({ icon, onCancel, setStep, step, text }: { text: string, onCancel: () => void, setStep?: React.Dispatch<React.SetStateAction<number>>, icon: IconDefinition, step: number }): React.ReactElement<Props> => {
   const theme = useTheme();
@@ -81,7 +74,7 @@ export const ModalTitle = ({ icon, onCancel, setStep, step, text }: { text: stri
   );
 };
 
-export default function ConfigurePayee({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function ConfigurePayee ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);
@@ -91,7 +84,7 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
 
   const [rewardDestinationValue, setRewardDestinationValue] = useState<'Staked' | 'Others'>();
   const [rewardDestinationAccount, setRewardDestinationAccount] = useState<string | undefined>();
-  const [newPayee, setNewPayee] = useState();
+  const [newPayee, setNewPayee] = useState<Payee>();
   const [step, setStep] = useState(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [inputs, setInputs] = useState<Inputs>();
@@ -184,6 +177,8 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
     if (account) {
       return { Account: account };
     }
+
+    return undefined;
   }, [settings]);
 
   const payeeNotChanged = useMemo(
@@ -279,7 +274,7 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
             />
           </>
         }
-        {[STEPS.REVIEW, STEPS.PROXY].includes(step) &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <Review
             address={address}
             inputs={inputs}

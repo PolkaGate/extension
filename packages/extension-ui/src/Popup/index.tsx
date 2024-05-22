@@ -6,7 +6,7 @@ import type { SettingsStruct } from '@polkadot/ui-settings/types';
 
 import { AnimatePresence } from 'framer-motion';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Route, Switch } from 'react-router';
+import { Route, Switch, useLocation } from 'react-router';
 
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
@@ -29,6 +29,8 @@ import AddWatchOnly from '@polkadot/extension-polkagate/src/popup/import/addWatc
 import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
 import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
 import LoginPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement';
+import ForgotPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement/ForgotPasswordFS';
+import ResetWallet from '@polkadot/extension-polkagate/src/popup/passwordManagement/ResetFS';
 import uiSettings from '@polkadot/ui-settings';
 
 import { ErrorBoundary, Loading } from '../../../extension-polkagate/src/components';
@@ -52,6 +54,9 @@ import AddWatchOnlyFullScreen from '../../../extension-polkagate/src/popup/impor
 import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
 import AttachQrFullScreen from '../../../extension-polkagate/src/popup/import/attachQrFullScreen';
 import ImportLedger from '../../../extension-polkagate/src/popup/import/importLedger';
+import ImportProxied from '../../../extension-polkagate/src/popup/import/importProxied';
+import ImportProxiedFullScreen from '../../../extension-polkagate/src/popup/import/importProxiedFullScreen';
+import ImportRawSeed from '../../../extension-polkagate/src/popup/import/importRawSeedFullScreen';
 import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeedFullScreen';
 import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJSONFullScreen';
 import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
@@ -116,6 +121,8 @@ export default function Popup(): React.ReactElement {
   const priceIds = usePriceIds();
   const isFetchingPricesRef = useRef(false);
 
+  useLocation();// just to trigger component to fix forgot pass issue
+
   const [accountCtx, setAccountCtx] = useState<AccountsContext>({ accounts: [], hierarchy: [] });
   const [authRequests, setAuthRequests] = useState<null | AuthorizeRequest[]>(null);
   const [cameraOn, setCameraOn] = useState(startSettings.camera === 'on');
@@ -162,7 +169,7 @@ export default function Popup(): React.ReactElement {
   }, [accounts, assetsOnChains]);
 
   useEffect(() => {
-    if (priceIds && currency && !isFetchingPricesRef.current) {
+    if (priceIds && currency?.code && !isFetchingPricesRef.current) {
       isFetchingPricesRef.current = true;
 
       getStorage('pricesInCurrencies')
@@ -172,7 +179,7 @@ export default function Popup(): React.ReactElement {
 
           if (mayBeSavedPriceInCurrentCurrencyCode && isPriceUpToDate(mayBeSavedPriceInCurrentCurrencyCode.date)) {
             /** price in the selected currency is already updated hence no need to fetch again */
-            // FixMe: what if user change selected chainS during price validity period?
+            // TODO: FixMe: what if users change selected chainS during price validity period?
             return;
           }
 
@@ -190,7 +197,7 @@ export default function Popup(): React.ReactElement {
           isFetchingPricesRef.current = false;
         });
     }
-  }, [currency, priceIds]);
+  }, [currency?.code, priceIds]);
 
   useEffect((): void => {
     Promise.all([
@@ -287,7 +294,8 @@ export default function Popup(): React.ReactElement {
                                       <Route path='/account/export-all'>{wrapWithErrorBoundary(<ExportAll />, 'export-all-address')}</Route>
                                       <Route path='/account/import-ledger'>{wrapWithErrorBoundary(<ImportLedger />, 'import-ledger')}</Route>
                                       <Route path='/account/import-seed'>{wrapWithErrorBoundary(<ImportSeed />, 'import-seed')}</Route>
-                                      <Route path='/account/restore-json'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json')}</Route>
+                                      <Route path='/account/import-raw-seed'>{wrapWithErrorBoundary(<ImportRawSeed />, 'import-raw-seed')}</Route>
+                                    <Route path='/account/restore-json'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json')}</Route>
                                       <Route path='/accountfs/:address/:paramAssetId'>{wrapWithErrorBoundary(<AccountFS />, 'account')}</Route>
                                       <Route path='/auth-list'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
                                       <Route path='/crowdloans/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
@@ -295,7 +303,9 @@ export default function Popup(): React.ReactElement {
                                       <Route path='/derive/:address'>{wrapWithErrorBoundary(<Derive />, 'derive-address')}</Route>
                                       <Route path='/export/:address'>{wrapWithErrorBoundary(<Export />, 'export-address')}</Route>
                                       <Route path='/forget/:address/:isExternal'>{wrapWithErrorBoundary(<ForgetAccount />, 'forget-address')}</Route>
-                                      <Route path='/fullscreenDerive/:address/'>{wrapWithErrorBoundary(<FullscreenDerive />, 'fullscreen-account-derive')}</Route>
+                                      <Route path='/forgot-password'>{wrapWithErrorBoundary(<ForgotPassword />, 'forgot-password')}</Route>
+                                    <Route path='/reset-wallet'>{wrapWithErrorBoundary(<ResetWallet />, 'reset-wallet')}</Route>
+                                    <Route path='/fullscreenDerive/:address/'>{wrapWithErrorBoundary(<FullscreenDerive />, 'fullscreen-account-derive')}</Route>
                                       <Route path='/fullscreenProxyManagement/:address/'>{wrapWithErrorBoundary(<FullScreenManageProxies />, 'fullscreen-proxy-management')}</Route>
                                       <Route path='/governance/:address/:topMenu/:postId'>{wrapWithErrorBoundary(<ReferendumPost />, 'governance')}</Route>
                                       <Route path='/governance/:address/:topMenu'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route>
@@ -304,7 +314,9 @@ export default function Popup(): React.ReactElement {
                                       <Route path='/import/add-watch-only-full-screen'>{wrapWithErrorBoundary(<AddWatchOnlyFullScreen />, 'import-add-watch-only-full-screen')}</Route>
                                       <Route path='/import/attach-qr'>{wrapWithErrorBoundary(<AttachQR />, 'attach-qr')}</Route>
                                       <Route path='/import/attach-qr-full-screen'>{wrapWithErrorBoundary(<AttachQrFullScreen />, 'attach-qr-full-screen')}</Route>
-                                      <Route path='/login-password'>{wrapWithErrorBoundary(<LoginPassword />, 'manage-login-password')}</Route>
+                                      <Route path='/import/proxied'>{wrapWithErrorBoundary(<ImportProxied />, 'import-proxied')}</Route>
+                                    <Route path='/import/proxied-full-screen'>{wrapWithErrorBoundary(<ImportProxiedFullScreen />, 'import-add-watch-only-full-screen')}</Route>
+                                    <Route path='/login-password'>{wrapWithErrorBoundary(<LoginPassword />, 'manage-login-password')}</Route>
                                       <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
                                       <Route path='/manageIdentity/:address'>{wrapWithErrorBoundary(<ManageIdentity />, 'manage-identity')}</Route>
                                       <Route path='/onboarding'>{wrapWithErrorBoundary(<Onboarding />, 'onboarding')}</Route>
@@ -317,7 +329,7 @@ export default function Popup(): React.ReactElement {
                                       <Route path='/pool/:address'>{wrapWithErrorBoundary(<Pool />, 'pool-staking')}</Route>
                                       <Route path='/poolfs/:address'>{wrapWithErrorBoundary(<PoolFS />, 'pool-staking-fullscreen')}</Route>
                                       <Route path='/manageValidators/:address'>{wrapWithErrorBoundary(<ManageValidators />, 'manage-validators-fullscreen')}</Route>
-                                      <Route path='/poolfsManageValidators/:address'>{wrapWithErrorBoundary(<ManageValidatorsPoolfs />, 'manage-validators-fullscreen')}</Route>
+                                      <Route path='/managePoolValidators/:address'>{wrapWithErrorBoundary(<ManageValidatorsPoolfs />, 'manage-validators-fullscreen')}</Route>
                                       <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
                                       <Route path='/receive/:address'>{wrapWithErrorBoundary(<Receive />, 'receive')}</Route>
                                       <Route path='/send/:address/:assetId'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>

@@ -16,29 +16,23 @@ import { updateMeta } from '../messaging';
 import { ASSET_HUBS } from '../util/constants';
 import getPoolAccounts from '../util/getPoolAccounts';
 import { BalancesInfo, SavedBalances } from '../util/types';
-import { useAccount, useApi, useChain, useChainName, useDecimal, useFormatted, useStakingAccount, useToken } from '.';
+import { useInfo, useStakingAccount } from '.';
 
 const assetsChains = createAssets();
 
 export default function useBalances (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: number): BalancesInfo | undefined {
   const stakingAccount = useStakingAccount(address);
-  const account = useAccount(address);
-  const api = useApi(address);
-  const chain = useChain(address);
-  const formatted = useFormatted(address);
+  const { account, api, chain, chainName, decimal: currentDecimal, formatted, token: currentToken } = useInfo(address);
   const isFetching = useContext(FetchingContext);
-  const chainName = useChainName(address);
-  const currentToken = useToken(address);
-  const currentDecimal = useDecimal(address);
 
   const mayBeAssetsOnMultiAssetChains = assetsChains[toCamelCase(chainName || '')];
   const isAssetHub = ASSET_HUBS.includes(chain?.genesisHash || '');
 
-  const [pooledBalance, setPooledBalance] = useState<{ balance: BN, genesisHash: string } | null>();
-  const [balances, setBalances] = useState<BalancesInfo | undefined>();
-  const [overall, setOverall] = useState<BalancesInfo | undefined>();
-  const [newBalances, setNewBalances] = useState<BalancesInfo | undefined>();
   const [assetBalance, setAssetBalance] = useState<BalancesInfo | undefined>();
+  const [balances, setBalances] = useState<BalancesInfo | undefined>();
+  const [newBalances, setNewBalances] = useState<BalancesInfo | undefined>();
+  const [pooledBalance, setPooledBalance] = useState<{ balance: BN, genesisHash: string } | null>();
+  const [overall, setOverall] = useState<BalancesInfo | undefined>();
 
   const token = api && api.registry.chainTokens[0];
   const decimal = api && api.registry.chainDecimals[0];
@@ -102,7 +96,16 @@ export default function useBalances (address: string | undefined, refresh?: bool
     const ED = api.consts.balances.existentialDeposit as unknown as BN;
 
     formatted && api.derive.balances?.all(formatted).then((b) => {
-      setNewBalances({ ...b, ED, chainName, date: Date.now(), decimal, genesisHash: api.genesisHash.toString(), token });
+      setNewBalances({
+        ...b,
+        ED,
+        chainName,
+        date: Date.now(),
+        decimal,
+        genesisHash: api.genesisHash.toString(),
+        token
+      });
+
       setRefresh && setRefresh(false);
       isFetching.fetching[String(formatted)].balances = false;
       isFetching.set(isFetching.fetching);
@@ -176,7 +179,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
       getBalances();
       getPoolBalances();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(isFetching?.fetching ?? {})?.length, api, chainName, decimal, formatted, getBalances, getPoolBalances, refresh, token]);
 
   useEffect(() => {
@@ -232,7 +235,10 @@ export default function useBalances (address: string | undefined, refresh?: bool
         votingBalance: new BN(sb.votingBalance)
       };
 
-      setBalances({ ...lastBalances, soloTotal: stakingAccount?.stakingLedger?.total });
+      setBalances({
+        ...lastBalances,
+        soloTotal: stakingAccount?.stakingLedger?.total as unknown as BN
+      });
 
       return;
     }
@@ -274,6 +280,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
           assetId,
           availableBalance: isFrozen ? BN_ZERO : balance,
           chainName,
+          date: Date.now(),
           decimal: metadata.decimals.toNumber() as number,
           freeBalance: !isFrozen ? balance : BN_ZERO,
           genesisHash: api.genesisHash.toHex(),
@@ -299,6 +306,10 @@ export default function useBalances (address: string | undefined, refresh?: bool
     }
 
     async function fetchAssetOnMultiAssetChain (assetInfo: Asset) {
+      if (!api) {
+        return;
+      }
+
       try {
         const assets = await api.query.tokens.accounts.entries(address);
         const currencyIdScale = (assetInfo.extras?.currencyIdScale as string).replace('0x', '');
@@ -313,7 +324,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
           return storageKey.endsWith(currencyIdScale);
         });
 
-        if (!found) {
+        if (!found?.length) {
           return;
         }
 

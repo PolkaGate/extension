@@ -17,6 +17,8 @@ import { ActionContext, ShowBalance, TwoButtons } from '../../components';
 import { useTranslation } from '../../hooks';
 import { ProxyItem } from '../../util/types';
 import { noop } from '../../util/utils';
+import Bread from '../partials/Bread';
+import { Title } from '../sendFund/InputPage';
 import ProxyTableFL from './components/ProxyTableFL';
 import { STEPS } from '.';
 
@@ -37,7 +39,7 @@ interface Props {
   newDepositValue: BN | undefined;
 }
 
-export default function Manage({ api, chain, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep }: Props): React.ReactElement {
+export default function Manage ({ api, chain, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -112,13 +114,13 @@ export default function Manage({ api, chain, depositedValue, isDisabledAddProxyB
 
   return (
     <Grid container item>
-      <Grid alignItems='center' container item pt='25px' width='fit-content'>
-        <vaadin-icon icon='vaadin:sitemap' style={{ fontSize: '25px', color: `${theme.palette.text.primary}` }} />
-        <Typography fontSize='30px' fontWeight={700} pl='15px'>
-          {t('Proxy Management')}
-        </Typography>
-      </Grid>
-      <Typography fontSize='14px' fontWeight={400} pt='25px'>
+      <Bread />
+      <Title
+        height='100px'
+        logo={ <vaadin-icon icon='vaadin:sitemap' style={{ fontSize: '23px', color: `${theme.palette.text.primary}` }} /> }
+        text= {t('Proxy Management')}
+      />
+      <Typography fontSize='14px' fontWeight={400}>
         {t('You can add new proxies or remove existing ones for the account here. Keep in mind that you need to reserve a deposit to have proxies.')}
       </Typography>
       <AddProxyButton
@@ -166,8 +168,8 @@ export default function Manage({ api, chain, depositedValue, isDisabledAddProxyB
             mt='10px'
             onPrimaryClick={toReview}
             onSecondaryClick={onCancel}
-            primaryBtnText={t<string>('Next')}
-            secondaryBtnText={t<string>('Cancel')}
+            primaryBtnText={t('Next')}
+            secondaryBtnText={t('Cancel')}
             width='100%'
           />
         </Grid>

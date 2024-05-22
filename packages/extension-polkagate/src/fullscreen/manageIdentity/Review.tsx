@@ -50,7 +50,7 @@ interface Props {
   selectedRegistrarName: string | undefined;
 }
 
-export default function Review({ address, api, chain, depositToPay, depositValue, identityToSet, infoParams, maxFeeAmount, mode, parentDisplay, selectedRegistrar, selectedRegistrarName, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
+export default function Review ({ address, api, chain, depositToPay, depositValue, identityToSet, infoParams, maxFeeAmount, mode, parentDisplay, selectedRegistrar, selectedRegistrarName, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
@@ -156,11 +156,11 @@ export default function Review({ address, api, chain, depositToPay, depositValue
   }, [setRefresh, setStep]);
 
   return (
-    <Motion style={{ height: '100%', paddingInline: '10%', width: '100%' }}>
+    <Motion style={{ height: '100%', width: '100%' }}>
       <>
         <Grid container py='25px'>
           <Typography fontSize='30px' fontWeight={700}>
-            {(step === STEPS.REVIEW || step === STEPS.PROXY) && (
+            {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) && (
               <>
                 {mode === 'Set' && t('Review On-chain Identity')}
                 {mode === 'Clear' && t('Clear On-chain Identity')}
@@ -204,7 +204,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
             )}
           </Typography>
         </Grid>
-        {(step === STEPS.REVIEW || step === STEPS.PROXY) &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <>
             {isPasswordError &&
               <WrongPasswordAlert />
@@ -360,8 +360,8 @@ export default function Review({ address, api, chain, depositToPay, depositValue
               </Grid>
               <SelectProxyModal2
                 address={address}
-                height={500}
                 closeSelectProxy={() => setStep(STEPS.REVIEW)}
+                height={500}
                 proxies={proxyItems}
                 proxyTypeFilter={['Any', 'NonTransfer']}
                 selectedProxy={selectedProxy}

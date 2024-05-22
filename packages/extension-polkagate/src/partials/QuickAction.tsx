@@ -15,7 +15,7 @@ import { useHistory } from 'react-router-dom';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { HorizontalMenuItem, PoolStakingIcon } from '../components';
-import { useAccount, useApi, useFormatted, useTranslation } from '../hooks';
+import { useInfo, useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 
@@ -27,14 +27,11 @@ interface Props {
 
 const ICON_SIZE = 10;
 
-export default function QuickAction({ address, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
+export default function QuickAction ({ address, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const formatted = useFormatted(address);
   const history = useHistory();
-
-  const account = useAccount(address);
-  const api = useApi(address);
+  const { account, api, formatted } = useInfo(address);
 
   const handleOpen = useCallback(() => setQuickActionOpen(String(address)), [address, setQuickActionOpen]);
   const handleClose = useCallback(() => quickActionOpen === address && setQuickActionOpen(undefined), [address, quickActionOpen, setQuickActionOpen]);
@@ -86,7 +83,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
         minWidth: 'calc(100% - 50px)',
         pl: '20px',
         pr: '10px',
-        pt:'5px',
+        pt: '5px',
         width: 'calc(100% - 50px)'
       }}
     >

@@ -11,18 +11,12 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { QrScanAddress } from '@polkadot/react-qr';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, TwoButtons, Warning } from '../../../components';
+import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, PButton, TwoButtons, Warning } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from '../../../messaging';
 import { Name } from '../../../partials';
-
-interface QrAccount {
-  content: string;
-  genesisHash: string;
-  isAddress: boolean;
-  name?: string;
-}
+import { ScanType } from '../attachQR';
 
 export default function AttachQrFullScreen (): React.ReactElement {
   useFullscreen();
@@ -30,7 +24,7 @@ export default function AttachQrFullScreen (): React.ReactElement {
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
-  const [account, setAccount] = useState<QrAccount | null>(null);
+  const [account, setAccount] = useState<ScanType | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
@@ -61,7 +55,7 @@ export default function AttachQrFullScreen (): React.ReactElement {
   }, [account, name, password, setQrLabelAndGoToHome]);
 
   const _setAccount = useCallback(
-    (qrAccount: QrAccount) => {
+    (qrAccount: ScanType) => {
       setAccount(qrAccount);
       setName(qrAccount?.name || null);
 
@@ -76,11 +70,9 @@ export default function AttachQrFullScreen (): React.ReactElement {
     []
   );
 
-  const onCancel = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
+  const onCancel = useCallback(() => window.close(), []);
 
-  const _onError = useCallback((error: string) => {
+  const _onError = useCallback((error: Error) => {
     setInvalidQR(String(error).includes('Invalid prefix'));
   }, []);
 
@@ -156,6 +148,14 @@ export default function AttachQrFullScreen (): React.ReactElement {
               <Typography fontSize='16px' fontWeight={300} m='auto' pt='20px' textAlign='center' width='92%'>
                 {t('Hold the QR code in front of the device’s camera')}
               </Typography>
+              <PButton
+                _ml={0}
+                _mt='30px'
+                _onClick={onCancel}
+                _variant='contained'
+                _width={100}
+                text={t('Cancel')}
+              />
             </Grid>
           }
           {account &&

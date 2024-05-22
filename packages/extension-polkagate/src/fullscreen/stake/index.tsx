@@ -18,6 +18,7 @@ import { useFullscreen, useInfo, usePoolConsts } from '../../hooks';
 import { TxInfo } from '../../util/types';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
+import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
 import AdvancedOptions from './partials/AdvancedOptions';
 import StakingMode from './partials/StakingMode';
@@ -38,12 +39,13 @@ export const STEPS = {
   EASY_CONFIRM: 11,
   JOIN_CONFIRM: 12,
   CREATE_CONFIRM: 13,
-  PROXY: 100
+  PROXY: 100,
+  SIGN_QR: 200
 };
 
 export type StepsType = typeof STEPS[keyof typeof STEPS];
 
-export default function StakingOptions(): React.ReactElement {
+export default function StakingOptions (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -56,6 +58,9 @@ export default function StakingOptions(): React.ReactElement {
   const [showAdvancedOptions, setShowAdvancedOptions] = useState<boolean>(false);
   const [step, setStep] = useState<StepsType>(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
+
+  const poolSteps = [STEPS.JOIN_POOL, STEPS.JOIN_REVIEW, STEPS.CREATE_POOL, STEPS.CREATE_REVIEW];
+  const generalSteps = [STEPS.EASY_STAKING, STEPS.EASY_REVIEW, STEPS.INDEX, STEPS.CONFIRM, STEPS.WAIT_SCREEN];
 
   const OnEasyStaking = useCallback(
     () => setStep(STEPS.EASY_STAKING)
@@ -81,11 +86,11 @@ export default function StakingOptions(): React.ReactElement {
       case STEPS.CREATE_POOL:
         return t('Create Staking Pool');
       case STEPS.EASY_REVIEW:
+      case STEPS.SOLO_REVIEW:
         return t('Review');
       case STEPS.JOIN_REVIEW:
-        return t('Review, Join Pool');
       case STEPS.CREATE_REVIEW:
-        return t('Review, Create Pool');
+        return t('Review');
       case STEPS.CONFIRM:
         return isSuccess ? t('Staked') : t('Staking Failed');
       default:
@@ -97,15 +102,21 @@ export default function StakingOptions(): React.ReactElement {
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='stake' unableToChangeAccount />
       <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '6%' }}>
+        <Bread />
         <Title
+          height='85px'
           icon={
-            [STEPS.EASY_STAKING, STEPS.EASY_REVIEW, STEPS.INDEX].includes(step) &&
-            faCoins}
+            generalSteps.includes(step)
+              ? faCoins
+              : undefined
+          }
           logo={
-            [STEPS.JOIN_POOL, STEPS.JOIN_REVIEW, STEPS.CREATE_POOL, STEPS.CREATE_REVIEW].includes(step)
+            poolSteps.includes(step)
               ? <PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />
-              : [STEPS.STAKE_SOLO].includes(step) &&
+              : [STEPS.STAKE_SOLO, STEPS.SOLO_REVIEW].includes(step) &&
               <BoyIcon sx={{ color: 'text.primary', fontSize: '62px' }} />}
+          ml={generalSteps.includes(step) ? undefined : '-25px'}
+          padding='0px'
           text={getHeaderText(txInfo?.success)}
         />
         {step === STEPS.INDEX

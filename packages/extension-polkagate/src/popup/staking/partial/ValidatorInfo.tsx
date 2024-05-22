@@ -66,11 +66,6 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
     if (accountInfo) {
       return setAccountInfo(accountInfo);
     }
-
-    // eslint-disable-next-line no-void
-    void api.derive.accounts.info(validatorInfo?.accountId).then((info) => {
-      setAccountInfo(info);
-    });
   }, [api, validatorInfo, validatorsIdentities]);
 
   const ValidatorInformation = () => (

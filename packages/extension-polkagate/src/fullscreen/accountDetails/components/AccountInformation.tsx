@@ -67,8 +67,8 @@ const Balance = ({ balanceToShow, isBalanceOutdated }: BalanceJSXType) => {
         : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
       }
     </>
-  )
-}
+  );
+};
 
 interface BalanceRowJSXType {
   balanceToShow: BalancesInfo | undefined;
@@ -108,7 +108,7 @@ const SelectedAssetBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOu
             <BalanceRow balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} isPriceOutdated={isPriceOutdated} price={price} />
           </Grid>
         </>
-        : <Infotip placement='right' showInfoMark text={t('Switch chain from top right, or click on an asset if any.')}>
+        : <Infotip iconTop={7} placement='right' showInfoMark text={t('Switch chain from top right, or click on an asset if any.')}>
           <Typography fontSize='18px' fontWeight={500} sx={{ pl: '10px' }}>
             {t('Account is in Any Chain mode')}
           </Typography>
@@ -117,7 +117,6 @@ const SelectedAssetBox = ({ account, balanceToShow, isBalanceOutdated, isPriceOu
     </Grid>
   );
 };
-
 
 interface AddressDetailsProps {
   address: string | undefined;
@@ -136,11 +135,11 @@ interface AddressDetailsProps {
   setAssetIdOnAssetHub: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function AccountInformation({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, isDarkTheme, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
-
-  const account = useAccount(address);
   const theme = useTheme();
+  const account = useAccount(address);
+
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
 
   const calculatePrice = useCallback((amount: BN, decimal: number, _price: number) => {
@@ -192,7 +191,7 @@ export default function AccountInformation({ accountAssets, address, api, balanc
   }, [account?.isHidden, address]);
 
   return (
-    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : '0px solid', borderBottomWidth: '8px', borderColor: 'secondary.light', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mb: '15px', p: `20px 20px ${showAOC ? '5px' : '20px'} 20px`, position: 'relative' }}>
+    <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: '0px solid', borderBottomWidth: '8px', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mb: '15px', p: `20px 20px ${showAOC ? '5px' : '20px'} 20px`, position: 'relative' }}>
       <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', left: 0, ml: 4, position: 'absolute', px: 1, top: 0, width: 'fit-content' }}>
         {label}
       </Grid>

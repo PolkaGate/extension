@@ -3,9 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 
-import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
@@ -18,15 +17,16 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { ActionContext, AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, ShowBalance, TwoButtons, Warning } from '../../components';
 import { useTranslation } from '../../components/translate';
-import { useApi, useChain, useFormatted, useTeleport } from '../../hooks';
+import { useInfo, useTeleport } from '../../hooks';
 import { ASSET_HUBS } from '../../util/constants';
 import { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
 import { amountToHuman, amountToMachine } from '../../util/utils';
 import { toTitleCase } from '../governance/utils/util';
-import { Inputs, STEPS } from '.';
+import { STEPS } from '../stake/pool/stake';
+import { Inputs } from '.';
 
 interface Props {
-  address: string
+  address: string;
   balances: BalancesInfo | undefined;
   assetId: number | undefined;
   inputs: Inputs | undefined;
@@ -37,35 +37,47 @@ interface Props {
 const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
 const INVALID_PARA_ID = Number.MAX_SAFE_INTEGER;
 
-export const Title = ({ icon, logo, onBackClick, padding = '30px 0px 30px', text }:
-{ text: string, icon?: IconDefinition, logo?: unknown, padding?: string, onBackClick?: () => void }) => {
+interface TitleProps {
+  height?: string;
+  text: string;
+  icon?: IconProp;
+  logo?: unknown;
+  ml?: string;
+  padding?: string;
+  onBackClick?: () => void;
+  spacing?: number;
+}
+
+export const Title = ({ height, icon, logo, ml, onBackClick, padding = '30px 0px 30px', spacing = 1, text }: TitleProps): React.ReactElement => {
   const theme = useTheme();
 
   return (
-    <Grid alignItems={ 'center' } container height='113px' item p={padding} spacing={1}>
+    <Grid alignItems={'center'} container height={height || '113px'} item ml={ml} p={padding} spacing={spacing}>
       {!!onBackClick &&
-      <Grid item width='fit-content'>
-        <ArrowBackIosIcon
-          onClick={onBackClick}
-          sx={{
-            ':hover': { opacity: 1 },
-            color: 'secondary.light',
-            cursor: 'pointer',
-            fontSize: 36,
-            opacity: 0.5,
-            stroke: theme.palette.secondary.light,
-            strokeWidth: 1
-          }}
-        />
-      </Grid>
+        <Grid item width='fit-content'>
+          <ArrowBackIosIcon
+            onClick={onBackClick}
+            sx={{
+              ':hover': { opacity: 1 },
+              color: 'secondary.light',
+              cursor: 'pointer',
+              fontSize: 36,
+              opacity: 0.5,
+              stroke: theme.palette.secondary.light,
+              strokeWidth: 1
+            }}
+          />
+        </Grid>
       }
       <Grid item>
-        <FontAwesomeIcon
-          color={theme.palette.text.primary}
-          icon={icon}
-          size='2xl'
-          style={{ paddingBottom: '5px' }}
-        />
+        {icon &&
+         <FontAwesomeIcon
+           color={theme.palette.text.primary}
+           icon={icon}
+           size='2xl'
+           style={{ paddingBottom: '5px' }}
+         />
+        }
         {logo}
       </Grid>
       <Grid item>
@@ -82,9 +94,7 @@ const isAssethub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || 
 export default function InputPage ({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const api = useApi(address);
-  const formatted = useFormatted(address);
-  const chain = useChain(address);
+  const { api, chain, formatted } = useInfo(address);
   const teleportState = useTeleport(address);
   const onAction = useContext(ActionContext);
 
@@ -365,8 +375,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     , [address, assetId, onAction]);
 
   return (
-    <Grid container item sx={{ display: 'block', px: '10%' }}>
-      <Title icon={faPaperPlane} text={t<string>('Send Fund')} />
+    <Grid container item>
       <Typography fontSize='14px' fontWeight={400}>
         {t<string>('Input transfer amount and destination account. For cross-chain transfers, adjust recipient chain and consider associated fees.')}
       </Typography>

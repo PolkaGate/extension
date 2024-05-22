@@ -13,6 +13,7 @@ import { BN } from '@polkadot/util';
 import { PButton, ShowBalance, TwoButtons } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { isEmail, isUrl } from '../../util/utils';
+import Bread from '../partials/Bread';
 import SetIdentityForm from './partial/SetIdentityForm';
 import { Mode, STEPS } from '.';
 
@@ -28,7 +29,7 @@ interface Props {
   identityToSet: DeriveAccountRegistration | null | undefined;
 }
 
-export default function SetIdentity({ api, chainName, identity, identityToSet, mode, setIdentityToSet, setMode, setStep, totalDeposit }: Props): React.ReactElement {
+export default function SetIdentity ({ api, chainName, identity, identityToSet, mode, setIdentityToSet, setMode, setStep, totalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [display, setDisplay] = useState<string | undefined>();
@@ -108,8 +109,8 @@ export default function SetIdentity({ api, chainName, identity, identityToSet, m
   }, [setMode, setStep]);
 
   return (
-    <Grid container item sx={{ display: 'block', px: '10%' }}>
-      <Typography fontSize='30px' fontWeight={700} pb='20px' pt='25px'>
+    <Grid container item sx={{ display: 'block' }}>
+      <Typography fontSize='30px' fontWeight={700} pb='15px' pt='25px'>
         {mode === 'Set'
           ? t('Set On-chain Identity')
           : t('Modify On-chain Identity')

@@ -12,9 +12,9 @@ import { Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
 import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain, SocialRecoveryIcon } from '../components';
-import { useAccount, useApi, useChain, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
+import { useGenesisHashOptions, useInfo, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
-import { IDENTITY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../util/constants';
+import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
 
 interface Props {
@@ -28,58 +28,61 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
   const { t } = useTranslation();
   const theme = useTheme();
   const options = useGenesisHashOptions();
-  const chain = useChain(address);
-  const formatted = useFormatted(address);
-  const account = useAccount(address);
-  const api = useApi(address);
+  const { account, api, chain, formatted } = useInfo(address);
 
   const [genesisHash, setGenesis] = useState<string | undefined>();
 
   const onAction = useContext(ActionContext);
   const containerRef = React.useRef(null);
-  const canDerive = !(account?.isExternal || account?.isHardware);
+  const hasPrivateKey = !(account?.isExternal || account?.isHardware);
 
-  const _onForgetAccount = useCallback(() => {
+  const onForgetAccount = useCallback(() => {
     onAction(`/forget/${address}/${account.isExternal}`);
   }, [address, account, onAction]);
 
-  const _goToDeriveAcc = useCallback(
-    () => {
-      address && onAction(`/derive/${address}/locked`);
-    }, [address, onAction]
-  );
+  const goToDeriveAcc = useCallback(() => {
+    address && onAction(`/derive/${address}/locked`);
+  }, [address, onAction]);
 
-  const _closeMenu = useCallback(
+  const closeMenu = useCallback(
     () => setShowMenu((isMenuOpen) => !isMenuOpen),
     [setShowMenu]
   );
 
-  const _onChangeNetwork = useCallback((newGenesisHash: string) => {
+  const onChangeNetwork = useCallback((newGenesisHash: string) => {
     const availableGenesisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;
 
     address && tieAccount(address, availableGenesisHash).catch(console.error);
     setGenesis(availableGenesisHash ?? undefined);
   }, [address]);
 
-  const _onRenameAccount = useCallback(() => {
+  const onRenameAccount = useCallback(() => {
     address && onAction(`/rename/${address}`);
   }, [address, onAction]);
 
-  const _onExportAccount = useCallback(() => {
+  const onExportAccount = useCallback(() => {
     address && onAction(`/export/${address}`);
   }, [address, onAction]);
 
-  const _onManageProxies = useCallback(() => {
-    address && chain && onAction(`/manageProxies/${address}`);
+  const onManageProxies = useCallback(() => {
+    address && chain && PROXY_CHAINS.includes(chain.genesisHash ?? '') && onAction(`/manageProxies/${address}`);
   }, [address, chain, onAction]);
 
-  const _onManageId = useCallback(() => {
+  const onManageId = useCallback(() => {
     address && windowOpen(`/manageIdentity/${address}`).catch(console.error);
   }, [address]);
 
-  const _onSocialRecovery = useCallback(() => {
+  const onSocialRecovery = useCallback(() => {
     address && windowOpen(`/socialRecovery/${address}/false`).catch(console.error);
   }, [address]);
+
+  const isDisabled = useCallback((supportedChains: string[]) => {
+    if (!chain) {
+      return true;
+    }
+
+    return !supportedChains.includes(chain.genesisHash ?? '');
+  }, [chain]);
 
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
@@ -88,78 +91,86 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
-        disabled={!chain}
+        disabled={isDisabled(PROXY_CHAINS)}
         iconComponent={
-          <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${isDisabled(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
         }
-        onClick={_onManageProxies}
+        onClick={onManageProxies}
         text={t('Manage proxies')}
+        withHoverEffect
       />
       <MenuItem
-        disabled={!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))}
+        disabled={isDisabled(IDENTITY_CHAINS)}
         iconComponent={
           <FontAwesomeIcon
-            color={(!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))) ? theme.palette.text.disabled : theme.palette.text.primary}
+            color={isDisabled(IDENTITY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}
             fontSize={19}
             icon={faAddressCard}
           />
         }
-        onClick={_onManageId}
+        onClick={onManageId}
         text={t('Manage identity')}
+        withHoverEffect
       />
       <MenuItem
-        disabled={!chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))}
+        disabled={isDisabled(SOCIAL_RECOVERY_CHAINS)}
         iconComponent={
           <SocialRecoveryIcon
             color={
-              !chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))
+              isDisabled(SOCIAL_RECOVERY_CHAINS)
                 ? theme.palette.text.disabled
                 : theme.palette.text.primary}
             height={22}
             width={22}
           />
         }
-        onClick={_onSocialRecovery}
-        text={t('Social Recovery')}
+        onClick={onSocialRecovery}
+        text={t('Social recovery')}
+        withHoverEffect
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
-      <MenuItem
-        iconComponent={
-          <vaadin-icon icon='vaadin:download-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-        }
-        onClick={_onExportAccount}
-        text={t('Export account')}
-      />
-      {canDerive &&
+      {hasPrivateKey &&
+        <MenuItem
+          iconComponent={
+            <vaadin-icon icon='vaadin:download-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          }
+          onClick={onExportAccount}
+          text={t('Export account')}
+          withHoverEffect
+        />}
+      {hasPrivateKey &&
         <MenuItem
           iconComponent={
             <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
-          onClick={_goToDeriveAcc}
+          onClick={goToDeriveAcc}
           text={t('Derive new account')}
+          withHoverEffect
         />
       }
       <MenuItem
         iconComponent={
           <vaadin-icon icon='vaadin:edit' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
-        onClick={_onRenameAccount}
+        onClick={onRenameAccount}
         text={t('Rename')}
+        withHoverEffect
       />
       <MenuItem
         iconComponent={
           <vaadin-icon icon='vaadin:file-remove' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
-        onClick={_onForgetAccount}
+        onClick={onForgetAccount}
         text={t('Forget account')}
+        withHoverEffect
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <SelectChain
         address={address}
         defaultValue={chain?.genesisHash ?? options[0].text}
         icon={getLogo(chain || undefined)}
-        label={t<string>('Chain')}
-        onChange={_onChangeNetwork}
+        label={t('Chain')}
+        onChange={onChangeNetwork}
         options={options}
         style={{ width: '100%' }}
       />
@@ -168,7 +179,7 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
         genesisHash={genesisHash}
       />
       <IconButton
-        onClick={_closeMenu}
+        onClick={closeMenu}
         sx={{
           left: '15px',
           p: 0,

@@ -18,7 +18,8 @@ import { AccountHolderWithProxy, Motion, ShowValue, SignArea2, WrongPasswordAler
 import { useEstimatedFee, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
 import { MemberPoints, MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { Inputs } from '../../../Entry';
-import { Mode, STEPS } from '.';
+import { STEPS } from '../../stake';
+import { Mode } from '.';
 
 interface Props {
   address: string;
@@ -49,11 +50,7 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
-  // const poolWithdrawUnbonded = api.tx.nominationPools.poolWithdrawUnbonded;
   const poolDepositorAddr = String(pool.bondedPool?.roles.depositor);
-
-  // const unlockingLen = pool?.stashIdAccount?.stakingLedger?.unlocking?.length ?? 0;
-  // const maxUnlockingChunks = api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
 
   const extraInfo = useMemo(() => ({
     action: 'Pool Staking',
@@ -138,7 +135,7 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
 
   return (
     <Motion>
-      {step === STEPS.REVIEW &&
+      {[STEPS.REVIEW, STEPS.SIGN_QR].includes(step) &&
         <Grid container direction='column' item pt='15px'>
           {isPasswordError &&
             <WrongPasswordAlert />
@@ -199,7 +196,8 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
               steps={STEPS}
             />
           </Grid>
-        </Grid>}
+        </Grid>
+      }
       {step === STEPS.PROXY &&
         <SelectProxyModal2
           address={address}

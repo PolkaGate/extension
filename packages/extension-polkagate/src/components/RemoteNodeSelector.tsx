@@ -3,7 +3,7 @@
 
 import React, { useCallback } from 'react';
 
-import { useAccount, useChainName, useEndpoint, useEndpoints, useTranslation } from '../hooks';
+import { useEndpoints, useInfo, useTranslation } from '../hooks';
 import { Select } from '.';
 
 interface Props {
@@ -17,12 +17,10 @@ export type ChromeStorageGetResponse = {
   } | undefined;
 };
 
-export default function RemoteNodeSelector({ address, genesisHash }: Props): React.ReactElement {
+export default function RemoteNodeSelector ({ address, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const chainName = useChainName(address);
-  const account = useAccount(address);
+  const { account, chainName, endpoint } = useInfo(address);
   const endpointOptions = useEndpoints(genesisHash || account?.genesisHash);
-  const endpoint = useEndpoint(address);
 
   const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
     chainName && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {

@@ -8,17 +8,16 @@ import { useCallback, useEffect, useState } from 'react';
 import { BN } from '@polkadot/util';
 
 import { sanitizeChainName } from '../util/utils';
-import { useChain, useCurrentEraIndex, useEndpoint, useToken } from '.';
+import { useCurrentEraIndex, useInfo } from '.';
 
-export default function usePoolConsts(address: string, stateConsts?: PoolStakingConsts): PoolStakingConsts | null | undefined {
-  const [consts, setConsts] = useState<PoolStakingConsts | undefined | null>();
-  const [newConsts, setNewConsts] = useState<PoolStakingConsts | undefined | null>();
-  const endpoint = useEndpoint(address);
-  const chain = useChain(address);
-  const token = useToken(address);
+export default function usePoolConsts (address: string, stateConsts?: PoolStakingConsts): PoolStakingConsts | null | undefined {
+  const { chain, endpoint, token } = useInfo(address);
   const eraIndex = useCurrentEraIndex(address);
 
   const chainName = sanitizeChainName(chain?.name);
+
+  const [consts, setConsts] = useState<PoolStakingConsts | undefined | null>();
+  const [newConsts, setNewConsts] = useState<PoolStakingConsts | undefined | null>();
 
   const getPoolStakingConsts = useCallback((endpoint: string) => {
     const getPoolStakingConstsWorker: Worker = new Worker(new URL('../util/workers/getPoolStakingConsts.js', import.meta.url));

@@ -14,6 +14,7 @@ import { useBalances, useFullscreen, useStakingAccount, useTranslation, useUnSup
 import { FULLSCREEN_WIDTH, STAKING_CHAINS } from '../../../util/constants';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
+import Bread from '../../partials/Bread';
 import { Title } from '../../sendFund/InputPage';
 import Entry from '../Entry';
 import { STEPS } from '..';
@@ -36,12 +37,11 @@ export const MODAL_IDS = {
   STAKE_EXTRA: 7
 };
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
+  const { address } = useParams<{ address: string }>();
 
   useFullscreen();
-
-  const { address } = useParams<{ address: string }>();
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
 
@@ -49,10 +49,11 @@ export default function Index(): React.ReactElement {
   const stakingAccount = useStakingAccount(address, undefined, refresh, setRefresh);
   const balances = useBalances(address, refresh, setRefresh);
 
-  const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const [showId, setShow] = useState<number>(MODAL_IDS.NONE);
   const [step, setStep] = useState<number>(STEPS.STAKE_SOLO);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
+
+  const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
 
   const onBack = useCallback(() => {
     openOrFocusTab(`/solofs/${address}/`, true);
@@ -64,6 +65,7 @@ export default function Index(): React.ReactElement {
       {showId !== MODAL_IDS.STAKE &&
         <StakedSolo
           balances={balances}
+          refresh={refresh}
           setRefresh={setRefresh}
           setShow={setShow}
           stakingAccount={stakingAccount}
@@ -111,14 +113,19 @@ export default function Index(): React.ReactElement {
           setShow={setShow}
           show={true}
         />}
-      {showId === MODAL_IDS.STAKE &&
+      {showId === MODAL_IDS.STAKE && // this is not a modal
         <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '6%' }}>
+          <Bread />
           <Title
+            height='85px'
             logo={<BoyIcon sx={{ color: 'text.primary', fontSize: '62px' }} />}
+            ml='-25px'
+            padding='0px'
+            spacing={0}
             text={step === STEPS.SOLO_REVIEW
-              ? t('Staking Review')
+              ? t('Review')
               : step === STEPS.CONFIRM
-                ? t('Staking Confirmation')
+                ? t('Confirmation')
                 : t('Solo Staking')}
           />
           <Entry

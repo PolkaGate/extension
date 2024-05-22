@@ -24,7 +24,7 @@ interface Props {
   setShowDetail: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function HistoryDetailModal ({ chainName, decimal, info, setShowDetail, token }: Props): React.ReactElement {
+export default function HistoryDetailModal({ chainName, decimal, info, setShowDetail, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
@@ -92,14 +92,12 @@ export default function HistoryDetailModal ({ chainName, decimal, info, setShowD
           <Explorer chainName={info?.chain?.name || chainName} formatted={info?.from?.address} txHash={info?.txHash} />
         </Grid>
       </Grid>
-      <Grid container item sx={{ '> button': { m: 'auto', position: 'initial' }, mt: '15px' }}>
-        <PButton
-          _mt='1px'
-          _onClick={_onBack}
-          _width={100}
-          text={t<string>('Back')}
-        />
-      </Grid>
+      <PButton
+        _ml={0}
+        _onClick={_onBack}
+        _width={90}
+        text={t<string>('Back')}
+      />
     </>
   );
 }

@@ -66,7 +66,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
   }, [justMember, pool]);
 
   const onManageValidators = useCallback(() => {
-    address && openOrFocusTab(`/poolfsManageValidators/${address}`, true);
+    address && openOrFocusTab(`/managePoolValidators/${address}`, true);
   }, [address]);
 
   const onEditPool = useCallback(() => {
@@ -106,7 +106,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
 
   return (
     <>
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '1px solid' : 'none', borderColor: 'secondary.light', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} width='inherit'>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} width='inherit'>
         <Typography fontSize='22px' fontWeight={700}>
           {t('Most common tasks')}
         </Typography>

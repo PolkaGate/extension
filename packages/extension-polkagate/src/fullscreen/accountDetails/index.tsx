@@ -3,15 +3,15 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { faFileInvoice } from '@fortawesome/free-solid-svg-icons';
+import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { BN } from '@polkadot/util';
 
 import { AccountContext, ActionContext } from '../../components';
-import { useAccount, useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
+import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
 import { FetchedBalance } from '../../hooks/useAssetsBalances';
 import { getValue } from '../../popup/account/util';
@@ -26,6 +26,8 @@ import { EXTRA_PRICE_IDS } from '../../util/api/getPrices';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { amountToHuman, sanitizeChainName } from '../../util/utils';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
+import Bread from '../partials/Bread';
+import { Title } from '../sendFund/InputPage';
 import { openOrFocusTab } from './components/CommonTasks';
 import LockedInReferenda from './unlock/Review';
 import { AccountInformation, AccountSetting, ChangeAssets, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
@@ -56,11 +58,9 @@ export default function AccountDetails (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address, paramAssetId } = useParams<{ address: string, paramAssetId?: string }>();
-  const account = useAccount(address);
   const { accounts } = useContext(AccountContext);
-
   const currency = useCurrency();
-  const { api, chain, chainName, formatted } = useInfo(address);
+  const { account, api, chain, chainName, formatted } = useInfo(address);
   const onAction = useContext(ActionContext);
   const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();
@@ -73,7 +73,7 @@ export default function AccountDetails (): React.ReactElement {
 
   const assetId = useMemo(() => assetIdOnAssetHub || selectedAsset?.assetId, [assetIdOnAssetHub, selectedAsset?.assetId]);
 
-  const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId);
+  const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId || undefined);
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette]);
   const isOnAssetHub = useMemo(() => ASSET_HUBS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
@@ -88,7 +88,9 @@ export default function AccountDetails (): React.ReactElement {
       return;
     }
 
-    return isRelayChain(chainName) ? balances : (selectedAsset || balances);
+    return balances?.date > selectedAsset?.date
+      ? { ...(selectedAsset || {}), ...(balances || {}) }
+      : { ...(balances || {}), ...(selectedAsset || {}) };
   }, [balances, chainName, selectedAsset]);
 
   const currentPrice = useMemo((): number | undefined => {
@@ -128,13 +130,17 @@ export default function AccountDetails (): React.ReactElement {
   }, [selectedAsset]);
 
   useEffect(() => {
-    onAction(`/accountfs/${address}/${assetId || '0'}`);
-  }, [address, assetId, onAction]);
+    accountAssets !== undefined && onAction(`/accountfs/${address}/${assetId || '0'}`);
+  }, [accountAssets, address, assetId, onAction]);
 
   useEffect(() => {
+    if (paramAssetId === undefined) {
+      return;
+    }
+
     const mayBeAssetIdSelectedInHomePage = parseInt(paramAssetId);
 
-    if (mayBeAssetIdSelectedInHomePage && accountAssets) {
+    if (mayBeAssetIdSelectedInHomePage >= 0 && accountAssets) {
       const found = accountAssets.find(({ assetId, genesisHash }) => assetId === mayBeAssetIdSelectedInHomePage && account?.genesisHash === genesisHash);
 
       setSelectedAsset(found);
@@ -164,43 +170,25 @@ export default function AccountDetails (): React.ReactElement {
     address && account?.genesisHash && STAKING_CHAINS.includes(account.genesisHash) && openOrFocusTab(`/poolfs/${address}/`);
   }, [account?.genesisHash, address]);
 
-  const onBackClick = useCallback(() => {
-    openOrFocusTab('/', true);
-  }, []);
-
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='accountDetails' />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '5%' }}>
-          <Grid alignItems='center' container item>
-            <Grid container item width='fit-content'>
-              <ArrowBackIosIcon
-                onClick={onBackClick}
-                sx={{
-                  ':hover': { opacity: 1 },
-                  color: 'secondary.light',
-                  cursor: 'pointer',
-                  fontSize: 36,
-                  opacity: 0.5,
-                  stroke: theme.palette.secondary.light,
-                  strokeWidth: 1
-                }}
-              />
-            </Grid>
-            <Grid item>
-              <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t('Account Details')}
-              </Typography>
-            </Grid>
-          </Grid>
+          <Bread />
+          <Title
+            height='70px'
+            icon={faFileInvoice}
+            padding='0px'
+            text={t('Account Details')}
+          />
           <Grid container item justifyContent='space-between' mb='15px'>
             <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 300px - 3%)'>
               <AccountInformation
                 accountAssets={accountAssets}
                 address={address}
                 api={api}
-                balances={balances}
+                balances={balancesToShow}
                 chain={chain}
                 chainName={chainName}
                 formatted={formatted}
@@ -274,7 +262,6 @@ export default function AccountDetails (): React.ReactElement {
                       chain={chain}
                       decimal={balancesToShow?.decimal}
                       formatted={String(formatted)}
-                      isDarkTheme={isDarkTheme}
                       price={currentPrice}
                       refreshNeeded={refreshNeeded}
                       setDisplayPopup={setDisplayPopup}

@@ -12,7 +12,7 @@ import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { PButton, RescueRecoveryIcon, SocialRecoveryIcon, TwoButtons } from '../../components';
-import { useChain, useCurrentBlockNumber, useDecimal, useFormatted, useToken, useTranslation } from '../../hooks';
+import { useCurrentBlockNumber, useInfo, useTranslation } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import SelectTrustedFriend, { AddressWithIdentity } from './components/SelectTrustedFriend';
 import ActiveProxyStatus from './partial/ActiveProxyStatus';
@@ -40,14 +40,11 @@ interface Props {
   setLostAccountRecoveryInfo: React.Dispatch<React.SetStateAction<false | PalletRecoveryRecoveryConfig | null | undefined>>;
 }
 
-export default function InitiateRecovery({ accountsInfo, activeProxy, address, api, initiatedRecovery, lostAccountRecoveryInfo, mode, setLostAccountAddress, setLostAccountRecoveryInfo, setMode, setStep, setTotalDeposit, withdrawInfo }: Props): React.ReactElement {
+export default function InitiateRecovery ({ accountsInfo, activeProxy, address, api, initiatedRecovery, lostAccountRecoveryInfo, mode, setLostAccountAddress, setLostAccountRecoveryInfo, setMode, setStep, setTotalDeposit, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const chain = useChain(address);
-  const decimal = useDecimal(address);
-  const token = useToken(address);
+  const { chain, decimal, formatted, token } = useInfo(address);
   const currentBlockNumber = useCurrentBlockNumber(address);
-  const formatted = useFormatted(address);
 
   const [lostAccount, setLostAccount] = useState<AddressWithIdentity>();
   const [goReview, setGoReview] = useState<boolean>(false);
@@ -155,7 +152,7 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
   }, [lostAccountRecoveryInfo, setMode, setTotalDeposit]);
 
   return (
-    <Grid container item sx={{ display: 'block', px: '10%' }}>
+    <Grid container item sx={{ display: 'block' }}>
       {initiatedRecovery || activeProxy
         ? <>
           <Grid alignItems='center' container item pt='20px' width='fit-content'>

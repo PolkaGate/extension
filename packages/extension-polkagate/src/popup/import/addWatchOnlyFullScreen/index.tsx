@@ -6,15 +6,16 @@
 import '@vaadin/icons';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { Chain } from '@polkadot/extension-chains/types';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { ActionContext, AddressInput, ProxyTable, SelectChain, TwoButtons } from '../../../components';
+import { AddressInput, ProxyTable, SelectChain, TwoButtons } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useApiWithChain, useFullscreen, useGenesisHashOptions, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata } from '../../../messaging';
@@ -32,7 +33,6 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-  const onAction = useContext(ActionContext);
 
   const [isBusy, setIsBusy] = useState(false);
   const [realAddress, setRealAddress] = useState<string | undefined>();
@@ -68,13 +68,13 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
       setIsBusy(true);
 
       createAccountExternal(name, realAddress, chain.genesisHash)
-        .then(() => onAction('/'))
+        .then(() => openOrFocusTab('/', true))
         .catch((error: Error) => {
           setIsBusy(false);
           console.error(error);
         });
     }
-  }, [chain?.genesisHash, name, onAction, realAddress]);
+  }, [chain?.genesisHash, name, realAddress]);
 
   const onCancel = useCallback(() => window.close(), []);
 
@@ -101,18 +101,18 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t<string>('Add Watch-Only Account')}
+                {t('Add Watch-Only Account')}
               </Typography>
             </Grid>
           </Grid>
           <Typography fontSize='16px' fontWeight={400} width='100%'>
-            {t<string>('Enter the watch-only address. It can also serve as a proxied account, but without transaction signing. A proxy account in the extension is needed for signing.')}
+            {t('Enter the watch-only address. It can also serve as a proxied account, but without transaction signing. A proxy account in the extension is needed for signing.')}
           </Typography>
           <AddressInput
             addWithQr
             address={realAddress}
             chain={chain}
-            label={t<string>('Account ID')}
+            label={t('Account ID')}
             setAddress={setRealAddress}
             style={{ m: '30px auto 0', width: '100%' }}
           />
@@ -129,7 +129,7 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
                 defaultValue={chain?.genesisHash}
                 disabledItems={disabledItems}
                 icon={getLogo(chain ?? undefined)}
-                label={t<string>('Select the chain')}
+                label={t('Select the chain')}
                 onChange={onChangeGenesis}
                 options={genesisOptions}
                 style={{ my: '13px', width: '100%' }}
@@ -138,7 +138,7 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
           </Grid>
           <ProxyTable
             chain={realAddress ? chain : undefined}
-            label={t<string>('Proxies')}
+            label={t('Proxies')}
             mode='Availability'
             proxies={proxies}
             style={{
@@ -154,8 +154,8 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
                 mt='1px'
                 onPrimaryClick={onAdd}
                 onSecondaryClick={onCancel}
-                primaryBtnText={t<string>('Add')}
-                secondaryBtnText={t<string>('Cancel')}
+                primaryBtnText={t('Add')}
+                secondaryBtnText={t('Cancel')}
               />
             </Grid>
           </Grid>

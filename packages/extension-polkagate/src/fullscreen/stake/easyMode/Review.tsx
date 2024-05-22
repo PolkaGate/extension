@@ -130,7 +130,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
               </Grid>
             </Grid>
             <Divider sx={{ bgcolor: 'secondary.main', height: '1px', width: '240px' }} />
-            <RewardsDestination settings={{ payee: 'Staked' }} />
+            <RewardsDestination settings={{ payee: inputs?.payee || 'Staked' }} />
           </Grid>
         }
         <DisplayValue dividerHeight='1px' title={t('Fee')}>

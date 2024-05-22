@@ -9,12 +9,10 @@ import '@vaadin/icons';
 import { faAddressCard } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Popover, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 
-import { ActionContext, Chain, MenuItem, SocialRecoveryIcon } from '../../../components';
-import { useAccount, useChain, useGenesisHashOptions, useTranslation } from '../../../hooks';
-import { tieAccount } from '../../../messaging';
-import { FullScreenRemoteNode } from '../../../partials';
+import { ActionContext, MenuItem, SocialRecoveryIcon } from '../../../components';
+import { useInfo, useTranslation } from '../../../hooks';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 import { POPUPS_NUMBER } from './AccountInformation';
 
@@ -24,16 +22,13 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props): React.ReactElement<Props> {
+function FullScreenAccountMenu ({ address, baseButton, setDisplayPopup }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
-  const chain = useChain(address);
-  const account = useAccount(address);
+  const { account, chain } = useInfo(address);
   const onAction = useContext(ActionContext);
-  const options = useGenesisHashOptions();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-  const [genesisHash, setGenesis] = useState<string | undefined>(chain?.genesisHash);
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);
@@ -54,12 +49,6 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
     address && setDisplayPopup(POPUPS_NUMBER.DERIVE_ACCOUNT);
     handleClose();
   }, [address, handleClose, setDisplayPopup]);
-
-  const onChangeNetwork = useCallback((newGenesisHash: string) => {
-    const availableGenesisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;
-
-    address && tieAccount(address, availableGenesisHash).then(() => setGenesis(availableGenesisHash ?? undefined)).catch(console.error);
-  }, [address]);
 
   const onRenameAccount = useCallback(() => {
     address && setDisplayPopup(POPUPS_NUMBER.RENAME);
@@ -83,40 +72,30 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
     address && onAction(`/socialRecovery/${address}/false`);
   }, [address, onAction]);
 
+  const isDisable = useCallback((supportedChains: string[]) => {
+    if (!chain) {
+      return true;
+    } else {
+      return !supportedChains.includes(chain.genesisHash ?? '');
+    }
+  }, [chain]);
+
   const AccountMenu = () => (
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
-      {/* <Grid container item>
-        <Chain
-          address={address}
-          allowAnyChainOption
-          defaultValue={genesisHash ?? chain?.genesisHash ?? options[0].text}
-          label={t<string>('Chain')}
-          onChange={onChangeNetwork}
-          style={{ '> div div div div div div': { height: '23px', width: '23px' }, '> div div div#selectChain': { borderRadius: '5px', height: '30px' }, '> div p': { fontSize: '16px', p: 0 }, textAlign: 'left', width: '84%' }}
-        />
-        <Grid alignContent='flex-end' container item justifyContent='center' width='15%' zIndex={1}>
-          {(genesisHash ?? chain?.genesisHash) &&
-            <FullScreenRemoteNode
-              address={address}
-              iconSize={25}
-            />}
-        </Grid>
-      </Grid>
-      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} /> */}
       <MenuItem
-        disabled={!chain || !(PROXY_CHAINS.includes(chain.genesisHash ?? ''))}
+        disabled={isDisable(PROXY_CHAINS)}
         iconComponent={
-          <vaadin-icon icon='vaadin:sitemap' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+          <vaadin-icon icon='vaadin:sitemap' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
         }
         onClick={onManageProxies}
         text={t<string>('Manage proxies')}
         withHoverEffect
       />
       <MenuItem
-        disabled={!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))}
+        disabled={isDisable(IDENTITY_CHAINS)}
         iconComponent={
           <FontAwesomeIcon
-            color={(!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))) ? theme.palette.text.disabled : theme.palette.text.primary}
+            color={isDisable(IDENTITY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}
             fontSize={20}
             icon={faAddressCard}
           />
@@ -126,11 +105,11 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
         withHoverEffect
       />
       <MenuItem
-        disabled={!chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))}
+        disabled={isDisable(SOCIAL_RECOVERY_CHAINS)}
         iconComponent={
           <SocialRecoveryIcon
             color={
-              !chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))
+              isDisable(SOCIAL_RECOVERY_CHAINS)
                 ? theme.palette.text.disabled
                 : theme.palette.text.primary}
             height={24}
@@ -138,7 +117,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
           />
         }
         onClick={onSocialRecovery}
-        text={t('Social Recovery')}
+        text={t('Social recovery')}
         withHoverEffect
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />

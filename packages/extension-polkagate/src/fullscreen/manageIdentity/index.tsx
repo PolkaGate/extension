@@ -19,9 +19,10 @@ import { BN, BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { Warning } from '../../components';
-import { useApi, useChain, useChainName, useFormatted, useFullscreen, useTranslation } from '../../hooks';
+import { useFullscreen, useInfo, useTranslation } from '../../hooks';
 import { FULLSCREEN_WIDTH } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
+import Bread from '../partials/Bread';
 import PreviewIdentity from './Preview';
 import RequestJudgement from './RequestJudgement';
 import Review from './Review';
@@ -40,7 +41,8 @@ export const STEPS = {
   WAIT_SCREEN: 8,
   CONFIRM: 9,
   UNSUPPORTED: 10,
-  PROXY: 100
+  PROXY: 100,
+  SIGN_QR: 200
 };
 
 type SubAccounts = [string, string[]];
@@ -59,19 +61,16 @@ function getRawValue (value: Data) {
 
 export function setData (value: string | undefined): Data {
   return value
-    ? { ['raw']: value }
-    : { ['none']: null };
+    ? { raw: value }
+    : { none: null };
 }
 
 export default function ManageIdentity (): React.ReactElement {
   useFullscreen();
   const { address } = useParams<{ address: string }>();
-  const api = useApi(address);
   const { t } = useTranslation();
   const theme = useTheme();
-  const chain = useChain(address);
-  const chainName = useChainName(address);
-  const formatted = useFormatted(address);
+  const { api, chain, chainName, formatted } = useInfo(address);
 
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null | undefined>();
   const [identityToSet, setIdentityToSet] = useState<DeriveAccountRegistration | null | undefined>();
@@ -239,7 +238,7 @@ export default function ManageIdentity (): React.ReactElement {
 
     setInfoParams({
       additional: identityToSet.other?.discord ? [[{ raw: 'Discord' }, { raw: identityToSet.other?.discord }]] : [],
-      display: { ['raw']: identityToSet?.display },
+      display: { raw: identityToSet?.display },
       email: setData(identityToSet?.email),
       legal: setData(identityToSet?.legal),
       riot: setData(identityToSet?.riot),
@@ -345,7 +344,8 @@ export default function ManageIdentity (): React.ReactElement {
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='manageIdentity' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
+      <Grid container item justifyContent='flex-start' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '3%' }}>
+        <Bread />
         {step === STEPS.CHECK_SCREEN &&
           <IdentityCheckProgress />
         }
@@ -421,7 +421,7 @@ export default function ManageIdentity (): React.ReactElement {
             setStep={setStep}
           />
         }
-        {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) &&
+        {[STEPS.REVIEW, STEPS.WAIT_SCREEN, STEPS.CONFIRM, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <Review
             address={address}
             api={api}
