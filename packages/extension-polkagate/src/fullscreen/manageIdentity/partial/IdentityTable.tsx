@@ -61,12 +61,16 @@ export default function IdentityTable ({ identity, style }: Props): React.ReactE
       />
       <IdItems
         title={t('Element')}
-        value={identity.riot}
+        value={identity.matrix || identity.riot}
+      />
+      <IdItems
+        title={t('Github')}
+        value={identity.github}
       />
       <IdItems
         noBorder
         title={t('Discord')}
-        value={identity.other?.discord}
+        value={identity.discord || identity.other?.discord}
       />
     </Grid>
   );

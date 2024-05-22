@@ -19,8 +19,8 @@ import { BN, BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { Warning } from '../../components';
-import { useFullscreen, useInfo, useTranslation } from '../../hooks';
-import { FULLSCREEN_WIDTH } from '../../util/constants';
+import { useApiWithChain2, useFullscreen, useInfo, usePeopleChain, useTranslation } from '../../hooks';
+import { FULLSCREEN_WIDTH, PEOPLE_CHAINS } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import PreviewIdentity from './Preview';
@@ -52,6 +52,10 @@ export type SubIdsParams = (string | Data | undefined)[][] | undefined;
 export type IdJudgement = 'Reasonable' | 'KnownGood' | 'FeePaid' | null | undefined;
 
 function getRawValue (value: Data) {
+  if (!value) {
+    return;
+  }
+
   const text = u8aToString(value.asRaw.toU8a(true));
 
   return text === ''
@@ -70,7 +74,10 @@ export default function ManageIdentity (): React.ReactElement {
   const { address } = useParams<{ address: string }>();
   const { t } = useTranslation();
   const theme = useTheme();
-  const { api, chain, chainName, formatted } = useInfo(address);
+  const { chain, chainName, formatted } = useInfo(address);
+
+  const peopleChain = usePeopleChain(address);
+  const api = useApiWithChain2(peopleChain);
 
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null | undefined>();
   const [identityToSet, setIdentityToSet] = useState<DeriveAccountRegistration | null | undefined>();
@@ -111,20 +118,23 @@ export default function ManageIdentity (): React.ReactElement {
   };
 
   const basicDepositValue = useMemo(() => api ? getConstantValue(api, 'basicDeposit') : BN_ZERO, [api]);
+  // fieldDeposit is removed on people chain on favour of byteDeposit
   const fieldDepositValue = useMemo(() => api ? getConstantValue(api, 'fieldDeposit') : BN_ZERO, [api]);
   const subAccountDeposit = useMemo(() => api ? getConstantValue(api, 'subAccountDeposit') : BN_ZERO, [api]);
 
   const totalDeposit = useMemo(() => {
+    const discord = identityToSet?.other?.discord || identityToSet?.discord as string;
+
     if (mode === 'Set' || step === STEPS.INDEX) {
-      return basicDepositValue.add(identityToSet?.other?.discord ? fieldDepositValue : BN_ZERO);
+      return basicDepositValue.add(discord ? fieldDepositValue : BN_ZERO);
     }
 
     if (mode === 'Modify' || step === STEPS.MODIFY) {
-      return basicDepositValue.add(identityToSet?.other?.discord ? fieldDepositValue : BN_ZERO);
+      return basicDepositValue.add(discord ? fieldDepositValue : BN_ZERO);
     }
 
     if (mode === 'Clear' || step === STEPS.REMOVE || step === STEPS.PREVIEW) {
-      return basicDepositValue.add(identity?.other?.discord ? fieldDepositValue : BN_ZERO).add(subIdAccounts ? subAccountDeposit.muln(subIdAccounts.length) : BN_ZERO);
+      return basicDepositValue.add(discord ? fieldDepositValue : BN_ZERO).add(subIdAccounts ? subAccountDeposit.muln(subIdAccounts.length) : BN_ZERO);
     }
 
     if (mode === 'ManageSubId' || step === STEPS.MANAGE_SUBID) {
@@ -134,9 +144,11 @@ export default function ManageIdentity (): React.ReactElement {
     }
 
     return BN_ZERO;
-  }, [basicDepositValue, fieldDepositValue, identity?.other?.discord, identityToSet?.other?.discord, mode, step, subAccountDeposit, subIdAccounts, subIdAccountsToSubmit]);
+  }, [basicDepositValue, fieldDepositValue, identityToSet, mode, step, subAccountDeposit, subIdAccounts, subIdAccountsToSubmit]);
 
   const depositToPay = useMemo(() => {
+    const discord = identity?.other?.discord || identity?.discord as string;
+
     if (!mode || ['Clear', 'CancelJudgement'].includes(mode)) {
       return BN_ZERO;
     }
@@ -150,7 +162,7 @@ export default function ManageIdentity (): React.ReactElement {
     }
 
     if (mode === 'Modify') {
-      const alreadyIdDeposit = basicDepositValue.add(identity?.other?.discord ? fieldDepositValue : BN_ZERO);
+      const alreadyIdDeposit = basicDepositValue.add(discord ? fieldDepositValue : BN_ZERO);
 
       return totalDeposit.gt(alreadyIdDeposit) ? totalDeposit.sub(alreadyIdDeposit) : BN_ZERO;
     }
@@ -167,7 +179,7 @@ export default function ManageIdentity (): React.ReactElement {
     }
 
     return BN_ZERO;
-  }, [basicDepositValue, fieldDepositValue, identity?.other?.discord, maxFeeValue, mode, subAccountDeposit, subIdAccounts, subIdAccountsToSubmit, totalDeposit]);
+  }, [basicDepositValue, fieldDepositValue, identity?.discord, maxFeeValue, mode, subAccountDeposit, subIdAccounts, subIdAccountsToSubmit, totalDeposit]);
 
   const fetchIdentity = useCallback(() => {
     setStep(STEPS.CHECK_SCREEN);
@@ -181,11 +193,18 @@ export default function ManageIdentity (): React.ReactElement {
             const { info, judgements } = id.unwrap()[0] as PalletIdentityRegistration;
 
             const idToSet: DeriveAccountRegistration | null = {
+              discord: getRawValue(info.discord),
               display: getRawValue(info.display),
               email: getRawValue(info.email),
+              github: getRawValue(info.github),
               legal: getRawValue(info.legal),
-              other: { discord: info.additional.length > 0 ? getRawValue(info.additional[0][1]) : undefined },
-              riot: getRawValue(info.riot),
+              matrix: getRawValue(info.matrix),
+              other: {
+                discord: info.additional?.length > 0
+                  ? getRawValue(info.additional[0][1])
+                  : undefined
+              }, // deprecated
+              riot: getRawValue(info.riot), // deprecated
               twitter: getRawValue(info.twitter),
               web: getRawValue(info.web),
               judgements
@@ -236,15 +255,28 @@ export default function ManageIdentity (): React.ReactElement {
       return;
     }
 
-    setInfoParams({
-      additional: identityToSet.other?.discord ? [[{ raw: 'Discord' }, { raw: identityToSet.other?.discord }]] : [],
+    const _identity: PalletIdentityIdentityInfo = {
+      discord: setData(identityToSet?.other?.discord || identityToSet?.discord as string),
       display: { raw: identityToSet?.display },
       email: setData(identityToSet?.email),
       legal: setData(identityToSet?.legal),
-      riot: setData(identityToSet?.riot),
       twitter: setData(identityToSet?.twitter),
       web: setData(identityToSet?.web)
-    });
+    };
+
+    if (identityToSet?.riot) {
+      _identity.riot = setData(identityToSet?.riot);
+    }
+
+    if (identityToSet?.matrix) {
+      _identity.matrix = setData(identityToSet?.matrix as string);
+    }
+
+    if (identityToSet?.github) {
+      _identity.github = setData(identityToSet?.github as string);
+    }
+
+    setInfoParams(_identity);
   }, [identityToSet]);
 
   useEffect(() => {

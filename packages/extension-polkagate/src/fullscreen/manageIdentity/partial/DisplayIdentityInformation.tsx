@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faDiscord, faTwitter } from '@fortawesome/free-brands-svg-icons';
+import { faDiscord, faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Box, Grid, Typography, useTheme } from '@mui/material';
@@ -94,7 +94,17 @@ export default function DisplayIdentityInformation ({ identity }: Props): React.
           <Box component='img' src={riot as string} sx={{ height: '30px', mb: '2px', width: '30px' }} />
         }
         title={t('Element')}
-        value={identity.riot ?? null}
+        value={identity.matrix || identity.riot || null}
+      />
+      <IdentityItems
+        icon={
+          <FontAwesomeIcon
+            color='#5865F2'
+            fontSize='30px'
+            icon={faGithub}
+          /> }
+        title={t('Github')}
+        value={identity.github ?? null}
       />
       <IdentityItems
         icon={
@@ -106,7 +116,7 @@ export default function DisplayIdentityInformation ({ identity }: Props): React.
         }
         noBorder
         title={t('Discord')}
-        value={identity.other?.discord ?? null}
+        value={identity.other?.discord || identity?.discord ||  null}
       />
     </Grid>
   );
