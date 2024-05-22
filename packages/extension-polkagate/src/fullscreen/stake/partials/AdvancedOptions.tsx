@@ -39,7 +39,7 @@ export default function AdvancedOptions({ address, setStep }: Props): React.Reac
   }, [setStep]);
 
   return (
-    <Grid container justifyContent='flex-end' pt='5px'>
+    <Grid container justifyContent='flex-end' pt='15px' rowGap='12px'>
       <StakingSubOption
         api={api}
         balance={minToReceiveRewardsInSolo}
@@ -53,7 +53,6 @@ export default function AdvancedOptions({ address, setStep }: Props): React.Reac
         }
         onClick={onSoloStake}
         style={{
-          my: '5px',
           pr: '6%',
           width: '87%'
         }}
@@ -72,7 +71,6 @@ export default function AdvancedOptions({ address, setStep }: Props): React.Reac
         }
         onClick={onJoinPool}
         style={{
-          my: '5px',
           pr: '6%',
           width: '87%'
         }}
@@ -91,7 +89,6 @@ export default function AdvancedOptions({ address, setStep }: Props): React.Reac
         }
         onClick={onCreatePool}
         style={{
-          my: '5px',
           pr: '6%',
           width: '87%'
         }}
