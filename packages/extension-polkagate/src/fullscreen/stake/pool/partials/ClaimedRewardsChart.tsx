@@ -348,7 +348,7 @@ export default function ClaimedRewardsChart ({ address }: Props): React.ReactEle
 
   const Arrows = ({ onNext, onPrevious }: ArrowsProps) => (
     <Grid container justifyContent='space-between' m='auto' width='96%'>
-      <Grid alignItems='center' container item justifyContent='flex-start' maxWidth='49.5%' onClick={onPrevious} sx={{ cursor: dataToShow && pageIndex === dataToShow.length - 1 ? 'default' : 'pointer' }} width='fit_content'>
+      <Grid alignItems='center' container item justifyContent='flex-start' maxWidth='50%' onClick={onPrevious} sx={{ cursor: dataToShow && pageIndex === dataToShow.length - 1 ? 'default' : 'pointer' }} width='fit_content'>
         <KeyboardDoubleArrowLeftIcon sx={{ color: dataToShow && pageIndex === dataToShow?.length - 1 ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
         <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '3px', mr: '7px', my: 'auto', width: '1px' }} />
         <Grid container direction='column' item xs={7}>
@@ -356,7 +356,7 @@ export default function ClaimedRewardsChart ({ address }: Props): React.ReactEle
           <Typography color={dataToShow && pageIndex === dataToShow.length - 1 ? 'secondary.contrastText' : 'text.primary'} fontSize='12px' fontWeight={300}>{nextPrevWeek(false)}</Typography>
         </Grid>
       </Grid>
-      <Grid alignItems='center' container item justifyContent='flex-end' maxWidth='49.5%' onClick={onNext} sx={{ cursor: pageIndex === 0 ? 'default' : 'pointer' }} width='fit_content'>
+      <Grid alignItems='center' container item justifyContent='flex-end' maxWidth='50%' onClick={onNext} sx={{ cursor: pageIndex === 0 ? 'default' : 'pointer' }} width='fit_content'>
         <Grid container direction='column' item textAlign='right' xs={7}>
           <Typography color={pageIndex === 0 ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t('Next')}</Typography>
           <Typography color={pageIndex === 0 ? 'secondary.contrastText' : 'text.primary'} fontSize='12px' fontWeight={300}>{nextPrevWeek(true)}</Typography>
