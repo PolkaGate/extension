@@ -75,6 +75,7 @@ export interface FetchedBalance {
   decimal: number,
   genesisHash: string,
   priceId: string,
+  price: number,
   token: string,
   availableBalance: BN,
   soloTotal?: BN,
