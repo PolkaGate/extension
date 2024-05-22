@@ -19,6 +19,7 @@ import { BalancesInfo, SavedBalances } from '../util/types';
 import { useInfo, useStakingAccount } from '.';
 
 const assetsChains = createAssets();
+const NATIVE_TOKEN_ASSET_ID = 0;
 
 export default function useBalances (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: number): BalancesInfo | undefined {
   const stakingAccount = useStakingAccount(address);
@@ -99,6 +100,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
       setNewBalances({
         ...b,
         ED,
+        assetId: NATIVE_TOKEN_ASSET_ID,
         chainName,
         date: Date.now(),
         decimal,
@@ -191,10 +193,12 @@ export default function useBalances (address: string | undefined, refresh?: bool
     const savedBalances = JSON.parse(account?.balances ?? '{}') as SavedBalances;
 
     const balances = {
+      assetId: overall.assetId,
       availableBalance: overall.availableBalance.toString(),
       freeBalance: overall.freeBalance.toString(),
+      genesisHash: overall.genesisHash,
       lockedBalance: overall.lockedBalance.toString(),
-      pooledBalance: overall.pooledBalance.toString(),
+      pooledBalance: overall.pooledBalance && overall.pooledBalance.toString(),
       reservedBalance: overall.reservedBalance.toString(),
       vestedBalance: overall.vestedBalance.toString(),
       vestedClaimable: overall.vestedClaimable.toString(),
@@ -221,11 +225,13 @@ export default function useBalances (address: string | undefined, refresh?: bool
       const sb = savedBalances[chainName].balances;
 
       const lastBalances = {
+        assetId: sb.assetId && parseInt(sb.assetId),
         availableBalance: new BN(sb.availableBalance),
         chainName,
         date: savedBalances[chainName].date,
         decimal: savedBalances[chainName].decimal,
         freeBalance: new BN(sb.freeBalance),
+        genesisHash: sb.genesisHash,
         lockedBalance: new BN(sb.lockedBalance),
         pooledBalance: new BN(sb.pooledBalance),
         reservedBalance: new BN(sb.reservedBalance),

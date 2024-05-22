@@ -8,19 +8,16 @@ import { Collapse, Grid, Skeleton, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { DisplayLogo, FormatPrice, ShowBalance } from '../../../components';
 import { usePrices, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import getLogo2 from '../../../util/getLogo2';
-import { BalancesInfo, Prices } from '../../../util/types';
+import { Prices } from '../../../util/types';
 
 interface Props {
-  account: AccountJson | undefined;
   api: ApiPromise | undefined;
   selectedAsset: FetchedBalance | undefined;
-  balanceToShow: BalancesInfo | undefined;
   accountAssets: FetchedBalance[] | null | undefined;
   onclick: (asset: FetchedBalance | undefined) => void;
   mode?: 'Home' | 'Detail';
@@ -30,9 +27,7 @@ interface Props {
 interface AssetBoxProps {
   api: ApiPromise | undefined,
   pricesInCurrencies: Prices | null | undefined,
-  account: AccountJson | undefined,
   selectedAsset: FetchedBalance | undefined,
-  balanceToShow: BalancesInfo | undefined,
   asset: FetchedBalance | undefined,
   mode: 'Home' | 'Detail',
   onclick: (asset: FetchedBalance | undefined) => void;
@@ -66,8 +61,8 @@ const BalanceRow = ({ api, asset, pricesInCurrencies }: BalanceRowProps) => (
   </Grid>
 );
 
-const AssetsBoxes = ({ account, api, asset, balanceToShow, hideNumbers, mode, onclick, pricesInCurrencies, selectedAsset }: AssetBoxProps) => {
-  const isAssetSelected = (asset && asset.genesisHash === account?.genesisHash && asset.token === balanceToShow?.token) || (asset?.genesisHash === selectedAsset?.genesisHash && asset?.token === selectedAsset?.token);
+const AssetsBoxes = ({ api, asset, hideNumbers, mode, onclick, pricesInCurrencies, selectedAsset }: AssetBoxProps) => {
+  const isAssetSelected = asset?.genesisHash === selectedAsset?.genesisHash && asset?.token === selectedAsset?.token && asset?.assetId === selectedAsset?.assetId;
 
   const homeMode = (mode === 'Home' && isAssetSelected);
   const logoInfo = useMemo(() => asset && getLogo2(asset.genesisHash, asset.token), [asset]);
@@ -93,7 +88,7 @@ const AssetsBoxes = ({ account, api, asset, balanceToShow, hideNumbers, mode, on
   );
 };
 
-function AOC ({ account, accountAssets, api, balanceToShow, hideNumbers, mode = 'Detail', onclick, selectedAsset }: Props) {
+function AOC ({ accountAssets, api, hideNumbers, mode = 'Detail', onclick, selectedAsset }: Props) {
   const { t } = useTranslation();
   const pricesInCurrencies = usePrices();
 
@@ -119,10 +114,8 @@ function AOC ({ account, accountAssets, api, balanceToShow, hideNumbers, mode = 
           <Grid container gap='15px' item justifyContent='flex-start' sx={{ height: 'fit-content', minHeight: '50px', overflow: 'hidden', p: '5px 1%' }}>
             {assets.map((asset, index) => (
               <AssetsBoxes
-                account={account}
                 api={api}
                 asset={asset}
-                balanceToShow={balanceToShow}
                 hideNumbers={hideNumbers}
                 key={index}
                 mode={mode}

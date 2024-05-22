@@ -61,11 +61,6 @@ function AccountItem ({ account, hideNumbers, id, quickActionOpen, setQuickActio
         <AccountInformation
           accountAssets={accountAssets}
           address={account.address}
-          api={api}
-          balances={undefined}
-          chain={chain}
-          chainName={chain?.name}
-          formatted={formatted}
           hideNumbers={hideNumbers}
           isChild={!!hasParent}
           selectedAsset={assetToShow}

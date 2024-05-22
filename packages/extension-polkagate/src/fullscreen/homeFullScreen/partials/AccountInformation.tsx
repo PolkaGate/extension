@@ -6,23 +6,20 @@
 
 import { ArrowForwardIos as ArrowForwardIosIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Box, Button, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
 import { ActionContext, Identicon, Identity, Infotip, OptionalCopyButton, ShortAddress2 } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
-import { useAccount, useCurrency, usePrices, useTranslation } from '../../../hooks';
+import { useCurrency, useInfo, usePrices, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { showAccount, tieAccount } from '../../../messaging';
 import ExportAccountModal from '../../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../../popup/forgetAccount/ForgetAccountModal';
 import DeriveAccountModal from '../../../popup/newAccount/deriveAccount/modal/DeriveAccountModal';
 import RenameModal from '../../../popup/rename/RenameModal';
-import { BalancesInfo } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import AccountIcons from '../../accountDetails/components/AccountIcons';
 import AOC from '../../accountDetails/components/AOC';
@@ -32,12 +29,7 @@ import FullScreenAccountMenu from './FullScreenAccountMenu';
 interface AddressDetailsProps {
   accountAssets: FetchedBalance[] | null | undefined;
   address: string | undefined;
-  api: ApiPromise | undefined;
   selectedAsset: FetchedBalance | undefined;
-  balances: BalancesInfo | undefined;
-  chain: Chain | null | undefined;
-  chainName: string | undefined;
-  formatted: string | undefined;
   hideNumbers: boolean | undefined
   setSelectedAsset: React.Dispatch<React.SetStateAction<FetchedBalance | undefined>>;
   isChild?: boolean;
@@ -52,15 +44,14 @@ export const POPUPS_NUMBER = {
   RENAME: 2
 };
 
-export default function AccountInformation ({ accountAssets, address, api, balances, chain, chainName, formatted, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformation ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();
-  const account = useAccount(address);
+  const { account, api, chain, formatted } = useInfo(address);
   const theme = useTheme();
   const onAction = useContext(ActionContext);
 
-  const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
   const [displayPopup, setDisplayPopup] = useState<number>();
 
   const calculatePrice = useCallback((amount: BN, decimal: number, price: number) => parseFloat(amountToHuman(amount, decimal)) * price, []);
@@ -86,14 +77,6 @@ export default function AccountInformation ({ accountAssets, address, api, balan
     /** we need currency as a dependency to update balance by changing currency*/
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountAssets, calculatePrice, currency, pricesInCurrencies]);
-
-  useEffect(() => {
-    if (balances?.chainName === chainName) {
-      return setBalanceToShow(balances);
-    }
-
-    setBalanceToShow(undefined);
-  }, [balances, chainName]);
 
   const AccountTotal = () => (
     <Grid alignItems='center' container item xs>
@@ -192,10 +175,8 @@ export default function AccountInformation ({ accountAssets, address, api, balan
           <Grid container item xs>
             {(assetsToShow === undefined || (assetsToShow && assetsToShow?.length > 0)) &&
               <AOC
-                account={account}
                 accountAssets={assetsToShow}
                 api={api}
-                balanceToShow={balanceToShow}
                 hideNumbers={hideNumbers}
                 mode='Home'
                 onclick={onAssetBoxClicked}
