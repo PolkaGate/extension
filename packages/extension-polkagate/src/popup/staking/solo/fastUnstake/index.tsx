@@ -16,7 +16,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN, BN_ONE } from '@polkadot/util';
 
 import { Motion, PButton, Progress, Warning } from '../../../../components';
-import { useApi, useBalances, useChain, useDecimal, useFormatted, useIsExposed, useStakingAccount, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
+import { useBalances, useInfo, useIsExposed, useStakingAccount, useStakingConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman } from '../../../../util/utils';
@@ -30,16 +30,13 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const history = useHistory();
-  const api = useApi(address, state?.api);
-  const chain = useChain(address);
-  const formatted = useFormatted(address);
-  const token = useToken(address);
+  const { api, chain, decimal, formatted, token } = useInfo(address);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
 
@@ -48,7 +45,6 @@ export default function Index(): React.ReactElement {
   const mayBeMyStashBalances = useBalances(stakingAccount?.stashId);
 
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
-  const decimal = useDecimal(address);
   const isExposed = useIsExposed(address);
 
   const fastUnstakeDeposit = api && api.consts.fastUnstake.deposit;
@@ -110,7 +106,7 @@ export default function Index(): React.ReactElement {
         shortBorder
         showBackArrow
         showClose
-        text={t<string>('Solo Staking')}
+        text={t('Solo Staking')}
       />
       <SubTitle
         label={t('Fast Unstake')}
@@ -118,24 +114,24 @@ export default function Index(): React.ReactElement {
       />
       <Grid container direction='column' m='20px auto' width='90%'>
         <Typography fontSize='14px' fontWeight={300}>
-          {t<string>('Checking fast unstake eligibility')}:
+          {t('Checking fast unstake eligibility')}:
         </Typography>
         <Grid alignItems='center' container item lineHeight='28px' pl='5px' pt='15px'>
           <NumberPassFail condition={hasEnoughDeposit} no={1} />
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
-            {t<string>('Having {{deposit}} {{token}} available to deposit', { replace: { deposit: fastUnstakeDeposit && decimal ? amountToHuman(fastUnstakeDeposit, decimal) : '...', token } })}
+            {t('Having {{deposit}} {{token}} available to deposit', { replace: { deposit: fastUnstakeDeposit && decimal ? amountToHuman(fastUnstakeDeposit, decimal) : '...', token } })}
           </Typography>
         </Grid>
         <Grid alignItems='center' container item lineHeight='28px' pl='5px'>
           <NumberPassFail condition={hasUnlockingAndRedeemable === undefined ? undefined : hasUnlockingAndRedeemable === false} no={2} />
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
-            {t<string>('No redeemable or unstaking funds')}
+            {t('No redeemable or unstaking funds')}
           </Typography>
         </Grid>
         <Grid alignItems='center' container item lineHeight='28px' pl='5px'>
           <NumberPassFail condition={isExposed === undefined ? undefined : isExposed === false} no={3} />
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
-            {t<string>('Not being rewarded in the past {{unbondingDuration}} {{day}}', { replace: { unbondingDuration: stakingConsts?.unbondingDuration || '...', day: stakingConsts?.unbondingDuration && stakingConsts.unbondingDuration > 1 ? 'days' : 'day' } })}
+            {t('Not being rewarded in the past {{unbondingDuration}} {{day}}', { replace: { unbondingDuration: stakingConsts?.unbondingDuration || '...', day: stakingConsts?.unbondingDuration && stakingConsts.unbondingDuration > 1 ? 'days' : 'day' } })}
           </Typography>
         </Grid>
       </Grid>
@@ -148,7 +144,7 @@ export default function Index(): React.ReactElement {
             fontWeight={300}
             theme={theme}
           >
-            {t<string>('You can proceed to do fast unstake. Note your stake amount will be available within a few minutes after submitting the transaction.')}
+            {t('You can proceed to do fast unstake. Note your stake amount will be available within a few minutes after submitting the transaction.')}
           </Warning>
         }
         {isEligible === false &&
@@ -157,14 +153,14 @@ export default function Index(): React.ReactElement {
             iconDanger
             theme={theme}
           >
-            {t<string>('This account is not eligible for fast unstake, because the requirements (highlighted above) are not met.')}
+            {t('This account is not eligible for fast unstake, because the requirements (highlighted above) are not met.')}
           </Warning>
         }
       </Grid>
       <PButton
         _onClick={goTo}
         disabled={isEligible === undefined}
-        text={isEligible === undefined || isEligible ? t<string>('Next') : t<string>('Back')}
+        text={isEligible === undefined || isEligible ? t('Next') : t('Back')}
       />
       {showFastUnstakeReview && formatted && api && getValue('available', balances) && chain && staked && !staked?.isZero() &&
         <FastUnstakeReview
@@ -180,4 +176,3 @@ export default function Index(): React.ReactElement {
     </Motion>
   );
 }
-

@@ -43,7 +43,7 @@ interface Props {
   rebonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
 }
 
-export default function Review({ address, amount, api, chain, estimatedFee, formatted, rebonded, setShow, show, total }: Props): React.ReactElement {
+export default function Review ({ address, amount, api, chain, estimatedFee, formatted, rebonded, setShow, show, total }: Props): React.ReactElement {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const name = useAccountDisplay(address);
@@ -120,7 +120,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
     }
   }, [amount, amountInHuman, api, chain, estimatedFee, formatted, name, password, rebonded, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
-  const _onBackClick = useCallback(() => {
+  const onBackClick = useCallback(() => {
     setShow(false);
   }, [setShow]);
 
@@ -128,11 +128,11 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
     <Motion>
       <Popup show={show}>
         <HeaderBrand
-          onBackClick={_onBackClick}
+          onBackClick={onBackClick}
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Restaking')}
+          text={t('Restaking')}
           withSteps={{
             current: 2,
             total: 2
@@ -171,7 +171,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
+          label={t('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={unstake}
           proxiedAddress={formatted}

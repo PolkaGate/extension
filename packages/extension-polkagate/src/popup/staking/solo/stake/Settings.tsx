@@ -21,7 +21,7 @@ interface Props {
   settings: SoloSettings;
 }
 
-export default function Settings({ address, setSettings, setShowAdvanceSettings, settings, showAdvanceSettings, stakingConsts }: Props): React.ReactElement<Props> {
+export default function Settings ({ address, setSettings, setShowAdvanceSettings, settings, showAdvanceSettings, stakingConsts }: Props): React.ReactElement<Props> {
   const onClose = useCallback(() => setShowAdvanceSettings(false), [setShowAdvanceSettings]);
 
   const page = (

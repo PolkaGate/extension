@@ -18,7 +18,7 @@ import { DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { BN_ZERO } from '@polkadot/util';
 
 import { Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
-import { useApi, useChain, useFormatted, useStakingAccount, useStakingConsts, useTranslation, useUnSupportedNetwork, useValidators, useValidatorsIdentities } from '../../../../hooks';
+import { useInfo, useStakingAccount, useStakingConsts, useTranslation, useUnSupportedNetwork, useValidators, useValidatorsIdentities } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { STAKING_CHAINS } from '../../../../util/constants';
 import SelectValidators from '../../partial/SelectValidators';
@@ -39,8 +39,7 @@ export default function Index (): React.ReactElement {
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const history = useHistory();
-  const api = useApi(address, state?.api);
-  const chain = useChain(address);
+  const { api, chain, formatted } = useInfo(address);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
@@ -50,7 +49,6 @@ export default function Index (): React.ReactElement {
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
 
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
-  const formatted = useFormatted(address);
   const stakingAccount = useStakingAccount(address, state?.stakingAccount, refresh, setRefresh);
   const [nominatedValidatorsIds, setNominatedValidatorsIds] = useState<AccountId[] | string[] | undefined | null>();
   const [showRemoveValidator, setShowRemoveValidator] = useState<boolean>(false);
@@ -63,7 +61,7 @@ export default function Index (): React.ReactElement {
     allValidatorsInfo && nominatedValidatorsIds && allValidatorsInfo.current
       .concat(allValidatorsInfo.waiting)
       .filter((v: DeriveStakingQuery) => nominatedValidatorsIds.includes(v.accountId))
-    , [allValidatorsInfo, nominatedValidatorsIds]);
+  , [allValidatorsInfo, nominatedValidatorsIds]);
 
   const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv?.exposure?.others?.find(({ who }) => who?.toString() === stakingAccount?.accountId?.toString())), [selectedValidatorsInfo, stakingAccount?.accountId]);
 
@@ -124,7 +122,7 @@ export default function Index (): React.ReactElement {
         <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '19px', m: 'auto 2px', width: '2px' }} />
       </Grid>
       <Grid item>
-        <Infotip text={t<string>('Use this to unselect validators. Note you will not get any rewards after.')}>
+        <Infotip text={t('Use this to unselect validators. Note you will not get any rewards after.')}>
           <Typography onClick={onRemoveValidators} sx={{ color: stakingAccount?.controllerId === formatted ? 'text.primary' : 'text.disabled', cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
             {t('Remove Validators')}
           </Typography>
@@ -134,7 +132,7 @@ export default function Index (): React.ReactElement {
         <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '19px', m: 'auto 2px', width: '2px' }} />
       </Grid>
       <Grid item>
-        <Infotip text={t<string>('If Tune UP is available, it will correct your account\'s position in voters\' list to be eligible for receiving rewards.')}>
+        <Infotip text={t('If Tune UP is available, it will correct your account\'s position in voters\' list to be eligible for receiving rewards.')}>
           <Typography onClick={OnTuneUp} sx={{ color: activeValidators?.length ? 'text.primary' : 'text.disabled', cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
             {t('Tune Up')}
           </Typography>
@@ -150,12 +148,12 @@ export default function Index (): React.ReactElement {
         shortBorder
         showBackArrow
         showClose
-        text={t<string>('Solo Staking')}
+        text={t('Solo Staking')}
       />
-      <SubTitle label={t<string>('Selected validators') + (nominatedValidatorsIds?.length ? ` (${nominatedValidatorsIds?.length})` : '')} />
+      <SubTitle label={t('Selected validators') + (nominatedValidatorsIds?.length ? ` (${nominatedValidatorsIds?.length})` : '')} />
       {nominatedValidatorsIds === null
         ? <>
-          <Warn text={t<string>('No validator found.')} />
+          <Warn text={t('No validator found.')} />
           <Grid alignItems='center' container direction='column' pt='98px'>
             <Grid item sx={{ cursor: 'pointer' }}>
               <FontAwesomeIcon
@@ -201,7 +199,7 @@ export default function Index (): React.ReactElement {
       {nominatedValidatorsIds === null && stakingAccount?.controllerId === formatted && stakingAccount?.stakingLedger?.active && !stakingAccount?.stakingLedger?.active?.isZero() &&
         <PButton
           _onClick={goToSelectValidator}
-          text={t<string>('Select Validator')}
+          text={t('Select Validator')}
         />
       }
       {showRemoveValidator && formatted &&

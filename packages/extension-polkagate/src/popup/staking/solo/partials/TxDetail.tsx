@@ -16,7 +16,7 @@ interface Props {
   label: string;
 }
 
-export default function TxDetail({ label, txInfo }: Props): React.ReactElement {
+export default function TxDetail ({ label, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = txInfo.api?.registry.chainTokens[0];
 
@@ -24,7 +24,7 @@ export default function TxDetail({ label, txInfo }: Props): React.ReactElement {
     <>
       <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-          {t<string>('Account holder')}:
+          {t('Account holder')}:
         </Typography>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='34%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
           {txInfo.from.name}

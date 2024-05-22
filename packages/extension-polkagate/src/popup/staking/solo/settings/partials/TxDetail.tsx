@@ -17,7 +17,7 @@ interface Props {
   newSettings: SoloSettings
 }
 
-export default function TxDetail({ newSettings, txInfo }: Props): React.ReactElement {
+export default function TxDetail ({ newSettings, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const controllerName = useAccountName(newSettings?.controllerId);
   const maybePayeeAddress = useMemo(() => getPayee(newSettings), [newSettings]);
@@ -27,7 +27,7 @@ export default function TxDetail({ newSettings, txInfo }: Props): React.ReactEle
     <>
       <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-          {t<string>('Account holder')}:
+          {t('Account holder')}:
         </Typography>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='34%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
           {txInfo.from.name}
@@ -49,7 +49,7 @@ export default function TxDetail({ newSettings, txInfo }: Props): React.ReactEle
       {newSettings?.controllerId &&
         <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t<string>('Controller account')}:
+            {t('Controller account')}:
           </Typography>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='34%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
             {controllerName || t('Unknown')}
@@ -66,7 +66,7 @@ export default function TxDetail({ newSettings, txInfo }: Props): React.ReactEle
       {newSettings?.payee &&
         <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t<string>('Rewards destination')}:
+            {t('Rewards destination')}:
           </Typography>
           {maybePayeeAddress &&
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='34%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>

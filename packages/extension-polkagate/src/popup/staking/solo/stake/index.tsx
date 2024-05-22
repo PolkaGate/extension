@@ -214,7 +214,7 @@ export default function Index (): React.ReactElement {
         shortBorder
         showBackArrow
         showClose
-        text={t<string>('Solo Staking')}
+        text={t('Solo Staking')}
       />
       <SubTitle
         label={t('Stake')}
@@ -231,12 +231,12 @@ export default function Index (): React.ReactElement {
         />
         <div style={{ paddingTop: '30px' }}>
           <AmountWithOptions
-            label={t<string>('Amount ({{token}})', { replace: { token } })}
+            label={t('Amount ({{token}})', { replace: { token } })}
             onChangeAmount={onChangeAmount}
             onPrimary={() => onThresholdAmount('max')}
             onSecondary={() => onThresholdAmount('min')}
-            primaryBtnText={t<string>('Max amount')}
-            secondaryBtnText={isFirstTimeStaking ? t<string>('Min amount') : undefined}
+            primaryBtnText={t('Max amount')}
+            secondaryBtnText={isFirstTimeStaking ? t('Min amount') : undefined}
             value={amount}
           />
           {alert &&
@@ -275,7 +275,7 @@ export default function Index (): React.ReactElement {
         _isBusy={isFirstTimeStaking && showReview && !autoSelectedValidators}
         _onClick={goToNext}
         disabled={!!alert || !amount || amount === '0' || !availableToSoloStake || availableToSoloStake?.isZero() || availableToSoloStake?.lte(estimatedFee?.addn(Number(amount) || 0) || BN_ZERO)}
-        text={t<string>('Next')}
+        text={t('Next')}
       />
       {showReview && amount && api && formatted && staked && chain && tx && params && (isFirstTimeStaking && validatorSelectionMethod === 'auto' ? autoSelectedValidators : true) &&
         <Review

@@ -152,7 +152,7 @@ export default function Index (): React.ReactElement {
         shortBorder
         showBackArrow
         showClose
-        text={t<string>('Solo Restaking')}
+        text={t('Solo Restaking')}
       />
       <SubTitle
         label={t('Restake')}
@@ -169,10 +169,10 @@ export default function Index (): React.ReactElement {
         />
         <div style={{ paddingTop: '30px' }}>
           <AmountWithOptions
-            label={t<string>('Amount ({{token}})', { replace: { token } })}
+            label={t('Amount ({{token}})', { replace: { token } })}
             onChangeAmount={onChangeAmount}
             onPrimary={onAllAmount}
-            primaryBtnText={t<string>('All amount')}
+            primaryBtnText={t('All amount')}
             value={amount}
           />
           {alert &&
@@ -183,7 +183,7 @@ export default function Index (): React.ReactElement {
       <PButton
         _onClick={goToReview}
         disabled={!amount || amount === '0' || unlockingAmount?.lt(amountAsBN)}
-        text={t<string>('Next')}
+        text={t('Next')}
       />
       {showReview && amount && api && formatted && unlockingAmount && chain && decimal &&
         <Review

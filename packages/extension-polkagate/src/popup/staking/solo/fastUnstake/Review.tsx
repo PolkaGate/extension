@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 /**
  * @description
  * this component opens withdraw rewards review page
@@ -37,7 +39,7 @@ interface Props {
   available: BN;
 }
 
-export default function FastUnstakeReview({ address, amount, api, available, chain, formatted, setShow, show }: Props): React.ReactElement {
+export default function FastUnstakeReview ({ address, amount, api, available, chain, formatted, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(String(address));
@@ -120,7 +122,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
     }
   }, [formatted, selectedProxyAddress, password, api, tx, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain]);
 
-  const _onBackClick = useCallback(() => {
+  const onBackClick = useCallback(() => {
     setShow(false);
   }, [setShow]);
 
@@ -128,11 +130,11 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
     <Motion>
       <Popup show={show}>
         <HeaderBrand
-          onBackClick={_onBackClick}
+          onBackClick={onBackClick}
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Fast Unstake')}
+          text={t('Fast Unstake')}
           withSteps={{ current: 2, total: 2 }}
         />
         {isPasswordError &&
@@ -143,7 +145,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
               isDanger
               theme={theme}
             >
-              {t<string>('You’ve used an incorrect password. Try again.')}
+              {t('You’ve used an incorrect password. Try again.')}
             </Warning>
           </Grid>
         }
@@ -157,7 +159,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
           />
           <AmountFee
             address={address}
-            amount={<ShowBalance2 address={String(address)} balance={amount}/>}
+            amount={<ShowBalance2 address={String(address)} balance={amount} />}
             fee={estimatedFee}
             label={t('Unstake amount')}
             showDivider
@@ -176,7 +178,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
+          label={t('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={submit}
           proxiedAddress={formatted}
@@ -205,7 +207,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
             txInfo={txInfo}
           >
             <TxDetail
-              label={t<string>('Unstaked amount')}
+              label={t('Unstaked amount')}
               txInfo={txInfo}
             />
           </Confirmation>)

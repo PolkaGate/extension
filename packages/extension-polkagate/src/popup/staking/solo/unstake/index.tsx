@@ -15,7 +15,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
-import { useApi, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
+import { useInfo, useStakingAccount, useStakingConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import Asset from '../../../../partials/Asset';
 import { DATE_OPTIONS, MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
@@ -29,17 +29,13 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const history = useHistory();
-  const api = useApi(address, state?.api);
-  const chain = useChain(address);
-  const formatted = useFormatted(address);
-  const token = useToken(address);
-  const decimal = useDecimal(address);
+  const { api, chain, decimal, formatted, token } = useInfo(address);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
@@ -179,14 +175,14 @@ export default function Index(): React.ReactElement {
         shortBorder
         showBackArrow
         showClose
-        text={t<string>('Solo Staking')}
+        text={t('Solo Staking')}
       />
       <SubTitle
         label={t('Unstake')}
         withSteps={{ current: 1, total: 2 }}
       />
       {staked?.isZero() &&
-        <Warn isDanger text={t<string>('Nothing to unstake.')} />
+        <Warn isDanger text={t('Nothing to unstake.')} />
       }
       <Grid item sx={{ mx: '15px' }} xs={12}>
         <Asset
@@ -198,10 +194,10 @@ export default function Index(): React.ReactElement {
           style={{ pt: '20px' }}
         />
         <AmountWithOptions
-          label={t<string>('Amount ({{token}})', { replace: { token } })}
+          label={t('Amount ({{token}})', { replace: { token } })}
           onChangeAmount={onChangeAmount}
           onPrimary={onAllAmount}
-          primaryBtnText={t<string>('All amount')}
+          primaryBtnText={t('All amount')}
           style={{ paddingTop: '30px' }}
           value={amount}
         />
@@ -212,7 +208,7 @@ export default function Index(): React.ReactElement {
       <PButton
         _onClick={goToReview}
         disabled={!amount || amount === '0'}
-        text={t<string>('Next')}
+        text={t('Next')}
       />
       {showReview && amount && api && formatted && maxUnlockingChunks && staked && chain &&
         <Review

@@ -12,15 +12,13 @@ import { Divider, Grid, Link } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { useLocation } from 'react-router-dom';
 
-import State from '@polkadot/extension-base/background/handlers/State';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
 
 import { ActionContext, Motion, PasswordUseProxyConfirm, Progress, ShortAddress, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useApi, useChain, useChainName, useFormatted, useNeedsPutInFrontOf, useNeedsRebag, useProxies, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
+import { useAccountDisplay, useInfo, useNeedsPutInFrontOf, useNeedsRebag, useProxies, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
@@ -32,12 +30,8 @@ import TxDetail from './TxDetail';
 
 export default function TuneUp (): React.ReactElement {
   const { t } = useTranslation();
-  const { state } = useLocation<State>();
   const { address } = useParams<{ address: string }>();
-  const api = useApi(address, state?.api);
-  const chain = useChain(address);
-  const chainName = useChainName(address);
-  const formatted = useFormatted(address);
+  const { api, chain, chainName, formatted } = useInfo(address);
   const onAction = useContext(ActionContext);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
@@ -134,7 +128,7 @@ export default function TuneUp (): React.ReactElement {
     }
   }, [formatted, api, rebaged, putInFrontOf, selectedProxyAddress, password, rebagInfo?.shouldRebag, putInFrontInfo?.lighter, selectedProxy, estimatedFee, name, selectedProxyName, chain]);
 
-  const _onBackClick = useCallback(() => {
+  const onBackClick = useCallback(() => {
     onAction(`/solo/nominations/${address}`);
   }, [address, onAction]);
 
@@ -165,11 +159,11 @@ export default function TuneUp (): React.ReactElement {
   return (
     <Motion>
       <HeaderBrand
-        onBackClick={_onBackClick}
+        onBackClick={onBackClick}
         shortBorder
         showBackArrow
         showClose
-        text={t<string>('Tune Up')}
+        text={t('Tune Up')}
       />
       {isPasswordError &&
         <WrongPasswordAlert />
@@ -214,7 +208,7 @@ export default function TuneUp (): React.ReactElement {
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
+          label={t('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={submit}
           proxiedAddress={selectedProxyAddress}

@@ -50,7 +50,7 @@ interface Props {
   selectedValidators: ValidatorInfo[] | null | undefined;
 }
 
-export default function Review({ address, amount, api, chain, estimatedFee, isFirstTimeStaking, params, selectedValidators, setShow, settings, show, total, tx }: Props): React.ReactElement {
+export default function Review ({ address, amount, api, chain, estimatedFee, isFirstTimeStaking, params, selectedValidators, setShow, settings, show, total, tx }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, settings.stashId);
   const name = useAccountDisplay(address);
@@ -144,14 +144,14 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
     }
   }, [settings.stashId, settings.controllerId, formatted, tx, selectedProxyAddress, password, isFirstTimeStaking, selectedValidators, api, params, selectedProxy, amount, estimatedFee, name, selectedProxyName, chain]);
 
-  const _onBackClick = useCallback(() => {
+  const onBackClick = useCallback(() => {
     setShow(false);
   }, [setShow]);
 
   const Controller = useCallback(() => (
     <Grid alignItems='center' container direction='column' justifyContent='center'>
       <Typography fontSize='16px' fontWeight={300} textAlign='center'>
-        {t<string>('Controller account')}
+        {t('Controller account')}
       </Typography>
       <Identity chain={chain} formatted={settings.controllerId} identiconSize={31} style={{ height: '35px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
       <ShortAddress address={settings.controllerId} />
@@ -163,11 +163,11 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
     <Motion>
       <Popup show={show}>
         <HeaderBrand
-          onBackClick={_onBackClick}
+          onBackClick={onBackClick}
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Staking')}
+          text={t('Staking')}
           withSteps={{
             current: 2,
             total: 2
@@ -201,7 +201,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
           {isFirstTimeStaking
             ? <Grid alignContent='center' container justifyContent='center'>
               <Grid item sx={{ alignSelf: 'center', mr: '20px', width: 'fit=content' }}>
-                <Infotip fontSize='13px' iconTop={5} showQuestionMark text={t<string>(SYSTEM_SUGGESTION_TEXT)}>
+                <Infotip fontSize='13px' iconTop={5} showQuestionMark text={t(SYSTEM_SUGGESTION_TEXT)}>
                   <Typography sx={{ fontWeight: 300 }}>
                     {t('Selected Validators ({{count}})', { replace: { count: selectedValidators?.length } })}
                   </Typography>
@@ -226,7 +226,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
+          label={t('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={stake}
           proxiedAddress={settings.stashId}

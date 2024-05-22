@@ -40,7 +40,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-function RewardsDestination({ chain, newSettings, settings }: { settings: SoloSettings, newSettings: SoloSettings, chain: Chain | undefined }) {
+function RewardsDestination ({ chain, newSettings, settings }: { settings: SoloSettings, newSettings: SoloSettings, chain: Chain | undefined }) {
   const { t } = useTranslation();
   const destinationAddress = useMemo(() =>
     newSettings.payee === 'Stash'
@@ -48,7 +48,7 @@ function RewardsDestination({ chain, newSettings, settings }: { settings: SoloSe
       : newSettings.payee === 'Controller'
         ? newSettings.controllerId || settings.controllerId
         : newSettings.payee.Account as string
-    , [newSettings.controllerId, newSettings.payee, settings.controllerId, settings.stashId]);
+  , [newSettings.controllerId, newSettings.payee, settings.controllerId, settings.stashId]);
 
   return (
     <Grid container item justifyContent='center' sx={{ alignSelf: 'center', my: '5px' }}>
@@ -71,13 +71,14 @@ function RewardsDestination({ chain, newSettings, settings }: { settings: SoloSe
   );
 }
 
-export default function Review({ address, api, newSettings, setRefresh, setShow, setShowSettings, settings, show }: Props): React.ReactElement {
+export default function Review ({ address, api, newSettings, setRefresh, setShow, setShowSettings, settings, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, settings.stashId);
   const name = useAccountDisplay(address);
   const chain = useChain(address);
   const formatted = useFormatted(address);
   const onAction = useContext(ActionContext);
+
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -183,7 +184,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
     }
   }, [formatted, api, tx, selectedProxyAddress, password, selectedProxy, estimatedFee, name, selectedProxyName, chain, setRefresh]);
 
-  const _onBackClick = useCallback(() => {
+  const onBackClick = useCallback(() => {
     setShow(false);
   }, [setShow]);
 
@@ -192,7 +193,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
 
     return (<Grid alignItems='center' container direction='column' justifyContent='center' my='5px'>
       <Typography fontSize='16px' fontWeight={300} textAlign='center'>
-        {t<string>('Controller account')}
+        {t('Controller account')}
       </Typography>
       <Identity chain={chain} formatted={controllerId} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
       <ShortAddress address={controllerId} />
@@ -205,11 +206,11 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
     <Motion>
       <Popup show={show}>
         <HeaderBrand
-          onBackClick={_onBackClick}
+          onBackClick={onBackClick}
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Solo Settings')}
+          text={t('Solo Settings')}
           withSteps={{ current: 2, total: 2 }}
         />
         {isPasswordError &&
@@ -221,14 +222,14 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
             <Controller />
           }
           {newSettings?.payee &&
-            <RewardsDestination chain={chain} settings={settings} newSettings={newSettings} />
+            <RewardsDestination chain={chain} newSettings={newSettings} settings={settings} />
           }
           <Grid alignItems='center' container item justifyContent='center' lineHeight='20px' mt='10px'>
             <Grid item>
               {t('Fee')}:
             </Grid>
             <Grid item sx={{ pl: '5px' }}>
-              <ShowValue value={estimatedFee?.toHuman()} height={16} />
+              <ShowValue height={16} value={estimatedFee?.toHuman()} />
             </Grid>
           </Grid>
         </Container>
@@ -237,7 +238,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
+          label={t('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={applySettings}
           proxiedAddress={settings.stashId}
