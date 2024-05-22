@@ -16,10 +16,10 @@ interface SubIdentity {
   display: string
 }
 
-export default function useAccountInfo3 (address: string | AccountId | undefined, formatted: string | undefined, accountInfo?: DeriveAccountInfo): DeriveAccountInfo | undefined {
+export default function useAccountInfo3 (genesisHash: string | AccountId | undefined, formatted: string | undefined, accountInfo?: DeriveAccountInfo): DeriveAccountInfo | undefined {
   const [info, setInfo] = useState<DeriveAccountInfo | undefined>();
 
-  const peopleChain = usePeopleChain(address);
+  const peopleChain = usePeopleChain(undefined, genesisHash);
   const api = useApiWithChain2(peopleChain);
 
   const getIdentityOf = useCallback(async (accountId: string) => {

@@ -23,7 +23,7 @@ interface Meta {
 
 export const upperCaseFirstChar = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
-export function isValidAddress(_address: string | undefined): boolean {
+export function isValidAddress (_address: string | undefined): boolean {
   try {
     encodeAddress(
       isHex(_address)

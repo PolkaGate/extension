@@ -50,7 +50,8 @@ function Identity ({ accountInfo, address, api, chain, direction = 'column', for
   const isMSwarning = ['Scam', 'High Risk Organization', 'Theft', 'Sanctions'].includes(msData?.tag_type_verbose);
   const _showSocial = msData ? false : showSocial;
 
-  const _accountInfo = useAccountInfo3(address, _formatted, accountInfo);
+  const genesisHash = chain?.genesisHash || api?.genesisHash?.toHex();
+  const _accountInfo = useAccountInfo3(genesisHash, _formatted, accountInfo);
   const _judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
 
   const merkleScienceTooltip = useMemo(() => (msData &&
