@@ -57,7 +57,7 @@ export default function Alert ({ setShowAlert, show }: Props): React.ReactElemen
       <Grid container direction='column' px='15px'>
         <Grid container item justifyContent='center' pb='20px' pt='50px'>
           <Typography fontSize='22px' fontWeight={400}>
-            {t<string>('Important Updates 🚀')}
+            {t('Important Updates 🚀')}
           </Typography>
         </Grid>
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
@@ -71,7 +71,7 @@ export default function Alert ({ setShowAlert, show }: Props): React.ReactElemen
           />
         </Grid>
       </Grid>
-      <PButton _onClick={onClose} text={t<string>('Close')} />
+      <PButton _onClick={onClose} text={t('Close')} />
     </Popup>
   );
 }
