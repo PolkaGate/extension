@@ -137,7 +137,7 @@ export default function Popup(): React.ReactElement {
   const [loginInfo, setLoginInfo] = useState<LoginInfo>();
   const [alerts, setAlerts] = useState<AlertsType[]>([]);
 
-  const assetsOnChains = useAssetsBalances(accounts, alerts, setAlerts);
+  const assetsOnChains = useAssetsBalances(accounts, setAlerts);
 
   const set = useCallback((change: Fetching) => {
     setFetching(change);

@@ -120,7 +120,7 @@ const assetsChains = createAssets();
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances (accounts: AccountJson[] | null, alerts: AlertsType[], setAlerts: React.Dispatch<React.SetStateAction<AlertsType[]>>): SavedAssets | undefined | null {
+export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: React.Dispatch<React.SetStateAction<AlertsType[]>>): SavedAssets | undefined | null {
   const isTestnetEnabled = useIsTestnetEnabled();
   const selectedChains = useSelectedChains();
   const { t } = useTranslation();
@@ -135,16 +135,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, alert
   const [fetchedAssets, setFetchedAssets] = useState<SavedAssets | undefined | null>();
   const [isWorking, setIsWorking] = useState<boolean>(false);
   const [workersCalled, setWorkersCalled] = useState<Worker[]>();
-  const [isUpdate, setIsUpdate] = useState<boolean>();
-
-  useEffect(() => {
-    const UPDATING_MESSAGE = t('Updating accounts balances');
-    const UPDATED_MESSAGE = t('Accounts balances updated!');
-    const alreadyAddedAlert = alerts.find(({ message }) => message === UPDATING_MESSAGE);
-
-    !alreadyAddedAlert && isWorking && setAlerts((perv) => [...perv, { message: UPDATING_MESSAGE, type: 'info' }]);
-    !isWorking && isUpdate && setAlerts((perv) => [...perv, { message: UPDATED_MESSAGE, type: 'info' }]);
-  }, [alerts, isUpdate, isWorking, setAlerts, t]);
+  const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
   useEffect(() => {
     SHOULD_FETCH_ASSETS && getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
@@ -173,8 +164,9 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, alert
     if (addresses && workersCalled?.length === 0) {
       setWorkersCalled(undefined);
       handleAccountsSaving();
+      setAlerts((perv) => [...perv, { message: t('Accounts balances updated!'), type: 'info' }]);
     }
-  }, [accounts, addresses, handleAccountsSaving, workersCalled?.length]);
+  }, [accounts, addresses, handleAccountsSaving, setAlerts, t, workersCalled?.length]);
 
   useEffect(() => {
     /** chain list may have changed */
@@ -437,6 +429,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, alert
       return;
     }
 
+    setAlerts((perv) => [...perv, { message: t('Updating accounts balances'), type: 'info' }]);
     const _selectedChains = isTestnetEnabled ? selectedChains : selectedChains.filter((genesisHash) => !TEST_NETS.includes(genesisHash));
     const multipleAssetsChainsNames = Object.keys(assetsChains);
 
@@ -454,7 +447,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, alert
 
       fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);
     });
-  }, [SHOULD_FETCH_ASSETS, addresses, fetchAssets, isTestnetEnabled, isUpdate, isWorking, selectedChains]);
+  }, [SHOULD_FETCH_ASSETS, addresses, fetchAssets, isTestnetEnabled, isUpdate, isWorking, selectedChains, setAlerts, t]);
 
   return fetchedAssets;
 }
