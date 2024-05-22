@@ -52,6 +52,7 @@ function Identity ({ accountInfo, address, api, chain, direction = 'column', for
 
   const genesisHash = chain?.genesisHash || api?.genesisHash?.toHex();
   const _accountInfo = useAccountInfo3(genesisHash, _formatted, accountInfo);
+
   const _judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
 
   const merkleScienceTooltip = useMemo(() => (msData &&

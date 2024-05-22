@@ -10,7 +10,7 @@ import { AccountJson } from '@polkadot/extension-base/background/types';
 import { BN } from '@polkadot/util';
 
 import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, Infotip2, OptionalCopyButton, ShortAddress2 } from '../../../components';
-import { useInfo, useTranslation } from '../../../hooks';
+import { useInfo, useMyAccountIdentity, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { showAccount, tieAccount } from '../../../messaging';
 import { getValue } from '../../../popup/account/util';
@@ -191,8 +191,6 @@ export default function AccountInformation ({ accountAssets, address, label, pri
           </Grid>
           <AccountIcons
             address={address}
-            api={api}
-            formatted={formatted}
           />
         </Grid>
         <Grid container item sx={{ display: 'grid', gridTemplateColumns: 'minmax(150px, 60%) max-content' }} xs>

@@ -76,7 +76,7 @@ export default function ManageIdentity (): React.ReactElement {
   const theme = useTheme();
   const { chain, chainName, formatted } = useInfo(address);
 
-  const peopleChain = usePeopleChain(address);
+  const { peopleChain } = usePeopleChain(address);
   const api = useApiWithChain2(peopleChain);
 
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null | undefined>();

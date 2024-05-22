@@ -11,13 +11,19 @@ const convertId = (id) => ({
   email: hexToString(id.info.email.asRaw.toHex()),
   judgements: id.judgements,
   legal: hexToString(id.info.legal.asRaw.toHex()),
-  riot: hexToString(id.info.riot.asRaw.toHex()),
+  riot: hexToString(
+    id.info.riot
+      ? id.info.riot.asRaw.toHex()
+      : id.info.matrix.asRaw.toHex()
+  ),
   twitter: hexToString(id.info.twitter.asRaw.toHex()),
   web: hexToString(id.info.web.asRaw.toHex())
 });
 
-async function getAllValidatorsIdentities(endpoint, _accountIds) {
+async function getAllValidatorsIdentities (endpoint, _accountIds) {
   try {
+    console.log('allValidatorsIdentities:',endpoint, _accountIds)
+
     const api = await getApi(endpoint);
     let accountInfo = [];
     let accountSubInfo = [];
@@ -25,7 +31,7 @@ async function getAllValidatorsIdentities(endpoint, _accountIds) {
     const page = 50;
     let totalFetched = 0;
 
-    const currentEraIndex = await api.query.staking.currentEra();
+    const currentEraIndex = api.query.staking?.currentEra && await api.query.staking?.currentEra();
 
     // get identity of validators if they have
     while (_accountIds.length > totalFetched) {
@@ -118,7 +124,7 @@ async function getAllValidatorsIdentities(endpoint, _accountIds) {
 
     return {
       accountsInfo: JSON.parse(JSON.stringify(accountInfo)),
-      eraIndex: Number(currentEraIndex.toString() || '0')
+      eraIndex: Number(currentEraIndex?.toString() || '0')
     };
   } catch (error) {
     console.log('something went wrong while getting validators id, err:', error);

@@ -23,7 +23,6 @@ export interface Props {
   actions?: React.ReactNode;
   address: string;
   children?: React.ReactNode;
-  genesisHash?: string | null;
   isExternal?: boolean | null;
   isHardware?: boolean | null;
   isHidden?: boolean;
@@ -37,7 +36,7 @@ export interface Props {
   hideNumbers: boolean | undefined;
 }
 
-export default function AccountPreview({ address, genesisHash, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
+export default function AccountPreview({ address, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
   const chain = useChain(address);
   const api = useApi(address);
   const formatted = useFormatted(address);
