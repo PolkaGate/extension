@@ -34,8 +34,6 @@ function WatchList ({ groupedAssets }: Props): React.ReactElement {
 
   const [showMore, setShowMore] = useState<boolean>(false);
 
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
-
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
   const DisplayAssetRow = ({ asset }: { asset: FetchedBalance }) => {
@@ -52,7 +50,7 @@ function WatchList ({ groupedAssets }: Props): React.ReactElement {
         </Grid>
         <Grid alignItems='center' columnGap='10px' container item width='fit-content'>
           <Typography fontSize='16px' fontWeight={600}>
-            { `${currency?.sign ?? ''}${nFormatter(asset.price ?? 0, 2)}`}
+            { `${currency?.sign ?? ''}${nFormatter(asset.price ?? 0, asset.price > 1 ? 2 : 4)}`}
           </Typography>
           <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '21px', m: 'auto', width: '3px' }} />
           {change > 0
