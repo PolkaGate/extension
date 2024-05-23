@@ -41,6 +41,12 @@ function sortNetworks(a, b) {
 knownGenesis.westmint = [
     '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9'
 ];
+knownGenesis.westendPeople = [
+    '0x1eb6fb0ba5187434de017a70cb84d4f47142df1d571d0ef9e7e1407f2b80b93c'
+];
+knownGenesis.kusamaPeople = [
+    '0xc1af4cb4eb3918e5db15086c0cc5ec17fb334f728b7c65dd44bfe1e174ff8b3f'
+];
 const testnets = [{
     "prefix": 42,
     "network": "westend",
@@ -75,7 +81,30 @@ const assetHubs = [{
     "standardAccount": "*25519",
     "website": "https://kusama.network"
 }];
-knownSubstrate.push(...assetHubs, ...testnets);
+
+const peopleChains = [
+    {
+        "prefix": 42,
+        "network": "westendPeople",
+        "displayName": "Westend People",
+        "symbols": ["WND"],
+        "decimals": [12],
+        "standardAccount": "*25519",
+        "website": "https://polkadot.network"
+    },
+    {
+        "prefix": 2,
+        "network": "kusamaPeople",
+        "displayName": "Kusama People",
+        "symbols": ["KSM"],
+        "decimals": [12],
+        "standardAccount": "*25519",
+        "website": "https://kusama.network"
+    }
+  ];
+
+  
+knownSubstrate.push(...assetHubs, ...peopleChains, ...testnets);
 
 export const allNetworks = knownSubstrate.map(toExpanded);
 export const availableNetworks = allNetworks.filter(filterAvailable).sort(sortNetworks);

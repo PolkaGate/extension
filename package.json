@@ -86,7 +86,7 @@
   "resolutions": {
     "@polkadot/api": "^11.0.3",
     "@polkadot/keyring": "^12.3.2",
-    "@polkadot/networks": "^12.3.2",
+    "@polkadot/networks": "^12.6.2",
     "@polkadot/types": "^10.9.1",
     "@polkadot/util": "^12.3.2",
     "@polkadot/util-crypto": "^12.3.2",
