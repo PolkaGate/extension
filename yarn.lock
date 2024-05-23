@@ -4491,14 +4491,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/networks@npm:^12.3.2":
-  version: 12.3.2
-  resolution: "@polkadot/networks@npm:12.3.2"
+"@polkadot/networks@npm:^12.6.2":
+  version: 12.6.2
+  resolution: "@polkadot/networks@npm:12.6.2"
   dependencies:
-    "@polkadot/util": 12.3.2
-    "@substrate/ss58-registry": ^1.40.0
-    tslib: ^2.5.3
-  checksum: 54d5aa2a90b761a200bf0cf492f1c53cbbd555067f9486542997097640b0813e46675837e83225cee8ab4e816bcae12cdc046f07b5869930ab1e694b1e6e3cec
+    "@polkadot/util": 12.6.2
+    "@substrate/ss58-registry": ^1.44.0
+    tslib: ^2.6.2
+  checksum: 7f3dbdd02d8429f82c36ce284ca279af663d45c1a40ce4ce1e38ec2a06fc9d6d27c66d374f32b91ae3058257f33d60701481c9e95ceab19bd2eb70d83465b026
   languageName: node
   linkType: hard
 
@@ -5798,10 +5798,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@substrate/ss58-registry@npm:^1.40.0":
-  version: 1.41.0
-  resolution: "@substrate/ss58-registry@npm:1.41.0"
-  checksum: 1fb78d50415a3f1fbf0ed9b8a790ad8f76a480948bc58a189678732120918993d16693e39c365507b4dc63fa0c38c9e82624a79fc69efb9f6760e12558bedef3
+"@substrate/ss58-registry@npm:^1.44.0":
+  version: 1.48.0
+  resolution: "@substrate/ss58-registry@npm:1.48.0"
+  checksum: f121284daae34f2976e3a5e0a7125373ac51f52e3d6b9bdd401b99b01bba49b3e1aa0379e500fd8b0701942d73c47dea896ef765228485a3d1637f988253fcf9
   languageName: node
   linkType: hard
 
