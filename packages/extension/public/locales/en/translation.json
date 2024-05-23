@@ -1271,5 +1271,6 @@
   "Raw seed starting with 0x": "",
   "account(s)": "",
   "Choose how you want to use your earned rewards": "",
-  "Now, select the validators you want to nominate, considering their properties, such as their commission rates. You can even filter them based on your preferences.": ""
+  "Now, select the validators you want to nominate, considering their properties, such as their commission rates. You can even filter them based on your preferences.": "",
+  "Github": ""
 }
