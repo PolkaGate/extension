@@ -424,11 +424,18 @@ export default function ClaimedRewardsChart ({ address }: Props): React.ReactEle
                 </>
               </Collapse>
               <Divider sx={{ bgcolor: 'divider', height: '2px', mt: '5px', width: '100%' }} />
-              <Grid alignItems='center' container item onClick={toggleDetails} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
-                <Typography color='secondary.light' fontSize='16px' fontWeight={400}>
-                  {t<string>(showDetails ? t('Less') : t('More'))}
-                </Typography>
-                <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showDetails ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+              <Grid alignItems='center' container item justifyContent='space-between'>
+                <Grid item>
+                  <Typography color='text.disabled' fontSize='10px'>
+                    {'Powered by Subscan'}
+                  </Typography>
+                </Grid>
+                <Grid container item onClick={toggleDetails} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
+                  <Typography color='secondary.light' fontSize='16px' fontWeight={400}>
+                    {t(showDetails ? t('Less') : t('More'))}
+                  </Typography>
+                  <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showDetails ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
