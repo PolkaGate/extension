@@ -118,7 +118,7 @@ export default function ManageIdentity (): React.ReactElement {
   };
 
   const basicDepositValue = useMemo(() => api ? getConstantValue(api, 'basicDeposit') : BN_ZERO, [api]);
-  // fieldDeposit is removed on people chain on favour of byteDeposit
+  // TODO: fieldDeposit is removed on people chain on favour of byteDeposit
   const fieldDepositValue = useMemo(() => api ? getConstantValue(api, 'fieldDeposit') : BN_ZERO, [api]);
   const subAccountDeposit = useMemo(() => api ? getConstantValue(api, 'subAccountDeposit') : BN_ZERO, [api]);
 
@@ -179,7 +179,7 @@ export default function ManageIdentity (): React.ReactElement {
     }
 
     return BN_ZERO;
-  }, [basicDepositValue, fieldDepositValue, identity?.discord, maxFeeValue, mode, subAccountDeposit, subIdAccounts, subIdAccountsToSubmit, totalDeposit]);
+  }, [basicDepositValue, fieldDepositValue, identity?.discord, identity?.other?.discord, maxFeeValue, mode, subAccountDeposit, subIdAccounts, subIdAccountsToSubmit, totalDeposit]);
 
   const fetchIdentity = useCallback(() => {
     setStep(STEPS.CHECK_SCREEN);
