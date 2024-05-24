@@ -3,8 +3,9 @@
 
 import type { PalletConvictionVotingVoteVoting } from '@polkadot/types/lookup';
 
-import { ApiPromise } from '@polkadot/api';
 import { TFunction } from '@polkagate/apps-config/types';
+
+import { ApiPromise } from '@polkadot/api';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_MAX_INTEGER, bnMin, extractTime } from '@polkadot/util';
 
@@ -16,7 +17,7 @@ type Result = [blockInterval: number, timeStr: string, time: Time];
 
 export const capitalizeFirstLetter = (str: string): string => str.replace(/^\w/, (c) => c.toUpperCase());
 
-export function toSnakeCase(input: string | undefined): string | undefined {
+export function toSnakeCase (input: string | undefined): string | undefined {
   if (!input) {
     return undefined;
   }
@@ -29,7 +30,7 @@ export function toSnakeCase(input: string | undefined): string | undefined {
   return output;
 }
 
-export function convertToCamelCase(input: string): string {
+export function convertToCamelCase (input: string): string {
   const parts = input.split(';');
   const camelCased = parts.map((part, index) =>
     index === 0 ? part : part.replace(/(?:^|-)(.)/g, (_, c) => c.toUpperCase())
@@ -38,13 +39,13 @@ export function convertToCamelCase(input: string): string {
   return camelCased.join('');
 }
 
-export function toCamelCase(str: string): string {
+export function toCamelCase (str: string): string {
   return str.replace(/(?:^\w|[A-Z]|\b\w)/g, (match, index) => {
     return index === 0 ? match.toLowerCase() : match.toUpperCase();
   }).replace(/\s+/g, '');
 }
 
-export function toPascalCase(input: string): string | undefined {
+export function toPascalCase (input: string): string | undefined {
   if (!input) {
     return undefined;
   }
@@ -53,7 +54,7 @@ export function toPascalCase(input: string): string | undefined {
   let words = input.replace(/[_-]/g, ' ').split(' ');
 
   // Convert each word to title case
-  words = words.map(word => {
+  words = words.map((word) => {
     return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
   });
 
@@ -61,7 +62,7 @@ export function toPascalCase(input: string): string | undefined {
   return words.join('');
 }
 
-export function toTitleCase(input: string | undefined): string | undefined {
+export function toTitleCase (input: string | undefined): string | undefined {
   if (!input) {
     return undefined;
   }
@@ -79,7 +80,7 @@ export function toTitleCase(input: string | undefined): string | undefined {
   return words.join(' ');
 }
 
-export function pascalCaseToTitleCase(str: string): string | undefined {
+export function pascalCaseToTitleCase (str: string): string | undefined {
   if (!str) {
     return undefined;
   }
@@ -91,14 +92,14 @@ export function pascalCaseToTitleCase(str: string): string | undefined {
   result = result.replace(/_/g, ' ');
 
   // Capitalize the first letter of each word
-  result = result.split(' ').map(word => {
+  result = result.split(' ').map((word) => {
     return word.charAt(0).toUpperCase() + word.slice(1);
   }).join(' ');
 
   return result;
 }
 
-export function formatRelativeTime(dateString: number | string | Date): string {
+export function formatRelativeTime (dateString: number | string | Date): string {
   const date = new Date(dateString);
   const now = new Date();
   const elapsedMs = now.getTime() - date.getTime();
@@ -253,7 +254,7 @@ export const getVoteType = (vote: Vote | null | undefined) => {
   return undefined;
 };
 
-export function calcBlockTime(blockTime: BN, blocks: BN, t: TFunction): Result {
+export function calcBlockTime (blockTime: BN, blocks: BN, t: TFunction): Result {
   // in the case of excessively large locks, limit to the max JS integer value
   const value = bnMin(BN_MAX_INTEGER, blockTime.mul(blocks)).toNumber();
 
@@ -292,7 +293,7 @@ export function calcBlockTime(blockTime: BN, blocks: BN, t: TFunction): Result {
   ];
 }
 
-export async function getMyDelegationInfo(api: ApiPromise | undefined, formatted: string | AccountId | undefined, tracks: Track[] | undefined): Promise<DelegationInfo[] | null | undefined> {
+export async function getMyDelegationInfo (api: ApiPromise | undefined, formatted: string | AccountId | undefined, tracks: Track[] | undefined): Promise<DelegationInfo[] | null | undefined> {
   if (!api || !formatted || !tracks || !tracks.length || !api?.query?.convictionVoting) {
     return undefined;
   }
