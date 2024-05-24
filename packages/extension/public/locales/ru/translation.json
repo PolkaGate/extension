@@ -1224,7 +1224,7 @@
   "Manage Pool Validators": "Управление майнерами пула",
   "Claimed Rewards": "Заявленные награды",
   "on-chain pool staking info": "Информация о стейкинге на пуле на цепочке",
-  "Claimable Rewards": "Заявляемые награды",
+  "Claimable rewards": "Заявляемые награды",
   "Pool information": "Информация о пуле",
   "Pool Rewards": "Награды пула",
   "Change State to {{state}}": "Изменить состояние на {{state}}",

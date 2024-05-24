@@ -377,7 +377,7 @@ export default function RewardsChart ({ address, rewardDestinationAddress }: Pro
   );
 
   return (
-    <Grid alignItems='flex-start' container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: 'fit-content', minHeight: '310px', p: '10px', width: 'inherit' }}>
+    <Grid alignItems='flex-start' container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: 'fit-content', minHeight: '295px', p: '10px', width: 'inherit' }}>
       <Grid alignItems='center' container item justifyContent='center' sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <FontAwesomeIcon
           color={`${theme.palette.text.primary}`}
@@ -459,7 +459,7 @@ export default function RewardsChart ({ address, rewardDestinationAddress }: Pro
                   </>
                 </Collapse>
                 <Divider sx={{ bgcolor: 'divider', height: '2px', mt: '5px', width: '100%' }} />
-                <Grid alignItems='center' container item justifyContent='space-between'>
+                <Grid alignItems='flex-start' container item justifyContent='space-between'>
                   <Grid item>
                     <Typography color='text.disabled' fontSize='10px'>
                       {'Powered by Subscan'}
