@@ -12,7 +12,7 @@ import { sanitizeChainName } from './utils';
  */
 export default function getChainName (_genesisHash: string | undefined): string | undefined {
   if (!_genesisHash) {
-    console.info('_genesisHash should not be undefined');
+    console.info('genesisHash should not be undefined');
 
     return undefined;
   }
