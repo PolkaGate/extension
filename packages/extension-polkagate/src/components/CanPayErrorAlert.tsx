@@ -22,10 +22,10 @@ export default function CanPayErrorAlert ({ canPayStatements }: { canPayStatemen
         marginTop={0}
         theme={theme}
       >
-        {canPayStatements === CanPayStatements.CANNOTPAYFEE && t<string>('Insufficient balance to cover transaction fee.')}
-        {canPayStatements === CanPayStatements.PROXYCANPAYFEE && t<string>('Selected proxy account lacks funds for the fee.')}
-        {canPayStatements === CanPayStatements.CANNOTPAY && t<string>('Insufficient balance to complete the transaction.')}
-        {canPayStatements === CanPayStatements.CANNOTPAYDEPOSIT && t<string>('Insufficient balance for transaction deposit.')}
+        {canPayStatements === CanPayStatements.CAN_NOT_PAY_FEE && t<string>('Insufficient balance to cover transaction fee.')}
+        {canPayStatements === CanPayStatements.PROXY_CAN_PAY_FEE && t<string>('Selected proxy account lacks funds for the fee.')}
+        {canPayStatements === CanPayStatements.CAN_NOT_PAY && t<string>('Insufficient balance to complete the transaction.')}
+        {canPayStatements === CanPayStatements.CAN_NOT_PAY_DEPOSIT && t<string>('Insufficient balance for transaction deposit.')}
       </Warning>
     </Grid>
   );

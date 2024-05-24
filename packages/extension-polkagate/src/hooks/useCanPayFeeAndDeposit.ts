@@ -25,27 +25,27 @@ export default function useCanPayFeeAndDeposit (formatted: AccountId | string | 
   const getStatement = useCallback((canPayFee, canPayDeposit, canPayWholeAmount, useProxy, hasDeposit) => {
     if (useProxy) {
       if (hasDeposit) {
-        if (canPayFee && canPayDeposit) return CanPayStatements.CANPAY;
-        if (canPayFee && !canPayDeposit) return CanPayStatements.CANNOTPAYDEPOSIT;
-        if (!canPayFee && canPayDeposit) return CanPayStatements.PROXYCANPAYFEE;
+        if (canPayFee && canPayDeposit) return CanPayStatements.CAN_PAY;
+        if (canPayFee && !canPayDeposit) return CanPayStatements.CAN_NOT_PAY_DEPOSIT;
+        if (!canPayFee && canPayDeposit) return CanPayStatements.PROXY_CAN_PAY_FEE;
 
-        return CanPayStatements.CANNOTPAY;
+        return CanPayStatements.CAN_NOT_PAY;
       } else {
-        if (canPayFee) return CanPayStatements.CANPAY;
+        if (canPayFee) return CanPayStatements.CAN_PAY;
 
-        return CanPayStatements.PROXYCANPAYFEE;
+        return CanPayStatements.PROXY_CAN_PAY_FEE;
       }
     } else {
       if (hasDeposit) {
-        if (canPayWholeAmount) return CanPayStatements.CANPAY;
-        if (canPayDeposit) return CanPayStatements.CANNOTPAYFEE;
-        if (!canPayDeposit && canPayFee) return CanPayStatements.CANNOTPAYDEPOSIT;
+        if (canPayWholeAmount) return CanPayStatements.CAN_PAY;
+        if (canPayDeposit) return CanPayStatements.CAN_NOT_PAY_FEE;
+        if (!canPayDeposit && canPayFee) return CanPayStatements.CAN_NOT_PAY_DEPOSIT;
 
-        return CanPayStatements.CANNOTPAY;
+        return CanPayStatements.CAN_NOT_PAY;
       } else {
-        if (canPayFee) return CanPayStatements.CANPAY;
+        if (canPayFee) return CanPayStatements.CAN_PAY;
 
-        return CanPayStatements.CANNOTPAYFEE;
+        return CanPayStatements.CAN_NOT_PAY_FEE;
       }
     }
   }, []);
