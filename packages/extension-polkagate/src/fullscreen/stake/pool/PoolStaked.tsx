@@ -110,7 +110,7 @@ export default function PoolStaked ({ address, balances, pool, redeemable, setSh
               amount={claimable}
               icons={[faSquarePlus, faArrowCircleDown]}
               onClicks={[onStakeRewards, onWithdrawRewards]}
-              title={t('Claimable Rewards')}
+              title={t('Claimable rewards')}
             />
             <DisplayBalance
               actions={[t('withdraw')]}

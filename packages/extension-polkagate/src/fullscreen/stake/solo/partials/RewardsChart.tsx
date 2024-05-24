@@ -377,7 +377,7 @@ export default function RewardsChart ({ address, rewardDestinationAddress }: Pro
   );
 
   return (
-    <Grid alignItems='flex-start' container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: 'fit-content', minHeight: '310px', p: '10px', width: 'inherit' }}>
+    <Grid alignItems='flex-start' container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: 'fit-content', minHeight: '295px', p: '10px', width: 'inherit' }}>
       <Grid alignItems='center' container item justifyContent='center' sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <FontAwesomeIcon
           color={`${theme.palette.text.primary}`}
@@ -459,11 +459,18 @@ export default function RewardsChart ({ address, rewardDestinationAddress }: Pro
                   </>
                 </Collapse>
                 <Divider sx={{ bgcolor: 'divider', height: '2px', mt: '5px', width: '100%' }} />
-                <Grid alignItems='center' container item onClick={toggleDetails} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
-                  <Typography color='secondary.light' fontSize='16px' fontWeight={400}>
-                    {t<string>(showDetails ? t('Less') : t('More'))}
-                  </Typography>
-                  <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showDetails ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+                <Grid alignItems='flex-start' container item justifyContent='space-between'>
+                  <Grid item>
+                    <Typography color='text.disabled' fontSize='10px'>
+                      {'Powered by Subscan'}
+                    </Typography>
+                  </Grid>
+                  <Grid container item onClick={toggleDetails} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
+                    <Typography color='secondary.light' fontSize='16px' fontWeight={400}>
+                      {t(showDetails ? t('Less') : t('More'))}
+                    </Typography>
+                    <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showDetails ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>)

@@ -98,7 +98,9 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
   const theme = useTheme();
 
   const governanceDisabled = useMemo(() => !GOVERNANCE_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
-  const stakingDisabled = useMemo(() => !STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
+  const stakingDisabled = useMemo(() =>
+    !STAKING_CHAINS.includes(genesisHash ?? '') || !balance?.soloTotal || !balance?.pooledBalance
+  , [balance?.pooledBalance, balance?.soloTotal, genesisHash]);
   const stakingIconColor = useMemo(() => stakingDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary, [stakingDisabled, theme.palette.action.disabledBackground, theme.palette.text.primary]);
 
   const hasSoloStake = Boolean(balance?.soloTotal && !balance.soloTotal.isZero());

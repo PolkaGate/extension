@@ -19,5 +19,5 @@ export default function getChainName (_genesisHash: string | undefined): string 
 
   const chain = allChains.find(({ genesisHash }) => genesisHash === _genesisHash)?.chain;
 
-  return toCamelCase(sanitizeChainName(chain) as string);
+  return toCamelCase(sanitizeChainName(chain) || '');
 }
