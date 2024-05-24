@@ -13,6 +13,7 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Tooltip, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { ISubmittableResult } from '@polkadot/types/types';
@@ -32,6 +33,7 @@ import { Identity, Password, PButton, Progress, TwoButtons, Warning } from '.';
 
 interface Props {
   address: string;
+  mayBeApi?: ApiPromise;
   call: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined | SubmittableExtrinsic<'promise', ISubmittableResult>;
   disabled?: boolean;
   isPasswordError?: boolean;
@@ -54,7 +56,7 @@ interface Props {
   extraInfo: Record<string, unknown>;
   steps: Record<string, number>;
   setRefresh?: React.Dispatch<React.SetStateAction<boolean>>;
-  previousStep?:number;
+  previousStep?: number;
 }
 
 /**
@@ -63,10 +65,14 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-export default function SignArea ({ address, call, disabled, extraInfo, isPasswordError, onSecondaryClick, params, previousStep, prevState, primaryBtn, primaryBtnText, proxyModalHeight, proxyTypeFilter, secondaryBtnText, selectedProxy, setIsPasswordError, setRefresh, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, token }: Props): React.ReactElement<Props> {
+export default function SignArea ({ address, call, disabled, extraInfo, isPasswordError, mayBeApi, onSecondaryClick, params, prevState, previousStep, primaryBtn, primaryBtnText, proxyModalHeight, proxyTypeFilter, secondaryBtnText, selectedProxy, setIsPasswordError, setRefresh, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, token }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { account, api, chain, formatted } = useInfo(address);
+  const { account, api: apiFromAddress, chain, formatted } = useInfo(address);
+
+  // To handle system chain apis like people chain
+  const api = mayBeApi || apiFromAddress;
+
   const senderName = useAccountDisplay(address);
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxy?.delegate));
   const proxies = useProxies(api, formatted);
@@ -488,7 +494,7 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
                   onSignature={onSignature}
                   payload={payload}
                 />
-                : <Progress pt='20px' title={t('API is not connected yet ...')} type='grid'/>
+                : <Progress pt='20px' title={t('API is not connected yet ...')} type='grid' />
               }
             </Grid>
           </Grid>

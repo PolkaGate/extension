@@ -333,6 +333,7 @@ export default function Review ({ address, api, chain, depositToPay, depositValu
                 disabled={feeAndDeposit.isAbleToPay !== true}
                 extraInfo={extraInfo}
                 isPasswordError={isPasswordError}
+                mayBeApi={api}
                 onSecondaryClick={handleClose}
                 primaryBtnText={t('Confirm')}
                 proxyTypeFilter={['Any', 'NonTransfer']}
