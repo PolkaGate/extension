@@ -21,6 +21,7 @@ import { useInfo, useStakingAccount } from '.';
 const assetsChains = createAssets();
 const NATIVE_TOKEN_ASSET_ID = 0;
 
+// TODO: decouple thi shook to smaller independent ones like usePoolBalance, useAssetBalance, useNativeBalance ...
 export default function useBalances (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: number): BalancesInfo | undefined {
   const stakingAccount = useStakingAccount(address);
   const { account, api, chain, chainName, decimal: currentDecimal, formatted, token: currentToken } = useInfo(address);

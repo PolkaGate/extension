@@ -19,7 +19,7 @@ import { CanPayErrorAlert, Identity, Motion, ShowBalance, SignArea2, Warning, Wr
 import { useCanPayFeeAndDeposit, useFormatted, useProxies } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
-import { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import { BalancesInfo, Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { pgBoxShadow } from '../../util/utils';
 import { DraggableModal } from '../governance/components/DraggableModal';
 import SelectProxyModal2 from '../governance/components/SelectProxyModal2';
@@ -61,16 +61,23 @@ export default function Review ({ address, api, chain, depositToPay, depositValu
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
+  const [balances, setBalances] = useState<BalancesInfo>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
-  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxyAddress, estimatedFee, depositToPay);
+  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxyAddress, estimatedFee, depositToPay, balances);
 
   const setIdentity = api && api.tx.identity.setIdentity;
   const clearIdentity = api && api.tx.identity.clearIdentity;
   const setSubs = api && api.tx.identity.setSubs;
   const requestJudgement = api && api.tx.identity.requestJudgement;
   const cancelRequest = api && api.tx.identity.cancelRequest;
+
+  useEffect(() => {
+    formatted && api && api.derive.balances?.all(formatted).then((b) => {
+      setBalances(b);
+    });
+  }, [api, formatted]);
 
   const subIdsToShow: SubIdAccountsToSubmit | undefined = useMemo(() => {
     if (mode !== 'ManageSubId' || !subIdsParams) {

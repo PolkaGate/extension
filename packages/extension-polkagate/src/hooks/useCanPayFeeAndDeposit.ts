@@ -9,6 +9,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { useCallback, useEffect, useState } from 'react';
 
+import { ApiPromise } from '@polkadot/api';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
@@ -16,9 +17,17 @@ import { getValue } from '../popup/account/util';
 import { CanPayFee, CanPayStatements } from '../util/types';
 import { useBalances } from '.';
 
-export default function useCanPayFeeAndDeposit (formatted: AccountId | string | undefined, proxyAddress: AccountId | string | undefined, estimatedFee: Balance | undefined, deposit: BN | Balance | undefined): CanPayFee {
-  const balances = useBalances(formatted?.toString());
+export default function useCanPayFeeAndDeposit (
+  formatted: AccountId | string | undefined,
+  proxyAddress: AccountId | string | undefined,
+  estimatedFee: Balance | undefined,
+  deposit: BN | Balance | undefined,
+  balancesFromProps?: ApiPromise | undefined
+): CanPayFee {
+  const balancesFromAddress = useBalances(formatted?.toString());
   const proxyAddressBalances = useBalances(proxyAddress?.toString());
+
+  const balances = balancesFromProps || balancesFromAddress;
   const [canPayFeeAndDeposit, setCanPayFeeAndDeposit] = useState<boolean | undefined>();
   const [canPayStatement, setCanPayStatement] = useState<number>();
 

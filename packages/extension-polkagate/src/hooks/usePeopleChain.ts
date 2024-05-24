@@ -15,6 +15,12 @@ interface PeopleChainInfo{
   peopleChain: Chain|undefined;
   endpoint: string|undefined;
 }
+/**
+ * @description To provide people chain if its already available for that chain
+ * @param address 
+ * @param genesisHash 
+ * @returns endpoint and chain
+ */
 
 export default function usePeopleChain (address: string | undefined, genesisHash?: string): PeopleChainInfo {
   const { chain } = useInfo(address);

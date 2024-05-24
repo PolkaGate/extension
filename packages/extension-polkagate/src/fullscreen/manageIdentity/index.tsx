@@ -19,8 +19,8 @@ import { BN, BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { Warning } from '../../components';
-import { useApiWithChain2, useFullscreen, useInfo, usePeopleChain, useTranslation } from '../../hooks';
-import { FULLSCREEN_WIDTH, PEOPLE_CHAINS } from '../../util/constants';
+import { useApiWithChain2, useFormatted, useFullscreen, usePeopleChain, useTranslation } from '../../hooks';
+import { FULLSCREEN_WIDTH } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import PreviewIdentity from './Preview';
@@ -71,13 +71,14 @@ export function setData (value: string | undefined): Data {
 
 export default function ManageIdentity (): React.ReactElement {
   useFullscreen();
-  const { address } = useParams<{ address: string }>();
   const { t } = useTranslation();
   const theme = useTheme();
-  const { chain, chainName, formatted } = useInfo(address);
+  const { address } = useParams<{ address: string }>();
+  const formatted = useFormatted(address);
 
-  const { peopleChain } = usePeopleChain(address);
-  const api = useApiWithChain2(peopleChain);
+  const { peopleChain: chain } = usePeopleChain(address);
+  const api = useApiWithChain2(chain);
+  const chainName = chain?.name;
 
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null | undefined>();
   const [identityToSet, setIdentityToSet] = useState<DeriveAccountRegistration | null | undefined>();
@@ -313,7 +314,7 @@ export default function ManageIdentity (): React.ReactElement {
 
   useEffect(() => {
     clear();
-  }, [chain?.genesisHash, chainName, clear]);
+  }, [chain?.genesisHash, clear]);
 
   useEffect(() => {
     const fetchSubAccounts = async () => {

@@ -113,7 +113,7 @@ export const STAKING_CHAINS = [
   KUSAMA_GENESIS_HASH
 ];
 
-export const PEOPLE_CHAINS = ['Kusama', 'Westend'];
+export const PEOPLE_CHAINS = ['Kusama', 'Westend', 'kusamaPeople', 'westendPeople'];
 
 export const PEOPLE_CHAINS_GENESIS_HASHES = [
   WESTEND_PEOPLE_GENESIS_HASH,
