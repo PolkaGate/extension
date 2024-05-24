@@ -40,9 +40,13 @@ export function convertToCamelCase (input: string): string {
 }
 
 export function toCamelCase (str: string): string {
+  if (!str) {
+    return '';
+  }
+
   return str.replace(/(?:^\w|[A-Z]|\b\w)/g, (match, index) => {
     return index === 0 ? match.toLowerCase() : match.toUpperCase();
-  }).replace(/\s+/g, '');
+  })?.replace(/\s+/g, '');
 }
 
 export function toPascalCase (input: string): string | undefined {
@@ -69,7 +73,7 @@ export function toTitleCase (input: string | undefined): string | undefined {
 
   // Replace all occurrences of capital letters with a space followed by the lowercase letter
   // Replace underscores and hyphens with spaces
-  let words = input.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').split(' ');
+  let words = input.replace(/([A-Z])/g, ' $1')?.replace(/[_-]/g, ' ')?.split(' ');
 
   // Convert each word to title case
   words = words.map((word) => {
@@ -89,7 +93,7 @@ export function pascalCaseToTitleCase (str: string): string | undefined {
   let result = str.replace(/([A-Z])/g, ' $1');
 
   // Replace underscores with spaces
-  result = result.replace(/_/g, ' ');
+  result = result?.replace(/_/g, ' ');
 
   // Capitalize the first letter of each word
   result = result.split(' ').map((word) => {
