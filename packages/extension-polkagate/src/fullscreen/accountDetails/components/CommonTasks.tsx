@@ -109,7 +109,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
 
   const goToSend = useCallback(() => {
     address && genesisHash &&
-      openOrFocusTab(`/send/${address}/${assetId}`);
+      openOrFocusTab(`/send/${address}/${assetId || ''}`);
   }, [address, assetId, genesisHash]);
 
   const goToReceive = useCallback(() => {
