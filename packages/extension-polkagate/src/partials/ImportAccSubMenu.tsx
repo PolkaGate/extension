@@ -5,8 +5,6 @@
 
 import '@vaadin/icons';
 
-import { faSitemap } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';

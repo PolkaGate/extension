@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export function balancify (balances) {
-  return JSON.stringify({
+  const base = {
     availableBalance: String(balances.availableBalance),
     freeBalance: String(balances.freeBalance),
     lockedBalance: String(balances.lockedBalance),
@@ -12,7 +12,17 @@ export function balancify (balances) {
     vestingLocked: String(balances.vestingLocked),
     vestingTotal: String(balances.vestingTotal),
     votingBalance: String(balances.votingBalance)
-  });
+  };
+
+  if (balances.soloTotal) {
+    base.soloTotal = String(balances.soloTotal);
+  }
+
+  if (balances.pooledBalance) {
+    base.pooledBalance = String(balances.pooledBalance);
+  }
+
+  return JSON.stringify(base);
 }
 
 export function balancifyAsset (balances) {
