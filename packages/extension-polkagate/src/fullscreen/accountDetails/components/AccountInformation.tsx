@@ -6,7 +6,6 @@
 import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { AccountJson } from '@polkadot/extension-base/background/types';
 import { BN } from '@polkadot/util';
 
 import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, Infotip2, OptionalCopyButton, ShortAddress2 } from '../../../components';
@@ -45,20 +44,20 @@ interface BalanceJSXType {
 }
 
 const Balance = ({ balanceToShow, isBalanceOutdated }: BalanceJSXType) => {
-  const balance = getValue('total', balanceToShow);
+  const total = getValue('total', balanceToShow);
   const decimal = balanceToShow?.decimal;
   const token = balanceToShow?.token;
 
   return (
     <>
-      {balanceToShow?.decimal
-        ? <Infotip2 text={`${amountToHuman(balance, decimal, decimal, true)}`}>
+      {decimal && token
+        ? <Infotip2 text={`${amountToHuman(total, decimal, decimal, true)}`}>
           <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary', fontWeight: 500 }}>
             <FormatBalance2
               decimalPoint={2}
               decimals={[decimal]}
               tokens={[token]}
-              value={balance}
+              value={total}
             />
           </Grid>
         </Infotip2>
@@ -138,10 +137,10 @@ export default function AccountInformation ({ accountAssets, address, label, pri
     return parseFloat(amountToHuman(amount, decimal)) * _price;
   }, []);
 
-  const isBalanceOutdated = useMemo(() => selectedAsset && Date.now() - selectedAsset.date > BALANCES_VALIDITY_PERIOD, [selectedAsset]);
+  const isBalanceOutdated = useMemo(() => selectedAsset?.date && Date.now() - selectedAsset.date > BALANCES_VALIDITY_PERIOD, [selectedAsset]);
   const isPriceOutdated = useMemo(() => pricesInCurrency && Date.now() - pricesInCurrency.date > BALANCES_VALIDITY_PERIOD, [pricesInCurrency]);
 
-  const assetsToShow = useMemo(() => {
+  const sortedAccountAssets = useMemo(() => {
     if (!accountAssets) {
       return accountAssets; // null or undefined!
     } else {
@@ -154,7 +153,7 @@ export default function AccountInformation ({ accountAssets, address, label, pri
     }
   }, [accountAssets, calculatePrice, pricesInCurrency?.prices]);
 
-  const showAOC = useMemo(() => !!(assetsToShow === undefined || (assetsToShow && assetsToShow.length > 0)), [assetsToShow]);
+  const showAOC = useMemo(() => !!(sortedAccountAssets === undefined || (sortedAccountAssets && sortedAccountAssets.length > 0)), [sortedAccountAssets]);
 
   useEffect(() => {
     /** if chain has been switched and its not among the selected chains */
@@ -224,7 +223,7 @@ export default function AccountInformation ({ accountAssets, address, label, pri
             </Grid>
           </Grid>
           <SelectedAssetBox
-            balanceToShow={ selectedAsset}
+            balanceToShow={ selectedAsset }
             genesisHash={genesisHash}
             isBalanceOutdated={isBalanceOutdated}
             isPriceOutdated={!!isPriceOutdated}
@@ -237,7 +236,7 @@ export default function AccountInformation ({ accountAssets, address, label, pri
         <>
           <Divider sx={{ bgcolor: 'divider', height: '1px', my: '15px', width: '100%' }} />
           <AOC
-            accountAssets={assetsToShow}
+            accountAssets={sortedAccountAssets}
             api={api}
             mode='Detail'
             onclick={onAssetBoxClicked}

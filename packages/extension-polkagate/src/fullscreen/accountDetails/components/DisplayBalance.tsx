@@ -22,11 +22,10 @@ interface DisplayBalanceProps {
   price: number | undefined;
   onClick?: () => void;
   theme?: Theme;
-  isDarkTheme: boolean;
   disabled?: boolean;
 }
 
-export default function DisplayBalance ({ amount, decimal, disabled, isDarkTheme, onClick, price, theme, title, token }: DisplayBalanceProps): React.ReactElement {
+export default function DisplayBalance ({ amount, decimal, disabled, onClick, price, theme, title, token }: DisplayBalanceProps): React.ReactElement {
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px 40px' }}>
       <Typography fontSize='18px' fontWeight={400}>
