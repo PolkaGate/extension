@@ -125,7 +125,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
   const selectedChains = useSelectedChains();
 
   /** to limit calling of this heavy call on just home and account details */
-  const SHOULD_FETCH_ASSETS = window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs');
+  const SHOULD_FETCH_ASSETS = useMemo(() => window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs'), []);
 
   /** We need to trigger address change when a new address is added, without affecting other account fields. Therefore, we use the length of the accounts array as a dependency. */
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -134,7 +134,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
   const [fetchedAssets, setFetchedAssets] = useState<SavedAssets | undefined | null>();
   const [isWorking, setIsWorking] = useState<boolean>(false);
   const [workersCalled, setWorkersCalled] = useState<Worker[]>();
-  const [isUpdate, setIsUpdate] = useState<boolean>();
+  const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
   useEffect(() => {
     SHOULD_FETCH_ASSETS && getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
@@ -142,7 +142,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
 
       setIsUpdate(isUpToDate(_timeStamp));
     }).catch(console.error);
-  }, [SHOULD_FETCH_ASSETS, workersCalled?.length]);
+  }, [SHOULD_FETCH_ASSETS]);
 
   const removeExpiredRecords = useCallback((toBeSavedAssets: SavedAssets): SavedAssets => {
     const balances = (toBeSavedAssets)?.balances || [];
@@ -184,12 +184,12 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
     setFetchedAssets(updatedAssetsToBeSaved);
     setStorage(ASSETS_NAME_IN_STORAGE, updatedAssetsToBeSaved, true).catch(console.error);
     setWorkersCalled(undefined);
+    setIsUpdate(true);
   }, [addresses, fetchedAssets, removeExpiredRecords]);
 
   useEffect(() => {
     /** when one round fetch is done, we will save fetched assets in storage */
     if (addresses && workersCalled?.length === 0) {
-      setWorkersCalled(undefined);
       handleAccountsSaving();
     }
   }, [accounts, addresses, handleAccountsSaving, workersCalled?.length]);
