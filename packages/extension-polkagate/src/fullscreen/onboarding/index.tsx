@@ -14,14 +14,18 @@ import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constan
 
 import { AccountContext, ActionContext, PButton } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
-import { windowOpen } from '../../messaging';
+import { createAccountExternal, windowOpen } from '../../messaging';
 import Privacy from '../../popup/welcome/Privacy';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
+
+const demoAccount = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
 
 function Onboarding (): React.ReactElement {
   useFullscreen();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
+  const [isBusy, setIsBusy] = useState(false);
 
   const { t } = useTranslation();
   const theme = useTheme();
@@ -45,6 +49,17 @@ function Onboarding (): React.ReactElement {
       windowOpen('/account/import-ledger').catch(console.error);
     }, []
   );
+
+  const onExploreDemo = useCallback((): void => {
+    setIsBusy(true);
+
+    createAccountExternal('Demo Account ☔️', demoAccount, POLKADOT_GENESIS)
+      .then(() => onAction('/'))
+      .catch((error: Error) => {
+        setIsBusy(false);
+        console.error(error);
+      });
+  }, [onAction]);
 
   const onCreate = useCallback(
     (): void => {
@@ -103,7 +118,7 @@ function Onboarding (): React.ReactElement {
             {t('We appreciate your choice in selecting Polkagate as your gateway to the Polkadot ecosystem! 🌟')}
           </Typography>
           <Typography fontSize='16px' fontWeight={400} width='100%'>
-            {t('At present, you do not have any accounts. To begin your journey, you can create your first account or import existing accounts to get started.')}
+            {t('At present, you do not have any accounts. To begin your journey, you can create your first account, import existing accounts, or explore our demo option to get started.')}
           </Typography>
           <Grid alignItems='center' container item justifyContent='center' pt='80px'>
             <PButton
@@ -159,8 +174,14 @@ function Onboarding (): React.ReactElement {
                 _onClick={onImportLedger}
                 _variant={'outlined'}
                 text={t('Attach ledger device')}
+              />  <PButton
+                _ml={0}
+                _mt='15px'
+                _isBusy={isBusy}
+                _onClick={onExploreDemo}
+                _variant={'contained'}
+                text={t('Explore a demo')}
               />
-
             </Grid>
             <Grid container justifyContent='center'>
               {/* eslint-disable-next-line react/jsx-no-bind */}
