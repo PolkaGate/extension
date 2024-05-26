@@ -6,11 +6,11 @@
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { BN_ZERO } from '@polkadot/util';
+import { BN, BN_MAX_INTEGER, BN_ZERO, bnMin } from '@polkadot/util';
 
-import { AmountWithOptions, ShowBalance, TwoButtons } from '../../../components';
+import { AmountWithOptions, ShowBalance, TwoButtons, Warning } from '../../../components';
 import { useTranslation } from '../../../components/translate';
-import { useInfo, useMinToReceiveRewardsInSolo2, usePool, usePoolConsts, useStakingConsts, useValidatorSuggestion } from '../../../hooks';
+import { useAvailableToSoloStake, useInfo, useMinToReceiveRewardsInSolo2, usePool, usePoolConsts, useStakingConsts, useValidatorSuggestion } from '../../../hooks';
 import { BalancesInfo } from '../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
 import { Inputs } from '../Entry';
@@ -42,12 +42,31 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
   const stakingConsts = useStakingConsts(address);
   const minToReceiveRewardsInSolo = useMinToReceiveRewardsInSolo2(address);
   const autoSelectedValidators = useValidatorSuggestion(address);
+  const availableToSoloStake = useAvailableToSoloStake(address);
 
   const [amount, setAmount] = useState<string>(inputs?.extraInfo?.amount);
   const [isNextClicked, setNextIsClicked] = useState<boolean>();
+  const [topStakingLimit, setTopStakingLimit] = useState<BN>();
+  const [alert, setAlert] = useState<string | undefined>();
+  const amountAsBN = amountToMachine(amount, decimal);
 
-  const buttonDisable = !amount;
+  const buttonDisable = useMemo(() => {
+    return !amount || !amountAsBN || !topStakingLimit || parseFloat(amount) === 0 || amountAsBN.gt(topStakingLimit);
+  }, [amount, amountAsBN, topStakingLimit]);
+
   const isBusy = !inputs?.extraInfo?.amount && isNextClicked;
+
+  useEffect(() => {
+    if (!amountAsBN || !amount) {
+      return setAlert(undefined);
+    }
+
+    if (amountAsBN.gt(topStakingLimit || BN_MAX_INTEGER)) {
+      return setAlert(t('It is more than top Staking Limit.'));
+    }
+
+    return setAlert(undefined);
+  }, [amount, amountAsBN, topStakingLimit, t]);
 
   useEffect(() => {
     if (amount && minToReceiveRewardsInSolo && poolConsts) {
@@ -122,20 +141,28 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
   }, [balances, setInputs]);
 
   const thresholds = useMemo(() => {
-    if (!stakingConsts || !decimal || !balances || !poolConsts) {
+    if (!stakingConsts || !decimal || !availableToSoloStake || !balances || !poolConsts) {
       return;
     }
 
     const ED = stakingConsts.existentialDeposit;
     let max = balances.freeBalance.sub(ED.muln(2));
+
+    const anUpperBondToStake = bnMin(availableToSoloStake, balances.availableBalance);
     let min = poolConsts.minJoinBond;
 
     if (min.gt(max)) {
       min = max = BN_ZERO;
     }
 
+    if (anUpperBondToStake.lt(max)) {
+      max = anUpperBondToStake;
+    }
+
+    setTopStakingLimit(max);
+
     return { max, min };
-  }, [balances, decimal, poolConsts, stakingConsts]);
+  }, [availableToSoloStake, balances, decimal, poolConsts, stakingConsts]);
 
   const onThresholdAmount = useCallback((maxMin: 'max' | 'min') => {
     if (!thresholds || !decimal) {
@@ -171,6 +198,23 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
     isNextClicked && !isBusy && goToReview();
   }, [goToReview, isBusy, isNextClicked]);
 
+  const Warn = ({ text }: { text: string }) => {
+    const theme = useTheme();
+
+    return (
+      <Grid container sx={{ '> div': { mr: '0', mt: 0, pl: '5px' } }}>
+        <Warning
+          fontWeight={400}
+          iconDanger
+          isBelowInput
+          theme={theme}
+        >
+          {text}
+        </Warning>
+      </Grid>
+    );
+  };
+
   return (
     <Grid container item>
       <Typography fontSize='16px' fontWeight={500} pb='15px' width='100%'>
@@ -193,13 +237,16 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
           textSpace='15px'
           value={amount}
         />
+        {alert &&
+             <Warn text={alert} />
+        }
         <Grid container item pb='10px'>
           <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '58.25%' }}>
             <Grid item sx={{ fontSize: '16px', fontWeight: 400 }}>
-              {t('Available Balance')}
+              {t('Top staking limit')}
             </Grid>
             <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
-              <ShowBalance balance={balances?.availableBalance} decimal={decimal} decimalPoint={2} token={balances?.token} />
+              <ShowBalance balance={topStakingLimit} decimal={decimal} decimalPoint={2} token={balances?.token} />
             </Grid>
           </Grid>
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '58.25%' }}>
