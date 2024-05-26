@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_MAX_INTEGER, BN_ZERO, bnMin } from '@polkadot/util';
 
-import { AmountWithOptions, ShowBalance, TwoButtons, Warning } from '../../../components';
+import { AmountWithOptions, Infotip2, ShowBalance, TwoButtons, Warning } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 import { useAvailableToSoloStake, useInfo, useMinToReceiveRewardsInSolo2, usePool, usePoolConsts, useStakingConsts, useValidatorSuggestion } from '../../../hooks';
 import { BalancesInfo } from '../../../util/types';
@@ -243,7 +243,9 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
         <Grid container item pb='10px'>
           <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '58.25%' }}>
             <Grid item sx={{ fontSize: '16px', fontWeight: 400 }}>
-              {t('Top staking limit')}
+              <Infotip2 showInfoMark text={t('The maximum amount you can stake, considering the existential deposit and future transaction fees.')}>
+                {t('Top staking limit')}
+              </Infotip2>
             </Grid>
             <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
               <ShowBalance balance={topStakingLimit} decimal={decimal} decimalPoint={2} token={balances?.token} />
