@@ -50,10 +50,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [amount, setAmount] = useState<string>();
   const [alert, setAlert] = useState<string | undefined>();
-  const [helperText, setHelperText] = useState<string | undefined>();
   const [unstakeAllAmount, setUnstakeAllAmount] = useState<boolean>(false);
-  const [helperButton, setShowHelperButton] = useState<number>();
-  const [goChange, setGoChange] = useState<boolean>(false);
 
   const staked = useMemo(() => {
     if (myPool && myPool.member?.points && myPool.stashIdAccount && myPool.bondedPool) {
@@ -91,8 +88,28 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
   const unbonded = api && api.tx.nominationPools.unbond;
   const poolWithdrawUnbonded = api && api.tx.nominationPools.poolWithdrawUnbonded;
 
+  const helperText = useMemo(() => {
+    if (!myPool || !formatted || !amount || !staked) {
+      return undefined;
+    }
+
+    const partial = staked.sub(amountToMachine(amount, decimal));
+
+    if (isPoolDepositor && isPoolRoot && poolState !== 'Destroying' && partial.isZero()) {
+      return t('You need to change the pool state to Destroying first to be able to unstake.');
+    }
+
+    if (isPoolDepositor && isPoolRoot && poolState === 'Destroying' && poolMemberCounter !== 1 && partial.isZero()) {
+      return t('You need to remove all members first to be able to unstake.');
+    }
+
+    return undefined;
+  }, [amount, decimal, formatted, isPoolDepositor, isPoolRoot, myPool, poolMemberCounter, poolState, staked, t]);
+
   useEffect(() => {
     if (!amount) {
+      setAlert(undefined);
+
       return;
     }
 
@@ -142,31 +159,6 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
     }).catch(console.error);
   }, [amount, api, decimal, formatted, maxUnlockingChunks, poolWithdrawUnbonded, unbonded, unlockingLen]);
 
-  useEffect(() => {
-    if (!myPool || !formatted || !poolConsts || !staked) {
-      return;
-    }
-
-    const partial = staked.sub(poolConsts.minCreateBond);
-
-    if (isPoolDepositor && isPoolRoot && poolState !== 'Destroying' && partial.isZero()) {
-      setHelperText(t<string>('You need to change the pool state to Destroying first to be able to unstake.'));
-      setShowHelperButton(CONDITION_MAP.DESTROY);
-
-      return;
-    }
-
-    if (isPoolDepositor && isPoolRoot && poolState === 'Destroying' && poolMemberCounter !== 1 && partial.isZero()) {
-      setHelperText(t<string>('You need to remove all members first to be able to unstake.'));
-      setShowHelperButton(CONDITION_MAP.REMOVE_ALL);
-
-      return;
-    }
-
-    setShowHelperButton(undefined);
-    setHelperText(undefined);
-  }, [formatted, isPoolDepositor, isPoolRoot, myPool, poolConsts, poolMemberCounter, poolState, staked, t]);
-
   const onChangeAmount = useCallback((value: string) => {
     setUnstakeAllAmount(false);
 
@@ -200,19 +192,11 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
       return;
     }
 
-    if (!isPoolDepositor && !isPoolRoot) { // TODO: do we really need this condition @Amir
+    if (!isPoolDepositor && !isPoolRoot) {
       setUnstakeAllAmount(true);
       setAmount(amountToHuman(staked.toString(), decimal));
     }
   }, [decimal, formatted, isPoolDepositor, isPoolRoot, myPool, poolConsts, poolMemberCounter, poolState, staked]);
-
-  const goToDestroying = useCallback(() => {
-    helperButton === 1 && setGoChange(!goChange);
-  }, [goChange, helperButton]);
-
-  const goToRemoveAll = useCallback(() => {
-    helperButton === 2 && setGoChange(!goChange);
-  }, [goChange, helperButton]);
 
   useEffect(() => {
     const handleInput = async () => {
@@ -292,27 +276,6 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
             {helperText &&
               <Grid container height='78px' justifyContent='center' m='auto' width='92%'>
                 <Warn isDanger text={helperText} />
-                {helperButton &&
-                  <Button
-                    onClick={helperButton === 1 ? goToDestroying : goToRemoveAll}
-                    startIcon={
-                      helperButton === 1
-                        ? (
-                          <AutoDeleteIcon
-                            sx={{ color: 'text.primary', fontSize: '21px' }}
-                          />)
-                        : (
-                          <FontAwesomeIcon
-                            color={theme.palette.text.primary}
-                            fontSize='18px'
-                            icon={faPersonCircleXmark}
-                          />)
-                    }
-                    sx={{ color: 'text.primary', fontSize: '14px', fontWeight: 400, mt: '10px', textDecorationLine: 'underline', textTransform: 'capitalize' }}
-                    variant='text'
-                  >
-                    {helperButton === 1 ? t<string>('Destroying') : t<string>('RemoveAll')}
-                  </Button>}
               </Grid>
             }
             <Grid item sx={{ mx: '15px' }} xs={12}>
@@ -327,11 +290,10 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
                 }}
               />
               <AmountWithOptions
-                disabled={!!helperButton}
-                label={t<string>('Amount ({{token}})', { replace: { token } })}
+                label={t('Amount ({{token}})', { replace: { token } })}
                 onChangeAmount={onChangeAmount}
                 onPrimary={onAllAmount}
-                primaryBtnText={t<string>('All amount')}
+                primaryBtnText={t('All amount')}
                 value={amount}
               />
               {alert &&
@@ -342,7 +304,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
               <ShowPool
                 api={api}
                 chain={chain}
-                label={t<string>('Pool')}
+                label={t('Pool')}
                 mode='Default'
                 pool={myPool}
                 showInfo
@@ -352,13 +314,13 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
                 }}
               />
             }
-            {!helperButton &&
+            {!helperText &&
               <Typography fontSize='14px' m='20px auto' textAlign='center'>
-                {t<string>('Outstanding rewards automatically withdrawn after transaction')}
+                {t('Outstanding rewards automatically withdrawn after transaction')}
               </Typography>
             }
             <TwoButtons
-              disabled={!inputs}
+              disabled={!inputs || !!helperText || !!alert}
               ml='0'
               onPrimaryClick={onNext}
               onSecondaryClick={onCancel}
