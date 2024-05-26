@@ -202,7 +202,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
               icon={faCoins}
             />
           }
-          loading={stakingNotReady}
+          loading={!stakingDisabled && stakingNotReady}
           onClick={goToStaking}
           secondaryIconType='page'
           show={notStakedYet}
