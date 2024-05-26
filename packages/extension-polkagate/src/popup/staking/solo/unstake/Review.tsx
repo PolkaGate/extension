@@ -19,7 +19,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useApi, useChain, useDecimal, useFormatted, useInfo, useProxies, useToken, useTranslation } from '../../../../hooks';
+import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
