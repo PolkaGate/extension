@@ -88,7 +88,7 @@ function ImportProxied (): React.ReactElement {
         text={t('Import Proxied')}
       />
       <Typography fontSize='14px' fontWeight={300} m='25px auto' textAlign='left' width='88%'>
-        {t('Import proxied account(s) to have it as watch-only account in the extension.')}
+        {t('Import proxied account(s) to have them as watch-only accounts in the extension.')}
       </Typography>
       <Label
         label={t('Choose proxy account')}

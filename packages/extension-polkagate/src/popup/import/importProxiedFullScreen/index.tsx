@@ -101,7 +101,7 @@ function ImportProxiedFS (): React.ReactElement {
             </Grid>
           </Grid>
           <Typography fontSize='16px' fontWeight={400} textAlign='left' width='100%'>
-            {t('Import proxied account(s) to have it as watch-only account in the extension.')}
+            {t('Import proxied account(s) to have them as watch-only accounts in the extension.')}
           </Typography>
           <Grid container item sx={{ my: '30px' }}>
             <Label

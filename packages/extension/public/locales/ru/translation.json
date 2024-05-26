@@ -1245,7 +1245,7 @@
   "Import proxied accounts": "Импортировать прокси-аккаунты",
   "Import proxied account(s)": "Импортировать прокси-аккаунт(ы)",
   "Import Proxied": "Импортировать прокси",
-  "Import proxied account(s) to have it as watch-only account in the extension.": "Импортируйте прокси-аккаунт(ы), чтобы иметь его как аккаунт только для просмотра в расширении.",
+  "Import proxied account(s) to have them as watch-only accounts in the extension.": "Импортируйте прокси-аккаунт(ы), чтобы иметь его как аккаунт только для просмотра в расширении.",
   "Choose proxy account": "Выберите прокси-аккаунт",
   "Proxied account(s)": "Прокси-аккаунт(ы)",
   "Import selected": "Импортировать выбранное",

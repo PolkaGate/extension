@@ -1250,7 +1250,7 @@
   "Import proxied accounts": "Importer des comptes proxy",
   "Import proxied account(s)": "Importer le(s) compte(s) proxy",
   "Import Proxied": "Importer le proxy",
-  "Import proxied account(s) to have it as watch-only account in the extension.": "Importez le(s) compte(s) proxy pour l'avoir comme compte en lecture seule dans l'extension.",
+  "Import proxied account(s) to have them as watch-only accounts in the extension.": "Importez le(s) compte(s) proxy pour l'avoir comme compte en lecture seule dans l'extension.",
   "Choose proxy account": "Choisissez le compte proxy",
   "Proxied account(s)": "Compte(s) proxy",
   "Import selected": "Importer la sélection",

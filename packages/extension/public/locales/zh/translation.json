@@ -1254,7 +1254,7 @@
   "Import proxied accounts": "导入代理账户",
   "Import proxied account(s)": "导入代理账户",
   "Import Proxied": "导入代理",
-  "Import proxied account(s) to have it as watch-only account in the extension.": "导入代理账户以将其作为扩展中的只读账户。",
+  "Import proxied account(s) to have them as watch-only accounts in the extension.": "导入代理账户以将其作为扩展中的只读账户。",
   "Choose proxy account": "选择代理账户",
   "Proxied account(s)": "代理账户",
   "Import selected": "导入所选",
