@@ -21,7 +21,7 @@ import ProxiedTable from './ProxiedTable';
 function ImportProxied (): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
   const genesisOptions = useGenesisHashOptions();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const chance = new Chance();
@@ -29,10 +29,10 @@ function ImportProxied (): React.ReactElement {
   const selectableChains = useMemo(() => genesisOptions.filter(({ value }) => PROXY_CHAINS.includes(value as string)), [genesisOptions]);
 
   const allAddresses = useMemo(() =>
-    hierarchy
+    accounts
       .filter(({ isExternal, isHardware, isQR }) => !isExternal || isQR || isHardware)
       .map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name])
-  , [hierarchy]);
+  , [accounts]);
 
   const [selectedAddress, setSelectedAddress] = useState<string | undefined>(undefined);
   const [selectedProxied, setSelectedProxied] = useState<string[]>([]);
