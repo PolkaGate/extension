@@ -242,7 +242,7 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
               value={amount}
             />
             {alert &&
-          <Warn text={alert} />
+             <Warn text={alert} />
             }
             <Grid container item pb='10px'>
               <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '58.25%' }}>
