@@ -134,7 +134,8 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
   const [fetchedAssets, setFetchedAssets] = useState<SavedAssets | undefined | null>();
   const [isWorking, setIsWorking] = useState<boolean>(false);
   const [workersCalled, setWorkersCalled] = useState<Worker[]>();
-  const [isUpdate, setIsUpdate] = useState<boolean>(false);
+  const [missionStartDate, setMissionStartDate] = useState<number>();
+  const [isUpdate, setIsUpdate] = useState<boolean>();
 
   useEffect(() => {
     SHOULD_FETCH_ASSETS && getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
@@ -150,10 +151,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
     Object.entries(balances).forEach(([address, assetsPerChain]) => {
       Object.entries(assetsPerChain).forEach(([genesisHash, fetchedBalance]) => {
         fetchedBalance.forEach(({ date }, index) => {
-          const now = Date.now();
-
-          // FixME: what if date in undefined?!
-          if (now - (date || 0) > BALANCE_VALIDITY_PERIOD) {
+          if (date && missionStartDate && date < missionStartDate) {
             // remove expired previously fetched balances
             balances[address][genesisHash].splice(index, 1);
           }
@@ -166,8 +164,10 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
       });
     });
 
+    setMissionStartDate(undefined);
+
     return toBeSavedAssets;
-  }, []);
+  }, [missionStartDate]);
 
   const handleAccountsSaving = useCallback(() => {
     const toBeSavedAssets = fetchedAssets || DEFAULT_SAVED_ASSETS;
@@ -236,6 +236,10 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
     terminate && worker.terminate();
 
     setWorkersCalled((workersCalled) => {
+      if (workersCalled?.length === 1 && !missionStartDate) {
+        setMissionStartDate(Date.now());
+      }
+
       terminate
         ? workersCalled?.pop()
         : !workersCalled
@@ -244,7 +248,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
 
       return workersCalled && [...workersCalled] as Worker[];
     });
-  }, []);
+  }, [missionStartDate]);
 
   const combineAndSetAssets = useCallback((assets: Assets) => {
     if (!addresses) {
@@ -334,7 +338,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
       const message = e.data;
 
       if (!message) {
-        console.info(`fetchAssetOnAssetHubs: No assets found on ${chainName}`);
+        console.info(`No assets found on ${chainName}`);
         handleSetWorkersCall(worker, 'terminate');
 
         return;
@@ -380,7 +384,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
       const message = e.data;
 
       if (!message) {
-        console.info('fetchAssetsOnHydraDx: No assets found on HydraDx');
+        console.info(`No assets found on ${chainName}`);
         handleSetWorkersCall(worker, 'terminate');
 
         return;
