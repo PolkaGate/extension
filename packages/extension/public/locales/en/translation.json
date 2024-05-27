@@ -1271,5 +1271,10 @@
   "Raw seed starting with 0x": "",
   "account(s)": "",
   "Choose how you want to use your earned rewards": "",
-  "Now, select the validators you want to nominate, considering their properties, such as their commission rates. You can even filter them based on your preferences.": ""
+  "Now, select the validators you want to nominate, considering their properties, such as their commission rates. You can even filter them based on your preferences.": "",
+  "At present, you do not have any accounts. To begin your journey, you can create your first account, import existing accounts, or explore our demo option to get started.": "",
+  "Explore a demo": "",
+  "It is more than top staking limit.": "",
+  "The maximum amount you can stake, considering the existential deposit and future transaction fees.": "",
+  "Top staking limit": ""
 }

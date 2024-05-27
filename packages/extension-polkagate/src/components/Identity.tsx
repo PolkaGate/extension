@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Email as EmailIcon, Language as LanguageIcon, Twitter as TwitterIcon } from '@mui/icons-material';
+import { Email as EmailIcon, Language as LanguageIcon, X as XIcon } from '@mui/icons-material';
 import { Box, Grid, Link, SxProps, Theme, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import React, { useEffect, useMemo } from 'react';
@@ -167,7 +167,7 @@ function Identity ({ accountInfo, address, api, chain, direction = 'column', for
             {_accountInfo?.identity?.twitter &&
               <Grid item pl='5px'>
                 <Link href={`https://twitter.com/${_accountInfo.identity.twitter}`} rel='noreferrer' target='_blank'>
-                  <TwitterIcon sx={{ color: '#2AA9E0', fontSize: 15 }} />
+                  <XIcon sx={{ color: '#2AA9E0', fontSize: 14 }} />
                 </Link>
               </Grid>
             }

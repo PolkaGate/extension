@@ -5,7 +5,7 @@
 
 import '@vaadin/icons';
 
-import { Email as EmailIcon, Language as LanguageIcon, Twitter as TwitterIcon } from '@mui/icons-material';
+import { Email as EmailIcon, Language as LanguageIcon, X as XIcon } from '@mui/icons-material';
 import { Box, Grid, Link } from '@mui/material';
 import React from 'react';
 
@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => (
-  <Grid container width='fit-content'>
+  <Grid alignItems='center' container width='fit-content'>
     <Grid item>
       <Link href={'mailto:polkagate@outlook.com'}>
         <EmailIcon sx={{ color: '#1E5AEF', fontSize: iconSize }} />
@@ -31,7 +31,7 @@ export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => (
     </Grid>
     <Grid item pl='5px'>
       <Link href='https://twitter.com/@polkagate' rel='noreferrer' target='_blank'>
-        <TwitterIcon sx={{ color: '#2AA9E0', fontSize: iconSize }} />
+        <XIcon sx={{ color: '#2AA9E0', fontSize: iconSize - 2 }} />
       </Link>
     </Grid>
     <Grid item pl='5px'>
