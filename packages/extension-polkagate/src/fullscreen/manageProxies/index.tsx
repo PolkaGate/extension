@@ -38,18 +38,20 @@ function ManageProxies (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string; }>();
-  const { account, api, chain } = useInfo(address);
+  const { account, api, chain, decimal, token } = useInfo(address);
 
-  const [step, setStep] = useState<number>(0);
+  const [step, setStep] = useState<number>(STEPS.CHECK);
   const [proxyItems, setProxyItems] = useState<ProxyItem[] | null | undefined>();
   const [depositedValue, setDepositedValue] = useState<BN | null | undefined>();
   const [newDepositValue, setNewDepositedValue] = useState<BN | undefined>();
   const [refresh, setRefresh] = useState<boolean>(false);
+  const [fetching, setFetching] = useState<boolean>(false);
 
   const isDisabledAddProxyButton = useMemo(() => !account || proxyItems === undefined, [account, proxyItems]);
 
   const fetchProxies = useCallback((_address: string, _api: ApiPromise) => {
     setRefresh(false);
+    setFetching(true);
 
     _api.query.proxy?.proxies(_address).then((_proxies) => {
       const fetchedProxies = _proxies.toHuman() as [Proxy[], string];
@@ -64,6 +66,8 @@ function ManageProxies (): React.ReactElement {
         setProxyItems(null);
         setDepositedValue(null);
       }
+
+      setFetching(false);
     }).catch(console.error);
   }, []);
 
@@ -83,12 +87,19 @@ function ManageProxies (): React.ReactElement {
   }, [chain?.genesisHash, refresh]);
 
   useEffect(() => {
-    api && api.genesisHash.toString() === chain?.genesisHash && address && fetchProxies(address, api);
-  }, [api, chain?.genesisHash, address, fetchProxies]);
+    if (!api || proxyItems !== undefined || fetching) {
+      return;
+    }
 
-  useEffect(() => {
-    api && address && refresh && fetchProxies(address, api);
-  }, [api, address, fetchProxies, refresh]);
+    if (api.genesisHash.toString() !== chain?.genesisHash) {
+      setProxyItems(undefined);
+      setDepositedValue(undefined);
+
+      return;
+    }
+
+    fetchProxies(address, api);
+  }, [address, api, chain?.genesisHash, fetchProxies, fetching, proxyItems, refresh]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
@@ -115,6 +126,7 @@ function ManageProxies (): React.ReactElement {
             <Manage
               api={api}
               chain={chain}
+              decimal={decimal}
               depositedValue={depositedValue}
               isDisabledAddProxyButton={!!isDisabledAddProxyButton}
               newDepositValue={newDepositValue}
@@ -122,6 +134,7 @@ function ManageProxies (): React.ReactElement {
               setNewDepositedValue={setNewDepositedValue}
               setProxyItems={setProxyItems}
               setStep={setStep}
+              token={token}
             />
           }
           {step === STEPS.ADD_PROXY &&

@@ -37,9 +37,11 @@ interface Props {
   depositedValue: BN | null | undefined;
   setNewDepositedValue: React.Dispatch<React.SetStateAction<BN | undefined>>;
   newDepositValue: BN | undefined;
+  decimal: number | undefined;
+  token: string | undefined;
 }
 
-export default function Manage ({ api, chain, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep }: Props): React.ReactElement {
+export default function Manage ({ api, chain, decimal, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -139,10 +141,12 @@ export default function Manage ({ api, chain, depositedValue, isDisabledAddProxy
         </Typography>
         <Grid fontSize='16px' fontWeight={500} item lineHeight='22px' pl='5px'>
           <ShowBalance
-            api={api}
+            // api={api}
             balance={depositedValue ?? newDepositValue ?? BN_ZERO}
             decimalPoint={4}
             height={22}
+            decimal={decimal}
+            token={token}
           />
         </Grid>
         {newDepositValue && depositedValue &&
@@ -152,10 +156,12 @@ export default function Manage ({ api, chain, depositedValue, isDisabledAddProxy
             </Typography>
             <Grid fontSize='16px' fontWeight={600} item lineHeight='22px'>
               <ShowBalance
-                api={api}
+                // api={api}
                 balance={newDepositValue}
                 decimalPoint={4}
                 height={22}
+                decimal={decimal}
+                token={token}
               />
             </Grid>
           </>
