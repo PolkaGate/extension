@@ -313,7 +313,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
               </Typography>
             }
             <TwoButtons
-              disabled={!inputs || !!helperText || !!alert}
+              disabled={!inputs || !!helperText || !!alert || amountAsBN?.isZero()}
               ml='0'
               onPrimaryClick={onNext}
               onSecondaryClick={onCancel}
