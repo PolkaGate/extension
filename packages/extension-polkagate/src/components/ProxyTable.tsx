@@ -48,9 +48,15 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
     setWarningTest(text);
   }, [chain?.name, mode, notFoundText, t]);
 
-  const isAvailable = useCallback((proxy: Proxy): NameAddress | undefined =>
-    accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate) && (proxyTypeFilter ? proxyTypeFilter.includes(proxy.proxyType) : true))
-    , [accounts, proxyTypeFilter]);
+  const isAvailable = useCallback((proxy: Proxy): boolean | undefined => {
+    const exists = accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate) && (proxyTypeFilter ? proxyTypeFilter.includes(proxy.proxyType) : true));
+
+    if (mode === 'Availability') {
+      return !!exists;
+    } else if (mode === 'Select') {
+      return exists && !exists?.isExternal;
+    }
+  }, [accounts, mode, proxyTypeFilter]);
 
   const handleSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     proxies && onSelect && onSelect(proxies[Number(event.target.value)].proxy);
