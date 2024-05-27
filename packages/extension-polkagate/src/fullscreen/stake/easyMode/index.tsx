@@ -62,7 +62,7 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
     }
 
     if (amountAsBN.gt(topStakingLimit || BN_MAX_INTEGER)) {
-      return setAlert(t('It is more than top Staking Limit.'));
+      return setAlert(t('It is more than top staking limit.'));
     }
 
     return setAlert(undefined);
