@@ -54,7 +54,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
     if (mode === 'Availability') {
       return !!exists;
     } else if (mode === 'Select') {
-      return !!(exists && (!exists.isExternal || exists.isQR || exists.isHardware));
+      return exists && !exists?.isExternal;
     }
   }, [accounts, mode, proxyTypeFilter]);
 
