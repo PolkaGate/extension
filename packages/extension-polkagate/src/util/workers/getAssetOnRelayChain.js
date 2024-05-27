@@ -83,11 +83,6 @@ async function getAssetOnRelayChain (addresses, chainName) {
     .then(({ api, balanceInfo, connectionsToBeClosed }) => {
       balanceInfo.forEach(({ address, balances, pooledBalance, soloTotal }) => {
         const totalBalance = balances.freeBalance.add(balances.reservedBalance).add(pooledBalance);
-
-        if (totalBalance.isZero()) {
-          return undefined;
-        }
-
         const genesisHash = api.genesisHash.toString();
         const priceId = TEST_NETS.includes(genesisHash) ? undefined : EXTRA_PRICE_IDS[chainName] || chainName.toLowerCase(); // based on the fact that relay chains price id is the same as their sanitized names,except for testnets and some other single asset chains
 

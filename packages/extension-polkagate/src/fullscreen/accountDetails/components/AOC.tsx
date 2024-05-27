@@ -119,16 +119,17 @@ function AOC ({ accountAssets, api, hideNumbers, mode = 'Detail', onclick, selec
         <Collapse collapsedSize={53} in={showMore} orientation='vertical' sx={{ width: '100%' }}>
           <Grid container gap='15px' item justifyContent='flex-start' sx={{ height: 'fit-content', minHeight: '50px', overflow: 'hidden', p: '5px 1%' }}>
             {assets.map((asset, index) => (
-              <AssetsBoxes
-                api={api}
-                asset={asset}
-                hideNumbers={hideNumbers}
-                key={index}
-                mode={mode}
-                onclick={onclick}
-                pricesInCurrencies={pricesInCurrencies}
-                selectedAsset={selectedAsset}
-              />
+              !asset?.totalBalance?.isZero() &&
+               <AssetsBoxes
+                 api={api}
+                 asset={asset}
+                 hideNumbers={hideNumbers}
+                 key={index}
+                 mode={mode}
+                 onclick={onclick}
+                 pricesInCurrencies={pricesInCurrencies}
+                 selectedAsset={selectedAsset}
+               />
             ))}
           </Grid>
         </Collapse>

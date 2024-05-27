@@ -125,7 +125,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
   const selectedChains = useSelectedChains();
 
   /** to limit calling of this heavy call on just home and account details */
-  const SHOULD_FETCH_ASSETS = useMemo(() => window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs'), []);
+  const SHOULD_FETCH_ASSETS = window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs');
 
   /** We need to trigger address change when a new address is added, without affecting other account fields. Therefore, we use the length of the accounts array as a dependency. */
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -134,7 +134,6 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
   const [fetchedAssets, setFetchedAssets] = useState<SavedAssets | undefined | null>();
   const [isWorking, setIsWorking] = useState<boolean>(false);
   const [workersCalled, setWorkersCalled] = useState<Worker[]>();
-  const [missionStartDate, setMissionStartDate] = useState<number>();
   const [isUpdate, setIsUpdate] = useState<boolean>();
 
   useEffect(() => {
@@ -145,29 +144,35 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
     }).catch(console.error);
   }, [SHOULD_FETCH_ASSETS]);
 
-  const removeExpiredRecords = useCallback((toBeSavedAssets: SavedAssets): SavedAssets => {
-    const balances = (toBeSavedAssets)?.balances || [];
+  const removeZeroBalanceRecords = useCallback((toBeSavedAssets: SavedAssets): SavedAssets => {
+    const _toBeSavedAssets = { ...toBeSavedAssets };
+    const balances = (_toBeSavedAssets)?.balances || [];
 
     Object.entries(balances).forEach(([address, assetsPerChain]) => {
       Object.entries(assetsPerChain).forEach(([genesisHash, fetchedBalance]) => {
-        fetchedBalance.forEach(({ date }, index) => {
-          if (date && missionStartDate && date < missionStartDate) {
-            // remove expired previously fetched balances
-            balances[address][genesisHash].splice(index, 1);
+        const toBeDeletedIndexes: string[] = [];
+
+        fetchedBalance.forEach(({ token, totalBalance }, index) => {
+          if (new BN(totalBalance).isZero()) {
+            toBeDeletedIndexes.push(token);
           }
+        });
+
+        toBeDeletedIndexes.forEach((_token) => {
+          const index = _toBeSavedAssets.balances[address][genesisHash].findIndex(({ token }) => _token === token);
+
+          index >= 0 && _toBeSavedAssets.balances[address][genesisHash].splice(index, 1);
         });
 
         // if fetched balances array on the chain is empty then remove that genesis hash from the structure
         if (!fetchedBalance.length) {
-          delete balances[address][genesisHash];
+          delete _toBeSavedAssets.balances[address][genesisHash];
         }
       });
     });
 
-    setMissionStartDate(undefined);
-
-    return toBeSavedAssets;
-  }, [missionStartDate]);
+    return _toBeSavedAssets;
+  }, []);
 
   const handleAccountsSaving = useCallback(() => {
     const toBeSavedAssets = fetchedAssets || DEFAULT_SAVED_ASSETS;
@@ -179,13 +184,13 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
     });
 
     // Remove assets whose balances drop to zero and have not been retrieved to be combined
-    const updatedAssetsToBeSaved = removeExpiredRecords(toBeSavedAssets);
+    const updatedAssetsToBeSaved = removeZeroBalanceRecords(toBeSavedAssets);
 
     setFetchedAssets(updatedAssetsToBeSaved);
     setStorage(ASSETS_NAME_IN_STORAGE, updatedAssetsToBeSaved, true).catch(console.error);
     setWorkersCalled(undefined);
     setIsUpdate(true);
-  }, [addresses, fetchedAssets, removeExpiredRecords]);
+  }, [addresses, fetchedAssets, removeZeroBalanceRecords]);
 
   useEffect(() => {
     /** when one round fetch is done, we will save fetched assets in storage */
@@ -236,10 +241,6 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
     terminate && worker.terminate();
 
     setWorkersCalled((workersCalled) => {
-      if (workersCalled?.length === 1 && !missionStartDate) {
-        setMissionStartDate(Date.now());
-      }
-
       terminate
         ? workersCalled?.pop()
         : !workersCalled
@@ -248,7 +249,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
 
       return workersCalled && [...workersCalled] as Worker[];
     });
-  }, [missionStartDate]);
+  }, []);
 
   const combineAndSetAssets = useCallback((assets: Assets) => {
     if (!addresses) {
