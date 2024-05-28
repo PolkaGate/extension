@@ -6,13 +6,13 @@ import { useMemo } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { PEOPLE_CHAINS, PEOPLE_CHAINS_GENESIS_HASHES } from '../util/constants';
+import { KUSAMA_PEOPLE_GENESIS_HASH, POLKADOT_GENESIS_HASH, WESTEND_PEOPLE_GENESIS_HASH } from '../util/constants';
 import getChain from '../util/getChain';
-import { sanitizeChainName, upperCaseFirstChar } from '../util/utils';
-import { useInfo } from '.';
+import { sanitizeChainName } from '../util/utils';
+import { useInfo, useMetadata } from '.';
 
 interface PeopleChainInfo {
-  peopleChain: Chain | undefined;
+  peopleChain: Chain | null | undefined;
   endpoint: string | undefined;
 }
 /**
@@ -22,34 +22,32 @@ interface PeopleChainInfo {
  * @returns endpoint and chain
  */
 
+const getPeopleChainGenesisHash = (chainName: string | undefined) => {
+  switch (chainName) {
+    case 'Westend':
+    case 'WestendPeople':
+      return WESTEND_PEOPLE_GENESIS_HASH;
+    case 'Kusama':
+    case 'KusamaPeople':
+      return KUSAMA_PEOPLE_GENESIS_HASH;
+    case 'Polkadot':
+    case 'PolkadotPeople':
+      return POLKADOT_GENESIS_HASH; // should be changed to POLKADOT_PEOPLE_GENESIS_HASH in the future
+    default:
+      return undefined;
+  }
+};
+
 export default function usePeopleChain (address: string | undefined, genesisHash?: string): PeopleChainInfo {
   const { chain } = useInfo(address);
   const _chain = chain || getChain(genesisHash);
   const _chainName = sanitizeChainName(_chain?.name);
+  const peopleChainGenesisHash = getPeopleChainGenesisHash(_chainName);
 
-  const peopleChain = useMemo((): Chain | undefined => {
-    const upperCasedChainName = upperCaseFirstChar(_chainName || '');
-
-    if (upperCasedChainName) {
-      if (PEOPLE_CHAINS.includes(upperCasedChainName)) {
-        const index = upperCasedChainName === 'Westend' ? 0 : 1;
-
-        const selectedGenesisHash = PEOPLE_CHAINS_GENESIS_HASHES[index];
-
-        return {
-          genesisHash: selectedGenesisHash,
-          name: `${upperCasedChainName}People`
-        } as Chain;
-      } else {
-        return _chain;
-      }
-    } else {
-      return undefined;
-    }
-  }, [_chainName, _chain]);
+  const peopleChain = useMetadata(peopleChainGenesisHash, true);
 
   const maybeEndpoint = useMemo(() => {
-    const peopleChainName = peopleChain?.name as string;
+    const peopleChainName = sanitizeChainName(peopleChain?.name as string);
 
     if (!peopleChainName) {
       return;
@@ -62,5 +60,8 @@ export default function usePeopleChain (address: string | undefined, genesisHash
     return endpoints?.length ? endpoints[0].value : undefined;
   }, [peopleChain]);
 
-  return { endpoint: maybeEndpoint, peopleChain };
+  return {
+    endpoint: maybeEndpoint,
+    peopleChain
+  };
 }
