@@ -14,6 +14,7 @@ import { useParams } from 'react-router';
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { AccountsStore } from '@polkadot/extension-base/stores';
+import { sanitizeChainName } from '@polkadot/extension-polkagate/src/util/utils';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
@@ -78,7 +79,7 @@ export default function ManageIdentity (): React.ReactElement {
 
   const { peopleChain: chain } = usePeopleChain(address);
   const api = useApiWithChain2(chain);
-  const chainName = chain?.name;
+  const chainName = sanitizeChainName(chain?.name);
 
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null | undefined>();
   const [identityToSet, setIdentityToSet] = useState<DeriveAccountRegistration | null | undefined>();

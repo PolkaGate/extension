@@ -6,40 +6,48 @@ import { useMemo } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { PEOPLE_CHAINS } from '../util/constants';
+import { KUSAMA_PEOPLE_GENESIS_HASH, POLKADOT_GENESIS_HASH, WESTEND_PEOPLE_GENESIS_HASH } from '../util/constants';
 import getChain from '../util/getChain';
-import { sanitizeChainName, upperCaseFirstChar } from '../util/utils';
-import { useInfo } from '.';
+import { sanitizeChainName } from '../util/utils';
+import { useInfo, useMetadata } from '.';
 
-interface PeopleChainInfo{
-  peopleChain: Chain|undefined;
-  endpoint: string|undefined;
+interface PeopleChainInfo {
+  peopleChain: Chain | null | undefined;
+  endpoint: string | undefined;
 }
 /**
  * @description To provide people chain if its already available for that chain
- * @param address 
- * @param genesisHash 
+ * @param address
+ * @param genesisHash
  * @returns endpoint and chain
  */
+
+const getPeopleChainGenesisHash = (chainName: string | undefined) => {
+  switch (chainName) {
+    case 'Westend':
+    case 'WestendPeople':
+      return WESTEND_PEOPLE_GENESIS_HASH;
+    case 'Kusama':
+    case 'KusamaPeople':
+      return KUSAMA_PEOPLE_GENESIS_HASH;
+    case 'Polkadot':
+    case 'PolkadotPeople':
+      return POLKADOT_GENESIS_HASH; // should be changed to POLKADOT_PEOPLE_GENESIS_HASH in the future
+    default:
+      return undefined;
+  }
+};
 
 export default function usePeopleChain (address: string | undefined, genesisHash?: string): PeopleChainInfo {
   const { chain } = useInfo(address);
   const _chain = chain || getChain(genesisHash);
   const _chainName = sanitizeChainName(_chain?.name);
+  const peopleChainGenesisHash = getPeopleChainGenesisHash(_chainName);
 
-  const peopleChain = useMemo(() => {
-    const upperCasedChainName = upperCaseFirstChar(_chainName || '');
-
-    return upperCasedChainName
-      ? PEOPLE_CHAINS.includes(upperCasedChainName)
-        ? { name: `${upperCasedChainName}People` }
-        : _chain
-      : undefined;
-  }
-  , [_chainName, _chain]);
+  const peopleChain = useMetadata(peopleChainGenesisHash, true);
 
   const maybeEndpoint = useMemo(() => {
-    const peopleChainName = peopleChain?.name as string;
+    const peopleChainName = sanitizeChainName(peopleChain?.name as string);
 
     if (!peopleChainName) {
       return;
@@ -52,5 +60,8 @@ export default function usePeopleChain (address: string | undefined, genesisHash
     return endpoints?.length ? endpoints[0].value : undefined;
   }, [peopleChain]);
 
-  return { endpoint: maybeEndpoint, peopleChain };
+  return {
+    endpoint: maybeEndpoint,
+    peopleChain
+  };
 }

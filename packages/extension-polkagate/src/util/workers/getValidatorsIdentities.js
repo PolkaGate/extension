@@ -9,6 +9,7 @@ import getApi from '../getApi.ts';
 const convertId = (id) => ({
   display: hexToString(id.info.display.asRaw.toHex()),
   email: hexToString(id.info.email.asRaw.toHex()),
+  // github: id.info.github && hexToString(id.info.github.asRaw.toHex()),
   judgements: id.judgements,
   legal: hexToString(id.info.legal.asRaw.toHex()),
   riot: hexToString(
@@ -22,7 +23,7 @@ const convertId = (id) => ({
 
 async function getAllValidatorsIdentities (endpoint, _accountIds) {
   try {
-    console.log('allValidatorsIdentities:',endpoint, _accountIds)
+    console.log('allValidatorsIdentities:', endpoint, _accountIds);
 
     const api = await getApi(endpoint);
     let accountInfo = [];

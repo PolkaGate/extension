@@ -133,8 +133,12 @@ export default function Review ({ address, api, chain, depositToPay, depositValu
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
-    // eslint-disable-next-line no-void
-    void tx.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
+    tx.paymentInfo(formatted)
+    .then((i) => setEstimatedFee(i?.partialFee))
+    .catch((error) => {
+      console.error(' error while fetching fee:', error);
+      setEstimatedFee(api?.createType('Balance', BN_ONE));
+    });
   }, [api, formatted, tx]);
 
   const extraInfo = useMemo(() => ({
