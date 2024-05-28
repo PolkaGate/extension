@@ -6,19 +6,19 @@ import { useMemo } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { PEOPLE_CHAINS } from '../util/constants';
+import { PEOPLE_CHAINS, PEOPLE_CHAINS_GENESIS_HASHES } from '../util/constants';
 import getChain from '../util/getChain';
 import { sanitizeChainName, upperCaseFirstChar } from '../util/utils';
 import { useInfo } from '.';
 
-interface PeopleChainInfo{
-  peopleChain: Chain|undefined;
-  endpoint: string|undefined;
+interface PeopleChainInfo {
+  peopleChain: Chain | undefined;
+  endpoint: string | undefined;
 }
 /**
  * @description To provide people chain if its already available for that chain
- * @param address 
- * @param genesisHash 
+ * @param address
+ * @param genesisHash
  * @returns endpoint and chain
  */
 
@@ -27,16 +27,26 @@ export default function usePeopleChain (address: string | undefined, genesisHash
   const _chain = chain || getChain(genesisHash);
   const _chainName = sanitizeChainName(_chain?.name);
 
-  const peopleChain = useMemo(() => {
+  const peopleChain = useMemo((): Chain | undefined => {
     const upperCasedChainName = upperCaseFirstChar(_chainName || '');
 
-    return upperCasedChainName
-      ? PEOPLE_CHAINS.includes(upperCasedChainName)
-        ? { name: `${upperCasedChainName}People` }
-        : _chain
-      : undefined;
-  }
-  , [_chainName, _chain]);
+    if (upperCasedChainName) {
+      if (PEOPLE_CHAINS.includes(upperCasedChainName)) {
+        const index = upperCasedChainName === 'Westend' ? 0 : 1;
+
+        const selectedGenesisHash = PEOPLE_CHAINS_GENESIS_HASHES[index];
+
+        return {
+          genesisHash: selectedGenesisHash,
+          name: `${upperCasedChainName}People`
+        } as Chain;
+      } else {
+        return _chain;
+      }
+    } else {
+      return undefined;
+    }
+  }, [_chainName, _chain]);
 
   const maybeEndpoint = useMemo(() => {
     const peopleChainName = peopleChain?.name as string;
