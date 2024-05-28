@@ -11,7 +11,7 @@ import getChainGenesisHash from '../util/getChainGenesisHash';
 import { sanitizeChainName } from '../util/utils';
 import useApi from './useApi';
 
-export default function useApiWithChain2 (chain: Chain | undefined): ApiPromise | undefined {
+export default function useApiWithChain2 (chain: Chain | null | undefined): ApiPromise | undefined {
   const genesisHash = useMemo(() => chain?.genesisHash || getChainGenesisHash(chain?.name), [chain]);
 
   const maybeEndpoint = useMemo(() => {
