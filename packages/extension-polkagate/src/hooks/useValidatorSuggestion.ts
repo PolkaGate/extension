@@ -73,7 +73,9 @@ export default function useValidatorSuggestion (address: string): ValidatorInfo[
       ? filtered2.filter((v) => v?.identity?.display && v?.identity?.judgements?.length) // filter those who has no verified identity
       : filtered2;
 
-    return filtered3.sort(getComparator('Commissions')).slice(0, stakingConsts?.maxNominations);
+    const filtered = filtered3.length ? filtered3 : filtered2;
+
+    return filtered.sort(getComparator('Commissions')).slice(0, stakingConsts?.maxNominations);
   }, [allValidatorsIdentities?.length, onLimitValidatorsPerOperator]);
 
   useEffect(() => {
