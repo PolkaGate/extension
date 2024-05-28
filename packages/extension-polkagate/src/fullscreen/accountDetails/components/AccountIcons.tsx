@@ -10,7 +10,7 @@ import { Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ActionContext, Infotip } from '../../../components';
-import { useAccountInfo3, useInfo, useTranslation } from '../../../hooks';
+import { useIdentity, useInfo, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 import { Proxy } from '../../../util/types';
@@ -25,7 +25,7 @@ export default function AccountIcons ({ address }: AddressDetailsProps): React.R
   const onAction = useContext(ActionContext);
   const { account, api, chain, formatted, genesisHash } = useInfo(address);
 
-  const accountInfo = useAccountInfo3(genesisHash, formatted);
+  const accountInfo = useIdentity(genesisHash, formatted);
 
   const [hasID, setHasID] = useState<boolean | undefined>();
   const [isRecoverable, setIsRecoverable] = useState<boolean | undefined>();

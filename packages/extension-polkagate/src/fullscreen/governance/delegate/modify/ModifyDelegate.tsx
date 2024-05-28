@@ -18,7 +18,7 @@ import { ISubmittableResult } from '@polkadot/types/types';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../components';
-import { useAccountInfo2, useCurrentBlockNumber, useInfo, useTracks, useTranslation } from '../../../../hooks';
+import { useCurrentBlockNumber, useIdentity, useInfo, useTracks, useTranslation } from '../../../../hooks';
 import { Lock } from '../../../../hooks/useAccountLocks';
 import { ThroughProxy } from '../../../../partials';
 import { BalancesInfo, Proxy, TxInfo } from '../../../../util/types';
@@ -52,7 +52,7 @@ export type ModifyModes = 'Modify' | 'ReviewModify';
 
 export default function ModifyDelegate ({ accountLocks, address, balances, classicDelegateInformation, formatted, lockedAmount, mixedDelegateInformation, mode, otherDelegatedTracks, selectedProxy, setDelegateInformation, setModalHeight, setMode, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const { api, chain, decimal, token } = useInfo(address);
+  const { api, chain, decimal, genesisHash, token } = useInfo(address);
   const { tracks } = useTracks(address);
   const currentBlock = useCurrentBlockNumber(address);
   const ref = useRef(null);
@@ -62,8 +62,8 @@ export default function ModifyDelegate ({ accountLocks, address, balances, class
     : mixedDelegateInformation
       ? mixedDelegateInformation.delegatee
       : undefined;
-  const delegateeName = useAccountInfo2(api, delegateeAddress)?.identity?.display;
-
+  const delegateeName = useIdentity(genesisHash, delegateeAddress)?.identity?.display;
+  
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [delegateAmount, setDelegateAmount] = useState<string>('0');
