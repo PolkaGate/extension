@@ -14,7 +14,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { ms, msGreen, msWarning, riot } from '../assets/icons';
-import { useAccountInfo3, useAccountName, useChain, useFormatted2, useMerkleScience, useTranslation } from '../hooks';
+import { useIdentity, useAccountName, useChain, useFormatted2, useMerkleScience, useTranslation } from '../hooks';
 import { getSubstrateAddress, isValidAddress } from '../util/utils';
 import { ChainLogo, Identicon, Infotip, ShortAddress } from '.';
 
@@ -51,7 +51,7 @@ function Identity ({ accountInfo, address, api, chain, direction = 'column', for
   const _showSocial = msData ? false : showSocial;
 
   const genesisHash = chain?.genesisHash || api?.genesisHash?.toHex();
-  const _accountInfo = useAccountInfo3(genesisHash, _formatted, accountInfo);
+  const _accountInfo = useIdentity(genesisHash, _formatted, accountInfo);
 
   const _judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
 

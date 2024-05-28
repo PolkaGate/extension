@@ -139,7 +139,6 @@ function ManageProxies (): React.ReactElement {
           }
           {step === STEPS.ADD_PROXY &&
             <AddProxy
-              api={api}
               chain={chain}
               proxiedAddress={address}
               proxyItems={proxyItems}

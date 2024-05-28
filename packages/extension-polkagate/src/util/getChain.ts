@@ -12,8 +12,6 @@ import allChains from './chains';
  */
 export default function getChain (_genesisHash: string | undefined): Chain | undefined {
   if (!_genesisHash) {
-    console.info('_genesisHash should not be undefined');
-
     return undefined;
   }
 

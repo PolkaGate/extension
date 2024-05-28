@@ -102,7 +102,6 @@ export default function RecoveryDetail ({ api, chain, recoveryInformation, setMo
         </Typography>
       </Grid>
       <TrustedFriendsList
-        api={api}
         chain={chain}
         friendsList={recoveryInformation.friends.map((friend) => String(friend))}
         style={{ maxHeight: '255px' }}

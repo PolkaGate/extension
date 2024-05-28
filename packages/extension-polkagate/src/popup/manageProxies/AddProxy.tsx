@@ -3,15 +3,13 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { ApiPromise } from '@polkadot/api';
-
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { AccountContext, AddressInput, InputWithLabel, PButton, Select, Warning } from '../../components';
-import { useAccountDisplay, useAccountInfo2, useFormatted, useTranslation } from '../../hooks';
+import { useAccountDisplay, useFormatted, useIdentity, useTranslation } from '../../hooks';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
 import { Proxy, ProxyItem } from '../../util/types';
@@ -20,7 +18,6 @@ import ShowIdentity from './partials/ShowIdentity';
 
 interface Props {
   address: string;
-  api: ApiPromise;
   showAddProxy: boolean;
   setShowAddProxy: React.Dispatch<React.SetStateAction<boolean>>;
   chain: Chain;
@@ -38,20 +35,19 @@ const isEqualProxy = (a: Proxy, b: Proxy) => {
   return a.delay === b.delay && a.delegate === b.delegate && a.proxyType === b.proxyType;
 };
 
-export default function AddProxy ({ address, api, chain, onChange, proxyItems, setProxyItems, setShowAddProxy, showAddProxy }: Props): React.ReactElement {
+export default function AddProxy ({ address, chain, onChange, proxyItems, setProxyItems, setShowAddProxy, showAddProxy }: Props): React.ReactElement {
+  const theme = useTheme();
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);
   const formatted = useFormatted(address);
   const accountDisplayName = useAccountDisplay(formatted);
-
-  const theme = useTheme();
 
   const [realAddress, setRealAddress] = useState<string | undefined>();
   const [selectedProxyType, setSelectedProxyType] = useState<string | null>('Any');
   const [delay, setDelay] = useState<number>(0);
   const [addButtonDisabled, setAddButtonDisabled] = useState<boolean>(true);
 
-  const proxyAccountIdentity = useAccountInfo2(api, realAddress);
+  const proxyAccountIdentity = useIdentity(chain.genesisHash, realAddress);
 
   const myselfAsProxy = useMemo(() => formatted === realAddress, [formatted, realAddress]);
   const possibleProxy = useMemo(() => ({ delay, delegate: realAddress, proxyType: selectedProxyType }) as Proxy, [delay, realAddress, selectedProxyType]);

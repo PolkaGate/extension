@@ -10,18 +10,16 @@ import { AddRounded as AddIcon, RemoveCircle as RemoveIcon } from '@mui/icons-ma
 import { Box, Grid, SxProps, Theme, Typography } from '@mui/material';
 import React from 'react';
 
-import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { riot } from '../../../assets/icons';
 import { Identicon, ShortAddress } from '../../../components';
-import { useAccountInfo2, useAccountName } from '../../../hooks';
+import { useAccountName, useIdentity } from '../../../hooks';
 import { AddressWithIdentity } from './SelectTrustedFriend';
 
 interface Props {
-  api: ApiPromise | undefined;
   formatted?: string | AccountId;
   chain: Chain | null | undefined;
   accountInfo?: DeriveAccountInfo | undefined;
@@ -45,8 +43,8 @@ const IdentityInformation = ({ icon, value }: { value: string | undefined, icon:
   );
 };
 
-export default function TrustedFriendAccount({ accountInfo, api, chain, formatted, iconType, onSelect, style }: Props): React.ReactElement {
-  const identity = useAccountInfo2(api, String(formatted), accountInfo)?.identity;
+export default function TrustedFriendAccount ({ accountInfo, chain, formatted, iconType, onSelect, style }: Props): React.ReactElement {
+  const identity = useIdentity(chain?.genesisHash, String(formatted), accountInfo)?.identity;
   const accountNameInExtension = useAccountName(formatted);
   const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
 

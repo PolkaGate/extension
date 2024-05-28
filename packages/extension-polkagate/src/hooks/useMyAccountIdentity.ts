@@ -9,7 +9,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { updateMeta } from '../messaging';
 import { SavedIdentities } from '../util/types';
-import { useAccount, useAccountInfo2, useInfo } from '.';
+import { useAccount, useIdentity, useInfo } from '.';
 
 /**
  * @description
@@ -17,9 +17,9 @@ import { useAccount, useAccountInfo2, useInfo } from '.';
  * it utilizes the saved identities in the local storage if any, while fetching the online identity
  * */
 export default function useMyAccountIdentity (address: AccountId | string | undefined): DeriveAccountRegistration | null | undefined {
-  const { api, chainName, formatted } = useInfo(address);
+  const { chainName, formatted, genesisHash } = useInfo(address);
   const account = useAccount(address);
-  const info = useAccountInfo2(api, formatted);
+  const info = useIdentity(genesisHash, formatted);
 
   const [oldIdentity, setOldIdentity] = useState<DeriveAccountRegistration | null | undefined>();
 

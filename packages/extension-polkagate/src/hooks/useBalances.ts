@@ -161,8 +161,6 @@ export default function useBalances (address: string | undefined, refresh?: bool
       isFetching.fetching[String(formatted)].pooledBalance = true;
       isFetching.set(isFetching.fetching);
       getPoolBalances();
-    } else {
-      console.log('pooled balance is fetching not need to fetch it again!');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, chain?.genesisHash, formatted, getPoolBalances, isFetching.fetching[String(formatted)]?.length]);

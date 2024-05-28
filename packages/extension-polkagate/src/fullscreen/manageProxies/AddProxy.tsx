@@ -9,11 +9,10 @@ import { AddRounded as AddRoundedIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { AccountContext, AddressInput, InputWithLabel, Select, TwoButtons, Warning } from '../../components';
-import { useAccountDisplay, useAccountInfo2, useFormatted, useTranslation } from '../../hooks';
+import { useAccountDisplay, useFormatted, useIdentity, useTranslation } from '../../hooks';
 import ShowIdentity from '../../popup/manageProxies/partials/ShowIdentity';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
@@ -22,7 +21,6 @@ import { sanitizeChainName } from '../../util/utils';
 import { STEPS } from '.';
 
 interface Props {
-  api: ApiPromise | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   chain: Chain | null | undefined;
   proxiedAddress: string | undefined;
@@ -30,7 +28,7 @@ interface Props {
   setProxyItems: React.Dispatch<React.SetStateAction<ProxyItem[] | null | undefined>>;
 }
 
-export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setProxyItems, setStep }: Props): React.ReactElement {
+export default function AddProxy ({ chain, proxiedAddress, proxyItems, setProxyItems, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
@@ -41,7 +39,7 @@ export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setP
   const [delay, setDelay] = useState<number>(0);
   const [duplicateProxy, setDuplicateProxy] = useState<boolean>(false);
 
-  const proxyAccountIdentity = useAccountInfo2(api, proxyAddress ?? undefined);
+  const proxyAccountIdentity = useIdentity(chain?.genesisHash, proxyAddress ?? undefined);
 
   const myselfAsProxy = useMemo(() => formatted === proxyAddress, [formatted, proxyAddress]);
   const PROXY_TYPE = CHAIN_PROXY_TYPES[sanitizeChainName(chain?.name) as keyof typeof CHAIN_PROXY_TYPES];
@@ -166,7 +164,7 @@ export default function AddProxy ({ api, chain, proxiedAddress, proxyItems, setP
       </Grid>
       {proxyAddress &&
         <ShowIdentity
-          accountIdentity={proxyAccountIdentity?.identity}
+          accountIdentity={proxyAccountIdentity?.accountId?.toString() === proxyAddress ? proxyAccountIdentity?.identity : undefined}
           style={{ '> div:last-child div div p': { fontSize: '14px' }, '> div:last-child div div:last-child p': { fontSize: '16px', fontWeight: 400 }, m: '25px auto 0', width: '100%' }}
         />}
       <Grid container item justifyContent='flex-end' sx={{ borderColor: 'divider', borderTop: 1, bottom: '25px', height: '50px', left: 0, mx: '7%', position: 'absolute', width: '85%' }}>
