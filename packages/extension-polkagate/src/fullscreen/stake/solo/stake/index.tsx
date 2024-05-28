@@ -108,8 +108,6 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
   }, [api, availableToSoloStake, t, amountAsBN, stakingConsts?.minNominatorBond, amount, stakingAccount?.stakingLedger?.total]);
 
   useEffect(() => {
-    console.log('call && params && newSelectedValidators && payee:', call, params, newSelectedValidators, payee);
-
     if (call && params && newSelectedValidators && payee) {
       const extraInfo = {
         action: 'Solo Staking',
