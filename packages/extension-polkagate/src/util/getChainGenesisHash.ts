@@ -11,8 +11,6 @@ import { sanitizeChainName } from './utils';
  */
 export default function getChainGenesisHash (chainName: string | undefined): string | undefined {
   if (!chainName) {
-    console.info('chain name should not be undefined');
-
     return undefined;
   }
 

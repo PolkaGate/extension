@@ -23,8 +23,6 @@ const convertId = (id) => ({
 
 async function getAllValidatorsIdentities (endpoint, _accountIds) {
   try {
-    console.log('allValidatorsIdentities:', endpoint, _accountIds);
-
     const api = await getApi(endpoint);
     let accountInfo = [];
     let accountSubInfo = [];
