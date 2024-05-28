@@ -73,7 +73,7 @@ export default function AccountDetails (): React.ReactElement {
   }, [chain, goToAccount]);
 
   const goToSend = useCallback(() => {
-    address && windowOpen(`/send/${address}/${assetId}`).catch(console.error);
+    address && windowOpen(`/send/${address}/${assetId || ''}`).catch(console.error);
   }, [address, assetId]);
 
   const goToStaking = useCallback(() => {

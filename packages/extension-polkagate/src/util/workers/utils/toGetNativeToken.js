@@ -11,10 +11,6 @@ export async function toGetNativeToken (addresses, api, chainName) {
   addresses.forEach((address, index) => {
     const totalBalance = balances[index].freeBalance.add(balances[index].reservedBalance);
 
-    if (totalBalance.isZero()) {
-      return;
-    }
-
     _result[address] = [{
       assetId: 0, // Rule: we set asset id 0 for native tokens
       balanceDetails: balancify(balances[index]),

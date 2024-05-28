@@ -8,19 +8,20 @@ import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { Balance } from '@polkadot/types/interfaces';
 import { BN, BN_ONE, BN_ZERO, isFunction, isNumber } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { ActionContext, AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, ShowBalance, TwoButtons, Warning } from '../../components';
+import { AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, ShowBalance, TwoButtons, Warning } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { useInfo, useTeleport } from '../../hooks';
 import { ASSET_HUBS } from '../../util/constants';
 import { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
 import { amountToHuman, amountToMachine } from '../../util/utils';
+import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { toTitleCase } from '../governance/utils/util';
 import { STEPS } from '../stake/pool/stake';
 import { Inputs } from '.';
@@ -96,7 +97,6 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
   const theme = useTheme();
   const { api, chain, formatted } = useInfo(address);
   const teleportState = useTeleport(address);
-  const onAction = useContext(ActionContext);
 
   const [amount, setAmount] = useState<string>(inputs?.amount || '0');
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
@@ -128,11 +128,11 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
       const remainingBalanceAfterTransfer = totalBalance.sub(toTransferBalance);
 
       if (balances.availableBalance.isZero() || balances.availableBalance.lt(toTransferBalance)) {
-        return t<string>('There is no sufficient transferable balance!');
+        return t('There is no sufficient transferable balance!');
       }
 
       if (remainingBalanceAfterTransfer.lt(ED) && remainingBalanceAfterTransfer.gt(BN_ZERO)) {
-        return t<string>('This transaction will drop your balance below the Existential Deposit threshold, risking account reaping.');
+        return t('This transaction will drop your balance below the Existential Deposit threshold, risking account reaping.');
       }
     }
 
@@ -370,20 +370,20 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     setAmount(value);
   }, [balances]);
 
-  const backToDetail = useCallback(
-    () => onAction(`/accountfs/${address}/${assetId || '0'}`)
-    , [address, assetId, onAction]);
+  const onBack = useCallback(
+    () => openOrFocusTab(`/accountfs/${address}/${assetId || '0'}`, true)
+    , [address, assetId]);
 
   return (
     <Grid container item>
       <Typography fontSize='14px' fontWeight={400}>
-        {t<string>('Input transfer amount and destination account. For cross-chain transfers, adjust recipient chain and consider associated fees.')}
+        {t('Input transfer amount and destination account. For cross-chain transfers, adjust recipient chain and consider associated fees.')}
       </Typography>
       <Grid alignItems='center' borderBottom='1px rgba(99, 54, 77, 0.2) solid' container item justifyContent='space-between' m='auto' pb='15px' pt='25px'>
         <Grid container item justifyContent='space-between'>
           <Grid item md={6.9} xs={12}>
             <Typography fontSize='16px'>
-              {t<string>('Transferable amount')}
+              {t('Transferable amount')}
             </Typography>
             <Grid alignItems='center' container item sx={{ border: 1, borderColor: 'rgba(75, 75, 75, 0.3)', fontSize: '18px', height: '48px', p: '0 5px' }}>
               <ShowBalance balance={balances?.availableBalance} decimal={balances?.decimal} skeletonWidth={120} token={balances?.token} />
@@ -391,7 +391,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
           </Grid>
           <Grid item md={4.8} xs={12}>
             <Typography fontSize='16px'>
-              {t<string>('Chain')}
+              {t('Chain')}
             </Typography>
             <Grid alignItems='center' container item sx={{ border: 1, borderColor: 'rgba(75, 75, 75, 0.3)', fontSize: '18px', height: '48px', p: '0 15px' }}>
               <ChainLogo genesisHash={chain?.genesisHash} size={29} />
@@ -403,15 +403,15 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
         </Grid>
         <AmountWithOptions
           inputWidth={8.4}
-          label={t<string>('Amount')}
+          label={t('Amount')}
           labelFontSize='16px'
           onChangeAmount={_onChangeAmount}
           // eslint-disable-next-line react/jsx-no-bind
           onPrimary={() => setWholeAmount('All')}
           // eslint-disable-next-line react/jsx-no-bind
           onSecondary={() => setWholeAmount('Max')}
-          primaryBtnText={t<string>('All amount')}
-          secondaryBtnText={t<string>('Max amount')}
+          primaryBtnText={t('All amount')}
+          secondaryBtnText={t('Max amount')}
           style={{
             fontSize: '16px',
             mt: '25px',
@@ -422,13 +422,13 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
         />
         <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '38px', width: '57.5%' }}>
           <Typography fontSize='16px' fontWeight={400}>
-            {t<string>('Network fee')}
+            {t('Network fee')}
           </Typography>
           <ShowBalance api={api} balance={estimatedFee} />
         </Grid>
       </Grid>
       <Typography fontSize='20px' fontWeight={500} pt='15px'>
-        {t<string>('To')}
+        {t('To')}
       </Typography>
       <Grid container item justifyContent='space-between'>
         <Grid item md={6.9} sx={{ pt: '10px' }} xs={12}>
@@ -445,7 +445,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
           <FullscreenChain
             address={address}
             defaultValue={chain?.genesisHash || inputs?.recipientGenesisHashOrParaId}
-            label={t<string>('Chain')}
+            label={t('Chain')}
             labelFontSize='16px'
             onChange={setRecipientChainGenesisHash}
             options={destinationGenesisHashes}
@@ -454,7 +454,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
           {isCrossChain && Number(amount) !== 0 &&
             <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '38px', width: '100%' }}>
               <Typography fontSize='16px' fontWeight={400}>
-                {t<string>('Cross-chain fee')}
+                {t('Cross-chain fee')}
               </Typography>
               <ShowBalance api={api} balance={estimatedCrossChainFee} />
             </Grid>
@@ -487,9 +487,9 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
               mt='1px'
               // eslint-disable-next-line react/jsx-no-bind
               onPrimaryClick={() => setStep(STEPS.REVIEW)}
-              onSecondaryClick={backToDetail}
-              primaryBtnText={t<string>('Next')}
-              secondaryBtnText={t<string>('Back')}
+              onSecondaryClick={onBack}
+              primaryBtnText={t('Next')}
+              secondaryBtnText={t('Back')}
             />
           </Grid>
         </Grid>

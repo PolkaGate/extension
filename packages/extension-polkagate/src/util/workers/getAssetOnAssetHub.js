@@ -29,11 +29,6 @@ async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
 
     AssetOfAddresses.forEach((_asset, index) => {
       const balance = _asset.isNone ? BN_ZERO : _asset.unwrap().balance;
-
-      if (balance.isZero()) {
-        return;
-      }
-
       const parsedAccountAsset = JSON.parse(JSON.stringify(_asset));
       const isFrozen = parsedAccountAsset?.status === 'Frozen';
       const _balance = String(balance);

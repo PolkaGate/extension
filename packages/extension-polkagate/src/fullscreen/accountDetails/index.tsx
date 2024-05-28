@@ -214,7 +214,6 @@ export default function AccountDetails (): React.ReactElement {
                   <DisplayBalance
                     amount={balancesToShow?.availableBalance}
                     decimal={balancesToShow?.decimal}
-                    isDarkTheme={isDarkTheme}
                     onClick={goToSend}
                     price={currentPrice}
                     theme={theme}
@@ -225,7 +224,6 @@ export default function AccountDetails (): React.ReactElement {
                     <DisplayBalance
                       amount={balancesToShow?.lockedBalance}
                       decimal={balancesToShow?.decimal}
-                      isDarkTheme={isDarkTheme}
                       price={currentPrice} // TODO: double check
                       title={t('Locked')}
                       token={balancesToShow?.token}
@@ -235,7 +233,6 @@ export default function AccountDetails (): React.ReactElement {
                       amount={balancesToShow?.soloTotal}
                       decimal={balancesToShow?.decimal}
                       disabled={!balancesToShow?.soloTotal || balancesToShow?.soloTotal?.isZero()}
-                      isDarkTheme={isDarkTheme}
                       onClick={goToSoloStaking}
                       price={currentPrice}
                       theme={theme}
@@ -247,7 +244,6 @@ export default function AccountDetails (): React.ReactElement {
                       amount={balancesToShow?.pooledBalance}
                       decimal={balancesToShow?.decimal}
                       disabled={!balancesToShow?.pooledBalance || balancesToShow?.pooledBalance?.isZero()}
-                      isDarkTheme={isDarkTheme}
                       onClick={goToPoolStaking}
                       price={currentPrice}
                       theme={theme}
@@ -270,7 +266,6 @@ export default function AccountDetails (): React.ReactElement {
                     <DisplayBalance
                       amount={balancesToShow?.reservedBalance}
                       decimal={balancesToShow?.decimal}
-                      isDarkTheme={isDarkTheme}
                       price={currentPrice} // TODO: double check
                       title={t('Reserved')}
                       token={balancesToShow?.token}

@@ -1256,7 +1256,7 @@
   "Import proxied accounts": "",
   "Import proxied account(s)": "",
   "Import Proxied": "",
-  "Import proxied account(s) to have it as watch-only account in the extension.": "",
+  "Import proxied account(s) to have them as watch-only accounts in the extension.": "",
   "Choose proxy account": "",
   "Proxied account(s)": "",
   "Import selected": "",
@@ -1272,5 +1272,10 @@
   "account(s)": "",
   "Choose how you want to use your earned rewards": "",
   "Now, select the validators you want to nominate, considering their properties, such as their commission rates. You can even filter them based on your preferences.": "",
-  "Github": ""
+  "Github": "",
+  "At present, you do not have any accounts. To begin your journey, you can create your first account, import existing accounts, or explore our demo option to get started.": "",
+  "Explore a demo": "",
+  "It is more than top staking limit.": "",
+  "The maximum amount you can stake, considering the existential deposit and future transaction fees.": "",
+  "Top staking limit": ""
 }

@@ -94,7 +94,7 @@ export interface FetchedBalance {
 const DEFAULT_SAVED_ASSETS = { balances: {} as AssetsBalancesPerAddress, timeStamp: Date.now() };
 
 export const ASSETS_NAME_IN_STORAGE = 'assets';
-const BALANCE_VALIDITY_PERIOD = 2 * 1000 * 60;
+const BALANCE_VALIDITY_PERIOD = 1 * 1000 * 60;
 
 const isUpToDate = (date?: number): boolean | undefined => date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
 
@@ -142,7 +142,37 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
 
       setIsUpdate(isUpToDate(_timeStamp));
     }).catch(console.error);
-  }, [SHOULD_FETCH_ASSETS, workersCalled?.length]);
+  }, [SHOULD_FETCH_ASSETS]);
+
+  const removeZeroBalanceRecords = useCallback((toBeSavedAssets: SavedAssets): SavedAssets => {
+    const _toBeSavedAssets = { ...toBeSavedAssets };
+    const balances = (_toBeSavedAssets)?.balances || [];
+
+    Object.entries(balances).forEach(([address, assetsPerChain]) => {
+      Object.entries(assetsPerChain).forEach(([genesisHash, fetchedBalance]) => {
+        const toBeDeletedIndexes: string[] = [];
+
+        fetchedBalance.forEach(({ token, totalBalance }, index) => {
+          if (new BN(totalBalance).isZero()) {
+            toBeDeletedIndexes.push(token);
+          }
+        });
+
+        toBeDeletedIndexes.forEach((_token) => {
+          const index = _toBeSavedAssets.balances[address][genesisHash].findIndex(({ token }) => _token === token);
+
+          index >= 0 && _toBeSavedAssets.balances[address][genesisHash].splice(index, 1);
+        });
+
+        // if fetched balances array on the chain is empty then remove that genesis hash from the structure
+        if (!fetchedBalance.length) {
+          delete _toBeSavedAssets.balances[address][genesisHash];
+        }
+      });
+    });
+
+    return _toBeSavedAssets;
+  }, []);
 
   const handleAccountsSaving = useCallback(() => {
     const toBeSavedAssets = fetchedAssets || DEFAULT_SAVED_ASSETS;
@@ -153,15 +183,18 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
       toBeSavedAssets.balances[address] = {};
     });
 
-    setFetchedAssets(toBeSavedAssets);
-    setStorage(ASSETS_NAME_IN_STORAGE, toBeSavedAssets, true).catch(console.error);
+    // Remove assets whose balances drop to zero and have not been retrieved to be combined
+    const updatedAssetsToBeSaved = removeZeroBalanceRecords(toBeSavedAssets);
+
+    setFetchedAssets(updatedAssetsToBeSaved);
+    setStorage(ASSETS_NAME_IN_STORAGE, updatedAssetsToBeSaved, true).catch(console.error);
     setWorkersCalled(undefined);
-  }, [addresses, fetchedAssets]);
+    setIsUpdate(true);
+  }, [addresses, fetchedAssets, removeZeroBalanceRecords]);
 
   useEffect(() => {
     /** when one round fetch is done, we will save fetched assets in storage */
     if (addresses && workersCalled?.length === 0) {
-      setWorkersCalled(undefined);
       handleAccountsSaving();
     }
   }, [accounts, addresses, handleAccountsSaving, workersCalled?.length]);
@@ -306,7 +339,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
       const message = e.data;
 
       if (!message) {
-        console.info(`fetchAssetOnAssetHubs: No assets found on ${chainName}`);
+        console.info(`No assets found on ${chainName}`);
         handleSetWorkersCall(worker, 'terminate');
 
         return;
@@ -352,7 +385,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
       const message = e.data;
 
       if (!message) {
-        console.info('fetchAssetsOnHydraDx: No assets found on HydraDx');
+        console.info(`No assets found on ${chainName}`);
         handleSetWorkersCall(worker, 'terminate');
 
         return;

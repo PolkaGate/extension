@@ -13,14 +13,14 @@ import { useTranslation } from '../../../components/translate';
 import { useInfo, usePoolConsts } from '../../../hooks';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import { STEPS } from '..';
-import StakingOption from './StakingOption';
+import StakingMode from './StakingMode';
 
 interface Props {
   address: string
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function PoolOptionsBig({ address, setStep }: Props): React.ReactElement {
+export default function PoolOptionsBig ({ address, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chainName } = useInfo(address);
@@ -45,7 +45,7 @@ export default function PoolOptionsBig({ address, setStep }: Props): React.React
         {t('Options are available to commence pool staking in {{chainName}}. Please select your preference, taking into consideration the minimum requirements for receiving rewards per era.', { replace: { chainName } })}
       </Typography>
       <Grid alignItems='center' container item justifyContent='flex-start' pt='40px'>
-        <StakingOption
+        <StakingMode
           api={api}
           balance={poolConsts?.minJoinBond}
           balanceText={t('Minimum to receive rewards')}
@@ -63,7 +63,7 @@ export default function PoolOptionsBig({ address, setStep }: Props): React.React
           text={t('You can join existing pools, which will be shown to you in a list,')}
           title={t('Join a Pool')}
         />
-        <StakingOption
+        <StakingMode
           api={api}
           balance={poolConsts?.minCreationBond}
           balanceText={t('Minimum to receive rewards')}

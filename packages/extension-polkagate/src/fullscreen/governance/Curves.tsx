@@ -14,7 +14,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { BN, BN_BILLION, BN_ZERO, bnMax, bnMin } from '@polkadot/util';
 
-export function curveThreshold(curve: PalletReferendaCurve, input: BN, div: BN): BN {
+export function curveThreshold (curve: PalletReferendaCurve, input: BN, div: BN): BN {
   // if divisor is zero, we return the max
   if (div.isZero()) {
     return BN_BILLION;
@@ -197,7 +197,7 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo | 
         },
         y: {
           beginAtZero: true,
-          max: 100,//findMaxValue([...support, ...linearDecreasingLineData]),
+          max: 100, // findMaxValue([...support, ...linearDecreasingLineData]),
           min: 0,
           grid: {
             display: false

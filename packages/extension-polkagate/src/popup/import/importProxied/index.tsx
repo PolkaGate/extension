@@ -21,7 +21,7 @@ import ProxiedTable from './ProxiedTable';
 function ImportProxied (): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
   const genesisOptions = useGenesisHashOptions();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const chance = new Chance();
@@ -29,10 +29,10 @@ function ImportProxied (): React.ReactElement {
   const selectableChains = useMemo(() => genesisOptions.filter(({ value }) => PROXY_CHAINS.includes(value as string)), [genesisOptions]);
 
   const allAddresses = useMemo(() =>
-    hierarchy
+    accounts
       .filter(({ isExternal, isHardware, isQR }) => !isExternal || isQR || isHardware)
       .map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name])
-  , [hierarchy]);
+  , [accounts]);
 
   const [selectedAddress, setSelectedAddress] = useState<string | undefined>(undefined);
   const [selectedProxied, setSelectedProxied] = useState<string[]>([]);
@@ -88,7 +88,7 @@ function ImportProxied (): React.ReactElement {
         text={t('Import Proxied')}
       />
       <Typography fontSize='14px' fontWeight={300} m='25px auto' textAlign='left' width='88%'>
-        {t('Import proxied account(s) to have it as watch-only account in the extension.')}
+        {t('Import proxied account(s) to have them as watch-only accounts in the extension.')}
       </Typography>
       <Label
         label={t('Choose proxy account')}

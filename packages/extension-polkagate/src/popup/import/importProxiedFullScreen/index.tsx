@@ -24,17 +24,17 @@ function ImportProxiedFS (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
   const genesisOptions = useGenesisHashOptions();
   const chance = new Chance();
 
   const selectableChains = useMemo(() => genesisOptions.filter(({ value }) => PROXY_CHAINS.includes(value as string)), [genesisOptions]);
 
   const allAddresses = useMemo(() =>
-    hierarchy
+    accounts
       .filter(({ isExternal, isHardware, isQR }) => !isExternal || isQR || isHardware)
       .map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name])
-  , [hierarchy]);
+  , [accounts]);
 
   const [selectedAddress, setSelectedAddress] = useState<string | undefined>(undefined);
   const [selectedProxied, setSelectedProxied] = useState<string[]>([]);
@@ -101,7 +101,7 @@ function ImportProxiedFS (): React.ReactElement {
             </Grid>
           </Grid>
           <Typography fontSize='16px' fontWeight={400} textAlign='left' width='100%'>
-            {t('Import proxied account(s) to have it as watch-only account in the extension.')}
+            {t('Import proxied account(s) to have them as watch-only accounts in the extension.')}
           </Typography>
           <Grid container item sx={{ my: '30px' }}>
             <Label

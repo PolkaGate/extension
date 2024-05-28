@@ -7,6 +7,7 @@ import { faCoins, faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-s
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Circle } from 'better-react-spinkit';
 import { BalancesInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useMemo } from 'react';
 
@@ -33,6 +34,7 @@ interface TaskButtonProps {
   disabled?: boolean;
   show?: boolean;
   mr?: string;
+  loading?: boolean;
 }
 
 export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): void => {
@@ -62,7 +64,7 @@ export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): 
   });
 };
 
-export const TaskButton = ({ disabled, icon, mr = '25px', noBorderButton = false, onClick, secondaryIconType, show = true, text }: TaskButtonProps) => {
+export const TaskButton = ({ disabled, icon, loading, mr = '25px', noBorderButton = false, onClick, secondaryIconType, show = true, text }: TaskButtonProps) => {
   const theme = useTheme();
 
   return (
@@ -79,10 +81,18 @@ export const TaskButton = ({ disabled, icon, mr = '25px', noBorderButton = false
                 {text}
               </Typography>
             </Grid>
-            {secondaryIconType === 'page' &&
+            {secondaryIconType === 'page' && !loading &&
               <Grid alignItems='center' container item justifyContent='flex-end' xs={2}>
                 <ArrowForwardIosRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '26px', stroke: disabled ? theme.palette.text.disabled : theme.palette.secondary.light, strokeWidth: 1 }} />
               </Grid>
+            }
+            {loading &&
+              <Circle
+                color={theme.palette.primary.main}
+                scaleEnd={0.7}
+                scaleStart={0.4}
+                size={25}
+              />
             }
           </Grid>
           {!noBorderButton && <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto', width: '85%' }} />
@@ -98,10 +108,13 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
   const theme = useTheme();
 
   const governanceDisabled = useMemo(() => !GOVERNANCE_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
-  const stakingDisabled = useMemo(() =>
-    !STAKING_CHAINS.includes(genesisHash ?? '') || !balance?.soloTotal || !balance?.pooledBalance
-  , [balance?.pooledBalance, balance?.soloTotal, genesisHash]);
-  const stakingIconColor = useMemo(() => stakingDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary, [stakingDisabled, theme.palette.action.disabledBackground, theme.palette.text.primary]);
+  const { stakingDisabled, stakingNotReady } = useMemo(() => {
+    const stakingDisabled = !STAKING_CHAINS.includes(genesisHash ?? '');
+    const stakingNotReady = !balance?.soloTotal || !balance?.pooledBalance;
+
+    return { stakingDisabled, stakingNotReady };
+  }, [balance?.pooledBalance, balance?.soloTotal, genesisHash]);
+  const stakingIconColor = useMemo(() => stakingDisabled || stakingNotReady ? theme.palette.action.disabledBackground : theme.palette.text.primary, [stakingDisabled, theme.palette.action.disabledBackground, theme.palette.text.primary, stakingNotReady]);
 
   const hasSoloStake = Boolean(balance?.soloTotal && !balance.soloTotal.isZero());
   const hasPoolStake = Boolean(balance?.pooledBalance && !balance.pooledBalance.isZero());
@@ -109,7 +122,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
 
   const goToSend = useCallback(() => {
     address && genesisHash &&
-      openOrFocusTab(`/send/${address}/${assetId}`);
+      openOrFocusTab(`/send/${address}/${assetId || ''}`, true);
   }, [address, assetId, genesisHash]);
 
   const goToReceive = useCallback(() => {
@@ -181,7 +194,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
           text={t('Governance')}
         />
         <TaskButton
-          disabled={stakingDisabled}
+          disabled={stakingDisabled || stakingNotReady}
           icon={
             <FontAwesomeIcon
               color={stakingIconColor}
@@ -189,6 +202,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
               icon={faCoins}
             />
           }
+          loading={!stakingDisabled && stakingNotReady}
           onClick={goToStaking}
           secondaryIconType='page'
           show={notStakedYet}

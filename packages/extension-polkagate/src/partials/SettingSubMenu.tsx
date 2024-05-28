@@ -8,7 +8,7 @@ import '@vaadin/icons';
 import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LockIcon from '@mui/icons-material/Lock';
-import { Collapse, Divider, Grid, IconButton, keyframes, useTheme } from '@mui/material';
+import { Collapse, Divider, Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
@@ -29,7 +29,7 @@ interface Props {
   onChange: () => void;
 }
 
-export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setTestnetEnabledChecked, show }: Props): React.ReactElement {
+export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, setTestnetEnabledChecked, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isPopup = useIsPopup();
@@ -43,7 +43,7 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
   const [prefix, setPrefix] = useState(`${settings.prefix === -1 ? 42 : settings.prefix}`);
 
   const languageOptions = useMemo(() => getLanguageOptions(), []);
-  const notificationOptions = ['Extension', 'PopUp', 'Window'].map((item) => ({ text: item, value: item.toLowerCase() }));
+  const notificationOptions = useMemo(() => ['Extension', 'PopUp', 'Window'].map((item) => ({ text: item, value: item.toLowerCase() })), []);
 
   useEffect(() => {
     settings.set({ camera: camera ? 'on' : 'off' });
@@ -106,12 +106,12 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
           <Grid alignItems='center' container item justifyContent='space-between'>
             <Grid item>
               <Switch
-                checkedLabel={t<string>('Dark')}
+                checkedLabel={t('Dark')}
                 fontSize='17px'
                 isChecked={theme.palette.mode === 'dark'}
                 onChange={onChangeTheme}
                 theme={theme}
-                uncheckedLabel={t<string>('Light')}
+                uncheckedLabel={t('Light')}
               />
             </Grid>
             {isLoginEnabled &&
@@ -155,7 +155,7 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
             <Checkbox2
               checked={camera}
               iconStyle={{ transform: 'scale(1.13)' }}
-              label={t<string>('Allow QR camera access')}
+              label={t('Allow QR camera access')}
               labelStyle={{ fontSize: '17px', fontWeight: 300, marginLeft: '7px' }}
               onChange={toggleCamera}
             />
@@ -174,7 +174,7 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
               text={t('Manage website access')}
             />
           </Grid>
-          <Grid container item pb={'10px'} >
+          <Grid container item pb={'10px'}>
             <MenuItem
               fontSize='17px'
               iconComponent={
@@ -187,7 +187,7 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
           </Grid>
           <Grid item pt='12px'>
             <Select
-              label={t<string>('Language')}
+              label={t('Language')}
               onChange={onChangeLang}
               options={languageOptions}
               value={settings.i18nLang !== 'default' ? settings.i18nLang : languageOptions[0].value}
@@ -195,7 +195,7 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
           </Grid>
           <Grid item pt='10px'>
             <Select
-              label={t<string>('Notification')}
+              label={t('Notification')}
               onChange={onChangeNotification}
               options={notificationOptions}
               value={notification ?? notificationOptions[1].value}
@@ -203,7 +203,7 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
           </Grid>
           {/* <Grid item pt='7px'>
           <Select
-            label={t<string>('Default display address format')}
+            label={t('Default display address format')}
             onChange={onChangePrefix}
             options={prefixOptions}
             value={prefix ?? prefixOptions[2].value}
