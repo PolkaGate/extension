@@ -14,14 +14,14 @@ import { useParams } from 'react-router';
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { AccountsStore } from '@polkadot/extension-base/stores';
-import { sanitizeChainName } from '@polkadot/extension-polkagate/src/util/utils';
+import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { Warning } from '../../components';
-import { useApiWithChain2, useFormatted, useFullscreen, usePeopleChain, useTranslation } from '../../hooks';
-import { FULLSCREEN_WIDTH } from '../../util/constants';
+import { useApiWithChain2, useFullscreen, useInfo, useTranslation } from '../../hooks';
+import { FULLSCREEN_WIDTH, PEOPLE_CHAINS, PEOPLE_CHAINS_GENESIS_HASHES } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import PreviewIdentity from './Preview';
@@ -75,11 +75,59 @@ export default function ManageIdentity (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
-  const formatted = useFormatted(address);
+  const { api: primaryApi, chain, chainName, formatted, genesisHash } = useInfo(address);
 
-  const { peopleChain: chain } = usePeopleChain(address);
-  const api = useApiWithChain2(chain);
-  const chainName = sanitizeChainName(chain?.name);
+  const isOnPeopleChain = useMemo(() => PEOPLE_CHAINS_GENESIS_HASHES.includes(genesisHash ?? ''), [genesisHash]);
+  const peopleChainName = useMemo(() => {
+    if (!genesisHash) {
+      return undefined;
+    }
+
+    if (isOnPeopleChain) {
+      return chainName;
+    } else {
+      switch (chainName) {
+        case 'Westend':
+          return 'WestendPeople';
+        case 'Kusama':
+          return 'KusamaPeople';
+        // case 'Polkadot':
+        //   return 'PolkadotPeople';
+        default:
+          return undefined;
+      }
+    }
+  }, [chainName, genesisHash, isOnPeopleChain]);
+
+  const apiName = !isOnPeopleChain && peopleChainName
+    ? { name: peopleChainName } as Chain | undefined
+    : isOnPeopleChain && peopleChainName
+      ? { name: peopleChainName.replace('People', '') } as Chain | undefined
+      : undefined;
+
+  const secondaryApi = useApiWithChain2(apiName);
+  const needSecondaryApi = PEOPLE_CHAINS.includes(chainName ?? '');
+
+  const { _api, api } = useMemo(() => {
+    if (needSecondaryApi) {
+      if (isOnPeopleChain) {
+        return {
+          _api: secondaryApi,
+          api: primaryApi
+        };
+      } else {
+        return {
+          _api: primaryApi,
+          api: secondaryApi
+        };
+      }
+    } else {
+      return {
+        _api: null,
+        api: primaryApi
+      };
+    }
+  }, [isOnPeopleChain, needSecondaryApi, primaryApi, secondaryApi]);
 
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null | undefined>();
   const [identityToSet, setIdentityToSet] = useState<DeriveAccountRegistration | null | undefined>();
@@ -464,9 +512,12 @@ export default function ManageIdentity (): React.ReactElement {
             depositValue={totalDeposit}
             identityToSet={identityToSet}
             infoParams={infoParams}
+            isOnPeopleChain={isOnPeopleChain}
             maxFeeAmount={maxFeeValue}
             mode={mode}
+            needSecondaryApi={needSecondaryApi}
             parentDisplay={identity?.display}
+            secondaryApi={_api}
             selectedRegistrar={selectedRegistrar}
             selectedRegistrarName={selectedRegistrarName}
             setRefresh={setRefresh}

@@ -5,15 +5,17 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 import type { PalletIdentityIdentityInfo } from '@polkadot/types/lookup';
+import type { AnyTuple } from '@polkadot/types/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
+import { SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
-import { BN, BN_ONE } from '@polkadot/util';
+import { BN, BN_ONE, isFunction } from '@polkadot/util';
 
 import { CanPayErrorAlert, Identity, Motion, ShowBalance, SignArea2, Warning, WrongPasswordAlert } from '../../components';
 import { useCanPayFeeAndDeposit, useFormatted, useProxies } from '../../hooks';
@@ -30,8 +32,10 @@ import Confirmation from './partial/Confirmation';
 import DisplaySubId from './partial/DisplaySubId';
 import IdentityTable from './partial/IdentityTable';
 import { Mode, STEPS, SubIdAccountsToSubmit, SubIdsParams } from '.';
+import type { ParaId } from '@polkadot/types/interfaces';
 
 interface Props {
+  secondaryApi: ApiPromise | null | undefined;
   address: string;
   api: ApiPromise | undefined;
   chain: Chain;
@@ -48,9 +52,13 @@ interface Props {
   selectedRegistrar: string | number | undefined;
   maxFeeAmount: BN | undefined;
   selectedRegistrarName: string | undefined;
+  isOnPeopleChain: boolean;
+  needSecondaryApi: boolean;
 }
 
-export default function Review ({ address, api, chain, depositToPay, depositValue, identityToSet, infoParams, maxFeeAmount, mode, parentDisplay, selectedRegistrar, selectedRegistrarName, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
+const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
+
+export default function Review({ address, api, chain, depositToPay, depositValue, identityToSet, infoParams, isOnPeopleChain, maxFeeAmount, mode, needSecondaryApi, parentDisplay, secondaryApi, selectedRegistrar, selectedRegistrarName, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
@@ -62,6 +70,8 @@ export default function Review ({ address, api, chain, depositToPay, depositValu
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [balances, setBalances] = useState<BalancesInfo>();
+  const [secondaryBalances, setSecondaryBalances] = useState<BalancesInfo>();
+  const [paraId, setParaId] = useState<ParaId>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
@@ -72,12 +82,25 @@ export default function Review ({ address, api, chain, depositToPay, depositValu
   const setSubs = api && api.tx.identity.setSubs;
   const requestJudgement = api && api.tx.identity.requestJudgement;
   const cancelRequest = api && api.tx.identity.cancelRequest;
+  // const transfer = api && api.tx.balances.transfer;
 
   useEffect(() => {
     formatted && api && api.derive.balances?.all(formatted).then((b) => {
       setBalances(b);
     });
-  }, [api, formatted]);
+
+    needSecondaryApi && secondaryApi && formatted && secondaryApi.derive.balances?.all(formatted).then((b) => {
+      setSecondaryBalances(b);
+    });
+  }, [api, formatted, needSecondaryApi, secondaryApi]);
+
+  useEffect((): void => {
+    needSecondaryApi && api && api.query.parachainInfo && api.query.parachainInfo.parachainId()
+      .then(setParaId)
+      .catch((error) => {
+        console.error('Failed to fetch parachain ID:', error);
+      });
+  }, [api]);
 
   const subIdsToShow: SubIdAccountsToSubmit | undefined = useMemo(() => {
     if (mode !== 'ManageSubId' || !subIdsParams) {
@@ -90,33 +113,108 @@ export default function Review ({ address, api, chain, depositToPay, depositValu
     })) as SubIdAccountsToSubmit;
   }, [mode, subIdsParams]);
 
-  const tx = useMemo(() => {
+  const { call, params } = useMemo((): { call: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined, params: unknown[] | undefined } => {
     if (!setIdentity || !clearIdentity || !setSubs || !requestJudgement || !cancelRequest) {
-      return undefined;
+      return { call: undefined, params: undefined };
     }
 
     if (mode === 'Set' || mode === 'Modify') {
-      return setIdentity(infoParams);
+      return { call: setIdentity, params: [infoParams] };
+      // return setIdentity(infoParams);
     }
 
     if (mode === 'Clear') {
-      return clearIdentity();
+      return { call: clearIdentity, params: [] };
+      // return clearIdentity();
     }
 
     if (mode === 'ManageSubId' && subIdsParams) {
-      return setSubs(subIdsParams);
+      return { call: setSubs, params: [subIdsParams] };
+      // return setSubs(subIdsParams);
     }
 
     if (mode === 'RequestJudgement' && selectedRegistrar !== undefined) {
-      return requestJudgement(selectedRegistrar, maxFeeAmount);
+      return { call: requestJudgement, params: [selectedRegistrar, maxFeeAmount] };
+      // return requestJudgement(selectedRegistrar, maxFeeAmount);
     }
 
     if (mode === 'CancelJudgement' && selectedRegistrar !== undefined) {
-      return cancelRequest(selectedRegistrar);
+      return { call: cancelRequest, params: [selectedRegistrar] };
+      // return cancelRequest(selectedRegistrar);
     }
 
-    return undefined;
+    return { call: undefined, params: undefined };
+    // return undefined;
   }, [cancelRequest, clearIdentity, infoParams, maxFeeAmount, mode, requestJudgement, selectedRegistrar, setIdentity, setSubs, subIdsParams]);
+
+  const preparedTxForPeopleChain = useMemo(() => {
+    if (!needSecondaryApi) {
+      return null;
+    }
+
+    if (!balances || !secondaryBalances || !estimatedFee || !call || params === undefined || !secondaryApi || paraId === undefined) {
+      return undefined;
+    }
+
+    const availableBalanceOnPeopleChain = balances.availableBalance;
+    const availableBalanceOnRelay = secondaryBalances.availableBalance;
+    const estimatedFeeInNumber = estimatedFee.toNumber();
+
+    console.log('estimatedFeeInNumber:', estimatedFeeInNumber);
+    const haveEnoughAssetOnPeopleChain = availableBalanceOnPeopleChain.gt(estimatedFee);
+
+    console.log('haveEnoughAssetOnPeopleChain:', haveEnoughAssetOnPeopleChain);
+
+    if (haveEnoughAssetOnPeopleChain) {
+      return [];
+    } else {
+      const haveEnoughBalanceOnRelay = availableBalanceOnRelay.gt(estimatedFee.muln(3)); // 1 fee for setting ID, 1 fee for transferring asset, TODO: we should check reap condition on relay chain.
+
+      if (haveEnoughBalanceOnRelay) {
+        const m = XCM_LOC.filter((x) => secondaryApi.tx[x] && isFunction(secondaryApi.tx[x].limitedTeleportAssets))?.[0];
+        const txCall = secondaryApi.tx[m].limitedTeleportAssets;
+        const crossChainParams = [
+          {
+            V3: { interior: { X1: { ParaChain: paraId } }, parents: 0 }
+          },
+          {
+            V3: {
+              interior: {
+                X1: {
+                  AccountId32: {
+                    id: secondaryApi.createType('AccountId32', formatted).toHex(),
+                    network: null
+                  }
+                }
+              },
+              parents: 0
+            }
+          },
+          {
+            V3: [{
+              fun: { Fungible: BN_ONE }, // amount to transfer
+              // fun: { Fungible: amountToMachine(amount, balances.decimal) },
+              id: {
+                Concrete: {
+                  interior: 'Here',
+                  parents: 0
+                }
+              }
+            }]
+          },
+          0,
+          { Unlimited: null }
+        ];
+        const batchCall = secondaryApi.tx.utility.batchAll;
+        const batchCallParams = [[txCall(...crossChainParams), call(...params)]];
+
+        return {
+          call: batchCall,
+          params: batchCallParams
+        };
+      }
+    }
+  }, [balances, call, estimatedFee, formatted, needSecondaryApi, paraId, params, secondaryApi, secondaryBalances]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -125,7 +223,7 @@ export default function Review ({ address, api, chain, depositToPay, depositValu
   }, [proxies]);
 
   useEffect(() => {
-    if (!formatted || !tx) {
+    if (!formatted || !call || !params) {
       return;
     }
 
@@ -133,13 +231,13 @@ export default function Review ({ address, api, chain, depositToPay, depositValu
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
-    tx.paymentInfo(formatted)
-    .then((i) => setEstimatedFee(i?.partialFee))
-    .catch((error) => {
-      console.error(' error while fetching fee:', error);
-      setEstimatedFee(api?.createType('Balance', BN_ONE));
-    });
-  }, [api, formatted, tx]);
+    call(...params).paymentInfo(formatted)
+      .then((i) => setEstimatedFee(i?.partialFee))
+      .catch((error) => {
+        console.error(' error while fetching fee:', error);
+        setEstimatedFee(api?.createType('Balance', BN_ONE));
+      });
+  }, [api, formatted, call, params]);
 
   const extraInfo = useMemo(() => ({
     action: 'Manage Identity',
@@ -340,12 +438,17 @@ export default function Review ({ address, api, chain, depositToPay, depositValu
             <Grid container item sx={{ '> div #TwoButtons': { '> div': { justifyContent: 'space-between', width: '450px' }, justifyContent: 'flex-end' }, pb: '20px' }}>
               <SignArea2
                 address={address}
-                call={tx}
+                call={preparedTxForPeopleChain !== null
+                  ? preparedTxForPeopleChain?.call
+                  : call}
                 disabled={feeAndDeposit.isAbleToPay !== true}
                 extraInfo={extraInfo}
                 isPasswordError={isPasswordError}
-                mayBeApi={api}
+                mayBeApi={needSecondaryApi ? secondaryApi : api}
                 onSecondaryClick={handleClose}
+                params={preparedTxForPeopleChain !== null
+                  ? preparedTxForPeopleChain?.params
+                  : params}
                 primaryBtnText={t('Confirm')}
                 proxyTypeFilter={['Any', 'NonTransfer']}
                 secondaryBtnText={t('Cancel')}
@@ -372,6 +475,7 @@ export default function Review ({ address, api, chain, depositToPay, depositValu
               </Grid>
               <SelectProxyModal2
                 address={address}
+                // eslint-disable-next-line react/jsx-no-bind
                 closeSelectProxy={() => setStep(STEPS.REVIEW)}
                 height={500}
                 proxies={proxyItems}
