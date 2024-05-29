@@ -25,7 +25,7 @@ export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => {
   return (
     <Grid alignItems='center' container width='fit-content'>
       <Link href={'mailto:polkagate@outlook.com'} pl='5px'>
-        <EmailIcon sx={{ color: '#007CC4' , fontSize: iconSize }} />
+        <EmailIcon sx={{ color: '#007CC4', fontSize: iconSize }} />
       </Link>
       <Link href='https://polkagate.xyz' pl='5px' rel='noreferrer' target='_blank'>
         <LanguageIcon sx={{ color: 'success.main', fontSize: iconSize }} />
