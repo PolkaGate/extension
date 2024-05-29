@@ -141,11 +141,10 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
         </Typography>
         <Grid fontSize='16px' fontWeight={500} item lineHeight='22px' pl='5px'>
           <ShowBalance
-            // api={api}
             balance={depositedValue ?? newDepositValue ?? BN_ZERO}
+            decimal={decimal}
             decimalPoint={4}
             height={22}
-            decimal={decimal}
             token={token}
           />
         </Grid>
@@ -156,11 +155,10 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
             </Typography>
             <Grid fontSize='16px' fontWeight={600} item lineHeight='22px'>
               <ShowBalance
-                // api={api}
                 balance={newDepositValue}
+                decimal={decimal}
                 decimalPoint={4}
                 height={22}
-                decimal={decimal}
                 token={token}
               />
             </Grid>
