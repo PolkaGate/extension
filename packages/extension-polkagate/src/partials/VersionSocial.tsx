@@ -6,7 +6,7 @@
 import '@vaadin/icons';
 
 import { Email as EmailIcon, Language as LanguageIcon, X as XIcon } from '@mui/icons-material';
-import { Box, Grid, Link } from '@mui/material';
+import { Box, Grid, Link, useTheme } from '@mui/material';
 import React from 'react';
 
 import { riot } from '../assets/icons';
@@ -17,30 +17,28 @@ interface Props {
   iconSize?: number;
 }
 
-export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => (
-  <Grid alignItems='center' container width='fit-content'>
-    <Grid item>
-      <Link href={'mailto:polkagate@outlook.com'}>
-        <EmailIcon sx={{ color: '#1E5AEF', fontSize: iconSize }} />
+export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => {
+  const theme = useTheme();
+
+  const isDark = theme.palette.mode === 'dark';
+
+  return (
+    <Grid alignItems='center' container width='fit-content'>
+      <Link href={'mailto:polkagate@outlook.com'} pl='5px'>
+        <EmailIcon sx={{ color: '#007CC4' , fontSize: iconSize }} />
+      </Link>
+      <Link href='https://polkagate.xyz' pl='5px' rel='noreferrer' target='_blank'>
+        <LanguageIcon sx={{ color: 'success.main', fontSize: iconSize }} />
+      </Link>
+      <Link href='https://twitter.com/@polkagate' pl='5px' rel='noreferrer' target='_blank'>
+        <XIcon sx={{ color: isDark ? 'white' : 'black', fontSize: iconSize - 2.5 }} />
+      </Link>
+      <Link href='https://matrix.to/#/#polkagate:matrix.org' pl='5px' rel='noreferrer' target='_blank'>
+        <Box component='img' src={riot} sx={{ height: iconSize === 15 ? '12px' : '17px', width: iconSize === 15 ? '12px' : '17px', pt: '1px' }} />
       </Link>
     </Grid>
-    <Grid item pl='5px'>
-      <Link href='https://polkagate.xyz' rel='noreferrer' target='_blank'>
-        <LanguageIcon sx={{ color: '#007CC4', fontSize: iconSize }} />
-      </Link>
-    </Grid>
-    <Grid item pl='5px'>
-      <Link href='https://twitter.com/@polkagate' rel='noreferrer' target='_blank'>
-        <XIcon sx={{ color: '#2AA9E0', fontSize: iconSize - 2 }} />
-      </Link>
-    </Grid>
-    <Grid item pl='5px'>
-      <Link href='https://matrix.to/#/#polkagate:matrix.org' rel='noreferrer' target='_blank'>
-        <Box component='img' src={riot} sx={{ height: iconSize === 15 ? '12px' : '17px', width: iconSize === 15 ? '12px' : '17px', mt: '2px' }} />
-      </Link>
-    </Grid>
-  </Grid>
-);
+  );
+};
 
 function VersionSocial ({ fontSize, iconSize = 15 }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
