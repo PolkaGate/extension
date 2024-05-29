@@ -43,7 +43,7 @@ export const STEPS = {
   SIGN_QR: 200
 };
 
-export default function StakeExtra ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function StakeExtra({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);
@@ -148,9 +148,9 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
       return true;
     }
 
-    const isAmountInRange = amountAsBN.lte(max);
+    const amountNotInRange = amountAsBN.gt(max);
 
-    return amountAsBN.isZero() || !isAmountInRange || !pool || pool?.bondedPool?.state !== 'Open';
+    return amountAsBN.isZero() || amountNotInRange || !pool || pool?.bondedPool?.state !== 'Open';
   }, [amountAsBN, max, inputs, pool]);
 
   const Warn = ({ iconDanger, isDanger, text }: { text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
@@ -224,7 +224,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
               {t('Outstanding rewards automatically withdrawn after transaction')}
             </Typography>
             <TwoButtons
-              disabled={ nextBtnDisabled}
+              disabled={nextBtnDisabled}
               ml='0'
               onPrimaryClick={onNext}
               onSecondaryClick={onCancel}
