@@ -46,6 +46,8 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
   const [inputs, setInputs] = useState<Inputs>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [amountAsBN, setAmountAsBN] = useState<BN>();
+  const [amount, setAmount] = useState<string | undefined>();
+
   const [alert, setAlert] = useState<string | undefined>();
   const [unstakeMaxAmount, setUnstakeMaxAmount] = useState<boolean>(false);
 
@@ -164,16 +166,18 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
     }
 
     setAmountAsBN(amountToMachine(value.slice(0, MAX_AMOUNT_LENGTH), decimal));
+    setAmount(value.slice(0, MAX_AMOUNT_LENGTH));
   }, [decimal]);
 
   const onMaxAmount = useCallback(() => {
-    if (!myPool || !formatted || !poolConsts || !staked || staked.isZero()) {
+    if (!decimal || !myPool || !formatted || !poolConsts || !staked || staked.isZero()) {
       return;
     }
 
     if ((isPoolRoot || isPoolDepositor) && poolState === 'Destroying' && poolMemberCounter === 1) {
       setUnstakeMaxAmount(true);
       setAmountAsBN(staked);
+      setAmount(amountToHuman(staked, decimal));
 
       return;
     }
@@ -182,7 +186,11 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
       const partial = staked.sub(poolConsts.minCreateBond);
 
       setUnstakeMaxAmount(false);
-      !partial.isZero() && setAmountAsBN(partial);
+
+      if (!partial.isZero()) {
+        setAmountAsBN(partial);
+        setAmount(amountToHuman(partial, decimal));
+      }
 
       return;
     }
@@ -190,8 +198,9 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
     if (!isPoolDepositor && !isPoolRoot) {
       setUnstakeMaxAmount(true);
       setAmountAsBN(staked);
+      setAmount(amountToHuman(staked, decimal));
     }
-  }, [formatted, isPoolDepositor, isPoolRoot, myPool, poolConsts, poolMemberCounter, poolState, staked]);
+  }, [decimal, formatted, isPoolDepositor, isPoolRoot, myPool, poolConsts, poolMemberCounter, poolState, staked]);
 
   useEffect(() => {
     const handleInput = async () => {
@@ -287,7 +296,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
                 onChangeAmount={onChangeAmount}
                 onPrimary={onMaxAmount}
                 primaryBtnText={t('Max amount')}
-                value={amountToHuman(amountAsBN, decimal)}
+                value={amount}
               />
               {alert &&
                 <Warn belowInput iconDanger text={alert} />
