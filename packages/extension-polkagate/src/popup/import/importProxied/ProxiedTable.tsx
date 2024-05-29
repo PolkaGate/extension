@@ -91,7 +91,6 @@ export default function ProxiedTable ({ api, chain, label, maxHeight = '120px', 
           {proxiedAccounts && proxiedAccounts.length > 0 && proxiedAccounts.map((proxiedAccount, index) =>
             <Grid container item key={index} sx={{ height: isExtensionMode ? '41px' : '50px', opacity: isAvailable(proxiedAccount) ? '0.5' : 1, textAlign: 'center' }}>
               <Grid alignItems='center' container height='100%' item justifyContent='center' xs={isExtensionMode ? 2 : 1}>
-                {/* <Select disabled={isAvailable(proxiedAccount)} index={index} proxied={proxiedAccount} /> */}
                 <Checkbox
                   checked={selectedProxied?.includes(proxiedAccount)}
                   disabled={isAvailable(proxiedAccount)}

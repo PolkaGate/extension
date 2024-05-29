@@ -29,6 +29,7 @@ import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
 import { openOrFocusTab } from './components/CommonTasks';
+import ShowReservedDetails from './components/ShowReservedDetails';
 import LockedInReferenda from './unlock/Review';
 import { AccountInformation, AccountSetting, ChangeAssets, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
 
@@ -51,7 +52,6 @@ export interface UnlockInformationType {
 export default function AccountDetails (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
-  const theme = useTheme();
   const { address, paramAssetId } = useParams<{ address: string, paramAssetId?: string }>();
   const { accounts } = useContext(AccountContext);
   const currency = useCurrency();
@@ -61,6 +61,7 @@ export default function AccountDetails (): React.ReactElement {
   const pricesInCurrency = usePrices();
 
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
+  const [showReservedDetails, setShowReservedDetails] = useState<boolean>(false);
   const [assetIdOnAssetHub, setAssetIdOnAssetHub] = useState<number>();
   const [selectedAsset, setSelectedAsset] = useState<FetchedBalance>();
   const [displayPopup, setDisplayPopup] = useState<number | undefined>();
@@ -69,8 +70,6 @@ export default function AccountDetails (): React.ReactElement {
   const assetId = useMemo(() => assetIdOnAssetHub !== undefined ? assetIdOnAssetHub : selectedAsset?.assetId, [assetIdOnAssetHub, selectedAsset?.assetId]);
 
   const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId || undefined);
-
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette]);
   const isOnAssetHub = useMemo(() => ASSET_HUBS.includes(genesisHash ?? ''), [genesisHash]);
   const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const supportStaking = useMemo(() => STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
@@ -113,17 +112,9 @@ export default function AccountDetails (): React.ReactElement {
     return currentAssetPrices?.value || mayBeTestNetPrice;
   }, [selectedAsset, chainName, pricesInCurrency?.prices]);
 
-  const nativeAssetPrice = useMemo(() => {
-    if (!pricesInCurrency || !balances || !currentPrice) {
-      return undefined;
-    }
-
-    const totalBalance = getValue('total', balances);
-
-    return parseFloat(amountToHuman(totalBalance, balances.decimal)) * currentPrice;
-  }, [balances, currentPrice, pricesInCurrency]);
-
   useEffect(() => {
+    setShowReservedDetails(false);
+
     // reset assetId on chain switch
     assetIdOnAssetHub && setAssetIdOnAssetHub(undefined);
 
@@ -175,6 +166,10 @@ export default function AccountDetails (): React.ReactElement {
     address && genesisHash && STAKING_CHAINS.includes(genesisHash) && openOrFocusTab(`/poolfs/${address}/`);
   }, [genesisHash, address]);
 
+  const onReservedClicked = useCallback(() => {
+    setShowReservedDetails(true);
+  }, []);
+
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='accountDetails' />
@@ -199,8 +194,8 @@ export default function AccountDetails (): React.ReactElement {
                 setAssetIdOnAssetHub={setAssetIdOnAssetHub}
                 setSelectedAsset={setSelectedAsset}
               />
-              {genesisHash &&
-                <>
+              {genesisHash && !showReservedDetails
+                ? <>
                   {isOnAssetHub &&
                     <ChangeAssets
                       address={address}
@@ -216,7 +211,6 @@ export default function AccountDetails (): React.ReactElement {
                     decimal={balancesToShow?.decimal}
                     onClick={goToSend}
                     price={currentPrice}
-                    theme={theme}
                     title={t('Transferable')}
                     token={balancesToShow?.token}
                   />
@@ -235,7 +229,6 @@ export default function AccountDetails (): React.ReactElement {
                       disabled={!balancesToShow?.soloTotal || balancesToShow?.soloTotal?.isZero()}
                       onClick={goToSoloStaking}
                       price={currentPrice}
-                      theme={theme}
                       title={t('Solo Stake')}
                       token={balancesToShow?.token}
                     />}
@@ -246,7 +239,6 @@ export default function AccountDetails (): React.ReactElement {
                       disabled={!balancesToShow?.pooledBalance || balancesToShow?.pooledBalance?.isZero()}
                       onClick={goToPoolStaking}
                       price={currentPrice}
-                      theme={theme}
                       title={t('Pool Stake')}
                       token={balancesToShow?.token}
                     />}
@@ -266,19 +258,23 @@ export default function AccountDetails (): React.ReactElement {
                     <DisplayBalance
                       amount={balancesToShow?.reservedBalance}
                       decimal={balancesToShow?.decimal}
+                      disabled={!balancesToShow?.reservedBalance || balancesToShow?.reservedBalance?.isZero()}
+                      onClick={onReservedClicked}
                       price={currentPrice} // TODO: double check
                       title={t('Reserved')}
                       token={balancesToShow?.token}
                     />}
                 </>
+                : <ShowReservedDetails
+                  address={address}
+                  setShowReservedDetails={setShowReservedDetails}
+                />
               }
             </Grid>
             <Grid container direction='column' gap='15px' item width='300px'>
               {showTotalChart &&
                 <TotalChart
                   accountAssets={accountAssets}
-                  isDarkTheme={isDarkTheme}
-                  nativeAssetPrice={nativeAssetPrice}
                   pricesInCurrency={pricesInCurrency}
                 />
               }
