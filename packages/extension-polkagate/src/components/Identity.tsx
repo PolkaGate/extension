@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Email as EmailIcon, Language as LanguageIcon, X as XIcon } from '@mui/icons-material';
-import { Box, Grid, Link, SxProps, Theme, Typography } from '@mui/material';
+import { Box, Grid, Link, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import React, { useEffect, useMemo } from 'react';
 
@@ -41,6 +41,10 @@ interface Props {
 
 function Identity ({ accountInfo, address, api, chain, direction = 'column', formatted, identiconSize = 40, judgement, name, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
+
+  const isDark = theme.palette.mode === 'dark';
+
   const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
   const _chain = useChain(address, chain);
   const _formatted = useFormatted2(address, formatted, chain)?.toString();
@@ -152,32 +156,24 @@ function Identity ({ accountInfo, address, api, chain, direction = 'column', for
         {_showSocial &&
           <Grid container id='socials' item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', mt: '3%', px: '5px', width: 'fit-content' }}>
             {_accountInfo?.identity?.email &&
-              <Grid item>
                 <Link href={`mailto:${_accountInfo.identity.email}`}>
-                  <EmailIcon sx={{ color: '#1E5AEF', fontSize: 15 }} />
+                  <EmailIcon sx={{ color:  '#007CC4', fontSize: 15 }} />
                 </Link>
-              </Grid>
             }
             {_accountInfo?.identity?.web &&
-              <Grid item pl='5px'>
-                <Link href={_accountInfo?.identity.web} rel='noreferrer' target='_blank'>
-                  <LanguageIcon sx={{ color: '#007CC4', fontSize: 15 }} />
-                </Link>
-              </Grid>
+                 <Link href={_accountInfo?.identity.web} pl='5px' rel='noreferrer' target='_blank'>
+                   <LanguageIcon sx={{ color: 'success.main', fontSize: 15 }} />
+                 </Link>
             }
             {_accountInfo?.identity?.twitter &&
-              <Grid item pl='5px'>
-                <Link href={`https://twitter.com/${_accountInfo.identity.twitter}`} rel='noreferrer' target='_blank'>
-                  <XIcon sx={{ color: '#2AA9E0', fontSize: 14 }} />
-                </Link>
-              </Grid>
+                 <Link href={`https://twitter.com/${_accountInfo.identity.twitter}`} pl='5px' rel='noreferrer' target='_blank'>
+                   <XIcon sx={{ color: isDark ? 'white' : 'black', fontSize: 14 }} />
+                 </Link>
             }
             {_accountInfo?.identity?.riot &&
-              <Grid item pl='5px'>
-                <Link href={`https://matrix.to/#/${_accountInfo.identity.riot}`} rel='noreferrer' target='_blank'>
+                <Link href={`https://matrix.to/#/${_accountInfo.identity.riot}`} pl='5px' rel='noreferrer' target='_blank'>
                   <Box component='img' src={riot} sx={{ height: '12px', mb: '2px', width: '12px' }} />
                 </Link>
-              </Grid>
             }
           </Grid>
         }
