@@ -42,12 +42,12 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
   const stakingConsts = useStakingConsts(address);
 
   const [amount, setAmount] = useState<string>(inputs?.extraInfo?.amount);
+  const [amountAsBN, setAmountAsBN] = useState<BN>(BN_ZERO);
   const [isNextClicked, setNextIsClicked] = useState<boolean>();
   const [topStakingLimit, setTopStakingLimit] = useState<BN>();
   const [alert, setAlert] = useState<string | undefined>();
   const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
 
-  const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
   const availableBalance = useMemo(() => balances?.availableBalance, [balances?.availableBalance]);
 
   const buttonDisable = useMemo(() => {
@@ -120,6 +120,7 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
 
     setInputs(undefined);
     setAmount(value);
+    setAmountAsBN(amountToMachine(value, balances.decimal));
   }, [balances, setInputs]);
 
   const thresholds = useMemo(() => {
@@ -149,6 +150,7 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
     setInputs(undefined);
 
     setAmount(amountToHuman(thresholds[maxMin].toString(), decimal));
+    setAmountAsBN(thresholds[maxMin]);
   }, [thresholds, decimal, setInputs]);
 
   const onMaxClick = useCallback(
