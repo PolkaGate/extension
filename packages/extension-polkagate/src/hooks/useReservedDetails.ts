@@ -12,7 +12,7 @@ import { PROXY_CHAINS } from '../util/constants';
 import useActiveRecoveries from './useActiveRecoveries';
 import { useInfo } from '.';
 
-type Item = 'identity' | 'proxy';
+type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda';
 export type Reserved = { [key in Item]?: BN };
 
 export default function useReservedDetails (address: string | undefined): Reserved {
@@ -113,6 +113,31 @@ export default function useReservedDetails (address: string | undefined): Reserv
         if (!referendaDepositSum.isZero()) {
           setReserved((prev) => {
             prev.referenda = referendaDepositSum;
+
+            return prev;
+          });
+        }
+      }).catch(console.error);
+    }
+
+    /** Fetch bounties reserved */
+    if (api.query?.bounties?.bounties) {
+      let bountiesDepositSum = BN_ZERO;
+
+      api.query.bounties.bounties.entries().then((bounties) => {
+        bounties.forEach(([_, value]) => {
+          if (value.isSome) {
+            const bounty = (value.unwrap());
+
+            if (bounty.proposer.toString() === formatted) {
+              bountiesDepositSum = bountiesDepositSum.add(bounty.curatorDeposit);
+            }
+          }
+        });
+
+        if (!bountiesDepositSum.isZero()) {
+          setReserved((prev) => {
+            prev.bounty = bountiesDepositSum;
 
             return prev;
           });
