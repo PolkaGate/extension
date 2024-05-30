@@ -32,7 +32,7 @@ function ImportProxiedFS (): React.ReactElement {
 
   const allAddresses = useMemo(() =>
     accounts
-      .filter(({ isExternal, isHardware, isQR }) => !isExternal || isQR || isHardware)
+      // .filter(({ isExternal, isHardware, isQR }) => !isExternal || isQR || isHardware)
       .map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name])
   , [accounts]);
 
