@@ -38,7 +38,7 @@ interface ReservedDetailsType {
 
 const ReservedDetails = ({ decimal, reservedDetails, showReservedDetails, text, token }: ReservedDetailsType) => (
   <Collapse in={showReservedDetails} sx={{ width: '100%' }}>
-    <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'divider', fontSize: '16px', mt: '10px', mx: '10%', width: '77%' }}>
+    <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'divider', fontSize: '16px', mt: '10px', mx: '10%', width: '82%' }}>
       <Grid item pt='10px' xs={12}>
         {text}
       </Grid>
@@ -70,8 +70,8 @@ export default function DisplayBalance ({ amount, decimal, disabled, onClick, pr
   const [showReservedDetails, setShowReservedDetails] = useState<boolean>(false);
 
   const toggleShowReservedDetails = useCallback(() => {
-    reservedDetails && setShowReservedDetails(!showReservedDetails);
-  }, [reservedDetails, showReservedDetails]);
+    reservedDetails && !amount?.isZero() && setShowReservedDetails(!showReservedDetails);
+  }, [amount, reservedDetails, showReservedDetails]);
 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px 40px' }}>
