@@ -19,7 +19,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { Warning } from '../../components';
+import { Progress, Warning } from '../../components';
 import { useApiWithChain2, useFormatted, useFullscreen, usePeopleChain, useTranslation } from '../../hooks';
 import { FULLSCREEN_WIDTH } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
@@ -364,24 +364,18 @@ export default function ManageIdentity (): React.ReactElement {
 
   const resetSubIds = useCallback(() => setResetSubId(true), []);
 
-  const IdentityCheckProgress = () => {
-    return (
-      <Grid alignItems='center' container direction='column' height='100%' item justifyContent='center'>
-        <CubeGrid col={3} color={theme.palette.secondary.main} row={3} size={200} style={{ opacity: '0.4' }} />
-        <Typography pt='15px'>
-          {t('Checking account\'s on-chain Identity, please wait...')}
-        </Typography>
-      </Grid>
-    );
-  };
-
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='manageIdentity' />
       <Grid container item justifyContent='flex-start' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '3%' }}>
         <Bread />
         {step === STEPS.CHECK_SCREEN &&
-          <IdentityCheckProgress />
+          <Progress
+            gridSize={200}
+            pt='250px'
+            title= {t('Checking account\'s on-chain Identity, please wait...')}
+            type='grid'
+          />
         }
         {step === STEPS.UNSUPPORTED &&
           <Grid alignItems='center' container direction='column' display='block' item>
