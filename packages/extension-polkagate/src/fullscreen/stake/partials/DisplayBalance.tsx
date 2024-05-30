@@ -160,26 +160,27 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
           text={t('To be released')}
           toBeReleased={toBeReleased}
           token={token}
-        />}
+        />
+      }
       {amount && !amount.isZero() &&
-      <Box
-        sx={{
-          '&::before': {
-            borderBottom: `20px solid ${triangleColor}`,
-            borderBottomLeftRadius: '20%',
-            borderRight: '20px solid transparent',
+        <Box
+          sx={{
+            '&::before': {
+              borderBottom: `20px solid ${triangleColor}`,
+              borderBottomLeftRadius: '20%',
+              borderRight: '20px solid transparent',
+              bottom: 0,
+              content: '""',
+              height: 0,
+              left: 0,
+              position: 'absolute',
+              width: 0
+            },
             bottom: 0,
-            content: '""',
-            height: 0,
             left: 0,
-            position: 'absolute',
-            width: 0
-          },
-          bottom: 0,
-          left: 0,
-          position: 'absolute'
-        }}
-      />}
+            position: 'absolute'
+          }}
+        />}
     </Grid>
   );
 }
