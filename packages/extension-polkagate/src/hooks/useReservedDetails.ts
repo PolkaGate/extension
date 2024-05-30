@@ -15,7 +15,7 @@ import { useInfo } from '.';
 type Item = 'identity' | 'proxy';
 export type Reserved = { [key in Item]?: BN };
 
-export default function useReservedDetails (address: string | undefined): Reserved | null | undefined {
+export default function useReservedDetails (address: string | undefined): Reserved {
   const { api, formatted, genesisHash } = useInfo(address);
   const activeRecoveries = useActiveRecoveries(api);
   const [reserved, setReserved] = useState<Reserved>({});
@@ -119,6 +119,10 @@ export default function useReservedDetails (address: string | undefined): Reserv
         }
       }).catch(console.error);
     }
+  }, [activeLost?.deposit, api, formatted, genesisHash]);
+
+  useEffect(() => {
+    setReserved({});
   }, [activeLost?.deposit, api, formatted, genesisHash]);
 
   return reserved;
