@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_MAX_INTEGER, BN_ZERO, bnMin } from '@polkadot/util';
 
-import { AmountWithOptions, Infotip2, ShowBalance, TwoButtons, Warning } from '../../../components';
+import { AmountWithOptions, Infotip2, ShowBalance, ShowBalance3, TwoButtons, Warning } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 import { useAvailableToSoloStake, useInfo, useMinToReceiveRewardsInSolo2, usePool, usePoolConsts, useStakingConsts, useValidatorSuggestion } from '../../../hooks';
 import { BalancesInfo } from '../../../util/types';
@@ -256,7 +256,7 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
               {t('Minimum to earn rewards')}
             </Grid>
             <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
-              <ShowBalance balance={poolConsts?.minJoinBond} decimal={decimal} decimalPoint={2} token={balances?.token} />
+              <ShowBalance3 address={address} balance={poolConsts?.minJoinBond} />
             </Grid>
           </Grid>
         </Grid>
