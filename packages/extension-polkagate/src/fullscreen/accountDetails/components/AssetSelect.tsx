@@ -18,7 +18,7 @@ interface Props {
   setAssetId: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-function ChangeAssets ({ address, assetId, label, onChange, setAssetId, style }: Props) {
+function AssetSelect({ address, assetId, label, onChange, setAssetId, style }: Props) {
   const tokens = useTokens(address);
   const assets = useAssetHubAssets(address);
   const options = useMemo(() => (tokens || []).concat(assets || []), [assets, tokens]);
@@ -50,4 +50,4 @@ function ChangeAssets ({ address, assetId, label, onChange, setAssetId, style }:
   );
 }
 
-export default React.memo(ChangeAssets);
+export default React.memo(AssetSelect);

@@ -29,7 +29,7 @@ import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
 import { openOrFocusTab } from './components/CommonTasks';
 import LockedInReferenda from './unlock/Review';
-import { AccountInformation, AccountSetting, ChangeAssets, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
+import { AccountInformation, AccountSetting, AssetSelect, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
 
 export const popupNumbers = {
   LOCKED_IN_REFERENDA: 1,
@@ -47,7 +47,7 @@ export interface UnlockInformationType {
   unlockableAmount: BN;
 }
 
-export default function AccountDetails (): React.ReactElement {
+export default function AccountDetails(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const { address, paramAssetId } = useParams<{ address: string, paramAssetId?: string }>();
@@ -186,10 +186,10 @@ export default function AccountDetails (): React.ReactElement {
                 setAssetIdOnAssetHub={setAssetIdOnAssetHub}
                 setSelectedAsset={setSelectedAsset}
               />
-              {genesisHash &&  
+              {genesisHash &&
                 <>
                   {isOnAssetHub &&
-                    <ChangeAssets
+                    <AssetSelect
                       address={address}
                       assetId={assetId}
                       label={t('Assets')}
