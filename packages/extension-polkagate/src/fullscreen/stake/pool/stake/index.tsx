@@ -43,7 +43,7 @@ export const STEPS = {
   SIGN_QR: 200
 };
 
-export default function StakeExtra ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function StakeExtra({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);
@@ -58,10 +58,18 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
   const [amount, setAmount] = useState<string | undefined>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
-  const [nextBtnDisabled, setNextBtnDisabled] = useState<boolean>(true);
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
+  const ED = api?.consts?.balances?.existentialDeposit as unknown as BN;
+
+  const max = useMemo(() => {
+    if (!availableBalance || !ED || !estimatedMaxFee) {
+      return;
+    }
+
+    return new BN(availableBalance).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
+  }, [ED, availableBalance, estimatedMaxFee]);
 
   useEffect(() => {
     if (amount && api && staked && amountAsBN) {
@@ -86,16 +94,14 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
   }, [amount, amountAsBN, api, staked]);
 
   const onMaxAmount = useCallback(() => {
-    if (!api || !availableBalance || !estimatedMaxFee) {
+    if (!max) {
       return;
     }
 
-    const ED = api.consts.balances.existentialDeposit as unknown as BN;
-    const max = new BN(availableBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
-    const maxToHuman = amountToHuman(max.toString(), decimal);
+    const maxToHuman = max.gt(BN_ZERO) ? amountToHuman(max.toString(), decimal) : 0;
 
     maxToHuman && setAmount(maxToHuman);
-  }, [api, availableBalance, decimal, estimatedMaxFee]);
+  }, [decimal, max]);
 
   const bondAmountChange = useCallback((value: string) => {
     if (!decimal) {
@@ -137,16 +143,15 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
     });
   }, [formatted, api, availableBalance, amount, decimal, amountAsBN]);
 
-  useEffect(() => {
-    if (!amountAsBN || !api || !availableBalance) {
-      return;
+  const nextBtnDisabled = useMemo(() => {
+    if (!amountAsBN || !max || !inputs) {
+      return true;
     }
 
-    const ED = api.consts.balances.existentialDeposit as unknown as BN;
-    const isAmountInRange = amountAsBN.lt(availableBalance.sub(ED.muln(2)).sub(estimatedMaxFee || BN_ZERO));
+    const amountNotInRange = amountAsBN.gt(max);
 
-    setNextBtnDisabled(!amount || amount === '0' || !isAmountInRange || !pool || pool?.member?.points === '0');
-  }, [amountAsBN, availableBalance, decimal, estimatedMaxFee, amount, api, pool]);
+    return amountAsBN.isZero() || amountNotInRange || !pool || pool?.bondedPool?.state !== 'Open';
+  }, [amountAsBN, max, inputs, pool]);
 
   const Warn = ({ iconDanger, isDanger, text }: { text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
     <Grid container sx={{ 'div.danger': { mr: '10px', mt: 0, pl: '10px' }, mt: '25px' }}>
@@ -219,7 +224,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
               {t('Outstanding rewards automatically withdrawn after transaction')}
             </Typography>
             <TwoButtons
-              disabled={!inputs || nextBtnDisabled}
+              disabled={nextBtnDisabled}
               ml='0'
               onPrimaryClick={onNext}
               onSecondaryClick={onCancel}
