@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
-import { faDiscord, faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons';
+import { faDiscord, faGithub, faXTwitter } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, useTheme } from '@mui/material';
 import React from 'react';
 
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -39,6 +39,8 @@ interface Props {
 
 export default function SetIdentityForm ({ discord, display, email, github, identity, isPeopleChainEnabled, legal, matrix, riot, setDiscord, setDisplay, setEmail, setGithub, setLegal, setMatrix, setRiot, setTwitter, setWeb, twitter, web }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Grid container item sx={{ borderBottom: '2px solid', borderBottomColor: '#D5CCD0', display: 'block', height: 'fit-content', py: '20px' }}>
@@ -68,7 +70,7 @@ export default function SetIdentityForm ({ discord, display, email, github, iden
       <IdentityInfoInput
         icon={
           <FontAwesomeIcon
-            color='#007CC4'
+            color={theme.palette.success.main}
             fontSize='30px'
             icon={faGlobe}
           />
@@ -81,13 +83,13 @@ export default function SetIdentityForm ({ discord, display, email, github, iden
       <IdentityInfoInput
         icon={
           <FontAwesomeIcon
-            color='#2AA9E0'
+            color={isDark ? 'white' : 'black'}
             fontSize='30px'
-            icon={faTwitter}
+            icon={faXTwitter}
           />
         }
         setter={setTwitter}
-        title={t('Twitter')}
+        title={t('X')}
         value={twitter ?? identity?.twitter}
       />
       <IdentityInfoInput
@@ -104,7 +106,7 @@ export default function SetIdentityForm ({ discord, display, email, github, iden
       <IdentityInfoInput
         icon={
           <FontAwesomeIcon
-            color='#5865F2'
+            color='rgb(178, 58, 120)'
             fontSize='30px'
             icon={faGithub}
           /> }

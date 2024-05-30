@@ -3,11 +3,11 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faTwitter } from '@fortawesome/free-brands-svg-icons';
+import { faXTwitter } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AddRounded as AddIcon, RemoveCircle as RemoveIcon } from '@mui/icons-material';
-import { Box, Grid, SxProps, Theme, Typography } from '@mui/material';
+import { Box, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
@@ -44,6 +44,9 @@ const IdentityInformation = ({ icon, value }: { value: string | undefined, icon:
 };
 
 export default function TrustedFriendAccount ({ accountInfo, chain, formatted, iconType, onSelect, style }: Props): React.ReactElement {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
   const identity = useIdentity(chain?.genesisHash, String(formatted), accountInfo)?.identity;
   const accountNameInExtension = useAccountName(formatted);
   const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
@@ -88,7 +91,7 @@ export default function TrustedFriendAccount ({ accountInfo, chain, formatted, i
           <IdentityInformation
             icon={
               <FontAwesomeIcon
-                color='#007CC4'
+                color={theme.palette.success.main}
                 fontSize='15px'
                 icon={faGlobe}
               />
@@ -98,9 +101,9 @@ export default function TrustedFriendAccount ({ accountInfo, chain, formatted, i
           <IdentityInformation
             icon={
               <FontAwesomeIcon
-                color='#2AA9E0'
+                color={isDark ? 'white' : 'black'}
                 fontSize='15px'
-                icon={faTwitter}
+                icon={faXTwitter}
               />
             }
             value={identity?.twitter}

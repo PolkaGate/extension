@@ -56,7 +56,7 @@ export default function IdentityTable ({ identity, style }: Props): React.ReactE
         value={identity.web}
       />
       <IdItems
-        title={t('Twitter')}
+        title={t('X')}
         value={identity.twitter}
       />
       <IdItems

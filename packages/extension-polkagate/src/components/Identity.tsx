@@ -14,7 +14,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { ms, msGreen, msWarning, riot } from '../assets/icons';
-import { useIdentity, useAccountName, useChain, useFormatted2, useMerkleScience, useTranslation } from '../hooks';
+import { useAccountName, useChain, useFormatted2, useIdentity, useMerkleScience, useTranslation } from '../hooks';
 import { getSubstrateAddress, isValidAddress } from '../util/utils';
 import { ChainLogo, Identicon, Infotip, ShortAddress } from '.';
 
@@ -157,7 +157,7 @@ function Identity ({ accountInfo, address, api, chain, direction = 'column', for
           <Grid container id='socials' item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', mt: '3%', px: '5px', width: 'fit-content' }}>
             {_accountInfo?.identity?.email &&
                 <Link href={`mailto:${_accountInfo.identity.email}`}>
-                  <EmailIcon sx={{ color:  '#007CC4', fontSize: 15 }} />
+                  <EmailIcon sx={{ color: '#007CC4', fontSize: 15 }} />
                 </Link>
             }
             {_accountInfo?.identity?.web &&

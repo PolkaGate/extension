@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faDiscord, faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons';
+import { faDiscord, faGithub, faXTwitter } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Box, Grid, Typography, useTheme } from '@mui/material';
@@ -29,6 +29,7 @@ interface Props {
 export default function DisplayIdentityInformation ({ identity }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const emptyFieldColor = useMemo(() => theme.palette.mode === 'light' ? '#F3EDF1' : '#212121', [theme.palette.mode]);
 
@@ -59,7 +60,7 @@ export default function DisplayIdentityInformation ({ identity }: Props): React.
       <IdentityItems
         icon={
           <FontAwesomeIcon
-            color='#007CC4'
+            color={theme.palette.success.main}
             fontSize='30px'
             icon={faGlobe}
           />
@@ -81,12 +82,12 @@ export default function DisplayIdentityInformation ({ identity }: Props): React.
       <IdentityItems
         icon={
           <FontAwesomeIcon
-            color='#2AA9E0'
+            color={isDark ? 'white' : 'black'}
             fontSize='30px'
-            icon={faTwitter}
+            icon={faXTwitter}
           />
         }
-        title={t('Twitter')}
+        title={t('X')}
         value={identity.twitter ?? null}
       />
       <IdentityItems
@@ -99,7 +100,7 @@ export default function DisplayIdentityInformation ({ identity }: Props): React.
       <IdentityItems
         icon={
           <FontAwesomeIcon
-            color='#5865F2'
+            color='rgb(178, 58, 120)'
             fontSize='30px'
             icon={faGithub}
           /> }
@@ -116,7 +117,7 @@ export default function DisplayIdentityInformation ({ identity }: Props): React.
         }
         noBorder
         title={t('Discord')}
-        value={identity.other?.discord || identity?.discord ||  null}
+        value={identity.other?.discord || identity?.discord || null}
       />
     </Grid>
   );
