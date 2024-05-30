@@ -6,13 +6,16 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton, Theme, Typography, useTheme } from '@mui/material';
-import React from 'react';
+import { Collapse, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useState } from 'react';
 
+import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
+import { Reserved } from '@polkadot/extension-polkagate/src/hooks/useReservedDetails';
 import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
-import { FormatPrice, ShowBalance } from '../../../components';
+import { FormatPrice, ShowBalance, Waiting } from '../../../components';
+import { toTitleCase } from '../../governance/utils/util';
 
 interface Props {
   amount: BN | Balance | undefined;
@@ -22,11 +25,54 @@ interface Props {
   price: number | undefined;
   onClick?: () => void;
   disabled?: boolean;
+  reservedDetails?: Reserved | null | undefined
 }
 
-export default function DisplayBalance ({ amount, decimal, disabled, onClick, price, title, token }: Props): React.ReactElement {
+interface ReservedDetailsType {
+  showReservedDetails: boolean;
+  decimal: number | undefined;
+  token: string | undefined;
+  reservedDetails: Reserved;
+  text?: string;
+}
+
+const ReservedDetails = ({ decimal, reservedDetails, showReservedDetails, text, token }: ReservedDetailsType) => (
+  <Collapse in={showReservedDetails} sx={{ width: '100%' }}>
+    <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'divider', fontSize: '16px', mt: '10px', mx: '10%', width: '77%' }}>
+      <Grid item pt='10px' xs={12}>
+        {text}
+      </Grid>
+      {Object.entries(reservedDetails)?.length
+        ? <Grid container direction='column' item rowGap='10px'>
+          {Object.entries(reservedDetails)?.map(([key, value], index) => (
+            <Grid container item justifyContent='space-between' key={index} sx={{ fontSize: '17px', fontWeight: 400 }}>
+              <Grid item>
+                {toTitleCase(key)}
+              </Grid>
+              <Grid fontWeight={600} item>
+                <ShowBalance balance={value} decimal={decimal} token={token} />
+              </Grid>
+            </Grid>
+          ))
+          }
+        </Grid>
+        : <Waiting height={60} />
+      }
+    </Grid>
+  </Collapse>
+);
+
+export default function DisplayBalance ({ amount, decimal, disabled, onClick, price, reservedDetails, title, token }: Props): React.ReactElement {
   const theme = useTheme();
-  
+  const { t } = useTranslation();
+  const isReserved = title === t('Reserved');
+
+  const [showReservedDetails, setShowReservedDetails] = useState<boolean>(false);
+
+  const toggleShowReservedDetails = useCallback(() => {
+    reservedDetails && setShowReservedDetails(!showReservedDetails);
+  }, [reservedDetails, showReservedDetails]);
+
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px 40px' }}>
       <Typography fontSize='18px' fontWeight={400}>
@@ -68,7 +114,37 @@ export default function DisplayBalance ({ amount, decimal, disabled, onClick, pr
             </IconButton>
           </Grid>
         }
+        {isReserved &&
+          <Grid item m='auto' pl='8px'>
+            <IconButton
+              sx={{ p: '8px' }}
+            >
+              <ArrowForwardIosRoundedIcon
+                onClick={toggleShowReservedDetails}
+                sx={{
+                  color: amount?.isZero() ? 'text.disabled' : 'secondary.light',
+                  cursor: amount?.isZero() ? 'unset' : 'pointer',
+                  fontSize: '26px',
+                  stroke: amount?.isZero() ? theme.palette.text.disabled : theme.palette.secondary.light,
+                  strokeWidth: 1,
+                  transform: !amount?.isZero() && showReservedDetails ? 'rotate(-90deg)' : 'rotate(90deg)',
+                  transitionDuration: '0.3s',
+                  transitionProperty: 'transform'
+                }}
+              />
+            </IconButton>
+          </Grid>
+        }
       </Grid>
+      {reservedDetails &&
+        <ReservedDetails
+          decimal={decimal}
+          reservedDetails={reservedDetails}
+          showReservedDetails={showReservedDetails}
+          // text={t('details')}
+          token={token}
+        />
+      }
     </Grid>
   );
 }

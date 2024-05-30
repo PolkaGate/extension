@@ -56,7 +56,8 @@ const ToBeReleased = ({ decimal, showUnstaking, text, toBeReleased, token }: ToB
           <Grid fontWeight={400} item>
             <ShowBalance balance={amount} decimal={decimal} token={token} />
           </Grid>
-        </Grid>))
+        </Grid>
+      ))
       }
     </Grid>
   </Collapse>

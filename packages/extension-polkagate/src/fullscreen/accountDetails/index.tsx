@@ -4,17 +4,16 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { faFileInvoice } from '@fortawesome/free-solid-svg-icons';
-import { Grid, useTheme } from '@mui/material';
+import { Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { BN } from '@polkadot/util';
 
 import { AccountContext, ActionContext } from '../../components';
-import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
+import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useReservedDetails, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
 import { FetchedBalance } from '../../hooks/useAssetsBalances';
-import { getValue } from '../../popup/account/util';
 import ExportAccountModal from '../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../popup/forgetAccount/ForgetAccountModal';
 import HistoryModal from '../../popup/history/modal/HistoryModal';
@@ -24,12 +23,11 @@ import ReceiveModal from '../../popup/receive/ReceiveModal';
 import RenameModal from '../../popup/rename/RenameModal';
 import { EXTRA_PRICE_IDS } from '../../util/api/getPrices';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
-import { amountToHuman, sanitizeChainName } from '../../util/utils';
+import { sanitizeChainName } from '../../util/utils';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
 import { openOrFocusTab } from './components/CommonTasks';
-import ShowReservedDetails from './components/ShowReservedDetails';
 import LockedInReferenda from './unlock/Review';
 import { AccountInformation, AccountSetting, ChangeAssets, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
 
@@ -59,9 +57,9 @@ export default function AccountDetails (): React.ReactElement {
   const onAction = useContext(ActionContext);
   const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();
+  const reservedDetails = useReservedDetails(address);
 
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
-  const [showReservedDetails, setShowReservedDetails] = useState<boolean>(false);
   const [assetIdOnAssetHub, setAssetIdOnAssetHub] = useState<number>();
   const [selectedAsset, setSelectedAsset] = useState<FetchedBalance>();
   const [displayPopup, setDisplayPopup] = useState<number | undefined>();
@@ -113,8 +111,6 @@ export default function AccountDetails (): React.ReactElement {
   }, [selectedAsset, chainName, pricesInCurrency?.prices]);
 
   useEffect(() => {
-    setShowReservedDetails(false);
-
     // reset assetId on chain switch
     assetIdOnAssetHub && setAssetIdOnAssetHub(undefined);
 
@@ -166,10 +162,6 @@ export default function AccountDetails (): React.ReactElement {
     address && genesisHash && STAKING_CHAINS.includes(genesisHash) && openOrFocusTab(`/poolfs/${address}/`);
   }, [genesisHash, address]);
 
-  const onReservedClicked = useCallback(() => {
-    setShowReservedDetails(true);
-  }, []);
-
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='accountDetails' />
@@ -194,8 +186,8 @@ export default function AccountDetails (): React.ReactElement {
                 setAssetIdOnAssetHub={setAssetIdOnAssetHub}
                 setSelectedAsset={setSelectedAsset}
               />
-              {genesisHash && !showReservedDetails
-                ? <>
+              {genesisHash &&  
+                <>
                   {isOnAssetHub &&
                     <ChangeAssets
                       address={address}
@@ -259,16 +251,12 @@ export default function AccountDetails (): React.ReactElement {
                       amount={balancesToShow?.reservedBalance}
                       decimal={balancesToShow?.decimal}
                       disabled={!balancesToShow?.reservedBalance || balancesToShow?.reservedBalance?.isZero()}
-                      onClick={onReservedClicked}
                       price={currentPrice} // TODO: double check
+                      reservedDetails={reservedDetails}
                       title={t('Reserved')}
                       token={balancesToShow?.token}
                     />}
                 </>
-                : <ShowReservedDetails
-                  address={address}
-                  setShowReservedDetails={setShowReservedDetails}
-                />
               }
             </Grid>
             <Grid container direction='column' gap='15px' item width='300px'>
