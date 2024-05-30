@@ -7,7 +7,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
 import { Reserved } from '@polkadot/extension-polkagate/src/hooks/useReservedDetails';
@@ -56,7 +56,7 @@ const ReservedDetails = ({ decimal, reservedDetails, showReservedDetails, text, 
           ))
           }
         </Grid>
-        : <Waiting height={60} />
+        : <Waiting height={50} />
       }
     </Grid>
   </Collapse>
@@ -72,6 +72,10 @@ export default function DisplayBalance ({ amount, decimal, disabled, onClick, pr
   const toggleShowReservedDetails = useCallback(() => {
     reservedDetails && !amount?.isZero() && setShowReservedDetails(!showReservedDetails);
   }, [amount, reservedDetails, showReservedDetails]);
+
+  useEffect(() => {
+    setShowReservedDetails(false); // to reset collapsed area on chain change
+  }, [token]);
 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px 40px' }}>
