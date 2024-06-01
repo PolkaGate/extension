@@ -47,7 +47,9 @@ export interface UnlockInformationType {
   unlockableAmount: BN;
 }
 
-export default function AccountDetails(): React.ReactElement {
+const isOnRelayChain = (chainName?: string) => ['kusama', 'polkadot', 'westend'].includes(chainName?.toLowerCase() || '');
+
+export default function AccountDetails (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const { address, paramAssetId } = useParams<{ address: string, paramAssetId?: string }>();
@@ -251,6 +253,7 @@ export default function AccountDetails(): React.ReactElement {
                       amount={balancesToShow?.reservedBalance}
                       decimal={balancesToShow?.decimal}
                       disabled={!balancesToShow?.reservedBalance || balancesToShow?.reservedBalance?.isZero()}
+                      isOnRelayChain={isOnRelayChain(chainName)}
                       price={currentPrice} // TODO: double check
                       reservedDetails={reservedDetails}
                       title={t('Reserved')}

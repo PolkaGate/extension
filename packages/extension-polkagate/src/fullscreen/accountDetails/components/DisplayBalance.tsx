@@ -26,6 +26,7 @@ interface Props {
   onClick?: () => void;
   disabled?: boolean;
   reservedDetails?: Reserved | null | undefined
+  isOnRelayChain?: boolean;
 }
 
 interface ReservedDetailsType {
@@ -84,7 +85,7 @@ const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetai
   </Collapse>
 );
 
-export default function DisplayBalance ({ amount, decimal, disabled, onClick, price, reservedDetails, title, token }: Props): React.ReactElement {
+export default function DisplayBalance ({ amount, decimal, disabled, isOnRelayChain, onClick, price, reservedDetails, title, token }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const isReserved = title === t('Reserved');
@@ -140,7 +141,7 @@ export default function DisplayBalance ({ amount, decimal, disabled, onClick, pr
             </IconButton>
           </Grid>
         }
-        {isReserved &&
+        {isReserved && isOnRelayChain &&
           <Grid item m='auto' pl='8px'>
             <IconButton
               sx={{ p: '8px' }}
