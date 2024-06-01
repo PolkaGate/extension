@@ -46,11 +46,18 @@ export default function useReservedDetails (address: string | undefined): Reserv
 
     // TODO: needs to incorporate people chain
     /** fetch identity reserved */
-    api.query?.identity?.identityOf(formatted).then((id) => {
-      const basicDeposit = api.consts.identity.basicDeposit;
+    api.query?.identity?.identityOf(formatted).then(async (id) => {
+      const basicDeposit = api.consts.identity.basicDeposit as unknown as BN;
+      const subAccountDeposit = api.consts.identity.subAccountDeposit as unknown as BN;
+
+      const subs = await api.query.identity.subsOf(address);
+
+      const subAccountsDeposit = (subs ? subs[0] : BN_ZERO) as unknown as BN;
+
+      const sum = (basicDeposit.add(subAccountsDeposit)) as unknown as BN;
 
       !id.isEmpty && setReserved((prev) => {
-        prev.identity = toBalance(basicDeposit as unknown as BN);
+        prev.identity = toBalance(sum);
 
         return prev;
       });
