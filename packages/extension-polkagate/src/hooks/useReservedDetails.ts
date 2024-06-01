@@ -1,10 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { PalletRecoveryRecoveryConfig, PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaReferendumStatusRankedCollectiveTally } from '@polkadot/types/lookup';
+import type { Balance } from '@polkadot/types/interfaces';
+import type { PalletRecoveryRecoveryConfig, PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaReferendumStatusRankedCollectiveTally, PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { Option } from '@polkadot/types';
+import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { Proxy } from '../,,/../util/types';
@@ -12,8 +15,8 @@ import { PROXY_CHAINS } from '../util/constants';
 import useActiveRecoveries from './useActiveRecoveries';
 import { useInfo } from '.';
 
-type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda';
-export type Reserved = { [key in Item]?: BN };
+type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society';
+export type Reserved = { [key in Item]?: Balance };
 
 export default function useReservedDetails (address: string | undefined): Reserved {
   const { api, formatted, genesisHash } = useInfo(address);
@@ -28,6 +31,14 @@ export default function useReservedDetails (address: string | undefined): Reserv
         : undefined
   , [activeRecoveries, formatted]);
 
+  const toBalance = useCallback((value: BN) => {
+    if (!api) {
+      return undefined;
+    }
+
+    return api.createType('Balance', value);
+  }, [api]);
+
   useEffect(() => {
     if (!api || !genesisHash) {
       return;
@@ -39,7 +50,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
       const basicDeposit = api.consts.identity.basicDeposit;
 
       !id.isEmpty && setReserved((prev) => {
-        prev.identity = basicDeposit as unknown as BN;
+        prev.identity = toBalance(basicDeposit as unknown as BN);
 
         return prev;
       });
@@ -56,7 +67,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
 
         if (proxyCount > 0) {
           setReserved((prev) => {
-            prev.proxy = proxyDepositBase.add(proxyDepositFactor.muln(proxyCount));
+            prev.proxy = toBalance(proxyDepositBase.add(proxyDepositFactor.muln(proxyCount)));
 
             return prev;
           });
@@ -69,7 +80,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
       const recoveryInfo = r.isSome ? r.unwrap() as unknown as PalletRecoveryRecoveryConfig : null;
 
       recoveryInfo?.deposit && setReserved((prev) => {
-        prev.recovery = (recoveryInfo.deposit as unknown as BN).add(activeLost?.deposit as unknown as BN || BN_ZERO);
+        prev.recovery = toBalance((recoveryInfo.deposit as unknown as BN).add(activeLost?.deposit as unknown as BN || BN_ZERO));
 
         return prev;
       });
@@ -112,7 +123,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
 
         if (!referendaDepositSum.isZero()) {
           setReserved((prev) => {
-            prev.referenda = referendaDepositSum;
+            prev.referenda = toBalance(referendaDepositSum);
 
             return prev;
           });
@@ -122,7 +133,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
 
     /** Fetch bounties reserved */
     if (api.query?.bounties?.bounties) {
-      let bountiesDepositSum = BN_ZERO;
+      let sum = BN_ZERO;
 
       api.query.bounties.bounties.entries().then((bounties) => {
         bounties.forEach(([_, value]) => {
@@ -130,21 +141,78 @@ export default function useReservedDetails (address: string | undefined): Reserv
             const bounty = (value.unwrap());
 
             if (bounty.proposer.toString() === formatted) {
-              bountiesDepositSum = bountiesDepositSum.add(bounty.curatorDeposit);
+              sum = sum.add(bounty.curatorDeposit);
             }
           }
         });
 
-        if (!bountiesDepositSum.isZero()) {
+        if (!sum.isZero()) {
           setReserved((prev) => {
-            prev.bounty = bountiesDepositSum;
+            prev.bounty = toBalance(sum);
 
             return prev;
           });
         }
       }).catch(console.error);
     }
-  }, [activeLost?.deposit, api, formatted, genesisHash]);
+
+    /** Fetch indices reserved */
+    if (api.query?.indices) {
+      let sum = BN_ZERO;
+
+      api.query.indices.accounts.entries().then((indices) => {
+        indices.forEach(([_, value]) => {
+          if (value.isSome) {
+            const [address, deposit, _status] = value.unwrap() as [ AccountId, BN, boolean ];
+
+            if (address.toString() === formatted) {
+              sum = sum.add(deposit);
+            }
+          }
+        });
+
+        if (!sum.isZero()) {
+          setReserved((prev) => {
+            prev.index = toBalance(sum);
+
+            return prev;
+          });
+        }
+      }).catch(console.error);
+    }
+
+    /** Fetch society reserved */
+    if (api.query?.society) {
+      let sum = BN_ZERO;
+
+      api.query.society.bids().then(async (bids) => {
+        (bids as unknown as PalletSocietyBid[]).forEach(({ _value, kind, who }) => {
+          if (who.toString() === formatted) {
+            const deposit = kind.isDeposit ? kind.asDeposit : BN_ZERO;
+
+            sum = sum.add(deposit);
+          }
+        });
+
+        const candidates = await api.query.society.candidates(formatted) as Option<PalletSocietyCandidacy>;
+
+        if (candidates.isSome) {
+          const { kind } = candidates.unwrap();
+          const deposit = kind.isDeposit ? kind.asDeposit : BN_ZERO;
+
+          sum = sum.add(deposit);
+        }
+
+        if (!sum.isZero()) {
+          setReserved((prev) => {
+            prev.society = toBalance(sum);
+
+            return prev;
+          });
+        }
+      }).catch(console.error);
+    }
+  }, [activeLost?.deposit, api, formatted, genesisHash, toBalance]);
 
   useEffect(() => {
     setReserved({});
