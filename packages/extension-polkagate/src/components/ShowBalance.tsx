@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 /**
- * @description  this component is used to show an account balance in some pages like contributeToCrowdloan
+ * @description  this component is used to show an account's balance
  * */
 import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
