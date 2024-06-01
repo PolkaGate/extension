@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Balance } from '@polkadot/types/interfaces';
-import type { PalletRecoveryRecoveryConfig, PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaReferendumStatusRankedCollectiveTally, PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
+import type { PalletMultisigMultisig, PalletRecoveryRecoveryConfig, PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaReferendumStatusRankedCollectiveTally, PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -15,7 +15,7 @@ import { PROXY_CHAINS } from '../util/constants';
 import useActiveRecoveries from './useActiveRecoveries';
 import { useInfo } from '.';
 
-type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society';
+type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society' | 'multisig';
 export type Reserved = { [key in Item]?: Balance };
 
 export default function useReservedDetails (address: string | undefined): Reserved {
@@ -45,12 +45,12 @@ export default function useReservedDetails (address: string | undefined): Reserv
     }
 
     // TODO: needs to incorporate people chain
-    /** fetch identity reserved */
+    /** fetch identity  */
     api.query?.identity?.identityOf(formatted).then(async (id) => {
       const basicDeposit = api.consts.identity.basicDeposit as unknown as BN;
       const subAccountDeposit = api.consts.identity.subAccountDeposit as unknown as BN;
 
-      const subs = await api.query.identity.subsOf(address);
+      const subs = await api.query.identity.subsOf(formatted);
 
       const subAccountsDeposit = (subs ? subs[0] : BN_ZERO) as unknown as BN;
 
@@ -63,7 +63,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
       });
     }).catch(console.error);
 
-    /** fetch proxy reserved */
+    /** fetch proxy  */
     if (api.query?.proxy && PROXY_CHAINS.includes(genesisHash)) {
       const proxyDepositBase = api.consts.proxy.proxyDepositBase as unknown as BN;
       const proxyDepositFactor = api.consts.proxy.proxyDepositFactor as unknown as BN;
@@ -82,7 +82,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
       }).catch(console.error);
     }
 
-    /** fetch social recovery reserved */
+    /** fetch social recovery  */
     api?.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => {
       const recoveryInfo = r.isSome ? r.unwrap() as unknown as PalletRecoveryRecoveryConfig : null;
 
@@ -93,7 +93,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
       });
     }).catch(console.error);
 
-    /** Fetch referenda reserved */
+    /** Fetch referenda  */
     if (api.query?.referenda?.referendumInfoFor) {
       let referendaDepositSum = BN_ZERO;
 
@@ -138,7 +138,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
       }).catch(console.error);
     }
 
-    /** Fetch bounties reserved */
+    /** Fetch bounties  */
     if (api.query?.bounties?.bounties) {
       let sum = BN_ZERO;
 
@@ -163,7 +163,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
       }).catch(console.error);
     }
 
-    /** Fetch indices reserved */
+    /** Fetch indices  */
     if (api.query?.indices) {
       let sum = BN_ZERO;
 
@@ -188,7 +188,32 @@ export default function useReservedDetails (address: string | undefined): Reserv
       }).catch(console.error);
     }
 
-    /** Fetch society reserved */
+    /** Fetch multisig  */
+    if (api.query?.multisig) {
+      let sum = BN_ZERO;
+
+      api.query.multisig.multisigs.entries().then((indices) => {
+        indices.forEach(([_, value]) => {
+          if (value.isSome) {
+            const { deposit, depositor } = value.unwrap() as PalletMultisigMultisig;
+
+            if (depositor.toString() === formatted) {
+              sum = sum.add(deposit);
+            }
+          }
+        });
+
+        if (!sum.isZero()) {
+          setReserved((prev) => {
+            prev.multisig = toBalance(sum);
+
+            return prev;
+          });
+        }
+      }).catch(console.error);
+    }
+
+    /** Fetch society  */
     if (api.query?.society) {
       let sum = BN_ZERO;
 
