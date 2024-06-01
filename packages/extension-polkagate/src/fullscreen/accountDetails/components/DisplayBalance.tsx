@@ -14,7 +14,7 @@ import { Reserved } from '@polkadot/extension-polkagate/src/hooks/useReservedDet
 import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
-import { FormatPrice, ShowBalance } from '../../../components';
+import { FormatPrice, ShowBalance, ShowValue } from '../../../components';
 import { toTitleCase } from '../../governance/utils/util';
 
 interface Props {
@@ -30,10 +30,7 @@ interface Props {
 
 interface ReservedDetailsType {
   showReservedDetails: boolean;
-  decimal: number | undefined;
-  token: string | undefined;
   reservedDetails: Reserved;
-  text?: string;
 }
 
 interface WaitForReservedProps {
@@ -64,12 +61,9 @@ function WaitForReserved ({ rows = 2, skeletonHeight = 20, skeletonWidth = 30, s
   );
 }
 
-const ReservedDetails = ({ decimal, reservedDetails, showReservedDetails, text, token }: ReservedDetailsType) => (
+const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetailsType) => (
   <Collapse in={showReservedDetails} sx={{ width: '100%' }}>
     <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'divider', fontSize: '16px', mt: '10px', mx: '10%', width: '82%' }}>
-      <Grid item pt='10px' xs={12}>
-        {text}
-      </Grid>
       {Object.entries(reservedDetails)?.length
         ? <Grid container direction='column' item rowGap='10px'>
           {Object.entries(reservedDetails)?.map(([key, value], index) => (
@@ -78,13 +72,13 @@ const ReservedDetails = ({ decimal, reservedDetails, showReservedDetails, text, 
                 {toTitleCase(key)}
               </Grid>
               <Grid fontWeight={600} item>
-                <ShowBalance balance={value} decimal={decimal} token={token} />
+                <ShowValue height={20} value={value?.toHuman()} />
               </Grid>
             </Grid>
           ))
           }
         </Grid>
-        : <WaitForReserved row={2} />
+        : <WaitForReserved rows={2} />
       }
     </Grid>
   </Collapse>
@@ -170,11 +164,8 @@ export default function DisplayBalance ({ amount, decimal, disabled, onClick, pr
       </Grid>
       {reservedDetails &&
         <ReservedDetails
-          decimal={decimal}
           reservedDetails={reservedDetails}
           showReservedDetails={showReservedDetails}
-          // text={t('details')}
-          token={token}
         />
       }
     </Grid>
