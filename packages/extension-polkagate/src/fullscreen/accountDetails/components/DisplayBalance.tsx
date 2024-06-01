@@ -6,7 +6,7 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Collapse, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
+import { Collapse, Divider, Grid, IconButton, Skeleton, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
@@ -14,7 +14,7 @@ import { Reserved } from '@polkadot/extension-polkagate/src/hooks/useReservedDet
 import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
-import { FormatPrice, ShowBalance, Waiting } from '../../../components';
+import { FormatPrice, ShowBalance } from '../../../components';
 import { toTitleCase } from '../../governance/utils/util';
 
 interface Props {
@@ -34,6 +34,34 @@ interface ReservedDetailsType {
   token: string | undefined;
   reservedDetails: Reserved;
   text?: string;
+}
+
+interface WaitForReservedProps {
+  rows?: number;
+  skeletonHeight?: number;
+  skeletonWidth?: number;
+  style?: SxProps<Theme> | undefined;
+}
+
+function WaitForReserved ({ rows = 2, skeletonHeight = 20, skeletonWidth = 30, style }: WaitForReservedProps): React.ReactElement<Props> {
+  return (
+    <Grid container justifyContent='center' sx={{ ...style }}>
+      {Array.from({ length: rows }).map((_, index) => (
+        <Grid container justifyContent='space-between' key={index}>
+          <Skeleton
+            animation='wave'
+            height={skeletonHeight}
+            sx={{ my: '5px', transform: 'none', width: `${skeletonWidth}%` }}
+          />
+          <Skeleton
+            animation='wave'
+            height={skeletonHeight}
+            sx={{ my: '5px', transform: 'none', width: `${skeletonWidth}%` }}
+          />
+        </Grid>
+      ))}
+    </Grid>
+  );
 }
 
 const ReservedDetails = ({ decimal, reservedDetails, showReservedDetails, text, token }: ReservedDetailsType) => (
@@ -56,7 +84,7 @@ const ReservedDetails = ({ decimal, reservedDetails, showReservedDetails, text, 
           ))
           }
         </Grid>
-        : <Waiting height={50} />
+        : <WaitForReserved row={2} />
       }
     </Grid>
   </Collapse>
