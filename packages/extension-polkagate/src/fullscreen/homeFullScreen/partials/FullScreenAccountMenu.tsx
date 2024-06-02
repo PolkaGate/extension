@@ -6,7 +6,7 @@
 
 import '@vaadin/icons';
 
-import { faAddressCard } from '@fortawesome/free-solid-svg-icons';
+import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Popover, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';

@@ -5,7 +5,7 @@
 
 import '@vaadin/icons';
 
-import { faAddressCard } from '@fortawesome/free-solid-svg-icons';
+import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
