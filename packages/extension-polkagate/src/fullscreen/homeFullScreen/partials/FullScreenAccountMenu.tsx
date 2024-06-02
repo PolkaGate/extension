@@ -83,15 +83,6 @@ function FullScreenAccountMenu ({ address, baseButton, setDisplayPopup }: Props)
   const AccountMenu = () => (
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
       <MenuItem
-        disabled={isDisable(PROXY_CHAINS)}
-        iconComponent={
-          <vaadin-icon icon='vaadin:sitemap' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
-        }
-        onClick={onManageProxies}
-        text={t<string>('Manage proxies')}
-        withHoverEffect
-      />
-      <MenuItem
         disabled={isDisable(IDENTITY_CHAINS)}
         iconComponent={
           <FontAwesomeIcon
@@ -102,6 +93,15 @@ function FullScreenAccountMenu ({ address, baseButton, setDisplayPopup }: Props)
         }
         onClick={onManageId}
         text={t('Manage identity')}
+        withHoverEffect
+      />
+      <MenuItem
+        disabled={isDisable(PROXY_CHAINS)}
+        iconComponent={
+          <vaadin-icon icon='vaadin:sitemap' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
+        }
+        onClick={onManageProxies}
+        text={t<string>('Manage proxies')}
         withHoverEffect
       />
       <MenuItem

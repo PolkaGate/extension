@@ -91,15 +91,6 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
-        disabled={isDisabled(PROXY_CHAINS)}
-        iconComponent={
-          <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${isDisabled(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
-        }
-        onClick={onManageProxies}
-        text={t('Manage proxies')}
-        withHoverEffect
-      />
-      <MenuItem
         disabled={isDisabled(IDENTITY_CHAINS)}
         iconComponent={
           <FontAwesomeIcon
@@ -110,6 +101,15 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
         }
         onClick={onManageId}
         text={t('Manage identity')}
+        withHoverEffect
+      />
+      <MenuItem
+        disabled={isDisabled(PROXY_CHAINS)}
+        iconComponent={
+          <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${isDisabled(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
+        }
+        onClick={onManageProxies}
+        text={t('Manage proxies')}
         withHoverEffect
       />
       <MenuItem

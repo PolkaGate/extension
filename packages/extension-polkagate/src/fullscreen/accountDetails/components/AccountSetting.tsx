@@ -81,13 +81,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
         <Grid alignItems='center' container direction='column' item justifyContent='center'>
           <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto 15px', width: '90%' }} />
           <TaskButton
-            disabled={proxyDisable}
-            icon={<vaadin-icon icon='vaadin:sitemap' style={{ height: '30px', color: `${proxyDisable ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
-            onClick={onManageProxies}
-            secondaryIconType='page'
-            text={t('Manage proxies')}
-          />
-          <TaskButton
             disabled={identityDisable}
             icon={
               <FontAwesomeIcon
@@ -99,6 +92,13 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
             onClick={onManageIdentity}
             secondaryIconType='page'
             text={t('Manage identity')}
+          />
+          <TaskButton
+            disabled={proxyDisable}
+            icon={<vaadin-icon icon='vaadin:sitemap' style={{ height: '30px', color: `${proxyDisable ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
+            onClick={onManageProxies}
+            secondaryIconType='page'
+            text={t('Manage proxies')}
           />
           <TaskButton
             disabled={socialRecoveryDisable}
