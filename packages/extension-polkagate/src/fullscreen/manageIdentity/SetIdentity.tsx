@@ -8,12 +8,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { PEOPLE_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN } from '@polkadot/util';
 
 import { PButton, ShowBalance, TwoButtons } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { isEmail, isUrl } from '../../util/utils';
-import Bread from '../partials/Bread';
 import SetIdentityForm from './partial/SetIdentityForm';
 import { Mode, STEPS } from '.';
 
@@ -32,12 +32,16 @@ interface Props {
 export default function SetIdentity ({ api, chainName, identity, identityToSet, mode, setIdentityToSet, setMode, setStep, totalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
 
+  const isPeopleChainEnabled = PEOPLE_CHAINS.includes(chainName || '');
+
   const [display, setDisplay] = useState<string | undefined>();
   const [legal, setLegal] = useState<string | undefined>();
   const [email, setEmail] = useState<string | undefined>();
   const [website, setWebsite] = useState<string | undefined>();
   const [twitter, setTwitter] = useState<string | undefined>();
+  const [matrix, setMatrix] = useState<string | undefined>();
   const [riot, setRiot] = useState<string | undefined>();
+  const [github, setGithub] = useState<string | undefined>();
   const [discord, setDiscord] = useState<string | undefined>();
 
   const hasBeenSet = useCallback((value: string | null | undefined) => {
@@ -58,7 +62,9 @@ export default function SetIdentity ({ api, chainName, identity, identityToSet, 
     setEmail(hasBeenSet(identity?.email));
     setWebsite(hasBeenSet(identity?.web));
     setTwitter(hasBeenSet(identity?.twitter));
+    setMatrix(hasBeenSet(identity?.matrix));
     setRiot(hasBeenSet(identity?.riot));
+    setGithub(hasBeenSet(identity?.github));
     setDiscord(hasBeenSet(identity?.other?.discord));
   }, [hasBeenSet, identity, mode]);
 
@@ -67,18 +73,27 @@ export default function SetIdentity ({ api, chainName, identity, identityToSet, 
       return;
     }
 
-    setIdentityToSet({
+    const _identity = {
       display: display || undefined,
       email: email || undefined,
       image: undefined,
       judgements: [],
       legal: legal || undefined,
-      other: discord ? { discord } : {},
-      riot: riot || undefined,
       twitter: twitter || undefined,
       web: website || undefined
-    });
-  }, [discord, display, email, legal, riot, setIdentityToSet, twitter, website]);
+    };
+
+    if (isPeopleChainEnabled) {
+      _identity.matrix = matrix || undefined;
+      _identity.github = github || undefined;
+      _identity.discord = discord || undefined;
+    } else {
+      _identity.riot = riot || undefined;
+      _identity.other = discord ? { discord } : {};
+    }
+
+    setIdentityToSet(_identity);
+  }, [discord, display, email, github, isPeopleChainEnabled, legal, matrix, riot, setIdentityToSet, twitter, website]);
 
   const nextBtnDisable = useMemo(() => {
     if (mode === 'Set') {
@@ -91,12 +106,15 @@ export default function SetIdentity ({ api, chainName, identity, identityToSet, 
           identityToSet?.web === identity?.web &&
           identityToSet?.twitter === identity?.twitter &&
           identityToSet?.riot === identity?.riot &&
+          identityToSet?.matrix === identity?.matrix &&
+          identityToSet?.github === identity?.github &&
+          identityToSet?.discord === identity?.discord &&
           identityToSet?.other?.discord === identity?.other?.discord
         ) ||
         (email && !isEmail(email)) ||
         (website && !isUrl(website));
     }
-  }, [display, email, identity?.display, identity?.email, identity?.legal, identity?.other?.discord, identity?.riot, identity?.twitter, identity?.web, identityToSet?.display, identityToSet?.email, identityToSet?.legal, identityToSet?.other?.discord, identityToSet?.riot, identityToSet?.twitter, identityToSet?.web, mode, website]);
+  }, [mode, display, email, website, identityToSet, identity]);
 
   const goReview = useCallback(() => {
     !mode && setMode('Set');
@@ -127,13 +145,18 @@ export default function SetIdentity ({ api, chainName, identity, identityToSet, 
         discord={discord}
         display={display}
         email={email}
+        github={github}
         identity={identity}
+        isPeopleChainEnabled={isPeopleChainEnabled}
         legal={legal}
+        matrix={matrix}
         riot={riot}
         setDiscord={setDiscord}
         setDisplay={setDisplay}
         setEmail={setEmail}
+        setGithub={setGithub}
         setLegal={setLegal}
+        setMatrix={setMatrix}
         setRiot={setRiot}
         setTwitter={setTwitter}
         setWeb={setWebsite}

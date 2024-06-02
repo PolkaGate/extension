@@ -13,13 +13,14 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
+import { PEOPLE_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN, BN_ONE } from '@polkadot/util';
 
 import { CanPayErrorAlert, Identity, Motion, ShowBalance, SignArea2, Warning, WrongPasswordAlert } from '../../components';
-import { useCanPayFeeAndDeposit, useFormatted, useProxies } from '../../hooks';
+import { useCanPayFeeAndDeposit, useFormatted, useInfo, useProxies } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
-import { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import { BalancesInfo, Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { pgBoxShadow } from '../../util/utils';
 import { DraggableModal } from '../governance/components/DraggableModal';
 import SelectProxyModal2 from '../governance/components/SelectProxyModal2';
@@ -52,25 +53,35 @@ interface Props {
 
 export default function Review ({ address, api, chain, depositToPay, depositValue, identityToSet, infoParams, maxFeeAmount, mode, parentDisplay, selectedRegistrar, selectedRegistrarName, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const formatted = useFormatted(address);
+  const { chainName, formatted } = useInfo(address);
   const proxies = useProxies(api, formatted);
   const theme = useTheme();
+
+  const isPeopleChainEnabled = PEOPLE_CHAINS.includes(chainName || '');
+  const isOnPeopleChain = chainName?.toLowerCase()?.includes('people');
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
+  const [balances, setBalances] = useState<BalancesInfo>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
-  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxyAddress, estimatedFee, depositToPay);
+  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxyAddress, estimatedFee, depositToPay, balances);
 
   const setIdentity = api && api.tx.identity.setIdentity;
   const clearIdentity = api && api.tx.identity.clearIdentity;
   const setSubs = api && api.tx.identity.setSubs;
   const requestJudgement = api && api.tx.identity.requestJudgement;
   const cancelRequest = api && api.tx.identity.cancelRequest;
+
+  useEffect(() => {
+    formatted && api && api.derive.balances?.all(formatted).then((b) => {
+      setBalances(b);
+    });
+  }, [api, formatted]);
 
   const subIdsToShow: SubIdAccountsToSubmit | undefined = useMemo(() => {
     if (mode !== 'ManageSubId' || !subIdsParams) {
@@ -126,8 +137,12 @@ export default function Review ({ address, api, chain, depositToPay, depositValu
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
-    // eslint-disable-next-line no-void
-    void tx.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
+    tx.paymentInfo(formatted)
+      .then((i) => setEstimatedFee(i?.partialFee))
+      .catch((error) => {
+        console.error(' error while fetching fee:', error);
+        setEstimatedFee(api?.createType('Balance', BN_ONE));
+      });
   }, [api, formatted, tx]);
 
   const extraInfo = useMemo(() => ({
@@ -210,7 +225,13 @@ export default function Review ({ address, api, chain, depositToPay, depositValu
               <WrongPasswordAlert />
             }
             {feeAndDeposit.isAbleToPay === false &&
-              <CanPayErrorAlert canPayStatements={feeAndDeposit.statement} />
+              <CanPayErrorAlert
+                canPayStatements={feeAndDeposit.statement}
+                extraText={isPeopleChainEnabled && !isOnPeopleChain
+                  ? t('Please transfer some tokens to {{chainName}} People chain.', { replace: { chainName } })
+                  : undefined
+                }
+              />
             }
             <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), mb: '20px', p: '1% 3%' }}>
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
@@ -333,6 +354,7 @@ export default function Review ({ address, api, chain, depositToPay, depositValu
                 disabled={feeAndDeposit.isAbleToPay !== true}
                 extraInfo={extraInfo}
                 isPasswordError={isPasswordError}
+                mayBeApi={api}
                 onSecondaryClick={handleClose}
                 primaryBtnText={t('Confirm')}
                 proxyTypeFilter={['Any', 'NonTransfer']}

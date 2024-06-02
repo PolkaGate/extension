@@ -21,6 +21,7 @@ import { useInfo, useStakingAccount } from '.';
 const assetsChains = createAssets();
 const NATIVE_TOKEN_ASSET_ID = 0;
 
+// TODO: decouple thi shook to smaller independent ones like usePoolBalance, useAssetBalance, useNativeBalance ...
 export default function useBalances (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: number): BalancesInfo | undefined {
   const stakingAccount = useStakingAccount(address);
   const { account, api, chain, chainName, decimal: currentDecimal, formatted, token: currentToken } = useInfo(address);
@@ -160,8 +161,6 @@ export default function useBalances (address: string | undefined, refresh?: bool
       isFetching.fetching[String(formatted)].pooledBalance = true;
       isFetching.set(isFetching.fetching);
       getPoolBalances();
-    } else {
-      console.log('pooled balance is fetching not need to fetch it again!');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, chain?.genesisHash, formatted, getPoolBalances, isFetching.fetching[String(formatted)]?.length]);

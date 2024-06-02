@@ -3,7 +3,7 @@
 
 export { default as AccountInformation } from './AccountInformation';
 export { default as AccountSetting } from './AccountSetting';
-export { default as ChangeAssets } from './ChangeAssets';
+export { default as AssetSelect } from './AssetSelect';
 export { default as CommonTasks } from './CommonTasks';
 export { default as DisplayBalance } from './DisplayBalance';
 export { default as ExternalLinks } from './ExternalLinks';

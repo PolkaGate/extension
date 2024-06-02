@@ -136,8 +136,6 @@ export default function AccountInformation ({ accountAssets, address, hideNumber
             </Grid>
             <AccountIcons
               address={address}
-              api={api}
-              formatted={formatted}
             />
           </Grid>
           <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'divider', px: '7px' }} xs={5.6}>

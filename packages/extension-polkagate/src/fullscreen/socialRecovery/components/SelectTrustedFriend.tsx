@@ -13,7 +13,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, SxProps, Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { Input, Label } from '../../../components';
@@ -24,7 +23,6 @@ import TrustedFriendAccount from './TrustedFriendAccount';
 export type AddressWithIdentity = { address: string, accountIdentity: DeriveAccountInfo | undefined };
 
 interface Props {
-  api: ApiPromise | undefined;
   chain: Chain | null | undefined;
   accountsInfo?: DeriveAccountInfo[];
   label: string;
@@ -36,7 +34,7 @@ interface Props {
   iconType?: 'plus' | 'minus' | 'none';
 }
 
-export default function SelectTrustedFriend({ accountsInfo = [], api, chain, disabled = false, placeHolder = '', iconType = 'plus', onSelectFriend, helperText = '', label, style }: Props): React.ReactElement<Props> {
+export default function SelectTrustedFriend ({ accountsInfo = [], chain, disabled = false, placeHolder = '', iconType = 'plus', onSelectFriend, helperText = '', label, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -87,7 +85,7 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
       return;
     }
 
-    setAddressSelected(false)
+    setAddressSelected(false);
     setEnteredAddress(value);
     findFriend(value);
   }, [addressSelected, findFriend, onSelectFriend]);
@@ -124,7 +122,7 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
 
   return (
     <Grid alignItems='flex-end' container item justifyContent='space-between' ref={ref} sx={{ position: 'relative', ...style }}>
-      <Grid container item onClick={_showDropdown} >
+      <Grid container item onClick={_showDropdown}>
         <Label
           helperText={helperText}
           label={label}
@@ -194,7 +192,6 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
           {friendsList.map((friend, index) => (
             <TrustedFriendAccount
               accountInfo={friend.accountIdentity}
-              api={api}
               chain={chain}
               formatted={friend.address}
               iconType={iconType}

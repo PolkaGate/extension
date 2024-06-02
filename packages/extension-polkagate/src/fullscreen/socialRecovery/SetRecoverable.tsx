@@ -252,7 +252,6 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
           <Grid container item justifyContent='space-between' py='15px'>
             <SelectTrustedFriend
               accountsInfo={accountsInfo}
-              api={api}
               chain={chain}
               disabled={false}
               helperText={t<string>('Find your trusted friend\'s account by entering their address or any associated identity details, such as their name, email, Twitter, etc.')}
@@ -264,7 +263,6 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
             <SelectTrustedFriendFromExtension
               accountsInfo={accountsInfo}
               address={address}
-              api={api}
               chain={chain}
               onSelectFriend={addNewFriend}
               style={{ width: '48%' }}
@@ -274,7 +272,6 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
             {t<string>('Trusted friends accounts')}
           </Typography>
           <TrustedFriendsList
-            api={api}
             chain={chain}
             friendsList={selectedFriendsToShow}
             onRemoveFriend={removeNewFriend}

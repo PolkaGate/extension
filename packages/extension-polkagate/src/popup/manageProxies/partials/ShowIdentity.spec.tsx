@@ -17,7 +17,7 @@ const accId = {
   email: 'polkagate@outlook.com',
   legal: '@polkagate:matrix.org',
   riot: 'Polkagate',
-  twitter: '@PolkaGate',
+  x: '@PolkaGate',
   web: 'http://polkagate.xyz'
 };
 
@@ -57,14 +57,14 @@ describe('Testing ShowIdentity component', () => {
     expect(queryByText('Legal:')).toBeTruthy();
     expect(queryByText('Email:')).toBeTruthy();
     expect(queryByText('Element:')).toBeTruthy();
-    expect(queryByText('Twitter:')).toBeTruthy();
+    expect(queryByText('X:')).toBeTruthy();
     expect(queryByText('Web:')).toBeTruthy();
 
     expect(queryByText(accId.display)).toBeTruthy();
     expect(queryByText(accId.legal)).toBeTruthy();
     expect(queryByText(accId.email)).toBeTruthy();
     expect(queryByText(accId.riot)).toBeTruthy();
-    expect(queryByText(accId.twitter)).toBeTruthy();
+    expect(queryByText(accId.x)).toBeTruthy();
     expect(queryByText(accId.web)).toBeTruthy();
   });
 });

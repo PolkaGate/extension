@@ -70,7 +70,7 @@ export default function ShowIdentity ({ accountIdentity, style }: Props): React.
                   {t('Element')}:
                 </Typography>
                 <Typography fontSize='12px' fontWeight={400}>
-                  {t('Twitter')}:
+                  {t('X')}:
                 </Typography>
                 <Typography fontSize='12px' fontWeight={400}>
                   {t('Web')}:

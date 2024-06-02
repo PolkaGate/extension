@@ -212,10 +212,9 @@ export default function ManageProxies(): React.ReactElement {
           />
         </>
       }
-      {showAddProxy && !showReviewProxy &&
+      {showAddProxy && !showReviewProxy && chain && proxyItems !== undefined &&
         <AddProxy
           address={address}
-          api={api}
           chain={chain}
           onChange={checkForChanges}
           proxyItems={proxyItems}

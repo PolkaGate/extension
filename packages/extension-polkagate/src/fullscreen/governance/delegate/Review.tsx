@@ -14,7 +14,7 @@ import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../components';
-import { useAccountInfo2, useInfo, useTracks, useTranslation } from '../../../hooks';
+import { useIdentity, useInfo, useTracks, useTranslation } from '../../../hooks';
 import { ThroughProxy } from '../../../partials';
 import { Proxy, TxInfo } from '../../../util/types';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
@@ -37,10 +37,10 @@ interface Props {
 
 export default function Review ({ address, delegateInformation, estimatedFee, selectedProxy, setModalHeight, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const { api, chain, token } = useInfo(address);
+  const { api, chain, genesisHash, token } = useInfo(address);
   const ref = useRef(null);
   const { tracks } = useTracks(address);
-  const delegateeName = useAccountInfo2(api, delegateInformation.delegateeAddress)?.identity?.display;
+  const delegateeName = useIdentity(genesisHash, delegateInformation.delegateeAddress)?.identity?.display;
 
   const [isPasswordError, setIsPasswordError] = useState(false);
 

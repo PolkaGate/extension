@@ -22,7 +22,7 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountInputWithIdentity, AmountWithOptions, From, Motion, PButton } from '../../components';
-import { useAccountInfo2, useAccountName, useApi, useChain, useDecimal, useFormatted, useTranslation } from '../../hooks';
+import { useAccountName, useIdentity, useInfo, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import Asset from '../../partials/Asset';
 import { MAX_AMOUNT_LENGTH } from '../../util/constants';
@@ -30,20 +30,17 @@ import { FormattedAddressState, TransferType } from '../../util/types';
 import { amountToHuman, amountToMachine, isValidAddress } from '../../util/utils';
 import Review from './Review';
 
-export default function Send(): React.ReactElement {
+export default function Send (): React.ReactElement {
   const { t } = useTranslation();
   const history = useHistory();
   const { address } = useParams<FormattedAddressState>();
-  const formatted = useFormatted(address);
-  const chain = useChain(address);
-  const api = useApi(address);
-  const decimal = useDecimal(address);
+  const { api, chain, decimal, formatted, genesisHash } = useInfo(address);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
   const [recipientAddress, setRecipientAddress] = useState<string | undefined>();
   const recipientNameIfIsInExtension = useAccountName(recipientAddress);
-  const recipientInfo = useAccountInfo2(api, recipientAddress);
+  const recipientInfo = useIdentity(genesisHash, recipientAddress);
   const [amount, setAmount] = useState<string>();
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>();
   const [transferType, setTransferType] = useState<TransferType | undefined>();
@@ -134,7 +131,7 @@ export default function Send(): React.ReactElement {
 
   const _onBackClick = useCallback(() => {
     chain?.genesisHash && history.push({
-      pathname: `/account/${chain?.genesisHash}/${address}/`,
+      pathname: `/account/${chain?.genesisHash}/${address}/`
     });
   }, [address, chain?.genesisHash, history]);
 

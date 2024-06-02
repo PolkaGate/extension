@@ -5,7 +5,7 @@
 import { BN } from '@polkadot/util';
 
 export const EXTENSION_NAME = 'Polkagate';
-export const NEW_VERSION_ALERT = 'alert_v0.4.7';
+export const NEW_VERSION_ALERT = 'alert_v0.5';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 export const DEFAULT_CHAIN_INDEX = 1;
 export const DEFAULT_MAX_COMMISSION = 10;
@@ -63,6 +63,10 @@ export const WESTMINT_GENESIS_HASH = '0x67f9723393ef76214df0118c34bbbd3dbebc8ed4
 export const STATEMINE_GENESIS_HASH = '0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a'; // KUSAMA ASSET HUB
 export const STATEMINT_GENESIS_HASH = '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f';
 
+export const WESTEND_PEOPLE_GENESIS_HASH = '0x1eb6fb0ba5187434de017a70cb84d4f47142df1d571d0ef9e7e1407f2b80b93c';
+export const KUSAMA_PEOPLE_GENESIS_HASH = '0xc1af4cb4eb3918e5db15086c0cc5ec17fb334f728b7c65dd44bfe1e174ff8b3f';
+export const POLKADOT_PEOPLE_GENESIS_HASH = '';
+
 export const RELAY_CHAINS_GENESISHASH = [
   POLKADOT_GENESIS_HASH,
   KUSAMA_GENESIS_HASH,
@@ -77,7 +81,8 @@ export const ASSET_HUBS = [
 
 export const TEST_NETS = [
   WESTEND_GENESIS_HASH,
-  WESTMINT_GENESIS_HASH
+  WESTMINT_GENESIS_HASH,
+  WESTEND_PEOPLE_GENESIS_HASH
 ];
 
 export const PROXY_CHAINS = [
@@ -109,8 +114,16 @@ export const STAKING_CHAINS = [
   KUSAMA_GENESIS_HASH
 ];
 
+export const PEOPLE_CHAINS = ['Kusama', 'Westend', 'KusamaPeople', 'WestendPeople'];
+
+export const PEOPLE_CHAINS_GENESIS_HASHES = [
+  WESTEND_PEOPLE_GENESIS_HASH,
+  KUSAMA_PEOPLE_GENESIS_HASH
+];
+
 export const IDENTITY_CHAINS = [
   ...STAKING_CHAINS,
+  ...PEOPLE_CHAINS_GENESIS_HASHES,
   '0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6', // Astar
   '0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931ddad144059b1eb884e5b', // Bifrost
   '0xa85cfb9b9fd4d622a5b28289a02347af987d8f73fa3108450e2b4a11c1ce5755', // Basilic

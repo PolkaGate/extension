@@ -190,8 +190,6 @@ export default function AccountInformation ({ accountAssets, address, label, pri
           </Grid>
           <AccountIcons
             address={address}
-            api={api}
-            formatted={formatted}
           />
         </Grid>
         <Grid container item sx={{ display: 'grid', gridTemplateColumns: 'minmax(150px, 60%) max-content' }} xs>

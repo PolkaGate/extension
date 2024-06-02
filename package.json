@@ -47,9 +47,9 @@
     "@mui/icons-material": "^5.15.18",
     "@mui/lab": "^5.0.0-alpha.85",
     "@mui/material": "^5.8.3",
-    "@polkadot/api": "^10.11.2",
+    "@polkadot/api": "^11.0.3",
     "@polkadot/rpc-provider": "^10.9.1",
-    "@polkagate/apps-config": "^0.133.86",
+    "@polkagate/apps-config": "^0.133.87",
     "@substrate/connect": "^0.7.32",
     "@vaadin/icons": "^23.2.3",
     "babel-plugin-transform-import-meta": "^2.1.1",
@@ -84,9 +84,9 @@
     "webpack-bundle-analyzer": "^4.9.0"
   },
   "resolutions": {
-    "@polkadot/api": "^10.11.2",
+    "@polkadot/api": "^11.0.3",
     "@polkadot/keyring": "^12.3.2",
-    "@polkadot/networks": "^12.3.2",
+    "@polkadot/networks": "^12.6.2",
     "@polkadot/types": "^10.9.1",
     "@polkadot/util": "^12.3.2",
     "@polkadot/util-crypto": "^12.3.2",

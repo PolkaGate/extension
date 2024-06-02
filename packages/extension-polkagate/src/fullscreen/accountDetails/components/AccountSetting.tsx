@@ -30,7 +30,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
 
   const [showAccountSettings, setShowAccountSettings] = useState<boolean>();
 
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const identityDisable = useMemo(() => !IDENTITY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
   const proxyDisable = useMemo(() => !PROXY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
   const socialRecoveryDisable = useMemo(() => !SOCIAL_RECOVERY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);

@@ -98,3 +98,7 @@ export { default as useIsValidator } from './useIsValidator';
 export { default as useUnstakingAmount } from './useUnstakingAmount';
 export { default as useAvailableToSoloStake } from './useAvailableToSoloStake';
 export { default as useProxiedAccounts } from './useProxiedAccounts';
+export { default as useApiWithChain2 } from './useApiWithChain2';
+export { default as usePeopleChain } from './usePeopleChain';
+export { default as useIdentity } from './useIdentity';
+export { default as useReservedDetails } from './useReservedDetails';

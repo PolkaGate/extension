@@ -21,7 +21,7 @@ interface Props {
   unableToChangeAccount?: boolean;
 }
 
-export default function AddressDropdown({ api, chainGenesis, onSelect, selectedAddress, unableToChangeAccount = false }: Props): React.ReactElement<Props> {
+export default function AddressDropdown ({ api, chainGenesis, onSelect, selectedAddress, unableToChangeAccount = false }: Props): React.ReactElement<Props> {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const { accounts } = useContext(AccountContext);

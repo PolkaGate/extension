@@ -8,12 +8,18 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useChainName, useTranslation } from '.';
 
-export default function useEndpoint(address: AccountId | string | undefined): string | undefined {
+export default function useEndpoint (address: AccountId | string | undefined, _endpoint?:string): string | undefined {
   const chainName = useChainName(address);
   const { t } = useTranslation();
   const [endpoint, setEndpoint] = useState<string | undefined>();
 
   useEffect(() => {
+    if (_endpoint) {
+      setEndpoint(_endpoint);
+
+      return;
+    }
+
     if (!address || !chainName) {
       setEndpoint(undefined);
 
@@ -44,13 +50,13 @@ export default function useEndpoint(address: AccountId | string | undefined): st
         }
       }
     });
-  }, [address, chainName, t]);
+  }, [_endpoint, address, chainName, t]);
 
   useEffect(() => {
     address && chainName && chrome.storage.onChanged.addListener((changes, namespace) => {
-      for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+      for (const [key, { newValue, oldValue }] of Object.entries(changes)) {
         if (key === 'endpoints' && namespace === 'local') {
-          const maybeNewEndpoint = newValue?.[String(address)]?.[chainName]
+          const maybeNewEndpoint = newValue?.[String(address)]?.[chainName];
 
           if (maybeNewEndpoint) {
             setEndpoint(maybeNewEndpoint);

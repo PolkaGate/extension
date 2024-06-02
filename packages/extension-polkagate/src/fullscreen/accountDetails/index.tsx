@@ -4,17 +4,16 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { faFileInvoice } from '@fortawesome/free-solid-svg-icons';
-import { Grid, useTheme } from '@mui/material';
+import { Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { BN } from '@polkadot/util';
 
 import { AccountContext, ActionContext } from '../../components';
-import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
+import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useReservedDetails, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
 import { FetchedBalance } from '../../hooks/useAssetsBalances';
-import { getValue } from '../../popup/account/util';
 import ExportAccountModal from '../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../popup/forgetAccount/ForgetAccountModal';
 import HistoryModal from '../../popup/history/modal/HistoryModal';
@@ -24,13 +23,13 @@ import ReceiveModal from '../../popup/receive/ReceiveModal';
 import RenameModal from '../../popup/rename/RenameModal';
 import { EXTRA_PRICE_IDS } from '../../util/api/getPrices';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
-import { amountToHuman, sanitizeChainName } from '../../util/utils';
+import { sanitizeChainName } from '../../util/utils';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
 import { openOrFocusTab } from './components/CommonTasks';
 import LockedInReferenda from './unlock/Review';
-import { AccountInformation, AccountSetting, ChangeAssets, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
+import { AccountInformation, AccountSetting, AssetSelect, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
 
 export const popupNumbers = {
   LOCKED_IN_REFERENDA: 1,
@@ -48,10 +47,11 @@ export interface UnlockInformationType {
   unlockableAmount: BN;
 }
 
+const isOnRelayChain = (chainName?: string) => ['kusama', 'polkadot', 'westend'].includes(chainName?.toLowerCase() || '');
+
 export default function AccountDetails (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
-  const theme = useTheme();
   const { address, paramAssetId } = useParams<{ address: string, paramAssetId?: string }>();
   const { accounts } = useContext(AccountContext);
   const currency = useCurrency();
@@ -59,6 +59,7 @@ export default function AccountDetails (): React.ReactElement {
   const onAction = useContext(ActionContext);
   const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();
+  const reservedDetails = useReservedDetails(address);
 
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
   const [assetIdOnAssetHub, setAssetIdOnAssetHub] = useState<number>();
@@ -69,8 +70,6 @@ export default function AccountDetails (): React.ReactElement {
   const assetId = useMemo(() => assetIdOnAssetHub !== undefined ? assetIdOnAssetHub : selectedAsset?.assetId, [assetIdOnAssetHub, selectedAsset?.assetId]);
 
   const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId || undefined);
-
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette]);
   const isOnAssetHub = useMemo(() => ASSET_HUBS.includes(genesisHash ?? ''), [genesisHash]);
   const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const supportStaking = useMemo(() => STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
@@ -112,16 +111,6 @@ export default function AccountDetails (): React.ReactElement {
 
     return currentAssetPrices?.value || mayBeTestNetPrice;
   }, [selectedAsset, chainName, pricesInCurrency?.prices]);
-
-  const nativeAssetPrice = useMemo(() => {
-    if (!pricesInCurrency || !balances || !currentPrice) {
-      return undefined;
-    }
-
-    const totalBalance = getValue('total', balances);
-
-    return parseFloat(amountToHuman(totalBalance, balances.decimal)) * currentPrice;
-  }, [balances, currentPrice, pricesInCurrency]);
 
   useEffect(() => {
     // reset assetId on chain switch
@@ -202,7 +191,7 @@ export default function AccountDetails (): React.ReactElement {
               {genesisHash &&
                 <>
                   {isOnAssetHub &&
-                    <ChangeAssets
+                    <AssetSelect
                       address={address}
                       assetId={assetId}
                       label={t('Assets')}
@@ -216,7 +205,6 @@ export default function AccountDetails (): React.ReactElement {
                     decimal={balancesToShow?.decimal}
                     onClick={goToSend}
                     price={currentPrice}
-                    theme={theme}
                     title={t('Transferable')}
                     token={balancesToShow?.token}
                   />
@@ -235,7 +223,6 @@ export default function AccountDetails (): React.ReactElement {
                       disabled={!balancesToShow?.soloTotal || balancesToShow?.soloTotal?.isZero()}
                       onClick={goToSoloStaking}
                       price={currentPrice}
-                      theme={theme}
                       title={t('Solo Stake')}
                       token={balancesToShow?.token}
                     />}
@@ -246,7 +233,6 @@ export default function AccountDetails (): React.ReactElement {
                       disabled={!balancesToShow?.pooledBalance || balancesToShow?.pooledBalance?.isZero()}
                       onClick={goToPoolStaking}
                       price={currentPrice}
-                      theme={theme}
                       title={t('Pool Stake')}
                       token={balancesToShow?.token}
                     />}
@@ -266,7 +252,10 @@ export default function AccountDetails (): React.ReactElement {
                     <DisplayBalance
                       amount={balancesToShow?.reservedBalance}
                       decimal={balancesToShow?.decimal}
+                      disabled={!balancesToShow?.reservedBalance || balancesToShow?.reservedBalance?.isZero()}
+                      isOnRelayChain={isOnRelayChain(chainName)}
                       price={currentPrice} // TODO: double check
+                      reservedDetails={reservedDetails}
                       title={t('Reserved')}
                       token={balancesToShow?.token}
                     />}
@@ -277,8 +266,6 @@ export default function AccountDetails (): React.ReactElement {
               {showTotalChart &&
                 <TotalChart
                   accountAssets={accountAssets}
-                  isDarkTheme={isDarkTheme}
-                  nativeAssetPrice={nativeAssetPrice}
                   pricesInCurrency={pricesInCurrency}
                 />
               }

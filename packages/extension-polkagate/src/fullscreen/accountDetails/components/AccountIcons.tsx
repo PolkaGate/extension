@@ -9,26 +9,23 @@ import { CheckCircleOutline as CheckIcon, InsertLinkRounded as LinkIcon } from '
 import { Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-
 import { ActionContext, Infotip } from '../../../components';
-import { useAccountInfo2, useInfo, useTranslation } from '../../../hooks';
+import { useIdentity, useInfo, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 import { Proxy } from '../../../util/types';
 
 interface AddressDetailsProps {
   address: string | undefined;
-  api: ApiPromise | undefined;
-  formatted: string | undefined;
 }
 
-export default function AccountIcons ({ address, api, formatted }: AddressDetailsProps): React.ReactElement {
+export default function AccountIcons ({ address }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
-  const { account, chain } = useInfo(address);
-  const accountInfo = useAccountInfo2(api, formatted);
+  const { account, api, chain, formatted, genesisHash } = useInfo(address);
+
+  const accountInfo = useIdentity(genesisHash, formatted);
 
   const [hasID, setHasID] = useState<boolean | undefined>();
   const [isRecoverable, setIsRecoverable] = useState<boolean | undefined>();
@@ -73,8 +70,8 @@ export default function AccountIcons ({ address, api, formatted }: AddressDetail
       return;
     }
 
-    if (api.query.identity && IDENTITY_CHAINS.includes(account.genesisHash)) {
-      api.query.identity.identityOf(formatted).then((id) => setHasID(!id.isEmpty)).catch(console.error);
+    if (IDENTITY_CHAINS.includes(account.genesisHash)) {
+      setHasID(!!accountInfo);
     } else {
       setHasID(false);
     }
@@ -94,7 +91,7 @@ export default function AccountIcons ({ address, api, formatted }: AddressDetail
     } else {
       setHasProxy(false);
     }
-  }, [api, address, formatted, account?.genesisHash]);
+  }, [api, address, formatted, account?.genesisHash, accountInfo]);
 
   const openIdentity = useCallback(() => {
     address && chain && windowOpen(`/manageIdentity/${address}`);

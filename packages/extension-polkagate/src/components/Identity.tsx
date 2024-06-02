@@ -14,7 +14,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { ms, msGreen, msWarning, riot } from '../assets/icons';
-import { useAccountInfo2, useAccountName, useChain, useFormatted2, useMerkleScience, useTranslation } from '../hooks';
+import { useAccountName, useChain, useFormatted2, useIdentity, useMerkleScience, useTranslation } from '../hooks';
 import { getSubstrateAddress, isValidAddress } from '../util/utils';
 import { ChainLogo, Identicon, Infotip, ShortAddress } from '.';
 
@@ -47,15 +47,16 @@ function Identity ({ accountInfo, address, api, chain, direction = 'column', for
 
   const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
   const _chain = useChain(address, chain);
-  const _formatted = useFormatted2(address, formatted, chain);
+  const _formatted = useFormatted2(address, formatted, chain)?.toString();
   const msData = useMerkleScience(_formatted, chain);
-  const _api = api;
 
   const isMSgreen = ['Exchange', 'Donation'].includes(msData?.tag_type_verbose);
   const isMSwarning = ['Scam', 'High Risk Organization', 'Theft', 'Sanctions'].includes(msData?.tag_type_verbose);
   const _showSocial = msData ? false : showSocial;
 
-  const _accountInfo = useAccountInfo2(_api, _formatted, accountInfo);
+  const genesisHash = chain?.genesisHash || api?.genesisHash?.toHex();
+  const _accountInfo = useIdentity(genesisHash, _formatted, accountInfo);
+
   const _judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
 
   const merkleScienceTooltip = useMemo(() => (msData &&
@@ -156,7 +157,7 @@ function Identity ({ accountInfo, address, api, chain, direction = 'column', for
           <Grid container id='socials' item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', mt: '3%', px: '5px', width: 'fit-content' }}>
             {_accountInfo?.identity?.email &&
                 <Link href={`mailto:${_accountInfo.identity.email}`}>
-                  <EmailIcon sx={{ color:  '#007CC4', fontSize: 15 }} />
+                  <EmailIcon sx={{ color: '#007CC4', fontSize: 15 }} />
                 </Link>
             }
             {_accountInfo?.identity?.web &&

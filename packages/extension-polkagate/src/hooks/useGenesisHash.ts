@@ -5,8 +5,8 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useChain } from '.';
 
-export default function useGenesisHash (address: AccountId | string | undefined): string | undefined {
+export default function useGenesisHash (address: AccountId | string | undefined, _genesisHash?:string): string | undefined {
   const chain = useChain(address);
 
-  return chain?.genesisHash;
+  return _genesisHash || chain?.genesisHash;
 }

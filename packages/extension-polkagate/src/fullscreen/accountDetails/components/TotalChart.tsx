@@ -19,10 +19,8 @@ import { Prices } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import { adjustColor } from '../../homeFullScreen/partials/TotalBalancePieChart';
 
-interface TotalChartProps {
-  isDarkTheme: boolean;
+interface Props {
   accountAssets: FetchedBalance[] | null | undefined;
-  nativeAssetPrice: number | undefined;
   pricesInCurrency: Prices | null | undefined
 }
 
@@ -32,7 +30,7 @@ interface AssetsToShow extends FetchedBalance {
   color: string
 }
 
-export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrency }: TotalChartProps): React.ReactElement {
+export default function TotalChart ({ accountAssets, pricesInCurrency }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const currency = useCurrency();

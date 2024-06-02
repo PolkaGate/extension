@@ -75,7 +75,7 @@ export default function Confirmation ({ SubIdentityAccounts, handleClose, identi
         value={identity?.email}
       />
       <DisplayInfo
-        caption={t('Twitter:')}
+        caption={t('X:')}
         value={identity?.twitter}
       />
       <DisplayInfo

@@ -13,39 +13,47 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { getValue } from '../popup/account/util';
-import { CanPayFee, CanPayStatements } from '../util/types';
+import { BalancesInfo, CanPayFee, CanPayStatements } from '../util/types';
 import { useBalances } from '.';
 
-export default function useCanPayFeeAndDeposit (formatted: AccountId | string | undefined, proxyAddress: AccountId | string | undefined, estimatedFee: Balance | undefined, deposit: BN | Balance | undefined): CanPayFee {
-  const balances = useBalances(formatted?.toString());
+export default function useCanPayFeeAndDeposit (
+  formatted: AccountId | string | undefined,
+  proxyAddress: AccountId | string | undefined,
+  estimatedFee: Balance | undefined,
+  deposit: BN | Balance | undefined,
+  balancesFromProps?: BalancesInfo | undefined
+): CanPayFee {
+  const balancesFromAddress = useBalances(formatted?.toString());
   const proxyAddressBalances = useBalances(proxyAddress?.toString());
+
+  const balances = balancesFromProps || balancesFromAddress;
   const [canPayFeeAndDeposit, setCanPayFeeAndDeposit] = useState<boolean | undefined>();
   const [canPayStatement, setCanPayStatement] = useState<number>();
 
   const getStatement = useCallback((canPayFee, canPayDeposit, canPayWholeAmount, useProxy, hasDeposit) => {
     if (useProxy) {
       if (hasDeposit) {
-        if (canPayFee && canPayDeposit) return CanPayStatements.CANPAY;
-        if (canPayFee && !canPayDeposit) return CanPayStatements.CANNOTPAYDEPOSIT;
-        if (!canPayFee && canPayDeposit) return CanPayStatements.PROXYCANPAYFEE;
+        if (canPayFee && canPayDeposit) return CanPayStatements.CAN_PAY;
+        if (canPayFee && !canPayDeposit) return CanPayStatements.CAN_NOT_PAY_DEPOSIT;
+        if (!canPayFee && canPayDeposit) return CanPayStatements.PROXY_CAN_PAY_FEE;
 
-        return CanPayStatements.CANNOTPAY;
+        return CanPayStatements.CAN_NOT_PAY;
       } else {
-        if (canPayFee) return CanPayStatements.CANPAY;
+        if (canPayFee) return CanPayStatements.CAN_PAY;
 
-        return CanPayStatements.PROXYCANPAYFEE;
+        return CanPayStatements.PROXY_CAN_PAY_FEE;
       }
     } else {
       if (hasDeposit) {
-        if (canPayWholeAmount) return CanPayStatements.CANPAY;
-        if (canPayDeposit) return CanPayStatements.CANNOTPAYFEE;
-        if (!canPayDeposit && canPayFee) return CanPayStatements.CANNOTPAYDEPOSIT;
+        if (canPayWholeAmount) return CanPayStatements.CAN_PAY;
+        if (canPayDeposit) return CanPayStatements.CAN_NOT_PAY_FEE;
+        if (!canPayDeposit && canPayFee) return CanPayStatements.CAN_NOT_PAY_DEPOSIT;
 
-        return CanPayStatements.CANNOTPAY;
+        return CanPayStatements.CAN_NOT_PAY;
       } else {
-        if (canPayFee) return CanPayStatements.CANPAY;
+        if (canPayFee) return CanPayStatements.CAN_PAY;
 
-        return CanPayStatements.CANNOTPAYFEE;
+        return CanPayStatements.CAN_NOT_PAY_FEE;
       }
     }
   }, []);
