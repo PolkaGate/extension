@@ -1277,5 +1277,12 @@
   "Explore a demo": "",
   "It is more than top staking limit.": "",
   "The maximum amount you can stake, considering the existential deposit and future transaction fees.": "",
-  "Top staking limit": ""
+  "Top staking limit": "",
+  "Insufficient balance to cover transaction fee. {{extraText}}": "",
+  "Selected proxy account lacks funds for the fee. {{extraText}}": "",
+  "Insufficient balance to complete the transaction. {{extraText}}": "",
+  "Insufficient balance for transaction deposit. {{extraText}}": "",
+  "X:": "",
+  "X": "",
+  "Please transfer some tokens to {{chainName}} People chain.": ""
 }

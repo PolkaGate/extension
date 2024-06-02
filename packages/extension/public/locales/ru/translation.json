@@ -1265,5 +1265,12 @@
   "Explore a demo": "Изучите демо-версию",
   "It is more than top staking limit.": "Это больше, чем верхний предел ставок.",
   "The maximum amount you can stake, considering the existential deposit and future transaction fees.": "Максимальная сумма, которую вы можете поставить, учитывая депозит на существование и будущие комиссии за транзакции.",
-  "Top staking limit": "Верхний предел ставок"
+  "Top staking limit": "Верхний предел ставок",
+  "Insufficient balance to cover transaction fee. {{extraText}}": "Баланс недостаточен для покрытия транзакционных комиссий. {{extraText}}",
+  "Selected proxy account lacks funds for the fee. {{extraText}}": "Выбранное代理контоСчет не имеет средств для оплаты комиссии. {{extraText}}",
+  "Insufficient balance to complete the transaction. {{extraText}}": "Баланс недостаточен для завершения транзакции. {{extraText}}",
+  "Insufficient balance for transaction deposit. {{extraText}}": "Баланс недостаточен для депозита транзакции. {{extraText}}",
+  "X:": "X:",
+  "X": "X",
+  "Please transfer some tokens to {{chainName}} People chain.": "Пожалуйста, переведите некоторые токены в цепь людей {{chainName}}."
 }

@@ -1274,5 +1274,12 @@
   "Explore a demo": "探索演示",
   "It is more than top staking limit.": "这超过了最高质押限额。",
   "The maximum amount you can stake, considering the existential deposit and future transaction fees.": "您可以质押的最大金额,考虑到存在性存款和未来的交易费用。",
-  "Top staking limit": "最高质押限额"
+  "Top staking limit": "最高质押限额",
+  "Insufficient balance to cover transaction fee. {{extraText}}": "交易手续费不足以覆盖账户余额. {{extraText}}",
+  "Selected proxy account lacks funds for the fee. {{extraText}}": "代理账户选择不具有足够的资金以支付手续费. {{extraText}}",
+  "Insufficient balance to complete the transaction. {{extraText}}": "账户余额不足以完成交易. {{extraText}}",
+  "Insufficient balance for transaction deposit. {{extraText}}": "账户余额不足以存储交易. {{extraText}}",
+  "X:": "X:",
+  "X": "X",
+  "Please transfer some tokens to {{chainName}} People chain.": "请将一些令牌转移到 {{chainName}} 人链上。"
 }

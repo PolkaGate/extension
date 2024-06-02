@@ -1270,5 +1270,12 @@
   "Explore a demo": "Explorez une démonstration",
   "It is more than top staking limit.": "C'est plus que la limite de mise maximale.",
   "The maximum amount you can stake, considering the existential deposit and future transaction fees.": "Le montant maximal que vous pouvez miser, en tenant compte du dépôt d'existence et des frais de transaction futurs.",
-  "Top staking limit": "Limite de mise maximale"
+  "Top staking limit": "Limite de mise maximale",
+  "Insufficient balance to cover transaction fee. {{extraText}}": "Solde insuffisant pour couvrir les frais de transaction. {{extraText}}",
+  "Selected proxy account lacks funds for the fee. {{extraText}}": "Le compte proxy sélectionné manque de fonds pour les frais. {{extraText}}",
+  "Insufficient balance to complete the transaction. {{extraText}}": "Solde insuffisant pour terminer la transaction. {{extraText}}",
+  "Insufficient balance for transaction deposit. {{extraText}}": "Solde insuffisant pour le dépôt de transaction. {{extraText}}",
+  "X:": "X:",
+  "X": "X",
+  "Please transfer some tokens to {{chainName}} People chain.": "Veuillez transférer quelques jetons vers la chaîne des personnes {{chainName}}."
 }
