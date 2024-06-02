@@ -3,6 +3,7 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 import type { PalletMultisigMultisig, PalletRecoveryRecoveryConfig, PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaReferendumStatusRankedCollectiveTally, PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
+import type { Proxy as ProxyType } from '../,,/../util/types';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -10,7 +11,6 @@ import { Option } from '@polkadot/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { Proxy } from '../,,/../util/types';
 import { PROXY_CHAINS } from '../util/constants';
 import useActiveRecoveries from './useActiveRecoveries';
 import { useInfo } from '.';
@@ -69,7 +69,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
       const proxyDepositFactor = api.consts.proxy.proxyDepositFactor as unknown as BN;
 
       api.query.proxy.proxies(formatted).then((p) => {
-        const fetchedProxies = JSON.parse(JSON.stringify(p[0])) as unknown as Proxy[];
+        const fetchedProxies = JSON.parse(JSON.stringify(p[0])) as unknown as ProxyType[];
         const proxyCount = fetchedProxies.length;
 
         if (proxyCount > 0) {
@@ -83,7 +83,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
     }
 
     /** fetch social recovery  */
-    api?.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => {
+    api.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => {
       const recoveryInfo = r.isSome ? r.unwrap() as unknown as PalletRecoveryRecoveryConfig : null;
 
       recoveryInfo?.deposit && setReserved((prev) => {
@@ -248,7 +248,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
 
   useEffect(() => {
     setReserved({});
-  }, [activeLost?.deposit, api, formatted, genesisHash]);
+  }, [genesisHash]);
 
   return reserved;
 }

@@ -45,7 +45,7 @@ function WaitForReserved ({ rows = 2, skeletonHeight = 20, skeletonWidth = 30, s
   return (
     <Grid container justifyContent='center' sx={{ ...style }}>
       {Array.from({ length: rows }).map((_, index) => (
-        <Grid container justifyContent='space-between' key={index}>
+        <Grid container justifyContent='space-between' key={index.toString()}>
           <Skeleton
             animation='wave'
             height={skeletonHeight}
