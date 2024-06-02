@@ -86,7 +86,7 @@ function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, de
               height={15}
               skeletonWidth={50}
               token={token}
-              />
+            />
             : t('waiting')
           }
         </Grid>
@@ -94,7 +94,7 @@ function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, de
       {allInOneRow && <Div />}
       <Grid alignItems='center' container item justifyContent={allInOneRow ? 'center' : 'space-between'} sx={{ fontSize: '14px', fontWeight: 300, lineHeight: '23px' }} width={allInOneRow ? 'fit-content' : '100%'}>
         <Grid item>
-          {t('Commission')}:
+          {t('Comm')}:
         </Grid>
         <Grid fontSize='14px' fontWeight={400} item lineHeight='22px' pl='3px'>
           {Number(v.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(v.validatorPrefs.commission) / (10 ** 7)}%
