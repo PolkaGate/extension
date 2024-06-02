@@ -27,18 +27,23 @@ export default function Alert ({ setShowAlert, show }: Props): React.ReactElemen
     onAction('/');
   }, [onAction, setShowAlert]);
 
-  const UL = ({ notes }: { notes: React.ReactNode[] }) => {
+  const UL = ({ notes }: { notes: string[] }) => {
     return (
       <Grid container direction='column' py='15px'>
         <Grid container item>
           <ul style={{ margin: 0, paddingLeft: '25px' }}>
-            {notes.map((note, index) => (
-              <li key={index} style={{ color: `${theme.palette.secondary.light}`, paddingBottom: '7px', paddingTop: '7px' }}>
-                <Typography color='text.primary' fontSize='14px' fontWeight={400} textAlign='left'>
-                  {note}
-                </Typography>
-              </li>
-            ))}
+            {notes.map((note, index) => {
+              const splitted = note.split(':');
+
+              return (
+                <li key={index} style={{ color: `${theme.palette.secondary.light}`, paddingBottom: '5px', paddingTop: '5px' }}>
+                  <Typography color='text.primary' fontSize='14px' fontWeight={400} textAlign='left'>
+                    <b>{splitted[0]}:</b>  {splitted[1]}
+                  </Typography>
+                </li>
+              );
+            }
+            )}
           </ul>
         </Grid>
       </Grid>
@@ -55,7 +60,7 @@ export default function Alert ({ setShowAlert, show }: Props): React.ReactElemen
         text={EXTENSION_NAME}
       />
       <Grid container direction='column' px='15px'>
-        <Grid container item justifyContent='center' pb='20px' pt='50px'>
+        <Grid container item justifyContent='center' pb='20px' pt='40px'>
           <Typography fontSize='22px' fontWeight={400}>
             {t('Important Updates 🚀')}
           </Typography>
