@@ -2,39 +2,25 @@
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 
-import { BN } from '@polkadot/util';
-
 export const EXTENSION_NAME = 'Polkagate';
 export const NEW_VERSION_ALERT = 'alert_v0.5.3';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
-export const DEFAULT_CHAIN_INDEX = 1;
-export const DEFAULT_MAX_COMMISSION = 10;
-export const DEFAULT_LIMIT_OF_VALIDATORS_PER_OPERATOR = 2;
+
 // export const EXTENSION_FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf2WHD0oVR0NS7tW6C1U025H1XBEZXqwxvFvPhcoFa18eHQiA/viewform';
-export const BALANCES_VALIDITY_PERIOD = 5 * 60 * 1000; // to show outdated balance i grey
-export const ENVIRONMENT = 'production'; // development or production
-export const PREFERRED_POOL_ID_ON_WESTEND = new BN(6);
-export const PREFERRED_POOL_ID_ON_KUSAMA = undefined;
-export const PREFERRED_POOL_ID_ON_POLKADOT = undefined;
-export const DEVELOPMENT_ENDPOINT = 'wss://109.109.36.23:443';
-export const SELECTED_COLOR = '#fffbed';
-export const POLKADOT_COLOR = '#E6007A';
+
+export const BALANCES_VALIDITY_PERIOD = 5 * 60 * 1000; // to show outdated balance in grey
 export const AUCTION_GRACE_PERIOD = 27000;// blocks
 export const MAX_NOMINATIONS = 16;
 export const FLOATING_POINT_DIGIT = 4;
 export const BLOCK_RATE = 6; // sec
 export const DEFAULT_TOKEN_DECIMALS = 12;
-export const MIN_EXTRA_BOND = 1 / (10 ** FLOATING_POINT_DIGIT);
-export const DEFAULT_COIN = 'WND';
-export const DEFAULT_CHAIN_NAME = 'Westend';
-export const DEFAULT_VALIDATOR_COMMISSION_FILTER = 20;
-export const TRANSACTION_HISTORY_DEFAULT_ROWS = 6;
+
 export const SHORT_ADDRESS_CHARACTERS = 4;
-export const MAX_VOTES = 16;
 export const MAX_REWARDS_TO_SHOW = 100;
 export const MAX_HISTORY_RECORD_TO_SHOW = 40;
 export const MAX_AMOUNT_LENGTH = 15;
 export const TIME_TO_SHAKE_ICON = 5000;// msec
+
 export const CHAINS_WITH_BLACK_LOGO = ['statescan', 'Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'Pendulum', 'Pendulum chain', 'Zeitgeist', 'Westend Collectives'];
 export const TOKENS_WITH_BLACK_LOGO = ['KSM', 'PEN', 'ZTG'];
 export const CHAINS_ON_POLKAHOLIC = ['Pendulum', 'Pendulum chain', 'Amplitude', 'Amplitude chain'];
@@ -156,22 +142,6 @@ const PROXY_TYPE_KUSAMA = ['Any', 'NonTransfer', 'Staking', 'Society', 'Governan
 const PROXY_TYPE_WESTEND = ['Any', 'NonTransfer', 'Staking', 'Governance', 'SudoBalances', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
 
 export const CHAIN_PROXY_TYPES = { Kusama: PROXY_TYPE_KUSAMA, Polkadot: PROXY_TYPE_POLKADOT, Westend: PROXY_TYPE_WESTEND };
-
-export const DEFAULT_IDENTITY = {
-  // 'judgments': [],
-  //  'deposit':202580000000,
-  info: {
-    // 'additional':[],
-    display: null,
-    legal: null,
-    web: null,
-    //  'riot':{'none':null},
-    email: null,
-    //  'pgpFingerprint':null,
-    //  'image':{'none':null},
-    twitter: null
-  }
-};
 
 export const VOTE_MAP = {
   AYE: 1,
