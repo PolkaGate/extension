@@ -9,7 +9,8 @@ import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
-import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
+import { FULLSCREEN_WIDTH, POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
+import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 
 import { Checkbox2, InputWithLabel, TwoButtons } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
@@ -61,7 +62,6 @@ function CreateAccount (): React.ReactElement {
         setSeed(seed);
       })
       .catch(console.error);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onNameChange = useCallback((enteredName: string) => {
@@ -87,7 +87,7 @@ function CreateAccount (): React.ReactElement {
     if (name && password && seed) {
       setIsBusy(true);
 
-      createAccountSuri(name, password, seed)
+      createAccountSuri(name, password, seed, DEFAULT_TYPE, POLKADOT_GENESIS_HASH)
         .then(() => openOrFocusTab('/', true))
         .catch((error: Error): void => {
           setIsBusy(false);
