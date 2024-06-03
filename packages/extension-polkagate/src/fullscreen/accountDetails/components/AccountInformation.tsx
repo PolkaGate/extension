@@ -153,7 +153,15 @@ export default function AccountInformation ({ accountAssets, address, label, pri
     }
   }, [accountAssets, calculatePrice, pricesInCurrency?.prices]);
 
-  const showAOC = useMemo(() => !!(sortedAccountAssets === undefined || (sortedAccountAssets && sortedAccountAssets.length > 0)), [sortedAccountAssets]);
+  const nonZeroSortedAssets = useMemo(() => {
+    if (!sortedAccountAssets) {
+      return sortedAccountAssets; // null or undefined!
+    } else {
+      return sortedAccountAssets.filter((_asset) => !getValue('total', _asset)?.isZero());
+    }
+  }, [sortedAccountAssets]);
+
+  const showAOC = useMemo(() => !!(nonZeroSortedAssets === undefined || (nonZeroSortedAssets && nonZeroSortedAssets.length > 0)), [nonZeroSortedAssets]);
 
   useEffect(() => {
     /** if chain has been switched and its not among the selected chains */
@@ -234,7 +242,7 @@ export default function AccountInformation ({ accountAssets, address, label, pri
         <>
           <Divider sx={{ bgcolor: 'divider', height: '1px', my: '15px', width: '100%' }} />
           <AOC
-            accountAssets={sortedAccountAssets}
+            accountAssets={nonZeroSortedAssets}
             api={api}
             mode='Detail'
             onclick={onAssetBoxClicked}

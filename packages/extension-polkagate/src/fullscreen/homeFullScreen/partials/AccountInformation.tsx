@@ -25,6 +25,7 @@ import AccountIcons from '../../accountDetails/components/AccountIcons';
 import AOC from '../../accountDetails/components/AOC';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import FullScreenAccountMenu from './FullScreenAccountMenu';
+import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 
 interface AddressDetailsProps {
   accountAssets: FetchedBalance[] | null | undefined;
@@ -60,7 +61,9 @@ export default function AccountInformation ({ accountAssets, address, hideNumber
     if (!accountAssets || !pricesInCurrencies) {
       return accountAssets; // null  or undefined
     } else {
-      return accountAssets.sort((a, b) => calculatePrice(b.totalBalance, b.decimal, pricesInCurrencies.prices?.[b.priceId]?.value ?? 0) - calculatePrice(a.totalBalance, a.decimal, pricesInCurrencies.prices?.[a.priceId]?.value ?? 0));
+      const sortedAssets = accountAssets.sort((a, b) => calculatePrice(b.totalBalance, b.decimal, pricesInCurrencies.prices?.[b.priceId]?.value ?? 0) - calculatePrice(a.totalBalance, a.decimal, pricesInCurrencies.prices?.[a.priceId]?.value ?? 0));
+
+      return sortedAssets.filter((_asset) => !getValue('total', _asset)?.isZero());
     }
   }, [accountAssets, calculatePrice, pricesInCurrencies]);
 

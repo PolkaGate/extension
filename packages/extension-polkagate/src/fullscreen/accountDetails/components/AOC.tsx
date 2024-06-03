@@ -102,9 +102,13 @@ function AOC ({ accountAssets, api, hideNumbers, mode = 'Detail', onclick, selec
 
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
-  const nonZeroAssets = useMemo(() =>
-    accountAssets?.filter((_asset) => !getValue('total', _asset)?.isZero(), [])
-  , [accountAssets]);
+  const assets = useMemo(() => {
+    if (accountAssets && accountAssets.length > 0) {
+      return accountAssets;
+    } else {
+      return [undefined, undefined]; // two undefined to show two skeletons
+    }
+  }, [accountAssets]);
 
   return (
     <Grid container item>
@@ -114,7 +118,7 @@ function AOC ({ accountAssets, api, hideNumbers, mode = 'Detail', onclick, selec
       <Grid alignItems='center' container item xs>
         <Collapse collapsedSize={53} in={showMore} orientation='vertical' sx={{ width: '100%' }}>
           <Grid container gap='15px' item justifyContent='flex-start' sx={{ height: 'fit-content', minHeight: '50px', overflow: 'hidden', p: '5px 1%' }}>
-            {nonZeroAssets?.map((asset, index) => (
+            {assets.map((asset, index) => (
               <AssetsBoxes
                 api={api}
                 asset={asset}
@@ -129,17 +133,17 @@ function AOC ({ accountAssets, api, hideNumbers, mode = 'Detail', onclick, selec
           </Grid>
         </Collapse>
       </Grid>
-      {!!nonZeroAssets?.length &&
+      {!!accountAssets?.length &&
         <Grid alignItems='center' container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: 'pointer', width: '65px' }}>
           {mode === 'Detail'
-            ? nonZeroAssets?.length > 5 &&
+            ? accountAssets.length > 5 &&
             <>
               <Typography fontSize='14px' fontWeight={400} sx={{ borderLeft: '1px solid', borderLeftColor: 'divider', height: 'fit-content', pl: '8px' }}>
                 {showMore ? t('Less') : t('More')}
               </Typography>
               <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
             </>
-            : nonZeroAssets?.length > 6 &&
+            : accountAssets.length > 6 &&
             <MoreHorizIcon sx={{ color: 'secondary.light', fontSize: '27px' }} />
           }
         </Grid>
