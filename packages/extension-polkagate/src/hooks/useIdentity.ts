@@ -4,7 +4,7 @@
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { PalletIdentityRegistration } from '@polkadot/types/lookup';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { hexToString } from '@polkadot/util';
 
@@ -98,5 +98,11 @@ export default function useIdentity (genesisHash: string | undefined, formatted:
     }).catch(console.error);
   }, [accountInfo, api, formatted, getIdentityOf, getSubIdentityOf]);
 
-  return info;
+  return useMemo(() => {
+    if (accountInfo && accountInfo.accountId?.toString() === formatted) {
+      return accountInfo;
+    }
+
+    return info;
+  }, [accountInfo, formatted, info]);
 }

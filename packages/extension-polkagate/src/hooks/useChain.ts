@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -15,17 +15,13 @@ export default function useChain (address: AccountId | string | undefined, chain
   const account = useAccount(sAddr);
   const metaDataChain = useMetadata(account?.genesisHash, true);
 
-  const [newChain, setNewChain] = useState<Chain | null | undefined>();
-
-  useEffect(() => {
+  return useMemo(() => {
     if (chain) {
-      setNewChain(chain);
+      return chain;
     } else if (account && !account?.genesisHash) {
-      setNewChain(null);
+      return null;
     } else {
-      setNewChain(metaDataChain);
+      return metaDataChain;
     }
   }, [account, chain, metaDataChain]);
-
-  return newChain;
 }
