@@ -80,7 +80,7 @@ function WatchList ({ groupedAssets }: Props): React.ReactElement {
   }, [groupedAssets]);
 
   return (
-    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px', width: '430px' }}>
+    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px 10px', width: '430px' }}>
       { uniqueAssets && uniqueAssets.length > 0 &&
           <Grid container item pt='10px'>
             {uniqueAssets.slice(0, 3).map((asset, index) => (

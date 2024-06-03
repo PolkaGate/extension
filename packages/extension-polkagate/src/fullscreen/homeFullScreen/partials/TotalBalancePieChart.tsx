@@ -163,7 +163,7 @@ function TotalBalancePieChart({ hideNumbers, setGroupedAssets }: Props): React.R
   };
 
   return (
-    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px', width: '430px' }}>
+    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px 10px', width: '430px' }}>
       <Grid alignItems='center' container gap='15px' item justifyContent='center'>
         <Typography fontSize='28px' fontWeight={400}>
           {t('You have')}
