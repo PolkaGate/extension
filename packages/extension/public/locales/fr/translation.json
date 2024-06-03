@@ -804,6 +804,7 @@
   "Members": "Membres",
   "Rewards": "Récomp.",
   "Commission": "Commission",
+  "Comm": "Comm",
   "{{selectedCount}} of {{maxSelectable}} is selected": "{{selectedCount}} sur {{maxSelectable}} est sélectionné",
   "Clear selection": "Effacer la sélection",
   "Loading the validators' list ...": "Chargement de la liste des validateurs...",

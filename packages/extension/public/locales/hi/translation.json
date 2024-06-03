@@ -805,6 +805,7 @@
   "Members": "सदस्य",
   "Rewards": "पुरस्कार",
   "Commission": "कमीशन",
+  "Comm": "कमीशन",
   "{{selectedCount}} of {{maxSelectable}} is selected": "{{selectedCount}} का चयन किया गया है {{maxSelectable}}",
   "Clear selection": "चयन साफ़ करें",
   "Loading the validators' list ...": "वैधकों की सूची लोड हो रही है...",

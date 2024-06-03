@@ -1284,5 +1284,6 @@
   "Insufficient balance for transaction deposit. {{extraText}}": "",
   "X:": "",
   "X": "",
-  "Please transfer some tokens to {{chainName}} People chain.": ""
+  "Please transfer some tokens to {{chainName}} People chain.": "",
+  "Comm": ""
 }

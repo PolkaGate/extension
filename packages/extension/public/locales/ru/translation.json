@@ -802,6 +802,7 @@
   "Members": "Участники",
   "Rewards": "Награды",
   "Commission": "Комиссия",
+  "Comm": "Комиссия",
   "{{selectedCount}} of {{maxSelectable}} is selected": "{{selectedCount}} из {{maxSelectable}} выбрано",
   "Clear selection": "Очистить выбор",
   "Loading the validators' list ...": "Загрузка списка валидаторов...",
