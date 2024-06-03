@@ -68,9 +68,9 @@ export default function Alert ({ setShowAlert, show }: Props): React.ReactElemen
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Introducing Demo Mode: Seamlessly explore extension features during onboarding with the new Demo Mode.',
+              'Demo Mode: Seamlessly explore extension features during onboarding.',
               'People Chain Support: Now supports the People Chain, which hosts identities.',
-              'Reserved Balance Reasons: Display reasons for reserved balances in account details.',
+              'Reserved Balance Reasons: Displays reasons for reserved balances in account details.',
               'Updated Twitter Icon: Features the modern X icon, reflecting Twitter’s rebrand.',
               'Enhanced Performance: Enjoy improved speed and reliability, along with valuable bug fixes for a smoother user experience.'
             ]}
