@@ -128,11 +128,11 @@ export default function AccountIcons ({ address }: AddressDetailsProps): React.R
               ? <FontAwesomeIcon
                 icon={faChain}
                 style={{ border: '1px solid', borderRadius: '5px', color: theme.palette.success.main, fontSize: '13px', padding: '2px' }}
-                />
+              />
               : <FontAwesomeIcon
                 icon={faCheckCircle}
                 style={{ border: '1px solid', borderRadius: '5px', color: theme.palette.success.main, fontSize: '16px', padding: '2px' }}
-                />
+              />
             : <FontAwesomeIcon
               icon={faCircleInfo}
               style={{ border: '1px solid', borderRadius: '5px', color: theme.palette.action.disabledBackground, fontSize: '16px', padding: '2px' }}
