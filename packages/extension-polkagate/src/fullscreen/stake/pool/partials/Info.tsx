@@ -47,7 +47,7 @@ export default function Info ({ address }: Props): React.ReactElement {
 
   const onClick = useCallback(() => {
     setShow(!show);
-  }, [setShow, show]);
+  }, [show]);
 
   return (
     <Grid alignItems='end' container item justifyItems='flex-end' sx={{ mt: '15px' }}>

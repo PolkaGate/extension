@@ -770,6 +770,16 @@ export interface AccountsAssetsContextType {
   setAccountsAssets: (savedAccountAssets: SavedAssets) => void;
 }
 
+export type AlertsType = {
+  type: 'warning' | 'error' | 'info';
+  message: string;
+}
+
+export interface AlertContextType {
+  alerts: AlertsType[];
+  setAlerts: (alerts: AlertsType[]) => void;
+}
+
 // TODO: FixMe, Controller is deprecated
 export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }
 export interface SoloSettings {
