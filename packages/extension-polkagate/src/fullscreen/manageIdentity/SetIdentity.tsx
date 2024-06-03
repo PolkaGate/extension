@@ -34,15 +34,15 @@ export default function SetIdentity ({ api, chainName, identity, identityToSet, 
 
   const isPeopleChainEnabled = PEOPLE_CHAINS.includes(chainName || '');
 
-  const [display, setDisplay] = useState<string | undefined>();
-  const [legal, setLegal] = useState<string | undefined>();
-  const [email, setEmail] = useState<string | undefined>();
-  const [website, setWebsite] = useState<string | undefined>();
-  const [twitter, setTwitter] = useState<string | undefined>();
-  const [matrix, setMatrix] = useState<string | undefined>();
-  const [riot, setRiot] = useState<string | undefined>();
-  const [github, setGithub] = useState<string | undefined>();
-  const [discord, setDiscord] = useState<string | undefined>();
+  const [display, setDisplay] = useState<string | undefined>(identityToSet?.display);
+  const [legal, setLegal] = useState<string | undefined>(identityToSet?.legal);
+  const [email, setEmail] = useState<string | undefined>(identityToSet?.email);
+  const [website, setWebsite] = useState<string | undefined>(identityToSet?.web);
+  const [twitter, setTwitter] = useState<string | undefined>(identityToSet?.twitter);
+  const [matrix, setMatrix] = useState<string | undefined>(identityToSet?.matrix);
+  const [riot, setRiot] = useState<string | undefined>(identityToSet?.riot);
+  const [github, setGithub] = useState<string | undefined>(identityToSet?.github);
+  const [discord, setDiscord] = useState<string | undefined>(identityToSet?.discord || identityToSet?.other?.discord);
 
   const hasBeenSet = useCallback((value: string | null | undefined) => {
     if (value === 'None' || value === null || value === undefined) {
@@ -65,7 +65,7 @@ export default function SetIdentity ({ api, chainName, identity, identityToSet, 
     setMatrix(hasBeenSet(identity?.matrix));
     setRiot(hasBeenSet(identity?.riot));
     setGithub(hasBeenSet(identity?.github));
-    setDiscord(hasBeenSet(identity?.other?.discord));
+    setDiscord(hasBeenSet(identity?.other?.discord || identity?.discord));
   }, [hasBeenSet, identity, mode]);
 
   useEffect(() => {
