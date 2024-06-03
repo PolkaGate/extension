@@ -19190,16 +19190,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-window@npm:^1.8.7":
-  version: 1.8.8
-  resolution: "react-window@npm:1.8.8"
+"react-window@npm:^1.8.10":
+  version: 1.8.10
+  resolution: "react-window@npm:1.8.10"
   dependencies:
     "@babel/runtime": ^7.0.0
     memoize-one: ">=3.1.1 <6"
   peerDependencies:
     react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
     react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
-  checksum: a19f43b9015fb84e16db983617dac618a8b298881d2ca96ffc2fb00534afd958ee57a00fd0017733b56f8c34dd84e5be59337877aed3c66329ed3b84e8d018ba
+  checksum: e8830f32e3ad4bf91af9cdc5cead84148c7694ce6abd9fdb447fb609da6cd4bbd0bbc75ff985f78828f4bbbd3ba4cbc98235cc9c056b5e5787578518f7fafbb9
   languageName: node
   linkType: hard
 
@@ -19967,7 +19967,7 @@ resolve@^2.0.0-next.3:
     react-json-to-table: ^0.1.7
     react-markdown: ^8.0.7
     react-tooltip: ^4.2.21
-    react-window: ^1.8.7
+    react-window: ^1.8.10
     rehype-raw: ^6.1.1
     sinon-chrome: ^3.0.1
     style-loader: ^3.3.2
