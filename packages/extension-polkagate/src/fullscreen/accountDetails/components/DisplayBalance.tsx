@@ -41,49 +41,60 @@ interface WaitForReservedProps {
   style?: SxProps<Theme> | undefined;
 }
 
-function WaitForReserved ({ rows = 2, skeletonHeight = 20, skeletonWidth = 30, style }: WaitForReservedProps): React.ReactElement<Props> {
+function WaitForReserved ({ rows = 2, skeletonHeight = 20, skeletonWidth = 60, style }: WaitForReservedProps): React.ReactElement<Props> {
   return (
     <Grid container justifyContent='center' sx={{ ...style }}>
       {Array.from({ length: rows }).map((_, index) => (
-        <Grid container justifyContent='space-between' key={index.toString()}>
-          <Skeleton
-            animation='wave'
-            height={skeletonHeight}
-            sx={{ my: '5px', transform: 'none', width: `${skeletonWidth}%` }}
-          />
-          <Skeleton
-            animation='wave'
-            height={skeletonHeight}
-            sx={{ my: '5px', transform: 'none', width: `${skeletonWidth}%` }}
-          />
+        <Grid container key={index.toString()}>
+          <Grid item xs={4}>
+            <Skeleton
+              animation='wave'
+              height={skeletonHeight}
+              sx={{ my: '5px', transform: 'none', width: `${skeletonWidth}%` }}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <Skeleton
+              animation='wave'
+              height={skeletonHeight}
+              sx={{ my: '5px', transform: 'none', width: `${skeletonWidth}%` }}
+            />
+          </Grid>
         </Grid>
       ))}
     </Grid>
   );
 }
 
-const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetailsType) => (
-  <Collapse in={showReservedDetails} sx={{ width: '100%' }}>
-    <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'divider', fontSize: '16px', mt: '10px', mx: '10%', width: '82%' }}>
-      {Object.entries(reservedDetails)?.length
-        ? <Grid container direction='column' item rowGap='10px'>
-          {Object.entries(reservedDetails)?.map(([key, value], index) => (
-            <Grid container item justifyContent='space-between' key={index} sx={{ fontSize: '17px', fontWeight: 400 }}>
-              <Grid item>
-                {toTitleCase(key)}
+const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetailsType) => {
+  const { t } = useTranslation();
+
+  return (
+    <Collapse in={showReservedDetails} sx={{ width: '100%' }}>
+      <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'divider', fontSize: '16px', mt: '10px', mx: '10%', width: '90%' }}>
+        <Typography fontSize='16px' fontWeight={500}>
+          {t('Reasons')}
+        </Typography>
+        {Object.entries(reservedDetails)?.length
+          ? <Grid container direction='column' item>
+            {Object.entries(reservedDetails)?.map(([key, value], index) => (
+              <Grid container item key={index} sx={{ fontSize: '16px' }}>
+                <Grid item sx={{ fontWeight: 300 }} xs={4}>
+                  {toTitleCase(key)}
+                </Grid>
+                <Grid fontWeight={400} item>
+                  <ShowValue height={20} value={value?.toHuman()} />
+                </Grid>
               </Grid>
-              <Grid fontWeight={600} item>
-                <ShowValue height={20} value={value?.toHuman()} />
-              </Grid>
-            </Grid>
-          ))
-          }
-        </Grid>
-        : <WaitForReserved rows={2} />
-      }
-    </Grid>
-  </Collapse>
-);
+            ))
+            }
+          </Grid>
+          : <WaitForReserved rows={2} />
+        }
+      </Grid>
+    </Collapse>
+  );
+};
 
 export default function DisplayBalance ({ amount, decimal, disabled, isOnRelayChain, onClick, price, reservedDetails, title, token }: Props): React.ReactElement {
   const theme = useTheme();
