@@ -8,6 +8,7 @@ import { ArrowForwardIos as ArrowForwardIosIcon, MoreVert as MoreVertIcon } from
 import { Box, Button, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
+import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { BN } from '@polkadot/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
@@ -25,7 +26,6 @@ import AccountIcons from '../../accountDetails/components/AccountIcons';
 import AOC from '../../accountDetails/components/AOC';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import FullScreenAccountMenu from './FullScreenAccountMenu';
-import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 
 interface AddressDetailsProps {
   accountAssets: FetchedBalance[] | null | undefined;
@@ -101,7 +101,12 @@ export default function AccountInformation ({ accountAssets, address, hideNumber
   );
 
   const AccountButton = ({ icon, onClick, text }: AccountButtonType) => (
-    <Button endIcon={icon} onClick={onClick} sx={{ '&:hover': { bgcolor: 'divider' }, color: theme.palette.secondary.main, fontSize: '16px', fontWeight: 400, height: '53px', textTransform: 'none', width: 'fit-content' }} variant='text'>
+    <Button
+      endIcon={icon}
+      onClick={onClick}
+      sx={{ '&:hover': { bgcolor: 'divider' }, color: theme.palette.secondary.light, fontSize: '16px', fontWeight: 400, height: '53px', textTransform: 'none', width: 'fit-content' }}
+      variant='text'
+    >
       {text}
     </Button>
   );
@@ -190,12 +195,20 @@ export default function AccountInformation ({ accountAssets, address, hideNumber
             <FullScreenAccountMenu
               address={address}
               baseButton={
-                <AccountButton icon={<MoreVertIcon style={{ color: theme.palette.secondary.light, fontSize: '32px' }} />} onClick={openSettings} text={t<string>('Settings')} />
+                <AccountButton
+                  icon={<MoreVertIcon style={{ color: theme.palette.secondary.light, fontSize: '32px' }} />}
+                  onClick={openSettings}
+                  text={t('Settings')}
+                />
               }
               setDisplayPopup={setDisplayPopup}
             />
             <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '34px', ml: '5px', mr: '15px', my: 'auto', width: '1px' }} />
-            <AccountButton icon={<ArrowForwardIosIcon style={{ color: theme.palette.secondary.light, fontSize: '28px' }} />} onClick={goToDetails} text={t<string>('Details')} />
+            <AccountButton
+              icon={<ArrowForwardIosIcon style={{ color: theme.palette.secondary.light, fontSize: '28px' }} />}
+              onClick={goToDetails}
+              text={t('Details')}
+            />
           </Grid>
         </Grid>
       </Grid>
