@@ -169,7 +169,7 @@ export default function Index (): React.ReactElement {
         {t('To be released')}
       </Grid>
       {toBeReleased?.map(({ amount, date }) => (
-        <Grid container item key={date} spacing='15px' sx={{ fontSize: '16px', fontWeight: 500 }}>
+        <Grid container item key={date} spacing='15px' sx={{ fontSize: '16px' }}>
           <Grid fontWeight={300} item>
             {new Date(date).toLocaleDateString(undefined, DATE_OPTIONS)}
           </Grid>
