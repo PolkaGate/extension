@@ -100,7 +100,8 @@ export default function SetIdentityForm ({ discord, display, email, github, iden
         title={t('Element')}
         value={isPeopleChainEnabled
           ? matrix ?? identity?.matrix as string
-          : riot || identity?.riot}
+          : riot || identity?.riot
+        }
       />
       {isPeopleChainEnabled &&
       <IdentityInfoInput
@@ -125,9 +126,10 @@ export default function SetIdentityForm ({ discord, display, email, github, iden
         }
         setter={setDiscord}
         title={t('Discord')}
-        value={discord ?? isPeopleChainEnabled
-          ? identity?.discord as string
-          : identity?.other?.discord}
+        value={ isPeopleChainEnabled
+          ? discord || identity?.discord as string
+          : discord || identity?.other?.discord
+        }
       />
     </Grid>
   );
