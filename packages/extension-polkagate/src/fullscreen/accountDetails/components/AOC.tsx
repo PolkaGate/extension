@@ -129,7 +129,7 @@ function AOC ({ accountAssets, api, hideNumbers, mode = 'Detail', onclick, selec
           </Grid>
         </Collapse>
       </Grid>
-      {nonZeroAssets?.length &&
+      {!!nonZeroAssets?.length &&
         <Grid alignItems='center' container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: 'pointer', width: '65px' }}>
           {mode === 'Detail'
             ? nonZeroAssets?.length > 5 &&
