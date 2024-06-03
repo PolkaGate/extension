@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Skeleton, Typography, alpha, useTheme } from '@mui/material';
+import { alpha, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
 import { BN } from '@polkadot/util';
@@ -50,7 +50,7 @@ export const LoadingSkeleton = ({ skeletonsNum, withCheckBox = false }: { skelet
   return skeletonArray;
 };
 
-export default function ReferendaTracks({ filterDelegatedTracks, filterLockedTracks, firstSelections, maximumHeight = '175px', selectedTracks, setSelectedTracks, tracks }: Props): React.ReactElement {
+export default function ReferendaTracks ({ filterDelegatedTracks, filterLockedTracks, firstSelections, maximumHeight = '175px', selectedTracks, setSelectedTracks, tracks }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
