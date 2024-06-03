@@ -57,7 +57,7 @@ function Identity ({ accountInfo, address, api, chain, direction = 'column', for
   const genesisHash = chain?.genesisHash || api?.genesisHash?.toHex();
   const _accountInfo = useIdentity(genesisHash, _formatted, accountInfo);
 
-  const _judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
+  const _judgement = useMemo(() => judgement || (_accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi)), [_accountInfo?.identity?.judgements, judgement]);
 
   const merkleScienceTooltip = useMemo(() => (msData &&
     <Typography variant='body2'>
@@ -92,7 +92,7 @@ function Identity ({ accountInfo, address, api, chain, direction = 'column', for
             <Identicon
               iconTheme={_chain?.icon ?? 'polkadot'}
               isSubId={!!_accountInfo?.identity?.displayParent}
-              judgement={judgement || _judgement}
+              judgement={_judgement}
               prefix={_chain?.ss58Format ?? 42}
               size={identiconSize}
               value={_formatted || address}
@@ -131,9 +131,18 @@ function Identity ({ accountInfo, address, api, chain, direction = 'column', for
               {_accountInfo?.identity.display && subIdOnly &&
                 _accountInfo?.identity?.display
               }
-              {_accountInfo?.nickname ? _accountInfo?.nickname : ''}
-              {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname) && name ? name : ''}
-              {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name) && accountName ? accountName : ''}
+              {_accountInfo?.nickname
+                ? _accountInfo?.nickname
+                : ''
+              }
+              {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname) && name
+                ? name
+                : ''
+              }
+              {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name) && accountName
+                ? accountName
+                : ''
+              }
               {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName)
                 ? showShortAddress && isValidAddress(String(_formatted))
                   ? <ShortAddress address={_formatted} style={{ fontSize: style?.fontSize as string || '11px', justifyContent: 'flex-start' }} />
@@ -156,24 +165,24 @@ function Identity ({ accountInfo, address, api, chain, direction = 'column', for
         {_showSocial &&
           <Grid container id='socials' item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', mt: '3%', px: '5px', width: 'fit-content' }}>
             {_accountInfo?.identity?.email &&
-                <Link href={`mailto:${_accountInfo.identity.email}`}>
-                  <EmailIcon sx={{ color: '#007CC4', fontSize: 15 }} />
-                </Link>
+              <Link href={`mailto:${_accountInfo.identity.email}`}>
+                <EmailIcon sx={{ color: '#007CC4', fontSize: 15 }} />
+              </Link>
             }
             {_accountInfo?.identity?.web &&
-                 <Link href={_accountInfo?.identity.web} pl='5px' rel='noreferrer' target='_blank'>
-                   <LanguageIcon sx={{ color: 'success.main', fontSize: 15 }} />
-                 </Link>
+              <Link href={_accountInfo?.identity.web} pl='5px' rel='noreferrer' target='_blank'>
+                <LanguageIcon sx={{ color: 'success.main', fontSize: 15 }} />
+              </Link>
             }
             {_accountInfo?.identity?.twitter &&
-                 <Link href={`https://twitter.com/${_accountInfo.identity.twitter}`} pl='5px' rel='noreferrer' target='_blank'>
-                   <XIcon sx={{ color: isDark ? 'white' : 'black', fontSize: 14 }} />
-                 </Link>
+              <Link href={`https://twitter.com/${_accountInfo.identity.twitter}`} pl='5px' rel='noreferrer' target='_blank'>
+                <XIcon sx={{ color: isDark ? 'white' : 'black', fontSize: 14 }} />
+              </Link>
             }
             {_accountInfo?.identity?.riot &&
-                <Link href={`https://matrix.to/#/${_accountInfo.identity.riot}`} pl='5px' rel='noreferrer' target='_blank'>
-                  <Box component='img' src={riot} sx={{ height: '12px', mb: '2px', width: '12px' }} />
-                </Link>
+              <Link href={`https://matrix.to/#/${_accountInfo.identity.riot}`} pl='5px' rel='noreferrer' target='_blank'>
+                <Box component='img' src={riot} sx={{ height: '12px', mb: '2px', width: '12px' }} />
+              </Link>
             }
           </Grid>
         }
