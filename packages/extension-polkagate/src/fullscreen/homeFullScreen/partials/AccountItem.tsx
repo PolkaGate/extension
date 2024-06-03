@@ -12,7 +12,7 @@ import React, { useContext, useMemo, useState } from 'react';
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { AccountContext } from '../../../components';
-import { useAccountAssets, useApi, useChain, useFormatted, useTranslation } from '../../../hooks';
+import { useAccountAssets, useChain, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import QuickActionFullScreen from '../../../partials/QuickActionFullScreen';
 import { label } from '../../../popup/home/AccountsTree';
@@ -27,11 +27,9 @@ interface Props {
 }
 
 function AccountItem ({ account, hideNumbers, id, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement {
-  const api = useApi(account.address);
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(account.address);
-  const formatted = useFormatted(account.address);
   const accountAssets = useAccountAssets(account.address);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const { accounts } = useContext(AccountContext);
