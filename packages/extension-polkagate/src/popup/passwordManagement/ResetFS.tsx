@@ -39,7 +39,7 @@ function ResetFS (): React.ReactElement {
           icon={faWallet}
           text= {t('Reset Wallet')}
         />
-        <Typography sx={{ fontSize: '14px', px: '15px', mb: '25px' }}>
+        <Typography sx={{ fontSize: '14px', mb: '25px', px: '15px' }}>
           {t<string>('Resetting your wallet is a last resort option that will erase your current wallet data. Please make sure you have a backup JSON File or a Recovery Phrase before proceeding. To reset your wallet, you can choose one of the following methods:')}
         </Typography>
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', m: '10px',mt:'40px', p: '10px', width: '95%' }}>
