@@ -3,9 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
+import { faChain, faCheckCircle, faCircleInfo, faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CheckCircleOutline as CheckIcon, InsertLinkRounded as LinkIcon } from '@mui/icons-material';
 import { Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
@@ -30,6 +29,21 @@ export default function AccountIcons ({ address }: AddressDetailsProps): React.R
   const [hasID, setHasID] = useState<boolean | undefined>();
   const [isRecoverable, setIsRecoverable] = useState<boolean | undefined>();
   const [hasProxy, setHasProxy] = useState<boolean | undefined>();
+
+  const identityToolTipTxt = useMemo(() => {
+    if (!chain) {
+      return 'Account is in Any Chain mode';
+    }
+
+    switch (hasID) {
+      case true:
+        return 'Has Identity';
+      case false:
+        return 'No Identity';
+      default:
+        return 'Checking';
+    }
+  }, [chain, hasID]);
 
   const recoverableToolTipTxt = useMemo(() => {
     if (!chain) {
@@ -107,15 +121,26 @@ export default function AccountIcons ({ address }: AddressDetailsProps): React.R
 
   return (
     <Grid alignItems='center' container direction='column' display='grid' height='72px' item justifyContent='center' justifyItems='center' width='fit-content'>
-      <Grid item onClick={openIdentity} sx={{ border: '1px solid', borderColor: 'success.main', borderRadius: '5px', cursor: 'pointer', display: hasID ? 'inherit' : 'none', height: '24px', m: 'auto', p: '2px', width: 'fit-content' }}>
-        {hasID
-          ? accountInfo?.identity?.displayParent
-            ? <LinkIcon sx={{ bgcolor: 'success.main', border: '1px solid', borderRadius: '50%', color: 'white', fontSize: '18px', transform: 'rotate(-45deg)' }} />
-            : <CheckIcon sx={{ bgcolor: 'success.main', border: '1px solid', borderRadius: '50%', color: 'white', fontSize: '18px' }} />
-          : undefined
-        }
+      <Grid item onClick={openIdentity} sx={{ cursor: 'pointer', height: '24px', m: 'auto', p: '2px', width: 'fit-content' }}>
+        <Infotip placement='right' text={t(identityToolTipTxt)}>
+          {hasID
+            ? accountInfo?.identity?.displayParent
+              ? <FontAwesomeIcon
+                icon={faChain}
+                style={{ border: '1px solid', borderRadius: '5px', color: theme.palette.success.main, fontSize: '13px', padding: '2px' }}
+                />
+              : <FontAwesomeIcon
+                icon={faCheckCircle}
+                style={{ border: '1px solid', borderRadius: '5px', color: theme.palette.success.main, fontSize: '16px', padding: '2px' }}
+                />
+            : <FontAwesomeIcon
+              icon={faCircleInfo}
+              style={{ border: '1px solid', borderRadius: '5px', color: theme.palette.action.disabledBackground, fontSize: '16px', padding: '2px' }}
+            />
+          }
+        </Infotip>
       </Grid>
-      <Grid height='24px' item width='24px'>
+      <Grid height='24px' item my='1px' width='24px'>
         <Infotip placement='right' text={t(recoverableToolTipTxt)}>
           <IconButton
             onClick={openSocialRecovery}
@@ -123,7 +148,7 @@ export default function AccountIcons ({ address }: AddressDetailsProps): React.R
           >
             <FontAwesomeIcon
               icon={faShieldHalved}
-              style={{ border: '1px solid', borderRadius: '5px', color: isRecoverable ? theme.palette.success.main : theme.palette.action.disabledBackground, fontSize: '16px', padding: '3px' }}
+              style={{ border: '1px solid', borderRadius: '5px', color: isRecoverable ? theme.palette.success.main : theme.palette.action.disabledBackground, fontSize: '16px', padding: '2px' }}
             />
           </IconButton>
         </Infotip>
