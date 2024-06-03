@@ -137,7 +137,7 @@ export default function AccountInformation ({ accountAssets, address, label, pri
     return parseFloat(amountToHuman(amount, decimal)) * _price;
   }, []);
 
-  const isBalanceOutdated = useMemo(() => selectedAsset?.date && Date.now() - selectedAsset.date > BALANCES_VALIDITY_PERIOD, [selectedAsset]);
+  const isBalanceOutdated = useMemo(() => selectedAsset?.date ? Date.now() - selectedAsset.date > BALANCES_VALIDITY_PERIOD : undefined, [selectedAsset]);
   const isPriceOutdated = useMemo(() => pricesInCurrency && Date.now() - pricesInCurrency.date > BALANCES_VALIDITY_PERIOD, [pricesInCurrency]);
 
   const sortedAccountAssets = useMemo(() => {
