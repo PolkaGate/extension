@@ -1273,5 +1273,6 @@
   "Insufficient balance for transaction deposit. {{extraText}}": "Баланс недостаточен для депозита транзакции. {{extraText}}",
   "X:": "X:",
   "X": "X",
-  "Please transfer some tokens to {{chainName}} People chain.": "Пожалуйста, переведите некоторые токены в цепь людей {{chainName}}."
+  "Please transfer some tokens to {{chainName}} People chain.": "Пожалуйста, переведите некоторые токены в цепь людей {{chainName}}.",
+  "Reasons": "Поводы"
 }

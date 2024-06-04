@@ -1275,5 +1275,6 @@
   "Insufficient balance for transaction deposit. {{extraText}}": "लेनदेन जमा के लिए पर्याप्त संतुलन नहीं है. {{extraText}}",
   "X:": "X:",
   "X": "X",
-  "Please transfer some tokens to {{chainName}} People chain.": "कुछ टोकन {{chainName}} लोगों की श्रृंखला में ट्रांसफर करें."
+  "Please transfer some tokens to {{chainName}} People chain.": "कुछ टोकन {{chainName}} लोगों की श्रृंखला में ट्रांसफर करें.",
+  "Reasons": "कारण"
 }

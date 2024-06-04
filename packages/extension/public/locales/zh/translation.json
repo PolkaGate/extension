@@ -1282,5 +1282,6 @@
   "Insufficient balance for transaction deposit. {{extraText}}": "账户余额不足以存储交易. {{extraText}}",
   "X:": "X:",
   "X": "X",
-  "Please transfer some tokens to {{chainName}} People chain.": "请将一些令牌转移到 {{chainName}} 人链上。"
+  "Please transfer some tokens to {{chainName}} People chain.": "请将一些令牌转移到 {{chainName}} 人链上。",
+  "Reasons": "原因"
 }

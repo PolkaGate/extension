@@ -1278,5 +1278,6 @@
   "Insufficient balance for transaction deposit. {{extraText}}": "Solde insuffisant pour le dépôt de transaction. {{extraText}}",
   "X:": "X:",
   "X": "X",
-  "Please transfer some tokens to {{chainName}} People chain.": "Veuillez transférer quelques jetons vers la chaîne des personnes {{chainName}}."
+  "Please transfer some tokens to {{chainName}} People chain.": "Veuillez transférer quelques jetons vers la chaîne des personnes {{chainName}}.",
+  "Reasons": "Raisons"
 }
