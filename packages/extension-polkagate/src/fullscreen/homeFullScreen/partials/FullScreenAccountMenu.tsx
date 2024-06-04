@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 
 import '@vaadin/icons';
@@ -14,7 +13,7 @@ import React, { useCallback, useContext } from 'react';
 import { ActionContext, MenuItem, SocialRecoveryIcon } from '../../../components';
 import { useInfo, useTranslation } from '../../../hooks';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
-import { POPUPS_NUMBER } from './AccountInformation';
+import { POPUPS_NUMBER } from './AccountInformationForHome';
 
 interface Props {
   address: string | undefined;
@@ -151,7 +150,7 @@ function FullScreenAccountMenu ({ address, baseButton, setDisplayPopup }: Props)
       />
       <MenuItem
         iconComponent={
-          <vaadin-icon icon='vaadin:file-remove' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+          <vaadin-icon icon='vaadin:file-remove' style={{ color: `${theme.palette.text.primary}`, height: '20px' }} />
         }
         onClick={onForgetAccount}
         text={t('Forget account')}

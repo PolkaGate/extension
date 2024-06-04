@@ -16,7 +16,7 @@ import { useAccountAssets, useChain, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import QuickActionFullScreen from '../../../partials/QuickActionFullScreen';
 import { label } from '../../../popup/home/AccountsTree';
-import AccountInformation from './AccountInformation';
+import AccountInformationForHome from './AccountInformationForHome';
 
 interface Props {
   account: AccountWithChildren;
@@ -56,7 +56,7 @@ function AccountItem ({ account, hideNumbers, id, quickActionOpen, setQuickActio
         <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', ml: 5, position: 'absolute', px: 1, width: 'fit-content' }}>
           {label(account, hasParent?.name ?? '', t)}
         </Grid>
-        <AccountInformation
+        <AccountInformationForHome
           accountAssets={accountAssets}
           address={account.address}
           hideNumbers={hideNumbers}

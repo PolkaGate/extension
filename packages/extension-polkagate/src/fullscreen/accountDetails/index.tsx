@@ -29,7 +29,7 @@ import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
 import { openOrFocusTab } from './components/CommonTasks';
 import LockedInReferenda from './unlock/Review';
-import { AccountInformation, AccountSetting, AssetSelect, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
+import { AccountInformationForDetails, AccountSetting, AssetSelect, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
 
 export const popupNumbers = {
   LOCKED_IN_REFERENDA: 1,
@@ -178,7 +178,7 @@ export default function AccountDetails (): React.ReactElement {
           />
           <Grid container item justifyContent='space-between' mb='15px'>
             <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 300px - 3%)'>
-              <AccountInformation
+              <AccountInformationForDetails
                 accountAssets={accountAssets}
                 address={address}
                 label={label(account, hasParent?.name || '', t)}

@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { BN } from '@polkadot/util';
 
 import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, Infotip2, OptionalCopyButton, ShortAddress2 } from '../../../components';
-import { useInfo, useTranslation } from '../../../hooks';
+import { useIdentity, useInfo, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { showAccount, tieAccount } from '../../../messaging';
 import { getValue } from '../../../popup/account/util';
@@ -17,7 +17,7 @@ import { BALANCES_VALIDITY_PERIOD } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import { BalancesInfo, Prices } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
-import AccountIcons from './AccountIcons';
+import AccountIconsFs from './AccountIconsFs';
 import AOC from './AOC';
 
 interface PriceJSXType {
@@ -128,10 +128,12 @@ interface AddressDetailsProps {
   setAssetIdOnAssetHub: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function AccountInformation ({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformationForDetails ({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { account, api, chain, formatted, genesisHash, token } = useInfo(address);
+
+  const accountInfo = useIdentity(genesisHash, formatted);
 
   const calculatePrice = useCallback((amount: BN, decimal: number, _price: number) => {
     return parseFloat(amountToHuman(amount, decimal)) * _price;
@@ -196,7 +198,8 @@ export default function AccountInformation ({ accountAssets, address, label, pri
               value={formatted || address}
             />
           </Grid>
-          <AccountIcons
+          <AccountIconsFs
+            accountInfo={accountInfo}
             address={address}
           />
         </Grid>
@@ -204,12 +207,13 @@ export default function AccountInformation ({ accountAssets, address, label, pri
           <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'divider', px: '7px' }}>
             <Grid container item justifyContent='space-between'>
               <Identity
+                accountInfo={accountInfo}
                 address={address}
                 api={api}
                 chain={chain}
                 noIdenticon
                 style={{ width: 'calc(100% - 40px)' }}
-                // subIdOnly
+              // subIdOnly
               />
               <Grid item width='40px'>
                 <Infotip text={account?.isHidden && t('This account is hidden from websites')}>
@@ -229,7 +233,7 @@ export default function AccountInformation ({ accountAssets, address, label, pri
             </Grid>
           </Grid>
           <SelectedAssetBox
-            balanceToShow={ selectedAsset }
+            balanceToShow={selectedAsset}
             genesisHash={genesisHash}
             isBalanceOutdated={isBalanceOutdated}
             isPriceOutdated={!!isPriceOutdated}

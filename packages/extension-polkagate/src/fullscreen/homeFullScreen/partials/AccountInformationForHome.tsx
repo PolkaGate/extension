@@ -14,7 +14,7 @@ import { BN } from '@polkadot/util';
 import { stars6Black, stars6White } from '../../../assets/icons';
 import { ActionContext, Identicon, Identity, Infotip, OptionalCopyButton, ShortAddress2 } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
-import { useCurrency, useInfo, usePrices, useTranslation } from '../../../hooks';
+import { useCurrency, useIdentity, useInfo, usePrices, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { showAccount, tieAccount } from '../../../messaging';
 import ExportAccountModal from '../../../popup/export/ExportAccountModal';
@@ -22,7 +22,7 @@ import ForgetAccountModal from '../../../popup/forgetAccount/ForgetAccountModal'
 import DeriveAccountModal from '../../../popup/newAccount/deriveAccount/modal/DeriveAccountModal';
 import RenameModal from '../../../popup/rename/RenameModal';
 import { amountToHuman } from '../../../util/utils';
-import AccountIcons from '../../accountDetails/components/AccountIcons';
+import AccountIconsFs from '../../accountDetails/components/AccountIconsFs';
 import AOC from '../../accountDetails/components/AOC';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import FullScreenAccountMenu from './FullScreenAccountMenu';
@@ -45,13 +45,16 @@ export const POPUPS_NUMBER = {
   RENAME: 2
 };
 
-export default function AccountInformation ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();
-  const { account, api, chain, formatted } = useInfo(address);
-  const theme = useTheme();
+  const { account, api, chain, formatted, genesisHash } = useInfo(address);
   const onAction = useContext(ActionContext);
+
+  const accountInfo = useIdentity(genesisHash, formatted);
 
   const [displayPopup, setDisplayPopup] = useState<number>();
 
@@ -142,13 +145,15 @@ export default function AccountInformation ({ accountAssets, address, hideNumber
                 value={formatted || address}
               />
             </Grid>
-            <AccountIcons
+            <AccountIconsFs
+              accountInfo={accountInfo}
               address={address}
             />
           </Grid>
           <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'divider', px: '7px' }} xs={5.6}>
             <Grid container item justifyContent='space-between'>
               <Identity
+                accountInfo={accountInfo}
                 address={address}
                 api={api}
                 chain={chain}
