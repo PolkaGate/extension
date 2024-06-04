@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Balance } from '@polkadot/types/interfaces';
-import type { PalletMultisigMultisig, PalletRecoveryRecoveryConfig, PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaReferendumStatusRankedCollectiveTally, PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
-import type { Proxy as ProxyType } from '../,,/../util/types';
+import type { PalletMultisigMultisig, PalletPreimageRequestStatus, PalletRecoveryRecoveryConfig, PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaReferendumStatusRankedCollectiveTally, PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -15,7 +14,7 @@ import { PROXY_CHAINS } from '../util/constants';
 import useActiveRecoveries from './useActiveRecoveries';
 import { useInfo } from '.';
 
-type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society' | 'multisig';
+type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society' | 'multisig' | 'preimage';
 export type Reserved = { [key in Item]?: Balance };
 
 export default function useReservedDetails (address: string | undefined): Reserved {
@@ -44,7 +43,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
       return;
     }
 
-    // TODO: needs to incorporate people chain
+    // TODO: needs to incorporate people chain?
     /** fetch identity  */
     api.query?.identity?.identityOf(formatted).then(async (id) => {
       const basicDeposit = api.consts.identity.basicDeposit as unknown as BN;
@@ -65,16 +64,12 @@ export default function useReservedDetails (address: string | undefined): Reserv
 
     /** fetch proxy  */
     if (api.query?.proxy && PROXY_CHAINS.includes(genesisHash)) {
-      const proxyDepositBase = api.consts.proxy.proxyDepositBase as unknown as BN;
-      const proxyDepositFactor = api.consts.proxy.proxyDepositFactor as unknown as BN;
-
       api.query.proxy.proxies(formatted).then((p) => {
-        const fetchedProxies = JSON.parse(JSON.stringify(p[0])) as unknown as ProxyType[];
-        const proxyCount = fetchedProxies.length;
+        const mayBeDeposit = p?.[1] as BN;
 
-        if (proxyCount > 0) {
+        if (!mayBeDeposit?.isZero()) {
           setReserved((prev) => {
-            prev.proxy = toBalance(proxyDepositBase.add(proxyDepositFactor.muln(proxyCount)));
+            prev.proxy = toBalance(mayBeDeposit);
 
             return prev;
           });
@@ -170,7 +165,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
       api.query.indices.accounts.entries().then((indices) => {
         indices.forEach(([_, value]) => {
           if (value.isSome) {
-            const [address, deposit, _status] = value.unwrap() as [ AccountId, BN, boolean ];
+            const [address, deposit, _status] = value.unwrap() as [AccountId, BN, boolean];
 
             if (address.toString() === formatted) {
               sum = sum.add(deposit);
@@ -192,8 +187,8 @@ export default function useReservedDetails (address: string | undefined): Reserv
     if (api.query?.multisig) {
       let sum = BN_ZERO;
 
-      api.query.multisig.multisigs.entries().then((indices) => {
-        indices.forEach(([_, value]) => {
+      api.query.multisig.multisigs.entries().then((multisigs) => {
+        multisigs.forEach(([_, value]) => {
           if (value.isSome) {
             const { deposit, depositor } = value.unwrap() as PalletMultisigMultisig;
 
@@ -206,6 +201,37 @@ export default function useReservedDetails (address: string | undefined): Reserv
         if (!sum.isZero()) {
           setReserved((prev) => {
             prev.multisig = toBalance(sum);
+
+            return prev;
+          });
+        }
+      }).catch(console.error);
+    }
+
+    /** Fetch preImage  */
+    if (api.query?.preimage) {
+      let sum = BN_ZERO;
+
+      api.query.preimage.requestStatusFor.entries().then((preimages) => {
+        preimages.forEach(([_, value]) => {
+          if (value.isSome) {
+            const status = value.unwrap() as PalletPreimageRequestStatus;
+
+            const request = status.isUnrequested ? status.asUnrequested : undefined;
+
+            if (request) {
+              const [accountId, deposit] = request.ticket;
+
+              if (accountId.toString() === formatted) {
+                sum = sum.add(deposit);
+              }
+            }
+          }
+        });
+
+        if (!sum.isZero()) {
+          setReserved((prev) => {
+            prev.preimage = toBalance(sum);
 
             return prev;
           });
