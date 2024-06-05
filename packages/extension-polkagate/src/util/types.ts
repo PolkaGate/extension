@@ -796,6 +796,7 @@ export enum CanPayStatements {
 }
 
 export type ProxiedAccounts = {
+  genesisHash: string;
   proxy: string;
   proxied: string[];
 };
