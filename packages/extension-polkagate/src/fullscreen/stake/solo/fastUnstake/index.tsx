@@ -161,7 +161,7 @@ export default function FastUnstake({ address, setRefresh, setShow, show }: Prop
                 </Grid>
               </Grid>
               {isEligible === undefined &&
-                <Progress pt={'60px'} size={115} title={t('Please wait a few seconds and don\'t close the extension.')} type='grid' />
+                <Progress pt={'60px'} size={115} title={t('Please wait a few seconds and don\'t close the window.')} type='grid' />
               }
               <Grid bottom='70px' item position='absolute'>
                 {isEligible !== undefined &&
