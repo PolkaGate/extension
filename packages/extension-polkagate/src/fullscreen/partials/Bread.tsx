@@ -22,6 +22,7 @@ export default function Bread (): React.ReactElement {
     switch (path) {
       case ('accountfs'):
       case ('import'):
+      case ('derivefs'):
         return [t('Home')];
       case ('managePoolValidators'):
         return [t('Home'), t('Account Details'), t('Staked in Pool')];
