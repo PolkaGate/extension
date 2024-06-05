@@ -12,7 +12,7 @@ const START_WITH_PATH = [
   '/send/',
   '/stake/',
   '/socialRecovery/',
-  '/fullscreenDerive/'
+  '/derivefs/'
 ] as const;
 const PHISHING_PAGE_REDIRECT = '/phishing-page-detected';
 const EXTENSION_PREFIX = 'POLKAGATE';

@@ -297,7 +297,7 @@ export default function Popup (): React.ReactElement {
                                     <Route path='/forget/:address/:isExternal'>{wrapWithErrorBoundary(<ForgetAccount />, 'forget-address')}</Route>
                                     <Route path='/forgot-password'>{wrapWithErrorBoundary(<ForgotPassword />, 'forgot-password')}</Route>
                                     <Route path='/reset-wallet'>{wrapWithErrorBoundary(<ResetWallet />, 'reset-wallet')}</Route>
-                                    <Route path='/fullscreenDerive/:address/'>{wrapWithErrorBoundary(<FullscreenDerive />, 'fullscreen-account-derive')}</Route>
+                                    <Route path='/derivefs/:address/'>{wrapWithErrorBoundary(<FullscreenDerive />, 'fullscreen-account-derive')}</Route>
                                     <Route path='/fullscreenProxyManagement/:address/'>{wrapWithErrorBoundary(<FullScreenManageProxies />, 'fullscreen-proxy-management')}</Route>
                                     <Route path='/governance/:address/:topMenu/:postId'>{wrapWithErrorBoundary(<ReferendumPost />, 'governance')}</Route>
                                     <Route path='/governance/:address/:topMenu'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route>

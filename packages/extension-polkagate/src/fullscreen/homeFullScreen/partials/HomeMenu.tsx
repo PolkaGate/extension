@@ -92,7 +92,7 @@ export default function HomeMenu (): React.ReactElement {
 
   const onDeriveFromAccounts = useCallback(() => {
     if (!areAllExternalAccounts && master) {
-      openOrFocusTab(`/fullscreenDerive/${master.address}`);
+      openOrFocusTab(`/derivefs/${master.address}`);
     }
   }, [areAllExternalAccounts, master]);
 
