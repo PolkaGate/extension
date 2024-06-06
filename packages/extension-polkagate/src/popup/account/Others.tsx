@@ -1,11 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-/* eslint-disable header/header */
+
 /* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
- * this component shows an account balances information in detail
+ * this component shows an account balances extra info
  * */
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
