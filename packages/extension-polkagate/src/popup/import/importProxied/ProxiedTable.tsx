@@ -36,7 +36,7 @@ export default function ProxiedTable ({ api, chain, label, maxHeight = '120px', 
   const isAvailable = useCallback((proxied: string): boolean => !!accounts?.find(({ address }) => address === getSubstrateAddress(proxied)), [accounts]);
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
-  const allSelected = useMemo(() => 
+  const allSelected = useMemo(() =>
     proxiedAccounts &&
     proxiedAccounts.length > 0 &&
     selectedProxied.length === proxiedAccounts.filter((proxied) => !isAvailable(proxied))?.length

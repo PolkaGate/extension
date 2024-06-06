@@ -1,7 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { ApiPromise } from '@polkadot/api';
 
 import { ProxiedAccounts, Proxy } from '../util/types';
 import useInfo from './useInfo';
@@ -12,12 +14,12 @@ import useInfo from './useInfo';
  * */
 
 export default function useProxiedAccounts (address: string | undefined): ProxiedAccounts | undefined {
-  const { api, formatted } = useInfo(address);
+  const { api, formatted, genesisHash } = useInfo(address);
 
   const [proxied, setProxied] = useState<ProxiedAccounts>();
 
-  const getProxiedAccounts = useCallback(() => {
-    api && api.query.proxy?.proxies.entries().then((proxies) => {
+  const getProxiedAccounts = useCallback((api: ApiPromise, formatted: string) => {
+    api.query.proxy?.proxies.entries().then((proxies) => {
       if (proxies.length === 0) {
         return;
       }
@@ -35,23 +37,32 @@ export default function useProxiedAccounts (address: string | undefined): Proxie
       }
 
       setProxied({
+        genesisHash: api.genesisHash.toHex(),
         proxied: proxiedAccounts,
         proxy: formatted
       });
     }).catch(console.error);
-  }, [api, formatted]);
+  }, []);
 
   useEffect(() => {
-    if (!address || !api || !formatted || (proxied && proxied.proxy === formatted)) {
-      return;
+    setProxied(undefined);
+  }, [formatted, genesisHash]);
+
+  return useMemo(() => {
+    if (!api || !formatted || !genesisHash || (api && api.genesisHash.toHex() !== genesisHash)) {
+      return undefined;
     }
 
-    if (proxied && proxied.proxy !== formatted) {
-      setProxied(undefined);
+    if (proxied && (proxied.genesisHash !== genesisHash || proxied.proxy !== formatted)) {
+      return undefined;
     }
 
-    getProxiedAccounts();
-  }, [address, api, formatted, getProxiedAccounts, proxied]);
+    if (proxied && proxied.proxy === formatted) {
+      return proxied;
+    }
 
-  return proxied;
+    !proxied && getProxiedAccounts(api, formatted);
+
+    return undefined; // to suppress the problem of useMemo should have a return
+  }, [api, formatted, genesisHash, proxied, getProxiedAccounts]);
 }

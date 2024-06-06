@@ -3,13 +3,13 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faSitemap } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, Typography, useTheme } from '@mui/material';
 import Chance from 'chance';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
+import Bread from '@polkadot/extension-polkagate/src/fullscreen/partials/Bread';
+import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 
 import { AccountContext, Label, SelectChain, TwoButtons } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
@@ -50,6 +50,14 @@ function ImportProxiedFS (): React.ReactElement {
     return { accountGenesishash: selectedAccount?.genesisHash, accountName: selectedAccount?.name };
   }, [accounts, selectedAddress]);
 
+  const tableMinHeight = useMemo(() => {
+    const TABLE_MAX_POSSIBLE_HEIGHT = window.innerHeight - 550;
+    const HEIGHT_PER_ROW = 47;
+    const _minHeight = proxiedAccounts?.proxied?.length ? (proxiedAccounts.proxied.length + 1) * HEIGHT_PER_ROW : undefined;
+
+    return _minHeight && _minHeight > TABLE_MAX_POSSIBLE_HEIGHT ? TABLE_MAX_POSSIBLE_HEIGHT : _minHeight;
+  }, [proxiedAccounts?.proxied?.length]);
+
   const onChangeGenesis = useCallback((genesisHash?: string | null) => {
     setSelectedProxied([]);
 
@@ -61,6 +69,7 @@ function ImportProxiedFS (): React.ReactElement {
 
   const onParentChange = useCallback((address: string) => {
     setSelectedProxied([]);
+    setChain(null);
     setSelectedAddress(address);
   }, []);
 
@@ -90,17 +99,15 @@ function ImportProxiedFS (): React.ReactElement {
       />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', position: 'relative' }}>
         <Grid container item sx={{ display: 'block', mb: '20px', px: '10%' }}>
-          <Grid alignContent='center' alignItems='center' container item>
-            <Grid item sx={{ mr: '20px' }}>
+          <Bread />
+          <Title
+            height='85px'
+            logo={
               <vaadin-icon icon='vaadin:sitemap' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px', transform: 'rotate(180deg)' }} />
-            </Grid>
-            <Grid item>
-              <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t('Import proxied accounts')}
-              </Typography>
-            </Grid>
-          </Grid>
-          <Typography fontSize='16px' fontWeight={400} textAlign='left' width='100%'>
+            }
+            text={t('Import proxied accounts')}
+          />
+          <Typography fontSize='16px' fontWeight={400} pt='20px' textAlign='left' width='100%'>
             {t('Import proxied account(s) to have them as watch-only accounts in the extension.')}
           </Typography>
           <Grid container item sx={{ my: '30px' }}>
@@ -119,6 +126,7 @@ function ImportProxiedFS (): React.ReactElement {
             </Label>
             <SelectChain
               address={selectedAddress}
+              defaultValue={chain?.genesisHash}
               fullWidthDropdown
               icon={getLogo(chain ?? undefined)}
               label={t('Select the chain')}
@@ -132,6 +140,7 @@ function ImportProxiedFS (): React.ReactElement {
                 chain={chain}
                 label={t('Proxied account(s)')}
                 maxHeight='200px'
+                minHeight={tableMinHeight ? `${tableMinHeight}px` : undefined}
                 proxiedAccounts={proxiedAccounts?.proxy === formatted ? proxiedAccounts?.proxied : undefined}
                 selectedProxied={selectedProxied}
                 setSelectedProxied={setSelectedProxied}
