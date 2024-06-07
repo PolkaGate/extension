@@ -27,7 +27,7 @@ function ChainItem({ chain, disabled, isSelected, onclick }: Props): React.React
       <Grid alignItems='center' container item mr='10px' width='fit-content'>
         <Avatar
           src={getLogo2(chain.text)?.logo}
-          sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(sanitizeChainName(String(chain.value)) || '') && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 25, width: 25, mr: '10px' }}
+          sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(sanitizeChainName(chain.text) || '') && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 25, width: 25, mr: '10px' }}
           variant='square'
         />
         <Typography fontSize='16px' fontWeight={selectedItem ? 500 : 400}>
