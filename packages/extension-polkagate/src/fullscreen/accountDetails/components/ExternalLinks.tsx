@@ -17,14 +17,13 @@ interface Props {
 // There are two Bifrost chains, but we only support Polkadot-Bifrost
 const SUBSQUARE_SUPPORTED_CHAINS = ['Polkadot', 'Polkadot Collectives', 'Acala', 'Bifrost', 'Centrifuge', 'Darwinia2', 'HydraDX', 'Interlay', 'Litentry', 'Phala', 'Zeitgeist', 'Kusama', 'Altair', 'Basilisk', 'Litmus', 'Karura', 'Khala', 'Turing', 'Kintsugi', 'Curst', 'Rococo'];
 
-export default function ExternalLinks({ address }: Props): React.ReactElement {
+export default function ExternalLinks ({ address }: Props): React.ReactElement {
   const theme = useTheme();
   const chainName = useChainName(address);
   const formatted = useFormatted(address);
 
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const subIDURL = useMemo(() => `https://sub.id/${formatted ?? address ?? ''}`, [address, formatted]);
- 
+
   const subscanURL = useMemo(() => {
     // Subscan does not support Pendulum
     if (chainName === 'Pendulum') {
@@ -74,7 +73,7 @@ export default function ExternalLinks({ address }: Props): React.ReactElement {
   };
 
   return (
-    <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} >
+    <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }}>
       <LinkButton
         linkName='subid'
         linkURL={subIDURL}
