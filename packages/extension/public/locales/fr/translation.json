@@ -1279,5 +1279,7 @@
   "X:": "X:",
   "X": "X",
   "Please transfer some tokens to {{chainName}} People chain.": "Veuillez transférer quelques jetons vers la chaîne des personnes {{chainName}}.",
-  "Reasons": "Raisons"
+  "Reasons": "Raisons",
+  "Please wait a few seconds and don't close the window.": "Veuillez patienter quelques secondes et ne fermez pas la fenêtre.",
+  "Reserved Reasons": "Raisons réservées"
 }

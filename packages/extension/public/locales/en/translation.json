@@ -1286,5 +1286,7 @@
   "X": "",
   "Please transfer some tokens to {{chainName}} People chain.": "",
   "Comm": "",
-  "Reasons": ""
+  "Reasons": "",
+  "Please wait a few seconds and don't close the window.": "",
+  "Reserved Reasons": ""
 }
