@@ -23,7 +23,7 @@ import ReceiveModal from '../../popup/receive/ReceiveModal';
 import RenameModal from '../../popup/rename/RenameModal';
 import { EXTRA_PRICE_IDS } from '../../util/api/getPrices';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
-import { sanitizeChainName } from '../../util/utils';
+import { isOnRelayChain, sanitizeChainName } from '../../util/utils';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
@@ -46,8 +46,6 @@ export interface UnlockInformationType {
   totalLocked: BN;
   unlockableAmount: BN;
 }
-
-const isOnRelayChain = (chainName?: string) => ['kusama', 'polkadot', 'westend'].includes(chainName?.toLowerCase() || '');
 
 export default function AccountDetails (): React.ReactElement {
   useFullscreen();
@@ -87,6 +85,7 @@ export default function AccountDetails (): React.ReactElement {
       return selectedAsset?.assetId === assetId ? selectedAsset : balances;
     }
 
+    // FixMe: is chainName check necessary?
     if (!chainName || (balances?.genesisHash && selectedAsset?.genesisHash && balances.genesisHash !== selectedAsset.genesisHash)) {
       return;
     }
@@ -253,7 +252,7 @@ export default function AccountDetails (): React.ReactElement {
                       amount={balancesToShow?.reservedBalance}
                       decimal={balancesToShow?.decimal}
                       disabled={!balancesToShow?.reservedBalance || balancesToShow?.reservedBalance?.isZero()}
-                      isOnRelayChain={isOnRelayChain(chainName)}
+                      isOnRelayChain={isOnRelayChain(genesisHash)}
                       price={currentPrice} // TODO: double check
                       reservedDetails={reservedDetails}
                       title={t('Reserved')}
