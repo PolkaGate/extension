@@ -71,7 +71,7 @@ const Item: React.FC<{ height?: string, logoSize?: number, text: string }> = ({ 
   );
 };
 
-function FullscreenChain({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style }: Props) {
+function FullscreenChain ({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style }: Props) {
   const theme = useTheme();
   const _allOptions = useGenesisHashOptions();
   const isTestnetEnabled = useIsTestnetEnabled();
