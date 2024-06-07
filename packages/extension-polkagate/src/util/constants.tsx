@@ -3,7 +3,7 @@
 /* eslint-disable header/header */
 
 export const EXTENSION_NAME = 'Polkagate';
-export const NEW_VERSION_ALERT = 'alert_v0.5.3';
+export const NEW_VERSION_ALERT = 'alert_v0.5.4';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 
 // export const EXTENSION_FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf2WHD0oVR0NS7tW6C1U025H1XBEZXqwxvFvPhcoFa18eHQiA/viewform';
