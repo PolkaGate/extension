@@ -73,7 +73,7 @@ export default function HomeMenu (): React.ReactElement {
   const areAllExternalAccounts = useMemo(() => accounts.every(({ isExternal }) => isExternal), [accounts]);
 
   const onCreate = useCallback(() => {
-    openOrFocusTab('/account/create');
+    openOrFocusTab('/create-account-full-screen');
   }, []);
 
   const onExportAll = useCallback(() => {

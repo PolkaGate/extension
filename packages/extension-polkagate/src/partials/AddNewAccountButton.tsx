@@ -22,8 +22,8 @@ export default function AddNewAccountButton (): React.ReactElement {
 
   const onCreate = useCallback((): void => {
     isExtensionMode
-      ? windowOpen('/account/create').catch(console.error)
-      : onAction('/account/create');
+      ? windowOpen('/create-account-full-screen').catch(console.error)
+      : onAction('/create-account-full-screen');
   }, [isExtensionMode, onAction]);
 
   return (

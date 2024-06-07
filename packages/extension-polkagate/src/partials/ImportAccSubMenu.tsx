@@ -26,15 +26,15 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
   const onAction = useContext(ActionContext);
 
   const onRestoreFromJson = useCallback((): void => {
-    windowOpen('/account/restore-json').catch(console.error);
+    windowOpen('/import/restore-json-full-screen').catch(console.error);
   }, []);
 
   const onImportAcc = useCallback(() => {
-    windowOpen('/account/import-seed').catch(console.error);
+    windowOpen('/import/seed-full-screen').catch(console.error);
   }, []);
 
   const onImportRawSeed = useCallback(() => {
-    windowOpen('/account/import-raw-seed').catch(console.error);
+    windowOpen('/import/raw-seed-full-screen').catch(console.error);
   }, []);
 
   const onAddWatchOnly = useCallback(() => {
@@ -46,7 +46,7 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
   }, [onAction]);
 
   const onImportLedger = useCallback((): void => {
-    windowOpen('/account/import-ledger').catch(console.error);
+    windowOpen('/import/ledger-full-screen').catch(console.error);
   }, []);
 
   const onImportProxied = useCallback((): void => {

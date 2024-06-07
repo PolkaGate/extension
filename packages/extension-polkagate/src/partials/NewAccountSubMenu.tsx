@@ -27,7 +27,7 @@ function NewAccountSubMenu({ show }: Props): React.ReactElement<Props> {
   }, [master, onAction]);
 
   const goToCreateAcc = useCallback(() => {
-    windowOpen('/account/create').catch(console.error);
+    windowOpen('/create-account-full-screen').catch(console.error);
   }, []);
 
   return (
