@@ -109,7 +109,7 @@ export default function ReservedReasons ({ address, assetId, identity, setShow, 
               ))}
             </>
             : <Progress
-              fontSize={16}
+              fontSize={14}
               pt={10}
               size={100}
               title={t('Loading information, please wait ...')}

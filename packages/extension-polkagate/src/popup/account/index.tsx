@@ -16,6 +16,8 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
+import { isOnRelayChain } from '@polkadot/extension-polkagate/src/util/utils';
+
 import { stakingClose } from '../../assets/icons';
 import { ActionContext, Assets, Chain, HorizontalMenuItem, Identity, Motion } from '../../components';
 import { useBalances, useGenesisHashOptions, useInfo, useMyAccountIdentity, useTranslation } from '../../hooks';
@@ -49,7 +51,7 @@ export default function AccountDetails (): React.ReactElement {
   const [showReservedReasons, setShowReservedReasons] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
 
-  const isOnAssetHub = useMemo(() => ASSET_HUBS.includes(genesisHash ?? ''), [genesisHash]);
+  const showReservedChevron = useMemo(() => balances && !balances?.reservedBalance.isZero() && isOnRelayChain(genesisHash), [balances, genesisHash]);
 
   const gotToHome = useCallback(() => {
     if (showStakingOptions) {
@@ -230,7 +232,7 @@ export default function AccountDetails (): React.ReactElement {
                   ? <LockedInReferenda address={address} refresh={refresh} setRefresh={setRefresh} />
                   : <LabelBalancePrice address={address} balances={balanceToShow} label={'Locked'} title={t('Locked')} />
                 }
-                <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} onClick={balances && !balances?.reservedBalance.isZero() && !isOnAssetHub ? onReservedReasons : undefined} title={t('Reserved')} />
+                <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} onClick={ showReservedChevron ? onReservedReasons : undefined} title={t('Reserved')} />
                 <OthersRow />
               </>
             }
