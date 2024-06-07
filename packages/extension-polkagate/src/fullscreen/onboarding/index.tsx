@@ -118,7 +118,7 @@ function Onboarding (): React.ReactElement {
             {t('We appreciate your choice in selecting Polkagate as your gateway to the Polkadot ecosystem! 🌟')}
           </Typography>
           <Typography fontSize='16px' fontWeight={400} width='100%'>
-            {t('At present, you do not have any accounts. To begin your journey, you can create your first account, import existing accounts, or explore our demo option to get started.')}
+            {t('At present, you do not have any accounts. To begin your journey, you can create your first account, import existing accounts, or explore the demo option to get started.')}
           </Typography>
           <Grid alignItems='center' container item justifyContent='center' pt='80px'>
             <PButton
