@@ -58,7 +58,7 @@ function renderMethod(data: string, { args, method }: Decoded, t: TFunction): Re
   if (!args || !method) {
     return (
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-        <Typography fontWeight={300} width='35%'>{t<string>('Method data')}</Typography>
+        <Typography fontWeight={300} width='35%'>{t('Method data')}</Typography>
         <ShortAddress address={data} charsCount={6} showCopy style={{ '& :last-child': { mr: '-5px' }, fontWeight: 400, justifyContent: 'flex-end', textAlign: 'right', width: '65%' }} />
       </Grid>
     );
@@ -72,19 +72,21 @@ function renderMethod(data: string, { args, method }: Decoded, t: TFunction): Re
     </Grid>
   );
 
+  const methodText = `${method.method}(${method.meta.args.map(({ name }) => name).join(', ')})`;
+
   return (
     <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
       <Grid container item justifyContent='flex-start' width='25%'>
         <Infotip iconLeft={5} showQuestionMark text={<PrettyArgs />}>
           <Typography fontWeight={300}>
-            {t<string>('Method')}
+            {t('Method')}
           </Typography>
         </Infotip>
       </Grid>
       <Grid container item justifyContent='flex-end' width='75%'>
         <Infotip text={<PrettyArgs />}>
           <Typography fontWeight={400} textAlign='right'>
-            {`${method.method}(${method.meta.args.map(({ name }) => name).join(', ')})`}
+            {methodText.length > 60 ? methodText.slice(0, 60) + '...' : methodText}
           </Typography>
         </Infotip>
       </Grid>
@@ -94,7 +96,7 @@ function renderMethod(data: string, { args, method }: Decoded, t: TFunction): Re
 
 function mortalityAsString(era: ExtrinsicEra, hexBlockNumber: string, t: TFunction): string {
   if (era.isImmortalEra) {
-    return t<string>('immortal');
+    return t('immortal');
   }
 
   const blockNumber = bnToBn(hexBlockNumber);
@@ -125,14 +127,14 @@ function Extrinsic({ payload: { era, nonce, tip }, request: { blockNumber, genes
     <Grid container fontSize='16px' sx={{ '> div:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', m: '15px auto', width: '92%' }}>
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
         <Typography fontWeight={300} width='35%'>
-          {t<string>('From')}
+          {t('From')}
         </Typography>
         <Typography fontWeight={400} sx={{ maxWidth: '65%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} textAlign='right'>
           {final}
         </Typography>
       </Grid>
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-        <Typography fontWeight={300} width='35%'>{chain ? t<string>('Chain') : t<string>('Genesis')}</Typography>
+        <Typography fontWeight={300} width='35%'>{chain ? t('Chain') : t('Genesis')}</Typography>
         {chain
           ? <Typography fontWeight={400} textAlign='right' width='65%'>{chain.name}</Typography>
           : <ShortAddress address={genesisHash} charsCount={6} showCopy style={{ '& :last-child': { mr: '-5px' }, fontWeight: 400, justifyContent: 'flex-end', textAlign: 'right', width: '65%' }} />
@@ -140,7 +142,7 @@ function Extrinsic({ payload: { era, nonce, tip }, request: { blockNumber, genes
       </Grid>
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
         <Typography fontWeight={300} width='35%'>
-          {t<string>('Version')}
+          {t('Version')}
         </Typography>
         <Typography fontWeight={400} textAlign='right' width='65%'>
           {specVersion.toNumber()}
@@ -148,7 +150,7 @@ function Extrinsic({ payload: { era, nonce, tip }, request: { blockNumber, genes
       </Grid>
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
         <Typography fontWeight={300} width='35%'>
-          {t<string>('Nonce')}
+          {t('Nonce')}
         </Typography>
         <Typography fontWeight={400} textAlign='right' width='65%'>
           {formatNumber(nonce)}
@@ -157,7 +159,7 @@ function Extrinsic({ payload: { era, nonce, tip }, request: { blockNumber, genes
       {!tip.isEmpty && (
         <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
           <Typography fontWeight={300} width='35%'>
-            {t<string>('Tip')}
+            {t('Tip')}
           </Typography>
           <Typography fontWeight={400} textAlign='right' width='65%'>
             {formatNumber(tip)}
@@ -167,7 +169,7 @@ function Extrinsic({ payload: { era, nonce, tip }, request: { blockNumber, genes
       {renderMethod(method, decoded, t)}
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
         <Typography fontWeight={300} width='35%'>
-          {t<string>('Time to sign')}
+          {t('Time to sign')}
         </Typography>
         <Typography fontWeight={400} textAlign='right' width='65%'>
           {mortalityAsString(era, blockNumber, t)}
