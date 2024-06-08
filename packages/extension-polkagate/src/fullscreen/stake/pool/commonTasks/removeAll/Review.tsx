@@ -43,8 +43,8 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
-  const [membersToUnboundAll, setMembersToUnboundAll] = useState<MemberPoints[] | undefined>();
-  const [membersToRemoveAll, setMembersToRemoveAll] = useState<MemberPoints[] | undefined>();
+  const [membersToUnbond, setMembersToUnbond] = useState<MemberPoints[] | undefined>();
+  const [membersToRemove, setMembersToRemove] = useState<MemberPoints[] | undefined>();
   const [inputs, setInputs] = useState<Inputs | undefined>();
 
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
@@ -79,16 +79,16 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
 
       const membersToUnbond = nonZeroPointMembers.filter((m) => m.accountId !== poolDepositorAddr);
 
-      setMembersToUnboundAll(membersToUnbond);
+      setMembersToUnbond(membersToUnbond);
     } else {
       const membersToRemove = poolMembers.filter((m) => m.accountId !== poolDepositorAddr);
 
-      setMembersToRemoveAll(membersToRemove);
+      setMembersToRemove(membersToRemove);
     }
   }, [poolMembers, mode, poolDepositorAddr]);
 
   useEffect(() => {
-    if ((!membersToUnboundAll && !membersToRemoveAll) || !formatted || !api) {
+    if ((!membersToUnbond && !membersToRemove) || !formatted || !api) {
       return;
     }
 
@@ -97,39 +97,47 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
     if (mode === 'UnbondAll') {
       const unbonded = api.tx.nominationPools.unbond;
 
-      const params = membersToUnboundAll?.map((m) => [m.accountId, m.points]);
+      const members = membersToUnbond?.map((m) => [m.accountId, m.points]);
 
-      if (!params || params.length === 0) {
+      if (!members || members.length === 0) {
         return;
       }
 
-      const call = params.length > 1
+      const call = members.length > 1
         ? batchAll
         : unbonded;
 
+      const params = members.length > 1
+        ? [members.map((member) => unbonded(...member))]
+        : members[0];
+
       setInputs({
         call,
-        params: params.length > 1 ? params : params[0]
+        params
       });
     } else if (mode === 'RemoveAll') {
       const redeem = api.tx.nominationPools.withdrawUnbonded;
 
-      const params = membersToRemoveAll?.map((m) => [m.accountId, m.points]);
+      const members = membersToRemove?.map((m) => [m.accountId, m.points]);
 
-      if (!params || params.length === 0) {
+      if (!members || members.length === 0) {
         return;
       }
 
-      const call = params.length > 1
+      const call = members.length > 1
         ? batchAll
         : redeem;
 
+      const params = members.length > 1
+        ? [members.map((member) => redeem(...member))]
+        : members[0];
+
       setInputs({
         call,
-        params: params.length > 1 ? params : params[0]
+        params
       });
     }
-  }, [api, formatted, membersToRemoveAll, membersToUnboundAll, mode, setInputs]);
+  }, [api, formatted, membersToRemove, membersToUnbond, mode, setInputs]);
 
   const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
 
@@ -150,14 +158,14 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
           {mode === 'UnbondAll'
             ? (<Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
-              {t<string>('Unstaking all members of the pool except yourself forcefully.')}
+              {t('Unstaking all members of the pool except yourself forcefully.')}
             </Typography>)
             : (<>
               <Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }} textAlign='center'>
-                {t<string>('Removing all members from the pool')}
+                {t('Removing all members from the pool')}
               </Typography>
               <Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
-                {t<string>('When you confirm, you will be able to unstake your tokens')}
+                {t('When you confirm, you will be able to unstake your tokens')}
               </Typography>
             </>)
           }
