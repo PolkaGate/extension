@@ -104,7 +104,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
               chain={chain}
               label={t('Pool')}
               labelPosition='center'
-              mode='Joining'
+              mode={inputs.pool.bondedPool?.state.toString() === 'Creating' ? 'Creating' : 'Joining'}
               pool={inputs?.pool}
               showInfo
               style={{
@@ -137,7 +137,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
           <Grid alignItems='center' container item sx={{ height: '42px' }}>
             <ShowBalance
               api={api}
-              balance={_extraInfo?.fee}
+              balance={estimatedFee}
               decimalPoint={4}
             />
           </Grid>
