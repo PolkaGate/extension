@@ -209,4 +209,4 @@ export const USD_CURRENCY = {
 };
 
 export const FULLSCREEN_WIDTH = '900px';
-export const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed', '/account/import-raw-seed', '/forgot-password', '/reset-wallet'];
+export const ALLOWED_URL_ON_RESET_PASSWORD = ['/import/restore-json-full-screen', '/import/seed-full-screen', '/import/raw-seed-full-screen', '/forgot-password', '/reset-wallet'];

@@ -40,13 +40,13 @@ function Onboarding (): React.ReactElement {
 
   const onRestoreFromJson = useCallback(
     (): void => {
-      windowOpen('/account/restore-json').catch(console.error);
+      windowOpen('/import/restore-json-full-screen').catch(console.error);
     }, []
   );
 
   const onImportLedger = useCallback(
     (): void => {
-      windowOpen('/account/import-ledger').catch(console.error);
+      windowOpen('/import/ledger-full-screen').catch(console.error);
     }, []
   );
 
@@ -63,7 +63,7 @@ function Onboarding (): React.ReactElement {
 
   const onCreate = useCallback(
     (): void => {
-      windowOpen('/account/create').catch(console.error);
+      windowOpen('/create-account-full-screen').catch(console.error);
     }, []
   );
 
@@ -75,13 +75,13 @@ function Onboarding (): React.ReactElement {
 
   const onImport = useCallback(
     (): void => {
-      windowOpen('/account/import-seed').catch(console.error);
+      windowOpen('/import/seed-full-screen').catch(console.error);
     }, []
   );
 
   const onImportRawSeed = useCallback(
     (): void => {
-      windowOpen('/account/import-raw-seed').catch(console.error);
+      windowOpen('/import/raw-seed-full-screen').catch(console.error);
     }, []
   );
 

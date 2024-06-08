@@ -24,11 +24,11 @@ function ResetFS (): React.ReactElement {
   useFullscreen();
 
   const _goToRestoreFromJson = useCallback((): void => {
-    windowOpen('/account/restore-json').catch(console.error);
+    windowOpen('/import/restore-json-full-screen').catch(console.error);
   }, []);
 
   const _goToImport = useCallback((): void => {
-    windowOpen('/account/import-seed').catch(console.error);
+    windowOpen('/import/seed-full-screen').catch(console.error);
   }, []);
 
   return (

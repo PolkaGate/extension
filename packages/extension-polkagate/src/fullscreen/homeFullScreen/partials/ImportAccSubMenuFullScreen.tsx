@@ -27,15 +27,15 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
   const theme = useTheme();
 
   const onRestoreFromJson = useCallback((): void => {
-    openOrFocusTab('/account/restore-json');
+    openOrFocusTab('/import/restore-json-full-screen');
   }, []);
 
   const onImportFromSeed = useCallback(() => {
-    openOrFocusTab('/account/import-seed');
+    openOrFocusTab('/import/seed-full-screen');
   }, []);
 
   const onImportFromRawSeed = useCallback(() => {
-    openOrFocusTab('/account/import-raw-seed');
+    openOrFocusTab('/import/raw-seed-full-screen');
   }, []);
 
   const onAddWatchOnlyFullScreen = useCallback(() => {
@@ -51,7 +51,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
   }, []);
 
   const onImportLedger = useCallback((): void => {
-    openOrFocusTab('/account/import-ledger');
+    openOrFocusTab('/import/ledger-full-screen');
   }, []);
 
   return (

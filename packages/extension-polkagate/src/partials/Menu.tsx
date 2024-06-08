@@ -65,7 +65,7 @@ function Menu ({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   }, [setShowMenu]);
 
   const _goToExportAll = useCallback(() => {
-    onAction('/account/export-all');
+    onAction('/export/all');
   }, [onAction]);
 
   const onEnableTestnetConfirm = useCallback(() => {

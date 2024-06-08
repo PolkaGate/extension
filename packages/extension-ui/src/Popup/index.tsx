@@ -282,17 +282,13 @@ export default function Popup (): React.ReactElement {
                                 <SigningReqContext.Provider value={signRequests}>
                                   <Switch>
                                     <Route path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<AccountEx />, 'account')}</Route>
-                                    <Route path='/account/create'>{wrapWithErrorBoundary(<CreateAccount />, 'account-creation')}</Route>
-                                    <Route path='/account/export-all'>{wrapWithErrorBoundary(<ExportAll />, 'export-all-address')}</Route>
-                                    <Route path='/account/import-ledger'>{wrapWithErrorBoundary(<ImportLedger />, 'import-ledger')}</Route>
-                                    <Route path='/account/import-seed'>{wrapWithErrorBoundary(<ImportSeed />, 'import-seed')}</Route>
-                                    <Route path='/account/import-raw-seed'>{wrapWithErrorBoundary(<ImportRawSeed />, 'import-raw-seed')}</Route>
-                                    <Route path='/account/restore-json'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json')}</Route>
                                     <Route path='/accountfs/:address/:paramAssetId'>{wrapWithErrorBoundary(<AccountFS />, 'account')}</Route>
                                     <Route path='/auth-list'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
+                                    <Route path='/create-account-full-screen'>{wrapWithErrorBoundary(<CreateAccount />, 'account-creation')}</Route>
                                     <Route path='/crowdloans/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
                                     <Route path='/derive/:address/locked'>{wrapWithErrorBoundary(<Derive isLocked />, 'derived-address-locked')}</Route>
                                     <Route path='/derive/:address'>{wrapWithErrorBoundary(<Derive />, 'derive-address')}</Route>
+                                    <Route path='/export/all'>{wrapWithErrorBoundary(<ExportAll />, 'export-all-address')}</Route>
                                     <Route path='/export/:address'>{wrapWithErrorBoundary(<Export />, 'export-address')}</Route>
                                     <Route path='/forget/:address/:isExternal'>{wrapWithErrorBoundary(<ForgetAccount />, 'forget-address')}</Route>
                                     <Route path='/forgot-password'>{wrapWithErrorBoundary(<ForgotPassword />, 'forgot-password')}</Route>
@@ -306,8 +302,12 @@ export default function Popup (): React.ReactElement {
                                     <Route path='/import/add-watch-only-full-screen'>{wrapWithErrorBoundary(<AddWatchOnlyFullScreen />, 'import-add-watch-only-full-screen')}</Route>
                                     <Route path='/import/attach-qr'>{wrapWithErrorBoundary(<AttachQR />, 'attach-qr')}</Route>
                                     <Route path='/import/attach-qr-full-screen'>{wrapWithErrorBoundary(<AttachQrFullScreen />, 'attach-qr-full-screen')}</Route>
+                                    <Route path='/import/ledger-full-screen'>{wrapWithErrorBoundary(<ImportLedger />, 'import-ledger-full-screen')}</Route>
                                     <Route path='/import/proxied'>{wrapWithErrorBoundary(<ImportProxied />, 'import-proxied')}</Route>
                                     <Route path='/import/proxied-full-screen'>{wrapWithErrorBoundary(<ImportProxiedFullScreen />, 'import-add-watch-only-full-screen')}</Route>
+                                    <Route path='/import/raw-seed-full-screen'>{wrapWithErrorBoundary(<ImportRawSeed />, 'import-raw-seed-full-screen')}</Route>
+                                    <Route path='/import/restore-json-full-screen'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json-full-screen')}</Route>
+                                    <Route path='/import/seed-full-screen'>{wrapWithErrorBoundary(<ImportSeed />, 'import-seed-full-screen')}</Route>
                                     <Route path='/login-password'>{wrapWithErrorBoundary(<LoginPassword />, 'manage-login-password')}</Route>
                                     <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
                                     <Route path='/manageIdentity/:address'>{wrapWithErrorBoundary(<ManageIdentity />, 'manage-identity')}</Route>
