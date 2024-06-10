@@ -304,6 +304,15 @@ export default class Extension {
     return true;
   }
 
+  // added for PolkaGate
+  private metadataUpdate(metadata: MetadataDef): boolean {
+    assert(metadata, 'Unable to update metadata');
+
+    this.#state.saveMetadata(metadata);
+
+    return true;
+  }
+
   private jsonRestore({ file, password }: RequestJsonRestore): void {
     try {
       keyring.restoreAccount(file, password);
@@ -618,6 +627,9 @@ export default class Extension {
 
       case 'pri(metadata.requests)':
         return this.metadataSubscribe(id, port);
+
+      case 'pri(metadata.update)': // added for polkagate
+        return this.metadataUpdate(request as MetadataDef);
 
       case 'pri(derivation.create)':
         return this.derivationCreate(request as RequestDeriveCreate);

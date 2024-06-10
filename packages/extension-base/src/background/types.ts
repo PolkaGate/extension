@@ -88,6 +88,7 @@ export interface RequestSignatures {
 
   'pri(accounts.updateMeta)': [RequestUpdateMeta, boolean]; // added for polkagate
   'pri(extension.lock)': [null, boolean]; // added for polkagate
+  'pri(metadata.update)': [MetadataDef, boolean]; // added for polkagate
 
   'pri(accounts.export)': [RequestAccountExport, ResponseAccountExport];
   'pri(accounts.batchExport)': [RequestAccountBatchExport, ResponseAccountsExport]
