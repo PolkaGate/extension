@@ -37,7 +37,7 @@ import { AccountContext, AccountsAssetsContext, ActionContext, APIContext, Autho
 import { getStorage, LoginInfo, setStorage, updateStorage } from '../../../extension-polkagate/src/components/Loading';
 import { ExtensionLockProvider } from '../../../extension-polkagate/src/context/ExtensionLockContext';
 import Onboarding from '../../../extension-polkagate/src/fullscreen/onboarding';
-import { usePriceIds } from '../../../extension-polkagate/src/hooks';
+import { usePriceIds, useUpdateMetadata } from '../../../extension-polkagate/src/hooks';
 import useAssetsBalances, { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../extension-polkagate/src/hooks/useAssetsBalances';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
 import AccountEx from '../../../extension-polkagate/src/popup/account';
@@ -135,6 +135,8 @@ export default function Popup (): React.ReactElement {
   const [accountsAssets, setAccountsAssets] = useState<SavedAssets | null | undefined>();
   const [currency, setCurrency] = useState<CurrencyItemType>();
   const [loginInfo, setLoginInfo] = useState<LoginInfo>();
+
+  useUpdateMetadata(accountCtx.accounts, apis);
 
   const set = useCallback((change: Fetching) => {
     setFetching(change);

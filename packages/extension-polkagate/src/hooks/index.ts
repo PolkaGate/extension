@@ -101,3 +101,4 @@ export { default as useApiWithChain2 } from './useApiWithChain2';
 export { default as usePeopleChain } from './usePeopleChain';
 export { default as useIdentity } from './useIdentity';
 export { default as useReservedDetails } from './useReservedDetails';
+export { default as useUpdateMetadata } from './useUpdateMetadata';
