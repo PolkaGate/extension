@@ -710,31 +710,20 @@ export interface ApiState {
   systemVersion: string;
 }
 
-export interface ApiProps extends ApiState {
-  api: ApiPromise;
-  apiEndpoint: LinkOption | null;
-  apiError: string | null;
-  apiRelay: ApiPromise | null;
-  apiUrl?: string;
-  extensions?: InjectedExtension[];
-  isApiConnected: boolean;
-  isApiInitialized: boolean;
-  isElectron: boolean;
-  isWaitingInjected: boolean;
+export interface ApiProps {
+  api?: ApiPromise;
+  endpoint?: string;
+  isRequested: boolean;
 }
 
 export interface APIs {
-  [genesisHash: string]: ApiProps;
+  [genesisHash: string]: ApiProps[];
 }
+
 export interface APIsContext {
-  apis: { [key: string]: { api?: ApiPromise; endpoint?: string; isRequested: boolean; }[] };
+  apis: APIs;
   setIt: (apis: {
-    [key: string]:
-    {
-      api?: ApiPromise;
-      endpoint?: string;
-      isRequested: boolean;
-    }[]
+    [key: string]: ApiProps[]
   }) => void;
 }
 
