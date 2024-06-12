@@ -7,6 +7,7 @@ import '@vaadin/icons';
 
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -18,7 +19,6 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { CanPayErrorAlert, ShowBalance, SignArea2, WrongPasswordAlert } from '../../components';
 import { useCanPayFeeAndDeposit, useFormatted, useTranslation } from '../../hooks';
 import { ThroughProxy } from '../../partials';
-import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { pgBoxShadow } from '../../util/utils';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
@@ -40,7 +40,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function Review({ address, api, chain, depositedValue, newDepositValue, proxyItems, setRefresh, setStep, step }: Props): React.ReactElement {
+function Review ({ address, api, chain, depositedValue, newDepositValue, proxyItems, setRefresh, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const formatted = useFormatted(address);

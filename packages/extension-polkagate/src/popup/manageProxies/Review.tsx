@@ -20,7 +20,7 @@ import useTranslation from '../../hooks/useTranslation';
 import { SubTitle, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
 import { signAndSend } from '../../util/api';
-import { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getFormattedAddress, getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import ManageProxiesTxDetail from './partials/ManageProxiesTxDetail';
 

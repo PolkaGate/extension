@@ -9,12 +9,12 @@ import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 import { BN_ZERO } from '@polkadot/util';
 
 import { Checkbox2, Identity, Infotip, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { StakingConsts, ValidatorInfo } from '../../../util/types';
+import type { StakingConsts, ValidatorInfo } from '../../../util/types';
 import { isHexToBn } from '../../../util/utils';
 
 interface Props {

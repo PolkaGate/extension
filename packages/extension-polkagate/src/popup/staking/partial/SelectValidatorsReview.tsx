@@ -23,7 +23,7 @@ import { useAccountDisplay, useChain, useDecimal, useFormatted, useProxies, useT
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../partials';
 import Confirmation from '../../../partials/Confirmation';
 import broadcast from '../../../util/api/broadcast';
-import { Proxy, ProxyItem, StakingConsts, TxInfo, ValidatorInfo } from '../../../util/types';
+import type { Proxy, ProxyItem, StakingConsts, TxInfo, ValidatorInfo } from '../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import TxDetail from './TxDetail';
 import ValidatorsTable from './ValidatorsTable';

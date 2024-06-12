@@ -5,6 +5,8 @@
 
 import '@vaadin/icons';
 
+import type { ProxyItem } from '../../util/types';
+
 import { AddRounded as AddRoundedIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
@@ -15,7 +17,6 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, ShowBalance, TwoButtons } from '../../components';
 import { useTranslation } from '../../hooks';
-import type { ProxyItem } from '../../util/types';
 import { noop } from '../../util/utils';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
@@ -41,7 +42,7 @@ interface Props {
   token: string | undefined;
 }
 
-export default function Manage({ api, chain, decimal, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
+export default function Manage ({ api, chain, decimal, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);

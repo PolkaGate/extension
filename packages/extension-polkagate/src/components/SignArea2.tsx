@@ -6,6 +6,7 @@
 import type { Header } from '@polkadot/types/interfaces';
 import type { AnyTuple } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
+import type { Proxy, ProxyItem, ProxyTypes, TxInfo, TxResult } from '../util/types';
 
 import { faSignature } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -27,7 +28,6 @@ import LedgerSign from '../popup/signing/LedgerSign';
 import Qr from '../popup/signing/Qr';
 import { CMD_MORTAL } from '../popup/signing/Request';
 import { send, signAndSend } from '../util/api';
-import { Proxy, ProxyItem, ProxyTypes, TxInfo, TxResult } from '../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../util/utils';
 import { Identity, Password, PButton, Progress, TwoButtons, Warning } from '.';
 

@@ -17,7 +17,7 @@ import { AddressInput, AmountWithOptions, InputWithLabel, PButton, ShowBalance }
 import { useApi, useChain, useDecimal, useFormatted, usePoolConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
 import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../../util/constants';
-import { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
+import type { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../../util/utils';
 import Review from './Review';
 import UpdateRoles from './UpdateRoles';

@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { NameAddress, TxInfo } from '../../util/types';
+
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
@@ -11,7 +13,6 @@ import { useAccountDisplay, useTranslation } from '../../hooks';
 import { SubTitle, ThroughProxy } from '../../partials';
 import Explorer from '../../popup/history/Explorer';
 import FailSuccessIcon from '../../popup/history/partials/FailSuccessIcon';
-import type { NameAddress, TxInfo } from '../../util/types';
 import { pgBoxShadow } from '../../util/utils';
 
 interface Props {

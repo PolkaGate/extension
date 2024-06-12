@@ -14,7 +14,7 @@ import { getComparator } from '@polkadot/extension-polkagate/src/popup/staking/p
 import { DEFAULT_FILTERS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { Checkbox2, Input, Select, SlidePopUp, TwoButtons } from '../../../components';
-import { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
+import type { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
 
 interface Props {
   allValidatorsIdentities: DeriveAccountInfo[] | undefined;

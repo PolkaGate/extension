@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { DropdownOption } from '../util/types';
+
 import { Avatar, FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -10,7 +12,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { CHAINS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
 
 import getLogo from '../util/getLogo';
-import { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
 import Label from './Label';
 

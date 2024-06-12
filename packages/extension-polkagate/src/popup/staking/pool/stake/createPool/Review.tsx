@@ -21,7 +21,7 @@ import { AccountHolderWithProxy, ActionContext, FormatBalance, PasswordUseProxyC
 import { useAccountDisplay, useChain, useDecimal, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
 import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import { createPool } from '../../../../../util/api';
-import { PoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
+import type { PoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import ShowPool from '../../../partial/ShowPool';
 import CreatePoolTxDetail from './partial/CreatePoolTxDetail';

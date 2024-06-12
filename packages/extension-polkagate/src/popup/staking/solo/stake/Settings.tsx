@@ -8,7 +8,7 @@ import { Grid, IconButton } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { SlidePopUp } from '../../../../components';
-import { SoloSettings, StakingConsts } from '../../../../util/types';
+import type { SoloSettings, StakingConsts } from '../../../../util/types';
 import SetPayeeController from './partials/SetPayeeController';
 import SettingsHeader from './partials/SettingsHeader';
 

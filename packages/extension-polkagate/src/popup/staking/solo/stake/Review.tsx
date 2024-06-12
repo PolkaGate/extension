@@ -28,7 +28,7 @@ import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
 import { SYSTEM_SUGGESTION_TEXT } from '../../../../util/constants';
-import { Proxy, ProxyItem, SoloSettings, TxInfo, ValidatorInfo } from '../../../../util/types';
+import type { Proxy, ProxyItem, SoloSettings, TxInfo, ValidatorInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import RewardsDestination from './partials/RewardDestination';
 import ShowValidators from './partials/ShowValidators';

@@ -11,7 +11,7 @@ import { Chain } from '../../../../../extension-chains/src/types';
 import { AccountContext, ShortAddress, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import ThroughProxy from '../../../partials/ThroughProxy';
-import { NameAddress, Proxy, ProxyItem } from '../../../util/types';
+import type { NameAddress, Proxy, ProxyItem } from '../../../util/types';
 import { getSubstrateAddress } from '../../../util/utils';
 
 interface Props {

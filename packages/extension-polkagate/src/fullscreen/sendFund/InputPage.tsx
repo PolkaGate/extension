@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
+import type { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
@@ -19,7 +20,6 @@ import { AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, ShowBalanc
 import { useTranslation } from '../../components/translate';
 import { useInfo, useTeleport } from '../../hooks';
 import { ASSET_HUBS } from '../../util/constants';
-import type { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
 import { amountToHuman, amountToMachine } from '../../util/utils';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { toTitleCase } from '../governance/utils/util';
@@ -92,7 +92,7 @@ export const Title = ({ height, icon, logo, ml, onBackClick, padding = '30px 0px
 
 const isAssethub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');
 
-export default function InputPage({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function InputPage ({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, formatted } = useInfo(address);
@@ -222,8 +222,8 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
       : [formatted, amount];
 
     api.rpc.state.getMetadata().then((m) => {
-      console.log(JSON.parse(JSON.stringify(m)))
-    })
+      console.log(JSON.parse(JSON.stringify(m)));
+    });
 
     onChainCall(..._params).paymentInfo(formatted).then((i) => setFeeCall(i?.partialFee)).catch(console.error);
   }, [api, formatted, balances, onChainCall, assetId]);

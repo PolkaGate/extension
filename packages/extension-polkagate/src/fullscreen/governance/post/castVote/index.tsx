@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -15,7 +16,6 @@ import { BN, BN_ONE } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useInfo, useProxies, useTranslation } from '../../../../hooks';
-import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { DraggableModal } from '../../components/DraggableModal';
 import SelectProxyModal2 from '../../components/SelectProxyModal2';

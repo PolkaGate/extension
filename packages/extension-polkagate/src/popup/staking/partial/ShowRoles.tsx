@@ -8,12 +8,12 @@ import { Circle } from 'better-react-spinkit';
 import React, { useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 
 import { Identity } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import getLogo from '../../../util/getLogo';
-import { MyPoolInfo } from '../../../util/types';
+import type { MyPoolInfo } from '../../../util/types';
 import { sanitizeChainName } from '../../../util/utils';
 
 interface Props {

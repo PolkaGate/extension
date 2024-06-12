@@ -26,7 +26,7 @@ import { useAccountName, useIdentity, useInfo, useTranslation } from '../../hook
 import { HeaderBrand } from '../../partials';
 import Asset from '../../partials/Asset';
 import { MAX_AMOUNT_LENGTH } from '../../util/constants';
-import { FormattedAddressState, TransferType } from '../../util/types';
+import type { FormattedAddressState, TransferType } from '../../util/types';
 import { amountToHuman, amountToMachine, isValidAddress } from '../../util/utils';
 import Review from './Review';
 

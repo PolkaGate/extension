@@ -13,7 +13,7 @@ import React from 'react';
 
 import { ShortAddress } from '../../../../../components';
 import { useAccountName, useMyAccountIdentity, useTranslation } from '../../../../../hooks';
-import { SoloSettings } from '../../../../../util/types';
+import type { SoloSettings } from '../../../../../util/types';
 import getPayee from './util';
 
 interface Props {

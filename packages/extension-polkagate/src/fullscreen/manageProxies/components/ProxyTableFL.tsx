@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ProxyItem } from '../../../util/types';
+
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import BackspaceIcon from '@mui/icons-material/Backspace';
@@ -14,7 +16,6 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { Checkbox2, Identity, Label2, Progress } from '../../../components';
 import { useTranslation } from '../../../components/translate';
-import type { ProxyItem } from '../../../util/types';
 
 interface Props {
   api: ApiPromise | undefined;
@@ -27,7 +28,7 @@ interface Props {
   labelAlignment?: 'left' | 'center' | 'right';
 }
 
-export default function ProxyTableFL({ api, chain, handleDelete, labelAlignment, proxyItems, status = 'Editable', style, tableLabel }: Props): React.ReactElement {
+export default function ProxyTableFL ({ api, chain, handleDelete, labelAlignment, proxyItems, status = 'Editable', style, tableLabel }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

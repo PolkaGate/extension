@@ -13,11 +13,11 @@ import { FixedSizeList as List } from 'react-window';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 import { useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
 import { BN, hexToBn, isHex } from '@polkadot/util';
 
-import { StakingConsts, ValidatorInfo } from '../../../util/types';
+import type { StakingConsts, ValidatorInfo } from '../../../util/types';
 import ShowValidator from './ShowValidator';
 import ValidatorInfoPage from './ValidatorInfo';
 

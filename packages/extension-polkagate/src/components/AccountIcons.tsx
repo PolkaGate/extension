@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { IconTheme } from '@polkadot/react-identicon/types';
+import type { Proxy } from '../util/types';
 
 import { faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,7 +16,6 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 import { PROXY_CHAINS } from '../util/constants';
-import type { Proxy } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
 import { ActionContext } from './contexts';
 import Identicon from './Identicon';

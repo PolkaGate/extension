@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { DropdownOption } from '../util/types';
+
 import { FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, SxProps, Theme, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -12,7 +14,6 @@ import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
 import getLogo from '../util/getLogo';
-import type { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
 import ChainLogo from './ChainLogo';
 import Label from './Label';
@@ -104,7 +105,7 @@ function FullscreenChain ({ address, defaultValue, disabledItems, helperText, la
       }
 
       const accountsAndChains = res?.RecentChains ?? {};
-      let myRecentChains = accountsAndChains[address] as string[];
+      const myRecentChains = accountsAndChains[address] as string[];
 
       if (!myRecentChains) {
         if (INITIAL_RECENT_CHAINS_GENESISHASH.includes(currentGenesisHash)) {

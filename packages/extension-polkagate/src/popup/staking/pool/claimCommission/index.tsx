@@ -20,7 +20,7 @@ import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../..
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
-import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import { To } from '../../../send/Review';
 import TxDetail from '../rewards/partials/TxDetail';

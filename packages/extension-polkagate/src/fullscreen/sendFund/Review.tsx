@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { BalancesInfo, Proxy, TxInfo } from '../../util/types';
+
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
@@ -10,7 +12,6 @@ import { ChainLogo, Identity, Motion, ShowBalance, SignArea2, WrongPasswordAlert
 import { useApi, useChain } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
-import type { BalancesInfo, Proxy, TxInfo } from '../../util/types';
 import { amountToMachine, pgBoxShadow } from '../../util/utils';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
 import { STEPS } from '../stake/pool/stake';

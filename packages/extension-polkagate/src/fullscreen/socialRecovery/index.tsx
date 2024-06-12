@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
+import type { InitiateRecoveryConfig, RecoveryConfigType, SessionInfo, SocialRecoveryModes, WithdrawInfo } from './util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -21,7 +22,6 @@ import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { AddressWithIdentity } from './components/SelectTrustedFriend';
 import RecoveryCheckProgress from './partial/RecoveryCheckProgress';
-import type { InitiateRecoveryConfig, RecoveryConfigType, SessionInfo, SocialRecoveryModes, WithdrawInfo } from './util/types';
 import Home from './Home';
 import InitiateRecovery from './InitiateRecovery';
 import RecoveryDetail from './RecoveryDetail';

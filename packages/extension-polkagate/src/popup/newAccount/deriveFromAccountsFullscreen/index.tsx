@@ -20,7 +20,7 @@ import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeade
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { deriveAccount, validateAccount, validateDerivationPath } from '../../../messaging';
 import { nextDerivationPath } from '../../../util/nextDerivationPath';
-import { AddressState } from '../../../util/types';
+import type { AddressState } from '../../../util/types';
 import DerivationPath from '../deriveAccount/DerivationPath';
 import AddressDropdownFullScreen from './AddressDropdownFullScreen';
 

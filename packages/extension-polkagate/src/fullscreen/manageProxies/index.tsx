@@ -5,6 +5,8 @@
 
 import '@vaadin/icons';
 
+import type { Proxy, ProxyItem } from '../../util/types';
+
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -15,7 +17,6 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { Warning } from '../../components';
 import { useFullscreen, useInfo, useTranslation } from '../../hooks';
 import { FULLSCREEN_WIDTH, PROXY_CHAINS } from '../../util/constants';
-import type { Proxy, ProxyItem } from '../../util/types';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import AddProxy from './AddProxy';
 import Manage from './Manage';
@@ -33,7 +34,7 @@ export const STEPS = {
   WAIT_SCREEN: 5
 };
 
-function ManageProxies(): React.ReactElement {
+function ManageProxies (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();

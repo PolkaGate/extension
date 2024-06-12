@@ -10,7 +10,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { AccountInputWithIdentity, PButton, Warning } from '../../../../../components';
 import { useInfo, useTranslation } from '../../../../../hooks';
-import { SoloSettings, StakingConsts } from '../../../../../util/types';
+import type { SoloSettings, StakingConsts } from '../../../../../util/types';
 import { amountToHuman } from '../../../../../util/utils';
 import getPayee from './util';
 

@@ -5,6 +5,8 @@
 
 import '@polkadot/extension-mocks/chrome';
 
+import type { ProxyItem } from '../util/types';
+
 import { render } from '@testing-library/react';
 import React from 'react';
 
@@ -13,7 +15,6 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { getMetadata } from '../messaging';
 import { buildHierarchy } from '../util/buildHierarchy';
-import { ProxyItem } from '../util/types';
 import { AccountContext, ProxyTable } from '.';
 
 jest.setTimeout(20000);

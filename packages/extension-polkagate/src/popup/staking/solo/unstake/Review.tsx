@@ -23,7 +23,7 @@ import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../..
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
-import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 

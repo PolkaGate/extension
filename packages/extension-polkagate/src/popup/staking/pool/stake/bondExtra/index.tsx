@@ -18,7 +18,7 @@ import { useInfo, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
 import Asset from '../../../../../partials/Asset';
 import { MAX_AMOUNT_LENGTH } from '../../../../../util/constants';
-import { MyPoolInfo } from '../../../../../util/types';
+import type { MyPoolInfo } from '../../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../../util/utils';
 import ShowPool from '../../../partial/ShowPool';
 import Review from './Review';

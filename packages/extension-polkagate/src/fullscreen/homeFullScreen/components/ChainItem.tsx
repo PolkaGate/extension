@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
+import type { DropdownOption } from '../../../util/types';
+
 import { Avatar, Grid, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
 import { Switch } from '../../../components';
 import { CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
-import type { DropdownOption } from '../../../util/types';
 import { sanitizeChainName } from '../../../util/utils';
 
 interface Props {
@@ -18,7 +19,7 @@ interface Props {
   disabled: boolean | undefined;
 }
 
-function ChainItem({ chain, disabled, isSelected, onclick }: Props): React.ReactElement {
+function ChainItem ({ chain, disabled, isSelected, onclick }: Props): React.ReactElement {
   const theme = useTheme();
   const selectedItem = useMemo(() => false, []);
 

@@ -17,7 +17,7 @@ import { BN, BN_ONE } from '@polkadot/util';
 
 import { Identity, PButton, Progress, ShowBalance, SlidePopUp } from '../../../components';
 import { useInfo, usePool, usePoolMembers, useTranslation } from '../../../hooks';
-import { FormattedAddressState, MemberPoints, MyPoolInfo, PoolInfo } from '../../../util/types';
+import type { FormattedAddressState, MemberPoints, MyPoolInfo, PoolInfo } from '../../../util/types';
 import ClaimCommission from '../pool/claimCommission';
 import ShowPool from './ShowPool';
 import ShowRoles from './ShowRoles';

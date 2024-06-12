@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { BalancesInfo } from '../../../../util/types';
 
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
@@ -16,7 +17,6 @@ import { Convictions, From, TwoButtons } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
 import { Lock } from '../../../../hooks/useAccountLocks';
 import { MAX_AMOUNT_LENGTH } from '../../../../util/constants';
-import type { BalancesInfo } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
 import { Track } from '../../utils/types';
 import AmountWithOptionsAndLockAmount from '../partial/AmountWithOptionsAndLockAmount';
@@ -50,7 +50,7 @@ interface Props {
   delegatedTracks: BN[] | undefined;
 }
 
-export default function Modify({ accountLocks, address, api, balances, chain, conviction, currentBlock, decimal, delegateAmount, delegatePower, delegatedTracks, delegateeAddress, estimatedFee, lockedAmount, nextButtonDisabled, otherDelegatedTracks, selectedTracks, setConviction, setDelegateAmount, setMode, setSelectedTracks, setStep, token, tracks }: Props): React.ReactElement {
+export default function Modify ({ accountLocks, address, api, balances, chain, conviction, currentBlock, decimal, delegateAmount, delegatePower, delegatedTracks, delegateeAddress, estimatedFee, lockedAmount, nextButtonDisabled, otherDelegatedTracks, selectedTracks, setConviction, setDelegateAmount, setMode, setSelectedTracks, setStep, token, tracks }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const onValueChange = useCallback((value: string) => {

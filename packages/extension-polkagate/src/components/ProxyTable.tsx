@@ -3,6 +3,9 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { Proxy, ProxyItem } from '../util/types';
+
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import BackspaceIcon from '@mui/icons-material/Backspace';
@@ -11,10 +14,7 @@ import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { Chain } from '@polkadot/extension-chains/types';
-
 import { useApi, useApiWithChain, useTranslation } from '../hooks';
-import type { Proxy, ProxyItem } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
 import Label from './Label';
 import { AccountContext, Checkbox2 as Checkbox, Identity } from '.';
@@ -32,7 +32,7 @@ interface Props {
   selected?: Proxy;
 }
 
-export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selected, onSelect, mode, chain, label, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
+export default function ProxyTable ({ proxyTypeFilter, notFoundText = '', selected, onSelect, mode, chain, label, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const [warningText, setWarningTest] = useState<string>();

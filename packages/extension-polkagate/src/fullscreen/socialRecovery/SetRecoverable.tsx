@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { RecoveryConfigType, SocialRecoveryModes } from './util/types';
+
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -14,7 +16,6 @@ import { useAccountsInfo, useChain, useFormatted, useTranslation } from '../../h
 import SelectTrustedFriend, { AddressWithIdentity } from './components/SelectTrustedFriend';
 import SelectTrustedFriendFromExtension from './components/SelectTrustedFriendFromExtension';
 import TrustedFriendsList from './partial/TrustedFriendsList';
-import type { RecoveryConfigType, SocialRecoveryModes } from './util/types';
 import { STEPS } from '.';
 
 interface Props {
@@ -43,7 +44,7 @@ const UNITS = {
 
 const BLOCKS_PER_HOUR = 600;
 
-export default function RecoveryConfig({ address, api, mode, recoveryConfig, setMode, setRecoveryConfig, setStep, setTotalDeposit }: Props): React.ReactElement {
+export default function RecoveryConfig ({ address, api, mode, recoveryConfig, setMode, setRecoveryConfig, setStep, setTotalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);

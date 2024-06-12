@@ -14,7 +14,7 @@ import { Balance } from '@polkadot/types/interfaces';
 
 import { useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import { PoolStakingConsts } from '../../../../util/types';
+import type { PoolStakingConsts } from '../../../../util/types';
 import Option from '../../partial/StakingOption';
 
 interface Props {

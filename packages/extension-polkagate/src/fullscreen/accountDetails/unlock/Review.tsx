@@ -9,6 +9,7 @@
  * */
 
 import type { ApiPromise } from '@polkadot/api';
+import type { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 
 import { useTheme } from '@emotion/react';
 import { Close as CloseIcon } from '@mui/icons-material';
@@ -23,7 +24,6 @@ import { AccountHolderWithProxy, AmountFee, SignArea2, Warning, WrongPasswordAle
 import { useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../hooks';
 import { Lock } from '../../../hooks/useAccountLocks';
 import { SubTitle } from '../../../partials';
-import type { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
 import SelectProxyModal2 from '../../governance/components/SelectProxyModal2';
@@ -49,7 +49,7 @@ const STEPS = {
   PROXY: 100
 };
 
-export default function Review ({ address, api, classToUnlock, setDisplayPopup, show, totalLocked, unlockableAmount, setRefresh }: Props): React.ReactElement {
+export default function Review ({ address, api, classToUnlock, setDisplayPopup, setRefresh, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const theme = useTheme();

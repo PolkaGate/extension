@@ -9,6 +9,7 @@
  * */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { Proxy, TxInfo } from '../../../util/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -16,7 +17,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../components';
 import { useIdentity, useInfo, useTracks, useTranslation } from '../../../hooks';
 import { ThroughProxy } from '../../../partials';
-import type { Proxy, TxInfo } from '../../../util/types';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
 import { GOVERNANCE_PROXY } from '../utils/consts';
 import TracksList from './partial/TracksList';

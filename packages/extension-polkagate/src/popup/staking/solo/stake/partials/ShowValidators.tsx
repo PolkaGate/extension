@@ -14,7 +14,7 @@ import { BN } from '@polkadot/util';
 
 import { SlidePopUp } from '../../../../../components';
 import { useInfo, useIsExtensionPopup, useTranslation } from '../../../../../hooks';
-import { ValidatorInfo } from '../../../../../util/types';
+import type { ValidatorInfo } from '../../../../../util/types';
 import ValidatorsTable from '../../../partial/ValidatorsTable';
 
 interface Props {

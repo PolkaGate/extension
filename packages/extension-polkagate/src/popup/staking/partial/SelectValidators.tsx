@@ -22,7 +22,7 @@ import { Checkbox2, Infotip, InputFilter, Motion, PButton, Popup, Progress } fro
 import { useChain, useDecimal, useToken, useTranslation, useValidators, useValidatorsIdentities } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import { DEFAULT_FILTERS, SYSTEM_SUGGESTION_TEXT } from '../../../util/constants';
-import { AllValidators, Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
+import type { AllValidators, Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
 import { getComparator } from '../partial/comparators';
 import Filters from '../partial/Filters';
 import ValidatorsTable from './ValidatorsTable';

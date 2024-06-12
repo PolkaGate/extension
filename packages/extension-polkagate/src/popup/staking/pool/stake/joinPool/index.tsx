@@ -17,7 +17,7 @@ import { AmountWithOptions, PButton, ShowBalance } from '../../../../../componen
 import { useApi, useDecimal, useFormatted, usePoolConsts, usePools, useToken, useTranslation, useUnSupportedNetwork } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
 import { MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME, STAKING_CHAINS } from '../../../../../util/constants';
-import { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
+import type { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../../util/utils';
 import PoolsTable from './partials/PoolsTable';
 import Review from './Review';

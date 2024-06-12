@@ -9,7 +9,7 @@ import React from 'react';
 import { ShortAddress } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
-import { TxInfo } from '../../../../util/types';
+import type { TxInfo } from '../../../../util/types';
 
 interface Props {
   txInfo: TxInfo;

@@ -16,7 +16,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { Identity, Infotip, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import getPoolAccounts from '../../../util/getPoolAccounts';
-import { MyPoolInfo, PoolInfo } from '../../../util/types';
+import type { MyPoolInfo, PoolInfo } from '../../../util/types';
 import RewardsDetail from '../solo/rewards/RewardsDetail';
 import PoolMoreInfo from './PoolMoreInfo';
 

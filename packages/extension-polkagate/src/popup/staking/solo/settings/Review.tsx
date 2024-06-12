@@ -25,7 +25,7 @@ import { useAccountDisplay, useChain, useFormatted, useProxies, useTranslation }
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
-import { Proxy, ProxyItem, SoloSettings, TxInfo } from '../../../../util/types';
+import type { Proxy, ProxyItem, SoloSettings, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 

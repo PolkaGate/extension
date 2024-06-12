@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
+import type { InitiateRecoveryConfig, SocialRecoveryModes } from './util/types';
 
 import { faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,7 +19,6 @@ import { useTranslation } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import RecoveryOptionButton from './components/RecoveryOptionButton';
-import type { InitiateRecoveryConfig, SocialRecoveryModes } from './util/types';
 import { STEPS } from '.';
 
 interface Props {
@@ -33,7 +33,7 @@ interface Props {
   setLostAccountAddress: React.Dispatch<React.SetStateAction<InitiateRecoveryConfig | undefined>>
 }
 
-export default function Home({ accountsInfo, activeLost, activeProxy, activeRescue, chain, recoveryInfo, setLostAccountAddress, setMode, setStep }: Props) {
+export default function Home ({ accountsInfo, activeLost, activeProxy, activeRescue, chain, recoveryInfo, setLostAccountAddress, setMode, setStep }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDisabled = !!activeLost;

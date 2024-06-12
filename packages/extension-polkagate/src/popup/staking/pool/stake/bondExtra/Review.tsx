@@ -21,7 +21,7 @@ import { AccountHolderWithProxy, ActionContext, AmountFee, PasswordUseProxyConfi
 import { useAccountDisplay, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
 import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import { broadcast } from '../../../../../util/api';
-import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
+import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import BondExtraTxDetail from './partial/BondExtraTxDetail';
 

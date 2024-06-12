@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Prices } from '../../../util/types';
+
 import { ArrowDropDown as ArrowDropDownIcon, MoreHoriz as MoreHorizIcon } from '@mui/icons-material';
 import { Collapse, Grid, Skeleton, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -14,7 +16,6 @@ import { DisplayLogo, FormatPrice, ShowBalance } from '../../../components';
 import { usePrices, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import getLogo2 from '../../../util/getLogo2';
-import type { Prices } from '../../../util/types';
 
 interface Props {
   api: ApiPromise | undefined;

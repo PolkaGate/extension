@@ -9,7 +9,7 @@ import React, { useMemo } from 'react';
 import { ShortAddress } from '../../../../../components';
 import { useAccountName, useTranslation } from '../../../../../hooks';
 import { ThroughProxy } from '../../../../../partials';
-import { SoloSettings, TxInfo } from '../../../../../util/types';
+import type { SoloSettings, TxInfo } from '../../../../../util/types';
 import getPayee from '../../stake/partials/util';
 
 interface Props {

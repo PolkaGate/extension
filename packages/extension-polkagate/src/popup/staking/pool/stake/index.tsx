@@ -14,7 +14,7 @@ import { ApiPromise } from '@polkadot/api';
 import { useApi, useBalances, useFormatted, usePool, usePoolConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
 import { STAKING_CHAINS } from '../../../../util/constants';
-import { MyPoolInfo, PoolStakingConsts } from '../../../../util/types';
+import type { MyPoolInfo, PoolStakingConsts } from '../../../../util/types';
 import BondExtra from './bondExtra';
 import StakeInitialChoice from './StakeInitialChoice';
 

@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { BalancesInfo } from '../../../../util/types';
+
 import { Grid, Typography } from '@mui/material';
 import React, { useMemo } from 'react';
 
@@ -11,7 +13,6 @@ import { BN, isBn } from '@polkadot/util';
 import { AmountWithOptions, Infotip2, ShowBalance } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
 import { Lock } from '../../../../hooks/useAccountLocks';
-import type { BalancesInfo } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
 import { getLockedUntil } from '../../utils/util';
 
@@ -28,7 +29,7 @@ interface Props {
   amount?: string | undefined;
 }
 
-export default function AmountWithOptionsAndLockAmount({ accountLocks, amount, balances, currentBlock, decimal, lockedAmount, onLockedAmount, onMaxAmount, onValueChange, token }: Props): React.ReactElement {
+export default function AmountWithOptionsAndLockAmount ({ accountLocks, amount, balances, currentBlock, decimal, lockedAmount, onLockedAmount, onMaxAmount, onValueChange, token }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const alreadyLockedTooltipText = useMemo(() => accountLocks && currentBlock &&

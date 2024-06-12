@@ -3,11 +3,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { CanPayStatements } from '../util/types';
+
 import { Grid, useTheme } from '@mui/material';
 import React from 'react';
 
 import { useTranslation } from '../hooks';
-import type { CanPayStatements } from '../util/types';
 import { Warning } from '.';
 
 interface Props{

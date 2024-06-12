@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ValidatorInfo } from '../../../util/types';
+import type { ValidatorInfo } from '../../../util/types';
 
 export type Order = 'Low to High' | 'High to Low';
 

@@ -8,6 +8,8 @@
  * this component opens Modify and Remove Delegate pages
  * */
 
+import type { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
+
 import { KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
@@ -17,7 +19,6 @@ import { BN } from '@polkadot/util';
 import { Identity, Motion, TwoButtons } from '../../../components';
 import { useInfo, useTracks, useTranslation } from '../../../hooks';
 import { Lock } from '../../../hooks/useAccountLocks';
-import type { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
 import ModifyDelegate, { ModifyModes } from './modify/ModifyDelegate';

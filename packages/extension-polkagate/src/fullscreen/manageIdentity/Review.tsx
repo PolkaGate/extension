@@ -5,6 +5,7 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 import type { PalletIdentityIdentityInfo } from '@polkadot/types/lookup';
+import type { BalancesInfo, Proxy, ProxyItem, TxInfo } from '../../util/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
@@ -20,7 +21,6 @@ import { CanPayErrorAlert, Identity, Motion, ShowBalance, SignArea2, Warning, Wr
 import { useCanPayFeeAndDeposit, useFormatted, useInfo, useProxies } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
-import { BalancesInfo, Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { pgBoxShadow } from '../../util/utils';
 import { DraggableModal } from '../governance/components/DraggableModal';
 import SelectProxyModal2 from '../governance/components/SelectProxyModal2';

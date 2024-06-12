@@ -19,7 +19,7 @@ import { useAccountDisplay, useProxies, useTranslation } from '../../../../../ho
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import Confirmation from '../../../../../partials/Confirmation';
 import { signAndSend } from '../../../../../util/api';
-import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
+import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import ShowPoolRole from './ShowPoolRole';
 import TxDetail from './TxDetail';

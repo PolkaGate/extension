@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Proxy } from '../../../util/types';
+
 import { faChain, faCheckCircle, faCircleInfo, faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, useTheme } from '@mui/material';
@@ -14,7 +16,6 @@ import { ActionContext, Infotip } from '../../../components';
 import { useInfo, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
-import type { Proxy } from '../../../util/types';
 
 interface AddressDetailsProps {
   address: string | undefined;

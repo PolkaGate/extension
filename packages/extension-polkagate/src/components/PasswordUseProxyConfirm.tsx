@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { BN } from '@polkadot/util';
+import type { Proxy, ProxyItem, ProxyTypes } from '../util/types';
 
 import { Grid, SxProps, Theme, Tooltip, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -13,7 +14,6 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useAccount, useCanPayFee, useMetadata, useTranslation } from '../hooks';
 import SelectProxy from '../partials/SelectProxy';
-import type { Proxy, ProxyItem, ProxyTypes } from '../util/types';
 import { noop } from '../util/utils';
 import { Identity, Password, PButton, Warning } from '.';
 

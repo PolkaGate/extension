@@ -25,7 +25,7 @@ import { HeaderBrand, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
 import SubTitle from '../../partials/SubTitle';
 import broadcast from '../../util/api/broadcast';
-import { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { amountToMachine, getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import SendTxDetail from './partial/SendTxDetail';
 

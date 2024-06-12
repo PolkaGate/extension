@@ -24,7 +24,7 @@ import { useApi, useChain, useChainName, useDecimal, useIsExtensionPopup, useTok
 import { HeaderBrand } from '../../../../partials';
 import getRewardsSlashes from '../../../../util/api/getRewardsSlashes';
 import { MAX_REWARDS_TO_SHOW } from '../../../../util/constants';
-import { RewardInfo, SubscanRewardInfo } from '../../../../util/types';
+import type { RewardInfo, SubscanRewardInfo } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
 
 ChartJS.register(

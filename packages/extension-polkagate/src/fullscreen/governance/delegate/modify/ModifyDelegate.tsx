@@ -9,6 +9,7 @@
  * */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { BalancesInfo, Proxy, TxInfo } from '../../../../util/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -21,7 +22,6 @@ import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../.
 import { useCurrentBlockNumber, useIdentity, useInfo, useTracks, useTranslation } from '../../../../hooks';
 import { Lock } from '../../../../hooks/useAccountLocks';
 import { ThroughProxy } from '../../../../partials';
-import type { BalancesInfo, Proxy, TxInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import DisplayValue from '../../post/castVote/partial/DisplayValue';
 import { GOVERNANCE_PROXY } from '../../utils/consts';
@@ -63,7 +63,7 @@ export default function ModifyDelegate ({ accountLocks, address, balances, class
       ? mixedDelegateInformation.delegatee
       : undefined;
   const delegateeName = useIdentity(genesisHash, delegateeAddress)?.identity?.display;
-  
+
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [delegateAmount, setDelegateAmount] = useState<string>('0');

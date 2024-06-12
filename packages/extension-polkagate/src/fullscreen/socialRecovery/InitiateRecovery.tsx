@@ -3,6 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
+import type { InitiateRecoveryConfig, SocialRecoveryModes, WithdrawInfo } from './util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -19,7 +20,6 @@ import ActiveProxyStatus from './partial/ActiveProxyStatus';
 import InitiatedRecoveryStatus from './partial/InitiatedRecoveryStatus';
 import LostAccountRecoveryInfo from './partial/LostAccountRecoveryInfo';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
-import type { InitiateRecoveryConfig, SocialRecoveryModes, WithdrawInfo } from './util/types';
 import { checkLostAccountRecoverability } from './util/utils';
 import { STEPS } from '.';
 

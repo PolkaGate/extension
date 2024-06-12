@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { BalancesInfo } from '../../../../util/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Grid, Typography } from '@mui/material';
@@ -16,7 +17,6 @@ import { Convictions, PButton } from '../../../../components';
 import { useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useFormatted, useToken, useTranslation } from '../../../../hooks';
 import { Lock } from '../../../../hooks/useAccountLocks';
 import { MAX_AMOUNT_LENGTH } from '../../../../util/constants';
-import type { BalancesInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { Track } from '../../utils/types';
 import AmountWithOptionsAndLockAmount from '../partial/AmountWithOptionsAndLockAmount';
