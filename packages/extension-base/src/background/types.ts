@@ -14,7 +14,17 @@ import type { KeypairType } from '@polkadot/util-crypto/types';
 import { TypeRegistry } from '@polkadot/types';
 
 import { ALLOWED_PATH } from '../defaults';
-import { AuthUrls } from './handlers/State';
+
+export type AuthUrls = Record<string, AuthUrlInfo>;
+export interface AuthUrlInfo {
+  count: number;
+  id: string;
+  // this is from pre-0.44.1
+  isAllowed?: boolean;
+  origin: string;
+  url: string;
+  authorizedAccounts: string[];
+}
 
 type KeysWithDefinedValues<T> = {
   [K in keyof T]: T[K] extends undefined ? never : K
@@ -32,7 +42,7 @@ export type SeedLengths = 12 | 24;
 
 export interface AccountJson extends KeyringPair$Meta {
   address: string;
-  genesisHash?: string | null;
+  genesisHash?: HexString | null;
   isExternal?: boolean;
   isHardware?: boolean;
   isHidden?: boolean;
@@ -132,9 +142,9 @@ export interface RequestSignatures {
   'pub(metadata.provide)': [MetadataDef, boolean];
   'pub(phishing.redirectIfDenied)': [null, boolean];
   'pub(rpc.listProviders)': [void, ResponseRpcListProviders];
-  'pub(rpc.send)': [RequestRpcSend, JsonRpcResponse];
+  'pub(rpc.send)': [RequestRpcSend, JsonRpcResponse<unknown>];
   'pub(rpc.startProvider)': [string, ProviderMeta];
-  'pub(rpc.subscribe)': [RequestRpcSubscribe, number, JsonRpcResponse];
+  'pub(rpc.subscribe)': [RequestRpcSubscribe, number, JsonRpcResponse<unknown>];
   'pub(rpc.subscribeConnected)': [null, boolean, boolean];
   'pub(rpc.unsubscribe)': [RequestRpcUnsubscribe, boolean];
 }
@@ -182,13 +192,13 @@ export type RequestMetadataSubscribe = null;
 
 export interface RequestAccountCreateExternal {
   address: string;
-  genesisHash?: string | null;
+  genesisHash?: HexString | null;
   name: string;
 }
 
 export interface RequestAccountCreateSuri {
   name: string;
-  genesisHash?: string | null;
+  genesisHash?: HexString | null;
   password: string;
   suri: string;
   type?: KeypairType;
@@ -198,7 +208,7 @@ export interface RequestAccountCreateHardware {
   accountIndex: number;
   address: string;
   addressOffset: number;
-  genesisHash: string;
+  genesisHash: HexString;
   hardwareType: string;
   name: string;
 }
@@ -211,7 +221,7 @@ export interface RequestAccountChangePassword {
 
 export interface RequestAccountEdit {
   address: string;
-  genesisHash?: string | null;
+  genesisHash?: HexString | null;
   name: string;
 }
 
@@ -226,7 +236,7 @@ export interface RequestAccountShow {
 
 export interface RequestAccountTie {
   address: string;
-  genesisHash: string | null;
+  genesisHash: HexString | null;
 }
 
 export interface RequestAccountValidate {
@@ -236,7 +246,7 @@ export interface RequestAccountValidate {
 
 export interface RequestDeriveCreate {
   name: string;
-  genesisHash?: string | null;
+  genesisHash?: HexString | null;
   suri: string;
   parentAddress: string;
   parentPassword: string;
@@ -414,7 +424,7 @@ export type AllowedPath = typeof ALLOWED_PATH[number];
 export interface ResponseJsonGetAccountInfo {
   address: string;
   name: string;
-  genesisHash: string;
+  genesisHash: HexString;
   type: KeypairType;
 }
 
