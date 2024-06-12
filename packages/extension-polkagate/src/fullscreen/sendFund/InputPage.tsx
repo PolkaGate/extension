@@ -19,7 +19,7 @@ import { AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, ShowBalanc
 import { useTranslation } from '../../components/translate';
 import { useInfo, useTeleport } from '../../hooks';
 import { ASSET_HUBS } from '../../util/constants';
-import { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
+import type { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
 import { amountToHuman, amountToMachine } from '../../util/utils';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { toTitleCase } from '../governance/utils/util';

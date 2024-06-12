@@ -4,6 +4,8 @@
 /* eslint-disable import-newlines/enforce */
 /* eslint-disable object-curly-newline */
 
+// @ts-nocheck
+
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { EXTRA_PRICE_IDS } from '../api/getPrices';

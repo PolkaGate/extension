@@ -16,7 +16,7 @@ import { useAccountDisplay, useFormatted, useIdentity, useTranslation } from '..
 import ShowIdentity from '../../popup/manageProxies/partials/ShowIdentity';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
-import { DropdownOption, ProxyItem } from '../../util/types';
+import type { DropdownOption, ProxyItem } from '../../util/types';
 import { sanitizeChainName } from '../../util/utils';
 import { STEPS } from '.';
 

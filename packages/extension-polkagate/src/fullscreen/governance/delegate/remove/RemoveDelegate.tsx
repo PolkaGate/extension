@@ -18,7 +18,7 @@ import { BN_ONE, BN_ZERO } from '@polkadot/util';
 import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../components';
 import { useIdentity, useInfo, useTracks, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
-import { Proxy, TxInfo } from '../../../../util/types';
+import type { Proxy, TxInfo } from '../../../../util/types';
 import DisplayValue from '../../post/castVote/partial/DisplayValue';
 import { GOVERNANCE_PROXY } from '../../utils/consts';
 import ReferendaTable from '../partial/ReferendaTable';

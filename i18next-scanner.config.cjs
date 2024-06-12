@@ -26,7 +26,6 @@ function transform (file, enc, done) {
 
 module.exports = {
   input: [
-    'packages/extension-ui/src/**/*.{ts,tsx}',
     'packages/extension-polkagate/src/**/*.{ts,tsx}',
     // Use ! to filter out files or directories
     '!packages/*/src/**/*.spec.{ts,tsx}',

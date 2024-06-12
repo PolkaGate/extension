@@ -10,7 +10,7 @@ import { ChainLogo, Identity, Motion, ShowBalance, SignArea2, WrongPasswordAlert
 import { useApi, useChain } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
-import { BalancesInfo, Proxy, TxInfo } from '../../util/types';
+import type { BalancesInfo, Proxy, TxInfo } from '../../util/types';
 import { amountToMachine, pgBoxShadow } from '../../util/utils';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
 import { STEPS } from '../stake/pool/stake';

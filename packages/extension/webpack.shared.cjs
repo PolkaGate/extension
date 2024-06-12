@@ -22,7 +22,6 @@ const packages = [
   'extension-chains',
   'extension-dapp',
   'extension-inject',
-  'extension-ui',
   'extension-polkagate'
 
 ];

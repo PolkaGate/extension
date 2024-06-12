@@ -23,7 +23,7 @@ import { AccountHolderWithProxy, AmountFee, SignArea2, Warning, WrongPasswordAle
 import { useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../hooks';
 import { Lock } from '../../../hooks/useAccountLocks';
 import { SubTitle } from '../../../partials';
-import { Proxy, ProxyItem, TxInfo } from '../../../util/types';
+import type { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
 import SelectProxyModal2 from '../../governance/components/SelectProxyModal2';

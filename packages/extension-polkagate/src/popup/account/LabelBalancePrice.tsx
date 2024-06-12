@@ -14,7 +14,7 @@ import React from 'react';
 
 import { FormatPrice, ShowBalance } from '../../components';
 import { useApi, useTokenPrice } from '../../hooks';
-import { BalancesInfo } from '../../util/types';
+import type { BalancesInfo } from '../../util/types';
 import { getValue } from './util';
 
 interface Props {

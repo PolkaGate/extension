@@ -18,7 +18,7 @@ import { useTranslation } from '../../hooks';
 import { pgBoxShadow } from '../../util/utils';
 import TrustedFriendsList from './partial/TrustedFriendsList';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
-import { RecoveryConfigType, SocialRecoveryModes } from './util/types';
+import type { RecoveryConfigType, SocialRecoveryModes } from './util/types';
 import { STEPS } from '.';
 
 interface Props {

@@ -10,7 +10,7 @@
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { BalancesInfo } from '../../util/types';
+import type { BalancesInfo } from '../../util/types';
 
 export const getValue = (type: string, balances: BalancesInfo | null | undefined): BN | undefined => {
   if (!balances) {

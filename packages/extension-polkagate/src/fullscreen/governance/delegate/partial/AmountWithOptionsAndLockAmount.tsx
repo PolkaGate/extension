@@ -11,7 +11,7 @@ import { BN, isBn } from '@polkadot/util';
 import { AmountWithOptions, Infotip2, ShowBalance } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
 import { Lock } from '../../../../hooks/useAccountLocks';
-import { BalancesInfo } from '../../../../util/types';
+import type { BalancesInfo } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
 import { getLockedUntil } from '../../utils/util';
 

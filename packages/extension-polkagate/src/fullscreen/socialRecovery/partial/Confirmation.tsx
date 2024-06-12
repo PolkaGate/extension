@@ -15,11 +15,11 @@ import { ActiveRecoveryFor } from '../../../hooks/useActiveRecoveries';
 import { ThroughProxy } from '../../../partials';
 import Explorer from '../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../popup/history/partials/FailSuccessIcon';
-import { TxInfo } from '../../../util/types';
+import type { TxInfo } from '../../../util/types';
 import { amountToHuman, pgBoxShadow } from '../../../util/utils';
 import { AddressWithIdentity } from '../components/SelectTrustedFriend';
 import recoveryDelayPeriod from '../util/recoveryDelayPeriod';
-import { RecoveryConfigType, SocialRecoveryModes } from '../util/types';
+import type { RecoveryConfigType, SocialRecoveryModes } from '../util/types';
 import { STEPS } from '..';
 
 interface Props {

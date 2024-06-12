@@ -21,7 +21,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { Identity, Motion, ShowBalance, ShowValue, SignArea2, Warning, WrongPasswordAlert } from '../../../../components';
 import { useInfo, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
-import { Proxy, TxInfo } from '../../../../util/types';
+import type { Proxy, TxInfo } from '../../../../util/types';
 import { ENDED_STATUSES, GOVERNANCE_PROXY, STATUS_COLOR } from '../../utils/consts';
 import DisplayValue from './partial/DisplayValue';
 import { STEPS, VoteInformation } from '.';

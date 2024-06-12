@@ -153,9 +153,10 @@ export default class State {
     extractMetadata(this.#metaStore);
 
     // retrieve previously set authorizations
-    chrome.storage.local.get('authUrls', (res) => {
-      this.#authUrls = (res?.['authUrls'] || {}) as AuthUrls;
-    });
+    // TODO: to be fixed later @Nick-1979 @AMIRKHANEF
+    // chrome.storage.local.get('authUrls', (res) => {
+    //   this.#authUrls = (res?.['authUrls'] || {}) as AuthUrls;
+    // });
   }
 
   public get knownMetadata (): MetadataDef[] {

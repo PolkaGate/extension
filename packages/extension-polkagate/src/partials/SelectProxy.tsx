@@ -12,7 +12,7 @@ import { PButton, ProxyTable } from '../components';
 import Popup from '../components/Popup';
 import { useMetadata, useTranslation } from '../hooks';
 import { HeaderBrand } from '../partials';
-import { Proxy, ProxyItem } from '../util/types';
+import type { Proxy, ProxyItem } from '../util/types';
 
 interface Props {
   show: boolean;

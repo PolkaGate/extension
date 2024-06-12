@@ -20,7 +20,7 @@ import { Identity, Progress } from '../../../../components';
 import { useInfo, useTranslation } from '../../../../hooks';
 import getRewardsSlashes from '../../../../util/api/getRewardsSlashes';
 import { MAX_REWARDS_TO_SHOW } from '../../../../util/constants';
-import { RewardInfo, SubscanRewardInfo } from '../../../../util/types';
+import type { RewardInfo, SubscanRewardInfo } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
 
 ChartJS.register(

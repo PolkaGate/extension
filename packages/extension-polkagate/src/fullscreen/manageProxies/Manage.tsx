@@ -15,7 +15,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, ShowBalance, TwoButtons } from '../../components';
 import { useTranslation } from '../../hooks';
-import { ProxyItem } from '../../util/types';
+import type { ProxyItem } from '../../util/types';
 import { noop } from '../../util/utils';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';

@@ -10,7 +10,7 @@ import { Motion, PButton, ShortAddress } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
 import Explorer from '../../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../../popup/history/partials/FailSuccessIcon';
-import { TxInfo } from '../../../../util/types';
+import type { TxInfo } from '../../../../util/types';
 
 interface Props {
   txInfo: TxInfo;

@@ -19,7 +19,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { AccountHolderWithProxy, Identity, ShortAddress, ShowBalance, ShowValue, SignArea2, WrongPasswordAlert } from '../../../components';
 import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../hooks';
 import { SubTitle } from '../../../partials';
-import { MyPoolInfo, Payee, Proxy, ProxyItem, TxInfo } from '../../../util/types';
+import type { MyPoolInfo, Payee, Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { Inputs } from '../Entry';
 import { STEPS } from '../pool/stake';
 

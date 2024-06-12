@@ -19,7 +19,7 @@ import ActiveProxyStatus from './partial/ActiveProxyStatus';
 import InitiatedRecoveryStatus from './partial/InitiatedRecoveryStatus';
 import LostAccountRecoveryInfo from './partial/LostAccountRecoveryInfo';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
-import { InitiateRecoveryConfig, SocialRecoveryModes, WithdrawInfo } from './util/types';
+import type { InitiateRecoveryConfig, SocialRecoveryModes, WithdrawInfo } from './util/types';
 import { checkLostAccountRecoverability } from './util/utils';
 import { STEPS } from '.';
 

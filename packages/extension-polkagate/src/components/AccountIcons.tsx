@@ -15,7 +15,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 import { PROXY_CHAINS } from '../util/constants';
-import { Proxy } from '../util/types';
+import type { Proxy } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
 import { ActionContext } from './contexts';
 import Identicon from './Identicon';

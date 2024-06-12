@@ -20,7 +20,7 @@ import { BN } from '@polkadot/util';
 import { Checkbox2, Infotip, InputFilter, Waiting } from '../../../../components';
 import { useInfo, useTranslation, useValidators, useValidatorsIdentities, useValidatorSuggestion } from '../../../../hooks';
 import { DEFAULT_FILTERS, SYSTEM_SUGGESTION_TEXT } from '../../../../util/constants';
-import { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../../util/types';
+import type { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../../util/types';
 import ValidatorsTable from './ValidatorsTable';
 
 interface Props {

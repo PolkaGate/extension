@@ -20,7 +20,7 @@ import { useIsLoginEnabled, useIsPopup, useTranslation } from '../hooks';
 import { lockExtension, setNotification } from '../messaging';
 import { NO_PASS_PERIOD } from '../util/constants';
 import getLanguageOptions from '../util/getLanguageOptions';
-import { DropdownOption } from '../util/types';
+import type { DropdownOption } from '../util/types';
 
 interface Props {
   isTestnetEnabledChecked: boolean | undefined;

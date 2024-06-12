@@ -12,7 +12,7 @@ import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
 import getLogo from '../util/getLogo';
-import { DropdownOption } from '../util/types';
+import type { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
 import ChainLogo from './ChainLogo';
 import Label from './Label';

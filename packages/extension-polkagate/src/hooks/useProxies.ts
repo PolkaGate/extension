@@ -12,7 +12,7 @@ import { ApiPromise } from '@polkadot/api';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { AccountContext } from '../components';
-import { Proxy, ProxyTypes } from '../util/types';
+import type { Proxy, ProxyTypes } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
 
 export default function useProxies(api: ApiPromise | undefined, proxiedAddress: string | AccountId | undefined | null, onlyAvailableWithTypes?: ProxyTypes[]): Proxy[] | undefined {

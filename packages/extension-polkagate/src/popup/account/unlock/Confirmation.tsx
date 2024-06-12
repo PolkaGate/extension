@@ -9,7 +9,7 @@ import React from 'react';
 import { Motion, Popup, ShortAddress, TwoButtons } from '../../../components';
 import { useToken, useTranslation } from '../../../hooks';
 import { HeaderBrand, SubTitle, ThroughProxy } from '../../../partials';
-import { TxInfo } from '../../../util/types';
+import type { TxInfo } from '../../../util/types';
 import Explorer from '../../history/Explorer';
 import FailSuccessIcon from '../../history/partials/FailSuccessIcon';
 

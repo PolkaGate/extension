@@ -1,9 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-nocheck
+
 import getApi from '../getApi.ts';
 
-async function needsPutInFrontOf(endpoint, target) {
+async function needsPutInFrontOf (endpoint, target) {
   console.log(`NeedsPutInFrontOf is called for id: ${target}`);
 
   const api = await getApi(endpoint);

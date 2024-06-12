@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { updateMeta } from '../messaging';
-import { SavedIdentities } from '../util/types';
+import type { SavedIdentities } from '../util/types';
 import { useAccount, useIdentity, useInfo } from '.';
 
 /**

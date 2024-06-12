@@ -17,7 +17,7 @@ import { BN } from '@polkadot/util';
 import { Identity, Motion, TwoButtons } from '../../../components';
 import { useInfo, useTracks, useTranslation } from '../../../hooks';
 import { Lock } from '../../../hooks/useAccountLocks';
-import { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
+import type { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
 import ModifyDelegate, { ModifyModes } from './modify/ModifyDelegate';

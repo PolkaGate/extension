@@ -13,7 +13,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { ShowBalance, SignArea2, WrongPasswordAlert } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
 import { useInfo, useStakingAccount, useStakingConsts, useValidators, useValidatorsIdentities } from '../../../../../hooks';
-import { Proxy, TxInfo } from '../../../../../util/types';
+import type { Proxy, TxInfo } from '../../../../../util/types';
 import { Inputs } from '../../../Entry';
 import { STEPS } from '../../../pool/stake';
 import ValidatorsTable from '../../partials/ValidatorsTable';

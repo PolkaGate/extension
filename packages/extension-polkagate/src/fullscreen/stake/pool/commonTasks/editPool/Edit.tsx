@@ -14,7 +14,7 @@ import getAllAddresses from '@polkadot/extension-polkagate/src/util/getAllAddres
 
 import { AccountContext, AddressInput, AutoResizeTextarea, ButtonWithCancel, Input, ShowValue } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
-import { MyPoolInfo } from '../../../../../util/types';
+import type { MyPoolInfo } from '../../../../../util/types';
 import { STEPS } from '../../stake';
 import { ChangesProps } from '.';
 

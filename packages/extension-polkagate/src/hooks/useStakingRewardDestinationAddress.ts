@@ -8,7 +8,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { AccountStakingInfo } from '../util/types';
+import type { AccountStakingInfo } from '../util/types';
 
 export default function useStakingRewardDestinationAddress (stakingAccount: AccountStakingInfo | null | undefined): string | undefined {
   const [payeeAddress, setPayeeAddress] = useState<string>();

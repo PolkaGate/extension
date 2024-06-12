@@ -15,7 +15,7 @@ import { toCamelCase } from '../fullscreen/governance/utils/util';
 import { updateMeta } from '../messaging';
 import { ASSET_HUBS } from '../util/constants';
 import getPoolAccounts from '../util/getPoolAccounts';
-import { BalancesInfo, SavedBalances } from '../util/types';
+import type { BalancesInfo, SavedBalances } from '../util/types';
 import { useInfo, useStakingAccount } from '.';
 
 const assetsChains = createAssets();

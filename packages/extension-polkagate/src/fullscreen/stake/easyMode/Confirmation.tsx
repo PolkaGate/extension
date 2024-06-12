@@ -11,7 +11,7 @@ import { useAccountDisplay, useTranslation } from '../../../hooks';
 import { ThroughProxy } from '../../../partials';
 import Explorer from '../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../popup/history/partials/FailSuccessIcon';
-import { NameAddress, TxInfo } from '../../../util/types';
+import type { NameAddress, TxInfo } from '../../../util/types';
 import { amountToHuman, pgBoxShadow } from '../../../util/utils';
 
 interface Props {

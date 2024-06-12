@@ -13,7 +13,7 @@ import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { Balance } from '@polkadot/types/interfaces';
 
 import { useBalances } from '../../hooks';
-import { MyPoolInfo, Payee, TxInfo, ValidatorInfo } from '../../util/types';
+import type { MyPoolInfo, Payee, TxInfo, ValidatorInfo } from '../../util/types';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import WaitScreen from '../governance/partials/WaitScreen';
 import Confirmation from './easyMode/Confirmation';

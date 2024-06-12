@@ -15,7 +15,7 @@ import { showAccount, tieAccount } from '../../../messaging';
 import { getValue } from '../../../popup/account/util';
 import { BALANCES_VALIDITY_PERIOD } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
-import { BalancesInfo, Prices } from '../../../util/types';
+import type { BalancesInfo, Prices } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import AccountIconsFs from './AccountIconsFs';
 import AOC from './AOC';

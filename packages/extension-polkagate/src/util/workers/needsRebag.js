@@ -1,12 +1,21 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-nocheck
+
 import getApi from '../getApi.ts';
 
-async function needsRebag(endpoint, currentAccount) {
+async function needsRebag (endpoint, currentAccount) {
   console.log(`NeedsRebag is called for id: ${currentAccount}`);
 
   const api = await getApi(endpoint);
+
+  if (!api) {
+    console.error('Failed to get api!');
+
+    return;
+  }
+
   const at = await api.rpc.chain.getFinalizedHead();
   const apiAt = await api.at(at);
 
@@ -18,11 +27,11 @@ async function needsRebag(endpoint, currentAccount) {
     return { currentBagThreshold: '0.00 DOT', shouldRebag: false };
   }
 
-  const renameConsistentApi = apiAt.query?.bagsList || apiAt.query?.voterList;
+  const renameConsistentApi = apiAt.query?.['bagsList'] || apiAt.query?.['voterList'];
 
-  const currentWeight = api.createType('Balance', (await apiAt.query.staking.ledger(currentCtrl)).unwrapOrDefault().active);
-  const unwrappedCurrentNode = await renameConsistentApi.listNodes(currentCtrl);
-  const currentNode = unwrappedCurrentNode.isSome ? unwrappedCurrentNode.unwrap() : undefined;
+  const currentWeight = api.createType('Balance', (await apiAt.query.staking['ledger'](currentCtrl)).unwrapOrDefault().active);
+  const unwrappedCurrentNode = await renameConsistentApi['listNodes'](currentCtrl);
+  const currentNode = unwrappedCurrentNode?.isSome ? unwrappedCurrentNode?.unwrap() : undefined;
 
   if (!currentNode) {
     // account probably has done stopNominated

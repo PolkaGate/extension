@@ -12,7 +12,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN } from '@polkadot/util';
 
 import { updateMeta } from '../messaging';
-import { AccountStakingInfo } from '../util/types';
+import type { AccountStakingInfo } from '../util/types';
 import { isHexToBn } from '../util/utils';
 import { useInfo, useStashId } from '.';
 

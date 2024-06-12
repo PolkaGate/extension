@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { toCamelCase } from '../fullscreen/governance/utils/util';
 import { EXTRA_PRICE_IDS } from '../util/api/getPrices';
 import { ASSET_HUBS } from '../util/constants';
-import { Price } from '../util/types';
+import type { Price } from '../util/types';
 import { useChain, useChainName, usePrices } from '.';
 
 const DEFAULT_PRICE = {

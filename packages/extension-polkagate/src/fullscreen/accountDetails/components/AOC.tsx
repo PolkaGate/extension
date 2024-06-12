@@ -14,7 +14,7 @@ import { DisplayLogo, FormatPrice, ShowBalance } from '../../../components';
 import { usePrices, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import getLogo2 from '../../../util/getLogo2';
-import { Prices } from '../../../util/types';
+import type { Prices } from '../../../util/types';
 
 interface Props {
   api: ApiPromise | undefined;

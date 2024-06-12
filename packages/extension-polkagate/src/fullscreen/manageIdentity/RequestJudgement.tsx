@@ -15,7 +15,7 @@ import { useTranslation } from '../../components/translate';
 import { useInfo } from '../../hooks';
 import FailSuccessIcon from '../../popup/history/partials/FailSuccessIcon';
 import { REGISTRARS_LIST, TEST_NETS } from '../../util/constants';
-import { DropdownOption } from '../../util/types';
+import type { DropdownOption } from '../../util/types';
 import { pgBoxShadow } from '../../util/utils';
 import { toTitleCase } from '../governance/utils/util';
 import DisplayIdentity from './component/DisplayIdentity';

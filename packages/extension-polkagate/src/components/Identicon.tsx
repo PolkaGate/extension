@@ -7,7 +7,7 @@ import { CheckCircleOutline as CheckIcon, InsertLinkRounded as LinkIcon } from '
 import React from 'react';
 import styled from 'styled-components';
 
-import { ThemeProps } from '@polkadot/extension-ui/types';
+import { ThemeProps } from '@polkadot/extension-polkagate/types';
 import Icon from '@polkadot/react-identicon';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 

@@ -8,7 +8,7 @@ import React, { useMemo } from 'react';
 import { Switch } from '../../../components';
 import { CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
-import { DropdownOption } from '../../../util/types';
+import type { DropdownOption } from '../../../util/types';
 import { sanitizeChainName } from '../../../util/utils';
 
 interface Props {

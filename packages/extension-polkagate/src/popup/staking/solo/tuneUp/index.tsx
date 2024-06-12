@@ -8,6 +8,8 @@
  * this component opens withdraw rewards review page
  * */
 
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+
 import { Divider, Grid, Link } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
@@ -24,7 +26,6 @@ import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
 import { STAKING_CHAINS } from '../../../../util/constants';
 import getLogo from '../../../../util/getLogo';
-import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './TxDetail';
 
@@ -54,7 +55,7 @@ export default function TuneUp (): React.ReactElement {
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
-  const rebaged = api && api.tx.voterList.rebag;
+  const rebaged = api && api.tx['voterList']['rebag'];
   const putInFrontOf = api && api.tx.voterList.putInFrontOf;
 
   const goToStakingHome = useCallback(() => {
@@ -138,7 +139,7 @@ export default function TuneUp (): React.ReactElement {
     onAction('/');
   }, [onAction]);
 
-  const LabelValue = ({ label, mt = '30px', noDivider, value }: { label: string, value: string | Element, mt?: string, noDivider?: boolean }) => (
+  const LabelValue = ({ label, mt = '30px', noDivider, value }: { label: string, value: string | React.JSX.Element, mt?: string, noDivider?: boolean }) => (
     <>
       <Grid item mt={mt} textAlign='center' xs={12}>
         <Typography fontSize='14px' fontWeight={300}>
@@ -176,8 +177,8 @@ export default function TuneUp (): React.ReactElement {
             <Typography fontSize='14px' fontWeight={300}>
               {t('Changing your account\'s position to be a better one.')}
             </Typography>
-            <LabelValue label={t('Current bag upper')} value={rebagInfo?.currentUpper} />
-            <LabelValue label={t('My staked amount')} mt='5px' value={rebagInfo?.currentWeight} />
+            <LabelValue label={t('Current bag upper')} value={rebagInfo?.currentUpper as string} />
+            <LabelValue label={t('My staked amount')} mt='5px' value={rebagInfo?.currentWeight as string} />
             {!putInFrontInfo?.shouldPutInFront
               ? <Grid item mt='10px' textAlign='center' xs={12}>
                 <Typography fontSize='15px' fontWeight={400}>
@@ -192,7 +193,7 @@ export default function TuneUp (): React.ReactElement {
                   <>
                     <ShortAddress address={putInFrontInfo?.lighter} />
                     <Grid item sx={{ mt: '12px' }}>
-                      <Link href={`${subscanLink(putInFrontInfo?.lighter)}`} rel='noreferrer' target='_blank' underline='none'>
+                      <Link href={`${subscanLink(putInFrontInfo?.lighter as string)}`} rel='noreferrer' target='_blank' underline='none'>
                         <Grid alt={'subscan'} component='img' src={getLogo('subscan')} sx={{ height: 40, width: 40 }} />
                       </Link>
                     </Grid>

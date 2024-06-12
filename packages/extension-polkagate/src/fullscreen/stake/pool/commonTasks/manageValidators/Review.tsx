@@ -14,7 +14,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { ShowBalance, SignArea2, WrongPasswordAlert } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
 import { useInfo } from '../../../../../hooks';
-import { Proxy, StakingConsts, TxInfo } from '../../../../../util/types';
+import type { Proxy, StakingConsts, TxInfo } from '../../../../../util/types';
 import { Inputs } from '../../../Entry';
 import ValidatorsTable from '../../../solo/partials/ValidatorsTable';
 import { STEPS } from '../../stake';

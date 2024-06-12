@@ -18,7 +18,7 @@ import { useTranslation } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import RecoveryOptionButton from './components/RecoveryOptionButton';
-import { InitiateRecoveryConfig, SocialRecoveryModes } from './util/types';
+import type { InitiateRecoveryConfig, SocialRecoveryModes } from './util/types';
 import { STEPS } from '.';
 
 interface Props {

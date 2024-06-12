@@ -14,7 +14,7 @@ import { useParams } from 'react-router';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { useApi, useApiWithChain, useTranslation } from '../hooks';
-import { NameAddress, Proxy, ProxyItem } from '../util/types';
+import type { Proxy, ProxyItem } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
 import Label from './Label';
 import { AccountContext, Checkbox2 as Checkbox, Identity } from '.';

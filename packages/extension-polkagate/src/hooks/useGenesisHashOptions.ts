@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { getAllMetadata } from '../messaging';
 import chains from '../util/chains';
-import { DropdownOption } from '../util/types';
+import type { DropdownOption } from '../util/types';
 
 const RELAY_CHAIN = 'Relay Chain';
 

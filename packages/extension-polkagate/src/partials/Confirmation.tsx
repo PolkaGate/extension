@@ -10,7 +10,7 @@ import { ActionContext, Motion, Popup, ShortAddress, TwoButtons } from '../compo
 import { useTranslation } from '../hooks';
 import Explorer from '../popup/history/Explorer';
 import FailSuccessIcon from '../popup/history/partials/FailSuccessIcon';
-import { TxInfo } from '../util/types';
+import type { TxInfo } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
 import { HeaderBrand, SubTitle } from '.';
 

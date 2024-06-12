@@ -4,7 +4,7 @@
 import { selectableNetworks } from '@polkadot/networks';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { DropdownOption } from '../util/types';
+import type { DropdownOption } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
 import useAccount from './useAccount';
 

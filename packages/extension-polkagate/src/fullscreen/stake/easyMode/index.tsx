@@ -13,7 +13,7 @@ import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { AmountWithOptions, Infotip2, ShowBalance, ShowBalance3, TwoButtons, Warning } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 import { useInfo, usePool, usePoolConsts, useStakingConsts } from '../../../hooks';
-import { BalancesInfo } from '../../../util/types';
+import type { BalancesInfo } from '../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
 import { Inputs } from '../Entry';
 import { STEPS } from '..';

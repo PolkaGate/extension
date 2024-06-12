@@ -21,7 +21,7 @@ import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../.
 import { useCurrentBlockNumber, useIdentity, useInfo, useTracks, useTranslation } from '../../../../hooks';
 import { Lock } from '../../../../hooks/useAccountLocks';
 import { ThroughProxy } from '../../../../partials';
-import { BalancesInfo, Proxy, TxInfo } from '../../../../util/types';
+import type { BalancesInfo, Proxy, TxInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import DisplayValue from '../../post/castVote/partial/DisplayValue';
 import { GOVERNANCE_PROXY } from '../../utils/consts';

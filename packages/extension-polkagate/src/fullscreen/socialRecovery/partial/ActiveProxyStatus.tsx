@@ -13,7 +13,7 @@ import { BN } from '@polkadot/util';
 
 import { Progress, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { WithdrawInfo } from '../util/types';
+import type { WithdrawInfo } from '../util/types';
 
 interface Props {
   api: ApiPromise | undefined;

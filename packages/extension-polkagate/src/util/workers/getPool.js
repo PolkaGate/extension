@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 
+// @ts-nocheck
+
 /**
  * @description
  * get all information regarding a pool
@@ -14,9 +16,16 @@ import { BN_ZERO, bnMax } from '@polkadot/util';
 import getApi from '../getApi.ts';
 import getPoolAccounts from '../getPoolAccounts';
 
-async function getPool(endpoint, stakerAddress, id = undefined) {
+async function getPool (endpoint, stakerAddress, id = undefined) {
   console.log(`getPool is called for ${stakerAddress} id:${id} endpoint:${endpoint}`);
   const api = await getApi(endpoint);
+
+  if (!api) {
+    console.error('Failed to get api!');
+
+    return;
+  }
+
   const token = api.registry.chainTokens[0];
   const decimal = api.registry.chainDecimals[0];
   const members = !id && await api.query.nominationPools.poolMembers(stakerAddress);

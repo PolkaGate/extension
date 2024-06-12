@@ -16,7 +16,7 @@ import { Convictions, PButton } from '../../../../components';
 import { useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useFormatted, useToken, useTranslation } from '../../../../hooks';
 import { Lock } from '../../../../hooks/useAccountLocks';
 import { MAX_AMOUNT_LENGTH } from '../../../../util/constants';
-import { BalancesInfo } from '../../../../util/types';
+import type { BalancesInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { Track } from '../../utils/types';
 import AmountWithOptionsAndLockAmount from '../partial/AmountWithOptionsAndLockAmount';

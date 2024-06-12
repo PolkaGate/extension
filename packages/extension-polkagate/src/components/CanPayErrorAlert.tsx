@@ -7,7 +7,7 @@ import { Grid, useTheme } from '@mui/material';
 import React from 'react';
 
 import { useTranslation } from '../hooks';
-import { CanPayStatements } from '../util/types';
+import type { CanPayStatements } from '../util/types';
 import { Warning } from '.';
 
 interface Props{

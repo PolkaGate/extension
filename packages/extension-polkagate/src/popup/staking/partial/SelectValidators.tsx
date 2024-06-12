@@ -36,7 +36,7 @@ interface Props {
   poolId?: BN;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
-  stashId: AccountId;
+  stashId: AccountId | string;
   stakingConsts: StakingConsts | null | undefined;
   staked: BN;
   title: string;

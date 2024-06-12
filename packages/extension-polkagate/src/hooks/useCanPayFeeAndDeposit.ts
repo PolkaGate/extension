@@ -13,7 +13,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { getValue } from '../popup/account/util';
-import { BalancesInfo, CanPayFee, CanPayStatements } from '../util/types';
+import type { BalancesInfo, CanPayFee, CanPayStatements } from '../util/types';
 import { useBalances } from '.';
 
 export default function useCanPayFeeAndDeposit (

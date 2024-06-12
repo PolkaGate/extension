@@ -24,7 +24,7 @@ import { useBalances, useGenesisHashOptions, useInfo, useMyAccountIdentity, useT
 import { tieAccount, windowOpen } from '../../messaging';
 import { FullScreenRemoteNode, HeaderBrand } from '../../partials';
 import { ASSET_HUBS, CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
-import { BalancesInfo, FormattedAddressState } from '../../util/types';
+import type { BalancesInfo, FormattedAddressState } from '../../util/types';
 import StakingOption from '../staking/Options';
 import LockedInReferenda from './unlock/LockedInReferenda';
 import AccountBrief from './AccountBrief';

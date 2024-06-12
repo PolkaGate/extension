@@ -14,7 +14,7 @@ import { ActionContext, Infotip } from '../../../components';
 import { useInfo, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
-import { Proxy } from '../../../util/types';
+import type { Proxy } from '../../../util/types';
 
 interface AddressDetailsProps {
   address: string | undefined;

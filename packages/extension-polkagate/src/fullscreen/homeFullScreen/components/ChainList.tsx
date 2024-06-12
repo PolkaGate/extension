@@ -13,7 +13,7 @@ import { useGenesisHashOptions, useIsTestnetEnabled, useTranslation } from '../.
 import { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../hooks/useAssetsBalances';
 import { TEST_NETS } from '../../../util/constants';
 import { DEFAULT_SELECTED_CHAINS } from '../../../util/defaultSelectedChains';
-import { DropdownOption } from '../../../util/types';
+import type { DropdownOption } from '../../../util/types';
 import ChainItem from './ChainItem';
 
 interface Props {

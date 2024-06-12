@@ -16,7 +16,7 @@ import { useInfo } from '@polkadot/extension-polkagate/src/hooks';
 import ValidatorInfoPage from '@polkadot/extension-polkagate/src/popup/staking/partial/ValidatorInfo';
 import { BN, hexToBn, isHex } from '@polkadot/util';
 
-import { StakingConsts, ValidatorInfo } from '../../../../util/types';
+import type { StakingConsts, ValidatorInfo } from '../../../../util/types';
 import ShowValidator from './ShowValidator';
 
 interface Props {

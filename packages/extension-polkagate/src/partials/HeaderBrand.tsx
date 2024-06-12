@@ -14,7 +14,7 @@ import React, { useCallback, useContext, useRef, useState } from 'react';
 import { logoBlack, logoWhite } from '../assets/logos';
 import { ActionContext, FullScreenIcon, Steps } from '../components';
 import useOutsideClick from '../hooks/useOutsideClick';
-import { Step } from '../util/types';
+import type { Step } from '../util/types';
 import Menu from './Menu';
 import { AccountMenu } from '.';
 

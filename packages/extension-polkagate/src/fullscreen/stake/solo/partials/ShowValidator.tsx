@@ -14,7 +14,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { Checkbox2, Identity, Infotip, ShowBalance } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
-import { StakingConsts, ValidatorInfo } from '../../../../util/types';
+import type { StakingConsts, ValidatorInfo } from '../../../../util/types';
 import { isHexToBn } from '../../../../util/utils';
 
 interface Props {

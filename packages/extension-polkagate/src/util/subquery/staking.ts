@@ -26,7 +26,7 @@ export async function getRewards(chainName: string, controller: string | Account
 }`;
   const res = await postReq(url, { query });
 
-  console.log('getRewards from subquery:', res.data.historyElements.nodes);
+  console.log('getRewards from subquery:', res['data'].historyElements.nodes);
 
-  return res.data.historyElements.nodes as SubQueryRewardInfo[];
+  return res['data'].historyElements.nodes as SubQueryRewardInfo[];
 }

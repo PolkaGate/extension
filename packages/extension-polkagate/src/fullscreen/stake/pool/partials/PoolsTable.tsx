@@ -17,7 +17,7 @@ import { InputFilter, Progress, ShowBalance } from '../../../../components';
 import { useInfo, useStakingConsts, useTranslation } from '../../../../hooks';
 import PoolMoreInfo from '../../../../popup/staking/partial/PoolMoreInfo';
 import { DEFAULT_POOL_FILTERS } from '../../../../util/constants';
-import { PoolFilter, PoolInfo } from '../../../../util/types';
+import type { PoolFilter, PoolInfo } from '../../../../util/types';
 
 interface Props {
   api?: ApiPromise;

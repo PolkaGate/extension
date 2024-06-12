@@ -14,7 +14,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { Checkbox2, Identity, Label2, Progress } from '../../../components';
 import { useTranslation } from '../../../components/translate';
-import { ProxyItem } from '../../../util/types';
+import type { ProxyItem } from '../../../util/types';
 
 interface Props {
   api: ApiPromise | undefined;

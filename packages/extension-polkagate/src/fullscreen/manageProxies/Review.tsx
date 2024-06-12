@@ -18,7 +18,7 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { CanPayErrorAlert, ShowBalance, SignArea2, WrongPasswordAlert } from '../../components';
 import { useCanPayFeeAndDeposit, useFormatted, useTranslation } from '../../hooks';
 import { ThroughProxy } from '../../partials';
-import { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { pgBoxShadow } from '../../util/utils';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';

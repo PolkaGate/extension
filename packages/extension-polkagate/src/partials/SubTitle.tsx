@@ -10,7 +10,7 @@ import { Divider, Grid } from '@mui/material';
 import React from 'react';
 
 import { Steps } from '../components';
-import { Step } from '../util/types';
+import type { Step } from '../util/types';
 
 interface Props {
   label: string;

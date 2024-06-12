@@ -16,7 +16,7 @@ import { Convictions, From, TwoButtons } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
 import { Lock } from '../../../../hooks/useAccountLocks';
 import { MAX_AMOUNT_LENGTH } from '../../../../util/constants';
-import { BalancesInfo } from '../../../../util/types';
+import type { BalancesInfo } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
 import { Track } from '../../utils/types';
 import AmountWithOptionsAndLockAmount from '../partial/AmountWithOptionsAndLockAmount';

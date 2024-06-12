@@ -4,7 +4,7 @@
 import { useContext, useMemo } from 'react';
 
 import { AccountsAssetsContext } from '../components';
-import { DropdownOption } from '../util/types';
+import type { DropdownOption } from '../util/types';
 import { useGenesisHash } from '.';
 
 export default function useAccountAssetsOptions (address: string | undefined): DropdownOption[] | undefined | null {

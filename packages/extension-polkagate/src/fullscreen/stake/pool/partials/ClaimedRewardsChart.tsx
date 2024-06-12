@@ -21,7 +21,7 @@ import { Progress } from '../../../../components';
 import { useInfo, useTranslation } from '../../../../hooks';
 import { getNominationPoolsClaimedRewards } from '../../../../util/api';
 import { MAX_HISTORY_RECORD_TO_SHOW } from '../../../../util/constants';
-import { ClaimedRewardInfo, SubscanClaimedRewardInfo } from '../../../../util/types';
+import type { ClaimedRewardInfo, SubscanClaimedRewardInfo } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
 
 ChartJS.register(

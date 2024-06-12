@@ -21,7 +21,6 @@
     "@polkadot/extension-base": "^0.47.5",
     "@polkadot/extension-inject": "^0.47.5",
     "@polkadot/extension-polkagate": "^0.47.5",
-    "@polkadot/extension-ui": "^0.47.5",
     "tslib": "^2.6.2"
   },
   "devDependencies": {

@@ -12,7 +12,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { PButton, ProxyTable } from '../../../components';
 import { useChain, useTranslation } from '../../../hooks';
-import { Proxy, ProxyItem } from '../../../util/types';
+import type { Proxy, ProxyItem } from '../../../util/types';
 
 interface Props {
   address: string | undefined;

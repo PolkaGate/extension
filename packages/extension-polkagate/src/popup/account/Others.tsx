@@ -20,7 +20,7 @@ import { Identicon, Motion, Popup } from '../../components';
 import { useAccountName, useFormatted, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { STAKING_CHAINS } from '../../util/constants';
-import { BalancesInfo } from '../../util/types';
+import type { BalancesInfo } from '../../util/types';
 import LabelBalancePrice from './LabelBalancePrice';
 
 interface Props {

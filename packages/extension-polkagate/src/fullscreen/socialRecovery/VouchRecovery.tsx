@@ -15,7 +15,7 @@ import { PButton, Progress, TwoButtons, VouchRecoveryIcon, Warning } from '../..
 import { useAccountsInfo, useChain, useTranslation } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import SelectTrustedFriend, { AddressWithIdentity } from './components/SelectTrustedFriend';
-import { SocialRecoveryModes } from './util/types';
+import type { SocialRecoveryModes } from './util/types';
 import { STEPS } from '.';
 
 interface Props {

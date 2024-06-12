@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { DropdownOption } from '../util/types';
+import type { DropdownOption } from '../util/types';
 import { useApi, useGenesisHash } from '.';
 
 /**

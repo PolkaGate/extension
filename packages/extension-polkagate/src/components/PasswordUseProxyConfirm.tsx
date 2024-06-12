@@ -13,7 +13,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useAccount, useCanPayFee, useMetadata, useTranslation } from '../hooks';
 import SelectProxy from '../partials/SelectProxy';
-import { Proxy, ProxyItem, ProxyTypes } from '../util/types';
+import type { Proxy, ProxyItem, ProxyTypes } from '../util/types';
 import { noop } from '../util/utils';
 import { Identity, Password, PButton, Warning } from '.';
 

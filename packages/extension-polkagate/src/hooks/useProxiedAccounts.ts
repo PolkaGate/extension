@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
-import { ProxiedAccounts, Proxy } from '../util/types';
+import type { ProxiedAccounts, Proxy } from '../util/types';
 import useInfo from './useInfo';
 
 /**

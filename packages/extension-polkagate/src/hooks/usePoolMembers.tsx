@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
-import { MembersMapEntry } from '../util/types';
+import type { MembersMapEntry } from '../util/types';
 
 interface Member {
   accountId: string;

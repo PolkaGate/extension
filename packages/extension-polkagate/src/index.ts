@@ -3,5 +3,5 @@
 
 import '@polkadot/types-augment';
 
-export { default as createView } from './createView';
-export { default as Popup } from './Popup';
+export { default as createView } from '@polkadot/extension-polkagate/src/createView';
+export { default as Popup } from './popup';

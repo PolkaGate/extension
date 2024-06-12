@@ -14,7 +14,7 @@ import { useTranslation } from '../../../hooks';
 import { ThroughProxy } from '../../../partials';
 import Explorer from '../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../popup/history/partials/FailSuccessIcon';
-import { TxInfo } from '../../../util/types';
+import type { TxInfo } from '../../../util/types';
 import { Mode, SubIdAccountsToSubmit } from '..';
 
 interface Props {

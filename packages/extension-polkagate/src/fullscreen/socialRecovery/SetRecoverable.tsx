@@ -14,7 +14,7 @@ import { useAccountsInfo, useChain, useFormatted, useTranslation } from '../../h
 import SelectTrustedFriend, { AddressWithIdentity } from './components/SelectTrustedFriend';
 import SelectTrustedFriendFromExtension from './components/SelectTrustedFriendFromExtension';
 import TrustedFriendsList from './partial/TrustedFriendsList';
-import { RecoveryConfigType, SocialRecoveryModes } from './util/types';
+import type { RecoveryConfigType, SocialRecoveryModes } from './util/types';
 import { STEPS } from '.';
 
 interface Props {

@@ -16,7 +16,7 @@ import { DATE_OPTIONS } from '@polkadot/extension-polkagate/src/util/constants';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
-import { MyPoolInfo, TxInfo } from '../../../../../util/types';
+import type { MyPoolInfo, TxInfo } from '../../../../../util/types';
 import { Inputs } from '../../../Entry';
 import Review from '../../../partials/Review';
 import { ModalTitle } from '../../../solo/commonTasks/configurePayee';

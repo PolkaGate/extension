@@ -13,7 +13,7 @@ import { useChainName, useTranslation } from '../../hooks';
 import { SubTitle, ThroughProxy } from '../../partials';
 import Explorer from '../../popup/history/Explorer';
 import FailSuccessIcon from '../../popup/history/partials/FailSuccessIcon';
-import { ProxyItem, TxInfo } from '../../util/types';
+import type { ProxyItem, TxInfo } from '../../util/types';
 import { getSubstrateAddress, pgBoxShadow } from '../../util/utils';
 
 interface Props {

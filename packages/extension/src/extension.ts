@@ -3,6 +3,6 @@
 
 import '@polkadot/extension-inject/crossenv';
 
-import { createView, Popup } from '@polkadot/extension-ui';
+import { createView, Popup } from '@polkadot/extension-polkagate';
 
 createView(Popup);

@@ -5,7 +5,7 @@ import type { AllValidators, ValidatorInfo, Validators } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { useCurrentEraIndex, useInfo } from '.';

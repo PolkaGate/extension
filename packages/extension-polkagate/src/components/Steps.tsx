@@ -4,7 +4,7 @@
 import { Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { Step } from '../util/types';
+import type { Step } from '../util/types';
 
 function Steps({ current, style = { fontSize: '20px', fontWeight: 400, lineHeight: '35px' }, total }: Step) {
   const theme = useTheme();

@@ -15,7 +15,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { Warning } from '../../components';
 import { useFullscreen, useInfo, useTranslation } from '../../hooks';
 import { FULLSCREEN_WIDTH, PROXY_CHAINS } from '../../util/constants';
-import { Proxy, ProxyItem } from '../../util/types';
+import type { Proxy, ProxyItem } from '../../util/types';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import AddProxy from './AddProxy';
 import Manage from './Manage';

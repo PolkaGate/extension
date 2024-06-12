@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 
+// @ts-nocheck
+
 import getApi from '../getApi.ts';
 
 async function getRewards (endpoint, _stakerAddress) {

@@ -16,7 +16,7 @@ import { ThroughProxy } from '../../../partials';
 import ShowPool from '../../../popup/staking/partial/ShowPool';
 import RewardsDestination from '../../../popup/staking/solo/stake/partials/RewardDestination';
 import { SYSTEM_SUGGESTION_TEXT } from '../../../util/constants';
-import { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
+import type { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
 import { amountToMachine, pgBoxShadow } from '../../../util/utils';
 import DisplayValue from '../../governance/post/castVote/partial/DisplayValue';
 import { Inputs } from '../Entry';

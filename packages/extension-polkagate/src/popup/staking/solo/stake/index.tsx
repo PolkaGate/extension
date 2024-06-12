@@ -316,7 +316,7 @@ export default function Index (): React.ReactElement {
           setShow={setShowSelectValidator}
           setShowReview={setShowReview}
           show={showSelectValidator}
-          staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
+          staked={(stakingAccount?.stakingLedger?.active ?? BN_ZERO) as BN}
           stakingConsts={stakingConsts}
           stashId={formatted}
           title={t('Select Validators')}

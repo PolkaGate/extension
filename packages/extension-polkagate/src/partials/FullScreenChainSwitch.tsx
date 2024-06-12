@@ -10,7 +10,7 @@ import { useGenesisHashOptions, useInfo, useIsTestnetEnabled } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '../util/constants';
 import getLogo from '../util/getLogo';
-import { DropdownOption } from '../util/types';
+import type { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
 
 interface Props {
