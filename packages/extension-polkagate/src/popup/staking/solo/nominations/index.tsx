@@ -183,11 +183,11 @@ export default function Index (): React.ReactElement {
               activeValidators={activeValidators}
               allValidatorsIdentities={allValidatorsIdentities}
               api={api}
-              chain={chain}
+              chain={chain as any}
               decimal={stakingAccount?.decimal}
               formatted={formatted}
               height={window.innerHeight - 190}
-              staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
+              staked={(stakingAccount?.stakingLedger?.active as unknown as BN) ?? BN_ZERO}
               stakingConsts={stakingConsts}
               token={stakingAccount?.token}
               validatorsToList={selectedValidatorsInfo}
@@ -196,7 +196,7 @@ export default function Index (): React.ReactElement {
           </>
         }
       </Grid>
-      {nominatedValidatorsIds === null && stakingAccount?.controllerId === formatted && stakingAccount?.stakingLedger?.active && !stakingAccount?.stakingLedger?.active?.isZero() &&
+      {nominatedValidatorsIds === null && stakingAccount?.controllerId === formatted && stakingAccount?.stakingLedger?.active && !(stakingAccount?.stakingLedger?.active as unknown as BN)?.isZero() &&
         <PButton
           _onClick={goToSelectValidator}
           text={t('Select Validator')}
@@ -206,7 +206,7 @@ export default function Index (): React.ReactElement {
         <RemoveValidators
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           formatted={formatted}
           setShow={setShowRemoveValidator}
           show={showRemoveValidator}
@@ -216,15 +216,14 @@ export default function Index (): React.ReactElement {
       {showSelectValidator && allValidatorsInfo && formatted &&
         <SelectValidators
           address={address}
-          api={api}
-          chain={chain}
+          api={api as ApiPromise}
           newSelectedValidators={newSelectedValidators}
           nominatedValidatorsIds={nominatedValidatorsIds}
           setNewSelectedValidators={setNewSelectedValidators}
           setShow={setShowSelectValidator}
           setShowReview={setShowReview}
           show={showSelectValidator}
-          staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
+          staked={(stakingAccount?.stakingLedger?.active as unknown as BN) ?? BN_ZERO}
           stakingConsts={stakingConsts}
           stashId={formatted}
           title={t('Select Validators')}

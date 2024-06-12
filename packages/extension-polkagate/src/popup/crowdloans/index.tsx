@@ -12,13 +12,13 @@ import type { Balance } from '@polkadot/types/interfaces';
 import { Language as LanguageIcon } from '@mui/icons-material';
 import { Avatar, Box, Container, Divider, Grid, Link, Typography, useTheme } from '@mui/material';
 import { createWsEndpoints } from '@polkagate/apps-config';
-import { Crowdloan } from 'extension-polkagate/src/util/types';
+import type { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import type { Chain } from '@polkadot/extension-chains/types';
 
-import { SettingsStruct } from '@polkadot/ui-settings/types';
+import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { auctionBlack, auctionRed, auctionWhite, crowdloanHomeBlack, crowdloanHomeRed, crowdloanHomeWhite, pastCrowdloanBlack, pastCrowdloanRed, pastCrowdloanWhite } from '../../assets/icons';
@@ -99,7 +99,7 @@ export default function CrowdLoans(): React.ReactElement {
     return endeds.length ? endeds : null;
   }, [auction]);
 
-  const allEndpoints = createWsEndpoints((key: string, value: string | undefined) => value || key);
+  const allEndpoints = createWsEndpoints(() => '');
   const paraIds = useMemo(() => auction?.crowdloans.map((c: Crowdloan) => c.fund.paraId), [auction?.crowdloans]);
   const crowdloansId = useMemo(() => {
     if (!paraIds || !allEndpoints.length) {

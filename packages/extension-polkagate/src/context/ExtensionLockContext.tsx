@@ -20,7 +20,7 @@ export const useExtensionLockContext = (): ExtensionLockContextProps => {
   return context;
 };
 
-export const ExtensionLockProvider: React.FC = ({ children }) => {
+export const ExtensionLockProvider: React.FC<{children: React.ReactElement}> = ({ children }:any) => {
   const [isExtensionLocked, setIsExtensionLocked] = useState(true);
 
   const setExtensionLock = (lock: boolean) => {

@@ -37,8 +37,8 @@ export default function ManageProxies(): React.ReactElement {
   const [disableToConfirmButton, setEnableToConfirmButton] = useState<boolean>(true);
   const [available, setAvailable] = useState<number>(0);
 
-  const proxyDepositBase = api ? api.consts.proxy.proxyDepositBase as unknown as BN : BN_ZERO;
-  const proxyDepositFactor = api ? api.consts.proxy.proxyDepositFactor as unknown as BN : BN_ZERO;
+  const proxyDepositBase = api ? api.consts['proxy']['proxyDepositBase'] as unknown as BN : BN_ZERO;
+  const proxyDepositFactor = api ? api.consts['proxy']['proxyDepositFactor'] as unknown as BN : BN_ZERO;
 
   const depositToPay = useMemo(() => {
     if (!proxyItems || proxyItems.length === 0) {
@@ -143,11 +143,13 @@ export default function ManageProxies(): React.ReactElement {
   }, [disableAddProxyButton, disableToConfirmButton, proxyItems, t]);
 
   useEffect(() => {
-    formatted && api && api.query.proxy?.proxies(formatted).then((proxies) => {
-      const fetchedProxyItems = (JSON.parse(JSON.stringify(proxies[0])))?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+    formatted && api && api.query['proxy']?.['proxies'](formatted)
+      .then((proxies) => {
+        const parsed = JSON.parse(JSON.stringify((proxies as unknown as any[])[0]));
+        const fetchedProxyItems = (parsed as Proxy[])?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
-      setProxyItems(fetchedProxyItems);
-    });
+        setProxyItems(fetchedProxyItems);
+      });
   }, [api, chain, formatted]);
 
   return (

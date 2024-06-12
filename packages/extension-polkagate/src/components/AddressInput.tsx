@@ -22,7 +22,6 @@ import Identicon from './Identicon';
 import Label from './Label';
 import ShortAddress from './ShortAddress';
 import Warning from './Warning';
-import type { AccountId } from '@polkadot/types/interfaces';
 
 interface Props {
   allAddresses?: [string, string | null, string | undefined][];
@@ -30,7 +29,7 @@ interface Props {
   style?: SxProps<Theme>;
   chain?: Chain;
   address: string | undefined;
-  setAddress: React.Dispatch<React.SetStateAction<string | AccountId| null | undefined>>;
+  setAddress: React.Dispatch<React.SetStateAction<string | null | undefined>>;
   showIdenticon?: boolean;
   helperText?: string;
   placeHolder?: string;

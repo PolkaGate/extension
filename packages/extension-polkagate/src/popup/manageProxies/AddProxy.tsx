@@ -13,7 +13,7 @@ import { AccountContext, AddressInput, InputWithLabel, PButton, Select, Warning 
 import { useAccountDisplay, useFormatted, useIdentity, useTranslation } from '../../hooks';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
-import { Proxy, ProxyItem } from '../../util/types';
+import type { Proxy, ProxyItem } from '../../util/types';
 import { sanitizeChainName } from '../../util/utils';
 import ShowIdentity from './partials/ShowIdentity';
 
@@ -43,12 +43,12 @@ export default function AddProxy({ address, chain, onChange, proxyItems, setProx
   const formatted = useFormatted(address);
   const accountDisplayName = useAccountDisplay(formatted);
 
-  const [realAddress, setRealAddress] = useState<string | undefined>();
+  const [realAddress, setRealAddress] = useState<string | null | undefined>();
   const [selectedProxyType, setSelectedProxyType] = useState<string | null>('Any');
   const [delay, setDelay] = useState<number>(0);
   const [addButtonDisabled, setAddButtonDisabled] = useState<boolean>(true);
 
-  const proxyAccountIdentity = useIdentity(chain.genesisHash, realAddress);
+  const proxyAccountIdentity = useIdentity(chain.genesisHash, realAddress as string);
 
   const myselfAsProxy = useMemo(() => formatted === realAddress, [formatted, realAddress]);
   const possibleProxy = useMemo(() => ({ delay, delegate: realAddress, proxyType: selectedProxyType }) as Proxy, [delay, realAddress, selectedProxyType]);
@@ -103,7 +103,7 @@ export default function AddProxy({ address, chain, onChange, proxyItems, setProx
         {t("You can add an account included in this extension as a proxy of {{accountDisplayName}} to sign certain types of transactions on {{accountDisplayName}}'s behalf.", { replace: { accountDisplayName } })}
       </Typography>
       <AddressInput
-        address={realAddress}
+        address={realAddress as string}
         allAddresses={allAddresses}
         chain={chain}
         helperText={t('The account address which will be a proxy account')}

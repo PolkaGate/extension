@@ -7,7 +7,7 @@ import React, { useCallback, useContext } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
-import { Chain } from '../../../../../extension-chains/src/types';
+import type { Chain } from '../../../../../extension-chains/src/types';
 import { AccountContext, ShortAddress, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import ThroughProxy from '../../../partials/ThroughProxy';
@@ -98,7 +98,7 @@ export default function ManageProxiesTxDetail({ address, api, chain, deposit, na
       </Grid>
       {address &&
         <Grid m='5px auto' width='92%'>
-          <ThroughProxy address={address} name={name} chain={chain} />
+          <ThroughProxy address={address} chain={chain as any} />
         </Grid>
       }
       <Divider

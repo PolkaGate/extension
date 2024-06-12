@@ -203,7 +203,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
         api={api}
         // estimatedFee={estimatedFee}
         disabled={canPayFeeAndDeposit.isAbleToPay !== true}
-        genesisHash={account?.genesisHash}
+        genesisHash={account?.genesisHash as string}
         isPasswordError={isPasswordError}
         label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
         onChange={setPassword}
@@ -241,7 +241,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
             chain={chain}
             deposit={depositValue}
             name={selectedProxyName}
-            proxies={proxiesToChange}
+            proxies={proxiesToChange as ProxyItem[]}
           />
         </Confirmation>
       }

@@ -3,13 +3,11 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, SxProps, Theme } from '@mui/material';
-import React from 'react';
-
 import type { Chain } from '@polkadot/extension-chains/types';
 
-
+import { Divider, Grid, type SxProps, type Theme } from '@mui/material';
 import { Identity } from '../components';
+import React from 'react';
 import { useApi, useTranslation } from '../hooks';
 
 interface Props {
@@ -32,7 +30,7 @@ function ThroughProxy({ address, chain, style = {}, showDivider = true }: Props)
       <Identity
         address={address}
         api={api}
-        chain={chain}
+        chain={chain as any}
         identiconSize={28}
         showSocial={false}
         // subIdOnly

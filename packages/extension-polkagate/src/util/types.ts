@@ -728,16 +728,10 @@ export interface ApiProps extends ApiState {
 export interface APIs {
   [genesisHash: string]: ApiProps;
 }
+
 export interface APIsContext {
-  apis: { [key: string]: { api?: ApiPromise; endpoint?: string; isRequested: boolean; }[] };
-  setIt: (apis: {
-    [key: string]:
-    {
-      api?: ApiPromise;
-      endpoint?: string;
-      isRequested: boolean;
-    }[]
-  }) => void;
+  apis: APIs;
+  setIt: (apis: APIs) => void;
 }
 
 export interface LatestRefs {

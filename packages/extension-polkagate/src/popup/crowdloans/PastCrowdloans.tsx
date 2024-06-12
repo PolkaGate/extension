@@ -7,10 +7,10 @@ import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Grid, useTheme } from '@mui/material';
-import { Crowdloan } from 'extension-polkagate/src/util/types';
+import type { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback } from 'react';
 
-import { LinkOption } from '@polkagate/apps-config/endpoints/types';
+import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 
 
@@ -37,7 +37,7 @@ export default function PastCrowdloans({ api, chain, contributedCrowdloans, crow
 
   return (
     <>
-      <BouncingSubTitle label={t<string>('Past Crowdloans')} style={{ fontSize: '20px', fontWeight: 400 }} />
+      <BouncingSubTitle label={t<string>('Past Crowdloans')} />
       <Grid container sx={{ height: window.innerHeight - 270, m: 'auto', overflow: 'scroll', width: '92%' }}>
         {pastCrowdloans?.length
           ? pastCrowdloans.map((crowdloan, index) => (

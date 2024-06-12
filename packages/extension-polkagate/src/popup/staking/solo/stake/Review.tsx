@@ -18,7 +18,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import type { Chain } from '@polkadot/extension-chains/types';
 
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
@@ -127,7 +127,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
+        from: { address: formatted as string, name },
         subAction: isFirstTimeStaking && selectedValidators ? 'Stake/Nominate' : 'Stake',  // TODO: should be Stake Extra?
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,

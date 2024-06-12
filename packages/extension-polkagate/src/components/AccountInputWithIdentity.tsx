@@ -20,7 +20,7 @@ interface Props {
   chain: Chain | null | undefined;
   label: string;
   style?: SxProps<Theme>;
-  setAddress: React.Dispatch<React.SetStateAction< string | AccountId | undefined>> | null;
+  setAddress: React.Dispatch<React.SetStateAction< string | AccountId | undefined | null>> | null;
   ignoreAddress?: string
   name?: string;
   helperText?: string;
