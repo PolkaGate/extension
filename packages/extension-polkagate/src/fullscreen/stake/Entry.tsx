@@ -10,7 +10,7 @@ import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 
 import { useBalances } from '../../hooks';
 import type { MyPoolInfo, Payee, TxInfo, ValidatorInfo } from '../../util/types';

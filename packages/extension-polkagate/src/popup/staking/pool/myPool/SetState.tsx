@@ -10,7 +10,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import type { Chain } from '@polkadot/extension-chains/types';
 
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
@@ -241,7 +241,7 @@ export default function SetState({ address, formatted, headerText, helperText, p
               </Grid>
               {txInfo.throughProxy &&
                 <Grid container m='auto' maxWidth='92%'>
-                  <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} name={txInfo.throughProxy.name} />
+                  <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
                 </Grid>
               }
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />

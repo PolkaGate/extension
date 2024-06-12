@@ -48,7 +48,7 @@ export default function FastUnstake({ address, setRefresh, setShow, show }: Prop
   const [inputs, setInputs] = useState<Inputs>();
 
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
-  const fastUnstakeDeposit = api && api.consts.fastUnstake.deposit as unknown as BN;
+  const fastUnstakeDeposit = api && api.consts['fastUnstake']['deposit'] as unknown as BN;
   const availableBalance = getValue('available', myBalances);
   const hasEnoughDeposit = fastUnstakeDeposit && stakingConsts && myBalances && estimatedFee && availableBalance
     ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(availableBalance || BN_MAX_INTEGER)

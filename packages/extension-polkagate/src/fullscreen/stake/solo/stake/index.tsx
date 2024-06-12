@@ -8,7 +8,7 @@ import { Payee, ValidatorInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Infotip2, ShowBalance, TwoButtons, Warning } from '../../../../components';

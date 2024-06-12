@@ -12,7 +12,7 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import { BN, BN_ONE, BN_ZERO, isFunction, isNumber } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
@@ -438,7 +438,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
         <Grid item md={6.9} sx={{ pt: '10px' }} xs={12}>
           <InputAccount
             address={recipientAddress || inputs?.recipientAddress}
-            chain={chain}
+            chain={chain as any}
             label={t('Account')}
             labelFontSize='16px'
             setAddress={setRecipientAddress}

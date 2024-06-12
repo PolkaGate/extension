@@ -6,14 +6,13 @@
 import type { ApiPromise } from '@polkadot/api';
 
 import { Language as LanguageIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
-import { Avatar, Grid, IconButton, Link, SxProps, Theme, Typography } from '@mui/material';
-import { Crowdloan } from 'extension-polkagate/src/util/types';
+import { Avatar, Grid, IconButton, Link, type SxProps, type Theme, Typography } from '@mui/material';
+import type { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useState, useMemo } from 'react';
 
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import { LinkOption } from '@polkagate/apps-config/endpoints/types';
+import type { DeriveAccountRegistration, DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import type { Chain } from '@polkadot/extension-chains/types';
-
 
 import { Identity } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -30,7 +29,7 @@ interface Props {
   labelPosition?: 'left' | 'right' | 'center';
 }
 
-export default function ShowParachain({ api, chain, crowdloan, crowdloansId, labelPosition = 'left', setShowCrowdloanInfo, style }: Props): React.ReactElement {
+export default function ShowParachain ({ api, chain, crowdloan, crowdloansId, labelPosition = 'left', setShowCrowdloanInfo, style }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const paraId = crowdloan.fund.paraId;
@@ -73,7 +72,7 @@ export default function ShowParachain({ api, chain, crowdloan, crowdloansId, lab
               }
             </Grid>
             : <Identity
-              accountInfo={accountInfo}
+              accountInfo={accountInfo as unknown as DeriveAccountInfo}
               address={crowdloan.fund.depositor}
               api={api}
               chain={chain as any}

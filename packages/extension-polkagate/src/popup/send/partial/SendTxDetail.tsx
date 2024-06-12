@@ -36,7 +36,7 @@ export default function SendTxDetail({ txInfo }: Props): React.ReactElement {
       </Grid>
       {txInfo.throughProxy &&
         <Grid container m='auto' maxWidth='92%'>
-          <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} name={txInfo.throughProxy.name} />
+          <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
           <Divider sx={{
             bgcolor: 'secondary.main',
             height: '2px',

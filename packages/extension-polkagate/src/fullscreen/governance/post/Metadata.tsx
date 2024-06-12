@@ -88,7 +88,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
             value={
               <Identity
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 formatted={referendum?.proposer}
                 identiconSize={25}
                 showShortAddress
@@ -118,7 +118,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
               value={
                 <Identity
                   api={api}
-                  chain={chain}
+                  chain={chain as any}
                   formatted={decisionDepositPayer}
                   identiconSize={25}
                   showShortAddress={!!decisionDepositPayer}
@@ -164,7 +164,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
                     isValidAddress(mayBeBeneficiary)
                       ? <Identity
                         api={api}
-                        chain={chain}
+                        chain={chain as any}
                         formatted={mayBeBeneficiary}
                         identiconSize={25}
                         showShortAddress

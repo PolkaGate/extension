@@ -5,7 +5,7 @@ import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
 import { ApiPromise } from '@polkadot/api';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import getPoolAccounts from '../../../util/getPoolAccounts';

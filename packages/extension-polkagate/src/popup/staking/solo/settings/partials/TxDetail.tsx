@@ -42,7 +42,7 @@ export default function TxDetail ({ newSettings, txInfo }: Props): React.ReactEl
       </Grid>
       {txInfo.throughProxy &&
         <Grid container m='auto' maxWidth='92%'>
-          <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} name={txInfo.throughProxy.name} />
+          <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
         </Grid>
       }
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />

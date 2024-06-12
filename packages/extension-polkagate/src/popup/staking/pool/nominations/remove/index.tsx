@@ -14,7 +14,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/types';
 
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
 

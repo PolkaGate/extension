@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 
 import { useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';

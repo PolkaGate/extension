@@ -72,7 +72,7 @@ export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, sel
         {t('Choose a suitable proxy for the account to conduct the transaction on its behalf.')}
       </Typography>
       <ProxyTable
-        chain={chain}
+        chain={chain as any}
         label={t<string>('Proxies')}
         maxHeight='50%'
         mode='Select'

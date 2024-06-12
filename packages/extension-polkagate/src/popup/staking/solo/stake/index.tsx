@@ -309,8 +309,7 @@ export default function Index(): React.ReactElement {
       {validatorSelectionMethod === 'manual' && showSelectValidator && formatted &&
         <SelectValidators
           address={address}
-          api={api}
-          chain={chain as any}
+          api={api as ApiPromise}
           newSelectedValidators={manualSelectedValidators}
           setNewSelectedValidators={setManualSelectedValidators}
           setShow={setShowSelectValidator}

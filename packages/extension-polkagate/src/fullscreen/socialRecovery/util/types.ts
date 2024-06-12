@@ -3,7 +3,7 @@
 
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import { BN } from '@polkadot/util';
 
 export type SocialRecoveryModes = 'RemoveRecovery' | 'SetRecovery' | 'ModifyRecovery' | 'InitiateRecovery' | 'CloseRecovery' | 'VouchRecovery' | 'Withdraw' | undefined;

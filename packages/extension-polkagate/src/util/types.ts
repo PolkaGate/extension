@@ -17,7 +17,7 @@ import { AccountJson } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 
 import { InjectedExtension } from '@polkadot/extension-inject/types';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { LatestReferenda } from '../fullscreen/governance/utils/types';
@@ -72,6 +72,7 @@ export interface NominatorInfo {
 }
 
 export interface ValidatorInfo extends DeriveStakingQuery {
+  exposure: any;
   accountInfo?: DeriveAccountInfo;
 }
 

@@ -142,7 +142,7 @@ export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmT
                         {selectedProxy &&
                           <Identity
                             api={api}
-                            chain={chain}
+                            chain={chain as any}
                             formatted={selectedProxy?.delegate}
                             identiconSize={30}
                             showSocial={false}

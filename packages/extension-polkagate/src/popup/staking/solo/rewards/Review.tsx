@@ -13,7 +13,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
 import { ExpandedRewards } from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/pending';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';

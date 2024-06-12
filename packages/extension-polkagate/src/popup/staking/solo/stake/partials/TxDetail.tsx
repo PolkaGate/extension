@@ -40,7 +40,7 @@ export default function TxDetail ({ settings, txInfo }: Props): React.ReactEleme
       </Grid>
       {txInfo.throughProxy &&
         <Grid container m='auto' maxWidth='92%'>
-          <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} name={txInfo.throughProxy.name} />
+          <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
         </Grid>
       }
       {settings?.controllerId && settings?.stashId !== settings?.controllerId &&

@@ -19,7 +19,7 @@ export default function TAccountsDisplay({ address, api, chain, selectedTrustedA
         <Identity
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           identiconSize={30}
           showShortAddress
           showSocial

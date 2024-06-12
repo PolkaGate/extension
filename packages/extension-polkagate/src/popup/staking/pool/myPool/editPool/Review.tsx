@@ -11,7 +11,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 

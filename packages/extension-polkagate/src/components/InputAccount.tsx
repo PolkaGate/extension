@@ -40,7 +40,7 @@ export default function InputAccount({ address, chain, disabled, helperText, ign
       <AddressInput2
         address={address}
         allAddresses={allAddresses}
-        chain={chain}
+        chain={chain as any}
         disabled={disabled}
         helperText={helperText}
         label={label}
@@ -61,7 +61,7 @@ export default function InputAccount({ address, chain, disabled, helperText, ign
           />
           <Identity
             api={api}
-            chain={chain}
+            chain={chain as any}
             formatted={address}
             identiconSize={31}
             name={name}

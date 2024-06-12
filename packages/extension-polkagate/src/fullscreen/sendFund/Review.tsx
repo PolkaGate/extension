@@ -27,7 +27,7 @@ interface Props {
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
 }
 
-export default function Review ({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const api = useApi(address);
   const chain = useChain(address);
@@ -62,7 +62,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
               <Identity
                 address={address}
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 direction='row'
                 identiconSize={31}
                 showSocial={false}
@@ -73,7 +73,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
           </DisplayValue>
           {selectedProxyAddress &&
             <Grid container m='auto' maxWidth='92%'>
-              <ThroughProxy address={selectedProxyAddress} chain={chain} />
+              <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
             </Grid>
           }
           <DisplayValue dividerHeight='1px' title={t('Amount')}>
@@ -100,7 +100,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
               <Identity
                 address={inputs?.recipientAddress}
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 direction='row'
                 identiconSize={31}
                 showSocial={false}

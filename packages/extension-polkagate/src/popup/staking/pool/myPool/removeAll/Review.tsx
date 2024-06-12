@@ -11,7 +11,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
@@ -302,7 +302,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
               </Grid>
               {txInfo.throughProxy &&
                 <Grid container m='auto' maxWidth='92%'>
-                  <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} name={txInfo.throughProxy.name} />
+                  <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
                 </Grid>
               }
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />

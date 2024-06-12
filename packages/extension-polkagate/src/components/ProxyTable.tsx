@@ -32,7 +32,7 @@ interface Props {
   selected?: Proxy;
 }
 
-export default function ProxyTable ({ proxyTypeFilter, notFoundText = '', selected, onSelect, mode, chain, label, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
+export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selected, onSelect, mode, chain, label, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const [warningText, setWarningTest] = useState<string>();
@@ -163,7 +163,7 @@ export default function ProxyTable ({ proxyTypeFilter, notFoundText = '', select
                   return (
                     <Grid container item key={index} sx={{ '> div:not(:last-child)': { borderRight: '1px solid', borderRightColor: 'secondary.light' }, bgcolor: fade(proxyItem) ? 'primary.contrastText' : 'transparent', height: '41px', opacity: fade(proxyItem) ? 0.7 : 1, textAlign: 'center' }} xs={12}>
                       <Grid alignItems='center' container item justifyContent='left' pl='3px' xs={mode === 'None' ? 6.1 : 4.7}>
-                        <Identity api={api ?? api2} chain={chain} formatted={proxyItem.proxy.delegate} identiconSize={25} showShortAddress showSocial={false} style={{ 'div:nth-child(2)': { maxWidth: '85px' }, fontSize: '12px' }} subIdOnly />
+                        <Identity api={api ?? api2} chain={chain as any} formatted={proxyItem.proxy.delegate} identiconSize={25} showShortAddress showSocial={false} style={{ 'div:nth-child(2)': { maxWidth: '85px' }, fontSize: '12px' }} subIdOnly />
                       </Grid>
                       <Grid alignItems='center' container height='100%' item justifyContent='center' xs={mode === 'None' ? 4.5 : 3.9}>
                         <Typography fontSize='12px' fontWeight={400}>

@@ -13,7 +13,7 @@ import { SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
 import type { Chain } from '@polkadot/extension-chains/types';
 
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import { BN_ONE } from '@polkadot/util';
 
 import { AccountHolderWithProxy, Infotip, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../../components';

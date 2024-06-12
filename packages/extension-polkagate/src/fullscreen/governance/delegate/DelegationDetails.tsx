@@ -52,7 +52,7 @@ interface ArrowsProps {
   onPrevious: () => void;
 }
 
-export default function DelegationDetails ({ accountLocks, address, balances, filteredDelegation, formatted, lockedAmount, mode, selectedProxy, setDelegateInformation, setModalHeight, setMode, setSelectedTracksLength, setStatus, setStep, setTxInfo, status, step }: Props): React.ReactElement<Props> {
+export default function DelegationDetails({ accountLocks, address, balances, filteredDelegation, formatted, lockedAmount, mode, selectedProxy, setDelegateInformation, setModalHeight, setMode, setSelectedTracksLength, setStatus, setStep, setTxInfo, status, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, chain, decimal, token } = useInfo(address);
   const { tracks } = useTracks(address);
@@ -80,7 +80,7 @@ export default function DelegationDetails ({ accountLocks, address, balances, fi
     filteredDelegation && !variousDelegation
       ? amountToHuman(filteredDelegation[delegateeIndex].info[0].delegatedBalance, decimal)
       : undefined
-  , [decimal, delegateeIndex, variousDelegation, filteredDelegation]);
+    , [decimal, delegateeIndex, variousDelegation, filteredDelegation]);
 
   const delegatePower = useCallback((conviction: number, delegateAmountBN: BN) => {
     if (conviction === undefined || delegateAmountBN.isZero()) {
@@ -103,7 +103,7 @@ export default function DelegationDetails ({ accountLocks, address, balances, fi
         delegateeAddress: filteredDelegation[delegateeIndex].delegatee
       }
       : undefined
-  , [delegateAmountInHuman, delegatePower, filteredDelegation, variousDelegation, delegateeIndex]);
+    , [delegateAmountInHuman, delegatePower, filteredDelegation, variousDelegation, delegateeIndex]);
 
   const delegatedConviction = useMemo(() =>
     filteredDelegation
@@ -135,7 +135,7 @@ export default function DelegationDetails ({ accountLocks, address, balances, fi
           </Typography>
           <Identity
             api={api}
-            chain={chain}
+            chain={chain as any}
             direction='row'
             formatted={filteredDelegation ? filteredDelegation[delegateeIndex].delegatee : ''}
             identiconSize={31}
@@ -180,7 +180,7 @@ export default function DelegationDetails ({ accountLocks, address, balances, fi
             <Identity
               address={address}
               api={api}
-              chain={chain}
+              chain={chain as any}
               direction='row'
               identiconSize={31}
               showSocial={false}
@@ -198,7 +198,7 @@ export default function DelegationDetails ({ accountLocks, address, balances, fi
                 </Typography>
                 <Identity
                   api={api}
-                  chain={chain}
+                  chain={chain as any}
                   direction='row'
                   formatted={filteredDelegation[0].delegatee}
                   identiconSize={31}

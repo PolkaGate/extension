@@ -410,7 +410,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
                       <>
                         {selectedProxy &&
                           <Identity
-                            chain={chain}
+                            chain={chain as any}
                             formatted={selectedProxy?.delegate}
                             identiconSize={30}
                             style={{ fontSize: '14px' }}

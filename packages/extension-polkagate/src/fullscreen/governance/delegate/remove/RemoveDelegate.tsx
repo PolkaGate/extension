@@ -134,7 +134,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
           <Identity
             address={address}
             api={api}
-            chain={chain}
+            chain={chain as any}
             direction='row'
             identiconSize={31}
             showShortAddress
@@ -145,7 +145,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
         </Grid>
         {selectedProxyAddress &&
           <Grid container m='auto' maxWidth='92%'>
-            <ThroughProxy address={selectedProxyAddress} chain={chain} />
+            <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
           </Grid>
         }
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
@@ -155,7 +155,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
           </Typography>
           <Identity
             api={api}
-            chain={chain}
+            chain={chain as any}
             direction='row'
             formatted={delegateeAddress}
             identiconSize={31}

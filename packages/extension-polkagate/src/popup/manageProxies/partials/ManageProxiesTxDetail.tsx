@@ -19,11 +19,10 @@ interface Props {
   api: ApiPromise;
   deposit?: BN;
   address?: string;
-  name?: string;
   chain?: Chain;
 }
 
-export default function ManageProxiesTxDetail({ address, api, chain, deposit, name, proxies }: Props): React.ReactElement {
+export default function ManageProxiesTxDetail({ address, api, chain, deposit, proxies }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
 

@@ -3,24 +3,18 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { ApiPromise } from '@polkadot/api';
-
 import { Language as LanguageIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
-import { Avatar, Grid, IconButton, Link, SxProps, Theme, Typography } from '@mui/material';
-import { Crowdloan } from 'extension-polkagate/src/util/types';
+import { Avatar, Grid, IconButton, Link, type SxProps, type Theme, Typography } from '@mui/material';
+import type { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useMemo } from 'react';
 
-import { LinkOption } from '@polkagate/apps-config/endpoints/types';
-import type { Chain } from '@polkadot/extension-chains/types';
-
+import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
 
 import { useTranslation } from '../../../hooks';
 import getLogo from '../../../util/getLogo';
 import { getWebsiteFavicon } from '../../../util/utils';
 
 interface Props {
-  api?: ApiPromise;
-  chain?: Chain | null;
   crowdloan: Crowdloan;
   crowdloansId?: LinkOption[];
   setShowCrowdloanInfo: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,7 +23,7 @@ interface Props {
   brief?: boolean;
 }
 
-export default function ShowParachainBrief({ api, chain, crowdloan, crowdloansId, setShowCrowdloanInfo, style }: Props): React.ReactElement {
+export default function ShowParachainBrief ({ crowdloan, crowdloansId, setShowCrowdloanInfo, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const paraId = crowdloan.fund.paraId;
   const name = useMemo(() => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string ?? crowdloan?.identity?.display), [crowdloan?.identity?.display, crowdloansId, paraId]);
@@ -46,10 +40,10 @@ export default function ShowParachainBrief({ api, chain, crowdloan, crowdloansId
       <Typography textAlign='center' width='100%'>
         {t<string>('Parachain candidate')}
       </Typography>
-      <Grid justifyContent='center' container item sx={{ height: '48px' }}>
+      <Grid justifyContent='center' item container sx={{ height: '48px' }}>
         <Grid alignItems='center' container item justifyContent='center' width='15%'>
           <Avatar
-            src={logo || getWebsiteFavicon(crowdloan?.identity?.web)}
+            src={logo || getWebsiteFavicon(crowdloan?.identity?.web as unknown as  string)}
             sx={{ height: 25, width: 25 }}
           />
         </Grid>

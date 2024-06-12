@@ -13,6 +13,7 @@ import { PoolStakingIcon } from '../../components';
 import { useApi, useMinToReceiveRewardsInSolo, usePoolConsts, useStakingConsts, useTranslation, useUnSupportedNetwork } from '../../hooks';
 import { STAKING_CHAINS } from '../../util/constants';
 import StakingOption from './partial/StakingOption';
+import type { ApiPromise } from '@polkadot/api';
 
 interface Props {
   showStakingOptions: boolean;
@@ -23,7 +24,7 @@ export default function Options({ setShowStakingOptions, showStakingOptions }: P
   const { t } = useTranslation();
   const history = useHistory();
   const theme = useTheme();
-  const { pathname, state } = useLocation();
+  const { pathname, state } = useLocation<{api:ApiPromise}>();
   const { address } = useParams<{ address: string }>();
   const api = useApi(address, state?.api);
 

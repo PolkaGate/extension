@@ -94,7 +94,7 @@ export default function Review({ address, delegateInformation, estimatedFee, sel
           <Identity
             address={address}
             api={api}
-            chain={chain}
+            chain={chain as any}
             direction='row'
             identiconSize={31}
             showSocial={false}
@@ -104,7 +104,7 @@ export default function Review({ address, delegateInformation, estimatedFee, sel
         </Grid>
         {selectedProxyAddress &&
           <Grid container m='auto' maxWidth='92%'>
-            <ThroughProxy address={selectedProxyAddress} chain={chain} />
+            <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
           </Grid>
         }
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
@@ -115,7 +115,7 @@ export default function Review({ address, delegateInformation, estimatedFee, sel
           <Identity
             address={delegateInformation.delegateeAddress}
             api={api}
-            chain={chain}
+            chain={chain as any}
             direction='row'
             identiconSize={31}
             showSocial={false}

@@ -8,10 +8,10 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import { Crowdloan } from 'extension-polkagate/src/util/types';
+import type { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useState } from 'react';
 
-import { LinkOption } from '@polkagate/apps-config/endpoints/types';
+import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -40,7 +40,7 @@ interface ArrowsProps {
   onNext: () => void;
 }
 
-export default function ActiveCrowdloans({ activeCrowdloans, api, chain, contributedCrowdloans, crowdloansId, currentBlockNumber, decimal, formatted, minContribution, token }: Props): React.ReactElement {
+export default function ActiveCrowdloans ({ activeCrowdloans, api, chain, contributedCrowdloans, crowdloansId, currentBlockNumber, decimal, formatted, minContribution, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -90,7 +90,7 @@ export default function ActiveCrowdloans({ activeCrowdloans, api, chain, contrib
 
   return (
     <>
-      <BouncingSubTitle label={t<string>('Active Crowdloans')} style={{ fontSize: '20px', fontWeight: 400 }} />
+      <BouncingSubTitle label={t<string>('Active Crowdloans')} />
       <Grid container sx={{ height: window.innerHeight - 360, m: 'auto', width: '92%' }}>
         {activeCrowdloans?.length
           ? <>

@@ -25,7 +25,7 @@ interface Props {
   closeSelectProxy: () => void
 }
 
-export default function SelectProxyModal2 ({ address, closeSelectProxy, height, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props): React.ReactElement<Props> {
+export default function SelectProxyModal2({ address, closeSelectProxy, height, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const chain = useChain(address);
   const ref = useRef(selectedProxy);
@@ -54,7 +54,7 @@ export default function SelectProxyModal2 ({ address, closeSelectProxy, height, 
         {t('Choose a suitable proxy for the account to conduct the transaction on its behalf.')}
       </Typography>
       <ProxyTable
-        chain={chain}
+        chain={chain as any}
         label={t<string>('Proxies')}
         maxHeight='300px'
         mode='Select'

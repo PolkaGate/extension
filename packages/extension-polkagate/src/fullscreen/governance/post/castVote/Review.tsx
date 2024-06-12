@@ -41,7 +41,7 @@ interface Props {
   txType: 'Remove' | 'Vote';
 }
 
-export default function Review ({ address, estimatedFee, selectedProxy, setModalHeight, setRefresh, setStep, setTxInfo, status, step, tx, txType, voteInformation }: Props): React.ReactElement<Props> {
+export default function Review({ address, estimatedFee, selectedProxy, setModalHeight, setRefresh, setStep, setTxInfo, status, step, tx, txType, voteInformation }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);
@@ -112,7 +112,7 @@ export default function Review ({ address, estimatedFee, selectedProxy, setModal
 
   const onBackClick = useCallback(() =>
     setStep(txType === 'Vote' ? STEPS.INDEX : STEPS.PREVIEW)
-  , [setStep, txType]);
+    , [setStep, txType]);
 
   return (
     <Motion style={{ height: '100%' }}>
@@ -137,7 +137,7 @@ export default function Review ({ address, estimatedFee, selectedProxy, setModal
           <Identity
             address={address}
             api={api}
-            chain={chain}
+            chain={chain as any}
             direction='row'
             identiconSize={35}
             showSocial={false}
@@ -147,7 +147,7 @@ export default function Review ({ address, estimatedFee, selectedProxy, setModal
         </Grid>
         {selectedProxyAddress &&
           <Grid container m='auto' maxWidth='92%'>
-            <ThroughProxy address={selectedProxyAddress} chain={chain} />
+            <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
           </Grid>
         }
         <DisplayValue title={t('Vote')}>

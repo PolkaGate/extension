@@ -14,7 +14,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { DeriveStakingQuery } from '@polkadot/api-derive/types';
+import type { DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
@@ -48,9 +48,9 @@ export default function Index (): React.ReactElement {
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
 
-  const [refresh, setRefresh] = useState<boolean | undefined>(false);
+  const [refresh, setRefresh] = useState<boolean>(false);
   const stakingAccount = useStakingAccount(address, state?.stakingAccount, refresh, setRefresh);
-  const [nominatedValidatorsIds, setNominatedValidatorsIds] = useState<AccountId[] | string[] | undefined | null>();
+  const [nominatedValidatorsIds, setNominatedValidatorsIds] = useState< string[] | undefined | null>();
   const [showRemoveValidator, setShowRemoveValidator] = useState<boolean>(false);
   const [showSelectValidator, setShowSelectValidator] = useState<boolean>(false);
 
@@ -60,10 +60,14 @@ export default function Index (): React.ReactElement {
   const selectedValidatorsInfo = useMemo(() =>
     allValidatorsInfo && nominatedValidatorsIds && allValidatorsInfo.current
       .concat(allValidatorsInfo.waiting)
-      .filter((v: DeriveStakingQuery) => nominatedValidatorsIds.includes(v.accountId))
+      .filter((v: DeriveStakingQuery) => {
+        const id=v.accountId as unknown as string;
+        return nominatedValidatorsIds.includes(id)
+      }
+      )
   , [allValidatorsInfo, nominatedValidatorsIds]);
 
-  const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv?.exposure?.others?.find(({ who }) => who?.toString() === stakingAccount?.accountId?.toString())), [selectedValidatorsInfo, stakingAccount?.accountId]);
+  const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv?.exposure?.others?.find(({ who }:{who:any}) => who?.toString() === stakingAccount?.accountId?.toString())), [selectedValidatorsInfo, stakingAccount?.accountId]);
 
   useEffect(() => {
     setNominatedValidatorsIds(stakingAccount === null || stakingAccount?.nominators?.length === 0 ? null : stakingAccount?.nominators.map((item) => item.toString()));

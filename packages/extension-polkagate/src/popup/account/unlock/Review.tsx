@@ -28,6 +28,7 @@ import type { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import Confirmation from './Confirmation';
 import type { Chain } from '@polkadot/extension-chains/types';
+import type { Balance } from '@polkadot/types/interfaces';
 
 interface Props {
   address: string;
@@ -187,7 +188,7 @@ export default function Review({ address, api, classToUnlock, setRefresh, setSho
           <AmountFee
             address={address}
             amount={amount}
-            fee={estimatedFee}
+            fee={estimatedFee as Balance}
             label={t('Available to unlock')}
             showDivider={!totalLocked.sub(unlockableAmount).isZero()}
             token={token}

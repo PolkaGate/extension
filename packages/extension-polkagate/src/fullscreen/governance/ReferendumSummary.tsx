@@ -105,7 +105,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, refSummary }: Props):
             {t('By')}:
           </Grid>
           <Grid item sx={{ maxWidth: '22%', mb: '10px' }}>
-            <Identity api={api} chain={chain} formatted={refSummary.proposer} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, height: '38px', lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+            <Identity api={api} chain={chain as any} formatted={refSummary.proposer} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, height: '38px', lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
           </Grid>
           <VerticalBar theme={theme} />
           {origin &&

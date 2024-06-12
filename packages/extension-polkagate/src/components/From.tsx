@@ -43,7 +43,7 @@ function From({ address, api, _chain, formatted, style, title }: Props): React.R
       </Typography>
       <Grid alignItems='center' container justifyContent='flex-start' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, py: '5px', mt: '2px' }}>
         <Grid item sx={{ fontSize: '28px', fontWeight: 400, maxWidth: '67%' }}>
-          <Identity address={_address} api={api} chain={chain} formatted={formatted || _formatted} identiconSize={31} showSocial={false} />
+          <Identity address={_address} api={api} chain={chain as any} formatted={formatted || _formatted} identiconSize={31} showSocial={false} />
         </Grid>
         <Grid item sx={{ width: '30%', pl: '5px' }}>
           <ShortAddress address={formatted || _formatted || _address} style={{ fontSize: '16px', fontWeight: 300, justifyContent: 'flex-start', mt: '5px' }} />

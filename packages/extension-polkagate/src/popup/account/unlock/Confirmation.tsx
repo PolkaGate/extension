@@ -110,7 +110,7 @@ export default function Confirmation({ address, onPrimaryBtnClick, onSecondaryBt
         }
         <TwoButtons
           onPrimaryClick={onPrimaryBtnClick}
-          onSecondaryClick={onSecondaryBtnClick}
+          onSecondaryClick={onSecondaryBtnClick as any}
           primaryBtnText={primaryBtnText}
           secondaryBtnText={secondaryBtnText}
         />

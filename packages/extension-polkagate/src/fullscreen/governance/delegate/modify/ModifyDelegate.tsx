@@ -229,7 +229,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
             address={address}
             api={api}
             balances={balances}
-            chain={chain}
+            chain={chain as any}
             conviction={newConviction ?? conviction}
             currentBlock={currentBlock}
             decimal={decimal}
@@ -263,7 +263,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
               <Identity
                 address={address}
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 direction='row'
                 identiconSize={31}
                 showShortAddress
@@ -274,7 +274,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
             </Grid>
             {selectedProxyAddress &&
               <Grid container m='auto' maxWidth='92%'>
-                <ThroughProxy address={selectedProxyAddress} chain={chain} />
+                <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
               </Grid>
             }
             <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
@@ -284,7 +284,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
               </Typography>
               <Identity
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 direction='row'
                 formatted={delegateeAddress}
                 identiconSize={31}
