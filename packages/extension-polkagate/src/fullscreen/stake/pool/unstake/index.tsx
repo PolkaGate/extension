@@ -209,7 +209,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
 
         const unbondedParams = [formatted, amountAsBN];
 
-        const optSpans = await api.query.staking.slashingSpans(formatted);
+        const optSpans = await api.query['staking']['slashingSpans'](formatted) as any;
         const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1 as number;
         const poolId = myPool.poolId;
 

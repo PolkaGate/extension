@@ -56,7 +56,7 @@ export default function WithdrawRedeem({ address, availableBalance, redeemable, 
     const handleInputs = async () => {
       const call = api.tx['nominationPools']['withdrawUnbonded'];
 
-      const optSpans = await api.query.staking.slashingSpans(formatted);
+      const optSpans = await api.query['staking']['slashingSpans'](formatted) as any;
       const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
       const params = [formatted, spanCount];
 

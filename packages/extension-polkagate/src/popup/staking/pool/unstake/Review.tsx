@@ -122,9 +122,9 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
         };
 
         saveAsHistory(from, info);
-        setTxInfo({ ...info, api, chain });
+        setTxInfo({ ...info, api, chain:chain as any });
       } else { // hence a poolWithdrawUnbonded is needed
-        const optSpans = await api.query.staking.slashingSpans(formatted);
+        const optSpans = await api.query['staking']['slashingSpans'](formatted) as any;
         const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
 
         const batch = api.tx['utility']['batchAll']([

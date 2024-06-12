@@ -100,7 +100,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
 
       signer.unlock(password);
       setShowWaitScreen(true);
-      const optSpans = await api.query.staking.slashingSpans(formatted);
+      const optSpans = await api.query['staking']['slashingSpans'](formatted) as any;
       const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
       const params = [spanCount];
       const { block, failureText, fee, success, txHash } = await broadcast(api, tx, params, signer, formatted, selectedProxy);

@@ -49,7 +49,7 @@ export default function WithdrawRedeemable({ address, redeemable, setRefresh, se
       if (api) {
         const call = api.tx['staking']['withdrawUnbonded']; // sign by controller
 
-        const optSpans = await api.query.staking.slashingSpans(formatted);
+        const optSpans = await api.query['staking']['slashingSpans'](formatted) as any;
         const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
         const params = [spanCount];
 

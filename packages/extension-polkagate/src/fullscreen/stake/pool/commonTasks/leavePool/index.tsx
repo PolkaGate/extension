@@ -68,7 +68,7 @@ export default function LeavePool({ address, onClose, pool, setRefresh }: Props)
   }), [decimal, estimatedFee, redeemDate, staked, t, token]);
 
   useEffect(() => {
-    api && api.query.staking.slashingSpans(formatted).then((optSpans) => {
+    api && api.query['staking']['slashingSpans'](formatted).then((optSpans: any) => {
       const _spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
 
       setSpanCount(_spanCount as number);
