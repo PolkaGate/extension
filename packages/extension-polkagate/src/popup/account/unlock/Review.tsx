@@ -40,7 +40,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function Review ({ address, api, classToUnlock, setRefresh, setShow, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
+export default function Review({ address, api, classToUnlock, setRefresh, setShow, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const theme = useTheme();
@@ -145,7 +145,8 @@ export default function Review ({ address, api, classToUnlock, setRefresh, setSh
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
 
       setShowWaitScreen(false);

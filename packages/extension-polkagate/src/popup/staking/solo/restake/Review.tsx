@@ -110,7 +110,8 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
 
       setShowWaitScreen(false);

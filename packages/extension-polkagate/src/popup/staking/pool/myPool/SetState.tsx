@@ -133,7 +133,8 @@ export default function SetState({ address, formatted, headerText, helperText, p
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
 
       setShowWaitScreen(false);

@@ -119,7 +119,8 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
 
       setShowWaitScreen(false);

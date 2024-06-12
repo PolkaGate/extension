@@ -112,7 +112,8 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
 
       setShowWaitScreen(false);

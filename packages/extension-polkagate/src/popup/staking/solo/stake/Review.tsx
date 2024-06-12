@@ -134,7 +134,8 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
 
       setShowWaitScreen(false);

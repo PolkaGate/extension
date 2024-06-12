@@ -96,7 +96,8 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);

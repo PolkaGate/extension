@@ -45,7 +45,7 @@ interface Props {
   isUnstakeAll: boolean;
 }
 
-export default function Review ({ address, amount, chilled, estimatedFee, hasNominator, isUnstakeAll, maxUnlockingChunks, redeem, redeemDate, setShow, show, staked, total, unbonded, unlockingLen }: Props): React.ReactElement {
+export default function Review({ address, amount, chilled, estimatedFee, hasNominator, isUnstakeAll, maxUnlockingChunks, redeem, redeemDate, setShow, show, staked, total, unbonded, unlockingLen }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, decimal, formatted, token } = useInfo(address);
   const proxies = useProxies(api, formatted);
@@ -125,7 +125,8 @@ export default function Review ({ address, amount, chilled, estimatedFee, hasNom
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
 
       saveAsHistory(from, info);
 

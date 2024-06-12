@@ -185,7 +185,8 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);

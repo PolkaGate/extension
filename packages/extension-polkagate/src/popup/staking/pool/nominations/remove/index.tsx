@@ -116,7 +116,8 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);

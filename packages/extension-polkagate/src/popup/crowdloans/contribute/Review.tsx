@@ -106,7 +106,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
       saveAsHistory(String(from), info);
       setShowWaitScreen(false);
       setShowConfirmation(true);

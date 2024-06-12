@@ -227,7 +227,8 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
         ...extraInfo
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(String(from), info);
       setStep(steps.CONFIRM);
     } catch (e) {
