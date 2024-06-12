@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -52,7 +52,7 @@ export type SubIdAccountsToSubmit = { address: string | undefined; name: string 
 export type SubIdsParams = (string | Data | undefined)[][] | undefined;
 export type IdJudgement = 'Reasonable' | 'KnownGood' | 'FeePaid' | null | undefined;
 
-function getRawValue (value: Data) {
+function getRawValue(value: Data) {
   if (!value) {
     return;
   }
@@ -64,13 +64,13 @@ function getRawValue (value: Data) {
     : text;
 }
 
-export function setData (value: string | undefined): Data {
+export function setData(value: string | undefined): Data {
   return value
     ? { raw: value }
     : { none: null };
 }
 
-export default function ManageIdentity (): React.ReactElement {
+export default function ManageIdentity(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -373,7 +373,7 @@ export default function ManageIdentity (): React.ReactElement {
           <Progress
             gridSize={200}
             pt='250px'
-            title= {t('Checking account\'s on-chain Identity, please wait...')}
+            title={t('Checking account\'s on-chain Identity, please wait...')}
             type='grid'
           />
         }

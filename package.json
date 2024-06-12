@@ -13,7 +13,7 @@
     "url": "https://github.com/polkagate/extension.git"
   },
   "sideEffects": false,
-  "version": "0.44.1",
+  "version": "0.47.5",
   "versions": {
     "git": "0.44.7-9-x",
     "npm": "0.44.6"
@@ -23,8 +23,8 @@
   ],
   "scripts": {
     "build": "polkadot-dev-build-ts && yarn build:zip && yarn build:rollup",
-    "build:extra": "yarn build:i18n && yarn build:ui",
-    "build:i18n": "i18next-scanner --config i18next-scanner.config.js",
+    "build:before": "yarn build:i18n",
+    "build:i18n": "i18next-scanner --config i18next-scanner.config.cjs",
     "build:release": "polkadot-ci-ghact-build",
     "build:rollup": "polkadot-exec-rollup --config",
     "build:ui": "cd packages/extension && NODE_ENV=production yarn webpack --config webpack.extension.cjs --mode production",
@@ -87,7 +87,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.18.2",
-    "@polkadot/dev": "latest",
+    "@polkadot/dev": "^0.79.3",
     "@testing-library/react": "latest",
     "@types/jest": "latest",
     "@types/node": "^20.10.5",
@@ -100,10 +100,15 @@
     "webpack-bundle-analyzer": "^4.9.0"
   },
   "resolutions": {
-    "@polkadot/keyring": "^12.3.2",
+    "@polkadot/api": "^11.2.1",
+    "@polkadot/keyring": "^12.6.2",
     "@polkadot/networks": "^12.6.2",
-    "@polkadot/types": "^10.9.1",
-    "@polkadot/x-fetch": "^12.3.2",
+    "@polkadot/types": "^11.2.1",
+    "@polkadot/types-augment": "^11.2.1",
+    "@polkadot/ui-keyring": "^3.6.6",
+    "@polkadot/util": "^12.6.2",
+    "@polkadot/util-crypto": "^12.6.2",
+    "@polkadot/x-fetch": "^12.6.2",
     "babel-core": "^7.0.0-bridge.0",
     "safe-buffer": "^5.2.1",
     "typescript": "^5.3.3"

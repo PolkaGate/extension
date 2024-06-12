@@ -13,17 +13,17 @@
     "url": "https://github.com/polkagate/extension.git"
   },
   "sideEffects": [
-    "./detectPackage.js",
-    "./detectPackage.cjs"
+    "./packageDetect.js",
+    "./packageDetect.cjs"
   ],
   "type": "module",
-  "version": "0.44.1",
+  "version": "0.47.5",
   "main": "index.js",
   "dependencies": {
-    "@babel/runtime": "^7.18.3",
-    "@polkadot/extension-inject": "^0.44.1",
+    "@polkadot/extension-inject": "^0.47.5",
     "@polkadot/util": "latest",
-    "@polkadot/util-crypto": "latest"
+    "@polkadot/util-crypto": "latest",
+    "tslib": "^2.6.2"
   },
   "peerDependencies": {
     "@polkadot/api": "*",

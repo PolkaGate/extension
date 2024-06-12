@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -72,12 +72,12 @@ export const Title = ({ height, icon, logo, ml, onBackClick, padding = '30px 0px
       }
       <Grid item>
         {icon &&
-         <FontAwesomeIcon
-           color={theme.palette.text.primary}
-           icon={icon}
-           size='2xl'
-           style={{ paddingBottom: '5px' }}
-         />
+          <FontAwesomeIcon
+            color={theme.palette.text.primary}
+            icon={icon}
+            size='2xl'
+            style={{ paddingBottom: '5px' }}
+          />
         }
         {logo}
       </Grid>
@@ -92,7 +92,7 @@ export const Title = ({ height, icon, logo, ml, onBackClick, padding = '30px 0px
 
 const isAssethub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');
 
-export default function InputPage ({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function InputPage({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, formatted } = useInfo(address);
@@ -221,10 +221,10 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
         : [assetId, formatted, amount]
       : [formatted, amount];
 
-      api.rpc.state.getMetadata().then((m)=>{
-        console.log(JSON.parse(JSON.stringify(m)))
-      })
-      
+    api.rpc.state.getMetadata().then((m) => {
+      console.log(JSON.parse(JSON.stringify(m)))
+    })
+
     onChainCall(..._params).paymentInfo(formatted).then((i) => setFeeCall(i?.partialFee)).catch(console.error);
   }, [api, formatted, balances, onChainCall, assetId]);
 

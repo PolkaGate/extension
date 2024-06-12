@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -40,7 +40,7 @@ interface ManageButtonProps {
   style?: SxProps<Theme> | undefined
 }
 
-export default function DisplaySubId ({ addressesToSelect, api, error = false, index, judgements, noButtons = false, onRemove, parentName, setSubAddress, setSubName, subIdInfo, toModify = false }: Props): React.ReactElement {
+export default function DisplaySubId({ addressesToSelect, api, error = false, index, judgements, noButtons = false, onRemove, parentName, setSubAddress, setSubName, subIdInfo, toModify = false }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const params = useParams<{ address: string }>();

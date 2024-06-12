@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -41,7 +41,7 @@ interface Props {
   token: string | undefined;
 }
 
-export default function Manage ({ api, chain, decimal, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
+export default function Manage({ api, chain, decimal, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -119,8 +119,8 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
       <Bread />
       <Title
         height='100px'
-        logo={ <vaadin-icon icon='vaadin:sitemap' style={{ fontSize: '23px', color: `${theme.palette.text.primary}` }} /> }
-        text= {t('Proxy Management')}
+        logo={<vaadin-icon icon='vaadin:sitemap' style={{ fontSize: '23px', color: `${theme.palette.text.primary}` }} />}
+        text={t('Proxy Management')}
       />
       <Typography fontSize='14px' fontWeight={400}>
         {t('You can add new proxies or remove existing ones for the account here. Keep in mind that you need to reserve a deposit to have proxies.')}

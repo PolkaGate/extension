@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -16,7 +16,7 @@ interface IdentityItemsProps {
   setter: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-export default function IdentityInfoInput ({ icon, setter, title, type, value }: IdentityItemsProps): React.ReactElement {
+export default function IdentityInfoInput({ icon, setter, title, type, value }: IdentityItemsProps): React.ReactElement {
   const setInput = React.useCallback((input: string): void => {
     const encoder = new TextEncoder();
     let byteLength = encoder.encode(input).length;

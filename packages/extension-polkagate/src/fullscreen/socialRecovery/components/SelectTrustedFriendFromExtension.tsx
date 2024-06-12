@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -27,7 +27,7 @@ interface Props {
   onSelectFriend: (addr: AddressWithIdentity | undefined) => void;
 }
 
-export default function SelectTrustedFriendFromExtension ({ accountsInfo, address, chain, onSelectFriend, style }: Props): React.ReactElement<Props> {
+export default function SelectTrustedFriendFromExtension({ accountsInfo, address, chain, onSelectFriend, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);

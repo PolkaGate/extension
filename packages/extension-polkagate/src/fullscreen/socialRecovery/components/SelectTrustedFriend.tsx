@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -34,7 +34,7 @@ interface Props {
   iconType?: 'plus' | 'minus' | 'none';
 }
 
-export default function SelectTrustedFriend ({ accountsInfo = [], chain, disabled = false, placeHolder = '', iconType = 'plus', onSelectFriend, helperText = '', label, style }: Props): React.ReactElement<Props> {
+export default function SelectTrustedFriend({ accountsInfo = [], chain, disabled = false, placeHolder = '', iconType = 'plus', onSelectFriend, helperText = '', label, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);

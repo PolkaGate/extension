@@ -1,11 +1,11 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Password } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
-import { allOf, isNotShorterThan, isSameAs,Validator } from '../../../../util/validators';
+import { allOf, isNotShorterThan, isSameAs, Validator } from '../../../../util/validators';
 import ValidatedInput2 from './ValidatedInput2';
 
 interface Props {

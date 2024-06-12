@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -44,7 +44,7 @@ const Warn = ({ text }: { text: string }) => {
   );
 };
 
-export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props): React.ReactElement {
+export default function SoloStake({ inputs, onBack, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const { api, decimal, formatted, genesisHash, token } = useInfo(address);
@@ -240,7 +240,7 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
               value={amount}
             />
             {alert &&
-             <Warn text={alert} />
+              <Warn text={alert} />
             }
             <Grid container item pb='10px'>
               <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '58.25%' }}>

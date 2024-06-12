@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -14,7 +14,7 @@ interface Props {
   address: string | undefined;
 }
 
-function OptionalCopyButton ({ address }: Props): React.ReactElement {
+function OptionalCopyButton({ address }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -39,12 +39,14 @@ function OptionalCopyButton ({ address }: Props): React.ReactElement {
       </Grid>
       <Popover
         PaperProps={{
-          sx: { backgroundImage: 'none',
+          sx: {
+            backgroundImage: 'none',
             bgcolor: 'background.paper',
             border: isDarkMode ? '1px solid' : 'none',
             borderColor: 'secondary.light',
             boxShadow: `0px 0px 10px 8px ${theme.palette.divider}`,
-            pt: '5px' }
+            pt: '5px'
+          }
         }}
         anchorEl={anchorEl}
         anchorOrigin={{

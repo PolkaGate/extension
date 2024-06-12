@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -22,7 +22,7 @@ interface Props {
 
 const DEFAULT_SELECTED_CHAINS_COUNT = 10;
 
-function ChainList ({ anchorEl }: Props): React.ReactElement {
+function ChainList({ anchorEl }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const allChains = useGenesisHashOptions(false);

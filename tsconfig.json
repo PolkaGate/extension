@@ -1,15 +1,15 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "jsx": "react",
     "baseUrl": "./packages",
     "composite": false
   },
   "include": [
     "packages/**/src/**/*",
     "packages/extension-polkagate/icons",
-    "packages/extension-polkagate/src/components/themes.ts"
-, "packages/extension/public/offscreen.js"  ],
+    "packages/extension-polkagate/src/components/themes.ts",
+    "packages/extension/public/offscreen.js"  
+  ],
   "exclude": [
     "**/node_modules/**/*"
   ]

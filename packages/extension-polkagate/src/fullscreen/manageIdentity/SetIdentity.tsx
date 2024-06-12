@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -29,7 +29,7 @@ interface Props {
   identityToSet: DeriveAccountRegistration | null | undefined;
 }
 
-export default function SetIdentity ({ api, chainName, identity, identityToSet, mode, setIdentityToSet, setMode, setStep, totalDeposit }: Props): React.ReactElement {
+export default function SetIdentity({ api, chainName, identity, identityToSet, mode, setIdentityToSet, setMode, setStep, totalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const isPeopleChainEnabled = PEOPLE_CHAINS.includes(chainName || '');

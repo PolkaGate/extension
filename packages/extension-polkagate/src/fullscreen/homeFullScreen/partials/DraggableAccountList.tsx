@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -22,7 +22,7 @@ export const saveNewOrder = (newOrder: AccountsOrder[]) => {
   chrome.storage.local.set({ addressOrder }).catch(console.error);
 };
 
-export default function DraggableAccountList ({ hideNumbers, initialAccountList }: Props) {
+export default function DraggableAccountList({ hideNumbers, initialAccountList }: Props) {
   const [accountsOrder, setAccountsOrder] = useState<AccountsOrder[]>(initialAccountList);
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
 

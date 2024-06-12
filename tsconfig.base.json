@@ -16,11 +16,10 @@
       "@polkadot/extension-inject/*": ["extension-inject/src/*"],
       "@polkadot/extension-mocks/*": ["extension-mocks/src/*"],
       "@polkadot/extension-ui": ["extension-ui/src"],
-      "@polkadot/extension-ui/*": ["extension-ui/src/*"]
+      "@polkadot/extension-ui/*": ["extension-ui/src/*"],
+      "@polkadot/extension-polkagate": ["extension-polkagate/src"],
+      "@polkadot/extension-polkagate/*": ["extension-polkagate/src/*"]
     },
     "skipLibCheck": true
-	},
-  "include": [// added for plus
-    "packages/extension-polkagate/*"
-  ]
+	}
  }

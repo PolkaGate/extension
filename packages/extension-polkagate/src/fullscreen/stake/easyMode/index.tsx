@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -32,7 +32,7 @@ const POLKAGATE_POOL_IDS = {
   Westend: 6
 };
 
-export default function EasyMode ({ address, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function EasyMode({ address, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chainName, decimal, formatted } = useInfo(address);
@@ -103,7 +103,7 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
       });
     } else {
       console.log('waiting!');
-      console.log('waiting:', amount , amountAsBN , poolConsts , pool , api , poolConsts?.minJoinBond &&amountAsBN?.gte(poolConsts?.minJoinBond));
+      console.log('waiting:', amount, amountAsBN, poolConsts, pool, api, poolConsts?.minJoinBond && amountAsBN?.gte(poolConsts?.minJoinBond));
     }
   }, [amount, amountAsBN, api, pool, poolConsts, setInputs]);
 
@@ -201,13 +201,13 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
       </Typography>
       <Grid alignItems='center' container item justifyContent='flex-start' pt='20px'>
         <AmountWithOptions
-          label={t('How much are you looking to stake?') }
+          label={t('How much are you looking to stake?')}
           labelFontSize='16px'
           onChangeAmount={onChangeAmount}
           onPrimary={onMaxClick}
           onSecondary={onMinClick}
           primaryBtnText={t('Max amount')}
-          secondaryBtnText={ t('Min amount')}
+          secondaryBtnText={t('Min amount')}
           style={{
             fontSize: '16px',
             mt: '15px',
@@ -261,9 +261,9 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
               secondaryBtnText={t('Back')}
             />
             {isBusy &&
-            <Typography sx={{ fontSize: '15px' }}>
-              {t('Please wait while we are fetching information!')}
-            </Typography>
+              <Typography sx={{ fontSize: '15px' }}>
+                {t('Please wait while we are fetching information!')}
+              </Typography>
             }
           </Grid>
         </Grid>

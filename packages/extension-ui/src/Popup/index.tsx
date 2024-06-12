@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson, AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
@@ -87,7 +87,7 @@ import { APIs, Fetching, LatestRefs, Prices, PricesInCurrencies } from '../../..
 const startSettings = uiSettings.get();
 
 // Request permission for video, based on access we can hide/show import
-async function requestMediaAccess (cameraOn: boolean): Promise<boolean> {
+async function requestMediaAccess(cameraOn: boolean): Promise<boolean> {
   if (!cameraOn) {
     return false;
   }
@@ -103,7 +103,7 @@ async function requestMediaAccess (cameraOn: boolean): Promise<boolean> {
   return false;
 }
 
-function initAccountContext (accounts: AccountJson[]): AccountsContext {
+function initAccountContext(accounts: AccountJson[]): AccountsContext {
   const hierarchy = buildHierarchy(accounts);
   const master = hierarchy.find(({ isExternal, type }) => !isExternal && canDerive(type));
 
@@ -114,7 +114,7 @@ function initAccountContext (accounts: AccountJson[]): AccountsContext {
   };
 }
 
-export default function Popup (): React.ReactElement {
+export default function Popup(): React.ReactElement {
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
   const assetsOnChains = useAssetsBalances(accounts);
   const priceIds = usePriceIds();
@@ -252,7 +252,7 @@ export default function Popup (): React.ReactElement {
       .catch(console.error);
   }, [cameraOn]);
 
-  function wrapWithErrorBoundary (component: React.ReactElement, trigger?: string): React.ReactElement {
+  function wrapWithErrorBoundary(component: React.ReactElement, trigger?: string): React.ReactElement {
     return <ErrorBoundary trigger={trigger}>{component}</ErrorBoundary>;
   }
 

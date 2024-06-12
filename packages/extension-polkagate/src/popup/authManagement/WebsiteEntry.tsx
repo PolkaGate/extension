@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -46,7 +46,7 @@ export default function WebsiteEntry({ info, removeAuth, toggleAuth, url }: Prop
           uncheckedLabel={t<string>('Denied')}
         />
       </Grid>
-      <Grid alignItems='center' container item justifyContent='center' onClick={_removeAuth} sx={{ width: 'fit-content', px:'5px' }}>
+      <Grid alignItems='center' container item justifyContent='center' onClick={_removeAuth} sx={{ width: 'fit-content', px: '5px' }}>
         <RemoveAuth />
       </Grid>
     </Grid>

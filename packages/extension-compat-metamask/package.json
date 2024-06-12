@@ -13,21 +13,22 @@
     "url": "https://github.com/polkagate/extension.git"
   },
   "sideEffects": [
-    "./detectPackage.js",
-    "./detectPackage.cjs"
+    "./packageDetect.js",
+    "./packageDetect.cjs"
   ],
   "type": "module",
-  "version": "0.44.1",
+  "version": "0.47.5",
   "main": "index.js",
   "dependencies": {
-    "@babel/runtime": "^7.18.3",
-    "@metamask/detect-provider": "^1.2.0",
-    "@polkadot/extension-inject": "^0.44.1",
+    "@metamask/detect-provider": "^2.0.0",
+    "@polkadot/extension-inject": "^0.47.5",
     "@polkadot/types": "latest",
     "@polkadot/util": "latest",
-    "web3": "^1.7.3"
+    "tslib": "^2.6.2",
+    "web3": "^4.7.0"
   },
   "peerDependencies": {
+    "@polkadot/api": "*",
     "@polkadot/util": "*"
   }
 }

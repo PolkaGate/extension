@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -33,7 +33,7 @@ export const STEPS = {
   WAIT_SCREEN: 5
 };
 
-function ManageProxies (): React.ReactElement {
+function ManageProxies(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();

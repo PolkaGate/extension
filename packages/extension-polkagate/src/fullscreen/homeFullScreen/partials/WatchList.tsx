@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -26,7 +26,7 @@ export interface AssetsWithUiAndPrice extends FetchedBalance {
   };
 }
 
-function WatchList ({ groupedAssets }: Props): React.ReactElement {
+function WatchList({ groupedAssets }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const currency = useCurrency();
@@ -50,7 +50,7 @@ function WatchList ({ groupedAssets }: Props): React.ReactElement {
         </Grid>
         <Grid alignItems='center' columnGap='10px' container item width='fit-content'>
           <Typography fontSize='16px' fontWeight={600}>
-            { `${currency?.sign ?? ''}${nFormatter(asset.price ?? 0, asset.price > 1 ? 2 : 4)}`}
+            {`${currency?.sign ?? ''}${nFormatter(asset.price ?? 0, asset.price > 1 ? 2 : 4)}`}
           </Typography>
           <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '21px', m: 'auto', width: '3px' }} />
           {change > 0
@@ -58,7 +58,7 @@ function WatchList ({ groupedAssets }: Props): React.ReactElement {
             : <DownIcon sx={{ color: 'warning.main', fontSize: '40px' }} />
           }
           <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
-            { `${(change ?? 0).toFixed(2)}%`}
+            {`${(change ?? 0).toFixed(2)}%`}
           </Typography>
         </Grid>
       </Grid>
@@ -81,34 +81,34 @@ function WatchList ({ groupedAssets }: Props): React.ReactElement {
 
   return (
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px 10px', width: '430px' }}>
-      { uniqueAssets && uniqueAssets.length > 0 &&
-          <Grid container item pt='10px'>
-            {uniqueAssets.slice(0, 3).map((asset, index) => (
-              <DisplayAssetRow
-                asset={asset}
-                key={index}
-              />
-            ))}
-            {uniqueAssets.length > 3 &&
-              <Grid container item justifyContent='flex-end'>
-                <Collapse in={showMore} orientation='vertical' sx={{ '> .MuiCollapse-wrapper .MuiCollapse-wrapperInner': { display: 'grid', rowGap: '10px' }, width: '100%' }}>
-                  {uniqueAssets.slice(3).map((asset, index) => (
-                    <DisplayAssetRow
-                      asset={asset}
-                      key={index}
-                    />
-                  ))}
-                </Collapse>
-                <Divider sx={{ bgcolor: 'divider', height: '2px', mt: '10px', width: '100%' }} />
-                <Grid alignItems='center' container item onClick={toggleAssets} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
-                  <Typography color='secondary.light' fontSize='16px' fontWeight={400}>
-                    {t<string>(showMore ? t('Less') : t('More'))}
-                  </Typography>
-                  <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
-                </Grid>
+      {uniqueAssets && uniqueAssets.length > 0 &&
+        <Grid container item pt='10px'>
+          {uniqueAssets.slice(0, 3).map((asset, index) => (
+            <DisplayAssetRow
+              asset={asset}
+              key={index}
+            />
+          ))}
+          {uniqueAssets.length > 3 &&
+            <Grid container item justifyContent='flex-end'>
+              <Collapse in={showMore} orientation='vertical' sx={{ '> .MuiCollapse-wrapper .MuiCollapse-wrapperInner': { display: 'grid', rowGap: '10px' }, width: '100%' }}>
+                {uniqueAssets.slice(3).map((asset, index) => (
+                  <DisplayAssetRow
+                    asset={asset}
+                    key={index}
+                  />
+                ))}
+              </Collapse>
+              <Divider sx={{ bgcolor: 'divider', height: '2px', mt: '10px', width: '100%' }} />
+              <Grid alignItems='center' container item onClick={toggleAssets} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
+                <Typography color='secondary.light' fontSize='16px' fontWeight={400}>
+                  {t<string>(showMore ? t('Less') : t('More'))}
+                </Typography>
+                <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
               </Grid>
-            }
-          </Grid>
+            </Grid>
+          }
+        </Grid>
       }
     </Grid>
   );

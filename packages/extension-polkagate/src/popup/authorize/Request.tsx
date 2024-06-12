@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -16,7 +16,7 @@ interface Props {
   authRequest: AuthorizeRequest;
 }
 
-export default function Request ({ authRequest }: Props): React.ReactElement<Props> {
+export default function Request({ authRequest }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();

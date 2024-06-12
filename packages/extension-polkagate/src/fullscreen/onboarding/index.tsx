@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -21,7 +21,7 @@ import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 
 const demoAccount = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
 
-function Onboarding (): React.ReactElement {
+function Onboarding(): React.ReactElement {
   useFullscreen();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);

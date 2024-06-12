@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -24,7 +24,7 @@ interface Props {
   externalChainNamesToShow?: (string | undefined)[] | undefined;
 }
 
-function ChainSwitch ({ address, children, externalChainNamesToShow, invert }: Props): React.ReactElement<Props> {
+function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { pathname } = useLocation();
   const { account, chainName: currentChainNameFromAccount } = useInfo(address);
@@ -161,7 +161,7 @@ function ChainSwitch ({ address, children, externalChainNamesToShow, invert }: P
     chainNamesToShow && (chainNamesToShow.length > 1
       ? setShowOtherChains(!showOtherChains)
       : selectNetwork(chainNamesToShow[0]))
-  , [chainNamesToShow, selectNetwork, showOtherChains]);
+    , [chainNamesToShow, selectNetwork, showOtherChains]);
   const closeChainSwitch = useCallback(() => setShowOtherChains(false), [setShowOtherChains]);
 
   return (

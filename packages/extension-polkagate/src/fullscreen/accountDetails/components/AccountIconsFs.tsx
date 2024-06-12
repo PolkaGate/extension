@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -21,7 +21,7 @@ interface AddressDetailsProps {
   accountInfo: DeriveAccountInfo | undefined
 }
 
-export default function AccountIconsFs ({ accountInfo, address }: AddressDetailsProps): React.ReactElement {
+export default function AccountIconsFs({ accountInfo, address }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);

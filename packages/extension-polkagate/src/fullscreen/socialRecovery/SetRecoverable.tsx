@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -43,7 +43,7 @@ const UNITS = {
 
 const BLOCKS_PER_HOUR = 600;
 
-export default function RecoveryConfig ({ address, api, mode, recoveryConfig, setMode, setRecoveryConfig, setStep, setTotalDeposit }: Props): React.ReactElement {
+export default function RecoveryConfig({ address, api, mode, recoveryConfig, setMode, setRecoveryConfig, setStep, setTotalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);

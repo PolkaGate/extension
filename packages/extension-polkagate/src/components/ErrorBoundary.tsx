@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributor
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributor
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Typography } from '@mui/material';

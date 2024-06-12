@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -18,7 +18,7 @@ interface Props {
   chains: string[];
 }
 
-function FullScreenChainSwitch ({ address, chains }: Props): React.ReactElement<Props> {
+function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const options = useGenesisHashOptions();
   const { chainName: chainNameFromAccount } = useInfo(address);
