@@ -221,6 +221,10 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
         : [assetId, formatted, amount]
       : [formatted, amount];
 
+      api.rpc.state.getMetadata().then((m)=>{
+        console.log(JSON.parse(JSON.stringify(m)))
+      })
+      
     onChainCall(..._params).paymentInfo(formatted).then((i) => setFeeCall(i?.partialFee)).catch(console.error);
   }, [api, formatted, balances, onChainCall, assetId]);
 

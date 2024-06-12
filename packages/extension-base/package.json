@@ -21,21 +21,22 @@
   "main": "index.js",
   "dependencies": {
     "@babel/runtime": "^7.18.3",
-    "@polkadot/api": "latest",
+    "@polkadot/api": "^11.2.1",
     "@polkadot/extension-chains": "^0.44.1",
     "@polkadot/extension-dapp": "^0.44.1",
     "@polkadot/extension-inject": "^0.44.1",
-    "@polkadot/keyring": "latest",
-    "@polkadot/networks": "latest",
+    "@polkadot/keyring": "12.3.2",
+    "@polkadot/networks": "^12.6.2",
     "@polkadot/phishing": "latest",
-    "@polkadot/rpc-provider": "latest",
-    "@polkadot/types": "latest",
-    "@polkadot/ui-keyring": "latest",
+    "@polkadot/rpc-provider": "^11.2.1",
+    "@polkadot/types": "^10.9.1",
+    "@polkadot/ui-keyring": "3.6.6",
     "@polkadot/ui-settings": "latest",
-    "@polkadot/util": "latest",
-    "@polkadot/util-crypto": "latest",
-    "eventemitter3": "^4.0.7",
-    "rxjs": "^7.5.5"
+    "@polkadot/util": "^12.6.2",
+    "@polkadot/util-crypto": "^12.6.2",
+    "eventemitter3": "^5.0.1",
+    "rxjs": "^7.8.1",
+    "tslib": "^2.6.2"
   },
   "devDependencies": {
     "@polkadot/extension-mocks": "^0.44.1"
