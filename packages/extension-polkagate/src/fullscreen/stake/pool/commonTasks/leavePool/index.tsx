@@ -44,7 +44,7 @@ export default function LeavePool({ address, onClose, pool, setRefresh }: Props)
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
 
   const unlockingLen = pool?.stashIdAccount?.stakingLedger?.unlocking?.length;
-  const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
+  const maxUnlockingChunks = api &&(api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber();
 
   const staked = useMemo(() => pool.member?.points && new BN(pool.member.points), [pool.member?.points]);
 

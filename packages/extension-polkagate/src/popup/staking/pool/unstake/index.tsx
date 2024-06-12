@@ -93,7 +93,7 @@ export default function Index(): React.ReactElement {
     }
   }, [amount, decimal, staked, unstakeAllAmount]);
   const unlockingLen = myPool?.stashIdAccount?.stakingLedger?.unlocking?.length;
-  const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
+  const maxUnlockingChunks = api && (api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber();
   const isPoolRoot = useMemo(() => String(formatted) === String(myPool?.bondedPool?.roles?.root), [formatted, myPool?.bondedPool?.roles?.root]);
   const isPoolDepositor = useMemo(() => String(formatted) === String(myPool?.bondedPool?.roles?.depositor), [formatted, myPool?.bondedPool?.roles?.depositor]);
   const poolState = useMemo(() => String(myPool?.bondedPool?.state), [myPool?.bondedPool?.state]);
@@ -342,7 +342,7 @@ export default function Index(): React.ReactElement {
       }
       <PButton
         _onClick={goToReview}
-        disabled={!amount || amount === '0' || !staked || staked?.isZero() || !estimatedFee || alert}
+        disabled={!!(!amount || amount === '0' || !staked || staked?.isZero() || !estimatedFee || alert)}
         text={t<string>('Next')}
       />
       {showReview && amount && api && formatted && maxUnlockingChunks && myPool &&

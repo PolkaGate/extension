@@ -51,7 +51,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
 
   const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active as unknown as BN, [stakingAccount]);
   const unlockingLen = stakingAccount?.stakingLedger?.unlocking?.length;
-  const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
+  const maxUnlockingChunks = api && (api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber();
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
 
   const unbonded = api && api.tx['staking']['unbond']; // signer: Controller

@@ -66,7 +66,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
   const poolDepositorAddr = String(pool.bondedPool?.roles.depositor);
 
   const unlockingLen = pool?.stashIdAccount?.stakingLedger?.unlocking?.length ?? 0;
-  const maxUnlockingChunks = api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
+  const maxUnlockingChunks = (api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber();
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
