@@ -8,7 +8,8 @@ import type { ApiPromise } from '@polkadot/api';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import CollapseIt from '@polkadot/extension-polkagate/src/popup/staking/pool/myPool/editPool/CollapseIt';
 import getAllAddresses from '@polkadot/extension-polkagate/src/util/getAllAddresses';
 
@@ -28,7 +29,7 @@ interface Props {
   changes: ChangesProps | undefined;
 }
 
-export default function Edit ({ api, chain, changes, onClose, pool, setChanges, setStep }: Props): React.ReactElement {
+export default function Edit({ api, chain, changes, onClose, pool, setChanges, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { hierarchy } = useContext(AccountContext);

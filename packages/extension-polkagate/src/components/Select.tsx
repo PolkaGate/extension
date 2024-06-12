@@ -5,7 +5,7 @@
 
 import type { DropdownOption } from '../util/types';
 
-import { Avatar, FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import { type SelectChangeEvent, Avatar, FormControl, Grid, InputBase, MenuItem, Select, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 

@@ -7,10 +7,11 @@ import { Info as InfoIcon, QuestionMark as QuestionIcon } from '@mui/icons-mater
 import { Grid, Tooltip } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 
+export type ToolTipPlacement ='top' | 'bottom' | 'left' | 'right' | 'bottom-end' | 'bottom-start' | 'left-end' | 'left-start' | 'right-end' | 'right-start' | 'top-end' | 'top-start';
 interface Props {
   text: NonNullable<React.ReactNode> | string | null | undefined;
   children: React.ReactElement<any, any>;
-  placement?: 'top' | 'bottom' | 'left' | 'right' | 'bottom-end' | 'bottom-start' | 'left-end' | 'left-start' | 'right-end' | 'right-start' | 'top-end' | 'top-start' | undefined
+  placement?: ToolTipPlacement | undefined
   showQuestionMark?: boolean;
   showInfoMark?: boolean;
   iconTop?: number;

@@ -10,7 +10,8 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import useIsExtensionPopup from '@polkadot/extension-polkagate/src/hooks/useIsExtensionPopup';
 import { BN, BN_ONE } from '@polkadot/util';
@@ -41,7 +42,7 @@ interface CollapseProps {
   open: () => void;
 }
 
-export default function PoolMoreInfo ({ api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
+export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const isExtensionPopup = useIsExtensionPopup();
 

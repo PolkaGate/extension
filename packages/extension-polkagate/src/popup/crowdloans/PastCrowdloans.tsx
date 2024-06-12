@@ -11,7 +11,8 @@ import { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback } from 'react';
 
 import { LinkOption } from '@polkagate/apps-config/endpoints/types';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { Progress, Warning } from '../../components';
 import { useTranslation } from '../../hooks';
@@ -29,7 +30,7 @@ interface Props {
   token?: string;
 }
 
-export default function PastCrowdloans ({ api, chain, contributedCrowdloans, crowdloansId, currentBlockNumber, decimal, pastCrowdloans, token }: Props): React.ReactElement {
+export default function PastCrowdloans({ api, chain, contributedCrowdloans, crowdloansId, currentBlockNumber, decimal, pastCrowdloans, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const getMyContribution = useCallback((paraId: string) => contributedCrowdloans?.get(paraId) ?? '0', [contributedCrowdloans]);

@@ -15,7 +15,8 @@ import type { AnyTuple } from '@polkadot/types/types';
 import { Container, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
@@ -49,7 +50,7 @@ interface Props {
   pool: MyPoolInfo
 }
 
-export default function Review ({ address, amount, api, chain, estimatedFee, formatted, maxUnlockingChunks, pool, poolWithdrawUnbonded, redeemDate, setShow, show, total, unbonded, unlockingLen, unstakeAllAmount }: Props): React.ReactElement {
+export default function Review({ address, amount, api, chain, estimatedFee, formatted, maxUnlockingChunks, pool, poolWithdrawUnbonded, redeemDate, setShow, show, total, unbonded, unlockingLen, unstakeAllAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);

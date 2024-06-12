@@ -8,7 +8,8 @@ import { Divider, Grid, IconButton, Typography } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import { BN } from '@polkadot/util';
 
@@ -29,7 +30,7 @@ interface Props {
 
 const MODAL_HEIGHT = 650;
 
-export default function ShowValidators ({ address, api, chain, selectedValidators, setShowSelectedValidators, showSelectedValidators, staked }: Props): React.ReactElement<Props> {
+export default function ShowValidators({ address, api, chain, selectedValidators, setShowSelectedValidators, showSelectedValidators, staked }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { decimal, token } = useInfo(address);
   const isExtensionPopup = useIsExtensionPopup();

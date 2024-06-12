@@ -10,7 +10,7 @@ import { Grid, SxProps, Theme, Tooltip, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useAccount, useCanPayFee, useMetadata, useTranslation } from '../hooks';
 import SelectProxy from '../partials/SelectProxy';

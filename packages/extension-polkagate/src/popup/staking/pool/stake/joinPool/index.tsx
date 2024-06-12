@@ -28,7 +28,7 @@ interface State {
   poolStakingConsts: PoolStakingConsts;
 }
 
-export default function JoinPool (): React.ReactElement {
+export default function JoinPool(): React.ReactElement {
   const { t } = useTranslation();
 
   const { address } = useParams<{ address: string }>();
@@ -126,7 +126,7 @@ export default function JoinPool (): React.ReactElement {
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api.createType('Balance', BN_ONE));
     }
 

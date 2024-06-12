@@ -33,7 +33,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function StakeExtra ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function StakeExtra({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, decimal, token } = useInfo(address);
@@ -88,7 +88,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
   }, [amount, amountAsBN, api, call, staked]);
 
   useEffect(() => {
-    if (api && !api?.call?.transactionPaymentApi) {
+    if (api && !api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 

@@ -4,7 +4,7 @@
 import { createWsEndpoints } from '@polkagate/apps-config';
 import { useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useChainName, useTranslation } from '.';
 

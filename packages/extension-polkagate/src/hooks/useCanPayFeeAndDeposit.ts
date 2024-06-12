@@ -9,7 +9,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { getValue } from '../popup/account/util';

@@ -28,7 +28,7 @@ interface State {
   poolStakingConsts: PoolStakingConsts;
 }
 
-export default function CreatePool (): React.ReactElement {
+export default function CreatePool(): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const { state } = useLocation<State>();
@@ -151,7 +151,7 @@ export default function CreatePool (): React.ReactElement {
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api.createType('Balance', BN_ONE));
     }
 

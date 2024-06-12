@@ -85,7 +85,7 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 

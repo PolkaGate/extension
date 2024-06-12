@@ -10,8 +10,9 @@ import React, { useEffect, useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import { Chain } from '@polkadot/extension-chains/types';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { ms, msGreen, msWarning, riot } from '../assets/icons';
 import { useAccountName, useChain, useFormatted2, useIdentity, useMerkleScience, useTranslation } from '../hooks';
@@ -39,7 +40,7 @@ interface Props {
   subIdOnly?: boolean;
 }
 
-function Identity ({ accountInfo, address, api, chain, direction = 'column', formatted, identiconSize = 40, judgement, name, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity({ accountInfo, address, api, chain, direction = 'column', formatted, identiconSize = 40, judgement, name, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 

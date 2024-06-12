@@ -4,7 +4,7 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { BN } from '@polkadot/util';
-import type { PoolAccounts } from '../util/plusTypes';
+import type { PoolAccounts } from '../util/types';
 
 import { useMemo } from 'react';
 
@@ -14,7 +14,7 @@ const EMPTY_H256 = new Uint8Array(32);
 const ADDR_PREFIX = stringToU8a('modlpy/npols');
 const ADDR_PREFIX_WST = stringToU8a('modlpy/nopls');
 
-export function createAccount(api: ApiPromise, poolId: BN, index: number): string {
+export function createAccount (api: ApiPromise, poolId: BN, index: number): string {
   return api.registry.createType(
     'AccountId32',
     u8aConcat(

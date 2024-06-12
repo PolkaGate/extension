@@ -5,7 +5,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { getValue } from '../popup/account/util';
 import { useBalances } from '.';

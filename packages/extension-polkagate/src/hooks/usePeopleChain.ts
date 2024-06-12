@@ -4,7 +4,8 @@
 import { createWsEndpoints } from '@polkagate/apps-config';
 import { useMemo } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { KUSAMA_PEOPLE_GENESIS_HASH, POLKADOT_GENESIS_HASH, WESTEND_PEOPLE_GENESIS_HASH } from '../util/constants';
 import getChain from '../util/getChain';
@@ -38,7 +39,7 @@ const getPeopleChainGenesisHash = (chainName: string | undefined) => {
   }
 };
 
-export default function usePeopleChain (address: string | undefined, genesisHash?: string): PeopleChainInfo {
+export default function usePeopleChain(address: string | undefined, genesisHash?: string): PeopleChainInfo {
   const { chain } = useInfo(address);
   const _chain = chain || getChain(genesisHash);
   const _chainName = sanitizeChainName(_chain?.name);

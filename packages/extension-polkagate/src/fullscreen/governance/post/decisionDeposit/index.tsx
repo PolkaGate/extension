@@ -43,7 +43,7 @@ const STEPS = {
   SIGN_QR: 200
 };
 
-export default function DecisionDeposit ({ address, open, refIndex, setOpen, track }: Props): React.ReactElement {
+export default function DecisionDeposit({ address, open, refIndex, setOpen, track }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, decimal, formatted, token } = useInfo(address);
   const theme = useTheme();
@@ -53,7 +53,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
 
   const proxyItems = useMemo(() =>
     proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[]
-  , [proxies]);
+    , [proxies]);
 
   const [step, setStep] = useState<number>(STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
@@ -70,7 +70,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
@@ -138,7 +138,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
           </Grid>
         </Grid>
         {[STEPS.REVIEW, STEPS.SIGN_QR].includes(step) &&
-          <Grid container item sx={{ display: 'block', height: '550px', mt:'20px' }}>
+          <Grid container item sx={{ display: 'block', height: '550px', mt: '20px' }}>
             {notEnoughBalance &&
               <Grid container height='42px' item justifyContent='center' my='15px'>
                 <Warning

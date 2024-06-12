@@ -6,7 +6,7 @@ import type { PalletConvictionVotingVoteVoting } from '@polkadot/types/lookup';
 import { TFunction } from '@polkagate/apps-config/types';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_MAX_INTEGER, bnMin, extractTime } from '@polkadot/util';
 
 import { remainingTime } from '../../../util/utils';

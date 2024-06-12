@@ -12,7 +12,8 @@ import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
@@ -36,7 +37,7 @@ interface Props {
   show: boolean;
 }
 
-export default function RemoveValidators ({ address, api, chain, formatted, setShow, show, title }: Props): React.ReactElement {
+export default function RemoveValidators({ address, api, chain, formatted, setShow, show, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
@@ -79,7 +80,7 @@ export default function RemoveValidators ({ address, api, chain, formatted, setS
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 

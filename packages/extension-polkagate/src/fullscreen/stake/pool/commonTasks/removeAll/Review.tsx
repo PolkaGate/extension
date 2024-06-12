@@ -8,7 +8,8 @@ import type { ApiPromise } from '@polkadot/api';
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
@@ -35,7 +36,7 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<Mode | undefined>>;
 }
 
-export default function Review ({ address, api, chain, mode, pool, poolMembers, setMode, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, api, chain, mode, pool, poolMembers, setMode, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);

@@ -144,7 +144,7 @@ export default function Index(): React.ReactElement {
 
     const params = [formatted, amountToMachine(amount, decimal)];
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 

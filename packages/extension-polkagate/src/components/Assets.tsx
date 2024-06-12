@@ -21,10 +21,10 @@ interface Props {
 }
 
 function Assets ({ address, assetId, label, onChange, setAssetId, style }: Props) {
-  const tokens = useTokens(address);
+  const tokens = useTokens(address as string);
   const chain = useChain(address);
-  const assetHubOptions = useAssetHubAssets(address); // TODO: should we show zero or spam assets?!
-  const multiChainAssetsOptions = useAccountAssetsOptions(address);
+  const assetHubOptions = useAssetHubAssets(address as string); // TODO: should we show zero or spam assets?!
+  const multiChainAssetsOptions = useAccountAssetsOptions(address as string);
   const options = useMemo(() =>
     assetHubOptions
       ? (tokens || []).concat(assetHubOptions || [])

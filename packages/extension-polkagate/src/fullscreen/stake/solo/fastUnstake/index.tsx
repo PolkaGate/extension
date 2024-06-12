@@ -93,7 +93,7 @@ export default function FastUnstake({ address, setRefresh, setShow, show }: Prop
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 

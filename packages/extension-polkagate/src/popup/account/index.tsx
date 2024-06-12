@@ -23,7 +23,7 @@ import { ActionContext, Assets, Chain, HorizontalMenuItem, Identity, Motion } fr
 import { useBalances, useGenesisHashOptions, useInfo, useMyAccountIdentity, useTranslation } from '../../hooks';
 import { tieAccount, windowOpen } from '../../messaging';
 import { FullScreenRemoteNode, HeaderBrand } from '../../partials';
-import { ASSET_HUBS, CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
+import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import type { BalancesInfo, FormattedAddressState } from '../../util/types';
 import StakingOption from '../staking/Options';
 import LockedInReferenda from './unlock/LockedInReferenda';
@@ -168,7 +168,7 @@ export default function AccountDetails (): React.ReactElement {
     <Motion>
       <HeaderBrand
         _centerItem={
-          <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={40} showSocial={false} style={{ fontSize: '32px', height: '40px', lineHeight: 'initial', maxWidth: '65%' }} subIdOnly />
+          <Identity address={address} api={api} chain={chain as any} formatted={formatted} identiconSize={40} showSocial={false} style={{ fontSize: '32px', height: '40px', lineHeight: 'initial', maxWidth: '65%' }} subIdOnly />
         }
         address={address}
         fullScreenURL={`/accountfs/${address}/0`}
@@ -192,9 +192,8 @@ export default function AccountDetails (): React.ReactElement {
           <Assets
             address={address}
             assetId={assetId}
-            defaultValue={-1}
             label={t<string>('Asset')}
-            onChange={_onChangeAsset}
+            onChange={_onChangeAsset as any}
             setAssetId={setAssetId}
             style={{ width: '27%' }}
           />

@@ -130,7 +130,7 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api.createType('Balance', BN_ONE));
     }
 

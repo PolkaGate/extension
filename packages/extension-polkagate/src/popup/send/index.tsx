@@ -10,6 +10,7 @@
 
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { FormattedAddressState, TransferType } from '../../util/types';
 
 import { Container } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -26,7 +27,6 @@ import { useAccountName, useIdentity, useInfo, useTranslation } from '../../hook
 import { HeaderBrand } from '../../partials';
 import Asset from '../../partials/Asset';
 import { MAX_AMOUNT_LENGTH } from '../../util/constants';
-import type { FormattedAddressState, TransferType } from '../../util/types';
 import { amountToHuman, amountToMachine, isValidAddress } from '../../util/utils';
 import Review from './Review';
 
@@ -38,9 +38,9 @@ export default function Send (): React.ReactElement {
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
-  const [recipientAddress, setRecipientAddress] = useState<string | undefined>();
-  const recipientNameIfIsInExtension = useAccountName(recipientAddress);
-  const recipientInfo = useIdentity(genesisHash, recipientAddress);
+  const [recipientAddress, setRecipientAddress] = useState<string | null | undefined>();
+  const recipientNameIfIsInExtension = useAccountName(recipientAddress as string);
+  const recipientInfo = useIdentity(genesisHash, recipientAddress as string);
   const [amount, setAmount] = useState<string>();
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>();
   const [transferType, setTransferType] = useState<TransferType | undefined>();
@@ -48,7 +48,7 @@ export default function Send (): React.ReactElement {
   const [recipientName, setRecipientName] = useState<string>();
   const [showReview, setShowReview] = useState<boolean>();
 
-  const transfer = api && api.tx?.balances && (['All', 'Max'].includes(transferType) ? (api.tx.balances.transferAll) : (api.tx.balances.transferKeepAlive));
+  const transfer = api && api.tx?.['balances'] && (['All', 'Max'].includes(transferType as string) ? (api.tx['balances']['transferAll']) : (api.tx['balances']['transferKeepAlive']));
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
 
   useEffect(() => {
@@ -61,7 +61,7 @@ export default function Send (): React.ReactElement {
     }
 
     setTransferType(type);
-    const ED = type === 'Max' ? api.consts.balances.existentialDeposit as unknown as BN : BN_ZERO;
+    const ED = type === 'Max' ? api.consts['balances']['existentialDeposit'] as unknown as BN : BN_ZERO;
     const allMaxAmount = balances.availableBalance.isZero() ? '0' : amountToHuman(balances.availableBalance.sub(maxFee).sub(ED).toString(), decimal);
 
     setAmount(allMaxAmount);
@@ -74,12 +74,12 @@ export default function Send (): React.ReactElement {
 
     const isAmountLessThanAllTransferAble = amountAsBN.gt(balances?.availableBalance?.sub(maxFee ?? BN_ZERO) ?? BN_ZERO);
 
-    setButtonDisabled(!isValidAddress(recipientAddress) || !amount || (amount === '0') || isAmountLessThanAllTransferAble);
+    setButtonDisabled(!isValidAddress(recipientAddress as string) || !amount || (amount === '0') || isAmountLessThanAllTransferAble);
   }, [amount, amountAsBN, api, balances?.availableBalance, decimal, maxFee, recipientAddress]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
-    api && void api.derive.balances?.all(formatted).then((b) => {
+    api && void api.derive.balances?.all(formatted as string).then((b) => {
       setBalances(b);
     });
   }, [api, formatted]);
@@ -89,13 +89,13 @@ export default function Send (): React.ReactElement {
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
     let params = [];
 
-    if (['All', 'Max'].includes(transferType)) {
+    if (['All', 'Max'].includes(transferType as string)) {
       const keepAlive = transferType === 'Max';
 
       params = [formatted, keepAlive]; // just for estimatedFee calculation, sender and receiver are the same
@@ -113,7 +113,7 @@ export default function Send (): React.ReactElement {
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -209,19 +209,19 @@ export default function Send (): React.ReactElement {
         text={t<string>('Next')}
       />
       {showReview && amount &&
-        <Review
-          address={address}
-          amount={amount}
-          api={api}
-          chain={chain}
-          estimatedFee={estimatedFee}
-          recipientAddress={recipientAddress}
-          recipientName={recipientName}
-          setShow={setShowReview}
-          show={showReview}
-          transfer={transfer}
-          transferType={transferType}
-        />
+      <Review
+        address={address}
+        amount={amount}
+        api={api}
+        chain={chain}
+        estimatedFee={estimatedFee}
+        recipientAddress={recipientAddress as string}
+        recipientName={recipientName}
+        setShow={setShowReview}
+        show={showReview}
+        transfer={transfer}
+        transferType={transferType}
+      />
       }
     </Motion>
   );

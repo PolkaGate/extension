@@ -12,7 +12,8 @@ import { Divider, Grid, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { ThroughProxy } from '@polkadot/extension-polkagate/src/partials';
@@ -64,7 +65,7 @@ const remainingTime = (seconds: number) => {
 
 export type Mode = 'UnbondAll' | 'RemoveAll';
 
-export default function RemoveAll ({ address, api, chain, onClose, pool, setRefresh }: Props): React.ReactElement {
+export default function RemoveAll({ address, api, chain, onClose, pool, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
 

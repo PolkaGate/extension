@@ -3,8 +3,9 @@
 
 import { useMemo } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { useChain } from './';

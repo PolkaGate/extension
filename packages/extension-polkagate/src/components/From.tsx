@@ -13,7 +13,8 @@ import type { ApiPromise } from '@polkadot/api';
 import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { useChain, useFormatted } from '../hooks';
 import { getSubstrateAddress } from '../util/utils';

@@ -87,7 +87,7 @@ export default function Review({ address, api, classToUnlock, setRefresh, setSho
 
     setParams(params);
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 

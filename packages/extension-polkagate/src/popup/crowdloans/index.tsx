@@ -16,7 +16,8 @@ import { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { SettingsStruct } from '@polkadot/ui-settings/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
@@ -49,7 +50,7 @@ const TAB_MAP = {
   PAST_CROWDLOANS: 3
 };
 
-export default function CrowdLoans (): React.ReactElement {
+export default function CrowdLoans(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();

@@ -11,7 +11,7 @@ import { BN_ONE } from '@polkadot/util';
 
 import { useInfo } from '.';
 
-export default function useEstimatedFee (address: string| undefined, call?: SubmittableExtrinsicFunction<'promise', AnyTuple>, params?: unknown[] | (() => unknown)[]): Balance | undefined {
+export default function useEstimatedFee(address: string | undefined, call?: SubmittableExtrinsicFunction<'promise', AnyTuple>, params?: unknown[] | (() => unknown)[]): Balance | undefined {
   const { api } = useInfo(address);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
@@ -21,7 +21,7 @@ export default function useEstimatedFee (address: string| undefined, call?: Subm
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 

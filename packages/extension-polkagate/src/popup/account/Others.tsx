@@ -13,8 +13,9 @@ import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { Container, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { Identicon, Motion, Popup } from '../../components';
 import { useAccountName, useFormatted, useTranslation } from '../../hooks';
@@ -32,7 +33,7 @@ interface Props {
   setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function Others ({ address, balances, chain, identity, setShow, show }: Props): React.ReactElement<void> {
+export default function Others({ address, balances, chain, identity, setShow, show }: Props): React.ReactElement<void> {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const accountName = useAccountName(address);
@@ -81,9 +82,9 @@ export default function Others ({ address, balances, chain, identity, setShow, s
         </Container>
         <Container disableGutters sx={{ maxHeight: `${parent.innerHeight - 150}px`, overflowY: 'auto', px: '15px' }}>
           {chain?.genesisHash && STAKING_CHAINS.includes(chain.genesisHash) &&
-            <LabelBalancePrice address={address} balances={balances} label={'Free Balance'} title={t('Free Balance')} />
+            <LabelBalancePrice address={address as string} balances={balances} label={'Free Balance'} title={t('Free Balance')} />
           }
-          <LabelBalancePrice address={address} balances={balances} label={'Voting Balance'} title={t('Voting Balance')} />
+          <LabelBalancePrice address={address as string} balances={balances} label={'Voting Balance'} title={t('Voting Balance')} />
         </Container>
       </Popup>
     </Motion>

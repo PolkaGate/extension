@@ -163,7 +163,7 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }

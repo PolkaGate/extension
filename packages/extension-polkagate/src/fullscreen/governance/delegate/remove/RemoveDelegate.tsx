@@ -38,7 +38,7 @@ interface Props {
   selectedProxy: Proxy | undefined;
 }
 
-export default function RemoveDelegate ({ address, classicDelegateInformation, formatted, mixedDelegateInformation, selectedProxy, setModalHeight, setSelectedTracksLength, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
+export default function RemoveDelegate({ address, classicDelegateInformation, formatted, mixedDelegateInformation, selectedProxy, setModalHeight, setSelectedTracksLength, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, chain, decimal, genesisHash, token } = useInfo(address);
   const { tracks } = useTracks(address);
@@ -91,7 +91,7 @@ export default function RemoveDelegate ({ address, classicDelegateInformation, f
 
     setSelectedTracksLength(params.length);
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }

@@ -5,7 +5,7 @@ import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
 import { useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { updateMeta } from '../messaging';
 import type { SavedIdentities } from '../util/types';

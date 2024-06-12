@@ -2,7 +2,9 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "./packages",
-    "composite": false
+    "composite": false,
+    "ignoreDeprecations": "5.0",
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
     "packages/**/src/**/*",

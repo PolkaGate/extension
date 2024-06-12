@@ -8,7 +8,8 @@ import { Grid, Typography } from '@mui/material';
 import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { Identity } from '../../../components';
 import { useTranslation } from '../../../hooks';

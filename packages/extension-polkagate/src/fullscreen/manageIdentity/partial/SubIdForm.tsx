@@ -8,7 +8,8 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { InputWithLabel } from '../../../components';
 import { useTranslation } from '../../../components/translate';

@@ -10,7 +10,8 @@ import { Divider, Grid, Skeleton, SxProps, Theme, Typography, useTheme } from '@
 import React, { useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { Identity, RescueRecoveryIcon, ShowBalance2 } from '../../../components';
 import { useTranslation } from '../../../hooks';

@@ -9,7 +9,8 @@ import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
@@ -109,7 +110,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
 
       setTxCalls(calls);
 
-      if (!api?.call?.transactionPaymentApi) {
+      if (!api?.call?.['transactionPaymentApi']) {
         return setEstimatedFee(api?.createType('Balance', BN_ONE));
       }
 
@@ -135,7 +136,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
 
       setTxCalls(calls);
 
-      if (!api?.call?.transactionPaymentApi) {
+      if (!api?.call?.['transactionPaymentApi']) {
         return setEstimatedFee(api?.createType('Balance', BN_ONE));
       }
 

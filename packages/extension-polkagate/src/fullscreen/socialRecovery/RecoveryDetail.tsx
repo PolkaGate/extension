@@ -11,7 +11,8 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { ChainLogo, PButton, ShowBalance2, TwoButtons, Warning } from '../../components';
 import { useTranslation } from '../../hooks';
@@ -30,7 +31,7 @@ interface Props {
   setRecoveryConfig: React.Dispatch<React.SetStateAction<RecoveryConfigType>>;
 }
 
-export default function RecoveryDetail ({ api, chain, recoveryInformation, setMode, setRecoveryConfig, setStep }: Props): React.ReactElement {
+export default function RecoveryDetail({ api, chain, recoveryInformation, setMode, setRecoveryConfig, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

@@ -7,7 +7,7 @@ import type { PalletMultisigMultisig, PalletPreimageRequestStatus, PalletRecover
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Option } from '@polkadot/types';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { PROXY_CHAINS } from '../util/constants';

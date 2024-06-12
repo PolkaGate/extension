@@ -6,7 +6,7 @@
 import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, SxProps, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { AccountInputWithIdentity, PButton, Warning } from '../../../../../components';
 import { useInfo, useTranslation } from '../../../../../hooks';

@@ -12,7 +12,7 @@ import { Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { HorizontalMenuItem, PoolStakingIcon } from '../components';
 import { useInfo, useTranslation } from '../hooks';

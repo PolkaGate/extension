@@ -10,7 +10,7 @@
 import { TFunction } from '@polkagate/apps-config/types';
 import { useCallback, useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { CONVICTIONS } from '../fullscreen/governance/utils/consts';

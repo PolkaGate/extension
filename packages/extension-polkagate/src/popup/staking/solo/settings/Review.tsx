@@ -14,7 +14,8 @@ import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import { Container, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { Balance } from '@polkadot/types/interfaces';
 import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
@@ -40,7 +41,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-function RewardsDestination ({ chain, newSettings, settings }: { settings: SoloSettings, newSettings: SoloSettings, chain: Chain | undefined }) {
+function RewardsDestination({ chain, newSettings, settings }: { settings: SoloSettings, newSettings: SoloSettings, chain: Chain | undefined }) {
   const { t } = useTranslation();
   const destinationAddress = useMemo(() =>
     newSettings.payee === 'Stash'
@@ -48,7 +49,7 @@ function RewardsDestination ({ chain, newSettings, settings }: { settings: SoloS
       : newSettings.payee === 'Controller'
         ? newSettings.controllerId || settings.controllerId
         : newSettings.payee.Account as string
-  , [newSettings.controllerId, newSettings.payee, settings.controllerId, settings.stashId]);
+    , [newSettings.controllerId, newSettings.payee, settings.controllerId, settings.stashId]);
 
   return (
     <Grid container item justifyContent='center' sx={{ alignSelf: 'center', my: '5px' }}>
@@ -71,7 +72,7 @@ function RewardsDestination ({ chain, newSettings, settings }: { settings: SoloS
   );
 }
 
-export default function Review ({ address, api, newSettings, setRefresh, setShow, setShowSettings, settings, show }: Props): React.ReactElement {
+export default function Review({ address, api, newSettings, setRefresh, setShow, setShowSettings, settings, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, settings.stashId);
   const name = useAccountDisplay(address);
@@ -102,7 +103,7 @@ export default function Review ({ address, api, newSettings, setRefresh, setShow
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 

@@ -15,7 +15,8 @@ import type { AnyTuple } from '@polkadot/types/types';
 import { Container, Divider, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 
@@ -59,8 +60,7 @@ interface Props {
   address: string;
   amount: string;
   api: ApiPromise | undefined;
-  chain: Chain | null;
-  fee: Balance | undefined;
+  chain: Chain | null | undefined;
   recipientAddress: string | undefined;
   recipientName: string | undefined;
   transfer: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;

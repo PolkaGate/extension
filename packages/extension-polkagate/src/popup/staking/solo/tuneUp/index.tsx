@@ -29,7 +29,7 @@ import getLogo from '../../../../util/getLogo';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './TxDetail';
 
-export default function TuneUp (): React.ReactElement {
+export default function TuneUp(): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const { api, chain, chainName, formatted } = useInfo(address);
@@ -73,7 +73,7 @@ export default function TuneUp (): React.ReactElement {
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 

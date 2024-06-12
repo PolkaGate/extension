@@ -32,7 +32,7 @@ interface Props {
   setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function ClaimCommission ({ address, pool, setShow, show }: Props): React.ReactElement {
+export default function ClaimCommission({ address, pool, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, decimal, formatted } = useInfo(address);
   const proxies = useProxies(api, formatted);
@@ -74,7 +74,7 @@ export default function ClaimCommission ({ address, pool, setShow, show }: Props
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 

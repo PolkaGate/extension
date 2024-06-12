@@ -3,6 +3,10 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ApiPromise } from '@polkadot/api';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { Proxy, ProxyItem } from '../../util/types';
+
 import { AddRounded as AddRoundedIcon } from '@mui/icons-material';
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -13,7 +17,6 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { ActionContext, PButton, ProxyTable, ShowBalance } from '../../components';
 import { useInfo, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
-import { Proxy, ProxyItem } from '../../util/types';
 import { getFormattedAddress } from '../../util/utils';
 import AddProxy from './AddProxy';
 import Review from './Review';
@@ -223,13 +226,13 @@ export default function ManageProxies(): React.ReactElement {
           showAddProxy={showAddProxy}
         />
       }
-      {showReviewProxy &&
+      {showReviewProxy && !!proxyItems?.length &&
         <Review
-          address={formatted}
-          api={api}
-          chain={chain}
+          address={formatted as string}
+          api={api as ApiPromise}
+          chain={chain as Chain}
           depositToPay={depositToPay}
-          depositValue={depositValue}
+          depositValue={depositValue as BN}
           proxies={proxyItems}
         />
       }

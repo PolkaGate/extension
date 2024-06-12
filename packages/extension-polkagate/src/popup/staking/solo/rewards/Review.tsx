@@ -23,7 +23,7 @@ import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../..
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
-import  type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './TxDetail';
 
@@ -35,7 +35,7 @@ interface Props {
   selectedToPayout: ExpandedRewards[]
 }
 
-export default function Review ({ address, amount, selectedToPayout, setShow, show }: Props): React.ReactElement {
+export default function Review({ address, amount, selectedToPayout, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);
@@ -89,7 +89,7 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 

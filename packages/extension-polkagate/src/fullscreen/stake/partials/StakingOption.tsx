@@ -3,8 +3,10 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ToolTipPlacement } from '@polkadot/extension-polkagate/src/components/Infotip';
+
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { type SxProps, type Theme, Grid, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -54,7 +56,7 @@ export default function StakingOption ({ api, balance, balanceText, helperText, 
         }
         {text &&
         <Grid item pt='5px' width='fit-content'>
-          <Infotip iconLeft={4} iconTop={1} placement={tipPlace} showQuestionMark={!noToolTip && showQuestionMark} text={helperText}>
+          <Infotip iconLeft={4} iconTop={1} placement={tipPlace as ToolTipPlacement} showQuestionMark={!noToolTip && showQuestionMark} text={helperText}>
             <Typography fontSize='14px' fontWeight={300}>
               {text}
             </Typography>

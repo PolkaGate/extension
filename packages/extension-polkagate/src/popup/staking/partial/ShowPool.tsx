@@ -11,7 +11,8 @@ import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { Identity, Infotip, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';

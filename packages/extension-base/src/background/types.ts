@@ -13,8 +13,6 @@ import type { KeypairType } from '@polkadot/util-crypto/types';
 
 import { TypeRegistry } from '@polkadot/types';
 
-import { ALLOWED_PATH } from '../defaults';
-
 export type AuthUrls = Record<string, AuthUrlInfo>;
 export interface AuthUrlInfo {
   count: number;
@@ -419,7 +417,7 @@ export interface ResponseJsonRestore {
   error: string | null;
 }
 
-export type AllowedPath = typeof ALLOWED_PATH[number];
+export type AllowedPath = string; // typeof ALLOWED_PATH[number];
 
 export interface ResponseJsonGetAccountInfo {
   address: string;

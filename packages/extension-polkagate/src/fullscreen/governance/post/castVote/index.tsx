@@ -69,7 +69,7 @@ export const STEPS = {
   SIGN_QR: 200
 };
 
-export default function Index ({ address, cantModify, hasVoted, myVote, notVoted, open, refIndex, setOpen, setRefresh, showAbout, status, trackId }: Props): React.ReactElement {
+export default function Index({ address, cantModify, hasVoted, myVote, notVoted, open, refIndex, setOpen, setRefresh, showAbout, status, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, decimal, formatted } = useInfo(address);
@@ -119,7 +119,7 @@ export default function Index ({ address, cantModify, hasVoted, myVote, notVoted
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }

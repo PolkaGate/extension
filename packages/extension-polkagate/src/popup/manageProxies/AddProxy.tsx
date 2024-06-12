@@ -6,7 +6,8 @@
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { AccountContext, AddressInput, InputWithLabel, PButton, Select, Warning } from '../../components';
 import { useAccountDisplay, useFormatted, useIdentity, useTranslation } from '../../hooks';
@@ -35,7 +36,7 @@ const isEqualProxy = (a: Proxy, b: Proxy) => {
   return a.delay === b.delay && a.delegate === b.delegate && a.proxyType === b.proxyType;
 };
 
-export default function AddProxy ({ address, chain, onChange, proxyItems, setProxyItems, setShowAddProxy, showAddProxy }: Props): React.ReactElement {
+export default function AddProxy({ address, chain, onChange, proxyItems, setProxyItems, setShowAddProxy, showAddProxy }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);

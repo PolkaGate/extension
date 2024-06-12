@@ -1,11 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { DropdownOption } from '../util/types';
+
 import { useEffect, useMemo, useState } from 'react';
 
 import { getAllMetadata } from '../messaging';
 import chains from '../util/chains';
-import type { DropdownOption } from '../util/types';
 
 const RELAY_CHAIN = 'Relay Chain';
 

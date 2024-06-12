@@ -5,7 +5,8 @@ import { createWsEndpoints } from '@polkagate/apps-config';
 import { useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { APIContext } from '../components';
 import { sanitizeChainName } from '../util/utils';

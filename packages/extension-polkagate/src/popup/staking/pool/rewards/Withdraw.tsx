@@ -13,7 +13,8 @@ import type { ApiPromise } from '@polkadot/api';
 import { Container } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
@@ -39,7 +40,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function RewardsWithdrawReview ({ address, amount, api, available, chain, formatted, setRefresh, setShow, show }: Props): React.ReactElement {
+export default function RewardsWithdrawReview({ address, amount, api, available, chain, formatted, setRefresh, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
@@ -56,7 +57,7 @@ export default function RewardsWithdrawReview ({ address, amount, api, available
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
   const tx = api.tx.nominationPools.claimPayout;
-  const params = useMemo(() => [] as unknown [], []);
+  const params = useMemo(() => [] as unknown[], []);
 
   const decimal = api.registry.chainDecimals[0];
 
@@ -77,7 +78,7 @@ export default function RewardsWithdrawReview ({ address, amount, api, available
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -149,7 +150,7 @@ export default function RewardsWithdrawReview ({ address, amount, api, available
           />
           <AmountFee
             address={address}
-            amount={<ShowBalance2 address={address} balance={amount}/>}
+            amount={<ShowBalance2 address={address} balance={amount} />}
             fee={estimatedFee}
             label={t('Withdraw amount')}
             showDivider
@@ -158,7 +159,7 @@ export default function RewardsWithdrawReview ({ address, amount, api, available
           />
           <AmountFee
             address={address}
-            amount={<ShowBalance2 address={address} balance={amount.add(available).sub(estimatedFee ?? BN_ZERO)}/>}
+            amount={<ShowBalance2 address={address} balance={amount.add(available).sub(estimatedFee ?? BN_ZERO)} />}
             label={t('Available balance after')}
             style={{ pt: '5px' }}
           />

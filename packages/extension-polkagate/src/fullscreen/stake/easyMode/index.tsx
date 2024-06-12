@@ -73,7 +73,7 @@ export default function EasyMode({ address, balances, inputs, setInputs, setStep
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedMaxFee(api.createType('Balance', BN_ONE));
     }
 

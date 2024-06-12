@@ -75,7 +75,7 @@ export const STEPS = {
 
 export type DelegationStatus = 'Delegate' | 'Remove' | 'Modify';
 
-export function Delegate ({ address, open, setOpen, showDelegationNote }: Props): React.ReactElement<Props> {
+export function Delegate({ address, open, setOpen, showDelegationNote }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, formatted } = useInfo(address);
@@ -145,7 +145,7 @@ export function Delegate ({ address, open, setOpen, showDelegationNote }: Props)
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }

@@ -9,7 +9,7 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { AccountContext } from '../components';
 import type { Proxy, ProxyTypes } from '../util/types';

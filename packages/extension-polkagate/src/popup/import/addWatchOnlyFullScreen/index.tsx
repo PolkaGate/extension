@@ -9,7 +9,8 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import keyring from '@polkadot/ui-keyring';
@@ -29,7 +30,7 @@ export interface AccountInfo {
   suri: string;
 }
 
-export default function AddWatchOnlyFullScreen (): React.ReactElement {
+export default function AddWatchOnlyFullScreen(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();

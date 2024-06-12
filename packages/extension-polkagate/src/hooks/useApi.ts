@@ -4,7 +4,7 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { APIContext } from '../components';
 import LCConnector from '../util/api/lightClient-connect';

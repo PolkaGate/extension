@@ -11,7 +11,8 @@ import { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useMemo } from 'react';
 
 import { LinkOption } from '@polkagate/apps-config/endpoints/types';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { useTranslation } from '../../../hooks';
 import getLogo from '../../../util/getLogo';

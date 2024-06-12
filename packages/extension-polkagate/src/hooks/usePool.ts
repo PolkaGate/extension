@@ -5,7 +5,7 @@ import type { MyPoolInfo } from '../util/types';
 
 import { useCallback, useContext, useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { FetchingContext } from '../components';
 import { isHexToBn } from '../util/utils';

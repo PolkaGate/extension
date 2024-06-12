@@ -12,8 +12,9 @@ import { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useState } from 'react';
 
 import { LinkOption } from '@polkagate/apps-config/endpoints/types';
-import { Chain } from '@polkadot/extension-chains/types';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { Progress, Warning } from '../../components';
 import { useTranslation } from '../../hooks';

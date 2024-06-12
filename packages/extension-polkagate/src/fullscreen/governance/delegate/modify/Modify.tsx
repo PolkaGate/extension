@@ -10,7 +10,8 @@ import { Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { BN } from '@polkadot/util';
 
 import { Convictions, From, TwoButtons } from '../../../../components';
@@ -50,7 +51,7 @@ interface Props {
   delegatedTracks: BN[] | undefined;
 }
 
-export default function Modify ({ accountLocks, address, api, balances, chain, conviction, currentBlock, decimal, delegateAmount, delegatePower, delegatedTracks, delegateeAddress, estimatedFee, lockedAmount, nextButtonDisabled, otherDelegatedTracks, selectedTracks, setConviction, setDelegateAmount, setMode, setSelectedTracks, setStep, token, tracks }: Props): React.ReactElement {
+export default function Modify({ accountLocks, address, api, balances, chain, conviction, currentBlock, decimal, delegateAmount, delegatePower, delegatedTracks, delegateeAddress, estimatedFee, lockedAmount, nextButtonDisabled, otherDelegatedTracks, selectedTracks, setConviction, setDelegateAmount, setMode, setSelectedTracks, setStep, token, tracks }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const onValueChange = useCallback((value: string) => {

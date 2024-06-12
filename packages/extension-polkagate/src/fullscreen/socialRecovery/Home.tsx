@@ -12,7 +12,8 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { MakeRecoverableIcon, PButton, RescueRecoveryIcon, SocialRecoveryIcon, VouchRecoveryIcon, Warning } from '../../components';
 import { useTranslation } from '../../hooks';
@@ -33,7 +34,7 @@ interface Props {
   setLostAccountAddress: React.Dispatch<React.SetStateAction<InitiateRecoveryConfig | undefined>>
 }
 
-export default function Home ({ accountsInfo, activeLost, activeProxy, activeRescue, chain, recoveryInfo, setLostAccountAddress, setMode, setStep }: Props) {
+export default function Home({ accountsInfo, activeLost, activeProxy, activeRescue, chain, recoveryInfo, setLostAccountAddress, setMode, setStep }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDisabled = !!activeLost;

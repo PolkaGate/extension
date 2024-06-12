@@ -12,7 +12,8 @@ import { Divider, Grid, SxProps, Theme, Typography, useTheme } from '@mui/materi
 import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { Checkbox2, Identity, Label2, Progress } from '../../../components';
 import { useTranslation } from '../../../components/translate';
@@ -28,7 +29,7 @@ interface Props {
   labelAlignment?: 'left' | 'center' | 'right';
 }
 
-export default function ProxyTableFL ({ api, chain, handleDelete, labelAlignment, proxyItems, status = 'Editable', style, tableLabel }: Props): React.ReactElement {
+export default function ProxyTableFL({ api, chain, handleDelete, labelAlignment, proxyItems, status = 'Editable', style, tableLabel }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

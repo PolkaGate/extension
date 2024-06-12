@@ -33,7 +33,7 @@ interface Props {
 
 export default function BondExtra({ address, api, balances, formatted, pool }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const {chain, decimal, token} = useInfo(address);
+  const { chain, decimal, token } = useInfo(address);
   const history = useHistory();
   const theme = useTheme();
 
@@ -94,7 +94,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
   useEffect(() => {
     if (!api || !availableBalance || !formatted) { return; }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api.createType('Balance', BN_ONE));
     }
 

@@ -10,7 +10,8 @@ import { Autocomplete, Grid, IconButton, InputAdornment, SxProps, TextField, The
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { Identity, Label, Warning } from '../../../components';
 import { useTranslation } from '../../../hooks';

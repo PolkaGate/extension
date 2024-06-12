@@ -5,7 +5,7 @@ import type { NominatorInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN } from '@polkadot/util';
 
 import { useInfo, useStashId } from '.';

@@ -483,7 +483,7 @@ export default class Extension {
   private windowOpen (path: AllowedPath): boolean {
     const url = `${chrome.runtime.getURL('index.html')}#${path}`;
 
-    if (!ALLOWED_PATH.includes(path) && !START_WITH_PATH.find((p) => path.startsWith(p))) { // added for Polkagate, updated
+    if (!ALLOWED_PATH.includes(path as any) && !START_WITH_PATH.find((p) => path.startsWith(p))) { // added for Polkagate, updated
       console.error('Not allowed to open the url:', url);
 
       return false;

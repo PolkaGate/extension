@@ -72,7 +72,7 @@ export default function DelegateVote({ accountLocks, address, api, balances, del
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return setMaxFee(api?.createType('Balance', BN_ONE));
     }

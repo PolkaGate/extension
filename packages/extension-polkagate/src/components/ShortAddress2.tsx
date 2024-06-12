@@ -6,7 +6,7 @@
 import { Grid, SxProps, Theme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { SHORT_ADDRESS_CHARACTERS } from '../util/constants';
 import CopyAddressButton from './CopyAddressButton';

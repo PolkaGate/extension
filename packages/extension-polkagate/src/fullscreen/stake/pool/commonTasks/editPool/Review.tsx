@@ -10,7 +10,8 @@ import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import { Balance } from '@polkadot/types/interfaces';
 import { BN_ONE } from '@polkadot/util';
@@ -36,7 +37,7 @@ interface Props {
   step: number;
 }
 
-export default function Review ({ address, api, chain, changes, formatted, pool, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, api, chain, changes, formatted, pool, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
 
@@ -109,7 +110,7 @@ export default function Review ({ address, api, chain, changes, formatted, pool,
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 

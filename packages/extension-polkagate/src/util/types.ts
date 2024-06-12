@@ -14,10 +14,11 @@ import { LinkOption } from '@polkagate/apps-config/endpoints/types';
 
 import { ApiPromise } from '@polkadot/api';
 import { AccountJson } from '@polkadot/extension-base/background/types';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { Balance } from '@polkadot/types/interfaces';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { LatestReferenda } from '../fullscreen/governance/utils/types';
 import { CurrencyItemType } from '../fullscreen/homeFullScreen/partials/Currency';

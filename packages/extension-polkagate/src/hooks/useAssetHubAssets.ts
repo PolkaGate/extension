@@ -5,7 +5,7 @@ import type { Option, StorageKey, u32 } from '@polkadot/types';
 
 import { useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import type { DropdownOption } from '../util/types';
 import { useApi, useGenesisHash } from '.';

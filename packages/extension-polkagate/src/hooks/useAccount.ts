@@ -5,7 +5,7 @@ import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { useContext, useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { AccountContext } from '../components';
 import { getSubstrateAddress } from '../util/utils';

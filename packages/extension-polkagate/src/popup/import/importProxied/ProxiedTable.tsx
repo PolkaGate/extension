@@ -9,7 +9,8 @@ import { Grid, Skeleton, SxProps, Theme, Typography, useTheme } from '@mui/mater
 import React, { useCallback, useContext, useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { AccountContext, Checkbox2 as Checkbox, Identity, Label, Progress } from '../../../components';
 import { useIsExtensionPopup, useTranslation } from '../../../hooks';
@@ -27,7 +28,7 @@ interface Props {
   setSelectedProxied: React.Dispatch<React.SetStateAction<string[]>>
 }
 
-export default function ProxiedTable ({ api, chain, label, maxHeight = '120px', minHeight = '70px', proxiedAccounts, selectedProxied, setSelectedProxied, style }: Props): React.ReactElement {
+export default function ProxiedTable({ api, chain, label, maxHeight = '120px', minHeight = '70px', proxiedAccounts, selectedProxied, setSelectedProxied, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtensionMode = useIsExtensionPopup();
   const theme = useTheme();
@@ -40,7 +41,7 @@ export default function ProxiedTable ({ api, chain, label, maxHeight = '120px', 
     proxiedAccounts &&
     proxiedAccounts.length > 0 &&
     selectedProxied.length === proxiedAccounts.filter((proxied) => !isAvailable(proxied))?.length
-  , [isAvailable, proxiedAccounts, selectedProxied.length]);
+    , [isAvailable, proxiedAccounts, selectedProxied.length]);
 
   const handleSelect = useCallback((index: number) => () => {
     const proxied = proxiedAccounts && proxiedAccounts[index];

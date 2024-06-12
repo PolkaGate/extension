@@ -7,7 +7,8 @@ import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, MoreVert as MoreV
 import { Grid, IconButton, useTheme } from '@mui/material';
 import React from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 interface Props {
   menuOnClick: () => void;

@@ -10,7 +10,8 @@ import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import { Collapse, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { objectSpread } from '@polkadot/util';
 
@@ -29,7 +30,7 @@ export interface AccountInfo {
   suri: string;
 }
 
-export default function ImportSeed (): React.ReactElement {
+export default function ImportSeed(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();

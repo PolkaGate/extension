@@ -6,7 +6,8 @@
 import { Divider, Grid, SxProps, Theme } from '@mui/material';
 import React from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { Identity } from '../components';
 import { useApi, useTranslation } from '../hooks';
@@ -18,7 +19,7 @@ interface Props {
   showDivider?: boolean;
 }
 
-function ThroughProxy ({ address, chain, style = {}, showDivider = true }: Props): React.ReactElement {
+function ThroughProxy({ address, chain, style = {}, showDivider = true }: Props): React.ReactElement {
   const { t } = useTranslation();
   const api = useApi(address);
 
@@ -38,8 +39,8 @@ function ThroughProxy ({ address, chain, style = {}, showDivider = true }: Props
         style={{ fontSize: '22px', maxWidth: '65%', px: '8px', width: 'fit-content' }}
         withShortAddress
       />
-      { showDivider &&
-       <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '1px', mt: '4px', width: '1px' }} />
+      {showDivider &&
+        <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '1px', mt: '4px', width: '1px' }} />
       }      <Grid item sx={{ fontSize: '12px', fontWeight: 300, textAlign: 'center', ml: '5px' }}>
         {t('as proxy')}
       </Grid>

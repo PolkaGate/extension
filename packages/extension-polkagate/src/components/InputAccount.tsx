@@ -7,7 +7,8 @@ import { Divider, Grid, SxProps, Theme, useTheme } from '@mui/material';
 import React, { useContext } from 'react';
 import { useParams } from 'react-router';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { useApi, useTranslation } from '../hooks';
 import getAllAddresses from '../util/getAllAddresses';

@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson, AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
+import type { CurrencyItemType } from '@polkadot/extension-polkagate/src/fullscreen/homeFullScreen/partials/Currency';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
+import type { APIs, Fetching, LatestRefs, Prices, PricesInCurrencies } from '../util/types';
 
 import { AnimatePresence } from 'framer-motion';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -13,7 +15,6 @@ import { canDerive } from '@polkadot/extension-base/utils';
 import AccountFS from '@polkadot/extension-polkagate/src/fullscreen/accountDetails';
 import Governance from '@polkadot/extension-polkagate/src/fullscreen/governance';
 import ReferendumPost from '@polkadot/extension-polkagate/src/fullscreen/governance/post';
-import { CurrencyItemType } from '@polkadot/extension-polkagate/src/fullscreen/homeFullScreen/partials/Currency';
 import ManageIdentity from '@polkadot/extension-polkagate/src/fullscreen/manageIdentity';
 import FullScreenManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxies';
 import Send from '@polkadot/extension-polkagate/src/fullscreen/sendFund';
@@ -34,20 +35,17 @@ import uiSettings from '@polkadot/ui-settings';
 
 import { ErrorBoundary, Loading } from '../components';
 import { AccountContext, AccountsAssetsContext, ActionContext, APIContext, AuthorizeReqContext, CurrencyContext, FetchingContext, MediaContext, MetadataReqContext, ReferendaContext, SettingsContext, SigningReqContext } from '../components/contexts';
-import { getStorage, LoginInfo, setStorage, updateStorage } from '../components/Loading';
+import { type LoginInfo, getStorage, setStorage, updateStorage } from '../components/Loading';
 import { ExtensionLockProvider } from '../context/ExtensionLockContext';
 import Onboarding from '../fullscreen/onboarding';
 import { usePriceIds } from '../hooks';
-import useAssetsBalances, { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../hooks/useAssetsBalances';
+import useAssetsBalances, { type SavedAssets,ASSETS_NAME_IN_STORAGE } from '../hooks/useAssetsBalances';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../messaging';
-import AccountEx from './account';
-import AuthList from './authManagement';
+import { getPrices } from '../util/api';
+import { buildHierarchy } from '../util/buildHierarchy';
 import Authorize from './authorize/index';
-import CrowdLoans from './crowdloans';
 import Export from './export/Export';
 import ExportAll from './export/ExportAll';
-import ForgetAccount from './forgetAccount';
-import History from './history';
 import Accounts from './home/ManageHome';
 import AddWatchOnlyFullScreen from './import/addWatchOnlyFullScreen';
 import AttachQR from './import/attachQR';
@@ -58,13 +56,7 @@ import ImportProxiedFullScreen from './import/importProxiedFullScreen';
 import ImportRawSeed from './import/importRawSeedFullScreen';
 import ImportSeed from './import/importSeedFullScreen';
 import RestoreJson from './import/restoreJSONFullScreen';
-import ManageProxies from './manageProxies';
-import Metadata from './metadata';
 import CreateAccount from './newAccount/createAccountFullScreen';
-import PhishingDetected from './PhishingDetected';
-import Receive from './receive';
-import Rename from './rename';
-import Signing from './signing';
 import Pool from './staking/pool';
 import PoolInformation from './staking/pool/myPool';
 import PoolNominations from './staking/pool/nominations';
@@ -80,14 +72,22 @@ import SoloPayout from './staking/solo/rewards/PendingRewards';
 import SoloStake from './staking/solo/stake';
 import TuneUp from './staking/solo/tuneUp';
 import SoloUnstake from './staking/solo/unstake';
-import { getPrices } from '../util/api';
-import { buildHierarchy } from '../util/buildHierarchy';
-import type { APIs, Fetching, LatestRefs, Prices, PricesInCurrencies } from '../util/types';
+import AccountEx from './account';
+import AuthList from './authManagement';
+import CrowdLoans from './crowdloans';
+import ForgetAccount from './forgetAccount';
+import History from './history';
+import ManageProxies from './manageProxies';
+import Metadata from './metadata';
+import PhishingDetected from './PhishingDetected';
+import Receive from './receive';
+import Rename from './rename';
+import Signing from './signing';
 
 const startSettings = uiSettings.get();
 
 // Request permission for video, based on access we can hide/show import
-async function requestMediaAccess(cameraOn: boolean): Promise<boolean> {
+async function requestMediaAccess (cameraOn: boolean): Promise<boolean> {
   if (!cameraOn) {
     return false;
   }
@@ -103,7 +103,7 @@ async function requestMediaAccess(cameraOn: boolean): Promise<boolean> {
   return false;
 }
 
-function initAccountContext(accounts: AccountJson[]): AccountsContext {
+function initAccountContext (accounts: AccountJson[]): AccountsContext {
   const hierarchy = buildHierarchy(accounts);
   const master = hierarchy.find(({ isExternal, type }) => !isExternal && canDerive(type));
 
@@ -114,7 +114,7 @@ function initAccountContext(accounts: AccountJson[]): AccountsContext {
   };
 }
 
-export default function Popup(): React.ReactElement {
+export default function Popup (): React.ReactElement {
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
   const assetsOnChains = useAssetsBalances(accounts);
   const priceIds = usePriceIds();
@@ -218,7 +218,7 @@ export default function Popup(): React.ReactElement {
     const fetchLoginInfo = async () => {
       chrome.storage.onChanged.addListener(function (changes, areaName) {
         if (areaName === 'local' && 'loginInfo' in changes) {
-          const newValue = changes.loginInfo.newValue as LoginInfo;
+          const newValue = changes['loginInfo'].newValue as LoginInfo;
 
           setLoginInfo(newValue);
         }

@@ -5,13 +5,14 @@ import { createWsEndpoints } from '@polkagate/apps-config';
 import { useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import getChainGenesisHash from '../util/getChainGenesisHash';
 import { sanitizeChainName } from '../util/utils';
 import useApi from './useApi';
 
-export default function useApiWithChain2 (chain: Chain | null | undefined): ApiPromise | undefined {
+export default function useApiWithChain2(chain: Chain | null | undefined): ApiPromise | undefined {
   const genesisHash = useMemo(() => chain?.genesisHash || getChainGenesisHash(chain?.name), [chain]);
 
   const maybeEndpoint = useMemo(() => {

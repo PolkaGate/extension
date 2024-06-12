@@ -13,7 +13,8 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { CanPayErrorAlert, ShowBalance, SignArea2, WrongPasswordAlert } from '../../components';
@@ -40,7 +41,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function Review ({ address, api, chain, depositedValue, newDepositValue, proxyItems, setRefresh, setStep, step }: Props): React.ReactElement {
+function Review({ address, api, chain, depositedValue, newDepositValue, proxyItems, setRefresh, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const formatted = useFormatted(address);
@@ -130,7 +131,7 @@ function Review ({ address, api, chain, depositedValue, newDepositValue, proxyIt
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 

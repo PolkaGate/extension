@@ -3,7 +3,7 @@
 
 import type { PalletReferendaTrackInfo } from '@polkadot/types/lookup';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN } from '@polkadot/util';
 
 export type TopMenu = 'Referenda' | 'Fellowship';

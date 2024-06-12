@@ -6,7 +6,8 @@
 import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { useTranslation } from '../../../hooks';
 import { pgBoxShadow } from '../../../util/utils';

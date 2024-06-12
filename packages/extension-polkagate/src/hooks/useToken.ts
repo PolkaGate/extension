@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { selectableNetworks } from '@polkadot/networks';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { getSubstrateAddress } from '../util/utils';
 import useAccount from './useAccount';

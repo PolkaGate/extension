@@ -120,7 +120,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
   }, [amount, amountAsBN, api, chilled, decimal, formatted, isUnstakeAll, maxUnlockingChunks, redeem, staked, stakingAccount?.nominators?.length, unbonded, unlockingLen]);
 
   const getFee = useCallback(async () => {
-    if (api && !api?.call?.transactionPaymentApi) {
+    if (api && !api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
