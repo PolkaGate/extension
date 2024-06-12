@@ -16,7 +16,7 @@ interface Props {
   url: string;
 }
 
-export default function Request({ metaId, request, url }: Props): React.ReactElement<Props> {
+export default function Request ({ metaId, request, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const chain = useMetadata(request.genesisHash, true);
   const onAction = useContext(ActionContext);
@@ -47,30 +47,106 @@ export default function Request({ metaId, request, url }: Props): React.ReactEle
 
   return (
     <>
-      <Grid container fontSize='16px' sx={{ '> div:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', m: '15px auto', width: '92%' }}>
-        <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-          <Typography fontWeight={300} width='35%'>{t<string>('from')}</Typography>
-          <Typography fontWeight={400} textAlign='right' width='65%'>{final}</Typography>
+      <Grid
+        container
+        fontSize='16px'
+        sx={{ '> div:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', m: '15px auto', width: '92%' }}
+      >
+        <Grid
+          alignItems='center'
+          container
+          item
+          sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}
+        >
+          <Typography
+            fontWeight={300}
+            width='35%'
+          >{t<string>('from')}</Typography>
+          <Typography
+            fontWeight={400}
+            textAlign='right'
+            width='65%'
+          >{final}</Typography>
         </Grid>
-        <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-          <Typography fontWeight={300} width='35%'>{t<string>('chain')}</Typography>
-          <Typography fontWeight={400} textAlign='right' width='65%'>{request.chain}</Typography>
+        <Grid
+          alignItems='center'
+          container
+          item
+          sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}
+        >
+          <Typography
+            fontWeight={300}
+            width='35%'
+          >{t<string>('chain')}</Typography>
+          <Typography
+            fontWeight={400}
+            textAlign='right'
+            width='65%'
+          >{request.chain}</Typography>
         </Grid>
-        <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-          <Typography fontWeight={300} width='35%'>{t<string>('icon')}</Typography>
-          <Typography fontWeight={400} textAlign='right' width='65%'>{request.icon}</Typography>
+        <Grid
+          alignItems='center'
+          container
+          item
+          sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}
+        >
+          <Typography
+            fontWeight={300}
+            width='35%'
+          >{t<string>('icon')}</Typography>
+          <Typography
+            fontWeight={400}
+            textAlign='right'
+            width='65%'
+          >{request.icon}</Typography>
         </Grid>
-        <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-          <Typography fontWeight={300} width='35%'>{t<string>('decimals')}</Typography>
-          <Typography fontWeight={400} textAlign='right' width='65%'>{request.tokenDecimals}</Typography>
+        <Grid
+          alignItems='center'
+          container
+          item
+          sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}
+        >
+          <Typography
+            fontWeight={300}
+            width='35%'
+          >{t<string>('decimals')}</Typography>
+          <Typography
+            fontWeight={400}
+            textAlign='right'
+            width='65%'
+          >{request.tokenDecimals}</Typography>
         </Grid>
-        <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-          <Typography fontWeight={300} width='35%'>{t<string>('symbol')}</Typography>
-          <Typography fontWeight={400} textAlign='right' width='65%'>{request.tokenSymbol}</Typography>
+        <Grid
+          alignItems='center'
+          container
+          item
+          sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}
+        >
+          <Typography
+            fontWeight={300}
+            width='35%'
+          >{t<string>('symbol')}</Typography>
+          <Typography
+            fontWeight={400}
+            textAlign='right'
+            width='65%'
+          >{request.tokenSymbol}</Typography>
         </Grid>
-        <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-          <Typography fontWeight={300} width='35%'>{t<string>('upgrade')}</Typography>
-          <Typography fontWeight={400} textAlign='right' width='65%'>{chain ? chain.specVersion : t('<unknown>')} -&gt; {request.specVersion}</Typography>
+        <Grid
+          alignItems='center'
+          container
+          item
+          sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}
+        >
+          <Typography
+            fontWeight={300}
+            width='35%'
+          >{t<string>('upgrade')}</Typography>
+          <Typography
+            fontWeight={400}
+            textAlign='right'
+            width='65%'
+          >{chain ? chain.specVersion : t('<unknown>')} -&gt; {request.specVersion}</Typography>
         </Grid>
       </Grid>
       <Grid
