@@ -110,7 +110,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
 
   const ED = assetId
     ? balances?.ED
-    : api && api.consts.balances.existentialDeposit as unknown as BN;
+    : api && api.consts['balances']['existentialDeposit'] as unknown as BN;
 
   const amountAsBN = useMemo(
     () =>
@@ -348,7 +348,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
 
     const _isAvailableZero = balances.availableBalance.isZero();
 
-    const ED = assetId === undefined ? api.consts.balances.existentialDeposit as unknown as BN : balances.ED;
+    const ED = assetId === undefined ? api.consts['balances']['existentialDeposit'] as unknown as BN : balances.ED;
     const _maxFee = assetId === undefined ? maxFee : BN_ZERO;
 
     const _canNotTransfer = _isAvailableZero || _maxFee.gte(balances.availableBalance);

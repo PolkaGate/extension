@@ -6,7 +6,7 @@
 import '@vaadin/icons';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useState } from 'react';
 
@@ -17,14 +17,15 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import { Identity, Infotip, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import getPoolAccounts from '../../../util/getPoolAccounts';
-import type { MyPoolInfo, PoolInfo } from '../../../util/types';
+import type { MyPoolInfo } from '../../../util/types';
 import RewardsDetail from '../solo/rewards/RewardsDetail';
 import PoolMoreInfo from './PoolMoreInfo';
+import type { PalletNominationPoolsBondedPoolInner } from '@polkadot/types/lookup';
 
 interface Props {
   api?: ApiPromise;
   chain?: Chain;
-  pool: MyPoolInfo | PoolInfo;
+  pool: MyPoolInfo;
   label?: string;
   labelPosition?: 'right' | 'left' | 'center';
   mode: 'Joining' | 'Creating' | 'Default';
@@ -48,7 +49,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
   const poolStatus = pool?.bondedPool?.state ? String(pool.bondedPool.state) : undefined;
   const chainName = chain?.name?.replace(' Relay Chain', '');
 
-  const hasCommission = pool && 'commission' in pool.bondedPool;
+  const hasCommission = pool && 'commission' in( pool.bondedPool as unknown as PalletNominationPoolsBondedPoolInner);
   const parsedPool = JSON.parse(JSON.stringify(pool));
   const mayBeCommission = hasCommission && parsedPool.bondedPool.commission.current ? parsedPool.bondedPool.commission.current[0] : 0
   const commission = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
@@ -116,7 +117,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
                 <Grid alignItems='center' container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='30%'>
                   <ShowBalance
                     api={api}
-                    balance={poolStaked}
+                    balance={poolStaked as unknown as BN}
                     decimal={pool?.decimal}
                     decimalPoint={2}
                     height={22}
@@ -152,7 +153,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
       </Grid>
       {isOpenPoolInfo && pool && chain &&
         <PoolMoreInfo
-          api={api}
+          api={api as ApiPromise}
           chain={chain}
           pool={pool}
           poolId={pool.poolId}

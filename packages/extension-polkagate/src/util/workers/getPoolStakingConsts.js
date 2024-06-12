@@ -14,7 +14,7 @@ async function getPoolStackingConsts(endpoint) {
     const at = await api.rpc.chain.getFinalizedHead();
     const apiAt = await api.at(at);
 
-    const ED = new BN(api.consts.balances.existentialDeposit);
+    const ED = new BN(api.consts['balances']['existentialDeposit']);
 
     const [maxPoolMembers, maxPoolMembersPerPool, maxPools, minCreateBond, minJoinBond, minNominatorBond, lastPoolId, currentEra, token] =
       await Promise.all([

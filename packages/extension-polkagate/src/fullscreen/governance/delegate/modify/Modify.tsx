@@ -81,7 +81,7 @@ export default function Modify({ accountLocks, address, api, balances, chain, co
       return;
     }
 
-    const ED = api.consts.balances.existentialDeposit as unknown as BN;
+    const ED = api.consts['balances']['existentialDeposit'] as unknown as BN;
     const max = new BN(balances.votingBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedFee));
     const maxToHuman = amountToHuman(max.toString(), decimal);
 

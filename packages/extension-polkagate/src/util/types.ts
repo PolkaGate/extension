@@ -397,8 +397,8 @@ export interface MyPoolInfo extends PoolInfo {
   redeemable?: BN;
   rewardClaimable?: BN;
   rewardIdBalance?: DeriveStakingAccount;
-  token: string;
-  decimal: number;
+  token?: string;
+  decimal?: number;
   date: number;
 }
 

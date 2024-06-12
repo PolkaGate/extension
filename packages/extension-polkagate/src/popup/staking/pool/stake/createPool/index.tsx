@@ -55,7 +55,7 @@ export default function CreatePool(): React.ReactElement {
   const [bouncerId, setBouncerId] = useState<string>();
   const [newPool, setNewPool] = useState<PoolInfo | undefined>();
 
-  const ED = api && api.consts.balances.existentialDeposit as unknown as BN;
+  const ED = api && api.consts['balances']['existentialDeposit'] as unknown as BN;
   const nextPoolId = poolStakingConsts && poolStakingConsts.lastPoolId.toNumber() + 1;
   const DEFAULT_POOLNAME = `Polkagate 💜${nextPoolId ? ` - ${nextPoolId}` : ''}`;
   // const amountAsBN = useMemo(() => ED && (new BN(parseFloat(createAmount ?? '0') * 10 ** decimal)).sub(ED), [ED, createAmount, decimal]);

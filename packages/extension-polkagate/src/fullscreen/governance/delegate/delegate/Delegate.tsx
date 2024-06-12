@@ -142,7 +142,7 @@ export default function DelegateVote({ accountLocks, address, api, balances, del
       return;
     }
 
-    const ED = api.consts.balances.existentialDeposit as unknown as BN;
+    const ED = api.consts['balances']['existentialDeposit'] as unknown as BN;
     const max = new BN(balances.votingBalance.toString()).sub(ED.muln(2)).sub(new BN(maxFee));
     const maxToHuman = balances.votingBalance?.isZero() ? BN_ZERO : amountToHuman(max.toString(), decimal);
 

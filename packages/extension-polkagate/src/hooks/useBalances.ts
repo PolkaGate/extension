@@ -22,7 +22,7 @@ const assetsChains = createAssets();
 const NATIVE_TOKEN_ASSET_ID = 0;
 
 // TODO: decouple thi shook to smaller independent ones like usePoolBalance, useAssetBalance, useNativeBalance ...
-export default function useBalances (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: number): BalancesInfo | undefined {
+export default function useBalances(address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: number): BalancesInfo | undefined {
   const stakingAccount = useStakingAccount(address);
   const { account, api, chain, chainName, decimal: currentDecimal, formatted, token: currentToken } = useInfo(address);
   const isFetching = useContext(FetchingContext);
@@ -95,7 +95,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
       return;
     }
 
-    const ED = api.consts.balances.existentialDeposit as unknown as BN;
+    const ED = api.consts['balances']['existentialDeposit'] as unknown as BN;
 
     formatted && api.derive.balances?.all(formatted).then((b) => {
       setNewBalances({
@@ -260,7 +260,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
 
     fetchAssetOnAssetHub().catch(console.error);
 
-    async function fetchAssetOnAssetHub () {
+    async function fetchAssetOnAssetHub() {
       if (!api) {
         return;
       }
@@ -310,7 +310,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
       assetInfo && api.query.tokens && fetchAssetOnMultiAssetChain(assetInfo).catch(console.error);
     }
 
-    async function fetchAssetOnMultiAssetChain (assetInfo: Asset) {
+    async function fetchAssetOnMultiAssetChain(assetInfo: Asset) {
       if (!api) {
         return;
       }

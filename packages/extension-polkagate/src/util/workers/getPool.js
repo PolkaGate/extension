@@ -16,7 +16,7 @@ import { BN_ZERO, bnMax } from '@polkadot/util';
 import getApi from '../getApi.ts';
 import getPoolAccounts from '../getPoolAccounts';
 
-async function getPool (endpoint, stakerAddress, id = undefined) {
+async function getPool(endpoint, stakerAddress, id = undefined) {
   console.log(`getPool is called for ${stakerAddress} id:${id} endpoint:${endpoint}`);
   const api = await getApi(endpoint);
 
@@ -57,7 +57,7 @@ async function getPool (endpoint, stakerAddress, id = undefined) {
 
   const unwrappedRewardPools = rewardPools.isSome ? rewardPools.unwrap() : null;
   const unwrappedBondedPool = bondedPools.isSome ? bondedPools.unwrap() : null;
-  const poolRewardClaimable = bnMax(BN_ZERO, rewardIdBalance.data.free.sub(api.consts.balances.existentialDeposit));
+  const poolRewardClaimable = bnMax(BN_ZERO, rewardIdBalance.data.free.sub(api.consts['balances']['existentialDeposit']));
   const rewardPool = {};
 
   if (unwrappedRewardPools) {

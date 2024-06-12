@@ -17,9 +17,9 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import type { Chain } from '@polkadot/extension-chains/types';
 
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
 import { useAccountDisplay, useDecimal, useProxies, useToken, useTranslation } from '../../../../hooks';
@@ -100,7 +100,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
       signer.unlock(password);
       setShowWaitScreen(true);
       const amountAsBN = unstakeAllAmount
-        ? new BN(pool.member.points)
+        ? new BN(pool.member?.points ?? BN_ZERO)
         : amountToMachine(amount, decimal);
       const params = [formatted, amountAsBN];
 
@@ -150,7 +150,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
         };
 
         saveAsHistory(from, info);
-        setTxInfo({ ...info, api, chain });
+        setTxInfo({ ...info, api, chain: chain as any });
       }
 
       setShowWaitScreen(false);
