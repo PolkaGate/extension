@@ -644,7 +644,7 @@ export interface BalancesInfo extends DeriveBalancesAll {
   pooledBalance?: BN;
   soloTotal?: BN;
   token: string;
-  totalBalance: number;
+  totalBalance?: number;
 }
 export interface AccountStakingInfo extends DeriveStakingAccount {
   era: number;

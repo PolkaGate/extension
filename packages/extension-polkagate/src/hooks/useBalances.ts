@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Balance } from '@polkadot/types/interfaces';
-import type { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
+import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
+import type { Option } from '@polkadot/types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
-import { Asset } from '@polkagate/apps-config/assets/types';
+import type { Asset } from '@polkagate/apps-config/assets/types';
 import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
@@ -40,15 +41,15 @@ export default function useBalances(address: string | undefined, refresh?: boole
   const decimal = api && api.registry.chainDecimals[0];
 
   const getPoolBalances = useCallback(() => {
-    if (api && !api.query.nominationPools) {
+    if (api && !api.query['nominationPools']) {
       return setPooledBalance({ balance: BN_ZERO, genesisHash: api.genesisHash.toString() });
     }
 
-    api && formatted && api.query.nominationPools.poolMembers(formatted).then(async (res) => {
+    api && formatted && api.query['nominationPools']['poolMembers'](formatted).then(async (res: any) => {
       const member = res?.unwrapOr(undefined) as PalletNominationPoolsPoolMember | undefined;
 
       if (!member) {
-        isFetching.fetching[String(formatted)].pooledBalance = false;
+        isFetching.fetching[String(formatted)]['pooledBalance'] = false;
         isFetching.set(isFetching.fetching);
 
         return setPooledBalance({ balance: BN_ZERO, genesisHash: api.genesisHash.toString() }); // user does not joined a pool yet. or pool id does not exist
@@ -60,16 +61,16 @@ export default function useBalances(address: string | undefined, refresh?: boole
       if (!accounts) {
         console.log(`useBalances: can not find a pool with id: ${poolId}`);
 
-        isFetching.fetching[String(formatted)].pooledBalance = false;
+        isFetching.fetching[String(formatted)]['pooledBalance'] = false;
         isFetching.set(isFetching.fetching);
 
         return setPooledBalance({ balance: BN_ZERO, genesisHash: api.genesisHash.toString() });
       }
 
       const [bondedPool, stashIdAccount, myClaimable] = await Promise.all([
-        api.query.nominationPools.bondedPools(poolId),
+        api.query['nominationPools']['bondedPools'](poolId) as unknown as Option<PalletNominationPoolsBondedPoolInner>,
         api.derive.staking.account(accounts.stashId),
-        api.call.nominationPoolsApi.pendingRewards(formatted)
+        api.call['nominationPoolsApi']['pendingRewards'](formatted)
       ]);
 
       const active = member.points.isZero()
@@ -84,11 +85,11 @@ export default function useBalances(address: string | undefined, refresh?: boole
 
       api.genesisHash.toString() === chain?.genesisHash && setPooledBalance({ balance: active.add(rewards).add(unlockingValue), genesisHash: api.genesisHash.toString() });
       setRefresh && setRefresh(false);
-      isFetching.fetching[String(formatted)].pooledBalance = false;
+      isFetching.fetching[String(formatted)]['pooledBalance'] = false;
       isFetching.set(isFetching.fetching);
     }).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, formatted, isFetching.fetching[String(formatted)]?.length, setRefresh]);
+  }, [api, formatted, isFetching.fetching[String(formatted)]?.['length'], setRefresh]);
 
   const getBalances = useCallback(() => {
     if (!chainName || api?.genesisHash?.toString() !== chain?.genesisHash || !decimal || !token) {
@@ -110,11 +111,11 @@ export default function useBalances(address: string | undefined, refresh?: boole
       });
 
       setRefresh && setRefresh(false);
-      isFetching.fetching[String(formatted)].balances = false;
+      isFetching.fetching[String(formatted)]['balances'] = false;
       isFetching.set(isFetching.fetching);
     }).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, chain?.genesisHash, chainName, formatted, isFetching.fetching[String(formatted)]?.length, setRefresh]);
+  }, [api, chain?.genesisHash, chainName, formatted, isFetching.fetching[String(formatted)]?.['length'], setRefresh]);
 
   useEffect(() => {
     if (newBalances && pooledBalance && api?.genesisHash?.toString() === chain?.genesisHash && api?.genesisHash?.toString() === newBalances?.genesisHash && api?.genesisHash?.toString() === pooledBalance.genesisHash) {
@@ -134,36 +135,36 @@ export default function useBalances(address: string | undefined, refresh?: boole
     }
 
     /** to fetch a formatted address's balance if not already fetching */
-    if (!isFetching.fetching[String(formatted)]?.balances) {
+    if (!isFetching.fetching[String(formatted)]?.['balances']) {
       if (!isFetching.fetching[String(formatted)]) {
         isFetching.fetching[String(formatted)] = {};
       }
 
-      isFetching.fetching[String(formatted)].balances = true;
+      isFetching.fetching[String(formatted)]['balances'] = true;
       isFetching.set(isFetching.fetching);
       getBalances();
     } else {
       console.log(`Balance is fetching for ${formatted}, hence doesn't need to fetch it again!`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, chain?.genesisHash, chainName, decimal, formatted, getBalances, isFetching.fetching[String(formatted)]?.length, token]);
+  }, [api, chain?.genesisHash, chainName, decimal, formatted, getBalances, isFetching.fetching[String(formatted)]?.['length'], token]);
 
   useEffect(() => {
     if (!chain?.genesisHash || !api || !formatted || api.genesisHash.toString() !== chain.genesisHash) {
       return;
     }
 
-    if (!isFetching.fetching[String(formatted)]?.pooledBalance) {
+    if (!isFetching.fetching[String(formatted)]?.['pooledBalance']) {
       if (!isFetching.fetching[String(formatted)]) {
         isFetching.fetching[String(formatted)] = {};
       }
 
-      isFetching.fetching[String(formatted)].pooledBalance = true;
+      isFetching.fetching[String(formatted)]['pooledBalance'] = true;
       isFetching.set(isFetching.fetching);
       getPoolBalances();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, chain?.genesisHash, formatted, getPoolBalances, isFetching.fetching[String(formatted)]?.length]);
+  }, [api, chain?.genesisHash, formatted, getPoolBalances, isFetching.fetching[String(formatted)]?.['length']]);
 
   useEffect(() => {
     if (refresh) {
@@ -172,8 +173,8 @@ export default function useBalances(address: string | undefined, refresh?: boole
       setPooledBalance(undefined);
 
       if (isFetching.fetching[String(formatted)]) {
-        isFetching.fetching[String(formatted)].pooledBalance = false;
-        isFetching.fetching[String(formatted)].balances = true;
+        isFetching.fetching[String(formatted)]['pooledBalance'] = false;
+        isFetching.fetching[String(formatted)]['balances'] = true;
       }
 
       isFetching.set(isFetching.fetching);
@@ -205,7 +206,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
     };
 
     // add this chain balances
-    savedBalances[chainName] = { balances, date: Date.now(), decimal, token };
+    savedBalances[chainName] = { balances: balances as any, date: Date.now(), decimal, token };
     const metaData = JSON.stringify({ balances: JSON.stringify(savedBalances) });
 
     updateMeta(address, metaData).catch(console.error);
@@ -224,21 +225,21 @@ export default function useBalances(address: string | undefined, refresh?: boole
       const sb = savedBalances[chainName].balances;
 
       const lastBalances = {
-        assetId: sb.assetId && parseInt(sb.assetId),
-        availableBalance: new BN(sb.availableBalance),
+        assetId: sb['assetId'] && parseInt(sb['assetId']),
+        availableBalance: new BN(sb['availableBalance']),
         chainName,
         date: savedBalances[chainName].date,
         decimal: savedBalances[chainName].decimal,
-        freeBalance: new BN(sb.freeBalance),
-        genesisHash: sb.genesisHash,
-        lockedBalance: new BN(sb.lockedBalance),
-        pooledBalance: new BN(sb.pooledBalance),
-        reservedBalance: new BN(sb.reservedBalance),
+        freeBalance: new BN(sb['freeBalance']),
+        genesisHash: sb['genesisHash'],
+        lockedBalance: new BN(sb['lockedBalance']),
+        pooledBalance: new BN(sb['pooledBalance']),
+        reservedBalance: new BN(sb['reservedBalance']),
         token: savedBalances[chainName].token,
-        vestedBalance: new BN(sb.vestedBalance),
-        vestedClaimable: new BN(sb.vestedClaimable),
-        votingBalance: new BN(sb.votingBalance)
-      };
+        vestedBalance: new BN(sb['vestedBalance']),
+        vestedClaimable: new BN(sb['vestedClaimable']),
+        votingBalance: new BN(sb['votingBalance'])
+      } as any;
 
       setBalances({
         ...lastBalances,
@@ -254,7 +255,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
 
   useEffect(() => {
     /** We fetch asset hub assets via this hook for asset ids, other multi chain assets have been fetched in the next useEffect*/
-    if (assetId === undefined || !api?.query?.assets || !ASSET_HUBS.includes(chain?.genesisHash || '')) {
+    if (assetId === undefined || !api?.query?.['assets'] || !ASSET_HUBS.includes(chain?.genesisHash || '')) {
       return;
     }
 
@@ -267,9 +268,9 @@ export default function useBalances(address: string | undefined, refresh?: boole
 
       try {
         const [accountAsset, assetInfo, metadata] = await Promise.all([
-          api.query.assets.account(assetId, formatted),
-          api.query.assets.asset(assetId),
-          api.query.assets.metadata(assetId)
+          api.query['assets']['account'](assetId, formatted) as any,
+          api.query['assets']['asset'](assetId) as any,
+          api.query['assets']['metadata'](assetId) as any
         ]);
 
         const ED = assetInfo.isNone ? BN_ZERO : assetInfo.unwrap()?.minBalance as BN;
@@ -295,7 +296,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
           token: metadata.symbol.toHuman() as string
         };
 
-        setAssetBalance(assetBalances);
+        setAssetBalance(assetBalances as unknown as BalancesInfo);
       } catch (error) {
         console.error(`Failed to fetch info for assetId ${assetId}:`, error);
       }
@@ -307,7 +308,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
     if (api && assetId && mayBeAssetsOnMultiAssetChains && !isAssetHub) {
       const assetInfo = mayBeAssetsOnMultiAssetChains[assetId];
 
-      assetInfo && api.query.tokens && fetchAssetOnMultiAssetChain(assetInfo).catch(console.error);
+      assetInfo && api.query['tokens'] && fetchAssetOnMultiAssetChain(assetInfo).catch(console.error);
     }
 
     async function fetchAssetOnMultiAssetChain(assetInfo: Asset) {
@@ -316,8 +317,8 @@ export default function useBalances(address: string | undefined, refresh?: boole
       }
 
       try {
-        const assets = await api.query.tokens.accounts.entries(address);
-        const currencyIdScale = (assetInfo.extras?.currencyIdScale as string).replace('0x', '');
+        const assets = await api.query['tokens']['accounts'].entries(address);
+        const currencyIdScale = (assetInfo.extras?.['currencyIdScale'] as string).replace('0x', '');
 
         const found = assets.find((entry) => {
           if (!entry.length) {
@@ -327,7 +328,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
           const storageKey = entry[0].toString();
 
           return storageKey.endsWith(currencyIdScale);
-        });
+        }) as any;
 
         if (!found?.length) {
           return;
@@ -337,7 +338,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
         const balance = found[1];
 
         const assetBalances = {
-          ED: new BN(assetInfo.extras?.existentialDeposit as string || 0),
+          ED: new BN(assetInfo.extras?.['existentialDeposit'] as string || 0),
           assetId: assetInfo.id,
           availableBalance: balance.free as BN,
           chainName,
@@ -350,7 +351,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
           token: assetInfo.symbol
         };
 
-        setAssetBalance(assetBalances);
+        setAssetBalance(assetBalances as unknown as BalancesInfo);
       } catch (e) {
         console.error('Something went wrong while fetching an asset:', e);
       }

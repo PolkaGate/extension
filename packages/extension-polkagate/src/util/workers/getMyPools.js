@@ -25,7 +25,7 @@ async function getMyPools(address, endpoint) {
   for (let poolId = 1; poolId <= lastPoolId.toNumber(); poolId++) {
     queries.push(Promise.all([
       api.query.nominationPools.metadata(poolId),
-      api.query.nominationPools.bondedPools(poolId),
+      api.query['nominationPools']['bondedPools'](poolId),
       api.query.nominationPools.rewardPools(poolId)
     ]));
   }

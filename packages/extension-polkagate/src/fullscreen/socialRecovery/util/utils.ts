@@ -89,7 +89,7 @@ export const checkLostAccountPoolStakedBalance = (
   setLostAccountPoolUnlock: React.Dispatch<React.SetStateAction<{ amount: BN; date: number; } | undefined>>,
   setLostAccountPoolRedeemable: React.Dispatch<React.SetStateAction<{ amount: BN; count: number; } | undefined>>
 ) => {
-  api.query.nominationPools.poolMembers(lostAccountAddress).then(async (res) => {
+  api.query['nominationPools']['poolMembers'](lostAccountAddress).then(async (res) => {
     const member = res?.unwrapOr(undefined) as PalletNominationPoolsPoolMember | undefined;
 
     if (!member) {
@@ -112,7 +112,7 @@ export const checkLostAccountPoolStakedBalance = (
     }
 
     const [bondedPool, stashIdAccount] = await Promise.all([
-      api.query.nominationPools.bondedPools(poolId),
+      api.query['nominationPools']['bondedPools'](poolId),
       api.derive.staking.account(accounts.stashId)
     ]);
 

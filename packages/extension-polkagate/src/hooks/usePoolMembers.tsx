@@ -14,7 +14,7 @@ interface Member {
   member: PalletNominationPoolsPoolMember;
 }
 
-export function usePoolMembers (api: ApiPromise | undefined, poolId: string | undefined): MembersMapEntry[] | undefined {
+export function usePoolMembers(api: ApiPromise | undefined, poolId: string | undefined): MembersMapEntry[] | undefined {
   const [poolMembers, setPoolMembers] = useState<Member[]>();
   const [isFetching, setFetching] = useState<boolean>(false);
 
@@ -25,7 +25,7 @@ export function usePoolMembers (api: ApiPromise | undefined, poolId: string | un
 
     setFetching(true);
 
-    api.query?.nominationPools && api.query.nominationPools.poolMembers.entries().then((entries) => {
+    api.query?.nominationPools && api.query['nominationPools']['poolMembers'].entries().then((entries) => {
       const members = entries.reduce((all, [{ args: [accountId] }, optMember]) => {
         if (optMember.isSome) {
           const member = optMember.unwrap();

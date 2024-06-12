@@ -28,7 +28,7 @@ async function getPool(endpoint, stakerAddress, id = undefined) {
 
   const token = api.registry.chainTokens[0];
   const decimal = api.registry.chainDecimals[0];
-  const members = !id && await api.query.nominationPools.poolMembers(stakerAddress);
+  const members = !id && await api.query['nominationPools']['poolMembers'](stakerAddress);
   const member = members?.isSome ? members.unwrap() : undefined;
 
   if (!member && !id) {
@@ -48,8 +48,8 @@ async function getPool(endpoint, stakerAddress, id = undefined) {
 
   const [metadata, bondedPools, myClaimable, rewardPools, rewardIdBalance, stashIdAccount] = await Promise.all([
     api.query.nominationPools.metadata(poolId),
-    api.query.nominationPools.bondedPools(poolId),
-    api.call.nominationPoolsApi.pendingRewards(stakerAddress),
+    api.query['nominationPools']['bondedPools'](poolId),
+    api.call['nominationPoolsApi']['pendingRewards'](stakerAddress),
     api.query.nominationPools.rewardPools(poolId),
     api.query.system.account(accounts.rewardId),
     api.derive.staking.account(accounts.stashId)
