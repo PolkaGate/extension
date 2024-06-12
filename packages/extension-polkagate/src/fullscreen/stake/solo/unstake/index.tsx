@@ -54,9 +54,9 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
   const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
 
-  const unbonded = api && api.tx.staking.unbond; // signer: Controller
-  const redeem = api && api.tx.staking.withdrawUnbonded; // signer: Controller
-  const chilled = api && api.tx.staking.chill; // signer: Controller
+  const unbonded = api && api.tx['staking']['unbond']; // signer: Controller
+  const redeem = api && api.tx['staking']['withdrawUnbonded']; // signer: Controller
+  const chilled = api && api.tx['staking']['chill']; // signer: Controller
 
   useEffect(() => {
     if (!amountAsBN) {
@@ -96,7 +96,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
         }
 
         txs.push(unbonded(amountAsBN));
-        const call = txs.length > 1 ? api.tx.utility.batchAll : unbonded;
+        const call = txs.length > 1 ? api.tx['utility']['batchAll'] : unbonded;
         const params = txs.length > 1 ? [txs] : [amountAsBN];
 
         const totalStakeAfter = staked.sub(amountAsBN);

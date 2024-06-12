@@ -41,7 +41,7 @@ export interface ExpandedRewards {
   value: BN;
 }
 
-export default function Pending ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function Pending({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -134,8 +134,8 @@ export default function Pending ({ address, setRefresh, setShow, show }: Props):
       return;
     }
 
-    const payoutStakers = api.tx.staking.payoutStakersByPage;
-    const batch = api.tx.utility.batchAll;
+    const payoutStakers = api.tx['staking']['payoutStakersByPage'];
+    const batch = api.tx['utility']['batchAll'];
 
     const call = selectedToPayout.length === 1
       ? payoutStakers

@@ -77,14 +77,14 @@ export default function EasyMode({ address, balances, inputs, setInputs, setStep
       return setEstimatedMaxFee(api.createType('Balance', BN_ONE));
     }
 
-    amountAsBN && api.tx.nominationPools.bondExtra({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
+    amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     });
   }, [formatted, api, availableBalance, amount, decimal, amountAsBN]);
 
   useEffect(() => {
     if (amount && amountAsBN && poolConsts && pool && api && amountAsBN.gte(poolConsts.minJoinBond)) {
-      const call = api.tx.nominationPools.join;
+      const call = api.tx['nominationPools']['join'];
       const params = [amountAsBN, pool.poolId];
 
       const extraInfo = {

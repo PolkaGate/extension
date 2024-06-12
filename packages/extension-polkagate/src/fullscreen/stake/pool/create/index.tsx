@@ -25,7 +25,7 @@ interface Props {
   inputs: Inputs | undefined;
 }
 
-export default function CreatePool ({ inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function CreatePool({ inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
@@ -113,13 +113,13 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
       rewardPool: null
     };
 
-    const create = api.tx.nominationPools.create;
+    const create = api.tx['nominationPools']['create'];
     const createParams = [amountAsBN, formatted, nominatorId, bouncerId];
 
-    const setMetadata = api.tx.nominationPools.setMetadata;
+    const setMetadata = api.tx['nominationPools']['setMetadata'];
     const setMetaDataParams = [poolStakingConsts?.lastPoolId?.addn(1), pool.metadata];
 
-    const call = api.tx.utility.batch;
+    const call = api.tx['utility']['batch'];
     const params = [[create(...createParams), setMetadata(...setMetaDataParams)]];
 
     const extraInfo = {
@@ -245,7 +245,7 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
         <UpdateRoles
           address={address}
           bouncerId={bouncerId}
-          chain={chain}
+          chain={chain as any}
           formatted={formatted}
           nominatorId={nominatorId}
           setBouncerId={setBouncerId}

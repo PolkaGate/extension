@@ -56,7 +56,7 @@ export default function InputPage({ address, inputs, pool, setInputs, setStep, s
 
   const { call, params } = useMemo(() => {
     if (api && newSelectedValidators?.length && pool) {
-      const call = api.tx.nominationPools.nominate;
+      const call = api.tx['nominationPools']['nominate'];
       const ids = newSelectedValidators.map((v) => v.accountId.toString());
 
       const params = [pool.poolId, ids];

@@ -75,9 +75,9 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
   const [newConviction, setNewConviction] = useState<number | undefined>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const undelegate = api && api.tx.convictionVoting.undelegate;
-  const delegate = api && api.tx.convictionVoting.delegate;
-  const batch = api && api.tx.utility.batchAll;
+  const undelegate = api && api.tx['convictionVoting']['undelegate'];
+  const delegate = api && api.tx['convictionVoting']['delegate'];
+  const batch = api && api.tx['utility']['batchAll'];
 
   const acceptableConviction = useMemo(() => newConviction !== undefined ? newConviction === 0.1 ? 0 : newConviction : conviction === 0.1 ? 0 : conviction, [conviction, newConviction]);
 

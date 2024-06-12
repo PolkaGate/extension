@@ -58,7 +58,7 @@ export default function InputPage({ address, inputs, setInputs, setStep }: Props
 
   const { call, params } = useMemo(() => {
     if (api && newSelectedValidators?.length) {
-      const call = api.tx.staking.nominate;
+      const call = api.tx['staking']['nominate'];
       const params = newSelectedValidators.map((v) => v.accountId.toString());
 
       return { call, params: [params] };

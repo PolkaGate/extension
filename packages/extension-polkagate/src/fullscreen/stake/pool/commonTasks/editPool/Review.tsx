@@ -67,10 +67,10 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       return;
     }
 
-    const batchAll = api.tx.utility.batchAll;
-    const setMetadata = api.tx.nominationPools.setMetadata;
-    const updateRoles = api.tx.nominationPools.updateRoles;
-    const setCommission = api.tx.nominationPools.setCommission;
+    const batchAll = api.tx['utility']['batchAll'];
+    const setMetadata = api.tx['nominationPools']['setMetadata'];
+    const updateRoles = api.tx['nominationPools']['updateRoles'];
+    const setCommission = api.tx['nominationPools']['setCommission'];
 
     const txs: { call: SubmittableExtrinsicFunction<'promise', AnyTuple>, params: unknown[] }[] = [];
 

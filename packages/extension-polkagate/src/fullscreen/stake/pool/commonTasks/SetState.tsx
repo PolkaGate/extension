@@ -64,9 +64,9 @@ export default function SetState({ address, api, formatted, onClose, pool, setRe
       return;
     }
 
-    const batchAll = api && api.tx.utility.batchAll;
-    const chilled = api && api.tx.nominationPools.chill;
-    const poolSetState = api && api.tx.nominationPools.setState; // (poolId, state)
+    const batchAll = api && api.tx['utility']['batchAll'];
+    const chilled = api && api.tx['nominationPools']['chill'];
+    const poolSetState = api && api.tx['nominationPools']['setState']; // (poolId, state)
 
     const poolId = pool.poolId.toString();
 

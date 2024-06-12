@@ -166,12 +166,12 @@ export async function createPool(
       return { status: 'failed' };
     }
 
-    const created = api.tx.utility.batch([
-      api.tx.nominationPools.create(value, roles.root, roles.nominator, roles.bouncer),
-      api.tx.nominationPools.setMetadata(poolId, poolName)
+    const created = api.tx['utility']['batch']([
+      api.tx['nominationPools']['create'](value, roles.root, roles.nominator, roles.bouncer),
+      api.tx['nominationPools']['setMetadata'](poolId, poolName)
     ]);
 
-    const tx = proxy ? api.tx.proxy.proxy(depositor, proxy.proxyType, created) : created;
+    const tx = proxy ? api.tx['proxy']['proxy'](depositor, proxy.proxyType, created) : created;
 
     return signAndSend(api, tx, signer, depositor);
   } catch (error) {
@@ -213,12 +213,12 @@ export async function editPool(
     const calls = [];
 
     basePool.metadata !== pool.metadata &&
-      calls.push(api.tx.nominationPools.setMetadata(pool.member?.poolId, pool.metadata));
+      calls.push(api.tx['nominationPools']['setMetadata'](pool.member?.poolId, pool.metadata));
     JSON.stringify(basePool.bondedPool?.roles) !== JSON.stringify(pool.bondedPool?.roles) &&
-      calls.push(api.tx.nominationPools.updateRoles(pool.member?.poolId, getRole('root'), getRole('nominator'), getRole('bouncer')));
+      calls.push(api.tx['nominationPools']['updateRoles'](pool.member?.poolId, getRole('root'), getRole('nominator'), getRole('bouncer')));
 
-    const updated = api.tx.utility.batch(calls);
-    const tx = proxy ? api.tx.proxy.proxy(depositor, proxy.proxyType, updated) : updated;
+    const updated = api.tx['utility']['batch'](calls);
+    const tx = proxy ? api.tx['proxy']['proxy'](depositor, proxy.proxyType, updated) : updated;
 
     return signAndSend(api, tx, signer, depositor);
   } catch (error) {

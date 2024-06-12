@@ -132,11 +132,11 @@ export default function JoinPool(): React.ReactElement {
 
     const mayBeAmount = amountAsBN || poolStakingConsts?.minJoinBond;
 
-    api && mayBeAmount && api.tx.nominationPools.join(mayBeAmount.toString(), BN_ONE).paymentInfo(formatted).then((i) => {
+    api && mayBeAmount && api.tx['nominationPools']['join'](mayBeAmount.toString(), BN_ONE).paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee));
     });
 
-    api && api.tx.nominationPools.join(String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
+    api && api.tx['nominationPools']['join'](String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     });
   }, [formatted, api, availableBalance, selectedPool, amountAsBN, poolStakingConsts]);

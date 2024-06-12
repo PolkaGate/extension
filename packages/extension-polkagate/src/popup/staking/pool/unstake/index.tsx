@@ -100,8 +100,8 @@ export default function Index(): React.ReactElement {
   const poolMemberCounter = useMemo(() => Number(myPool?.bondedPool?.memberCounter), [myPool?.bondedPool?.memberCounter]);
   const destroyHelperText = t<string>('No one can join and all members can be removed without permissions. Once in destroying state, it cannot be reverted to another state.');
 
-  const unbonded = api && api.tx.nominationPools.unbond;
-  const poolWithdrawUnbonded = api && api.tx.nominationPools.poolWithdrawUnbonded;
+  const unbonded = api && api.tx['nominationPools']['unbond'];
+  const poolWithdrawUnbonded = api && api.tx['nominationPools']['poolWithdrawUnbonded'];
   const redeemDate = useMemo(() => {
     if (stakingConsts) {
       const date = Date.now() + stakingConsts.unbondingDuration * 24 * 60 * 60 * 1000;

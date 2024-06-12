@@ -59,10 +59,10 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [txCalls, setTxCalls] = useState<SubmittableExtrinsic<'promise'>[]>();
 
-  const unbonded = api.tx.nominationPools.unbond;
-  const poolWithdrawUnbonded = api.tx.nominationPools.poolWithdrawUnbonded;
-  const batchAll = api.tx.utility.batchAll;
-  const redeem = api.tx.nominationPools.withdrawUnbonded;
+  const unbonded = api.tx['nominationPools']['unbond'];
+  const poolWithdrawUnbonded = api.tx['nominationPools']['poolWithdrawUnbonded'];
+  const batchAll = api.tx['utility']['batchAll'];
+  const redeem = api.tx['nominationPools']['withdrawUnbonded'];
   const poolDepositorAddr = String(pool.bondedPool?.roles.depositor);
 
   const unlockingLen = pool?.stashIdAccount?.stakingLedger?.unlocking?.length ?? 0;
@@ -166,7 +166,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
       setShowWaitScreen(true);
 
       const updated = txCalls.length > 1 ? batchAll(txCalls) : txCalls[0];
-      const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, updated) : updated;
+      const tx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, updated) : updated;
 
       const { block, failureText, fee, success, txHash } = await signAndSend(api, tx, signer, formatted);
 

@@ -62,7 +62,7 @@ export default function Index(): React.ReactElement {
 
   const staked = useMemo(() => stakingAccount ? stakingAccount.stakingLedger.active as unknown as BN : BN_ZERO, [stakingAccount]);
   const totalAfterStake = useMemo(() => decimal ? staked?.add(amountToMachine(amount, decimal)) : BN_ZERO, [amount, decimal, staked]);
-  const isFirstTimeStaking = !!stakingAccount?.stakingLedger?.total?.isZero();
+  const isFirstTimeStaking = !!(stakingAccount?.stakingLedger?.total as unknown as BN)?.isZero();
 
   const thresholds = useMemo(() => {
     if (!stakingConsts || !decimal || !balances || !stakingAccount || !availableToSoloStake) {
@@ -73,7 +73,7 @@ export default function Index(): React.ReactElement {
     let max = availableToSoloStake.sub(ED.muln(2));
     let min = stakingConsts.minNominatorBond;
 
-    if (!stakingAccount.stakingLedger.active.isZero()) {
+    if (!(stakingAccount.stakingLedger.active as unknown as BN).isZero()) {
       min = BN_ZERO;
     }
 
@@ -84,15 +84,15 @@ export default function Index(): React.ReactElement {
     return { max, min };
   }, [availableToSoloStake, balances, decimal, stakingAccount, stakingConsts]);
 
-  const bond = api && api.tx.staking.bond;// (controller: MultiAddress, value: Compact<u128>, payee: PalletStakingRewardDestination)
-  const bondExtra = api && api.tx.staking.bondExtra;// (max_additional: Compact<u128>)
-  const batchAll = api && api.tx.utility.batchAll;
-  const nominated = api && api.tx.staking.nominate;
+  const bond = api && api.tx['staking']['bond'];// (controller: MultiAddress, value: Compact<u128>, payee: PalletStakingRewardDestination)
+  const bondExtra = api && api.tx['staking']['bondExtra'];// (max_additional: Compact<u128>)
+  const batchAll = api && api.tx['utility']['batchAll'];
+  const nominated = api && api.tx['staking']['nominate'];
   const isControllerDeprecated = bond ? bond.meta.args.length === 2 : undefined;
 
   const tx = isFirstTimeStaking ? bond : bondExtra;
   const amountAsBN = useMemo(() => amountToMachine(amount ?? '0', decimal), [amount, decimal]);
-  const params = useMemo(() => stakingAccount?.stakingLedger?.total?.isZero()
+  const params = useMemo(() => (stakingAccount?.stakingLedger?.total as unknown as BN)?.isZero()
     ? isControllerDeprecated
       ? [amountAsBN, settings.payee]
       : [settings.stashId, amountAsBN, settings.payee]
@@ -191,7 +191,7 @@ export default function Index(): React.ReactElement {
   }, [validatorSelectionMethod]);
 
   const onSelectionMethodChange = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
-    setValidatorSelectionMethod(event.target.value);
+    setValidatorSelectionMethod(event.target.value as "auto" | "manual");
   }, []);
 
   const Warn = ({ text }: { text: string }) => (

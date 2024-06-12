@@ -105,18 +105,18 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
       let batchCall;
 
       if (isFirstTimeStaking && selectedValidators) {
-        const nominated = api.tx.staking.nominate;
-        const setController = api.tx.staking.setController;
+        const nominated = api.tx['staking']['nominate'];
+        const setController = api.tx['staking']['setController'];
         const isControllerDeprecated = setController.meta.args.length === 0;
         const ids = selectedValidators.map((v) => v.accountId);
         const txs = [tx(...params), nominated(ids)];
 
         settings.controllerId !== settings.stashId && !isControllerDeprecated && txs.push(setController(settings.controllerId));
-        batchCall = api.tx.utility.batchAll(txs);
+        batchCall = api.tx['utility']['batchAll'](txs);
       }
 
       const extrinsic = batchCall || tx(...params);
-      const ptx = selectedProxy ? api.tx.proxy.proxy(settings.stashId, selectedProxy.proxyType, extrinsic) : extrinsic;
+      const ptx = selectedProxy ? api.tx['proxy']['proxy'](settings.stashId, selectedProxy.proxyType, extrinsic) : extrinsic;
 
       const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, settings.stashId);
 

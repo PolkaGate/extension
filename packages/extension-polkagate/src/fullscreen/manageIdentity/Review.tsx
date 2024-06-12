@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
-import type { PalletIdentityIdentityInfo } from '@polkadot/types/lookup';
+import type { PalletIdentityLegacyIdentityInfo } from '@polkadot/types/lookup';
 import type { BalancesInfo, Proxy, ProxyItem, TxInfo } from '../../util/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
@@ -12,14 +12,14 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 
 import { PEOPLE_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN, BN_ONE } from '@polkadot/util';
 
 import { CanPayErrorAlert, Identity, Motion, ShowBalance, SignArea2, Warning, WrongPasswordAlert } from '../../components';
-import { useCanPayFeeAndDeposit, useFormatted, useInfo, useProxies } from '../../hooks';
+import { useCanPayFeeAndDeposit, useInfo, useProxies } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import { pgBoxShadow } from '../../util/utils';
@@ -31,7 +31,7 @@ import { toTitleCase } from '../governance/utils/util';
 import Confirmation from './partial/Confirmation';
 import DisplaySubId from './partial/DisplaySubId';
 import IdentityTable from './partial/IdentityTable';
-import { Mode, STEPS, SubIdAccountsToSubmit, SubIdsParams } from '.';
+import { type Mode, STEPS, type SubIdAccountsToSubmit, type SubIdsParams } from '.';
 
 interface Props {
   address: string;
@@ -40,7 +40,7 @@ interface Props {
   depositToPay: BN | undefined;
   depositValue: BN;
   identityToSet: DeriveAccountRegistration | null | undefined;
-  infoParams: PalletIdentityIdentityInfo | null | undefined;
+  infoParams: PalletIdentityLegacyIdentityInfo | null | undefined;
   subIdsParams: SubIdsParams | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   step: number;
@@ -72,11 +72,11 @@ export default function Review({ address, api, chain, depositToPay, depositValue
 
   const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxyAddress, estimatedFee, depositToPay, balances);
 
-  const setIdentity = api && api.tx.identity.setIdentity;
-  const clearIdentity = api && api.tx.identity.clearIdentity;
-  const setSubs = api && api.tx.identity.setSubs;
-  const requestJudgement = api && api.tx.identity.requestJudgement;
-  const cancelRequest = api && api.tx.identity.cancelRequest;
+  const setIdentity = api && api.tx['identity']['setIdentity'];
+  const clearIdentity = api && api.tx['identity']['clearIdentity'];
+  const setSubs = api && api.tx['identity']['setSubs'];
+  const requestJudgement = api && api.tx['identity']['requestJudgement'];
+  const cancelRequest = api && api.tx['identity']['cancelRequest'];
 
   useEffect(() => {
     formatted && api && api.derive.balances?.all(formatted).then((b) => {

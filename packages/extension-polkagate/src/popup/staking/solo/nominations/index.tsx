@@ -15,7 +15,7 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { DeriveStakingQuery } from '@polkadot/api-derive/types';
-import { BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
 import { useInfo, useStakingAccount, useStakingConsts, useTranslation, useUnSupportedNetwork, useValidators, useValidatorsIdentities } from '../../../../hooks';
@@ -235,14 +235,13 @@ export default function Index (): React.ReactElement {
       {showReview && newSelectedValidators &&
         <Review
           address={address}
-          allValidators={allValidatorsInfo}
           allValidatorsIdentities={allValidatorsIdentities}
           api={api}
           newSelectedValidators={newSelectedValidators}
           setShow={setShowReview}
           show={showReview}
-          staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
-          stakingConsts={stakingConsts}
+          staked={stakingAccount?.stakingLedger?.active as unknown as BN ?? BN_ZERO}
+          stakingConsts={stakingConsts as StakingConsts }
         />
       }
     </Motion>

@@ -52,7 +52,7 @@ export default function Index(): React.ReactElement {
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
   const totalStakeAfter = useMemo(() => staked && unlockingAmount && staked.add(amountAsBN), [amountAsBN, staked, unlockingAmount]);
 
-  const rebonded = api && api.tx.staking.rebond; // signer: Controller
+  const rebonded = api && api.tx['staking']['rebond']; // signer: Controller
 
   useEffect(() => {
     if (!stakingAccount) {
@@ -64,7 +64,7 @@ export default function Index(): React.ReactElement {
     if (stakingAccount?.unlocking) {
       for (const [_, { remainingEras, value }] of Object.entries(stakingAccount.unlocking)) {
         if (remainingEras.gtn(0)) {
-          const amount = new BN(value as string);
+          const amount = new BN(value as unknown as string);
 
           unlockingValue = unlockingValue.add(amount);
         }

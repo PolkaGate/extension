@@ -84,13 +84,13 @@ export default function LeavePool({ address, onClose, pool, setRefresh }: Props)
     let params: unknown[];
 
     if (unlockingLen < maxUnlockingChunks) {
-      call = api.tx.nominationPools.unbond;
+      call = api.tx['nominationPools']['unbond'];
       params = [formatted, staked];
     } else {
-      const unbonded = api.tx.nominationPools.unbond;
-      const poolWithdrawUnbonded = api.tx.nominationPools.poolWithdrawUnbonded;
+      const unbonded = api.tx['nominationPools']['unbond'];
+      const poolWithdrawUnbonded = api.tx['nominationPools']['poolWithdrawUnbonded'];
 
-      call = api.tx.utility.batchAll;
+      call = api.tx['utility']['batchAll'];
       params = [[poolWithdrawUnbonded(pool.poolId, spanCount), unbonded(formatted, staked)]];
     }
 

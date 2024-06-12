@@ -67,9 +67,9 @@ function Review({ address, api, chain, depositedValue, newDepositValue, proxyIte
   }, [depositedValue, newDepositValue]);
 
   const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
-  const removeProxy = api && api.tx.proxy.removeProxy; /** (delegate, proxyType, delay) **/
-  const addProxy = api && api.tx.proxy.addProxy; /** (delegate, proxyType, delay) **/
-  const batchAll = api && api.tx.utility.batchAll;
+  const removeProxy = api && api.tx['proxy']['removeProxy']; /** (delegate, proxyType, delay) **/
+  const addProxy = api && api.tx['proxy']['addProxy']; /** (delegate, proxyType, delay) **/
+  const batchAll = api && api.tx['utility']['batchAll'];
 
   const changedItems = useMemo(() => proxyItems?.filter(({ status }) => status !== 'current'), [proxyItems]);
 

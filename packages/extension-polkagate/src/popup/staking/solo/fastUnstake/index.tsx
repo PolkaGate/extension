@@ -65,7 +65,7 @@ export default function Index(): React.ReactElement {
     : undefined;
 
   const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active, [stakingAccount]);
-  const tx = api && api.tx.fastUnstake.registerFastUnstake;
+  const tx = api && api.tx['fastUnstake']['registerFastUnstake'];
 
   useEffect((): void => {
     if (!api) {

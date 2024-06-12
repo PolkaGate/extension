@@ -11,7 +11,7 @@ import { KeyringPair } from '@polkadot/keyring/types';
 import { Proxy, TxResult } from '../types';
 import { signAndSend } from './signAndSend';
 
-export default async function broadcast (
+export default async function broadcast(
   api: ApiPromise,
   extrinsic: ((...args: any[]) => SubmittableExtrinsic<'promise'>),
   params: unknown[] | (() => unknown[]),
@@ -22,7 +22,7 @@ export default async function broadcast (
   try {
     console.log(`Broadcasting a ${proxy ? 'proxy ' : ''}tx ....`);
 
-    const tx = proxy ? api.tx.proxy.proxy(senderAddress, proxy.proxyType, extrinsic(...params)) : extrinsic(...params);
+    const tx = proxy ? api.tx['proxy']['proxy'](senderAddress, proxy.proxyType, extrinsic(...params)) : extrinsic(...params);
 
     return signAndSend(api, tx, signer, proxy?.delegate ?? senderAddress);
   } catch (e) {

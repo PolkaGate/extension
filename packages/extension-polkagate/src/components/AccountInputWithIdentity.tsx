@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useContext } from 'react';
 import { useParams } from 'react-router';
 
@@ -13,13 +13,14 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import { useApi, useTranslation } from '../hooks';
 import getAllAddresses from '../util/getAllAddresses';
 import { AccountContext, AddressInput, Identity } from '.';
+import type { AccountId } from '@polkadot/types/interfaces';
 
 interface Props {
   address: string | null | undefined;
   chain: Chain | null | undefined;
   label: string;
   style?: SxProps<Theme>;
-  setAddress: React.Dispatch<React.SetStateAction<string | null | undefined>>;
+  setAddress: React.Dispatch<React.SetStateAction< string | AccountId | undefined>> | null;
   ignoreAddress?: string
   name?: string;
   helperText?: string;
@@ -37,9 +38,9 @@ export default function AccountInputWithIdentity({ address, chain, disabled, hel
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ ...style }}>
       <AddressInput
-        address={address}
+        address={address as string}
         allAddresses={allAddresses}
-        chain={chain}
+        chain={chain as any}
         disabled={disabled}
         helperText={helperText}
         label={label}

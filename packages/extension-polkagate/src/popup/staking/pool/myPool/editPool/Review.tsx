@@ -60,8 +60,8 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [txCalls, setTxCalls] = useState<SubmittableExtrinsic<'promise'>[]>();
 
-  const batchAll = api && api.tx.utility.batchAll;
-  const setMetadata = api && api.tx.nominationPools.setMetadata;
+  const batchAll = api && api.tx['utility']['batchAll'];
+  const setMetadata = api && api.tx['nominationPools']['setMetadata'];
 
   const maybeCurrentCommissionPayee = pool?.bondedPool?.commission?.current?.[1]?.toString() as string | undefined;
 
@@ -90,10 +90,10 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       calls.push(setMetadata(pool.poolId, changes?.newPoolName));
 
     changes?.newRoles !== undefined && !Object.values(changes.newRoles).every((value) => value === undefined) &&
-      calls.push(api.tx.nominationPools.updateRoles(pool.poolId, getRole(changes.newRoles.newRoot), getRole(changes.newRoles.newNominator), getRole(changes.newRoles.newBouncer)));
+      calls.push(api.tx['nominationPools']['updateRoles'](pool.poolId, getRole(changes.newRoles.newRoot), getRole(changes.newRoles.newNominator), getRole(changes.newRoles.newBouncer)));
 
     changes?.commission !== undefined && (changes.commission.value !== undefined || changes.commission.payee) &&
-      calls.push(api.tx.nominationPools.setCommission(pool.poolId, [(changes.commission.value || 0) * 10 ** 7, changes.commission.payee || maybeCurrentCommissionPayee]));
+      calls.push(api.tx['nominationPools']['setCommission'](pool.poolId, [(changes.commission.value || 0) * 10 ** 7, changes.commission.payee || maybeCurrentCommissionPayee]));
 
     setTxCalls(calls);
 
@@ -139,7 +139,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       setShowWaitScreen(true);
 
       const updated = txCalls.length > 1 ? batchAll(txCalls) : txCalls[0];
-      const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, updated) : updated;
+      const tx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, updated) : updated;
 
       const { block, failureText, fee, success, txHash } = await signAndSend(api, tx, signer, formatted);
 

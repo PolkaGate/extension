@@ -26,7 +26,7 @@ interface Props {
   inputs: Inputs | undefined;
 }
 
-export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function JoinPool({ inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
@@ -120,7 +120,7 @@ export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.
       return;
     }
 
-    api && api.tx.nominationPools.join(String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
+    api && api.tx['nominationPools']['join'](String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     });
   }, [formatted, api, availableBalance, selectedPool, amountAsBN, poolStakingConsts]);
@@ -148,7 +148,7 @@ export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.
       return;
     }
 
-    const call = api.tx.nominationPools.join;
+    const call = api.tx['nominationPools']['join'];
     const params = [amountAsBN, selectedPool.poolId];
     const extraInfo = {
       action: 'Pool Staking',

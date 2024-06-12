@@ -90,9 +90,9 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [tx, setTx] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>>();
 
-  const setController = api && api.tx.staking.setController; // sign by stash
-  const setPayee = api && api.tx.staking.setPayee; // sign by Controller
-  const batchAll = api && api.tx.utility.batchAll;
+  const setController = api && api.tx['staking']['setController']; // sign by stash
+  const setPayee = api && api.tx['staking']['setPayee']; // sign by Controller
+  const batchAll = api && api.tx['utility']['batchAll'];
   const isControllerDeprecated = setController ? setController.meta.args.length === 0 : undefined;
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
@@ -157,7 +157,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const ptx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
+      const ptx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, tx) : tx;
       const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, formatted);
 
       const info = {

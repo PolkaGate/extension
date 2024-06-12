@@ -45,7 +45,7 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
   const decimal = useDecimal(formatted);
   const token = useToken(formatted);
 
-  const tx = api && api.tx.crowdloan.contribute;
+  const tx = api && api.tx['crowdloan']['contribute'];
 
   const [showCrowdloanInfo, setShowCrowdloanInfo] = useState<boolean>(false);
   const [showReview, setShowReview] = useState<boolean>(false);

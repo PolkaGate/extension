@@ -45,7 +45,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
   const proxies = useProxies(api, address);
   const decimals = api.registry.chainDecimals[0];
 
-  const joined = api.tx.nominationPools.join; // (amount, poolId)
+  const joined = api.tx['nominationPools']['join']; // (amount, poolId)
 
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();

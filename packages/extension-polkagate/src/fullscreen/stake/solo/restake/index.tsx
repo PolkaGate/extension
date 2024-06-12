@@ -53,7 +53,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
   const amountAsBN = useMemo(() => restakeAllAmount ? unlockingAmount : amountToMachine(amount, decimal), [amount, decimal, restakeAllAmount, unlockingAmount]);
   const totalStakeAfter = useMemo(() => staked && unlockingAmount && amountAsBN && staked.add(amountAsBN), [amountAsBN, staked, unlockingAmount]);
 
-  const rebonded = api && api.tx.staking.rebond; // signer: Controller
+  const rebonded = api && api.tx['staking']['rebond']; // signer: Controller
 
   useEffect(() => {
     if (!stakingAccount) {
@@ -124,7 +124,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
 
   useEffect(() => {
     if (amount && api) {
-      const call = api.tx.staking.rebond;
+      const call = api.tx['staking']['rebond'];
       const params = [amountAsBN];
 
       const extraInfo = {

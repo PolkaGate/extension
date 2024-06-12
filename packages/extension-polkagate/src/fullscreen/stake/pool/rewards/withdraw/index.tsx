@@ -32,7 +32,7 @@ interface Props {
   pool: MyPoolInfo | null | undefined;
 }
 
-export default function WithdrawRewards ({ address, balances, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function WithdrawRewards({ address, balances, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
 
@@ -45,7 +45,7 @@ export default function WithdrawRewards ({ address, balances, pool, setRefresh, 
 
   useEffect(() => {
     if (claimable && api && availableBalance) {
-      const call = api.tx.nominationPools.claimPayout;
+      const call = api.tx['nominationPools']['claimPayout'];
       const params = [] as unknown[];
 
       const extraInfo = {

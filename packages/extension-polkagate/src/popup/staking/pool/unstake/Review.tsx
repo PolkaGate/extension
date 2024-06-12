@@ -127,12 +127,12 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
         const optSpans = await api.query.staking.slashingSpans(formatted);
         const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
 
-        const batch = api.tx.utility.batchAll([
+        const batch = api.tx['utility']['batchAll']([
           poolWithdrawUnbonded(poolId, spanCount),
           unbonded(...params)
         ]);
 
-        const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, batch) : batch;
+        const tx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, batch) : batch;
         const { block, failureText, fee, success, txHash } = await signAndSend(api, tx, signer, formatted);
 
         const info = {

@@ -56,7 +56,7 @@ export default function RewardsWithdrawReview({ address, amount, api, available,
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
-  const tx = api.tx.nominationPools.claimPayout;
+  const tx = api.tx['nominationPools']['claimPayout'];
   const params = useMemo(() => [] as unknown[], []);
 
   const decimal = api.registry.chainDecimals[0];

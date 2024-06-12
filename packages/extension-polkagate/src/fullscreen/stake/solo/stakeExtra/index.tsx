@@ -52,7 +52,7 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
   const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active as unknown as BN, [stakingAccount]);
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
 
-  const call = api && api.tx.staking.bondExtra;
+  const call = api && api.tx['staking']['bondExtra'];
 
   useEffect(() => {
     if (!amountAsBN) {

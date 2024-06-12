@@ -51,7 +51,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
   const name = useAccountDisplay(address);
   const proxies = useProxies(api, formatted);
 
-  const contribute = api && api.tx.crowdloan.contribute;
+  const contribute = api && api.tx['crowdloan']['contribute'];
 
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();

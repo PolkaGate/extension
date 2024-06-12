@@ -69,7 +69,7 @@ export default function FastUnstake({ address, setRefresh, setShow, show }: Prop
       return;
     }
 
-    const call = api.tx.fastUnstake.registerFastUnstake;
+    const call = api.tx['fastUnstake']['registerFastUnstake'];
     const availableBalanceAfter = availableBalance.add(staked);
 
     const params = [];

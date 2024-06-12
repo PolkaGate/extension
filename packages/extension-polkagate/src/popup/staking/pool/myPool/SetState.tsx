@@ -58,9 +58,9 @@ export default function SetState({ address, formatted, headerText, helperText, p
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
-  const batchAll = api && api.tx.utility.batchAll;
-  const chilled = api && api.tx.nominationPools.chill;
-  const poolSetState = api && api.tx.nominationPools.setState(pool.poolId.toString(), state); // (poolId, state)
+  const batchAll = api && api.tx['utility']['batchAll'];
+  const chilled = api && api.tx['nominationPools']['chill'];
+  const poolSetState = api && api.tx['nominationPools']['setState'](pool.poolId.toString(), state); // (poolId, state)
 
   const backToStake = useCallback(() => {
     setShow(false);
@@ -115,7 +115,7 @@ export default function SetState({ address, formatted, headerText, helperText, p
       const mayNeedChill = state === 'Destroying' && pool.stashIdAccount?.nominators?.length && (String(pool.bondedPool?.roles.root) === String(formatted) || String(pool.bondedPool?.roles.nominator) === String(formatted)) ? chilled(pool.poolId) : undefined;
       const calls = mayNeedChill ? batchAll([mayNeedChill, poolSetState]) : poolSetState;
 
-      const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, calls) : calls;
+      const tx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, calls) : calls;
       const { block, failureText, fee, success, txHash } = await signAndSend(api, tx, signer, formatted);
 
       const subAction = state === 'Destroying' ? 'Destroy Pool' : state === 'Open' ? 'Unblock Pool' : 'Block Pool';

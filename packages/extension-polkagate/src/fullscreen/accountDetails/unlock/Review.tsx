@@ -68,9 +68,9 @@ export default function Review({ address, api, classToUnlock, setDisplayPopup, s
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
   const amount = useMemo(() => amountToHuman(unlockableAmount, decimal), [decimal, unlockableAmount]);
-  const remove = api.tx.convictionVoting.removeVote; // (class, index)
-  const unlockClass = api.tx.convictionVoting.unlock; // (class)
-  const batchAll = api.tx.utility.batchAll;
+  const remove = api.tx['convictionVoting']['removeVote']; // (class, index)
+  const unlockClass = api.tx['convictionVoting']['unlock']; // (class)
+  const batchAll = api.tx['utility']['batchAll'];
 
   const extraInfo = useMemo(() => ({
     action: 'Unlock Referenda',

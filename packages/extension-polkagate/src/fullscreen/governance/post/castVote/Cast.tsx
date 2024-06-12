@@ -104,7 +104,7 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
   const [voteAmount, setVoteAmount] = React.useState<string>('0');
   const [conviction, setConviction] = useState<number>();
 
-  const tx = api && api.tx.convictionVoting.vote;
+  const tx = api && api.tx['convictionVoting']['vote'];
 
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
   const myDelegations = previousVote?.delegations?.votes;

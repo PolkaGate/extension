@@ -4,16 +4,15 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Data } from '@polkadot/types';
-import type { PalletIdentityIdentityInfo, PalletIdentityRegistration } from '@polkadot/types/lookup';
+import type { PalletIdentityLegacyIdentityInfo, PalletIdentityRegistration } from '@polkadot/types/lookup';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import { CubeGrid } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { ApiPromise } from '@polkadot/api';
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import { AccountsStore } from '@polkadot/extension-base/stores';
+import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import type { AccountsStore } from '@polkadot/extension-base/stores';
 import { sanitizeChainName } from '@polkadot/extension-polkagate/src/util/utils';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
@@ -83,7 +82,7 @@ export default function ManageIdentity(): React.ReactElement {
 
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null | undefined>();
   const [identityToSet, setIdentityToSet] = useState<DeriveAccountRegistration | null | undefined>();
-  const [infoParams, setInfoParams] = useState<PalletIdentityIdentityInfo | null | undefined>();
+  const [infoParams, setInfoParams] = useState<PalletIdentityLegacyIdentityInfo | null | undefined>();
   const [subIdsParams, setSubIdsParams] = useState<SubIdsParams | undefined>();
   const [idJudgement, setIdJudgement] = useState<IdJudgement>();
   const [subIdAccounts, setSubIdAccounts] = useState<{ address: string, name: string }[] | null | undefined>();
@@ -257,7 +256,7 @@ export default function ManageIdentity(): React.ReactElement {
       return;
     }
 
-    const _identity: PalletIdentityIdentityInfo = {
+    const _identity: PalletIdentityLegacyIdentityInfo = {
       discord: setData(identityToSet?.other?.discord || identityToSet?.discord as string),
       display: { raw: identityToSet?.display },
       email: setData(identityToSet?.email),

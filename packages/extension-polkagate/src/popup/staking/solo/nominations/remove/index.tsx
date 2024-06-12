@@ -52,7 +52,7 @@ export default function RemoveValidators({ address, api, chain, formatted, setSh
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
-  const chilled = api && api.tx.staking.chill;
+  const chilled = api && api.tx['staking']['chill'];
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));

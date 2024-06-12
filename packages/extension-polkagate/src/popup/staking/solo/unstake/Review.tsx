@@ -14,7 +14,7 @@ import type { AnyTuple } from '@polkadot/types/types';
 import { Container, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Balance } from '@polkadot/types/interfaces';
+import { type Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
@@ -96,7 +96,7 @@ export default function Review ({ address, amount, chilled, estimatedFee, hasNom
       const txs = [];
 
       if (unlockingLen >= maxUnlockingChunks) {
-        const optSpans = await api.query.staking.slashingSpans(formatted);
+        const optSpans = await api.query['staking']['slashingSpans'](formatted) as any;
         const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1 as number;
 
         txs.push(redeem(spanCount));
@@ -107,8 +107,8 @@ export default function Review ({ address, amount, chilled, estimatedFee, hasNom
       }
 
       txs.push(unbonded(amountAsBN));
-      const mayBeBatchTxs = txs.length > 1 ? api.tx.utility.batchAll(txs) : txs[0];
-      const mayBeProxiedTx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, mayBeBatchTxs) : mayBeBatchTxs;
+      const mayBeBatchTxs = txs.length > 1 ? api.tx['utility']['batchAll'](txs) : txs[0];
+      const mayBeProxiedTx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, mayBeBatchTxs) : mayBeBatchTxs;
       const { block, failureText, fee, success, txHash } = await signAndSend(api, mayBeProxiedTx, signer, formatted);
 
       const info = {
@@ -162,7 +162,7 @@ export default function Review ({ address, amount, chilled, estimatedFee, hasNom
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />

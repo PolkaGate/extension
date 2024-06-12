@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
 
@@ -56,7 +56,7 @@ export default function TuneUp(): React.ReactElement {
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
   const rebaged = api && api.tx['voterList']['rebag'];
-  const putInFrontOf = api && api.tx.voterList.putInFrontOf;
+  const putInFrontOf = api && api.tx['voterList']['putInFrontOf'];
 
   const goToStakingHome = useCallback(() => {
     onAction(`/solo/${address}`);

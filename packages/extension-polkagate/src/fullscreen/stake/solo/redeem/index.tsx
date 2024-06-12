@@ -31,7 +31,7 @@ interface Props {
   redeemable: Balance | undefined
 }
 
-export default function WithdrawRedeemable ({ address, redeemable, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function WithdrawRedeemable({ address, redeemable, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
   const availableToSoloStake = useAvailableToSoloStake(address);
@@ -42,12 +42,12 @@ export default function WithdrawRedeemable ({ address, redeemable, setRefresh, s
 
   const availableBalanceAfter = useMemo(() =>
     redeemable && availableToSoloStake && redeemable.add(availableToSoloStake)
-  , [availableToSoloStake, redeemable]);
+    , [availableToSoloStake, redeemable]);
 
   useEffect(() => {
     const handleInputs = async () => {
       if (api) {
-        const call = api.tx.staking.withdrawUnbonded; // sign by controller
+        const call = api.tx['staking']['withdrawUnbonded']; // sign by controller
 
         const optSpans = await api.query.staking.slashingSpans(formatted);
         const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;

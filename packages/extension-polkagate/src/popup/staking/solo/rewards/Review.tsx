@@ -57,8 +57,8 @@ export default function Review({ address, amount, selectedToPayout, setShow, sho
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
-  const payoutStakers = api && api.tx.staking.payoutStakersByPage;
-  const batch = api && api.tx.utility.batchAll;
+  const payoutStakers = api && api.tx['staking']['payoutStakersByPage'];
+  const batch = api && api.tx['utility']['batchAll'];
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -114,7 +114,7 @@ export default function Review({ address, amount, selectedToPayout, setShow, sho
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const ptx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
+      const ptx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, tx) : tx;
       const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, formatted);
 
       const info = {

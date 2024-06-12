@@ -197,7 +197,7 @@ export default function CrowdLoans(): React.ReactElement {
       if (mCS?.length) {
         const mCSD: Map<number, MCS> = new Map();
 
-        mCS.forEach((cs) => {
+        mCS.forEach((cs: { para_id: number; block_num: any; block_timestamp: any; unlocking_block: any; }) => {
           mCSD.set(cs.para_id, {
             contributionBlock: cs.block_num,
             contributionTimestamp: cs.block_timestamp,
@@ -275,7 +275,7 @@ export default function CrowdLoans(): React.ReactElement {
     <>
       {contributedCrowdloans !== undefined &&
         <>
-          <BouncingSubTitle label={t<string>('Contributed Crowdloans')} style={{ fontSize: '20px', fontWeight: 400 }} />
+          <BouncingSubTitle label={t<string>('Contributed Crowdloans')} />
           {!!contributedCrowdloans?.length &&
             <MyContribution
               amount={allContributionAmount}
@@ -307,7 +307,7 @@ export default function CrowdLoans(): React.ReactElement {
                             </Grid>
                           }
                         </Grid>
-                        : <Identity address={crowdloan.fund.depositor} api={api} chain={chain} formatted={crowdloan.fund.depositor} identiconSize={15} noIdenticon style={{ fontSize: '16px' }} />
+                        : <Identity address={crowdloan.fund.depositor} api={api} chain={chain as any} formatted={crowdloan.fund.depositor} identiconSize={15} noIdenticon style={{ fontSize: '16px' }} />
                       }
                     </Grid>
                   </Grid>
@@ -454,7 +454,7 @@ export default function CrowdLoans(): React.ReactElement {
           divider
           exceptionWidth={33}
           icon={
-            <vaadin-icon
+            <vaadin-icon 
               icon='vaadin:piggy-bank-coin'
               style={{
                 height: '32px',

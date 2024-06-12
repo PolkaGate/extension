@@ -55,8 +55,8 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
-  const undelegate = api && api.tx.convictionVoting.undelegate;
-  const batch = api && api.tx.utility.batchAll;
+  const undelegate = api && api.tx['convictionVoting']['undelegate'];
+  const batch = api && api.tx['utility']['batchAll'];
 
   const delegatedTracks = useMemo(() => {
     if (classicDelegateInformation) {

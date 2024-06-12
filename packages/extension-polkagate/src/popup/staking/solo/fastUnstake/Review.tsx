@@ -59,7 +59,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
-  const tx = api.tx.fastUnstake.registerFastUnstake;
+  const tx = api.tx['fastUnstake']['registerFastUnstake'];
 
   const goToStakingHome = useCallback(() => {
     setShow(false);

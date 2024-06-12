@@ -98,11 +98,11 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
       return setEstimatedFee(api.createType('Balance', BN_ONE));
     }
 
-    amountAsBN && api.tx.nominationPools.bondExtra({ FreeBalance: amountAsBN.toString() }).paymentInfo(formatted).then((i) => {
+    amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: amountAsBN.toString() }).paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee));
     });
 
-    amountAsBN && api.tx.nominationPools.bondExtra({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
+    amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     });
   }, [formatted, api, availableBalance, bondAmount, decimal, amountAsBN]);

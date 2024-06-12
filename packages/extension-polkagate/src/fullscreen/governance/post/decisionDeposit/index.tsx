@@ -22,7 +22,7 @@ import { DraggableModal } from '../../components/DraggableModal';
 import SelectProxyModal2 from '../../components/SelectProxyModal2';
 import WaitScreen from '../../partials/WaitScreen';
 import { GOVERNANCE_PROXY } from '../../utils/consts';
-import { Track } from '../../utils/types';
+import { type Track } from '../../utils/types';
 import DisplayValue from '../castVote/partial/DisplayValue';
 import Confirmation from './Confirmation';
 
@@ -61,7 +61,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
 
-  const tx = api && api.tx.referenda.placeDecisionDeposit;
+  const tx = api && api.tx['referenda']['placeDecisionDeposit'];
   const amount = track?.[1]?.decisionDeposit;
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
@@ -159,7 +159,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
                 <Identity
                   address={address}
                   api={api}
-                  chain={chain}
+                  chain={chain as any}
                   direction='row'
                   identiconSize={35}
                   showSocial={false}
@@ -169,7 +169,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
               </Grid>
               {selectedProxyAddress &&
                 <Grid container m='auto' maxWidth='92%'>
-                  <ThroughProxy address={selectedProxyAddress} chain={chain} />
+                  <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
                 </Grid>
               }
               <DisplayValue title={t('Referendum')}>
@@ -190,7 +190,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
             </Grid>
             <Grid container item sx={{ bottom: '20px', left: '4%', position: 'absolute', width: '92%' }}>
               <SignArea2
-                address={address}
+                address={address as string}
                 call={tx}
                 disabled={notEnoughBalance}
                 extraInfo={extraInfo}

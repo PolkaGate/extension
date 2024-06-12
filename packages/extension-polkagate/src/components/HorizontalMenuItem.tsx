@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { } from 'react';
 
 interface Props {

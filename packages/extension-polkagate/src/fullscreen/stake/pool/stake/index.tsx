@@ -73,7 +73,7 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
 
   useEffect(() => {
     if (amount && api && staked && amountAsBN) {
-      const call = api.tx.nominationPools.bondExtra;
+      const call = api.tx['nominationPools']['bondExtra'];
       const params = [{ FreeBalance: amountAsBN.toString() }];
 
       const totalStakeAfter = staked.add(amountAsBN);
@@ -134,11 +134,11 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
       return setEstimatedFee(api.createType('Balance', BN_ONE));
     }
 
-    amountAsBN && api.tx.nominationPools.bondExtra({ FreeBalance: amountAsBN.toString() }).paymentInfo(formatted).then((i) => {
+    amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: amountAsBN.toString() }).paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee));
     });
 
-    amountAsBN && api.tx.nominationPools.bondExtra({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
+    amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     });
   }, [formatted, api, availableBalance, amount, decimal, amountAsBN]);

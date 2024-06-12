@@ -32,7 +32,7 @@ interface Props {
   availableBalance: Balance | undefined;
 }
 
-export default function WithdrawRedeem ({ address, availableBalance, redeemable, setRefresh, setShow }: Props): React.ReactElement<Props> {
+export default function WithdrawRedeem({ address, availableBalance, redeemable, setRefresh, setShow }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
 
@@ -54,7 +54,7 @@ export default function WithdrawRedeem ({ address, availableBalance, redeemable,
     }
 
     const handleInputs = async () => {
-      const call = api.tx.nominationPools.withdrawUnbonded;
+      const call = api.tx['nominationPools']['withdrawUnbonded'];
 
       const optSpans = await api.query.staking.slashingSpans(formatted);
       const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;

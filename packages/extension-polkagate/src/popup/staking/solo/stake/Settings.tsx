@@ -30,7 +30,7 @@ export default function Settings ({ address, setSettings, setShowAdvanceSettings
       <SetPayeeController
         address={address}
         set={setSettings}
-        setShow={setShowAdvanceSettings}
+        setShow={setShowAdvanceSettings as any}
         settings={settings}
         stakingConsts={stakingConsts}
       />

@@ -5,7 +5,7 @@
 
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { type RouteComponentProps, withRouter } from 'react-router';
 
 import keyring from '@polkadot/ui-keyring';
 

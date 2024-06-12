@@ -93,10 +93,10 @@ export default function Review({ address, api, chain, mode, pool, poolMembers, s
       return;
     }
 
-    const batchAll = api.tx.utility.batchAll;
+    const batchAll = api.tx['utility']['batchAll'];
 
     if (mode === 'UnbondAll') {
-      const unbonded = api.tx.nominationPools.unbond;
+      const unbonded = api.tx['nominationPools']['unbond'];
 
       const members = membersToUnbond?.map((m) => [m.accountId, m.points]);
 
@@ -117,7 +117,7 @@ export default function Review({ address, api, chain, mode, pool, poolMembers, s
         params
       });
     } else if (mode === 'RemoveAll') {
-      const redeem = api.tx.nominationPools.withdrawUnbonded;
+      const redeem = api.tx['nominationPools']['withdrawUnbonded'];
 
       const members = membersToRemove?.map((m) => [m.accountId, m.points]);
 

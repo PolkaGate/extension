@@ -59,7 +59,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
-  const tx = api.tx.nominationPools.withdrawUnbonded;
+  const tx = api.tx['nominationPools']['withdrawUnbonded'];
 
   const decimal = api.registry.chainDecimals[0];
 

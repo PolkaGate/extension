@@ -15,15 +15,15 @@ import { Divider, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 
-import { ISubmittableResult } from '@polkadot/types/types';
+import type { ISubmittableResult } from '@polkadot/types/types';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { CanPayErrorAlert, EndRecoveryIcon, Identity, Infotip2, MakeRecoverableIcon, Motion, RescueRecoveryIcon, ShortAddress, ShowBalance, SignArea2, VouchRecoveryIcon, Warning, WrongPasswordAlert } from '../../components';
 import { useCanPayFeeAndDeposit, useCurrentBlockNumber, useInfo } from '../../hooks';
-import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
+import type { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import blockToDate from '../../popup/crowdloans/partials/blockToDate';
@@ -31,11 +31,12 @@ import { pgBoxShadow } from '../../util/utils';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
 import { toTitleCase } from '../governance/utils/util';
-import { AddressWithIdentity } from './components/SelectTrustedFriend';
+import type { AddressWithIdentity } from './components/SelectTrustedFriend';
 import Confirmation from './partial/Confirmation';
 import TrustedFriendsDisplay from './partial/TrustedFriendsDisplay';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
 import { STEPS } from '.';
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
 interface Props {
   address: string;
@@ -73,22 +74,22 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
-  const batchAll = api && api.tx.utility.batchAll;
-  const removeRecovery = api && api.tx.recovery.removeRecovery;
-  const createRecovery = api && api.tx.recovery.createRecovery;
-  const initiateRecovery = api && api.tx.recovery.initiateRecovery;
-  const closeRecovery = api && api.tx.recovery.closeRecovery;
-  const vouchRecovery = api && api.tx.recovery.vouchRecovery;
-  const claimRecovery = api && api.tx.recovery.claimRecovery;
-  const asRecovered = api && api.tx.recovery.asRecovered;
-  const chill = api && api.tx.staking.chill;
-  const unbonded = api && api.tx.staking.unbond;
-  const redeem = api && api.tx.staking.withdrawUnbonded;
-  const poolRedeem = api && api.tx.nominationPools.withdrawUnbonded;
-  const transferAll = api && api.tx.balances.transferAll; // [rescuer.accountId, false]
-  const clearIdentity = api && api.tx.identity.clearIdentity;
-  const removeProxies = api && api.tx.proxy.removeProxies;
-  const unbond = api && api.tx.nominationPools.unbond;
+  const batchAll = api && api.tx['utility']['batchAll'];
+  const removeRecovery = api && api.tx['recovery']['removeRecovery'];
+  const createRecovery = api && api.tx['recovery']['createRecovery'];
+  const initiateRecovery = api && api.tx['recovery']['initiateRecovery'];
+  const closeRecovery = api && api.tx['recovery']['closeRecovery'];
+  const vouchRecovery = api && api.tx['recovery']['vouchRecovery'];
+  const claimRecovery = api && api.tx['recovery']['claimRecovery'];
+  const asRecovered = api && api.tx['recovery']['asRecovered'];
+  const chill = api && api.tx['staking']['chill'];
+  const unbonded = api && api.tx['staking']['unbond'];
+  const redeem = api && api.tx['staking']['withdrawUnbonded'];
+  const poolRedeem = api && api.tx['nominationPools']['withdrawUnbonded'];
+  const transferAll = api && api.tx['balances']['transferAll']; // [rescuer.accountId, false]
+  const clearIdentity = api && api.tx['identity']['clearIdentity'];
+  const removeProxies = api && api.tx['proxy']['removeProxies'];
+  const unbond = api && api.tx['nominationPools']['unbond'];
 
   const depositToPay = useMemo(() => {
     if (['CloseRecovery', 'RemoveRecovery', 'VouchRecovery', 'Withdraw'].includes(mode ?? '')) {
@@ -479,7 +480,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                     {t<string>('Trusted friends')}
                   </Typography>
                   <TrustedFriendsDisplay
-                    accountsInfo={recoveryConfig.friends.infos}
+                    accountsInfo={recoveryConfig.friends.infos as unknown as DeriveAccountInfo []}
                     api={api}
                     chain={chain}
                     friends={recoveryConfig.friends.addresses}

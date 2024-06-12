@@ -13,8 +13,8 @@ import type { ApiPromise } from '@polkadot/api';
 import { Container, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { Balance } from '@polkadot/types/interfaces';
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
@@ -58,7 +58,7 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
-  const nominated = api && (poolId ? api.tx.nominationPools.nominate : api.tx.staking.nominate);
+  const nominated = api && (poolId ? api.tx['nominationPools']['nominate'] : api.tx['staking']['nominate']);
   const params = useMemo(() => {
     const selectedValidatorsAccountId = newSelectedValidators.map((v) => v.accountId);
 
@@ -125,7 +125,7 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain:chain as any});
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -164,7 +164,7 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
           <ValidatorsTable
             allValidatorsIdentities={allValidatorsIdentities}
             api={api}
-            chain={chain}
+            chain={chain as any}
             decimal={decimal}
             formatted={formatted}
             height={window.innerHeight - 320}

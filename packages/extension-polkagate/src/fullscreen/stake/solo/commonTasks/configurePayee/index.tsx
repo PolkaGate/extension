@@ -74,7 +74,7 @@ export const ModalTitle = ({ icon, onCancel, setStep, step, text }: { text: stri
   );
 };
 
-export default function ConfigurePayee ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function ConfigurePayee({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);
@@ -128,7 +128,7 @@ export default function ConfigurePayee ({ address, setRefresh, setShow, show }: 
   const getOptionLabel = useCallback((s: SoloSettings): 'Staked' | 'Others' => s?.payee === 'Staked' ? 'Staked' : 'Others', []);
   const optionDefaultVal = useMemo(() => settings && getOptionLabel(settings), [getOptionLabel, settings]);
 
-  const setPayee = api && api.tx.staking.setPayee;
+  const setPayee = api && api.tx['staking']['setPayee'];
 
   useEffect(() => {
     if (!setPayee || !api || !address || !newPayee) {

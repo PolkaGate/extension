@@ -35,7 +35,7 @@ interface Props {
   selectedProxy: Proxy | undefined;
 }
 
-export default function Review ({ address, delegateInformation, estimatedFee, selectedProxy, setModalHeight, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
+export default function Review({ address, delegateInformation, estimatedFee, selectedProxy, setModalHeight, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, chain, genesisHash, token } = useInfo(address);
   const ref = useRef(null);
@@ -46,8 +46,8 @@ export default function Review ({ address, delegateInformation, estimatedFee, se
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
-  const delegate = api && api.tx.convictionVoting.delegate;
-  const batch = api && api.tx.utility.batchAll;
+  const delegate = api && api.tx['convictionVoting']['delegate'];
+  const batch = api && api.tx['utility']['batchAll'];
 
   useEffect(() => {
     if (ref) {

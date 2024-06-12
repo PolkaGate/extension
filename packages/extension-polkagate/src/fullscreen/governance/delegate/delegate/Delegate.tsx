@@ -52,8 +52,8 @@ export default function DelegateVote({ accountLocks, address, api, balances, del
   const [checked, setChecked] = useState<BN[]>([]);
   const [maxFee, setMaxFee] = useState<Balance>();
 
-  const delegate = api && api.tx.convictionVoting.delegate;
-  const batch = api && api.tx.utility.batchAll;
+  const delegate = api && api.tx['convictionVoting']['delegate'];
+  const batch = api && api.tx['utility']['batchAll'];
 
   const delegateAmountBN = useMemo(() => (amountToMachine(delegateAmount, decimal)), [decimal, delegateAmount]);
   const delegatePower = useMemo(() => {

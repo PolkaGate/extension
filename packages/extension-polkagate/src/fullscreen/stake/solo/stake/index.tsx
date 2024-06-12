@@ -70,12 +70,12 @@ export default function SoloStake({ inputs, onBack, setInputs, setStep }: Props)
 
   const { call, params } = useMemo(() => {
     if (amountAsBN && api && newSelectedValidators && payee) {
-      const bonded = api.tx.staking.bond;
+      const bonded = api.tx['staking']['bond'];
       const bondParams = [amountAsBN, payee];
 
-      const nominated = api.tx.staking.nominate;
+      const nominated = api.tx['staking']['nominate'];
       const ids = newSelectedValidators.map((v) => v.accountId);
-      const call = api.tx.utility.batchAll;
+      const call = api.tx['utility']['batchAll'];
       const params = [[bonded(...bondParams), nominated(ids)]];
 
       return { call, params };

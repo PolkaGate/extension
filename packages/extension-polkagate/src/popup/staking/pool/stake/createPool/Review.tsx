@@ -45,7 +45,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
   const proxies = useProxies(api, address);
   const decimal = useDecimal(address);
 
-  const create = api.tx.nominationPools.create;
+  const create = api.tx['nominationPools']['create'];
 
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();

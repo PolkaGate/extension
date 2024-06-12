@@ -9,7 +9,7 @@ import React, { useCallback, useContext, useMemo } from 'react';
 import { AccountContext, PButton, Popup } from '../../components';
 import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
-import { NameAddress, TransactionDetail } from '../../util/types';
+import type { NameAddress, TransactionDetail } from '../../util/types';
 import { accountName, amountToMachine, toShortAddress, upperCaseFirstChar } from '../../util/utils';
 import Amount from './partials/Amount';
 import FailSuccessIcon from './partials/FailSuccessIcon';
@@ -72,7 +72,7 @@ export default function Detail({ chainName, decimal, info, setShowDetail, showDe
         </Typography>
         <Divider sx={{ bgcolor: 'secondary.light', height: '2px', m: '3px auto', width: '35%' }} />
         <FailSuccessIcon success={info.success} />
-        <Item item={info?.date && new Date(info.date).toLocaleDateString(undefined, options)} mt={15} />
+        <Item item={info?.date ? new Date(info.date).toLocaleDateString(undefined, options as any) : undefined} mt={15} />
         {info?.from &&
           <ToFrom item={<ShowNameAddress title={t('From')} nameAddress={info.from} />} toCopy={info?.from?.address} />
         }

@@ -49,12 +49,12 @@ export default function Index(): React.ReactElement {
   const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active as unknown as BN, [stakingAccount]);
   const totalAfterUnstake = useMemo(() => staked && decimal ? staked.sub(amountToMachine(amount, decimal)) : undefined, [amount, decimal, staked]);
   const unlockingLen = stakingAccount?.stakingLedger?.unlocking?.length;
-  const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
+  const maxUnlockingChunks = api ? (api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber() : undefined;
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
 
-  const unbonded = api && api.tx.staking.unbond; // signer: Controller
-  const redeem = api && api.tx.staking.withdrawUnbonded; // signer: Controller
-  const chilled = api && api.tx.staking.chill; // signer: Controller
+  const unbonded = api && api.tx['staking']['unbond']; // signer: Controller
+  const redeem = api && api.tx['staking']['withdrawUnbonded']; // signer: Controller
+  const chilled = api && api.tx['staking']['chill']; // signer: Controller
   const redeemDate = useMemo(() => {
     if (stakingConsts) {
       const date = Date.now() + stakingConsts.unbondingDuration * 24 * 60 * 60 * 1000;
@@ -104,7 +104,7 @@ export default function Index(): React.ReactElement {
         txs.push(chilled());
       }
 
-      const finalTx = txs.length > 1 ? api.tx.utility.batchAll(txs) : txs[0];
+      const finalTx = txs.length > 1 ? api.tx['utility']['batchAll'](txs) : txs[0];
 
       const partialFee = (await finalTx.paymentInfo(formatted))?.partialFee;
 

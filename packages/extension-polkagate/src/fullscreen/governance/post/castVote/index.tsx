@@ -83,8 +83,8 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
   const [alterType, setAlterType] = useState<'modify' | 'remove'>();
   const [reviewModalHeight, setReviewModalHeight] = useState<number | undefined>();
 
-  const voteTx = api && api.tx.convictionVoting.vote;
-  const removeTx = api && api.tx.convictionVoting.removeVote;
+  const voteTx = api && api.tx['convictionVoting']['vote'];
+  const removeTx = api && api.tx['convictionVoting']['removeVote'];
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];

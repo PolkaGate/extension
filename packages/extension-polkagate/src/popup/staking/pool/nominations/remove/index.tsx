@@ -52,7 +52,7 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
-  const chilled = api && api.tx.nominationPools.chill;
+  const chilled = api && api.tx['nominationPools']['chill'];
   const params = useMemo(() => [poolId], [poolId]);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;

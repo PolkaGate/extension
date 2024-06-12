@@ -99,8 +99,8 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyStep, setProxyStep] = useState<number>();
 
-  const delegate = api && api.tx.convictionVoting.delegate;
-  const batch = api && api.tx.utility.batchAll;
+  const delegate = api && api.tx['convictionVoting']['delegate'];
+  const batch = api && api.tx['utility']['batchAll'];
 
   useEffect(() => {
     if (step === STEPS.PROXY) {

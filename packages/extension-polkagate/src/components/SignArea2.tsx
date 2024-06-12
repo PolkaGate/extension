@@ -65,7 +65,7 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-export default function SignArea ({ address, call, disabled, extraInfo, isPasswordError, mayBeApi, onSecondaryClick, params, prevState, previousStep, primaryBtn, primaryBtnText, proxyModalHeight, proxyTypeFilter, secondaryBtnText, selectedProxy, setIsPasswordError, setRefresh, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, token }: Props): React.ReactElement<Props> {
+export default function SignArea({ address, call, disabled, extraInfo, isPasswordError, mayBeApi, onSecondaryClick, params, prevState, previousStep, primaryBtn, primaryBtnText, proxyModalHeight, proxyTypeFilter, secondaryBtnText, selectedProxy, setIsPasswordError, setRefresh, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, token }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { account, api: apiFromAddress, chain, formatted } = useInfo(address);
@@ -118,7 +118,7 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
 
     const tx = (params ? call(...params) : call) as SubmittableExtrinsic<'promise', ISubmittableResult>;
 
-    return selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
+    return selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, tx) : tx;
   }, [api, call, formatted, params, selectedProxy]);
 
   const payload = useMemo(() => {
@@ -374,54 +374,54 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
                   />
                 </Grid>
                 {(!!proxies?.length || prevState?.selectedProxyAddress) &&
-                <Tooltip
-                  arrow
-                  componentsProps={{
-                    popper: {
-                      sx: {
-                        '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-18kejt8': {
-                          mb: '3px',
-                          p: '3px 15px'
-                        },
-                        '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-1yuxi3g': {
-                          mb: '3px',
-                          p: '3px 15px'
-                        },
-                        visibility: selectedProxy ? 'visible' : 'hidden'
+                  <Tooltip
+                    arrow
+                    componentsProps={{
+                      popper: {
+                        sx: {
+                          '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-18kejt8': {
+                            mb: '3px',
+                            p: '3px 15px'
+                          },
+                          '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-1yuxi3g': {
+                            mb: '3px',
+                            p: '3px 15px'
+                          },
+                          visibility: selectedProxy ? 'visible' : 'hidden'
+                        }
+                      },
+                      tooltip: {
+                        sx: {
+                          '& .MuiTooltip-arrow': {
+                            color: '#fff',
+                            height: '10px'
+                          },
+                          backgroundColor: '#fff',
+                          color: '#000',
+                          fontWeight: 400
+                        }
                       }
-                    },
-                    tooltip: {
-                      sx: {
-                        '& .MuiTooltip-arrow': {
-                          color: '#fff',
-                          height: '10px'
-                        },
-                        backgroundColor: '#fff',
-                        color: '#000',
-                        fontWeight: 400
-                      }
+                    }}
+                    leaveDelay={300}
+                    placement='top-start'
+                    sx={{ width: 'fit-content' }}
+                    title={
+                      <>
+                        {selectedProxy &&
+                          <Identity
+                            chain={chain}
+                            formatted={selectedProxy?.delegate}
+                            identiconSize={30}
+                            style={{ fontSize: '14px' }}
+                          />
+                        }
+                      </>
                     }
-                  }}
-                  leaveDelay={300}
-                  placement='top-start'
-                  sx={{ width: 'fit-content' }}
-                  title={
-                    <>
-                      {selectedProxy &&
-                        <Identity
-                          chain={chain}
-                          formatted={selectedProxy?.delegate}
-                          identiconSize={30}
-                          style={{ fontSize: '14px' }}
-                        />
-                      }
-                    </>
-                  }
-                >
-                  <Grid aria-label='useProxy' item onClick={goToSelectProxy} pl='10px' pt='10px' role='button' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
-                    {selectedProxy ? t('Update proxy') : t('Use proxy')}
-                  </Grid>
-                </Tooltip>
+                  >
+                    <Grid aria-label='useProxy' item onClick={goToSelectProxy} pl='10px' pt='10px' role='button' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
+                      {selectedProxy ? t('Update proxy') : t('Use proxy')}
+                    </Grid>
+                  </Tooltip>
                 }
               </Grid>
               <Grid alignItems='center' container id='TwoButtons' item sx={{ '> div': { m: 0, width: '100%' }, pt: '15px' }}>

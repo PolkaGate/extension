@@ -146,10 +146,11 @@ export interface TxResult {
 }
 export interface TransactionDetail extends TxResult {
   action: string; // send, Solo staking, pool staking ...
-  subAction?: string; // bond_extra, unbound, nominate
-  from: NameAddress;
   amount?: string;
+  chain?: Chain;
   date: number;
+  from: NameAddress;
+  subAction?: string; // bond_extra, unbound, nominate
   to?: NameAddress;
   token?: string;
   throughProxy?: NameAddress;

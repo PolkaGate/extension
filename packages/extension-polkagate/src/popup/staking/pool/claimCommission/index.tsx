@@ -55,7 +55,7 @@ export default function ClaimCommission({ address, pool, setShow, show }: Props)
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
-  const tx = api && api.tx.nominationPools.claimCommission;
+  const tx = api && api.tx['nominationPools']['claimCommission'];
 
   const goToStakingHome = useCallback(() => {
     setShow(false);

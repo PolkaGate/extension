@@ -84,8 +84,8 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
   const poolState = useMemo(() => String(myPool?.bondedPool?.state), [myPool?.bondedPool?.state]);
   const poolMemberCounter = useMemo(() => Number(myPool?.bondedPool?.memberCounter), [myPool?.bondedPool?.memberCounter]);
 
-  const unbonded = api && api.tx.nominationPools.unbond;
-  const poolWithdrawUnbonded = api && api.tx.nominationPools.poolWithdrawUnbonded;
+  const unbonded = api && api.tx['nominationPools']['unbond'];
+  const poolWithdrawUnbonded = api && api.tx['nominationPools']['poolWithdrawUnbonded'];
 
   const helperText = useMemo(() => {
     if (!myPool || !formatted || !amountAsBN || !staked) {
@@ -205,7 +205,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
   useEffect(() => {
     const handleInput = async () => {
       if (amountAsBN && api && maxUnlockingChunks && unlockingLen !== undefined && poolConsts && myPool?.poolId && unbonded && poolWithdrawUnbonded) {
-        const batch = api.tx.utility.batchAll;
+        const batch = api.tx['utility']['batchAll'];
 
         const unbondedParams = [formatted, amountAsBN];
 

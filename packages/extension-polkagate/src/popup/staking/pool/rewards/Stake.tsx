@@ -57,7 +57,7 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
-  const tx = api.tx.nominationPools.bondExtra;
+  const tx = api.tx['nominationPools']['bondExtra'];
   const params = useMemo(() => ['Rewards'], []);
   const decimal = api.registry.chainDecimals[0];
 

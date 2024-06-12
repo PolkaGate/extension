@@ -43,7 +43,7 @@ export default function StakeRewards({ address, pool, setRefresh, setShow, show 
 
   useEffect(() => {
     if (claimable && api && staked) {
-      const call = api.tx.nominationPools.bondExtra;
+      const call = api.tx['nominationPools']['bondExtra'];
       const params = ['Rewards'];
 
       const extraInfo = {

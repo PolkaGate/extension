@@ -56,9 +56,9 @@ export default function Review({ address, api, chain, depositToPay, depositValue
 
   const canPayFeeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
 
-  const removeProxy = api.tx.proxy.removeProxy; /** (delegate, proxyType, delay) **/
-  const addProxy = api.tx.proxy.addProxy; /** (delegate, proxyType, delay) **/
-  const batchAll = api.tx.utility.batchAll;
+  const removeProxy = api.tx['proxy']['removeProxy']; /** (delegate, proxyType, delay) **/
+  const addProxy = api.tx['proxy']['addProxy']; /** (delegate, proxyType, delay) **/
+  const batchAll = api.tx['utility']['batchAll'];
 
   const goToMyAccounts = useCallback(() => {
     setShowConfirmation(false);
@@ -102,7 +102,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const decidedTx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
+      const decidedTx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, tx) : tx;
 
       const { block, failureText, fee, success, txHash } = await signAndSend(api, decidedTx, signer, selectedProxy?.delegate ?? formatted);
 
