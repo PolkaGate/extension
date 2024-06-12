@@ -78,7 +78,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
   }, [amountAsBN, staked, unstakeMaxAmount]);
 
   const unlockingLen = myPool?.stashIdAccount?.stakingLedger?.unlocking?.length;
-  const maxUnlockingChunks = api &&(api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber();
+  const maxUnlockingChunks = api && (api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber();
   const isPoolRoot = useMemo(() => String(formatted) === String(myPool?.bondedPool?.roles?.root), [formatted, myPool?.bondedPool?.roles?.root]);
   const isPoolDepositor = useMemo(() => String(formatted) === String(myPool?.bondedPool?.roles?.depositor), [formatted, myPool?.bondedPool?.roles?.depositor]);
   const poolState = useMemo(() => String(myPool?.bondedPool?.state), [myPool?.bondedPool?.state]);
@@ -305,7 +305,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
             {myPool &&
               <ShowPool
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 label={t('Pool')}
                 mode='Default'
                 pool={myPool}

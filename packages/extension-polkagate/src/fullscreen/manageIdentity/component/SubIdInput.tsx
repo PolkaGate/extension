@@ -152,7 +152,7 @@ export default function SubIdInput({ api, selectableAddresses = [], chain = unde
                 <Grid alignItems='center' container item justifyContent='space-between' key={address} onClick={() => onSelectOption(address)} sx={{ '&:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light', mb: '5px' }, cursor: 'pointer', p: '5px' }}>
                   <Identity
                     api={api}
-                    chain={chain}
+                    chain={chain as any}
                     direction='row'
                     formatted={address}
                     identiconSize={28}

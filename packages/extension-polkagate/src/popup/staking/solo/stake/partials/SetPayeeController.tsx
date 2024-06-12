@@ -125,7 +125,7 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
         <>
           <AccountInputWithIdentity
             address={controllerId as string}
-            chain={chain}
+            chain={chain as any}
             disabled={isControllerDeprecated}
             label={isControllerDeprecated ? t('Controller account is deprecated') : t('Controller account')}
             setAddress={isControllerDeprecated ? null : setControllerId}
@@ -160,7 +160,7 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
             <>
               <AccountInputWithIdentity
                 address={rewardDestinationAccount as string}
-                chain={chain}
+                chain={chain as any}
                 label={t('Specific account')}
                 setAddress={setRewardDestinationAccount}
                 style={{ pt: '15px', px: '15px' }}

@@ -156,7 +156,7 @@ export default function AccountInformationForHome({ accountAssets, address, hide
                 accountInfo={accountInfo}
                 address={address}
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 noIdenticon
                 onClick={goToDetails}
                 style={{ width: 'calc(100% - 40px)' }}

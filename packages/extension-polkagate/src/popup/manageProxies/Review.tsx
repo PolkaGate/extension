@@ -161,7 +161,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
         {helperText}
       </Typography>
       <ProxyTable
-        chain={chain}
+        chain={chain as any}
         label={t<string>('Proxies')}
         maxHeight={window.innerHeight / 3}
         mode='Status'
@@ -239,7 +239,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
           <ManageProxiesTxDetail
             address={selectedProxyAddress}
             api={api}
-            chain={chain}
+            chain={chain as any}
             deposit={depositValue}
             name={selectedProxyName}
             proxies={proxiesToChange as ProxyItem[]}

@@ -97,7 +97,7 @@ export default function ActiveCrowdloans({ activeCrowdloans, api, chain, contrib
             <Arrows onNext={goNextCrowdloan} onPrevious={goPreviousCrowdloan} />
             <ShowCrowdloan
               api={api}
-              chain={chain}
+              chain={chain as any}
               crowdloan={activeCrowdloans[itemToShow]}
               crowdloansId={crowdloansId}
               currentBlockNumber={currentBlockNumber}
@@ -124,7 +124,7 @@ export default function ActiveCrowdloans({ activeCrowdloans, api, chain, contrib
       {showContribute && selectedCrowdloan &&
         <Contribute
           api={api}
-          chain={chain}
+          chain={chain as any}
           crowdloan={selectedCrowdloan}
           crowdloansId={crowdloansId}
           currentBlockNumber={currentBlockNumber}

@@ -142,7 +142,7 @@ export default function ClaimCommission({ address, pool, setShow, show }: Props)
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />
@@ -156,7 +156,7 @@ export default function ClaimCommission({ address, pool, setShow, show }: Props)
             withFee
           />
           <To
-            chain={chain}
+            chain={chain as any}
             formatted={payee}
             label={t('Payee')}
             noDivider

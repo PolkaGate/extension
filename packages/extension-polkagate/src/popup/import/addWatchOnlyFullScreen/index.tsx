@@ -112,7 +112,7 @@ export default function AddWatchOnlyFullScreen(): React.ReactElement {
           <AddressInput
             addWithQr
             address={realAddress}
-            chain={chain}
+            chain={chain as any}
             label={t('Account ID')}
             setAddress={setRealAddress}
             style={{ m: '30px auto 0', width: '100%' }}

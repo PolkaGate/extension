@@ -65,7 +65,7 @@ function ShowValidator({ accountInfo, allInOneRow = true, api, chain, check, dec
         <Identity
           accountInfo={accountInfo}
           api={api}
-          chain={chain}
+          chain={chain as any}
           formatted={String(v.accountId)}
           identiconSize={24}
           showShortAddress

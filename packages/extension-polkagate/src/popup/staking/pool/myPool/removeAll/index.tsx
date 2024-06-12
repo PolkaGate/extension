@@ -272,7 +272,7 @@ export default function RemoveAll({ address, pool, setRefresh, setShowRemoveAll,
         <Review
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           formatted={formatted}
           mode={mode}
           pool={pool}

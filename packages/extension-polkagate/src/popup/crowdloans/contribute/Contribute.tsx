@@ -138,7 +138,7 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
         />
         <ShowParachain
           api={api}
-          chain={chain}
+          chain={chain as any}
           crowdloan={crowdloan}
           crowdloansId={crowdloansId}
           setShowCrowdloanInfo={setShowCrowdloanInfo}
@@ -178,7 +178,7 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
         {showCrowdloanInfo && chain &&
           <ParachainInfo
             api={api}
-            chain={chain}
+            chain={chain as any}
             crowdloan={crowdloan}
             crowdloansId={crowdloansId}
             currentBlockNumber={currentBlockNumber}

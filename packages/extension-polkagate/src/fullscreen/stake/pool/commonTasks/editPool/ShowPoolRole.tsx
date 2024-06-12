@@ -32,7 +32,7 @@ export default function ShowPoolRole({ chain, roleAddress, roleTitle, showDivide
       {roleAddress
         ? <Grid container direction='row' item justifyContent='center'>
           <Identity
-            chain={chain}
+            chain={chain as any}
             direction='row'
             formatted={roleAddress}
             identiconSize={25}

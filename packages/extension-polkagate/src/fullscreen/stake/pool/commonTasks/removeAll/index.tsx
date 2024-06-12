@@ -291,7 +291,7 @@ export default function RemoveAll({ address, api, chain, onClose, pool, setRefre
           <Review
             address={address}
             api={api}
-            chain={chain}
+            chain={chain as any}
             mode={mode}
             pool={pool}
             poolMembers={members}

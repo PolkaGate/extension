@@ -177,13 +177,13 @@ function Review({ address, api, chain, depositedValue, newDepositValue, proxyIte
             {selectedProxyAddress &&
               <Grid container m='auto' maxWidth='92%'>
                 <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
-                <ThroughProxy address={selectedProxyAddress} chain={chain} />
+                <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
               </Grid>
             }
             <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
             <ProxyTableFL
               api={api}
-              chain={chain}
+              chain={chain as any}
               labelAlignment='center'
               proxyItems={changedItems}
               status='Read-Only'

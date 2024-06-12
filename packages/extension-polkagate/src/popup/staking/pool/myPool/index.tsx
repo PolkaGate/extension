@@ -45,7 +45,7 @@ interface ArrowsProps {
   onNext: () => void;
 }
 
-export default function Pool (): React.ReactElement {
+export default function Pool(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -353,7 +353,7 @@ export default function Pool (): React.ReactElement {
           }
           <ShowPool
             api={api}
-            chain={chain}
+            chain={chain as any}
             mode='Default'
             pool={poolsToShow[poolIndex]}
             showInfo
@@ -364,7 +364,7 @@ export default function Pool (): React.ReactElement {
           />
           <ShowRoles
             api={api}
-            chain={chain}
+            chain={chain as any}
             label={t<string>('Roles')}
             mode='Roles'
             pool={poolsToShow[poolIndex]}

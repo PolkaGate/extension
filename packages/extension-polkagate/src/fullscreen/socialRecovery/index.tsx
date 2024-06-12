@@ -45,7 +45,7 @@ export const STEPS = {
   SIGN_QR: 200
 };
 
-export default function SocialRecovery (): React.ReactElement {
+export default function SocialRecovery(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -79,14 +79,14 @@ export default function SocialRecovery (): React.ReactElement {
       : activeRecoveries === null
         ? null
         : undefined
-  , [activeRecoveries, formatted]);
+    , [activeRecoveries, formatted]);
   const activeLost = useMemo(() =>
     activeRecoveries && formatted
       ? activeRecoveries.filter((active) => active.lost === String(formatted)).at(-1) ?? null
       : activeRecoveries === null
         ? null
         : undefined
-  , [activeRecoveries, formatted]);
+    , [activeRecoveries, formatted]);
 
   useEffect(() => {
     unsupportedChain ? setStep(STEPS.UNSUPPORTED) : setStep(STEPS.CHECK_SCREEN);
@@ -250,7 +250,7 @@ export default function SocialRecovery (): React.ReactElement {
             activeLost={activeLost}
             activeProxy={activeProxy}
             activeRescue={activeRescue}
-            chain={chain}
+            chain={chain as any}
             recoveryInfo={recoveryInfo}
             setLostAccountAddress={setLostAccountAddress}
             setMode={setMode}
@@ -260,7 +260,7 @@ export default function SocialRecovery (): React.ReactElement {
         {step === STEPS.RECOVERY_DETAIL && recoveryInfo &&
           <RecoveryDetail
             api={api}
-            chain={chain}
+            chain={chain as any}
             recoveryInformation={recoveryInfo}
             setMode={setMode}
             setRecoveryConfig={setRecoveryConfig}
@@ -313,7 +313,7 @@ export default function SocialRecovery (): React.ReactElement {
             address={address}
             allActiveRecoveries={activeRecoveries}
             api={api}
-            chain={chain}
+            chain={chain as any}
             depositValue={totalDeposit}
             lostAccountAddress={lostAccountAddress}
             mode={mode}

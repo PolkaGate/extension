@@ -168,7 +168,7 @@ export default function Index(): React.ReactElement {
           amount={staked}
           api={api}
           available={getValue('available', balances)}
-          chain={chain}
+          chain={chain as any}
           formatted={formatted}
           setShow={setShowReview}
           show={showFastUnstakeReview}

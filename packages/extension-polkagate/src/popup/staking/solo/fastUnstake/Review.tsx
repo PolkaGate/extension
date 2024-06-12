@@ -155,7 +155,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />

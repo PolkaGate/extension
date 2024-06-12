@@ -324,7 +324,7 @@ export default function Index(): React.ReactElement {
       {myPool &&
         <ShowPool
           api={api}
-          chain={chain}
+          chain={chain as any}
           label={t<string>('Pool')}
           mode='Default'
           pool={myPool}
@@ -350,7 +350,7 @@ export default function Index(): React.ReactElement {
           address={address}
           amount={amount}
           api={api}
-          chain={chain}
+          chain={chain as any}
           estimatedFee={estimatedFee}
           formatted={formatted}
           maxUnlockingChunks={maxUnlockingChunks}
@@ -369,7 +369,7 @@ export default function Index(): React.ReactElement {
         <SetState
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           formatted={formatted}
           headerText={t<string>('Destroy Pool')}
           helperText={destroyHelperText}

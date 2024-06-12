@@ -68,7 +68,7 @@ export default function ManageEditPool({ address, api, chain, onClose, pool, set
           {step === STEPS.INDEX &&
             <Edit
               api={api}
-              chain={chain}
+              chain={chain as any}
               changes={changes}
               onClose={onClose}
               pool={pool}
@@ -80,7 +80,7 @@ export default function ManageEditPool({ address, api, chain, onClose, pool, set
             <Review
               address={address}
               api={api}
-              chain={chain}
+              chain={chain as any}
               changes={changes}
               formatted={String(formatted)}
               pool={pool}

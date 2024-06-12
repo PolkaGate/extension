@@ -190,7 +190,7 @@ export default function Index(): React.ReactElement {
           address={address}
           amount={restakeAllAmount ? unlockingAmount : amountToMachine(amount, decimal)}
           api={api}
-          chain={chain}
+          chain={chain as any}
           estimatedFee={estimatedFee}
           formatted={formatted}
           rebonded={rebonded}

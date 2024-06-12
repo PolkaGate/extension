@@ -62,7 +62,7 @@ function ShowValidator({ accountInfo, api, chain, check, decimal, handleCheck, i
           <Identity
             accountInfo={accountInfo}
             api={api}
-            chain={chain}
+            chain={chain as any}
             formatted={String(v.accountId)}
             identiconSize={24}
             showShortAddress

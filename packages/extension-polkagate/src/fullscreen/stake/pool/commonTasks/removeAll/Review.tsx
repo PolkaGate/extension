@@ -151,7 +151,7 @@ export default function Review({ address, api, chain, mode, pool, poolMembers, s
           }
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             style={{ mt: 'auto' }}
             title={t('Account holder')}
@@ -172,7 +172,7 @@ export default function Review({ address, api, chain, mode, pool, poolMembers, s
           }
           <ShowPool
             api={api}
-            chain={chain}
+            chain={chain as any}
             label=''
             mode='Default'
             pool={pool}

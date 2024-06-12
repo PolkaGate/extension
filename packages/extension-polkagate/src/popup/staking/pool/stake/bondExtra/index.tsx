@@ -168,7 +168,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
       />
       <ShowPool
         api={api}
-        chain={chain}
+        chain={chain as any}
         label={t<string>('Pool')}
         mode='Default'
         pool={pool}

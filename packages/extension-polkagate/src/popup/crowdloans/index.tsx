@@ -398,7 +398,7 @@ export default function CrowdLoans(): React.ReactElement {
                 <ActiveCrowdloans
                   activeCrowdloans={activeCrowdloans}
                   api={api}
-                  chain={chain}
+                  chain={chain as any}
                   contributedCrowdloans={myContributions}
                   crowdloansId={crowdloansId}
                   currentBlockNumber={currentBlockNumber}
@@ -418,7 +418,7 @@ export default function CrowdLoans(): React.ReactElement {
               {itemShow === TAB_MAP.PAST_CROWDLOANS &&
                 <PastCrowdloans
                   api={api}
-                  chain={chain}
+                  chain={chain as any}
                   contributedCrowdloans={myContributions}
                   crowdloansId={crowdloansId}
                   currentBlockNumber={currentBlockNumber}
@@ -454,7 +454,7 @@ export default function CrowdLoans(): React.ReactElement {
           divider
           exceptionWidth={33}
           icon={
-            <vaadin-icon 
+            <vaadin-icon
               icon='vaadin:piggy-bank-coin'
               style={{
                 height: '32px',

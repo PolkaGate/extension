@@ -105,7 +105,7 @@ export default function AddProxy({ address, chain, onChange, proxyItems, setProx
       <AddressInput
         address={realAddress as string}
         allAddresses={allAddresses}
-        chain={chain}
+        chain={chain as any}
         helperText={t('The account address which will be a proxy account')}
         label='Account ID'
         setAddress={setRealAddress}

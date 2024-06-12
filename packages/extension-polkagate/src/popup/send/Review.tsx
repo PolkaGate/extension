@@ -39,7 +39,7 @@ export function To({ chain, fontSize1 = 28, formatted, identiconSize = 31, label
       </Grid>
       <Grid alignItems='center' container item justifyContent='center' sx={{ maxWidth: '85%', lineHeight: `${identiconSize}px`, pt: `${pt2}px`, width: '90%' }}>
         <Identity
-          chain={chain}
+          chain={chain as any}
           formatted={formatted}
           identiconSize={identiconSize}
           showSocial={false}
@@ -178,13 +178,13 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
             title={t('From')}
           />
           <To
-            chain={chain}
+            chain={chain as any}
             formatted={recipientAddress}
             label={t('To')}
             pt1={0}

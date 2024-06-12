@@ -138,7 +138,7 @@ function ImportProxiedFS(): React.ReactElement {
             {selectedAddress && chain &&
               <ProxiedTable
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 label={t('Proxied account(s)')}
                 maxHeight='200px'
                 minHeight={tableMinHeight ? `${tableMinHeight}px` : undefined}

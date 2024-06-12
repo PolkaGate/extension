@@ -30,7 +30,7 @@ import { MAX_AMOUNT_LENGTH } from '../../util/constants';
 import { amountToHuman, amountToMachine, isValidAddress } from '../../util/utils';
 import Review from './Review';
 
-export default function Send (): React.ReactElement {
+export default function Send(): React.ReactElement {
   const { t } = useTranslation();
   const history = useHistory();
   const { address } = useParams<FormattedAddressState>();
@@ -176,7 +176,7 @@ export default function Send (): React.ReactElement {
         />
         <AccountInputWithIdentity
           address={recipientAddress as string}
-          chain={chain}
+          chain={chain as any}
           ignoreAddress={formatted}
           label={t('To')}
           name={recipientName}
@@ -209,19 +209,19 @@ export default function Send (): React.ReactElement {
         text={t<string>('Next')}
       />
       {showReview && amount &&
-      <Review
-        address={address}
-        amount={amount}
-        api={api}
-        chain={chain}
-        estimatedFee={estimatedFee}
-        recipientAddress={recipientAddress as string}
-        recipientName={recipientName}
-        setShow={setShowReview}
-        show={showReview}
-        transfer={transfer}
-        transferType={transferType}
-      />
+        <Review
+          address={address}
+          amount={amount}
+          api={api}
+          chain={chain as any}
+          estimatedFee={estimatedFee}
+          recipientAddress={recipientAddress as string}
+          recipientName={recipientName}
+          setShow={setShowReview}
+          show={showReview}
+          transfer={transfer}
+          transferType={transferType}
+        />
       }
     </Motion>
   );

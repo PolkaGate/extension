@@ -37,7 +37,7 @@ interface State {
   poolConsts?: PoolStakingConsts;
 }
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();
@@ -68,7 +68,7 @@ export default function Index (): React.ReactElement {
         : String(formatted) === String(stakingAccount?.controllerId)
           ? 'Controller'
           : 'undefined' // default
-  , [formatted, stakingAccount?.controllerId, stakingAccount?.stashId]);
+    , [formatted, stakingAccount?.controllerId, stakingAccount?.stashId]);
 
   const canStake = ['Both', 'Stash'].includes(role());
   const canUnstake = ['Both', 'Controller'].includes(role());
@@ -395,7 +395,7 @@ export default function Index (): React.ReactElement {
           amount={redeemable}
           api={api}
           available={getValue('available', balances)}
-          chain={chain}
+          chain={chain as any}
           formatted={String(formatted)}
           setRefresh={setRefresh}
           setShow={setShowRedeemableWithdraw}

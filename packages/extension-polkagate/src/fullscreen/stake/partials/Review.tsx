@@ -33,7 +33,7 @@ interface Props {
   onClose?: () => void
 }
 
-function RewardsDestination ({ address, payee }: { address: string | undefined, payee: Payee }) {
+function RewardsDestination({ address, payee }: { address: string | undefined, payee: Payee }) {
   const { t } = useTranslation();
   const { chain, formatted } = useInfo(address);
 
@@ -41,7 +41,7 @@ function RewardsDestination ({ address, payee }: { address: string | undefined, 
     payee === 'Stash'
       ? formatted
       : payee.Account as string
-  , [formatted, payee]);
+    , [formatted, payee]);
 
   return (
     <Grid container item justifyContent='center' sx={{ alignSelf: 'center', my: '5px' }}>
@@ -55,7 +55,7 @@ function RewardsDestination ({ address, payee }: { address: string | undefined, 
             {t('Add to staked amount')}
           </Typography>
           : <Grid container item justifyContent='center'>
-            <Identity chain={chain} formatted={destinationAddress} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+            <Identity chain={chain as any} formatted={destinationAddress} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
             <ShortAddress address={destinationAddress} />
           </Grid>
         }
@@ -64,7 +64,7 @@ function RewardsDestination ({ address, payee }: { address: string | undefined, 
   );
 }
 
-export default function Review ({ address, inputs, onClose, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, inputs, onClose, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, formatted, token } = useInfo(address);
   const proxies = useProxies(api, formatted);
@@ -117,7 +117,7 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
           <Container disableGutters sx={{ px: '30px' }}>
             <AccountHolderWithProxy
               address={address}
-              chain={chain}
+              chain={chain as any}
               selectedProxyAddress={selectedProxyAddress}
               style={{ mt: 'auto' }}
               title={t('Account holder')}
@@ -157,7 +157,7 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
                 </Typography>
                 <ShowPool
                   api={api}
-                  chain={chain}
+                  chain={chain as any}
                   mode='Default'
                   pool={inputs.extraInfo.pool as MyPoolInfo}
                   showInfo

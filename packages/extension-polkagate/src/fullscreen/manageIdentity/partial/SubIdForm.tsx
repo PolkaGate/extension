@@ -50,7 +50,7 @@ export default function SubIdForm({ address, addressesToSelect, api, chain, erro
       <SubIdInput
         address={address}
         api={api}
-        chain={chain}
+        chain={chain as any}
         disabled={false}
         label={t('Account')}
         selectableAddresses={addressesToSelect}

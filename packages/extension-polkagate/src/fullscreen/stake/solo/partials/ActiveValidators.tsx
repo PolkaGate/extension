@@ -20,7 +20,7 @@ interface Props {
   address?: string;
 }
 
-export default function ActiveValidators ({ address }: Props): React.ReactElement {
+export default function ActiveValidators({ address }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);
@@ -57,7 +57,7 @@ export default function ActiveValidators ({ address }: Props): React.ReactElemen
                   accountInfo={v.accountInfo}
                   allInOneRow={false}
                   api={api}
-                  chain={chain}
+                  chain={chain as any}
                   decimal={decimal}
                   isActive={true}
                   isOversubscribed={v.isOversubscribed}
@@ -77,7 +77,7 @@ export default function ActiveValidators ({ address }: Props): React.ReactElemen
                         accountInfo={v.accountInfo}
                         allInOneRow={false}
                         api={api}
-                        chain={chain}
+                        chain={chain as any}
                         decimal={decimal}
                         isActive={true}
                         isOversubscribed={v.isOversubscribed}

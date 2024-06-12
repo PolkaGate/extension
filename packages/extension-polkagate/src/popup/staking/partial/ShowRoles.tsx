@@ -67,7 +67,7 @@ export default function ShowRoles({ api, chain, label, mode, pool, style }: Prop
                 </Grid>
                 <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='65%'>
                   {acc.address
-                    ? <Identity address={acc.address} api={api} chain={chain} formatted={acc.address} identiconSize={25} showShortAddress showSocial style={{ fontSize: '14px', height: '37px', pl: '5px' }} />
+                    ? <Identity address={acc.address} api={api} chain={chain as any} formatted={acc.address} identiconSize={25} showShortAddress showSocial style={{ fontSize: '14px', height: '37px', pl: '5px' }} />
                     : <Typography fontSize='16px' fontWeight={400} lineHeight='37px'>
                       {'—'}
                     </Typography>

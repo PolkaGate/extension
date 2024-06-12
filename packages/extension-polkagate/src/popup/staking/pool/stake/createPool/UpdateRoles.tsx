@@ -64,7 +64,7 @@ export default function UpdateRoles({ address, bouncerId, chain, nominatorId, se
       <AddressInput
         address={newNominatorId}
         allAddresses={allAddresses}
-        chain={chain}
+        chain={chain as any}
         label={t<string>('Nominator')}
         setAddress={setNewNominatorId}
         showIdenticon
@@ -76,7 +76,7 @@ export default function UpdateRoles({ address, bouncerId, chain, nominatorId, se
       <AddressInput
         address={newBouncerId}
         allAddresses={allAddresses}
-        chain={chain}
+        chain={chain as any}
         label={t<string>('Bouncer')}
         setAddress={setNewBouncerId}
         showIdenticon

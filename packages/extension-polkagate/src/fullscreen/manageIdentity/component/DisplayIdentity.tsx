@@ -32,7 +32,7 @@ export default function DisplayIdentity({ address, api, chain }: Props): React.R
         <Identity
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           identiconSize={25}
           showSocial
           style={{ fontSize: '16px' }}

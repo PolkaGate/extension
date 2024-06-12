@@ -305,7 +305,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
                               <Grid item xs={6}>
                                 <Identity
                                   api={api}
-                                  chain={chain}
+                                  chain={chain as any}
                                   formatted={validator}
                                   identiconSize={20}
                                   showShortAddress

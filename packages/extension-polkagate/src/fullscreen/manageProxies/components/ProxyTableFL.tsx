@@ -96,7 +96,7 @@ export default function ProxyTableFL({ api, chain, handleDelete, labelAlignment,
                   <Grid container fontSize='20px' item pl='10px' width='49%'>
                     <Identity
                       api={api}
-                      chain={chain}
+                      chain={chain as any}
                       formatted={proxyItem.proxy.delegate}
                       identiconSize={35}
                       showShortAddress

@@ -76,7 +76,7 @@ export default function ShowParachain({ api, chain, crowdloan, crowdloansId, lab
               accountInfo={accountInfo}
               address={crowdloan.fund.depositor}
               api={api}
-              chain={chain}
+              chain={chain as any}
               formatted={crowdloan.fund.depositor}
               noIdenticon
               returnIdentity={returnIdentity}

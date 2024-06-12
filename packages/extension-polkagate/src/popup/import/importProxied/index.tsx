@@ -116,7 +116,7 @@ function ImportProxied(): React.ReactElement {
       {selectedAddress && chain &&
         <ProxiedTable
           api={api}
-          chain={chain}
+          chain={chain as any}
           label={t('Proxied account(s)')}
           maxHeight='140px'
           proxiedAccounts={proxiedAccounts?.proxy === formatted ? proxiedAccounts?.proxied : undefined}

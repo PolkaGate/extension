@@ -122,7 +122,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
         };
 
         saveAsHistory(from, info);
-        setTxInfo({ ...info, api, chain:chain as any });
+        setTxInfo({ ...info, api, chain: chain as any });
       } else { // hence a poolWithdrawUnbonded is needed
         const optSpans = await api.query['staking']['slashingSpans'](formatted) as any;
         const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
@@ -186,7 +186,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />

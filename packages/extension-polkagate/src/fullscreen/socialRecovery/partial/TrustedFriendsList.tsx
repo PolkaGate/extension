@@ -41,7 +41,7 @@ export default function TrustedFriendsList({ chain, friendsList, onRemoveFriend,
       {friendsList.map((friend, index) => (
         <TrustedFriendAccount
           accountInfo={typeof (friend) === 'object' ? friend.accountIdentity : undefined}
-          chain={chain}
+          chain={chain as any}
           formatted={typeof (friend) === 'object' ? friend.address : String(friend)}
           iconType='minus'
           key={index}

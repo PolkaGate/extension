@@ -171,7 +171,7 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
           <>
             <AddressInput
               address={depositorAddress}
-              chain={chain}
+              chain={chain as any}
               disabled
               label={'Depositor'}
               showIdenticon
@@ -183,7 +183,7 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
             <AddressInput
               address={newRootAddress}
               allAddresses={allAddresses}
-              chain={chain}
+              chain={chain as any}
               label={'Root'}
               setAddress={setNewRootAddress}
               showIdenticon
@@ -195,7 +195,7 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
             <AddressInput
               address={newNominatorAddress}
               allAddresses={allAddresses}
-              chain={chain}
+              chain={chain as any}
               label={t<string>('Nominator')}
               setAddress={setNewNominatorAddress}
               showIdenticon
@@ -207,7 +207,7 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
             <AddressInput
               address={newBouncerAddress}
               allAddresses={allAddresses}
-              chain={chain}
+              chain={chain as any}
               label={t<string>('Bouncer')}
               setAddress={setNewBouncerAddress}
               showIdenticon
@@ -258,7 +258,7 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
             <AddressInput
               address={newCommissionPayee}
               allAddresses={allAddresses}
-              chain={chain}
+              chain={chain as any}
               label={t('Payee')}
               setAddress={setNewCommissionPayee}
               showIdenticon
@@ -279,7 +279,7 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
         <Review
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           changes={changes}
           formatted={String(formatted)}
           pool={pool}

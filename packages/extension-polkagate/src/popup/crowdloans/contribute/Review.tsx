@@ -150,7 +150,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
         />
         <AccountHolderWithProxy
           address={address}
-          chain={chain}
+          chain={chain as any}
           selectedProxyAddress={selectedProxyAddress}
           showDivider
           style={{ m: 'auto', width: '90%' }}
@@ -177,7 +177,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
         <ShowParachainBrief
           api={api}
-          chain={chain}
+          chain={chain as any}
           crowdloan={crowdloanToContribute}
           crowdloansId={crowdloansId}
           setShowCrowdloanInfo={setShowCrowdloanInfo}
@@ -206,7 +206,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
         {showCrowdloanInfo &&
           <ParachainInfo
             api={api}
-            chain={chain}
+            chain={chain as any}
             crowdloan={crowdloanToContribute}
             crowdloansId={crowdloansId}
             currentBlockNumber={currentBlockNumber}

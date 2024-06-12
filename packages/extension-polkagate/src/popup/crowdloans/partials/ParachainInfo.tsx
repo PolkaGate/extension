@@ -51,7 +51,7 @@ export default function ParachainInfo({ api, chain, crowdloan, crowdloansId, cur
       <Grid container item m='15px auto 0' width='92%'>
         <ShowCrowdloan
           api={api}
-          chain={chain}
+          chain={chain as any}
           crowdloan={crowdloan}
           crowdloansId={crowdloansId}
           currentBlockNumber={currentBlockNumber}

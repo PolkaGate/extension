@@ -144,7 +144,7 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
         <>
           <AddressInput
             address={depositorAddress}
-            chain={chain}
+            chain={chain as any}
             disabled
             label={'Depositor'}
             showIdenticon
@@ -156,7 +156,7 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
           <AddressInput
             address={newRootAddress}
             allAddresses={allAddresses}
-            chain={chain}
+            chain={chain as any}
             label={'Root'}
             setAddress={setNewRootAddress}
             showIdenticon
@@ -168,7 +168,7 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
           <AddressInput
             address={newNominatorAddress}
             allAddresses={allAddresses}
-            chain={chain}
+            chain={chain as any}
             label={t('Nominator')}
             setAddress={setNewNominatorAddress}
             showIdenticon
@@ -180,7 +180,7 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
           <AddressInput
             address={newBouncerAddress}
             allAddresses={allAddresses}
-            chain={chain}
+            chain={chain as any}
             label={t('Bouncer')}
             setAddress={setNewBouncerAddress}
             showIdenticon
@@ -233,7 +233,7 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
           <AddressInput
             address={newCommissionPayee}
             allAddresses={allAddresses}
-            chain={chain}
+            chain={chain as any}
             label={t('Payee')}
             setAddress={setNewCommissionPayee}
             showIdenticon

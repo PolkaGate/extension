@@ -210,7 +210,7 @@ export default function AccountInformationForDetails({ accountAssets, address, l
                 accountInfo={accountInfo}
                 address={address}
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 noIdenticon
                 style={{ width: 'calc(100% - 40px)' }}
               // subIdOnly

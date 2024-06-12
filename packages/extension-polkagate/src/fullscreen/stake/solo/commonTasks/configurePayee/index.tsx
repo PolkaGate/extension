@@ -254,7 +254,7 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
                 <>
                   <AccountInputWithIdentity
                     address={rewardDestinationAccount}
-                    chain={chain}
+                    chain={chain as any}
                     label={t('Specific account')}
                     setAddress={setRewardDestinationAccount}
                     style={{ pt: '25px', px: '15px' }}

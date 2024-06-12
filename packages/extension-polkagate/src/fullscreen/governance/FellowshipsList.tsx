@@ -38,7 +38,7 @@ export default function FellowshipsList({ address, fellowships }: Props): React.
             <Grid item>
               <Identity
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 direction='row'
                 formatted={fellow}
                 identiconSize={31}

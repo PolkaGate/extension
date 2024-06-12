@@ -136,7 +136,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
             }
             <AccountHolderWithProxy
               address={address}
-              chain={chain}
+              chain={chain as any}
               selectedProxyAddress={selectedProxyAddress}
               style={{ mt: 'auto' }}
               title={t('Account holder')}
@@ -160,7 +160,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
               </>}
             {changes?.newRoles?.newRoot !== undefined &&
               <ShowPoolRole
-                chain={chain}
+                chain={chain as any}
                 roleAddress={changes?.newRoles?.newRoot}
                 roleTitle={t<string>('Root')}
                 showDivider
@@ -168,7 +168,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
             }
             {changes?.newRoles?.newNominator !== undefined &&
               <ShowPoolRole
-                chain={chain}
+                chain={chain as any}
                 roleAddress={changes?.newRoles?.newNominator}
                 roleTitle={t<string>('Nominator')}
                 showDivider
@@ -176,7 +176,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
             }
             {changes?.newRoles?.newBouncer !== undefined &&
               <ShowPoolRole
-                chain={chain}
+                chain={chain as any}
                 roleAddress={changes?.newRoles?.newBouncer}
                 roleTitle={t<string>('Bouncer')}
                 showDivider
@@ -197,7 +197,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
             }
             {changes?.commission?.payee !== undefined &&
               <ShowPoolRole
-                chain={chain}
+                chain={chain as any}
                 roleAddress={changes.commission.payee || maybeCurrentCommissionPayee}
                 roleTitle={t<string>('Commission payee')}
                 showDivider

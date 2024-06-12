@@ -182,7 +182,7 @@ export default function Vouch({ activeRecoveries, address, api, setMode, setStep
       <SelectTrustedFriend
         accountsInfo={accountsInfo}
         api={api}
-        chain={chain}
+        chain={chain as any}
         disabled={false}
         helperText={t<string>('Find the lost account by entering their address or any associated identity details, such as their name, email, Twitter, etc.')}
         iconType='none'
@@ -194,7 +194,7 @@ export default function Vouch({ activeRecoveries, address, api, setMode, setStep
       <SelectTrustedFriend
         accountsInfo={accountsInfo}
         api={api}
-        chain={chain}
+        chain={chain as any}
         disabled={false}
         helperText={t<string>('Find the rescuer account by entering their address or any associated identity details, such as their name, email, Twitter, etc.')}
         iconType='none'

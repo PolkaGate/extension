@@ -82,7 +82,7 @@ export default function AccountPreview({ address, hideNumbers, isHidden, name, q
   return (
     <Grid alignItems='center' container position='relative' p='15px 0 13px'>
       <AccountIcons
-        chain={chain}
+        chain={chain as any}
         formatted={formatted || address}
         identiconTheme={identiconTheme}
         isSubId={!!identity?.displayParent}
@@ -93,7 +93,7 @@ export default function AccountPreview({ address, hideNumbers, isHidden, name, q
       />
       <AccountDetail
         address={address}
-        chain={chain}
+        chain={chain as any}
         formatted={formatted}
         goToAccount={goToAccount}
         hideNumbers={hideNumbers}
@@ -103,7 +103,7 @@ export default function AccountPreview({ address, hideNumbers, isHidden, name, q
         name={name}
         toggleVisibility={_toggleVisibility}
       />
-      <AccountFeatures chain={chain} goToAccount={goToAccount} menuOnClick={menuOnClick} />
+      <AccountFeatures chain={chain as any} goToAccount={goToAccount} menuOnClick={menuOnClick} />
       {
         showAccountMenu &&
         <AccountMenu

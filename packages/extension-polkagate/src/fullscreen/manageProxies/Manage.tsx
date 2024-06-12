@@ -133,7 +133,7 @@ export default function Manage({ api, chain, decimal, depositedValue, isDisabled
       />
       <ProxyTableFL
         api={api}
-        chain={chain}
+        chain={chain as any}
         handleDelete={handleDelete}
         proxyItems={proxyItems}
       />

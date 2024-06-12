@@ -62,7 +62,7 @@ function RewardsDestination({ chain, newSettings, settings }: { settings: SoloSe
             {t('Add to staked amount')}
           </Typography>
           : <Grid container item justifyContent='center'>
-            <Identity chain={chain} formatted={destinationAddress} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+            <Identity chain={chain as any} formatted={destinationAddress} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
             <ShortAddress address={destinationAddress} />
           </Grid>
         }
@@ -197,7 +197,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
       <Typography fontSize='16px' fontWeight={300} textAlign='center'>
         {t('Controller account')}
       </Typography>
-      <Identity chain={chain} formatted={controllerId} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+      <Identity chain={chain as any} formatted={controllerId} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
       <ShortAddress address={controllerId} />
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
     </Grid>
@@ -224,7 +224,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
             <Controller />
           }
           {newSettings?.payee &&
-            <RewardsDestination chain={chain} newSettings={newSettings} settings={settings} />
+            <RewardsDestination chain={chain as any} newSettings={newSettings} settings={settings} />
           }
           <Grid alignItems='center' container item justifyContent='center' lineHeight='20px' mt='10px'>
             <Grid item>

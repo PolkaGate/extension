@@ -155,7 +155,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
       <Typography fontSize='16px' fontWeight={300} textAlign='center'>
         {t('Controller account')}
       </Typography>
-      <Identity chain={chain} formatted={settings.controllerId} identiconSize={31} style={{ height: '35px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+      <Identity chain={chain as any} formatted={settings.controllerId} identiconSize={31} style={{ height: '35px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
       <ShortAddress address={settings.controllerId} />
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
     </Grid>
@@ -182,7 +182,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
             style={{ mt: '-5px' }}
@@ -262,7 +262,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
           </Confirmation>)
         }
         {showSelectedValidators && !!selectedValidators?.length &&
-          <ShowValidators address={address} api={api} chain={chain} selectedValidators={selectedValidators} setShowSelectedValidators={setShowSelectedValidators} showSelectedValidators={showSelectedValidators} staked={total} />
+          <ShowValidators address={address} api={api} chain={chain as any} selectedValidators={selectedValidators} setShowSelectedValidators={setShowSelectedValidators} showSelectedValidators={showSelectedValidators} staked={total} />
         }
       </Popup>
     </Motion>

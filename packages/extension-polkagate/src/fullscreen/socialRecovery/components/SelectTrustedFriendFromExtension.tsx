@@ -60,7 +60,7 @@ export default function SelectTrustedFriendFromExtension({ accountsInfo, address
       {friendsList?.map((friend, index) => (
         <TrustedFriendAccount
           accountInfo={friend.accountIdentity}
-          chain={chain}
+          chain={chain as any}
           formatted={friend.address}
           iconType='plus'
           key={index}

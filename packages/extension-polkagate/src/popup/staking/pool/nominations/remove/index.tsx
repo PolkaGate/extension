@@ -148,7 +148,7 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
         <Grid container justifyContent='center' sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />

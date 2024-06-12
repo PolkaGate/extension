@@ -217,7 +217,7 @@ export default function Index(): React.ReactElement {
   );
 
   const Row = ({ isUnstaking, label, link1Text, link2Text, onLink1, onLink2, showDivider = true, value }
-  : { label: string, value: BN | undefined, link1Text?: Text, onLink1?: () => void, link2Text?: Text, onLink2?: () => void, showDivider?: boolean, isUnstaking?: boolean }) => {
+    : { label: string, value: BN | undefined, link1Text?: Text, onLink1?: () => void, link2Text?: Text, onLink2?: () => void, showDivider?: boolean, isUnstaking?: boolean }) => {
     return (
       <>
         <Grid alignItems='center' container justifyContent='space-between' pt='10px'>
@@ -386,7 +386,7 @@ export default function Index(): React.ReactElement {
           address={address}
           amount={claimable}
           api={api}
-          chain={chain}
+          chain={chain as any}
           formatted={formatted}
           setRefresh={setRefresh}
           setShow={setShowRewardStake}
@@ -399,7 +399,7 @@ export default function Index(): React.ReactElement {
           amount={claimable}
           api={api}
           available={getValue('available', balances)}
-          chain={chain}
+          chain={chain as any}
           formatted={formatted}
           setRefresh={setRefresh}
           setShow={setShowRewardWithdraw}
@@ -411,7 +411,7 @@ export default function Index(): React.ReactElement {
           amount={redeemable}
           api={api}
           available={getValue('available', balances)}
-          chain={chain}
+          chain={chain as any}
           formatted={formatted}
           setRefresh={setRefresh}
           setShow={setShowRedeemableWithdraw}

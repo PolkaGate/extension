@@ -460,7 +460,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                     ? address
                     : vouchRecoveryInfo?.rescuer.address}
                   api={api}
-                  chain={chain}
+                  chain={chain as any}
                   direction='row'
                   identiconSize={31}
                   showSocial={false}
@@ -470,7 +470,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
               </Grid>
               {selectedProxyAddress &&
                 <Grid container m='auto' maxWidth='92%'>
-                  <ThroughProxy address={selectedProxyAddress} chain={chain} />
+                  <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
                 </Grid>
               }
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
@@ -480,9 +480,9 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                     {t<string>('Trusted friends')}
                   </Typography>
                   <TrustedFriendsDisplay
-                    accountsInfo={recoveryConfig.friends.infos as unknown as DeriveAccountInfo []}
+                    accountsInfo={recoveryConfig.friends.infos as unknown as DeriveAccountInfo[]}
                     api={api}
-                    chain={chain}
+                    chain={chain as any}
                     friends={recoveryConfig.friends.addresses}
                   />
                   <DisplayValue title={t<string>('Recovery Threshold')}>
@@ -504,7 +504,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                   </Typography>
                   <TrustedFriendsDisplay
                     api={api}
-                    chain={chain}
+                    chain={chain as any}
                     friends={recoveryInfo.friends.map((friend) => String(friend))}
                   />
                 </>
@@ -522,7 +522,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                           ? vouchRecoveryInfo?.lost.accountIdentity
                           : undefined}
                       api={api}
-                      chain={chain}
+                      chain={chain as any}
                       direction='row'
                       formatted={mode === 'InitiateRecovery' || mode === 'Withdraw'
                         ? lostAccountAddress?.address
@@ -550,7 +550,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                         </Typography>
                         <Identity
                           api={api}
-                          chain={chain}
+                          chain={chain as any}
                           direction='row'
                           formatted={activeLost.rescuer}
                           identiconSize={31}

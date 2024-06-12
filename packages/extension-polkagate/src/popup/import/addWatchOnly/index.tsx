@@ -96,7 +96,7 @@ export default function AddAddressOnly(): React.ReactElement {
       <AddressInput
         addWithQr
         address={realAddress}
-        chain={chain}
+        chain={chain as any}
         label={t<string>('Account ID')}
         setAddress={setRealAddress}
         style={{ m: '15px auto 0', width: '92%' }}

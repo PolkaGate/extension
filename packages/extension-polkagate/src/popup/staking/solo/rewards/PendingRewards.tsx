@@ -42,7 +42,7 @@ export const LabelBalance = ({ api, balance, label }: { api: ApiPromise | undefi
   </Grid>
 );
 
-export default function PendingRewards (): React.ReactElement {
+export default function PendingRewards(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -265,7 +265,7 @@ export default function PendingRewards (): React.ReactElement {
                         <Grid item xs={6}>
                           <Identity
                             api={api}
-                            chain={chain}
+                            chain={chain as any}
                             formatted={validator}
                             identiconSize={20}
                             showShortAddress

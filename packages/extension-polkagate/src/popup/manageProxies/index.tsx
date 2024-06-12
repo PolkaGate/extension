@@ -181,7 +181,7 @@ export default function ManageProxies(): React.ReactElement {
             </Grid>
           </Grid>
           <ProxyTable
-            chain={chain}
+            chain={chain as any}
             label={t('Proxies')}
             maxHeight={window.innerHeight / 2.5}
             mode='Delete'
@@ -220,7 +220,7 @@ export default function ManageProxies(): React.ReactElement {
       {showAddProxy && !showReviewProxy && chain && proxyItems !== undefined &&
         <AddProxy
           address={address}
-          chain={chain}
+          chain={chain as any}
           onChange={checkForChanges}
           proxyItems={proxyItems}
           setProxyItems={setProxyItems}

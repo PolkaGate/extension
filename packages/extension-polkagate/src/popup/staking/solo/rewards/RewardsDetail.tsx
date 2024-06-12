@@ -181,7 +181,7 @@ const ChartBody = ({ api, chain, data, dataToShow, decimal, descSortedRewards, e
                       {chain && <Identity
                         address={d.validator}
                         api={api}
-                        chain={chain}
+                        chain={chain as any}
                         formatted={d.validator}
                         identiconSize={30}
                         showSocial={false}

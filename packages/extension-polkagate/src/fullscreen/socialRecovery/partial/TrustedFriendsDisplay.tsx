@@ -27,7 +27,7 @@ export default function TrustedFriendsDisplay({ accountsInfo, api, chain, friend
         <Identity
           accountInfo={accountsInfo ? accountsInfo[index] : undefined}
           api={api}
-          chain={chain}
+          chain={chain as any}
           direction='row'
           formatted={friend}
           identiconSize={25}

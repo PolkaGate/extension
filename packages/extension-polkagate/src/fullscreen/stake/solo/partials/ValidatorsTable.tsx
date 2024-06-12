@@ -36,7 +36,7 @@ interface Props {
   nominatedValidatorsIds?: AccountId[] | null | undefined;
 }
 
-export default function ValidatorsTable ({ activeValidators, address, allValidatorsIdentities, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTable({ activeValidators, address, allValidatorsIdentities, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
   const theme = useTheme();
   const ref = useRef();
   const { api, chain, decimal, token } = useInfo(address);
@@ -106,7 +106,7 @@ export default function ValidatorsTable ({ activeValidators, address, allValidat
                   <ShowValidator
                     accountInfo={accountInfo}
                     api={api}
-                    chain={chain}
+                    chain={chain as any}
                     check={check}
                     decimal={decimal}
                     handleCheck={handleCheck}
@@ -129,7 +129,7 @@ export default function ValidatorsTable ({ activeValidators, address, allValidat
       {showValidatorInfo && validatorToShowInfo && api && chain &&
         <ValidatorInfoPage
           api={api}
-          chain={chain}
+          chain={chain as any}
           isFullscreen
           setShowValidatorInfo={setShowValidatorInfo}
           showValidatorInfo={showValidatorInfo}

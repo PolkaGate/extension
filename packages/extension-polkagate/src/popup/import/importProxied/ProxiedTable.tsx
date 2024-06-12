@@ -99,7 +99,7 @@ export default function ProxiedTable({ api, chain, label, maxHeight = '120px', m
                 />
               </Grid>
               <Grid alignItems='center' container item justifyContent='left' pl='10px' xs={isExtensionMode ? 10 : 11}>
-                <Identity api={api} chain={chain} formatted={proxiedAccount} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: isExtensionMode ? '12px' : '16px', maxWidth: '100%' }} subIdOnly />
+                <Identity api={api} chain={chain as any} formatted={proxiedAccount} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: isExtensionMode ? '12px' : '16px', maxWidth: '100%' }} subIdOnly />
               </Grid>
             </Grid>
           )}

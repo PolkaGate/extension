@@ -162,7 +162,7 @@ export default function SetState({ address, formatted, headerText, helperText, p
         <SubTitle label={t<string>('Review')} />
         <ShowPool
           api={api}
-          chain={chain}
+          chain={chain as any}
           mode='Default'
           pool={pool}
           showInfo

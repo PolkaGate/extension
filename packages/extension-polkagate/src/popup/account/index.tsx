@@ -32,7 +32,7 @@ import LabelBalancePrice from './LabelBalancePrice';
 import Others from './Others';
 import ReservedReasons from './ReservedReasons';
 
-export default function AccountDetails (): React.ReactElement {
+export default function AccountDetails(): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const history = useHistory();
@@ -124,7 +124,7 @@ export default function AccountDetails (): React.ReactElement {
       : showStakingOptions
         ? theme.palette.secondary.main
         : theme.palette.text.primary
-  , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
+    , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
 
   const goToOthers = useCallback(() => {
     setShowOthers(true);
@@ -210,10 +210,10 @@ export default function AccountDetails (): React.ReactElement {
             {assetId !== undefined
               ? <>
                 <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferable'} title={t('Transferable')} />
-                { balances?.lockedBalance &&
+                {balances?.lockedBalance &&
                   <LabelBalancePrice address={address} balances={balanceToShow} label={'Locked'} title={t('Locked')} />
                 }
-                { balances?.reservedBalance && !balances?.lockedBalance &&
+                {balances?.reservedBalance && !balances?.lockedBalance &&
                   <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} title={t('Reserved')} />
                 }
               </>
@@ -231,7 +231,7 @@ export default function AccountDetails (): React.ReactElement {
                   ? <LockedInReferenda address={address} refresh={refresh} setRefresh={setRefresh} />
                   : <LabelBalancePrice address={address} balances={balanceToShow} label={'Locked'} title={t('Locked')} />
                 }
-                <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} onClick={ showReservedChevron ? onReservedReasons : undefined} title={t('Reserved')} />
+                <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} onClick={showReservedChevron ? onReservedReasons : undefined} title={t('Reserved')} />
                 <OthersRow />
               </>
             }
@@ -308,7 +308,7 @@ export default function AccountDetails (): React.ReactElement {
         <Others
           address={address}
           balances={balances}
-          chain={chain}
+          chain={chain as any}
           identity={identity}
           setShow={setShowOthers}
           show={showOthers}
@@ -317,7 +317,7 @@ export default function AccountDetails (): React.ReactElement {
       {showReservedReasons && balances &&
         <ReservedReasons
           address={address}
-          assetId= {balances?.assetId}
+          assetId={balances?.assetId}
           identity={identity}
           setShow={setShowReservedReasons}
           show={showReservedReasons}

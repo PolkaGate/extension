@@ -43,7 +43,7 @@ export default function PastCrowdloans({ api, chain, contributedCrowdloans, crow
           ? pastCrowdloans.map((crowdloan, index) => (
             <ShowCrowdloan
               api={api}
-              chain={chain}
+              chain={chain as any}
               crowdloan={crowdloan}
               crowdloansId={crowdloansId}
               currentBlockNumber={currentBlockNumber}

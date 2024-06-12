@@ -213,7 +213,7 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
             {pool &&
               <ShowPool
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 label={t('Pool')}
                 mode='Default'
                 pool={pool}

@@ -282,7 +282,7 @@ export default function Index(): React.ReactElement {
           address={address}
           amount={amount}
           api={api}
-          chain={chain}
+          chain={chain as any}
           estimatedFee={estimatedFee}
           isFirstTimeStaking={isFirstTimeStaking}
           params={params}
@@ -310,7 +310,7 @@ export default function Index(): React.ReactElement {
         <SelectValidators
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           newSelectedValidators={manualSelectedValidators}
           setNewSelectedValidators={setManualSelectedValidators}
           setShow={setShowSelectValidator}

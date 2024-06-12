@@ -77,7 +77,7 @@ export default function InitiatedRecoveryStatus({ api, chain, delayRemainBlock, 
             <Grid alignItems='center' container item py='5px' width='100%'>
               <Identity
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 direction='row'
                 formatted={String(lostAccountRecoveryInfo.lostAccount)}
                 identiconSize={25}
@@ -108,7 +108,7 @@ export default function InitiatedRecoveryStatus({ api, chain, delayRemainBlock, 
                   <Grid container item width='65%'>
                     <Identity
                       api={api}
-                      chain={chain}
+                      chain={chain as any}
                       direction='row'
                       formatted={String(friend)}
                       identiconSize={25}

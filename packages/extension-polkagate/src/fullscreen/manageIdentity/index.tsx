@@ -452,7 +452,7 @@ export default function ManageIdentity(): React.ReactElement {
           <Review
             address={address}
             api={api}
-            chain={chain}
+            chain={chain as any}
             depositToPay={depositToPay}
             depositValue={totalDeposit}
             identityToSet={identityToSet}

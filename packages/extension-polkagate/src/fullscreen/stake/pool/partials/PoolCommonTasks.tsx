@@ -226,7 +226,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
         <EditPool
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           onClose={resetModal}
           pool={pool}
           setRefresh={setRefresh}
@@ -236,7 +236,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
         <SetState
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           formatted={formatted}
           onClose={resetModal}
           pool={pool}
@@ -256,7 +256,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
         <RemoveAll
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           onClose={resetModal}
           pool={pool}
           setRefresh={setRefresh}

@@ -142,7 +142,7 @@ export default function Review({ address, api, classToUnlock, setDisplayPopup, s
             <Container disableGutters sx={{ px: '30px' }}>
               <AccountHolderWithProxy
                 address={address}
-                chain={chain}
+                chain={chain as any}
                 selectedProxyAddress={selectedProxyAddress}
                 showDivider
                 style={{ mt: '-5px' }}

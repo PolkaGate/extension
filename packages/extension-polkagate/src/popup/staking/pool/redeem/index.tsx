@@ -152,7 +152,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />

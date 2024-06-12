@@ -107,7 +107,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
       {membersToShow?.length
         ? membersToShow.map((member, index) => (
           <Grid container item key={index} sx={{ '&:last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
-            <Identity address={member.accountId} api={api} chain={chain} formatted={member.accountId} identiconSize={25} showShortAddress style={{ fontSize: '14px', minHeight: '45px', pl: '10px', width: '50%' }} />
+            <Identity address={member.accountId} api={api} chain={chain as any} formatted={member.accountId} identiconSize={25} showShortAddress style={{ fontSize: '14px', minHeight: '45px', pl: '10px', width: '50%' }} />
             <Grid alignItems='center' container fontSize='14px' fontWeight='400' item justifyContent='center' sx={{ borderColor: 'secondary.light', borderInline: '1px solid' }} width='30%'>
               <ShowBalance
                 balance={toBalance(member.points)}
@@ -192,7 +192,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
       </Grid>
       <Collapse in={show} sx={{ width: '100%' }}>
         {(mode === 'Ids' || mode === 'Roles') &&
-          <ShowRoles api={api} chain={chain} mode={mode} pool={pool} style={{ my: '10px' }} />
+          <ShowRoles api={api} chain={chain as any} mode={mode} pool={pool} style={{ my: '10px' }} />
         }
         {mode === 'Members' &&
           <ShowMembers />
@@ -218,7 +218,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
         ? <Grid container direction='column' item rowGap='5px'>
           <ShowPool
             api={api}
-            chain={chain}
+            chain={chain as any}
             mode='Default'
             pool={poolToShow}
             style={{ m: '10px auto', width: '92%' }}

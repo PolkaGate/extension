@@ -49,7 +49,7 @@ export default function ShowValidators({ address, api, chain, selectedValidators
       </Grid>
       <ValidatorsTable
         api={api}
-        chain={chain}
+        chain={chain as any}
         decimal={decimal}
         height={isExtensionPopup ? tableHeight : MODAL_HEIGHT - 50}
         staked={staked}

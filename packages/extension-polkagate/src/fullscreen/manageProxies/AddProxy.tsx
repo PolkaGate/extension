@@ -130,7 +130,7 @@ export default function AddProxy({ chain, proxiedAddress, proxyItems, setProxyIt
         addWithQr
         address={proxyAddress}
         allAddresses={allAddresses}
-        chain={chain}
+        chain={chain as any}
         label={t('Account ID')}
         setAddress={setProxyAddress}
         showIdenticon

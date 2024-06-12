@@ -193,7 +193,7 @@ export default function SelectTrustedFriend({ accountsInfo = [], chain, disabled
           {friendsList.map((friend, index) => (
             <TrustedFriendAccount
               accountInfo={friend.accountIdentity}
-              chain={chain}
+              chain={chain as any}
               formatted={friend.address}
               iconType={iconType}
               key={index}

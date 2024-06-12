@@ -35,7 +35,7 @@ interface Props {
   idJudgement: IdJudgement;
 }
 
-export default function RequestJudgement ({ address, api, idJudgement, maxFeeValue, selectedRegistrar, setMaxFeeValue, setMode, setSelectedRegistrar, setSelectedRegistrarName, setStep }: Props): React.ReactElement {
+export default function RequestJudgement({ address, api, idJudgement, maxFeeValue, selectedRegistrar, setMaxFeeValue, setMode, setSelectedRegistrar, setSelectedRegistrarName, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { chain, chainName } = useInfo(address);
@@ -138,7 +138,7 @@ export default function RequestJudgement ({ address, api, idJudgement, maxFeeVal
           <DisplayIdentity
             address={address}
             api={api}
-            chain={chain}
+            chain={chain as any}
           />
           <Grid alignItems='flex-end' container item justifyContent='space-between' m='auto'>
             <Grid alignContent='flex-start' container justifyContent='center' sx={{ '> div div div': { fontSize: '16px', fontWeight: 400 }, position: 'relative', width: '65%' }}>

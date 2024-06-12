@@ -168,7 +168,7 @@ export default function Review({ address, amount, selectedToPayout, setShow, sho
         <Container disableGutters sx={{ px: '20px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />

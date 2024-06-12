@@ -138,7 +138,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
         <SubTitle label={t<string>('Review')} />
         <AccountHolderWithProxy
           address={formatted}
-          chain={chain}
+          chain={chain as any}
           selectedProxyAddress={selectedProxyAddress}
           showDivider
           style={{ m: 'auto', width: '90%' }}
@@ -155,7 +155,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
         <ShowPool
           api={api}
-          chain={chain}
+          chain={chain as any}
           label={t<string>('Pool')}
           labelPosition='center'
           mode='Creating'

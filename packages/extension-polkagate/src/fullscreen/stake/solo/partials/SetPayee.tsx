@@ -18,7 +18,7 @@ interface Props {
   set: React.Dispatch<React.SetStateAction<Payee | undefined>>
 }
 
-export default function SetPayee ({ address, set, title }: Props): React.ReactElement<Props> {
+export default function SetPayee({ address, set, title }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { chain, decimal, formatted, token } = useInfo(address);
@@ -83,7 +83,7 @@ export default function SetPayee ({ address, set, title }: Props): React.ReactEl
             {title || t('Reward destination')}
           </FormLabel>
           {rewardDestinationValue
-            ? <RadioGroup defaultValue={rewardDestinationValue } onChange={onSelectionMethodChange}>
+            ? <RadioGroup defaultValue={rewardDestinationValue} onChange={onSelectionMethodChange}>
               <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main' }} value='Staked' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Add to staked amount')}</Typography>} />
               <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main', py: '2px' }} value='Others' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Transfer to a specific account')}</Typography>} />
             </RadioGroup>
@@ -99,7 +99,7 @@ export default function SetPayee ({ address, set, title }: Props): React.ReactEl
         <>
           <AccountInputWithIdentity
             address={rewardDestinationAccount}
-            chain={chain}
+            chain={chain as any}
             label={t('Specific account')}
             setAddress={setRewardDestinationAccount}
             style={{ pt: '25px', px: '15px' }}

@@ -290,7 +290,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
                     <ValidatorsTable
                       allValidatorsIdentities={allValidatorsIdentities}
                       api={api}
-                      chain={chain}
+                      chain={chain as any}
                       decimal={decimal}
                       formatted={stashId}
                       handleCheck={handleCheck}

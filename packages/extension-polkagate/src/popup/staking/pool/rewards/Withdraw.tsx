@@ -145,7 +145,7 @@ export default function RewardsWithdrawReview({ address, amount, api, available,
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />

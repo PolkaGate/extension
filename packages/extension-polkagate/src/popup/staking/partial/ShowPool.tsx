@@ -49,7 +49,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
   const poolStatus = pool?.bondedPool?.state ? String(pool.bondedPool.state) : undefined;
   const chainName = chain?.name?.replace(' Relay Chain', '');
 
-  const hasCommission = pool && 'commission' in( pool.bondedPool as unknown as PalletNominationPoolsBondedPoolInner);
+  const hasCommission = pool && 'commission' in (pool.bondedPool as unknown as PalletNominationPoolsBondedPoolInner);
   const parsedPool = JSON.parse(JSON.stringify(pool));
   const mayBeCommission = hasCommission && parsedPool.bondedPool.commission.current ? parsedPool.bondedPool.commission.current[0] : 0
   const commission = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
@@ -71,7 +71,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
                 <Grid fontSize='16px' fontWeight={400} item justifyContent='center' overflow='hidden' textAlign='center' textOverflow='ellipsis' whiteSpace='nowrap' width={showInfo ? '92%' : '100%'}>
                   <Infotip text={pool?.metadata ?? t('Unknown')}>
                     {pool?.stashIdAccount?.accountId
-                      ? <Identity chain={chain} formatted={pool.stashIdAccount.accountId} identiconSize={25} name={pool?.metadata ?? t('Unknown')} style={{ fontSize: '16px', fontWeight: 400 }} />
+                      ? <Identity chain={chain as any} formatted={pool.stashIdAccount.accountId} identiconSize={25} name={pool?.metadata ?? t('Unknown')} style={{ fontSize: '16px', fontWeight: 400 }} />
                       : <>
                         {pool?.metadata ?? t('Unknown')}
                       </>
@@ -154,7 +154,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
       {isOpenPoolInfo && pool && chain &&
         <PoolMoreInfo
           api={api as ApiPromise}
-          chain={chain}
+          chain={chain as any}
           pool={pool}
           poolId={pool.poolId}
           setShowPoolInfo={setOpenPoolInfo}
@@ -164,7 +164,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
       {showRewardsChart && chain && rewardDestinationAddress && token && token && mode !== 'Creating' &&
         <RewardsDetail
           api={api}
-          chain={chain}
+          chain={chain as any}
           chainName={chainName}
           decimal={decimal}
           rewardDestinationAddress={rewardDestinationAddress}

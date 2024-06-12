@@ -34,7 +34,7 @@ export const STEPS = {
   WAIT_SCREEN: 5
 };
 
-function ManageProxies (): React.ReactElement {
+function ManageProxies(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -126,7 +126,7 @@ function ManageProxies (): React.ReactElement {
           {step === STEPS.MANAGE &&
             <Manage
               api={api}
-              chain={chain}
+              chain={chain as any}
               decimal={decimal}
               depositedValue={depositedValue}
               isDisabledAddProxyButton={!!isDisabledAddProxyButton}
@@ -140,7 +140,7 @@ function ManageProxies (): React.ReactElement {
           }
           {step === STEPS.ADD_PROXY &&
             <AddProxy
-              chain={chain}
+              chain={chain as any}
               proxiedAddress={address}
               proxyItems={proxyItems}
               setProxyItems={setProxyItems}
@@ -151,7 +151,7 @@ function ManageProxies (): React.ReactElement {
             <Review
               address={address}
               api={api}
-              chain={chain}
+              chain={chain as any}
               depositedValue={BN_ZERO}
               newDepositValue={newDepositValue}
               proxyItems={proxyItems}
