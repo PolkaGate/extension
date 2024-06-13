@@ -8,7 +8,7 @@ import { Divider, Grid } from '@mui/material';
 import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 
 import { BN_ZERO } from '@polkadot/util';
@@ -28,7 +28,7 @@ interface Props {
     safe: boolean;
   } | undefined;
   v: ValidatorInfo;
-  handleCheck: (checked: boolean, validator: ValidatorInfo) => void;
+  handleCheck?: (checked: boolean, validator: ValidatorInfo) => void;
   chain?: Chain;
   decimal?: number;
   stakingConsts: StakingConsts | null | undefined;

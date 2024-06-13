@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
-
+//@ts-nocheck
 /**
  * @description to show rewards chart
  * */
@@ -278,9 +278,9 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
               return;
             }
 
-            const weekDayIndex = dataToShow[pageIndex][1].indexOf(TooltipItem[0].label);
+            const weekDayIndex = dataToShow[pageIndex][1].indexOf((TooltipItem[0] as any).label);
 
-            return `${weekDaysShort[weekDayIndex]} ${TooltipItem[0].label}`;
+            return `${weekDaysShort[weekDayIndex]} ${(TooltipItem[0] as any).label }`;
           }
         },
         displayColors: false,
@@ -302,7 +302,7 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
           tickColor: ''
         },
         ticks: {
-          callback: function (_, index: number) {
+          callback: function (_:any, index: number) {
             const currentDay = formateDate(new Date().getTime() / 1000);
             const labels = dataToShow && dataToShow[pageIndex][1];
             const currentLabel = labels?.length ? labels[index] : undefined;
@@ -358,11 +358,11 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
   const Arrows = ({ onNext, onPrevious }: ArrowsProps) => (
     <Grid container justifyContent='space-between' m='auto' width='96%'>
       <Grid alignItems='center' container item justifyContent='flex-start' maxWidth='50%' onClick={onPrevious} sx={{ cursor: pageIndex === dataToShow?.length - 1 ? 'default' : 'pointer' }} width='fit_content'>
-        <KeyboardDoubleArrowLeftIcon sx={{ color: pageIndex === dataToShow?.length - 1 ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
+        <KeyboardDoubleArrowLeftIcon sx={{ color: pageIndex === (dataToShow?.length as number) - 1 ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
         <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '3px', mr: '7px', my: 'auto', width: '1px' }} />
         <Grid container direction='column' item xs={7}>
-          <Typography color={pageIndex === dataToShow?.length - 1 ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t('Previous')}</Typography>
-          <Typography color={pageIndex === dataToShow?.length - 1 ? 'secondary.contrastText' : 'text.primary'} fontSize='12px' fontWeight={300}>{nextPrevWeek(false)}</Typography>
+          <Typography color={pageIndex === (dataToShow?.length as number) - 1 ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t('Previous')}</Typography>
+          <Typography color={pageIndex === (dataToShow?.length as number) - 1 ? 'secondary.contrastText' : 'text.primary'} fontSize='12px' fontWeight={300}>{nextPrevWeek(false)}</Typography>
         </Grid>
       </Grid>
       <Grid alignItems='center' container item justifyContent='flex-end' maxWidth='50%' onClick={onNext} sx={{ cursor: pageIndex === 0 ? 'default' : 'pointer' }} width='fit_content'>
@@ -394,7 +394,7 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
             <Grid container item>
               <Arrows onNext={onNext} onPrevious={onPrevious} />
               <Grid item sx={{ p: '5px 10px 5px' }} xs={12}>
-                <Bar data={data} options={options} />
+                <Bar data={data} options={options as any} />
               </Grid>
               <Grid container item justifyContent='flex-end'>
                 <Collapse in={showDetails} orientation='vertical' sx={{ '> .MuiCollapse-wrapper .MuiCollapse-wrapperInner': { display: 'grid', rowGap: '10px' }, width: '100%' }}>

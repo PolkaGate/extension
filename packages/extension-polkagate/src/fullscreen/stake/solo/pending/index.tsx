@@ -47,7 +47,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
 
   const { api, chain, decimal, token } = useInfo(address);
   const currentBlock = useCurrentBlockNumber(address);
-  const rewards = usePendingRewards2(address);
+  const rewards = usePendingRewards2(address as string);
 
   const [expandedRewards, setExpandedRewards] = useState<ExpandedRewards[] | undefined>(undefined);
   const [selectedToPayout, setSelectedToPayout] = useState<ExpandedRewards[]>([]);
@@ -60,7 +60,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
   const [percentOfEraFetched, setPercentOfEraFetched] = useState<number>();
 
   useEffect(() => {
-    window.addEventListener('percentOfErasCheckedForPendingRewards', (res) => setPercentOfEraFetched(res.detail as number));
+    window.addEventListener('percentOfErasCheckedForPendingRewards', (res) => setPercentOfEraFetched((res as any).detail as number));
   }, []);
 
   useEffect(() => {
@@ -69,11 +69,11 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
     }
 
     api.derive.session.progress().then(setProgress).catch(console.error);
-    api.query.staking.forceEra().then(setForcing).catch(console.error);
+    api.query['staking']['forceEra']().then((f)=>setForcing(f as Forcing)).catch(console.error);
 
-    api.query.staking?.historyDepth
-      ? api.query.staking.historyDepth().then(setHistoryDepth).catch(console.error)
-      : setHistoryDepth(api.consts.staking.historyDepth);
+    api.query['staking']?.['historyDepth']
+      ? api.query['staking']['historyDepth']().then((depth)=>setHistoryDepth(depth as unknown as BN)).catch(console.error)
+      : setHistoryDepth(api.consts['staking']['historyDepth'] as unknown as BN);
   }, [api]);
 
   useEffect(() => {
@@ -97,7 +97,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
       []
     );
 
-    setExpandedRewards(rewardsArray);
+    setExpandedRewards(rewardsArray as any);
   }, [rewards]);
 
   const totalPending = useMemo(() => {
@@ -123,7 +123,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
     }
 
     return selectedToPayout.reduce((sum: BN, value: ExpandedRewards) => {
-      sum = sum.add(value[3] as BN);
+      sum = sum.add((value as any)[3] as BN);
 
       return sum;
     }, BN_ZERO);
@@ -143,7 +143,9 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
 
     const params =
       selectedToPayout.length === 1
+        // @ts-ignore
         ? [selectedToPayout[0][1], Number(selectedToPayout[0][0]), selectedToPayout[0][2]]
+        // @ts-ignore
         : [selectedToPayout.map((p) => payoutStakers(p[1], Number(p[0]), p[2]))];
 
     const amount = amountToHuman(totalSelectedPending, decimal);
@@ -189,7 +191,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
     return EndEraInBlock ? blockToDate(EndEraInBlock.addn(currentBlock).toNumber(), currentBlock, { day: 'numeric', month: 'short' }) : undefined;
   }, [currentBlock, forcing, historyDepth, progress]);
 
-  const onSelectAll = useCallback((_, checked: boolean) => {
+  const onSelectAll = useCallback((_: any, checked: boolean) => {
     if (checked && expandedRewards?.length) {
       setSelectedToPayout([...expandedRewards]);
     } else {
@@ -278,6 +280,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
                       </Typography>
                     </Grid>
                     : <> {expandedRewards?.map((info, index) => {
+                      // @ts-ignore
                       const [eraIndex, validator, page, value] = info;
 
                       return (

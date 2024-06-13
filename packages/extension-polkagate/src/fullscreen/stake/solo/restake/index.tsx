@@ -76,7 +76,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
   }, [stakingAccount]);
 
   useEffect(() => {
-    if (amountAsBN.gt(unlockingAmount || BN_ZERO)) {
+    if (amountAsBN?.gt(unlockingAmount || BN_ZERO)) {
       return setAlert(t('It is more than total unlocking amount.'));
     }
 

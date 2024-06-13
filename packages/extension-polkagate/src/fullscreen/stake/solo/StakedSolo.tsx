@@ -9,7 +9,7 @@ import { Grid } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router';
 
-import { AccountStakingInfo, BalancesInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { AccountStakingInfo, BalancesInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { BN } from '@polkadot/util';
 
 import { useAvailableToSoloStake, useStakingRewardDestinationAddress, useStakingRewards, useTranslation, useUnstakingAmount, useUnSupportedNetwork } from '../../../hooks';
