@@ -65,7 +65,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
     if (stakingAccount?.unlocking) {
       for (const [_, { remainingEras, value }] of Object.entries(stakingAccount.unlocking)) {
         if (remainingEras.gtn(0)) {
-          const amount = new BN(value as string);
+          const amount = new BN(value as unknown as string);
 
           unlockingValue = unlockingValue.add(amount);
         }
