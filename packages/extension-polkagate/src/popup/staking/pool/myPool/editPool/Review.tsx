@@ -8,7 +8,7 @@ import type { ApiPromise } from '@polkadot/api';
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 
 import type { Balance } from '@polkadot/types/interfaces';
@@ -24,7 +24,7 @@ import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/t
 import { getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import ShowPoolRole from './ShowPoolRole';
 import TxDetail from './TxDetail';
-import { ChangesProps } from '.';
+import type { ChangesProps } from '.';
 
 interface Props {
   address: string;
@@ -63,7 +63,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
   const batchAll = api && api.tx['utility']['batchAll'];
   const setMetadata = api && api.tx['nominationPools']['setMetadata'];
 
-  const maybeCurrentCommissionPayee = pool?.bondedPool?.commission?.current?.[1]?.toString() as string | undefined;
+  const maybeCurrentCommissionPayee = (pool?.bondedPool?.commission?.current as any)?.[1]?.toString() as string | undefined;
 
   const onBackClick = useCallback(() => {
     setShow(!show);
@@ -93,7 +93,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       calls.push(api.tx['nominationPools']['updateRoles'](pool.poolId, getRole(changes.newRoles.newRoot), getRole(changes.newRoles.newNominator), getRole(changes.newRoles.newBouncer)));
 
     changes?.commission !== undefined && (changes.commission.value !== undefined || changes.commission.payee) &&
-      calls.push(api.tx['nominationPools']['setCommission'](pool.poolId, [(changes.commission.value || 0) * 10 ** 7, changes.commission.payee || maybeCurrentCommissionPayee]));
+      calls.push(api.tx['nominationPools']['setCommission'](pool.poolId, [(changes.commission.value || 0) as any * 10 ** 7, changes.commission.payee || maybeCurrentCommissionPayee]));
 
     setTxCalls(calls);
 
@@ -202,7 +202,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       {changes?.newRoles?.newRoot !== undefined &&
         <ShowPoolRole
           chain={chain as any}
-          roleAddress={changes?.newRoles?.newRoot}
+          roleAddress={changes?.newRoles?.newRoot as string}
           roleTitle={t<string>('Root')}
           showDivider
         />
@@ -210,7 +210,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       {changes?.newRoles?.newNominator !== undefined &&
         <ShowPoolRole
           chain={chain as any}
-          roleAddress={changes?.newRoles?.newNominator}
+          roleAddress={changes?.newRoles?.newNominator as string}
           roleTitle={t<string>('Nominator')}
           showDivider
         />
@@ -218,7 +218,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       {changes?.newRoles?.newBouncer !== undefined &&
         <ShowPoolRole
           chain={chain as any}
-          roleAddress={changes?.newRoles?.newBouncer}
+          roleAddress={changes?.newRoles?.newBouncer as string}
           roleTitle={t<string>('Bouncer')}
           showDivider
         />
@@ -239,7 +239,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       {changes?.commission?.payee !== undefined &&
         <ShowPoolRole
           chain={chain as any}
-          roleAddress={changes.commission.payee || maybeCurrentCommissionPayee}
+          roleAddress={(changes.commission.payee || maybeCurrentCommissionPayee) as string}
           roleTitle={t<string>('Commission payee')}
           showDivider
         />

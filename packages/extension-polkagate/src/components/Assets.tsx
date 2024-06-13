@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme } from '@mui/material';
+import { Grid, type SxProps, type Theme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { useAccountAssetsOptions, useAssetHubAssets, useChain, useTokens } from '@polkadot/extension-polkagate/src/hooks';
@@ -20,7 +20,7 @@ interface Props {
 
 }
 
-function Assets ({ address, assetId, label, onChange, setAssetId, style }: Props) {
+function Assets({ address, assetId, label, onChange, setAssetId, style }: Props) {
   const tokens = useTokens(address as string);
   const chain = useChain(address);
   const assetHubOptions = useAssetHubAssets(address as string); // TODO: should we show zero or spam assets?!
@@ -29,7 +29,7 @@ function Assets ({ address, assetId, label, onChange, setAssetId, style }: Props
     assetHubOptions
       ? (tokens || []).concat(assetHubOptions || [])
       : multiChainAssetsOptions || tokens || []
-  , [assetHubOptions, multiChainAssetsOptions, tokens]);
+    , [assetHubOptions, multiChainAssetsOptions, tokens]);
 
   const [isLoading, setLoading] = useState<boolean>();
 

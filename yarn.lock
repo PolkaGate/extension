@@ -3864,6 +3864,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-spinkit@npm:^3.0.10":
+  version: 3.0.10
+  resolution: "@types/react-spinkit@npm:3.0.10"
+  dependencies:
+    "@types/react": "*"
+  checksum: c161a821f8846d5fa7904b9cd41f0a7d7e36f4c03e5d51af9c28e6d3a0779bacc0129dee88b322d9cca6b46d1f6bfd44e954d6accbe0b9b6bb519338d12b2bac
+  languageName: node
+  linkType: hard
+
 "@types/react-transition-group@npm:^4.4.10":
   version: 4.4.10
   resolution: "@types/react-transition-group@npm:4.4.10"
@@ -14967,6 +14976,7 @@ __metadata:
     "@testing-library/react": latest
     "@types/jest": latest
     "@types/node": ^20.10.5
+    "@types/react-spinkit": ^3.0.10
     "@vaadin/icons": ^23.2.3
     babel-plugin-transform-import-meta: ^2.1.1
     better-react-spinkit: ^2.0.4

@@ -17,7 +17,7 @@ import Label from './Label';
 
 interface Props {
   defaultValue: string | number | undefined;
-  value: string | number | undefined;
+  value?: string | number | undefined;
   onChange?: (value: number | string) => void;
   options: DropdownOption[];
   label: string;

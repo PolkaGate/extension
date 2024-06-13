@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme } from '@mui/material';
+import { Grid, type SxProps, type Theme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -20,7 +20,7 @@ interface Props {
   clipped?: boolean;
 }
 
-function ShortAddress2 ({ address, clipped = false, charsCount = SHORT_ADDRESS_CHARACTERS, style, showCopy = false, inParentheses = false }: Props): React.ReactElement {
+function ShortAddress2({ address, clipped = false, charsCount = SHORT_ADDRESS_CHARACTERS, style, showCopy = false, inParentheses = false }: Props): React.ReactElement {
   const [charactersCount, setCharactersCount] = useState<number>(charsCount);
   const pRef = useRef<HTMLDivElement>(null);
   const cRef = useRef<HTMLDivElement>(null);

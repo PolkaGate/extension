@@ -24,6 +24,8 @@ import { broadcast } from '../../../../../util/api';
 import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import BondExtraTxDetail from './partial/BondExtraTxDetail';
+import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
+import type { DeriveStakingAccount } from '@polkadot/api-derive/types';
 
 interface Props {
   api: ApiPromise;
@@ -54,7 +56,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
-  const totalStaked = new BN(pool.member.points).isZero() ? BN_ZERO : (new BN(pool.member.points).mul(new BN(pool.stashIdAccount.stakingLedger.active))).div(new BN(pool.bondedPool.points));
+  const totalStaked = new BN((pool.member as PalletNominationPoolsPoolMember).points).isZero() ? BN_ZERO : (new BN((pool.member as PalletNominationPoolsPoolMember).points).mul(new BN((pool.stashIdAccount as DeriveStakingAccount).stakingLedger.active as unknown as BN))).div(new BN((pool.bondedPool as PalletNominationPoolsBondedPoolInner).points));
   const bondExtra = api.tx['nominationPools']['bondExtra'];
 
   const _onBackClick = useCallback(() => {
@@ -92,7 +94,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
         from: { address: formatted, name },
         subAction: 'Stake',
         success,
-        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
+        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 

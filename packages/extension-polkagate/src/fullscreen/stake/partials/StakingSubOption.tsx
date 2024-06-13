@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -25,7 +25,7 @@ interface OptionProps {
   logo?: unknown;
 }
 
-export default function StakingSubOption ({ api, balance, balanceText, logo, onClick, style, title, warningText }: OptionProps): React.ReactElement {
+export default function StakingSubOption({ api, balance, balanceText, logo, onClick, style, title, warningText }: OptionProps): React.ReactElement {
   const theme = useTheme();
 
   return (

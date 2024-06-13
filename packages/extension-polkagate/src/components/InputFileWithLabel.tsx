@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Grid, SxProps, Theme, useTheme } from '@mui/material';
+import { Box, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { createRef, useCallback, useState } from 'react';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
 
@@ -15,7 +15,7 @@ import { noop, pgBoxShadow } from '../util/utils';
 import Label from './Label';
 import PButton from './PButton';
 
-function classes (...classNames: (boolean | null | string | undefined)[]): string {
+function classes(...classNames: (boolean | null | string | undefined)[]): string {
   return classNames
     .filter((className): boolean => !!className)
     .join(' ');

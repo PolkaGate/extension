@@ -100,10 +100,10 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
+        from: { address: formatted as string, name },
         subAction: 'Create Pool',
         success,
-        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
+        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 
@@ -137,7 +137,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
         }
         <SubTitle label={t<string>('Review')} />
         <AccountHolderWithProxy
-          address={formatted}
+          address={formatted as string}
           chain={chain as any}
           selectedProxyAddress={selectedProxyAddress}
           showDivider

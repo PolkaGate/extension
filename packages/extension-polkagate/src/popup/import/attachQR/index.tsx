@@ -32,7 +32,7 @@ export default function AttachQR (): React.ReactElement {
   const [address, setAddress] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
-  const [genesisHash, setGenesisHash] = useState<string | null>(null);
+  // const [genesisHash, setGenesisHash] = useState<string | null>(null);
   const [invalidQR, setInvalidQR] = useState<boolean>();
 
   const [stepOne, setStep] = useState(true);
@@ -50,11 +50,11 @@ export default function AttachQR (): React.ReactElement {
   const onCreate = useCallback(() => {
     if (account && name) {
       if (account.isAddress) {
-        createAccountExternal(name, account.content, account.genesisHash)
+        createAccountExternal(name, account.content, account.genesisHash as string)
           .then(() => setQrLabelAndGoToHome())
           .catch((error: Error) => console.error(error));
       } else if (password) {
-        createAccountSuri(name, password, account.content, 'sr25519', account.genesisHash)
+        createAccountSuri(name, password, account.content, 'sr25519', account.genesisHash as string)
           .then(() => setQrLabelAndGoToHome())
           .catch((error: Error) => console.error(error));
       }
@@ -65,7 +65,7 @@ export default function AttachQR (): React.ReactElement {
     (qrAccount: ScanType) => {
       setAccount(qrAccount);
       setName(qrAccount?.name || null);
-      setGenesisHash(qrAccount.genesisHash);
+      // setGenesisHash(qrAccount.genesisHash);
       setStep(false);
 
       if (qrAccount.isAddress) {

@@ -30,7 +30,7 @@ import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../u
 import TxDetail from '../partials/TxDetail';
 
 interface Props {
-  address: AccountId;
+  address: AccountId | string;
   amount: BN;
   available: BN | undefined;
   api: ApiPromise;
@@ -151,14 +151,14 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
         <SubTitle label={t('Review')} />
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
-            address={address}
+            address={address as unknown as string}
             chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />
           <AmountFee
-            address={address}
-            amount={<ShowBalance2 address={address} balance={amount} />}
+            address={address as unknown as string}
+            amount={<ShowBalance2 address={address as unknown as string} balance={amount} />}
             fee={estimatedFee}
             label={t('Withdraw amount')}
             showDivider
@@ -166,8 +166,8 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
             withFee
           />
           <AmountFee
-            address={address}
-            amount={<ShowBalance2 address={address} balance={amount.add(available || BN_ZERO).sub(estimatedFee || BN_ZERO)} />}
+            address={address as string}
+            amount={<ShowBalance2 address={address as string} balance={amount.add(available || BN_ZERO).sub(estimatedFee || BN_ZERO)} />}
             label={t('Available balance after')}
             style={{ pt: '5px' }}
           />

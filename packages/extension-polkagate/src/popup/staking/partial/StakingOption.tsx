@@ -3,13 +3,14 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
 import { Infotip, PButton, ShowBalance, Warning } from '../../../components';
+import type { ToolTipPlacement } from '@polkadot/extension-polkagate/src/components/Infotip';
 
 interface OptionProps {
   api?: ApiPromise;
@@ -42,7 +43,7 @@ export default function StakingOption({ api, balance, balanceText, buttonText, h
           </Grid>
         }
         <Grid item>
-          <Infotip iconLeft={6} iconTop={8} placement={tipPlace} showQuestionMark={!noToolTip && showQuestionMark} text={helperText}>
+          <Infotip iconLeft={6} iconTop={8} placement={tipPlace as ToolTipPlacement} showQuestionMark={!noToolTip && showQuestionMark} text={helperText}>
             <Typography fontSize='20px' fontWeight={400}>
               {title}
             </Typography>

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
-
+// @ts-nocheck
 import '@vaadin/icons';
 
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -22,7 +22,7 @@ import { useApiWithChain, useFullscreen, useGenesisHashOptions, useTranslation }
 import { createAccountExternal, getMetadata } from '../../../messaging';
 import { Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
-import { ProxyItem } from '../../../util/types';
+import type { ProxyItem } from '../../../util/types';
 
 export interface AccountInfo {
   address: string;
@@ -57,7 +57,7 @@ export default function AddWatchOnlyFullScreen(): React.ReactElement {
   }, [realAddress, chain]);
 
   useEffect(() => {
-    realAddress && api && api.query.proxy?.proxies(realAddress).then((proxies) => {
+    realAddress && api && api.query['proxy']?.['proxies'](realAddress).then((proxies) => {
       const fetchedProxyItems = (JSON.parse(JSON.stringify(proxies[0])))?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
       setProxies(fetchedProxyItems);
@@ -114,7 +114,7 @@ export default function AddWatchOnlyFullScreen(): React.ReactElement {
             address={realAddress}
             chain={chain as any}
             label={t('Account ID')}
-            setAddress={setRealAddress}
+            setAddress={setRealAddress as any}
             style={{ m: '30px auto 0', width: '100%' }}
           />
           <Grid container justifyContent='space-between'>

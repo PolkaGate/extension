@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Collapse, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Collapse, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { ChainLogo, NewAddress } from '../../../components';
@@ -51,7 +51,7 @@ export default function AddressDropdownFullScreen ({ allAddresses, onSelect, sel
               </Grid>
               {!withoutChainLogo &&
                 <Grid container item width='fit-content'>
-                  <ChainLogo genesisHash={selectedGenesis} />
+                  <ChainLogo genesisHash={selectedGenesis as string} />
                 </Grid>}
             </>
             : <Grid alignItems='center' container height='70px' item>
@@ -80,7 +80,7 @@ export default function AddressDropdownFullScreen ({ allAddresses, onSelect, sel
                 </Grid>
                 {!withoutChainLogo &&
                   <Grid container item width='fit-content'>
-                    <ChainLogo genesisHash={genesisHash} />
+                    <ChainLogo genesisHash={genesisHash as string} />
                   </Grid>}
               </Grid>
             ))}

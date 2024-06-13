@@ -6,7 +6,7 @@
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/handlers/State';
+import type { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/handlers/State';
 
 import { ActionContext, InputFilter, Label, PButton } from '../../components';
 import { useTranslation } from '../../hooks';
@@ -23,7 +23,7 @@ export default function AuthManagement (): React.ReactElement {
 
   useEffect(() => {
     getAuthList()
-      .then(({ list }) => setAuthList(list))
+      .then(({ list }) => setAuthList(list as AuthUrls))
       .catch((e) => console.error(e));
   }, []);
 
@@ -33,13 +33,13 @@ export default function AuthManagement (): React.ReactElement {
 
   const toggleAuth = useCallback((url: string) => {
     toggleAuthorization(url)
-      .then(({ list }) => setAuthList(list))
+      .then(({ list }) => setAuthList(list as AuthUrls))
       .catch(console.error);
   }, []);
 
   const removeAuth = useCallback((url: string) => {
     removeAuthorization(url)
-      .then(({ list }) => setAuthList(list))
+      .then(({ list }) => setAuthList(list as AuthUrls))
       .catch(console.error);
   }, []);
 

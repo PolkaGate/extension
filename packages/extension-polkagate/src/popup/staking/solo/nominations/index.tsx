@@ -4,7 +4,6 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
-import type { AccountId } from '@polkadot/types/interfaces';
 import type { AccountStakingInfo, StakingConsts, ValidatorInfo } from '../../../../util/types';
 
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';

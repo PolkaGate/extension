@@ -91,6 +91,7 @@
     "@testing-library/react": "latest",
     "@types/jest": "latest",
     "@types/node": "^20.10.5",
+    "@types/react-spinkit": "^3.0.10",
     "dotenv-webpack": "^8.0.1",
     "i18next-scanner": "^4.4.0",
     "intersection-observer": "^0.12.0",

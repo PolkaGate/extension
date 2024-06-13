@@ -31,7 +31,7 @@ export default function Settings ({ address, api, setRefresh, setShowSettings, s
   const formatted = useFormatted(address);
 
   const [settings, setSettings] = useState<SoloSettings>();
-  const [newSettings, setNewSettings] = useState<SoloSettings>({ controllerId: undefined, payee: undefined, stashId: undefined });
+  const [newSettings, setNewSettings] = useState<SoloSettings>({ controllerId: undefined, payee: undefined as unknown as Payee, stashId: undefined });
   const [showReview, setShowReview] = useState<boolean>(false);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function Settings ({ address, api, setRefresh, setShowSettings, s
 
     if (destinationType === 'account') {
       payee = {
-        Account: parsedStakingAccount.rewardDestination.account
+        Account: (parsedStakingAccount.rewardDestination as any).account
       };
     } else {
       payee = upperCaseFirstChar(destinationType) as Payee;

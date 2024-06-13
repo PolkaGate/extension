@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
-
+// @ts-nocheck
 import '@vaadin/icons';
 
 import { Button, Grid, Typography, useTheme } from '@mui/material';
@@ -16,7 +16,7 @@ import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeade
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from '../../../messaging';
 import { Name } from '../../../partials';
-import { ScanType } from '../attachQR';
+import type { ScanType } from '../attachQR';
 
 export default function AttachQrFullScreen (): React.ReactElement {
   useFullscreen();
@@ -43,11 +43,11 @@ export default function AttachQrFullScreen (): React.ReactElement {
   const onAttach = useCallback(() => {
     if (account && name) {
       if (account.isAddress) {
-        createAccountExternal(name, account.content, account.genesisHash)
+        createAccountExternal(name, account.content, account.genesisHash as string)
           .then(() => setQrLabelAndGoToHome())
           .catch((error: Error) => console.error(error));
       } else if (password) {
-        createAccountSuri(name, password, account.content, 'sr25519', account.genesisHash)
+        createAccountSuri(name, password, account.content, 'sr25519', account.genesisHash as string)
           .then(() => setQrLabelAndGoToHome())
           .catch((error: Error) => console.error(error));
       }

@@ -5,12 +5,12 @@
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
-import { Chain } from '@substrate/connect';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { AccountContext, AddressInput, PButton } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 import getAllAddresses from '../../../../../util/getAllAddresses';
+import type { Chain } from '@polkadot/extension-chains/types';
 
 interface Props {
   address: string;
@@ -28,12 +28,12 @@ export default function UpdateRoles({ address, bouncerId, chain, nominatorId, se
   const containerRef = useRef(null);
   const theme = useTheme();
   const { t } = useTranslation();
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { hierarchy } = useContext(AccountContext);
   const [updateBtnDisable, setUpdateBtnDisable] = useState<boolean>(false);
   const [newNominatorId, setNewNominatorId] = useState<string | null | undefined>(nominatorId);
   const [newBouncerId, setNewBouncerId] = useState<string | null | undefined>(bouncerId);
 
-  const allAddresses = getAllAddresses(hierarchy, true, true, chain?.ss58Format, address);
+  const allAddresses = getAllAddresses(hierarchy, true, true, chain?.ss58Format , address);
 
   const closeMenu = useCallback(() => {
     setShow(!show);
@@ -62,7 +62,7 @@ export default function UpdateRoles({ address, bouncerId, chain, nominatorId, se
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px', m: '30px auto 5px', width: '80%' }} />
       </Grid>
       <AddressInput
-        address={newNominatorId}
+        address={newNominatorId as string}
         allAddresses={allAddresses}
         chain={chain as any}
         label={t<string>('Nominator')}
@@ -74,7 +74,7 @@ export default function UpdateRoles({ address, bouncerId, chain, nominatorId, se
         }}
       />
       <AddressInput
-        address={newBouncerId}
+        address={newBouncerId as string}
         allAddresses={allAddresses}
         chain={chain as any}
         label={t<string>('Bouncer')}

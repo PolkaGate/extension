@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, SxProps, Theme, useTheme } from '@mui/material';
+import { Divider, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useContext } from 'react';
 import { useParams } from 'react-router';
 

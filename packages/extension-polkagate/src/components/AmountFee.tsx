@@ -5,7 +5,7 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Divider, Grid, SxProps, Theme } from '@mui/material';
+import { Divider, Grid, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
 
 import { useAccount, useTranslation } from '../hooks';
@@ -24,7 +24,7 @@ interface Props {
   withFee?: boolean;
 }
 
-function AmountFee ({ address, amount, children, fee, label, style = {}, showDivider = false, token, withFee }: Props): React.ReactElement {
+function AmountFee({ address, amount, children, fee, label, style = {}, showDivider = false, token, withFee }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
 

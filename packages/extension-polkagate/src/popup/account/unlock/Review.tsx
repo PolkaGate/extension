@@ -38,7 +38,7 @@ interface Props {
   show: boolean;
   unlockableAmount: BN;
   totalLocked: BN;
-  setRefresh: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Review({ address, api, classToUnlock, setRefresh, setShow, show, totalLocked, unlockableAmount }: Props): React.ReactElement {

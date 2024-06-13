@@ -6,7 +6,7 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Collapse, Divider, Grid, IconButton, Skeleton, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Collapse, Divider, Grid, IconButton, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';

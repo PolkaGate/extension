@@ -8,7 +8,7 @@ import type { ProxyItem } from '../../../util/types';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import BackspaceIcon from '@mui/icons-material/Backspace';
-import { Divider, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';

@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Box, Grid, SxProps, Theme, Typography } from '@mui/material';
+import { Box, Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import React, { MouseEventHandler } from 'react';
 
 import { noop } from '../util/utils';
@@ -23,7 +23,7 @@ interface Props {
   withHoverEffect?: boolean;
 }
 
-export default function MenuItem ({ children, disabled = false, fontSize, icon, iconComponent, onClick, pl = '0', py = '8px', showSubMenu = false, text, withHoverEffect }: Props): React.ReactElement<Props> {
+export default function MenuItem({ children, disabled = false, fontSize, icon, iconComponent, onClick, pl = '0', py = '8px', showSubMenu = false, text, withHoverEffect }: Props): React.ReactElement<Props> {
   const hoverEffectStyles: SxProps<Theme> = {
     '&:hover': { bgcolor: disabled ? 'none' : 'divider' },
     borderRadius: '5px',

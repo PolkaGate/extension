@@ -7,7 +7,7 @@ import { faXTwitter } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AddRounded as AddIcon, RemoveCircle as RemoveIcon } from '@mui/icons-material';
-import { Box, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Box, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';

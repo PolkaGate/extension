@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme } from '@mui/material';
+import { Grid, type SxProps, type Theme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
 import { useGenesisHashOptions, useIsTestnetEnabled } from '@polkadot/extension-polkagate/src/hooks';
@@ -22,7 +22,7 @@ interface Props {
   disabledItems?: string[] | number[];
 }
 
-function Chain ({ address, allowAnyChainOption, defaultValue, disabledItems, label, onChange, style }: Props) {
+function Chain({ address, allowAnyChainOption, defaultValue, disabledItems, label, onChange, style }: Props) {
   let options = useGenesisHashOptions();
   const isTestnetEnabled = useIsTestnetEnabled();
 
@@ -32,7 +32,7 @@ function Chain ({ address, allowAnyChainOption, defaultValue, disabledItems, lab
     !isTestnetEnabled
       ? [...(disabledItems || []), ...TEST_NETS]
       : disabledItems
-  , [disabledItems, isTestnetEnabled]);
+    , [disabledItems, isTestnetEnabled]);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     try {

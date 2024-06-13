@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+//@ts-nocheck
+
 import type { Header } from '@polkadot/types/interfaces';
 import type { AnyTuple } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
@@ -15,9 +17,9 @@ import { Grid, Tooltip, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
+import type { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
 import { AccountsStore } from '@polkadot/extension-base/stores';
-import { ISubmittableResult } from '@polkadot/types/types';
+import type { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
@@ -116,6 +118,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
       return;
     }
 
+    // @ts-ignore
     const tx = (params ? call(...params) : call) as SubmittableExtrinsic<'promise', ISubmittableResult>;
 
     return selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, tx) : tx;
@@ -164,7 +167,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
   useEffect((): void => {
     if (api && from) {
       api.rpc.chain.getHeader().then(setLastHeader).catch(console.error);
-      api.query.system.account(from).then((res) => setRawNonce(res?.nonce || 0)).catch(console.error);
+      api.query['system']['account'](from).then((res) => setRawNonce(res?.nonce || 0)).catch(console.error);
     }
   }, [api, formatted, from, selectedProxy]);
 

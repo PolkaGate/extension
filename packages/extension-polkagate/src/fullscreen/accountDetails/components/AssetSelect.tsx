@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme } from '@mui/material';
+import { Grid, type SxProps, type Theme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import Select2 from '../../../components/Select2';
@@ -18,7 +18,7 @@ interface Props {
   setAssetId: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-function AssetSelect ({ address, assetId, label, onChange, setAssetId, style }: Props) {
+function AssetSelect({ address, assetId, label, onChange, setAssetId, style }: Props) {
   const tokens = useTokens(address);
   const assets = useAssetHubAssets(address);
   const options = useMemo(() => (tokens || []).concat(assets || []), [assets, tokens]);

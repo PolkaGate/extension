@@ -7,7 +7,7 @@ import '@vaadin/icons';
 
 import type { AccountId } from '@polkadot/types/interfaces';
 
-import { alpha, Grid, SxProps, Theme, useTheme } from '@mui/material';
+import { alpha, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 

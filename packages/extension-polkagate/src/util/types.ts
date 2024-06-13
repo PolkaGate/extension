@@ -9,7 +9,7 @@ import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMem
 import type { BN } from '@polkadot/util';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
-import { SxProps, Theme } from '@mui/material';
+import { type SxProps, type Theme } from '@mui/material';
 import { LinkOption } from '@polkagate/apps-config/endpoints/types';
 
 import { ApiPromise } from '@polkadot/api';
@@ -400,7 +400,7 @@ export interface MyPoolInfo extends PoolInfo {
   rewardIdBalance?: DeriveStakingAccount;
   token?: string;
   decimal?: number;
-  date: number;
+  date?: number;
 }
 
 export interface PoolAccounts {

@@ -35,7 +35,7 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
-  const { price } = useTokenPrice(address);
+  const { price } = useTokenPrice(address as string);
   const formatted = useFormatted(address);
   const decimal = useDecimal(address);
   const chain = useChain(address);
@@ -147,7 +147,7 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
   }, [api, biggestOngoingLock, currentBlock, referendaLocks, t]);
 
   useEffect(() => {
-    if (!api?.query?.balances || !formatted || api?.genesisHash?.toString() !== chain?.genesisHash) {
+    if (!api?.query?.['balances'] || !formatted || api?.genesisHash?.toString() !== chain?.genesisHash) {
       return setMiscRefLock(undefined);
     }
 
@@ -200,7 +200,7 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
               />
             </Grid>
           </Grid>
-          <Grid alignItems='center' container item justifyContent='flex-end' sx={{ cursor: unlockableAmount && !unlockableAmount.isZero() && 'pointer', ml: '8px', width: '26px' }}>
+          <Grid alignItems='center' container item justifyContent='flex-end' sx={{ cursor: unlockableAmount && !unlockableAmount.isZero() ? 'pointer' : undefined, ml: '8px', width: '26px' }}>
             <FontAwesomeIcon
               color={!unlockableAmount || unlockableAmount.isZero() ? theme.palette.action.disabledBackground : theme.palette.secondary.light}
               icon={faUnlockAlt}

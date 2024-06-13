@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import type { Chain } from '@polkadot/extension-chains/types';

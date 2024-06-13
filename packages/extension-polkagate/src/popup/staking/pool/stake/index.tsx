@@ -1,9 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router';
@@ -25,7 +27,7 @@ interface State {
   pathname: string;
 }
 
-export default function Stake (): React.ReactElement {
+export default function Stake(): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
@@ -79,7 +81,7 @@ export default function Stake (): React.ReactElement {
             address={address}
             api={api}
             balances={balances}
-            consts={poolStakingConsts}
+            consts={poolStakingConsts as PoolStakingConsts}
           />
       }
     </>

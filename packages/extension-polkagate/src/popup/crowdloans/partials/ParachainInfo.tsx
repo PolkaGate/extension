@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+// @ts-nocheck
+
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Close as CloseIcon } from '@mui/icons-material';

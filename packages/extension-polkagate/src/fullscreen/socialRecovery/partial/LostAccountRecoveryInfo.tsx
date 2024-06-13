@@ -5,7 +5,7 @@
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
-import { Divider, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { BN } from '@polkadot/util';

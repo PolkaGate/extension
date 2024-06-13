@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Typography } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
-import React, { useCallback,useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import Popup from '../components/Popup';
 import { useTranslation } from '../hooks';

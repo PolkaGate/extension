@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { QuestionMarkRounded as QuestionMarkRoundedIcon } from '@mui/icons-material';
-import { Grid, SxProps, Theme, Tooltip, Typography } from '@mui/material';
+import { Grid, type SxProps, type Theme, Tooltip, Typography } from '@mui/material';
 import React from 'react';
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
   labelAlignment?: 'left' | 'center' | 'right';
 }
 
-function Label2 ({ children, helperText, label, labelAlignment = 'left', style }: Props): React.ReactElement<Props> {
+function Label2({ children, helperText, label, labelAlignment = 'left', style }: Props): React.ReactElement<Props> {
   return (
     <Grid container item sx={style}>
       <Grid container item sx={{ maxWidth: helperText ? '95%' : '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>

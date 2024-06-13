@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 
-import { Container, Divider, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Container, Divider, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import React from 'react';
 

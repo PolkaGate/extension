@@ -6,7 +6,7 @@
 import type { BN } from '@polkadot/util';
 import type { Proxy, ProxyItem, ProxyTypes } from '../util/types';
 
-import { Grid, SxProps, Theme, Tooltip, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Tooltip, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';

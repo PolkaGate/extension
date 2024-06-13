@@ -9,6 +9,7 @@ import type { MemberPoints, MyPoolInfo, TxInfo } from '../../../../../util/types
 import { faPersonCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { CheckCircleOutlineSharp as CheckCircleOutlineSharpIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 

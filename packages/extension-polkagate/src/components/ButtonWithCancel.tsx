@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Button, Grid, useTheme } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React from 'react';
 
@@ -19,7 +20,7 @@ interface Props {
   _isBusy?: boolean;
 }
 
-export default function ButtonWithCancel ({ _isBusy, _mt, _onClick, _onClickCancel, cancelText, disabled = false, text }: Props): React.ReactElement<Props> {
+export default function ButtonWithCancel({ _isBusy, _mt, _onClick, _onClickCancel, cancelText, disabled = false, text }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 

@@ -5,7 +5,7 @@
 
 import type { DropdownOption } from '../util/types';
 
-import { FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, SxProps, Theme, Typography } from '@mui/material';
+import { FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, type SxProps, type Theme, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -72,7 +72,7 @@ const Item: React.FC<{ height?: string, logoSize?: number, text: string }> = ({ 
   );
 };
 
-function FullscreenChain ({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style }: Props) {
+function FullscreenChain({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style }: Props) {
   const theme = useTheme();
   const _allOptions = useGenesisHashOptions();
   const isTestnetEnabled = useIsTestnetEnabled();
@@ -90,7 +90,7 @@ function FullscreenChain ({ address, defaultValue, disabledItems, helperText, la
     !isTestnetEnabled
       ? [...(disabledItems || []), ...TEST_NETS]
       : disabledItems
-  , [disabledItems, isTestnetEnabled]);
+    , [disabledItems, isTestnetEnabled]);
 
   useEffect(() => {
     onChange(defaultValue);

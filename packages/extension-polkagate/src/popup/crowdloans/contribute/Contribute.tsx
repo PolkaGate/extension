@@ -9,7 +9,7 @@ import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { LinkOption } from '@polkagate/apps-config/endpoints/types';
+import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -20,7 +20,7 @@ import { useBalances, useDecimal, useToken, useTranslation } from '../../../hook
 import { HeaderBrand, SubTitle } from '../../../partials';
 import Asset from '../../../partials/Asset';
 import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
-import { Crowdloan } from '../../../util/types';
+import type { Crowdloan } from '../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
 import ParachainInfo from '../partials/ParachainInfo';
 import ShowParachain from '../partials/ShowParachain';
@@ -39,7 +39,7 @@ interface Props {
   myContribution?: string | Balance;
 }
 
-export default function Contribute({ api, chain, crowdloan, crowdloansId, currentBlockNumber, formatted, minContribution, myContribution, setShowContribute, showContribute = false }: Props): React.ReactElement {
+export default function Contribute ({ api, chain, crowdloan, crowdloansId, currentBlockNumber, formatted, minContribution, myContribution, setShowContribute, showContribute = false }: Props): React.ReactElement {
   const { t } = useTranslation();
   const balances = useBalances(String(formatted));
   const decimal = useDecimal(formatted);

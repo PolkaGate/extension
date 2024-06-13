@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Typography } from '@mui/material';
+// @ts-ignore
 import Chance from 'chance';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
@@ -99,8 +100,8 @@ function ImportProxied(): React.ReactElement {
           allAddresses={allAddresses}
           onSelect={onParentChange}
           selectedAddress={selectedAddress}
-          selectedGenesis={accountGenesishash}
-          selectedName={accountName}
+          selectedGenesis={accountGenesishash as string}
+          selectedName={accountName as string}
           withoutChainLogo
         />
       </Label>

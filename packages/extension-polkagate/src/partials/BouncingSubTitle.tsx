@@ -8,6 +8,7 @@
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { keyframes } from '@mui/system';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React from 'react';
 

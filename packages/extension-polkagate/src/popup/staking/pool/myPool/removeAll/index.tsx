@@ -7,6 +7,7 @@ import type { MemberPoints, MyPoolInfo } from '../../../../../util/types';
 
 import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
 import { Grid, Typography } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -103,7 +104,7 @@ export default function RemoveAll({ address, pool, setRefresh, setShowRemoveAll,
     setShowReview(!showReview);
   }, [showReview]);
 
-  const RemoveAllBtnDisabled = needsUnboundAll || (!!sessionInfo && remainingEraToKick > 0);
+  const RemoveAllBtnDisabled = needsUnboundAll || (!!sessionInfo && (remainingEraToKick as number) > 0);
 
   useEffect(() => {
     if (!pool) {
@@ -121,7 +122,7 @@ export default function RemoveAll({ address, pool, setRefresh, setShowRemoveAll,
       return setStep(1);
     }
 
-    if (sessionInfo && remainingEraToKick > 0) {
+    if (sessionInfo && remainingEraToKick as number > 0) {
       return setStep(2);
     }
 
@@ -129,7 +130,7 @@ export default function RemoveAll({ address, pool, setRefresh, setShowRemoveAll,
       return setStep(3);
     }
 
-    members?.length <= 1 && setStep(4);
+    (members?.length as number) <= 1 && setStep(4);
   }, [remainingEraToKick, needsUnboundAll, members, sessionInfo, sessionInfo?.currentEra]);
 
   useEffect(() => {
@@ -169,9 +170,9 @@ export default function RemoveAll({ address, pool, setRefresh, setShowRemoveAll,
     <Grid container justifyContent='center'>
       <Typography fontSize='16px' fontWeight={300}>{t<string>('Time left to be able to remove all')}</Typography>
       <Grid container justifyContent='center' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', m: 'auto', py: '30px', width: '92%' }}>
-        {remainingTimeCounter?.dayCounter > 0 &&
+        {remainingTimeCounter?.dayCounter as number > 0 &&
           <Typography fontSize='28px' fontWeight={400} textAlign='center'>
-            {remainingTimeCounter?.dayCounter > 1
+            {remainingTimeCounter?.dayCounter as number > 1
               ? t<string>('days and')
               : t<string>('day and')}
           </Typography>
@@ -196,7 +197,7 @@ export default function RemoveAll({ address, pool, setRefresh, setShowRemoveAll,
   );
 
   return (
-    <Popup show={showRemoveAll}>
+    <Popup show={!!showRemoveAll}>
       <HeaderBrand
         onBackClick={backToPool}
         shortBorder
@@ -273,7 +274,7 @@ export default function RemoveAll({ address, pool, setRefresh, setShowRemoveAll,
           address={address}
           api={api}
           chain={chain as any}
-          formatted={formatted}
+          formatted={formatted as string}
           mode={mode}
           pool={pool}
           poolMembers={members}

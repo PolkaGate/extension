@@ -5,7 +5,7 @@
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Grid, Skeleton, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Grid, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -68,7 +68,7 @@ export default function ProxiedTable({ api, chain, label, maxHeight = '120px', m
             <Grid alignItems='center' container item width='fit-content'>
               <Grid alignItems='center' container item onClick={onSelect(!allSelected)} sx={{ cursor: !proxiedAccounts ? 'default' : 'pointer', pl: isExtensionMode ? '18px' : '20px', width: 'fit-content' }}>
                 <Checkbox
-                  checked={allSelected}
+                  checked={allSelected as boolean}
                 />
               </Grid>
             </Grid>

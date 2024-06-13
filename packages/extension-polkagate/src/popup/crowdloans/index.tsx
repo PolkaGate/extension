@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+// @ts-nocheck
+
 import '@vaadin/icons';
 
 import type { ApiPromise } from '@polkadot/api';

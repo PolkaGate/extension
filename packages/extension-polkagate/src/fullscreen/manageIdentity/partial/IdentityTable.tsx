@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme, Typography } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import React from 'react';
 
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -15,7 +15,7 @@ interface Props {
   style?: SxProps<Theme> | undefined;
 }
 
-export default function IdentityTable ({ identity, style }: Props): React.ReactElement {
+export default function IdentityTable({ identity, style }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const IdItems = ({ noBorder = false, title, value }: { title: string, value: string | undefined, noBorder?: boolean }) => (

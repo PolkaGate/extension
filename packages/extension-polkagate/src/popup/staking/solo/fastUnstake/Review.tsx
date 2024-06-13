@@ -16,7 +16,6 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import type { Chain } from '@polkadot/extension-chains/types';
 
 import type { Balance } from '@polkadot/types/interfaces';
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 

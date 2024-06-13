@@ -9,7 +9,8 @@ import type { Proxy, ProxyItem } from '../util/types';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import BackspaceIcon from '@mui/icons-material/Backspace';
-import { FormControlLabel, Grid, Radio, SxProps, Theme, Typography } from '@mui/material';
+import { FormControlLabel, Grid, Radio, type SxProps, type Theme, Typography } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';

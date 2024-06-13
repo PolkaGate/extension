@@ -115,7 +115,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
     const ED = api.consts['balances']['existentialDeposit'] as unknown as BN;
     const isAmountInRange = amountAsBN.lt(availableBalance.sub(ED.muln(2)).sub(estimatedMaxFee || BN_ZERO));
 
-    setNextBtnDisabled(!bondAmount || bondAmount === '0' || !isAmountInRange || !pool || pool?.member?.points === '0');
+    setNextBtnDisabled(!bondAmount || bondAmount === '0' || !isAmountInRange || !pool || (pool?.member?.points as unknown as string) === '0');
   }, [amountAsBN, availableBalance, decimal, estimatedMaxFee, bondAmount, api, pool]);
 
   const Warn = ({ iconDanger, isDanger, text }: { text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
@@ -141,7 +141,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
         text={t<string>('Pool Staking')}
       />
       <SubTitle label={t<string>('Stake')} />
-      {pool?.member?.points === '0' &&
+      {(pool?.member?.points as unknown as string) === '0' &&
         <Warn isDanger text={t('The account is fully unstaked, so can\'t stake until you withdraw entire unstaked/redeemable amount.')} />
       }
       <Asset
@@ -189,7 +189,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
       {showReview &&
         <Review
           address={address}
-          api={api}
+          api={api as ApiPromise }
           bondAmount={amountAsBN}
           estimatedFee={estimatedFee}
           pool={pool}

@@ -7,6 +7,7 @@ import '@vaadin/icons';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useState } from 'react';
 

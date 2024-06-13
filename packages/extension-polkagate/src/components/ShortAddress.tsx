@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme } from '@mui/material';
+import { Grid, type SxProps, type Theme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';

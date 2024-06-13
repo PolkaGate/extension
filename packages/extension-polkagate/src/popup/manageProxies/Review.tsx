@@ -241,7 +241,6 @@ export default function Review({ address, api, chain, depositToPay, depositValue
             api={api}
             chain={chain as any}
             deposit={depositValue}
-            name={selectedProxyName}
             proxies={proxiesToChange as ProxyItem[]}
           />
         </Confirmation>

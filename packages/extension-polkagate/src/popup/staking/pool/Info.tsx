@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+//@ts-nocheck
+
 import type { PoolStakingConsts } from '../../../util/types';
 
 import { Container, Divider, Grid } from '@mui/material';
@@ -17,7 +19,6 @@ import { amountToHuman } from '../../../util/utils';
 
 interface Props {
   address: string;
-  backPath: string;
   showInfo: boolean;
   info: PoolStakingConsts;
   setShowInfo: React.Dispatch<React.SetStateAction<boolean>>

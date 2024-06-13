@@ -6,7 +6,7 @@
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
 import { AccessTime as AccessTimeIcon, Check as CheckIcon } from '@mui/icons-material';
-import { Divider, Grid, Skeleton, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';

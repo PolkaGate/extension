@@ -30,9 +30,9 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);
 
-  const [controllerId, setControllerId] = useState<AccountId | string | undefined>(settings.controllerId);
+  const [controllerId, setControllerId] = useState<AccountId | string | undefined | null>(settings.controllerId);
   const [rewardDestinationValue, setRewardDestinationValue] = useState<'Staked' | 'Others'>(settings.payee === 'Staked' ? 'Staked' : 'Others');
-  const [rewardDestinationAccount, setRewardDestinationAccount] = useState<AccountId | string | undefined>(getPayee(settings));
+  const [rewardDestinationAccount, setRewardDestinationAccount] = useState<AccountId | string | null | undefined>(getPayee(settings));
 
   const isSettingAtBonding = useMemo(() => !newSettings, [newSettings]);
 
@@ -69,14 +69,15 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
     if (rewardDestinationAccount) {
       return { Account: rewardDestinationAccount };
     }
+    return undefined;
   }, [controllerId, settings.controllerId, settings.stashId]);
 
-  const payeeNotChanged = useMemo(() => JSON.stringify(settings.payee) === JSON.stringify(makePayee(rewardDestinationValue, rewardDestinationAccount)), [makePayee, rewardDestinationAccount, rewardDestinationValue, settings.payee]);
+  const payeeNotChanged = useMemo(() => JSON.stringify(settings.payee) === JSON.stringify(makePayee(rewardDestinationValue, rewardDestinationAccount as string)), [makePayee, rewardDestinationAccount, rewardDestinationValue, settings.payee]);
 
   const onSet = useCallback(() => {
     set((s) => {
       if (isSettingAtBonding) {
-        s.controllerId = controllerId;
+        s.controllerId = controllerId as string;
         s.payee = makePayee(rewardDestinationValue, rewardDestinationAccount as string) as Payee;
 
         return s;
@@ -150,7 +151,7 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
               <FormLabel sx={{ '&.Mui-focused': { color: 'text.primary' }, color: 'text.primary', fontSize: '16px' }}>
                 {t('Reward destination')}
               </FormLabel>
-              <RadioGroup defaultValue={optionDefaultVal} onChange={onSelectionMethodChange}>
+              <RadioGroup defaultValue={optionDefaultVal} onChange={onSelectionMethodChange as any}>
                 <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main' }} value='Staked' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Add to staked amount')}</Typography>} />
                 <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main', py: '2px' }} value='Others' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Transfer to a specific account')}</Typography>} />
               </RadioGroup>

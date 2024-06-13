@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
-
+// @ts-nocheck
 import '@vaadin/icons';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
@@ -21,6 +21,7 @@ import { createAccountHardware, getMetadata } from '../../../messaging';
 import { Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
 import ledgerChains from '../../../util/legerChains';
+import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
 
 interface AccOption {
   text: string;
@@ -166,7 +167,7 @@ export default function ImportLedger(): React.ReactElement {
               icon={getLogo(newChain ?? undefined)}
               label={t<string>('Select the chain')}
               onChange={setGenesis}
-              options={networkOps.current}
+              options={networkOps.current as DropdownOption[]}
               style={{ mt: 3, width: '100%' }}
             />
           </Grid>

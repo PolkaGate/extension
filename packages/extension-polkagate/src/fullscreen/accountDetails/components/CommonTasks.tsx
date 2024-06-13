@@ -7,6 +7,7 @@ import { faCoins, faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-s
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import { BalancesInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useMemo } from 'react';

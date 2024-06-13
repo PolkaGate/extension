@@ -5,7 +5,7 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Grid, SxProps, Theme, Typography } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';

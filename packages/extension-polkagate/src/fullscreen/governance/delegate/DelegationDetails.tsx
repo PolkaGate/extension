@@ -18,14 +18,14 @@ import { BN } from '@polkadot/util';
 
 import { Identity, Motion, TwoButtons } from '../../../components';
 import { useInfo, useTracks, useTranslation } from '../../../hooks';
-import { Lock } from '../../../hooks/useAccountLocks';
+import type { Lock } from '../../../hooks/useAccountLocks';
 import { amountToHuman } from '../../../util/utils';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
-import ModifyDelegate, { ModifyModes } from './modify/ModifyDelegate';
+import ModifyDelegate, { type ModifyModes } from './modify/ModifyDelegate';
 import ReferendaTable from './partial/ReferendaTable';
 import TracksList from './partial/TracksList';
 import RemoveDelegate from './remove/RemoveDelegate';
-import { AlreadyDelegateInformation, DelegateInformation, DelegationStatus, STEPS } from '.';
+import { type AlreadyDelegateInformation, type DelegateInformation, type DelegationStatus, STEPS } from '.';
 
 interface Props {
   address: string | undefined;

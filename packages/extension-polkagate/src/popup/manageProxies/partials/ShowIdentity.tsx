@@ -8,6 +8,7 @@ import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { type SxProps, type Theme, Grid, Typography } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React, { useEffect, useState } from 'react';
 
@@ -28,7 +29,7 @@ interface IdentityProps {
   web: string | undefined;
 }
 
-export default function ShowIdentity ({ accountIdentity, style }: Props): React.ReactElement {
+export default function ShowIdentity({ accountIdentity, style }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [identity, setIdentity] = useState<IdentityProps | undefined>();

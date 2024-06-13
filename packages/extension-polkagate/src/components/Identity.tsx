@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Email as EmailIcon, Language as LanguageIcon, X as XIcon } from '@mui/icons-material';
-import { Box, Grid, Link, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Box, Grid, Link, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import React, { useEffect, useMemo } from 'react';
 

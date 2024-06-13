@@ -47,7 +47,7 @@ function Popup({ children, handleClose, id, show }: Props): React.ReactElement<P
         </Container>
       </div>
     </Modal>
-    , document.getElementById('root')
+    , document.getElementById('root') as HTMLElement
   );
 }
 

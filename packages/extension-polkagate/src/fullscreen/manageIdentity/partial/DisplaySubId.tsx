@@ -6,7 +6,7 @@
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForward as ArrowForwardIcon, Replay as UndoIcon } from '@mui/icons-material';
-import { Divider, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 

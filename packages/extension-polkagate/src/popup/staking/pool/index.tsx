@@ -40,6 +40,9 @@ interface SessionIfo {
 interface State {
   api?: ApiPromise;
   stakingConsts?: StakingConsts;
+  unlockingAmount?: BN;
+  redeemable?: BN;
+  currentEraIndex?: number;
   poolConsts?: PoolStakingConsts;
 }
 
@@ -70,7 +73,7 @@ export default function Index(): React.ReactElement {
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
-  const isPoolInfoOutdated = useMemo(() => pool && (Date.now() - pool.date) > BALANCES_VALIDITY_PERIOD, [pool]);
+  const isPoolInfoOutdated = useMemo(() => pool && pool.date && (Date.now() - pool.date) > BALANCES_VALIDITY_PERIOD, [pool]);
 
   const [redeemable, setRedeemable] = useState<BN | undefined>(state?.redeemable);
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
@@ -104,7 +107,7 @@ export default function Index(): React.ReactElement {
   }, [api]);
 
   useEffect((): void => {
-    api && api.query.staking && api.query.staking.currentEra().then((ce) => {
+    api && api['query']['staking'] && api.query['staking']['currentEra']().then((ce) => {
       setCurrentEraIndex(Number(ce));
     });
   }, [api]);
@@ -209,7 +212,7 @@ export default function Index(): React.ReactElement {
             {new Date(date).toLocaleDateString(undefined, DATE_OPTIONS)}
           </Grid>
           <Grid fontWeight={400} item>
-            <FormatBalance api={api} value={amount} />
+            <FormatBalance api={api as ApiPromise} value={amount} />
           </Grid>
         </Grid>))
       }
@@ -235,7 +238,7 @@ export default function Index(): React.ReactElement {
               <Grid alignItems='center' container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400, mt: '5px' }}>
                 {link1Text &&
                   <Grid item onClick={onLink1} sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', textDecorationLine: 'underline' }} >
-                    {link1Text}
+                    {link1Text as unknown as string}
                   </Grid>
                 }
                 {link2Text &&
@@ -244,7 +247,7 @@ export default function Index(): React.ReactElement {
                       <Divider orientation='vertical' sx={{ bgcolor: !value || value?.isZero() ? 'text.disabled' : 'text.primary', height: '19px', mt: '3px', width: '2px' }} />
                     </Grid>
                     <Grid item onClick={onLink2} sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', textDecorationLine: 'underline' }}>
-                      {link2Text}
+                      {link2Text as unknown as string}
                     </Grid>
                   </>
                 }
@@ -302,7 +305,7 @@ export default function Index(): React.ReactElement {
       />
       <Container disableGutters sx={{ px: '15px' }}>
         <AccountBrief address={address} identity={identity} />
-        <BouncingSubTitle circleStyle={{ m: '17px 0 0 149px' }} label={t<string>('Pool Staking')} refresh={refresh} style={{ fontSize: '20px', fontWeight: 400 }} />
+        <BouncingSubTitle circleStyle={{ margin: '17px 0 0 149px' }} label={t<string>('Pool Staking')} refresh={refresh} />
         <Grid container maxHeight={window.innerHeight - 264} sx={{ overflowY: 'scroll' }}>
           <Row
             label={t('Staked')}
@@ -354,7 +357,7 @@ export default function Index(): React.ReactElement {
           divider
           icon={
             <FontAwesomeIcon
-              bounce={staked !== undefined && !staked.isZero() && pool?.bondedPool?.state !== 'Destroying' && pool?.stashIdAccount?.nominators?.length === 0} // do when has stake but does not nominations
+              bounce={staked !== undefined && !staked.isZero() && (pool?.bondedPool?.state as unknown as string) !== 'Destroying' && pool?.stashIdAccount?.nominators?.length === 0} // do when has stake but does not nominations
               color={`${theme.palette.text.primary}`}
               icon={faHand}
               size='lg'
@@ -365,11 +368,13 @@ export default function Index(): React.ReactElement {
         />
         <HorizontalMenuItem
           divider
+          // @ts-ignore
           icon={<vaadin-icon icon='vaadin:grid-small' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
           onClick={goToPool}
           title={t<string>('Pool')}
         />
         <HorizontalMenuItem
+          // @ts-ignore
           icon={<vaadin-icon icon='vaadin:info-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
           onClick={goToInfo}
           title={t<string>('Info')}
@@ -377,7 +382,7 @@ export default function Index(): React.ReactElement {
       </Grid>
       <Info
         address={address}
-        info={consts}
+        info={consts as PoolStakingConsts}
         setShowInfo={setShowInfo}
         showInfo={showInfo}
       />
@@ -398,7 +403,7 @@ export default function Index(): React.ReactElement {
           address={address}
           amount={claimable}
           api={api}
-          available={getValue('available', balances)}
+          available={getValue('available', balances) as BN}
           chain={chain as any}
           formatted={formatted}
           setRefresh={setRefresh}
@@ -410,7 +415,7 @@ export default function Index(): React.ReactElement {
           address={address}
           amount={redeemable}
           api={api}
-          available={getValue('available', balances)}
+          available={getValue('available', balances) as BN}
           chain={chain as any}
           formatted={formatted}
           setRefresh={setRefresh}

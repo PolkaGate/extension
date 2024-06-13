@@ -91,6 +91,7 @@ export default function Index(): React.ReactElement {
     if (staked && !unstakeAllAmount) {
       return staked.sub(amountToMachine(amount, decimal));
     }
+    return undefined;
   }, [amount, decimal, staked, unstakeAllAmount]);
   const unlockingLen = myPool?.stashIdAccount?.stakingLedger?.unlocking?.length;
   const maxUnlockingChunks = api && (api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber();
@@ -368,9 +369,7 @@ export default function Index(): React.ReactElement {
       {goChange && helperButton === 1 && myPool && formatted &&
         <SetState
           address={address}
-          api={api}
-          chain={chain as any}
-          formatted={formatted}
+          formatted={formatted as string}
           headerText={t<string>('Destroy Pool')}
           helperText={destroyHelperText}
           pool={myPool}

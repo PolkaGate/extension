@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme } from '@mui/material';
+import { Grid, type SxProps, type Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { useBlockInterval, useConvictionOptions, useTranslation } from '../hooks';

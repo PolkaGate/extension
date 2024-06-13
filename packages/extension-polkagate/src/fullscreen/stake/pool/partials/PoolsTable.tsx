@@ -6,7 +6,7 @@
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FilterAltOutlined as FilterIcon, MoreVert as MoreVertIcon, SearchOff as SearchOffIcon, SearchOutlined as SearchOutlinedIcon } from '@mui/icons-material';
-import { Divider, FormControlLabel, Grid, LinearProgress, Radio, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Divider, FormControlLabel, Grid, LinearProgress, Radio, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';

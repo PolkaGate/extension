@@ -7,7 +7,7 @@
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { Grid, Popover, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Grid, Popover, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo } from 'react';
 
 import type { Chain } from '@polkadot/extension-chains/types';

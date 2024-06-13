@@ -10,7 +10,7 @@ import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
 import { faPaste, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Grid, IconButton, SxProps, Theme, useTheme } from '@mui/material';
+import { Grid, IconButton, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { Chain } from '@polkadot/extension-chains/types';

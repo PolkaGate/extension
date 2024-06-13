@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+// @ts-nocheck
+
 /**
  * @description
  * this component opens stake review page

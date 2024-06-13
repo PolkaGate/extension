@@ -7,7 +7,7 @@ import '@vaadin/icons';
 
 import { faPaste, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Grid, IconButton, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Grid, IconButton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { Chain } from '@polkadot/extension-chains/types';

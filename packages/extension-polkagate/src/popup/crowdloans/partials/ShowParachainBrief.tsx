@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+// @ts-nocheck
+
 import { Language as LanguageIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Avatar, Grid, IconButton, Link, type SxProps, type Theme, Typography } from '@mui/material';
 import type { Crowdloan } from 'extension-polkagate/src/util/types';

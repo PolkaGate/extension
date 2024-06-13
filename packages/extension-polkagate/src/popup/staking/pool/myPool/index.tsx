@@ -10,6 +10,7 @@ import { faPenToSquare, faPersonCircleXmark } from '@fortawesome/free-solid-svg-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon, AutoDelete as AutoDeleteIcon, KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon, LockOpenRounded as UnblockIcon, LockPersonRounded as BlockIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
@@ -120,7 +121,7 @@ export default function Pool(): React.ReactElement {
     }
 
     if (roleToShow !== 'all') {
-      const filteredPools = allMyPools.filter((pool) => pool?.bondedPool?.roles[roleToShow] === formatted);
+      const filteredPools = allMyPools.filter((pool) => (pool?.bondedPool?.roles as any)[roleToShow] === formatted);
 
       setPoolsToShow([...filteredPools]);
 
@@ -147,7 +148,7 @@ export default function Pool(): React.ReactElement {
     const toDisable: string[] = [];
 
     allRoles.forEach((role, index) => {
-      const available = allMyPools.find((pool) => pool?.bondedPool?.roles[role] === formatted);
+      const available = allMyPools.find((pool) => (pool?.bondedPool?.roles as any)[role] === formatted);
 
       !available && toDisable.push(allRoles[index]);
     });
@@ -344,7 +345,7 @@ export default function Pool(): React.ReactElement {
                   disabledItems={disabledItems}
                   isDisabled={allMyPools?.length === 1}
                   label={t('Select role')}
-                  onChange={onSelectionMethodChange}
+                  onChange={onSelectionMethodChange as any}
                   options={POOL_ROLES}
                 />
               </Grid>
@@ -355,7 +356,7 @@ export default function Pool(): React.ReactElement {
             api={api}
             chain={chain as any}
             mode='Default'
-            pool={poolsToShow[poolIndex]}
+            pool={poolsToShow[poolIndex] as MyPoolInfo}
             showInfo
             style={{
               m: '0 auto',
@@ -367,7 +368,7 @@ export default function Pool(): React.ReactElement {
             chain={chain as any}
             label={t<string>('Roles')}
             mode='Roles'
-            pool={poolsToShow[poolIndex]}
+            pool={poolsToShow[poolIndex] as MyPoolInfo }
             style={{ m: '15px auto', width: '92%' }}
           />
           {canChangeState &&
@@ -399,7 +400,7 @@ export default function Pool(): React.ReactElement {
           formatted={formatted}
           headerText={changeState === 'Blocked' ? t('Block Pool') : changeState === 'Open' ? t('Unblock Pool') : t('Destroy Pool')}
           helperText={changeState === 'Blocked' ? blockHelperText : changeState === 'Open' ? unblockHelperText : destroyHelperText}
-          pool={poolsToShow[poolIndex]}
+          pool={poolsToShow[poolIndex] as MyPoolInfo}
           setRefresh={setRefresh}
           setShow={setGoChange}
           show={goChange}
@@ -409,7 +410,7 @@ export default function Pool(): React.ReactElement {
       {showEdit && poolsToShow?.length &&
         <EditPool
           address={address}
-          pool={poolsToShow[poolIndex]}
+          pool={poolsToShow[poolIndex] as MyPoolInfo}
           setRefresh={setRefresh}
           setShowEdit={setShowEdit}
           showEdit={showEdit}
@@ -418,7 +419,7 @@ export default function Pool(): React.ReactElement {
       {showRemoveAll && poolsToShow?.length &&
         <RemoveAll
           address={address}
-          pool={poolsToShow[poolIndex]}
+          pool={poolsToShow[poolIndex] as MyPoolInfo}
           setRefresh={setRefresh}
           setShowRemoveAll={setShowRemoveAll}
           showRemoveAll={showRemoveAll}

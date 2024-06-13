@@ -5,7 +5,7 @@
 
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Grid, IconButton, SxProps, Theme, Tooltip, Typography, useTheme } from '@mui/material';
+import { Grid, IconButton, type SxProps, type Theme, Tooltip, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 

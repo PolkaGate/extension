@@ -3,12 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { ApiPromise } from '@polkadot/api';
-
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-
-import type { Chain } from '@polkadot/extension-chains/types';
 
 import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -26,9 +22,7 @@ import ShowPool from '../../partial/ShowPool';
 
 interface Props {
   address: string;
-  api: ApiPromise | undefined;
-  chain: Chain;
-  formatted: AccountId;
+  formatted: AccountId | string;
   pool: MyPoolInfo;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
@@ -126,7 +120,7 @@ export default function SetState({ address, formatted, headerText, helperText, p
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
+        from: { address: formatted as unknown as string, name },
         subAction,
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,

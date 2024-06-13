@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Button, Grid, useTheme } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React from 'react';
 

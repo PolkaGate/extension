@@ -3,7 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Avatar, Grid, Link, SxProps, Theme, Typography } from '@mui/material';
+import { Avatar, Grid, Link, type SxProps, type Theme, Typography } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React, { useMemo } from 'react';
 

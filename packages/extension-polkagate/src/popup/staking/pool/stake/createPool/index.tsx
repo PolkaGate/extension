@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolRoles, PalletNominationPoolsPoolState } from '@polkadot/types/lookup';
 
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -104,18 +105,18 @@ export default function CreatePool(): React.ReactElement {
   const toReview = useCallback(() => {
     setNewPool({
       bondedPool: {
-        memberCounter: 1,
-        points: amountAsBN,
+        memberCounter: 1 as any,
+        points: amountAsBN as any,
         roles: {
-          depositor: formatted,
-          nominator: nominatorId,
-          root: formatted,
-          bouncer: bouncerId
-        },
-        state: 'Creating'
-      },
+          depositor: formatted as any,
+          nominator: nominatorId as any,
+          root: formatted as any,
+          bouncer: bouncerId as any
+        } as PalletNominationPoolsPoolRoles,
+        state: 'Creating' as unknown as PalletNominationPoolsPoolState
+      } as PalletNominationPoolsBondedPoolInner,
       metadata: poolName ?? DEFAULT_POOLNAME,
-      poolId: poolStakingConsts?.lastPoolId?.addn(1),
+      poolId: poolStakingConsts?.lastPoolId?.addn(1) as any,
       rewardPool: null
     });
     setShowReview(!showReview);
@@ -224,7 +225,7 @@ export default function CreatePool(): React.ReactElement {
       {showReview && newPool &&
         <Review
           address={address}
-          api={api}
+          api={api as ApiPromise}
           createAmount={amountAsBN}
           estimatedFee={estimatedFee}
           poolToCreate={newPool}

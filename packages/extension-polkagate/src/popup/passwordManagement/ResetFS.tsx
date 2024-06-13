@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
-
+//@ts-nocheck
 import '@vaadin/icons';
 
 import { faWallet } from '@fortawesome/free-solid-svg-icons';

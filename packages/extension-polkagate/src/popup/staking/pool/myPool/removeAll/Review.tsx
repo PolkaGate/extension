@@ -8,7 +8,7 @@ import type { ApiPromise } from '@polkadot/api';
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 
 import type { Balance } from '@polkadot/types/interfaces';
