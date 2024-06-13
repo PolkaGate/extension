@@ -18,7 +18,7 @@ import { ShortAddress } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
 import type { MyPoolInfo, TxInfo } from '../../../../util/types';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import Review from '../../partials/Review';
 import { ModalTitle } from '../../solo/commonTasks/configurePayee';
 import Confirmation from '../partials/Confirmation';

@@ -26,7 +26,7 @@ import ValidatorsTable from './ValidatorsTable';
 interface Props {
   address: string;
   nominatedValidatorsIds?: string[] | null | undefined;
-  stashId: AccountId;
+  stashId: AccountId | string;
   stakingConsts: StakingConsts | null | undefined;
   staked: BN;
   tableHeight?: number;

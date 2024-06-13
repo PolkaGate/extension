@@ -17,7 +17,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 
 import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
 import { useAccountDisplay, useProxies, useTranslation } from '../../../../hooks';

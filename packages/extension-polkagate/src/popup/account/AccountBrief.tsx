@@ -77,7 +77,7 @@ function AccountBrief ({ address, identity, showDivider = true, showName = true 
           </Infotip>
           <Infotip placement='top' text={t('Subscan')}>
             <Link
-              href={`${subscanLink(formatted)}`}
+              href={`${subscanLink(formatted as string)}`}
               rel='noreferrer'
               target='_blank'
               underline='none'

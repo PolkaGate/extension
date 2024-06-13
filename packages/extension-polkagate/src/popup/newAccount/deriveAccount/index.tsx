@@ -104,7 +104,7 @@ function Derive({ isLocked }: Props): React.ReactElement<Props> {
             isLocked={isLocked}
             onDerivationConfirmed={_onDerivationConfirmed}
             parentAddress={parentAddress}
-            parentGenesis={parentGenesis}
+            parentGenesis={parentGenesis as string}
             parentName={parentName}
           />
         </>

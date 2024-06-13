@@ -24,7 +24,7 @@ import { amountToHuman, amountToMachine } from '../../util/utils';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { toTitleCase } from '../governance/utils/util';
 import { STEPS } from '../stake/pool/stake';
-import { Inputs } from '.';
+import type { Inputs } from '.';
 
 interface Props {
   address: string;

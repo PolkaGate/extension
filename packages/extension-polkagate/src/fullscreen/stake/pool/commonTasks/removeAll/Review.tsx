@@ -18,7 +18,7 @@ import { BN } from '@polkadot/util';
 import { AccountHolderWithProxy, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../../components';
 import { useEstimatedFee, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
 import type { MemberPoints, MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
-import { Inputs } from '../../../Entry';
+import type { Inputs } from '../../../Entry';
 import { STEPS } from '../../stake';
 import { Mode } from '.';
 

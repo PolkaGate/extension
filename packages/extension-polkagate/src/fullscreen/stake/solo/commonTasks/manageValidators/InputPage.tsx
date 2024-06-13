@@ -4,16 +4,16 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography } from '@mui/material';
-import { ValidatorInfo } from 'extension-polkagate/src/util/types';
+import type { ValidatorInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
-import { BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { TwoButtons } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
 import { useInfo, useStakingAccount, useStakingConsts } from '../../../../../hooks';
-import { Inputs } from '../../../Entry';
+import type { Inputs } from '../../../Entry';
 import { STEPS } from '../../../pool/stake';
 import SelectValidators from '../../partials/SelectValidators';
 
@@ -104,9 +104,9 @@ export default function InputPage({ address, inputs, setInputs, setStep }: Props
           newSelectedValidators={newSelectedValidators}
           nominatedValidatorsIds={nominatedValidatorsIds}
           setNewSelectedValidators={setNewSelectedValidators}
-          staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
+          staked={(stakingAccount?.stakingLedger?.active as unknown as BN) ?? BN_ZERO}
           stakingConsts={stakingConsts}
-          stashId={formatted}
+          stashId={formatted as string}
           tableHeight={window.innerHeight - 400}
         />
         <Grid container item sx={{ '> div': { m: 0, width: '64%' }, justifyContent: 'flex-end', mt: '5px' }}>

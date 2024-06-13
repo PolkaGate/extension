@@ -19,7 +19,7 @@ import { SYSTEM_SUGGESTION_TEXT } from '../../../util/constants';
 import type { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
 import { amountToMachine, pgBoxShadow } from '../../../util/utils';
 import DisplayValue from '../../governance/post/castVote/partial/DisplayValue';
-import { Inputs } from '../Entry';
+import type { Inputs } from '../Entry';
 import { STEPS } from '..';
 
 interface Props {

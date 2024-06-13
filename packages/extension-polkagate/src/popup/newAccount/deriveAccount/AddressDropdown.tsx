@@ -77,7 +77,7 @@ export default function AddressDropdown({ allAddresses, onSelect, selectedAddres
             </Grid>
             {!withoutChainLogo &&
               <Grid item>
-                <ChainLogo genesisHash={genesisHash} />
+                <ChainLogo genesisHash={genesisHash as string} />
               </Grid>
             }
           </Grid>

@@ -13,13 +13,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
-import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_MAX_INTEGER, BN_ONE } from '@polkadot/util';
 
 import { PButton, Progress, Warning } from '../../../../components';
 import { useBalances, useInfo, useIsExposed, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { STEPS } from '../../pool/stake';

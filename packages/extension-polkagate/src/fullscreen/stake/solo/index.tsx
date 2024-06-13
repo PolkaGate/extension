@@ -8,7 +8,7 @@ import { Grid } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 
 import { useBalances, useFullscreen, useStakingAccount, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { FULLSCREEN_WIDTH, STAKING_CHAINS } from '../../../util/constants';

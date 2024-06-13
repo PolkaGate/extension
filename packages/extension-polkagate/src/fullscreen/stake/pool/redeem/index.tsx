@@ -11,13 +11,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
-import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
 import { Progress } from '../../../../components';
 import { useInfo, useTranslation } from '../../../../hooks';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { ModalTitle } from '../../solo/commonTasks/configurePayee';

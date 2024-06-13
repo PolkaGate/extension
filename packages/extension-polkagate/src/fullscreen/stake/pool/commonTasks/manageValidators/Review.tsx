@@ -15,7 +15,7 @@ import { ShowBalance, SignArea2, WrongPasswordAlert } from '../../../../../compo
 import { useTranslation } from '../../../../../components/translate';
 import { useInfo } from '../../../../../hooks';
 import type { Proxy, StakingConsts, TxInfo } from '../../../../../util/types';
-import { Inputs } from '../../../Entry';
+import type { Inputs } from '../../../Entry';
 import ValidatorsTable from '../../../solo/partials/ValidatorsTable';
 import { STEPS } from '../../stake';
 

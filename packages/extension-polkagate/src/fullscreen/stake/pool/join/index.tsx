@@ -17,7 +17,7 @@ import { MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME, STAKING_CHAINS } from '../../..
 import type { PoolInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import PoolsTable from '../partials/PoolsTable';
 
 interface Props {

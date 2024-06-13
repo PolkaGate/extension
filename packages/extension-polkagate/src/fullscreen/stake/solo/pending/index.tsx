@@ -8,7 +8,7 @@ import type { Forcing } from '@polkadot/types/interfaces';
 
 import { faClockFour } from '@fortawesome/free-solid-svg-icons';
 import { Grid, LinearProgress, Skeleton, Typography, useTheme } from '@mui/material';
-import { TxInfo } from 'extension-polkagate/src/util/types';
+import type { TxInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
@@ -20,7 +20,7 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { Checkbox2, Identity, ShowBalance, TwoButtons } from '../../../../components';
 import { useCurrentBlockNumber, useInfo, usePendingRewards2, useTranslation } from '../../../../hooks';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { STEPS } from '../../pool/stake';

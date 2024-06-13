@@ -14,13 +14,13 @@ import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/
 import Asset from '@polkadot/extension-polkagate/src/partials/Asset';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
 import { MAX_AMOUNT_LENGTH } from '@polkadot/extension-polkagate/src/util/constants';
-import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
 import { useInfo, usePool, usePoolConsts, useTranslation } from '../../../../hooks';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { ModalTitle } from '../../solo/commonTasks/configurePayee';

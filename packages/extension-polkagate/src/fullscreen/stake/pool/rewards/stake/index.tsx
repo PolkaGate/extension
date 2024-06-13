@@ -15,7 +15,7 @@ import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
 import { useInfo, useTranslation } from '../../../../../hooks';
-import { Inputs } from '../../../Entry';
+import type { Inputs } from '../../../Entry';
 import Confirmation from '../../../partials/Confirmation';
 import Review from '../../../partials/Review';
 import { ModalTitle } from '../../../solo/commonTasks/configurePayee';

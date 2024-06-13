@@ -16,7 +16,7 @@ import { useEstimatedFee, useInfo, usePoolConsts, useTranslation, useUnSupported
 import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import UpdateRoles from './UpdateRoles';
 
 interface Props {

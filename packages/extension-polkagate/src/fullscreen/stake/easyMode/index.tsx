@@ -15,7 +15,7 @@ import { useTranslation } from '../../../components/translate';
 import { useInfo, usePool, usePoolConsts, useStakingConsts } from '../../../hooks';
 import type { BalancesInfo } from '../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
-import { Inputs } from '../Entry';
+import type { Inputs } from '../Entry';
 import { STEPS } from '..';
 
 interface Props {

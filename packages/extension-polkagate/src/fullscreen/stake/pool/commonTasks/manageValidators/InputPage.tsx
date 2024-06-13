@@ -15,7 +15,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { TwoButtons } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
 import { useInfo } from '../../../../../hooks';
-import { Inputs } from '../../../Entry';
+import type { Inputs } from '../../../Entry';
 import SelectValidators from '../../../solo/partials/SelectValidators';
 import { STEPS } from '../../stake';
 

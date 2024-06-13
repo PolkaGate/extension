@@ -13,13 +13,13 @@ import { FullScreenHeader } from '@polkadot/extension-polkagate/src/fullscreen/g
 import Bread from '@polkadot/extension-polkagate/src/fullscreen/partials/Bread';
 import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
-import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 
 import { useTranslation } from '../../../../../components/translate';
 import { useFullscreen } from '../../../../../hooks';
 import WaitScreen from '../../../../governance/partials/WaitScreen';
 import Confirmation from '../../../easyMode/Confirmation';
-import { Inputs } from '../../../Entry';
+import type { Inputs } from '../../../Entry';
 import { STEPS } from '../../../pool/stake';
 import InputPage from './InputPage';
 import Review from './Review';

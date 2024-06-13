@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { Infotip2 } from '../../components';
 import { useTranslation } from '../../hooks';
 
-const imagePath = `https://raw.githubusercontent.com/PolkaGate/backgrounds/main/${process.env.BG_THEME || 'general'}`;
+const imagePath = `https://raw.githubusercontent.com/PolkaGate/backgrounds/main/${process.env['BG_THEME'] || 'general'}`;
 
 type BgImage = {
   dark: string;

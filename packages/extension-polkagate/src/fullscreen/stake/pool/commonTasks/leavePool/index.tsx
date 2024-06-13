@@ -17,7 +17,7 @@ import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
 import type { MyPoolInfo, TxInfo } from '../../../../../util/types';
-import { Inputs } from '../../../Entry';
+import type { Inputs } from '../../../Entry';
 import Review from '../../../partials/Review';
 import { ModalTitle } from '../../../solo/commonTasks/configurePayee';
 import Confirmation from '../../partials/Confirmation';
@@ -44,7 +44,7 @@ export default function LeavePool({ address, onClose, pool, setRefresh }: Props)
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
 
   const unlockingLen = pool?.stashIdAccount?.stakingLedger?.unlocking?.length;
-  const maxUnlockingChunks = api &&(api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber();
+  const maxUnlockingChunks = api && (api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber();
 
   const staked = useMemo(() => pool.member?.points && new BN(pool.member.points), [pool.member?.points]);
 

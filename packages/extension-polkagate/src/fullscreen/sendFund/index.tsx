@@ -14,7 +14,7 @@ import { useHistory } from 'react-router-dom';
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
-import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';

@@ -20,7 +20,7 @@ import { AccountHolderWithProxy, Identity, ShortAddress, ShowBalance, ShowValue,
 import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../hooks';
 import { SubTitle } from '../../../partials';
 import type { MyPoolInfo, Payee, Proxy, ProxyItem, TxInfo } from '../../../util/types';
-import { Inputs } from '../Entry';
+import type { Inputs } from '../Entry';
 import { STEPS } from '../pool/stake';
 
 interface Props {

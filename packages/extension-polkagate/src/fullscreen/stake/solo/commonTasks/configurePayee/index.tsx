@@ -18,7 +18,7 @@ import { amountToHuman, upperCaseFirstChar } from '@polkadot/extension-polkagate
 
 import { AccountInputWithIdentity, TwoButtons, Warning } from '../../../../../components';
 import { useInfo, useStakingAccount, useStakingConsts, useTranslation } from '../../../../../hooks';
-import { Inputs } from '../../../Entry';
+import type { Inputs } from '../../../Entry';
 import Confirmation from '../../../partials/Confirmation';
 import Review from '../../../partials/Review';
 import { STEPS } from '../../../pool/stake';

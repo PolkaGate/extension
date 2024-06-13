@@ -8,13 +8,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
 import type { Balance } from '@polkadot/types/interfaces';
-import { BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ShowBalance, SignArea2, WrongPasswordAlert } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
 import { useInfo, useStakingAccount, useStakingConsts, useValidators, useValidatorsIdentities } from '../../../../../hooks';
 import type { Proxy, TxInfo } from '../../../../../util/types';
-import { Inputs } from '../../../Entry';
+import type { Inputs } from '../../../Entry';
 import { STEPS } from '../../../pool/stake';
 import ValidatorsTable from '../../partials/ValidatorsTable';
 
@@ -77,9 +77,8 @@ export default function Review({ address, inputs, setStep, setTxInfo, step }: Pr
           allValidatorsIdentities={allValidatorsIdentities}
           formatted={formatted}
           height={window.innerHeight - 444}
-          staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
+          staked={(stakingAccount?.stakingLedger?.active as unknown as BN) ?? BN_ZERO}
           stakingConsts={stakingConsts}
-          token={token}
           validatorsToList={selectedValidators}
         />
         <DisplayValue dividerHeight='1px' title={t('Fee')}>

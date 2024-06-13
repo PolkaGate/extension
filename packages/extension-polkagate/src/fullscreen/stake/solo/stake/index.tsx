@@ -16,7 +16,7 @@ import { useTranslation } from '../../../../components/translate';
 import { useAvailableToSoloStake, useBalances, useInfo, useMinToReceiveRewardsInSolo2, useStakingAccount, useStakingConsts } from '../../../../hooks';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import SelectValidators from '../partials/SelectValidators';
 import SetPayee from '../partials/SetPayee';
 

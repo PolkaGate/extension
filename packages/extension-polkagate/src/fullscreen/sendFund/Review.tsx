@@ -15,7 +15,7 @@ import { ThroughProxy } from '../../partials';
 import { amountToMachine, pgBoxShadow } from '../../util/utils';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
 import { STEPS } from '../stake/pool/stake';
-import { Inputs } from '.';
+import type { Inputs } from '.';
 
 interface Props {
   address: string;
