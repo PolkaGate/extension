@@ -137,7 +137,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
             onSecondaryClick={handleClose}
             params={inputs?.params}
             primaryBtnText={t('Confirm')}
-            proxyTypeFilter={['Any', 'NonTransfer']}
+            proxyTypeFilter={['Any']}
             secondaryBtnText={t('Cancel')}
             selectedProxy={selectedProxy}
             setIsPasswordError={setIsPasswordError}
