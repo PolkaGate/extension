@@ -27,6 +27,6 @@
       "@polkadot/extension-polkagate": ["extension-polkagate/src/index.ts"],
       "@polkadot/extension-polkagate/*": ["extension-polkagate/src/*.ts"]
     },
-    "skipLibCheck": true
+    "skipLibCheck": true,
 	}
  }

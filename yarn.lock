@@ -2063,9 +2063,9 @@ __metadata:
     "@polkadot/extension-mocks": ^0.47.5
     "@polkadot/keyring": 12.3.2
     "@polkadot/networks": ^12.6.2
-    "@polkadot/phishing": latest
+    "@polkadot/phishing": ^0.22.8
     "@polkadot/rpc-provider": ^11.2.1
-    "@polkadot/types": latest
+    "@polkadot/types": ^11.2.1
     "@polkadot/ui-keyring": ^3.6.6
     "@polkadot/ui-settings": ^3.6.6
     "@polkadot/util": ^12.6.2
@@ -2337,7 +2337,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/phishing@npm:latest":
+"@polkadot/phishing@npm:^0.22.8":
   version: 0.22.8
   resolution: "@polkadot/phishing@npm:0.22.8"
   dependencies:
