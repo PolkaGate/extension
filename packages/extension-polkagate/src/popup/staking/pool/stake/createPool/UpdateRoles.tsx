@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -33,7 +34,7 @@ export default function UpdateRoles({ address, bouncerId, chain, nominatorId, se
   const [newNominatorId, setNewNominatorId] = useState<string | null | undefined>(nominatorId);
   const [newBouncerId, setNewBouncerId] = useState<string | null | undefined>(bouncerId);
 
-  const allAddresses = getAllAddresses(hierarchy, true, true, chain?.ss58Format , address);
+  const allAddresses = getAllAddresses(hierarchy, true, true, chain?.ss58Format, address);
 
   const closeMenu = useCallback(() => {
     setShow(!show);

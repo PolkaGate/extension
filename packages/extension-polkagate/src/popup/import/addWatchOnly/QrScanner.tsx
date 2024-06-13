@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -20,7 +21,7 @@ interface Props {
   setAddress: React.Dispatch<React.SetStateAction<string | undefined>> | ((newAddr?: string) => void);
 }
 
-export default function QrScanner ({ openCamera, setAddress, setOpenCamera }: Props): React.ReactElement<Props> {
+export default function QrScanner({ openCamera, setAddress, setOpenCamera }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
 

@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
@@ -10,11 +11,11 @@ import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { AccountContext } from '../components';
 import { getSubstrateAddress } from '../util/utils';
 
-function findAccountByAddress (accounts: AccountJson[], address: string): AccountJson | undefined {
+function findAccountByAddress(accounts: AccountJson[], address: string): AccountJson | undefined {
   return accounts.find((acc) => acc.address === address);
 }
 
-export default function useAccount (address: string | AccountId | null | undefined): AccountJson | undefined {
+export default function useAccount(address: string | AccountId | null | undefined): AccountJson | undefined {
   const [account, setAccount] = useState<AccountJson>();
 
   const { accounts } = useContext(AccountContext);

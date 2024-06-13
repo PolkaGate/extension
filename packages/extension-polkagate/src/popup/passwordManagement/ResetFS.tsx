@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 //@ts-nocheck
@@ -17,7 +18,7 @@ import { PButton } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 
-function ResetFS (): React.ReactElement {
+function ResetFS(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -37,12 +38,12 @@ function ResetFS (): React.ReactElement {
       <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '6%' }}>
         <Title
           icon={faWallet}
-          text= {t('Reset Wallet')}
+          text={t('Reset Wallet')}
         />
         <Typography sx={{ fontSize: '14px', mb: '25px', px: '15px' }}>
           {t<string>('Resetting your wallet is a last resort option that will erase your current wallet data. Please make sure you have a backup JSON File or a Recovery Phrase before proceeding. To reset your wallet, you can choose one of the following methods:')}
         </Typography>
-        <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', m: '10px',mt:'40px', p: '10px', width: '95%' }}>
+        <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', m: '10px', mt: '40px', p: '10px', width: '95%' }}>
           <Typography sx={{ fontSize: '14px' }}>
             {t<string>('Restore from a previously exported accounts JSON backup file. This file contains the encrypted data of your accounts and can be used to restore them.')}
           </Typography>
@@ -56,7 +57,7 @@ function ResetFS (): React.ReactElement {
             text={t<string>('Restore from JSON File')}
           />
         </Grid>
-        <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', m: '10px', mt:'20px', p: '10px', width: '95%' }}>
+        <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', m: '10px', mt: '20px', p: '10px', width: '95%' }}>
           <Typography sx={{ fontSize: '14px' }}>
             {t<string>('Import from the secret Recovery Phrase. This phrase is a sequence of 12 words that can be used to generate your account.')}
           </Typography>

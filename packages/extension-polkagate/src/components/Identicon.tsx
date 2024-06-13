@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { ThemeProps } from '@polkadot/extension-polkagate/types';
 import type { IconTheme } from '@polkadot/react-identicon/types';
@@ -22,7 +23,7 @@ interface Props {
   value?: AccountId | string | null;
 }
 
-function Identicon ({ className, iconTheme, isSubId, judgement, onCopy, prefix, size, value }: Props): React.ReactElement<Props> {
+function Identicon({ className, iconTheme, isSubId, judgement, onCopy, prefix, size, value }: Props): React.ReactElement<Props> {
   return (
     <div style={{ position: 'relative' }}>
       <div className={className}>

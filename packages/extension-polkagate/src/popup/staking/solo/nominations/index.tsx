@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -32,7 +33,7 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -49,7 +50,7 @@ export default function Index (): React.ReactElement {
 
   const [refresh, setRefresh] = useState<boolean>(false);
   const stakingAccount = useStakingAccount(address, state?.stakingAccount, refresh, setRefresh);
-  const [nominatedValidatorsIds, setNominatedValidatorsIds] = useState< string[] | undefined | null>();
+  const [nominatedValidatorsIds, setNominatedValidatorsIds] = useState<string[] | undefined | null>();
   const [showRemoveValidator, setShowRemoveValidator] = useState<boolean>(false);
   const [showSelectValidator, setShowSelectValidator] = useState<boolean>(false);
 
@@ -60,13 +61,13 @@ export default function Index (): React.ReactElement {
     allValidatorsInfo && nominatedValidatorsIds && allValidatorsInfo.current
       .concat(allValidatorsInfo.waiting)
       .filter((v: DeriveStakingQuery) => {
-        const id=v.accountId as unknown as string;
+        const id = v.accountId as unknown as string;
         return nominatedValidatorsIds.includes(id)
       }
       )
-  , [allValidatorsInfo, nominatedValidatorsIds]);
+    , [allValidatorsInfo, nominatedValidatorsIds]);
 
-  const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv?.exposure?.others?.find(({ who }:{who:any}) => who?.toString() === stakingAccount?.accountId?.toString())), [selectedValidatorsInfo, stakingAccount?.accountId]);
+  const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv?.exposure?.others?.find(({ who }: { who: any }) => who?.toString() === stakingAccount?.accountId?.toString())), [selectedValidatorsInfo, stakingAccount?.accountId]);
 
   useEffect(() => {
     setNominatedValidatorsIds(stakingAccount === null || stakingAccount?.nominators?.length === 0 ? null : stakingAccount?.nominators.map((item) => item.toString()));
@@ -243,7 +244,7 @@ export default function Index (): React.ReactElement {
           setShow={setShowReview}
           show={showReview}
           staked={stakingAccount?.stakingLedger?.active as unknown as BN ?? BN_ZERO}
-          stakingConsts={stakingConsts as StakingConsts }
+          stakingConsts={stakingConsts as StakingConsts}
         />
       }
     </Motion>

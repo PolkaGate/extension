@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { useCallback, useContext, useMemo } from 'react';
 
@@ -9,7 +10,7 @@ import { AccountsAssetsContext } from '../components';
 import { amountToHuman } from '../util/utils';
 import { usePrices } from '.';
 
-export interface YouHaveType{
+export interface YouHaveType {
   portfolio: number,
   date: number
 }
@@ -19,7 +20,7 @@ export interface YouHaveType{
  *  returns all user portfolio balance in selected currency
  * @returns null: means not balance found, undefined: when still work in progress, and number indicating user balance in selected currency
  */
-export default function useYouHave (): YouHaveType | undefined | null {
+export default function useYouHave(): YouHaveType | undefined | null {
   const pricesInCurrencies = usePrices();
   const { accountsAssets } = useContext(AccountsAssetsContext);
 

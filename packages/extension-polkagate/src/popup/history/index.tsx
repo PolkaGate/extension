@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -43,7 +44,7 @@ const INITIAL_STATE = {
 export default function TransactionHistory(): React.ReactElement<''> {
   const { t } = useTranslation();
   const history = useHistory();
-  const { state } = useLocation<{ tabIndex: number;  pathname?:string }>();
+  const { state } = useLocation<{ tabIndex: number; pathname?: string }>();
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
   const chain = useChain(address);

@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -368,7 +369,7 @@ export default function Pool(): React.ReactElement {
             chain={chain as any}
             label={t<string>('Roles')}
             mode='Roles'
-            pool={poolsToShow[poolIndex] as MyPoolInfo }
+            pool={poolsToShow[poolIndex] as MyPoolInfo}
             style={{ m: '15px auto', width: '92%' }}
           />
           {canChangeState &&

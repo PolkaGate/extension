@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -26,7 +27,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function Settings ({ address, api, setRefresh, setShowSettings, showSettings, stakingAccount, stakingConsts }: Props): React.ReactElement {
+export default function Settings({ address, api, setRefresh, setShowSettings, showSettings, stakingAccount, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
 

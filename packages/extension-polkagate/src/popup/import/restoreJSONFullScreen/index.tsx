@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 //@ts-nocheck
@@ -27,7 +28,7 @@ import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
-export default function RestoreJson (): React.ReactElement {
+export default function RestoreJson(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();

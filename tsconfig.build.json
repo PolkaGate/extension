@@ -11,6 +11,7 @@
     { "path": "./packages/extension-dapp/tsconfig.build.json" },
     { "path": "./packages/extension-inject/tsconfig.build.json" },
     { "path": "./packages/extension-mocks/tsconfig.build.json" },
+    { "path": "./packages/extension-ui/tsconfig.build.json" },
     { "path": "./packages/extension-polkagate/tsconfig.build.json" } // added for polkagate
   ]
 }

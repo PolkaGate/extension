@@ -22,8 +22,7 @@ const packages = [
   'extension-chains',
   'extension-dapp',
   'extension-inject',
-  'extension-polkagate'
-
+  'extension-ui'
 ];
 
 module.exports = (entry, alias = {}) => ({

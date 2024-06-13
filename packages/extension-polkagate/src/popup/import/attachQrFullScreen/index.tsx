@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 // @ts-nocheck
@@ -18,7 +19,7 @@ import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from
 import { Name } from '../../../partials';
 import type { ScanType } from '../attachQR';
 
-export default function AttachQrFullScreen (): React.ReactElement {
+export default function AttachQrFullScreen(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();

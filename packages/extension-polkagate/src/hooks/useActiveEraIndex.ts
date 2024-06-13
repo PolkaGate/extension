@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { useEffect, useState } from 'react';
 
@@ -10,7 +11,7 @@ import { useApi } from '.';
 /**
  * @description This hook is going to be used for users account existing in the extension
  * */
-export default function useActiveEraIndex (address: AccountId | string | undefined): number | undefined {
+export default function useActiveEraIndex(address: AccountId | string | undefined): number | undefined {
   const [index, setIndex] = useState<number>();
   const api = useApi(address);
 

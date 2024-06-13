@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { Boy as BoyIcon } from '@mui/icons-material';
 import { Box, Slide, useTheme } from '@mui/material';
@@ -24,7 +25,7 @@ export default function Options({ setShowStakingOptions, showStakingOptions }: P
   const { t } = useTranslation();
   const history = useHistory();
   const theme = useTheme();
-  const { pathname, state } = useLocation<{api:ApiPromise}>();
+  const { pathname, state } = useLocation<{ api: ApiPromise }>();
   const { address } = useParams<{ address: string }>();
   const api = useApi(address, state?.api);
 

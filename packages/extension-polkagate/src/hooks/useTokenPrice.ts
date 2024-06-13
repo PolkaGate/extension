@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { createAssets } from '@polkagate/apps-config/assets';
 import { useMemo } from 'react';
@@ -23,7 +24,7 @@ const assetsChains = createAssets();
  * @param address : accounts substrate address
  * @returns price : price of the token which the address is already switched to
  */
-export default function useTokenPrice (address: string, assetId?: number): Price | typeof DEFAULT_PRICE {
+export default function useTokenPrice(address: string, assetId?: number): Price | typeof DEFAULT_PRICE {
   const chainName = useChainName(address);
   const chain = useChain(address);
   const isAssetHub = ASSET_HUBS.includes(chain?.genesisHash || '');

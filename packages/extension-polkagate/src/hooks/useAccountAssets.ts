@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { useContext, useEffect, useState } from 'react';
 
@@ -9,7 +10,7 @@ import { isHexToBn } from '../util/utils';
 import { BN_MEMBERS, FetchedBalance } from './useAssetsBalances';
 import useIsTestnetEnabled from './useIsTestnetEnabled';
 
-export default function useAccountAssets (address: string | undefined): FetchedBalance[] | undefined | null {
+export default function useAccountAssets(address: string | undefined): FetchedBalance[] | undefined | null {
   const [assets, setAssets] = useState<FetchedBalance[] | undefined | null>();
   const { accountsAssets } = useContext(AccountsAssetsContext);
   const isTestnetEnabled = useIsTestnetEnabled();

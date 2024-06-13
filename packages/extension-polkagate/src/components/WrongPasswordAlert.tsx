@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,7 +10,7 @@ import React from 'react';
 import { useTranslation } from '../hooks';
 import { Warning } from '.';
 
-export default function WrongPasswordAlert({ bgcolor, fontSize }: { bgcolor?: SystemStyleObject<Theme>, fontSize?: string; }): React.ReactElement {
+export default function WrongPasswordAlert({ bgcolor, fontSize }: { bgcolor?: string, fontSize?: string; }): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
 

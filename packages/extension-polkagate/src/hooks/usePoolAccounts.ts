@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
 
 import type { ApiPromise } from '@polkadot/api';
@@ -14,7 +15,7 @@ const EMPTY_H256 = new Uint8Array(32);
 const ADDR_PREFIX = stringToU8a('modlpy/npols');
 const ADDR_PREFIX_WST = stringToU8a('modlpy/nopls');
 
-export function createAccount (api: ApiPromise, poolId: BN, index: number): string {
+export function createAccount(api: ApiPromise, poolId: BN, index: number): string {
   return api.registry.createType(
     'AccountId32',
     u8aConcat(

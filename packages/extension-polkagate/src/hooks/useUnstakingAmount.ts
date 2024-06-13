@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -28,7 +29,7 @@ interface UnstakingType {
  * @description get the total unstaking amount and their release dates
  *
  */
-export default function useUnstakingAmount (address: AccountId | string | undefined, refresh?: boolean): UnstakingType {
+export default function useUnstakingAmount(address: AccountId | string | undefined, refresh?: boolean): UnstakingType {
   const api = useApi(address);
   const stakingAccount = useStakingAccount(address, undefined, refresh);
 

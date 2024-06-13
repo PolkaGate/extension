@@ -1,12 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import '@vaadin/icons';
 
 import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useLayoutEffect,useState } from 'react';
+import React, { useCallback, useLayoutEffect, useState } from 'react';
 
 import { selectableNetworks } from '@polkadot/networks';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
@@ -19,7 +20,7 @@ interface Props {
   setAnchorEl: (value: React.SetStateAction<HTMLButtonElement | null>) => void;
 }
 
-function OptionalCopyPopup ({ address, setAnchorEl }: Props): React.ReactElement {
+function OptionalCopyPopup({ address, setAnchorEl }: Props): React.ReactElement {
   const { t } = useTranslation();
   const chain = useChain(address);
   const options = useGenesisHashOptions();

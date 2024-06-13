@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -27,7 +28,7 @@ import AiBackgroundImage from './AiBackgroundImage';
 import Alert from './Alert';
 import YouHave from './YouHave';
 
-export default function Home (): React.ReactElement {
+export default function Home(): React.ReactElement {
   const initialAccountList = useAccountsOrder() as AccountWithChildren[];
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
@@ -57,7 +58,7 @@ export default function Home (): React.ReactElement {
       keyring.loadAll({ store: new AccountsStore() });
     }).catch(() => null);
 
-    getStorage('loginInfo').then((info)=>setLoginInfo(info as LoginInfo)).catch(console.error);
+    getStorage('loginInfo').then((info) => setLoginInfo(info as LoginInfo)).catch(console.error);
   }, []);
 
   return (

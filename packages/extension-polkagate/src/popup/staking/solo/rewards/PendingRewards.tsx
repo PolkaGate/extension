@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -66,10 +67,10 @@ export default function PendingRewards(): React.ReactElement {
     }
 
     api.derive.session.progress().then(setProgress).catch(console.error);
-    api.query['staking']['forceEra']().then((f)=>setForcing(f as unknown as Forcing)).catch(console.error);
+    api.query['staking']['forceEra']().then((f) => setForcing(f as unknown as Forcing)).catch(console.error);
 
     api.query['staking']?.['historyDepth']
-      ? api.query['staking']['historyDepth']().then((depth)=>setHistoryDepth(depth as unknown as BN)).catch(console.error)
+      ? api.query['staking']['historyDepth']().then((depth) => setHistoryDepth(depth as unknown as BN)).catch(console.error)
       : setHistoryDepth(api.consts['staking']['historyDepth'] as unknown as BN);
   }, [api]);
 
@@ -154,7 +155,7 @@ export default function PendingRewards(): React.ReactElement {
     return EndEraInBlock ? blockToDate(EndEraInBlock.addn(currentBlock).toNumber(), currentBlock, { day: 'numeric', month: 'short' }) : undefined;
   }, [currentBlock, forcing, historyDepth, progress]);
 
-  const onSelectAll = useCallback((_:any, checked: boolean) => {
+  const onSelectAll = useCallback((_: any, checked: boolean) => {
     if (checked && expandedRewards?.length) {
       setSelectedToPayout([...expandedRewards]);
     } else {

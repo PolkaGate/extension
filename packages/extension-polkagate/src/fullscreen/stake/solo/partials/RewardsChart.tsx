@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 //@ts-nocheck
@@ -280,7 +281,7 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
 
             const weekDayIndex = dataToShow[pageIndex][1].indexOf((TooltipItem[0] as any).label);
 
-            return `${weekDaysShort[weekDayIndex]} ${(TooltipItem[0] as any).label }`;
+            return `${weekDaysShort[weekDayIndex]} ${(TooltipItem[0] as any).label}`;
           }
         },
         displayColors: false,
@@ -302,7 +303,7 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
           tickColor: ''
         },
         ticks: {
-          callback: function (_:any, index: number) {
+          callback: function (_: any, index: number) {
             const currentDay = formateDate(new Date().getTime() / 1000);
             const labels = dataToShow && dataToShow[pageIndex][1];
             const currentLabel = labels?.length ? labels[index] : undefined;

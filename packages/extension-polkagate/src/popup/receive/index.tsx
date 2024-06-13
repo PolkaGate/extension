@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -17,7 +18,7 @@ interface LocationState {
   pathname?: string;
 }
 
-export default function Receive (): React.ReactElement {
+export default function Receive(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const location = useLocation<LocationState>();

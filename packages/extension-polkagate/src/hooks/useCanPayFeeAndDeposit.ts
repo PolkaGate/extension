@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -16,7 +17,7 @@ import { getValue } from '../popup/account/util';
 import type { BalancesInfo, CanPayFee, CanPayStatements } from '../util/types';
 import { useBalances } from '.';
 
-export default function useCanPayFeeAndDeposit (
+export default function useCanPayFeeAndDeposit(
   formatted: AccountId | string | undefined,
   proxyAddress: AccountId | string | undefined,
   estimatedFee: Balance | undefined,

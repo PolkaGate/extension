@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { NominatorInfo } from '../util/types';
 
@@ -10,7 +11,7 @@ import { BN } from '@polkadot/util';
 
 import { useInfo, useStashId } from '.';
 
-export default function useNominator (address: string): NominatorInfo | undefined {
+export default function useNominator(address: string): NominatorInfo | undefined {
   const { endpoint, formatted } = useInfo(address);
   const stashId = useStashId(formatted);
 

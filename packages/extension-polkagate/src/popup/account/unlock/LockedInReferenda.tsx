@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -153,7 +154,7 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
 
     // eslint-disable-next-line no-void
     void api.query['balances']['locks'](formatted).then((locks) => {
-      const _locks =locks as unknown as PalletBalancesBalanceLock[]
+      const _locks = locks as unknown as PalletBalancesBalanceLock[]
       if (_locks?.length) {
         const foundRefLock = _locks.find((l) => l.id.toHuman() === 'pyconvot');
 

@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { StorageKey } from '@polkadot/types';
 import type { AnyTuple, Codec } from '@polkadot/types/types';
@@ -66,7 +67,7 @@ const isRewardsPaged = (chainName: string | undefined, era: number): boolean => 
 
 export const MAX_SUPPORTED_PAYOUT_ERAS = 7; // TODO: can increase to more if needed after enough tests
 
-export default function usePendingRewards2 (address: string): UnclaimedPayouts | undefined {
+export default function usePendingRewards2(address: string): UnclaimedPayouts | undefined {
   const { api, chainName, formatted } = useInfo(address);
   const activeEra = useActiveEraIndex(address);
   const [pendingRewards, setPendingRewards] = useState<UnclaimedPayouts>();

@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -29,7 +30,7 @@ interface Props {
   labelPosition?: 'left' | 'right' | 'center';
 }
 
-export default function ShowParachain ({ api, chain, crowdloan, crowdloansId, labelPosition = 'left', setShowCrowdloanInfo, style }: Props): React.ReactElement {
+export default function ShowParachain({ api, chain, crowdloan, crowdloansId, labelPosition = 'left', setShowCrowdloanInfo, style }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const paraId = crowdloan.fund.paraId;

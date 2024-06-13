@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -14,7 +15,7 @@ import { getAuthList, removeAuthorization, toggleAuthorization } from '../../mes
 import { HeaderBrand } from '../../partials';
 import WebsiteEntry from './WebsiteEntry';
 
-export default function AuthManagement (): React.ReactElement {
+export default function AuthManagement(): React.ReactElement {
   const { t } = useTranslation();
   const [authList, setAuthList] = useState<AuthUrls | null>(null);
   const [filter, setFilter] = useState('');

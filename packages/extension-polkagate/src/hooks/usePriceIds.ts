@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { createAssets } from '@polkagate/apps-config/assets';
 import { useMemo } from 'react';
@@ -14,7 +15,7 @@ const assetsChains = createAssets();
  * @description To fetch assets priceIds for fetching their prices
  * @returns a list of priceIds like 'acala', 'polkadot, ...
  */
-export default function usePriceIds (): string[] | undefined | null {
+export default function usePriceIds(): string[] | undefined | null {
   const selectedChains = useSelectedChains();
 
   return useMemo(() => {

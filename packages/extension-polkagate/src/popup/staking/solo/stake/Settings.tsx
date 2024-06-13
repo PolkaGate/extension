@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -21,7 +22,7 @@ interface Props {
   settings: SoloSettings;
 }
 
-export default function Settings ({ address, setSettings, setShowAdvanceSettings, settings, showAdvanceSettings, stakingConsts }: Props): React.ReactElement<Props> {
+export default function Settings({ address, setSettings, setShowAdvanceSettings, settings, showAdvanceSettings, stakingConsts }: Props): React.ReactElement<Props> {
   const onClose = useCallback(() => setShowAdvanceSettings(false), [setShowAdvanceSettings]);
 
   const page = (

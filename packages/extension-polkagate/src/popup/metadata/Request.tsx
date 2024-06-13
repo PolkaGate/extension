@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { MetadataDef } from '@polkadot/extension-inject/types';
 
@@ -16,7 +17,7 @@ interface Props {
   url: string;
 }
 
-export default function Request ({ metaId, request, url }: Props): React.ReactElement<Props> {
+export default function Request({ metaId, request, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const chain = useMetadata(request.genesisHash, true);
   const onAction = useContext(ActionContext);

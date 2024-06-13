@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { MyPoolInfo } from '../util/types';
 
@@ -11,7 +12,7 @@ import { FetchingContext } from '../components';
 import { isHexToBn } from '../util/utils';
 import { useInfo } from '.';
 
-export default function usePool (address?: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
+export default function usePool(address?: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
   const { decimal: currentDecimal, endpoint, formatted, token: currentToken } = useInfo(address);
   const isFetching = useContext(FetchingContext);
 

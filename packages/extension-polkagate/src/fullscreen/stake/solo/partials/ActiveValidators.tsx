@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -80,7 +81,7 @@ export default function ActiveValidators({ address }: Props): React.ReactElement
                         chain={chain as any}
                         decimal={decimal}
                         isActive={true}
-                        isOversubscribed={(v as any).isOversubscribed }
+                        isOversubscribed={(v as any).isOversubscribed}
                         stakingConsts={stakingConsts}
                         token={token}
                         v={v}

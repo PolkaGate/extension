@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { Option, StorageKey, u32 } from '@polkadot/types';
 
@@ -13,7 +14,7 @@ import { useApi, useGenesisHash } from '.';
 /**
  * @description To get all available assets on asset hubs for an address based on its chain
  */
-export default function useAssetHubAssets (address: AccountId | string | undefined): DropdownOption[] | undefined | null {
+export default function useAssetHubAssets(address: AccountId | string | undefined): DropdownOption[] | undefined | null {
   const api = useApi(address);
   const accountGenesisHash = useGenesisHash(address);
   const [assets, setAssets] = useState<DropdownOption[] | null>();

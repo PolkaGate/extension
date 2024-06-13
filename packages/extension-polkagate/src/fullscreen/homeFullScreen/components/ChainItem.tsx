@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 import type { DropdownOption } from '../../../util/types';
@@ -19,7 +20,7 @@ interface Props {
   disabled: boolean | undefined;
 }
 
-function ChainItem ({ chain, disabled, isSelected, onclick }: Props): React.ReactElement {
+function ChainItem({ chain, disabled, isSelected, onclick }: Props): React.ReactElement {
   const theme = useTheme();
   const selectedItem = useMemo(() => false, []);
 

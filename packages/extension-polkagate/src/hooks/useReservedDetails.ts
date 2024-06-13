@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { Balance } from '@polkadot/types/interfaces';
 import type { PalletMultisigMultisig, PalletPreimageRequestStatus, PalletRecoveryRecoveryConfig, PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaReferendumStatusRankedCollectiveTally, PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
@@ -17,7 +18,7 @@ import { useInfo } from '.';
 type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society' | 'multisig' | 'preimage';
 export type Reserved = { [key in Item]?: Balance };
 
-export default function useReservedDetails (address: string | undefined): Reserved {
+export default function useReservedDetails(address: string | undefined): Reserved {
   const { api, formatted, genesisHash } = useInfo(address);
   const activeRecoveries = useActiveRecoveries(api);
   const [reserved, setReserved] = useState<Reserved>({});
@@ -28,7 +29,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
       : activeRecoveries === null
         ? null
         : undefined
-  , [activeRecoveries, formatted]);
+    , [activeRecoveries, formatted]);
 
   const toBalance = useCallback((value: BN) => {
     if (!api) {

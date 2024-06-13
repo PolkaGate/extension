@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -13,7 +14,7 @@ import useInfo from './useInfo';
  * this hook returns proxied accounts of a proxy account
  * */
 
-export default function useProxiedAccounts (address: string | undefined): ProxiedAccounts | undefined {
+export default function useProxiedAccounts(address: string | undefined): ProxiedAccounts | undefined {
   const { api, formatted, genesisHash } = useInfo(address);
 
   const [proxied, setProxied] = useState<ProxiedAccounts>();

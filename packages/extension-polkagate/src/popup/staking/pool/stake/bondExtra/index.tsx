@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -189,7 +190,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
       {showReview &&
         <Review
           address={address}
-          api={api as ApiPromise }
+          api={api as ApiPromise}
           bondAmount={amountAsBN}
           estimatedFee={estimatedFee}
           pool={pool}

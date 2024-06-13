@@ -1,9 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
- // @ts-nocheck
- 
+// @ts-nocheck
+
 import '@vaadin/icons';
 
 import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';

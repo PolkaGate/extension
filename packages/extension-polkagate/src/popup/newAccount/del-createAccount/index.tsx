@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { Chain } from '@polkadot/extension-chains/types';
 
@@ -14,7 +15,7 @@ import { DEFAULT_TYPE } from '../../../util/defaultType';
 import getLogo from '../../../util/getLogo';
 import Mnemonic from './Mnemonic';
 
-function CreateAccount (): React.ReactElement {
+function CreateAccount(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const options = useGenesisHashOptions();

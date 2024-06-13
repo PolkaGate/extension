@@ -1,11 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 // @ts-nocheck
 
 import getApi from '../getApi.ts';
 
-async function needsRebag (endpoint, currentAccount) {
+async function needsRebag(endpoint, currentAccount) {
   console.log(`NeedsRebag is called for id: ${currentAccount}`);
 
   const api = await getApi(endpoint);

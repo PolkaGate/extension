@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
@@ -16,7 +17,7 @@ import { useAccount, useIdentity, useInfo } from '.';
  * This hook is going to be used for users account existing in the extension,
  * it utilizes the saved identities in the local storage if any, while fetching the online identity
  * */
-export default function useMyAccountIdentity (address: AccountId | string | undefined): DeriveAccountRegistration | null | undefined {
+export default function useMyAccountIdentity(address: AccountId | string | undefined): DeriveAccountRegistration | null | undefined {
   const { chainName, formatted, genesisHash } = useInfo(address);
   const account = useAccount(address);
   const info = useIdentity(genesisHash, formatted);

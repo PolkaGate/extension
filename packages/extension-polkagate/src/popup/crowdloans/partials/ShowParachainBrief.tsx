@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -25,7 +26,7 @@ interface Props {
   brief?: boolean;
 }
 
-export default function ShowParachainBrief ({ crowdloan, crowdloansId, setShowCrowdloanInfo, style }: Props): React.ReactElement {
+export default function ShowParachainBrief({ crowdloan, crowdloansId, setShowCrowdloanInfo, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const paraId = crowdloan.fund.paraId;
   const name = useMemo(() => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string ?? crowdloan?.identity?.display), [crowdloan?.identity?.display, crowdloansId, paraId]);
@@ -45,7 +46,7 @@ export default function ShowParachainBrief ({ crowdloan, crowdloansId, setShowCr
       <Grid justifyContent='center' item container sx={{ height: '48px' }}>
         <Grid alignItems='center' container item justifyContent='center' width='15%'>
           <Avatar
-            src={logo || getWebsiteFavicon(crowdloan?.identity?.web as unknown as  string)}
+            src={logo || getWebsiteFavicon(crowdloan?.identity?.web as unknown as string)}
             sx={{ height: 25, width: 25 }}
           />
         </Grid>

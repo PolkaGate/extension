@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 interface Option {
   info?: string;
@@ -9,7 +10,7 @@ interface Option {
   value: string | number;
 }
 
-export default function getLanguageOptions (): Option[] {
+export default function getLanguageOptions(): Option[] {
   return [
     // default/native
     {

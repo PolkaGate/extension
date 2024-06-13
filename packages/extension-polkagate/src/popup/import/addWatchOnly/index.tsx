@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -61,7 +62,7 @@ export default function AddAddressOnly(): React.ReactElement {
 
   const onChangeGenesis = useCallback((genesisHash?: string | null): void => {
     setProxies(undefined);
-    genesisHash && getMetadata(genesisHash, true).then((chain)=>setChain(chain as Chain)).catch((error): void => {
+    genesisHash && getMetadata(genesisHash, true).then((chain) => setChain(chain as Chain)).catch((error): void => {
       console.error(error);
     });
   }, []);

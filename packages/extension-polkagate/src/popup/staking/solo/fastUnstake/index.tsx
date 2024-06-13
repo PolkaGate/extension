@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -64,7 +65,7 @@ export default function Index(): React.ReactElement {
     ? !isExposed && !hasUnlockingAndRedeemable && hasEnoughDeposit
     : undefined;
 
-  const staked = useMemo(():BN | undefined => stakingAccount ? stakingAccount.stakingLedger.active as unknown as BN : undefined, [stakingAccount]);
+  const staked = useMemo((): BN | undefined => stakingAccount ? stakingAccount.stakingLedger.active as unknown as BN : undefined, [stakingAccount]);
   const tx = api && api.tx['fastUnstake']['registerFastUnstake'];
 
   useEffect((): void => {

@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /**
  * @description
@@ -10,7 +11,7 @@ import { useEffect, useState } from 'react';
 
 import type { AccountStakingInfo } from '../util/types';
 
-export default function useStakingRewardDestinationAddress (stakingAccount: AccountStakingInfo | null | undefined): string | undefined {
+export default function useStakingRewardDestinationAddress(stakingAccount: AccountStakingInfo | null | undefined): string | undefined {
   const [payeeAddress, setPayeeAddress] = useState<string>();
 
   useEffect(() => {

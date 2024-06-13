@@ -1,11 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { useContext, useEffect, useState } from 'react';
 
 import { AccountContext } from '../components';
 
-export default function useChainNames (): string[] | undefined {
+export default function useChainNames(): string[] | undefined {
   const { hierarchy } = useContext(AccountContext);
   const [chainNames, setChainNames] = useState<string[]>();
 

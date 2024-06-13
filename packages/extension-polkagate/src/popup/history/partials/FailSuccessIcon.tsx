@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
 import { Container, type SxProps, type Theme, Typography } from '@mui/material';

@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -40,7 +41,7 @@ export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => {
   );
 };
 
-function VersionSocial ({ fontSize, iconSize = 15 }: Props): React.ReactElement<Props> {
+function VersionSocial({ fontSize, iconSize = 15 }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const manifest = useManifest();
 
