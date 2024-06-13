@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -20,7 +20,7 @@ interface Props {
   settings: SoloSettings
 }
 
-export default function RewardsDestination ({ settings }: Props): React.ReactElement {
+export default function RewardsDestination({ settings }: Props): React.ReactElement {
   const { t } = useTranslation();
   const address = getPayee(settings);
   const payeeName = useAccountName(address);

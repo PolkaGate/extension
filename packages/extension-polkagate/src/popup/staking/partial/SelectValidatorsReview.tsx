@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -125,7 +125,7 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
         txHash
       };
 
-      setTxInfo({ ...info, api, chain:chain as any});
+      setTxInfo({ ...info, api, chain: chain as any });
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);

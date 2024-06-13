@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -43,7 +43,7 @@ const Account = ({ info, label }: { label: string, info: NameAddress }) => {
   );
 };
 
-export default function Confirmation ({ handleDone, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ handleDone, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -59,19 +59,19 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
     return (
       <>
         {value &&
-        <Grid alignItems='center' container direction='column' fontSize='16px' fontWeight={400} justifyContent='center'>
-          <Grid container item width='fit-content'>
-            <Typography lineHeight='40px' pr='5px'>
-              {caption}
-            </Typography>
-            <Typography lineHeight='40px'>
-              {value}
-            </Typography>
+          <Grid alignItems='center' container direction='column' fontSize='16px' fontWeight={400} justifyContent='center'>
+            <Grid container item width='fit-content'>
+              <Typography lineHeight='40px' pr='5px'>
+                {caption}
+              </Typography>
+              <Typography lineHeight='40px'>
+                {value}
+              </Typography>
+            </Grid>
+            {showDivider &&
+              <Div />
+            }
           </Grid>
-          {showDivider &&
-           <Div />
-          }
-        </Grid>
         }
       </>
     );
@@ -103,7 +103,7 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
         {txInfo.amount && txInfo.token &&
           <DisplayInfo
             caption={t('Amount:')}
-            value={ `${parseFloat(txInfo.amount)} ${txInfo.token}` }
+            value={`${parseFloat(txInfo.amount)} ${txInfo.token}`}
           />
         }
         {txInfo.poolName &&

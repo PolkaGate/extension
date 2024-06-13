@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -11,12 +11,12 @@ import React from 'react';
 import { useTranslation } from '../hooks';
 import { Warning } from '.';
 
-interface Props{
+interface Props {
   canPayStatements: CanPayStatements;
   extraText?: string;
 }
 
-export default function CanPayErrorAlert ({ canPayStatements, extraText }: Props): React.ReactElement {
+export default function CanPayErrorAlert({ canPayStatements, extraText }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
 

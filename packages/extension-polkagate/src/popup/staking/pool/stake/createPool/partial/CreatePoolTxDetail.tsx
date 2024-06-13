@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Divider, Grid, Typography } from '@mui/material';
@@ -64,7 +64,7 @@ export default function CreatePoolTxDetail({ pool, txInfo }: Props): React.React
         </Grid>
       </Grid>
       {txInfo.throughProxy?.address &&
-        <ThroughProxy address={txInfo.throughProxy?.address} chain={txInfo?.chain}/>
+        <ThroughProxy address={txInfo.throughProxy?.address} chain={txInfo?.chain} />
       }
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
       <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
