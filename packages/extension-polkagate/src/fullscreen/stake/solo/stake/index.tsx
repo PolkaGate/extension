@@ -299,7 +299,7 @@ export default function SoloStake({ inputs, onBack, setInputs, setStep }: Props)
           />
           <Grid container item sx={{ '> div': { m: 0, width: '64%' }, justifyContent: 'flex-end', mt: '15px' }}>
             <TwoButtons
-              disabled={buttonDisable}
+              disabled={!newSelectedValidators?.length}
               isBusy={isBusy}
               mt='1px'
               onPrimaryClick={onNext}
