@@ -785,14 +785,6 @@ export type TransferType = 'All' | 'Max' | 'Normal';
 
 export type CanPayFee = { isAbleToPay: boolean | undefined, statement: number };
 
-export enum CanPayStatements {
-  CAN_NOT_PAY,
-  CAN_PAY,
-  CAN_NOT_PAY_FEE,
-  CAN_NOT_PAY_DEPOSIT,
-  PROXY_CAN_PAY_FEE,
-}
-
 export type ProxiedAccounts = {
   genesisHash: string;
   proxy: string;

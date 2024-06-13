@@ -1,16 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import type { CanPayStatements } from '../util/types';
 
 import { Grid, useTheme } from '@mui/material';
 import React from 'react';
 
 import { useTranslation } from '../hooks';
 import { Warning } from '.';
+import { CanPayStatements } from '../hooks/useCanPayFeeAndDeposit';
 
 interface Props {
   canPayStatements: CanPayStatements;
