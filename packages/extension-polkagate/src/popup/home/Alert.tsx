@@ -69,11 +69,7 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Demo Mode: Seamlessly explore extension features during onboarding.',
-              'People Chain Support: Now supports the People Chain, which hosts identities.',
-              'Reserved Balance Reasons: Displays reasons for reserved balances in account details.',
-              'Updated Twitter Icon: Features the modern X icon, reflecting Twitter’s rebrand.',
-              'Enhanced Performance: Enjoy improved speed and reliability, along with valuable bug fixes for a smoother user experience.'
+              'Bug Fixes: Resolved the latest Kusama runtime upgrade issue, which was causing transactions on Kusama to fail'
             ]}
           />
         </Grid>
