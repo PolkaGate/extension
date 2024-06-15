@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { AccountId, ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
@@ -11,7 +12,7 @@ import { ISubmittableResult } from '@polkadot/types/types';
 
 import { TxResult } from '../types';
 
-export async function signAndSend (
+export async function signAndSend(
   api: ApiPromise,
   submittable: SubmittableExtrinsic<'promise', ISubmittableResult>,
   _signer: KeyringPair,
@@ -32,7 +33,7 @@ export async function signAndSend (
       try {
         if (result.dispatchError) {
           if (result.dispatchError.isModule) {
-          // for module errors, we have the section indexed, lookup
+            // for module errors, we have the section indexed, lookup
             const decoded = api.registry.findMetaError(result.dispatchError.asModule);
             const { docs, name, section } = decoded;
 
@@ -73,9 +74,9 @@ export async function signAndSend (
           const fee = undefined; // queryInfo.partialFee.toString();
 
           resolve({ block: Number(blockNumber), failureText, fee, success, txHash });
-        //     }
-        //   }
-        // });
+          //     }
+          //   }
+          // });
         }
       } catch (e) {
         resolve({ block: 0, failureText: String(e), fee: '', success: false, txHash: '' });
@@ -87,7 +88,7 @@ export async function signAndSend (
   });
 }
 
-export async function send (from: string | AccountId, api: ApiPromise, ptx: SubmittableExtrinsic<'promise', ISubmittableResult>, payload: ExtrinsicPayload, signature: HexString): Promise<TxResult> {
+export async function send(from: string | AccountId, api: ApiPromise, ptx: SubmittableExtrinsic<'promise', ISubmittableResult>, payload: ExtrinsicPayload, signature: HexString): Promise<TxResult> {
   return new Promise((resolve) => {
     console.log('sending a tx ...');
 

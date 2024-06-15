@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,8 +14,9 @@ import type { ApiPromise } from '@polkadot/api';
 import { Container } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
@@ -23,7 +25,7 @@ import { useAccountDisplay, useProxies, useTranslation } from '../../../../hooks
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
-import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
@@ -39,7 +41,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function RewardsWithdrawReview ({ address, amount, api, available, chain, formatted, setRefresh, setShow, show }: Props): React.ReactElement {
+export default function RewardsWithdrawReview({ address, amount, api, available, chain, formatted, setRefresh, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
@@ -55,8 +57,8 @@ export default function RewardsWithdrawReview ({ address, amount, api, available
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
-  const tx = api.tx.nominationPools.claimPayout;
-  const params = useMemo(() => [] as unknown [], []);
+  const tx = api.tx['nominationPools']['claimPayout'];
+  const params = useMemo(() => [] as unknown[], []);
 
   const decimal = api.registry.chainDecimals[0];
 
@@ -77,7 +79,7 @@ export default function RewardsWithdrawReview ({ address, amount, api, available
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -112,7 +114,8 @@ export default function RewardsWithdrawReview ({ address, amount, api, available
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -143,13 +146,13 @@ export default function RewardsWithdrawReview ({ address, amount, api, available
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />
           <AmountFee
             address={address}
-            amount={<ShowBalance2 address={address} balance={amount}/>}
+            amount={<ShowBalance2 address={address} balance={amount} />}
             fee={estimatedFee}
             label={t('Withdraw amount')}
             showDivider
@@ -158,7 +161,7 @@ export default function RewardsWithdrawReview ({ address, amount, api, available
           />
           <AmountFee
             address={address}
-            amount={<ShowBalance2 address={address} balance={amount.add(available).sub(estimatedFee ?? BN_ZERO)}/>}
+            amount={<ShowBalance2 address={address} balance={amount.add(available).sub(estimatedFee ?? BN_ZERO)} />}
             label={t('Available balance after')}
             style={{ pt: '5px' }}
           />

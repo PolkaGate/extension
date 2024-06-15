@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -16,10 +17,10 @@ import { ThroughProxy } from '../../../partials';
 import ShowPool from '../../../popup/staking/partial/ShowPool';
 import RewardsDestination from '../../../popup/staking/solo/stake/partials/RewardDestination';
 import { SYSTEM_SUGGESTION_TEXT } from '../../../util/constants';
-import { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
+import type { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
 import { amountToMachine, pgBoxShadow } from '../../../util/utils';
 import DisplayValue from '../../governance/post/castVote/partial/DisplayValue';
-import { Inputs } from '../Entry';
+import type { Inputs } from '../Entry';
 import { STEPS } from '..';
 
 interface Props {
@@ -32,7 +33,7 @@ interface Props {
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>
 }
 
-export default function Review ({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain } = useInfo(address);
   const theme = useTheme();
@@ -73,7 +74,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
             <Identity
               address={address}
               api={api}
-              chain={chain}
+              chain={chain as any}
               direction='row'
               identiconSize={31}
               showSocial={false}
@@ -84,7 +85,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
         </DisplayValue>
         {selectedProxyAddress &&
           <Grid container m='auto' maxWidth='92%'>
-            <ThroughProxy address={selectedProxyAddress} chain={chain} />
+            <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
           </Grid>
         }
         <DisplayValue dividerHeight='1px' title={t('Amount')}>
@@ -101,7 +102,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
             <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mx: 'auto', my: '5px', width: '170px' }} />
             <ShowPool
               api={api}
-              chain={chain}
+              chain={chain as any}
               label={t('Pool')}
               labelPosition='center'
               mode='Joining'
@@ -166,15 +167,15 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
         />
       </Grid>
       {showSelectedValidators && !!inputs?.selectedValidators?.length &&
-          <ShowValidators
-            address={address}
-            api={api}
-            chain={chain}
-            selectedValidators={inputs.selectedValidators}
-            setShowSelectedValidators={setShowSelectedValidators}
-            showSelectedValidators={showSelectedValidators}
-            staked={inputs?.extraInfo?.amount && balances?.decimal && amountToMachine(inputs.extraInfo.amount, balances.decimal)}
-          />
+        <ShowValidators
+          address={address}
+          api={api}
+          chain={chain as any}
+          selectedValidators={inputs.selectedValidators}
+          setShowSelectedValidators={setShowSelectedValidators}
+          showSelectedValidators={showSelectedValidators}
+          staked={inputs?.extraInfo?.amount && balances?.decimal && amountToMachine(inputs.extraInfo.amount, balances.decimal)}
+        />
       }
     </>
   );

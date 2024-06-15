@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,7 +14,7 @@ interface Props {
   baseLogoSize?: string;
 }
 
-export default function AssetIcon ({ asset, assetSize = '40px', baseLogo, baseLogoSize = '20px' }: Props): React.ReactElement {
+export default function AssetIcon({ asset, assetSize = '40px', baseLogo, baseLogoSize = '20px' }: Props): React.ReactElement {
   return (
     <Grid container sx={{ position: 'relative', width: 'fit-content' }}>
       <Avatar

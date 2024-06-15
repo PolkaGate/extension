@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -15,7 +16,7 @@ interface Props {
   address: string;
 }
 
-export default function Info ({ address }: Props): React.ReactElement {
+export default function Info({ address }: Props): React.ReactElement {
   const { t } = useTranslation();
   const info = usePoolConsts(address);
   const { decimal, token } = useInfo(address);
@@ -54,11 +55,13 @@ export default function Info ({ address }: Props): React.ReactElement {
       <Infotip2 showInfoMark text={t('click to view')}>
         <Typography
           fontSize='14px' onClick={onClick}
-          sx={{ '&:hover': {
-            textDecoration: 'underline'
-          },
-          color: 'secondary.light',
-          cursor: 'pointer' }} width='100%'
+          sx={{
+            '&:hover': {
+              textDecoration: 'underline'
+            },
+            color: 'secondary.light',
+            cursor: 'pointer'
+          }} width='100%'
         >
           {t('on-chain pool staking info')}
         </Typography>

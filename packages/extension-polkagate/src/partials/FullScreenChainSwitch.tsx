@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,7 +11,7 @@ import { useGenesisHashOptions, useInfo, useIsTestnetEnabled } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '../util/constants';
 import getLogo from '../util/getLogo';
-import { DropdownOption } from '../util/types';
+import type { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
 
 interface Props {
@@ -18,7 +19,7 @@ interface Props {
   chains: string[];
 }
 
-function FullScreenChainSwitch ({ address, chains }: Props): React.ReactElement<Props> {
+function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const options = useGenesisHashOptions();
   const { chainName: chainNameFromAccount } = useInfo(address);

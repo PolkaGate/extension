@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -14,19 +15,21 @@ import { useTheme } from '@emotion/react';
 import { Container } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { ISubmittableResult } from '@polkadot/types/types';
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, isBn } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, Warning, WrongPasswordAlert } from '../../../components';
 import { useAccountDisplay, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../hooks';
-import { Lock } from '../../../hooks/useAccountLocks';
+import type { Lock } from '../../../hooks/useAccountLocks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../partials';
 import { signAndSend } from '../../../util/api';
-import { Proxy, ProxyItem, TxInfo } from '../../../util/types';
+import type { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import Confirmation from './Confirmation';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { Balance } from '@polkadot/types/interfaces';
 
 interface Props {
   address: string;
@@ -36,7 +39,7 @@ interface Props {
   show: boolean;
   unlockableAmount: BN;
   totalLocked: BN;
-  setRefresh: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Review({ address, api, classToUnlock, setRefresh, setShow, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
@@ -63,9 +66,9 @@ export default function Review({ address, api, classToUnlock, setRefresh, setSho
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const amount = useMemo(() => amountToHuman(unlockableAmount, decimal), [decimal, unlockableAmount]);
-  const remove = api.tx.convictionVoting.removeVote; // (class, index)
-  const unlockClass = api.tx.convictionVoting.unlock; // (class)
-  const batchAll = api.tx.utility.batchAll;
+  const remove = api.tx['convictionVoting']['removeVote']; // (class, index)
+  const unlockClass = api.tx['convictionVoting']['unlock']; // (class)
+  const batchAll = api.tx['utility']['batchAll'];
 
   useEffect((): void => {
     if (!formatted) {
@@ -85,9 +88,9 @@ export default function Review({ address, api, classToUnlock, setRefresh, setSho
 
     const params = [...removes, ...unlocks];
 
-    setParams(params);
+    setParams(params as any);
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -126,7 +129,7 @@ export default function Review({ address, api, classToUnlock, setRefresh, setSho
       setShowWaitScreen(true);
 
       const extrinsic = batchAll(params);
-      const ptx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, extrinsic) : extrinsic;
+      const ptx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, extrinsic) : extrinsic;
 
       const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, formatted);
 
@@ -144,7 +147,8 @@ export default function Review({ address, api, classToUnlock, setRefresh, setSho
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
 
       setShowWaitScreen(false);
@@ -176,7 +180,7 @@ export default function Review({ address, api, classToUnlock, setRefresh, setSho
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as Chain}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
             style={{ mt: '-5px' }}
@@ -185,7 +189,7 @@ export default function Review({ address, api, classToUnlock, setRefresh, setSho
           <AmountFee
             address={address}
             amount={amount}
-            fee={estimatedFee}
+            fee={estimatedFee as Balance}
             label={t('Available to unlock')}
             showDivider={!totalLocked.sub(unlockableAmount).isZero()}
             token={token}

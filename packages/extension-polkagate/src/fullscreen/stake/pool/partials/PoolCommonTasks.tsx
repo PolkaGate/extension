@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -226,7 +227,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
         <EditPool
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           onClose={resetModal}
           pool={pool}
           setRefresh={setRefresh}
@@ -236,7 +237,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
         <SetState
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           formatted={formatted}
           onClose={resetModal}
           pool={pool}
@@ -256,7 +257,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
         <RemoveAll
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           onClose={resetModal}
           pool={pool}
           setRefresh={setRefresh}

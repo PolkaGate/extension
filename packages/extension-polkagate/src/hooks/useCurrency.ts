@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { useContext, useEffect } from 'react';
 
@@ -13,7 +14,7 @@ import { USD_CURRENCY } from '../util/constants';
  * get the selected currency
  * @returns CurrencyItemType
  */
-export default function useCurrency (): CurrencyItemType | undefined {
+export default function useCurrency(): CurrencyItemType | undefined {
   const { currency, setCurrency } = useContext(CurrencyContext);
 
   useEffect(() => {

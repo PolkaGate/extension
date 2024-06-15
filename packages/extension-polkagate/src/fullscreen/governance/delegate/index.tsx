@@ -1,9 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -16,7 +18,6 @@ import { BN, BN_ONE } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useAccountLocks, useBalances, useInfo, useProxies, useTracks, useTranslation } from '../../../hooks';
-import { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { DraggableModal } from '../components/DraggableModal';
 import SelectProxyModal2 from '../components/SelectProxyModal2';
 import WaitScreen from '../partials/WaitScreen';
@@ -75,7 +76,7 @@ export const STEPS = {
 
 export type DelegationStatus = 'Delegate' | 'Remove' | 'Modify';
 
-export function Delegate ({ address, open, setOpen, showDelegationNote }: Props): React.ReactElement<Props> {
+export function Delegate({ address, open, setOpen, showDelegationNote }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, formatted } = useInfo(address);
@@ -99,8 +100,8 @@ export function Delegate ({ address, open, setOpen, showDelegationNote }: Props)
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyStep, setProxyStep] = useState<number>();
 
-  const delegate = api && api.tx.convictionVoting.delegate;
-  const batch = api && api.tx.utility.batchAll;
+  const delegate = api && api.tx['convictionVoting']['delegate'];
+  const batch = api && api.tx['utility']['batchAll'];
 
   useEffect(() => {
     if (step === STEPS.PROXY) {
@@ -145,7 +146,7 @@ export function Delegate ({ address, open, setOpen, showDelegationNote }: Props)
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }

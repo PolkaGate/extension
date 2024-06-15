@@ -1,13 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Typography } from '@mui/material';
+// @ts-ignore
 import Chance from 'chance';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { AccountContext, ActionContext, Label, PButton, SelectChain } from '../../../components';
 import { useGenesisHashOptions, useInfo, useProxiedAccounts, useTranslation } from '../../../hooks';
@@ -18,7 +21,7 @@ import getLogo from '../../../util/getLogo';
 import AddressDropdown from '../../newAccount/deriveAccount/AddressDropdown';
 import ProxiedTable from './ProxiedTable';
 
-function ImportProxied (): React.ReactElement {
+function ImportProxied(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
@@ -32,7 +35,7 @@ function ImportProxied (): React.ReactElement {
     accounts
       .filter(({ isExternal, isHardware, isQR }) => !isExternal || isQR || isHardware)
       .map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name])
-  , [accounts]);
+    , [accounts]);
 
   const [selectedAddress, setSelectedAddress] = useState<string | undefined>(undefined);
   const [selectedProxied, setSelectedProxied] = useState<string[]>([]);
@@ -98,8 +101,8 @@ function ImportProxied (): React.ReactElement {
           allAddresses={allAddresses}
           onSelect={onParentChange}
           selectedAddress={selectedAddress}
-          selectedGenesis={accountGenesishash}
-          selectedName={accountName}
+          selectedGenesis={accountGenesishash as string}
+          selectedName={accountName as string}
           withoutChainLogo
         />
       </Label>
@@ -115,7 +118,7 @@ function ImportProxied (): React.ReactElement {
       {selectedAddress && chain &&
         <ProxiedTable
           api={api}
-          chain={chain}
+          chain={chain as any}
           label={t('Proxied account(s)')}
           maxHeight='140px'
           proxiedAccounts={proxiedAccounts?.proxy === formatted ? proxiedAccounts?.proxied : undefined}

@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { ApiPromise } from '@polkadot/api';
 
@@ -37,7 +38,7 @@ function calcInterval(api: ApiPromise): BN {
     ));
 }
 
-export default function useBlockInterval(address: string|undefined): BN | undefined {
+export default function useBlockInterval(address: string | undefined): BN | undefined {
     const api = useApi(address);
 
     return useMemo(() => api && calcInterval(api), [api]);

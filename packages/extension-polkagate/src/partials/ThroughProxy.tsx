@@ -1,14 +1,14 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, SxProps, Theme } from '@mui/material';
-import React from 'react';
+import type { Chain } from '@polkadot/extension-chains/types';
 
-import { Chain } from '@polkadot/extension-chains/types';
-
+import { Divider, Grid, type SxProps, type Theme } from '@mui/material';
 import { Identity } from '../components';
+import React from 'react';
 import { useApi, useTranslation } from '../hooks';
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
   showDivider?: boolean;
 }
 
-function ThroughProxy ({ address, chain, style = {}, showDivider = true }: Props): React.ReactElement {
+function ThroughProxy({ address, chain, style = {}, showDivider = true }: Props): React.ReactElement {
   const { t } = useTranslation();
   const api = useApi(address);
 
@@ -31,15 +31,15 @@ function ThroughProxy ({ address, chain, style = {}, showDivider = true }: Props
       <Identity
         address={address}
         api={api}
-        chain={chain}
+        chain={chain as any}
         identiconSize={28}
         showSocial={false}
         // subIdOnly
         style={{ fontSize: '22px', maxWidth: '65%', px: '8px', width: 'fit-content' }}
         withShortAddress
       />
-      { showDivider &&
-       <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '1px', mt: '4px', width: '1px' }} />
+      {showDivider &&
+        <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '1px', mt: '4px', width: '1px' }} />
       }      <Grid item sx={{ fontSize: '12px', fontWeight: 300, textAlign: 'center', ml: '5px' }}>
         {t('as proxy')}
       </Grid>

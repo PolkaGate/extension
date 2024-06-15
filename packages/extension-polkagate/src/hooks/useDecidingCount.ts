@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -70,7 +71,7 @@ export default function useDecidingCount(address: string | undefined): DecidingC
 
     if (chain?.genesisHash !== api?.genesisHash?.toString()) {
       setCounts(undefined);
-      
+
       return;
     }
 

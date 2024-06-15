@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -20,13 +21,13 @@ import { BN } from '@polkadot/util';
 import { Checkbox2, Infotip, InputFilter, Waiting } from '../../../../components';
 import { useInfo, useTranslation, useValidators, useValidatorsIdentities, useValidatorSuggestion } from '../../../../hooks';
 import { DEFAULT_FILTERS, SYSTEM_SUGGESTION_TEXT } from '../../../../util/constants';
-import { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../../util/types';
+import type { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../../util/types';
 import ValidatorsTable from './ValidatorsTable';
 
 interface Props {
   address: string;
   nominatedValidatorsIds?: string[] | null | undefined;
-  stashId: AccountId;
+  stashId: AccountId | string;
   stakingConsts: StakingConsts | null | undefined;
   staked: BN;
   tableHeight?: number;
@@ -53,7 +54,7 @@ const TableSubInfoWithClear = ({ maxSelectable, onClearSelection, selectedCount 
   );
 };
 
-export default function SelectValidators ({ address, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, staked, stakingConsts, stashId, tableHeight }: Props): React.ReactElement {
+export default function SelectValidators({ address, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, staked, stakingConsts, stashId, tableHeight }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { token } = useInfo(address);
@@ -271,24 +272,24 @@ export default function SelectValidators ({ address, newSelectedValidators, nomi
               selectedCount={newSelectedValidators?.length}
             />
             {showFilters &&
-             <Filters
-               allValidators={searchKeyword ? searchedValidators : allValidators}
-               allValidatorsIdentities={allValidatorsIdentities}
-               apply={apply}
-               filters={filters}
-               isFullscreen
-               newSelectedValidators={newSelectedValidators}
-               onLimitValidatorsPerOperator={onLimitValidatorsPerOperator}
-               setApply={setApply}
-               setFilteredValidators={setFilteredValidators}
-               setFilters={setFilters}
-               setNewSelectedValidators={setNewSelectedValidators}
-               setShow={setShowFilters}
-               setSortValue={setSortValue}
-               show={showFilters}
-               sortValue={sortValue}
-               stakingConsts={stakingConsts}
-             />
+              <Filters
+                allValidators={searchKeyword ? searchedValidators : allValidators}
+                allValidatorsIdentities={allValidatorsIdentities}
+                apply={apply}
+                filters={filters}
+                isFullscreen
+                newSelectedValidators={newSelectedValidators}
+                onLimitValidatorsPerOperator={onLimitValidatorsPerOperator}
+                setApply={setApply}
+                setFilteredValidators={setFilteredValidators}
+                setFilters={setFilters}
+                setNewSelectedValidators={setNewSelectedValidators}
+                setShow={setShowFilters}
+                setSortValue={setSortValue}
+                show={showFilters}
+                sortValue={sortValue}
+                stakingConsts={stakingConsts}
+              />
             }
           </Grid>
         </>

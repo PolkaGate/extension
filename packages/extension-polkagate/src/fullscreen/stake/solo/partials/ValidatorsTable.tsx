@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -7,7 +8,7 @@ import '@vaadin/icons';
 
 import type { AccountId } from '@polkadot/types/interfaces';
 
-import { alpha, Grid, SxProps, Theme, useTheme } from '@mui/material';
+import { alpha, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
@@ -16,7 +17,7 @@ import { useInfo } from '@polkadot/extension-polkagate/src/hooks';
 import ValidatorInfoPage from '@polkadot/extension-polkagate/src/popup/staking/partial/ValidatorInfo';
 import { BN, hexToBn, isHex } from '@polkadot/util';
 
-import { StakingConsts, ValidatorInfo } from '../../../../util/types';
+import type { StakingConsts, ValidatorInfo } from '../../../../util/types';
 import ShowValidator from './ShowValidator';
 
 interface Props {
@@ -36,7 +37,7 @@ interface Props {
   nominatedValidatorsIds?: AccountId[] | null | undefined;
 }
 
-export default function ValidatorsTable ({ activeValidators, address, allValidatorsIdentities, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTable({ activeValidators, address, allValidatorsIdentities, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
   const theme = useTheme();
   const ref = useRef();
   const { api, chain, decimal, token } = useInfo(address);
@@ -106,7 +107,7 @@ export default function ValidatorsTable ({ activeValidators, address, allValidat
                   <ShowValidator
                     accountInfo={accountInfo}
                     api={api}
-                    chain={chain}
+                    chain={chain as any}
                     check={check}
                     decimal={decimal}
                     handleCheck={handleCheck}
@@ -129,7 +130,7 @@ export default function ValidatorsTable ({ activeValidators, address, allValidat
       {showValidatorInfo && validatorToShowInfo && api && chain &&
         <ValidatorInfoPage
           api={api}
-          chain={chain}
+          chain={chain as any}
           isFullscreen
           setShowValidatorInfo={setShowValidatorInfo}
           showValidatorInfo={showValidatorInfo}

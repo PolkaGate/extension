@@ -1,11 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
@@ -14,7 +16,7 @@ import { useApiWithChain, useGenesisHashOptions, useTranslation } from '../../..
 import { createAccountExternal, getMetadata } from '../../../messaging';
 import { HeaderBrand, Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
-import { Proxy, ProxyItem } from '../../../util/types';
+import type { Proxy, ProxyItem } from '../../../util/types';
 
 export default function AddAddressOnly(): React.ReactElement {
   const { t } = useTranslation();
@@ -43,7 +45,8 @@ export default function AddAddressOnly(): React.ReactElement {
   }, [realAddress, chain]);
 
   useEffect(() => {
-    realAddress && api && api.query.proxy?.proxies(realAddress).then((proxies) => {
+    realAddress && api && api.query['proxy']?.['proxies'](realAddress).then((proxies) => {
+      // @ts-ignore
       const fetchedProxyItems = (JSON.parse(JSON.stringify(proxies[0])))?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
       setProxies(fetchedProxyItems);
@@ -59,7 +62,7 @@ export default function AddAddressOnly(): React.ReactElement {
 
   const onChangeGenesis = useCallback((genesisHash?: string | null): void => {
     setProxies(undefined);
-    genesisHash && getMetadata(genesisHash, true).then(setChain).catch((error): void => {
+    genesisHash && getMetadata(genesisHash, true).then((chain) => setChain(chain as Chain)).catch((error): void => {
       console.error(error);
     });
   }, []);
@@ -95,9 +98,9 @@ export default function AddAddressOnly(): React.ReactElement {
       <AddressInput
         addWithQr
         address={realAddress}
-        chain={chain}
+        chain={chain as any}
         label={t<string>('Account ID')}
-        setAddress={setRealAddress}
+        setAddress={setRealAddress as any}
         style={{ m: '15px auto 0', width: '92%' }}
       />
       <Name

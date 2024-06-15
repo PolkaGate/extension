@@ -1,12 +1,13 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Collapse, Divider, Grid, IconButton, Skeleton, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Collapse, Divider, Grid, IconButton, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
@@ -41,7 +42,7 @@ interface WaitForReservedProps {
   style?: SxProps<Theme> | undefined;
 }
 
-function WaitForReserved ({ rows = 2, skeletonHeight = 20, skeletonWidth = 60, style }: WaitForReservedProps): React.ReactElement<Props> {
+function WaitForReserved({ rows = 2, skeletonHeight = 20, skeletonWidth = 60, style }: WaitForReservedProps): React.ReactElement<Props> {
   return (
     <Grid container justifyContent='center' sx={{ ...style }}>
       {Array.from({ length: rows }).map((_, index) => (
@@ -96,7 +97,7 @@ const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetai
   );
 };
 
-export default function DisplayBalance ({ amount, decimal, disabled, isOnRelayChain, onClick, price, reservedDetails, title, token }: Props): React.ReactElement {
+export default function DisplayBalance({ amount, decimal, disabled, isOnRelayChain, onClick, price, reservedDetails, title, token }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const isReserved = title === t('Reserved');

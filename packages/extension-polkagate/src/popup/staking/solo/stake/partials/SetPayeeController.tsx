@@ -1,16 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, SxProps, Typography, useTheme } from '@mui/material';
+import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, type SxProps, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { AccountInputWithIdentity, PButton, Warning } from '../../../../../components';
 import { useInfo, useTranslation } from '../../../../../hooks';
-import { SoloSettings, StakingConsts } from '../../../../../util/types';
+import type { Payee, SoloSettings, StakingConsts } from '../../../../../util/types';
 import { amountToHuman } from '../../../../../util/utils';
 import getPayee from './util';
 
@@ -25,19 +26,19 @@ interface Props {
   newSettings?: SoloSettings; // will be used when user is already has staked
 }
 
-export default function SetPayeeController ({ address, buttonLabel, newSettings, set, setShow, setShowReview, settings, stakingConsts }: Props): React.ReactElement<Props> {
+export default function SetPayeeController({ address, buttonLabel, newSettings, set, setShow, setShowReview, settings, stakingConsts }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);
 
-  const [controllerId, setControllerId] = useState<AccountId | string | undefined>(settings.controllerId);
+  const [controllerId, setControllerId] = useState<AccountId | string | undefined | null>(settings.controllerId);
   const [rewardDestinationValue, setRewardDestinationValue] = useState<'Staked' | 'Others'>(settings.payee === 'Staked' ? 'Staked' : 'Others');
-  const [rewardDestinationAccount, setRewardDestinationAccount] = useState<string | undefined>(getPayee(settings));
+  const [rewardDestinationAccount, setRewardDestinationAccount] = useState<AccountId | string | null | undefined>(getPayee(settings));
 
   const isSettingAtBonding = useMemo(() => !newSettings, [newSettings]);
 
   const getOptionLabel = useCallback((s: SoloSettings): 'Staked' | 'Others' => s.payee === 'Staked' ? 'Staked' : 'Others', []);
-  const isControllerDeprecated = api ? api.tx.staking.setController.meta.args.length === 0 : undefined;
+  const isControllerDeprecated = api ? api.tx['staking']['setController'].meta.args.length === 0 : undefined;
   const needToSetControllerToStashID = isControllerDeprecated && formatted !== controllerId;
 
   const optionDefaultVal = useMemo(() => isSettingAtBonding
@@ -45,7 +46,7 @@ export default function SetPayeeController ({ address, buttonLabel, newSettings,
     : !newSettings?.payee ? getOptionLabel(settings) : getOptionLabel(newSettings), [getOptionLabel, isSettingAtBonding, newSettings, settings]);
 
   const ED = useMemo(() => stakingConsts?.existentialDeposit && decimal && amountToHuman(stakingConsts.existentialDeposit, decimal), [decimal, stakingConsts?.existentialDeposit]);
-  const onSelectionMethodChange = useCallback((event: React.ChangeEvent<HTMLInputElement>, value: 'Staked' | 'Others'): void => {
+  const onSelectionMethodChange = useCallback((_event: React.ChangeEvent<HTMLInputElement>, value: 'Staked' | 'Others'): void => {
     setRewardDestinationValue(value);
 
     if (value === 'Staked') {
@@ -69,25 +70,26 @@ export default function SetPayeeController ({ address, buttonLabel, newSettings,
     if (rewardDestinationAccount) {
       return { Account: rewardDestinationAccount };
     }
+    return undefined;
   }, [controllerId, settings.controllerId, settings.stashId]);
 
-  const payeeNotChanged = useMemo(() => JSON.stringify(settings.payee) === JSON.stringify(makePayee(rewardDestinationValue, rewardDestinationAccount)), [makePayee, rewardDestinationAccount, rewardDestinationValue, settings.payee]);
+  const payeeNotChanged = useMemo(() => JSON.stringify(settings.payee) === JSON.stringify(makePayee(rewardDestinationValue, rewardDestinationAccount as string)), [makePayee, rewardDestinationAccount, rewardDestinationValue, settings.payee]);
 
   const onSet = useCallback(() => {
     set((s) => {
       if (isSettingAtBonding) {
-        s.controllerId = controllerId;
-        s.payee = makePayee(rewardDestinationValue, rewardDestinationAccount);
+        s.controllerId = controllerId as string;
+        s.payee = makePayee(rewardDestinationValue, rewardDestinationAccount as string) as Payee;
 
         return s;
       }
 
-      const payee = makePayee(rewardDestinationValue, rewardDestinationAccount);
+      const payee = makePayee(rewardDestinationValue, rewardDestinationAccount as string);
 
       if (payee && JSON.stringify(settings.payee) !== JSON.stringify(payee)) {
         s.payee = payee;
       } else {
-        s.payee = undefined;
+        s.payee = undefined as unknown as Payee;
       }
 
       if (controllerId && (s.payee === 'Controller' || settings.controllerId !== controllerId)) {
@@ -124,8 +126,8 @@ export default function SetPayeeController ({ address, buttonLabel, newSettings,
       {!isSettingAtBonding && formatted === settings.stashId && formatted !== controllerId &&
         <>
           <AccountInputWithIdentity
-            address={controllerId}
-            chain={chain}
+            address={controllerId as string}
+            chain={chain as any}
             disabled={isControllerDeprecated}
             label={isControllerDeprecated ? t('Controller account is deprecated') : t('Controller account')}
             setAddress={isControllerDeprecated ? null : setControllerId}
@@ -150,7 +152,7 @@ export default function SetPayeeController ({ address, buttonLabel, newSettings,
               <FormLabel sx={{ '&.Mui-focused': { color: 'text.primary' }, color: 'text.primary', fontSize: '16px' }}>
                 {t('Reward destination')}
               </FormLabel>
-              <RadioGroup defaultValue={optionDefaultVal} onChange={onSelectionMethodChange}>
+              <RadioGroup defaultValue={optionDefaultVal} onChange={onSelectionMethodChange as any}>
                 <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main' }} value='Staked' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Add to staked amount')}</Typography>} />
                 <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main', py: '2px' }} value='Others' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Transfer to a specific account')}</Typography>} />
               </RadioGroup>
@@ -159,8 +161,8 @@ export default function SetPayeeController ({ address, buttonLabel, newSettings,
           {rewardDestinationValue === 'Others' &&
             <>
               <AccountInputWithIdentity
-                address={rewardDestinationAccount}
-                chain={chain}
+                address={rewardDestinationAccount as string}
+                chain={chain as any}
                 label={t('Specific account')}
                 setAddress={setRewardDestinationAccount}
                 style={{ pt: '15px', px: '15px' }}

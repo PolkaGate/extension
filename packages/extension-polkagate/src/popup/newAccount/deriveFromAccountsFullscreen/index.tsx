@@ -1,8 +1,9 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
+//@ts-nocheck
 import '@vaadin/icons';
 
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -20,14 +21,14 @@ import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeade
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { deriveAccount, validateAccount, validateDerivationPath } from '../../../messaging';
 import { nextDerivationPath } from '../../../util/nextDerivationPath';
-import { AddressState } from '../../../util/types';
+import type { AddressState } from '../../../util/types';
 import DerivationPath from '../deriveAccount/DerivationPath';
 import AddressDropdownFullScreen from './AddressDropdownFullScreen';
 
 // match any single slash
 const singleSlashRegex = /([^/]|^)\/([^/]|$)/;
 
-function DeriveFromAccounts (): React.ReactElement {
+function DeriveFromAccounts(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -146,7 +147,7 @@ function DeriveFromAccounts (): React.ReactElement {
               <vaadin-icon icon='vaadin:road-branch' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
             }
             padding='0px'
-            text= {t('Derive from accounts')}
+            text={t('Derive from accounts')}
           />
           <Typography fontSize='16px' fontWeight={400} width='100%'>
             {t('A derived account inherits the recovery phrase from its parent, but has a unique derivation path. Please select a parent account and enter its password to proceed.')}

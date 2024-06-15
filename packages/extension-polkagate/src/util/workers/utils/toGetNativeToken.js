@@ -1,9 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
+
+// @ts-nocheck
 
 import { balancify } from '.';
 
-export async function toGetNativeToken (addresses, api, chainName) {
+export async function toGetNativeToken(addresses, api, chainName) {
   const _result = {};
 
   const balances = await Promise.all(addresses.map((address) => api.derive.balances.all(address)));

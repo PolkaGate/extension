@@ -1,11 +1,12 @@
 {
   "author": "Jaco Greeff <jacogr@gmail.com>",
   "bugs": "https://github.com/polkagate/extension/issues",
-  "contributors": [],
   "description": "A sample signer extension for the @polkadot/api",
+  "engines": {
+    "node": ">=18"
+  },
   "homepage": "https://github.com/polkagate/extension/tree/master/packages/extension-ui#readme",
   "license": "Apache-2.0",
-  "maintainers": [],
   "name": "@polkadot/extension-ui",
   "repository": {
     "directory": "packages/extension-ui",
@@ -14,18 +15,17 @@
   },
   "sideEffects": true,
   "type": "module",
-  "version": "0.44.1",
+  "version": "0.47.5",
   "dependencies": {
-    "@babel/runtime": "^7.18.3",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-brands-svg-icons": "^6.5.2",
     "@fortawesome/free-regular-svg-icons": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
-    "@polkadot/extension-base": "^0.44.1",
-    "@polkadot/extension-chains": "^0.44.1",
-    "@polkadot/extension-dapp": "^0.44.1",
-    "@polkadot/extension-inject": "^0.44.1",
+    "@polkadot/extension-base": "^0.47.5",
+    "@polkadot/extension-chains": "^0.47.5",
+    "@polkadot/extension-dapp": "^0.47.5",
+    "@polkadot/extension-inject": "^0.47.5",
     "@polkadot/hw-ledger": "latest",
     "@polkadot/keyring": "latest",
     "@polkadot/networks": "latest",
@@ -46,10 +46,11 @@
     "react-is": "^18.1.0",
     "react-router": "^5.3.3",
     "react-router-dom": "^5.3.3",
-    "styled-components": "^5.3.5"
+    "styled-components": "^5.3.5",
+    "tslib": "^2.6.2"
   },
   "devDependencies": {
-    "@polkadot/extension-mocks": "^0.44.1",
+    "@polkadot/extension-mocks": "^0.47.5",
     "@types/enzyme": "^3.10.12",
     "@types/enzyme-adapter-react-16": "^1.0.6",
     "@types/file-saver": "^2.0.5",

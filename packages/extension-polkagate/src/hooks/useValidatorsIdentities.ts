@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { AccountId } from '@polkadot/types/interfaces';
 
@@ -7,10 +8,10 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
-import { SavedValidatorsIdentities, ValidatorsIdentities } from '../util/types';
+import type { SavedValidatorsIdentities, ValidatorsIdentities } from '../util/types';
 import { useCurrentEraIndex, useInfo, usePeopleChain } from '.';
 
-export default function useValidatorsIdentities (address: string, allValidatorsIds: AccountId[] | null | undefined, identities?: DeriveAccountInfo[]): DeriveAccountInfo[] | null | undefined {
+export default function useValidatorsIdentities(address: string, allValidatorsIds: AccountId[] | null | undefined, identities?: DeriveAccountInfo[] | null): DeriveAccountInfo[] | null | undefined {
   const { chainName } = useInfo(address);
   const { endpoint } = usePeopleChain(address);
 

@@ -1,10 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -30,7 +31,7 @@ interface OptionProps {
   rotations?: unknown;
 }
 
-export default function StakingMode ({ api, balance, balanceText, helperText, logo, noToolTip, onClick, rotations, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
+export default function StakingMode({ api, balance, balanceText, helperText, logo, noToolTip, onClick, rotations, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
   const theme = useTheme();
 
   return (

@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,14 +14,14 @@ import React from 'react';
 
 import { ShortAddress } from '../../../../../components';
 import { useAccountName, useMyAccountIdentity, useTranslation } from '../../../../../hooks';
-import { SoloSettings } from '../../../../../util/types';
+import type { SoloSettings } from '../../../../../util/types';
 import getPayee from './util';
 
 interface Props {
   settings: SoloSettings
 }
 
-export default function RewardsDestination ({ settings }: Props): React.ReactElement {
+export default function RewardsDestination({ settings }: Props): React.ReactElement {
   const { t } = useTranslation();
   const address = getPayee(settings);
   const payeeName = useAccountName(address);

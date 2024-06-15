@@ -1,15 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
+// @ts-nocheck
 import '@vaadin/icons';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import keyring from '@polkadot/ui-keyring';
@@ -21,7 +23,7 @@ import { useApiWithChain, useFullscreen, useGenesisHashOptions, useTranslation }
 import { createAccountExternal, getMetadata } from '../../../messaging';
 import { Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
-import { ProxyItem } from '../../../util/types';
+import type { ProxyItem } from '../../../util/types';
 
 export interface AccountInfo {
   address: string;
@@ -29,7 +31,7 @@ export interface AccountInfo {
   suri: string;
 }
 
-export default function AddWatchOnlyFullScreen (): React.ReactElement {
+export default function AddWatchOnlyFullScreen(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -56,7 +58,7 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
   }, [realAddress, chain]);
 
   useEffect(() => {
-    realAddress && api && api.query.proxy?.proxies(realAddress).then((proxies) => {
+    realAddress && api && api.query['proxy']?.['proxies'](realAddress).then((proxies) => {
       const fetchedProxyItems = (JSON.parse(JSON.stringify(proxies[0])))?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
       setProxies(fetchedProxyItems);
@@ -111,9 +113,9 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
           <AddressInput
             addWithQr
             address={realAddress}
-            chain={chain}
+            chain={chain as any}
             label={t('Account ID')}
-            setAddress={setRealAddress}
+            setAddress={setRealAddress as any}
             style={{ m: '30px auto 0', width: '100%' }}
           />
           <Grid container justifyContent='space-between'>

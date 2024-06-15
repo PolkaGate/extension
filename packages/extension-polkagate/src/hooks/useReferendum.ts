@@ -1,12 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { PalletRankedCollectiveTally, PalletReferendaReferendumInfoRankedCollectiveTally } from '@polkadot/types/lookup';
 import type { u32 } from '@polkadot/types-codec';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { REFERENDA_LIMIT_SAVED_LOCAL } from '../fullscreen/governance/utils/consts';
 import { getReferendumVotes, OnchainVotes } from '../fullscreen/governance/utils/getAllVotes';

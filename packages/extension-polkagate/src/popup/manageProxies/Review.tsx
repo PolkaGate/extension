@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,7 +11,8 @@ import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
@@ -20,7 +22,7 @@ import useTranslation from '../../hooks/useTranslation';
 import { SubTitle, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
 import { signAndSend } from '../../util/api';
-import { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getFormattedAddress, getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import ManageProxiesTxDetail from './partials/ManageProxiesTxDetail';
 
@@ -55,9 +57,9 @@ export default function Review({ address, api, chain, depositToPay, depositValue
 
   const canPayFeeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
 
-  const removeProxy = api.tx.proxy.removeProxy; /** (delegate, proxyType, delay) **/
-  const addProxy = api.tx.proxy.addProxy; /** (delegate, proxyType, delay) **/
-  const batchAll = api.tx.utility.batchAll;
+  const removeProxy = api.tx['proxy']['removeProxy']; /** (delegate, proxyType, delay) **/
+  const addProxy = api.tx['proxy']['addProxy']; /** (delegate, proxyType, delay) **/
+  const batchAll = api.tx['utility']['batchAll'];
 
   const goToMyAccounts = useCallback(() => {
     setShowConfirmation(false);
@@ -85,7 +87,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -101,7 +103,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const decidedTx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
+      const decidedTx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, tx) : tx;
 
       const { block, failureText, fee, success, txHash } = await signAndSend(api, decidedTx, signer, selectedProxy?.delegate ?? formatted);
 
@@ -119,7 +121,8 @@ export default function Review({ address, api, chain, depositToPay, depositValue
         txHash: txHash || ''
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -159,7 +162,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
         {helperText}
       </Typography>
       <ProxyTable
-        chain={chain}
+        chain={chain as any}
         label={t<string>('Proxies')}
         maxHeight={window.innerHeight / 3}
         mode='Status'
@@ -202,7 +205,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
         api={api}
         // estimatedFee={estimatedFee}
         disabled={canPayFeeAndDeposit.isAbleToPay !== true}
-        genesisHash={account?.genesisHash}
+        genesisHash={account?.genesisHash as string}
         isPasswordError={isPasswordError}
         label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
         onChange={setPassword}
@@ -237,10 +240,9 @@ export default function Review({ address, api, chain, depositToPay, depositValue
           <ManageProxiesTxDetail
             address={selectedProxyAddress}
             api={api}
-            chain={chain}
+            chain={chain as any}
             deposit={depositValue}
-            name={selectedProxyName}
-            proxies={proxiesToChange}
+            proxies={proxiesToChange as ProxyItem[]}
           />
         </Confirmation>
       }

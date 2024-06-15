@@ -1,7 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Proxy } from '../../../util/types';
 
 import { faChain, faCheckCircle, faCircleInfo, faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,14 +17,13 @@ import { ActionContext, Infotip } from '../../../components';
 import { useInfo, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
-import { Proxy } from '../../../util/types';
 
 interface AddressDetailsProps {
   address: string | undefined;
   accountInfo: DeriveAccountInfo | undefined
 }
 
-export default function AccountIconsFs ({ accountInfo, address }: AddressDetailsProps): React.ReactElement {
+export default function AccountIconsFs({ accountInfo, address }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);

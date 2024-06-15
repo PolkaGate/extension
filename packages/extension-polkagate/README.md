@@ -1,5 +1,5 @@
 
-# ![polkadot{.js} plus extension](docs/logo.jpg)
+# ![Polkagate extension](docs/logo.jpg)
 
 A user-friendly wallet for seamless browser-based interaction with Polkadot/Substrate-based blockchains. It allows users to access their Polkadot account(s), which can also be used to interact with decentralized apps.
 

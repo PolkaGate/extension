@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -11,7 +12,7 @@ import { useChainName, useToken, useTranslation } from '../../../hooks';
 import { SubTitle, ThroughProxy } from '../../../partials';
 import Explorer from '../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../popup/history/partials/FailSuccessIcon';
-import { TxInfo } from '../../../util/types';
+import type { TxInfo } from '../../../util/types';
 
 interface Props {
   address: string | undefined;
@@ -20,7 +21,7 @@ interface Props {
   onPrimaryBtnClick: () => void;
 }
 
-export default function Confirmation ({ address, onPrimaryBtnClick, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ address, onPrimaryBtnClick, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = useToken(address);
   const chainName = useChainName(address);

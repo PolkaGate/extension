@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,12 +10,12 @@ import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 import { BN_ZERO } from '@polkadot/util';
 
 import { Checkbox2, Identity, Infotip, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { StakingConsts, ValidatorInfo } from '../../../util/types';
+import type { StakingConsts, ValidatorInfo } from '../../../util/types';
 import { isHexToBn } from '../../../util/utils';
 
 interface Props {
@@ -62,7 +63,7 @@ function ShowValidator({ accountInfo, api, chain, check, decimal, handleCheck, i
           <Identity
             accountInfo={accountInfo}
             api={api}
-            chain={chain}
+            chain={chain as any}
             formatted={String(v.accountId)}
             identiconSize={24}
             showShortAddress

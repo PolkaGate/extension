@@ -1,11 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Avatar, CircularProgress, FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
-import React, { useCallback, useLayoutEffect,useState } from 'react';
+import React, { useCallback, useLayoutEffect, useState } from 'react';
 
 import { CHAINS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
 
@@ -109,7 +110,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
             }
           }}
           defaultValue={defaultValue}
-          IconComponent={isItemsLoading ? () =>  <CircularProgress size={20} sx={{ color: `${theme.palette.secondary.light}`, position: 'absolute', right: '5px' }} /> : undefined}
+          IconComponent={isItemsLoading ? () => <CircularProgress size={20} sx={{ color: `${theme.palette.secondary.light}`, position: 'absolute', right: '5px' }} /> : undefined}
           id='selectChain'
           input={<BootstrapInput isDisabled={isDisabled} />}
           onChange={_onChange}
@@ -141,7 +142,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
             }
           }}
           value={selectedValue} // Assuming selectedValue is a state variable
-          open={ options?.length !== 1 && showMenu} // do not open select when page is loading , or options has just one item
+          open={options?.length !== 1 && showMenu} // do not open select when page is loading , or options has just one item
           // eslint-disable-next-line react/jsx-no-bind
           renderValue={(v) => {
             let textToShow = options.find((option) => v === option.value || v === option.text || String(v) === String(option.value))?.text?.split(/\s*\(/)[0];

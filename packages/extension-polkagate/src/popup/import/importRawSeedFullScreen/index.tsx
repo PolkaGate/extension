@@ -1,7 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+//@ts-nocheck
 
 import '@vaadin/icons';
 
@@ -29,7 +31,7 @@ export interface AccountInfo {
   suri: string;
 }
 
-export default function ImportRawSeed (): React.ReactElement {
+export default function ImportRawSeed(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();

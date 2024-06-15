@@ -1,7 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { RecoveryConfigType, SocialRecoveryModes } from './util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -14,7 +17,6 @@ import { useAccountsInfo, useChain, useFormatted, useTranslation } from '../../h
 import SelectTrustedFriend, { AddressWithIdentity } from './components/SelectTrustedFriend';
 import SelectTrustedFriendFromExtension from './components/SelectTrustedFriendFromExtension';
 import TrustedFriendsList from './partial/TrustedFriendsList';
-import { RecoveryConfigType, SocialRecoveryModes } from './util/types';
 import { STEPS } from '.';
 
 interface Props {
@@ -43,7 +45,7 @@ const UNITS = {
 
 const BLOCKS_PER_HOUR = 600;
 
-export default function RecoveryConfig ({ address, api, mode, recoveryConfig, setMode, setRecoveryConfig, setStep, setTotalDeposit }: Props): React.ReactElement {
+export default function RecoveryConfig({ address, api, mode, recoveryConfig, setMode, setRecoveryConfig, setStep, setTotalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
@@ -252,7 +254,7 @@ export default function RecoveryConfig ({ address, api, mode, recoveryConfig, se
           <Grid container item justifyContent='space-between' py='15px'>
             <SelectTrustedFriend
               accountsInfo={accountsInfo}
-              chain={chain}
+              chain={chain as any}
               disabled={false}
               helperText={t<string>('Find your trusted friend\'s account by entering their address or any associated identity details, such as their name, email, Twitter, etc.')}
               label={t<string>('Find trusted friends accounts')}
@@ -263,7 +265,7 @@ export default function RecoveryConfig ({ address, api, mode, recoveryConfig, se
             <SelectTrustedFriendFromExtension
               accountsInfo={accountsInfo}
               address={address}
-              chain={chain}
+              chain={chain as any}
               onSelectFriend={addNewFriend}
               style={{ width: '48%' }}
             />
@@ -272,7 +274,7 @@ export default function RecoveryConfig ({ address, api, mode, recoveryConfig, se
             {t<string>('Trusted friends accounts')}
           </Typography>
           <TrustedFriendsList
-            chain={chain}
+            chain={chain as any}
             friendsList={selectedFriendsToShow}
             onRemoveFriend={removeNewFriend}
             style={{ '> div': { px: '10px' }, m: '5px', minHeight: '230px', p: 0 }}

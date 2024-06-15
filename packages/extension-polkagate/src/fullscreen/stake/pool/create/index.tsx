@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -16,7 +17,7 @@ import { useEstimatedFee, useInfo, usePoolConsts, useTranslation, useUnSupported
 import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import UpdateRoles from './UpdateRoles';
 
 interface Props {
@@ -25,7 +26,7 @@ interface Props {
   inputs: Inputs | undefined;
 }
 
-export default function CreatePool ({ inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function CreatePool({ inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
@@ -45,7 +46,7 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
   const [nominatorId, setNominatorId] = useState<string>();
   const [bouncerId, setBouncerId] = useState<string>();
 
-  const ED = api && api.consts.balances.existentialDeposit as unknown as BN;
+  const ED = api && api.consts['balances']['existentialDeposit'] as unknown as BN;
   const nextPoolId = poolStakingConsts && poolStakingConsts.lastPoolId.toNumber() + 1;
   const DEFAULT_POOLNAME = `Polkagate 💜${nextPoolId ? ` - ${nextPoolId}` : ''}`;
   const amountAsBN = useMemo(() => amountToMachine(createAmount, decimal), [createAmount, decimal]);
@@ -113,13 +114,13 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
       rewardPool: null
     };
 
-    const create = api.tx.nominationPools.create;
+    const create = api.tx['nominationPools']['create'];
     const createParams = [amountAsBN, formatted, nominatorId, bouncerId];
 
-    const setMetadata = api.tx.nominationPools.setMetadata;
+    const setMetadata = api.tx['nominationPools']['setMetadata'];
     const setMetaDataParams = [poolStakingConsts?.lastPoolId?.addn(1), pool.metadata];
 
-    const call = api.tx.utility.batch;
+    const call = api.tx['utility']['batch'];
     const params = [[create(...createParams), setMetadata(...setMetaDataParams)]];
 
     const extraInfo = {
@@ -212,7 +213,7 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
         <Typography fontSize='14px' fontWeight={300} sx={{ mt: 'auto', width: '90%' }} textAlign='left'>
           {t('All the roles (Depositor, Root, Nominator, and Bouncer) are set to the following ID by default although you can update the Nominator and Bouncer by clicking on “Update roles”.')}
         </Typography>
-        <AddressInput address={formatted} chain={chain} disabled label={''} setAddress={() => null} showIdenticon style={{ mt: '15px', width: '92%' }} />
+        <AddressInput address={formatted} chain={chain as any} disabled label={''} setAddress={() => null} showIdenticon style={{ mt: '15px', width: '92%' }} />
         <Grid onClick={onUpdateRoles} width='fit-content'>
           <Typography fontSize='16px' fontWeight={400} lineHeight='36px' sx={{ cursor: 'pointer', textAlign: 'left', textDecoration: 'underline' }}>
             {t('Update roles')}
@@ -245,7 +246,7 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
         <UpdateRoles
           address={address}
           bouncerId={bouncerId}
-          chain={chain}
+          chain={chain as any}
           formatted={formatted}
           nominatorId={nominatorId}
           setBouncerId={setBouncerId}

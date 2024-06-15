@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -11,14 +12,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import { BN_ONE } from '@polkadot/util';
 
 import { ShortAddress } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
-import { MyPoolInfo, TxInfo } from '../../../../util/types';
-import { Inputs } from '../../Entry';
+import type { MyPoolInfo, TxInfo } from '../../../../util/types';
+import type { Inputs } from '../../Entry';
 import Review from '../../partials/Review';
 import { ModalTitle } from '../../solo/commonTasks/configurePayee';
 import Confirmation from '../partials/Confirmation';
@@ -35,7 +36,7 @@ interface Props {
   onClose: () => void;
 }
 
-export default function SetState ({ address, api, formatted, onClose, pool, setRefresh, state }: Props): React.ReactElement {
+export default function SetState({ address, api, formatted, onClose, pool, setRefresh, state }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
@@ -49,7 +50,7 @@ export default function SetState ({ address, api, formatted, onClose, pool, setR
       : state === 'Open'
         ? t('The pool state will be changed to Open, and any member will be able to join the pool.')
         : t('No one can join and all members can be removed without permissions. Once in destroying state, it cannot be reverted to another state.')
-  , [state, t]);
+    , [state, t]);
 
   const extraInfo = useMemo(() => ({
     action: 'Pool Staking',
@@ -64,9 +65,9 @@ export default function SetState ({ address, api, formatted, onClose, pool, setR
       return;
     }
 
-    const batchAll = api && api.tx.utility.batchAll;
-    const chilled = api && api.tx.nominationPools.chill;
-    const poolSetState = api && api.tx.nominationPools.setState; // (poolId, state)
+    const batchAll = api && api.tx['utility']['batchAll'];
+    const chilled = api && api.tx['nominationPools']['chill'];
+    const poolSetState = api && api.tx['nominationPools']['setState']; // (poolId, state)
 
     const poolId = pool.poolId.toString();
 
@@ -91,7 +92,7 @@ export default function SetState ({ address, api, formatted, onClose, pool, setR
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 

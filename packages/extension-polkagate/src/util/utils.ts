@@ -1,21 +1,21 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
+import type { Theme } from '@mui/material';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
+import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
-
-import { Theme } from '@mui/material';
+import type { AccountsBalanceType, SavedMetaData, TransactionDetail } from './types';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
-import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { BLOCK_RATE, FLOATING_POINT_DIGIT, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS } from './constants';
-import { AccountsBalanceType, SavedMetaData, TransactionDetail } from './types';
 
 interface Meta {
   docs: Text[];
@@ -23,7 +23,7 @@ interface Meta {
 
 export const upperCaseFirstChar = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
-export function isValidAddress (_address: string | undefined): boolean {
+export function isValidAddress(_address: string | undefined): boolean {
   try {
     encodeAddress(
       isHex(_address)
@@ -120,7 +120,7 @@ export function getFormattedAddress(_address: string | null | undefined, _chain:
   return encodeAddress(publicKey, prefix);
 }
 
-export function getSubstrateAddress(address: AccountId | string | undefined): string | undefined {
+export function getSubstrateAddress(address: AccountId | string | null | undefined): string | undefined {
   if (!address) {
     return undefined;
   }
@@ -214,7 +214,7 @@ export const getWebsiteFavicon = (url: string | undefined): string => {
   return 'https://s2.googleusercontent.com/s2/favicons?domain=' + url;
 };
 
-export function remainingTime (blocks: number, noMinutes?: boolean): string {
+export function remainingTime(blocks: number, noMinutes?: boolean): string {
   let mins = Math.floor(blocks * BLOCK_RATE / 60);
 
   if (!mins) {

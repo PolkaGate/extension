@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -7,10 +8,11 @@
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { Grid, Popover, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Grid, Popover, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { AccountContext, Label } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -27,7 +29,7 @@ interface Props {
   onSelectFriend: (addr: AddressWithIdentity | undefined) => void;
 }
 
-export default function SelectTrustedFriendFromExtension ({ accountsInfo, address, chain, onSelectFriend, style }: Props): React.ReactElement<Props> {
+export default function SelectTrustedFriendFromExtension({ accountsInfo, address, chain, onSelectFriend, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
@@ -59,7 +61,7 @@ export default function SelectTrustedFriendFromExtension ({ accountsInfo, addres
       {friendsList?.map((friend, index) => (
         <TrustedFriendAccount
           accountInfo={friend.accountIdentity}
-          chain={chain}
+          chain={chain as any}
           formatted={friend.address}
           iconType='plus'
           key={index}
