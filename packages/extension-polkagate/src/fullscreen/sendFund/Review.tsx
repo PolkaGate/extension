@@ -13,6 +13,7 @@ import { ChainLogo, Identity, Motion, ShowBalance, SignArea2, WrongPasswordAlert
 import { useApi, useChain } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
+import { PROXY_TYPE } from '../../util/constants';
 import { amountToMachine, pgBoxShadow } from '../../util/utils';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
 import { STEPS } from '../stake/pool/stake';
@@ -137,7 +138,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
             onSecondaryClick={handleClose}
             params={inputs?.params}
             primaryBtnText={t('Confirm')}
-            proxyTypeFilter={['Any']}
+            proxyTypeFilter={PROXY_TYPE.SEND_FUND}
             secondaryBtnText={t('Cancel')}
             selectedProxy={selectedProxy}
             setIsPasswordError={setIsPasswordError}

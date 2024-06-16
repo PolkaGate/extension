@@ -29,8 +29,8 @@ import { amountToHuman } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
 import SelectProxyModal2 from '../../governance/components/SelectProxyModal2';
 import WaitScreen from '../../governance/partials/WaitScreen';
-import { GOVERNANCE_PROXY } from '../../governance/utils/consts';
 import Confirmation from './Confirmation';
+import { PROXY_TYPE } from '../../../util/constants';
 
 interface Props {
   address: string;
@@ -174,7 +174,7 @@ export default function Review({ address, api, classToUnlock, setDisplayPopup, s
                 isPasswordError={isPasswordError}
                 onSecondaryClick={onClose}
                 primaryBtnText={t('Confirm')}
-                proxyTypeFilter={GOVERNANCE_PROXY}
+                proxyTypeFilter={PROXY_TYPE.GOVERNANCE}
                 secondaryBtnText={t('Back')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
@@ -192,7 +192,7 @@ export default function Review({ address, api, classToUnlock, setDisplayPopup, s
             closeSelectProxy={closeProxy}
             height={500}
             proxies={proxyItems}
-            proxyTypeFilter={['Any', 'NonTransfer']}
+            proxyTypeFilter={PROXY_TYPE.GOVERNANCE}
             selectedProxy={selectedProxy}
             setSelectedProxy={setSelectedProxy}
           />

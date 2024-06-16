@@ -8,6 +8,7 @@ import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
+import { PROXY_TYPE } from '@polkadot/extension-polkagate/src/util/constants';
 import type { Balance } from '@polkadot/types/interfaces';
 import { BN, BN_ZERO } from '@polkadot/util';
 
@@ -100,7 +101,7 @@ export default function Review({ address, inputs, setStep, setTxInfo, step }: Pr
             onSecondaryClick={handleCancel}
             params={params}
             primaryBtnText={t('Confirm')}
-            proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+            proxyTypeFilter={PROXY_TYPE.STAKING}
             secondaryBtnText={t('Back')}
             selectedProxy={selectedProxy}
             setIsPasswordError={setIsPasswordError}

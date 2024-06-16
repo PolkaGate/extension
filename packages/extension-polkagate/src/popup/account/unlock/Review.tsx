@@ -25,6 +25,7 @@ import { useAccountDisplay, useChain, useDecimal, useFormatted, useProxies, useT
 import type { Lock } from '../../../hooks/useAccountLocks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../partials';
 import { signAndSend } from '../../../util/api';
+import { PROXY_TYPE } from '../../../util/constants';
 import type { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import Confirmation from './Confirmation';
@@ -213,7 +214,7 @@ export default function Review({ address, api, classToUnlock, setRefresh, setSho
           onConfirmClick={unlockRef}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+          proxyTypeFilter={PROXY_TYPE.GOVERNANCE}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

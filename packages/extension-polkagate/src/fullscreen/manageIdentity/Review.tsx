@@ -16,7 +16,7 @@ import { ApiPromise } from '@polkadot/api';
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 
-import { PEOPLE_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
+import { PEOPLE_CHAINS, PROXY_TYPE } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN, BN_ONE } from '@polkadot/util';
 
 import { CanPayErrorAlert, Identity, Motion, ShowBalance, SignArea2, Warning, WrongPasswordAlert } from '../../components';
@@ -359,7 +359,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
                 mayBeApi={api}
                 onSecondaryClick={handleClose}
                 primaryBtnText={t('Confirm')}
-                proxyTypeFilter={['Any', 'NonTransfer']}
+                proxyTypeFilter={PROXY_TYPE.GENERAL}
                 secondaryBtnText={t('Cancel')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
@@ -387,7 +387,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
                 closeSelectProxy={() => setStep(STEPS.REVIEW)}
                 height={500}
                 proxies={proxyItems}
-                proxyTypeFilter={['Any', 'NonTransfer']}
+                proxyTypeFilter={PROXY_TYPE.GENERAL}
                 selectedProxy={selectedProxy}
                 setSelectedProxy={setSelectedProxy}
               />

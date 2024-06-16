@@ -211,3 +211,12 @@ export const USD_CURRENCY = {
 
 export const FULLSCREEN_WIDTH = '900px';
 export const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed', '/account/import-raw-seed', '/forgot-password', '/reset-wallet'];
+
+export const PROXY_TYPE = {
+  STAKING: ['Any', 'NonTransfer', 'Staking'],
+  NOMINATION_POOLS: ['Any', 'NonTransfer', 'Staking', 'NominationPools'],
+  GOVERNANCE: ['Any', 'NonTransfer', 'Governance'],
+  SEND_FUND: ['Any'],
+  GENERAL: ['Any', 'NonTransfer'],
+  CROWDLOAN: ['Any', 'NonTransfer', 'Auction']
+};

@@ -18,10 +18,10 @@ import { BN, BN_ONE } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useAccountLocks, useBalances, useInfo, useProxies, useTracks, useTranslation } from '../../../hooks';
+import { PROXY_TYPE } from '../../../util/constants';
 import { DraggableModal } from '../components/DraggableModal';
 import SelectProxyModal2 from '../components/SelectProxyModal2';
 import WaitScreen from '../partials/WaitScreen';
-import { GOVERNANCE_PROXY } from '../utils/consts';
 import { DelegationInfo } from '../utils/types';
 import { getMyDelegationInfo } from '../utils/util';
 import ChooseDelegator from './delegate/ChooseDelegator';
@@ -358,7 +358,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
             closeSelectProxy={() => setStep(proxyStep)}
             height={modalHeight}
             proxies={proxyItems}
-            proxyTypeFilter={GOVERNANCE_PROXY}
+            proxyTypeFilter={PROXY_TYPE.GOVERNANCE}
             selectedProxy={selectedProxy}
             setSelectedProxy={setSelectedProxy}
           />

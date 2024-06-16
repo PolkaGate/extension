@@ -22,6 +22,7 @@ import { AccountHolderWithProxy, ActionContext, AmountFee, PasswordUseProxyConfi
 import { useAccountDisplay, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
 import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import { broadcast } from '../../../../../util/api';
+import { PROXY_TYPE } from '../../../../../util/constants';
 import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import BondExtraTxDetail from './partial/BondExtraTxDetail';
@@ -169,7 +170,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
           onConfirmClick={BondExtra}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+          proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

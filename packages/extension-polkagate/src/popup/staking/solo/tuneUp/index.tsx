@@ -25,7 +25,7 @@ import { useAccountDisplay, useInfo, useNeedsPutInFrontOf, useNeedsRebag, usePro
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
-import { STAKING_CHAINS } from '../../../../util/constants';
+import { PROXY_TYPE, STAKING_CHAINS } from '../../../../util/constants';
 import getLogo from '../../../../util/getLogo';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './TxDetail';
@@ -216,7 +216,7 @@ export default function TuneUp(): React.ReactElement {
           onConfirmClick={submit}
           proxiedAddress={selectedProxyAddress}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+          proxyTypeFilter={PROXY_TYPE.STAKING}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

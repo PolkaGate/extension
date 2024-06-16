@@ -23,9 +23,9 @@ import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../.
 import { useCurrentBlockNumber, useIdentity, useInfo, useTracks, useTranslation } from '../../../../hooks';
 import { Lock } from '../../../../hooks/useAccountLocks';
 import { ThroughProxy } from '../../../../partials';
+import { PROXY_TYPE } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import DisplayValue from '../../post/castVote/partial/DisplayValue';
-import { GOVERNANCE_PROXY } from '../../utils/consts';
 import TracksList from '../partial/TracksList';
 import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '..';
 import Modify from './Modify';
@@ -324,7 +324,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
                 isPasswordError={isPasswordError}
                 onSecondaryClick={onBackClick}
                 primaryBtnText={t('Confirm')}
-                proxyTypeFilter={GOVERNANCE_PROXY}
+                proxyTypeFilter={PROXY_TYPE.GOVERNANCE}
                 secondaryBtnText={t('Back')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}

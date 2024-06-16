@@ -9,6 +9,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
+import { PROXY_TYPE } from '@polkadot/extension-polkagate/src/util/constants';
 import type { Balance } from '@polkadot/types/interfaces';
 import { BN, BN_ZERO } from '@polkadot/util';
 
@@ -96,7 +97,7 @@ export default function Review({ address, allValidatorsIdentities, inputs, setSt
             onSecondaryClick={handleCancel}
             params={params}
             primaryBtnText={t('Confirm')}
-            proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+            proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
             secondaryBtnText={t('Back')}
             selectedProxy={selectedProxy}
             setIsPasswordError={setIsPasswordError}

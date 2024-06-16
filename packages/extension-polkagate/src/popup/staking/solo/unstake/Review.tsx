@@ -24,6 +24,7 @@ import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../..
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
+import { PROXY_TYPE } from '../../../../util/constants';
 import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
@@ -199,7 +200,7 @@ export default function Review({ address, amount, chilled, estimatedFee, hasNomi
           onConfirmClick={unstake}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+          proxyTypeFilter={PROXY_TYPE.STAKING}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

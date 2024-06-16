@@ -23,7 +23,7 @@ import { useAccountDisplay, useProxies, useTranslation, useUnSupportedNetwork } 
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
-import { STAKING_CHAINS } from '../../../../util/constants';
+import { PROXY_TYPE, STAKING_CHAINS } from '../../../../util/constants';
 import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from '../rewards/partials/TxDetail';
@@ -193,7 +193,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
           onConfirmClick={submit}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+          proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

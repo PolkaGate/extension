@@ -21,6 +21,7 @@ import { useAccountDisplay, useProxies, useTranslation } from '../../../../../ho
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import Confirmation from '../../../../../partials/Confirmation';
 import { signAndSend } from '../../../../../util/api';
+import { PROXY_TYPE } from '../../../../../util/constants';
 import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import ShowPoolRole from './ShowPoolRole';
@@ -263,7 +264,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
         onConfirmClick={goEditPool}
         proxiedAddress={formatted}
         proxies={proxyItems}
-        proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+        proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
         selectedProxy={selectedProxy}
         setIsPasswordError={setIsPasswordError}
         setSelectedProxy={setSelectedProxy}

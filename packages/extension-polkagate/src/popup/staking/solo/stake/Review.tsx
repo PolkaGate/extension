@@ -29,7 +29,7 @@ import { useAccountDisplay, useFormatted, useProxies, useToken, useTranslation }
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
-import { SYSTEM_SUGGESTION_TEXT } from '../../../../util/constants';
+import { PROXY_TYPE, SYSTEM_SUGGESTION_TEXT } from '../../../../util/constants';
 import type { Proxy, ProxyItem, SoloSettings, TxInfo, ValidatorInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import RewardsDestination from './partials/RewardDestination';
@@ -234,7 +234,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
           onConfirmClick={stake}
           proxiedAddress={settings.stashId}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+          proxyTypeFilter={PROXY_TYPE.STAKING}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

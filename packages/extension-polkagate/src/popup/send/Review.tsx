@@ -27,6 +27,7 @@ import { HeaderBrand, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
 import SubTitle from '../../partials/SubTitle';
 import broadcast from '../../util/api/broadcast';
+import { PROXY_TYPE } from '../../util/constants';
 import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { amountToMachine, getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import SendTxDetail from './partial/SendTxDetail';
@@ -210,7 +211,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
           onConfirmClick={send}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any']}
+          proxyTypeFilter={PROXY_TYPE.SEND_FUND}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

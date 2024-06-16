@@ -21,6 +21,7 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { CanPayErrorAlert, ShowBalance, SignArea2, WrongPasswordAlert } from '../../components';
 import { useCanPayFeeAndDeposit, useFormatted, useTranslation } from '../../hooks';
 import { ThroughProxy } from '../../partials';
+import { PROXY_TYPE } from '../../util/constants';
 import { pgBoxShadow } from '../../util/utils';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
@@ -221,7 +222,7 @@ function Review({ address, api, chain, depositedValue, newDepositValue, proxyIte
               isPasswordError={isPasswordError}
               onSecondaryClick={backToManage}
               primaryBtnText={t('Confirm')}
-              proxyTypeFilter={['Any', 'NonTransfer']}
+              proxyTypeFilter={PROXY_TYPE.GENERAL}
               secondaryBtnText={t('Cancel')}
               selectedProxy={selectedProxy}
               setIsPasswordError={setIsPasswordError}

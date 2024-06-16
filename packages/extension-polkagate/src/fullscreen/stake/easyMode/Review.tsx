@@ -19,7 +19,7 @@ import useTranslation from '../../../hooks/useTranslation';
 import { ThroughProxy } from '../../../partials';
 import ShowPool from '../../../popup/staking/partial/ShowPool';
 import RewardsDestination from '../../../popup/staking/solo/stake/partials/RewardDestination';
-import { SYSTEM_SUGGESTION_TEXT } from '../../../util/constants';
+import { PROXY_TYPE, SYSTEM_SUGGESTION_TEXT } from '../../../util/constants';
 import { amountToMachine, pgBoxShadow } from '../../../util/utils';
 import DisplayValue from '../../governance/post/castVote/partial/DisplayValue';
 import { STEPS } from '..';
@@ -160,7 +160,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
           onSecondaryClick={handleCancel}
           params={inputs?.params}
           primaryBtnText={t('Confirm')}
-          proxyTypeFilter={inputs?.pool ? ['Any', 'NonTransfer', 'Staking', 'NominationPools'] : ['Any', 'NonTransfer', 'Staking']} // TODO: nomination pools needs test
+          proxyTypeFilter={inputs?.pool ? PROXY_TYPE.NOMINATION_POOLS : PROXY_TYPE.STAKING}
           secondaryBtnText={t('Cancel')}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
