@@ -32,6 +32,7 @@ import { signAndSend } from '../../../../util/api';
 import type { Proxy, ProxyItem, SoloSettings, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
+import { PROXY_TYPE } from '../../../../util/constants';
 
 interface Props {
   address: string;
@@ -248,7 +249,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
           onConfirmClick={applySettings}
           proxiedAddress={settings.stashId}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+          proxyTypeFilter={PROXY_TYPE.STAKING}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

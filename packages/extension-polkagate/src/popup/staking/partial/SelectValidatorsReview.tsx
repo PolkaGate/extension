@@ -24,6 +24,7 @@ import { useAccountDisplay, useChain, useDecimal, useFormatted, useProxies, useT
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../partials';
 import Confirmation from '../../../partials/Confirmation';
 import broadcast from '../../../util/api/broadcast';
+import { PROXY_TYPE } from '../../../util/constants';
 import type { Proxy, ProxyItem, StakingConsts, TxInfo, ValidatorInfo } from '../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import TxDetail from './TxDetail';
@@ -193,7 +194,7 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
           onConfirmClick={nominate}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', poolId ? 'NominationPools' : 'Staking']}
+          proxyTypeFilter={poolId ? PROXY_TYPE.NOMINATION_POOLS : PROXY_TYPE.STAKING}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

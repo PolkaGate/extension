@@ -14,6 +14,7 @@ import { SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
 import type { Chain } from '@polkadot/extension-chains/types';
 
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
+import { PROXY_TYPE } from '@polkadot/extension-polkagate/src/util/constants';
 import type { Balance } from '@polkadot/types/interfaces';
 import { BN_ONE } from '@polkadot/util';
 
@@ -222,7 +223,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
               onSecondaryClick={onBackClick}
               params={inputs?.params}
               primaryBtnText={t<string>('Confirm')}
-              proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+              proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
               secondaryBtnText={t<string>('Back')}
               selectedProxy={selectedProxy}
               setIsPasswordError={setIsPasswordError}
@@ -243,7 +244,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
           closeSelectProxy={closeProxy}
           height={500}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+          proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
           selectedProxy={selectedProxy}
           setSelectedProxy={setSelectedProxy}
         />

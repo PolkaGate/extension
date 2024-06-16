@@ -18,11 +18,11 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { Identity, ShowBalance, SignArea2, Warning } from '../../../../components';
 import { useAccountDisplay, useBalances, useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
+import { PROXY_TYPE } from '../../../../util/constants';
 import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { DraggableModal } from '../../components/DraggableModal';
 import SelectProxyModal2 from '../../components/SelectProxyModal2';
 import WaitScreen from '../../partials/WaitScreen';
-import { GOVERNANCE_PROXY } from '../../utils/consts';
 import { type Track } from '../../utils/types';
 import DisplayValue from '../castVote/partial/DisplayValue';
 import Confirmation from './Confirmation';
@@ -200,7 +200,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
                 params={[refIndex]}
                 previousStep={STEPS.REVIEW}
                 primaryBtnText={t('Confirm')}
-                proxyTypeFilter={GOVERNANCE_PROXY}
+                proxyTypeFilter={PROXY_TYPE.GOVERNANCE}
                 secondaryBtnText={t('Close')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
@@ -219,7 +219,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
             closeSelectProxy={() => setStep(STEPS.REVIEW)}
             height={HEIGHT}
             proxies={proxyItems}
-            proxyTypeFilter={GOVERNANCE_PROXY}
+            proxyTypeFilter={PROXY_TYPE.GOVERNANCE}
             selectedProxy={selectedProxy}
             setSelectedProxy={setSelectedProxy}
           />

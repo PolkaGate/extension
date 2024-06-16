@@ -20,8 +20,8 @@ import { BN_ONE, BN_ZERO } from '@polkadot/util';
 import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../components';
 import { useIdentity, useInfo, useTracks, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
+import { PROXY_TYPE } from '../../../../util/constants';
 import DisplayValue from '../../post/castVote/partial/DisplayValue';
-import { GOVERNANCE_PROXY } from '../../utils/consts';
 import ReferendaTable from '../partial/ReferendaTable';
 import TracksList from '../partial/TracksList';
 import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '..';
@@ -212,7 +212,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
             isPasswordError={isPasswordError}
             onSecondaryClick={onBackClick}
             primaryBtnText={t('Confirm')}
-            proxyTypeFilter={GOVERNANCE_PROXY}
+            proxyTypeFilter={PROXY_TYPE.GOVERNANCE}
             secondaryBtnText={t('Back')}
             selectedProxy={selectedProxy}
             setIsPasswordError={setIsPasswordError}

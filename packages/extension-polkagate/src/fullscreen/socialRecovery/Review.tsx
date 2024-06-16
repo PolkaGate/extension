@@ -28,6 +28,7 @@ import type { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import blockToDate from '../../popup/crowdloans/partials/blockToDate';
+import { PROXY_TYPE } from '../../util/constants';
 import { pgBoxShadow } from '../../util/utils';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
@@ -642,7 +643,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                   ? closeWindow
                   : handleClose}
                 primaryBtnText={t<string>('Confirm')}
-                proxyTypeFilter={['Any', 'NonTransfer']}
+                proxyTypeFilter={PROXY_TYPE.GENERAL}
                 secondaryBtnText={t<string>('Cancel')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}

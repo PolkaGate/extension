@@ -23,6 +23,7 @@ import { AccountHolderWithProxy, ActionContext, ChainLogo, FormatBalance, Passwo
 import { useAccountDisplay, useChain, useProxies, useTranslation } from '../../../hooks';
 import { Confirmation, HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../partials';
 import { broadcast } from '../../../util/api';
+import { PROXY_TYPE } from '../../../util/constants';
 import type { Crowdloan, Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import ParachainInfo from '../partials/ParachainInfo';
@@ -191,7 +192,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
           onConfirmClick={goContribute}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'Auction', 'NonTransfer']}
+          proxyTypeFilter={PROXY_TYPE.CROWDLOAN}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

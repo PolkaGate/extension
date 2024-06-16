@@ -20,6 +20,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { AccountHolderWithProxy, Identity, ShortAddress, ShowBalance, ShowValue, SignArea2, WrongPasswordAlert } from '../../../components';
 import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../hooks';
 import { SubTitle } from '../../../partials';
+import { PROXY_TYPE } from '../../../util/constants';
 import type { MyPoolInfo, Payee, Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import type { Inputs } from '../Entry';
 import { STEPS } from '../pool/stake';
@@ -95,8 +96,8 @@ export default function Review({ address, inputs, onClose, setRefresh, setStep, 
   const proxyTypeFilter = useMemo(
     () =>
       inputs?.extraInfo?.pool
-        ? ['Any', 'NonTransfer', 'NominationPools']
-        : ['Any', 'NonTransfer', 'Staking']
+        ? PROXY_TYPE.NOMINATION_POOLS
+        : PROXY_TYPE.STAKING
     , [inputs]);
 
   const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);

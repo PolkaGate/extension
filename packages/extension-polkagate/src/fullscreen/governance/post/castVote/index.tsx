@@ -18,10 +18,10 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
+import { PROXY_TYPE } from '../../../../util/constants';
 import { DraggableModal } from '../../components/DraggableModal';
 import SelectProxyModal2 from '../../components/SelectProxyModal2';
 import WaitScreen from '../../partials/WaitScreen';
-import { GOVERNANCE_PROXY } from '../../utils/consts';
 import { getVoteType } from '../../utils/util';
 import { getConviction, Vote } from '../myVote/util';
 import About from './About';
@@ -273,7 +273,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
             closeSelectProxy={() => setStep(alterType === 'remove' ? STEPS.REMOVE : STEPS.REVIEW)}
             height={reviewModalHeight}
             proxies={proxyItems}
-            proxyTypeFilter={GOVERNANCE_PROXY}
+            proxyTypeFilter={PROXY_TYPE.GOVERNANCE}
             selectedProxy={selectedProxy}
             setSelectedProxy={setSelectedProxy}
           />

@@ -27,6 +27,7 @@ import { useAccountDisplay, useDecimal, useProxies, useToken, useTranslation } f
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
+import { PROXY_TYPE } from '../../../../util/constants';
 import broadcast from '../../../../util/api/broadcast';
 import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToMachine, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
@@ -222,7 +223,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
           onConfirmClick={unstake}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+          proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

@@ -18,8 +18,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../components';
 import { useIdentity, useInfo, useTracks, useTranslation } from '../../../hooks';
 import { ThroughProxy } from '../../../partials';
+import { PROXY_TYPE } from '../../../util/constants';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
-import { GOVERNANCE_PROXY } from '../utils/consts';
 import TracksList from './partial/TracksList';
 import { DelegateInformation, STEPS } from '.';
 
@@ -152,7 +152,7 @@ export default function Review({ address, delegateInformation, estimatedFee, sel
           isPasswordError={isPasswordError}
           onSecondaryClick={onBackClick}
           primaryBtnText={t('Confirm')}
-          proxyTypeFilter={GOVERNANCE_PROXY}
+          proxyTypeFilter={PROXY_TYPE.GOVERNANCE}
           secondaryBtnText={t('Back')}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}

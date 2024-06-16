@@ -17,6 +17,7 @@ import { useAccountDisplay, useApi, useChain, useProxies, useTranslation } from 
 import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
+import { PROXY_TYPE } from '../../../../util/constants';
 import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import ShowPool from '../../partial/ShowPool';
@@ -193,7 +194,7 @@ export default function SetState({ address, formatted, headerText, helperText, p
           onConfirmClick={changeState}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+          proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

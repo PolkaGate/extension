@@ -22,6 +22,7 @@ import useTranslation from '../../hooks/useTranslation';
 import { SubTitle, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
 import { signAndSend } from '../../util/api';
+import { PROXY_TYPE } from '../../util/constants';
 import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getFormattedAddress, getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import ManageProxiesTxDetail from './partials/ManageProxiesTxDetail';
@@ -212,7 +213,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
         onConfirmClick={onNext}
         proxiedAddress={address}
         proxies={proxies}
-        proxyTypeFilter={['Any', 'NonTransfer']}
+        proxyTypeFilter={PROXY_TYPE.GENERAL}
         selectedProxy={selectedProxy}
         setIsPasswordError={setIsPasswordError}
         setSelectedProxy={setSelectedProxy}
