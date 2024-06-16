@@ -47,14 +47,6 @@ export interface LastBalances {
 
 export const DEFAULT_ACCOUNT_BALANCE = { address: null, balanceInfo: null, chain: null, name: null };
 
-export interface AccountsBalanceType {
-  address: string; // formatted address
-  chain: string | null; // chainName actually
-  balanceInfo?: LastBalances;
-  name: string | null;
-  txHistory?: string;
-}
-
 export interface StakingConsts {
   bondingDuration: number; // eras
   eraIndex: number;
