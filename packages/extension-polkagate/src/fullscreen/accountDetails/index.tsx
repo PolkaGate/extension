@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -12,9 +11,9 @@ import { useParams } from 'react-router';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, ActionContext } from '../../components';
-import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useReservedDetails, useTranslation } from '../../hooks';
-import { Lock } from '../../hooks/useAccountLocks';
-import { FetchedBalance } from '../../hooks/useAssetsBalances';
+import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
+import type { Lock } from '../../hooks/useAccountLocks';
+import type { FetchedBalance } from '../../hooks/useAssetsBalances';
 import ExportAccountModal from '../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../popup/forgetAccount/ForgetAccountModal';
 import HistoryModal from '../../popup/history/modal/HistoryModal';
@@ -24,11 +23,12 @@ import ReceiveModal from '../../popup/receive/ReceiveModal';
 import RenameModal from '../../popup/rename/RenameModal';
 import { EXTRA_PRICE_IDS } from '../../util/api/getPrices';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
-import { isOnRelayChain, sanitizeChainName } from '../../util/utils';
+import { sanitizeChainName } from '../../util/utils';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
 import { openOrFocusTab } from './components/CommonTasks';
+import ReservedDisplayBalance from './components/ReservedDisplayBalance';
 import LockedInReferenda from './unlock/Review';
 import { AccountInformationForDetails, AccountSetting, AssetSelect, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
 
@@ -58,7 +58,6 @@ export default function AccountDetails(): React.ReactElement {
   const onAction = useContext(ActionContext);
   const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();
-  const reservedDetails = useReservedDetails(address);
 
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
   const [assetIdOnAssetHub, setAssetIdOnAssetHub] = useState<number>();
@@ -92,7 +91,7 @@ export default function AccountDetails(): React.ReactElement {
     }
 
     /** when both exists on the same chain, we show one which is more recent */
-    return balances?.date > selectedAsset?.date
+    return balances?.date && selectedAsset?.date && balances.date > selectedAsset.date
       ? { ...(selectedAsset || {}), ...(balances || {}) }
       : { ...(balances || {}), ...(selectedAsset || {}) };
   }, [assetId, balances, chainName, selectedAsset]);
@@ -184,7 +183,7 @@ export default function AccountDetails(): React.ReactElement {
                 label={label(account, hasParent?.name || '', t)}
                 price={currentPrice}
                 pricesInCurrency={pricesInCurrency}
-                selectedAsset={balancesToShow}
+                selectedAsset={balancesToShow as any}
                 setAssetIdOnAssetHub={setAssetIdOnAssetHub}
                 setSelectedAsset={setSelectedAsset}
               />
@@ -203,6 +202,7 @@ export default function AccountDetails(): React.ReactElement {
                   <DisplayBalance
                     amount={balancesToShow?.availableBalance}
                     decimal={balancesToShow?.decimal}
+                    disabled={!balancesToShow?.availableBalance || balancesToShow?.availableBalance.isZero()}
                     onClick={goToSend}
                     price={currentPrice}
                     title={t('Transferable')}
@@ -248,17 +248,12 @@ export default function AccountDetails(): React.ReactElement {
                       token={balancesToShow?.token}
                     />
                   }
-                  {!isOnAssetHub &&
-                    <DisplayBalance
-                      amount={balancesToShow?.reservedBalance}
-                      decimal={balancesToShow?.decimal}
-                      disabled={!balancesToShow?.reservedBalance || balancesToShow?.reservedBalance?.isZero()}
-                      isOnRelayChain={isOnRelayChain(genesisHash)}
-                      price={currentPrice} // TODO: double check
-                      reservedDetails={reservedDetails}
-                      title={t('Reserved')}
-                      token={balancesToShow?.token}
-                    />}
+                  <ReservedDisplayBalance
+                    address={address}
+                    amount={balancesToShow?.reservedBalance}
+                    disabled={!balancesToShow?.reservedBalance || balancesToShow?.reservedBalance?.isZero()}
+                    price={currentPrice}
+                  />
                 </>
               }
             </Grid>
@@ -273,7 +268,7 @@ export default function AccountDetails(): React.ReactElement {
                 <CommonTasks
                   address={address}
                   assetId={assetId}
-                  balance={balancesToShow}
+                  balance={balancesToShow as any}
                   genesisHash={genesisHash}
                   setDisplayPopup={setDisplayPopup}
                 />
