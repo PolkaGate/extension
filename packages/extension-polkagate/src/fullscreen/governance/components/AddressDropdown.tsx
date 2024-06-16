@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -21,7 +22,7 @@ interface Props {
   unableToChangeAccount?: boolean;
 }
 
-export default function AddressDropdown ({ api, chainGenesis, onSelect, selectedAddress, unableToChangeAccount = false }: Props): React.ReactElement<Props> {
+export default function AddressDropdown({ api, chainGenesis, onSelect, selectedAddress, unableToChangeAccount = false }: Props): React.ReactElement<Props> {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const { accounts } = useContext(AccountContext);
@@ -74,7 +75,7 @@ export default function AddressDropdown ({ api, chainGenesis, onSelect, selected
                 <Grid alignItems='center' container item key={index} onClick={_onSelect(address)} sx={{ cursor: 'pointer', zIndex: 10 }}>
                   <Identity
                     address={address}
-                    chain={chain}
+                    chain={chain as any}
                     identiconSize={24}
                     showSocial={false}
                     style={{

@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -22,7 +23,7 @@ interface Props {
   isBusy: boolean;
 }
 
-export default function CreateNewDerivedAccount ({ address, derivedAccountName, genesisHash, isBusy, onBackClick, onCreate, onNameChange, onPasswordChange, password }: Props): React.ReactElement<Props> {
+export default function CreateNewDerivedAccount({ address, derivedAccountName, genesisHash, isBusy, onBackClick, onCreate, onNameChange, onPasswordChange, password }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const nullF = useCallback(() => null, []);

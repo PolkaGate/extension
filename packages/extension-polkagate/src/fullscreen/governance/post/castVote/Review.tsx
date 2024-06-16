@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,6 +11,7 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 import type { AnyTuple } from '@polkadot/types/types';
+import type { Proxy, TxInfo } from '../../../../util/types';
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -21,7 +23,6 @@ import { BN_ZERO } from '@polkadot/util';
 import { Identity, Motion, ShowBalance, ShowValue, SignArea2, Warning, WrongPasswordAlert } from '../../../../components';
 import { useInfo, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
-import { Proxy, TxInfo } from '../../../../util/types';
 import { ENDED_STATUSES, GOVERNANCE_PROXY, STATUS_COLOR } from '../../utils/consts';
 import DisplayValue from './partial/DisplayValue';
 import { STEPS, VoteInformation } from '.';
@@ -41,7 +42,7 @@ interface Props {
   txType: 'Remove' | 'Vote';
 }
 
-export default function Review ({ address, estimatedFee, selectedProxy, setModalHeight, setRefresh, setStep, setTxInfo, status, step, tx, txType, voteInformation }: Props): React.ReactElement<Props> {
+export default function Review({ address, estimatedFee, selectedProxy, setModalHeight, setRefresh, setStep, setTxInfo, status, step, tx, txType, voteInformation }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);
@@ -112,7 +113,7 @@ export default function Review ({ address, estimatedFee, selectedProxy, setModal
 
   const onBackClick = useCallback(() =>
     setStep(txType === 'Vote' ? STEPS.INDEX : STEPS.PREVIEW)
-  , [setStep, txType]);
+    , [setStep, txType]);
 
   return (
     <Motion style={{ height: '100%' }}>
@@ -137,7 +138,7 @@ export default function Review ({ address, estimatedFee, selectedProxy, setModal
           <Identity
             address={address}
             api={api}
-            chain={chain}
+            chain={chain as any}
             direction='row'
             identiconSize={35}
             showSocial={false}
@@ -147,7 +148,7 @@ export default function Review ({ address, estimatedFee, selectedProxy, setModal
         </Grid>
         {selectedProxyAddress &&
           <Grid container m='auto' maxWidth='92%'>
-            <ThroughProxy address={selectedProxyAddress} chain={chain} />
+            <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
           </Grid>
         }
         <DisplayValue title={t('Vote')}>

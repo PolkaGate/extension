@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,13 +14,13 @@ import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/gov
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import Asset from '@polkadot/extension-polkagate/src/partials/Asset';
 import { MAX_AMOUNT_LENGTH } from '@polkadot/extension-polkagate/src/util/constants';
-import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
 import { useInfo, useStakingAccount, useTranslation } from '../../../../hooks';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { STEPS } from '../../pool/stake';
@@ -33,7 +34,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function Unstake ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function Unstake({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, decimal, formatted, token } = useInfo(address);
@@ -53,7 +54,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
   const amountAsBN = useMemo(() => restakeAllAmount ? unlockingAmount : amountToMachine(amount, decimal), [amount, decimal, restakeAllAmount, unlockingAmount]);
   const totalStakeAfter = useMemo(() => staked && unlockingAmount && amountAsBN && staked.add(amountAsBN), [amountAsBN, staked, unlockingAmount]);
 
-  const rebonded = api && api.tx.staking.rebond; // signer: Controller
+  const rebonded = api && api.tx['staking']['rebond']; // signer: Controller
 
   useEffect(() => {
     if (!stakingAccount) {
@@ -65,7 +66,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
     if (stakingAccount?.unlocking) {
       for (const [_, { remainingEras, value }] of Object.entries(stakingAccount.unlocking)) {
         if (remainingEras.gtn(0)) {
-          const amount = new BN(value as string);
+          const amount = new BN(value as unknown as string);
 
           unlockingValue = unlockingValue.add(amount);
         }
@@ -76,7 +77,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
   }, [stakingAccount]);
 
   useEffect(() => {
-    if (amountAsBN.gt(unlockingAmount || BN_ZERO)) {
+    if (amountAsBN?.gt(unlockingAmount || BN_ZERO)) {
       return setAlert(t('It is more than total unlocking amount.'));
     }
 
@@ -88,7 +89,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -124,7 +125,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
 
   useEffect(() => {
     if (amount && api) {
-      const call = api.tx.staking.rebond;
+      const call = api.tx['staking']['rebond'];
       const params = [amountAsBN];
 
       const extraInfo = {

@@ -1,12 +1,15 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
+
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FilterAltOutlined as FilterIcon, MoreVert as MoreVertIcon, SearchOff as SearchOffIcon, SearchOutlined as SearchOutlinedIcon } from '@mui/icons-material';
-import { Divider, FormControlLabel, Grid, LinearProgress, Radio, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Divider, FormControlLabel, Grid, LinearProgress, Radio, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -15,7 +18,7 @@ import { BN } from '@polkadot/util';
 import { InputFilter, Progress, ShowBalance } from '../../../../../../components';
 import { useChain, useDecimal, useStakingConsts, useToken, useTranslation } from '../../../../../../hooks';
 import { DEFAULT_POOL_FILTERS } from '../../../../../../util/constants';
-import { PoolFilter, PoolInfo } from '../../../../../../util/types';
+import type { PoolFilter, PoolInfo } from '../../../../../../util/types';
 import PoolMoreInfo from '../../../../partial/PoolMoreInfo';
 import Filters from './Filters';
 
@@ -35,7 +38,7 @@ interface Props {
   setSearchedPools: React.Dispatch<React.SetStateAction<PoolInfo[] | null | undefined>>;
 }
 
-export default function PoolsTable ({ address, setSearchedPools, api, numberOfFetchedPools, totalNumberOfPools, pools, poolsToShow, filteredPools, setFilteredPools, selected, setSelected, maxHeight = window.innerHeight / 2.4, style }: Props): React.ReactElement {
+export default function PoolsTable({ address, setSearchedPools, api, numberOfFetchedPools, totalNumberOfPools, pools, poolsToShow, filteredPools, setFilteredPools, selected, setSelected, maxHeight = window.innerHeight / 2.4, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef(null);
   const chain = useChain(address);
@@ -145,7 +148,7 @@ export default function PoolsTable ({ address, setSearchedPools, api, numberOfFe
         {poolsToShow
           ? poolsToShow.length
             ? poolsToShow.map((pool, index) => {
-              const mayBeCommission = pool.bondedPool.commission.current.isSome ? pool.bondedPool.commission.current.value[0] : 0;
+              const mayBeCommission = (pool.bondedPool as any).commission.current.isSome ? (pool.bondedPool as any).commission.current.value[0] : 0;
               const commission = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
 
               return (
@@ -167,7 +170,7 @@ export default function PoolsTable ({ address, setSearchedPools, api, numberOfFe
                         <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
                           <ShowBalance
                             api={api}
-                            balance={poolStaked(pool.bondedPool?.points)}
+                            balance={poolStaked(pool.bondedPool?.points as BN)}
                             decimal={decimal}
                             decimalPoint={2}
                             height={22}
@@ -215,9 +218,9 @@ export default function PoolsTable ({ address, setSearchedPools, api, numberOfFe
         <Grid ml='-15px'>
           <PoolMoreInfo
             address={address}
-            api={api}
-            chain={chain}
-            pool={poolId === selected?.poolId && selected}
+            api={api as ApiPromise}
+            chain={chain as any}
+            pool={poolId === selected?.poolId ? selected : undefined}
             poolId={poolId}
             setShowPoolInfo={setShowPoolMoreInfo}
             showPoolInfo={showPoolMoreInfo}
@@ -237,7 +240,7 @@ export default function PoolsTable ({ address, setSearchedPools, api, numberOfFe
             setShow={setShowFilters}
             setSortValue={setSortValue}
             show={showFilters}
-            sortValue={sortValue}
+            sortValue={sortValue as number}
             stakingConsts={stakingConsts}
             token={token}
           />

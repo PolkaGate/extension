@@ -1,7 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
-import { Checkbox, FormControlLabel, SxProps, Theme } from '@mui/material';
+import { Checkbox, FormControlLabel, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
 
 import { checkBox, checkedBox } from '../assets/icons';

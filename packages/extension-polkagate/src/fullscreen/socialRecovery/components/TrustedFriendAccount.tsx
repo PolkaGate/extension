@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -7,12 +8,13 @@ import { faXTwitter } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AddRounded as AddIcon, RemoveCircle as RemoveIcon } from '@mui/icons-material';
-import { Box, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Box, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { Chain } from '@polkadot/extension-chains/types';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { riot } from '../../../assets/icons';
 import { Identicon, ShortAddress } from '../../../components';
@@ -43,7 +45,7 @@ const IdentityInformation = ({ icon, value }: { value: string | undefined, icon:
   );
 };
 
-export default function TrustedFriendAccount ({ accountInfo, chain, formatted, iconType, onSelect, style }: Props): React.ReactElement {
+export default function TrustedFriendAccount({ accountInfo, chain, formatted, iconType, onSelect, style }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
 

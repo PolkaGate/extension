@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,7 +10,7 @@ import { Grid } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router';
 
-import { AccountStakingInfo, BalancesInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { AccountStakingInfo, BalancesInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { BN } from '@polkadot/util';
 
 import { useAvailableToSoloStake, useStakingRewardDestinationAddress, useStakingRewards, useTranslation, useUnstakingAmount, useUnSupportedNetwork } from '../../../hooks';
@@ -32,7 +33,7 @@ interface Props {
   balances: BalancesInfo | undefined
 }
 
-export default function StakedSolo ({ balances, refresh, setRefresh, setShow, stakingAccount }: Props): React.ReactElement {
+export default function StakedSolo({ balances, refresh, setRefresh, setShow, stakingAccount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
 

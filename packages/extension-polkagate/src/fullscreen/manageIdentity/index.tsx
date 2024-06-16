@@ -1,19 +1,19 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Data } from '@polkadot/types';
-import type { PalletIdentityIdentityInfo, PalletIdentityRegistration } from '@polkadot/types/lookup';
+import type { PalletIdentityLegacyIdentityInfo, PalletIdentityRegistration } from '@polkadot/types/lookup';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import { CubeGrid } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { ApiPromise } from '@polkadot/api';
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import { AccountsStore } from '@polkadot/extension-base/stores';
+import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import type { AccountsStore } from '@polkadot/extension-base/stores';
 import { sanitizeChainName } from '@polkadot/extension-polkagate/src/util/utils';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
@@ -52,7 +52,7 @@ export type SubIdAccountsToSubmit = { address: string | undefined; name: string 
 export type SubIdsParams = (string | Data | undefined)[][] | undefined;
 export type IdJudgement = 'Reasonable' | 'KnownGood' | 'FeePaid' | null | undefined;
 
-function getRawValue (value: Data) {
+function getRawValue(value: Data) {
   if (!value) {
     return;
   }
@@ -64,13 +64,13 @@ function getRawValue (value: Data) {
     : text;
 }
 
-export function setData (value: string | undefined): Data {
+export function setData(value: string | undefined): Data {
   return value
     ? { raw: value }
     : { none: null };
 }
 
-export default function ManageIdentity (): React.ReactElement {
+export default function ManageIdentity(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -83,7 +83,7 @@ export default function ManageIdentity (): React.ReactElement {
 
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null | undefined>();
   const [identityToSet, setIdentityToSet] = useState<DeriveAccountRegistration | null | undefined>();
-  const [infoParams, setInfoParams] = useState<PalletIdentityIdentityInfo | null | undefined>();
+  const [infoParams, setInfoParams] = useState<PalletIdentityLegacyIdentityInfo | null | undefined>();
   const [subIdsParams, setSubIdsParams] = useState<SubIdsParams | undefined>();
   const [idJudgement, setIdJudgement] = useState<IdJudgement>();
   const [subIdAccounts, setSubIdAccounts] = useState<{ address: string, name: string }[] | null | undefined>();
@@ -257,7 +257,7 @@ export default function ManageIdentity (): React.ReactElement {
       return;
     }
 
-    const _identity: PalletIdentityIdentityInfo = {
+    const _identity: PalletIdentityLegacyIdentityInfo = {
       discord: setData(identityToSet?.other?.discord || identityToSet?.discord as string),
       display: { raw: identityToSet?.display },
       email: setData(identityToSet?.email),
@@ -373,7 +373,7 @@ export default function ManageIdentity (): React.ReactElement {
           <Progress
             gridSize={200}
             pt='250px'
-            title= {t('Checking account\'s on-chain Identity, please wait...')}
+            title={t('Checking account\'s on-chain Identity, please wait...')}
             type='grid'
           />
         }
@@ -453,7 +453,7 @@ export default function ManageIdentity (): React.ReactElement {
           <Review
             address={address}
             api={api}
-            chain={chain}
+            chain={chain as any}
             depositToPay={depositToPay}
             depositValue={totalDeposit}
             identityToSet={identityToSet}

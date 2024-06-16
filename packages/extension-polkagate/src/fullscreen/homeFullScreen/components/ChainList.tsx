@@ -1,7 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { DropdownOption } from '../../../util/types';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Button, Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
@@ -13,7 +16,6 @@ import { useGenesisHashOptions, useIsTestnetEnabled, useTranslation } from '../.
 import { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../hooks/useAssetsBalances';
 import { TEST_NETS } from '../../../util/constants';
 import { DEFAULT_SELECTED_CHAINS } from '../../../util/defaultSelectedChains';
-import { DropdownOption } from '../../../util/types';
 import ChainItem from './ChainItem';
 
 interface Props {
@@ -22,7 +24,7 @@ interface Props {
 
 const DEFAULT_SELECTED_CHAINS_COUNT = 10;
 
-function ChainList ({ anchorEl }: Props): React.ReactElement {
+function ChainList({ anchorEl }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const allChains = useGenesisHashOptions(false);

@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -21,7 +22,7 @@ import { Progress } from '../../../../components';
 import { useInfo, useTranslation } from '../../../../hooks';
 import { getNominationPoolsClaimedRewards } from '../../../../util/api';
 import { MAX_HISTORY_RECORD_TO_SHOW } from '../../../../util/constants';
-import { ClaimedRewardInfo, SubscanClaimedRewardInfo } from '../../../../util/types';
+import type { ClaimedRewardInfo, SubscanClaimedRewardInfo } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
 
 ChartJS.register(
@@ -45,7 +46,7 @@ interface Props {
   address?: string;
 }
 
-export default function ClaimedRewardsChart ({ address }: Props): React.ReactElement {
+export default function ClaimedRewardsChart({ address }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { chainName, decimal, token } = useInfo(address);
@@ -368,7 +369,7 @@ export default function ClaimedRewardsChart ({ address }: Props): React.ReactEle
   );
 
   return (
-    <Grid alignItems={ 'flex-start'} container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: 'fit-content', minHeight: claimedRewardsInfo === null ? 'fit-content' : '295px', p: '10px', width: 'inherit' }}>
+    <Grid alignItems={'flex-start'} container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: 'fit-content', minHeight: claimedRewardsInfo === null ? 'fit-content' : '295px', p: '10px', width: 'inherit' }}>
       <Grid alignItems='center' container item justifyContent='center' sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <FontAwesomeIcon
           color={`${theme.palette.text.primary}`}

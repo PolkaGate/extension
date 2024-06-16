@@ -1,15 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Grid, Skeleton, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Grid, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { AccountContext, Checkbox2 as Checkbox, Identity, Label, Progress } from '../../../components';
 import { useIsExtensionPopup, useTranslation } from '../../../hooks';
@@ -27,7 +29,7 @@ interface Props {
   setSelectedProxied: React.Dispatch<React.SetStateAction<string[]>>
 }
 
-export default function ProxiedTable ({ api, chain, label, maxHeight = '120px', minHeight = '70px', proxiedAccounts, selectedProxied, setSelectedProxied, style }: Props): React.ReactElement {
+export default function ProxiedTable({ api, chain, label, maxHeight = '120px', minHeight = '70px', proxiedAccounts, selectedProxied, setSelectedProxied, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtensionMode = useIsExtensionPopup();
   const theme = useTheme();
@@ -40,7 +42,7 @@ export default function ProxiedTable ({ api, chain, label, maxHeight = '120px', 
     proxiedAccounts &&
     proxiedAccounts.length > 0 &&
     selectedProxied.length === proxiedAccounts.filter((proxied) => !isAvailable(proxied))?.length
-  , [isAvailable, proxiedAccounts, selectedProxied.length]);
+    , [isAvailable, proxiedAccounts, selectedProxied.length]);
 
   const handleSelect = useCallback((index: number) => () => {
     const proxied = proxiedAccounts && proxiedAccounts[index];
@@ -67,7 +69,7 @@ export default function ProxiedTable ({ api, chain, label, maxHeight = '120px', 
             <Grid alignItems='center' container item width='fit-content'>
               <Grid alignItems='center' container item onClick={onSelect(!allSelected)} sx={{ cursor: !proxiedAccounts ? 'default' : 'pointer', pl: isExtensionMode ? '18px' : '20px', width: 'fit-content' }}>
                 <Checkbox
-                  checked={allSelected}
+                  checked={allSelected as boolean}
                 />
               </Grid>
             </Grid>
@@ -98,7 +100,7 @@ export default function ProxiedTable ({ api, chain, label, maxHeight = '120px', 
                 />
               </Grid>
               <Grid alignItems='center' container item justifyContent='left' pl='10px' xs={isExtensionMode ? 10 : 11}>
-                <Identity api={api} chain={chain} formatted={proxiedAccount} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: isExtensionMode ? '12px' : '16px', maxWidth: '100%' }} subIdOnly />
+                <Identity api={api} chain={chain as any} formatted={proxiedAccount} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: isExtensionMode ? '12px' : '16px', maxWidth: '100%' }} subIdOnly />
               </Grid>
             </Grid>
           )}

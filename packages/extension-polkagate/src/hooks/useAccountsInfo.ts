@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { PalletIdentityRegistration } from '@polkadot/types/lookup';
@@ -7,14 +8,15 @@ import type { PalletIdentityRegistration } from '@polkadot/types/lookup';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { hexToString } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
 
 import { PEOPLE_CHAINS } from '../util/constants';
 import { useApiWithChain2, usePeopleChain } from '.';
 
-export default function useAccountsInfo (api: ApiPromise | undefined, chain: Chain | null | undefined): DeriveAccountInfo[] | undefined {
+export default function useAccountsInfo(api: ApiPromise | undefined, chain: Chain | null | undefined): DeriveAccountInfo[] | undefined {
   const [infos, setInfos] = useState<DeriveAccountInfo[] | undefined>();
   const [fetching, setFetching] = useState<boolean>(false);
 

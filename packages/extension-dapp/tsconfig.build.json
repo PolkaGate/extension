@@ -5,6 +5,9 @@
     "outDir": "./build",
     "rootDir": "./src"
   },
+  "exclude": [
+    "**/*.spec.ts"
+  ],
   "references": [
     { "path": "../extension-inject/tsconfig.build.json"
     }

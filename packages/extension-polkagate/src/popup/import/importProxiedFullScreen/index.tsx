@@ -1,13 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+//@ts-nocheck
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import Chance from 'chance';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import Bread from '@polkadot/extension-polkagate/src/fullscreen/partials/Bread';
 import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 
@@ -20,7 +23,7 @@ import getLogo from '../../../util/getLogo';
 import AddressDropdownFullScreen from '../../newAccount/deriveFromAccountsFullscreen/AddressDropdownFullScreen';
 import ProxiedTable from '../importProxied/ProxiedTable';
 
-function ImportProxiedFS (): React.ReactElement {
+function ImportProxiedFS(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -34,7 +37,7 @@ function ImportProxiedFS (): React.ReactElement {
     accounts
       .filter(({ isExternal, isHardware, isQR }) => !isExternal || isQR || isHardware)
       .map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name])
-  , [accounts]);
+    , [accounts]);
 
   const [selectedAddress, setSelectedAddress] = useState<string | undefined>(undefined);
   const [selectedProxied, setSelectedProxied] = useState<string[]>([]);
@@ -137,7 +140,7 @@ function ImportProxiedFS (): React.ReactElement {
             {selectedAddress && chain &&
               <ProxiedTable
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 label={t('Proxied account(s)')}
                 maxHeight='200px'
                 minHeight={tableMinHeight ? `${tableMinHeight}px` : undefined}

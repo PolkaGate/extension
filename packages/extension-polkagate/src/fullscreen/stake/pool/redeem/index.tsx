@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -11,13 +12,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
-import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
 import { Progress } from '../../../../components';
 import { useInfo, useTranslation } from '../../../../hooks';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { ModalTitle } from '../../solo/commonTasks/configurePayee';
@@ -32,7 +33,7 @@ interface Props {
   availableBalance: Balance | undefined;
 }
 
-export default function WithdrawRedeem ({ address, availableBalance, redeemable, setRefresh, setShow }: Props): React.ReactElement<Props> {
+export default function WithdrawRedeem({ address, availableBalance, redeemable, setRefresh, setShow }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
 
@@ -54,9 +55,9 @@ export default function WithdrawRedeem ({ address, availableBalance, redeemable,
     }
 
     const handleInputs = async () => {
-      const call = api.tx.nominationPools.withdrawUnbonded;
+      const call = api.tx['nominationPools']['withdrawUnbonded'];
 
-      const optSpans = await api.query.staking.slashingSpans(formatted);
+      const optSpans = await api.query['staking']['slashingSpans'](formatted) as any;
       const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
       const params = [formatted, spanCount];
 

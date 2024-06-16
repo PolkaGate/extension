@@ -9,14 +9,22 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { getValue } from '../popup/account/util';
-import { BalancesInfo, CanPayFee, CanPayStatements } from '../util/types';
+import type { BalancesInfo, CanPayFee } from '../util/types';
 import { useBalances } from '.';
 
-export default function useCanPayFeeAndDeposit (
+export enum CanPayStatements {
+  CAN_NOT_PAY,
+  CAN_PAY,
+  CAN_NOT_PAY_FEE,
+  CAN_NOT_PAY_DEPOSIT,
+  PROXY_CAN_PAY_FEE,
+}
+
+export default function useCanPayFeeAndDeposit(
   formatted: AccountId | string | undefined,
   proxyAddress: AccountId | string | undefined,
   estimatedFee: Balance | undefined,
@@ -30,7 +38,7 @@ export default function useCanPayFeeAndDeposit (
   const [canPayFeeAndDeposit, setCanPayFeeAndDeposit] = useState<boolean | undefined>();
   const [canPayStatement, setCanPayStatement] = useState<number>();
 
-  const getStatement = useCallback((canPayFee, canPayDeposit, canPayWholeAmount, useProxy, hasDeposit) => {
+  const getStatement = useCallback((canPayFee:boolean | undefined, canPayDeposit:boolean | undefined, canPayWholeAmount:boolean | undefined, useProxy:boolean | undefined, hasDeposit:boolean | undefined) => {
     if (useProxy) {
       if (hasDeposit) {
         if (canPayFee && canPayDeposit) return CanPayStatements.CAN_PAY;

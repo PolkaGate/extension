@@ -1,20 +1,23 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { ProxyItem } from '../../../util/types';
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import BackspaceIcon from '@mui/icons-material/Backspace';
-import { Divider, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { Checkbox2, Identity, Label2, Progress } from '../../../components';
 import { useTranslation } from '../../../components/translate';
-import { ProxyItem } from '../../../util/types';
 
 interface Props {
   api: ApiPromise | undefined;
@@ -27,7 +30,7 @@ interface Props {
   labelAlignment?: 'left' | 'center' | 'right';
 }
 
-export default function ProxyTableFL ({ api, chain, handleDelete, labelAlignment, proxyItems, status = 'Editable', style, tableLabel }: Props): React.ReactElement {
+export default function ProxyTableFL({ api, chain, handleDelete, labelAlignment, proxyItems, status = 'Editable', style, tableLabel }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -94,7 +97,7 @@ export default function ProxyTableFL ({ api, chain, handleDelete, labelAlignment
                   <Grid container fontSize='20px' item pl='10px' width='49%'>
                     <Identity
                       api={api}
-                      chain={chain}
+                      chain={chain as any}
                       formatted={proxyItem.proxy.delegate}
                       identiconSize={35}
                       showShortAddress

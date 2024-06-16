@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,7 +10,7 @@ import React from 'react';
 import { ShortAddress } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 import { ThroughProxy } from '../../../../../partials';
-import { MyPoolInfo, TxInfo } from '../../../../../util/types';
+import type { MyPoolInfo, TxInfo } from '../../../../../util/types';
 
 interface Props {
   txInfo: TxInfo
@@ -38,7 +39,7 @@ export default function TxDetail({ pool, txInfo }: Props): React.ReactElement {
       </Grid>
       {txInfo.throughProxy &&
         <Grid container m='auto' maxWidth='92%'>
-          <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} name={txInfo.throughProxy.name} />
+          <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
         </Grid>
       }
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />

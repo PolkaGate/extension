@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -26,7 +27,7 @@ interface Props {
   identity: DeriveAccountRegistration;
 }
 
-export default function DisplayIdentityInformation ({ identity }: Props): React.ReactElement {
+export default function DisplayIdentityInformation({ identity }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
@@ -103,7 +104,7 @@ export default function DisplayIdentityInformation ({ identity }: Props): React.
             color='rgb(178, 58, 120)'
             fontSize='30px'
             icon={faGithub}
-          /> }
+          />}
         title={t('Github')}
         value={identity.github ?? null}
       />

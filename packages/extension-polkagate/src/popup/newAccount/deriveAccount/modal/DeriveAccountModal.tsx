@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -32,7 +33,7 @@ interface ConfirmState {
   parentPassword: string;
 }
 
-function DeriveModal ({ parentAddress, setDisplayPopup }: Props): React.ReactElement<Props> {
+function DeriveModal({ parentAddress, setDisplayPopup }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();

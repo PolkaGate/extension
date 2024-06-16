@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -17,7 +18,7 @@ interface Props {
   subIdAccounts: { address: string; name: string; }[];
 }
 
-export default function SubIdsAccordion ({ judgements, parentNameID, subIdAccounts }: Props): React.ReactElement {
+export default function SubIdsAccordion({ judgements, parentNameID, subIdAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

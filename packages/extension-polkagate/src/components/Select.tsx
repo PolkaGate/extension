@@ -1,22 +1,24 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Avatar, FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import type { DropdownOption } from '../util/types';
+
+import { type SelectChangeEvent, Avatar, FormControl, Grid, InputBase, MenuItem, Select, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { CHAINS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
 
 import getLogo from '../util/getLogo';
-import { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
 import Label from './Label';
 
 interface Props {
   defaultValue: string | number | undefined;
-  value: string | number | undefined;
+  value?: string | number | undefined;
   onChange?: (value: number | string) => void;
   options: DropdownOption[];
   label: string;

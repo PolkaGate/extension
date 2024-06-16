@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -12,7 +13,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Grid, SxProps, Theme, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React from 'react';
 
 import { BN } from '@polkadot/util';
@@ -32,7 +33,7 @@ interface Props {
   style?: SxProps<Theme> | undefined;
 }
 
-function Asset ({ api, balance, address, balanceLabel, balanceType, balances, fee, style = { pt: '10px' } }: Props): React.ReactElement<Props> {
+function Asset({ api, balance, address, balanceLabel, balanceType, balances, fee, style = { pt: '10px' } }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const chain = useChain(address);

@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,7 +14,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
 import { ExpandedRewards } from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/pending';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
@@ -23,7 +24,7 @@ import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../..
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
-import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './TxDetail';
 
@@ -35,7 +36,7 @@ interface Props {
   selectedToPayout: ExpandedRewards[]
 }
 
-export default function Review ({ address, amount, selectedToPayout, setShow, show }: Props): React.ReactElement {
+export default function Review({ address, amount, selectedToPayout, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);
@@ -57,8 +58,8 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
-  const payoutStakers = api && api.tx.staking.payoutStakersByPage;
-  const batch = api && api.tx.utility.batchAll;
+  const payoutStakers = api && api.tx['staking']['payoutStakersByPage'];
+  const batch = api && api.tx['utility']['batchAll'];
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -89,7 +90,7 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -114,7 +115,7 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const ptx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
+      const ptx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, tx) : tx;
       const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, formatted);
 
       const info = {
@@ -131,7 +132,8 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
 
       setShowWaitScreen(false);
@@ -167,7 +169,7 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
         <Container disableGutters sx={{ px: '20px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />

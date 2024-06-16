@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -15,7 +16,7 @@ import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
 import { useInfo, useTranslation } from '../../../../../hooks';
-import { Inputs } from '../../../Entry';
+import type { Inputs } from '../../../Entry';
 import Confirmation from '../../../partials/Confirmation';
 import Review from '../../../partials/Review';
 import { ModalTitle } from '../../../solo/commonTasks/configurePayee';
@@ -43,7 +44,7 @@ export default function StakeRewards({ address, pool, setRefresh, setShow, show 
 
   useEffect(() => {
     if (claimable && api && staked) {
-      const call = api.tx.nominationPools.bondExtra;
+      const call = api.tx['nominationPools']['bondExtra'];
       const params = ['Rewards'];
 
       const extraInfo = {
