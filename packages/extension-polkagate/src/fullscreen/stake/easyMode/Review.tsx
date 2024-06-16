@@ -1,8 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { ApiPromise } from '@polkadot/api';
+import type { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
+import type { Inputs } from '../Entry';
 
 import { MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
@@ -17,10 +20,8 @@ import { ThroughProxy } from '../../../partials';
 import ShowPool from '../../../popup/staking/partial/ShowPool';
 import RewardsDestination from '../../../popup/staking/solo/stake/partials/RewardDestination';
 import { SYSTEM_SUGGESTION_TEXT } from '../../../util/constants';
-import type { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
 import { amountToMachine, pgBoxShadow } from '../../../util/utils';
 import DisplayValue from '../../governance/post/castVote/partial/DisplayValue';
-import type { Inputs } from '../Entry';
 import { STEPS } from '..';
 
 interface Props {
@@ -33,7 +34,7 @@ interface Props {
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>
 }
 
-export default function Review({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review ({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain } = useInfo(address);
   const theme = useTheme();
@@ -56,6 +57,12 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
 
     return undefined;
   }, [estimatedFee, inputs]);
+  
+  const staked = useMemo(() => 
+    inputs?.extraInfo?.['amount'] && balances?.decimal 
+    ? amountToMachine((inputs.extraInfo as any)['amount'], balances.decimal)
+    :undefined
+  , [inputs, balances]);
 
   const handleCancel = useCallback(() => {
     setStep(inputs?.mode || STEPS.INDEX);
@@ -92,7 +99,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
           <Grid alignItems='center' container item sx={{ height: '42px' }}>
             <ShowBalance
               api={api}
-              balance={inputs?.extraInfo?.amount && balances?.decimal && amountToMachine(inputs.extraInfo.amount, balances.decimal)}
+              balance={staked}
               decimalPoint={4}
             />
           </Grid>
@@ -105,7 +112,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
               chain={chain as any}
               label={t('Pool')}
               labelPosition='center'
-              mode='Joining'
+              mode={inputs.pool.bondedPool?.state.toString() === 'Creating' ? 'Creating' : 'Joining'}
               pool={inputs?.pool}
               showInfo
               style={{
@@ -138,7 +145,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
           <Grid alignItems='center' container item sx={{ height: '42px' }}>
             <ShowBalance
               api={api}
-              balance={_extraInfo?.fee}
+              balance={estimatedFee}
               decimalPoint={4}
             />
           </Grid>
@@ -148,7 +155,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
         <SignArea2
           address={address}
           call={inputs?.call}
-          extraInfo={_extraInfo}
+          extraInfo={_extraInfo as any}
           isPasswordError={isPasswordError}
           onSecondaryClick={handleCancel}
           params={inputs?.params}
@@ -169,12 +176,12 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
       {showSelectedValidators && !!inputs?.selectedValidators?.length &&
         <ShowValidators
           address={address}
-          api={api}
+          api={api as ApiPromise}
           chain={chain as any}
           selectedValidators={inputs.selectedValidators}
           setShowSelectedValidators={setShowSelectedValidators}
           showSelectedValidators={showSelectedValidators}
-          staked={inputs?.extraInfo?.amount && balances?.decimal && amountToMachine(inputs.extraInfo.amount, balances.decimal)}
+          staked={staked}
         />
       }
     </>
