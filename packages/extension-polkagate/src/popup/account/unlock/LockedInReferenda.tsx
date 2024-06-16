@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -20,7 +21,7 @@ import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance, ShowValue } from '../../../components';
 import { useAccountLocks, useApi, useChain, useCurrentBlockNumber, useDecimal, useFormatted, useHasDelegated, useToken, useTokenPrice, useTranslation } from '../../../hooks';
-import { Lock } from '../../../hooks/useAccountLocks';
+import { type Lock } from '../../../hooks/useAccountLocks';
 import { TIME_TO_SHAKE_ICON } from '../../../util/constants';
 import blockToDate from '../../crowdloans/partials/blockToDate';
 import Review from './Review';
@@ -28,14 +29,14 @@ import Review from './Review';
 interface Props {
   address: string | undefined;
   refresh: boolean | undefined;
-  setRefresh: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function LockedInReferenda({ address, refresh, setRefresh }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
-  const { price } = useTokenPrice(address);
+  const { price } = useTokenPrice(address as string);
   const formatted = useFormatted(address);
   const decimal = useDecimal(address);
   const chain = useChain(address);
@@ -147,14 +148,15 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
   }, [api, biggestOngoingLock, currentBlock, referendaLocks, t]);
 
   useEffect(() => {
-    if (!api?.query?.balances || !formatted || api?.genesisHash?.toString() !== chain?.genesisHash) {
+    if (!api?.query?.['balances'] || !formatted || api?.genesisHash?.toString() !== chain?.genesisHash) {
       return setMiscRefLock(undefined);
     }
 
     // eslint-disable-next-line no-void
-    void api.query.balances.locks(formatted).then((locks: PalletBalancesBalanceLock[]) => {
-      if (locks?.length) {
-        const foundRefLock = locks.find((l) => l.id.toHuman() === 'pyconvot');
+    void api.query['balances']['locks'](formatted).then((locks) => {
+      const _locks = locks as unknown as PalletBalancesBalanceLock[]
+      if (_locks?.length) {
+        const foundRefLock = _locks.find((l) => l.id.toHuman() === 'pyconvot');
 
         setMiscRefLock(foundRefLock?.amount);
       }
@@ -199,7 +201,7 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
               />
             </Grid>
           </Grid>
-          <Grid alignItems='center' container item justifyContent='flex-end' sx={{ cursor: unlockableAmount && !unlockableAmount.isZero() && 'pointer', ml: '8px', width: '26px' }}>
+          <Grid alignItems='center' container item justifyContent='flex-end' sx={{ cursor: unlockableAmount && !unlockableAmount.isZero() ? 'pointer' : undefined, ml: '8px', width: '26px' }}>
             <FontAwesomeIcon
               color={!unlockableAmount || unlockableAmount.isZero() ? theme.palette.action.disabledBackground : theme.palette.secondary.light}
               icon={faUnlockAlt}

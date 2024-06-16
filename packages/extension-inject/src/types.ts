@@ -4,6 +4,7 @@
 import type { Signer as InjectedSigner } from '@polkadot/api/types';
 import type { ProviderInterface } from '@polkadot/rpc-provider/types';
 import type { ExtDef } from '@polkadot/types/extrinsic/signedExtensions/types';
+import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
 // eslint-disable-next-line no-undef
@@ -52,7 +53,7 @@ export interface ProviderMeta {
 
 export interface MetadataDefBase {
   chain: string;
-  genesisHash: string;
+  genesisHash: HexString;
   icon: string;
   ss58Format: number;
   chainType?: 'substrate' | 'ethereum'
@@ -99,8 +100,9 @@ export interface Injected {
 }
 
 export interface InjectedWindowProvider {
-  enable: (origin: string) => Promise<Injected>;
-  version: string;
+  connect?: (origin: string) => Promise<InjectedExtension>;
+  enable?: (origin: string) => Promise<Injected>;
+  version?: string;
 }
 
 export interface InjectedWindow extends This {
@@ -112,7 +114,8 @@ export type InjectedExtension = InjectedExtensionInfo & Injected;
 export type InjectOptions = InjectedExtensionInfo;
 
 export interface Web3AccountsOptions {
-  ss58Format?: number,
-  accountType?: KeypairType[],
-  extensions?: string[]
+  accountType?: KeypairType[];
+  extensions?: string[];
+  genesisHash?: string | null;
+  ss58Format?: number;
 }

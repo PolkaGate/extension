@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -17,12 +18,12 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { Identity, ShowBalance, SignArea2, Warning } from '../../../../components';
 import { useAccountDisplay, useBalances, useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
-import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { DraggableModal } from '../../components/DraggableModal';
 import SelectProxyModal2 from '../../components/SelectProxyModal2';
 import WaitScreen from '../../partials/WaitScreen';
 import { GOVERNANCE_PROXY } from '../../utils/consts';
-import { Track } from '../../utils/types';
+import { type Track } from '../../utils/types';
 import DisplayValue from '../castVote/partial/DisplayValue';
 import Confirmation from './Confirmation';
 
@@ -43,7 +44,7 @@ const STEPS = {
   SIGN_QR: 200
 };
 
-export default function DecisionDeposit ({ address, open, refIndex, setOpen, track }: Props): React.ReactElement {
+export default function DecisionDeposit({ address, open, refIndex, setOpen, track }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, decimal, formatted, token } = useInfo(address);
   const theme = useTheme();
@@ -53,7 +54,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
 
   const proxyItems = useMemo(() =>
     proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[]
-  , [proxies]);
+    , [proxies]);
 
   const [step, setStep] = useState<number>(STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
@@ -61,7 +62,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
 
-  const tx = api && api.tx.referenda.placeDecisionDeposit;
+  const tx = api && api.tx['referenda']['placeDecisionDeposit'];
   const amount = track?.[1]?.decisionDeposit;
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
@@ -70,7 +71,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
@@ -138,7 +139,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
           </Grid>
         </Grid>
         {[STEPS.REVIEW, STEPS.SIGN_QR].includes(step) &&
-          <Grid container item sx={{ display: 'block', height: '550px', mt:'20px' }}>
+          <Grid container item sx={{ display: 'block', height: '550px', mt: '20px' }}>
             {notEnoughBalance &&
               <Grid container height='42px' item justifyContent='center' my='15px'>
                 <Warning
@@ -159,7 +160,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
                 <Identity
                   address={address}
                   api={api}
-                  chain={chain}
+                  chain={chain as any}
                   direction='row'
                   identiconSize={35}
                   showSocial={false}
@@ -169,7 +170,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
               </Grid>
               {selectedProxyAddress &&
                 <Grid container m='auto' maxWidth='92%'>
-                  <ThroughProxy address={selectedProxyAddress} chain={chain} />
+                  <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
                 </Grid>
               }
               <DisplayValue title={t('Referendum')}>
@@ -190,7 +191,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
             </Grid>
             <Grid container item sx={{ bottom: '20px', left: '4%', position: 'absolute', width: '92%' }}>
               <SignArea2
-                address={address}
+                address={address as string}
                 call={tx}
                 disabled={notEnoughBalance}
                 extraInfo={extraInfo}

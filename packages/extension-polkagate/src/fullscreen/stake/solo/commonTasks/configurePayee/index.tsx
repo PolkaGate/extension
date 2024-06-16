@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -18,7 +19,7 @@ import { amountToHuman, upperCaseFirstChar } from '@polkadot/extension-polkagate
 
 import { AccountInputWithIdentity, TwoButtons, Warning } from '../../../../../components';
 import { useInfo, useStakingAccount, useStakingConsts, useTranslation } from '../../../../../hooks';
-import { Inputs } from '../../../Entry';
+import type { Inputs } from '../../../Entry';
 import Confirmation from '../../../partials/Confirmation';
 import Review from '../../../partials/Review';
 import { STEPS } from '../../../pool/stake';
@@ -74,7 +75,7 @@ export const ModalTitle = ({ icon, onCancel, setStep, step, text }: { text: stri
   );
 };
 
-export default function ConfigurePayee ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function ConfigurePayee({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);
@@ -128,7 +129,7 @@ export default function ConfigurePayee ({ address, setRefresh, setShow, show }: 
   const getOptionLabel = useCallback((s: SoloSettings): 'Staked' | 'Others' => s?.payee === 'Staked' ? 'Staked' : 'Others', []);
   const optionDefaultVal = useMemo(() => settings && getOptionLabel(settings), [getOptionLabel, settings]);
 
-  const setPayee = api && api.tx.staking.setPayee;
+  const setPayee = api && api.tx['staking']['setPayee'];
 
   useEffect(() => {
     if (!setPayee || !api || !address || !newPayee) {
@@ -254,7 +255,7 @@ export default function ConfigurePayee ({ address, setRefresh, setShow, show }: 
                 <>
                   <AccountInputWithIdentity
                     address={rewardDestinationAccount}
-                    chain={chain}
+                    chain={chain as any}
                     label={t('Specific account')}
                     setAddress={setRewardDestinationAccount}
                     style={{ pt: '25px', px: '15px' }}

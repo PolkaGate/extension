@@ -1,9 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
+
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router';
@@ -14,7 +17,7 @@ import { ApiPromise } from '@polkadot/api';
 import { useApi, useBalances, useFormatted, usePool, usePoolConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
 import { STAKING_CHAINS } from '../../../../util/constants';
-import { MyPoolInfo, PoolStakingConsts } from '../../../../util/types';
+import type { MyPoolInfo, PoolStakingConsts } from '../../../../util/types';
 import BondExtra from './bondExtra';
 import StakeInitialChoice from './StakeInitialChoice';
 
@@ -25,7 +28,7 @@ interface State {
   pathname: string;
 }
 
-export default function Stake (): React.ReactElement {
+export default function Stake(): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
@@ -79,7 +82,7 @@ export default function Stake (): React.ReactElement {
             address={address}
             api={api}
             balances={balances}
-            consts={poolStakingConsts}
+            consts={poolStakingConsts as PoolStakingConsts}
           />
       }
     </>

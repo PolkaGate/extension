@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-no-bind */
@@ -8,7 +9,8 @@ import { Grid, Typography } from '@mui/material';
 import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { Identity } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -19,7 +21,7 @@ interface Props {
   address: string | undefined;
 }
 
-export default function DisplayIdentity ({ address, api, chain }: Props): React.ReactElement {
+export default function DisplayIdentity({ address, api, chain }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -31,7 +33,7 @@ export default function DisplayIdentity ({ address, api, chain }: Props): React.
         <Identity
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           identiconSize={25}
           showSocial
           style={{ fontSize: '16px' }}

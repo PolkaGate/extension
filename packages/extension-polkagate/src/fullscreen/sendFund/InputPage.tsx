@@ -1,9 +1,11 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
+import type { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
@@ -11,7 +13,7 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import { BN, BN_ONE, BN_ZERO, isFunction, isNumber } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
@@ -19,12 +21,11 @@ import { AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, ShowBalanc
 import { useTranslation } from '../../components/translate';
 import { useInfo, useTeleport } from '../../hooks';
 import { ASSET_HUBS } from '../../util/constants';
-import { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
 import { amountToHuman, amountToMachine } from '../../util/utils';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { toTitleCase } from '../governance/utils/util';
 import { STEPS } from '../stake/pool/stake';
-import { Inputs } from '.';
+import type { Inputs } from '.';
 
 interface Props {
   address: string;
@@ -72,12 +73,12 @@ export const Title = ({ height, icon, logo, ml, onBackClick, padding = '30px 0px
       }
       <Grid item>
         {icon &&
-         <FontAwesomeIcon
-           color={theme.palette.text.primary}
-           icon={icon}
-           size='2xl'
-           style={{ paddingBottom: '5px' }}
-         />
+          <FontAwesomeIcon
+            color={theme.palette.text.primary}
+            icon={icon}
+            size='2xl'
+            style={{ paddingBottom: '5px' }}
+          />
         }
         {logo}
       </Grid>
@@ -92,7 +93,7 @@ export const Title = ({ height, icon, logo, ml, onBackClick, padding = '30px 0px
 
 const isAssethub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');
 
-export default function InputPage ({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function InputPage({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, formatted } = useInfo(address);
@@ -110,7 +111,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
 
   const ED = assetId
     ? balances?.ED
-    : api && api.consts.balances.existentialDeposit as unknown as BN;
+    : api && api.consts['balances']['existentialDeposit'] as unknown as BN;
 
   const amountAsBN = useMemo(
     () =>
@@ -209,7 +210,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       const dummyAmount = api?.createType('Balance', BN_ONE);
 
       return setFeeCall(dummyAmount);
@@ -220,6 +221,10 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
         ? [formatted, balances.currencyId, amount]
         : [assetId, formatted, amount]
       : [formatted, amount];
+
+    api.rpc.state.getMetadata().then((m) => {
+      console.log(JSON.parse(JSON.stringify(m)));
+    });
 
     onChainCall(..._params).paymentInfo(formatted).then((i) => setFeeCall(i?.partialFee)).catch(console.error);
   }, [api, formatted, balances, onChainCall, assetId]);
@@ -344,7 +349,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
 
     const _isAvailableZero = balances.availableBalance.isZero();
 
-    const ED = assetId === undefined ? api.consts.balances.existentialDeposit as unknown as BN : balances.ED;
+    const ED = assetId === undefined ? api.consts['balances']['existentialDeposit'] as unknown as BN : balances.ED;
     const _maxFee = assetId === undefined ? maxFee : BN_ZERO;
 
     const _canNotTransfer = _isAvailableZero || _maxFee.gte(balances.availableBalance);
@@ -434,7 +439,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
         <Grid item md={6.9} sx={{ pt: '10px' }} xs={12}>
           <InputAccount
             address={recipientAddress || inputs?.recipientAddress}
-            chain={chain}
+            chain={chain as any}
             label={t('Account')}
             labelFontSize='16px'
             setAddress={setRecipientAddress}

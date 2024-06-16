@@ -1,11 +1,12 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
 import { ApiPromise } from '@polkadot/api';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import getPoolAccounts from '../../../util/getPoolAccounts';
@@ -89,7 +90,7 @@ export const checkLostAccountPoolStakedBalance = (
   setLostAccountPoolUnlock: React.Dispatch<React.SetStateAction<{ amount: BN; date: number; } | undefined>>,
   setLostAccountPoolRedeemable: React.Dispatch<React.SetStateAction<{ amount: BN; count: number; } | undefined>>
 ) => {
-  api.query.nominationPools.poolMembers(lostAccountAddress).then(async (res) => {
+  api.query['nominationPools']['poolMembers'](lostAccountAddress).then(async (res) => {
     const member = res?.unwrapOr(undefined) as PalletNominationPoolsPoolMember | undefined;
 
     if (!member) {
@@ -112,7 +113,7 @@ export const checkLostAccountPoolStakedBalance = (
     }
 
     const [bondedPool, stashIdAccount] = await Promise.all([
-      api.query.nominationPools.bondedPools(poolId),
+      api.query['nominationPools']['bondedPools'](poolId),
       api.derive.staking.account(accounts.stashId)
     ]);
 

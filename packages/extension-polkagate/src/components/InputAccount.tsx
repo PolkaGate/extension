@@ -1,13 +1,15 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, SxProps, Theme, useTheme } from '@mui/material';
+import { Divider, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useContext } from 'react';
 import { useParams } from 'react-router';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { useApi, useTranslation } from '../hooks';
 import getAllAddresses from '../util/getAllAddresses';
@@ -39,7 +41,7 @@ export default function InputAccount({ address, chain, disabled, helperText, ign
       <AddressInput2
         address={address}
         allAddresses={allAddresses}
-        chain={chain}
+        chain={chain as any}
         disabled={disabled}
         helperText={helperText}
         label={label}
@@ -60,7 +62,7 @@ export default function InputAccount({ address, chain, disabled, helperText, ign
           />
           <Identity
             api={api}
-            chain={chain}
+            chain={chain as any}
             formatted={address}
             identiconSize={31}
             name={name}

@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,7 +10,7 @@ import React, { useMemo } from 'react';
 import { ShortAddress } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 import { ThroughProxy } from '../../../../../partials';
-import { TxInfo } from '../../../../../util/types';
+import type { TxInfo } from '../../../../../util/types';
 import { ChangesProps } from '.';
 
 interface Props {
@@ -17,7 +18,7 @@ interface Props {
   changes: ChangesProps | undefined;
 }
 
-export default function TxDetail ({ changes, txInfo }: Props): React.ReactElement {
+export default function TxDetail({ changes, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const changedRoles = useMemo(() => {

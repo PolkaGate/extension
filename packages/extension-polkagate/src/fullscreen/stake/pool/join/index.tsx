@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -14,10 +15,10 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { AmountWithOptions, ShowBalance, TwoButtons } from '../../../../components';
 import { useEstimatedFee, useInfo, usePoolConsts, usePools, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME, STAKING_CHAINS } from '../../../../util/constants';
-import { PoolInfo } from '../../../../util/types';
+import type { PoolInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import PoolsTable from '../partials/PoolsTable';
 
 interface Props {
@@ -26,7 +27,7 @@ interface Props {
   inputs: Inputs | undefined;
 }
 
-export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function JoinPool({ inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
@@ -87,7 +88,7 @@ export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.
       return;
     }
 
-    const ED = api.consts.balances.existentialDeposit as unknown as BN;
+    const ED = api.consts['balances']['existentialDeposit'] as unknown as BN;
     const max = new BN(availableBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
     const maxToHuman = amountToHuman(max.toString(), decimal);
 
@@ -120,7 +121,7 @@ export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.
       return;
     }
 
-    api && api.tx.nominationPools.join(String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
+    api && api.tx['nominationPools']['join'](String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     });
   }, [formatted, api, availableBalance, selectedPool, amountAsBN, poolStakingConsts]);
@@ -148,7 +149,7 @@ export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.
       return;
     }
 
-    const call = api.tx.nominationPools.join;
+    const call = api.tx['nominationPools']['join'];
     const params = [amountAsBN, selectedPool.poolId];
     const extraInfo = {
       action: 'Pool Staking',

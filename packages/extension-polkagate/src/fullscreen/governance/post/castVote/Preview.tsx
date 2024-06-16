@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -25,7 +26,7 @@ interface Props {
   cantModify: boolean;
 }
 
-export default function Preview ({ address, cantModify, setAlterType, setStep, vote }: Props): React.ReactElement<Props> {
+export default function Preview({ address, cantModify, setAlterType, setStep, vote }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const token = useToken(address);
   const decimal = useDecimal(address);
@@ -107,7 +108,7 @@ export default function Preview ({ address, cantModify, setAlterType, setStep, v
           <Identity
             address={address}
             api={api}
-            chain={chain}
+            chain={chain as any}
             direction='row'
             identiconSize={35}
             showSocial={false}

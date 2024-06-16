@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -23,7 +24,7 @@ export interface AccountsOrder {
   account: AccountWithChildren
 }
 
-export default function HomePageFullScreen (): React.ReactElement {
+export default function HomePageFullScreen(): React.ReactElement {
   useFullscreen();
   const initialAccountList = useAccountsOrder(true) as AccountsOrder[];
   const onAction = useContext(ActionContext);

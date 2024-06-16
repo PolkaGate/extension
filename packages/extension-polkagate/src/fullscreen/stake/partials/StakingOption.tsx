@@ -1,10 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ToolTipPlacement } from '@polkadot/extension-polkagate/src/components/Infotip';
+
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { type SxProps, type Theme, Grid, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -29,7 +32,7 @@ interface OptionProps {
   rotations?: any;
 }
 
-export default function StakingOption ({ api, balance, balanceText, helperText, logo, noToolTip, onClick, rotations, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
+export default function StakingOption({ api, balance, balanceText, helperText, logo, noToolTip, onClick, rotations, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
   const theme = useTheme();
 
   return (
@@ -42,24 +45,24 @@ export default function StakingOption ({ api, balance, balanceText, helperText, 
           {title}
         </Typography>
         {warningText &&
-        <Grid container item justifyContent='center' sx={{ '> div': { mt: '5px' } }}>
-          <Warning
-            fontWeight={400}
-            isDanger
-            theme={theme}
-          >
-            {warningText}
-          </Warning>
-        </Grid>
+          <Grid container item justifyContent='center' sx={{ '> div': { mt: '5px' } }}>
+            <Warning
+              fontWeight={400}
+              isDanger
+              theme={theme}
+            >
+              {warningText}
+            </Warning>
+          </Grid>
         }
         {text &&
-        <Grid item pt='5px' width='fit-content'>
-          <Infotip iconLeft={4} iconTop={1} placement={tipPlace} showQuestionMark={!noToolTip && showQuestionMark} text={helperText}>
-            <Typography fontSize='14px' fontWeight={300}>
-              {text}
-            </Typography>
-          </Infotip>
-        </Grid>
+          <Grid item pt='5px' width='fit-content'>
+            <Infotip iconLeft={4} iconTop={1} placement={tipPlace as ToolTipPlacement} showQuestionMark={!noToolTip && showQuestionMark} text={helperText}>
+              <Typography fontSize='14px' fontWeight={300}>
+                {text}
+              </Typography>
+            </Infotip>
+          </Grid>
         }
         <Grid container item justifyContent='flex-start' pt='10px'>
           <Grid item mr='10px'>

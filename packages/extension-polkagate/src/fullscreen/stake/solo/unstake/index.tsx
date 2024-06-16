@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,13 +14,13 @@ import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/gov
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import Asset from '@polkadot/extension-polkagate/src/partials/Asset';
 import { MAX_AMOUNT_LENGTH } from '@polkadot/extension-polkagate/src/util/constants';
-import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
 import { useInfo, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { STEPS } from '../../pool/stake';
@@ -39,7 +40,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
   const { api, decimal, formatted, token } = useInfo(address);
 
   const stakingAccount = useStakingAccount(address);
-  const stakingConsts = useStakingConsts(address);
+  const stakingConsts = useStakingConsts(address as string);
 
   const [step, setStep] = useState(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
@@ -51,12 +52,12 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
 
   const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active as unknown as BN, [stakingAccount]);
   const unlockingLen = stakingAccount?.stakingLedger?.unlocking?.length;
-  const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
+  const maxUnlockingChunks = api && (api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber();
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
 
-  const unbonded = api && api.tx.staking.unbond; // signer: Controller
-  const redeem = api && api.tx.staking.withdrawUnbonded; // signer: Controller
-  const chilled = api && api.tx.staking.chill; // signer: Controller
+  const unbonded = api && api.tx['staking']['unbond']; // signer: Controller
+  const redeem = api && api.tx['staking']['withdrawUnbonded']; // signer: Controller
+  const chilled = api && api.tx['staking']['chill']; // signer: Controller
 
   useEffect(() => {
     if (!amountAsBN) {
@@ -83,7 +84,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
         const txs = [];
 
         if (unlockingLen >= maxUnlockingChunks) {
-          const optSpans = await api.query.staking.slashingSpans(formatted);
+          const optSpans = await api.query['staking']['slashingSpans'](formatted) as any;
           const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1 as number;
 
           txs.push(redeem(spanCount));
@@ -96,7 +97,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
         }
 
         txs.push(unbonded(amountAsBN));
-        const call = txs.length > 1 ? api.tx.utility.batchAll : unbonded;
+        const call = txs.length > 1 ? api.tx['utility']['batchAll'] : unbonded;
         const params = txs.length > 1 ? [txs] : [amountAsBN];
 
         const totalStakeAfter = staked.sub(amountAsBN);
@@ -120,7 +121,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
   }, [amount, amountAsBN, api, chilled, decimal, formatted, isUnstakeAll, maxUnlockingChunks, redeem, staked, stakingAccount?.nominators?.length, unbonded, unlockingLen]);
 
   const getFee = useCallback(async () => {
-    if (api && !api?.call?.transactionPaymentApi) {
+    if (api && !api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 

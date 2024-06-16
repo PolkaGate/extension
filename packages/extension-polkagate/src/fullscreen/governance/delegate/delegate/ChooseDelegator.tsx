@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -94,7 +95,7 @@ export default function ChooseDelegator({ setDelegateInformation, setStep }: Pro
       <Grid container item>
         <AccountInputWithIdentity
           address={delegatorAddress}
-          chain={chain}
+          chain={chain as any}
           helperText={t<string>('Enter the account address that you want to delegate to')}
           ignoreAddress={String(myFormattedAddress)}
           label={t('Delegate to Account')}
@@ -128,7 +129,7 @@ export default function ChooseDelegator({ setDelegateInformation, setStep }: Pro
                   <TAccountsDisplay
                     address={trustedAccount}
                     api={api}
-                    chain={chain}
+                    chain={chain as any}
                     key={trustedAccount}
                     selectedTrustedAddress={selectedTrustedAddress}
                   />

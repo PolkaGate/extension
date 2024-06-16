@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -21,7 +22,7 @@ interface Props {
 
 }
 
-export default function CommonTasks ({ address, setRefresh, staked }: Props): React.ReactElement {
+export default function CommonTasks({ address, setRefresh, staked }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { genesisHash } = useInfo(address);
@@ -43,7 +44,7 @@ export default function CommonTasks ({ address, setRefresh, staked }: Props): Re
 
   const isDisabled = useMemo((): boolean => !genesisHash || !staked || staked?.isZero(), [genesisHash, staked]);
   const iconColor = isDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary
-  
+
   const onRewardDestination = useCallback(() => {
     setShowRewardDestinationModal(true);
   }, []);

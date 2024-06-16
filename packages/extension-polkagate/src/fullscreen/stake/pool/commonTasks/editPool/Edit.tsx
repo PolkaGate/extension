@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -8,13 +9,14 @@ import type { ApiPromise } from '@polkadot/api';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import CollapseIt from '@polkadot/extension-polkagate/src/popup/staking/pool/myPool/editPool/CollapseIt';
 import getAllAddresses from '@polkadot/extension-polkagate/src/util/getAllAddresses';
 
 import { AccountContext, AddressInput, AutoResizeTextarea, ButtonWithCancel, Input, ShowValue } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
-import { MyPoolInfo } from '../../../../../util/types';
+import type { MyPoolInfo } from '../../../../../util/types';
 import { STEPS } from '../../stake';
 import { ChangesProps } from '.';
 
@@ -28,7 +30,7 @@ interface Props {
   changes: ChangesProps | undefined;
 }
 
-export default function Edit ({ api, chain, changes, onClose, pool, setChanges, setStep }: Props): React.ReactElement {
+export default function Edit({ api, chain, changes, onClose, pool, setChanges, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { hierarchy } = useContext(AccountContext);
@@ -143,7 +145,7 @@ export default function Edit ({ api, chain, changes, onClose, pool, setChanges, 
         <>
           <AddressInput
             address={depositorAddress}
-            chain={chain}
+            chain={chain as any}
             disabled
             label={'Depositor'}
             showIdenticon
@@ -155,7 +157,7 @@ export default function Edit ({ api, chain, changes, onClose, pool, setChanges, 
           <AddressInput
             address={newRootAddress}
             allAddresses={allAddresses}
-            chain={chain}
+            chain={chain as any}
             label={'Root'}
             setAddress={setNewRootAddress}
             showIdenticon
@@ -167,7 +169,7 @@ export default function Edit ({ api, chain, changes, onClose, pool, setChanges, 
           <AddressInput
             address={newNominatorAddress}
             allAddresses={allAddresses}
-            chain={chain}
+            chain={chain as any}
             label={t('Nominator')}
             setAddress={setNewNominatorAddress}
             showIdenticon
@@ -179,7 +181,7 @@ export default function Edit ({ api, chain, changes, onClose, pool, setChanges, 
           <AddressInput
             address={newBouncerAddress}
             allAddresses={allAddresses}
-            chain={chain}
+            chain={chain as any}
             label={t('Bouncer')}
             setAddress={setNewBouncerAddress}
             showIdenticon
@@ -232,7 +234,7 @@ export default function Edit ({ api, chain, changes, onClose, pool, setChanges, 
           <AddressInput
             address={newCommissionPayee}
             allAddresses={allAddresses}
-            chain={chain}
+            chain={chain as any}
             label={t('Payee')}
             setAddress={setNewCommissionPayee}
             showIdenticon

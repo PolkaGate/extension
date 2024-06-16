@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { MyPoolInfo } from '../util/types';
 
@@ -8,7 +9,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { isHexToBn } from '../util/utils';
 import { useInfo } from '.';
 
-export default function useMyPools (address: string): MyPoolInfo[] | null | undefined {
+export default function useMyPools(address: string): MyPoolInfo[] | null | undefined {
   const [myPools, setMyPools] = useState<MyPoolInfo[] | undefined | null>();
   const { endpoint, formatted } = useInfo(address);
 

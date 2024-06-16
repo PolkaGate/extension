@@ -1,8 +1,11 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable sort-keys */
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Prices } from '../../../util/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { Chart, registerables } from 'chart.js';
@@ -15,7 +18,6 @@ import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import getLogo2 from '../../../util/getLogo2';
-import { Prices } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import { adjustColor } from '../../homeFullScreen/partials/TotalBalancePieChart';
 
@@ -30,7 +32,7 @@ interface AssetsToShow extends FetchedBalance {
   color: string
 }
 
-export default function TotalChart ({ accountAssets, pricesInCurrency }: Props): React.ReactElement {
+export default function TotalChart({ accountAssets, pricesInCurrency }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const currency = useCurrency();

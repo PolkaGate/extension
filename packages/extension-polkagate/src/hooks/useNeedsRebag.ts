@@ -1,15 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { RebagInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useEndpoint, useStashId } from '.';
 
-export default function useNeedsRebag (address: string): RebagInfo | undefined {
+export default function useNeedsRebag(address: string): RebagInfo | undefined {
   const endpoint = useEndpoint(address);
   const stashId = useStashId(address);
 

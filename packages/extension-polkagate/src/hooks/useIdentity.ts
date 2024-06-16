@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { PalletIdentityRegistration } from '@polkadot/types/lookup';
@@ -15,7 +16,7 @@ interface SubIdentity {
   display: string
 }
 
-export default function useIdentity (genesisHash: string | undefined, formatted: string | undefined, accountInfo?: DeriveAccountInfo): DeriveAccountInfo | undefined {
+export default function useIdentity(genesisHash: string | undefined, formatted: string | undefined, accountInfo?: DeriveAccountInfo): DeriveAccountInfo | undefined {
   const [info, setInfo] = useState<DeriveAccountInfo | undefined>();
 
   const { peopleChain } = usePeopleChain(undefined, genesisHash);

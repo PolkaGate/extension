@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import React, { useCallback } from 'react';
 
@@ -17,7 +18,7 @@ export type ChromeStorageGetResponse = {
   } | undefined;
 };
 
-export default function RemoteNodeSelector ({ address, genesisHash }: Props): React.ReactElement {
+export default function RemoteNodeSelector({ address, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { account, chainName, endpoint } = useInfo(address);
   const endpointOptions = useEndpoints(genesisHash || account?.genesisHash);

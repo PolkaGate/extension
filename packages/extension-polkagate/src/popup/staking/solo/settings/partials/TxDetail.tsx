@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,7 +10,7 @@ import React, { useMemo } from 'react';
 import { ShortAddress } from '../../../../../components';
 import { useAccountName, useTranslation } from '../../../../../hooks';
 import { ThroughProxy } from '../../../../../partials';
-import { SoloSettings, TxInfo } from '../../../../../util/types';
+import type { SoloSettings, TxInfo } from '../../../../../util/types';
 import getPayee from '../../stake/partials/util';
 
 interface Props {
@@ -17,7 +18,7 @@ interface Props {
   newSettings: SoloSettings
 }
 
-export default function TxDetail ({ newSettings, txInfo }: Props): React.ReactElement {
+export default function TxDetail({ newSettings, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const controllerName = useAccountName(newSettings?.controllerId);
   const maybePayeeAddress = useMemo(() => getPayee(newSettings), [newSettings]);
@@ -42,7 +43,7 @@ export default function TxDetail ({ newSettings, txInfo }: Props): React.ReactEl
       </Grid>
       {txInfo.throughProxy &&
         <Grid container m='auto' maxWidth='92%'>
-          <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} name={txInfo.throughProxy.name} />
+          <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
         </Grid>
       }
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />

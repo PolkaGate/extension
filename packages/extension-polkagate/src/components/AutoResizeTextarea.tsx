@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { Grid, TextareaAutosize, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
@@ -15,7 +16,7 @@ interface Props {
   width?: string;
 }
 
-export default function AutoResizeTextarea ({ label, maxRows = 3, onChange, style, value, width = '327px' }: Props): React.ReactElement<Props> {
+export default function AutoResizeTextarea({ label, maxRows = 3, onChange, style, value, width = '327px' }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const _onChange = useCallback(

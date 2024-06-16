@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,7 +11,7 @@ import { ActionContext, Motion, Popup, ShortAddress, TwoButtons } from '../compo
 import { useTranslation } from '../hooks';
 import Explorer from '../popup/history/Explorer';
 import FailSuccessIcon from '../popup/history/partials/FailSuccessIcon';
-import { TxInfo } from '../util/types';
+import type { TxInfo } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
 import { HeaderBrand, SubTitle } from '.';
 

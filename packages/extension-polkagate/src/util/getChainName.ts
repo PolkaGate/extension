@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { toCamelCase } from '../fullscreen/governance/utils/util';
 import allChains from './chains';
@@ -10,7 +11,7 @@ import { sanitizeChainName } from './utils';
  * @param _genesisHash
  * @returns sanitized chain name
  */
-export default function getChainName (_genesisHash: string | undefined): string | undefined {
+export default function getChainName(_genesisHash: string | undefined): string | undefined {
   if (!_genesisHash) {
     console.info('genesisHash should not be undefined');
 

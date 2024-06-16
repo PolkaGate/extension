@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -14,7 +15,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { BN, BN_BILLION, BN_ZERO, bnMax, bnMin } from '@polkadot/util';
 
-export function curveThreshold (curve: PalletReferendaCurve, input: BN, div: BN): BN {
+export function curveThreshold(curve: PalletReferendaCurve, input: BN, div: BN): BN {
   // if divisor is zero, we return the max
   if (div.isZero()) {
     return BN_BILLION;

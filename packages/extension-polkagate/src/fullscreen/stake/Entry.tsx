@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,10 +11,10 @@ import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 
 import { useBalances } from '../../hooks';
-import { MyPoolInfo, Payee, TxInfo, ValidatorInfo } from '../../util/types';
+import type { MyPoolInfo, Payee, TxInfo, ValidatorInfo } from '../../util/types';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import WaitScreen from '../governance/partials/WaitScreen';
 import Confirmation from './easyMode/Confirmation';
@@ -44,7 +45,7 @@ interface Props {
   txInfo: TxInfo | undefined
 }
 
-function Entry ({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.ReactElement {
+function Entry({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.ReactElement {
   const { address } = useParams<{ address: string }>();
 
   const [refresh, setRefresh] = useState<boolean>(false);

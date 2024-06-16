@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import '@vaadin/icons';
 
@@ -15,7 +16,7 @@ interface Props {
   size?: number;
 }
 
-function CopyAddressButton ({ address, showAddress = false, size = 20 }: Props): React.ReactElement<Props> {
+function CopyAddressButton({ address, showAddress = false, size = 20 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
 

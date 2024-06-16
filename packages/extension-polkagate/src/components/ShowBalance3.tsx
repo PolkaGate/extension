@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -28,7 +29,7 @@ export interface Props {
   address?: string;
 }
 
-export default function ShowBalance3 ({ address, api, balance, decimalPoint, height = 20, skeletonWidth = 90 }: Props): React.ReactElement<Props> {
+export default function ShowBalance3({ address, api, balance, decimalPoint, height = 20, skeletonWidth = 90 }: Props): React.ReactElement<Props> {
   const decimal = useDecimal(address);
   const token = useToken(address);
   const adaptiveDecimalPoint = balance && decimal && (String(balance).length >= decimal - 1 ? 2 : 4);

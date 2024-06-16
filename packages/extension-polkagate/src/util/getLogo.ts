@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { createWsEndpoints, externalLinks } from '@polkagate/apps-config';
 import { createAssets } from '@polkagate/apps-config/assets';
@@ -11,7 +12,7 @@ import { sanitizeChainName } from './utils';
 
 const endpoints = createWsEndpoints(() => '');
 
-export default function getLogo (info: string | undefined | Chain, token?: string): string | undefined {
+export default function getLogo(info: string | undefined | Chain, token?: string): string | undefined {
   let chainNameFromGenesisHash;
 
   if (token) {

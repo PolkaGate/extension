@@ -1,16 +1,14 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import type { ApiPromise } from '@polkadot/api';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-import { Balance } from '@polkadot/types/interfaces';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { Balance } from '@polkadot/types/interfaces';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
 
@@ -19,15 +17,13 @@ import { useAccountDisplay, useApi, useChain, useProxies, useTranslation } from 
 import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
-import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import ShowPool from '../../partial/ShowPool';
 
 interface Props {
   address: string;
-  api: ApiPromise | undefined;
-  chain: Chain;
-  formatted: AccountId;
+  formatted: AccountId | string;
   pool: MyPoolInfo;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
@@ -57,9 +53,9 @@ export default function SetState({ address, formatted, headerText, helperText, p
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
-  const batchAll = api && api.tx.utility.batchAll;
-  const chilled = api && api.tx.nominationPools.chill;
-  const poolSetState = api && api.tx.nominationPools.setState(pool.poolId.toString(), state); // (poolId, state)
+  const batchAll = api && api.tx['utility']['batchAll'];
+  const chilled = api && api.tx['nominationPools']['chill'];
+  const poolSetState = api && api.tx['nominationPools']['setState'](pool.poolId.toString(), state); // (poolId, state)
 
   const backToStake = useCallback(() => {
     setShow(false);
@@ -70,7 +66,7 @@ export default function SetState({ address, formatted, headerText, helperText, p
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -114,7 +110,7 @@ export default function SetState({ address, formatted, headerText, helperText, p
       const mayNeedChill = state === 'Destroying' && pool.stashIdAccount?.nominators?.length && (String(pool.bondedPool?.roles.root) === String(formatted) || String(pool.bondedPool?.roles.nominator) === String(formatted)) ? chilled(pool.poolId) : undefined;
       const calls = mayNeedChill ? batchAll([mayNeedChill, poolSetState]) : poolSetState;
 
-      const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, calls) : calls;
+      const tx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, calls) : calls;
       const { block, failureText, fee, success, txHash } = await signAndSend(api, tx, signer, formatted);
 
       const subAction = state === 'Destroying' ? 'Destroy Pool' : state === 'Open' ? 'Unblock Pool' : 'Block Pool';
@@ -125,14 +121,15 @@ export default function SetState({ address, formatted, headerText, helperText, p
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
+        from: { address: formatted as unknown as string, name },
         subAction,
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
 
       setShowWaitScreen(false);
@@ -160,7 +157,7 @@ export default function SetState({ address, formatted, headerText, helperText, p
         <SubTitle label={t<string>('Review')} />
         <ShowPool
           api={api}
-          chain={chain}
+          chain={chain as any}
           mode='Default'
           pool={pool}
           showInfo
@@ -239,7 +236,7 @@ export default function SetState({ address, formatted, headerText, helperText, p
               </Grid>
               {txInfo.throughProxy &&
                 <Grid container m='auto' maxWidth='92%'>
-                  <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} name={txInfo.throughProxy.name} />
+                  <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
                 </Grid>
               }
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />

@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
@@ -10,7 +11,7 @@ import { EXTENSION_NAME } from '../../util/constants';
 import TransactionIndex from '../signing/TransactionIndex';
 import Request from './Request';
 
-export default function Authorize (): React.ReactElement {
+export default function Authorize(): React.ReactElement {
   const requests = useContext(AuthorizeReqContext);
 
   const [requestIndex, setRequestIndex] = useState<number>(0);

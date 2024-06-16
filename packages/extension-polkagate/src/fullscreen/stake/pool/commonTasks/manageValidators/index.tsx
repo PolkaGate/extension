@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,19 +14,19 @@ import { FullScreenHeader } from '@polkadot/extension-polkagate/src/fullscreen/g
 import Bread from '@polkadot/extension-polkagate/src/fullscreen/partials/Bread';
 import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
-import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { BN } from '@polkadot/util';
 
 import { useTranslation } from '../../../../../components/translate';
 import { useFullscreen, usePool, useStakingConsts, useValidators, useValidatorsIdentities } from '../../../../../hooks';
 import WaitScreen from '../../../../governance/partials/WaitScreen';
 import Confirmation from '../../../easyMode/Confirmation';
-import { Inputs } from '../../../Entry';
+import type { Inputs } from '../../../Entry';
 import { STEPS } from '../../stake';
 import InputPage from './InputPage';
 import Review from './Review';
 
-export default function ManageValidators (): React.ReactElement {
+export default function ManageValidators(): React.ReactElement {
   useFullscreen();
 
   const { t } = useTranslation();

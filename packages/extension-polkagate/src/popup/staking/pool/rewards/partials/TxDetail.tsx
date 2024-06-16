@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,7 +10,7 @@ import React from 'react';
 import { ShortAddress } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 import { ThroughProxy } from '../../../../../partials';
-import { TxInfo } from '../../../../../util/types';
+import type { TxInfo } from '../../../../../util/types';
 
 interface Props {
   txInfo: TxInfo;

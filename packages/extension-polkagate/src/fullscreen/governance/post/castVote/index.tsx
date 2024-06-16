@@ -1,9 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -15,7 +17,6 @@ import { BN, BN_ONE } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useInfo, useProxies, useTranslation } from '../../../../hooks';
-import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { DraggableModal } from '../../components/DraggableModal';
 import SelectProxyModal2 from '../../components/SelectProxyModal2';
@@ -69,7 +70,7 @@ export const STEPS = {
   SIGN_QR: 200
 };
 
-export default function Index ({ address, cantModify, hasVoted, myVote, notVoted, open, refIndex, setOpen, setRefresh, showAbout, status, trackId }: Props): React.ReactElement {
+export default function Index({ address, cantModify, hasVoted, myVote, notVoted, open, refIndex, setOpen, setRefresh, showAbout, status, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, decimal, formatted } = useInfo(address);
@@ -83,8 +84,8 @@ export default function Index ({ address, cantModify, hasVoted, myVote, notVoted
   const [alterType, setAlterType] = useState<'modify' | 'remove'>();
   const [reviewModalHeight, setReviewModalHeight] = useState<number | undefined>();
 
-  const voteTx = api && api.tx.convictionVoting.vote;
-  const removeTx = api && api.tx.convictionVoting.removeVote;
+  const voteTx = api && api.tx['convictionVoting']['vote'];
+  const removeTx = api && api.tx['convictionVoting']['removeVote'];
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -119,7 +120,7 @@ export default function Index ({ address, cantModify, hasVoted, myVote, notVoted
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }

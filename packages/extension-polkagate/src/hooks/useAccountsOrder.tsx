@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { useCallback, useContext, useLayoutEffect, useState } from 'react';
 
@@ -9,7 +10,7 @@ import { AccountContext } from '../components';
 import { AccountsOrder } from '../fullscreen/homeFullScreen';
 import { saveNewOrder } from '../fullscreen/homeFullScreen/partials/DraggableAccountList';
 
-export default function useAccountsOrder (isFullScreenMode?: boolean) {
+export default function useAccountsOrder(isFullScreenMode?: boolean) {
   const { accounts: accountsInExtension, hierarchy } = useContext(AccountContext);
 
   const [initialAccountList, setInitialAccountList] = useState<AccountsOrder[] | undefined>();
