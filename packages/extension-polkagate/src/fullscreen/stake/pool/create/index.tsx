@@ -1,10 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import type { Balance } from '@polkadot/types/interfaces';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -13,7 +10,7 @@ import { useParams } from 'react-router';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AddressInput, AmountWithOptions, InputWithLabel, ShowBalance, TwoButtons } from '../../../../components';
-import { useEstimatedFee, useInfo, usePoolConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
+import { useBalances, useEstimatedFee, useInfo, usePoolConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
@@ -31,6 +28,7 @@ export default function CreatePool({ inputs, setInputs, setStep }: Props): React
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const { api, chain, decimal, formatted, token } = useInfo(address);
+  const availableBalance = useBalances(address, undefined, undefined, true)?.availableBalance;
 
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
 
@@ -40,16 +38,27 @@ export default function CreatePool({ inputs, setInputs, setStep }: Props): React
 
   const [poolName, setPoolName] = useState<string | undefined>();
   const [createAmount, setCreateAmount] = useState<string | undefined>();
-  const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
   const [showRoles, setShowRoles] = useState<boolean>(false);
-  const [toReviewDisabled, setToReviewDisabled] = useState<boolean>(true);
   const [nominatorId, setNominatorId] = useState<string>();
   const [bouncerId, setBouncerId] = useState<string>();
 
   const ED = api && api.consts['balances']['existentialDeposit'] as unknown as BN;
   const nextPoolId = poolStakingConsts && poolStakingConsts.lastPoolId.toNumber() + 1;
-  const DEFAULT_POOLNAME = `Polkagate 💜${nextPoolId ? ` - ${nextPoolId}` : ''}`;
+  const DEFAULT_POOLNAME = useMemo(() => `Polkagate 💜${nextPoolId ? ` - ${nextPoolId}` : ''}`, [nextPoolId]);
   const amountAsBN = useMemo(() => amountToMachine(createAmount, decimal), [createAmount, decimal]);
+
+  const toReviewDisabled = useMemo(() => {
+    if (!poolStakingConsts || !formatted || !nominatorId || !bouncerId || !createAmount || !amountAsBN || !inputs?.extraInfo?.['poolName']) {
+      return true;
+    }
+
+    const isAmountOutOfRange =
+      amountAsBN.lt(poolStakingConsts.minCreateBond)
+      ||
+      amountAsBN.gt(availableBalance?.sub(estimatedFee ?? BN_ZERO) ?? BN_ZERO);
+
+    return isAmountOutOfRange;
+  }, [amountAsBN, availableBalance, bouncerId, createAmount, estimatedFee, formatted, inputs?.extraInfo?.['poolName'], nominatorId, poolStakingConsts]);
 
   const stakeAmountChange = useCallback((value: string) => {
     if (decimal && value.length > decimal - 1) {
@@ -76,7 +85,7 @@ export default function CreatePool({ inputs, setInputs, setStep }: Props): React
     poolStakingConsts?.minCreationBond && setCreateAmount(amountToHuman(poolStakingConsts.minCreationBond.toString(), decimal));
   }, [decimal, poolStakingConsts?.minCreationBond]);
 
-  const _onPoolNameChange = useCallback((name: string) => {
+  const onPoolNameChange = useCallback((name: string) => {
     setPoolName(name);
   }, []);
 
@@ -93,7 +102,7 @@ export default function CreatePool({ inputs, setInputs, setStep }: Props): React
   }, [setStep]);
 
   useEffect(() => {
-    if (!api) {
+    if (!api || !poolStakingConsts?.lastPoolId) {
       return;
     }
 
@@ -109,8 +118,8 @@ export default function CreatePool({ inputs, setInputs, setStep }: Props): React
         },
         state: 'Creating'
       },
-      metadata: poolName ?? DEFAULT_POOLNAME,
-      poolId: poolStakingConsts?.lastPoolId?.addn(1),
+      poolId: poolStakingConsts.lastPoolId.addn(1).toNumber(),
+      metadata: poolName || DEFAULT_POOLNAME,
       rewardPool: null
     };
 
@@ -126,51 +135,24 @@ export default function CreatePool({ inputs, setInputs, setStep }: Props): React
     const extraInfo = {
       action: 'Pool Staking',
       amount: createAmount,
-      fee: String(estimatedFee || 0),
       poolName: pool.metadata,
       subAction: 'Create Pool'
     };
 
     setInputs({
       call,
-      estimatedFee, // TODO: needs to include setMetadata
       extraInfo,
       mode: STEPS.CREATE_POOL,
       params,
-      pool
+      pool: pool as any
     });
-  }, [DEFAULT_POOLNAME, amountAsBN, api, bouncerId, createAmount, estimatedFee, formatted, nominatorId, poolName, poolStakingConsts?.lastPoolId, setInputs]);
+  }, [DEFAULT_POOLNAME, amountAsBN, api, bouncerId, createAmount, formatted, nominatorId, poolName, poolStakingConsts?.lastPoolId, setInputs]);
 
   useEffect(() => {
     !nominatorId && formatted && setNominatorId(String(formatted));
     !bouncerId && formatted && setBouncerId(String(formatted));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formatted]);
-
-  useEffect(() => {
-    !nominatorId && formatted && setNominatorId(String(formatted));
-    !bouncerId && formatted && setBouncerId(String(formatted));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formatted]);
-
-  useEffect(() => {
-    if (!poolStakingConsts?.minCreateBond) {
-      return;
-    }
-
-    const goTo = !(formatted && nominatorId && bouncerId && createAmount);
-    const isAmountInRange = amountAsBN?.gt(availableBalance?.sub(estimatedFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN?.gte(poolStakingConsts.minCreateBond);
-
-    setToReviewDisabled(goTo || isAmountInRange);
-  }, [amountAsBN, availableBalance, createAmount, estimatedFee, formatted, nominatorId, poolStakingConsts?.minCreateBond, bouncerId]);
-
-  useEffect(() => {
-    api && formatted && api.derive.balances?.all(formatted)
-      .then((b) => {
-        setAvailableBalance(b.availableBalance);
-      })
-      .catch(console.error);
-  }, [formatted, api]);
 
   return (
     <>
@@ -178,7 +160,7 @@ export default function CreatePool({ inputs, setInputs, setStep }: Props): React
         <InputWithLabel
           height={50}
           label={t('Pool name')}
-          onChange={_onPoolNameChange}
+          onChange={onPoolNameChange}
           placeholder={DEFAULT_POOLNAME}
           value={poolName}
         />
