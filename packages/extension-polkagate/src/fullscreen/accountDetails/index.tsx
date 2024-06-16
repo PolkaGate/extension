@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,8 +12,8 @@ import { BN } from '@polkadot/util';
 
 import { AccountContext, ActionContext } from '../../components';
 import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
-import { Lock } from '../../hooks/useAccountLocks';
-import { FetchedBalance } from '../../hooks/useAssetsBalances';
+import type { Lock } from '../../hooks/useAccountLocks';
+import type { FetchedBalance } from '../../hooks/useAssetsBalances';
 import ExportAccountModal from '../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../popup/forgetAccount/ForgetAccountModal';
 import HistoryModal from '../../popup/history/modal/HistoryModal';
@@ -92,7 +91,7 @@ export default function AccountDetails(): React.ReactElement {
     }
 
     /** when both exists on the same chain, we show one which is more recent */
-    return balances?.date > selectedAsset?.date
+    return balances?.date && selectedAsset?.date && balances.date > selectedAsset.date
       ? { ...(selectedAsset || {}), ...(balances || {}) }
       : { ...(balances || {}), ...(selectedAsset || {}) };
   }, [assetId, balances, chainName, selectedAsset]);
@@ -184,7 +183,7 @@ export default function AccountDetails(): React.ReactElement {
                 label={label(account, hasParent?.name || '', t)}
                 price={currentPrice}
                 pricesInCurrency={pricesInCurrency}
-                selectedAsset={balancesToShow}
+                selectedAsset={balancesToShow as any}
                 setAssetIdOnAssetHub={setAssetIdOnAssetHub}
                 setSelectedAsset={setSelectedAsset}
               />
@@ -269,7 +268,7 @@ export default function AccountDetails(): React.ReactElement {
                 <CommonTasks
                   address={address}
                   assetId={assetId}
-                  balance={balancesToShow}
+                  balance={balancesToShow as any}
                   genesisHash={genesisHash}
                   setDisplayPopup={setDisplayPopup}
                 />
