@@ -56,6 +56,9 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
   const mayBeCommission = hasCommission && parsedPool.bondedPool.commission.current ? parsedPool.bondedPool.commission.current[0] : 0
   const commission = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
 
+  // hide show more info for a pool while creating a pool
+  const _showInfo = mode === 'Creating' ? false: showInfo;
+
   const onRewardsChart = useCallback(() => {
     setShowRewardsChart(true);
   }, []);
@@ -70,7 +73,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
           {pool
             ? <>
               <Grid container item lineHeight='35px' px='5px' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
-                <Grid fontSize='16px' fontWeight={400} item justifyContent='center' overflow='hidden' textAlign='center' textOverflow='ellipsis' whiteSpace='nowrap' width={showInfo ? '92%' : '100%'}>
+                <Grid fontSize='16px' fontWeight={400} item justifyContent='center' overflow='hidden' textAlign='center' textOverflow='ellipsis' whiteSpace='nowrap' width={_showInfo ? '92%' : '100%'}>
                   <Infotip text={pool?.metadata ?? t('Unknown')}>
                     {pool?.stashIdAccount?.accountId
                       ? <Identity chain={chain as any} formatted={pool.stashIdAccount.accountId} identiconSize={25} name={pool?.metadata ?? t('Unknown')} style={{ fontSize: '16px', fontWeight: 400 }} />
@@ -80,7 +83,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
                     }
                   </Infotip>
                 </Grid>
-                {showInfo &&
+                {_showInfo &&
                   <Grid alignItems='center' container item justifyContent='center' onClick={openPoolInfo} sx={{ cursor: 'pointer' }} width='8%'>
                     <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
                   </Grid>
