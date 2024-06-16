@@ -172,7 +172,13 @@ export function getTransactionHistoryFromLocalStorage(
   const chainName = chain ? sanitizeChainName(chain.name) : _chainName;
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const transactionHistoryFromLocalStorage: SavedMetaData = account?.['history'] ? JSON.parse(String(account['history'])) : null;
+  let transactionHistoryFromLocalStorage: SavedMetaData | null= null;
+  try {
+    transactionHistoryFromLocalStorage = account?.['history'] ? JSON.parse(String(account['history'])) : null;
+  } catch (error) {
+    console.error('Failed to parse transaction history:', error);
+  }
+
 
   if (transactionHistoryFromLocalStorage) {
     if (transactionHistoryFromLocalStorage.chainName === chainName) {
@@ -322,7 +328,7 @@ export async function getHistoryFromStorage(formatted: string): Promise<Transact
       const last = (res?.['history'] ?? {}) as unknown as { [key: string]: TransactionDetail[] };
 
 
-      resolve(last && last[k]);
+      resolve(last?.[k]);
     });
   });
 }
