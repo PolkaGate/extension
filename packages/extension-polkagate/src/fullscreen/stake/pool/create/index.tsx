@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -49,14 +48,14 @@ export default function CreatePool({ inputs, setInputs, setStep }: Props): React
   const amountAsBN = useMemo(() => amountToMachine(createAmount, decimal), [createAmount, decimal]);
 
   const toReviewDisabled = useMemo(() => {
-    if (!poolStakingConsts || !formatted || !nominatorId || !bouncerId || !createAmount || !amountAsBN || !inputs?.extraInfo?.poolName) {
+    if (!poolStakingConsts || !formatted || !nominatorId || !bouncerId || !createAmount || !amountAsBN || !inputs?.extraInfo?.['poolName']) {
       return true;
     }
 
-    const isAmountInRange = amountAsBN.gt(availableBalance?.sub(estimatedFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN?.gte(poolStakingConsts.minCreateBond);
+    const isAmountInRange = amountAsBN.gt(availableBalance?.sub(estimatedFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN.gte(poolStakingConsts.minCreateBond);
 
     return isAmountInRange;
-  }, [amountAsBN, availableBalance, bouncerId, createAmount, estimatedFee, formatted, inputs?.extraInfo?.poolName, nominatorId, poolStakingConsts]);
+  }, [amountAsBN, availableBalance, bouncerId, createAmount, estimatedFee, formatted, inputs?.extraInfo?.['poolName'], nominatorId, poolStakingConsts]);
 
   const stakeAmountChange = useCallback((value: string) => {
     if (decimal && value.length > decimal - 1) {
@@ -100,7 +99,7 @@ export default function CreatePool({ inputs, setInputs, setStep }: Props): React
   }, [setStep]);
 
   useEffect(() => {
-    if (!api) {
+    if (!api || !poolStakingConsts?.lastPoolId) {
       return;
     }
 
@@ -116,7 +115,7 @@ export default function CreatePool({ inputs, setInputs, setStep }: Props): React
         },
         state: 'Creating'
       },
-      poolId: poolStakingConsts?.lastPoolId?.addn(1),
+      poolId: poolStakingConsts.lastPoolId.addn(1).toNumber(),
       metadata: poolName || DEFAULT_POOLNAME,
       rewardPool: null
     };
@@ -142,7 +141,7 @@ export default function CreatePool({ inputs, setInputs, setStep }: Props): React
       extraInfo,
       mode: STEPS.CREATE_POOL,
       params,
-      pool
+      pool: pool as any
     });
   }, [DEFAULT_POOLNAME, amountAsBN, api, bouncerId, createAmount, formatted, nominatorId, poolName, poolStakingConsts?.lastPoolId, setInputs]);
 
