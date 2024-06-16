@@ -52,9 +52,12 @@ export default function CreatePool({ inputs, setInputs, setStep }: Props): React
       return true;
     }
 
-    const isAmountInRange = amountAsBN.gt(availableBalance?.sub(estimatedFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN.gte(poolStakingConsts.minCreateBond);
+    const isAmountOutOfRange =
+      amountAsBN.lt(poolStakingConsts.minCreateBond)
+      ||
+      amountAsBN.gt(availableBalance?.sub(estimatedFee ?? BN_ZERO) ?? BN_ZERO);
 
-    return isAmountInRange;
+    return isAmountOutOfRange;
   }, [amountAsBN, availableBalance, bouncerId, createAmount, estimatedFee, formatted, inputs?.extraInfo?.['poolName'], nominatorId, poolStakingConsts]);
 
   const stakeAmountChange = useCallback((value: string) => {
