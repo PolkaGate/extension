@@ -5,11 +5,11 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Collapse, Divider, Grid, Skeleton, SxProps, Theme, Typography } from '@mui/material';
+import { Collapse, Divider, Grid, Skeleton, type SxProps, type Theme, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
-import useReservedDetails, { Reserved } from '@polkadot/extension-polkagate/src/hooks/useReservedDetails';
+import useReservedDetails, { type Reserved } from '@polkadot/extension-polkagate/src/hooks/useReservedDetails';
 import { isOnAssetHub, isOnRelayChain } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
