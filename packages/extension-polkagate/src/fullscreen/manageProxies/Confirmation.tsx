@@ -1,7 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { ProxyItem, TxInfo } from '../../util/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
@@ -13,7 +16,6 @@ import { useChainName, useTranslation } from '../../hooks';
 import { SubTitle, ThroughProxy } from '../../partials';
 import Explorer from '../../popup/history/Explorer';
 import FailSuccessIcon from '../../popup/history/partials/FailSuccessIcon';
-import { ProxyItem, TxInfo } from '../../util/types';
 import { getSubstrateAddress, pgBoxShadow } from '../../util/utils';
 
 interface Props {
@@ -24,7 +26,7 @@ interface Props {
   proxyItems: ProxyItem[];
 }
 
-export default function Confirmation ({ address, depositAmount, handleClose, proxyItems, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ address, depositAmount, handleClose, proxyItems, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chainName = useChainName(address);

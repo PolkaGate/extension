@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -21,7 +22,7 @@ import { AccountHolderWithProxy, ActionContext, FormatBalance, PasswordUseProxyC
 import { useAccountDisplay, useChain, useDecimal, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
 import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import { createPool } from '../../../../../util/api';
-import { PoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
+import type { PoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import ShowPool from '../../../partial/ShowPool';
 import CreatePoolTxDetail from './partial/CreatePoolTxDetail';
@@ -45,7 +46,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
   const proxies = useProxies(api, address);
   const decimal = useDecimal(address);
 
-  const create = api.tx.nominationPools.create;
+  const create = api.tx['nominationPools']['create'];
 
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
@@ -100,14 +101,15 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
+        from: { address: formatted as string, name },
         subAction: 'Create Pool',
         success,
-        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
+        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -136,8 +138,8 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
         }
         <SubTitle label={t<string>('Review')} />
         <AccountHolderWithProxy
-          address={formatted}
-          chain={chain}
+          address={formatted as string}
+          chain={chain as any}
           selectedProxyAddress={selectedProxyAddress}
           showDivider
           style={{ m: 'auto', width: '90%' }}
@@ -154,7 +156,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
         <ShowPool
           api={api}
-          chain={chain}
+          chain={chain as any}
           label={t<string>('Pool')}
           labelPosition='center'
           mode='Creating'

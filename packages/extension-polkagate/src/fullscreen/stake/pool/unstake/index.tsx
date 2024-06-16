@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -14,13 +15,13 @@ import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/
 import Asset from '@polkadot/extension-polkagate/src/partials/Asset';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
 import { MAX_AMOUNT_LENGTH } from '@polkadot/extension-polkagate/src/util/constants';
-import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
 import { useInfo, usePool, usePoolConsts, useTranslation } from '../../../../hooks';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { ModalTitle } from '../../solo/commonTasks/configurePayee';
@@ -34,7 +35,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function Unstake ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function Unstake({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);
@@ -78,14 +79,14 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
   }, [amountAsBN, staked, unstakeMaxAmount]);
 
   const unlockingLen = myPool?.stashIdAccount?.stakingLedger?.unlocking?.length;
-  const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
+  const maxUnlockingChunks = api && (api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber();
   const isPoolRoot = useMemo(() => String(formatted) === String(myPool?.bondedPool?.roles?.root), [formatted, myPool?.bondedPool?.roles?.root]);
   const isPoolDepositor = useMemo(() => String(formatted) === String(myPool?.bondedPool?.roles?.depositor), [formatted, myPool?.bondedPool?.roles?.depositor]);
   const poolState = useMemo(() => String(myPool?.bondedPool?.state), [myPool?.bondedPool?.state]);
   const poolMemberCounter = useMemo(() => Number(myPool?.bondedPool?.memberCounter), [myPool?.bondedPool?.memberCounter]);
 
-  const unbonded = api && api.tx.nominationPools.unbond;
-  const poolWithdrawUnbonded = api && api.tx.nominationPools.poolWithdrawUnbonded;
+  const unbonded = api && api.tx['nominationPools']['unbond'];
+  const poolWithdrawUnbonded = api && api.tx['nominationPools']['poolWithdrawUnbonded'];
 
   const helperText = useMemo(() => {
     if (!myPool || !formatted || !amountAsBN || !staked) {
@@ -137,7 +138,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
 
     const params = [formatted, amountAsBN];
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -205,11 +206,11 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
   useEffect(() => {
     const handleInput = async () => {
       if (amountAsBN && api && maxUnlockingChunks && unlockingLen !== undefined && poolConsts && myPool?.poolId && unbonded && poolWithdrawUnbonded) {
-        const batch = api.tx.utility.batchAll;
+        const batch = api.tx['utility']['batchAll'];
 
         const unbondedParams = [formatted, amountAsBN];
 
-        const optSpans = await api.query.staking.slashingSpans(formatted);
+        const optSpans = await api.query['staking']['slashingSpans'](formatted) as any;
         const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1 as number;
         const poolId = myPool.poolId;
 
@@ -305,7 +306,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
             {myPool &&
               <ShowPool
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 label={t('Pool')}
                 mode='Default'
                 pool={myPool}

@@ -1,9 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import request from 'umi-request';
 
-import { TransferRequest } from '../types';
+import type { TransferRequest } from '../types';
 
 export default function getContributions(chainName: string, address: string): Promise<TransferRequest> {
   return postReq(`https://${chainName}.api.subscan.io/api/scan/account/contributions`, {

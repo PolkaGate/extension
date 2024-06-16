@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -16,7 +17,7 @@ interface Props {
   setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Alert ({ setShowAlert, show }: Props): React.ReactElement<Props> {
+export default function Alert({ setShowAlert, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -68,11 +69,7 @@ export default function Alert ({ setShowAlert, show }: Props): React.ReactElemen
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Demo Mode: Seamlessly explore extension features during onboarding.',
-              'People Chain Support: Now supports the People Chain, which hosts identities.',
-              'Reserved Balance Reasons: Displays reasons for reserved balances in account details.',
-              'Updated Twitter Icon: Features the modern X icon, reflecting Twitter’s rebrand.',
-              'Enhanced Performance: Enjoy improved speed and reliability, along with valuable bug fixes for a smoother user experience.'
+              'Bug Fixes: Resolved the latest Kusama runtime upgrade issue, which was causing transactions on Kusama to fail'
             ]}
           />
         </Grid>

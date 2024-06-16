@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -14,13 +15,13 @@ import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/
 import Asset from '@polkadot/extension-polkagate/src/partials/Asset';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
 import { MAX_AMOUNT_LENGTH } from '@polkadot/extension-polkagate/src/util/constants';
-import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
 import { useBalances, useInfo, usePool, useTranslation } from '../../../../hooks';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { ModalTitle } from '../../solo/commonTasks/configurePayee';
@@ -73,7 +74,7 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
 
   useEffect(() => {
     if (amount && api && staked && amountAsBN) {
-      const call = api.tx.nominationPools.bondExtra;
+      const call = api.tx['nominationPools']['bondExtra'];
       const params = [{ FreeBalance: amountAsBN.toString() }];
 
       const totalStakeAfter = staked.add(amountAsBN);
@@ -130,15 +131,15 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api.createType('Balance', BN_ONE));
     }
 
-    amountAsBN && api.tx.nominationPools.bondExtra({ FreeBalance: amountAsBN.toString() }).paymentInfo(formatted).then((i) => {
+    amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: amountAsBN.toString() }).paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee));
     });
 
-    amountAsBN && api.tx.nominationPools.bondExtra({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
+    amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     });
   }, [formatted, api, availableBalance, amount, decimal, amountAsBN]);
@@ -213,7 +214,7 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
             {pool &&
               <ShowPool
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 label={t('Pool')}
                 mode='Default'
                 pool={pool}

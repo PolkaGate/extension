@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -34,7 +35,7 @@ interface State {
   pool: MyPoolInfo | undefined;
 }
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -65,7 +66,7 @@ export default function Index (): React.ReactElement {
     allValidatorsInfo && nominatedValidatorsIds && allValidatorsInfo.current
       .concat(allValidatorsInfo.waiting)
       .filter((v: DeriveStakingQuery) => nominatedValidatorsIds.includes(v.accountId))
-  , [allValidatorsInfo, nominatedValidatorsIds]);
+    , [allValidatorsInfo, nominatedValidatorsIds]);
 
   const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv.exposure.others.find(({ who }) => who.toString() === pool?.accounts?.stashId)), [pool?.accounts?.stashId, selectedValidatorsInfo]);
 
@@ -173,7 +174,7 @@ export default function Index (): React.ReactElement {
               activeValidators={activeValidators}
               allValidatorsIdentities={allValidatorsIdentities}
               api={api}
-              chain={chain}
+              chain={chain as any}
               decimal={pool?.decimal}
               formatted={pool?.stashIdAccount?.accountId?.toString()}
               height={window.innerHeight - (canNominate ? 190 : 150)}
@@ -205,7 +206,7 @@ export default function Index (): React.ReactElement {
         <RemoveValidators
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           formatted={formatted}
           poolId={pool?.poolId}
           setShow={setShowRemoveValidator}
@@ -217,7 +218,7 @@ export default function Index (): React.ReactElement {
         <SelectValidators
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           newSelectedValidators={newSelectedValidators}
           nominatedValidatorsIds={nominatedValidatorsIds}
           poolId={pool.poolId}

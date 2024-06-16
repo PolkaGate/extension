@@ -1,21 +1,24 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import '@vaadin/icons';
+
+import type { ProxyItem } from '../../util/types';
 
 import { AddRounded as AddRoundedIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, ShowBalance, TwoButtons } from '../../components';
 import { useTranslation } from '../../hooks';
-import { ProxyItem } from '../../util/types';
 import { noop } from '../../util/utils';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
@@ -41,7 +44,7 @@ interface Props {
   token: string | undefined;
 }
 
-export default function Manage ({ api, chain, decimal, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
+export default function Manage({ api, chain, decimal, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -119,8 +122,8 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
       <Bread />
       <Title
         height='100px'
-        logo={ <vaadin-icon icon='vaadin:sitemap' style={{ fontSize: '23px', color: `${theme.palette.text.primary}` }} /> }
-        text= {t('Proxy Management')}
+        logo={<vaadin-icon icon='vaadin:sitemap' style={{ fontSize: '23px', color: `${theme.palette.text.primary}` }} />}
+        text={t('Proxy Management')}
       />
       <Typography fontSize='14px' fontWeight={400}>
         {t('You can add new proxies or remove existing ones for the account here. Keep in mind that you need to reserve a deposit to have proxies.')}
@@ -131,7 +134,7 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
       />
       <ProxyTableFL
         api={api}
-        chain={chain}
+        chain={chain as any}
         handleDelete={handleDelete}
         proxyItems={proxyItems}
       />

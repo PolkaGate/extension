@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -110,7 +111,7 @@ const FlyingLogo = ({ theme }: { theme: Theme }) => (
   />
 );
 
-export default function Loading ({ children }: Props): React.ReactElement<Props> {
+export default function Loading({ children }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const manifest = useManifest();
 

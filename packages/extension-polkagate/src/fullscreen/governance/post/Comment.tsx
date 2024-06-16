@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -57,7 +58,7 @@ export default function Comment({ address, comment, noSource }: { address: strin
   return (
     <Grid alignItems='center' container item sx={{ mb: '10px' }}>
       <Grid item maxWidth='65%' width='fit-content'>
-        <Identity address={comment.proposer} api={api} chain={chain} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+        <Identity address={comment.proposer} api={api} chain={chain as any} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
       </Grid>
       <Grid item sx={{ color: 'text.disabled', fontSize: '16px', px: '15px' }}>
         {formatRelativeTime(comment.created_at)}

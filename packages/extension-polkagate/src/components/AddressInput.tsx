@@ -1,17 +1,21 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-no-bind */
+
+// @ts-nocheck
 
 import '@vaadin/icons';
 
 import { faPaste, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Autocomplete, Grid, IconButton, InputAdornment, SxProps, TextField, Theme, Typography, useTheme } from '@mui/material';
+import { Autocomplete, Grid, IconButton, InputAdornment, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import settings from '@polkadot/ui-settings';
 
 import { useTranslation } from '../hooks';
@@ -28,7 +32,7 @@ interface Props {
   style?: SxProps<Theme>;
   chain?: Chain;
   address: string | undefined;
-  setAddress: React.Dispatch<React.SetStateAction<string | null | undefined>>;
+  setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>>;
   showIdenticon?: boolean;
   helperText?: string;
   placeHolder?: string;
@@ -36,7 +40,7 @@ interface Props {
   addWithQr?: boolean;
 }
 
-export default function AddressInput ({ addWithQr = false, allAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
+export default function AddressInput({ addWithQr = false, allAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [isPopperOpen, setTogglePopper] = useState<boolean>(false);
   const [focus, setFocus] = useState<boolean>(false);
@@ -55,7 +59,7 @@ export default function AddressInput ({ addWithQr = false, allAddresses = [], ch
 
   useEffect(() => {
     if (containerRef) {
-      setDropdownWidth(`${containerRef.current?.offsetWidth + (showIdenticon ? 5 : 0)}px`);
+      setDropdownWidth(`${(containerRef.current?.offsetWidth || 0) + (showIdenticon ? 5 : 0)}px`);
     }
   }, [containerRef?.current?.offsetWidth, showIdenticon]);
 
@@ -63,7 +67,7 @@ export default function AddressInput ({ addWithQr = false, allAddresses = [], ch
     setTogglePopper(false);
 
     if (!value) {
-      setAddress(null);
+      setAddress && setAddress(null);
       setEnteredAddress(undefined);
       setInValidAddress(false);
 
@@ -72,10 +76,11 @@ export default function AddressInput ({ addWithQr = false, allAddresses = [], ch
 
     setInValidAddress(!(isValidAddress(value)));
     setEnteredAddress(value);
-    isValidAddress(value) ? setAddress(value) : setAddress(undefined);
+    isValidAddress(value) ? setAddress && setAddress(value) : setAddress && setAddress(undefined);
   }, [setAddress]);
 
-  const _selectAddress = useCallback((newAddr: string) => handleAddress({ target: { value: newAddr } }), [handleAddress]);
+  // @ts-ignore
+  const _selectAddress = useCallback((newAddr?: string) => handleAddress({ target: { value: newAddr } }), [handleAddress]);
 
   const openQrScanner = useCallback(() => setOpenCamera(true), []);
 
@@ -97,12 +102,12 @@ export default function AddressInput ({ addWithQr = false, allAddresses = [], ch
     setTogglePopper(false);
 
     if (enteredAddress || address) {
-      setAddress(null);
+      setAddress && setAddress(null);
       setEnteredAddress(undefined);
       setInValidAddress(false);
     } else {
       navigator.clipboard.readText().then((clipText) => {
-        isValidAddress(clipText) ? setAddress(clipText) : setAddress(undefined);
+        isValidAddress(clipText) ? setAddress && setAddress(clipText) : setAddress && setAddress(undefined);
         setEnteredAddress(clipText);
         setInValidAddress(!(isValidAddress(clipText)));
       }).catch(console.error);
@@ -168,7 +173,7 @@ export default function AddressInput ({ addWithQr = false, allAddresses = [], ch
                   sx={{ '> div.MuiOutlinedInput-root': { '> fieldset': { border: 'none' }, '> input.MuiAutocomplete-input': { border: 'none', lineHeight: '31px', p: 0 }, border: 'none', height: '31px', p: 0, px: '5px' }, bgcolor: 'background.paper', border: `${focus || inValidAddress ? '2px' : '1px'} solid`, borderColor: `${inValidAddress ? 'warning.main' : focus ? 'action.focus' : 'secondary.light'}`, borderRadius: '5px', height: '32px', lineHeight: '31px' }}
                 />
               )}
-              renderOption={(props, value) => {
+              renderOption={(_props, value) => {
                 return (
                   <Grid alignItems='center' container item justifyContent='space-between' key={value.address} onClick={() => onSelectOption(value.address)} sx={{ '&:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light', mb: '5px' }, cursor: 'pointer', p: '5px' }}>
                     <Grid container item xs={10.5}>

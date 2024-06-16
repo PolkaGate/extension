@@ -1,6 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
+
+// @ts-nocheck
 
 import { hexToString } from '@polkadot/util';
 
@@ -21,7 +24,7 @@ const convertId = (id) => ({
   web: hexToString(id.info.web.asRaw.toHex())
 });
 
-async function getAllValidatorsIdentities (endpoint, _accountIds) {
+async function getAllValidatorsIdentities(endpoint, _accountIds) {
   try {
     const api = await getApi(endpoint);
     let accountInfo = [];

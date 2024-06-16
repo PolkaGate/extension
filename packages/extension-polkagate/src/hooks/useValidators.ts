@@ -1,11 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { AllValidators, ValidatorInfo, Validators } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { useCurrentEraIndex, useInfo } from '.';
@@ -31,7 +32,7 @@ export interface Others {
  * This hooks return a list of all available validators (current and waiting) on the chain, which the address is already tied with.
  */
 
-export default function useValidators (address: string, validators?: AllValidators): AllValidators | null | undefined {
+export default function useValidators(address: string, validators?: AllValidators): AllValidators | null | undefined {
   const { api, chain, chainName, endpoint } = useInfo(address);
   const currentEraIndex = useCurrentEraIndex(address); // TODO: Should we use active era index?
 

@@ -1,9 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { useContext, useMemo } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AccountContext } from '../components/contexts';

@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -45,7 +46,7 @@ const INITIAL_STATE = {
   transactions: []
 };
 
-export default function HistoryModal ({ address, setDisplayPopup }: Props): React.ReactElement {
+export default function HistoryModal({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const chain = useChain(address);

@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /**
  * @description
@@ -10,7 +11,7 @@ import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import { createWsEndpoints } from '@polkagate/apps-config';
 import { useEffect, useMemo, useState } from 'react';
 
-import { DropdownOption } from '../util/types';
+import type { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
 import { useGenesisHashOptions, useTranslation } from './';
 

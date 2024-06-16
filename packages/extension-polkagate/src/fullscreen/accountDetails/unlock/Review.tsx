@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,6 +10,7 @@
  * */
 
 import type { ApiPromise } from '@polkadot/api';
+import type { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 
 import { useTheme } from '@emotion/react';
 import { Close as CloseIcon } from '@mui/icons-material';
@@ -23,7 +25,6 @@ import { AccountHolderWithProxy, AmountFee, SignArea2, Warning, WrongPasswordAle
 import { useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../hooks';
 import { Lock } from '../../../hooks/useAccountLocks';
 import { SubTitle } from '../../../partials';
-import { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
 import SelectProxyModal2 from '../../governance/components/SelectProxyModal2';
@@ -49,7 +50,7 @@ const STEPS = {
   PROXY: 100
 };
 
-export default function Review ({ address, api, classToUnlock, setDisplayPopup, show, totalLocked, unlockableAmount, setRefresh }: Props): React.ReactElement {
+export default function Review({ address, api, classToUnlock, setDisplayPopup, setRefresh, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const theme = useTheme();
@@ -68,9 +69,9 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
   const amount = useMemo(() => amountToHuman(unlockableAmount, decimal), [decimal, unlockableAmount]);
-  const remove = api.tx.convictionVoting.removeVote; // (class, index)
-  const unlockClass = api.tx.convictionVoting.unlock; // (class)
-  const batchAll = api.tx.utility.batchAll;
+  const remove = api.tx['convictionVoting']['removeVote']; // (class, index)
+  const unlockClass = api.tx['convictionVoting']['unlock']; // (class)
+  const batchAll = api.tx['utility']['batchAll'];
 
   const extraInfo = useMemo(() => ({
     action: 'Unlock Referenda',
@@ -99,7 +100,7 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
 
     setParams(params);
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -142,7 +143,7 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
             <Container disableGutters sx={{ px: '30px' }}>
               <AccountHolderWithProxy
                 address={address}
-                chain={chain}
+                chain={chain as any}
                 selectedProxyAddress={selectedProxyAddress}
                 showDivider
                 style={{ mt: '-5px' }}

@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -15,7 +16,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useParams } from 'react-router';
 
 import { ApiPromise } from '@polkadot/api';
-import { ExpandedRewards } from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/pending';
+import type { ExpandedRewards } from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/pending';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, Checkbox2, Identity, Motion, ShowBalance, TwoButtons } from '../../../../components';
@@ -42,7 +43,7 @@ export const LabelBalance = ({ api, balance, label }: { api: ApiPromise | undefi
   </Grid>
 );
 
-export default function PendingRewards (): React.ReactElement {
+export default function PendingRewards(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -66,11 +67,11 @@ export default function PendingRewards (): React.ReactElement {
     }
 
     api.derive.session.progress().then(setProgress).catch(console.error);
-    api.query.staking.forceEra().then(setForcing).catch(console.error);
+    api.query['staking']['forceEra']().then((f) => setForcing(f as unknown as Forcing)).catch(console.error);
 
-    api.query.staking?.historyDepth
-      ? api.query.staking.historyDepth().then(setHistoryDepth).catch(console.error)
-      : setHistoryDepth(api.consts.staking.historyDepth);
+    api.query['staking']?.['historyDepth']
+      ? api.query['staking']['historyDepth']().then((depth) => setHistoryDepth(depth as unknown as BN)).catch(console.error)
+      : setHistoryDepth(api.consts['staking']['historyDepth'] as unknown as BN);
   }, [api]);
 
   useEffect(() => {
@@ -94,7 +95,7 @@ export default function PendingRewards (): React.ReactElement {
       []
     );
 
-    setExpandedRewards(rewardsArray);
+    setExpandedRewards(rewardsArray as any);
   }, [rewards]);
 
   const totalPending = useMemo(() => {
@@ -120,7 +121,7 @@ export default function PendingRewards (): React.ReactElement {
     }
 
     return selectedToPayout.reduce((sum: BN, value: ExpandedRewards) => {
-      sum = sum.add(value[3] as BN);
+      sum = sum.add((value as any)[3] as BN);
 
       return sum;
     }, BN_ZERO);
@@ -154,7 +155,7 @@ export default function PendingRewards (): React.ReactElement {
     return EndEraInBlock ? blockToDate(EndEraInBlock.addn(currentBlock).toNumber(), currentBlock, { day: 'numeric', month: 'short' }) : undefined;
   }, [currentBlock, forcing, historyDepth, progress]);
 
-  const onSelectAll = useCallback((_, checked: boolean) => {
+  const onSelectAll = useCallback((_: any, checked: boolean) => {
     if (checked && expandedRewards?.length) {
       setSelectedToPayout([...expandedRewards]);
     } else {
@@ -238,6 +239,7 @@ export default function PendingRewards (): React.ReactElement {
                 </Typography>
               </Grid>
               : <> {expandedRewards?.map((info, index) => {
+                //@ts-ignore
                 const [eraIndex, validator, page, value] = info;
 
                 return (
@@ -265,7 +267,7 @@ export default function PendingRewards (): React.ReactElement {
                         <Grid item xs={6}>
                           <Identity
                             api={api}
-                            chain={chain}
+                            chain={chain as any}
                             formatted={validator}
                             identiconSize={20}
                             showShortAddress

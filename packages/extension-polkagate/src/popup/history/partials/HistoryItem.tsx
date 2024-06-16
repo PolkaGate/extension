@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,7 +10,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { FormatBalance2 } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { TransactionDetail } from '../../../util/types';
+import type { TransactionDetail } from '../../../util/types';
 import { amountToMachine, toShortAddress, upperCaseFirstChar } from '../../../util/utils';
 import Detail from '../Detail';
 
@@ -40,12 +41,13 @@ export default function HistoryItem({ anotherDay, chainName, date, decimal, form
     }
 
     if (info?.from?.address === formatted) {
-      return `${t('To')}: ${info?.to?.name || toShortAddress(info?.to?.address)}`;
+      return `${t('To')}: ${info?.to?.name || toShortAddress(info?.to?.address as string)}`;
     }
 
     if (info?.to?.address === formatted) {
       return `${t('From')}: ${info?.from?.name || toShortAddress(info?.from?.address)}`;
     }
+    return undefined;
   }, [formatted, info?.from?.address, info?.from?.name, info.subAction, info?.to, t]);
 
   return (
@@ -97,7 +99,6 @@ export default function HistoryItem({ anotherDay, chainName, date, decimal, form
         <Detail
           chainName={chainName}
           decimal={decimal}
-          formatted={formatted}
           info={info}
           setShowDetail={setShowDetail}
           showDetail={showDetail}

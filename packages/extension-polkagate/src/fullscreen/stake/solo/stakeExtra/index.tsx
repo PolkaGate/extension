@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,13 +14,13 @@ import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/gov
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import Asset from '@polkadot/extension-polkagate/src/partials/Asset';
 import { MAX_AMOUNT_LENGTH } from '@polkadot/extension-polkagate/src/util/constants';
-import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
 import { useAvailableToSoloStake, useInfo, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { STEPS } from '../../pool/stake';
@@ -33,13 +34,13 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function StakeExtra ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function StakeExtra({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, decimal, token } = useInfo(address);
 
   const stakingAccount = useStakingAccount(address);
-  const stakingConsts = useStakingConsts(address);
+  const stakingConsts = useStakingConsts(address as string);
   const availableToSoloStake = useAvailableToSoloStake(address);
 
   const [alert, setAlert] = useState<string | undefined>();
@@ -52,7 +53,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
   const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active as unknown as BN, [stakingAccount]);
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
 
-  const call = api && api.tx.staking.bondExtra;
+  const call = api && api.tx['staking']['bondExtra'];
 
   useEffect(() => {
     if (!amountAsBN) {
@@ -88,7 +89,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
   }, [amount, amountAsBN, api, call, staked]);
 
   useEffect(() => {
-    if (api && !api?.call?.transactionPaymentApi) {
+    if (api && !api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 

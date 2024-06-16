@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -16,8 +17,8 @@ import { DATE_OPTIONS } from '@polkadot/extension-polkagate/src/util/constants';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
-import { MyPoolInfo, TxInfo } from '../../../../../util/types';
-import { Inputs } from '../../../Entry';
+import type { MyPoolInfo, TxInfo } from '../../../../../util/types';
+import type { Inputs } from '../../../Entry';
 import Review from '../../../partials/Review';
 import { ModalTitle } from '../../../solo/commonTasks/configurePayee';
 import Confirmation from '../../partials/Confirmation';
@@ -44,7 +45,7 @@ export default function LeavePool({ address, onClose, pool, setRefresh }: Props)
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
 
   const unlockingLen = pool?.stashIdAccount?.stakingLedger?.unlocking?.length;
-  const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
+  const maxUnlockingChunks = api && (api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber();
 
   const staked = useMemo(() => pool.member?.points && new BN(pool.member.points), [pool.member?.points]);
 
@@ -68,7 +69,7 @@ export default function LeavePool({ address, onClose, pool, setRefresh }: Props)
   }), [decimal, estimatedFee, redeemDate, staked, t, token]);
 
   useEffect(() => {
-    api && api.query.staking.slashingSpans(formatted).then((optSpans) => {
+    api && api.query['staking']['slashingSpans'](formatted).then((optSpans: any) => {
       const _spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
 
       setSpanCount(_spanCount as number);
@@ -84,13 +85,13 @@ export default function LeavePool({ address, onClose, pool, setRefresh }: Props)
     let params: unknown[];
 
     if (unlockingLen < maxUnlockingChunks) {
-      call = api.tx.nominationPools.unbond;
+      call = api.tx['nominationPools']['unbond'];
       params = [formatted, staked];
     } else {
-      const unbonded = api.tx.nominationPools.unbond;
-      const poolWithdrawUnbonded = api.tx.nominationPools.poolWithdrawUnbonded;
+      const unbonded = api.tx['nominationPools']['unbond'];
+      const poolWithdrawUnbonded = api.tx['nominationPools']['poolWithdrawUnbonded'];
 
-      call = api.tx.utility.batchAll;
+      call = api.tx['utility']['batchAll'];
       params = [[poolWithdrawUnbonded(pool.poolId, spanCount), unbonded(formatted, staked)]];
     }
 

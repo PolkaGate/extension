@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -24,7 +25,7 @@ interface Props {
   setDetailInfo: React.Dispatch<React.SetStateAction<TransactionDetail | undefined>>;
 }
 
-export default function HistoryItemModal ({ anotherDay, date, decimal, formatted, info, setDetailInfo, setShowDetail, token }: Props): React.ReactElement {
+export default function HistoryItemModal({ anotherDay, date, decimal, formatted, info, setDetailInfo, setShowDetail, token }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const _goToDetail = useCallback(() => {

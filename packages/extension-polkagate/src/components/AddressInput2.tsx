@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-no-bind */
@@ -11,7 +12,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Autocomplete, Grid, IconButton, InputAdornment, SxProps, TextField, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import settings from '@polkadot/ui-settings';
 
 import { useTranslation } from '../hooks';

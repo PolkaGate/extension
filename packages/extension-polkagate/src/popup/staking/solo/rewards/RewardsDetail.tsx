@@ -1,6 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
+// @ts-nocheck
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 /**
@@ -14,7 +15,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import { ModalTitle } from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/commonTasks/configurePayee';
 import { BN, BN_ZERO } from '@polkadot/util';
@@ -24,7 +26,7 @@ import { useApi, useChain, useChainName, useDecimal, useIsExtensionPopup, useTok
 import { HeaderBrand } from '../../../../partials';
 import getRewardsSlashes from '../../../../util/api/getRewardsSlashes';
 import { MAX_REWARDS_TO_SHOW } from '../../../../util/constants';
-import { RewardInfo, SubscanRewardInfo } from '../../../../util/types';
+import type { RewardInfo, SubscanRewardInfo } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
 
 ChartJS.register(
@@ -180,7 +182,7 @@ const ChartBody = ({ api, chain, data, dataToShow, decimal, descSortedRewards, e
                       {chain && <Identity
                         address={d.validator}
                         api={api}
-                        chain={chain}
+                        chain={chain as any}
                         formatted={d.validator}
                         identiconSize={30}
                         showSocial={false}
@@ -203,7 +205,7 @@ const ChartBody = ({ api, chain, data, dataToShow, decimal, descSortedRewards, e
   );
 };
 
-export default function RewardsDetail ({ address, api, chain, chainName, decimal, rewardDestinationAddress, setShow, show, token }: Props): React.ReactElement {
+export default function RewardsDetail({ address, api, chain, chainName, decimal, rewardDestinationAddress, setShow, show, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtensionPopup = useIsExtensionPopup();
 

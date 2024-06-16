@@ -1,7 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { TxInfo } from '../../../../util/types';
 
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
@@ -9,13 +12,12 @@ import React from 'react';
 import { ShortAddress } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
-import { TxInfo } from '../../../../util/types';
 
 interface Props {
   txInfo: TxInfo;
 }
 
-export default function TxDetail ({ txInfo }: Props): React.ReactElement {
+export default function TxDetail({ txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (

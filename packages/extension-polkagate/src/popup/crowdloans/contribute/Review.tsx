@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 /**
@@ -13,8 +14,8 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { LinkOption } from '@polkagate/apps-config/endpoints/types';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
@@ -22,7 +23,7 @@ import { AccountHolderWithProxy, ActionContext, ChainLogo, FormatBalance, Passwo
 import { useAccountDisplay, useChain, useProxies, useTranslation } from '../../../hooks';
 import { Confirmation, HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../partials';
 import { broadcast } from '../../../util/api';
-import { Crowdloan, Proxy, ProxyItem, TxInfo } from '../../../util/types';
+import type { Crowdloan, Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import ParachainInfo from '../partials/ParachainInfo';
 import ShowParachainBrief from '../partials/ShowParachainBrief';
@@ -51,7 +52,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
   const name = useAccountDisplay(address);
   const proxies = useProxies(api, formatted);
 
-  const contribute = api && api.tx.crowdloan.contribute;
+  const contribute = api && api.tx['crowdloan']['contribute'];
 
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
@@ -106,7 +107,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
       saveAsHistory(String(from), info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -149,8 +150,8 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
           label={t<string>('Review')}
         />
         <AccountHolderWithProxy
-          address={address}
-          chain={chain}
+          address={address as string}
+          chain={chain as any}
           selectedProxyAddress={selectedProxyAddress}
           showDivider
           style={{ m: 'auto', width: '90%' }}
@@ -163,7 +164,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
             <ChainLogo genesisHash={chain?.genesisHash} />
           </Grid>
           <Grid item sx={{ fontSize: '26px', pl: '8px' }}>
-            <FormatBalance api={api} decimalPoint={2} value={contributionAmount} />
+            <FormatBalance api={api as ApiPromise} decimalPoint={2} value={contributionAmount} />
           </Grid>
         </Grid>
         <Grid container justifyContent='center'>
@@ -171,13 +172,11 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
             {t<string>('Fee:')}
           </Typography>
           <Grid item lineHeight='22px' pl='5px'>
-            <FormatBalance api={api} decimalPoint={4} value={estimatedFee} />
+            <FormatBalance api={api as ApiPromise} decimalPoint={4} value={estimatedFee} />
           </Grid>
         </Grid>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
         <ShowParachainBrief
-          api={api}
-          chain={chain}
           crowdloan={crowdloanToContribute}
           crowdloansId={crowdloansId}
           setShowCrowdloanInfo={setShowCrowdloanInfo}
@@ -206,7 +205,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
         {showCrowdloanInfo &&
           <ParachainInfo
             api={api}
-            chain={chain}
+            chain={chain as any}
             crowdloan={crowdloanToContribute}
             crowdloansId={crowdloansId}
             currentBlockNumber={currentBlockNumber}

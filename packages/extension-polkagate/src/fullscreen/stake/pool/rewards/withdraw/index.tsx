@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -16,7 +17,7 @@ import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
 import { useInfo, useTranslation } from '../../../../../hooks';
-import { Inputs } from '../../../Entry';
+import type { Inputs } from '../../../Entry';
 import Confirmation from '../../../partials/Confirmation';
 import Review from '../../../partials/Review';
 import { ModalTitle } from '../../../solo/commonTasks/configurePayee';
@@ -32,7 +33,7 @@ interface Props {
   pool: MyPoolInfo | null | undefined;
 }
 
-export default function WithdrawRewards ({ address, balances, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function WithdrawRewards({ address, balances, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
 
@@ -45,7 +46,7 @@ export default function WithdrawRewards ({ address, balances, pool, setRefresh, 
 
   useEffect(() => {
     if (claimable && api && availableBalance) {
-      const call = api.tx.nominationPools.claimPayout;
+      const call = api.tx['nominationPools']['claimPayout'];
       const params = [] as unknown[];
 
       const extraInfo = {

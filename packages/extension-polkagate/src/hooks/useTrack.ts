@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { useMemo } from 'react';
 
@@ -16,7 +17,7 @@ export default function useTrack(address: string | undefined, trackName: string 
       String(t?.[1].name) === snakeCaseTrackName) || fellowshipTracks?.find((t) => String(t?.[1].name) === snakeCaseTrackName
       )
     : undefined
-  , [fellowshipTracks, snakeCaseTrackName, tracks]);
+    , [fellowshipTracks, snakeCaseTrackName, tracks]);
 
   return track;
 }

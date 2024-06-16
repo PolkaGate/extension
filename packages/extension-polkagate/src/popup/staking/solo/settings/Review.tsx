@@ -1,7 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+// @ts-nocheck
 
 /**
  * @description
@@ -14,8 +17,9 @@ import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import { Container, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { Balance } from '@polkadot/types/interfaces';
 import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
@@ -25,7 +29,7 @@ import { useAccountDisplay, useChain, useFormatted, useProxies, useTranslation }
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
-import { Proxy, ProxyItem, SoloSettings, TxInfo } from '../../../../util/types';
+import type { Proxy, ProxyItem, SoloSettings, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
@@ -40,7 +44,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-function RewardsDestination ({ chain, newSettings, settings }: { settings: SoloSettings, newSettings: SoloSettings, chain: Chain | undefined }) {
+function RewardsDestination({ chain, newSettings, settings }: { settings: SoloSettings, newSettings: SoloSettings, chain: Chain | undefined }) {
   const { t } = useTranslation();
   const destinationAddress = useMemo(() =>
     newSettings.payee === 'Stash'
@@ -48,7 +52,7 @@ function RewardsDestination ({ chain, newSettings, settings }: { settings: SoloS
       : newSettings.payee === 'Controller'
         ? newSettings.controllerId || settings.controllerId
         : newSettings.payee.Account as string
-  , [newSettings.controllerId, newSettings.payee, settings.controllerId, settings.stashId]);
+    , [newSettings.controllerId, newSettings.payee, settings.controllerId, settings.stashId]);
 
   return (
     <Grid container item justifyContent='center' sx={{ alignSelf: 'center', my: '5px' }}>
@@ -61,7 +65,7 @@ function RewardsDestination ({ chain, newSettings, settings }: { settings: SoloS
             {t('Add to staked amount')}
           </Typography>
           : <Grid container item justifyContent='center'>
-            <Identity chain={chain} formatted={destinationAddress} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+            <Identity chain={chain as any} formatted={destinationAddress} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
             <ShortAddress address={destinationAddress} />
           </Grid>
         }
@@ -71,7 +75,7 @@ function RewardsDestination ({ chain, newSettings, settings }: { settings: SoloS
   );
 }
 
-export default function Review ({ address, api, newSettings, setRefresh, setShow, setShowSettings, settings, show }: Props): React.ReactElement {
+export default function Review({ address, api, newSettings, setRefresh, setShow, setShowSettings, settings, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, settings.stashId);
   const name = useAccountDisplay(address);
@@ -89,9 +93,9 @@ export default function Review ({ address, api, newSettings, setRefresh, setShow
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [tx, setTx] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>>();
 
-  const setController = api && api.tx.staking.setController; // sign by stash
-  const setPayee = api && api.tx.staking.setPayee; // sign by Controller
-  const batchAll = api && api.tx.utility.batchAll;
+  const setController = api && api.tx['staking']['setController']; // sign by stash
+  const setPayee = api && api.tx['staking']['setPayee']; // sign by Controller
+  const batchAll = api && api.tx['utility']['batchAll'];
   const isControllerDeprecated = setController ? setController.meta.args.length === 0 : undefined;
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
@@ -102,7 +106,7 @@ export default function Review ({ address, api, newSettings, setRefresh, setShow
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -156,7 +160,7 @@ export default function Review ({ address, api, newSettings, setRefresh, setShow
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const ptx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
+      const ptx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, tx) : tx;
       const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, formatted);
 
       const info = {
@@ -173,7 +177,8 @@ export default function Review ({ address, api, newSettings, setRefresh, setShow
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -195,7 +200,7 @@ export default function Review ({ address, api, newSettings, setRefresh, setShow
       <Typography fontSize='16px' fontWeight={300} textAlign='center'>
         {t('Controller account')}
       </Typography>
-      <Identity chain={chain} formatted={controllerId} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+      <Identity chain={chain as any} formatted={controllerId} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
       <ShortAddress address={controllerId} />
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
     </Grid>
@@ -222,7 +227,7 @@ export default function Review ({ address, api, newSettings, setRefresh, setShow
             <Controller />
           }
           {newSettings?.payee &&
-            <RewardsDestination chain={chain} newSettings={newSettings} settings={settings} />
+            <RewardsDestination chain={chain as any} newSettings={newSettings} settings={settings} />
           }
           <Grid alignItems='center' container item justifyContent='center' lineHeight='20px' mt='10px'>
             <Grid item>

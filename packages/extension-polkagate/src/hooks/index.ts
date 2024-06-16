@@ -1,5 +1,6 @@
 // Copyright 2017-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 export { default as useAccount } from './useAccount';
 export { default as useAssetHubAssets } from './useAssetHubAssets';

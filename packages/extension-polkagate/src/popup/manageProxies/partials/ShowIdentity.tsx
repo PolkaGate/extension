@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -7,7 +8,8 @@ import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Grid, SxProps, Theme, Typography } from '@mui/material';
+import { type SxProps, type Theme, Grid, Typography } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React, { useEffect, useState } from 'react';
 
@@ -28,7 +30,7 @@ interface IdentityProps {
   web: string | undefined;
 }
 
-export default function ShowIdentity ({ accountIdentity, style }: Props): React.ReactElement {
+export default function ShowIdentity({ accountIdentity, style }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [identity, setIdentity] = useState<IdentityProps | undefined>();

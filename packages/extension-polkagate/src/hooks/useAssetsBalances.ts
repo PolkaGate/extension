@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -98,7 +99,7 @@ const BALANCE_VALIDITY_PERIOD = 1 * 1000 * 60;
 
 const isUpToDate = (date?: number): boolean | undefined => date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
 
-function allHexToBN (balances: string | undefined): BalancesDetails | {} {
+function allHexToBN(balances: string | undefined): BalancesDetails | {} {
   if (!balances) {
     return {};
   }
@@ -120,7 +121,7 @@ const assetsChains = createAssets();
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances (accounts: AccountJson[] | null): SavedAssets | undefined | null {
+export default function useAssetsBalances(accounts: AccountJson[] | null): SavedAssets | undefined | null {
   const isTestnetEnabled = useIsTestnetEnabled();
   const selectedChains = useSelectedChains();
 

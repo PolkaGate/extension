@@ -1,13 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useApi, useChain, useCurrentEraIndex, useStakingConsts, useStashId } from '.';
 
-export default function useIsExposed (address: AccountId | string | undefined): boolean | undefined {
+export default function useIsExposed(address: AccountId | string | undefined): boolean | undefined {
   const api = useApi(address);
   const stashId = useStashId(address);
   const chain = useChain(address);

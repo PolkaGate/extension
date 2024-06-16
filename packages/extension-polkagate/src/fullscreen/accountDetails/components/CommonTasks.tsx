@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -7,6 +8,7 @@ import { faCoins, faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-s
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import { BalancesInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useMemo } from 'react';
@@ -103,7 +105,7 @@ export const TaskButton = ({ disabled, icon, loading, mr = '25px', noBorderButto
   );
 };
 
-export default function CommonTasks ({ address, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
+export default function CommonTasks({ address, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

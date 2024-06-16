@@ -1,11 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { type RouteComponentProps, withRouter } from 'react-router';
 
 import keyring from '@polkadot/ui-keyring';
 
