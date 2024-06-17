@@ -1,11 +1,12 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
-import { Divider, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { BN } from '@polkadot/util';

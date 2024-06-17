@@ -1,21 +1,20 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Theme } from '@mui/material';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
+import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
-
-import { Theme } from '@mui/material';
+import type { SavedMetaData, TransactionDetail } from './types';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
-import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { BLOCK_RATE, FLOATING_POINT_DIGIT, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS } from './constants';
-import { AccountsBalanceType, SavedMetaData, TransactionDetail } from './types';
+import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS } from './constants';
 
 interface Meta {
   docs: Text[];
@@ -23,7 +22,7 @@ interface Meta {
 
 export const upperCaseFirstChar = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
-export function isValidAddress (_address: string | undefined): boolean {
+export function isValidAddress(_address: string | undefined): boolean {
   try {
     encodeAddress(
       isHex(_address)
@@ -53,27 +52,6 @@ export function fixFloatingPoint(_number: number | string, decimalDigit = FLOATI
   const fractionalDigits = sNumber.slice(dotIndex, dotIndex + decimalDigit + 1);
 
   return integerDigits + fractionalDigits;
-}
-
-export function balanceToHuman(_balance: AccountsBalanceType | null, _type: string, decimalDigits?: number, commify?: boolean): string {
-  if (!_balance || !_balance.balanceInfo) {
-    return '';
-  }
-
-  const balance = _balance.balanceInfo;
-
-  switch (_type.toLowerCase()) {
-    case 'total':
-      return amountToHuman(String(balance.total), balance.decimals, decimalDigits, commify);
-    case 'available':
-      return amountToHuman(String(balance.available), balance.decimals, decimalDigits, commify);
-    case 'reserved':
-      return amountToHuman(String(balance.reserved), balance.decimals, decimalDigits, commify);
-    default:
-      console.log('_type is unknown in balanceToHuman!');
-
-      return '';
-  }
 }
 
 export const toHuman = (api: ApiPromise, value: unknown) => api.createType('Balance', value).toHuman();
@@ -120,7 +98,7 @@ export function getFormattedAddress(_address: string | null | undefined, _chain:
   return encodeAddress(publicKey, prefix);
 }
 
-export function getSubstrateAddress(address: AccountId | string | undefined): string | undefined {
+export function getSubstrateAddress(address: AccountId | string | null | undefined): string | undefined {
   if (!address) {
     return undefined;
   }
@@ -194,7 +172,13 @@ export function getTransactionHistoryFromLocalStorage(
   const chainName = chain ? sanitizeChainName(chain.name) : _chainName;
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const transactionHistoryFromLocalStorage: SavedMetaData = account?.history ? JSON.parse(String(account.history)) : null;
+  let transactionHistoryFromLocalStorage: SavedMetaData | null= null;
+  try {
+    transactionHistoryFromLocalStorage = account?.['history'] ? JSON.parse(String(account['history'])) : null;
+  } catch (error) {
+    console.error('Failed to parse transaction history:', error);
+  }
+
 
   if (transactionHistoryFromLocalStorage) {
     if (transactionHistoryFromLocalStorage.chainName === chainName) {
@@ -214,7 +198,7 @@ export const getWebsiteFavicon = (url: string | undefined): string => {
   return 'https://s2.googleusercontent.com/s2/favicons?domain=' + url;
 };
 
-export function remainingTime (blocks: number, noMinutes?: boolean): string {
+export function remainingTime(blocks: number, noMinutes?: boolean): string {
   let mins = Math.floor(blocks * BLOCK_RATE / 60);
 
   if (!mins) {
@@ -322,9 +306,9 @@ export const isEqual = (a1: any[] | null, a2: any[] | null): boolean => {
 };
 
 export function saveAsHistory(formatted: string, info: TransactionDetail) {
-  chrome.storage.local.get('history', (res: { [key: string]: TransactionDetail[] }) => {
-    const k = `${formatted}`;
-    const last = res?.history ?? {};
+  chrome.storage.local.get('history', (res) => {
+    const k = `${formatted}` as any;
+    const last = (res?.['history'] ?? {}) as unknown as { [key: string]: TransactionDetail[] };
 
     if (last[k]) {
       last[k].push(info);
@@ -339,11 +323,12 @@ export function saveAsHistory(formatted: string, info: TransactionDetail) {
 
 export async function getHistoryFromStorage(formatted: string): Promise<TransactionDetail[] | undefined> {
   return new Promise((resolve) => {
-    chrome.storage.local.get('history', (res: { [key: string]: TransactionDetail[] }) => {
-      const k = `${formatted}`;
-      const last = res?.history;
+    chrome.storage.local.get('history', (res) => {
+      const k = `${formatted}` as any;
+      const last = (res?.['history'] ?? {}) as unknown as { [key: string]: TransactionDetail[] };
 
-      resolve(last && last[k]);
+
+      resolve(last?.[k]);
     });
   });
 }
@@ -395,3 +380,5 @@ export const truncString32Bytes = (input: string | null | undefined): string | n
 };
 
 export const isOnRelayChain = (genesisHash?: string) => RELAY_CHAINS_GENESISHASH.includes(genesisHash || '');
+
+export const isOnAssetHub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');

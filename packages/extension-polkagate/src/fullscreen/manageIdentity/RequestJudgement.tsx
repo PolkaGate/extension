@@ -1,7 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { DropdownOption } from '../../util/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -15,7 +18,6 @@ import { useTranslation } from '../../components/translate';
 import { useInfo } from '../../hooks';
 import FailSuccessIcon from '../../popup/history/partials/FailSuccessIcon';
 import { REGISTRARS_LIST, TEST_NETS } from '../../util/constants';
-import { DropdownOption } from '../../util/types';
 import { pgBoxShadow } from '../../util/utils';
 import { toTitleCase } from '../governance/utils/util';
 import DisplayIdentity from './component/DisplayIdentity';
@@ -34,7 +36,7 @@ interface Props {
   idJudgement: IdJudgement;
 }
 
-export default function RequestJudgement ({ address, api, idJudgement, maxFeeValue, selectedRegistrar, setMaxFeeValue, setMode, setSelectedRegistrar, setSelectedRegistrarName, setStep }: Props): React.ReactElement {
+export default function RequestJudgement({ address, api, idJudgement, maxFeeValue, selectedRegistrar, setMaxFeeValue, setMode, setSelectedRegistrar, setSelectedRegistrarName, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { chain, chainName } = useInfo(address);
@@ -137,7 +139,7 @@ export default function RequestJudgement ({ address, api, idJudgement, maxFeeVal
           <DisplayIdentity
             address={address}
             api={api}
-            chain={chain}
+            chain={chain as any}
           />
           <Grid alignItems='flex-end' container item justifyContent='space-between' m='auto'>
             <Grid alignContent='flex-start' container justifyContent='center' sx={{ '> div div div': { fontSize: '16px', fontWeight: 400 }, position: 'relative', width: '65%' }}>

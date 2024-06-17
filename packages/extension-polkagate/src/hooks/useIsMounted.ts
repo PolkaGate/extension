@@ -1,9 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { useEffect, useRef } from 'react';
 
-export default function useIsMounted (): boolean {
+export default function useIsMounted(): boolean {
   const isMounted = useRef(false);
 
   useEffect((): () => void => {

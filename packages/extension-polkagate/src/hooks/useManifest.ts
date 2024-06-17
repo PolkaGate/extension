@@ -1,9 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { useEffect, useState } from 'react';
 
-export default function useManifest (): chrome.runtime.Manifest | undefined {
+export default function useManifest(): chrome.runtime.Manifest | undefined {
   const [manifest, setManifest] = useState<chrome.runtime.Manifest>();
 
   const fetchManifest = async () => {

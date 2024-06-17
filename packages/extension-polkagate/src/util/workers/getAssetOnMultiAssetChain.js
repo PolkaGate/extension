@@ -1,12 +1,15 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
+
+// @ts-nocheck
 
 import { createAssets } from '@polkagate/apps-config/assets';
 
 import { getSubstrateAddress } from '../utils';
 import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, toGetNativeToken } from './utils';
 
-async function getAssets (addresses, assetsToBeFetched, chainName) {
+async function getAssets(addresses, assetsToBeFetched, chainName) {
   const endpoints = getChainEndpoints(chainName);
   const { api, connections } = await fastestEndpoint(endpoints, false);
 

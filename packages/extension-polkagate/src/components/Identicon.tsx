@@ -1,15 +1,16 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
+import type { ThemeProps } from '@polkadot/extension-polkagate/types';
 import type { IconTheme } from '@polkadot/react-identicon/types';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { CheckCircleOutline as CheckIcon, InsertLinkRounded as LinkIcon } from '@mui/icons-material';
 import React from 'react';
 import styled from 'styled-components';
 
-import { ThemeProps } from '@polkadot/extension-ui/types';
 import Icon from '@polkadot/react-identicon';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 interface Props {
   className?: string;

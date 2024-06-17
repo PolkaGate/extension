@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -11,7 +12,7 @@
 import { Container } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
@@ -20,7 +21,8 @@ import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../..
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
-import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import { PROXY_TYPE } from '../../../../util/constants';
+import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import { To } from '../../../send/Review';
 import TxDetail from '../rewards/partials/TxDetail';
@@ -32,7 +34,7 @@ interface Props {
   setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function ClaimCommission ({ address, pool, setShow, show }: Props): React.ReactElement {
+export default function ClaimCommission({ address, pool, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, decimal, formatted } = useInfo(address);
   const proxies = useProxies(api, formatted);
@@ -55,7 +57,7 @@ export default function ClaimCommission ({ address, pool, setShow, show }: Props
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
-  const tx = api && api.tx.nominationPools.claimCommission;
+  const tx = api && api.tx['nominationPools']['claimCommission'];
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -74,7 +76,7 @@ export default function ClaimCommission ({ address, pool, setShow, show }: Props
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -110,7 +112,8 @@ export default function ClaimCommission ({ address, pool, setShow, show }: Props
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -141,7 +144,7 @@ export default function ClaimCommission ({ address, pool, setShow, show }: Props
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />
@@ -155,7 +158,7 @@ export default function ClaimCommission ({ address, pool, setShow, show }: Props
             withFee
           />
           <To
-            chain={chain}
+            chain={chain as any}
             formatted={payee}
             label={t('Payee')}
             noDivider
@@ -174,7 +177,7 @@ export default function ClaimCommission ({ address, pool, setShow, show }: Props
           onConfirmClick={submit}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+          proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

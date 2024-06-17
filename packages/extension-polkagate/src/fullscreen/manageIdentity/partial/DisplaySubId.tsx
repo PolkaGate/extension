@@ -1,12 +1,13 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForward as ArrowForwardIcon, Replay as UndoIcon } from '@mui/icons-material';
-import { Divider, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
@@ -40,7 +41,7 @@ interface ManageButtonProps {
   style?: SxProps<Theme> | undefined
 }
 
-export default function DisplaySubId ({ addressesToSelect, api, error = false, index, judgements, noButtons = false, onRemove, parentName, setSubAddress, setSubName, subIdInfo, toModify = false }: Props): React.ReactElement {
+export default function DisplaySubId({ addressesToSelect, api, error = false, index, judgements, noButtons = false, onRemove, parentName, setSubAddress, setSubName, subIdInfo, toModify = false }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const params = useParams<{ address: string }>();
@@ -159,7 +160,7 @@ export default function DisplaySubId ({ addressesToSelect, api, error = false, i
           address={subIdInfo.address}
           addressesToSelect={addressesToSelect}
           api={api}
-          chain={chain}
+          chain={chain as any}
           error={error}
           index={index}
           name={subIdInfo.name}

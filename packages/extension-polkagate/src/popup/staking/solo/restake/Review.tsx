@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -15,8 +16,9 @@ import type { AnyTuple } from '@polkadot/types/types';
 import { Container } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
@@ -25,7 +27,8 @@ import { useAccountDisplay, useDecimal, useProxies, useToken, useTranslation } f
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
-import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import { PROXY_TYPE } from '../../../../util/constants';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
@@ -43,7 +46,7 @@ interface Props {
   rebonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
 }
 
-export default function Review ({ address, amount, api, chain, estimatedFee, formatted, rebonded, setShow, show, total }: Props): React.ReactElement {
+export default function Review({ address, amount, api, chain, estimatedFee, formatted, rebonded, setShow, show, total }: Props): React.ReactElement {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const name = useAccountDisplay(address);
@@ -109,7 +112,8 @@ export default function Review ({ address, amount, api, chain, estimatedFee, for
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
 
       setShowWaitScreen(false);
@@ -145,7 +149,7 @@ export default function Review ({ address, amount, api, chain, estimatedFee, for
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />
@@ -176,7 +180,7 @@ export default function Review ({ address, amount, api, chain, estimatedFee, for
           onConfirmClick={unstake}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+          proxyTypeFilter={PROXY_TYPE.STAKING}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

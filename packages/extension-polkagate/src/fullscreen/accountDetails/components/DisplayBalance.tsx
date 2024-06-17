@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -6,16 +6,12 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Collapse, Divider, Grid, IconButton, Skeleton, SxProps, Theme, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
+import React from 'react';
 
-import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
-import { Reserved } from '@polkadot/extension-polkagate/src/hooks/useReservedDetails';
-import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
-import { FormatPrice, ShowBalance, ShowValue } from '../../../components';
-import { toTitleCase } from '../../governance/utils/util';
+import { FormatPrice, ShowBalance } from '../../../components';
 
 interface Props {
   amount: BN | Balance | undefined;
@@ -25,91 +21,11 @@ interface Props {
   price: number | undefined;
   onClick?: () => void;
   disabled?: boolean;
-  reservedDetails?: Reserved | null | undefined
-  isOnRelayChain?: boolean;
+  openCollapse?: boolean;
 }
 
-interface ReservedDetailsType {
-  showReservedDetails: boolean;
-  reservedDetails: Reserved;
-}
-
-interface WaitForReservedProps {
-  rows?: number;
-  skeletonHeight?: number;
-  skeletonWidth?: number;
-  style?: SxProps<Theme> | undefined;
-}
-
-function WaitForReserved ({ rows = 2, skeletonHeight = 20, skeletonWidth = 60, style }: WaitForReservedProps): React.ReactElement<Props> {
-  return (
-    <Grid container justifyContent='center' sx={{ ...style }}>
-      {Array.from({ length: rows }).map((_, index) => (
-        <Grid container key={index.toString()}>
-          <Grid item xs={4}>
-            <Skeleton
-              animation='wave'
-              height={skeletonHeight}
-              sx={{ my: '5px', transform: 'none', width: `${skeletonWidth}%` }}
-            />
-          </Grid>
-          <Grid item xs={4}>
-            <Skeleton
-              animation='wave'
-              height={skeletonHeight}
-              sx={{ my: '5px', transform: 'none', width: `${skeletonWidth}%` }}
-            />
-          </Grid>
-        </Grid>
-      ))}
-    </Grid>
-  );
-}
-
-const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetailsType) => {
-  const { t } = useTranslation();
-
-  return (
-    <Collapse in={showReservedDetails} sx={{ width: '100%' }}>
-      <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'divider', fontSize: '16px', mt: '10px', mx: '10%', width: '90%' }}>
-        <Typography fontSize='16px' fontWeight={500}>
-          {t('Reasons')}
-        </Typography>
-        {Object.entries(reservedDetails)?.length
-          ? <Grid container direction='column' item>
-            {Object.entries(reservedDetails)?.map(([key, value], index) => (
-              <Grid container item key={index} sx={{ fontSize: '16px' }}>
-                <Grid item sx={{ fontWeight: 300 }} xs={4}>
-                  {toTitleCase(key)}
-                </Grid>
-                <Grid fontWeight={400} item>
-                  <ShowValue height={20} value={value?.toHuman()} />
-                </Grid>
-              </Grid>
-            ))
-            }
-          </Grid>
-          : <WaitForReserved rows={2} />
-        }
-      </Grid>
-    </Collapse>
-  );
-};
-
-export default function DisplayBalance ({ amount, decimal, disabled, isOnRelayChain, onClick, price, reservedDetails, title, token }: Props): React.ReactElement {
+export default function DisplayBalance({ amount, decimal, disabled, onClick, price, openCollapse, title, token }: Props): React.ReactElement {
   const theme = useTheme();
-  const { t } = useTranslation();
-  const isReserved = title === t('Reserved');
-
-  const [showReservedDetails, setShowReservedDetails] = useState<boolean>(false);
-
-  const toggleShowReservedDetails = useCallback(() => {
-    reservedDetails && !amount?.isZero() && setShowReservedDetails(!showReservedDetails);
-  }, [amount, reservedDetails, showReservedDetails]);
-
-  useEffect(() => {
-    setShowReservedDetails(false); // to reset collapsed area on chain change
-  }, [token]);
 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px 40px' }}>
@@ -138,34 +54,22 @@ export default function DisplayBalance ({ amount, decimal, disabled, isOnRelayCh
         {onClick &&
           <Grid item m='auto' pl='8px'>
             <IconButton
-              onClick={disabled ? noop : onClick}
+              disabled={disabled}
+              onClick={onClick}
               sx={{ p: '8px' }}
             >
               <ArrowForwardIosRoundedIcon
                 sx={{
-                  color: disabled ? 'text,disabled' : 'secondary.light',
+                  color: disabled ? 'action.disabledBackground' : 'secondary.light',
                   fontSize: '24px',
-                  stroke: `${disabled ? theme.palette.text.disabled : theme.palette.secondary.light}`,
-                  strokeWidth: 1.5
-                }}
-              />
-            </IconButton>
-          </Grid>
-        }
-        {isReserved && isOnRelayChain &&
-          <Grid item m='auto' pl='8px'>
-            <IconButton
-              sx={{ p: '8px' }}
-            >
-              <ArrowForwardIosRoundedIcon
-                onClick={toggleShowReservedDetails}
-                sx={{
-                  color: amount?.isZero() ? 'text.disabled' : 'secondary.light',
-                  cursor: amount?.isZero() ? 'unset' : 'pointer',
-                  fontSize: '26px',
-                  stroke: amount?.isZero() ? theme.palette.text.disabled : theme.palette.secondary.light,
-                  strokeWidth: 1,
-                  transform: !amount?.isZero() && showReservedDetails ? 'rotate(-90deg)' : 'rotate(90deg)',
+                  stroke: `${disabled ? theme.palette.action.disabledBackground : theme.palette.secondary.light}`,
+                  strokeWidth: 1.5,
+                  transform:
+                    openCollapse !== undefined
+                      ? openCollapse
+                        ? 'rotate(-90deg)'
+                        : 'rotate(90deg)'
+                      : 'none',
                   transitionDuration: '0.3s',
                   transitionProperty: 'transform'
                 }}
@@ -174,12 +78,6 @@ export default function DisplayBalance ({ amount, decimal, disabled, isOnRelayCh
           </Grid>
         }
       </Grid>
-      {reservedDetails &&
-        <ReservedDetails
-          reservedDetails={reservedDetails}
-          showReservedDetails={showReservedDetails}
-        />
-      }
     </Grid>
   );
 }

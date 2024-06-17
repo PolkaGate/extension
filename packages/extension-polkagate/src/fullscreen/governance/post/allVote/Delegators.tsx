@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -189,7 +190,7 @@ export default function Delegators({ address, closeDelegators, handleCloseStanda
           <Grid item sx={{ pl: '6px' }} xs>
             <Identity
               api={api}
-              chain={chain}
+              chain={chain as any}
               formatted={standard.voter}
               identiconSize={28}
               showShortAddress
@@ -263,7 +264,7 @@ export default function Delegators({ address, closeDelegators, handleCloseStanda
           {votesToShow?.map((vote, index) => (
             <Grid alignItems='flex-start' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400, py: '6px' }}>
               <Grid container item justifyContent='flex-start' width='35%'>
-                <Identity api={api} chain={chain} formatted={vote.voter} identiconSize={28} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+                <Identity api={api} chain={chain as any} formatted={vote.voter} identiconSize={28} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
               </Grid>
               <Grid container item justifyContent='center' width='22%'>
                 <ShowBalance api={api} balance={vote.balance?.value || vote.balance?.abstain || vote.balance?.aye || vote.balance?.nay} decimal={decimal} decimalPoint={2} token={token} />

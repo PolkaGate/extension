@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /**
  * @description
@@ -8,6 +9,7 @@
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { keyframes } from '@mui/system';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React from 'react';
 

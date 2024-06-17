@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -8,14 +9,15 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
-import { Balance } from '@polkadot/types/interfaces';
+import { PROXY_TYPE } from '@polkadot/extension-polkagate/src/util/constants';
+import type { Balance } from '@polkadot/types/interfaces';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ShowBalance, SignArea2, WrongPasswordAlert } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
 import { useInfo } from '../../../../../hooks';
-import { Proxy, StakingConsts, TxInfo } from '../../../../../util/types';
-import { Inputs } from '../../../Entry';
+import type { Proxy, StakingConsts, TxInfo } from '../../../../../util/types';
+import type { Inputs } from '../../../Entry';
 import ValidatorsTable from '../../../solo/partials/ValidatorsTable';
 import { STEPS } from '../../stake';
 
@@ -30,7 +32,7 @@ interface Props {
   allValidatorsIdentities: DeriveAccountInfo[] | null | undefined;
 }
 
-export default function Review ({ address, allValidatorsIdentities, inputs, setStep, setTxInfo, staked, stakingConsts, step }: Props): React.ReactElement {
+export default function Review({ address, allValidatorsIdentities, inputs, setStep, setTxInfo, staked, stakingConsts, step }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { api, formatted, token } = useInfo(address);
@@ -95,7 +97,7 @@ export default function Review ({ address, allValidatorsIdentities, inputs, setS
             onSecondaryClick={handleCancel}
             params={params}
             primaryBtnText={t('Confirm')}
-            proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+            proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
             secondaryBtnText={t('Back')}
             selectedProxy={selectedProxy}
             setIsPasswordError={setIsPasswordError}

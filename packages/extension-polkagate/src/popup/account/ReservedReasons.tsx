@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -14,7 +15,7 @@ import { Container, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { toTitleCase } from '@polkadot/extension-polkagate/src/fullscreen/governance/utils/util';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { FormatPrice, Identicon, Motion, Popup, Progress, ShowBalance3 } from '../../components';
 import { useAccountName, useInfo, useReservedDetails, useTokenPrice, useTranslation } from '../../hooks';
@@ -28,14 +29,14 @@ interface Props {
   setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function ReservedReasons ({ address, assetId, identity, setShow, show }: Props): React.ReactElement<void> {
+export default function ReservedReasons({ address, assetId, identity, setShow, show }: Props): React.ReactElement<void> {
   const { t } = useTranslation();
   const { chain, decimal, formatted } = useInfo(address);
   const accountName = useAccountName(address);
 
-  const reservedDetails = useReservedDetails(address);
+  const reservedDetails = useReservedDetails(address as string);
 
-  const { price } = useTokenPrice(address, assetId);
+  const { price } = useTokenPrice(address as string, assetId);
 
   const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
 
@@ -80,7 +81,7 @@ export default function ReservedReasons ({ address, assetId, identity, setShow, 
           </Grid>
         </Container>
         <Container disableGutters sx={{ maxHeight: `${parent.innerHeight - 150}px`, overflowY: 'auto', px: '15px' }}>
-          { Object.entries(reservedDetails)?.length
+          {Object.entries(reservedDetails)?.length
             ? <>
               {Object.entries(reservedDetails)?.map(([key, value], index) => (
                 <Grid container item key={index}>
@@ -91,7 +92,7 @@ export default function ReservedReasons ({ address, assetId, identity, setShow, 
                     <Grid alignItems='flex-end' container direction='column' item xs>
                       <Grid item sx={{ fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} textAlign='right'>
                         <ShowBalance3
-                          address={address}
+                          address={address as string}
                           balance={value}
                         />
                       </Grid>

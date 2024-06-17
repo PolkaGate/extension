@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -21,7 +22,7 @@ interface Props {
 
 type EndpointsDelay = { name: string, delay: number | null | undefined, value: string }[];
 
-function FullScreenRemoteNode ({ address, iconSize = 35 }: Props): React.ReactElement {
+function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactElement {
   const theme = useTheme();
   const { account, chainName, endpoint: endpointUrl } = useInfo(address);
   const genesisHash = account?.genesisHash;

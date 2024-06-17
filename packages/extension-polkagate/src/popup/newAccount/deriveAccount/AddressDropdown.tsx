@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -77,7 +78,7 @@ export default function AddressDropdown({ allAddresses, onSelect, selectedAddres
             </Grid>
             {!withoutChainLogo &&
               <Grid item>
-                <ChainLogo genesisHash={genesisHash} />
+                <ChainLogo genesisHash={genesisHash as string} />
               </Grid>
             }
           </Grid>

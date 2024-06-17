@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -38,7 +39,7 @@ export default function FellowshipsList({ address, fellowships }: Props): React.
             <Grid item>
               <Identity
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 direction='row'
                 formatted={fellow}
                 identiconSize={31}

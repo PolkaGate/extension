@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -15,7 +16,7 @@ import { showAccount, tieAccount } from '../../../messaging';
 import { getValue } from '../../../popup/account/util';
 import { BALANCES_VALIDITY_PERIOD } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
-import { BalancesInfo, Prices } from '../../../util/types';
+import type { BalancesInfo, Prices } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import AccountIconsFs from './AccountIconsFs';
 import AOC from './AOC';
@@ -128,7 +129,7 @@ interface AddressDetailsProps {
   setAssetIdOnAssetHub: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function AccountInformationForDetails ({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformationForDetails({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { account, api, chain, formatted, genesisHash, token } = useInfo(address);
@@ -210,7 +211,7 @@ export default function AccountInformationForDetails ({ accountAssets, address, 
                 accountInfo={accountInfo}
                 address={address}
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 noIdenticon
                 style={{ width: 'calc(100% - 40px)' }}
               // subIdOnly

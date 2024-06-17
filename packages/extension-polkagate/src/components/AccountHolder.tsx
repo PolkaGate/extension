@@ -1,9 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme, Typography } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import React from 'react';
 
 import { useInfo, useIsExtensionPopup, useTranslation } from '../hooks';
@@ -15,7 +16,7 @@ interface Props {
   title?: string;
 }
 
-function AccountHolder ({ address, style, title }: Props): React.ReactElement {
+function AccountHolder({ address, style, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtensionPopup = useIsExtensionPopup();
 

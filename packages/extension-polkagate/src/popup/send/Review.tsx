@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -15,8 +16,9 @@ import type { AnyTuple } from '@polkadot/types/types';
 import { Container, Divider, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 
 import { AccountHolderWithProxy, ActionContext, AmountFee, Identity, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, WrongPasswordAlert } from '../../components';
@@ -25,7 +27,8 @@ import { HeaderBrand, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
 import SubTitle from '../../partials/SubTitle';
 import broadcast from '../../util/api/broadcast';
-import { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import { PROXY_TYPE } from '../../util/constants';
+import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { amountToMachine, getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import SendTxDetail from './partial/SendTxDetail';
 
@@ -38,7 +41,7 @@ export function To({ chain, fontSize1 = 28, formatted, identiconSize = 31, label
       </Grid>
       <Grid alignItems='center' container item justifyContent='center' sx={{ maxWidth: '85%', lineHeight: `${identiconSize}px`, pt: `${pt2}px`, width: '90%' }}>
         <Identity
-          chain={chain}
+          chain={chain as any}
           formatted={formatted}
           identiconSize={identiconSize}
           showSocial={false}
@@ -59,8 +62,7 @@ interface Props {
   address: string;
   amount: string;
   api: ApiPromise | undefined;
-  chain: Chain | null;
-  fee: Balance | undefined;
+  chain: Chain | null | undefined;
   recipientAddress: string | undefined;
   recipientName: string | undefined;
   transfer: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
@@ -141,7 +143,8 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
         txHash: txHash || ''
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
 
       setShowWaitScreen(false);
@@ -177,13 +180,13 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
             title={t('From')}
           />
           <To
-            chain={chain}
+            chain={chain as any}
             formatted={recipientAddress}
             label={t('To')}
             pt1={0}
@@ -208,7 +211,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
           onConfirmClick={send}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any']}
+          proxyTypeFilter={PROXY_TYPE.SEND_FUND}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

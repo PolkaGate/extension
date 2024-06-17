@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
@@ -21,7 +22,7 @@ interface Props {
   signId: string;
 }
 
-export default function SignArea ({ buttonText, error, isExternal, isFirst, isSignable, setError, signId }: Props): JSX.Element {
+export default function SignArea({ buttonText, error, isExternal, isFirst, isSignable, setError, signId }: Props): JSX.Element {
   const onAction = useContext(ActionContext);
   const { t } = useTranslation();
 

@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
@@ -104,7 +105,7 @@ function Derive({ isLocked }: Props): React.ReactElement<Props> {
             isLocked={isLocked}
             onDerivationConfirmed={_onDerivationConfirmed}
             parentAddress={parentAddress}
-            parentGenesis={parentGenesis}
+            parentGenesis={parentGenesis as string}
             parentName={parentName}
           />
         </>

@@ -3,6 +3,10 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ApiPromise } from '@polkadot/api';
+import type { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
+import type { Inputs } from '../Entry';
+
 import { MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -15,11 +19,9 @@ import useTranslation from '../../../hooks/useTranslation';
 import { ThroughProxy } from '../../../partials';
 import ShowPool from '../../../popup/staking/partial/ShowPool';
 import RewardsDestination from '../../../popup/staking/solo/stake/partials/RewardDestination';
-import { SYSTEM_SUGGESTION_TEXT } from '../../../util/constants';
-import { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
+import { PROXY_TYPE, SYSTEM_SUGGESTION_TEXT } from '../../../util/constants';
 import { amountToMachine, pgBoxShadow } from '../../../util/utils';
 import DisplayValue from '../../governance/post/castVote/partial/DisplayValue';
-import { Inputs } from '../Entry';
 import { STEPS } from '..';
 
 interface Props {
@@ -55,6 +57,12 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
 
     return undefined;
   }, [estimatedFee, inputs]);
+  
+  const staked = useMemo(() => 
+    inputs?.extraInfo?.['amount'] && balances?.decimal 
+    ? amountToMachine((inputs.extraInfo as any)['amount'], balances.decimal)
+    :undefined
+  , [inputs, balances]);
 
   const handleCancel = useCallback(() => {
     setStep(inputs?.mode || STEPS.INDEX);
@@ -73,7 +81,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
             <Identity
               address={address}
               api={api}
-              chain={chain}
+              chain={chain as any}
               direction='row'
               identiconSize={31}
               showSocial={false}
@@ -84,14 +92,14 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
         </DisplayValue>
         {selectedProxyAddress &&
           <Grid container m='auto' maxWidth='92%'>
-            <ThroughProxy address={selectedProxyAddress} chain={chain} />
+            <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
           </Grid>
         }
         <DisplayValue dividerHeight='1px' title={t('Amount')}>
           <Grid alignItems='center' container item sx={{ height: '42px' }}>
             <ShowBalance
               api={api}
-              balance={inputs?.extraInfo?.amount && balances?.decimal && amountToMachine(inputs.extraInfo.amount, balances.decimal)}
+              balance={staked}
               decimalPoint={4}
             />
           </Grid>
@@ -101,10 +109,10 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
             <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mx: 'auto', my: '5px', width: '170px' }} />
             <ShowPool
               api={api}
-              chain={chain}
+              chain={chain as any}
               label={t('Pool')}
               labelPosition='center'
-              mode='Joining'
+              mode={inputs.pool.bondedPool?.state.toString() === 'Creating' ? 'Creating' : 'Joining'}
               pool={inputs?.pool}
               showInfo
               style={{
@@ -137,7 +145,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
           <Grid alignItems='center' container item sx={{ height: '42px' }}>
             <ShowBalance
               api={api}
-              balance={_extraInfo?.fee}
+              balance={estimatedFee}
               decimalPoint={4}
             />
           </Grid>
@@ -147,12 +155,12 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
         <SignArea2
           address={address}
           call={inputs?.call}
-          extraInfo={_extraInfo}
+          extraInfo={_extraInfo as any}
           isPasswordError={isPasswordError}
           onSecondaryClick={handleCancel}
           params={inputs?.params}
           primaryBtnText={t('Confirm')}
-          proxyTypeFilter={inputs?.pool ? ['Any', 'NonTransfer', 'Staking', 'NominationPools'] : ['Any', 'NonTransfer', 'Staking']} // TODO: nomination pools needs test
+          proxyTypeFilter={inputs?.pool ? PROXY_TYPE.NOMINATION_POOLS : PROXY_TYPE.STAKING}
           secondaryBtnText={t('Cancel')}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
@@ -166,15 +174,15 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
         />
       </Grid>
       {showSelectedValidators && !!inputs?.selectedValidators?.length &&
-          <ShowValidators
-            address={address}
-            api={api}
-            chain={chain}
-            selectedValidators={inputs.selectedValidators}
-            setShowSelectedValidators={setShowSelectedValidators}
-            showSelectedValidators={showSelectedValidators}
-            staked={inputs?.extraInfo?.amount && balances?.decimal && amountToMachine(inputs.extraInfo.amount, balances.decimal)}
-          />
+        <ShowValidators
+          address={address}
+          api={api as ApiPromise}
+          chain={chain as any}
+          selectedValidators={inputs.selectedValidators}
+          setShowSelectedValidators={setShowSelectedValidators}
+          showSelectedValidators={showSelectedValidators}
+          staked={staked}
+        />
       }
     </>
   );

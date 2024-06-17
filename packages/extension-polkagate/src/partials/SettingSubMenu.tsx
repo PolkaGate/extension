@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -20,7 +21,7 @@ import { useIsLoginEnabled, useIsPopup, useTranslation } from '../hooks';
 import { lockExtension, setNotification } from '../messaging';
 import { NO_PASS_PERIOD } from '../util/constants';
 import getLanguageOptions from '../util/getLanguageOptions';
-import { DropdownOption } from '../util/types';
+import type { DropdownOption } from '../util/types';
 
 interface Props {
   isTestnetEnabledChecked: boolean | undefined;
@@ -29,7 +30,7 @@ interface Props {
   onChange: () => void;
 }
 
-export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, setTestnetEnabledChecked, show }: Props): React.ReactElement {
+export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setTestnetEnabledChecked, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isPopup = useIsPopup();

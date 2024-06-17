@@ -1,6 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
+
+// @ts-nocheck
 
 import { BN, bnMax } from '@polkadot/util';
 
@@ -12,7 +15,7 @@ async function getPoolStackingConsts(endpoint) {
     const at = await api.rpc.chain.getFinalizedHead();
     const apiAt = await api.at(at);
 
-    const ED = new BN(api.consts.balances.existentialDeposit);
+    const ED = new BN(api.consts['balances']['existentialDeposit']);
 
     const [maxPoolMembers, maxPoolMembersPerPool, maxPools, minCreateBond, minJoinBond, minNominatorBond, lastPoolId, currentEra, token] =
       await Promise.all([

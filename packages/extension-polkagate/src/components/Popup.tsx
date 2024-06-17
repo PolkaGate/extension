@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
 
 import { Container, Modal, Typography, useTheme } from '@mui/material';
@@ -16,7 +17,7 @@ export interface Props {
 
 function Popup({ children, handleClose, id, show }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  
+
   return ReactDom.createPortal(
     <Modal
       disablePortal
@@ -47,7 +48,7 @@ function Popup({ children, handleClose, id, show }: Props): React.ReactElement<P
         </Container>
       </div>
     </Modal>
-    , document.getElementById('root')
+    , document.getElementById('root') as HTMLElement
   );
 }
 

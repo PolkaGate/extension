@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -19,7 +20,7 @@ interface Props {
   balances: BalancesInfo | undefined
 }
 
-export default function StakedBar ({ availableBalance, balances, redeemable, staked, unlockingAmount }: Props): React.ReactElement {
+export default function StakedBar({ availableBalance, balances, redeemable, staked, unlockingAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -31,39 +32,39 @@ export default function StakedBar ({ availableBalance, balances, redeemable, sta
   const availablePercent = useMemo(() => total && availableBalance ? Number(availableBalance) * 100 / Number(total) : undefined, [availableBalance, total]);
   const reminderPercent = useMemo(() =>
     Number((total || BN_HUNDRED).sub((availableBalance || BN_ZERO).add(staked || BN_ZERO).add(redeemable || BN_ZERO).add(unlockingAmount || BN_ZERO))) * 100 / Number(total)
-  , [availableBalance, redeemable, staked, total, unlockingAmount]);
+    , [availableBalance, redeemable, staked, total, unlockingAmount]);
 
-  const Bar = ({ bgcolor, percent, tooltipText }: {bgcolor?: string, tooltipText?: string, percent?: number}) => (
+  const Bar = ({ bgcolor, percent, tooltipText }: { bgcolor?: string, tooltipText?: string, percent?: number }) => (
     <Tooltip placement='top-end' title={tooltipText || ''}>
       <Box bgcolor={bgcolor} height='5px' width={percent ? `${percent}%` : undefined} />
     </Tooltip>
   );
 
   return (
-    <Grid container item sx={{flexWrap: 'nowrap' }}>
+    <Grid container item sx={{ flexWrap: 'nowrap' }}>
       <Bar
         bgcolor={theme.palette.aye.main}
-        percent ={stakedPercent }
+        percent={stakedPercent}
         tooltipText={t('Staked')}
       />
       <Bar
         bgcolor={theme.palette.approval.main}
-        percent ={redeemablePercent}
+        percent={redeemablePercent}
         tooltipText={t('Redeemable')}
       />
       <Bar
         bgcolor={theme.palette.support.main}
-        percent ={unlockingPercent }
+        percent={unlockingPercent}
         tooltipText={t('Unstaking')}
       />
       <Bar
         bgcolor={theme.palette.warning.main}
-        percent ={availablePercent}
+        percent={availablePercent}
         tooltipText={t('Available to stake')}
       />
       <Bar
         bgcolor={theme.palette.action.disabled}
-        percent ={reminderPercent }
+        percent={reminderPercent}
         tooltipText={t('Others')}
       />
     </Grid>

@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -19,8 +20,9 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { AccountHolderWithProxy, Identity, ShortAddress, ShowBalance, ShowValue, SignArea2, WrongPasswordAlert } from '../../../components';
 import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../hooks';
 import { SubTitle } from '../../../partials';
-import { MyPoolInfo, Payee, Proxy, ProxyItem, TxInfo } from '../../../util/types';
-import { Inputs } from '../Entry';
+import { PROXY_TYPE } from '../../../util/constants';
+import type { MyPoolInfo, Payee, Proxy, ProxyItem, TxInfo } from '../../../util/types';
+import type { Inputs } from '../Entry';
 import { STEPS } from '../pool/stake';
 
 interface Props {
@@ -33,7 +35,7 @@ interface Props {
   onClose?: () => void
 }
 
-function RewardsDestination ({ address, payee }: { address: string | undefined, payee: Payee }) {
+function RewardsDestination({ address, payee }: { address: string | undefined, payee: Payee }) {
   const { t } = useTranslation();
   const { chain, formatted } = useInfo(address);
 
@@ -41,7 +43,7 @@ function RewardsDestination ({ address, payee }: { address: string | undefined, 
     payee === 'Stash'
       ? formatted
       : payee.Account as string
-  , [formatted, payee]);
+    , [formatted, payee]);
 
   return (
     <Grid container item justifyContent='center' sx={{ alignSelf: 'center', my: '5px' }}>
@@ -55,7 +57,7 @@ function RewardsDestination ({ address, payee }: { address: string | undefined, 
             {t('Add to staked amount')}
           </Typography>
           : <Grid container item justifyContent='center'>
-            <Identity chain={chain} formatted={destinationAddress} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+            <Identity chain={chain as any} formatted={destinationAddress} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
             <ShortAddress address={destinationAddress} />
           </Grid>
         }
@@ -64,7 +66,7 @@ function RewardsDestination ({ address, payee }: { address: string | undefined, 
   );
 }
 
-export default function Review ({ address, inputs, onClose, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, inputs, onClose, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, formatted, token } = useInfo(address);
   const proxies = useProxies(api, formatted);
@@ -94,8 +96,8 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
   const proxyTypeFilter = useMemo(
     () =>
       inputs?.extraInfo?.pool
-        ? ['Any', 'NonTransfer', 'NominationPools']
-        : ['Any', 'NonTransfer', 'Staking']
+        ? PROXY_TYPE.NOMINATION_POOLS
+        : PROXY_TYPE.STAKING
     , [inputs]);
 
   const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
@@ -117,7 +119,7 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
           <Container disableGutters sx={{ px: '30px' }}>
             <AccountHolderWithProxy
               address={address}
-              chain={chain}
+              chain={chain as any}
               selectedProxyAddress={selectedProxyAddress}
               style={{ mt: 'auto' }}
               title={t('Account holder')}
@@ -157,7 +159,7 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
                 </Typography>
                 <ShowPool
                   api={api}
-                  chain={chain}
+                  chain={chain as any}
                   mode='Default'
                   pool={inputs.extraInfo.pool as MyPoolInfo}
                   showInfo

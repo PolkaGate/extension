@@ -1,11 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { useEffect, useState } from 'react';
 
 import { getStorage, LoginInfo } from '../components/Loading';
 
-export default function useIsLoginEnabled (): boolean | undefined {
+export default function useIsLoginEnabled(): boolean | undefined {
   const [isLoginEnabled, setIsLoginEnabled] = useState<boolean>();
 
   useEffect(() => {

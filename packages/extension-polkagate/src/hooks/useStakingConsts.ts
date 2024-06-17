@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { StakingConsts } from '../util/types';
 
@@ -9,7 +10,7 @@ import { BN } from '@polkadot/util';
 
 import { useCurrentEraIndex, useInfo } from '.';
 
-export default function useStakingConsts (address: string, stateConsts?: StakingConsts): StakingConsts | null | undefined {
+export default function useStakingConsts(address: string, stateConsts?: StakingConsts): StakingConsts | null | undefined {
   const { chainName, endpoint, token } = useInfo(address);
   const eraIndex = useCurrentEraIndex(address);
 

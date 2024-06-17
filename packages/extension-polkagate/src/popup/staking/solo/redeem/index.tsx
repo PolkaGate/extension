@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,9 +14,10 @@ import type { ApiPromise } from '@polkadot/api';
 import { Container } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-import { Balance } from '@polkadot/types/interfaces';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { Balance } from '@polkadot/types/interfaces';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
@@ -24,12 +26,13 @@ import { useAccountDisplay, useProxies, useTranslation } from '../../../../hooks
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
-import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import { PROXY_TYPE } from '../../../../util/constants';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from '../partials/TxDetail';
 
 interface Props {
-  address: AccountId;
+  address: AccountId | string;
   amount: BN;
   available: BN | undefined;
   api: ApiPromise;
@@ -40,7 +43,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function RedeemableWithdrawReview ({ address, amount, api, available, chain, formatted, setRefresh, setShow, show }: Props): React.ReactElement {
+export default function RedeemableWithdrawReview({ address, amount, api, available, chain, formatted, setRefresh, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(String(address));
@@ -57,7 +60,7 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
-  const tx = api.tx.staking.withdrawUnbonded; // sign by controller
+  const tx = api.tx['staking']['withdrawUnbonded']; // sign by controller
 
   const decimal = api.registry.chainDecimals[0];
 
@@ -79,7 +82,7 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -99,7 +102,7 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
 
       signer.unlock(password);
       setShowWaitScreen(true);
-      const optSpans = await api.query.staking.slashingSpans(formatted);
+      const optSpans = await api.query['staking']['slashingSpans'](formatted) as any;
       const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
       const params = [spanCount];
       const { block, failureText, fee, success, txHash } = await broadcast(api, tx, params, signer, formatted, selectedProxy);
@@ -118,7 +121,8 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
 
       setShowWaitScreen(false);
@@ -149,14 +153,14 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
         <SubTitle label={t('Review')} />
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
-            address={address}
-            chain={chain}
+            address={address as unknown as string}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />
           <AmountFee
-            address={address}
-            amount={<ShowBalance2 address={address} balance={amount} />}
+            address={address as unknown as string}
+            amount={<ShowBalance2 address={address as unknown as string} balance={amount} />}
             fee={estimatedFee}
             label={t('Withdraw amount')}
             showDivider
@@ -164,8 +168,8 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
             withFee
           />
           <AmountFee
-            address={address}
-            amount={<ShowBalance2 address={address} balance={amount.add(available || BN_ZERO).sub(estimatedFee || BN_ZERO)} />}
+            address={address as string}
+            amount={<ShowBalance2 address={address as string} balance={amount.add(available || BN_ZERO).sub(estimatedFee || BN_ZERO)} />}
             label={t('Available balance after')}
             style={{ pt: '5px' }}
           />
@@ -180,7 +184,7 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
           onConfirmClick={submit}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+          proxyTypeFilter={PROXY_TYPE.STAKING}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

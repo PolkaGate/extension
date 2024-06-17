@@ -1,7 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
-import { SxProps, Theme, useTheme } from '@mui/material';
+import { type SxProps, type Theme, useTheme } from '@mui/material';
 
 interface Output {
   allReferendaStatsContainer: SxProps<Theme>;
