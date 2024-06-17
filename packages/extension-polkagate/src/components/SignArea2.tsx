@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-//@ts-nocheck
-
 import type { Header } from '@polkadot/types/interfaces';
 import type { AnyTuple } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
@@ -139,8 +137,12 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
         genesisHash: api.genesisHash.toHex(),
         method: api.createType('Call', ptx).toHex(), // TODO: DOES SUPPORT nested calls, batches , ...
         nonce: api.registry.createType('Compact<Index>', rawNonce).toHex(),
+        mode: 0,  // default value to ignore CheckMetadataHash
+        assetId: null,
+        metadataHash: null, //api.runtimeMetadata.hash.toHex(),
         signedExtensions: [
           'CheckNonZeroSender',
+          'CheckMetadataHash',
           'CheckSpecVersion',
           'CheckTxVersion',
           'CheckGenesis',
