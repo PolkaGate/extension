@@ -25,7 +25,7 @@ import PoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/pool';
 import ManageValidatorsPoolfs from '@polkadot/extension-polkagate/src/fullscreen/stake/pool/commonTasks/manageValidators';
 import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/solo';
 import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/commonTasks/manageValidators';
-import { isPriceUpToDate } from '@polkadot/extension-polkagate/src/hooks/usePrices';
+import { isPriceUpToDate, useUpdateMetadata } from '@polkadot/extension-polkagate/src/hooks/usePrices';
 import AddWatchOnly from '@polkadot/extension-polkagate/src/popup/import/addWatchOnly';
 import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
 import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
