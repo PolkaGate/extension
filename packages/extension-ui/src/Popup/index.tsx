@@ -39,7 +39,7 @@ import { AccountContext, AccountsAssetsContext, ActionContext, APIContext, Autho
 import { type LoginInfo, getStorage, setStorage, updateStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { ExtensionLockProvider } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
 import Onboarding from '@polkadot/extension-polkagate/src/fullscreen/onboarding';
-import { usePriceIds } from '@polkadot/extension-polkagate/src/hooks';
+import { usePriceIds, useUpdateMetadata } from '@polkadot/extension-polkagate/src/hooks';
 import useAssetsBalances, { type SavedAssets, ASSETS_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '@polkadot/extension-polkagate/src/messaging';
 import { getPrices } from '@polkadot/extension-polkagate/src/util/api';

@@ -5,14 +5,14 @@ import { createWsEndpoints } from '@polkagate/apps-config';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountJson } from '@polkadot/extension-base/background/types';
-import { MetadataDef } from '@polkadot/extension-inject/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
+import type { MetadataDef } from '@polkadot/extension-inject/types';
 import { getSpecTypes } from '@polkadot/types-known';
 import { formatBalance, isNumber } from '@polkadot/util';
 import { base64Encode } from '@polkadot/util-crypto';
 
 import { getAllMetadata, updateMetadata } from '../messaging';
-import { APIs } from '../util/types';
+import type { APIs } from '../util/types';
 
 /**
  * @description
@@ -45,7 +45,7 @@ export default function useUpdateMetadata (accounts: AccountJson[], apis: APIs) 
   }, [accounts]);
 
   // Get chain color by genesis hash
-  const getChainColor = useCallback((genesisHash) => {
+  const getChainColor = useCallback((genesisHash: string) => {
     const color = endpoints
       .find(({ genesisHash: _genesisHash, ui }) => _genesisHash === genesisHash && ui.color)
       ?.ui.color;

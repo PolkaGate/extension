@@ -219,7 +219,7 @@ export async function updateMetadata (metadata: MetadataDef): Promise<boolean> {
   return sendMessage('pri(metadata.update)', metadata);
 }
 
-export async function subscribeSigningRequests (cb: (accounts: SigningRequest[]) => void): Promise<boolean> {
+export async function subscribeSigningRequests(cb: (accounts: SigningRequest[]) => void): Promise<boolean> {
   return sendMessage('pri(signing.requests)', null, cb);
 }
 
