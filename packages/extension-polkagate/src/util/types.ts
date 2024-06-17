@@ -717,15 +717,8 @@ export interface APIs {
 }
 
 export interface APIsContext {
-  apis: { [key: string]: { api?: ApiPromise; endpoint?: string; isRequested: boolean; }[] };
-  setIt: (apis: {
-    [key: string]:
-    {
-      api?: ApiPromise;
-      endpoint?: string;
-      isRequested: boolean;
-    }[]
-  }) => void;
+  apis: { [key: string]: ApiProps[] };
+  setIt: (apis: { [key: string]: ApiProps[] }) => void;
 }
 
 export interface LatestRefs {
