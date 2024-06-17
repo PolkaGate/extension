@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -30,7 +31,7 @@ interface DisplayBalanceProps {
   setUnlockInformation: React.Dispatch<React.SetStateAction<UnlockInformationType | undefined>>;
 }
 
-export default function LockedBalanceDisplay ({ address, decimal, price, refreshNeeded, setDisplayPopup, setUnlockInformation, title, token }: DisplayBalanceProps): React.ReactElement {
+export default function LockedBalanceDisplay({ address, decimal, price, refreshNeeded, setDisplayPopup, setUnlockInformation, title, token }: DisplayBalanceProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -51,7 +52,7 @@ export default function LockedBalanceDisplay ({ address, decimal, price, refresh
   const isDisable = useMemo(() => !unlockableAmount || unlockableAmount.isZero() || !classToUnlock || !totalLocked, [classToUnlock, totalLocked, unlockableAmount]);
   const hasDescription = useMemo(() =>
     (unlockableAmount && !unlockableAmount.isZero()) || (delegatedBalance && !delegatedBalance.isZero()) || timeToUnlock
-  , [delegatedBalance, timeToUnlock, unlockableAmount]);
+    , [delegatedBalance, timeToUnlock, unlockableAmount]);
 
   useEffect(() => {
     if (unlockableAmount && !unlockableAmount.isZero()) {

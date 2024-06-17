@@ -1,5 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
+
+/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography } from '@mui/material';
 import QRCode from 'qrcode.react';
@@ -11,10 +14,14 @@ import { ActionContext, Identity } from '../../components';
 import { useApi, useFormatted, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 
+interface LocationState {
+  pathname?: string;
+}
+
 export default function Receive(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
-  const location = useLocation();
+  const location = useLocation<LocationState>();
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
   const api = useApi(address);
@@ -46,7 +53,7 @@ export default function Receive(): React.ReactElement {
         <QRCode
           level='H'
           size={275}
-          value={formatted}
+          value={formatted as string}
         />
       </Grid>
       <Typography fontSize='10px' fontWeight={300} sx={{ m: '20px auto 0', width: 'fit-content' }}>

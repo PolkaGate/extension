@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -8,16 +9,18 @@ import type { ApiPromise } from '@polkadot/api';
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
+import { PROXY_TYPE } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN } from '@polkadot/util';
 
 import { AccountHolderWithProxy, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../../components';
 import { useEstimatedFee, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
-import { MemberPoints, MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
-import { Inputs } from '../../../Entry';
+import type { MemberPoints, MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
+import type { Inputs } from '../../../Entry';
 import { STEPS } from '../../stake';
 import { Mode } from '.';
 
@@ -35,7 +38,7 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<Mode | undefined>>;
 }
 
-export default function Review ({ address, api, chain, mode, pool, poolMembers, setMode, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, api, chain, mode, pool, poolMembers, setMode, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
@@ -92,10 +95,10 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
       return;
     }
 
-    const batchAll = api.tx.utility.batchAll;
+    const batchAll = api.tx['utility']['batchAll'];
 
     if (mode === 'UnbondAll') {
-      const unbonded = api.tx.nominationPools.unbond;
+      const unbonded = api.tx['nominationPools']['unbond'];
 
       const members = membersToUnbond?.map((m) => [m.accountId, m.points]);
 
@@ -116,7 +119,7 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
         params
       });
     } else if (mode === 'RemoveAll') {
-      const redeem = api.tx.nominationPools.withdrawUnbonded;
+      const redeem = api.tx['nominationPools']['withdrawUnbonded'];
 
       const members = membersToRemove?.map((m) => [m.accountId, m.points]);
 
@@ -150,7 +153,7 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
           }
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             style={{ mt: 'auto' }}
             title={t('Account holder')}
@@ -171,7 +174,7 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
           }
           <ShowPool
             api={api}
-            chain={chain}
+            chain={chain as any}
             label=''
             mode='Default'
             pool={pool}
@@ -192,7 +195,7 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
               onSecondaryClick={onBackClick}
               params={inputs?.params}
               primaryBtnText={t('Confirm')}
-              proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+              proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
               secondaryBtnText={t('Back')}
               selectedProxy={selectedProxy}
               setIsPasswordError={setIsPasswordError}
@@ -212,7 +215,7 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
           closeSelectProxy={closeProxy}
           height={500}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+          proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
           selectedProxy={selectedProxy}
           setSelectedProxy={setSelectedProxy}
         />

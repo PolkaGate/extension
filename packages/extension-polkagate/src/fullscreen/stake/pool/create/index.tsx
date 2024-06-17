@@ -3,8 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { Balance } from '@polkadot/types/interfaces';
-
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
@@ -12,11 +10,11 @@ import { useParams } from 'react-router';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AddressInput, AmountWithOptions, InputWithLabel, ShowBalance, TwoButtons } from '../../../../components';
-import { useEstimatedFee, useInfo, usePoolConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
+import { useBalances, useEstimatedFee, useInfo, usePoolConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import UpdateRoles from './UpdateRoles';
 
 interface Props {
@@ -25,11 +23,12 @@ interface Props {
   inputs: Inputs | undefined;
 }
 
-export default function CreatePool ({ inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function CreatePool({ inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const { api, chain, decimal, formatted, token } = useInfo(address);
+  const availableBalance = useBalances(address, undefined, undefined, true)?.availableBalance;
 
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
 
@@ -39,16 +38,27 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
 
   const [poolName, setPoolName] = useState<string | undefined>();
   const [createAmount, setCreateAmount] = useState<string | undefined>();
-  const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
   const [showRoles, setShowRoles] = useState<boolean>(false);
-  const [toReviewDisabled, setToReviewDisabled] = useState<boolean>(true);
   const [nominatorId, setNominatorId] = useState<string>();
   const [bouncerId, setBouncerId] = useState<string>();
 
-  const ED = api && api.consts.balances.existentialDeposit as unknown as BN;
+  const ED = api && api.consts['balances']['existentialDeposit'] as unknown as BN;
   const nextPoolId = poolStakingConsts && poolStakingConsts.lastPoolId.toNumber() + 1;
-  const DEFAULT_POOLNAME = `Polkagate 💜${nextPoolId ? ` - ${nextPoolId}` : ''}`;
+  const DEFAULT_POOLNAME = useMemo(() => `Polkagate 💜${nextPoolId ? ` - ${nextPoolId}` : ''}`, [nextPoolId]);
   const amountAsBN = useMemo(() => amountToMachine(createAmount, decimal), [createAmount, decimal]);
+
+  const toReviewDisabled = useMemo(() => {
+    if (!poolStakingConsts || !formatted || !nominatorId || !bouncerId || !createAmount || !amountAsBN || !inputs?.extraInfo?.['poolName']) {
+      return true;
+    }
+
+    const isAmountOutOfRange =
+      amountAsBN.lt(poolStakingConsts.minCreateBond)
+      ||
+      amountAsBN.gt(availableBalance?.sub(estimatedFee ?? BN_ZERO) ?? BN_ZERO);
+
+    return isAmountOutOfRange;
+  }, [amountAsBN, availableBalance, bouncerId, createAmount, estimatedFee, formatted, inputs?.extraInfo?.['poolName'], nominatorId, poolStakingConsts]);
 
   const stakeAmountChange = useCallback((value: string) => {
     if (decimal && value.length > decimal - 1) {
@@ -75,7 +85,7 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
     poolStakingConsts?.minCreationBond && setCreateAmount(amountToHuman(poolStakingConsts.minCreationBond.toString(), decimal));
   }, [decimal, poolStakingConsts?.minCreationBond]);
 
-  const _onPoolNameChange = useCallback((name: string) => {
+  const onPoolNameChange = useCallback((name: string) => {
     setPoolName(name);
   }, []);
 
@@ -92,7 +102,7 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
   }, [setStep]);
 
   useEffect(() => {
-    if (!api) {
+    if (!api || !poolStakingConsts?.lastPoolId) {
       return;
     }
 
@@ -108,68 +118,41 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
         },
         state: 'Creating'
       },
-      metadata: poolName ?? DEFAULT_POOLNAME,
-      poolId: poolStakingConsts?.lastPoolId?.addn(1),
+      poolId: poolStakingConsts.lastPoolId.addn(1).toNumber(),
+      metadata: poolName || DEFAULT_POOLNAME,
       rewardPool: null
     };
 
-    const create = api.tx.nominationPools.create;
+    const create = api.tx['nominationPools']['create'];
     const createParams = [amountAsBN, formatted, nominatorId, bouncerId];
 
-    const setMetadata = api.tx.nominationPools.setMetadata;
+    const setMetadata = api.tx['nominationPools']['setMetadata'];
     const setMetaDataParams = [poolStakingConsts?.lastPoolId?.addn(1), pool.metadata];
 
-    const call = api.tx.utility.batch;
+    const call = api.tx['utility']['batch'];
     const params = [[create(...createParams), setMetadata(...setMetaDataParams)]];
 
     const extraInfo = {
       action: 'Pool Staking',
       amount: createAmount,
-      fee: String(estimatedFee || 0),
       poolName: pool.metadata,
       subAction: 'Create Pool'
     };
 
     setInputs({
       call,
-      estimatedFee, // TODO: needs to include setMetadata
       extraInfo,
       mode: STEPS.CREATE_POOL,
       params,
-      pool
+      pool: pool as any
     });
-  }, [DEFAULT_POOLNAME, amountAsBN, api, bouncerId, createAmount, estimatedFee, formatted, nominatorId, poolName, poolStakingConsts?.lastPoolId, setInputs]);
+  }, [DEFAULT_POOLNAME, amountAsBN, api, bouncerId, createAmount, formatted, nominatorId, poolName, poolStakingConsts?.lastPoolId, setInputs]);
 
   useEffect(() => {
     !nominatorId && formatted && setNominatorId(String(formatted));
     !bouncerId && formatted && setBouncerId(String(formatted));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formatted]);
-
-  useEffect(() => {
-    !nominatorId && formatted && setNominatorId(String(formatted));
-    !bouncerId && formatted && setBouncerId(String(formatted));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formatted]);
-
-  useEffect(() => {
-    if (!poolStakingConsts?.minCreateBond) {
-      return;
-    }
-
-    const goTo = !(formatted && nominatorId && bouncerId && createAmount);
-    const isAmountInRange = amountAsBN?.gt(availableBalance?.sub(estimatedFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN?.gte(poolStakingConsts.minCreateBond);
-
-    setToReviewDisabled(goTo || isAmountInRange);
-  }, [amountAsBN, availableBalance, createAmount, estimatedFee, formatted, nominatorId, poolStakingConsts?.minCreateBond, bouncerId]);
-
-  useEffect(() => {
-    api && formatted && api.derive.balances?.all(formatted)
-      .then((b) => {
-        setAvailableBalance(b.availableBalance);
-      })
-      .catch(console.error);
-  }, [formatted, api]);
 
   return (
     <>
@@ -177,7 +160,7 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
         <InputWithLabel
           height={50}
           label={t('Pool name')}
-          onChange={_onPoolNameChange}
+          onChange={onPoolNameChange}
           placeholder={DEFAULT_POOLNAME}
           value={poolName}
         />
@@ -212,7 +195,7 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
         <Typography fontSize='14px' fontWeight={300} sx={{ mt: 'auto', width: '90%' }} textAlign='left'>
           {t('All the roles (Depositor, Root, Nominator, and Bouncer) are set to the following ID by default although you can update the Nominator and Bouncer by clicking on “Update roles”.')}
         </Typography>
-        <AddressInput address={formatted} chain={chain} disabled label={''} setAddress={() => null} showIdenticon style={{ mt: '15px', width: '92%' }} />
+        <AddressInput address={formatted} chain={chain as any} disabled label={''} setAddress={() => null} showIdenticon style={{ mt: '15px', width: '92%' }} />
         <Grid onClick={onUpdateRoles} width='fit-content'>
           <Typography fontSize='16px' fontWeight={400} lineHeight='36px' sx={{ cursor: 'pointer', textAlign: 'left', textDecoration: 'underline' }}>
             {t('Update roles')}
@@ -245,7 +228,7 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
         <UpdateRoles
           address={address}
           bouncerId={bouncerId}
-          chain={chain}
+          chain={chain as any}
           formatted={formatted}
           nominatorId={nominatorId}
           setBouncerId={setBouncerId}

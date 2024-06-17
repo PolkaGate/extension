@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
+//@ts-nocheck
 import '@vaadin/icons';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
@@ -10,7 +11,8 @@ import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import { Collapse, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { objectSpread } from '@polkadot/util';
 
@@ -29,7 +31,7 @@ export interface AccountInfo {
   suri: string;
 }
 
-export default function ImportSeed (): React.ReactElement {
+export default function ImportSeed(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();

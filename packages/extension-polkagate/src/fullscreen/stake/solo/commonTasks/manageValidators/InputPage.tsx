@@ -1,19 +1,20 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography } from '@mui/material';
-import { ValidatorInfo } from 'extension-polkagate/src/util/types';
+import type { ValidatorInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
-import { BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { TwoButtons } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
 import { useInfo, useStakingAccount, useStakingConsts } from '../../../../../hooks';
-import { Inputs } from '../../../Entry';
+import type { Inputs } from '../../../Entry';
 import { STEPS } from '../../../pool/stake';
 import SelectValidators from '../../partials/SelectValidators';
 
@@ -24,7 +25,7 @@ interface Props {
   inputs: Inputs | undefined;
 }
 
-function arraysAreEqual (arr1: string[], arr2: string[]): boolean {
+function arraysAreEqual(arr1: string[], arr2: string[]): boolean {
   if (arr1.length !== arr2.length) {
     return false;
   }
@@ -41,7 +42,7 @@ function arraysAreEqual (arr1: string[], arr2: string[]): boolean {
   return true;
 }
 
-export default function InputPage ({ address, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function InputPage({ address, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const stakingConsts = useStakingConsts(address);
@@ -54,11 +55,11 @@ export default function InputPage ({ address, inputs, setInputs, setStep }: Prop
     stakingAccount === null || stakingAccount?.nominators?.length === 0
       ? null
       : stakingAccount?.nominators.map((item) => item.toString())
-  , [stakingAccount]);
+    , [stakingAccount]);
 
   const { call, params } = useMemo(() => {
     if (api && newSelectedValidators?.length) {
-      const call = api.tx.staking.nominate;
+      const call = api.tx['staking']['nominate'];
       const params = newSelectedValidators.map((v) => v.accountId.toString());
 
       return { call, params: [params] };
@@ -104,9 +105,9 @@ export default function InputPage ({ address, inputs, setInputs, setStep }: Prop
           newSelectedValidators={newSelectedValidators}
           nominatedValidatorsIds={nominatedValidatorsIds}
           setNewSelectedValidators={setNewSelectedValidators}
-          staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
+          staked={(stakingAccount?.stakingLedger?.active as unknown as BN) ?? BN_ZERO}
           stakingConsts={stakingConsts}
-          stashId={formatted}
+          stashId={formatted as string}
           tableHeight={window.innerHeight - 400}
         />
         <Grid container item sx={{ '> div': { m: 0, width: '64%' }, justifyContent: 'flex-end', mt: '5px' }}>

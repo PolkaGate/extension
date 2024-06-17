@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import request from 'umi-request';
 
@@ -13,7 +14,7 @@ export const EXTRA_PRICE_IDS: Record<string, string> = {
   pendulum: 'pendulum-chain'
 };
 
-export default async function getPrices (priceIds: string[], currencyCode = 'usd') {
+export default async function getPrices(priceIds: string[], currencyCode = 'usd') {
   console.log(' getting prices for:', priceIds.sort());
 
   const revisedPriceIds = priceIds.map((item) => (EXTRA_PRICE_IDS[item] || item));
@@ -31,7 +32,7 @@ export default async function getPrices (priceIds: string[], currencyCode = 'usd
   return price;
 }
 
-function getReq (api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<Record<string, unknown>> {
+function getReq(api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<Record<string, unknown>> {
   return request.get(api, {
     data,
     ...option

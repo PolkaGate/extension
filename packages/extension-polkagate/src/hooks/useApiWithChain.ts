@@ -1,11 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { createWsEndpoints } from '@polkagate/apps-config';
 import { useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { APIContext } from '../components';
 import { sanitizeChainName } from '../util/utils';

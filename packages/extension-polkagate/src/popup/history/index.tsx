@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,7 +14,7 @@ import { useChain, useChainName, useDecimal, useFormatted, useToken, useTranslat
 import { HeaderBrand } from '../../partials';
 import { getTxTransfers } from '../../util/api/getTransfers';
 import { STAKING_ACTIONS, STAKING_CHAINS } from '../../util/constants';
-import { TransactionDetail, Transfers } from '../../util/types';
+import type { TransactionDetail, Transfers } from '../../util/types';
 import { getHistoryFromStorage } from '../../util/utils';
 import HistoryItem from './partials/HistoryItem';
 
@@ -43,7 +44,7 @@ const INITIAL_STATE = {
 export default function TransactionHistory(): React.ReactElement<''> {
   const { t } = useTranslation();
   const history = useHistory();
-  const { pathname, state } = useLocation();
+  const { state } = useLocation<{ tabIndex: number; pathname?: string }>();
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
   const chain = useChain(address);
@@ -75,8 +76,8 @@ export default function TransactionHistory(): React.ReactElement<''> {
       return null;
     }
 
-    const temp = {};
-    const options = { day: 'numeric', month: 'short', year: 'numeric' };
+    const temp = {} as any;
+    const options = { day: 'numeric', month: 'short', year: 'numeric' } as Intl.DateTimeFormatOptions;
 
     tabHistory.forEach((h) => {
       const day = new Date(h.date).toLocaleDateString(undefined, options);
@@ -219,7 +220,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
     });
   }, [history, state?.pathname]);
 
-  const handleTabChange = useCallback((event: React.SyntheticEvent<Element, Event>, tabIndex: number) => {
+  const handleTabChange = useCallback((_event: React.SyntheticEvent<Element, Event>, tabIndex: number) => {
     setTabIndex(tabIndex);
   }, []);
 

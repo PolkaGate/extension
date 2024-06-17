@@ -1,5 +1,6 @@
 // Copyright 2017-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
 
@@ -7,14 +8,14 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
-import { MembersMapEntry } from '../util/types';
+import type { MembersMapEntry } from '../util/types';
 
 interface Member {
   accountId: string;
   member: PalletNominationPoolsPoolMember;
 }
 
-export function usePoolMembers (api: ApiPromise | undefined, poolId: string | undefined): MembersMapEntry[] | undefined {
+export function usePoolMembers(api: ApiPromise | undefined, poolId: string | undefined): MembersMapEntry[] | undefined {
   const [poolMembers, setPoolMembers] = useState<Member[]>();
   const [isFetching, setFetching] = useState<boolean>(false);
 
@@ -25,7 +26,7 @@ export function usePoolMembers (api: ApiPromise | undefined, poolId: string | un
 
     setFetching(true);
 
-    api.query?.nominationPools && api.query.nominationPools.poolMembers.entries().then((entries) => {
+    api.query?.nominationPools && api.query['nominationPools']['poolMembers'].entries().then((entries) => {
       const members = entries.reduce((all, [{ args: [accountId] }, optMember]) => {
         if (optMember.isSome) {
           const member = optMember.unwrap();

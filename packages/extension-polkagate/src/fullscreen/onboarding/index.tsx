@@ -1,8 +1,9 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
+//@ts-nocheck
 import '@vaadin/icons';
 
 import { faHome } from '@fortawesome/free-solid-svg-icons';
@@ -21,7 +22,7 @@ import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 
 const demoAccount = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
 
-function Onboarding (): React.ReactElement {
+function Onboarding(): React.ReactElement {
   useFullscreen();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);

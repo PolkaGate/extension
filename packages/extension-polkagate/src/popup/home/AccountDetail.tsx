@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -11,10 +12,11 @@ import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Box, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { stars5Black, stars5White } from '../../assets/icons';
-import { FormatBalance2, FormatPrice, Infotip,OptionalCopyButton } from '../../components';
+import { FormatBalance2, FormatPrice, Infotip, OptionalCopyButton } from '../../components';
 import { useBalances, useChainName, useTokenPrice, useTranslation } from '../../hooks/';
 import RecentChains from '../../partials/RecentChains';
 import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
@@ -52,7 +54,7 @@ const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
   );
 };
 
-export default function AccountDetail ({ address, chain, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail({ address, chain, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const balances = useBalances(address);

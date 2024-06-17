@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,7 +14,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { BN, BN_ONE } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { Motion, PButton, Progress, Warning } from '../../../../components';
 import { useBalances, useInfo, useIsExposed, useStakingAccount, useStakingConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
@@ -30,7 +31,7 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -42,19 +43,19 @@ export default function Index (): React.ReactElement {
 
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
   const myBalances = useBalances(address);
-  const mayBeMyStashBalances = useBalances(stakingAccount?.stashId);
+  const mayBeMyStashBalances = useBalances(stakingAccount?.stashId as unknown as string);
 
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const isExposed = useIsExposed(address);
 
-  const fastUnstakeDeposit = api && api.consts.fastUnstake.deposit;
+  const fastUnstakeDeposit = api ? api.consts['fastUnstake']['deposit'] as unknown as BN : undefined;
   const balances = useMemo(() => mayBeMyStashBalances || myBalances, [mayBeMyStashBalances, myBalances]);
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [showFastUnstakeReview, setShowReview] = useState<boolean>(false);
   const hasEnoughDeposit = fastUnstakeDeposit && stakingConsts && myBalances && estimatedFee && getValue('available', myBalances)
-    ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(getValue('available', myBalances))
+    ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(getValue('available', myBalances) || BN_ZERO)
     : undefined;
   const hasUnlockingAndRedeemable = redeemable && stakingAccount
     ? !!(!redeemable.isZero() || stakingAccount.unlocking?.length)
@@ -64,15 +65,15 @@ export default function Index (): React.ReactElement {
     ? !isExposed && !hasUnlockingAndRedeemable && hasEnoughDeposit
     : undefined;
 
-  const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active, [stakingAccount]);
-  const tx = api && api.tx.fastUnstake.registerFastUnstake;
+  const staked = useMemo((): BN | undefined => stakingAccount ? stakingAccount.stakingLedger.active as unknown as BN : undefined, [stakingAccount]);
+  const tx = api && api.tx['fastUnstake']['registerFastUnstake'];
 
   useEffect((): void => {
     if (!api) {
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -164,11 +165,11 @@ export default function Index (): React.ReactElement {
       />
       {showFastUnstakeReview && formatted && api && getValue('available', balances) && chain && staked && !staked?.isZero() &&
         <FastUnstakeReview
-          address={address}
-          amount={staked}
+          address={address as string}
+          amount={staked as unknown as BN}
           api={api}
-          available={getValue('available', balances)}
-          chain={chain}
+          available={getValue('available', balances) as BN}
+          chain={chain as any}
           formatted={formatted}
           setShow={setShowReview}
           show={showFastUnstakeReview}

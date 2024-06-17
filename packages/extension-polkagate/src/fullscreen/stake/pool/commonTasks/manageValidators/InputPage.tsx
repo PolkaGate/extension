@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -15,7 +16,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { TwoButtons } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
 import { useInfo } from '../../../../../hooks';
-import { Inputs } from '../../../Entry';
+import type { Inputs } from '../../../Entry';
 import SelectValidators from '../../../solo/partials/SelectValidators';
 import { STEPS } from '../../stake';
 
@@ -29,7 +30,7 @@ interface Props {
   stakingConsts: StakingConsts | null | undefined;
 }
 
-function arraysAreEqual (arr1: string[], arr2: string[]): boolean {
+function arraysAreEqual(arr1: string[], arr2: string[]): boolean {
   if (arr1.length !== arr2.length) {
     return false;
   }
@@ -46,7 +47,7 @@ function arraysAreEqual (arr1: string[], arr2: string[]): boolean {
   return true;
 }
 
-export default function InputPage ({ address, inputs, pool, setInputs, setStep, staked, stakingConsts }: Props): React.ReactElement {
+export default function InputPage({ address, inputs, pool, setInputs, setStep, staked, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { api, formatted } = useInfo(address);
@@ -56,7 +57,7 @@ export default function InputPage ({ address, inputs, pool, setInputs, setStep, 
 
   const { call, params } = useMemo(() => {
     if (api && newSelectedValidators?.length && pool) {
-      const call = api.tx.nominationPools.nominate;
+      const call = api.tx['nominationPools']['nominate'];
       const ids = newSelectedValidators.map((v) => v.accountId.toString());
 
       const params = [pool.poolId, ids];

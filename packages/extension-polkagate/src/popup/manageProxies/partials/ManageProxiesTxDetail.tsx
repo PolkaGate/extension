@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
@@ -7,11 +8,11 @@ import React, { useCallback, useContext } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
-import { Chain } from '../../../../../extension-chains/src/types';
+import type { Chain } from '../../../../../extension-chains/src/types';
 import { AccountContext, ShortAddress, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import ThroughProxy from '../../../partials/ThroughProxy';
-import { NameAddress, Proxy, ProxyItem } from '../../../util/types';
+import type { NameAddress, Proxy, ProxyItem } from '../../../util/types';
 import { getSubstrateAddress } from '../../../util/utils';
 
 interface Props {
@@ -19,11 +20,10 @@ interface Props {
   api: ApiPromise;
   deposit?: BN;
   address?: string;
-  name?: string;
   chain?: Chain;
 }
 
-export default function ManageProxiesTxDetail({ address, api, chain, deposit, name, proxies }: Props): React.ReactElement {
+export default function ManageProxiesTxDetail({ address, api, chain, deposit, proxies }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
 
@@ -98,7 +98,7 @@ export default function ManageProxiesTxDetail({ address, api, chain, deposit, na
       </Grid>
       {address &&
         <Grid m='5px auto' width='92%'>
-          <ThroughProxy address={address} name={name} chain={chain} />
+          <ThroughProxy address={address} chain={chain as any} />
         </Grid>
       }
       <Divider

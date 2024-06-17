@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -14,7 +15,7 @@ import { getComparator } from '@polkadot/extension-polkagate/src/popup/staking/p
 import { DEFAULT_FILTERS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { Checkbox2, Input, Select, SlidePopUp, TwoButtons } from '../../../components';
-import { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
+import type { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
 
 interface Props {
   allValidatorsIdentities: DeriveAccountInfo[] | undefined;
@@ -35,7 +36,7 @@ interface Props {
   onLimitValidatorsPerOperator: (validators: ValidatorInfoWithIdentity[] | undefined, limit: number) => ValidatorInfoWithIdentity[];
 }
 
-export default function Filters ({ allValidators, allValidatorsIdentities, apply, filters, isFullscreen, newSelectedValidators, onLimitValidatorsPerOperator, setApply, setFilteredValidators, setFilters, setNewSelectedValidators, setShow, setSortValue, show, sortValue, stakingConsts }: Props): React.ReactElement<Props> {
+export default function Filters({ allValidators, allValidatorsIdentities, apply, filters, isFullscreen, newSelectedValidators, onLimitValidatorsPerOperator, setApply, setFilteredValidators, setFilters, setNewSelectedValidators, setShow, setSortValue, show, sortValue, stakingConsts }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 

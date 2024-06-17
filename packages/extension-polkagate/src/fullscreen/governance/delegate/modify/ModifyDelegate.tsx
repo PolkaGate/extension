@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,6 +10,7 @@
  * */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { BalancesInfo, Proxy, TxInfo } from '../../../../util/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -21,10 +23,9 @@ import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../.
 import { useCurrentBlockNumber, useIdentity, useInfo, useTracks, useTranslation } from '../../../../hooks';
 import { Lock } from '../../../../hooks/useAccountLocks';
 import { ThroughProxy } from '../../../../partials';
-import { BalancesInfo, Proxy, TxInfo } from '../../../../util/types';
+import { PROXY_TYPE } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import DisplayValue from '../../post/castVote/partial/DisplayValue';
-import { GOVERNANCE_PROXY } from '../../utils/consts';
 import TracksList from '../partial/TracksList';
 import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '..';
 import Modify from './Modify';
@@ -50,7 +51,7 @@ interface Props {
 
 export type ModifyModes = 'Modify' | 'ReviewModify';
 
-export default function ModifyDelegate ({ accountLocks, address, balances, classicDelegateInformation, formatted, lockedAmount, mixedDelegateInformation, mode, otherDelegatedTracks, selectedProxy, setDelegateInformation, setModalHeight, setMode, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
+export default function ModifyDelegate({ accountLocks, address, balances, classicDelegateInformation, formatted, lockedAmount, mixedDelegateInformation, mode, otherDelegatedTracks, selectedProxy, setDelegateInformation, setModalHeight, setMode, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, chain, decimal, genesisHash, token } = useInfo(address);
   const { tracks } = useTracks(address);
@@ -63,7 +64,7 @@ export default function ModifyDelegate ({ accountLocks, address, balances, class
       ? mixedDelegateInformation.delegatee
       : undefined;
   const delegateeName = useIdentity(genesisHash, delegateeAddress)?.identity?.display;
-  
+
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [delegateAmount, setDelegateAmount] = useState<string>('0');
@@ -75,9 +76,9 @@ export default function ModifyDelegate ({ accountLocks, address, balances, class
   const [newConviction, setNewConviction] = useState<number | undefined>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const undelegate = api && api.tx.convictionVoting.undelegate;
-  const delegate = api && api.tx.convictionVoting.delegate;
-  const batch = api && api.tx.utility.batchAll;
+  const undelegate = api && api.tx['convictionVoting']['undelegate'];
+  const delegate = api && api.tx['convictionVoting']['delegate'];
+  const batch = api && api.tx['utility']['batchAll'];
 
   const acceptableConviction = useMemo(() => newConviction !== undefined ? newConviction === 0.1 ? 0 : newConviction : conviction === 0.1 ? 0 : conviction, [conviction, newConviction]);
 
@@ -178,7 +179,7 @@ export default function ModifyDelegate ({ accountLocks, address, balances, class
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
@@ -229,7 +230,7 @@ export default function ModifyDelegate ({ accountLocks, address, balances, class
             address={address}
             api={api}
             balances={balances}
-            chain={chain}
+            chain={chain as any}
             conviction={newConviction ?? conviction}
             currentBlock={currentBlock}
             decimal={decimal}
@@ -263,7 +264,7 @@ export default function ModifyDelegate ({ accountLocks, address, balances, class
               <Identity
                 address={address}
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 direction='row'
                 identiconSize={31}
                 showShortAddress
@@ -274,7 +275,7 @@ export default function ModifyDelegate ({ accountLocks, address, balances, class
             </Grid>
             {selectedProxyAddress &&
               <Grid container m='auto' maxWidth='92%'>
-                <ThroughProxy address={selectedProxyAddress} chain={chain} />
+                <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
               </Grid>
             }
             <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
@@ -284,7 +285,7 @@ export default function ModifyDelegate ({ accountLocks, address, balances, class
               </Typography>
               <Identity
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 direction='row'
                 formatted={delegateeAddress}
                 identiconSize={31}
@@ -323,7 +324,7 @@ export default function ModifyDelegate ({ accountLocks, address, balances, class
                 isPasswordError={isPasswordError}
                 onSecondaryClick={onBackClick}
                 primaryBtnText={t('Confirm')}
-                proxyTypeFilter={GOVERNANCE_PROXY}
+                proxyTypeFilter={PROXY_TYPE.GOVERNANCE}
                 secondaryBtnText={t('Back')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}

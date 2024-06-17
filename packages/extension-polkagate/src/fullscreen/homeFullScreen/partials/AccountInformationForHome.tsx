@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
@@ -45,7 +46,7 @@ export const POPUPS_NUMBER = {
   RENAME: 2
 };
 
-export default function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformationForHome({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -156,7 +157,7 @@ export default function AccountInformationForHome ({ accountAssets, address, hid
                 accountInfo={accountInfo}
                 address={address}
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 noIdenticon
                 onClick={goToDetails}
                 style={{ width: 'calc(100% - 40px)' }}

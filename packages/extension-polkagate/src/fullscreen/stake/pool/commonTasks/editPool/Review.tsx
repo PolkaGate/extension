@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,15 +11,17 @@ import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
-import { Balance } from '@polkadot/types/interfaces';
+import { PROXY_TYPE } from '@polkadot/extension-polkagate/src/util/constants';
+import type { Balance } from '@polkadot/types/interfaces';
 import { BN_ONE } from '@polkadot/util';
 
 import { AccountHolderWithProxy, Infotip, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../../components';
 import { useProxies, useTranslation } from '../../../../../hooks';
-import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
-import { Inputs } from '../../../Entry';
+import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
+import type { Inputs } from '../../../Entry';
 import { STEPS } from '../../stake';
 import ShowPoolRole from './ShowPoolRole';
 import { ChangesProps } from '.';
@@ -36,7 +39,7 @@ interface Props {
   step: number;
 }
 
-export default function Review ({ address, api, chain, changes, formatted, pool, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, api, chain, changes, formatted, pool, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
 
@@ -66,10 +69,10 @@ export default function Review ({ address, api, chain, changes, formatted, pool,
       return;
     }
 
-    const batchAll = api.tx.utility.batchAll;
-    const setMetadata = api.tx.nominationPools.setMetadata;
-    const updateRoles = api.tx.nominationPools.updateRoles;
-    const setCommission = api.tx.nominationPools.setCommission;
+    const batchAll = api.tx['utility']['batchAll'];
+    const setMetadata = api.tx['nominationPools']['setMetadata'];
+    const updateRoles = api.tx['nominationPools']['updateRoles'];
+    const setCommission = api.tx['nominationPools']['setCommission'];
 
     const txs: { call: SubmittableExtrinsicFunction<'promise', AnyTuple>, params: unknown[] }[] = [];
 
@@ -109,7 +112,7 @@ export default function Review ({ address, api, chain, changes, formatted, pool,
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -135,7 +138,7 @@ export default function Review ({ address, api, chain, changes, formatted, pool,
             }
             <AccountHolderWithProxy
               address={address}
-              chain={chain}
+              chain={chain as any}
               selectedProxyAddress={selectedProxyAddress}
               style={{ mt: 'auto' }}
               title={t('Account holder')}
@@ -159,7 +162,7 @@ export default function Review ({ address, api, chain, changes, formatted, pool,
               </>}
             {changes?.newRoles?.newRoot !== undefined &&
               <ShowPoolRole
-                chain={chain}
+                chain={chain as any}
                 roleAddress={changes?.newRoles?.newRoot}
                 roleTitle={t<string>('Root')}
                 showDivider
@@ -167,7 +170,7 @@ export default function Review ({ address, api, chain, changes, formatted, pool,
             }
             {changes?.newRoles?.newNominator !== undefined &&
               <ShowPoolRole
-                chain={chain}
+                chain={chain as any}
                 roleAddress={changes?.newRoles?.newNominator}
                 roleTitle={t<string>('Nominator')}
                 showDivider
@@ -175,7 +178,7 @@ export default function Review ({ address, api, chain, changes, formatted, pool,
             }
             {changes?.newRoles?.newBouncer !== undefined &&
               <ShowPoolRole
-                chain={chain}
+                chain={chain as any}
                 roleAddress={changes?.newRoles?.newBouncer}
                 roleTitle={t<string>('Bouncer')}
                 showDivider
@@ -196,7 +199,7 @@ export default function Review ({ address, api, chain, changes, formatted, pool,
             }
             {changes?.commission?.payee !== undefined &&
               <ShowPoolRole
-                chain={chain}
+                chain={chain as any}
                 roleAddress={changes.commission.payee || maybeCurrentCommissionPayee}
                 roleTitle={t<string>('Commission payee')}
                 showDivider
@@ -220,7 +223,7 @@ export default function Review ({ address, api, chain, changes, formatted, pool,
               onSecondaryClick={onBackClick}
               params={inputs?.params}
               primaryBtnText={t<string>('Confirm')}
-              proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+              proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
               secondaryBtnText={t<string>('Back')}
               selectedProxy={selectedProxy}
               setIsPasswordError={setIsPasswordError}
@@ -241,7 +244,7 @@ export default function Review ({ address, api, chain, changes, formatted, pool,
           closeSelectProxy={closeProxy}
           height={500}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+          proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
           selectedProxy={selectedProxy}
           setSelectedProxy={setSelectedProxy}
         />

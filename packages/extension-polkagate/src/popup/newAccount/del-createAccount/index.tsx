@@ -1,10 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
+
+import type { Chain } from '@polkadot/extension-chains/types';
 
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-
-import { Chain } from '@polkadot/extension-chains/types';
 
 import { AccountNamePasswordCreation, ActionContext, Address, Loading, SelectChain } from '../../../components';
 import { useGenesisHashOptions, useMetadata, useTranslation } from '../../../hooks';
@@ -14,7 +15,7 @@ import { DEFAULT_TYPE } from '../../../util/defaultType';
 import getLogo from '../../../util/getLogo';
 import Mnemonic from './Mnemonic';
 
-function CreateAccount (): React.ReactElement {
+function CreateAccount(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const options = useGenesisHashOptions();

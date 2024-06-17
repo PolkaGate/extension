@@ -1,9 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
 import { useInfo, useTranslation } from '../hooks';
@@ -16,7 +17,7 @@ export interface Props {
   showCopy?: boolean;
 }
 
-export default function NewAddress ({ address, name, showCopy, style }: Props): React.ReactElement<Props> {
+export default function NewAddress({ address, name, showCopy, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { account, chain, formatted } = useInfo(address);

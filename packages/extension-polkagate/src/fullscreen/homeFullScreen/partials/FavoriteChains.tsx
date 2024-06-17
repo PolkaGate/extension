@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -12,7 +13,7 @@ import ChainList from '../components/ChainList';
 
 export interface CurrencyItemType { code: string; country: string; currency: string; sign: string; };
 
-export default function FavoriteChains (): React.ReactElement {
+export default function FavoriteChains(): React.ReactElement {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 

@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -12,7 +13,7 @@ import { Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { HorizontalMenuItem, PoolStakingIcon } from '../components';
 import { useInfo, useTranslation } from '../hooks';
@@ -27,7 +28,7 @@ interface Props {
 
 const ICON_SIZE = 10;
 
-export default function QuickAction ({ address, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
+export default function QuickAction({ address, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();

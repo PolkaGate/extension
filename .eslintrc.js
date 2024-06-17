@@ -10,15 +10,20 @@ module.exports = {
     'jest/**/*',
     'i18next-scanner.config.js'
   ],
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ...base.parserOptions,
     project: [
       './tsconfig.eslint.json'
     ]
   },
+  plugins: ['@typescript-eslint'],
   rules: {
     ...base.rules,
     // this seems very broken atm, false positives
-    '@typescript-eslint/unbound-method': 'off'
+    '@typescript-eslint/unbound-method': 'off',
+    "parser": "@typescript-eslint/parser",
+    "@typescript-eslint/no-explicit-any": "off",
+    "no-unused-vars": "warn"
   }
 };

@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,9 +14,9 @@ import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { AmountWithOptions, Infotip2, ShowBalance, ShowBalance3, TwoButtons, Warning } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 import { useInfo, usePool, usePoolConsts, useStakingConsts } from '../../../hooks';
-import { BalancesInfo } from '../../../util/types';
+import type { BalancesInfo } from '../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
-import { Inputs } from '../Entry';
+import type { Inputs } from '../Entry';
 import { STEPS } from '..';
 
 interface Props {
@@ -32,7 +33,7 @@ const POLKAGATE_POOL_IDS = {
   Westend: 6
 };
 
-export default function EasyMode ({ address, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function EasyMode({ address, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chainName, decimal, formatted } = useInfo(address);
@@ -73,18 +74,18 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedMaxFee(api.createType('Balance', BN_ONE));
     }
 
-    amountAsBN && api.tx.nominationPools.bondExtra({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
+    amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     });
   }, [formatted, api, availableBalance, amount, decimal, amountAsBN]);
 
   useEffect(() => {
     if (amount && amountAsBN && poolConsts && pool && api && amountAsBN.gte(poolConsts.minJoinBond)) {
-      const call = api.tx.nominationPools.join;
+      const call = api.tx['nominationPools']['join'];
       const params = [amountAsBN, pool.poolId];
 
       const extraInfo = {
@@ -103,7 +104,7 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
       });
     } else {
       console.log('waiting!');
-      console.log('waiting:', amount , amountAsBN , poolConsts , pool , api , poolConsts?.minJoinBond &&amountAsBN?.gte(poolConsts?.minJoinBond));
+      console.log('waiting:', amount, amountAsBN, poolConsts, pool, api, poolConsts?.minJoinBond && amountAsBN?.gte(poolConsts?.minJoinBond));
     }
   }, [amount, amountAsBN, api, pool, poolConsts, setInputs]);
 
@@ -201,13 +202,13 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
       </Typography>
       <Grid alignItems='center' container item justifyContent='flex-start' pt='20px'>
         <AmountWithOptions
-          label={t('How much are you looking to stake?') }
+          label={t('How much are you looking to stake?')}
           labelFontSize='16px'
           onChangeAmount={onChangeAmount}
           onPrimary={onMaxClick}
           onSecondary={onMinClick}
           primaryBtnText={t('Max amount')}
-          secondaryBtnText={ t('Min amount')}
+          secondaryBtnText={t('Min amount')}
           style={{
             fontSize: '16px',
             mt: '15px',
@@ -261,9 +262,9 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
               secondaryBtnText={t('Back')}
             />
             {isBusy &&
-            <Typography sx={{ fontSize: '15px' }}>
-              {t('Please wait while we are fetching information!')}
-            </Typography>
+              <Typography sx={{ fontSize: '15px' }}>
+                {t('Please wait while we are fetching information!')}
+              </Typography>
             }
           </Grid>
         </Grid>

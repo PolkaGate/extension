@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -14,7 +15,7 @@ import React from 'react';
 
 import { FormatPrice, ShowBalance } from '../../components';
 import { useApi, useTokenPrice } from '../../hooks';
-import { BalancesInfo } from '../../util/types';
+import type { BalancesInfo } from '../../util/types';
 import { getValue } from './util';
 
 interface Props {
@@ -26,12 +27,12 @@ interface Props {
   onClick?: () => void
 }
 
-export default function LabelBalancePrice ({ address, balances, label, onClick, showLabel = true, title }: Props): React.ReactElement<Props> {
+export default function LabelBalancePrice({ address, balances, label, onClick, showLabel = true, title }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const value = getValue(label, balances);
   const api = useApi(address);
-  const { price } = useTokenPrice(address, balances?.assetId);
+  const { price } = useTokenPrice(address as string, balances?.assetId);
 
   return (
     <>

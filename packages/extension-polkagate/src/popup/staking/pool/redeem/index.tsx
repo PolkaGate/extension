@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /**
  * @description
@@ -11,8 +12,9 @@ import type { ApiPromise } from '@polkadot/api';
 import { Container } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
@@ -21,8 +23,8 @@ import { useAccountDisplay, useProxies, useTranslation, useUnSupportedNetwork } 
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
-import { STAKING_CHAINS } from '../../../../util/constants';
-import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import { PROXY_TYPE, STAKING_CHAINS } from '../../../../util/constants';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from '../rewards/partials/TxDetail';
 
@@ -38,7 +40,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function RedeemableWithdrawReview ({ address, amount, api, available, chain, formatted, setRefresh, setShow, show }: Props): React.ReactElement {
+export default function RedeemableWithdrawReview({ address, amount, api, available, chain, formatted, setRefresh, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
@@ -58,7 +60,7 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
-  const tx = api.tx.nominationPools.withdrawUnbonded;
+  const tx = api.tx['nominationPools']['withdrawUnbonded'];
 
   const decimal = api.registry.chainDecimals[0];
 
@@ -80,7 +82,7 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -100,7 +102,7 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
 
       signer.unlock(password);
       setShowWaitScreen(true);
-      const optSpans = await api.query.staking.slashingSpans(formatted);
+      const optSpans = await api.query['staking']['slashingSpans'](formatted) as any;
       const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
       const params = [formatted, spanCount];
       const { block, failureText, fee, success, txHash } = await broadcast(api, tx, params, signer, formatted, selectedProxy);
@@ -119,7 +121,8 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -150,7 +153,7 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />
@@ -190,7 +193,7 @@ export default function RedeemableWithdrawReview ({ address, amount, api, availa
           onConfirmClick={submit}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+          proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

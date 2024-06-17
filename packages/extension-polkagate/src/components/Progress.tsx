@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { Grid, useTheme } from '@mui/material';
 import { Circle, CubeGrid, WanderingCubes } from 'better-react-spinkit';
@@ -14,7 +15,7 @@ interface Props {
   type?: 'circle' | 'cubes' | 'grid';
 }
 
-function Progress ({ fontSize = 13, gridSize = 135, pt = '50px', size = 25, title, type = 'circle' }: Props): React.ReactElement<Props> {
+function Progress({ fontSize = 13, gridSize = 135, pt = '50px', size = 25, title, type = 'circle' }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (

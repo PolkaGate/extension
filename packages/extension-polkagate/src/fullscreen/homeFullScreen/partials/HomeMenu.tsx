@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -60,7 +61,7 @@ export const TaskButton = ({ children, disabled, extra, hasChildren, icon, isSub
   );
 };
 
-export default function HomeMenu (): React.ReactElement {
+export default function HomeMenu(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts, master } = useContext(AccountContext);

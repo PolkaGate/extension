@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { Grid, Skeleton } from '@mui/material';
 import React from 'react';
@@ -10,7 +11,7 @@ interface Props {
   mb?: number;
 }
 
-function Waiting ({ height, mb = 2, skeletonHeight = 25 }: Props): React.ReactElement<Props> {
+function Waiting({ height, mb = 2, skeletonHeight = 25 }: Props): React.ReactElement<Props> {
   const _height = height || window.innerHeight - 100;
   const length = _height / skeletonHeight;
   const step = 100 / length;

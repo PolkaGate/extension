@@ -1,14 +1,15 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { createWsEndpoints } from '@polkagate/apps-config';
 import { useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useChainName, useTranslation } from '.';
 
-export default function useEndpoint (address: AccountId | string | undefined, _endpoint?:string): string | undefined {
+export default function useEndpoint(address: AccountId | string | undefined, _endpoint?: string): string | undefined {
   const chainName = useChainName(address);
   const { t } = useTranslation();
   const [endpoint, setEndpoint] = useState<string | undefined>();

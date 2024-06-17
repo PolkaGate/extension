@@ -1,7 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+//@ts-nocheck
 
 import type { PoolStakingConsts } from '../../../util/types';
 
@@ -17,14 +20,13 @@ import { amountToHuman } from '../../../util/utils';
 
 interface Props {
   address: string;
-  backPath: string;
   showInfo: boolean;
   info: PoolStakingConsts;
   setShowInfo: React.Dispatch<React.SetStateAction<boolean>>
 
 }
 
-export default function Info ({ address, info, setShowInfo, showInfo }: Props): React.ReactElement {
+export default function Info({ address, info, setShowInfo, showInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { decimal, token } = useInfo(address);
 

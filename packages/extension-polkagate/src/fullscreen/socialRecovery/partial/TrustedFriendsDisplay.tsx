@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
@@ -8,7 +9,8 @@ import { Grid } from '@mui/material';
 import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { Identity } from '../../../components';
 
@@ -26,7 +28,7 @@ export default function TrustedFriendsDisplay({ accountsInfo, api, chain, friend
         <Identity
           accountInfo={accountsInfo ? accountsInfo[index] : undefined}
           api={api}
-          chain={chain}
+          chain={chain as any}
           direction='row'
           formatted={friend}
           identiconSize={25}

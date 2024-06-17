@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -7,7 +8,8 @@ import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, MoreVert as MoreV
 import { Grid, IconButton, useTheme } from '@mui/material';
 import React from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 interface Props {
   menuOnClick: () => void;

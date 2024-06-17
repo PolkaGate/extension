@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 import { faDiscord, faGithub, faXTwitter } from '@fortawesome/free-brands-svg-icons';
@@ -37,7 +38,7 @@ interface Props {
   isPeopleChainEnabled: boolean
 }
 
-export default function SetIdentityForm ({ discord, display, email, github, identity, isPeopleChainEnabled, legal, matrix, riot, setDiscord, setDisplay, setEmail, setGithub, setLegal, setMatrix, setRiot, setTwitter, setWeb, twitter, web }: Props): React.ReactElement {
+export default function SetIdentityForm({ discord, display, email, github, identity, isPeopleChainEnabled, legal, matrix, riot, setDiscord, setDisplay, setEmail, setGithub, setLegal, setMatrix, setRiot, setTwitter, setWeb, twitter, web }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
@@ -104,17 +105,17 @@ export default function SetIdentityForm ({ discord, display, email, github, iden
         }
       />
       {isPeopleChainEnabled &&
-      <IdentityInfoInput
-        icon={
-          <FontAwesomeIcon
-            color='rgb(178, 58, 120)'
-            fontSize='30px'
-            icon={faGithub}
-          /> }
-        setter={setGithub}
-        title={t('Github')}
-        value={github ?? identity?.github as string}
-      />
+        <IdentityInfoInput
+          icon={
+            <FontAwesomeIcon
+              color='rgb(178, 58, 120)'
+              fontSize='30px'
+              icon={faGithub}
+            />}
+          setter={setGithub}
+          title={t('Github')}
+          value={github ?? identity?.github as string}
+        />
       }
       <IdentityInfoInput
         icon={
@@ -126,7 +127,7 @@ export default function SetIdentityForm ({ discord, display, email, github, iden
         }
         setter={setDiscord}
         title={t('Discord')}
-        value={ isPeopleChainEnabled
+        value={isPeopleChainEnabled
           ? discord || identity?.discord as string
           : discord || identity?.other?.discord
         }

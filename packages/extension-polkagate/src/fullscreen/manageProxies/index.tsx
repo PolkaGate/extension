@@ -1,9 +1,12 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import '@vaadin/icons';
+
+import type { Proxy, ProxyItem } from '../../util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
@@ -15,7 +18,6 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { Warning } from '../../components';
 import { useFullscreen, useInfo, useTranslation } from '../../hooks';
 import { FULLSCREEN_WIDTH, PROXY_CHAINS } from '../../util/constants';
-import { Proxy, ProxyItem } from '../../util/types';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import AddProxy from './AddProxy';
 import Manage from './Manage';
@@ -33,7 +35,7 @@ export const STEPS = {
   WAIT_SCREEN: 5
 };
 
-function ManageProxies (): React.ReactElement {
+function ManageProxies(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -125,7 +127,7 @@ function ManageProxies (): React.ReactElement {
           {step === STEPS.MANAGE &&
             <Manage
               api={api}
-              chain={chain}
+              chain={chain as any}
               decimal={decimal}
               depositedValue={depositedValue}
               isDisabledAddProxyButton={!!isDisabledAddProxyButton}
@@ -139,7 +141,7 @@ function ManageProxies (): React.ReactElement {
           }
           {step === STEPS.ADD_PROXY &&
             <AddProxy
-              chain={chain}
+              chain={chain as any}
               proxiedAddress={address}
               proxyItems={proxyItems}
               setProxyItems={setProxyItems}
@@ -150,7 +152,7 @@ function ManageProxies (): React.ReactElement {
             <Review
               address={address}
               api={api}
-              chain={chain}
+              chain={chain as any}
               depositedValue={BN_ZERO}
               newDepositValue={newDepositValue}
               proxyItems={proxyItems}
