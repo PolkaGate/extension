@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, Infotip2, OptionalCopyButton, ShortAddress2 } from '../../../components';
+import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, Infotip2, OptionalCopyButton, ShortAddress2, VaadinIcon } from '../../../components';
 import { useIdentity, useInfo, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { showAccount, tieAccount } from '../../../messaging';
@@ -219,7 +219,7 @@ export default function AccountInformationForDetails({ accountAssets, address, l
               <Grid item width='40px'>
                 <Infotip text={account?.isHidden && t('This account is hidden from websites')}>
                   <IconButton onClick={toggleVisibility} sx={{ height: '20px', ml: '7px', mt: '13px', p: 0, width: '28px' }}>
-                    <vaadin-icon icon={account?.isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
+                    <VaadinIcon icon={account?.isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
                   </IconButton>
                 </Infotip>
               </Grid>

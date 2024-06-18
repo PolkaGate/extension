@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon, Close as CloseIcon, Menu as MenuIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
@@ -13,7 +11,7 @@ import { Box, Container, Divider, Grid, IconButton, type SxProps, type Theme, Ty
 import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { logoBlack, logoWhite } from '../assets/logos';
-import { ActionContext, FullScreenIcon, Steps } from '../components';
+import { ActionContext, FullScreenIcon, Steps, VaadinIcon } from '../components';
 import useOutsideClick from '../hooks/useOutsideClick';
 import type { Step } from '../util/types';
 import Menu from './Menu';
@@ -141,7 +139,7 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreenURL = 
         <IconButton aria-label='menu' color='inherit' edge='start' onClick={onClose || _onClose} size='small' sx={{ p: 0 }}>
           {showCloseX
             ? <CloseIcon sx={{ fontSize: 40 }} />
-            : <vaadin-icon icon={`vaadin:home${theme.palette.mode === 'light' ? '-o' : ''}`} style={{ height: '22px', width: '22px', color: `${theme.palette.secondary.light}` }} />
+            : <VaadinIcon icon={`vaadin:home${theme.palette.mode === 'light' ? '-o' : ''}`} style={{ height: '22px', width: '22px', color: `${theme.palette.secondary.light}` }} />
           }
         </IconButton>
       }

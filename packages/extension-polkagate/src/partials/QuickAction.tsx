@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon, Boy as BoyIcon } from '@mui/icons-material';
@@ -15,7 +13,7 @@ import { useHistory } from 'react-router-dom';
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { HorizontalMenuItem, PoolStakingIcon } from '../components';
+import { HorizontalMenuItem, PoolStakingIcon, VaadinIcon } from '../components';
 import { useInfo, useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
@@ -156,7 +154,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
         divider
         dividerHeight={20}
         icon={
-          <vaadin-icon icon='vaadin:piggy-bank-coin' style={{ height: '23px', color: `${CROWDLOANS_CHAINS.includes(account?.genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}` }} />
+          <VaadinIcon icon='vaadin:piggy-bank-coin' style={{ height: '23px', color: `${CROWDLOANS_CHAINS.includes(account?.genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}` }} />
         }
         onClick={goToCrowdLoans}
         textDisabled={!CROWDLOANS_CHAINS.includes(account?.genesisHash)}

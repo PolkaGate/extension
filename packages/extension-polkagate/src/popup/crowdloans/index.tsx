@@ -4,10 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-// @ts-nocheck
-
-import '@vaadin/icons';
-
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveOwnContributions } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
@@ -25,7 +21,7 @@ import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { auctionBlack, auctionRed, auctionWhite, crowdloanHomeBlack, crowdloanHomeRed, crowdloanHomeWhite, pastCrowdloanBlack, pastCrowdloanRed, pastCrowdloanWhite } from '../../assets/icons';
-import { ActionContext, HorizontalMenuItem, Identicon, Identity, Progress, ShowBalance, Warning } from '../../components';
+import { ActionContext, HorizontalMenuItem, Identicon, Identity, Progress, ShowBalance, VaadinIcon, Warning } from '../../components';
 import { SettingsContext } from '../../components/contexts';
 import { useAuction, useCurrentBlockNumber, useInfo, useMyAccountIdentity, useTranslation } from '../../hooks';
 import useIsExtensionPopup from '../../hooks/useIsExtensionPopup';
@@ -457,7 +453,7 @@ export default function CrowdLoans(): React.ReactElement {
           divider
           exceptionWidth={33}
           icon={
-            <vaadin-icon
+            <VaadinIcon
               icon='vaadin:piggy-bank-coin'
               style={{
                 height: '32px',

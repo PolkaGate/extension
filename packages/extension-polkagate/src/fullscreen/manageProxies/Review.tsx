@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
@@ -18,7 +16,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { CanPayErrorAlert, ShowBalance, SignArea2, WrongPasswordAlert } from '../../components';
+import { CanPayErrorAlert, ShowBalance, SignArea2, WrongPasswordAlert, VaadinIcon } from '../../components';
 import { useCanPayFeeAndDeposit, useFormatted, useTranslation } from '../../hooks';
 import { ThroughProxy } from '../../partials';
 import { PROXY_TYPE } from '../../util/constants';
@@ -154,7 +152,7 @@ function Review({ address, api, chain, depositedValue, newDepositValue, proxyIte
     <Grid container item>
       <Title
         logo={
-          <vaadin-icon icon='vaadin:sitemap' style={{ fontSize: '25px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:sitemap' style={{ fontSize: '25px', color: `${theme.palette.text.primary}` }} />
         }
         text={
           [STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step)

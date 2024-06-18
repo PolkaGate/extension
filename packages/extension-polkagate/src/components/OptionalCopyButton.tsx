@@ -4,12 +4,11 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { Grid, Popover, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import OptionalCopyPopup from '../partials/OptionalCopyPopup';
+import { VaadinIcon } from '../components';
 
 interface Props {
   address: string | undefined;
@@ -36,7 +35,7 @@ function OptionalCopyButton({ address }: Props): React.ReactElement {
   return (
     <>
       <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onCopyIconClick} sx={{ bgcolor: 'transparent', border: 'none', cursor: 'pointer', p: '2px 6px', position: 'relative', width: '35px' }}>
-        <vaadin-icon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}`, width: '20px' }} />
+        <VaadinIcon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}`, width: '20px' }} />
       </Grid>
       <Popover
         PaperProps={{

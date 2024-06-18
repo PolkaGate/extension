@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
@@ -15,6 +13,7 @@ import React, { useCallback } from 'react';
 import settings from '@polkadot/ui-settings';
 
 import { useTranslation } from '../../../hooks';
+import { VaadinIcon } from '../../../components';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import { TaskButton } from './HomeMenu';
 
@@ -61,7 +60,7 @@ function ImportAccSubMenuFullScreen({ show, toggleSettingSubMenu }: Props): Reac
         <Grid container direction='column' display='block' item sx={{ p: '0 0 15px 40px' }}>
           <TaskButton
             icon={
-              <vaadin-icon icon='vaadin:file-text' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+              <VaadinIcon icon='vaadin:file-text' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
             }
             isSubMenu
             onClick={onRestoreFromJson}
@@ -69,7 +68,7 @@ function ImportAccSubMenuFullScreen({ show, toggleSettingSubMenu }: Props): Reac
           />
           <TaskButton
             icon={
-              <vaadin-icon icon='vaadin:book' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+              <VaadinIcon icon='vaadin:book' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
             }
             isSubMenu
             onClick={onImportFromSeed}
@@ -77,7 +76,7 @@ function ImportAccSubMenuFullScreen({ show, toggleSettingSubMenu }: Props): Reac
           />
           <TaskButton
             icon={
-              <vaadin-icon icon='vaadin:book-dollar' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+              <VaadinIcon icon='vaadin:book-dollar' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
             }
             isSubMenu
             onClick={onImportFromRawSeed}
@@ -85,7 +84,7 @@ function ImportAccSubMenuFullScreen({ show, toggleSettingSubMenu }: Props): Reac
           />
           <TaskButton
             icon={
-              <vaadin-icon icon='vaadin:sitemap' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px', transform: 'rotate(180deg)' }} />
+              <VaadinIcon icon='vaadin:sitemap' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px', transform: 'rotate(180deg)' }} />
             }
             isSubMenu
             onClick={onImportProxiedFullScreen}
@@ -93,7 +92,7 @@ function ImportAccSubMenuFullScreen({ show, toggleSettingSubMenu }: Props): Reac
           />
           <TaskButton
             icon={
-              <vaadin-icon icon='vaadin:tag' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+              <VaadinIcon icon='vaadin:tag' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
             }
             isSubMenu
             onClick={onAddWatchOnlyFullScreen}
@@ -109,7 +108,7 @@ function ImportAccSubMenuFullScreen({ show, toggleSettingSubMenu }: Props): Reac
               : undefined
             }
             icon={
-              <vaadin-icon icon='vaadin:qrcode' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+              <VaadinIcon icon='vaadin:qrcode' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
             }
             isSubMenu
             onClick={onAttachQrFullScreen}
@@ -117,7 +116,7 @@ function ImportAccSubMenuFullScreen({ show, toggleSettingSubMenu }: Props): Reac
           />
           <TaskButton
             icon={
-              <vaadin-icon icon='vaadin:wallet' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+              <VaadinIcon icon='vaadin:wallet' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
             }
             isSubMenu
             onClick={onImportLedger}

@@ -3,9 +3,6 @@
 // @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-//@ts-nocheck
-
-import '@vaadin/icons';
 
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import { Collapse, Grid, IconButton, Typography, useTheme } from '@mui/material';
@@ -17,7 +14,7 @@ import { keyring } from '@polkadot/ui-keyring';
 import { objectSpread } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { ActionContext, Address, InputWithLabel, TextAreaWithLabel, TwoButtons, Warning } from '../../../components';
+import { ActionContext, Address, InputWithLabel, TextAreaWithLabel, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useGenesisHashOptions, useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri } from '../../../messaging';
@@ -149,7 +146,7 @@ export default function ImportRawSeed(): React.ReactElement {
         <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
-              <vaadin-icon icon='vaadin:book-dollar' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
+              <VaadinIcon icon='vaadin:book-dollar' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>

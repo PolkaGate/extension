@@ -4,15 +4,13 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { ArrowBackIos as ArrowBackIosIcon, Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import { Divider, Grid, Pagination, SxProps, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { Identity, ShowBalance } from '../../../../components';
+import { Identity, ShowBalance, VaadinIcon } from '../../../../components';
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
 import { AbstainVoteType, VoteType } from '../../utils/helpers';
@@ -249,7 +247,7 @@ export default function Delegators({ address, closeDelegators, handleCloseStanda
               {t('Delegators ({{count}})', { replace: { count: delegatorList?.length } })}
             </Grid>
             <Grid item width='22%'>
-              <vaadin-icon icon='vaadin:sort' onClick={onSortVotes} style={{ height: '20px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
+              <VaadinIcon icon='vaadin:sort' onClick={onSortVotes} style={{ height: '20px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
               {t('Amount')}
             </Grid>
             <Grid item width='15%'>

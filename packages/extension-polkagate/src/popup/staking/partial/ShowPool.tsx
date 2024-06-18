@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 // @ts-ignore
@@ -16,7 +14,7 @@ import { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/types';
 
 
-import { Identity, Infotip, ShowBalance } from '../../../components';
+import { Identity, Infotip, ShowBalance, VaadinIcon } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import getPoolAccounts from '../../../util/getPoolAccounts';
 import type { MyPoolInfo } from '../../../util/types';
@@ -141,7 +139,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
                   {mode === 'Default' ? poolStatus : mode}
                 </Grid>
                 <Grid alignItems='center' item justifyContent='center' onClick={onRewardsChart} width='16%' sx={{ cursor: 'pointer' }}>
-                  <vaadin-icon icon='vaadin:bar-chart-h' style={{ height: '16px', width: '16px', color: `${mode === 'Creating' ? theme.palette.text.disabled : theme.palette.secondary.main}` }} />
+                  <VaadinIcon icon='vaadin:bar-chart-h' style={{ height: '16px', width: '16px', color: `${mode === 'Creating' ? theme.palette.text.disabled : theme.palette.secondary.main}` }} />
                 </Grid>
               </Grid>
             </>

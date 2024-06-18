@@ -4,15 +4,13 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
-import { ActionContext, SocialRecoveryIcon } from '../../../components';
+import { ActionContext, SocialRecoveryIcon, VaadinIcon } from '../../../components';
 import { useInfo, useTranslation } from '../../../hooks';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 import { popupNumbers } from '..';
@@ -96,7 +94,7 @@ export default function AccountSetting({ address, setDisplayPopup }: Props): Rea
           />
           <TaskButton
             disabled={proxyDisable}
-            icon={<vaadin-icon icon='vaadin:sitemap' style={{ height: '30px', color: `${proxyDisable ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
+            icon={<VaadinIcon icon='vaadin:sitemap' style={{ height: '30px', color: `${proxyDisable ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
             onClick={onManageProxies}
             secondaryIconType='page'
             text={t('Manage proxies')}
@@ -119,26 +117,26 @@ export default function AccountSetting({ address, setDisplayPopup }: Props): Rea
           />
           <TaskButton
             disabled={hardwareOrExternalAccount}
-            icon={<vaadin-icon icon='vaadin:download-alt' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
+            icon={<VaadinIcon icon='vaadin:download-alt' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
             onClick={onExportAccount}
             secondaryIconType='popup'
             text={t('Export account')}
           />
           <TaskButton
             disabled={hardwareOrExternalAccount}
-            icon={<vaadin-icon icon='vaadin:road-branch' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
+            icon={<VaadinIcon icon='vaadin:road-branch' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
             onClick={goToDeriveAcc}
             secondaryIconType='popup'
             text={t('Derive new account')}
           />
           <TaskButton
-            icon={<vaadin-icon icon='vaadin:edit' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
+            icon={<VaadinIcon icon='vaadin:edit' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
             onClick={onRenameAccount}
             secondaryIconType='popup'
             text={t('Rename')}
           />
           <TaskButton
-            icon={<vaadin-icon icon='vaadin:file-remove' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
+            icon={<VaadinIcon icon='vaadin:file-remove' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
             noBorderButton
             onClick={onForgetAccount}
             secondaryIconType='popup'

@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import type { AccountId } from '@polkadot/types/interfaces';
 
 import { alpha, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
@@ -15,6 +13,7 @@ import { FixedSizeList as List } from 'react-window';
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { Chain } from '@polkadot/extension-chains/types';
+import { VaadinIcon } from '@polkadot/extension-polkagate/src/components';
 import { useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
 import { BN, hexToBn, isHex } from '@polkadot/util';
 
@@ -124,7 +123,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
                     v={v}
                   />
                   <Grid alignItems='center' container item justifyContent='center' onClick={() => openValidatorInfo(v)} sx={{ cursor: 'pointer' }} width='6%'>
-                    <vaadin-icon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
+                    <VaadinIcon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
                   </Grid>
                 </Grid>
               );

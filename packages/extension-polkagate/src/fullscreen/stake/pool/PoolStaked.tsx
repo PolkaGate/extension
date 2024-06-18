@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import type { BalancesInfo, MyPoolInfo } from '../../../util/types';
 
 import { faSquarePlus } from '@fortawesome/free-regular-svg-icons';

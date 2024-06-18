@@ -3,8 +3,6 @@
 // @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-//@ts-nocheck
-import '@vaadin/icons';
 
 import type { ResponseJsonGetAccountInfo } from '@polkadot/extension-base/background/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
@@ -17,7 +15,7 @@ import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/acc
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { u8aToString } from '@polkadot/util';
 
-import { Address, InputFileWithLabel, Label, Password, TwoButtons, Warning, WrongPasswordAlert } from '../../../components';
+import { Address, InputFileWithLabel, Label, Password, TwoButtons, VaadinIcon, Warning, WrongPasswordAlert } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../../../messaging';
@@ -131,7 +129,7 @@ export default function RestoreJson(): React.ReactElement {
         <Grid container item sx={{ display: 'block', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
-              <vaadin-icon icon='vaadin:file-text' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
+              <VaadinIcon icon='vaadin:file-text' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>

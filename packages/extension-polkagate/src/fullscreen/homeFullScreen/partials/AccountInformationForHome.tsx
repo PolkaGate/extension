@@ -13,7 +13,7 @@ import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { BN } from '@polkadot/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
-import { ActionContext, Identicon, Identity, Infotip, OptionalCopyButton, ShortAddress2 } from '../../../components';
+import { ActionContext, Identicon, Identity, Infotip, OptionalCopyButton, ShortAddress2, VaadinIcon } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, useIdentity, useInfo, usePrices, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
@@ -166,7 +166,7 @@ export default function AccountInformationForHome({ accountAssets, address, hide
               <Grid item width='40px'>
                 <Infotip text={account?.isHidden && t('This account is hidden from websites')}>
                   <IconButton onClick={toggleVisibility} sx={{ height: '20px', ml: '7px', mt: '13px', p: 0, width: '28px' }}>
-                    <vaadin-icon icon={account?.isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
+                    <VaadinIcon icon={account?.isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
                   </IconButton>
                 </Infotip>
               </Grid>

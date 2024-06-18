@@ -4,14 +4,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import { saveAs } from 'file-saver';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { AccountContext, TwoButtons } from '../../../components';
+import { AccountContext, TwoButtons, VaadinIcon } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { exportAccounts } from '../../../messaging';
 import { Passwords } from '../../../partials';
@@ -65,7 +63,7 @@ export default function ExportAllModal({ open, setDisplayPopup }: Props): React.
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid alignItems='flex-start' container justifyContent='flex-start' sx={{ width: 'fit-content' }}>
             <Grid item>
-              <vaadin-icon icon='vaadin:download' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+              <VaadinIcon icon='vaadin:download' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
             </Grid>
             <Grid item sx={{ pl: '10px' }}>
               <Typography fontSize='22px' fontWeight={700}>

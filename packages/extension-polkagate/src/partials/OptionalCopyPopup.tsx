@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useLayoutEffect, useState } from 'react';
 

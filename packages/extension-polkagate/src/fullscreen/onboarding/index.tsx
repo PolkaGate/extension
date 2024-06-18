@@ -3,8 +3,6 @@
 // @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-//@ts-nocheck
-import '@vaadin/icons';
 
 import { faHome } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,7 +11,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { AccountContext, ActionContext, PButton } from '../../components';
+import { AccountContext, ActionContext, PButton, VaadinIcon } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
 import { createAccountExternal, windowOpen } from '../../messaging';
 import Privacy from '../../popup/welcome/Privacy';
@@ -127,7 +125,7 @@ function Onboarding(): React.ReactElement {
               _mt='20px'
               _onClick={onCreate}
               _variant={'contained'}
-              startIcon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.main}` }} />}
+              startIcon={<VaadinIcon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.main}` }} />}
               text={t('Create a new account')}
             />
             <Divider sx={{ fontSize: '20px', fontWeight: 400, my: '25px', width: '88%' }}>

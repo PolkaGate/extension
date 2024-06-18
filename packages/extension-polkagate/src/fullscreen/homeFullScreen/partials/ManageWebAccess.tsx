@@ -4,15 +4,13 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/handlers/State';
 
-import { InputFilter, Label, PButton } from '../../../components';
+import { InputFilter, Label, PButton, VaadinIcon } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { getAuthList, removeAuthorization, toggleAuthorization } from '../../../messaging';
 import WebsiteEntry from '../../../popup/authManagement/WebsiteEntry';
@@ -59,7 +57,7 @@ export default function ManageWebAccess({ open, setDisplayPopup }: Props): React
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid alignItems='flex-start' container justifyContent='flex-start' sx={{ width: 'fit-content' }}>
             <Grid item>
-              <vaadin-icon icon='vaadin:lines-list' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+              <VaadinIcon icon='vaadin:lines-list' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
             </Grid>
             <Grid item sx={{ pl: '10px' }}>
               <Typography fontSize='22px' fontWeight={700}>

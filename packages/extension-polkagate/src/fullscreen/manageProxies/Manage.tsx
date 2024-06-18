@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import type { ProxyItem } from '../../util/types';
 
 import { AddRounded as AddRoundedIcon } from '@mui/icons-material';
@@ -17,7 +15,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, ShowBalance, TwoButtons } from '../../components';
+import { ActionContext, ShowBalance, TwoButtons, VaadinIcon } from '../../components';
 import { useTranslation } from '../../hooks';
 import { noop } from '../../util/utils';
 import Bread from '../partials/Bread';
@@ -122,7 +120,7 @@ export default function Manage({ api, chain, decimal, depositedValue, isDisabled
       <Bread />
       <Title
         height='100px'
-        logo={<vaadin-icon icon='vaadin:sitemap' style={{ fontSize: '23px', color: `${theme.palette.text.primary}` }} />}
+        logo={<VaadinIcon icon='vaadin:sitemap' style={{ fontSize: '23px', color: `${theme.palette.text.primary}` }} />}
         text={t('Proxy Management')}
       />
       <Typography fontSize='14px' fontWeight={400}>

@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { Email as EmailIcon, Language as LanguageIcon, X as XIcon } from '@mui/icons-material';
 import { Box, Grid, Link, useTheme } from '@mui/material';
 import React from 'react';

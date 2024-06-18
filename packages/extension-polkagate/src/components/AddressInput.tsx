@@ -5,10 +5,6 @@
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-no-bind */
 
-// @ts-nocheck
-
-import '@vaadin/icons';
-
 import { faPaste, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Autocomplete, Grid, IconButton, InputAdornment, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
@@ -19,6 +15,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import settings from '@polkadot/ui-settings';
 
 import { useTranslation } from '../hooks';
+import { VaadinIcon } from '../components';
 import QrScanner from '../popup/import/addWatchOnly/QrScanner';
 import isValidAddress from '../util/validateAddress';
 import Identicon from './Identicon';
@@ -162,7 +159,7 @@ export default function AddressInput({ addWithQr = false, allAddresses = [], cha
                             onClick={openQrScanner}
                             sx={{ p: '3px' }}
                           >
-                            <vaadin-icon icon='vaadin:qrcode' style={{ height: '16px', width: '16px', color: `${settings.camera === 'on' ? theme.palette.primary.main : theme.palette.text.disabled}` }} />
+                            <VaadinIcon icon='vaadin:qrcode' style={{ height: '16px', width: '16px', color: `${settings.camera === 'on' ? theme.palette.primary.main : theme.palette.text.disabled}` }} />
                           </IconButton>
                         }
                       </InputAdornment>

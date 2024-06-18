@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import type { Proxy, ProxyItem } from '../../util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
