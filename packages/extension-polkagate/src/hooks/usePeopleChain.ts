@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import { createWsEndpoints } from '@polkagate/apps-config';
 import { useMemo } from 'react';
@@ -25,15 +24,15 @@ interface PeopleChainInfo {
  */
 
 const getPeopleChainGenesisHash = (chainName: string | undefined) => {
-  switch (chainName) {
+  const relayChainNames = ['Westend', 'Kusama', 'Polkadot'];
+  const startWith = relayChainNames.find((name) => chainName?.startsWith(name)) || undefined;
+
+  switch (startWith) {
     case 'Westend':
-    case 'WestendPeople':
       return WESTEND_PEOPLE_GENESIS_HASH;
     case 'Kusama':
-    case 'KusamaPeople':
       return KUSAMA_PEOPLE_GENESIS_HASH;
     case 'Polkadot':
-    case 'PolkadotPeople':
       return POLKADOT_GENESIS_HASH; // should be changed to POLKADOT_PEOPLE_GENESIS_HASH in the future
     default:
       return undefined;
@@ -44,6 +43,7 @@ export default function usePeopleChain(address: string | undefined, genesisHash?
   const { chain } = useInfo(address);
   const _chain = chain || getChain(genesisHash);
   const _chainName = sanitizeChainName(_chain?.name);
+
   const peopleChainGenesisHash = getPeopleChainGenesisHash(_chainName);
 
   const peopleChain = useMetadata(peopleChainGenesisHash, true);

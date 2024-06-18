@@ -55,10 +55,9 @@ export default function AddProxy({ address, chain, onChange, proxyItems, setProx
   const possibleProxy = useMemo(() => ({ delay, delegate: realAddress, proxyType: selectedProxyType }) as Proxy, [delay, realAddress, selectedProxyType]);
   const alreadyExisting = useMemo(() => !!(proxyItems?.find((item) => isEqualProxy(item.proxy, possibleProxy))), [possibleProxy, proxyItems]);
 
-  const chainName = sanitizeChainName(chain?.name)?.toLowerCase()?.includes('assethub')
-    ? 'AssetHubs'
-    : sanitizeChainName(chain?.name);
-  const PROXY_TYPE = CHAIN_PROXY_TYPES[chainName as keyof typeof CHAIN_PROXY_TYPES];
+  const chainName = sanitizeChainName(chain?.name);
+  const proxyTypeIndex = chainName?.toLowerCase()?.includes('assethub') ? 'AssetHubs' : chainName;
+  const PROXY_TYPE = CHAIN_PROXY_TYPES[proxyTypeIndex as keyof typeof CHAIN_PROXY_TYPES];
 
   const proxyTypeOptions = PROXY_TYPE.map((type: string): DropdownOption => ({
     text: type,
@@ -144,7 +143,7 @@ export default function AddProxy({ address, chain, onChange, proxyItems, setProx
       </Grid>
       {realAddress && !(myselfAsProxy || alreadyExisting) &&
         <ShowIdentity
-          accountIdentity={proxyAccountIdentity?.identity}
+          accountIdentity={proxyAccountIdentity !==undefined && proxyAccountIdentity?.identity || null}
           style={{ m: 'auto', width: '92%' }}
         />
       }
