@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LockIcon from '@mui/icons-material/Lock';
@@ -14,7 +12,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import settings from '@polkadot/ui-settings';
 
-import { ActionContext, Checkbox2, ColorContext, FullScreenIcon, Infotip2, MenuItem, Select, Switch } from '../components';
+import { ActionContext, Checkbox2, ColorContext, FullScreenIcon, Infotip2, MenuItem, Select, Switch, VaadinIcon } from '../components';
 import { getStorage, updateStorage } from '../components/Loading';
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import { useIsLoginEnabled, useIsPopup, useTranslation } from '../hooks';
@@ -179,7 +177,7 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
             <MenuItem
               fontSize='17px'
               iconComponent={
-                <vaadin-icon icon='vaadin:key' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+                <VaadinIcon icon='vaadin:key' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={onManageLoginPassword}
               py='2px'

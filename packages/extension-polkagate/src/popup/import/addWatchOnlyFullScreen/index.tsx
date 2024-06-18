@@ -3,8 +3,6 @@
 // @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-// @ts-nocheck
-import '@vaadin/icons';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -17,7 +15,7 @@ import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constan
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AddressInput, ProxyTable, SelectChain, TwoButtons } from '../../../components';
+import { AddressInput, ProxyTable, SelectChain, TwoButtons, VaadinIcon } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useApiWithChain, useFullscreen, useGenesisHashOptions, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata } from '../../../messaging';
@@ -99,7 +97,7 @@ export default function AddWatchOnlyFullScreen(): React.ReactElement {
         <Grid container item sx={{ display: 'block', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
-              <vaadin-icon icon='vaadin:tag' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
+              <VaadinIcon icon='vaadin:tag' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>

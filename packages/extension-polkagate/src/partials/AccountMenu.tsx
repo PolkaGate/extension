@@ -4,15 +4,13 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain, SocialRecoveryIcon } from '../components';
+import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain, SocialRecoveryIcon, VaadinIcon } from '../components';
 import { useGenesisHashOptions, useInfo, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../util/constants';
@@ -107,7 +105,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       <MenuItem
         disabled={isDisabled(PROXY_CHAINS)}
         iconComponent={
-          <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${isDisabled(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:sitemap' style={{ height: '18px', color: `${isDisabled(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
         }
         onClick={onManageProxies}
         text={t('Manage proxies')}
@@ -133,7 +131,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
-            <vaadin-icon icon='vaadin:download-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:download-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
           onClick={onExportAccount}
           text={t('Export account')}
@@ -142,7 +140,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
-            <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
           onClick={goToDeriveAcc}
           text={t('Derive new account')}
@@ -151,7 +149,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       }
       <MenuItem
         iconComponent={
-          <vaadin-icon icon='vaadin:edit' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:edit' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
         onClick={onRenameAccount}
         text={t('Rename')}
@@ -159,7 +157,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       />
       <MenuItem
         iconComponent={
-          <vaadin-icon icon='vaadin:file-remove' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:file-remove' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
         onClick={onForgetAccount}
         text={t('Forget account')}

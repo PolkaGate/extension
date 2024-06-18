@@ -3,8 +3,6 @@
 // @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-// @ts-nocheck
-import '@vaadin/icons';
 
 import { Button, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
@@ -12,7 +10,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { QrScanAddress } from '@polkadot/react-qr';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, PButton, TwoButtons, Warning } from '../../../components';
+import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, PButton, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from '../../../messaging';
@@ -123,7 +121,7 @@ export default function AttachQrFullScreen(): React.ReactElement {
         <Grid container item sx={{ display: 'block', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
-              <vaadin-icon icon='vaadin:qrcode' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
+              <VaadinIcon icon='vaadin:qrcode' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>

@@ -2,13 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-import '@vaadin/icons';
-
 import { Grid, IconButton, Tooltip, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 import { useTranslation } from '../hooks';
+import { VaadinIcon } from '../components';
 
 interface Props {
   address: string | null | undefined;
@@ -75,7 +74,7 @@ function CopyAddressButton({ address, showAddress = false, size = 20 }: Props): 
           }}
         >
           <CopyToClipboard text={String(address)}>
-            <vaadin-icon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}`, width: `${size}px` }} />
+            <VaadinIcon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}`, width: `${size}px` }} />
           </CopyToClipboard>
         </IconButton>
       </Tooltip>

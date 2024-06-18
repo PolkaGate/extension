@@ -4,14 +4,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Popover, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
-import { ActionContext, MenuItem, SocialRecoveryIcon } from '../../../components';
+import { ActionContext, MenuItem, SocialRecoveryIcon, VaadinIcon } from '../../../components';
 import { useInfo, useTranslation } from '../../../hooks';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 import { POPUPS_NUMBER } from './AccountInformationForHome';
@@ -98,7 +96,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
       <MenuItem
         disabled={isDisable(PROXY_CHAINS)}
         iconComponent={
-          <vaadin-icon icon='vaadin:sitemap' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:sitemap' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
         }
         onClick={onManageProxies}
         text={t<string>('Manage proxies')}
@@ -124,7 +122,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
-            <vaadin-icon icon='vaadin:download-alt' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:download-alt' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
           }
           onClick={onExportAccount}
           text={t('Export account')}
@@ -134,7 +132,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
-            <vaadin-icon icon='vaadin:road-branch' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:road-branch' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
           }
           onClick={goToDeriveAcc}
           text={t('Derive new account')}
@@ -143,7 +141,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
       }
       <MenuItem
         iconComponent={
-          <vaadin-icon icon='vaadin:edit' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:edit' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
         }
         onClick={onRenameAccount}
         text={t('Rename')}
@@ -151,7 +149,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
       />
       <MenuItem
         iconComponent={
-          <vaadin-icon icon='vaadin:file-remove' style={{ color: `${theme.palette.text.primary}`, height: '20px' }} />
+          <VaadinIcon icon='vaadin:file-remove' style={{ color: `${theme.palette.text.primary}`, height: '20px' }} />
         }
         onClick={onForgetAccount}
         text={t('Forget account')}

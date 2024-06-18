@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import type { ApiPromise } from '@polkadot/api';
 import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
 
@@ -19,7 +17,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
+import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance, VaadinIcon } from '../../../components';
 import { useApi, useBalances, useChain, useDecimal, useFormatted, useMyAccountIdentity, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import useIsExtensionPopup from '../../../hooks/useIsExtensionPopup';
 import { ChainSwitch, HeaderBrand } from '../../../partials';
@@ -370,13 +368,13 @@ export default function Index(): React.ReactElement {
         <HorizontalMenuItem
           divider
           // @ts-ignore
-          icon={<vaadin-icon icon='vaadin:grid-small' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
+          icon={<VaadinIcon icon='vaadin:grid-small' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
           onClick={goToPool}
           title={t<string>('Pool')}
         />
         <HorizontalMenuItem
           // @ts-ignore
-          icon={<vaadin-icon icon='vaadin:info-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
+          icon={<VaadinIcon icon='vaadin:info-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
           onClick={goToInfo}
           title={t<string>('Info')}
         />

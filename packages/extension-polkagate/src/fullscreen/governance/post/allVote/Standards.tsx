@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import SearchIcon from '@mui/icons-material/Search';
@@ -15,7 +13,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
-import { Identity, InputFilter, Progress, ShowBalance } from '../../../../components';
+import { Identity, InputFilter, Progress, ShowBalance, VaadinIcon } from '../../../../components';
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
 import { AbstainVoteType, AllVotesType, FilteredVotes, VoteType } from '../../utils/helpers';
@@ -236,7 +234,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
               </Grid>
               <Grid container item justifyContent='space-around' xs={12} fontSize='16px'>
                 <Grid item>
-                  <vaadin-icon icon='vaadin:sort' onClick={onSortVotes} style={{ height: '25px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
+                  <VaadinIcon icon='vaadin:sort' onClick={onSortVotes} style={{ height: '25px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
                   {t('Value')}
                 </Grid>
                 {voteTypeStr !== 'abstain' &&

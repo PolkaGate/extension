@@ -3,8 +3,6 @@
 // @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-//@ts-nocheck
-import '@vaadin/icons';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -16,7 +14,7 @@ import Bread from '@polkadot/extension-polkagate/src/fullscreen/partials/Bread';
 import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext, Label, Password, Warning } from '../../../components';
+import { AccountContext, AccountNamePasswordCreation, ActionContext, Label, Password, VaadinIcon, Warning } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { deriveAccount, validateAccount, validateDerivationPath } from '../../../messaging';
@@ -144,7 +142,7 @@ function DeriveFromAccounts(): React.ReactElement {
           <Title
             height='70px'
             logo={
-              <vaadin-icon icon='vaadin:road-branch' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
+              <VaadinIcon icon='vaadin:road-branch' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
             }
             padding='0px'
             text={t('Derive from accounts')}

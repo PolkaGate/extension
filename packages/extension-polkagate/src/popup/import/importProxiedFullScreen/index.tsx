@@ -3,7 +3,6 @@
 // @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-//@ts-nocheck
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import Chance from 'chance';
@@ -14,7 +13,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import Bread from '@polkadot/extension-polkagate/src/fullscreen/partials/Bread';
 import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 
-import { AccountContext, Label, SelectChain, TwoButtons } from '../../../components';
+import { AccountContext, Label, SelectChain, TwoButtons, VaadinIcon } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useGenesisHashOptions, useInfo, useProxiedAccounts, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata, tieAccount } from '../../../messaging';
@@ -106,7 +105,7 @@ function ImportProxiedFS(): React.ReactElement {
           <Title
             height='85px'
             logo={
-              <vaadin-icon icon='vaadin:sitemap' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px', transform: 'rotate(180deg)' }} />
+              <VaadinIcon icon='vaadin:sitemap' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px', transform: 'rotate(180deg)' }} />
             }
             text={t('Import proxied accounts')}
           />

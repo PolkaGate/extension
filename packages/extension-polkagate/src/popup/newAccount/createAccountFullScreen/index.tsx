@@ -3,9 +3,6 @@
 // @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-// @ts-nocheck
-
-import '@vaadin/icons';
 
 import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -14,7 +11,7 @@ import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/acc
 import { FULLSCREEN_WIDTH, POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 
-import { Checkbox2, InputWithLabel, TwoButtons } from '../../../components';
+import { Checkbox2, InputWithLabel, TwoButtons, VaadinIcon } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountSuri, createSeed } from '../../../messaging';
@@ -110,7 +107,7 @@ function CreateAccount(): React.ReactElement {
         <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
-              <vaadin-icon icon='vaadin:plus-circle' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
+              <VaadinIcon icon='vaadin:plus-circle' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>

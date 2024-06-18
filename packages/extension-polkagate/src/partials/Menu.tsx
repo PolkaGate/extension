@@ -4,14 +4,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography } from '@mui/material';
 import { keyframes, Theme } from '@mui/material/styles';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { AccountContext, ActionContext, MenuItem, TwoButtons, Warning } from '../components';
+import { AccountContext, ActionContext, MenuItem, TwoButtons, VaadinIcon,Warning } from '../components';
 import { setStorage } from '../components/Loading';
 import { useTranslation } from '../hooks';
 import { tieAccount } from '../messaging';
@@ -119,7 +117,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
           ? <>
             <MenuItem
               iconComponent={
-                <vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+                <VaadinIcon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={toggleNewAccountSubMenu}
               showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT}
@@ -131,7 +129,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
             <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
             <MenuItem
               iconComponent={
-                <vaadin-icon icon='vaadin:upload-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+                <VaadinIcon icon='vaadin:upload-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={toggleImportSubMenu}
               showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT}
@@ -143,7 +141,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
             <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
             <MenuItem
               iconComponent={
-                <vaadin-icon icon='vaadin:download' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+                <VaadinIcon icon='vaadin:download' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={_goToExportAll}
               text={t('Export all accounts')}
@@ -152,7 +150,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
             <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
             <MenuItem
               iconComponent={
-                <vaadin-icon icon='vaadin:cog' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+                <VaadinIcon icon='vaadin:cog' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={toggleSettingSubMenu}
               showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.SETTING}

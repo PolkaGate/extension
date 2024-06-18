@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
@@ -16,7 +14,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 
 
 import { stars5Black, stars5White } from '../../assets/icons';
-import { FormatBalance2, FormatPrice, Infotip, OptionalCopyButton } from '../../components';
+import { FormatBalance2, FormatPrice, Infotip, OptionalCopyButton, VaadinIcon } from '../../components';
 import { useBalances, useChainName, useTokenPrice, useTranslation } from '../../hooks/';
 import RecentChains from '../../partials/RecentChains';
 import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
@@ -48,7 +46,7 @@ const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
   return (
     <Infotip text={isHidden && t('This account is hidden from websites')}>
       <IconButton onClick={toggleVisibility} sx={{ height: '15px', ml: '7px', mt: '13px', p: 0, width: '24px' }}>
-        <vaadin-icon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
+        <VaadinIcon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
       </IconButton>
     </Infotip>
   );

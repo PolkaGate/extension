@@ -3,8 +3,6 @@
 // @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-//@ts-nocheck
-import '@vaadin/icons';
 
 import { faWallet } from '@fortawesome/free-solid-svg-icons';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -14,7 +12,7 @@ import { FullScreenHeader } from '@polkadot/extension-polkagate/src/fullscreen/g
 import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { PButton } from '../../components';
+import { PButton, VaadinIcon } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 
@@ -52,7 +50,7 @@ function ResetFS(): React.ReactElement {
             _onClick={_goToRestoreFromJson}
             _variant={'contained'}
             startIcon={
-              <vaadin-icon icon='vaadin:file-text' style={{ height: '18px', color: `${theme.palette.text.main}` }} />
+              <VaadinIcon icon='vaadin:file-text' style={{ height: '18px', color: `${theme.palette.text.main}` }} />
             }
             text={t<string>('Restore from JSON File')}
           />
@@ -66,7 +64,7 @@ function ResetFS(): React.ReactElement {
             _onClick={_goToImport}
             _variant={'contained'}
             startIcon={
-              <vaadin-icon icon='vaadin:book' style={{ height: '18px', color: `${theme.palette.text.main}` }} />
+              <VaadinIcon icon='vaadin:book' style={{ height: '18px', color: `${theme.palette.text.main}` }} />
             }
             text={t<string>('Import from Recovery Phrase')}
           />
