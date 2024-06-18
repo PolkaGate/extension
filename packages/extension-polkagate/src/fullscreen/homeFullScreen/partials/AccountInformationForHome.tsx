@@ -4,6 +4,8 @@
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
+
 import { ArrowForwardIos as ArrowForwardIosIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Box, Button, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
@@ -15,7 +17,6 @@ import { stars6Black, stars6White } from '../../../assets/icons';
 import { ActionContext, Identicon, Identity, Infotip, OptionalCopyButton, ShortAddress2, VaadinIcon } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, useIdentity, useInfo, usePrices, useTranslation } from '../../../hooks';
-import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { showAccount, tieAccount } from '../../../messaging';
 import ExportAccountModal from '../../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../../popup/forgetAccount/ForgetAccountModal';
@@ -26,7 +27,7 @@ import AccountIconsFs from '../../accountDetails/components/AccountIconsFs';
 import AOC from '../../accountDetails/components/AOC';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import FullScreenAccountMenu from './FullScreenAccountMenu';
-import ManageProfileModal from '../../manageProfiles/ManageProfileModal';
+import type { BalancesInfo } from '@polkadot/extension-polkagate/util/types';
 
 interface AddressDetailsProps {
   accountAssets: FetchedBalance[] | null | undefined;
@@ -68,7 +69,7 @@ export default function AccountInformationForHome({ accountAssets, address, hide
     } else {
       const sortedAssets = accountAssets.sort((a, b) => calculatePrice(b.totalBalance, b.decimal, pricesInCurrencies.prices?.[b.priceId]?.value ?? 0) - calculatePrice(a.totalBalance, a.decimal, pricesInCurrencies.prices?.[a.priceId]?.value ?? 0));
 
-      return sortedAssets.filter((_asset) => !getValue('total', _asset)?.isZero());
+      return sortedAssets.filter((_asset) => !getValue('total', _asset as unknown as BalancesInfo)?.isZero());
     }
   }, [accountAssets, calculatePrice, pricesInCurrencies]);
 
@@ -239,12 +240,6 @@ export default function AccountInformationForHome({ accountAssets, address, hide
       }
       {displayPopup === POPUPS_NUMBER.EXPORT_ACCOUNT && address &&
         <ExportAccountModal
-          address={address}
-          setDisplayPopup={setDisplayPopup}
-        />
-      }
-      {displayPopup === POPUPS_NUMBER.MANAGE_PROFILE && address &&
-        <ManageProfileModal
           address={address}
           setDisplayPopup={setDisplayPopup}
         />

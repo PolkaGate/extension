@@ -6,18 +6,17 @@
 import { Divider, Grid, Popover, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState, useMemo } from 'react';
 
-import { AccountContext, ActionContext, MenuItem, VaadinIcon } from '../../../components';
+import { AccountContext, ActionContext, InputWithLabel, MenuItem, VaadinIcon } from '../../../components';
 import { useInfo, useTranslation } from '../../../hooks';
 import { PROXY_CHAINS } from '../../../util/constants';
-import { POPUPS_NUMBER } from './AccountInformationForHome';
 import { updateMeta } from '../../../messaging';
 
 interface Props {
   address: string | undefined;
-  setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
+  setUpperAnchorEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>
 }
 
-function ProfileMenu({ address, setDisplayPopup }: Props): React.ReactElement<Props> {
+function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const { chain } = useInfo(address);
@@ -26,25 +25,37 @@ function ProfileMenu({ address, setDisplayPopup }: Props): React.ReactElement<Pr
   const { accounts } = useContext(AccountContext);
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | HTMLDivElement | null>();
+  const [showName, setShowName] = useState<boolean>();
+  const [newName, setNewName] = useState<string | undefined>();
+
+  const editName = useCallback((newName: string | null) => {
+    setNewName(newName ?? '');
+  }, []);
 
   const userDefinedProfiles = useMemo(() => {
     const profiles = accounts?.map(({ profile }) => profile)?.filter((item) => !!item);
-    return [...new Set(profiles)];
+    return [...new Set(profiles)].sort();
   }, [accounts]);
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);
+    setShowName(false);
+    setUpperAnchorEl(null);
   }, []);
 
   const onClick = useCallback((event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
   }, []);
 
-  const onManageProfiles = useCallback(() => {
-    setDisplayPopup(POPUPS_NUMBER.MANAGE_PROFILE);
+  const onNewProfile = useCallback(() => {
+    setShowName(true);
   }, [address, chain, onAction]);
 
-  const addToNewProfile = useCallback((profile: string) => {
+  const addToNewProfile = useCallback((profile?: string) => {
+    if (!profile) {
+      return;
+    }
+
     const metaData = JSON.stringify({ profile: profile });
 
     updateMeta(String(address), metaData)
@@ -63,14 +74,28 @@ function ProfileMenu({ address, setDisplayPopup }: Props): React.ReactElement<Pr
 
   const Menus = () => (
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
-      <MenuItem
-        iconComponent={
-          <VaadinIcon icon='vaadin:plus' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
-        }
-        onClick={onManageProfiles}
-        text={t('New profile')}
-        withHoverEffect
-      />
+      {showName
+        ? <InputWithLabel
+          isFocused
+          fontSize={16}
+          fontWeight={400}
+          height={35}
+          label={t('Choose a name for your new profile.')}
+          labelFontSize='14px'
+          onChange={editName}
+          onEnter={() => addToNewProfile(newName as string)}
+          placeholder={t('Profile Name')}
+          value={newName}
+        />
+        : <MenuItem
+          iconComponent={
+            <VaadinIcon icon='vaadin:plus' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
+          }
+          onClick={onNewProfile}
+          text={t('New profile')}
+          withHoverEffect
+        />
+      }
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       {userDefinedProfiles?.length
         ? userDefinedProfiles?.map((profile) => (
@@ -96,7 +121,7 @@ function ProfileMenu({ address, setDisplayPopup }: Props): React.ReactElement<Pr
   );
 
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const id = open ? 'simple-popover 2' : undefined;
 
   return (
     <>

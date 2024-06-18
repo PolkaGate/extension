@@ -121,7 +121,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
         <ProfileMenu
           address={address}
-          setDisplayPopup={setDisplayPopup}
+          setUpperAnchorEl={setAnchorEl}
         />
       {hasPrivateKey &&
         <MenuItem

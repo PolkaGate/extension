@@ -57,7 +57,7 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
 
   const userDefinedProfiles = useMemo(() => {
     const profiles = orderedAccounts?.map(({ account: { profile } }) => profile)?.filter((item) => !!item);
-    return [...new Set(profiles)];
+    return [...new Set(profiles)].sort();
   }, [orderedAccounts]);
 
   const hasLocal = useMemo(() =>
