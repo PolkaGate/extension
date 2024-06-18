@@ -26,6 +26,8 @@ export default function useProfileAccounts(initialAccountList: AccountsOrder[] |
     }
 
     switch (profile) {
+      case t('All'):
+        return setProfileAccounts(initialAccountList);
       case t('Local'):
         const localAccounts = initialAccountList.filter(({ account: { isExternal } }) => !isExternal);
         return setProfileAccounts(localAccounts);
@@ -36,7 +38,8 @@ export default function useProfileAccounts(initialAccountList: AccountsOrder[] |
         const qrAttachedAccounts = initialAccountList.filter(({ account: { isQR } }) => isQR);
         return setProfileAccounts(qrAttachedAccounts);
       default:
-        setProfileAccounts(initialAccountList);
+        const useDefinedProfile = initialAccountList.filter(({ account }) => account?.profile && account.profile === profile);
+        return setProfileAccounts(useDefinedProfile);
     }
   }, [profile]);
 

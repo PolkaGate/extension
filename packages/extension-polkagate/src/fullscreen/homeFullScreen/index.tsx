@@ -35,8 +35,6 @@ export default function HomePageFullScreen(): React.ReactElement {
 
   const profileAccounts = useProfileAccounts(initialAccountList) as AccountsOrder[] | undefined;
 
-  console.log('profileAccounts', profileAccounts)
-
   useEffect(() => {
     if (accountsInExtension && accountsInExtension?.length === 0) {
       onAction('/onboarding');

@@ -43,7 +43,7 @@ function Tab({ text, onClick }: TabProps): React.ReactElement {
         borderBottomLeftRadius: '12px',
         WebkitBorderBottomRightRadius: '12px',
         minWidth: '100px',
-        borderBottom: profile === text ?`1.5px solid ${theme.palette.secondary.light}`: undefined
+        borderBottom: profile === text ? `1.5px solid ${theme.palette.secondary.light}` : undefined
       }}>
       <Typography color={'text.primary'} fontSize='14px' fontWeight={400} textAlign='center'>
         {text}
@@ -54,6 +54,11 @@ function Tab({ text, onClick }: TabProps): React.ReactElement {
 
 export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
+
+  const userDefinedProfiles = useMemo(() => {
+    const profiles = orderedAccounts?.map(({ account: { profile } }) => profile)?.filter((item) => !!item);
+    return [...new Set(profiles)];
+  }, [orderedAccounts]);
 
   const hasLocal = useMemo(() =>
     orderedAccounts?.find(({ account }) => !account.isExternal)
@@ -94,6 +99,13 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
           text={t('QR-attached')}
           onClick={onTabClick}
         />
+      }
+      {userDefinedProfiles?.map((profile) => (
+        <Tab
+          text={profile as string}
+          onClick={onTabClick}
+        />
+      ))
       }
     </Grid>
   );
