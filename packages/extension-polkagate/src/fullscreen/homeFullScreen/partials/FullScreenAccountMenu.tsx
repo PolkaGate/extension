@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,6 +12,7 @@ import { ActionContext, MenuItem, SocialRecoveryIcon, VaadinIcon } from '../../.
 import { useInfo, useTranslation } from '../../../hooks';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 import { POPUPS_NUMBER } from './AccountInformationForHome';
+import ProfileMenu from './ProfileMenu';
 
 interface Props {
   address: string | undefined;
@@ -119,6 +119,10 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
         withHoverEffect
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
+        <ProfileMenu
+          address={address}
+          setDisplayPopup={setDisplayPopup}
+        />
       {hasPrivateKey &&
         <MenuItem
           iconComponent={

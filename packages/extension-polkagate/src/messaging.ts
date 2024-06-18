@@ -72,7 +72,7 @@ export async function editAccount(address: string, name: string): Promise<boolea
   return sendMessage('pri(accounts.edit)', { address, name });
 }
 
-// added for polkagate
+// added for polkagate ----------------
 export async function updateMeta(address: string, meta: string): Promise<boolean> {
   return sendMessage('pri(accounts.updateMeta)', { address, meta });
 }
@@ -80,7 +80,7 @@ export async function updateMeta(address: string, meta: string): Promise<boolean
 export async function lockExtension(): Promise<boolean> {
   return sendMessage('pri(extension.lock)');
 }
-
+// -------------------------------------
 export async function showAccount(address: string, isShowing: boolean): Promise<boolean> {
   return sendMessage('pri(accounts.show)', { address, isShowing });
 }

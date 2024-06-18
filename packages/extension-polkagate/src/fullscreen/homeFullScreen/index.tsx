@@ -1,23 +1,23 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { Grid } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 
-import { AccountWithChildren } from '@polkadot/extension-base/background/types';
-
 import { AccountContext, ActionContext } from '../../components';
-import { useAccountsOrder, useFullscreen } from '../../hooks';
+import { useAccountsOrder, useFullscreen, useProfileAccounts } from '../../hooks';
 import { AddNewAccountButton } from '../../partials';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import HeaderComponents from './components/HeaderComponents';
 import DraggableAccountsList from './partials/DraggableAccountList';
 import HomeMenu from './partials/HomeMenu';
 import TotalBalancePieChart from './partials/TotalBalancePieChart';
-import WatchList, { AssetsWithUiAndPrice } from './partials/WatchList';
+import WatchList, { type AssetsWithUiAndPrice } from './partials/WatchList';
+import ProfileTabs from './partials/ProfileTabs';
 
 export interface AccountsOrder {
   id: number,
@@ -26,12 +26,16 @@ export interface AccountsOrder {
 
 export default function HomePageFullScreen(): React.ReactElement {
   useFullscreen();
-  const initialAccountList = useAccountsOrder(true) as AccountsOrder[];
+  const initialAccountList = useAccountsOrder(true) as AccountsOrder[] | undefined;
   const onAction = useContext(ActionContext);
   const { accounts: accountsInExtension } = useContext(AccountContext);
 
   const [hideNumbers, setHideNumbers] = useState<boolean>();
   const [groupedAssets, setGroupedAssets] = useState<AssetsWithUiAndPrice[] | undefined>();
+
+  const profileAccounts = useProfileAccounts(initialAccountList) as AccountsOrder[] | undefined;
+
+  console.log('profileAccounts', profileAccounts)
 
   useEffect(() => {
     if (accountsInExtension && accountsInExtension?.length === 0) {
@@ -51,12 +55,15 @@ export default function HomePageFullScreen(): React.ReactElement {
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='space-around' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', py: '40px' }}>
+      <ProfileTabs
+        orderedAccounts={initialAccountList}
+      />
+      <Grid container item justifyContent='space-around' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', pt: '20px', pb: '40px' }}>
         <Grid container direction='column' item rowGap='20px' width='760px'>
-          {initialAccountList &&
+          {profileAccounts &&
             <DraggableAccountsList
               hideNumbers={hideNumbers}
-              initialAccountList={initialAccountList}
+              initialAccountList={profileAccounts}
             />
           }
           {initialAccountList && initialAccountList?.length <= 2 &&

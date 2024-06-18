@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
@@ -27,6 +26,7 @@ import AccountIconsFs from '../../accountDetails/components/AccountIconsFs';
 import AOC from '../../accountDetails/components/AOC';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import FullScreenAccountMenu from './FullScreenAccountMenu';
+import ManageProfileModal from '../../manageProfiles/ManageProfileModal';
 
 interface AddressDetailsProps {
   accountAssets: FetchedBalance[] | null | undefined;
@@ -39,11 +39,12 @@ interface AddressDetailsProps {
 
 type AccountButtonType = { text: string, onClick: () => void, icon: React.ReactNode };
 
-export const POPUPS_NUMBER = {
-  DERIVE_ACCOUNT: 4,
-  EXPORT_ACCOUNT: 3,
-  FORGET_ACCOUNT: 1,
-  RENAME: 2
+export enum POPUPS_NUMBER {
+  DERIVE_ACCOUNT,
+  EXPORT_ACCOUNT,
+  FORGET_ACCOUNT,
+  RENAME,
+  MANAGE_PROFILE
 };
 
 export default function AccountInformationForHome({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
@@ -238,6 +239,12 @@ export default function AccountInformationForHome({ accountAssets, address, hide
       }
       {displayPopup === POPUPS_NUMBER.EXPORT_ACCOUNT && address &&
         <ExportAccountModal
+          address={address}
+          setDisplayPopup={setDisplayPopup}
+        />
+      }
+      {displayPopup === POPUPS_NUMBER.MANAGE_PROFILE && address &&
+        <ManageProfileModal
           address={address}
           setDisplayPopup={setDisplayPopup}
         />
