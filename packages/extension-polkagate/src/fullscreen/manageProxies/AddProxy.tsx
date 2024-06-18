@@ -12,7 +12,6 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import type { Chain } from '@polkadot/extension-chains/types';
 
-
 import { AccountContext, AddressInput, InputWithLabel, Select, TwoButtons, Warning } from '../../components';
 import { useAccountDisplay, useFormatted, useIdentity, useTranslation } from '../../hooks';
 import ShowIdentity from '../../popup/manageProxies/partials/ShowIdentity';
@@ -44,7 +43,10 @@ export default function AddProxy({ chain, proxiedAddress, proxyItems, setProxyIt
   const proxyAccountIdentity = useIdentity(chain?.genesisHash, proxyAddress ?? undefined);
 
   const myselfAsProxy = useMemo(() => formatted === proxyAddress, [formatted, proxyAddress]);
-  const PROXY_TYPE = CHAIN_PROXY_TYPES[sanitizeChainName(chain?.name) as keyof typeof CHAIN_PROXY_TYPES];
+  const chainName = sanitizeChainName(chain?.name)?.toLowerCase()?.includes('assethub')
+    ? 'AssetHubs'
+    : sanitizeChainName(chain?.name);
+  const PROXY_TYPE = CHAIN_PROXY_TYPES[chainName as keyof typeof CHAIN_PROXY_TYPES];
 
   const proxyTypeOptions = PROXY_TYPE.map((type: string): DropdownOption => ({
     text: type,
