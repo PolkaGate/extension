@@ -3,15 +3,14 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { Divider, Grid, Popover, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useState, useMemo } from 'react';
 
-import { ActionContext, MenuItem } from '../../../components';
+import { AccountContext, ActionContext, MenuItem, VaadinIcon } from '../../../components';
 import { useInfo, useTranslation } from '../../../hooks';
 import { PROXY_CHAINS } from '../../../util/constants';
 import { POPUPS_NUMBER } from './AccountInformationForHome';
+import { updateMeta } from '../../../messaging';
 
 interface Props {
   address: string | undefined;
@@ -22,9 +21,16 @@ function ProfileMenu({ address, setDisplayPopup }: Props): React.ReactElement<Pr
   const theme = useTheme();
   const { t } = useTranslation();
   const { chain } = useInfo(address);
+
   const onAction = useContext(ActionContext);
+  const { accounts } = useContext(AccountContext);
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | HTMLDivElement | null>();
+
+  const userDefinedProfiles = useMemo(() => {
+    const profiles = accounts?.map(({ profile }) => profile)?.filter((item) => !!item);
+    return [...new Set(profiles)];
+  }, [accounts]);
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);
@@ -38,6 +44,15 @@ function ProfileMenu({ address, setDisplayPopup }: Props): React.ReactElement<Pr
     setDisplayPopup(POPUPS_NUMBER.MANAGE_PROFILE);
   }, [address, chain, onAction]);
 
+  const addToNewProfile = useCallback((profile: string) => {
+    const metaData = JSON.stringify({ profile: profile });
+
+    updateMeta(String(address), metaData)
+      .then(() => {
+        handleClose();
+      }).catch(console.error);
+  }, [address]);
+
   const isDisable = useCallback((supportedChains: string[]) => {
     if (!chain) {
       return true;
@@ -50,21 +65,23 @@ function ProfileMenu({ address, setDisplayPopup }: Props): React.ReactElement<Pr
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
       <MenuItem
         iconComponent={
-          <vaadin-icon icon='vaadin:plus' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:plus' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
         }
         onClick={onManageProfiles}
         text={t('New profile')}
         withHoverEffect
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
-      <MenuItem
-        iconComponent={
-          <vaadin-icon icon='vaadin:sitemap' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
-        }
-        onClick={onManageProfiles}
-        text={t<string>('Others')}
-        withHoverEffect
-      />
+      {userDefinedProfiles?.map((profile) => (
+        <MenuItem
+          iconComponent={
+            <VaadinIcon icon='vaadin:minus' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
+          }
+          onClick={() => addToNewProfile(profile as string)}
+          text={profile as string}
+          withHoverEffect
+        />
+      ))}
     </Grid>
   );
 
@@ -76,8 +93,7 @@ function ProfileMenu({ address, setDisplayPopup }: Props): React.ReactElement<Pr
       <Grid aria-describedby={id} component='button' container item onClick={onClick} sx={{ bgcolor: 'transparent', border: 'none', height: 'fit-content', p: 0, width: 'inherit' }}>
         <MenuItem
           iconComponent={
-            //@ts-ignore
-            <vaadin-icon icon='vaadin:archives' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:archives' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
           }
           text={t('Add account to profile')}
           withHoverEffect

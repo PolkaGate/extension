@@ -31,8 +31,6 @@ export default function ManageProfileModal({ address, setDisplayPopup }: Props):
   const editName = useCallback((newName: string | null) => {
     setNewName(newName ?? '');
   }, []);
-  console.log('account', account)
-
 
   const addToNewProfile = useCallback(() => {
     if (!newName) {
