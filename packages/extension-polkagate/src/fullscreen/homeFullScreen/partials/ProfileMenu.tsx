@@ -72,16 +72,26 @@ function ProfileMenu({ address, setDisplayPopup }: Props): React.ReactElement<Pr
         withHoverEffect
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
-      {userDefinedProfiles?.map((profile) => (
-        <MenuItem
+      {userDefinedProfiles?.length
+        ? userDefinedProfiles?.map((profile) => (
+          <MenuItem
+            iconComponent={
+              <VaadinIcon icon='vaadin:minus' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+            }
+            onClick={() => addToNewProfile(profile as string)}
+            text={profile as string}
+            withHoverEffect
+          />
+        ))
+        : <MenuItem
+          disabled
           iconComponent={
-            <VaadinIcon icon='vaadin:minus' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:minus' style={{ height: '20px', color: `${theme.palette.text.disabled}` }} />
           }
-          onClick={() => addToNewProfile(profile as string)}
-          text={profile as string}
+          text={t('No user profile')}
           withHoverEffect
         />
-      ))}
+      }
     </Grid>
   );
 
@@ -95,7 +105,7 @@ function ProfileMenu({ address, setDisplayPopup }: Props): React.ReactElement<Pr
           iconComponent={
             <VaadinIcon icon='vaadin:archives' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
           }
-          text={t('Add account to profile')}
+          text={t('Add to profile')}
           withHoverEffect
         />
       </Grid>
