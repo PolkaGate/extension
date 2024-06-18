@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import type { TxInfo } from '../../../util/types';
 
 import { Grid, useTheme } from '@mui/material';

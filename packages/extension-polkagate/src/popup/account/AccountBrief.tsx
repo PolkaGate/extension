@@ -9,8 +9,6 @@
  * this component show a brief of an account on home pages like staking/crowdloans homepages
  * */
 
-import '@vaadin/icons';
-
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
 import { QrCode2 } from '@mui/icons-material';

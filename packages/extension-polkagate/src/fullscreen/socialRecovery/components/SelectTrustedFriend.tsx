@@ -5,8 +5,6 @@
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 
-import '@vaadin/icons';
-
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
 import { faPaste, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';

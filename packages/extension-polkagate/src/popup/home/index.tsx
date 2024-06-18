@@ -5,8 +5,6 @@
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 
-import '@vaadin/icons';
-
 import { Container, Grid, useTheme } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 

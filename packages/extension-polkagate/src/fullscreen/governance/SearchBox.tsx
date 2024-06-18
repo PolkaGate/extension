@@ -5,8 +5,6 @@
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 
-import '@vaadin/icons';
-
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';

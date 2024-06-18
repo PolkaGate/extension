@@ -10,7 +10,7 @@ interface VaadinIconProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const VaadinIcon: React.FC<VaadinIconProps> = ({ icon, ...props }) => {
-  return <vaadin-icon icon={icon} {...props}></vaadin-icon>;
+  return <vaadin-icon icon={icon} {...props} />;
 };
 
 export default VaadinIcon;

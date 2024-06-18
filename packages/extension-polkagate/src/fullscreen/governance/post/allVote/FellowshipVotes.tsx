@@ -4,8 +4,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
 import SearchIcon from '@mui/icons-material/Search';
 import { Box, Divider, Grid, Pagination, Tab, Tabs, Typography, useTheme } from '@mui/material';

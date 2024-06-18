@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-import '@vaadin/icons';
-
 import { IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
