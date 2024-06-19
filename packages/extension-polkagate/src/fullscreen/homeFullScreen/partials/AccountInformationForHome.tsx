@@ -7,14 +7,14 @@
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
 import { ArrowForwardIos as ArrowForwardIosIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
-import { Box, Button, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
+import { Box, Button, Divider, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { BN } from '@polkadot/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
-import { ActionContext, Identicon, Identity, Infotip, OptionalCopyButton, ShortAddress2, VaadinIcon } from '../../../components';
+import { ActionContext, Identicon, Identity, OptionalCopyButton, ShortAddress2 } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, useIdentity, useInfo, usePrices, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount } from '../../../messaging';
@@ -28,6 +28,7 @@ import AOC from '../../accountDetails/components/AOC';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import FullScreenAccountMenu from './FullScreenAccountMenu';
 import type { BalancesInfo } from '@polkadot/extension-polkagate/util/types';
+import { EyeIconFullScreen } from '../../accountDetails/components/AccountInformationForDetails';
 
 interface AddressDetailsProps {
   accountAssets: FetchedBalance[] | null | undefined;
@@ -166,11 +167,10 @@ export default function AccountInformationForHome({ accountAssets, address, hide
                 subIdOnly
               />
               <Grid item width='40px'>
-                <Infotip text={account?.isHidden && t('This account is hidden from websites')}>
-                  <IconButton onClick={toggleVisibility} sx={{ height: '20px', ml: '7px', mt: '13px', p: 0, width: '28px' }}>
-                    <VaadinIcon icon={account?.isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
-                  </IconButton>
-                </Infotip>
+                <EyeIconFullScreen
+                  isHidden={account?.isHidden}
+                  onClick={toggleVisibility}
+                />
               </Grid>
             </Grid>
             <Grid alignItems='center' container item>

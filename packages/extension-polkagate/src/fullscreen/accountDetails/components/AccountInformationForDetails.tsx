@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -11,7 +10,7 @@ import { BN } from '@polkadot/util';
 
 import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, Infotip2, OptionalCopyButton, ShortAddress2, VaadinIcon } from '../../../components';
 import { useIdentity, useInfo, useTranslation } from '../../../hooks';
-import { FetchedBalance } from '../../../hooks/useAssetsBalances';
+import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { showAccount, tieAccount } from '../../../messaging';
 import { getValue } from '../../../popup/account/util';
 import { BALANCES_VALIDITY_PERIOD } from '../../../util/constants';
@@ -129,8 +128,20 @@ interface AddressDetailsProps {
   setAssetIdOnAssetHub: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function AccountInformationForDetails({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export const EyeIconFullScreen = ({ isHidden, onClick }: { isHidden: boolean | undefined, onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+
+  return (
+    <Infotip text={isHidden ? t('This account is hidden from websites') : t('This account is visible to websites')}>
+      <IconButton onClick={onClick} sx={{ height: '20px', ml: '7px', mt: '13px', p: 0, width: '28px' }}>
+        <VaadinIcon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
+      </IconButton>
+    </Infotip>
+  )
+}
+
+export default function AccountInformationForDetails({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const theme = useTheme();
   const { account, api, chain, formatted, genesisHash, token } = useInfo(address);
 
@@ -160,7 +171,7 @@ export default function AccountInformationForDetails({ accountAssets, address, l
     if (!sortedAccountAssets) {
       return sortedAccountAssets; // null or undefined!
     } else {
-      return sortedAccountAssets.filter((_asset) => !getValue('total', _asset)?.isZero());
+      return sortedAccountAssets.filter((_asset) => !getValue('total', _asset as unknown as BalancesInfo)?.isZero());
     }
   }, [sortedAccountAssets]);
 
@@ -217,11 +228,10 @@ export default function AccountInformationForDetails({ accountAssets, address, l
               // subIdOnly
               />
               <Grid item width='40px'>
-                <Infotip text={account?.isHidden && t('This account is hidden from websites')}>
-                  <IconButton onClick={toggleVisibility} sx={{ height: '20px', ml: '7px', mt: '13px', p: 0, width: '28px' }}>
-                    <VaadinIcon icon={account?.isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
-                  </IconButton>
-                </Infotip>
+                <EyeIconFullScreen
+                  isHidden={account?.isHidden}
+                  onClick={toggleVisibility}
+                />
               </Grid>
             </Grid>
             <Grid alignItems='center' container item>
@@ -234,7 +244,7 @@ export default function AccountInformationForDetails({ accountAssets, address, l
             </Grid>
           </Grid>
           <SelectedAssetBox
-            balanceToShow={selectedAsset}
+            balanceToShow={selectedAsset as unknown as BalancesInfo}
             genesisHash={genesisHash}
             isBalanceOutdated={isBalanceOutdated}
             isPriceOutdated={!!isPriceOutdated}
