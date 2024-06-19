@@ -1,14 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
+import type { AccountsOrder } from '..';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useEffect, useState } from 'react';
-import { useTranslation } from '../../../hooks';
-import type { AccountsOrder } from '..';
+import { useProfileAccounts, useTranslation } from '../../../hooks';
 import { getStorage, setStorage, watchStorage } from '../../../components/Loading';
 import { pgBoxShadow } from '../../../util/utils';
+import { VaadinIcon } from '../../../components/index';
+import { showAccount } from '../../../messaging';
 
 interface Props {
   orderedAccounts: AccountsOrder[] | undefined;
@@ -16,20 +16,50 @@ interface Props {
 
 interface TabProps {
   text: string;
+  orderedAccounts: AccountsOrder[] | undefined
 }
 
-function Tab({ text }: TabProps): React.ReactElement {
+function Tab({ text, orderedAccounts }: TabProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
+  const profileAccounts = useProfileAccounts(orderedAccounts, text);
+
   const [profile, setProfile] = useState<string>();
+  /** set by user click on profile tab */
+  const [toHiddenAll, setToHiddenAll] = useState<boolean>();
 
   /** Save the current selected tab in local storage on tab click */
-  const onClick = useCallback((event: any) => {
-    setStorage('profile', event.target.innerText);
-  }, []);
+  const onClick = useCallback(() => {
+    setStorage('profile', text);
+    profile === text && setToHiddenAll(!toHiddenAll);
+  }, [profile, toHiddenAll]);
+
+  /** check to see if all accounts in a profile is hidden */
+  const isAllProfileAccountsHidden = useMemo(() => {
+    const isHidden = profileAccounts?.length
+      ? profileAccounts.every(({ account }) => account.isHidden)
+      : undefined;
+
+    return isHidden;
+  }, [profileAccounts]);
+
+  const hideAccounts = useCallback((accounts: AccountsOrder[]) => {
+    toHiddenAll !== undefined && accounts.forEach(({ account: { address } }) => {
+      showAccount(address, !toHiddenAll).catch(console.error);
+    })
+  }, [toHiddenAll]);
+
+  const isHiddenAll = isAllProfileAccountsHidden !== undefined ? isAllProfileAccountsHidden : toHiddenAll;
 
   useEffect(() => {
+    if (profileAccounts && toHiddenAll !== undefined) {
+      hideAccounts(profileAccounts);
+    }
+  }, [toHiddenAll]);
+
+  useEffect(() => {
+    /** set profile text in local storage and watch its change to apply on the UI */
     getStorage('profile').then((res) => {
       setProfile(res as string || t('All'));
     }).catch(console.error);
@@ -38,7 +68,9 @@ function Tab({ text }: TabProps): React.ReactElement {
   }, []);
 
   return (
-    <Grid item onClick={onClick}
+    <Grid item container onClick={onClick}
+      justifyContent='space-between'
+      alignItems='center'
       sx={{
         cursor: 'pointer',
         mx: '1px',
@@ -57,11 +89,17 @@ function Tab({ text }: TabProps): React.ReactElement {
           boxShadow: pgBoxShadow(theme),
         },
         perspective: '1000px',
-        display: 'inline-block',
+        // display: 'inline-block',
+        width: 'fit-content'
       }}>
-      <Typography color={'text.primary'} fontSize='14px' fontWeight={400} textAlign='center'>
-        {text}
-      </Typography>
+      <Grid item>
+        <Typography color={'text.primary'} display='block' fontSize='14px' fontWeight={400} textAlign='center' sx={{ userSelect: 'none' }}>
+          {text}
+        </Typography>
+      </Grid>
+      <Grid item>
+        <VaadinIcon icon={isHiddenAll ? 'vaadin:eye-slash' : ''} style={{ height: '13px' }} />
+      </Grid>
     </Grid>
   );
 }
@@ -90,35 +128,41 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
     orderedAccounts?.find(({ account: { isQR } }) => isQR)
     , [orderedAccounts]);
 
-    // TODO: can put all texts in an array
+  // TODO: can put all texts in an array
   return (
     <Grid container item justifyContent='left' sx={{ bgcolor: 'backgroundFL.secondary', maxWidth: '1282px', px: '20px' }}>
       <Tab
         text={t('All')}
+        orderedAccounts={orderedAccounts}
       />
       {hasLocal &&
         <Tab
           text={t('Local')}
+          orderedAccounts={orderedAccounts}
         />
       }
       {hasLedger &&
         <Tab
           text={t('Ledger')}
+          orderedAccounts={orderedAccounts}
         />
       }
       {hasWatchOnly &&
         <Tab
           text={t('Watch Only')}
+          orderedAccounts={orderedAccounts}
         />
       }
       {hasQrAttached &&
         <Tab
           text={t('QR-attached')}
+          orderedAccounts={orderedAccounts}
         />
       }
       {userDefinedProfiles?.map((profile) => (
         <Tab
           text={profile as string}
+          orderedAccounts={orderedAccounts}
         />
       ))
       }
