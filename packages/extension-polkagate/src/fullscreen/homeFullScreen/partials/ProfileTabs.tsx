@@ -106,60 +106,46 @@ function Tab({ text, orderedAccounts }: TabProps): React.ReactElement {
 
 export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const [profiles, setProfiles] = useState<string[]>([t('All')]);
 
-  const userDefinedProfiles = useMemo(() => {
-    const profiles = orderedAccounts?.map(({ account: { profile } }) => profile)?.filter((item) => !!item);
-    return [...new Set(profiles)].sort();
+  useEffect(() => {
+    if(!orderedAccounts){
+      return
+    }
+
+    const texts=[t('All')];
+    const hasLocal = orderedAccounts.find(({ account }) => !account.isExternal)
+    if (hasLocal) {
+      texts.push(t('Local'))
+    }
+
+    const hasLedger = orderedAccounts.find(({ account }) => account.isHardware)
+    if (hasLedger) {
+      texts.push(t('Ledger'))
+    }
+
+    const hasWatchOnly = orderedAccounts.find(({ account }) => account.isExternal && !account.isQR && !account.isHardware);
+    if (hasWatchOnly) {
+      texts.push(t('Watch Only'))
+    }
+
+    const hasQrAttached = orderedAccounts.find(({ account: { isQR } }) => isQR);
+    if (hasQrAttached) {
+      texts.push(t('QR-attached'))
+    }
+
+    const userDefinedProfiles = orderedAccounts.map(({ account: { profile } }) => profile as string).filter((item) => !!item);
+    const sortedUserDefinedProfiles = [...new Set(userDefinedProfiles)].sort();
+    if (sortedUserDefinedProfiles) {
+      texts.push(...sortedUserDefinedProfiles)
+    }
+
+    setProfiles(texts);
   }, [orderedAccounts]);
 
-  const hasLocal = useMemo(() =>
-    orderedAccounts?.find(({ account }) => !account.isExternal)
-    , [orderedAccounts]);
-
-  const hasLedger = useMemo(() =>
-    orderedAccounts?.find(({ account }) => account.isHardware)
-    , [orderedAccounts]);
-
-  const hasWatchOnly = useMemo(() =>
-    orderedAccounts?.find(({ account }) => account.isExternal && !account.isQR && !account.isHardware)
-    , [orderedAccounts]);
-
-  const hasQrAttached = useMemo(() =>
-    orderedAccounts?.find(({ account: { isQR } }) => isQR)
-    , [orderedAccounts]);
-
-  // TODO: can put all texts in an array
   return (
     <Grid container item justifyContent='left' sx={{ bgcolor: 'backgroundFL.secondary', maxWidth: '1282px', px: '20px' }}>
-      <Tab
-        text={t('All')}
-        orderedAccounts={orderedAccounts}
-      />
-      {hasLocal &&
-        <Tab
-          text={t('Local')}
-          orderedAccounts={orderedAccounts}
-        />
-      }
-      {hasLedger &&
-        <Tab
-          text={t('Ledger')}
-          orderedAccounts={orderedAccounts}
-        />
-      }
-      {hasWatchOnly &&
-        <Tab
-          text={t('Watch Only')}
-          orderedAccounts={orderedAccounts}
-        />
-      }
-      {hasQrAttached &&
-        <Tab
-          text={t('QR-attached')}
-          orderedAccounts={orderedAccounts}
-        />
-      }
-      {userDefinedProfiles?.map((profile) => (
+      {profiles?.map((profile) => (
         <Tab
           text={profile as string}
           orderedAccounts={orderedAccounts}
