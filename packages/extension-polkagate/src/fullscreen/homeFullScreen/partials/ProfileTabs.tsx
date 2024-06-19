@@ -16,14 +16,18 @@ interface Props {
 
 interface TabProps {
   text: string;
-  onClick: (event: any) => void;
 }
 
-function Tab({ text, onClick }: TabProps): React.ReactElement {
+function Tab({ text }: TabProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
   const [profile, setProfile] = useState<string>();
+
+  /** Save the current selected tab in local storage on tab click */
+  const onClick = useCallback((event: any) => {
+    setStorage('profile', event.target.innerText);
+  }, []);
 
   useEffect(() => {
     getStorage('profile').then((res) => {
@@ -74,6 +78,10 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
     orderedAccounts?.find(({ account }) => !account.isExternal)
     , [orderedAccounts]);
 
+  const hasLedger = useMemo(() =>
+    orderedAccounts?.find(({ account }) => account.isHardware)
+    , [orderedAccounts]);
+
   const hasWatchOnly = useMemo(() =>
     orderedAccounts?.find(({ account }) => account.isExternal && !account.isQR && !account.isHardware)
     , [orderedAccounts]);
@@ -82,39 +90,35 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
     orderedAccounts?.find(({ account: { isQR } }) => isQR)
     , [orderedAccounts]);
 
-    /** Save the current selected tab in local storage on tab click */
-  const onTabClick = useCallback((event: any) => {
-    setStorage('profile', event.target.innerText);
-  }, []);
-
+    // TODO: can put all texts in an array
   return (
     <Grid container item justifyContent='left' sx={{ bgcolor: 'backgroundFL.secondary', maxWidth: '1282px', px: '20px' }}>
       <Tab
         text={t('All')}
-        onClick={onTabClick}
       />
       {hasLocal &&
         <Tab
           text={t('Local')}
-          onClick={onTabClick}
+        />
+      }
+      {hasLedger &&
+        <Tab
+          text={t('Ledger')}
         />
       }
       {hasWatchOnly &&
         <Tab
           text={t('Watch Only')}
-          onClick={onTabClick}
         />
       }
       {hasQrAttached &&
         <Tab
           text={t('QR-attached')}
-          onClick={onTabClick}
         />
       }
       {userDefinedProfiles?.map((profile) => (
         <Tab
           text={profile as string}
-          onClick={onTabClick}
         />
       ))
       }
