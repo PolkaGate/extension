@@ -9,11 +9,22 @@ import { getStorage, setStorage, watchStorage } from '../../../components/Loadin
 import { pgBoxShadow } from '../../../util/utils';
 import { VaadinIcon } from '../../../components/index';
 import { showAccount } from '../../../messaging';
+import { keyframes } from '@emotion/react';
 
 interface Props {
   text: string;
   orderedAccounts: AccountsOrder[] | undefined
 }
+
+// Define keyframes for the swinging animation around the x-axis
+const swingAnimation = keyframes`
+  0% { transform: rotateX(0deg); }
+  20% { transform: rotateX(30deg); }
+  40% { transform: rotateX(-20deg); }
+  60% { transform: rotateX(10deg); }
+  80% { transform: rotateX(-10deg); }
+  100% { transform: rotateX(0deg); }
+`;
 
 export default function ProfileTab({ text, orderedAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
@@ -21,6 +32,7 @@ export default function ProfileTab({ text, orderedAccounts }: Props): React.Reac
 
   const profileAccounts = useProfileAccounts(orderedAccounts, text);
 
+  const [animate, setAnimate] = useState<boolean>(true);
   const [profile, setProfile] = useState<string>();
   /** set by user click on profile tab */
   const [toHiddenAll, setToHiddenAll] = useState<boolean>();
@@ -29,7 +41,7 @@ export default function ProfileTab({ text, orderedAccounts }: Props): React.Reac
   const onClick = useCallback(() => {
     setStorage('profile', text);
     profile === text && setToHiddenAll(!toHiddenAll);
-  }, [profile, toHiddenAll]);
+  }, [profile, toHiddenAll, text]);
 
   /** check to see if all accounts in a profile is hidden */
   const isAllProfileAccountsHidden = useMemo(() => {
@@ -52,7 +64,7 @@ export default function ProfileTab({ text, orderedAccounts }: Props): React.Reac
     if (profileAccounts && toHiddenAll !== undefined) {
       hideAccounts(profileAccounts);
     }
-  }, [toHiddenAll]);
+  }, [hideAccounts, profileAccounts?.length, toHiddenAll]);
 
   useEffect(() => {
     /** set profile text in local storage and watch its change to apply on the UI */
@@ -61,7 +73,14 @@ export default function ProfileTab({ text, orderedAccounts }: Props): React.Reac
     }).catch(console.error);
 
     watchStorage('profile', setProfile).catch(console.error);
-  }, []);
+
+    // Disable animation after initial render
+    const timer = setTimeout(() => {
+      setAnimate(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [t]);
 
   return (
     <Grid item container onClick={onClick}
@@ -84,8 +103,10 @@ export default function ProfileTab({ text, orderedAccounts }: Props): React.Reac
           transform: 'perspective(1000px) translateZ(10px)',
           boxShadow: pgBoxShadow(theme),
         },
+        animation: animate ? `${swingAnimation} 1s ease-in-out` : 'none',
         perspective: '1000px',
-        width: 'fit-content'
+        width: 'fit-content',
+        transformOrigin: 'top',
       }}>
       <Grid item>
         <Typography color={'text.primary'} display='block' fontSize='14px' fontWeight={400} textAlign='center' sx={{ userSelect: 'none' }}>
@@ -98,4 +119,3 @@ export default function ProfileTab({ text, orderedAccounts }: Props): React.Reac
     </Grid>
   );
 }
-
