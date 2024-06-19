@@ -44,7 +44,7 @@ const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
   const theme = useTheme();
 
   return (
-    <Infotip text={isHidden && t('This account is hidden from websites')}>
+    <Infotip text={isHidden ? t('This account is hidden from websites'):  t('This account is visible to websites')}>
       <IconButton onClick={toggleVisibility} sx={{ height: '15px', ml: '7px', mt: '13px', p: 0, width: '24px' }}>
         <VaadinIcon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
       </IconButton>
