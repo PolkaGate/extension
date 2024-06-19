@@ -19,7 +19,7 @@ interface Props {
 function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
-  const { chain } = useInfo(address);
+  const { account, chain } = useInfo(address);
 
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
@@ -32,6 +32,8 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
     setNewName(newName ?? '');
   }, []);
 
+  const profileName = account?.profile;
+
   const userDefinedProfiles = useMemo(() => {
     const profiles = accounts?.map(({ profile }) => profile)?.filter((item) => !!item);
     return [...new Set(profiles)].sort();
@@ -43,7 +45,7 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
     setUpperAnchorEl(null);
   }, []);
 
-  const onClick = useCallback((event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
+  const onAddClick = useCallback((event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
   }, []);
 
@@ -64,6 +66,19 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
       }).catch(console.error);
   }, [address]);
 
+  const onRemoveClick = useCallback(() => {
+    if (!account) {
+      return;
+    }
+
+    const metaData = JSON.stringify({ profile: null });
+
+    updateMeta(String(address), metaData)
+      .then(() => {
+        handleClose();
+      }).catch(console.error);
+  }, [address, account]);
+
   const isDisable = useCallback((supportedChains: string[]) => {
     if (!chain) {
       return true;
@@ -80,7 +95,7 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
           fontSize={16}
           fontWeight={400}
           height={35}
-          label={t('Choose a name for your new profile.')}
+          label={t('Choose a name for the profile')}
           labelFontSize='14px'
           onChange={editName}
           onEnter={() => addToNewProfile(newName as string)}
@@ -101,7 +116,7 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
         ? userDefinedProfiles?.map((profile) => (
           <MenuItem
             iconComponent={
-              <VaadinIcon icon='vaadin:minus' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+              <VaadinIcon icon='vaadin:folder-open-o' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
             }
             onClick={() => addToNewProfile(profile as string)}
             text={profile as string}
@@ -125,15 +140,29 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
 
   return (
     <>
-      <Grid aria-describedby={id} component='button' container item onClick={onClick} sx={{ bgcolor: 'transparent', border: 'none', height: 'fit-content', p: 0, width: 'inherit' }}>
+      <Grid aria-describedby={id} component='button' container item onClick={onAddClick} sx={{ bgcolor: 'transparent', border: 'none', height: 'fit-content', p: 0, width: 'inherit' }}>
         <MenuItem
           iconComponent={
-            <VaadinIcon icon='vaadin:archives' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:folder-add' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
           }
           text={t('Add to profile')}
           withHoverEffect
         />
       </Grid>
+      {!!profileName &&
+        <>
+          <Grid component='button' container item onClick={onRemoveClick} sx={{ bgcolor: 'transparent', border: 'none', height: 'fit-content', p: 0, width: 'inherit' }}>
+            <MenuItem
+              iconComponent={
+                <VaadinIcon icon='vaadin:folder-remove' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+              }
+              text={t('Remove from {{profileName}} profile', { replace: { profileName } })}
+              withHoverEffect
+            />
+          </Grid>
+          <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px', width: '100%' }} />
+        </>
+      }
       <Popover
         PaperProps={{
           sx: {

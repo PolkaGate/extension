@@ -8,6 +8,7 @@ import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import { useTranslation } from '../../../hooks';
 import type { AccountsOrder } from '..';
 import { getStorage, setStorage, watchStorage } from '../../../components/Loading';
+import { pgBoxShadow } from '../../../util/utils';
 
 interface Props {
   orderedAccounts: AccountsOrder[] | undefined;
@@ -43,7 +44,16 @@ function Tab({ text, onClick }: TabProps): React.ReactElement {
         borderBottomLeftRadius: '12px',
         WebkitBorderBottomRightRadius: '12px',
         minWidth: '100px',
-        borderBottom: profile === text ? `1.5px solid ${theme.palette.secondary.light}` : undefined
+        borderBottom: profile === text
+          ? `1.5px solid ${theme.palette.secondary.light}`
+          : `1.5px solid ${theme.palette.divider}`,
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        '&:hover': {
+          transform: 'perspective(1000px) translateZ(10px)',
+          boxShadow: pgBoxShadow(theme),
+        },
+        perspective: '1000px',
+        display: 'inline-block',
       }}>
       <Typography color={'text.primary'} fontSize='14px' fontWeight={400} textAlign='center'>
         {text}
@@ -72,6 +82,7 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
     orderedAccounts?.find(({ account: { isQR } }) => isQR)
     , [orderedAccounts]);
 
+    /** Save the current selected tab in local storage on tab click */
   const onTabClick = useCallback((event: any) => {
     setStorage('profile', event.target.innerText);
   }, []);

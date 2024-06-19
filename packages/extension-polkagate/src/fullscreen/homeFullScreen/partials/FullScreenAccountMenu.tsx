@@ -23,10 +23,13 @@ interface Props {
 function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
+
   const { account, chain } = useInfo(address);
   const onAction = useContext(ActionContext);
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+  const hasPrivateKey = !(account?.isExternal || account?.isHardware);
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);
@@ -35,8 +38,6 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
   const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   }, []);
-
-  const hasPrivateKey = !(account?.isExternal || account?.isHardware);
 
   const onForgetAccount = useCallback(() => {
     account && setDisplayPopup(POPUPS_NUMBER.FORGET_ACCOUNT);

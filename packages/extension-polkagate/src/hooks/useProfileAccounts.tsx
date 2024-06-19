@@ -41,7 +41,7 @@ export default function useProfileAccounts(initialAccountList: AccountsOrder[] |
         const useDefinedProfile = initialAccountList.filter(({ account }) => account?.profile && account.profile === profile);
         return setProfileAccounts(useDefinedProfile);
     }
-  }, [profile]);
+  }, [profile, initialAccountList]);
 
-  return profileAccounts;
+  return profileAccounts && (profileAccounts?.length ? profileAccounts : initialAccountList);
 }
