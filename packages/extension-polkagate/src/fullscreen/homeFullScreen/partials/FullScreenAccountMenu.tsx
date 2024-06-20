@@ -20,24 +20,19 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props): React.ReactElement<Props> {
-  const theme = useTheme();
+const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
+  : {
+    address: string | undefined,
+    handleClose: () => void,
+    setAnchorEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>,
+    setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>,
+  }) => {
   const { t } = useTranslation();
-
-  const { account, chain } = useInfo(address);
+  const theme = useTheme();
   const onAction = useContext(ActionContext);
 
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-
+  const { account, chain } = useInfo(address);
   const hasPrivateKey = !(account?.isExternal || account?.isHardware);
-
-  const handleClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
-
-  const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  }, []);
 
   const onForgetAccount = useCallback(() => {
     account && setDisplayPopup(POPUPS_NUMBER.FORGET_ACCOUNT);
@@ -79,7 +74,7 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
     }
   }, [chain]);
 
-  const AccountMenu = () => (
+  return (
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
       <MenuItem
         disabled={isDisable(IDENTITY_CHAINS)}
@@ -120,10 +115,10 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
         withHoverEffect
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
-        <ProfileMenu
-          address={address}
-          setUpperAnchorEl={setAnchorEl}
-        />
+      <ProfileMenu
+        address={address}
+        setUpperAnchorEl={setAnchorEl}
+      />
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
@@ -161,7 +156,21 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
         withHoverEffect
       />
     </Grid>
-  );
+  )
+};
+
+function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props): React.ReactElement<Props> {
+  const theme = useTheme();
+
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+
+  const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  }, []);
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
@@ -189,7 +198,12 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
           vertical: 'top'
         }}
       >
-        <AccountMenu />
+        <Menus
+          address={address}
+          setDisplayPopup={setDisplayPopup}
+          handleClose={handleClose}
+          setAnchorEl={setAnchorEl}
+        />
       </Popover>
     </>
   );

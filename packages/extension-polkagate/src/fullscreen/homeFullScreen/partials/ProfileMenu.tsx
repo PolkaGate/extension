@@ -147,6 +147,7 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
           }
           text={t('Add to profile')}
           withHoverEffect
+          showChevron
         />
       </Grid>
       {!!profileName &&
