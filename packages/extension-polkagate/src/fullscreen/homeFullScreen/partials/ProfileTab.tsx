@@ -84,13 +84,12 @@ export default function ProfileTab({ text, orderedAccounts }: Props): React.Reac
 
   return (
     <Grid item container onClick={onClick}
-      justifyContent='space-between'
+      justifyContent='center'
       alignItems='center'
       sx={{
         cursor: 'pointer',
         mx: '1px',
         pb: '2px',
-        px: '20px',
         bgcolor: 'background.paper',
         borderBottomLeftRadius: '12px',
         WebkitBorderBottomRightRadius: '12px',
@@ -108,14 +107,10 @@ export default function ProfileTab({ text, orderedAccounts }: Props): React.Reac
         width: 'fit-content',
         transformOrigin: 'top',
       }}>
-      <Grid item>
-        <Typography color={'text.primary'} display='block' fontSize='14px' fontWeight={400} textAlign='center' sx={{ userSelect: 'none' }}>
-          {text}
-        </Typography>
-      </Grid>
-      <Grid item>
-        <VaadinIcon icon={isHiddenAll ? 'vaadin:eye-slash' : ''} style={{ height: '13px' }} />
-      </Grid>
+      <Typography color={'text.primary'} display='block' fontSize='15px' fontWeight={400} textAlign='center' sx={{ userSelect: 'none', px: '20px' }}>
+        {text}
+      </Typography>
+      <VaadinIcon icon={isHiddenAll ? 'vaadin:eye-slash' : ''} style={{ height: '13px', marginLeft:'-20px' }} />
     </Grid>
   );
 }
