@@ -1289,12 +1289,13 @@
   "Reasons": "",
   "Please wait a few seconds and don't close the window.": "",
   "Reserved Reasons": "",
-  "Choose a name for your new profile.": "",
   "Profile Name": "",
   "New profile": "",
   "No user profile": "",
   "Add to profile": "",
   "Local": "",
   "Watch Only": "",
-  "Manage Profiles": ""
+  "This account is visible to websites": "",
+  "Choose a name for the profile": "",
+  "Remove from {{profileName}} profile": ""
 }

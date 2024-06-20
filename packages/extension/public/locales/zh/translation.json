@@ -1285,5 +1285,14 @@
   "Please transfer some tokens to {{chainName}} People chain.": "请将一些令牌转移到 {{chainName}} 人链上。",
   "Reasons": "原因",
   "Please wait a few seconds and don't close the window.": "请等待几秒钟,不要关闭窗口。",
-  "Reserved Reasons": "保留原因"
+  "Reserved Reasons": "保留原因",
+  "Profile Name": "个人资料名称",
+  "New profile": "新个人资料",
+  "No user profile": "无用户个人资料",
+  "Add to profile": "添加到个人资料",
+  "Local": "本地",
+  "Watch Only": "只看",
+  "This account is visible to websites": "这账户可在网站上查看",
+  "Choose a name for the profile": "选择个人资料名称",
+  "Remove from {{profileName}} profile": "从{{profileName}}个人资料中删除"
 }

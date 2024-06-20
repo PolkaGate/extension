@@ -1281,5 +1281,14 @@
   "Please transfer some tokens to {{chainName}} People chain.": "Veuillez transférer quelques jetons vers la chaîne des personnes {{chainName}}.",
   "Reasons": "Raisons",
   "Please wait a few seconds and don't close the window.": "Veuillez patienter quelques secondes et ne fermez pas la fenêtre.",
-  "Reserved Reasons": "Raisons réservées"
+  "Reserved Reasons": "Raisons réservées",
+  "Profile Name": "Nom de profil",
+  "New profile": "Nouveau profil",
+  "No user profile": "Aucun profil utilisateur",
+  "Add to profile": "Ajouter au profil",
+  "Local": "Local",
+  "Watch Only": "Seulement regarder",
+  "This account is visible to websites": "Ce compte est visible aux sites web",
+  "Choose a name for the profile": "Choisissez un nom pour le profil",
+  "Remove from {{profileName}} profile": "Retirer du profil {{profileName}}"
 }

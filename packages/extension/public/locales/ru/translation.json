@@ -1276,5 +1276,14 @@
   "Please transfer some tokens to {{chainName}} People chain.": "Пожалуйста, переведите некоторые токены в цепь людей {{chainName}}.",
   "Reasons": "Поводы",
   "Please wait a few seconds and don't close the window.": "Подождите несколько секунд и не закрывайте окно.",
-  "Reserved Reasons": "Зарезервированные причины"
+  "Reserved Reasons": "Зарезервированные причины",
+  "Profile Name": "Имя профиля",
+  "New profile": "Новый профиль",
+  "No user profile": "Нет профиля пользователя",
+  "Add to profile": "Добавить в профиль",
+  "Local": "Локальный",
+  "Watch Only": "Только смотреть",
+  "This account is visible to websites": "Эта учетная запись доступна веб-сайтам",
+  "Choose a name for the profile": "Выберите имя для профиля",
+  "Remove from {{profileName}} profile": "Удалить из профиля {{profileName}}"
 }
