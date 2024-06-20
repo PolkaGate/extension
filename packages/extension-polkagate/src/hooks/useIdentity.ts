@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
@@ -16,19 +17,19 @@ interface SubIdentity {
   display: string
 }
 
-export default function useIdentity(genesisHash: string | undefined, formatted: string | undefined, accountInfo?: DeriveAccountInfo): DeriveAccountInfo | undefined {
-  const [info, setInfo] = useState<DeriveAccountInfo | undefined>();
+export default function useIdentity(genesisHash: string | undefined, formatted: string | undefined, accountInfo?: DeriveAccountInfo): DeriveAccountInfo | undefined | null {
+  const [info, setInfo] = useState<DeriveAccountInfo | null>();
 
   const { peopleChain } = usePeopleChain(undefined, genesisHash);
   const api = useApiWithChain2(peopleChain);
 
   const getIdentityOf = useCallback(async (accountId: string) => {
-    if (!api?.query?.identity?.identityOf || !accountId) {
+    if (!api?.query?.['identity']?.['identityOf'] || !accountId) {
       return;
     }
 
-    const i = await api.query.identity.identityOf(accountId);
-    const id = i.isSome ? i.unwrap()[0] as PalletIdentityRegistration : undefined;
+    const i = await api.query['identity']['identityOf'](accountId) as any;
+    const id = i.isSome ? i.unwrap()[0] as PalletIdentityRegistration : null;
 
     return id?.info
       ? {
@@ -38,23 +39,23 @@ export default function useIdentity(genesisHash: string | undefined, formatted: 
         legal: hexToString(id.info.legal.asRaw.toHex()),
         riot: id.info.riot
           ? hexToString(id.info.riot.asRaw.toHex())
-          : id.info.matrix
-            ? hexToString(id.info.matrix.asRaw.toHex())
+          : (id.info as any).matrix
+            ? hexToString((id.info as any).matrix.asRaw.toHex())
             : '',
         // github: id.info.github && hexToString(id.info.github.asRaw.toHex()),
         twitter: hexToString(id.info.twitter.asRaw.toHex()),
         web: hexToString(id.info.web.asRaw.toHex())
       }
-      : undefined;
+      : null;
   }, [api]);
 
   const getSubIdentityOf = useCallback(async (): Promise<SubIdentity | undefined> => {
-    if (!api?.query?.identity?.superOf || !formatted) {
+    if (!api?.query?.['identity']?.['superOf'] || !formatted) {
       return;
     }
 
-    const s = await api.query.identity.superOf(formatted);
-    const subId = s.isSome ? s.unwrap() : undefined;
+    const s = await api.query['identity']['superOf'](formatted) as any;
+    const subId = s.isSome ? s.unwrap()  : undefined;
 
     return subId
       ? {
@@ -93,6 +94,8 @@ export default function useIdentity(genesisHash: string | undefined, formatted: 
                 return setInfo(subIdentity);
               }
             }).catch(console.error);
+          }else{
+            setInfo(null);
           }
         }).catch(console.error);
       }
