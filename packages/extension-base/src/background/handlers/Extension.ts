@@ -6,7 +6,7 @@ import type { KeyringPair, KeyringPair$Json, KeyringPair$Meta } from '@polkadot/
 import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
-// added for plus to import RequestUpdateMeta
+// added for polkagate to import RequestUpdateMeta
 import type { AccountJson, AllowedPath, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestAuthorizeReject, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestTypes, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
 
 import { ALLOWED_PATH, PASSWORD_EXPIRY_MS, START_WITH_PATH } from '@polkadot/extension-base/defaults';
@@ -105,7 +105,7 @@ export default class Extension {
     return true;
   }
 
-  // added for plus to update meta generally
+  // added for polkagate to update meta generally
   private accountsUpdateMeta ({ address, meta }: RequestUpdateMeta): boolean {
     const pair = keyring.getPair(address);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -300,6 +300,15 @@ export default class Extension {
       unsubscribe(id);
       subscription.unsubscribe();
     });
+
+    return true;
+  }
+
+  // added for PolkaGate
+  private metadataUpdate(metadata: MetadataDef): boolean {
+    assert(metadata, 'Unable to update metadata');
+
+    this.#state.saveMetadata(metadata);
 
     return true;
   }
@@ -618,6 +627,9 @@ export default class Extension {
 
       case 'pri(metadata.requests)':
         return this.metadataSubscribe(id, port);
+
+      case 'pri(metadata.update)': // added for polkagate
+        return this.metadataUpdate(request as MetadataDef);
 
       case 'pri(derivation.create)':
         return this.derivationCreate(request as RequestDeriveCreate);
