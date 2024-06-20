@@ -30,18 +30,35 @@ export default function ProfileTab({ text, orderedAccounts }: Props): React.Reac
   const { t } = useTranslation();
   const theme = useTheme();
 
+  const PREDEFINED_TAB_COLORS = [
+    { text: t('All'), colorLight: '#D1C4E9', colorDark: '#5E35B1' }, // Muted Lavender
+    { text: t('Local'), colorLight: '#C8E6C9', colorDark: '#388E3C' }, // Pastel Green
+    { text: t('Ledger'), colorLight: '#FFCCBC', colorDark: '#D84315' }, // Soft Peach
+    { text: t('Watch-only'), colorLight: '#B3E5FC', colorDark: '#0288D1' }, // Light Sky Blue
+    { text: t('QR-attached'), colorLight: '#F8BBD0', colorDark: '#D81B60' }, // Powder Pink
+  ];
+
   const profileAccounts = useProfileAccounts(orderedAccounts, text);
 
   const [animate, setAnimate] = useState<boolean>(true);
   const [profile, setProfile] = useState<string>();
-  /** set by user click on profile tab */
+  /** set by user click on a profile tab */
   const [toHiddenAll, setToHiddenAll] = useState<boolean>();
+
+  const getColor = useCallback((_text: string) => {
+    const selectedProfile = PREDEFINED_TAB_COLORS.find(({ text }) => text === _text);
+    const color = theme.palette.mode === 'dark' ? selectedProfile?.colorDark : selectedProfile?.colorLight;
+    
+    return color;
+  }, [PREDEFINED_TAB_COLORS]);
+
+  const isSelected = profile === text;
 
   /** Save the current selected tab in local storage on tab click */
   const onClick = useCallback(() => {
     setStorage('profile', text);
-    profile === text && setToHiddenAll(!toHiddenAll);
-  }, [profile, toHiddenAll, text]);
+    isSelected && setToHiddenAll(!toHiddenAll);
+  }, [profile, toHiddenAll, text, isSelected]);
 
   /** check to see if all accounts in a profile is hidden */
   const isAllProfileAccountsHidden = useMemo(() => {
@@ -89,12 +106,11 @@ export default function ProfileTab({ text, orderedAccounts }: Props): React.Reac
       sx={{
         cursor: 'pointer',
         mx: '1px',
-        pb: '2px',
-        bgcolor: 'background.paper',
+        bgcolor: getColor(text) || 'background.paper',
         borderBottomLeftRadius: '12px',
         WebkitBorderBottomRightRadius: '12px',
         minWidth: '100px',
-        borderBottom: profile === text
+        borderBottom: isSelected
           ? `1.5px solid ${theme.palette.secondary.light}`
           : `1.5px solid ${theme.palette.divider}`,
         transition: 'transform 0.3s, box-shadow 0.3s',
@@ -107,10 +123,11 @@ export default function ProfileTab({ text, orderedAccounts }: Props): React.Reac
         width: 'fit-content',
         transformOrigin: 'top',
       }}>
+      <VaadinIcon icon={'vaadin:check'} style={{ height: '13px', marginRight: '-20px', visibility: isSelected ? 'visible' : 'hidden' }} />
       <Typography color={'text.primary'} display='block' fontSize='15px' fontWeight={400} textAlign='center' sx={{ userSelect: 'none', px: '20px' }}>
         {text}
       </Typography>
-      <VaadinIcon icon={isHiddenAll ? 'vaadin:eye-slash' : ''} style={{ height: '13px', marginLeft:'-20px' }} />
+      <VaadinIcon icon={isHiddenAll ? 'vaadin:eye-slash' : ''} style={{ height: '13px', marginLeft: '-20px' }} />
     </Grid>
   );
 }
