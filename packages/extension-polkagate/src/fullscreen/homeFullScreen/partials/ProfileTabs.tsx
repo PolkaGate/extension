@@ -33,7 +33,7 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
 
     const hasWatchOnly = orderedAccounts.find(({ account }) => account.isExternal && !account.isQR && !account.isHardware);
     if (hasWatchOnly) {
-      texts.push(t('Watch Only'))
+      texts.push(t('Watch-only'))
     }
 
     const hasQrAttached = orderedAccounts.find(({ account: { isQR } }) => isQR);

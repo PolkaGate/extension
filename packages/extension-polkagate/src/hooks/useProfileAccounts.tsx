@@ -38,7 +38,7 @@ export default function useProfileAccounts(initialAccountList: AccountsOrder[] |
       case t('Ledger'):
         const ledgerAccounts = initialAccountList.filter(({ account: { isHardware } }) => isHardware);
         return setProfileAccounts(ledgerAccounts);
-      case t('Watch Only'):
+      case t('Watch-only'):
         const watchOnlyAccounts = initialAccountList.filter(({ account: { isExternal, isQR, isHardware } }) => isExternal && !isQR && !isHardware);
         return setProfileAccounts(watchOnlyAccounts);
       case t('QR-attached'):
