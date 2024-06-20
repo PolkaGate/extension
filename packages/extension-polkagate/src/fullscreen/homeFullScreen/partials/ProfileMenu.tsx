@@ -118,6 +118,7 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
             iconComponent={
               <VaadinIcon icon='vaadin:folder-open-o' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
             }
+            key={profile}
             onClick={() => addToNewProfile(profile as string)}
             text={profile as string}
             withHoverEffect

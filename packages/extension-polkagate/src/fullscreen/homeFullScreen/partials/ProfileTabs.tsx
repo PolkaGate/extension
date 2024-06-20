@@ -53,8 +53,9 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
   return (
     <Grid container item justifyContent='left' sx={{ bgcolor: 'backgroundFL.secondary', maxWidth: '1282px', px: '20px' }}>
       {
-        profiles?.map((profile) => (
+        profiles?.map((profile, index) => (
           <ProfileTab
+            key={index}
             text={profile as string}
             orderedAccounts={orderedAccounts}
           />
