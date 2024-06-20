@@ -10,7 +10,6 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import type { Chain } from '@polkadot/extension-chains/types';
 
-
 import { AccountContext, AddressInput, InputWithLabel, Select, TwoButtons, Warning } from '../../components';
 import { useAccountDisplay, useFormatted, useIdentity, useTranslation } from '../../hooks';
 import ShowIdentity from '../../popup/manageProxies/partials/ShowIdentity';
@@ -42,7 +41,10 @@ export default function AddProxy({ chain, proxiedAddress, proxyItems, setProxyIt
   const proxyAccountIdentity = useIdentity(chain?.genesisHash, proxyAddress ?? undefined);
 
   const myselfAsProxy = useMemo(() => formatted === proxyAddress, [formatted, proxyAddress]);
-  const PROXY_TYPE = CHAIN_PROXY_TYPES[sanitizeChainName(chain?.name) as keyof typeof CHAIN_PROXY_TYPES];
+
+  const chainName = sanitizeChainName(chain?.name);
+  const proxyTypeIndex = chainName?.toLowerCase()?.includes('assethub') ? 'AssetHubs' : chainName;
+  const PROXY_TYPE = CHAIN_PROXY_TYPES[proxyTypeIndex as keyof typeof CHAIN_PROXY_TYPES];
 
   const proxyTypeOptions = PROXY_TYPE.map((type: string): DropdownOption => ({
     text: type,
@@ -164,7 +166,7 @@ export default function AddProxy({ chain, proxiedAddress, proxyItems, setProxyIt
       </Grid>
       {proxyAddress &&
         <ShowIdentity
-          accountIdentity={proxyAccountIdentity?.accountId?.toString() === proxyAddress ? proxyAccountIdentity?.identity : undefined}
+          accountIdentity={proxyAccountIdentity !== undefined && proxyAccountIdentity?.accountId?.toString() === proxyAddress ? proxyAccountIdentity?.identity : null}
           style={{ '> div:last-child div div p': { fontSize: '14px' }, '> div:last-child div div:last-child p': { fontSize: '16px', fontWeight: 400 }, m: '25px auto 0', width: '100%' }}
         />}
       <Grid container item justifyContent='flex-end' sx={{ borderColor: 'divider', borderTop: 1, bottom: '25px', height: '50px', left: 0, mx: '7%', position: 'absolute', width: '85%' }}>
