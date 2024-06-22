@@ -6,12 +6,13 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Collapse, Divider, Grid, Skeleton, type SxProps, type Theme, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
 import useReservedDetails, { type Reserved } from '@polkadot/extension-polkagate/src/hooks/useReservedDetails';
-import { isOnAssetHub, isOnRelayChain } from '@polkadot/extension-polkagate/src/util/utils';
+import { isOnRelayChain } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
+import { useParams } from 'react-router';
 
 import { ShowValue } from '../../../components';
 import { useInfo } from '../../../hooks';
@@ -97,6 +98,17 @@ export default function ReservedDisplayBalance ({ address, amount, disabled, pri
   const { t } = useTranslation();
   const reservedDetails = useReservedDetails(address);
   const { decimal, genesisHash, token } = useInfo(address);
+  const { paramAssetId } = useParams<{ address: string, paramAssetId: string }>();
+
+  const notOnNativeAsset = useMemo(() => {
+    const assetIdNumber = Number(paramAssetId);
+
+    if (isNaN(assetIdNumber) || assetIdNumber > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [paramAssetId]);
 
   const [showReservedDetails, setShowReservedDetails] = useState<boolean>(false);
 
@@ -108,7 +120,7 @@ export default function ReservedDisplayBalance ({ address, amount, disabled, pri
     reservedDetails && !amount?.isZero() && setShowReservedDetails(!showReservedDetails);
   }, [amount, reservedDetails, showReservedDetails]);
 
-  return !genesisHash || isOnAssetHub(genesisHash)
+  return !genesisHash || notOnNativeAsset
     ? <></>
     : (
       <Grid container item sx={{ '> div': { bgcolor: 'unset', boxShadow: 'none' }, bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)' }}>
@@ -116,7 +128,7 @@ export default function ReservedDisplayBalance ({ address, amount, disabled, pri
           amount={amount}
           decimal={decimal}
           disabled={disabled}
-          onClick={isOnRelayChain(genesisHash) ? toggleShowReservedDetails : undefined}
+          onClick={isOnRelayChain(genesisHash) || !notOnNativeAsset ? toggleShowReservedDetails : undefined}
           openCollapse={showReservedDetails}
           price={price}
           title={t('Reserved')}
