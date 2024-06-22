@@ -11,15 +11,16 @@ import { Option } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { PROXY_CHAINS } from '../util/constants';
+import { ASSET_HUBS, PROXY_CHAINS } from '../util/constants';
 import useActiveRecoveries from './useActiveRecoveries';
 import { useInfo } from '.';
+import { amountToHuman, amountToMachine } from '../util/utils';
 
-type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society' | 'multisig' | 'preimage';
+type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society' | 'multisig' | 'preimage' | 'assets';
 export type Reserved = { [key in Item]?: Balance };
 
 export default function useReservedDetails(address: string | undefined): Reserved {
-  const { api, formatted, genesisHash } = useInfo(address);
+  const { api, decimal, formatted, genesisHash } = useInfo(address);
   const activeRecoveries = useActiveRecoveries(api);
   const [reserved, setReserved] = useState<Reserved>({});
 
@@ -43,7 +44,7 @@ export default function useReservedDetails(address: string | undefined): Reserve
     if (!api || !genesisHash) {
       return;
     }
-    
+
     try {
       // TODO: needs to incorporate people chain?
       /** fetch identity  */
@@ -271,6 +272,33 @@ export default function useReservedDetails(address: string | undefined): Reserve
             });
           }
         }).catch(console.error);
+      }
+
+      /** assets on asset hubs */
+      if (api.consts?.assets && ASSET_HUBS.includes(genesisHash)) {
+        api.query.assets.asset.entries().then(async (assets) => {
+          const myAssets = assets.filter((asset) => asset[1].toHuman()['owner'] === formatted);
+          const myAssetsId = myAssets.map(([assetId, assetInfo]) => String(assetId.toHuman()[0]).replaceAll(',', ''));
+          const assetDeposit = api.consts.assets.assetDeposit as BN;
+
+          const myAssetsMetadata = await Promise.all(myAssetsId.map((assetId) => api.query.assets.metadata(assetId)));
+
+          const totalAssetDeposit = myAssetsMetadata.reduce((acc, metadata) => {
+            const metaDeposit = metadata.deposit as BN;
+
+            return acc.add(metaDeposit);
+          }, BN_ZERO);
+
+          const finalDeposit = assetDeposit.muln(2).add(totalAssetDeposit);
+
+          if (!assetDeposit.isZero()) {
+            setReserved((prev) => {
+              prev.assets = toBalance(finalDeposit);
+
+              return prev;
+            });
+          }
+        });
       }
     } catch (e) {
       console.error('Fatal error while fetching reserved details:', e)
