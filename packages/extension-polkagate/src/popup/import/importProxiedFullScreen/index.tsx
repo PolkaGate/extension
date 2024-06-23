@@ -76,8 +76,8 @@ function ImportProxiedFS(): React.ReactElement {
     setSelectedAddress(address);
   }, []);
 
-  const createProxids = useCallback(() => {
-    return new Promise(async (resolve) => {
+  const createProxids = useCallback(async () => {
+    try {
       for (let index = 0; index < selectedProxied.length; index++) {
         const address = selectedProxied[index];
         const randomName = (chance?.name() as string)?.split(' ')?.[0] || `Proxied ${index + 1}`;
@@ -91,8 +91,11 @@ function ImportProxiedFS(): React.ReactElement {
           await updateMeta(address, metaData);
         }
       }
-      resolve(true);
-    })
+      return true;
+    } catch (error) {
+      console.error('Failed to create proxied accounts:', error);
+      return false;
+    }
   }, [chain?.genesisHash, chance, selectedProxied, profileName]);
 
   const onImport = useCallback(() => {
