@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography, useTheme } from '@mui/material';
+// @ts-ignore
 import Chance from 'chance';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 

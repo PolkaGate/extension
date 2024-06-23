@@ -87,6 +87,7 @@ export default function ProfileInput({ disabled = false, placeHolder = '', setPr
               InputProps={{
                 ...params.InputProps,
               }}
+              // @ts-ignore
               onChange={() => handleProfile(event?.target?.value)}
               placeholder={placeHolder}
               sx={{ '> div.MuiOutlinedInput-root': { '> fieldset': { border: 'none' }, '> input.MuiAutocomplete-input': { border: 'none', lineHeight: '31px', p: 0 }, border: 'none', height: '31px', p: 0, px: '5px' }, bgcolor: 'background.paper', border: `${focus ? '2px' : '1px'} solid`, borderColor: `${focus ? 'action.focus' : 'secondary.light'}`, borderRadius: '5px', height: '32px', lineHeight: '31px' }}
