@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,10 +12,10 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import Bread from '@polkadot/extension-polkagate/src/fullscreen/partials/Bread';
 import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 
-import { AccountContext, Label, SelectChain, TwoButtons, VaadinIcon } from '../../../components';
+import { AccountContext, ProfileInput, Label, SelectChain, TwoButtons, VaadinIcon } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useGenesisHashOptions, useInfo, useProxiedAccounts, useTranslation } from '../../../hooks';
-import { createAccountExternal, getMetadata, tieAccount } from '../../../messaging';
+import { createAccountExternal, getMetadata, tieAccount, updateMeta } from '../../../messaging';
 import { FULLSCREEN_WIDTH, PROXY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
 import getLogo from '../../../util/getLogo';
 import AddressDropdownFullScreen from '../../newAccount/deriveFromAccountsFullscreen/AddressDropdownFullScreen';
@@ -42,6 +41,7 @@ function ImportProxiedFS(): React.ReactElement {
   const [selectedProxied, setSelectedProxied] = useState<string[]>([]);
   const [chain, setChain] = useState<Chain | null>(null);
   const [isBusy, setIsBusy] = useState(false);
+  const [profileName, setProfileName] = useState<string>();
 
   const proxiedAccounts = useProxiedAccounts(chain ? selectedAddress : undefined);
   const { api, formatted } = useInfo(chain ? selectedAddress : undefined);
@@ -75,19 +75,32 @@ function ImportProxiedFS(): React.ReactElement {
     setSelectedAddress(address);
   }, []);
 
+  const createProxids = useCallback(() => {
+    return new Promise(async (resolve) => {
+      for (let index = 0; index < selectedProxied.length; index++) {
+        const address = selectedProxied[index];
+        const randomName = (chance?.name() as string)?.split(' ')?.[0] || `Proxied ${index + 1}`;
+
+        await createAccountExternal(randomName, address, chain?.genesisHash ?? WESTEND_GENESIS_HASH)
+
+        /** add the proxied account to the profile if has chosen by user */
+        if (profileName) {
+          const metaData = JSON.stringify({ profile: profileName });
+
+          await updateMeta(address, metaData);
+        }
+      }
+      resolve(true);
+    })
+  }, [chain?.genesisHash, chance, selectedProxied, profileName]);
+
   const onImport = useCallback(() => {
     setIsBusy(true);
-    selectedProxied.forEach((address, index) => {
-      const randomName = (chance?.name() as string)?.split(' ')?.[0] || `Proxied ${index + 1}`;
-
-      createAccountExternal(randomName, address, chain?.genesisHash ?? WESTEND_GENESIS_HASH).catch((error: Error) => {
-        setIsBusy(false);
-        console.error(error);
-      });
-    });
-
-    window.close();
-  }, [chain?.genesisHash, chance, selectedProxied]);
+    createProxids().then(() => {
+      setIsBusy(false);
+      window.close();
+    })
+  }, [createProxids]);
 
   const backHome = useCallback(() => {
     window.close();
@@ -147,6 +160,15 @@ function ImportProxiedFS(): React.ReactElement {
                 selectedProxied={selectedProxied}
                 setSelectedProxied={setSelectedProxied}
                 style={{ m: '0 auto' }}
+              />
+            }
+            {proxiedAccounts && proxiedAccounts?.proxy === formatted && !!proxiedAccounts.proxied.length &&
+              <ProfileInput
+                profileName={profileName}
+                helperText={t('You can add your imported proxied accounts to a profile if you wish. If not, they\'ll be visible in \'All\' and \'Watch-only\' profiles.')}
+                label={t('Choose a profile name:')}
+                setProfileName={setProfileName}
+                style={{ my: '30px', width: '54%' }}
               />
             }
             <Grid container item sx={{ '> div': { m: 0, width: '64%' }, borderTop: '1px solid', borderTopColor: 'divider', bottom: '40px', height: '50px', justifyContent: 'flex-end', left: '10%', position: 'absolute', width: '80%' }}>

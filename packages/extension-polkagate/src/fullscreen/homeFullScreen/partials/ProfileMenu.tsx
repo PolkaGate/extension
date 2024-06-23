@@ -4,11 +4,10 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Divider, Grid, Popover, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useState, useMemo } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
-import { AccountContext, ActionContext, InputWithLabel, MenuItem, VaadinIcon } from '../../../components';
-import { useInfo, useTranslation } from '../../../hooks';
-import { PROXY_CHAINS } from '../../../util/constants';
+import { ActionContext, InputWithLabel, MenuItem, VaadinIcon } from '../../../components';
+import { useInfo, useTranslation, useProfiles } from '../../../hooks';
 import { updateMeta } from '../../../messaging';
 
 interface Props {
@@ -19,25 +18,20 @@ interface Props {
 function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
-  const { account, chain } = useInfo(address);
 
   const onAction = useContext(ActionContext);
-  const { accounts } = useContext(AccountContext);
+  const { account, chain } = useInfo(address);
+  const userDefinedProfiles = useProfiles();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | HTMLDivElement | null>();
   const [showName, setShowName] = useState<boolean>();
   const [newName, setNewName] = useState<string | undefined>();
 
+  const profileName = account?.profile;
+
   const editName = useCallback((newName: string | null) => {
     setNewName(newName ?? '');
   }, []);
-
-  const profileName = account?.profile;
-
-  const userDefinedProfiles = useMemo(() => {
-    const profiles = accounts?.map(({ profile }) => profile)?.filter((item) => !!item);
-    return [...new Set(profiles)].sort();
-  }, [accounts]);
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);
@@ -66,7 +60,7 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
       }).catch(console.error);
   }, [address]);
 
-  const onRemoveClick = useCallback(() => {
+  const onRemove = useCallback(() => {
     if (!account) {
       return;
     }
@@ -78,14 +72,6 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
         handleClose();
       }).catch(console.error);
   }, [address, account]);
-
-  const isDisable = useCallback((supportedChains: string[]) => {
-    if (!chain) {
-      return true;
-    } else {
-      return !supportedChains.includes(chain.genesisHash ?? '');
-    }
-  }, [chain]);
 
   const Menus = () => (
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
@@ -104,7 +90,7 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
         />
         : <MenuItem
           iconComponent={
-            <VaadinIcon icon='vaadin:plus' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:plus' style={{ height: '20px', color: theme.palette.text.primary }} />
           }
           onClick={onNewProfile}
           text={t('New profile')}
@@ -116,7 +102,7 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
         ? userDefinedProfiles?.map((profile) => (
           <MenuItem
             iconComponent={
-              <VaadinIcon icon='vaadin:folder-open-o' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+              <VaadinIcon icon='vaadin:folder-open-o' style={{ height: '20px', color: theme.palette.text.primary }} />
             }
             key={profile}
             onClick={() => addToNewProfile(profile as string)}
@@ -141,7 +127,7 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
 
   return (
     <>
-      <Grid aria-describedby={id} component='button' container item onClick={onAddClick} sx={{ bgcolor: 'transparent', border: 'none', height: 'fit-content', p: 0, width: 'inherit' }}>
+      <Grid aria-describedby={id} component='button' container item onClick={onAddClick} sx={{ bgcolor: 'transparent', border: 'none', color:theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
         <MenuItem
           iconComponent={
             <VaadinIcon icon='vaadin:folder-add' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
@@ -153,7 +139,7 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
       </Grid>
       {!!profileName &&
         <>
-          <Grid component='button' container item onClick={onRemoveClick} sx={{ bgcolor: 'transparent', border: 'none', height: 'fit-content', p: 0, width: 'inherit' }}>
+          <Grid component='button' container item onClick={onRemove} sx={{ bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
             <MenuItem
               iconComponent={
                 <VaadinIcon icon='vaadin:folder-remove' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />

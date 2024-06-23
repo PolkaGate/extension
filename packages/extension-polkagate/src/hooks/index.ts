@@ -103,3 +103,4 @@ export { default as usePeopleChain } from './usePeopleChain';
 export { default as useIdentity } from './useIdentity';
 export { default as useReservedDetails } from './useReservedDetails';
 export { default as useProfileAccounts } from './useProfileAccounts';
+export { default as useProfiles } from './useProfiles';

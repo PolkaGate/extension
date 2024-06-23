@@ -48,11 +48,11 @@ export default function ProfileTab({ text, orderedAccounts }: Props): React.Reac
   const getColor = useCallback((_text: string) => {
     const selectedProfile = PREDEFINED_TAB_COLORS.find(({ text }) => text === _text);
     const color = theme.palette.mode === 'dark' ? selectedProfile?.colorDark : selectedProfile?.colorLight;
-    
+
     return color;
   }, [PREDEFINED_TAB_COLORS]);
 
-  const isSelected = profile === text;
+  const isSelected = useMemo(() => profile === text, [profile, text]);
 
   /** Save the current selected tab in local storage on tab click */
   const onClick = useCallback(() => {
