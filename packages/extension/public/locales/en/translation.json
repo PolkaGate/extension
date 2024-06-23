@@ -1296,5 +1296,7 @@
   "Local": "",
   "This account is visible to websites": "",
   "Choose a name for the profile": "",
-  "Remove from {{profileName}} profile": ""
+  "Remove from {{profileName}} profile": "",
+  "You can add your imported proxied accounts to a profile if you wish. If not, they'll be visible in 'All' and 'Watch-only' profiles.": "",
+  "Choose a profile name:": ""
 }
