@@ -1293,5 +1293,7 @@
   "Local": "本地",
   "This account is visible to websites": "这账户可在网站上查看",
   "Choose a name for the profile": "选择个人资料名称",
-  "Remove from {{profileName}} profile": "从{{profileName}}个人资料中删除"
+  "Remove from {{profileName}} profile": "从{{profileName}}个人资料中删除",
+  "You can add your imported proxied accounts to a profile if you wish. If not, they'll be visible in 'All' and 'Watch-only' profiles.": "您可以将您的导入代理账户添加到一个-profile中，如果您想的话。如果不是，他们将在‘所有’和‘只读’-profiles中可见。",
+  "Choose a profile name:": "选择个人资料名称:"
 }
