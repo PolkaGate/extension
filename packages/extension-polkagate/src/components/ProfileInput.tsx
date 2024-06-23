@@ -39,7 +39,7 @@ export default function ProfileInput({ disabled = false, placeHolder = '', setPr
     }
   }, [containerRef?.current?.offsetWidth]);
 
-  const handleProfile = useCallback((value?:string): void => {
+  const handleProfile = useCallback((value?: string): void => {
     setTogglePopper(false);
 
     if (!value) {
@@ -66,7 +66,7 @@ export default function ProfileInput({ disabled = false, placeHolder = '', setPr
       <Label
         helperText={helperText}
         label={label}
-        style={{ position: 'relative', width:'100%' }}
+        style={{ position: 'relative', width: '100%' }}
       >
         <Autocomplete
           componentsProps={{ paper: { sx: { '> ul': { m: 0, p: 0 }, border: '2px solid', borderColor: 'secondary.light', maxHeight: window.innerHeight / 2, ml: '-1px', my: '5px', p: 0, width: dropdownWidth } } }}
@@ -87,8 +87,7 @@ export default function ProfileInput({ disabled = false, placeHolder = '', setPr
               InputProps={{
                 ...params.InputProps,
               }}
-              // @ts-ignore
-              onChange={() => handleProfile(event?.target?.value)}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleProfile(event.target.value)}
               placeholder={placeHolder}
               sx={{ '> div.MuiOutlinedInput-root': { '> fieldset': { border: 'none' }, '> input.MuiAutocomplete-input': { border: 'none', lineHeight: '31px', p: 0 }, border: 'none', height: '31px', p: 0, px: '5px' }, bgcolor: 'background.paper', border: `${focus ? '2px' : '1px'} solid`, borderColor: `${focus ? 'action.focus' : 'secondary.light'}`, borderRadius: '5px', height: '32px', lineHeight: '31px' }}
             />
