@@ -110,6 +110,7 @@ export default function ProfileTab({ isHovered, text, selectedProfile, setSelect
       alignItems='center'
       sx={{
         cursor: 'pointer',
+        flexShrink: 0,
         mx: '1px',
         bgcolor: getColor(text) || 'background.paper',
         borderBottomLeftRadius: '12px',

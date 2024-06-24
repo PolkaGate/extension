@@ -59,12 +59,13 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
   }, [orderedAccounts]);
 
   return (
-    <Grid container sx={{ position: 'relative', overflow: 'hidden', height: '30px', pb: '10px' }}>
+    <Grid container sx={{ position: 'relative', overflow: 'auto', height: '30px', pb: '10px' }}>
       <Grid container item justifyContent='left'
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         sx={{
           bgcolor: 'backgroundFL.secondary',
+          flexWrap: 'nowrap', 
           maxWidth: '1282px',
           px: '20px',
           position: 'relative',
