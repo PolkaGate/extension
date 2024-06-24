@@ -58,6 +58,7 @@ export default function ProfileTab({ isHovered, text, selectedProfile, setSelect
   }, [PREDEFINED_TAB_COLORS]);
 
   const isSelected = useMemo(() => selectedProfile === text, [selectedProfile, text]);
+  const visibleContent = useMemo(() => isHovered || isSelected, [isHovered , isSelected]);
 
   /** Save the current selected tab in local storage on tab click */
   const onClick = useCallback(() => {
@@ -132,10 +133,10 @@ export default function ProfileTab({ isHovered, text, selectedProfile, setSelect
         transform: isSelected && !isHovered ? `translateY(${HIDDEN_PERCENT})` : undefined
       }}>
       <VaadinIcon icon={'vaadin:check'} style={{ height: '13px', marginRight: '-20px', visibility: isSelected ? 'visible' : 'hidden' }} />
-      <Typography color={'text.primary'} display='block' fontSize='15px' fontWeight={400} textAlign='center' sx={{ userSelect: 'none', px: '20px', visibility: isHovered || isSelected ? 'visible' : 'hidden' }}>
+      <Typography color={'text.primary'} display='block' fontSize='15px' fontWeight={400} textAlign='center' sx={{ userSelect: 'none', px: '20px', visibility: visibleContent ? 'visible' : 'hidden' }}>
         {text}
       </Typography>
-      <VaadinIcon icon={isHiddenAll ? 'vaadin:eye-slash' : ''} style={{ height: '13px', marginLeft: '-20px', visibility: isHovered || isSelected ? 'visible' : 'hidden' }} />
+      <VaadinIcon icon={isHiddenAll ? 'vaadin:eye-slash' : ''} style={{ height: '13px', marginLeft: '-20px', visibility: visibleContent ? 'visible' : 'hidden' }} />
     </Grid>
   );
 }
