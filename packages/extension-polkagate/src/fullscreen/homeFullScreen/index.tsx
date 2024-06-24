@@ -53,37 +53,39 @@ export default function HomePageFullScreen(): React.ReactElement {
         noAccountDropDown
         noChainSwitch
       />
-      <ProfileTabs
-        orderedAccounts={initialAccountList}
-      />
-      <Grid container item justifyContent='space-around' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', pt: '20px', pb: '40px' }}>
-        <Grid container direction='column' item rowGap='20px' width='760px'>
-          {profileAccounts &&
-            <DraggableAccountsList
-              hideNumbers={hideNumbers}
-              initialAccountList={profileAccounts}
-            />
-          }
-          {initialAccountList && initialAccountList?.length <= 2 &&
-            <AddNewAccountButton />
-          }
-        </Grid>
-        <Grid container direction='column' item rowGap='20px' width='fit-content'>
-          <Grid container item width='fit-content'>
-            <TotalBalancePieChart
-              hideNumbers={hideNumbers}
-              setGroupedAssets={setGroupedAssets}
-            />
+      <Grid container item sx={{ bgcolor: 'backgroundFL.secondary', maxWidth: '1282px' }}>
+        <ProfileTabs
+          orderedAccounts={initialAccountList}
+        />
+        <Grid container item justifyContent='space-around' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 105px)', maxWidth: '1282px', overflow: 'scroll', pb: '40px' }}>
+          <Grid container direction='column' item rowGap='20px' width='760px'>
+            {profileAccounts &&
+              <DraggableAccountsList
+                hideNumbers={hideNumbers}
+                initialAccountList={profileAccounts}
+              />
+            }
+            {initialAccountList && initialAccountList?.length <= 2 &&
+              <AddNewAccountButton />
+            }
           </Grid>
-          {groupedAssets && groupedAssets?.length > 0 &&
+          <Grid container direction='column' item rowGap='20px' width='fit-content'>
             <Grid container item width='fit-content'>
-              <WatchList
-                groupedAssets={groupedAssets}
+              <TotalBalancePieChart
+                hideNumbers={hideNumbers}
+                setGroupedAssets={setGroupedAssets}
               />
             </Grid>
-          }
-          <Grid container item width='fit-content'>
-            <HomeMenu />
+            {groupedAssets && groupedAssets?.length > 0 &&
+              <Grid container item width='fit-content'>
+                <WatchList
+                  groupedAssets={groupedAssets}
+                />
+              </Grid>
+            }
+            <Grid container item width='fit-content'>
+              <HomeMenu />
+            </Grid>
           </Grid>
         </Grid>
       </Grid>

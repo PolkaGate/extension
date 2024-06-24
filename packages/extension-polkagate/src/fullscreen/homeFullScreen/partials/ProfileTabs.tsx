@@ -3,7 +3,7 @@
 
 import type { AccountsOrder } from '..';
 import { Grid } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from '../../../hooks';
 import ProfileTab from './ProfileTab';
 
@@ -11,9 +11,17 @@ interface Props {
   orderedAccounts: AccountsOrder[] | undefined;
 }
 
+export const HIDDEN_PERCENT = '50%';
+
 export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
+
   const [profiles, setProfiles] = useState<string[]>([t('All')]);
+  const [selectedProfile, setSelectedProfile] = useState<string>();
+  const [isHovered, setIsHovered] = useState<boolean>();
+
+  const onMouseEnter= useCallback(()=>setIsHovered(true),[])
+  const onMouseLeave= useCallback(()=>setIsHovered(false),[])
 
   useEffect(() => {
     if (!orderedAccounts) {
@@ -51,16 +59,34 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
   }, [orderedAccounts]);
 
   return (
-    <Grid container item justifyContent='left' sx={{ bgcolor: 'backgroundFL.secondary', maxWidth: '1282px', px: '20px' }}>
-      {
-        profiles?.map((profile, index) => (
-          <ProfileTab
-            key={index}
-            text={profile as string}
-            orderedAccounts={orderedAccounts}
-          />
-        ))
-      }
+    <Grid container sx={{ position: 'relative', overflow: 'hidden', height: '30px', pb: '10px' }}>
+      <Grid container item justifyContent='left'
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        sx={{
+          bgcolor: 'backgroundFL.secondary',
+          maxWidth: '1282px',
+          px: '20px',
+          position: 'relative',
+          transition: 'transform 0.3s ease-in-out',
+          transform: `translateY(-${HIDDEN_PERCENT})`,
+          '&:hover': {
+            transform: 'translateY(0%)'
+          }
+        }}>
+        {
+          profiles?.map((profile, index) => (
+            <ProfileTab
+              selectedProfile={selectedProfile}
+              setSelectedProfile={setSelectedProfile}
+              key={index}
+              isHovered={isHovered}
+              text={profile as string}
+              orderedAccounts={orderedAccounts}
+            />
+          ))
+        }
+      </Grid >
     </Grid>
   );
 }
