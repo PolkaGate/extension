@@ -131,14 +131,10 @@ export default function ProfileTab({ isHovered, text, selectedProfile, setSelect
         transform: isSelected && !isHovered ? `translateY(${HIDDEN_PERCENT})` : undefined
       }}>
       <VaadinIcon icon={'vaadin:check'} style={{ height: '13px', marginRight: '-20px', visibility: isSelected ? 'visible' : 'hidden' }} />
-      {(isHovered || isSelected) &&
-        <>
-          <Typography color={'text.primary'} display='block' fontSize='15px' fontWeight={400} textAlign='center' sx={{ userSelect: 'none', px: '20px' }}>
-            {text}
-          </Typography>
-          <VaadinIcon icon={isHiddenAll ? 'vaadin:eye-slash' : ''} style={{ height: '13px', marginLeft: '-20px' }} />
-        </>
-      }
+      <Typography color={'text.primary'} display='block' fontSize='15px' fontWeight={400} textAlign='center' sx={{ userSelect: 'none', px: '20px', visibility: isHovered || isSelected ? 'visible' : 'hidden' }}>
+        {text}
+      </Typography>
+      <VaadinIcon icon={isHiddenAll ? 'vaadin:eye-slash' : ''} style={{ height: '13px', marginLeft: '-20px', visibility: isHovered || isSelected ? 'visible' : 'hidden' }} />
     </Grid>
   );
 }
