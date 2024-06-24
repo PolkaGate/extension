@@ -54,7 +54,7 @@ const InputBox = ({ addToNewProfile, editName, newName, t, theme }: InputBoxProp
   );
 }
 
-const MAX_USER_DEFINED_PROFILE_LIMIT = 4;
+const MAX_POSSIBLE_PROFILES = 4;
 
 function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<Props> {
   const theme = useTheme();
@@ -62,14 +62,14 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
 
   const onAction = useContext(ActionContext);
   const { account, chain } = useInfo(address);
-  const userDefinedProfiles = useProfiles();
+  const profiles = useProfiles();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | HTMLDivElement | null>();
   const [showName, setShowName] = useState<boolean>();
   const [newName, setNewName] = useState<string | undefined>();
 
   const profileName = account?.profile;
-  const newProfileDisabled = useMemo(() => userDefinedProfiles && userDefinedProfiles?.length >= MAX_USER_DEFINED_PROFILE_LIMIT, [userDefinedProfiles, userDefinedProfiles?.length]);
+  const newProfileDisabled = useMemo(() => profiles?.userDefinedProfiles && profiles.userDefinedProfiles?.length >= MAX_POSSIBLE_PROFILES, [profiles?.userDefinedProfiles, profiles?.userDefinedProfiles?.length]);
 
   const editName = useCallback((newName: string | null) => {
     setNewName(newName ?? '');
@@ -136,8 +136,8 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
         />
       }
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
-      {userDefinedProfiles?.length
-        ? userDefinedProfiles?.map((profile) => (
+      {profiles?.userDefinedProfiles?.length
+        ? profiles.userDefinedProfiles?.map((profile) => (
           <MenuItem
             iconComponent={
               <VaadinIcon icon='vaadin:folder-open-o' style={{ height: '20px', color: theme.palette.text.primary }} />

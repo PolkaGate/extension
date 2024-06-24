@@ -20,14 +20,14 @@ interface Props {
 export default function ProfileInput({ disabled = false, placeHolder = '', setProfileName, profileName, helperText = '', label, style }: Props): React.ReactElement<Props> {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const userDefinedProfiles = useProfiles();
+  const profiles = useProfiles();
 
   const [isPopperOpen, setTogglePopper] = useState<boolean>(false);
   const [focus, setFocus] = useState<boolean>(false);
   const [enteredProfile, setEnteredProfile] = useState<string | undefined>();
   const [dropdownWidth, setDropdownWidth] = useState<string>('0');
 
-  const autocompleteOptions = useMemo(() => userDefinedProfiles?.map((profile, index) => ({ index, profile })), [userDefinedProfiles]);
+  const autocompleteOptions = useMemo(() => profiles?.userDefinedProfiles?.map((profile, index) => ({ index, profile })), [profiles?.userDefinedProfiles]);
 
   useEffect(() => {
     profileName && setEnteredProfile(profileName);
@@ -54,8 +54,8 @@ export default function ProfileInput({ disabled = false, placeHolder = '', setPr
   }, [setProfileName]);
 
   const openPopper = useCallback(() =>
-    userDefinedProfiles && userDefinedProfiles?.length > 0 && !enteredProfile && !isPopperOpen && setTogglePopper(true)
-    , [userDefinedProfiles?.length, enteredProfile, isPopperOpen]);
+    profiles?.userDefinedProfiles && profiles.userDefinedProfiles?.length > 0 && !enteredProfile && !isPopperOpen && setTogglePopper(true)
+    , [profiles?.userDefinedProfiles?.length, enteredProfile, isPopperOpen]);
 
   const closePopper = useCallback(() =>
     setTogglePopper(false),

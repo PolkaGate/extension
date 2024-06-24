@@ -3,9 +3,9 @@
 
 import type { AccountsOrder } from '..';
 import { Grid } from '@mui/material';
-import React, { useEffect, useState, useCallback } from 'react';
-import { useTranslation } from '../../../hooks';
+import React, { useState, useCallback, useMemo } from 'react';
 import ProfileTab from './ProfileTab';
+import { useProfiles } from '../../../hooks';
 
 interface Props {
   orderedAccounts: AccountsOrder[] | undefined;
@@ -14,49 +14,20 @@ interface Props {
 export const HIDDEN_PERCENT = '50%';
 
 export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
-  const { t } = useTranslation();
-
-  const [profiles, setProfiles] = useState<string[]>([]);
+  const profiles = useProfiles();
   const [selectedProfile, setSelectedProfile] = useState<string>();
   const [isHovered, setIsHovered] = useState<boolean>();
 
   const onMouseEnter = useCallback(() => setIsHovered(true), []);
   const onMouseLeave = useCallback(() => setIsHovered(false), []);
 
-  useEffect(() => {
-    if (!orderedAccounts) {
-      return
+  const profilesToShow = useMemo(() => {
+    if (!profiles) {
+      return undefined;
     }
 
-    const texts = ['All'];
-    const hasLocal = orderedAccounts.find(({ account }) => !account.isExternal)
-    if (hasLocal) {
-      texts.push('Local')
-    }
-
-    const hasLedger = orderedAccounts.find(({ account }) => account.isHardware)
-    if (hasLedger) {
-      texts.push('Ledger')
-    }
-
-    const hasWatchOnly = orderedAccounts.find(({ account }) => account.isExternal && !account.isQR && !account.isHardware);
-    if (hasWatchOnly) {
-      texts.push('Watch-only')
-    }
-
-    const hasQrAttached = orderedAccounts.find(({ account: { isQR } }) => isQR);
-    if (hasQrAttached) {
-      texts.push('QR-attached')
-    }
-
-    const userDefinedProfiles = orderedAccounts.map(({ account: { profile } }) => profile as string).filter((item) => !!item);
-    const sortedUserDefinedProfiles = [...new Set(userDefinedProfiles)].sort();
-    if (sortedUserDefinedProfiles) {
-      texts.push(...sortedUserDefinedProfiles)
-    }
-
-    setProfiles(texts);
-  }, [orderedAccounts]);
+    return profiles.defaultProfiles.concat(profiles.userDefinedProfiles);
+  }, [profiles, profiles?.defaultProfiles.length, profiles?.userDefinedProfiles.length]);
 
   return (
     <Grid container sx={{ position: 'relative', overflow: 'auto', height: '30px', pb: '40px' }}>
@@ -70,7 +41,7 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
           position: 'relative'
         }}>
         {
-          profiles.map((profile, index) => (
+          profilesToShow?.map((profile, index) => (
             <ProfileTab
               selectedProfile={selectedProfile}
               setSelectedProfile={setSelectedProfile}
