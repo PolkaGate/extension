@@ -10,10 +10,14 @@ import { pgBoxShadow } from '../../../util/utils';
 import { VaadinIcon } from '../../../components/index';
 import { showAccount } from '../../../messaging';
 import { keyframes } from '@emotion/react';
+import { HIDDEN_PERCENT } from './ProfileTabs';
 
 interface Props {
-  text: string;
   orderedAccounts: AccountsOrder[] | undefined
+  selectedProfile: string | undefined;
+  setSelectedProfile: React.Dispatch<React.SetStateAction<string | undefined>>;
+  isHovered: boolean | undefined;
+  text: string;
 }
 
 // Define keyframes for the swinging animation around the x-axis
@@ -26,22 +30,23 @@ const swingAnimation = keyframes`
   100% { transform: rotateX(0deg); }
 `;
 
-export default function ProfileTab({ text, orderedAccounts }: Props): React.ReactElement {
+export default function ProfileTab({ isHovered, text, selectedProfile, setSelectedProfile, orderedAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const PREDEFINED_TAB_COLORS = [
-    { text: t('All'), colorLight: '#D1C4E9', colorDark: '#5E35B1' }, // Muted Lavender
-    { text: t('Local'), colorLight: '#C8E6C9', colorDark: '#388E3C' }, // Pastel Green
-    { text: t('Ledger'), colorLight: '#FFCCBC', colorDark: '#D84315' }, // Soft Peach
-    { text: t('Watch-only'), colorLight: '#B3E5FC', colorDark: '#0288D1' }, // Light Sky Blue
-    { text: t('QR-attached'), colorLight: '#F8BBD0', colorDark: '#D81B60' }, // Powder Pink
-  ];
+  const PREDEFINED_TAB_COLORS = useMemo(() => {
+    return [
+      { text: t('All'), colorLight: '#D1C4E9', colorDark: '#5E35B1' },
+      { text: t('Local'), colorLight: '#C8E6C9', colorDark: '#388E3C' },
+      { text: t('Ledger'), colorLight: '#FFCCBC', colorDark: '#D84315' },
+      { text: t('Watch-only'), colorLight: '#B3E5FC', colorDark: '#0288D1' },
+      { text: t('QR-attached'), colorLight: '#F8BBD0', colorDark: '#D81B60' },
+    ]
+  }, [t, theme]);
 
   const profileAccounts = useProfileAccounts(orderedAccounts, text);
 
   const [animate, setAnimate] = useState<boolean>(true);
-  const [profile, setProfile] = useState<string>();
   /** set by user click on a profile tab */
   const [toHiddenAll, setToHiddenAll] = useState<boolean>();
 
@@ -52,13 +57,13 @@ export default function ProfileTab({ text, orderedAccounts }: Props): React.Reac
     return color;
   }, [PREDEFINED_TAB_COLORS]);
 
-  const isSelected = useMemo(() => profile === text, [profile, text]);
+  const isSelected = useMemo(() => selectedProfile === text, [selectedProfile, text]);
 
   /** Save the current selected tab in local storage on tab click */
   const onClick = useCallback(() => {
     setStorage('profile', text);
     isSelected && setToHiddenAll(!toHiddenAll);
-  }, [profile, toHiddenAll, text, isSelected]);
+  }, [selectedProfile, toHiddenAll, text, isSelected]);
 
   /** check to see if all accounts in a profile is hidden */
   const isAllProfileAccountsHidden = useMemo(() => {
@@ -86,10 +91,10 @@ export default function ProfileTab({ text, orderedAccounts }: Props): React.Reac
   useEffect(() => {
     /** set profile text in local storage and watch its change to apply on the UI */
     getStorage('profile').then((res) => {
-      setProfile(res as string || t('All'));
+      setSelectedProfile(res as string || t('All'));
     }).catch(console.error);
 
-    watchStorage('profile', setProfile).catch(console.error);
+    watchStorage('profile', setSelectedProfile).catch(console.error);
 
     // Disable animation after initial render
     const timer = setTimeout(() => {
@@ -105,6 +110,7 @@ export default function ProfileTab({ text, orderedAccounts }: Props): React.Reac
       alignItems='center'
       sx={{
         cursor: 'pointer',
+        flexShrink: 0,
         mx: '1px',
         bgcolor: getColor(text) || 'background.paper',
         borderBottomLeftRadius: '12px',
@@ -122,12 +128,14 @@ export default function ProfileTab({ text, orderedAccounts }: Props): React.Reac
         perspective: '1000px',
         width: 'fit-content',
         transformOrigin: 'top',
+        position: 'relative',
+        transform: isSelected && !isHovered ? `translateY(${HIDDEN_PERCENT})` : undefined
       }}>
       <VaadinIcon icon={'vaadin:check'} style={{ height: '13px', marginRight: '-20px', visibility: isSelected ? 'visible' : 'hidden' }} />
-      <Typography color={'text.primary'} display='block' fontSize='15px' fontWeight={400} textAlign='center' sx={{ userSelect: 'none', px: '20px' }}>
+      <Typography color={'text.primary'} display='block' fontSize='15px' fontWeight={400} textAlign='center' sx={{ userSelect: 'none', px: '20px', visibility: isHovered || isSelected ? 'visible' : 'hidden' }}>
         {text}
       </Typography>
-      <VaadinIcon icon={isHiddenAll ? 'vaadin:eye-slash' : ''} style={{ height: '13px', marginLeft: '-20px' }} />
+      <VaadinIcon icon={isHiddenAll ? 'vaadin:eye-slash' : ''} style={{ height: '13px', marginLeft: '-20px', visibility: isHovered || isSelected ? 'visible' : 'hidden' }} />
     </Grid>
   );
 }
