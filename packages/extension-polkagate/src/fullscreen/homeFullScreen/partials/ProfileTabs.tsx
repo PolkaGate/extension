@@ -16,37 +16,37 @@ export const HIDDEN_PERCENT = '50%';
 export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
 
-  const [profiles, setProfiles] = useState<string[]>([t('All')]);
+  const [profiles, setProfiles] = useState<string[]>([]);
   const [selectedProfile, setSelectedProfile] = useState<string>();
   const [isHovered, setIsHovered] = useState<boolean>();
 
-  const onMouseEnter= useCallback(()=>setIsHovered(true),[])
-  const onMouseLeave= useCallback(()=>setIsHovered(false),[])
+  const onMouseEnter = useCallback(() => setIsHovered(true), []);
+  const onMouseLeave = useCallback(() => setIsHovered(false), []);
 
   useEffect(() => {
     if (!orderedAccounts) {
       return
     }
 
-    const texts = [t('All')];
+    const texts = ['All'];
     const hasLocal = orderedAccounts.find(({ account }) => !account.isExternal)
     if (hasLocal) {
-      texts.push(t('Local'))
+      texts.push('Local')
     }
 
     const hasLedger = orderedAccounts.find(({ account }) => account.isHardware)
     if (hasLedger) {
-      texts.push(t('Ledger'))
+      texts.push('Ledger')
     }
 
     const hasWatchOnly = orderedAccounts.find(({ account }) => account.isExternal && !account.isQR && !account.isHardware);
     if (hasWatchOnly) {
-      texts.push(t('Watch-only'))
+      texts.push('Watch-only')
     }
 
     const hasQrAttached = orderedAccounts.find(({ account: { isQR } }) => isQR);
     if (hasQrAttached) {
-      texts.push(t('QR-attached'))
+      texts.push('QR-attached')
     }
 
     const userDefinedProfiles = orderedAccounts.map(({ account: { profile } }) => profile as string).filter((item) => !!item);
@@ -59,28 +59,23 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
   }, [orderedAccounts]);
 
   return (
-    <Grid container sx={{ position: 'relative', overflow: 'auto', height: '30px', pb: '10px' }}>
+    <Grid container sx={{ position: 'relative', overflow: 'auto', height: '30px', pb: '40px' }}>
       <Grid container item justifyContent='left'
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
+        columnGap='10px'
         sx={{
           bgcolor: 'backgroundFL.secondary',
-          flexWrap: 'nowrap', 
-          maxWidth: '1282px',
-          px: '20px',
-          position: 'relative',
-          transition: 'transform 0.3s ease-in-out',
-          transform: `translateY(-${HIDDEN_PERCENT})`,
-          '&:hover': {
-            transform: 'translateY(0%)'
-          }
+          pl: '20px',
+          position: 'relative'
         }}>
         {
-          profiles?.map((profile, index) => (
+          profiles.map((profile, index) => (
             <ProfileTab
               selectedProfile={selectedProfile}
               setSelectedProfile={setSelectedProfile}
               key={index}
+              index={index}
               isHovered={isHovered}
               text={profile as string}
               orderedAccounts={orderedAccounts}
@@ -91,4 +86,3 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
     </Grid>
   );
 }
-

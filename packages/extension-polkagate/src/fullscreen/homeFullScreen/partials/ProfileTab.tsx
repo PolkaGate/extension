@@ -6,10 +6,8 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import { useProfileAccounts, useTranslation } from '../../../hooks';
 import { getStorage, setStorage, watchStorage } from '../../../components/Loading';
-import { pgBoxShadow } from '../../../util/utils';
 import { VaadinIcon } from '../../../components/index';
 import { showAccount } from '../../../messaging';
-import { keyframes } from '@emotion/react';
 import { HIDDEN_PERCENT } from './ProfileTabs';
 
 interface Props {
@@ -18,41 +16,38 @@ interface Props {
   setSelectedProfile: React.Dispatch<React.SetStateAction<string | undefined>>;
   isHovered: boolean | undefined;
   text: string;
+  index: number;
 }
 
-// Define keyframes for the swinging animation around the x-axis
-const swingAnimation = keyframes`
-  0% { transform: rotateX(0deg); }
-  20% { transform: rotateX(30deg); }
-  40% { transform: rotateX(-20deg); }
-  60% { transform: rotateX(10deg); }
-  80% { transform: rotateX(-10deg); }
-  100% { transform: rotateX(0deg); }
-`;
-
-export default function ProfileTab({ isHovered, text, selectedProfile, setSelectedProfile, orderedAccounts }: Props): React.ReactElement {
+export default function ProfileTab({ isHovered, text, selectedProfile, setSelectedProfile, orderedAccounts, index }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
   const PREDEFINED_TAB_COLORS = useMemo(() => {
     return [
-      { text: t('All'), colorLight: '#D1C4E9', colorDark: '#5E35B1' },
-      { text: t('Local'), colorLight: '#C8E6C9', colorDark: '#388E3C' },
-      { text: t('Ledger'), colorLight: '#FFCCBC', colorDark: '#D84315' },
-      { text: t('Watch-only'), colorLight: '#B3E5FC', colorDark: '#0288D1' },
-      { text: t('QR-attached'), colorLight: '#F8BBD0', colorDark: '#D81B60' },
+      { lightColor: '#D1C4E9', darkColor: '#99004F' },
+      { lightColor: '#C8E6C9', darkColor: '#468189' },
+      { lightColor: '#B3E5FC', darkColor: '#846C5B' },
+      { lightColor: '#F8BBD0', darkColor: '#A63C06' },
+      { lightColor: '#ACE894', darkColor: '#D81B60' },
+      { lightColor: '#F5D5ED', darkColor: '#2B4162' },
+      { lightColor: '#EBCFB2', darkColor: '#9D8189' },
+      { lightColor: '#FCF0CC', darkColor: '#5F4842' },
     ]
   }, [t, theme]);
 
   const profileAccounts = useProfileAccounts(orderedAccounts, text);
 
-  const [animate, setAnimate] = useState<boolean>(true);
   /** set by user click on a profile tab */
   const [toHiddenAll, setToHiddenAll] = useState<boolean>();
 
-  const getColor = useCallback((_text: string) => {
-    const selectedProfile = PREDEFINED_TAB_COLORS.find(({ text }) => text === _text);
-    const color = theme.palette.mode === 'dark' ? selectedProfile?.colorDark : selectedProfile?.colorLight;
+  const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
+  const shadow = useMemo(() => isDarkMode ? '0px 2px 5px 1px rgba(255, 255, 255, 0.10)' : '0px 2px 3px 1px rgba(000, 000, 000, 0.13)', [isDarkMode]);
+  const shadowOnHover = useMemo(() => isDarkMode ? '0px 2px 5px 1px rgba(255, 255, 255, 0.20)' : '0px 2px 3px 1px rgba(000, 000, 000, 0.20)', [isDarkMode]);
+
+  const getColor = useCallback((index: number) => {
+    const selectedProfile = PREDEFINED_TAB_COLORS[index];
+    const color = isDarkMode ? selectedProfile?.darkColor : selectedProfile?.lightColor;
 
     return color;
   }, [PREDEFINED_TAB_COLORS]);
@@ -83,6 +78,8 @@ export default function ProfileTab({ isHovered, text, selectedProfile, setSelect
 
   const isHiddenAll = isAllProfileAccountsHidden !== undefined ? isAllProfileAccountsHidden : toHiddenAll;
 
+  const hideCard = useMemo(() => !Boolean(isSelected || isHovered || visibleContent), [isSelected, isHovered, visibleContent]);
+
   useEffect(() => {
     if (profileAccounts && toHiddenAll !== undefined) {
       hideAccounts(profileAccounts);
@@ -96,58 +93,40 @@ export default function ProfileTab({ isHovered, text, selectedProfile, setSelect
     }).catch(console.error);
 
     watchStorage('profile', setSelectedProfile).catch(console.error);
-
-    // Disable animation after initial render
-    const timer = setTimeout(() => {
-      setAnimate(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
   }, [t]);
 
   return (
     <Grid item container onClick={onClick}
       justifyContent='center'
       alignItems='center'
+      columnGap='5px'
+      px='8px'
       sx={{
         cursor: 'pointer',
         flexShrink: 0,
-        mx: '1px',
-        bgcolor: getColor(text) || 'background.paper',
-        borderBottomLeftRadius: '12px',
-        WebkitBorderBottomRightRadius: '12px',
+        bgcolor: getColor(index) || 'background.paper',
+        borderRadius: '0 0 12px 12px',
         minWidth: '100px',
-        borderBottom: isSelected
-          ? `1.5px solid ${theme.palette.secondary.light}`
-          : `1.5px solid ${theme.palette.divider}`,
-        transition: 'transform 0.3s, box-shadow 0.3s',
+        transition: 'transform 0.2s, box-shadow 0.2s',
+        boxShadow: shadow,
         '&:hover': {
-          transform: 'perspective(1000px) translateZ(10px)',
-          boxShadow: pgBoxShadow(theme),
+          boxShadow: shadowOnHover,
         },
-        animation: animate ? `${swingAnimation} 1s ease-in-out` : 'none',
-        perspective: '1000px',
         width: 'fit-content',
         transformOrigin: 'top',
         position: 'relative',
-        transform: isSelected && !isHovered ? `translateY(${HIDDEN_PERCENT})` : undefined
+        transform: hideCard ? `translateY(-${HIDDEN_PERCENT})` : undefined
       }}>
-      <VaadinIcon icon={'vaadin:check'} style={{ height: '13px', marginRight: '-20px', visibility: isSelected ? 'visible' : 'hidden' }} />
-      <Typography color={'text.primary'} display='block' fontSize='15px' fontWeight={400} textAlign='center'
-        sx={{
-          userSelect: 'none',
-          px: '20px',
-          visibility: visibleContent ? 'visible' : 'hidden',
-          transition: 'visibility 0.3s ease-in-out'
-        }}>
-        {text}
+      <VaadinIcon icon={'vaadin:check'} style={{ height: '13px', visibility: isSelected ? 'visible' : 'hidden', width: '15px' }} />
+      <Typography color={'text.primary'} display='block' fontSize='16px' fontWeight={isSelected ? 500 : 400} textAlign='center' sx={{ visibility: visibleContent ? 'visible' : 'hidden', transition: isSelected ? 'none' : 'visibility 0.1s ease-in-out', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {t(text)}
       </Typography>
       <VaadinIcon icon={isHiddenAll ? 'vaadin:eye-slash' : ''}
         style={{
           height: '13px',
-          marginLeft: '-20px',
           visibility: visibleContent ? 'visible' : 'hidden',
-          transition: 'visibility 0.3s ease-in-out'
+          transition: isSelected ? 'none' : 'visibility 0.1s ease-in-out',
+          width: '15px'
         }} />
     </Grid>
   );
