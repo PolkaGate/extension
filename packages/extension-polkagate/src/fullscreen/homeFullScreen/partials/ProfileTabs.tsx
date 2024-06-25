@@ -62,6 +62,7 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
         ref.removeEventListener('wheel', handleWheel);
       };
     }
+    return undefined;
   }, []);
 
   return (

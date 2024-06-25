@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Divider, Grid, Popover, useTheme, IconButton, type Theme } from '@mui/material';
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { type TFunction } from '@polkagate/apps-config/types';
 import DoneIcon from '@mui/icons-material/Done';
 import { ActionContext, InputWithLabel, MenuItem, VaadinIcon } from '../../../components';
