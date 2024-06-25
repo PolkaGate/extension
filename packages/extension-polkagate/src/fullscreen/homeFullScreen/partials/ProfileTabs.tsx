@@ -15,7 +15,7 @@ interface Props {
 export const HIDDEN_PERCENT = '50%';
 
 export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
-  const profiles = useProfiles();
+  const { defaultProfiles, userDefinedProfiles } = useProfiles();
 
   const [selectedProfile, setSelectedProfile] = useState<string>();
   const [isHovered, setIsHovered] = useState<boolean>();
@@ -25,12 +25,12 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const profilesToShow = useMemo(() => {
-    if (!profiles) {
-      return undefined;
+    if (defaultProfiles.length === 0 && userDefinedProfiles.length === 0) {
+      return [];
     }
 
-    return profiles.defaultProfiles.concat(profiles.userDefinedProfiles);
-  }, [profiles, profiles?.defaultProfiles.length, profiles?.userDefinedProfiles.length]);
+    return defaultProfiles.concat(userDefinedProfiles);
+  }, [defaultProfiles.length, userDefinedProfiles.length]);
 
   const onMouseEnter = useCallback(() => setIsHovered(true), []);
   const onMouseLeave = useCallback(() => setIsHovered(false), []);
@@ -46,7 +46,7 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
   const handleWheel = (event: WheelEvent) => {
     if (scrollContainerRef.current) {
       event.preventDefault();
-      scrollContainerRef.current.scrollLeft += event.deltaY;
+      scrollContainerRef.current.scrollLeft += (event.deltaY || event.deltaX);
       handleScroll();
     }
   };
@@ -80,11 +80,11 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
           overflowX: 'scroll',
           whiteSpace: 'nowrap'
         }}
-        ref={scrollContainerRef} 
+        ref={scrollContainerRef}
         xs
       >
         {
-          profilesToShow?.map((profile, index) => (
+          profilesToShow.map((profile, index) => (
             <ProfileTab
               selectedProfile={selectedProfile}
               setSelectedProfile={setSelectedProfile}

@@ -4,14 +4,20 @@
 import { useContext, useMemo } from 'react';
 import { AccountContext } from '../components';
 
-type Profiles = { userDefinedProfiles: string[]; defaultProfiles: string[]; } | undefined;
+type Profiles = {
+  userDefinedProfiles: string[];
+  defaultProfiles: string[];
+};
 
 export default function useProfiles(): Profiles {
   const { accounts } = useContext(AccountContext);
 
   return useMemo(() => {
-    if(!accounts){
-      return;
+    if (!accounts) {
+      return {
+        userDefinedProfiles: [],
+        defaultProfiles: []
+      };
     }
 
     // default profiles

@@ -60,7 +60,7 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
 
   const onAction = useContext(ActionContext);
   const { account, chain } = useInfo(address);
-  const profiles = useProfiles();
+  const { userDefinedProfiles } = useProfiles();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | HTMLDivElement | null>();
   const [showName, setShowName] = useState<boolean>();
@@ -132,8 +132,8 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
         />
       }
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
-      {profiles?.userDefinedProfiles?.length
-        ? profiles.userDefinedProfiles?.map((profile) => (
+      {userDefinedProfiles.length > 0
+        ? userDefinedProfiles.map((profile) => (
           <MenuItem
             iconComponent={
               <VaadinIcon icon='vaadin:folder-open-o' style={{ height: '20px', color: theme.palette.text.primary }} />
