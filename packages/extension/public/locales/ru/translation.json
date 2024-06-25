@@ -1284,7 +1284,7 @@
   "Local": "Локальный",
   "This account is visible to websites": "Эта учетная запись доступна веб-сайтам",
   "Choose a name for the profile": "Выберите имя для профиля",
-  "Remove from {{profileName}} profile": "Удалить из профиля {{profileName}}",
   "You can add your imported proxied accounts to a profile if you wish. If not, they'll be visible in 'All' and 'Watch-only' profiles.": "Вы можете добавить импортированные проксированные учетные записи в профиль, если вы этого хотите. Если не, они будут видны в профилях 'Все' и 'Только для просмотра'.",
-  "Choose a profile name:": "Выберите имя профиля:"
+  "Choose a profile name:": "Выберите имя профиля:",
+  "Remove from {{profileName}}": "Supprimer de {{profileName}}"
 }

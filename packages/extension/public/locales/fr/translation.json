@@ -1289,7 +1289,7 @@
   "Local": "Local",
   "This account is visible to websites": "Ce compte est visible aux sites web",
   "Choose a name for the profile": "Choisissez un nom pour le profil",
-  "Remove from {{profileName}} profile": "Retirer du profil {{profileName}}",
   "You can add your imported proxied accounts to a profile if you wish. If not, they'll be visible in 'All' and 'Watch-only' profiles.": "Vous pouvez ajouter vos comptes importés proxy à un profil si vous le souhaitez. Si non, ils seront visibles dans les profils 'Tous' et 'Seulement à regarder'.",
-  "Choose a profile name:": "Choisissez un nom de profil:"
+  "Choose a profile name:": "Choisissez un nom de profil:",
+  "Remove from {{profileName}}": "Supprimer de {{profileName}}"
 }
