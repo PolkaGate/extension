@@ -54,8 +54,6 @@ const InputBox = ({ addToNewProfile, editName, newName, t, theme }: InputBoxProp
   );
 }
 
-const MAX_POSSIBLE_PROFILES = 4;
-
 function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -69,7 +67,6 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
   const [newName, setNewName] = useState<string | undefined>();
 
   const profileName = account?.profile;
-  const newProfileDisabled = useMemo(() => profiles?.userDefinedProfiles && profiles.userDefinedProfiles?.length >= MAX_POSSIBLE_PROFILES, [profiles?.userDefinedProfiles, profiles?.userDefinedProfiles?.length]);
 
   const editName = useCallback((newName: string | null) => {
     setNewName(newName ?? '');
@@ -126,9 +123,8 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
           theme={theme}
         />
         : <MenuItem
-          disabled={newProfileDisabled}
           iconComponent={
-            <VaadinIcon icon='vaadin:plus' style={{ height: '20px', color: newProfileDisabled ? theme.palette.text.disabled : theme.palette.text.primary }} />
+            <VaadinIcon icon='vaadin:plus' style={{ height: '20px', color: theme.palette.text.primary }} />
           }
           onClick={onNewProfile}
           text={t('New profile')}
