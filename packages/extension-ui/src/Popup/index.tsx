@@ -152,7 +152,7 @@ export default function Popup(): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    assetsOnChains && setAccountsAssets({...assetsOnChains});
+    assetsOnChains && setAccountsAssets({ ...assetsOnChains });
   }, [assetsOnChains?.timeStamp]);
 
   useEffect(() => {
@@ -162,7 +162,7 @@ export default function Popup(): React.ReactElement {
         const found = accounts.find(({ address }) => address === _address);
 
         if (!found) {
-          delete assetsOnChains.balances[_address];
+          assetsOnChains.balances[_address] = undefined;
           setStorage(ASSETS_NAME_IN_STORAGE, assetsOnChains, true).catch(console.error);
         }
       });
