@@ -32,14 +32,14 @@ import ReservedDisplayBalance from './components/ReservedDisplayBalance';
 import LockedInReferenda from './unlock/Review';
 import { AccountInformationForDetails, AccountSetting, AssetSelect, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
 
-export const popupNumbers = {
-  LOCKED_IN_REFERENDA: 1,
-  FORGET_ACCOUNT: 2,
-  RENAME: 3,
-  EXPORT_ACCOUNT: 4,
-  DERIVE_ACCOUNT: 5,
-  RECEIVE: 6,
-  HISTORY: 7
+export enum popupNumbers {
+  LOCKED_IN_REFERENDA,
+  FORGET_ACCOUNT,
+  RENAME,
+  EXPORT_ACCOUNT,
+  DERIVE_ACCOUNT,
+  RECEIVE,
+  HISTORY
 };
 
 export interface UnlockInformationType {

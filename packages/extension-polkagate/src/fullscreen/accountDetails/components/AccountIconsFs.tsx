@@ -20,7 +20,7 @@ import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../
 
 interface AddressDetailsProps {
   address: string | undefined;
-  accountInfo: DeriveAccountInfo | undefined
+  accountInfo: DeriveAccountInfo | undefined | null
 }
 
 export default function AccountIconsFs({ accountInfo, address }: AddressDetailsProps): React.ReactElement {
