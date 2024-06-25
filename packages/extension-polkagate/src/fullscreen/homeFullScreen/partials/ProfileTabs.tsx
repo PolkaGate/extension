@@ -67,7 +67,7 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
 
   return (
     <Grid container sx={{ display: 'flex', position: 'relative', height: '30px', mb: '10px' }}>
-      {showLeftMore && <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '20px', transform: 'rotate(-180deg)', width: 'fit-content', zIndex: 1 }} />}
+      {showLeftMore && <ArrowForwardIosRoundedIcon sx={{ color: 'text.disabled', fontSize: '20px', transform: 'rotate(-180deg)', width: 'fit-content', zIndex: 1 }} />}
       <Grid container item justifyContent='left'
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
@@ -97,7 +97,7 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
           ))
         }
       </Grid>
-      {showRightMore && <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '20px', width: 'fit-content', zIndex: 1 }} />}
+      {showRightMore && <ArrowForwardIosRoundedIcon sx={{ color: 'text.disabled', fontSize: '20px', width: 'fit-content', zIndex: 1 }} />}
     </Grid>
   );
 }
