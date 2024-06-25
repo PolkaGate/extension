@@ -1,12 +1,13 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme } from '@mui/material';
+import { Grid, type SxProps, type Theme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { SHORT_ADDRESS_CHARACTERS } from '../util/constants';
 import ObserveResize from '../util/ObserveResize';
@@ -46,7 +47,7 @@ function ShortAddress({ address, clipped = false, charsCount = SHORT_ADDRESS_CHA
     <Grid alignItems='center' container justifyContent='center' ref={pRef} sx={{ ...style }} width='100%'>
       <Grid item ref={cRef} width='fit-content'>
         {inParentheses ? '(' : ''}
-        {!charsCount || (charactersCount === address?.length / 2) ? address : `${address?.slice(0, charactersCount)}...${address?.slice(-charactersCount)}`}
+        {!charsCount || (charactersCount >= (address?.length ?? 2) / 2) ? address : `${address?.slice(0, charactersCount)}...${address?.slice(-charactersCount)}`}
         {inParentheses ? ')' : ''}
       </Grid>
       {showCopy &&

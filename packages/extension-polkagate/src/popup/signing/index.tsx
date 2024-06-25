@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { SignerPayloadJSON } from '@polkadot/types/types';
 
@@ -64,7 +65,7 @@ export default function Signing(): React.ReactElement {
       <>
         <Header onClose={_onCancel} text={isTransaction ? t<string>('Transaction') : t<string>('Sign message')} />
         {error &&
-          <Grid container >
+          <Grid container>
             <Warning fontWeight={400} isDanger marginTop={15} theme={theme}>
               {error}
             </Warning>

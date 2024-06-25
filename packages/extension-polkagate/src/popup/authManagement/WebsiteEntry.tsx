@@ -1,5 +1,8 @@
-// Copyright 2019-2023 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
+
+/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
@@ -16,7 +19,7 @@ interface Props {
   url: string;
 }
 
-export default function WebsiteEntry ({ info, removeAuth, toggleAuth, url }: Props): React.ReactElement<Props> {
+export default function WebsiteEntry({ info, removeAuth, toggleAuth, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -29,44 +32,11 @@ export default function WebsiteEntry ({ info, removeAuth, toggleAuth, url }: Pro
   }, [removeAuth, url]);
 
   return (
-    <Grid
-      container
-      item
-      sx={{
-        '&:last-child': {
-          borderBottom: 'none'
-        },
-        borderBottom: '1px solid',
-        borderBottomColor: 'secondary.light'
-      }}
-    >
-      <Grid
-        alignItems='center'
-        container
-        item
-        maxWidth='163px'
-        sx={{
-          borderRight: '1px solid',
-          borderRightColor: 'secondary.light',
-          overflowX: 'hidden',
-          pl: '5px',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap'
-        }}
-      >
+    <Grid container item sx={{ '&:last-child': { borderBottom: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
+      <Grid alignItems='center' container item maxWidth='163px' xs sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light', overflowX: 'hidden', pl: '5px', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {url}
       </Grid>
-      <Grid
-        alignItems='center'
-        container
-        item
-        justifyContent='center'
-        sx={{
-          borderRight: '1px solid',
-          borderRightColor: 'secondary.light'
-        }}
-        xs={5.2}
-      >
+      <Grid alignItems='center' container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light' }} xs={5.2}>
         <Switch
           checkedLabel={t<string>('Allowed')}
           fontSize='12px'
@@ -77,14 +47,7 @@ export default function WebsiteEntry ({ info, removeAuth, toggleAuth, url }: Pro
           uncheckedLabel={t<string>('Denied')}
         />
       </Grid>
-      <Grid
-        alignItems='center'
-        container
-        item
-        justifyContent='center'
-        onClick={_removeAuth}
-        xs={0.8}
-      >
+      <Grid alignItems='center' container item justifyContent='center' onClick={_removeAuth} sx={{ width: 'fit-content', px: '5px' }}>
         <RemoveAuth />
       </Grid>
     </Grid>

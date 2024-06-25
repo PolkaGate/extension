@@ -1,18 +1,18 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { RebagInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { useEndpoint2, useFormatted, useStashId } from '.';
+import { useEndpoint, useStashId } from '.';
 
 export default function useNeedsRebag(address: string): RebagInfo | undefined {
-  const endpoint = useEndpoint2(address);
-  const formatted = useFormatted(address);
-  const stashId = useStashId(formatted);
+  const endpoint = useEndpoint(address);
+  const stashId = useStashId(address);
 
   const [info, setRebagInfo] = useState<RebagInfo | undefined>();
 

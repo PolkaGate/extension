@@ -1,16 +1,17 @@
-// Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 
-import { Identicon, Identity, ShortAddress } from '../../../../../components';
-import { useAccountName, useTranslation } from '../../../../../hooks';
-import { getSubstrateAddress } from '../../../../../util/utils';
+
+import { Identity } from '../../../../../components';
+import { useTranslation } from '../../../../../hooks';
 
 interface Props {
   roleTitle: string;
@@ -22,8 +23,6 @@ interface Props {
 export default function ShowPoolRole({ chain, roleAddress, roleTitle, showDivider }: Props) {
   const { t } = useTranslation();
 
-  const roleName = useAccountName(getSubstrateAddress(roleAddress)) ?? t<string>('Unknown');
-
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
       <Grid item>
@@ -34,7 +33,7 @@ export default function ShowPoolRole({ chain, roleAddress, roleTitle, showDivide
       {roleAddress
         ? <Grid container direction='row' item justifyContent='center'>
           <Identity
-            chain={chain}
+            chain={chain as any}
             direction='row'
             formatted={roleAddress}
             identiconSize={25}

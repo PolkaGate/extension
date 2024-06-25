@@ -1,29 +1,31 @@
-// Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 
-import { Identity, Infotip, ShowBalance } from '../../../components';
+
+import { Identity, Infotip, ShowBalance, VaadinIcon } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import getPoolAccounts from '../../../util/getPoolAccounts';
-import { MyPoolInfo, PoolInfo } from '../../../util/types';
+import type { MyPoolInfo } from '../../../util/types';
 import RewardsDetail from '../solo/rewards/RewardsDetail';
 import PoolMoreInfo from './PoolMoreInfo';
+import type { PalletNominationPoolsBondedPoolInner } from '@polkadot/types/lookup';
 
 interface Props {
   api?: ApiPromise;
   chain?: Chain;
-  pool: MyPoolInfo | PoolInfo;
+  pool: MyPoolInfo;
   label?: string;
   labelPosition?: 'right' | 'left' | 'center';
   mode: 'Joining' | 'Creating' | 'Default';
@@ -47,10 +49,13 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
   const poolStatus = pool?.bondedPool?.state ? String(pool.bondedPool.state) : undefined;
   const chainName = chain?.name?.replace(' Relay Chain', '');
 
-  const hasCommission = pool && 'commission' in pool.bondedPool;
+  const hasCommission = pool && 'commission' in (pool.bondedPool as unknown as PalletNominationPoolsBondedPoolInner);
   const parsedPool = JSON.parse(JSON.stringify(pool));
   const mayBeCommission = hasCommission && parsedPool.bondedPool.commission.current ? parsedPool.bondedPool.commission.current[0] : 0
   const commission = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
+
+  // hide show more info for a pool while creating a pool
+  const _showInfo = mode === 'Creating' ? false: showInfo;
 
   const onRewardsChart = useCallback(() => {
     setShowRewardsChart(true);
@@ -66,17 +71,17 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
           {pool
             ? <>
               <Grid container item lineHeight='35px' px='5px' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
-                <Grid fontSize='16px' fontWeight={400} item justifyContent='center' overflow='hidden' textAlign='center' textOverflow='ellipsis' whiteSpace='nowrap' width={showInfo ? '92%' : '100%'}>
+                <Grid fontSize='16px' fontWeight={400} item justifyContent='center' overflow='hidden' textAlign='center' textOverflow='ellipsis' whiteSpace='nowrap' width={_showInfo ? '92%' : '100%'}>
                   <Infotip text={pool?.metadata ?? t('Unknown')}>
                     {pool?.stashIdAccount?.accountId
-                      ? <Identity chain={chain} formatted={pool.stashIdAccount.accountId} identiconSize={25} name={pool?.metadata ?? t('Unknown')} style={{ fontSize: '16px', fontWeight: 400 }} />
+                      ? <Identity chain={chain as any} formatted={pool.stashIdAccount.accountId} identiconSize={25} name={pool?.metadata ?? t('Unknown')} style={{ fontSize: '16px', fontWeight: 400 }} />
                       : <>
                         {pool?.metadata ?? t('Unknown')}
                       </>
                     }
                   </Infotip>
                 </Grid>
-                {showInfo &&
+                {_showInfo &&
                   <Grid alignItems='center' container item justifyContent='center' onClick={openPoolInfo} sx={{ cursor: 'pointer' }} width='8%'>
                     <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
                   </Grid>
@@ -115,7 +120,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
                 <Grid alignItems='center' container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='30%'>
                   <ShowBalance
                     api={api}
-                    balance={poolStaked}
+                    balance={poolStaked as unknown as BN}
                     decimal={pool?.decimal}
                     decimalPoint={2}
                     height={22}
@@ -134,7 +139,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
                   {mode === 'Default' ? poolStatus : mode}
                 </Grid>
                 <Grid alignItems='center' item justifyContent='center' onClick={onRewardsChart} width='16%' sx={{ cursor: 'pointer' }}>
-                  <vaadin-icon icon='vaadin:bar-chart-h' style={{ height: '16px', width: '16px', color: `${mode === 'Creating' ? theme.palette.text.disabled : theme.palette.secondary.main}` }} />
+                  <VaadinIcon icon='vaadin:bar-chart-h' style={{ height: '16px', width: '16px', color: `${mode === 'Creating' ? theme.palette.text.disabled : theme.palette.secondary.main}` }} />
                 </Grid>
               </Grid>
             </>
@@ -151,8 +156,8 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
       </Grid>
       {isOpenPoolInfo && pool && chain &&
         <PoolMoreInfo
-          api={api}
-          chain={chain}
+          api={api as ApiPromise}
+          chain={chain as any}
           pool={pool}
           poolId={pool.poolId}
           setShowPoolInfo={setOpenPoolInfo}
@@ -162,7 +167,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
       {showRewardsChart && chain && rewardDestinationAddress && token && token && mode !== 'Creating' &&
         <RewardsDetail
           api={api}
-          chain={chain}
+          chain={chain as any}
           chainName={chainName}
           decimal={decimal}
           rewardDestinationAddress={rewardDestinationAddress}

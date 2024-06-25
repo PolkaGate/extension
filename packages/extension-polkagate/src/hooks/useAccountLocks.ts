@@ -1,14 +1,15 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { ApiPromise } from '@polkadot/api';
-import type { PalletConvictionVotingVoteCasting, PalletConvictionVotingVotePriorLock, PalletConvictionVotingVoteVoting, PalletReferendaReferendumInfoConvictionVotingTally, PalletReferendaReferendumInfoRankedCollectiveTally } from '@polkadot/types/lookup';
+import type { PalletConvictionVotingVoteCasting, PalletConvictionVotingVoteVoting, PalletReferendaReferendumInfoConvictionVotingTally, PalletReferendaReferendumInfoRankedCollectiveTally } from '@polkadot/types/lookup';
 
 import { useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
-import { CONVICTIONS } from '../util/constants';
+import { CONVICTIONS } from '../fullscreen/governance/utils/consts';
 import useApi from './useApi';
 import useCurrentBlockNumber from './useCurrentBlockNumber';
 import useFormatted from './useFormatted';
@@ -117,8 +118,6 @@ export default function useAccountLocks(address: string | undefined, palletRefer
       setInfo(undefined);
     }
 
-    getLockClass();
-
     async function getLockClass() {
       if (!api || !palletVote || !formatted) {
         return undefined;
@@ -202,6 +201,9 @@ export default function useAccountLocks(address: string | undefined, palletRefer
         votes: maybeVotes
       });
     }
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    getLockClass();
   }, [api, chain?.genesisHash, formatted, palletReferenda, palletVote, refresh]);
 
   return useMemo(() => {
@@ -212,11 +214,7 @@ export default function useAccountLocks(address: string | undefined, palletRefer
       // /** add priors */
       accountLocks.push(...priors);
 
-      if (notExpired) {
-        return accountLocks.filter((l) => l.endBlock.gtn(currentBlock));
-      }
-
-      return accountLocks;
+      return notExpired ? accountLocks.filter((l) => l.endBlock.gtn(currentBlock)) : accountLocks;
     }
 
     if (info === null) {

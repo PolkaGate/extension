@@ -1,11 +1,12 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { type RouteComponentProps, withRouter } from 'react-router';
 
 import keyring from '@polkadot/ui-keyring';
 
@@ -93,7 +94,7 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
           marginTop={0}
           theme={theme}
         >
-          {t('You are about to remove this account. This means you will not be able to access it via this extension anymore. If you want to recover it after, you need to use the mnemonic seed.')}
+          {t('Removing this account means losing access via this extension. To recover it later, use the recovery phrase.')}
         </Warning>
       </Grid>
       <Grid m='40px auto 0' width='92%'>
@@ -101,6 +102,7 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
           ? <>
             <Password
               isError={isPasswordError}
+              isFocused
               label={t<string>('Password for this account')}
               onChange={_onChangePass}
               onEnter={_onClickForget}

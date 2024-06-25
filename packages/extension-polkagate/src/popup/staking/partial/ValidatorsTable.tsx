@@ -1,48 +1,50 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import type { AccountId } from '@polkadot/types/interfaces';
 
-import { alpha, Grid, SxProps, Theme, useTheme } from '@mui/material';
+import { alpha, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+import { VaadinIcon } from '@polkadot/extension-polkagate/src/components';
+import { useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
 import { BN, hexToBn, isHex } from '@polkadot/util';
 
-import { StakingConsts, ValidatorInfo } from '../../../util/types';
+import type { StakingConsts, ValidatorInfo } from '../../../util/types';
 import ShowValidator from './ShowValidator';
 import ValidatorInfoPage from './ValidatorInfo';
 
 interface Props {
   api?: ApiPromise;
-  activeValidators: ValidatorInfo[] | undefined;
-  allValidatorsIdentities: DeriveAccountInfo[] | null | undefined;
+  activeValidators?: ValidatorInfo[] | undefined;
+  allValidatorsIdentities?: DeriveAccountInfo[] | null | undefined;
   chain?: Chain;
   decimal?: number;
   formatted?: AccountId | string;
-  handleCheck: (checked: boolean, validator: ValidatorInfo) => void;
+  handleCheck?: (checked: boolean, validator: ValidatorInfo) => void;
   height?: number;
-  isSelected: (v: ValidatorInfo) => boolean;
+  isSelected?: (v: ValidatorInfo) => boolean;
   maxSelected?: boolean;
   style?: SxProps<Theme> | undefined;
   staked: BN | undefined;
-  stakingConsts: StakingConsts | null | undefined;
+  stakingConsts?: StakingConsts | null | undefined;
   showCheckbox?: boolean;
   validatorsToList: ValidatorInfo[] | null | undefined;
   token?: string;
-  nominatedValidatorsIds: AccountId[] | null | undefined;
+  nominatedValidatorsIds?: AccountId[] | null | undefined;
 }
 
-export default function ValidatorsTable ({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
   const theme = useTheme();
   const ref = useRef();
+  const isExtensionMode = useIsExtensionPopup();
 
   const [showValidatorInfo, setShowValidatorInfo] = useState<boolean>(false);
   const [validatorToShowInfo, setValidatorToShowInfo] = useState<ValidatorInfo>();
@@ -59,7 +61,7 @@ export default function ValidatorsTable ({ activeValidators, allValidatorsIdenti
 
     const threshold = stakingConsts.maxNominatorRewardedPerValidator;
     const sortedNominators = v.exposure.others.sort((a, b) => b.value - a.value);
-    const maybeMyIndex = staked ? sortedNominators.findIndex((n) => new BN(isHex(n.value) ? hexToBn(n.value) : n.value).lt(staked)) : -1;
+    const maybeMyIndex = staked ? sortedNominators.findIndex((n) => new BN(isHex(n.value) ? hexToBn(n.value) : String(n.value)).lt(staked)) : -1;
 
     return {
       notSafe: v.exposure.others.length > threshold && (maybeMyIndex > threshold || maybeMyIndex === -1),
@@ -98,7 +100,7 @@ export default function ValidatorsTable ({ activeValidators, allValidatorsIdenti
           >
             {({ index, key, style }) => {
               const v = validatorsToList[index];
-              const isActive = activeValidators?.find((av) => v.accountId === av?.accountId);
+              const isActive = !!activeValidators?.find((av) => v.accountId === av?.accountId);
               const isOversubscribed = overSubscribed(v);
               const accountInfo = allValidatorsIdentities?.find((a) => a.accountId === v?.accountId);
               const check = isSelected && isSelected(v);
@@ -109,7 +111,7 @@ export default function ValidatorsTable ({ activeValidators, allValidatorsIdenti
                   <ShowValidator
                     accountInfo={accountInfo}
                     api={api}
-                    chain={chain}
+                    chain={chain as any}
                     check={check}
                     decimal={decimal}
                     handleCheck={handleCheck}
@@ -121,7 +123,7 @@ export default function ValidatorsTable ({ activeValidators, allValidatorsIdenti
                     v={v}
                   />
                   <Grid alignItems='center' container item justifyContent='center' onClick={() => openValidatorInfo(v)} sx={{ cursor: 'pointer' }} width='6%'>
-                    <vaadin-icon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
+                    <VaadinIcon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
                   </Grid>
                 </Grid>
               );
@@ -129,16 +131,16 @@ export default function ValidatorsTable ({ activeValidators, allValidatorsIdenti
           </List>
         }
       </Grid>
-      {
-        showValidatorInfo && validatorToShowInfo && api && chain &&
+      {showValidatorInfo && validatorToShowInfo && api && chain &&
         <Grid ml='-15px'>
           <ValidatorInfoPage
             api={api}
-            chain={chain}
+            chain={chain as any}
+            isFullscreen={!isExtensionMode}
             setShowValidatorInfo={setShowValidatorInfo}
             showValidatorInfo={showValidatorInfo}
             staked={staked}
-            stakerAddress={formatted}
+            stakerAddress={String(formatted)}
             validatorInfo={validatorToShowInfo}
             validatorsIdentities={allValidatorsIdentities}
           />

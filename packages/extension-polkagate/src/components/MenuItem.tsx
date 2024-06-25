@@ -1,11 +1,14 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import React, { MouseEventHandler } from 'react';
+
+import { noop } from '../util/utils';
 
 interface Props {
   disabled?: boolean;
@@ -16,13 +19,21 @@ interface Props {
   onClick?: MouseEventHandler<HTMLDivElement>;
   showSubMenu?: boolean;
   py?: string;
+  fontSize?: string;
   pl?: string;
+  withHoverEffect?: boolean;
 }
 
-export default function MenuItem({ children, disabled = false, icon, iconComponent, onClick, pl = '0', py = '8px', showSubMenu = false, text }: Props): React.ReactElement<Props> {
+export default function MenuItem({ children, disabled = false, fontSize, icon, iconComponent, onClick, pl = '0', py = '8px', showSubMenu = false, text, withHoverEffect }: Props): React.ReactElement<Props> {
+  const hoverEffectStyles: SxProps<Theme> = {
+    '&:hover': { bgcolor: disabled ? 'none' : 'divider' },
+    borderRadius: '5px',
+    p: '8px'
+  };
+
   return (
     <>
-      <Grid alignItems='center' color={disabled ? '#4B4B4B' : 'inherit'} container item justifyContent='space-between' my='4px' onClick={disabled ? () => null : onClick} pl={pl} py={py} sx={{ cursor: disabled ? '' : 'pointer' }} textAlign='left' xs={12}>
+      <Grid alignItems='center' color={disabled ? '#4B4B4B' : 'inherit'} container item justifyContent='space-between' my='4px' onClick={disabled ? noop : onClick} pl={pl} py={py} sx={{ cursor: disabled ? '' : 'pointer', ...(withHoverEffect ? hoverEffectStyles : {}) }} textAlign='left' xs={12}>
         <Grid alignItems='center' container item xs>
           <Grid alignItems='center' container item xs={1}>
             {iconComponent ??
@@ -38,7 +49,7 @@ export default function MenuItem({ children, disabled = false, icon, iconCompone
           <Grid item pl='10px'>
             <Typography
               color={disabled ? 'text.disabled' : 'inherit'}
-              fontSize='18px'
+              fontSize={fontSize || '18px'}
               fontWeight={300}
               lineHeight='20px'
             >

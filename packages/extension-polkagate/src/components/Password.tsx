@@ -1,11 +1,11 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-import '@vaadin/icons';
+// @ts-nocheck
 
 import { IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
+import VaadinIcon from './VaadinIcon';
 import Label from './Label';
 import { Input } from './TextInputs';
 
@@ -15,15 +15,16 @@ interface Props {
   isError?: boolean;
   isFocused?: boolean;
   isReadOnly?: boolean;
-  label: string;
+  label?: string;
   onChange?: (value: string) => void;
   onEnter?: () => void;
+  onOffFocus?: () => void;
   placeholder?: string;
   value?: string;
-  withoutMargin?: boolean;
+  style?: React.CSSProperties;
 }
 
-export default function Password({ defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, withoutMargin }: Props): React.ReactElement<Props> {
+export default function Password({ defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, onOffFocus, placeholder, style }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const theme = useTheme();
@@ -47,12 +48,13 @@ export default function Password({ defaultValue, disabled, isError, isFocused, i
 
   const _setOffFocus = useCallback(() => {
     setOffFocus(true);
-  }, []);
+    onOffFocus && onOffFocus();
+  }, [onOffFocus]);
 
   return (
     <Label
       label={label}
-      style={{ letterSpacing: '-0.015em', position: 'relative' }}
+      style={{ letterSpacing: '-0.015em', position: 'relative', ...style }}
     >
       <Input
         autoCapitalize='off'
@@ -67,7 +69,11 @@ export default function Password({ defaultValue, disabled, isError, isFocused, i
         readOnly={isReadOnly}
         spellCheck={false}
         style={{
-          borderColor: isError ? theme.palette.warning.main : theme.palette.secondary.light,
+          borderColor: isError
+            ? theme.palette.warning.main
+            : disabled
+              ? theme.palette.secondary.contrastText
+              : theme.palette.secondary.light,
           borderWidth: isError ? '3px' : '1px',
           fontSize: '18px',
           fontWeight: 300,
@@ -88,7 +94,7 @@ export default function Password({ defaultValue, disabled, isError, isFocused, i
         }}
         tabIndex={-1}
       >
-        <vaadin-icon icon={showPass ? 'vaadin:eye' : 'vaadin:eye-slash'} style={{ height: '20px', color: `${theme.palette.secondary.light}` }} />
+        <VaadinIcon icon={showPass ? 'vaadin:eye' : 'vaadin:eye-slash'} style={{ height: '20px', color: `${theme.palette.secondary.light}` }} />
       </IconButton>
     </Label>
   );

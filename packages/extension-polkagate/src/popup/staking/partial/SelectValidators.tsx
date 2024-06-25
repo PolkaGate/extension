@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,18 +11,19 @@
 
 import type { AccountId } from '@polkadot/types/interfaces';
 
+import { FilterAltOutlined as FilterIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { BN } from '@polkadot/util';
 
 import { Checkbox2, Infotip, InputFilter, Motion, PButton, Popup, Progress } from '../../../components';
 import { useChain, useDecimal, useToken, useTranslation, useValidators, useValidatorsIdentities } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import { DEFAULT_FILTERS, SYSTEM_SUGGESTION_TEXT } from '../../../util/constants';
-import { AllValidators, Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
+import type { AllValidators, Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
 import { getComparator } from '../partial/comparators';
 import Filters from '../partial/Filters';
 import ValidatorsTable from './ValidatorsTable';
@@ -31,11 +33,10 @@ interface Props {
   validatorsIdentities?: DeriveAccountInfo[] | null | undefined;
   validatorsInfo?: AllValidators;
   api: ApiPromise;
-  nominatedValidatorsIds?: AccountId[] | null | undefined;
-  poolId?: BN;
+  nominatedValidatorsIds?: string[] | AccountId[] | null | undefined;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
-  stashId: AccountId;
+  stashId: AccountId | string;
   stakingConsts: StakingConsts | null | undefined;
   staked: BN;
   title: string;
@@ -44,7 +45,7 @@ interface Props {
   setShowReview: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function SelectValidators({ address, api, newSelectedValidators, nominatedValidatorsIds, poolId, setNewSelectedValidators, setShow, setShowReview, show, staked, stakingConsts, stashId, title, validatorsIdentities, validatorsInfo }: Props): React.ReactElement {
+export default function SelectValidators({ address, api, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, setShow, setShowReview, show, staked, stakingConsts, stashId, title, validatorsIdentities, validatorsInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const token = useToken(address);
@@ -54,8 +55,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
   const allValidatorsInfo = useValidators(address, validatorsInfo);
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds, validatorsIdentities);
-
-  const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => !v.validatorPrefs.blocked), [allValidatorsInfo]);
+  const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => (v.validatorPrefs.blocked as unknown as boolean) === false || v.validatorPrefs.blocked?.isFalse), [allValidatorsInfo]);
   const [systemSuggestion, setSystemSuggestion] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [filteredValidators, setFilteredValidators] = useState<ValidatorInfo[] | undefined>(allValidators);
@@ -87,7 +87,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
     if (systemSuggestion && newSelectedValidators?.length) {
       const notSelected = allValidators?.filter((a) => !newSelectedValidators.find((n) => a.accountId === n.accountId));
 
-      setValidatorsToList(newSelectedValidators.concat(notSelected));
+      setValidatorsToList(newSelectedValidators.concat(notSelected as ValidatorInfo[]));
     }
   }, [systemSuggestion, newSelectedValidators, allValidators]);
 
@@ -119,7 +119,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
       v.identity = vId?.identity;
     });
 
-    aDeepCopyOfValidators.sort((v1, v2) => ('' + v1?.identity?.displayParent).localeCompare(v2?.identity?.displayParent));
+    aDeepCopyOfValidators.sort((v1, v2) => ('' + v1?.identity?.displayParent).localeCompare(v2?.identity?.displayParent as string));
 
     let counter = 1;
     let indicator = aDeepCopyOfValidators[0];
@@ -193,7 +193,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
 
   const isSelected = useCallback((v: ValidatorInfo) =>
     !!newSelectedValidators.find((n) => n.accountId === v.accountId)
-  , [newSelectedValidators]);
+    , [newSelectedValidators]);
 
   const handleCheck = useCallback((e: React.ChangeEvent<HTMLInputElement>, validator: ValidatorInfo) => {
     const checked = e.target.checked;
@@ -269,7 +269,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
                     <Checkbox2
                       checked={systemSuggestion}
                       label={t<string>('System Suggestions')}
-                      labelStyle={{ fontSize: '16px', fontWeight: '400' }}
+                      labelStyle={{ fontSize: '16px', fontWeight: 400 }}
                       onChange={onSystemSuggestion}
                     />
                   </Infotip>
@@ -283,18 +283,15 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
                     value={searchKeyword ?? ''}
                   />
                 </Grid>
-                <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' onClick={onFilters} pl='15px' py='10px' width='27%' sx={{ cursor: 'pointer' }}>
-                  {t('Filters')}
-                  <Grid alignItems='center' container item justifyContent='center' pl='10px' sx={{ cursor: 'pointer', width: '40%' }}>
-                    <vaadin-icon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
-                  </Grid>
+                <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-end' onClick={onFilters} pl='15px' py='10px' width='27%' sx={{ cursor: 'pointer' }}>
+                  <FilterIcon sx={{ color: 'secondary.light' }} />
                 </Grid>
                 <Grid item xs={12}>
                   {validatorsToList &&
                     <ValidatorsTable
                       allValidatorsIdentities={allValidatorsIdentities}
                       api={api}
-                      chain={chain}
+                      chain={chain as any}
                       decimal={decimal}
                       formatted={stashId}
                       handleCheck={handleCheck}

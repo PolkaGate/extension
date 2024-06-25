@@ -1,82 +1,139 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { FiberManualRecord as FiberManualRecordIcon } from '@mui/icons-material';
-import { Box, List, ListItem, ListItemIcon, ListItemText, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext } from 'react';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useState } from 'react';
 
-import { ActionContext, PButton } from '../../components';
+import { PButton, VaadinIcon } from '../../components';
 import { useTranslation } from '../../hooks';
+import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
+import { EXTENSION_NAME } from '../../util/constants';
+import Privacy from './Privacy';
 
-const Welcome = function (): React.ReactElement {
+function Welcome(): React.ReactElement {
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
   const theme = useTheme();
 
-  const _onClick = useCallback(
+  const [showPrivacyAndSecurity, setShowPrivacyAndSecurity] = useState(false);
+
+  const onRestoreFromJson = useCallback(
     (): void => {
-      window.localStorage.setItem('welcome_read', 'ok');
-      onAction();
-    },
-    [onAction]
+      windowOpen('/account/restore-json').catch(console.error);
+    }, []
+  );
+
+  const onImportLedger = useCallback(
+    (): void => {
+      windowOpen('/account/import-ledger').catch(console.error);
+    }, []
+  );
+
+  const onCreate = useCallback(
+    (): void => {
+      windowOpen('/account/create').catch(console.error);
+    }, []
+  );
+
+  const onAddWatchOnly = useCallback(
+    (): void => {
+      windowOpen('/import/add-watch-only-full-screen').catch(console.error);
+    }, []
+  );
+
+  const onImport = useCallback(
+    (): void => {
+      windowOpen('/account/import-seed').catch(console.error);
+    }, []
+  );
+
+  const onImportRawSeed = useCallback(
+    (): void => {
+      windowOpen('/account/import-raw-seed').catch(console.error);
+    }, []
+  );
+
+  const onAttachQR = useCallback(
+    (): void => {
+      windowOpen('/import/attach-qr-full-screen').catch(console.error);
+    }, []
   );
 
   return (
     <>
       <HeaderBrand
         showBrand
-        text={t<string>('Polkagate')}
+        showMenu
+        text={EXTENSION_NAME}
       />
-      <Typography component='h2' sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '20px', pt: '25px', textAlign: 'center' }}>
-        {t<string>('Welcome')}
+      <Typography sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '5px', pt: '20px', textAlign: 'center' }}>
+        {t('Welcome!')}
       </Typography>
-      <Typography component={'p'} sx={{ fontSize: '14px', fontWeight: 300, textAlign: 'center' }}>
-        {t<string>('Before we start, just a couple of notes regarding use:')}
-      </Typography>
-      <Box sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '14px', m: '24px 15px 17px', p: '0' }}>
-        <List sx={{ color: 'text.primary' }}>
-          <ListItem>
-            <ListItemIcon sx={{ color: 'primary.main', minWidth: '26px', width: '26px' }}>
-              <FiberManualRecordIcon sx={{ width: '9px' }} />
-            </ListItemIcon>
-            <ListItemText
-              primary={t<string>('We do not send any clicks, pageviews or events to a central server.')}
-              primaryTypographyProps={{ fontSize: '14px' }}
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemIcon sx={{ color: 'primary.main', minWidth: '26px', width: '26px' }}>
-              <FiberManualRecordIcon sx={{ width: '9px' }} />
-            </ListItemIcon>
-            <ListItemText
-              primary={t<string>('We do not use any trackers or analytics.')}
-              primaryTypographyProps={{ fontSize: '14px' }}
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemIcon sx={{ color: 'primary.main', minWidth: '26px', width: '26px' }}>
-              <FiberManualRecordIcon sx={{ width: '9px' }} />
-            </ListItemIcon>
-            <ListItemText
-              primary={t<string>('We do not collect keys, addresses or any information. Your information never leaves this machine.')}
-              primaryTypographyProps={{ fontSize: '14px' }}
-            />
-          </ListItem>
-        </List>
-      </Box>
-      <Typography component={'p'} sx={{ fontSize: '14px', fontWeight: 300, pl: '25px' }}>
-        {t<string>('... We are not in the information collection business (even anonymized).')}
+      <Typography sx={{ fontSize: '14px', fontWeight: 400, px: '24px' }}>
+        {t<string>('Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started.')}
       </Typography>
       <PButton
-        _onClick={_onClick}
+        _mt='20px'
+        _onClick={onCreate}
         _variant={'contained'}
-        text={t<string>('Understood, let me continue')}
+        startIcon={<VaadinIcon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.main}` }} />}
+        text={t<string>('Create a new account')}
       />
+      <Divider sx={{ fontSize: '18px', fontWeight: 300, my: '10px', px: '20px' }}>
+        {t('Or')}
+      </Divider>
+      <PButton
+        _mt='0'
+        _onClick={onRestoreFromJson}
+        _variant={'outlined'}
+        text={t<string>('Restore from file')}
+      />
+      <PButton
+        _mt='10px'
+        _onClick={onImport}
+        _variant={'outlined'}
+        text={t<string>('Import from recovery phrase')}
+      />
+      <PButton
+        _mt='10px'
+        _onClick={onImportRawSeed}
+        _variant={'outlined'}
+        text={t<string>('Import from raw seed')}
+      />
+      <PButton
+        _mt='10px'
+        _onClick={onAddWatchOnly}
+        _variant={'outlined'}
+        text={t<string>('Add watch-only account')}
+      />
+      <PButton
+        _mt='10px'
+        _onClick={onAttachQR}
+        _variant={'outlined'}
+        text={t<string>('Attach QR-signer')}
+      />
+      <PButton
+        _mt='10px'
+        _onClick={onImportLedger}
+        _variant={'outlined'}
+        text={t<string>('Attach ledger device')}
+      />
+      <Grid container justifyContent='center'>
+        <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ cursor: 'pointer', fontSize: '12px', bottom: 0, position: 'absolute', textAlign: 'center', textDecoration: 'underline' }}>
+          {t('Privacy and Security')}
+        </Typography>
+      </Grid>
+      {showPrivacyAndSecurity &&
+        <Privacy
+          setShow={setShowPrivacyAndSecurity}
+          show={showPrivacyAndSecurity}
+        />
+      }
     </>
   );
-};
+}
 
-export default React.memo(Welcome);
+export default (Welcome);

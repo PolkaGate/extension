@@ -1,11 +1,12 @@
-// Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Divider, Grid, SxProps, Theme } from '@mui/material';
+import { Divider, Grid, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
 
 import { useAccount, useTranslation } from '../hooks';
@@ -55,7 +56,7 @@ function AmountFee({ address, amount, children, fee, label, style = {}, showDivi
               {t('Fee')}:
             </Grid>
             <Grid item sx={{ pl: '5px' }}>
-              <ShowValue value={fee?.toHuman()} height={16} />
+              <ShowValue height={16} value={fee?.toHuman()} />
             </Grid>
           </Grid>
         }

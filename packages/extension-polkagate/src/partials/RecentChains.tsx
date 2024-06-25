@@ -1,15 +1,16 @@
-// Copyright 2019-2023 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faCircleXmark } from '@fortawesome/free-solid-svg-icons/faCircleXmark';
+import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Backdrop, Box, ClickAwayListener, Grid, keyframes, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { threeItemCurveBackgroundBlack, threeItemCurveBackgroundWhite } from '../assets/icons';
+import { getStorage } from '../components/Loading';
 import { useAccount, useGenesisHashOptions } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CHAINS_WITH_BLACK_LOGO, INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
@@ -24,9 +25,10 @@ interface Props {
 function RecentChains({ address, currentChainName }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const account = useAccount(address);
+  const genesisHashes = useGenesisHashOptions();
+
   const [showRecentChains, setShowRecentChains] = useState<boolean>(false);
   const [notFirstTime, setFirstTime] = useState<boolean>(false);
-  const genesisHashes = useGenesisHashOptions();
   const [recentChains, setRecentChains] = useState<string[]>();
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
   const [currentSelectedChain, setCurrentSelectedChain] = useState<string | undefined>(currentChainName);
@@ -37,23 +39,26 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
     currentChainName && setCurrentSelectedChain(currentChainName);
   }, [currentChainName]);
 
-  useEffect(() =>
-    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
-    , [showRecentChains]);
+  useEffect(() => {
+    getStorage('testnet_enabled').then((res) => {
+      setIsTestnetEnabled(res as boolean);
+    }).catch(console.error);
+  }, [showRecentChains]);
 
   useEffect(() => {
     if (!address || !account) {
       return;
     }
 
-    chrome.storage.local.get('RecentChains', (res) => {
-      const allRecentChains = res?.RecentChains;
-      const myRecentChains = allRecentChains?.[address] as string[];
+    browser.storage.local.get('RecentChains')
+      .then((res) => {
+        const allRecentChains = res?.['RecentChains'];
+        const myRecentChains = allRecentChains?.[address] as string[];
 
-      const suggestedRecent = INITIAL_RECENT_CHAINS_GENESISHASH.filter((chain) => account.genesisHash !== chain);
+        const suggestedRecent = INITIAL_RECENT_CHAINS_GENESISHASH.filter((chain) => account.genesisHash !== chain);
 
-      myRecentChains ? setRecentChains(myRecentChains) : setRecentChains(suggestedRecent);
-    });
+        myRecentChains ? setRecentChains(myRecentChains) : setRecentChains(suggestedRecent);
+      });
   }, [account, account?.genesisHash, address]);
 
   const chainNamesToShow = useMemo(() => {
@@ -165,7 +170,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
 
     setCurrentSelectedChain(newChainName);
     setFirstTime(false);
-    address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch((error) => {
+    address && selectedGenesisHash && tieAccount(address, selectedGenesisHash as any).catch((error) => {
       setCurrentSelectedChain(currentChainName);
       console.error(error);
     });
@@ -194,7 +199,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
           : <Grid item onClick={toggleRecentChains} sx={{ cursor: 'pointer', left: 0, position: 'absolute', top: 0 }}>
             <Avatar
               src={getLogo(currentSelectedChain)}
-              sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(currentSelectedChain) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: '20px', width: '20px' }}
+              sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(currentSelectedChain as any) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: '20px', width: '20px' }}
             />
           </Grid>
         }
@@ -220,7 +225,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
             item
             key={index}
             // eslint-disable-next-line react/jsx-no-bind
-            onClick={() => selectNetwork(name)}
+            onClick={() => selectNetwork(name as string)}
             position='absolute'
             sx={{
               animationDuration: '150ms',
@@ -240,7 +245,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
                 border: 'none',
                 borderRadius: '50%',
                 boxShadow: `0px 0px 5px ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)'}`,
-                filter: (CHAINS_WITH_BLACK_LOGO.includes(name) && theme.palette.mode === 'dark') ? 'invert(1)' : '',
+                filter: (CHAINS_WITH_BLACK_LOGO.includes(name as string) && theme.palette.mode === 'dark') ? 'invert(1)' : '',
                 height: '22px',
                 width: '22px'
               }}

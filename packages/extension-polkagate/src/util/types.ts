@@ -1,24 +1,29 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
 /* eslint-disable camelcase */
 
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/promise/types';
 import type { DeriveAccountInfo, DeriveAccountRegistration, DeriveBalancesAll, DeriveCollectiveProposal, DeriveElectionsInfo, DeriveProposal, DeriveReferendumExt, DeriveStakingAccount, DeriveStakingQuery } from '@polkadot/api-derive/types';
-import type { LinkOption } from '@polkadot/apps-config/settings/types';
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
-import { SxProps, Theme } from '@mui/material';
+import { type SxProps, type Theme } from '@mui/material';
+import { LinkOption } from '@polkagate/apps-config/endpoints/types';
 
 import { ApiPromise } from '@polkadot/api';
 import { AccountJson } from '@polkadot/extension-base/background/types';
-import { Chain } from '@polkadot/extension-chains/types';
-import { Balance } from '@polkadot/types/interfaces';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { Chain } from '@polkadot/extension-chains/types';
 
-import { Lock } from '../hooks/useAccountLocks';
+import { InjectedExtension } from '@polkadot/extension-inject/types';
+import type { Balance } from '@polkadot/types/interfaces';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
+
+import { LatestReferenda } from '../fullscreen/governance/utils/types';
+import { CurrencyItemType } from '../fullscreen/homeFullScreen/partials/Currency';
+import { SavedAssets } from '../hooks/useAssetsBalances';
 
 export interface TransactionStatus {
   blockNumber: string | null;
@@ -42,14 +47,6 @@ export interface LastBalances {
 
 export const DEFAULT_ACCOUNT_BALANCE = { address: null, balanceInfo: null, chain: null, name: null };
 
-export interface AccountsBalanceType {
-  address: string; // formatted address
-  chain: string | null; // chainName actually
-  balanceInfo?: LastBalances;
-  name: string | null;
-  txHistory?: string;
-}
-
 export interface StakingConsts {
   bondingDuration: number; // eras
   eraIndex: number;
@@ -66,13 +63,9 @@ export interface NominatorInfo {
   isInList: boolean // is Nominator in top 22500 elected
   eraIndex: number;
 }
-export interface MinToReceiveRewardsInSolo {
-  minToGetRewards: BN;
-  eraIndex: number;
-  token: string;
-}
 
 export interface ValidatorInfo extends DeriveStakingQuery {
+  exposure: any;
   accountInfo?: DeriveAccountInfo;
 }
 
@@ -142,23 +135,29 @@ export interface TxResult {
   block: number;
   txHash: string;
   fee?: string;
-  success: boolean,
+  success: boolean;
   failureText?: string;
 }
 export interface TransactionDetail extends TxResult {
   action: string; // send, Solo staking, pool staking ...
-  subAction?: string; // bond_extra, unbound, nominate
-  from: NameAddress;
   amount?: string;
+  chain?: Chain;
   date: number;
+  from: NameAddress;
+  subAction?: string; // bond_extra, unbound, nominate
   to?: NameAddress;
+  token?: string;
   throughProxy?: NameAddress;
 }
 
 export interface TxInfo extends TransactionDetail {
   api: ApiPromise;
   chain: Chain;
+  decimal?: number;
+  recipientChainName?: string;
   token?: string;
+  poolName?: string;
+  validatorsCount?: number;
 }
 
 export interface Auction {
@@ -324,6 +323,7 @@ export interface FormattedAddressState {
   genesisHash: string;
   address: string;
   formatted: string;
+  assetId: string;
 }
 
 export interface nameAddress {
@@ -362,11 +362,6 @@ export interface Tip {
   beneficiary: AccountInfo;
 }
 
-export interface Option {
-  text: string;
-  value: string;
-}
-
 export interface PoolStakingConsts {
   eraIndex: number;
   lastPoolId: BN;
@@ -396,9 +391,9 @@ export interface MyPoolInfo extends PoolInfo {
   redeemable?: BN;
   rewardClaimable?: BN;
   rewardIdBalance?: DeriveStakingAccount;
-  token: string;
-  decimal: number;
-  date: number;
+  token?: string;
+  decimal?: number;
+  date?: number;
 }
 
 export interface PoolAccounts {
@@ -513,6 +508,25 @@ export interface RewardInfo {
   stash: string
 }
 
+export interface SubscanClaimedRewardInfo {
+  era: number,
+  pool_id: number,
+  account_display: { address: string },
+  amount: string,
+  block_timestamp: number,
+  event_index: string,
+  module_id: string,
+  event_id: string,
+  extrinsic_index: string
+}
+
+export interface ClaimedRewardInfo {
+  era: number;
+  amount: BN;
+  date?: string;
+  timeStamp: number;
+}
+
 export interface AlertType {
   text: string;
   severity: 'error' | 'warning' | 'info' | 'success'
@@ -530,16 +544,6 @@ export interface Proxy {
 export interface ProxyItem {
   proxy: Proxy;
   status: 'current' | 'new' | 'remove';
-}
-
-export interface PriceAll {
-  balances: DeriveBalancesAll;
-  decimals: number;
-  price: number;
-}
-
-export interface AddressPriceAll {
-  [k: string]: PriceAll;
 }
 
 export interface RenameAcc {
@@ -583,18 +587,30 @@ export interface Step {
   total: string | number;
   style?: SxProps<Theme> | undefined;
 }
-export interface TokenPrice {
-  [chainName: string]: Price;
+
+interface PriceValue {
+  value: number,
+  change: number
 }
+
+export interface PricesType {
+  [priceId: string]: PriceValue;
+}
+
 export interface Prices {
-  prices: Record<string, Record<string, number>>;
   date: number;
+  prices: PricesType;
+  currencyCode?: string;
 }
+
+export interface PricesInCurrencies {
+  [currencyCode: string]: { date: number; prices: PricesType; };
+}
+
 export interface Price {
-  amount: number;
-  chainName: string;
-  date: number;
-  token?: string;
+  price: number;
+  priceChainName: string;
+  priceDate: number;
 }
 
 export interface SavedBalances {
@@ -611,13 +627,17 @@ export interface SavedIdentities {
 }
 
 export interface BalancesInfo extends DeriveBalancesAll {
+  ED: BN;
+  assetId?: number;
   chainName: string;
-  decimal: number;
-  token: string;
+  currencyId?: unknown;
   date: number;
+  decimal: number;
+  genesisHash: string;
   pooledBalance?: BN;
   soloTotal?: BN;
-  genesisHash: string;
+  token: string;
+  totalBalance?: number;
 }
 export interface AccountStakingInfo extends DeriveStakingAccount {
   era: number;
@@ -639,11 +659,15 @@ export interface IsFetching {
   [item: string]: boolean;
 }
 
-export interface FetchingsContext {
+export interface CurrencyContextType {
+  currency: CurrencyItemType | undefined;
+  setCurrency: (selectedCurrency: CurrencyItemType) => void;
+}
+
+export interface FetchingRequests {
   fetching: Fetching;
   set: (change: Fetching) => void;
 }
-
 interface Limit {
   check?: boolean;
   value?: number;
@@ -664,8 +688,6 @@ export interface PoolFilter {
   membersMoreThan: Limit;
   sortBy: string;
 }
-
-
 export interface ValidatorInfoWithIdentity extends ValidatorInfo {
   identity?: DeriveAccountRegistration;
 }
@@ -700,19 +722,63 @@ export interface ApiProps extends ApiState {
 export interface APIs {
   [genesisHash: string]: ApiProps;
 }
+
 export interface APIsContext {
-  apis: { [key: string]: { api: ApiPromise; endpoint: string; } };
-  setIt: (apis: { [key: string]: { api: ApiPromise; endpoint: string; } }) => void;
+  apis: APIs;
+  setIt: (apis: APIs) => void;
 }
 
+export interface LatestRefs {
+  [key: string]: LatestReferenda[]
+}
+
+export interface ReferendaContextType {
+  refs: LatestRefs;
+  setRefs: (refs: LatestRefs) => void;
+}
+
+export interface AccountAssets {
+  assetId: number | undefined;
+  chainName: string;
+  decimal: number;
+  price?: number;
+  priceId: string;
+  genesisHash: string;
+  token: string;
+  totalBalance: BN;
+}
+
+export interface AccountsAssets {
+  address: string;
+  assets: AccountAssets[];
+}
+
+export interface SavedAccountsAssets { balances: AccountsAssets[], timestamp: number }
+
+export interface AccountsAssetsContextType {
+  accountsAssets: SavedAssets | null | undefined;
+  setAccountsAssets: (savedAccountAssets: SavedAssets) => void;
+}
+
+// TODO: FixMe, Controller is deprecated
 export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }
 export interface SoloSettings {
-  controllerId: AccountId | string | undefined,
+  controllerId?: AccountId | string | undefined,
   payee: Payee,
-  stashId: AccountId | string | undefined,
+  stashId?: AccountId | string | undefined,
 }
 
 export interface DropdownOption {
   text: string;
-  value: string;
+  value: string | number;
 }
+
+export type TransferType = 'All' | 'Max' | 'Normal';
+
+export type CanPayFee = { isAbleToPay: boolean | undefined, statement: number };
+
+export type ProxiedAccounts = {
+  genesisHash: string;
+  proxy: string;
+  proxied: string[];
+};

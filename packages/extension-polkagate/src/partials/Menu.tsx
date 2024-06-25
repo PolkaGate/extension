@@ -1,24 +1,23 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
-import { faFileExport } from '@fortawesome/free-solid-svg-icons/faFileExport';
-import { faFileImport } from '@fortawesome/free-solid-svg-icons/faFileImport';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Close as CloseIcon, Email as EmailIcon, Language as LanguageIcon, Twitter as TwitterIcon } from '@mui/icons-material';
-import { Box, Divider, Grid, IconButton, Link, Typography } from '@mui/material';
+import { Close as CloseIcon } from '@mui/icons-material';
+import { Divider, Grid, IconButton, Typography } from '@mui/material';
 import { keyframes, Theme } from '@mui/material/styles';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
-import { riot } from '../assets/icons';
-import { ActionContext, MenuItem, TwoButtons, Warning } from '../components';
+import { AccountContext, ActionContext, MenuItem, TwoButtons, VaadinIcon,Warning } from '../components';
+import { setStorage } from '../components/Loading';
 import { useTranslation } from '../hooks';
+import { tieAccount } from '../messaging';
+import { TEST_NETS } from '../util/constants';
 import ImportAccSubMenu from './ImportAccSubMenu';
 import NewAccountSubMenu from './NewAccountSubMenu';
 import SettingSubMenu from './SettingSubMenu';
+import VersionSocial from './VersionSocial';
 
 interface Props {
   theme: Theme;
@@ -36,25 +35,10 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const [collapsedMenu, setCollapsedMenu] = useState<number>(COLLAPSIBLE_MENUS.SETTING);
-  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+  const [isTestnetEnableConfirmed, setIsTestnetEnableConfirmed] = useState<boolean>();
   const [showWarning, setShowWarning] = useState<boolean>();
-  const [manifest, setManifest] = useState<chrome.runtime.Manifest>();
   const [closeMenu, setCloseMenu] = useState<boolean>(false);
-
-  const fetchJson = () => {
-    fetch('./manifest.json')
-      .then((response) => {
-        return response.json();
-      }).then((data: chrome.runtime.Manifest) => {
-        setManifest(data);
-      }).catch((e: Error) => {
-        console.log(e.message);
-      });
-  };
-
-  useEffect(() => {
-    fetchJson();
-  }, []);
+  const { accounts } = useContext(AccountContext);
 
   const toggleImportSubMenu = useCallback(() => {
     collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT
@@ -74,7 +58,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
       : setCollapsedMenu(COLLAPSIBLE_MENUS.SETTING);
   }, [collapsedMenu]);
 
-  const _toggleSettings = useCallback(() => {
+  const onCloseMenu = useCallback(() => {
     setCloseMenu(true);
     setTimeout(() => setShowMenu(false), 300);
   }, [setShowMenu]);
@@ -85,23 +69,28 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
 
   const onEnableTestnetConfirm = useCallback(() => {
     setShowWarning(false);
-    setIsTestnetEnabled(true);
-    window.localStorage.setItem('testnet_enabled', 'true');
+    setIsTestnetEnableConfirmed(true);
+    setStorage('testnet_enabled', true).catch(console.error);
   }, []);
 
   const onEnableTestnetReject = useCallback(() => {
     setShowWarning(false);
-    setIsTestnetEnabled(false);
+    setIsTestnetEnableConfirmed(false);
   }, []);
 
   const onEnableTestNetClick = useCallback(() => {
-    !isTestnetEnabled && setShowWarning(true);
+    !isTestnetEnableConfirmed && setShowWarning(true);
 
-    if (isTestnetEnabled) {
-      window.localStorage.setItem('testnet_enabled', 'false');
-      setIsTestnetEnabled(false);
+    if (isTestnetEnableConfirmed) {
+      setStorage('testnet_enabled', false).catch(console.error);
+      accounts?.forEach(({ address, genesisHash }) => {
+        if (genesisHash && TEST_NETS.includes(genesisHash)) {
+          tieAccount(address, null).catch(console.error);
+        }
+      });
+      setIsTestnetEnableConfirmed(false);
     }
-  }, [isTestnetEnabled]);
+  }, [accounts, isTestnetEnableConfirmed]);
 
   const slideLeft = keyframes`
   0% {
@@ -122,57 +111,56 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
 `;
 
   return (
-    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' sx={[{ animationDuration: '0.2s', animationFillMode: 'forwards', animationName: `${!closeMenu ? slideLeft : slideRight}`, position: 'absolute', right: 0, top: 0, mixBlendMode: 'normal', overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }]} zIndex={10} >
-      <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px 24px' sx={{ height: 'parent.innerHeight', position: 'relative' }} width='86%'>
+    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' sx={[{ animationDuration: '0.2s', animationFillMode: 'forwards', animationName: `${!closeMenu ? slideLeft : slideRight}`, position: 'absolute', right: 0, top: 0, mixBlendMode: 'normal', overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }]} zIndex={10}>
+      <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px' sx={{ height: 'parent.innerHeight', minWidth: '307px', position: 'relative' }} width='86%'>
         {!showWarning
           ? <>
             <MenuItem
               iconComponent={
-                <vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+                <VaadinIcon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={toggleNewAccountSubMenu}
+              showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT}
               text={t('New account')}
+              withHoverEffect
             >
               <NewAccountSubMenu show={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT} />
             </MenuItem>
             <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
             <MenuItem
               iconComponent={
-                <FontAwesomeIcon
-                  color={theme.palette.text.primary}
-                  icon={faFileImport}
-                />
+                <VaadinIcon icon='vaadin:upload-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={toggleImportSubMenu}
               showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT}
               text={t('Import account')}
+              withHoverEffect
             >
               <ImportAccSubMenu show={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT} toggleSettingSubMenu={toggleSettingSubMenu} />
             </MenuItem>
             <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
             <MenuItem
               iconComponent={
-                <FontAwesomeIcon
-                  color={theme.palette.text.primary}
-                  icon={faFileExport}
-                />
+                <VaadinIcon icon='vaadin:download' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={_goToExportAll}
               text={t('Export all accounts')}
+              withHoverEffect
             />
             <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
             <MenuItem
               iconComponent={
-                <vaadin-icon icon='vaadin:cog' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+                <VaadinIcon icon='vaadin:cog' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={toggleSettingSubMenu}
               showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.SETTING}
-              text={t('Setting')}
+              text={t('Settings')}
+              withHoverEffect
             >
               <SettingSubMenu
-                isTestnetEnabled={isTestnetEnabled}
+                isTestnetEnabledChecked={isTestnetEnableConfirmed}
                 onChange={onEnableTestNetClick}
-                setIsTestnetEnabled={setIsTestnetEnabled}
+                setTestnetEnabledChecked={setIsTestnetEnableConfirmed}
                 show={collapsedMenu === COLLAPSIBLE_MENUS.SETTING}
               />
             </MenuItem>
@@ -190,7 +178,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
                 marginTop={0}
                 theme={theme}
               >
-                {t<string>('Enabling testnet chains may cause instability or crashes since they\'re meant for testing. Proceed with caution. If issues arise, return here to disable the option.')}
+                {t('Enabling testnet chains may cause instability or crashes since they\'re meant for testing. Proceed with caution. If issues arise, return here to disable the option.')}
               </Warning>
             </Grid>
             <Grid container>
@@ -204,35 +192,9 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
             </Grid>
           </Grid>
         }
-        <Grid container fontSize='11px' justifyContent='space-between' sx={{ bottom: '10px', position: 'absolute', pl: '10px', width: '85%' }}>
-          <Grid item>
-            {`${t('Version')} ${manifest?.version || ''}`}
-          </Grid>
-          <Grid container width='fit-content'>
-            <Grid item>
-              <Link href={'mailto:polkagate@outlook.com'}>
-                <EmailIcon sx={{ color: '#1E5AEF', fontSize: 15 }} />
-              </Link>
-            </Grid>
-            <Grid item pl='5px'>
-              <Link href='https://polkagate.xyz' rel='noreferrer' target='_blank'>
-                <LanguageIcon sx={{ color: '#007CC4', fontSize: 15 }} />
-              </Link>
-            </Grid>
-            <Grid item pl='5px'>
-              <Link href='https://twitter.com/@polkagate' rel='noreferrer' target='_blank'>
-                <TwitterIcon sx={{ color: '#2AA9E0', fontSize: 15 }} />
-              </Link>
-            </Grid>
-            <Grid item pl='5px'>
-              <Link href='https://matrix.to/#/#polkagate:matrix.org' rel='noreferrer' target='_blank'>
-                <Box component='img' src={riot} sx={{ height: '12px', width: '12px', mt: '2px' }} />
-              </Link>
-            </Grid>
-          </Grid>
-        </Grid>
+        <VersionSocial fontSize='11px' />
       </Grid>
-      <IconButton onClick={_toggleSettings} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>
+      <IconButton onClick={onCloseMenu} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>
         <CloseIcon sx={{ color: 'text.secondary', fontSize: 35 }} />
       </IconButton>
     </Grid>

@@ -1,6 +1,9 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
+
+// @ts-nocheck
 
 /**
  * @description
@@ -15,11 +18,18 @@ import getApi from '../getApi.ts';
 import getPoolAccounts from '../getPoolAccounts';
 
 async function getPool(endpoint, stakerAddress, id = undefined) {
-  console.log(`getPool is called for ${stakerAddress} id:${id}`);
+  console.log(`getPool is called for ${stakerAddress} id:${id} endpoint:${endpoint}`);
   const api = await getApi(endpoint);
+
+  if (!api) {
+    console.error('Failed to get api!');
+
+    return;
+  }
+
   const token = api.registry.chainTokens[0];
   const decimal = api.registry.chainDecimals[0];
-  const members = !id && await api.query.nominationPools.poolMembers(stakerAddress);
+  const members = !id && await api.query['nominationPools']['poolMembers'](stakerAddress);
   const member = members?.isSome ? members.unwrap() : undefined;
 
   if (!member && !id) {
@@ -39,8 +49,8 @@ async function getPool(endpoint, stakerAddress, id = undefined) {
 
   const [metadata, bondedPools, myClaimable, rewardPools, rewardIdBalance, stashIdAccount] = await Promise.all([
     api.query.nominationPools.metadata(poolId),
-    api.query.nominationPools.bondedPools(poolId),
-    api.call.nominationPoolsApi.pendingRewards(stakerAddress),
+    api.query['nominationPools']['bondedPools'](poolId),
+    api.call['nominationPoolsApi']['pendingRewards'](stakerAddress),
     api.query.nominationPools.rewardPools(poolId),
     api.query.system.account(accounts.rewardId),
     api.derive.staking.account(accounts.stashId)
@@ -48,7 +58,7 @@ async function getPool(endpoint, stakerAddress, id = undefined) {
 
   const unwrappedRewardPools = rewardPools.isSome ? rewardPools.unwrap() : null;
   const unwrappedBondedPool = bondedPools.isSome ? bondedPools.unwrap() : null;
-  const poolRewardClaimable = bnMax(BN_ZERO, rewardIdBalance.data.free.sub(api.consts.balances.existentialDeposit));
+  const poolRewardClaimable = bnMax(BN_ZERO, rewardIdBalance.data.free.sub(api.consts['balances']['existentialDeposit']));
   const rewardPool = {};
 
   if (unwrappedRewardPools) {

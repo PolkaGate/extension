@@ -1,9 +1,10 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable sort-keys */
 
-import { ThemeOptions } from '@mui/material';
+import { ThemeOptions, TypeText } from '@mui/material';
 
 import { baseTheme } from './baseTheme';
 
@@ -14,6 +15,7 @@ declare module '@mui/material/styles' {
     label: Palette['primary'];
     approval: Palette['primary'];
     support: Palette['primary'];
+    backgroundFL?: Palette['primary'];
   }
   interface PaletteOptions {
     approval?: PaletteOptions['primary'];
@@ -21,6 +23,7 @@ declare module '@mui/material/styles' {
     nay?: PaletteOptions['primary'];
     label?: PaletteOptions['primary'];
     support?: PaletteOptions['primary'];
+    backgroundFL?: Partial<TypeText>;
   }
 }
 
@@ -36,10 +39,12 @@ export const lightTheme: ThemeOptions = {
     nay: { main: '#FF5722' },
     label: { main: '#FFFFFF' },
     background: { default: '#F1F1F1', paper: '#fff' },
+    backgroundFL: { primary: '#DFDFDF', secondary: '#F1F1F1' },
     text: { primary: '#63364D', secondary: '#FFFFFF', disabled: '#747474' },
     action: { disabled: '#fff', disabledBackground: '#989898', focus: '#BA82A5' },
     success: { main: '#1F7720' },
-    warning: { main: '#FF002B' }
+    warning: { main: '#FF002B' },
+    divider: 'rgba(0, 0, 0, 0.1)'
   },
   components: {
     MuiSkeleton: {

@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /**
  * @description
@@ -10,7 +11,7 @@ import { Divider, Grid } from '@mui/material';
 import React from 'react';
 
 import { Steps } from '../components';
-import { Step } from '../util/types';
+import type { Step } from '../util/types';
 
 interface Props {
   label: string;

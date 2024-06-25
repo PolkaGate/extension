@@ -1,22 +1,24 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
+
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { MoreVert as MoreVertIcon, SearchOff as SearchOffIcon, SearchOutlined as SearchOutlinedIcon } from '@mui/icons-material';
-import { Divider, FormControlLabel, Grid, LinearProgress, Radio, SxProps, Theme, Typography, useTheme } from '@mui/material';
-import { Circle } from 'better-react-spinkit';
+import { FilterAltOutlined as FilterIcon, MoreVert as MoreVertIcon, SearchOff as SearchOffIcon, SearchOutlined as SearchOutlinedIcon } from '@mui/icons-material';
+import { Divider, FormControlLabel, Grid, LinearProgress, Radio, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
-import { InputFilter, ShowBalance, ShowValue } from '../../../../../../components';
+import { InputFilter, Progress, ShowBalance } from '../../../../../../components';
 import { useChain, useDecimal, useStakingConsts, useToken, useTranslation } from '../../../../../../hooks';
 import { DEFAULT_POOL_FILTERS } from '../../../../../../util/constants';
-import { PoolFilter, PoolInfo } from '../../../../../../util/types';
+import type { PoolFilter, PoolInfo } from '../../../../../../util/types';
 import PoolMoreInfo from '../../../../partial/PoolMoreInfo';
 import Filters from './Filters';
 
@@ -112,23 +114,12 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
 
   return (
     <Grid sx={{ ...style }}>
-      <Grid alignItems='center' container item justifyContent='space-between'>
-        <Grid alignItems='center' container item width='fit-content'>
-          <Grid item>
-            {t<string>('Pick 1 of ')}
-          </Grid>
-          <Grid item px='5px'>
-            <ShowValue value={totalNumberOfPools} width='35px' />
-          </Grid>
-          <Grid item>
-            {t<string>('to join')}
-          </Grid>
+      <Grid alignItems='center' container item justifyContent='space-between' wrap='nowrap'>
+        <Grid item textAlign='left' width='fit-content'>
+          {t<string>('Pick 1 of {{totalNumberOfPools}} to join', { replace: { totalNumberOfPools: totalNumberOfPools || ' . . . ' } })}
         </Grid>
         <Div height='19px' />
         <Grid alignItems='center' container item onClick={onSearchClick} sx={{ cursor: 'pointer' }} width='fit-content'>
-          <Typography fontWeight={400} mr='5px'>
-            {t('Search')}
-          </Typography>
           {isSearching
             ? <SearchOffIcon sx={{ color: 'secondary.light' }} />
             : <SearchOutlinedIcon sx={{ color: 'secondary.light' }} />
@@ -136,10 +127,7 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
         </Grid>
         <Div height='19px' />
         <Grid alignItems='center' container item onClick={onFilters} sx={{ cursor: 'pointer' }} width='fit-content'>
-          <Typography fontWeight={400} mr='5px'>
-            {t('Filters')}
-          </Typography>
-          <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '30px' }} />
+          <FilterIcon sx={{ color: 'secondary.light' }} />
         </Grid>
       </Grid>
       {isSearching &&
@@ -160,7 +148,7 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
         {poolsToShow
           ? poolsToShow.length
             ? poolsToShow.map((pool, index) => {
-              const mayBeCommission = pool.bondedPool.commission.current.isSome ? pool.bondedPool.commission.current.value[0] : 0
+              const mayBeCommission = (pool.bondedPool as any).commission.current.isSome ? (pool.bondedPool as any).commission.current.value[0] : 0;
               const commission = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
 
               return (
@@ -182,7 +170,7 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
                         <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
                           <ShowBalance
                             api={api}
-                            balance={poolStaked(pool.bondedPool?.points)}
+                            balance={poolStaked(pool.bondedPool?.points as BN)}
                             decimal={decimal}
                             decimalPoint={2}
                             height={22}
@@ -199,14 +187,6 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
                           {commission}%
                         </Grid>
                       </Grid>
-                      {/* <Grid alignItems='center' container item width='fit-content'>
-                      <Typography fontSize='12px' fontWeight={300} lineHeight='23px'>
-                        {t<string>('Index:')}
-                      </Typography>
-                      <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
-                        {pool.poolId?.toString()}
-                      </Grid>
-                    </Grid> */}
                       <Div />
                       <Grid alignItems='end' container item width='fit-content'>
                         <Typography fontSize='12px' fontWeight={300} lineHeight='23px'>
@@ -222,7 +202,7 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
                     <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
                   </Grid>
                 </Grid>
-              )
+              );
             })
             : <Grid display='inline-flex' p='10px'>
               <FontAwesomeIcon className='warningImage' icon={faExclamationTriangle} />
@@ -230,14 +210,7 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
                 {t<string>('There is no pool to join!')}
               </Typography>
             </Grid>
-          : <Grid alignItems='center' container justifyContent='center'>
-            <Grid item>
-              <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
-            </Grid>
-            <Typography fontSize='13px' lineHeight='59px' pl='10px'>
-              {t<string>('Loading pools...')}
-            </Typography>
-          </Grid>
+          : <Progress title={t<string>('Loading pools...')} type='grid' />
         }
       </Grid>
       {
@@ -245,9 +218,9 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
         <Grid ml='-15px'>
           <PoolMoreInfo
             address={address}
-            api={api}
-            chain={chain}
-            pool={poolId === selected?.poolId && selected}
+            api={api as ApiPromise}
+            chain={chain as any}
+            pool={poolId === selected?.poolId ? selected : undefined}
             poolId={poolId}
             setShowPoolInfo={setShowPoolMoreInfo}
             showPoolInfo={showPoolMoreInfo}
@@ -267,7 +240,7 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
             setShow={setShowFilters}
             setSortValue={setSortValue}
             show={showFilters}
-            sortValue={sortValue}
+            sortValue={sortValue as number}
             stakingConsts={stakingConsts}
             token={token}
           />

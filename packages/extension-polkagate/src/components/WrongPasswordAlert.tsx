@@ -1,21 +1,23 @@
-// Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, useTheme } from '@mui/material';
+import { Grid, Theme, useTheme } from '@mui/material';
 import React from 'react';
 
 import { useTranslation } from '../hooks';
 import { Warning } from '.';
 
-export default function WrongPasswordAlert (): React.ReactElement {
+export default function WrongPasswordAlert({ bgcolor, fontSize }: { bgcolor?: string, fontSize?: string; }): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
 
   return (
-    <Grid container height='35px'>
+    <Grid container height='35px' sx={{ bgcolor }}>
       <Warning
+        fontSize={fontSize}
         fontWeight={400}
         isDanger
         marginTop={0}

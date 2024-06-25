@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { Grid, Typography } from '@mui/material';
 import { Theme } from '@mui/material/styles';
@@ -10,21 +11,18 @@ interface Props {
   className?: string;
   theme: Theme;
   onChange: () => void;
-  checkedLabel: string;
-  uncheckedLabel: string;
+  checkedLabel?: string;
+  uncheckedLabel?: string;
   fontSize?: string;
   fontWeight?: number;
   isChecked?: boolean;
+  changeBackground?: boolean;
 }
 
-function Switch({ checkedLabel, className, fontSize = '18px', fontWeight = 300, onChange, theme, uncheckedLabel, isChecked = false }: Props): React.ReactElement<Props> {
+function Switch({ changeBackground = false, checkedLabel, className, fontSize = '18px', fontWeight = 300, isChecked = false, onChange, theme, uncheckedLabel }: Props): React.ReactElement<Props> {
   return (
     <Grid alignItems='center' className={className} container item width='fit-content'>
-      <Typography
-        display='inline'
-        fontSize={fontSize}
-        fontWeight={fontWeight}
-      >
+      <Typography display='inline' fontSize={fontSize} fontWeight={fontWeight}>
         {uncheckedLabel}
       </Typography>
       <label>
@@ -34,7 +32,9 @@ function Switch({ checkedLabel, className, fontSize = '18px', fontWeight = 300, 
           onChange={onChange}
           type='checkbox'
         />
-        <span className='slider' />
+        <span
+          className='slider'
+          style={{ backgroundColor: isChecked && changeBackground ? 'rgb(255 239 18) ' : 'transparent' }} />
       </label>
       <Typography
         display='inline'
@@ -73,7 +73,7 @@ export default styled(Switch)(({ theme }: Props) => `
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: ${theme.palette.background.default};
+    background-color: '${theme.palette.background.default}';
     transition: 0.2s;
     border-radius: 100px;
     border: 1px solid ${theme.palette.secondary.light};

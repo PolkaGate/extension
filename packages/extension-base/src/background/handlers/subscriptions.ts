@@ -1,14 +1,14 @@
-// Copyright 2019-2023 @polkadot/extension authors & contributors
+// Copyright 2019-2024 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MessageTypesWithSubscriptions, SubscriptionMessageTypes } from '../types';
 
-type Subscriptions = Record<string, chrome.runtime.Port>;
+type Subscriptions = Record<string, browser.runtime.Port>;
 
 const subscriptions: Subscriptions = {};
 
 // return a subscription callback, that will send the data to the caller via the port
-export function createSubscription<TMessageType extends MessageTypesWithSubscriptions> (id: string, port: chrome.runtime.Port): (data: SubscriptionMessageTypes[TMessageType]) => void {
+export function createSubscription<TMessageType extends MessageTypesWithSubscriptions> (id: string, port: browser.runtime.Port): (data: SubscriptionMessageTypes[TMessageType]) => void {
   subscriptions[id] = port;
 
   return (subscription: unknown): void => {

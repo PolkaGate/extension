@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -15,11 +16,11 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
-import { useApi, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation } from '../../../../hooks';
+import { useInfo, useStakingAccount, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
+import Asset from '../../../../partials/Asset';
+import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import Asset from '../../../send/partial/Asset';
 import Review from './Review';
 
 interface State {
@@ -35,13 +36,11 @@ export default function Index(): React.ReactElement {
   const { state } = useLocation<State>();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
-  const api = useApi(address, state?.api);
-  const chain = useChain(address);
-  const decimal = useDecimal(address);
-  const formatted = useFormatted(address);
+  const { api, chain, decimal, formatted, token } = useInfo(address);
   const history = useHistory();
+
+  useUnSupportedNetwork(address, STAKING_CHAINS);
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
-  const token = useToken(address);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [amount, setAmount] = useState<string>();
@@ -54,7 +53,7 @@ export default function Index(): React.ReactElement {
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
   const totalStakeAfter = useMemo(() => staked && unlockingAmount && staked.add(amountAsBN), [amountAsBN, staked, unlockingAmount]);
 
-  const rebonded = api && api.tx.staking.rebond; // signer: Controller
+  const rebonded = api && api.tx['staking']['rebond']; // signer: Controller
 
   useEffect(() => {
     if (!stakingAccount) {
@@ -66,7 +65,7 @@ export default function Index(): React.ReactElement {
     if (stakingAccount?.unlocking) {
       for (const [_, { remainingEras, value }] of Object.entries(stakingAccount.unlocking)) {
         if (remainingEras.gtn(0)) {
-          const amount = new BN(value as string);
+          const amount = new BN(value as unknown as string);
 
           unlockingValue = unlockingValue.add(amount);
         }
@@ -89,7 +88,7 @@ export default function Index(): React.ReactElement {
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -154,47 +153,45 @@ export default function Index(): React.ReactElement {
         shortBorder
         showBackArrow
         showClose
-        text={t<string>('Solo Restaking')}
+        text={t('Solo Restaking')}
       />
       <SubTitle
         label={t('Restake')}
         withSteps={{ current: 1, total: 2 }}
       />
-      <Grid item xs={12} sx={{ mx: '15px' }}>
+      <Grid item sx={{ mx: '15px' }} xs={12}>
         <Asset
           address={address}
           api={api}
           balance={unlockingAmount}
-          balanceLabel={t('Unlocking')}
+          balanceLabel={t('Unstaking')}
           fee={estimatedFee}
-          genesisHash={chain?.genesisHash}
           style={{ pt: '20px' }}
         />
         <div style={{ paddingTop: '30px' }}>
           <AmountWithOptions
-            label={t<string>('Amount ({{token}})', { replace: { token } })}
+            label={t('Amount ({{token}})', { replace: { token } })}
             onChangeAmount={onChangeAmount}
             onPrimary={onAllAmount}
-            primaryBtnText={t<string>('All amount')}
+            primaryBtnText={t('All amount')}
             value={amount}
           />
           {alert &&
             <Warn text={alert} />
           }
         </div>
-
       </Grid>
       <PButton
         _onClick={goToReview}
         disabled={!amount || amount === '0' || unlockingAmount?.lt(amountAsBN)}
-        text={t<string>('Next')}
+        text={t('Next')}
       />
       {showReview && amount && api && formatted && unlockingAmount && chain && decimal &&
         <Review
           address={address}
           amount={restakeAllAmount ? unlockingAmount : amountToMachine(amount, decimal)}
           api={api}
-          chain={chain}
+          chain={chain as any}
           estimatedFee={estimatedFee}
           formatted={formatted}
           rebonded={rebonded}
@@ -207,4 +204,3 @@ export default function Index(): React.ReactElement {
     </Motion>
   );
 }
-

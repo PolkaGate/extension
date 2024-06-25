@@ -1,11 +1,13 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
+import { createWsEndpoints } from '@polkagate/apps-config';
 import { useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { createWsEndpoints } from '@polkadot/apps-config';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { APIContext } from '../components';
 import { sanitizeChainName } from '../util/utils';
@@ -16,11 +18,11 @@ export default function useApiWithChain(chain: Chain | undefined, api?: ApiPromi
 
   const maybeEndpoint = useMemo(() => {
     const chainName = sanitizeChainName(chain?.name);
-    const allEndpoints = createWsEndpoints((key: string, value: string | undefined) => value || key);
+    const allEndpoints = createWsEndpoints(() => '');
 
     const endpoints = allEndpoints?.filter((e) => String(e.text)?.toLowerCase() === chainName?.toLowerCase());
 
-    return endpoints?.length ? endpoints[endpoints.length > 2 ? 1 : 0].value : undefined;
+    return endpoints?.length ? endpoints[0].value : undefined;
   }, [chain?.name]);
 
   useEffect(() => {

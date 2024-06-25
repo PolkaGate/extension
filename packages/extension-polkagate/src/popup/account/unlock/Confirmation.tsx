@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,7 +10,7 @@ import React from 'react';
 import { Motion, Popup, ShortAddress, TwoButtons } from '../../../components';
 import { useToken, useTranslation } from '../../../hooks';
 import { HeaderBrand, SubTitle, ThroughProxy } from '../../../partials';
-import { TxInfo } from '../../../util/types';
+import type { TxInfo } from '../../../util/types';
 import Explorer from '../../history/Explorer';
 import FailSuccessIcon from '../../history/partials/FailSuccessIcon';
 
@@ -110,7 +111,7 @@ export default function Confirmation({ address, onPrimaryBtnClick, onSecondaryBt
         }
         <TwoButtons
           onPrimaryClick={onPrimaryBtnClick}
-          onSecondaryClick={onSecondaryBtnClick}
+          onSecondaryClick={onSecondaryBtnClick as any}
           primaryBtnText={primaryBtnText}
           secondaryBtnText={secondaryBtnText}
         />

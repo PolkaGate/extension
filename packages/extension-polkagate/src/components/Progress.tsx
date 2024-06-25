@@ -1,8 +1,9 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { Grid, useTheme } from '@mui/material';
-import { Circle } from 'better-react-spinkit';
+import { Circle, CubeGrid, WanderingCubes } from 'better-react-spinkit';
 import React from 'react';
 
 interface Props {
@@ -10,9 +11,11 @@ interface Props {
   title?: string;
   pt?: number | string;
   size?: number;
+  gridSize?: number;
+  type?: 'circle' | 'cubes' | 'grid';
 }
 
-function Progress({ pt = '50px', title, size = 25, fontSize = 13 }: Props): React.ReactElement<Props> {
+function Progress({ fontSize = 13, gridSize = 135, pt = '50px', size = 25, title, type = 'circle' }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (
@@ -23,13 +26,40 @@ function Progress({ pt = '50px', title, size = 25, fontSize = 13 }: Props): Reac
       justifyContent='center'
       pt={pt}
     >
-      <Circle color={theme.palette.primary.main} scaleEnd={0.7} scaleStart={0.4} size={size} />
-      <Grid
-        item
-        sx={{ fontSize, paddingTop: '20px' }}
-      >
-        {title}
-      </Grid>
+      {type === 'circle' &&
+        <Circle
+          color={theme.palette.primary.main}
+          scaleEnd={0.7}
+          scaleStart={0.4}
+          size={size}
+        />
+      }
+      {type === 'cubes' &&
+        <WanderingCubes
+          color={theme.palette.primary.main}
+          cubeSize={9}
+          duration='2s'
+          size={size}
+          timingFunction='ease-in-out'
+        />
+      }
+      {type === 'grid' &&
+        <CubeGrid
+          col={3}
+          color={theme.palette.secondary.main}
+          row={3}
+          size={gridSize}
+          style={{ margin: 'auto', opacity: '0.4' }}
+        />
+      }
+      {title &&
+        <Grid
+          item
+          sx={{ fontSize, paddingTop: '20px' }}
+        >
+          {title}
+        </Grid>
+      }
     </Grid>
   );
 }

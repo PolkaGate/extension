@@ -1,10 +1,13 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
+
+// @ts-nocheck
 
 import getApi from '../getApi.ts';
 
-async function getAllValidators (endpoint) {
+async function getAllValidators(endpoint) {
   console.log('getting validators info from ', endpoint);
 
   try {
@@ -13,7 +16,6 @@ async function getAllValidators (endpoint) {
     const at = await api.rpc.chain.getFinalizedHead();
     const apiAt = await api.at(at);
     const [elected, waiting, currentEra] = await Promise.all([
-
       api.derive.staking.electedInfo({ withController: true, withDestination: true, withExposure: true, withPrefs: true, withNominations: true, withLedger: true }),
       api.derive.staking.waitingInfo({ withController: true, withDestination: true, withExposure: true, withPrefs: true, withNominations: true, withLedger: true }),
       apiAt.query.staking.currentEra()
@@ -39,5 +41,7 @@ onmessage = (e) => {
   const { endpoint } = e.data;
 
   // eslint-disable-next-line no-void
-  void getAllValidators(endpoint).then((info) => { postMessage(info); });
+  void getAllValidators(endpoint).then((info) => {
+    postMessage(info);
+  });
 };

@@ -1,9 +1,8 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import '@vaadin/icons';
 
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveOwnContributions } from '@polkadot/api-derive/types';
@@ -11,19 +10,21 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { Language as LanguageIcon } from '@mui/icons-material';
 import { Avatar, Box, Container, Divider, Grid, Link, Typography, useTheme } from '@mui/material';
-import { Crowdloan } from 'extension-polkagate/src/util/types';
+import { createWsEndpoints } from '@polkagate/apps-config';
+import type { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { createWsEndpoints } from '@polkadot/apps-config';
-import { Chain } from '@polkadot/extension-chains/types';
-import { SettingsStruct } from '@polkadot/ui-settings/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { activeCrowdloanBlack, activeCrowdloanRed, activeCrowdloanWhite, auctionBlack, auctionRed, auctionWhite, crowdloanHomeBlack, crowdloanHomeRed, crowdloanHomeWhite, pastCrowdloanBlack, pastCrowdloanRed, pastCrowdloanWhite } from '../../assets/icons';
-import { ActionContext, HorizontalMenuItem, Identicon, Identity, Progress, ShowBalance, Warning } from '../../components';
+import { auctionBlack, auctionRed, auctionWhite, crowdloanHomeBlack, crowdloanHomeRed, crowdloanHomeWhite, pastCrowdloanBlack, pastCrowdloanRed, pastCrowdloanWhite } from '../../assets/icons';
+import { ActionContext, HorizontalMenuItem, Identicon, Identity, Progress, ShowBalance, VaadinIcon, Warning } from '../../components';
 import { SettingsContext } from '../../components/contexts';
-import { useAccount, useApi, useAuction, useChain, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useMyAccountIdentity, useToken, useTranslation } from '../../hooks';
+import { useAuction, useCurrentBlockNumber, useInfo, useMyAccountIdentity, useTranslation } from '../../hooks';
+import useIsExtensionPopup from '../../hooks/useIsExtensionPopup';
 import { ChainSwitch, HeaderBrand } from '../../partials';
 import BouncingSubTitle from '../../partials/BouncingSubTitle';
 import getContributions from '../../util/api/getContributions';
@@ -56,20 +57,17 @@ export default function CrowdLoans(): React.ReactElement {
   const { address } = useParams<{ address: string }>();
   const currentBlockNumber = useCurrentBlockNumber(address);
   const auction = useAuction(address);
-  const account = useAccount(address);
-  const formatted = useFormatted(address);
-  const chain = useChain(address);
-  const api = useApi(address);
+  const { account, api, chain, chainName, decimal, formatted, token } = useInfo(address);
   const identity = useMyAccountIdentity(address);
-  const token = useToken(address);
-  const decimal = useDecimal(address);
-  const chainName = useChainName(address);
+  const onExtension = useIsExtensionPopup();
+
   const [myContributions, setMyContributions] = useState<Map<string, Balance> | undefined>();
   const [allContributionAmount, setAllContributionAmount] = useState<Balance | undefined>();
   const [myContributedCrowdloans, setMyContributedCrowdloans] = useState<Crowdloan[] | undefined>();
   const [myContributionsFromSubscan, setMyContributionsFromSubscan] = useState<Map<number, MCS>>();
   const [itemShow, setItemShow] = useState<number>(0);
 
+  const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
   const sortingCrowdloans = (a: Crowdloan, b: Crowdloan) => Number(a.fund.paraId) - Number(b.fund.paraId);// oldest first
   const sortingCrowdloansReverse = (a: Crowdloan, b: Crowdloan) => Number(b.fund.paraId) - Number(a.fund.paraId);// newest first
   const activeCrowdloans = useMemo(() => {
@@ -100,7 +98,7 @@ export default function CrowdLoans(): React.ReactElement {
     return endeds.length ? endeds : null;
   }, [auction]);
 
-  const allEndpoints = createWsEndpoints((key: string, value: string | undefined) => value || key);
+  const allEndpoints = createWsEndpoints(() => '');
   const paraIds = useMemo(() => auction?.crowdloans.map((c: Crowdloan) => c.fund.paraId), [auction?.crowdloans]);
   const crowdloansId = useMemo(() => {
     if (!paraIds || !allEndpoints.length) {
@@ -166,10 +164,14 @@ export default function CrowdLoans(): React.ReactElement {
   }, [address, chain, settings, auction, api, paraIds]);
 
   const onBackClick = useCallback(() => {
-    const url = chain?.genesisHash ? `/account/${chain.genesisHash}/${address}/` : '/';
-
-    onAction(url);
-  }, [address, chain?.genesisHash, onAction]);
+    if (chain?.genesisHash && onExtension) {
+      onAction(`/account/${chain.genesisHash}/${address}/`);
+    } else if (!onExtension) {
+      onAction(`/accountfs/${address}/0`);
+    } else {
+      onAction('/');
+    }
+  }, [address, chain?.genesisHash, onAction, onExtension]);
 
   const showMyContribution = useCallback(() => {
     setItemShow(TAB_MAP.MY_CONTRIBUTION);
@@ -194,7 +196,7 @@ export default function CrowdLoans(): React.ReactElement {
       if (mCS?.length) {
         const mCSD: Map<number, MCS> = new Map();
 
-        mCS.forEach((cs) => {
+        mCS.forEach((cs: { para_id: number; block_num: any; block_timestamp: any; unlocking_block: any; }) => {
           mCSD.set(cs.para_id, {
             contributionBlock: cs.block_num,
             contributionTimestamp: cs.block_timestamp,
@@ -230,7 +232,8 @@ export default function CrowdLoans(): React.ReactElement {
   const identicon = (
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
-      judgement={identity?.judgements}
+      isSubId={!!identity?.displayParent}
+      judgement={_judgement}
       prefix={chain?.ss58Format ?? 42}
       size={40}
       value={formatted}
@@ -271,7 +274,7 @@ export default function CrowdLoans(): React.ReactElement {
     <>
       {contributedCrowdloans !== undefined &&
         <>
-          <BouncingSubTitle label={t<string>('Contributed Crowdloans')} style={{ fontSize: '20px', fontWeight: 400 }} />
+          <BouncingSubTitle label={t<string>('Contributed Crowdloans')} />
           {!!contributedCrowdloans?.length &&
             <MyContribution
               amount={allContributionAmount}
@@ -303,7 +306,7 @@ export default function CrowdLoans(): React.ReactElement {
                             </Grid>
                           }
                         </Grid>
-                        : <Identity address={crowdloan.fund.depositor} api={api} chain={chain} formatted={crowdloan.fund.depositor} identiconSize={15} noIdenticon style={{ fontSize: '16px' }} />
+                        : <Identity address={crowdloan.fund.depositor} api={api} chain={chain as any} formatted={crowdloan.fund.depositor} identiconSize={15} noIdenticon style={{ fontSize: '16px' }} />
                       }
                     </Grid>
                   </Grid>
@@ -348,7 +351,7 @@ export default function CrowdLoans(): React.ReactElement {
                 >
                   {t<string>('No contribution yet.')}
                 </Warning>
-                <Typography fontWeight={400} fontSize='14px' p='7px 41px' align='center'>
+                <Typography align='center' fontSize='14px' fontWeight={400} p='7px 41px'>
                   {t('You can find Crowdloans to contribute by clicking on “Active” button below.')}
                 </Typography>
               </Grid>
@@ -394,7 +397,7 @@ export default function CrowdLoans(): React.ReactElement {
                 <ActiveCrowdloans
                   activeCrowdloans={activeCrowdloans}
                   api={api}
-                  chain={chain}
+                  chain={chain as any}
                   contributedCrowdloans={myContributions}
                   crowdloansId={crowdloansId}
                   currentBlockNumber={currentBlockNumber}
@@ -414,7 +417,7 @@ export default function CrowdLoans(): React.ReactElement {
               {itemShow === TAB_MAP.PAST_CROWDLOANS &&
                 <PastCrowdloans
                   api={api}
-                  chain={chain}
+                  chain={chain as any}
                   contributedCrowdloans={myContributions}
                   crowdloansId={crowdloansId}
                   currentBlockNumber={currentBlockNumber}
@@ -439,7 +442,8 @@ export default function CrowdLoans(): React.ReactElement {
                   : theme.palette.mode === 'light'
                     ? crowdloanHomeBlack as string
                     : crowdloanHomeWhite as string}
-              sx={{ height: '35px' }} />
+              sx={{ height: '35px' }}
+            />
           }
           onClick={showMyContribution}
           textSelected={itemShow === TAB_MAP.MY_CONTRIBUTION}
@@ -449,7 +453,7 @@ export default function CrowdLoans(): React.ReactElement {
           divider
           exceptionWidth={33}
           icon={
-            <vaadin-icon
+            <VaadinIcon
               icon='vaadin:piggy-bank-coin'
               style={{
                 height: '32px',
@@ -475,7 +479,8 @@ export default function CrowdLoans(): React.ReactElement {
                   : theme.palette.mode === 'light'
                     ? auctionBlack as string
                     : auctionWhite as string}
-              sx={{ height: '35px' }} />}
+              sx={{ height: '35px' }}
+            />}
           onClick={showAuction}
           textSelected={itemShow === TAB_MAP.AUCTION}
           title={t<string>('Auction')}
@@ -492,7 +497,8 @@ export default function CrowdLoans(): React.ReactElement {
                     ? pastCrowdloanBlack as string
                     : pastCrowdloanWhite as string
               }
-              sx={{ height: '35px' }} />}
+              sx={{ height: '35px' }}
+            />}
           onClick={showPastCrowdloans}
           textSelected={itemShow === TAB_MAP.PAST_CROWDLOANS}
           title={t<string>('Past')}

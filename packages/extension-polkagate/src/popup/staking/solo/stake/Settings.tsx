@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -8,7 +9,7 @@ import { Grid, IconButton } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { SlidePopUp } from '../../../../components';
-import { SoloSettings, StakingConsts } from '../../../../util/types';
+import type { SoloSettings, StakingConsts } from '../../../../util/types';
 import SetPayeeController from './partials/SetPayeeController';
 import SettingsHeader from './partials/SettingsHeader';
 
@@ -30,7 +31,7 @@ export default function Settings({ address, setSettings, setShowAdvanceSettings,
       <SetPayeeController
         address={address}
         set={setSettings}
-        setShow={setShowAdvanceSettings}
+        setShow={setShowAdvanceSettings as any}
         settings={settings}
         stakingConsts={stakingConsts}
       />

@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,33 +11,32 @@
 
 import type { PalletBalancesBalanceLock } from '@polkadot/types/lookup';
 
-import { faUnlockAlt } from '@fortawesome/free-solid-svg-icons/faUnlockAlt';
+import { faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Divider, Grid, Skeleton, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Divider, Grid, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
 
+import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
-import { Infotip, ShowBalance } from '../../../components';
-import { useAccountLocks, useApi, useChain, useCurrentBlockNumber, useDecimal, useFormatted, useHasDelegated, usePrice, useToken, useTranslation } from '../../../hooks';
-import { Lock } from '../../../hooks/useAccountLocks';
+import { FormatPrice, ShowBalance, ShowValue } from '../../../components';
+import { useAccountLocks, useApi, useChain, useCurrentBlockNumber, useDecimal, useFormatted, useHasDelegated, useToken, useTokenPrice, useTranslation } from '../../../hooks';
+import { type Lock } from '../../../hooks/useAccountLocks';
 import { TIME_TO_SHAKE_ICON } from '../../../util/constants';
 import blockToDate from '../../crowdloans/partials/blockToDate';
 import Review from './Review';
 
 interface Props {
   address: string | undefined;
-  refresh: boolean | undefined
-  setRefresh: React.Dispatch<React.SetStateAction<boolean | undefined>>
+  refresh: boolean | undefined;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
-const noop = () => null;
 
 export default function LockedInReferenda({ address, refresh, setRefresh }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
-  const price = usePrice(address);
+  const { price } = useTokenPrice(address as string);
   const formatted = useFormatted(address);
   const decimal = useDecimal(address);
   const chain = useChain(address);
@@ -49,11 +49,10 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
   const [unlockableAmount, setUnlockableAmount] = useState<BN>();
   const [lockedInRef, setLockedInReferenda] = useState<BN>();
   const [totalLocked, setTotalLocked] = useState<BN | null>();
-  const [timeToUnlock, setTimeToUnlock] = useState<string>();
+  const [timeToUnlock, setTimeToUnlock] = useState<string | null>();
   const [miscRefLock, setMiscRefLock] = useState<BN>();
   const [shake, setShake] = useState<boolean>();
 
-  const balanceInUSD = useMemo(() => price && decimal && totalLocked && Number(totalLocked) / (10 ** decimal) * price.amount, [decimal, price, totalLocked]);
   const classToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock) && ref.classId.lt(BN_MAX_INTEGER)) : undefined;
 
   useEffect(() => {
@@ -72,35 +71,67 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
   useEffect(() => {
     if (refresh) {
       setLockedInReferenda(undefined); // TODO: needs double check
+      setUnlockableAmount(undefined);
+      setTotalLocked(undefined);
+      setMiscRefLock(undefined);
     }
+  }, [refresh]);
 
+  useEffect(() => {
     if (referendaLocks === null) {
       setLockedInReferenda(BN_ZERO);
+      setTimeToUnlock(null);
 
       return;
     }
 
-    if (!referendaLocks?.length || !currentBlock) {
+    if (!referendaLocks || !currentBlock) {
       setLockedInReferenda(undefined);
       setTimeToUnlock(undefined);
 
       return;
     }
 
-    referendaLocks.sort((a, b) => b.total.sub(a.total).toNumber());
+    if (!referendaLocks?.length) {
+      setLockedInReferenda(undefined);
+      setTimeToUnlock(t('Unlock date unknown'));
+
+      return;
+    }
+
+    referendaLocks.sort((a, b) => { // sort locks based on total and endblock desc
+      if (a.total.gt(b.total)) {
+        return -1;
+      }
+
+      if (a.total.lt(b.total)) {
+        return 1;
+      }
+
+      if (a.endBlock.gt(b.endBlock)) {
+        return -1;
+      }
+
+      if (a.endBlock.lt(b.endBlock)) {
+        return 1;
+      }
+
+      return 0;
+    });
+
     const biggestVote = referendaLocks[0].total;
 
     setLockedInReferenda(biggestVote);
-    const indexOfBiggestNotLockable = referendaLocks.findIndex((l) => l.endBlock.gtn(currentBlock));
+    const indexOfBiggestNotLockable = referendaLocks.findIndex(({ endBlock }) => endBlock.gtn(currentBlock));
 
     if (indexOfBiggestNotLockable === -1) { // all is unlockable
       return setUnlockableAmount(biggestVote);
     }
 
-    if (biggestVote.eq(biggestOngoingLock(referendaLocks))) { // The biggest vote is already ongoing 
+    if (biggestVote.eq(biggestOngoingLock(referendaLocks))) { // The biggest vote is already ongoing
       setUnlockableAmount(BN_ZERO);
 
-      return setTimeToUnlock('Locked in ongoing referenda');
+      return setTimeToUnlock(t('Locked in ongoing referenda'));
     }
 
     if (indexOfBiggestNotLockable === 0 || biggestVote.eq(referendaLocks[indexOfBiggestNotLockable].total)) { // nothing is unlockable
@@ -108,27 +139,24 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
 
       setUnlockableAmount(BN_ZERO);
 
-      return setTimeToUnlock(`Unlockable on ${dateString}`);
+      return setTimeToUnlock(t('Unlockable on {{dateString}}', { replace: { dateString } }));
     }
 
     const amountStillLocked = referendaLocks[indexOfBiggestNotLockable].total;
 
     setUnlockableAmount(biggestVote.sub(amountStillLocked));
-  }, [api, biggestOngoingLock, currentBlock, referendaLocks, refresh]);
+  }, [api, biggestOngoingLock, currentBlock, referendaLocks, t]);
 
   useEffect(() => {
-    if (!api?.query?.balances || !formatted || api?.genesisHash?.toString() !== chain?.genesisHash) {
+    if (!api?.query?.['balances'] || !formatted || api?.genesisHash?.toString() !== chain?.genesisHash) {
       return setMiscRefLock(undefined);
     }
 
-    if (refresh) {
-      setMiscRefLock(undefined);
-    }
-
     // eslint-disable-next-line no-void
-    void api.query.balances.locks(formatted).then((locks: PalletBalancesBalanceLock[]) => {
-      if (locks?.length) {
-        const foundRefLock = locks.find((l) => l.id.toHuman() === 'pyconvot');
+    void api.query['balances']['locks'](formatted).then((locks) => {
+      const _locks = locks as unknown as PalletBalancesBalanceLock[]
+      if (_locks?.length) {
+        const foundRefLock = _locks.find((l) => l.id.toHuman() === 'pyconvot');
 
         setMiscRefLock(foundRefLock?.amount);
       }
@@ -136,16 +164,12 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
   }, [api, chain?.genesisHash, formatted, refresh]);
 
   useEffect(() => {
-    if (refresh) {
-      setTotalLocked(undefined);
-    }
-
     if (!lockedInRef && !delegatedBalance && !miscRefLock) {
       return setTotalLocked(undefined);
     }
 
     setTotalLocked(miscRefLock || lockedInRef || delegatedBalance);
-  }, [delegatedBalance, lockedInRef, miscRefLock, refresh]);
+  }, [delegatedBalance, lockedInRef, miscRefLock]);
 
   const onUnlock = useCallback(() => {
     setShowReview(true);
@@ -153,43 +177,54 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
 
   return (
     <>
-      <Grid item py='4px'>
-        <Grid alignItems='center' container justifyContent='space-between'>
-          <Grid item sx={{ fontSize: '16px', fontWeight: 300, lineHeight: '36px' }} xs={6}>
+      <Grid item pt='3px' pb='2px'>
+        <Grid alignItems='flex-end' container justifyContent='space-between'>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 300 }} xs>
             {t('Locked in Referenda')}
           </Grid>
-          <Grid alignItems='flex-end' container direction='column' item xs>
+          <Grid alignItems='flex-end' container direction='column' item sx={{ width: 'fit-content' }}>
             <Grid item sx={{ fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} textAlign='right'>
-              <ShowBalance api={api} balance={totalLocked} decimal={decimal} decimalPoint={2} token={token} />
+              <ShowBalance
+                api={api}
+                balance={totalLocked}
+                decimal={decimal}
+                decimalPoint={2}
+                token={token}
+                withCurrency={false}
+              />
             </Grid>
-            <Grid item pt='6px' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
-              {balanceInUSD !== undefined
-                ? `$${Number(balanceInUSD)?.toLocaleString()}`
-                : <Skeleton height={15} sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '90px' }} />
-              }
+            <Grid item pt='6px' sx={{ lineHeight: '15px' }}>
+              <FormatPrice
+                amount={totalLocked}
+                decimals={decimal}
+                price={price}
+              />
             </Grid>
           </Grid>
-          <Grid alignItems='center' container item justifyContent='flex-end' sx={{ cursor: unlockableAmount && !unlockableAmount.isZero() && 'pointer', ml: '8px', width: '26px' }}>
-            <Infotip
-              text={api && unlockableAmount && !unlockableAmount.isZero()
-                ? `${api.createType('Balance', unlockableAmount).toHuman()} can be unlocked`
+          <Grid alignItems='center' container item justifyContent='flex-end' sx={{ cursor: unlockableAmount && !unlockableAmount.isZero() ? 'pointer' : undefined, ml: '8px', width: '26px' }}>
+            <FontAwesomeIcon
+              color={!unlockableAmount || unlockableAmount.isZero() ? theme.palette.action.disabledBackground : theme.palette.secondary.light}
+              icon={faUnlockAlt}
+              onClick={unlockableAmount && !unlockableAmount.isZero() ? onUnlock : noop}
+              shake={shake}
+              style={{ height: '25px' }}
+            />
+          </Grid>
+          <Grid container item justifyContent='flex-end' pt='6px' sx={{ fontSize: '12px', lineHeight: '15px', mr: '33px' }}>
+            <ShowValue
+              height={15}
+              value={api && unlockableAmount && !unlockableAmount.isZero()
+                ? t('{{amount}} can be unlocked', { replace: { amount: api.createType('Balance', unlockableAmount).toHuman() } })
                 : delegatedBalance && !delegatedBalance.isZero()
                   ? t('Locked as delegated')
-                  : timeToUnlock}
-            >
-              <FontAwesomeIcon
-                color={!unlockableAmount || unlockableAmount.isZero() ? theme.palette.action.disabledBackground : theme.palette.secondary.light}
-                icon={faUnlockAlt}
-                onClick={unlockableAmount && !unlockableAmount.isZero() ? onUnlock : noop}
-                shake={shake}
-                style={{ height: '25px' }}
-              />
-            </Infotip>
+                  : timeToUnlock === null ? '' : timeToUnlock}
+              width='50%'
+            />
           </Grid>
         </Grid>
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '5px' }} />
-      {showReview && classToUnlock?.length && api && lockedInRef && unlockableAmount && address &&
+      {showReview && !!classToUnlock?.length && api && lockedInRef && unlockableAmount && address &&
         <Review
           address={address}
           api={api}

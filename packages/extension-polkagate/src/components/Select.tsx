@@ -1,11 +1,14 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Avatar, FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import type { DropdownOption } from '../util/types';
+
+import { type SelectChangeEvent, Avatar, FormControl, Grid, InputBase, MenuItem, Select, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { CHAINS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
 
@@ -13,14 +16,9 @@ import getLogo from '../util/getLogo';
 import { sanitizeChainName } from '../util/utils';
 import Label from './Label';
 
-interface DropdownOption {
-  text: string;
-  value: string;
-}
-
 interface Props {
-  defaultValue: string | number | undefined;
-  value: string | number | undefined;
+  defaultValue?: string | number | undefined;
+  value?: string | number | undefined;
   onChange?: (value: number | string) => void;
   options: DropdownOption[];
   label: string;
@@ -29,13 +27,16 @@ interface Props {
   _mt?: string | number;
   helperText?: string;
   disabledItems?: string[] | number[];
+  fullWidthDropdown?: boolean;
 }
 
-function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, isDisabled = false, label, onChange, options, showLogo = false, value }: Props) {
+function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, fullWidthDropdown, helperText, isDisabled = false, label, onChange, options, showLogo = false, value }: Props) {
   const theme = useTheme();
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
-  const [selectedValue, setSelectedValue] = useState<string>();
+  const [selectedValue, setSelectedValue] = useState<string | number>();
+
+  const selectRef = useRef();
 
   useEffect(() => {
     setSelectedValue(value || defaultValue);
@@ -112,7 +113,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, is
                 borderColor: 'secondary.light',
                 borderRadius: '7px',
                 filter: 'drop-shadow(-4px 4px 4px rgba(0, 0, 0, 0.15))',
-                mt: '10px',
+                mt: '5px',
                 overflow: 'hidden',
                 overflowY: 'scroll'
               }
@@ -124,6 +125,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, is
           onChange={_onChange}
           onClick={toggleMenu}
           open={showMenu}
+          ref={selectRef}
           // eslint-disable-next-line react/jsx-no-bind
           renderValue={(value) => {
             const textToShow = options.find((option) => value === option.value || value === option.text)?.text;
@@ -159,7 +161,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, is
             <MenuItem
               disabled={disabledItems?.includes(value) || disabledItems?.includes(text)}
               key={value}
-              sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em' }}
+              sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em', width: fullWidthDropdown ? `${selectRef?.current?.offsetWidth}px` : 'auto' }}
               value={value || text}
             >
               <Grid container height={showLogo ? '32px' : 'auto'} justifyContent='space-between'>

@@ -1,19 +1,21 @@
-// Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Avatar, Grid, Link, SxProps, Theme, Typography } from '@mui/material';
+import { Avatar, Grid, Link, type SxProps, type Theme, Typography } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React, { useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 
 import { Identity } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import getLogo from '../../../util/getLogo';
-import { MyPoolInfo } from '../../../util/types';
+import type { MyPoolInfo } from '../../../util/types';
 import { sanitizeChainName } from '../../../util/utils';
 
 interface Props {
@@ -67,7 +69,7 @@ export default function ShowRoles({ api, chain, label, mode, pool, style }: Prop
                 </Grid>
                 <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='65%'>
                   {acc.address
-                    ? <Identity address={acc.address} api={api} chain={chain} formatted={acc.address} identiconSize={25} showShortAddress showSocial style={{ fontSize: '14px', height: '37px', pl: '5px' }} />
+                    ? <Identity address={acc.address} api={api} chain={chain as any} formatted={acc.address} identiconSize={25} showShortAddress showSocial style={{ fontSize: '14px', height: '37px', pl: '5px' }} />
                     : <Typography fontSize='16px' fontWeight={400} lineHeight='37px'>
                       {'—'}
                     </Typography>

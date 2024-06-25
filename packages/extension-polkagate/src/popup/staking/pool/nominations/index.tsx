@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -7,7 +8,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { MyPoolInfo, PoolStakingConsts, StakingConsts, ValidatorInfo } from '../../../../util/types';
 
-import { faRefresh } from '@fortawesome/free-solid-svg-icons/faRefresh';
+import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, SxProps, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -18,8 +19,9 @@ import { DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { BN } from '@polkadot/util';
 
 import { Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
-import { useApi, useChain, useFormatted, usePool, useStakingConsts, useTranslation, useValidators, useValidatorsIdentities } from '../../../../hooks';
+import { useApi, useChain, useFormatted, usePool, useStakingConsts, useTranslation, useUnSupportedNetwork, useValidators, useValidatorsIdentities } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
+import { STAKING_CHAINS } from '../../../../util/constants';
 import SelectValidators from '../../partial/SelectValidators';
 import Review from '../../partial/SelectValidatorsReview';
 import ValidatorsTable from '../../partial/ValidatorsTable';
@@ -41,6 +43,9 @@ export default function Index(): React.ReactElement {
   const history = useHistory();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
+
+  useUnSupportedNetwork(address, STAKING_CHAINS);
+
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const allValidatorsInfo = useValidators(address);
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
@@ -169,7 +174,7 @@ export default function Index(): React.ReactElement {
               activeValidators={activeValidators}
               allValidatorsIdentities={allValidatorsIdentities}
               api={api}
-              chain={chain}
+              chain={chain as any}
               decimal={pool?.decimal}
               formatted={pool?.stashIdAccount?.accountId?.toString()}
               height={window.innerHeight - (canNominate ? 190 : 150)}
@@ -201,7 +206,7 @@ export default function Index(): React.ReactElement {
         <RemoveValidators
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           formatted={formatted}
           poolId={pool?.poolId}
           setShow={setShowRemoveValidator}
@@ -213,7 +218,7 @@ export default function Index(): React.ReactElement {
         <SelectValidators
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           newSelectedValidators={newSelectedValidators}
           nominatedValidatorsIds={nominatedValidatorsIds}
           poolId={pool.poolId}

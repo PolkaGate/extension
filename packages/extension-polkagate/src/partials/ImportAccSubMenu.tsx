@@ -1,17 +1,16 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
-import { ArrowForwardIos as ArrowForwardIosIcon, QrCode as QrCodeIcon, UploadFileRounded as UploadJSONIcon, Usb as UsbIcon } from '@mui/icons-material';
-import { Divider, Grid, keyframes, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
+import { Collapse, Divider, Grid, useTheme } from '@mui/material';
+import React, { useCallback, useContext } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-import { ActionContext, MenuItem } from '../components';
+import { ActionContext, MenuItem, VaadinIcon } from '../components';
 import { useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 
@@ -24,115 +23,120 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
-  const [notFirstTime, setFirstTime] = useState<boolean>(false);
 
-  useEffect(() => {
-    show ? setFirstTime(true) : setTimeout(() => setFirstTime(false), 150);
-  }, [show]);
-
-  const _goToRestoreFromJson = useCallback((): void => {
+  const onRestoreFromJson = useCallback((): void => {
     windowOpen('/account/restore-json').catch(console.error);
   }, []);
 
-  const _goToImportAcc = useCallback(() => {
-    onAction('/account/import-seed');
+  const onImportAcc = useCallback(() => {
+    windowOpen('/account/import-seed').catch(console.error);
+  }, []);
+
+  const onImportRawSeed = useCallback(() => {
+    windowOpen('/account/import-raw-seed').catch(console.error);
+  }, []);
+
+  const onAddWatchOnly = useCallback(() => {
+    onAction('/import/add-watch-only');
   }, [onAction]);
 
-  const _goToAddAddressOnly = useCallback(() => {
-    onAction('/import/add-address-only');
-  }, [onAction]);
-
-  const _goToAttachQR = useCallback(() => {
+  const onAttachQR = useCallback(() => {
     onAction('/import/attach-qr');
   }, [onAction]);
 
-  const _goToImportLedger = useCallback((): void => {
+  const onImportLedger = useCallback((): void => {
     windowOpen('/account/import-ledger').catch(console.error);
   }, []);
 
-  const slideIn = keyframes`
-  0% {
-    display: none;
-    height: 0;
-  }
-  100%{
-    display: block;
-    height: ${settings.camera !== 'on' ? '230px' : '200px'};
-  }
-`;
-
-  const slideOut = keyframes`
-  0% {
-    display: block;
-    height: ${settings.camera !== 'on' ? '230px' : '200px'};
-  }
-  100%{
-    display: none;
-    height: 0;
-  }
-`;
+  const onImportProxied = useCallback((): void => {
+    onAction('/import/proxied');
+  }, [onAction]);
 
   return (
-    <Grid container display={notFirstTime ? 'inherit' : 'none'} item overflow='hidden' sx={{ animationDuration: show ? '0.3s' : '0.15s', animationFillMode: 'both', animationName: `${show ? slideIn : slideOut}` }}>
-      <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
-      <Grid container direction='column' display='block' item sx={{ p: '18px 0 15px 10px' }}>
-        <MenuItem
-          iconComponent={
-            <UploadJSONIcon
-              sx={{ color: `${theme.palette.text.primary}`, fontSize: '20px' }}
-            />
+    <Collapse easing={{ enter: '200ms', exit: '100ms' }} in={show} sx={{ width: '100%' }}>
+      <Grid container item>
+        <Divider sx={{ bgcolor: 'secondary.light', height: '1px', width: '100%' }} />
+        <Grid container direction='column' display='block' item sx={{ p: '10px', pr: 0 }}>
+          <MenuItem
+            fontSize='17px'
+            iconComponent={
+              <VaadinIcon icon='vaadin:file-text' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            }
+            onClick={onRestoreFromJson}
+            py='4px'
+            text={t('Restore from JSON file')}
+            withHoverEffect
+          />
+          <MenuItem
+            fontSize='17px'
+            iconComponent={
+              <VaadinIcon icon='vaadin:book' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            }
+            onClick={onImportAcc}
+            py='4px'
+            text={t('Import from recovery phrase')}
+            withHoverEffect
+          />
+          <MenuItem
+            fontSize='17px'
+            iconComponent={
+              <VaadinIcon icon='vaadin:book-dollar' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            }
+            onClick={onImportRawSeed}
+            py='4px'
+            text={t('Import from raw seed')}
+            withHoverEffect
+          />
+          <MenuItem
+            fontSize='17px'
+            iconComponent={
+              <VaadinIcon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}`, transform: 'rotate(180deg)' }} />
+            }
+            onClick={onImportProxied}
+            py='4px'
+            text={t('Import proxied account(s)')}
+            withHoverEffect
+          />
+          <MenuItem
+            fontSize='17px'
+            iconComponent={
+              <VaadinIcon icon='vaadin:tag' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            }
+            onClick={onAddWatchOnly}
+            py='4px'
+            text={t('Add watch-only account')}
+            withHoverEffect
+          />
+          <MenuItem
+            disabled={settings.camera !== 'on'}
+            fontSize='17px'
+            iconComponent={
+              <VaadinIcon icon='vaadin:qrcode' style={{ height: '18px', color: `${settings.camera === 'on' ? 'theme.palette.text.primary' : 'theme.palette.text.disabled'}` }} />
+            }
+            onClick={onAttachQR}
+            py='4px'
+            text={t('Attach external QR-signer')}
+            withHoverEffect
+          />
+          {settings.camera !== 'on' &&
+            <Grid fontSize='11px' item letterSpacing='-1.5%' onClick={toggleSettingSubMenu} sx={{ cursor: 'pointer' }} textAlign='left'>
+              {t('Allow QR camera access in the extension’s setting in order to use this feature')}
+              <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 10, mb: '-2px', stroke: '#BA2882' }} />
+            </Grid>
           }
-          onClick={_goToRestoreFromJson}
-          py='4px'
-          text={t('Restore from JSON file')}
-        />
-        <MenuItem
-          iconComponent={
-            <vaadin-icon icon='vaadin:key' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-          }
-          onClick={_goToImportAcc}
-          py='4px'
-          text={t('Import from mnemonic')}
-        />
-        <MenuItem
-          iconComponent={
-            <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-          }
-          onClick={_goToAddAddressOnly}
-          py='4px'
-          text='Add address only'
-        />
-        <MenuItem
-          disabled={settings.camera !== 'on'}
-          iconComponent={
-            <QrCodeIcon
-              sx={{
-                color: `${settings.camera === 'on' ? 'theme.palette.text.primary' : 'theme.palette.text.disabled'}`
-              }}
-            />
-          }
-          onClick={_goToAttachQR}
-          py='4px'
-          text='Attach external QR-signer '
-        />
-        {settings.camera !== 'on' &&
-          <Grid fontSize='10px' item letterSpacing='-1.5%' onClick={toggleSettingSubMenu} sx={{ cursor: 'pointer' }} textAlign='left'>
-            {t('Allow QR camera access in the extension’s setting in order to use this feature')}
-            <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 10, mb: '-2px', stroke: '#BA2882' }} />
-          </Grid>
-        }
-        <MenuItem
-          iconComponent={
-            <UsbIcon
-              sx={{ color: 'text.primary' }}
-            />
-          }
-          onClick={_goToImportLedger}
-          py='4px'
-          text='Attach ledger device'
-        />
+          <MenuItem
+            fontSize='17px'
+            iconComponent={
+              <VaadinIcon icon='vaadin:wallet' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            }
+            onClick={onImportLedger}
+            py='4px'
+            text={t('Attach ledger device')}
+            withHoverEffect
+          />
+        </Grid>
       </Grid>
-    </Grid>
+    </Collapse>
   );
 }
 

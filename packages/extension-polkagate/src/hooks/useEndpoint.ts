@@ -1,36 +1,71 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useMemo } from 'react';
+import { createWsEndpoints } from '@polkagate/apps-config';
+import { useEffect, useState } from 'react';
 
-import { createWsEndpoints } from '@polkadot/apps-config';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { SavedMetaData } from '../util/types';
-import { getSubstrateAddress, sanitizeChainName } from '../util/utils';
-import { useAccount } from '.';
+import { useChainName, useTranslation } from '.';
 
-export function useEndpoint(addressOrFormatted: string | null | undefined, chain: Chain | null | undefined): string | undefined {
-  const address = getSubstrateAddress(addressOrFormatted as string);
-  const account = useAccount(address);
+export default function useEndpoint(address: AccountId | string | undefined, _endpoint?: string): string | undefined {
+  const chainName = useChainName(address);
+  const { t } = useTranslation();
+  const [endpoint, setEndpoint] = useState<string | undefined>();
 
-  const endpoint = useMemo(() => {
-    const chainName = sanitizeChainName(chain?.name);
+  useEffect(() => {
+    if (_endpoint) {
+      setEndpoint(_endpoint);
 
-    // const account = Array.isArray(accounts) ? accounts.find((account) => account.address === address) : accounts;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const endPointFromStore: SavedMetaData = account?.endpoint ? JSON.parse(account.endpoint) : null;
-
-    if (endPointFromStore && endPointFromStore?.chainName === chainName) {
-      return endPointFromStore.metaData as string;
+      return;
     }
 
-    const allEndpoints = createWsEndpoints((key: string, value: string | undefined) => value || key);
+    if (!address || !chainName) {
+      setEndpoint(undefined);
 
-    const endpoints = allEndpoints?.filter((e) => String(e.text)?.toLowerCase() === chainName?.toLowerCase());
+      return;
+    }
 
-    return endpoints?.length ? endpoints[0].value : undefined;
-  }, [account, chain?.name]);
+    browser.storage.local.get('endpoints').then((res) => {
+      const i = `${String(address)}`;
+      const j = `${chainName}`;
+      const savedEndpoint = res?.['endpoints']?.[i]?.[j] as string | undefined;
+
+      if (savedEndpoint) {
+        setEndpoint(savedEndpoint);
+      } else {
+        const allEndpoints = createWsEndpoints(t);
+
+        const endpoints = allEndpoints?.filter((e) =>
+          e.value &&
+          (String(e.info)?.toLowerCase() === chainName?.toLowerCase() ||
+            String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase()))
+        );
+
+        if (endpoints?.length) {
+          setEndpoint(endpoints[0].value);
+        } else {
+          // Endpoint not found, handle the error (e.g., set a default value?)
+          setEndpoint(undefined);
+        }
+      }
+    });
+  }, [_endpoint, address, chainName, t]);
+
+  useEffect(() => {
+    address && chainName && browser.storage.onChanged.addListener((changes, namespace) => {
+      // @ts-ignore
+      for (const [key, { newValue, oldValue }] of Object.entries(changes)) {
+        if (key === 'endpoints' && namespace === 'local') {
+          const maybeNewEndpoint = newValue?.[String(address)]?.[chainName];
+
+          if (maybeNewEndpoint) {
+            setEndpoint(maybeNewEndpoint);
+          }
+        }
+      }
+    });
+  }, [address, chainName, t]);
 
   return endpoint;
 }

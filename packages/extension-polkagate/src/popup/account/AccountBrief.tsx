@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -7,8 +8,6 @@
  * @description
  * this component show a brief of an account on home pages like staking/crowdloans homepages
  * */
-
-import '@vaadin/icons';
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
@@ -18,20 +17,19 @@ import React, { useCallback } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { subscan } from '../../assets/icons/';
-import { Infotip, ShortAddress } from '../../components';
-import { useAccount, useChainName, useFormatted, useTranslation } from '../../hooks';
+import { Infotip, OptionalCopyButton, ShortAddress2 } from '../../components';
+import { useInfo, useTranslation } from '../../hooks';
 
 interface Props {
   address: string;
   identity: DeriveAccountRegistration | null | undefined
-
+  showName?: boolean;
+  showDivider?: boolean;
 }
 
-function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
+function AccountBrief({ address, identity, showDivider = true, showName = true }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const formatted = useFormatted(address);
-  const account = useAccount(address);
-  const chainName = useChainName(address);
+  const { account, chainName, formatted } = useInfo(address);
   const history = useHistory();
   const { pathname } = useLocation();
 
@@ -42,28 +40,43 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
     });
   }, [history, address, pathname]);
 
-  const subscanLink = (address: string) => `https://${chainName}.subscan.io/account/${String(address)}`;
+  const subscanLink = useCallback((address: string) => {
+    if (chainName === 'WestendAssetHub') {
+      return `https://westmint.statescan.io/#/accounts/${String(address)}`;
+    }
+
+    if (chainName?.includes('AssetHub')) {
+      return `https://assethub-${chainName.replace(/AssetHub/, '')}.subscan.io/account/${String(address)}`;
+    }
+
+    return `https://${chainName}.subscan.io/account/${String(address)}`;
+  }, [chainName]);
 
   return (
     < >
-      <Grid alignItems='center' container justifyContent='center' xs={12}>
-        <Typography sx={{ fontSize: '36px', fontWeight: 400, lineHeight: '38px', mt: '5px', maxWidth: '92%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {identity?.display || account?.name}
-        </Typography>
-      </Grid>
-      <Grid alignItems='center' container item justifyContent='center'>
-        <Grid item>
-          <ShortAddress address={formatted} charsCount={20} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
+      {showName &&
+        <Grid alignItems='center' container justifyContent='center' xs={12}>
+          <Typography sx={{ fontSize: '36px', fontWeight: 400, lineHeight: '38px', maxWidth: '92%', mt: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {identity?.display || account?.name}
+          </Typography>
         </Grid>
-        <Grid item>
+      }
+      <Grid alignItems='center' container item justifyContent='space-between' pl='5px' pr='10px'>
+        <Grid container item sx={{ width: '84%' }}>
+          <Grid container item xs>
+            <ShortAddress2 address={formatted} charsCount={19} style={{ fontSize: '10px', fontWeight: 300 }} />
+          </Grid>
+          <Grid container item width='fit-content'>
+            <OptionalCopyButton address={address} />
+          </Grid>
+        </Grid>
+        <Grid alignItems='center' container item justifyContent='space-around' width='16%'>
           <Infotip placement='top' text={t('Receive')}>
             <QrCode2 onClick={goToReceive} sx={{ color: 'secondary.light', mt: '9px', mr: '4px', cursor: 'pointer' }} />
           </Infotip>
-        </Grid>
-        <Grid item>
           <Infotip placement='top' text={t('Subscan')}>
             <Link
-              href={`${subscanLink(formatted)}`}
+              href={`${subscanLink(formatted as string)}`}
               rel='noreferrer'
               target='_blank'
               underline='none'
@@ -73,7 +86,9 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
           </Infotip>
         </Grid>
       </Grid>
-      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '0px' }} />
+      {showDivider &&
+        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '0px' }} />
+      }
     </>
   );
 }

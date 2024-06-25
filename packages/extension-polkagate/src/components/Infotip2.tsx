@@ -1,9 +1,10 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Info as InfoIcon, QuestionMark as QuestionIcon } from '@mui/icons-material';
 import { Grid, Tooltip, useTheme } from '@mui/material';
@@ -11,17 +12,15 @@ import React from 'react';
 
 interface Props {
   text: NonNullable<React.ReactNode> | string | null | undefined;
-  children: React.ReactElement<any, any>;
+  children: React.ReactElement<unknown, any>;
   placement?: 'top' | 'bottom' | 'left' | 'right' | 'bottom-end' | 'bottom-start' | 'left-end' | 'left-start' | 'right-end' | 'right-start' | 'top-end' | 'top-start' | undefined
   showQuestionMark?: boolean;
   showInfoMark?: boolean;
   showWarningMark?: boolean;
-  iconTop?: number;
-  iconLeft?: number;
   fontSize?: string;
 }
 
-function Infotip2({ children, fontSize = '14px', placement = 'top', showInfoMark = false, showQuestionMark = false, text, showWarningMark }: Props): React.ReactElement<Props> {
+function Infotip2({ children, fontSize = '14px', placement = 'top', showInfoMark = false, showQuestionMark = false, showWarningMark, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (

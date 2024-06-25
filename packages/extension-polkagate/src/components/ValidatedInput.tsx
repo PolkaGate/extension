@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
@@ -24,9 +25,10 @@ type Props<T extends BasicProps> = T & {
   validator: Validator<string>;
   onEnter?: () => void;
   isFocused?: boolean;
+  width?: string | number;
 }
 
-function ValidatedInput<T extends Record<string, unknown>>({ className, component: Input, defaultValue, isFocused, onEnter, onValidatedChange, validator, ...props }: Props<T>): React.ReactElement<Props<T>> {
+function ValidatedInput<T extends Record<string, unknown>>({ className, component: Input, defaultValue, isFocused, onEnter, onValidatedChange, validator, width, ...props }: Props<T>): React.ReactElement<Props<T>> {
   const [value, setValue] = useState(defaultValue || '');
   const [validationResult, setValidationResult] = useState<Result<string>>(Result.ok(''));
   const isMounted = useIsMounted();
@@ -61,7 +63,7 @@ function ValidatedInput<T extends Record<string, unknown>>({ className, componen
       style={{
         margin: 'auto',
         paddingTop: '21px',
-        width: '92%'
+        width: width || '92%'
       }}
     >
       <Input

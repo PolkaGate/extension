@@ -1,4 +1,4 @@
-// Copyright 2019-2023 @polkadot/extension authors & contributors
+// Copyright 2019-2024 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { InjectedAccount, InjectedMetadataKnown, MetadataDef, ProviderMeta } from '@polkadot/extension-inject/types';
@@ -47,12 +47,12 @@ export default class Tabs {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private accountsList (url: string, { anyType }: RequestAccountList): InjectedAccount[] {
+  private accountsList (_url: string, { anyType }: RequestAccountList): InjectedAccount[] {
     return transformAccounts(accountsObservable.subject.getValue(), anyType);
   }
 
   // FIXME This looks very much like what we have in Extension
-  private accountsSubscribe (url: string, id: string, port: chrome.runtime.Port): boolean {
+  private accountsSubscribe (_url: string, id: string, port: browser.runtime.Port): boolean {
     const cb = createSubscription<'pub(accounts.subscribe)'>(id, port);
     const subscription = accountsObservable.subject.subscribe((accounts: SubjectInfo): void =>
       cb(transformAccounts(accounts))
@@ -93,7 +93,7 @@ export default class Tabs {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private metadataList (url: string): InjectedMetadataKnown[] {
+  private metadataList (_url: string): InjectedMetadataKnown[] {
     return this.#state.knownMetadata.map(({ genesisHash, specVersion }) => ({
       genesisHash,
       specVersion
@@ -104,15 +104,15 @@ export default class Tabs {
     return this.#state.rpcListProviders();
   }
 
-  private rpcSend (request: RequestRpcSend, port: chrome.runtime.Port): Promise<JsonRpcResponse> {
+  private rpcSend (request: RequestRpcSend, port: browser.runtime.Port): Promise<JsonRpcResponse<unknown>> {
     return this.#state.rpcSend(request, port);
   }
 
-  private rpcStartProvider (key: string, port: chrome.runtime.Port): Promise<ProviderMeta> {
+  private rpcStartProvider (key: string, port: browser.runtime.Port): Promise<ProviderMeta> {
     return this.#state.rpcStartProvider(key, port);
   }
 
-  private async rpcSubscribe (request: RequestRpcSubscribe, id: string, port: chrome.runtime.Port): Promise<boolean> {
+  private async rpcSubscribe (request: RequestRpcSubscribe, id: string, port: browser.runtime.Port): Promise<boolean> {
     const innerCb = createSubscription<'pub(rpc.subscribe)'>(id, port);
     const cb = (_error: Error | null, data: SubscriptionMessageTypes['pub(rpc.subscribe)']): void => innerCb(data);
     const subscriptionId = await this.#state.rpcSubscribe(request, cb, port);
@@ -125,7 +125,7 @@ export default class Tabs {
     return true;
   }
 
-  private rpcSubscribeConnected (request: null, id: string, port: chrome.runtime.Port): Promise<boolean> {
+  private rpcSubscribeConnected (request: null, id: string, port: browser.runtime.Port): Promise<boolean> {
     const innerCb = createSubscription<'pub(rpc.subscribeConnected)'>(id, port);
     const cb = (_error: Error | null, data: SubscriptionMessageTypes['pub(rpc.subscribeConnected)']): void => innerCb(data);
 
@@ -138,21 +138,21 @@ export default class Tabs {
     return Promise.resolve(true);
   }
 
-  private async rpcUnsubscribe (request: RequestRpcUnsubscribe, port: chrome.runtime.Port): Promise<boolean> {
+  private async rpcUnsubscribe (request: RequestRpcUnsubscribe, port: browser.runtime.Port): Promise<boolean> {
     return this.#state.rpcUnsubscribe(request, port);
   }
 
   private redirectPhishingLanding (phishingWebsite: string): void {
     const nonFragment = phishingWebsite.split('#')[0];
     const encodedWebsite = encodeURIComponent(nonFragment);
-    const url = `${chrome.extension.getURL('index.html')}#${PHISHING_PAGE_REDIRECT}/${encodedWebsite}`;
+    const url = `${browser.runtime.getURL('index.html')}#${PHISHING_PAGE_REDIRECT}/${encodedWebsite}`;
 
-    chrome.tabs.query({ url: nonFragment }, (tabs) => {
+    browser.tabs.query({ url: nonFragment }).then((tabs) => {
       tabs
         .map(({ id }) => id)
         .filter((id): id is number => isNumber(id))
         .forEach((id) =>
-          withErrorLog(() => chrome.tabs.update(id, { url }))
+          withErrorLog(() => browser.tabs.update(id, { url }))
         );
     });
   }
@@ -169,7 +169,7 @@ export default class Tabs {
     return false;
   }
 
-  public async handle<TMessageType extends MessageTypes> (id: string, type: TMessageType, request: RequestTypes[TMessageType], url: string, port: chrome.runtime.Port): Promise<ResponseTypes[keyof ResponseTypes]> {
+  public async handle<TMessageType extends MessageTypes> (id: string, type: TMessageType, request: RequestTypes[TMessageType], url: string, port: browser.runtime.Port): Promise<ResponseTypes[keyof ResponseTypes]> {
     if (type === 'pub(phishing.redirectIfDenied)') {
       return this.redirectIfPhishing(url);
     }

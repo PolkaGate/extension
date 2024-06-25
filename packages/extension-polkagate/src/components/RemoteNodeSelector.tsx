@@ -1,11 +1,9 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useCallback } from 'react';
 
-import { useAccount, useChainName, useEndpoint2, useEndpoints, useTranslation } from '../hooks';
-import { updateMeta } from '../messaging';
-import { prepareMetaData } from '../util/utils';
+import { useEndpoints, useInfo, useTranslation } from '../hooks';
 import { Select } from '.';
 
 interface Props {
@@ -13,16 +11,29 @@ interface Props {
   genesisHash: string | undefined;
 }
 
+export type ChromeStorageGetResponse = {
+  [key: string]: {
+    [key: string]: string | undefined;
+  } | undefined;
+};
+
 export default function RemoteNodeSelector({ address, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const chainName = useChainName(address);
-  const account = useAccount(address);
+  const { account, chainName, endpoint } = useInfo(address);
   const endpointOptions = useEndpoints(genesisHash || account?.genesisHash);
-  const endpoint = useEndpoint2(address);
 
   const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
-    // eslint-disable-next-line no-void
-    chainName && address && void updateMeta(address, prepareMetaData(chainName, 'endpoint', newEndpoint));
+    chainName && address && browser.storage.local.get('endpoints').then((res: { endpoints?: ChromeStorageGetResponse }) => {
+      const i = `${address}`;
+      const j = `${chainName}`;
+      const savedEndpoints: ChromeStorageGetResponse = res?.endpoints || {};
+
+      savedEndpoints[i] = savedEndpoints[i] || {};
+
+      savedEndpoints[i]![j] = newEndpoint;
+
+      browser.storage.local.set({ endpoints: savedEndpoints });
+    });
   }, [address, chainName]);
 
   return (
@@ -31,7 +42,7 @@ export default function RemoteNodeSelector({ address, genesisHash }: Props): Rea
         <Select
           _mt='10px'
           label={t<string>('Remote node')}
-          onChange={_onChangeEndpoint}
+          onChange={_onChangeEndpoint as ()=>void}
           options={endpointOptions}
           value={endpoint}
         />}

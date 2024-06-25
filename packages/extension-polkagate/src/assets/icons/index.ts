@@ -1,9 +1,10 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 export { default as checkBox } from './checkBox.svg';
 export { default as checkedBox } from './checkedBox.svg';
-export { default as riot } from './riot.png';
+export { default as riot } from './riot.svg';
 export { default as upload } from './upload.png';
 export { default as subscan } from './subscan.svg';
 export { default as twoItemCurveBackgroundBlack } from './twoItemCurveBackgroundBlack.svg';
@@ -13,8 +14,7 @@ export { default as threeItemCurveBackgroundBlack } from './threeItemCurveBackgr
 export { default as auctionWhite } from './auctionWhite.svg';
 export { default as auctionBlack } from './auctionBlack.svg';
 export { default as auctionRed } from './auctionRed.svg';
-export { default as hide } from './hide.svg';
-export { default as show } from './show.svg';
+export { default as subId } from './subId.svg';
 export { default as pastCrowdloanWhite } from './pastCrowdloanWhite.svg';
 export { default as pastCrowdloanBlack } from './pastCrowdloanBlack.svg';
 export { default as pastCrowdloanRed } from './pastCrowdloanRed.svg';
@@ -23,12 +23,6 @@ export { default as crowdloanHomeWhite } from './crowdloanHomeWhite.svg';
 export { default as crowdloanHomeRed } from './crowdloanHomeRed.svg';
 export { default as soloSettingWhite } from './soloSettingWhite.svg';
 export { default as soloSettingBlack } from './soloSettingBlack.svg';
-export { default as soloStakingWhite } from './soloStakingWhite.svg';
-export { default as soloStakingBlack } from './soloStakingBlack.svg';
-export { default as poolStakingDisabledDark } from './poolStakingDisabledDark.svg';
-export { default as poolStakingDisabledLight } from './poolStakingDisabledLight.svg';
-export { default as poolStakingWhite } from './poolStakingWhite.svg';
-export { default as poolStakingBlack } from './poolStakingBlack.svg';
 export { default as stashSettingBlack } from './stashSettingBlack.svg';
 export { default as controllerSettingBlack } from './controllerSettingBlack.svg';
 export { default as stashSettingWhite } from './stashSettingWhite.svg';
@@ -41,3 +35,10 @@ export { default as stars5Black } from './stars5Black.svg';
 export { default as ms } from './ms.svg';
 export { default as msGreen } from './msGreen.svg';
 export { default as msWarning } from './msWarning.svg';
+export { default as assetHub } from './assetHub.svg';
+export { default as USDT } from './USDT.svg';
+export { default as USDC } from './USDC.svg';
+export { default as lcDOT } from './lcDOT.svg';
+export { default as LDOT } from './LDOT.svg';
+export { default as DAI } from './DAI.svg';
+export { default as BTC } from './BTC.svg';

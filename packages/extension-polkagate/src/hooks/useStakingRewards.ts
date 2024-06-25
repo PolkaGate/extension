@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /** 
  * @description
@@ -8,21 +9,21 @@
 
 import { useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { postData } from '../util/api';
-import { AccountStakingInfo } from '../util/types';
+import type { AccountStakingInfo } from '../util/types';
 import { useChainName, useStakingRewardDestinationAddress } from '.';
 
 export async function getStakingReward(chainName: string, address: AccountId | string | null): Promise<string | null> {
   if (!address) {
-    console.log('address is null in getting getStakingReward ');
+    console.log('address is null in getting get Staking Rewards ');
 
     return null;
   }
 
-  console.log('Getting Staking Reward from subscan ... ');
+  console.log(`Getting Staking Reward from subscan  on ${chainName} for ${address} ... `);
 
   return new Promise((resolve) => {
     try {
@@ -44,7 +45,7 @@ export async function getStakingReward(chainName: string, address: AccountId | s
           }
         });
     } catch (error) {
-      console.log('something went wrong while getting getStakingReward ');
+      console.log('something went wrong while getting get Staking Rewards ');
       resolve(null);
     }
   });
@@ -56,7 +57,7 @@ export default function useStakingRewards(address: string, stakingAccount: Accou
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
 
   useEffect(() => {
-    if (!stakingAccount || !chainName || !rewardDestinationAddress) {
+    if (!chainName || !rewardDestinationAddress) {
       setRewards(undefined);
 
       return;
@@ -65,7 +66,7 @@ export default function useStakingRewards(address: string, stakingAccount: Accou
     getStakingReward(chainName, rewardDestinationAddress).then((r) => {
       setRewards(r ? new BN(r) : BN_ZERO);
     }).catch(console.error);
-  }, [chainName, rewardDestinationAddress, stakingAccount]);
+  }, [chainName, rewardDestinationAddress]);
 
   return rewards;
 }

@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,34 +10,29 @@
  * */
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton, Skeleton, useTheme } from '@mui/material';
-import React, { useMemo } from 'react';
+import { Divider, Grid, IconButton, useTheme } from '@mui/material';
+import React from 'react';
 
-import { ShowBalance } from '../../components';
-import { useApi, useDecimal, usePrice, useToken } from '../../hooks';
-import { BalancesInfo } from '../../util/types';
+import { FormatPrice, ShowBalance } from '../../components';
+import { useApi, useTokenPrice } from '../../hooks';
+import type { BalancesInfo } from '../../util/types';
 import { getValue } from './util';
 
 interface Props {
   label: string;
+  title: string;
   balances: BalancesInfo | null | undefined;
   address: string | undefined;
   showLabel?: boolean;
   onClick?: () => void
 }
 
-export default function LabelBalancePrice({ address, balances, label, onClick, showLabel = true }: Props): React.ReactElement<Props> {
+export default function LabelBalancePrice({ address, balances, label, onClick, showLabel = true, title }: Props): React.ReactElement<Props> {
   const theme = useTheme();
+
   const value = getValue(label, balances);
   const api = useApi(address);
-  const price = usePrice(address);
-  const decimal = useDecimal(address);
-  const token = useToken(address);
-
-  const balanceInUSD = useMemo(() =>
-    price && value && balances?.decimal &&
-    Number(value) / (10 ** balances.decimal) * price.amount
-    , [balances?.decimal, price, value]);
+  const { price } = useTokenPrice(address as string, balances?.assetId);
 
   return (
     <>
@@ -44,18 +40,26 @@ export default function LabelBalancePrice({ address, balances, label, onClick, s
         <Grid alignItems='center' container justifyContent='space-between'>
           {showLabel &&
             <Grid item sx={{ fontSize: '16px', fontWeight: 300, lineHeight: '36px' }} xs={6}>
-              {label}
+              {title}
             </Grid>
           }
           <Grid alignItems='flex-end' container direction='column' item xs>
             <Grid item sx={{ fontSize: label === 'Total' ? '28px' : '20px', fontWeight: label === 'Total' ? 500 : 400, lineHeight: '20px' }} textAlign='right'>
-              <ShowBalance api={api} balance={value} decimal={decimal} decimalPoint={2} token={token} />
+              <ShowBalance
+                api={api}
+                balance={value}
+                decimal={balances?.decimal}
+                decimalPoint={2}
+                token={balances?.token}
+                withCurrency={false}
+              />
             </Grid>
             <Grid item pt='6px' sx={{ fontSize: label === 'Total' ? '20px' : '16px', fontWeight: label === 'Total' ? 400 : 300, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
-              {balanceInUSD !== undefined
-                ? `$${Number(balanceInUSD)?.toLocaleString()}`
-                : <Skeleton height={15} sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '90px' }} />
-              }
+              <FormatPrice
+                amount={value}
+                decimals={balances?.decimal}
+                price={price}
+              />
             </Grid>
           </Grid>
           {onClick &&

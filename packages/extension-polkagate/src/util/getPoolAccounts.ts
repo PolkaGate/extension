@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
 
 import type { ApiPromise } from '@polkadot/api';
@@ -13,7 +14,7 @@ import { bnToU8a, stringToU8a, u8aConcat } from '@polkadot/util';
 const EMPTY_H256 = new Uint8Array(32);
 const MOD_PREFIX = stringToU8a('modl');
 
-export function createAccount (api: ApiPromise, poolId: number | bigint | BN | null | undefined, index: number): string {
+export function createAccount(api: ApiPromise, poolId: number | bigint | BN | null | undefined, index: number): string {
   return api.registry.createType(
     'AccountId32',
     u8aConcat(

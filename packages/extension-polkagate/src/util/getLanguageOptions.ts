@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 interface Option {
   info?: string;
@@ -9,7 +10,7 @@ interface Option {
   value: string | number;
 }
 
-export default function getLanguageOptions (): Option[] {
+export default function getLanguageOptions(): Option[] {
   return [
     // default/native
     {
@@ -25,20 +26,12 @@ export default function getLanguageOptions (): Option[] {
       value: 'fr'
     },
     {
-      text: 'Türkce',
-      value: 'tr'
+      text: 'Русский',
+      value: 'ru'
     },
     {
-      text: 'Polski',
-      value: 'pl'
-    },
-    {
-      text: 'ภาษาไทย',
-      value: 'th'
-    },
-    {
-      text: 'اردو',
-      value: 'ur'
+      text: 'हिन्दी',
+      value: 'hi'
     }
   ];
 }

@@ -1,4 +1,4 @@
-// Copyright 2019-2023 @polkadot/extension authors & contributors
+// Copyright 2019-2024 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MetadataDef } from '@polkadot/extension-inject/types';
@@ -7,7 +7,7 @@ import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types'
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 // added for plus to import RequestUpdateMeta
-import type { AccountJson, AllowedPath, AuthorizeRequest, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestAuthorizeReject, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestTypes, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
+import type { AccountJson, AllowedPath, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestAuthorizeReject, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestTypes, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
 
 import { ALLOWED_PATH, PASSWORD_EXPIRY_MS, START_WITH_PATH } from '@polkadot/extension-base/defaults';
 import { TypeRegistry } from '@polkadot/types';
@@ -118,6 +118,24 @@ export default class Extension {
     return true;
   }
 
+  private lockExtension(): boolean {
+    const currentDomain = browser.runtime.getURL('/');
+
+    browser.tabs.query({}).then((tabs) => {
+      for (let i = 0; i < tabs.length; i++) {
+        const tabParsedUrl = new URL(tabs[i].url as string);
+
+        const tabDomain = `${tabParsedUrl?.protocol}//${tabParsedUrl?.hostname}/`;
+
+        if (tabDomain === currentDomain) {
+          browser.tabs.reload(tabs[i].id as number).catch(console.error);
+        }
+      }
+    });
+
+    return true;
+  }
+
   private accountsExport({ address, password }: RequestAccountExport): ResponseAccountExport {
     return { exportedJson: keyring.backupAccount(keyring.getPair(address), password) };
   }
@@ -181,8 +199,8 @@ export default class Extension {
   }
 
   // FIXME This looks very much like what we have in Tabs
-  private accountsSubscribe(id: string, port: chrome.runtime.Port): boolean {
-    const cb = createSubscription<'pri(accounts.subscribe)'>(id, port);
+  private accountsSubscribe(id: string, port: browser.runtime.Port): boolean {
+    const cb = createSubscription<'pri(accounts.subscribe)'>(id, port as any);
     const subscription = accountsObservable.subject.subscribe((accounts: SubjectInfo): void =>
       cb(transformAccounts(accounts))
     );
@@ -208,7 +226,7 @@ export default class Extension {
   }
 
   private getAuthList(): ResponseAuthorizeList {
-    return { list: this.#state.authUrls };
+    return { list: this.#state.authUrls as AuthUrls };
   }
 
   private authorizeReject({ id }: RequestAuthorizeReject): boolean {
@@ -224,8 +242,8 @@ export default class Extension {
   }
 
   // FIXME This looks very much like what we have in accounts
-  private authorizeSubscribe(id: string, port: chrome.runtime.Port): boolean {
-    const cb = createSubscription<'pri(authorize.requests)'>(id, port);
+  private authorizeSubscribe(id: string, port: browser.runtime.Port): boolean {
+    const cb = createSubscription<'pri(authorize.requests)'>(id, port as any);
     const subscription = this.#state.authSubject.subscribe((requests: AuthorizeRequest[]): void =>
       cb(requests)
     );
@@ -272,8 +290,8 @@ export default class Extension {
     return true;
   }
 
-  private metadataSubscribe(id: string, port: chrome.runtime.Port): boolean {
-    const cb = createSubscription<'pri(metadata.requests)'>(id, port);
+  private metadataSubscribe(id: string, port: browser.runtime.Port): boolean {
+    const cb = createSubscription<'pri(metadata.requests)'>(id, port as any);
     const subscription = this.#state.metaSubject.subscribe((requests: MetadataRequest[]): void =>
       cb(requests)
     );
@@ -448,8 +466,8 @@ export default class Extension {
   }
 
   // FIXME This looks very much like what we have in authorization
-  private signingSubscribe(id: string, port: chrome.runtime.Port): boolean {
-    const cb = createSubscription<'pri(signing.requests)'>(id, port);
+  private signingSubscribe(id: string, port: browser.runtime.Port): boolean {
+    const cb = createSubscription<'pri(signing.requests)'>(id, port as any);
     const subscription = this.#state.signSubject.subscribe((requests: SigningRequest[]): void =>
       cb(requests)
     );
@@ -463,15 +481,15 @@ export default class Extension {
   }
 
   private windowOpen(path: AllowedPath): boolean {
-    const url = `${chrome.extension.getURL('index.html')}#${path}`;
+    const url = `${browser.runtime.getURL('index.html')}#${path}`;
 
-    if (!ALLOWED_PATH.includes(path) && !START_WITH_PATH.find((p) => path.startsWith(p))) { // added for Polkagate, updated
+    if (!ALLOWED_PATH.includes(path as any) && !START_WITH_PATH.find((p) => path.startsWith(p))) { // added for Polkagate, updated
       console.error('Not allowed to open the url:', url);
 
       return false;
     }
 
-    withErrorLog(() => chrome.tabs.create({ url }));
+    withErrorLog(() => browser.tabs.create({ url }));
 
     return true;
   }
@@ -515,16 +533,16 @@ export default class Extension {
   }
 
   private toggleAuthorization(url: string): ResponseAuthorizeList {
-    return { list: this.#state.toggleAuthorization(url) };
+    return { list: this.#state.toggleAuthorization(url) as AuthUrls };
   }
 
   private removeAuthorization(url: string): ResponseAuthorizeList {
-    return { list: this.#state.removeAuthorization(url) };
+    return { list: this.#state.removeAuthorization(url) as AuthUrls };
   }
 
   // Weird thought, the eslint override is not needed in Tabs
   // eslint-disable-next-line @typescript-eslint/require-await
-  public async handle<TMessageType extends MessageTypes>(id: string, type: TMessageType, request: RequestTypes[TMessageType], port: chrome.runtime.Port): Promise<ResponseType<TMessageType>> {
+  public async handle<TMessageType extends MessageTypes>(id: string, type: TMessageType, request: RequestTypes[TMessageType], port: browser.runtime.Port): Promise<ResponseType<TMessageType>> {
     switch (type) {
       case 'pri(authorize.approve)':
         return this.authorizeApprove(request as RequestAuthorizeApprove);
@@ -553,8 +571,11 @@ export default class Extension {
       case 'pri(accounts.create.suri)':
         return this.accountsCreateSuri(request as RequestAccountCreateSuri);
 
-      case 'pri(accounts.updateMeta)': // added for plus 
+      case 'pri(accounts.updateMeta)': // added for polkagate
         return this.accountsUpdateMeta(request as RequestUpdateMeta);
+
+      case 'pri(extension.lock)': // added for polkagate
+        return this.lockExtension();
 
       case 'pri(accounts.changePassword)':
         return this.accountsChangePassword(request as RequestAccountChangePassword);

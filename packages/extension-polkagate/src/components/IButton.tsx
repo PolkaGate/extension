@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /** description
  * This button shows an icon button like a lock 🔓 button in derived account path
@@ -8,7 +9,7 @@
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
 
-interface Props extends ThemeProps {
+interface Props {
   className?: string;
   children?: React.ReactNode;
   isBusy?: boolean;
@@ -18,7 +19,7 @@ interface Props extends ThemeProps {
   to?: string;
 }
 
-function Button ({ children, className = '', isBusy, isDisabled, onClick, to }: Props): React.ReactElement<Props> {
+function Button({ children, className = '', isBusy, isDisabled, onClick, to }: Props): React.ReactElement<Props> {
   const _onClick = useCallback(
     (): void => {
       if (isBusy || isDisabled) {

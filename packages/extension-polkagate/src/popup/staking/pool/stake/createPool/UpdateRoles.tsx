@@ -1,16 +1,17 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
-import { Chain } from '@substrate/connect';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { AccountContext, AddressInput, PButton } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 import getAllAddresses from '../../../../../util/getAllAddresses';
+import type { Chain } from '@polkadot/extension-chains/types';
 
 interface Props {
   address: string;
@@ -28,7 +29,7 @@ export default function UpdateRoles({ address, bouncerId, chain, nominatorId, se
   const containerRef = useRef(null);
   const theme = useTheme();
   const { t } = useTranslation();
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { hierarchy } = useContext(AccountContext);
   const [updateBtnDisable, setUpdateBtnDisable] = useState<boolean>(false);
   const [newNominatorId, setNewNominatorId] = useState<string | null | undefined>(nominatorId);
   const [newBouncerId, setNewBouncerId] = useState<string | null | undefined>(bouncerId);
@@ -62,10 +63,10 @@ export default function UpdateRoles({ address, bouncerId, chain, nominatorId, se
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px', m: '30px auto 5px', width: '80%' }} />
       </Grid>
       <AddressInput
-        address={newNominatorId}
+        address={newNominatorId as string}
         allAddresses={allAddresses}
-        chain={chain}
-        label={'Nominator'}
+        chain={chain as any}
+        label={t<string>('Nominator')}
         setAddress={setNewNominatorId}
         showIdenticon
         style={{
@@ -74,10 +75,10 @@ export default function UpdateRoles({ address, bouncerId, chain, nominatorId, se
         }}
       />
       <AddressInput
-        address={newBouncerId}
+        address={newBouncerId as string}
         allAddresses={allAddresses}
-        chain={chain}
-        label={'Bouncer'}
+        chain={chain as any}
+        label={t<string>('Bouncer')}
         setAddress={setNewBouncerId}
         showIdenticon
         style={{

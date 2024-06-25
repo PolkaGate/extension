@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -15,11 +16,11 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
-import { useApi, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation } from '../../../../hooks';
+import { useInfo, useStakingAccount, useStakingConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import { DATE_OPTIONS, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
+import Asset from '../../../../partials/Asset';
+import { DATE_OPTIONS, MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import Asset from '../../../send/partial/Asset';
 import Review from './Review';
 
 interface State {
@@ -35,29 +36,26 @@ export default function Index(): React.ReactElement {
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const history = useHistory();
-  const api = useApi(address, state?.api);
-  const chain = useChain(address);
-  const formatted = useFormatted(address);
-  const token = useToken(address);
-  const decimal = useDecimal(address);
+  const { api, chain, decimal, formatted, token } = useInfo(address);
 
+  useUnSupportedNetwork(address, STAKING_CHAINS);
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [amount, setAmount] = useState<string>();
   const [alert, setAlert] = useState<string | undefined>();
   const [showReview, setShowReview] = useState<boolean>(false);
-  const [unstakeAllAmount, setUnstakeAllAmount] = useState<boolean>(false);
+  const [isUnstakeAll, setIsUnstakeAll] = useState<boolean>(false);
 
-  const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active, [stakingAccount]);
-  const totalAfterUnstake = useMemo(() => staked && decimal && staked.sub(amountToMachine(amount, decimal)) as BN | undefined, [amount, decimal, staked]);
+  const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active as unknown as BN, [stakingAccount]);
+  const totalAfterUnstake = useMemo(() => staked && decimal ? staked.sub(amountToMachine(amount, decimal)) : undefined, [amount, decimal, staked]);
   const unlockingLen = stakingAccount?.stakingLedger?.unlocking?.length;
-  const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
+  const maxUnlockingChunks = api ? (api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber() : undefined;
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
 
-  const unbonded = api && api.tx.staking.unbond; // signer: Controller
-  const redeem = api && api.tx.staking.withdrawUnbonded; // signer: Controller
-  const chilled = api && api.tx.staking.chill; // signer: Controller
+  const unbonded = api && api.tx['staking']['unbond']; // signer: Controller
+  const redeem = api && api.tx['staking']['withdrawUnbonded']; // signer: Controller
+  const chilled = api && api.tx['staking']['chill']; // signer: Controller
   const redeemDate = useMemo(() => {
     if (stakingConsts) {
       const date = Date.now() + stakingConsts.unbondingDuration * 24 * 60 * 60 * 1000;
@@ -77,7 +75,7 @@ export default function Index(): React.ReactElement {
       return setAlert(t('It is more than already staked.'));
     }
 
-    if (api && staked && stakingConsts && !staked.sub(amountAsBN).isZero() && !unstakeAllAmount && staked.sub(amountAsBN).lt(stakingConsts.minNominatorBond)) {
+    if (api && staked && stakingConsts && !staked.sub(amountAsBN).isZero() && !isUnstakeAll && staked.sub(amountAsBN).lt(stakingConsts.minNominatorBond)) {
       const remained = api.createType('Balance', staked.sub(amountAsBN)).toHuman();
       const min = api.createType('Balance', stakingConsts.minNominatorBond).toHuman();
 
@@ -85,12 +83,12 @@ export default function Index(): React.ReactElement {
     }
 
     setAlert(undefined);
-  }, [amountAsBN, api, staked, stakingConsts, t, unstakeAllAmount]);
+  }, [amountAsBN, api, staked, stakingConsts, t, isUnstakeAll]);
 
   const getFee = useCallback(async () => {
     const txs = [];
 
-    if (api && !api?.call?.transactionPaymentApi) {
+    if (api && !api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -103,17 +101,17 @@ export default function Index(): React.ReactElement {
         txs.push(redeem(...dummyParams));
       }
 
-      if (amountAsBN.eq(staked)) {
+      if (isUnstakeAll) {
         txs.push(chilled());
       }
 
-      const finalTx = txs.length > 1 ? api.tx.utility.batchAll(txs) : txs[0];
+      const finalTx = txs.length > 1 ? api.tx['utility']['batchAll'](txs) : txs[0];
 
       const partialFee = (await finalTx.paymentInfo(formatted))?.partialFee;
 
       setEstimatedFee(api?.createType('Balance', partialFee));
     }
-  }, [amountAsBN, api, chilled, formatted, maxUnlockingChunks, redeem, staked, unbonded, unlockingLen]);
+  }, [amountAsBN, api, chilled, formatted, maxUnlockingChunks, redeem, staked, unbonded, unlockingLen, isUnstakeAll]);
 
   useEffect(() => {
     if (amountAsBN && redeem && chilled && maxUnlockingChunks && unlockingLen !== undefined && unbonded && formatted && staked) {
@@ -129,7 +127,7 @@ export default function Index(): React.ReactElement {
   }, [address, history, state]);
 
   const onChangeAmount = useCallback((value: string) => {
-    setUnstakeAllAmount(false);
+    setIsUnstakeAll(false);
 
     if (decimal && value.length > decimal - 1) {
       console.log(`The amount digits is more than decimal:${decimal}`);
@@ -137,7 +135,9 @@ export default function Index(): React.ReactElement {
       return;
     }
 
-    setAmount(value.slice(0, MAX_AMOUNT_LENGTH));
+    const roundedAmount = value.slice(0, MAX_AMOUNT_LENGTH);
+
+    setAmount(roundedAmount);
   }, [decimal]);
 
   const onAllAmount = useCallback(() => {
@@ -147,7 +147,7 @@ export default function Index(): React.ReactElement {
 
     const allToShow = amountToHuman(staked.toString(), decimal);
 
-    setUnstakeAllAmount(true);
+    setIsUnstakeAll(true);
     setAmount(allToShow);
   }, [decimal, staked]);
 
@@ -176,54 +176,49 @@ export default function Index(): React.ReactElement {
         shortBorder
         showBackArrow
         showClose
-        text={t<string>('Solo Staking')}
+        text={t('Solo Staking')}
       />
       <SubTitle
         label={t('Unstake')}
         withSteps={{ current: 1, total: 2 }}
       />
       {staked?.isZero() &&
-        <Warn isDanger text={t<string>('Nothing to unstake.')} />
+        <Warn isDanger text={t('Nothing to unstake.')} />
       }
-      <Grid item xs={12} sx={{ mx: '15px' }}>
+      <Grid item sx={{ mx: '15px' }} xs={12}>
         <Asset
           address={address}
           api={api}
           balance={staked}
           balanceLabel={t('Staked')}
           fee={estimatedFee}
-          genesisHash={chain?.genesisHash}
           style={{ pt: '20px' }}
         />
-        <div style={{ paddingTop: '30px' }}>
-          <AmountWithOptions
-            label={t<string>('Amount ({{token}})', { replace: { token } })}
-            onChangeAmount={onChangeAmount}
-            onPrimary={onAllAmount}
-            primaryBtnText={t<string>('All amount')}
-            value={amount}
-          />
-          {alert &&
-            <Warn belowInput iconDanger text={alert} />
-          }
-        </div>
-
+        <AmountWithOptions
+          label={t('Amount ({{token}})', { replace: { token } })}
+          onChangeAmount={onChangeAmount}
+          onPrimary={onAllAmount}
+          primaryBtnText={t('All amount')}
+          style={{ paddingTop: '30px' }}
+          value={amount}
+        />
+        {alert &&
+          <Warn belowInput iconDanger text={alert} />
+        }
       </Grid>
       <PButton
         _onClick={goToReview}
         disabled={!amount || amount === '0'}
-        text={t<string>('Next')}
+        text={t('Next')}
       />
       {showReview && amount && api && formatted && maxUnlockingChunks && staked && chain &&
         <Review
           address={address}
           amount={amount}
-          api={api}
-          chain={chain}
           chilled={chilled}
           estimatedFee={estimatedFee}
-          formatted={formatted}
           hasNominator={!!stakingAccount?.nominators?.length}
+          isUnstakeAll={isUnstakeAll}
           maxUnlockingChunks={maxUnlockingChunks}
           redeem={redeem}
           redeemDate={redeemDate}

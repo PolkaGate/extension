@@ -1,7 +1,8 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
-import { faCopy } from '@fortawesome/free-regular-svg-icons/faCopy';
+import { faCopy } from '@fortawesome/free-regular-svg-icons';
 import React, { MouseEventHandler } from 'react';
 
 import { useTranslation } from '../hooks';
@@ -24,7 +25,7 @@ export default function MnemonicSeed({ isCopied, onCopy, seed, setIsCopied }: Pr
       <TextAreaWithLabel
         className='mnemonicDisplay'
         isReadOnly
-        label={t<string>('Generated 12-word mnemonic seed:')}
+        label={t<string>('Generated 12-word recovery phrase:')}
         style={{ margin: 'auto', width: '92%' }}
         value={seed}
       />

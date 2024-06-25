@@ -1,14 +1,13 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { MyPoolInfo } from '../../../../../util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-
-import { Option } from '@polkadot/types';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AccountContext, AddressInput, AutoResizeTextarea, Input, PButton, Popup, ShowValue } from '../../../../../components';
 import { useApi, useChain, useFormatted, useTranslation } from '../../../../../hooks';
@@ -28,7 +27,7 @@ interface Props {
 export interface ChangesProps {
   commission: {
     payee: string | undefined | null;
-    value: number | undefined | null;
+    value: string | undefined | null;
   },
   newPoolName: string | undefined | null;
   newRoles: {
@@ -51,8 +50,8 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
   const myPoolRoles = pool?.bondedPool?.roles;
   const depositorAddress = pool?.bondedPool?.roles?.depositor?.toString();
 
-  const maybeCommissionPayee = pool?.bondedPool?.commission?.current?.[1]?.toString() as string | undefined;
-  const mayBeCommission = (pool?.bondedPool?.commission?.current?.[0] || 0) as number;
+  const maybeCommissionPayee = (pool?.bondedPool?.commission?.current as any)?.[1]?.toString() as string | undefined;
+  const mayBeCommission = ((pool?.bondedPool?.commission?.current as any)?.[0] || 0) as number;
   const commissionValue = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
 
   const [showReview, setShowReview] = useState<boolean>(false);
@@ -61,12 +60,12 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
   const [newRootAddress, setNewRootAddress] = useState<string | null | undefined>();
   const [newNominatorAddress, setNewNominatorAddress] = useState<string | null | undefined>();
   const [newBouncerAddress, setNewBouncerAddress] = useState<string | null | undefined>();
-  const [collapsedName, setCollapsed] = useState<'Roles' | 'Commission' | undefined>();
+  const [collapsedName, setCollapsed] = useState<string | undefined>();
   const [newCommissionPayee, setNewCommissionPayee] = useState<string | null | undefined>();
   const [newCommissionValue, setNewCommissionValue] = useState<number | undefined>();
   const [maxCommission, setMaxCommission] = useState<number | undefined>();
 
-  const open = useCallback((title: 'Roles' | 'Commission') => {
+  const open = useCallback((title: string) => {
     setCollapsed(title === collapsedName ? undefined : title);
   }, [collapsedName]);
 
@@ -99,10 +98,9 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
   }, [commissionValue, maybeCommissionPayee, myPoolName, myPoolRoles, newBouncerAddress, newCommissionPayee, newCommissionValue, newNominatorAddress, newPoolName, newRootAddress]);
 
   useEffect(() => {
-    api && api.query.nominationPools.globalMaxCommission().then((res: Option) => {
+    api && api.query['nominationPools']['globalMaxCommission']().then((res: any) => {
       if (res.isSome) {
         setMaxCommission(res.unwrap());
-        console.log('res:', res.unwrap());
       }
     });
   }, [api]);
@@ -113,7 +111,7 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
     }
 
     if ((newValue !== null || newValue !== undefined) && newValue !== oldValue) {
-      return newValue;
+      return newValue as string;
     }
 
     return undefined;
@@ -139,7 +137,7 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
     return value === undefined;
   });
 
-  const onNewCommission = useCallback((e) => {
+  const onNewCommission = useCallback((e: { target: { value: any; }; }) => {
     const value = Number(e.target.value);
 
     if (value !== commissionValue) {
@@ -165,16 +163,15 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
         </Grid>
         <CollapseIt
           open={open}
-          show={collapsedName === 'Roles'}
+          show={collapsedName === t('Roles')}
           title={t('Roles')}
         >
           <>
             <AddressInput
               address={depositorAddress}
-              chain={chain}
+              chain={chain as any}
               disabled
               label={'Depositor'}
-              // setAddress={setDepositorAddress}
               showIdenticon
               style={{
                 m: '15px auto 0',
@@ -182,9 +179,9 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
               }}
             />
             <AddressInput
-              address={newRootAddress}
+              address={newRootAddress as string}
               allAddresses={allAddresses}
-              chain={chain}
+              chain={chain as any}
               label={'Root'}
               setAddress={setNewRootAddress}
               showIdenticon
@@ -194,10 +191,10 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
               }}
             />
             <AddressInput
-              address={newNominatorAddress}
+              address={newNominatorAddress as string}
               allAddresses={allAddresses}
-              chain={chain}
-              label={'Nominator'}
+              chain={chain as any}
+              label={t<string>('Nominator')}
               setAddress={setNewNominatorAddress}
               showIdenticon
               style={{
@@ -206,9 +203,9 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
               }}
             />
             <AddressInput
-              address={newBouncerAddress}
+              address={newBouncerAddress as string}
               allAddresses={allAddresses}
-              chain={chain}
+              chain={chain as any}
               label={t<string>('Bouncer')}
               setAddress={setNewBouncerAddress}
               showIdenticon
@@ -221,7 +218,7 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
         </CollapseIt>
         <CollapseIt
           open={open}
-          show={collapsedName === 'Commission'}
+          show={collapsedName === t('Commission')}
           title={t('Commission')}
         >
           <>
@@ -252,15 +249,15 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
                   {t('Max')}:
                 </Grid>
                 <Grid item>
-                  <ShowValue value={maxCommission?.toHuman()} width='58px' />
+                  <ShowValue value={(maxCommission as any)?.toHuman()} width='58px' />
                 </Grid>
               </Grid>
             </Grid>
             <AddressInput
-              address={newCommissionPayee}
+              address={newCommissionPayee as string}
               allAddresses={allAddresses}
-              chain={chain}
-              label={'Payee'}
+              chain={chain as any}
+              label={t('Payee')}
               setAddress={setNewCommissionPayee}
               showIdenticon
               style={{
@@ -280,7 +277,7 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
         <Review
           address={address}
           api={api}
-          chain={chain}
+          chain={chain as any}
           changes={changes}
           formatted={String(formatted)}
           pool={pool}

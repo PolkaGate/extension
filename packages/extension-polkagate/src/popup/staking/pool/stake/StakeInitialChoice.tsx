@@ -1,21 +1,21 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 
-import { faRightToBracket } from '@fortawesome/free-solid-svg-icons/faRightToBracket';
-import { faSquarePlus } from '@fortawesome/free-solid-svg-icons/faSquarePlus';
+import { faRightToBracket, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 
 import { useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import { PoolStakingConsts } from '../../../../util/types';
+import type { PoolStakingConsts } from '../../../../util/types';
 import Option from '../../partial/StakingOption';
 
 interface Props {

@@ -1,0 +1,67 @@
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+/* eslint-disable react/jsx-max-props-per-line */
+
+import { closestCenter, DndContext, type DragEndEvent } from '@dnd-kit/core';
+import { restrictToParentElement } from '@dnd-kit/modifiers';
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import React, { useCallback, useLayoutEffect, useState } from 'react';
+
+import type { AccountsOrder } from '..';
+import AccountItem from './AccountItem';
+
+interface Props {
+  initialAccountList: AccountsOrder[];
+  hideNumbers: boolean | undefined;
+}
+
+export const saveNewOrder = (newOrder: AccountsOrder[]) => {
+  const addressOrder = newOrder.map(({ account }) => account.address);
+
+  browser.storage.local.set({ addressOrder }).catch(console.error);
+};
+
+export default function DraggableAccountList({ hideNumbers, initialAccountList }: Props) {
+  const [accountsOrder, setAccountsOrder] = useState<AccountsOrder[]>(initialAccountList);
+  const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
+
+  useLayoutEffect(() => {
+    setAccountsOrder(initialAccountList);
+  }, [initialAccountList, initialAccountList.length]);
+
+  const getItemPos = useCallback((_id: any) => accountsOrder?.findIndex(({ id }) => _id === id), [accountsOrder]);
+
+  const handleDrag = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id === over?.id) {
+      return;
+    }
+
+    const originalPosition = getItemPos(active.id);
+    const newPosition = getItemPos(over?.id);
+
+    const newOrder = arrayMove(accountsOrder, originalPosition, newPosition);
+
+    saveNewOrder(newOrder);
+    setAccountsOrder(newOrder);
+  }, [accountsOrder, getItemPos]);
+
+  return (
+    <DndContext collisionDetection={closestCenter} modifiers={[restrictToParentElement]} onDragEnd={handleDrag}>
+      <SortableContext items={accountsOrder} strategy={verticalListSortingStrategy}>
+        {accountsOrder.map(({ account, id }) => (
+          <AccountItem
+            account={account}
+            hideNumbers={hideNumbers}
+            id={id}
+            key={id}
+            quickActionOpen={quickActionOpen}
+            setQuickActionOpen={setQuickActionOpen}
+          />
+        ))}
+      </SortableContext>
+    </DndContext>
+  );
+}

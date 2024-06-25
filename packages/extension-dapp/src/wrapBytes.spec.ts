@@ -1,9 +1,9 @@
-// Copyright 2019-2023 @polkadot/extension authors & contributors
+// Copyright 2019-2024 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { u8aConcat, u8aEq, u8aToString } from '@polkadot/util';
 
-import { ETHEREUM, POSTFIX, PREFIX, unwrapBytes, wrapBytes } from './wrapBytes';
+import { ETHEREUM, POSTFIX, PREFIX, unwrapBytes, wrapBytes } from './wrapBytes.js';
 
 const TEST_DATA = 'this is just some random message that we expect to be wrapped along the way';
 const TEST_ETH = u8aConcat(ETHEREUM, TEST_DATA);

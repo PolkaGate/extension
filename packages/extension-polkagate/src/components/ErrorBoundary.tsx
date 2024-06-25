@@ -1,11 +1,13 @@
-// Copyright 2019-2023 @polkadot/extension-ui authors & contributor
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import HeaderBrand from '../partials/HeaderBrand';
+import { EXTENSION_NAME } from '../util/constants';
 import translate from './translate';
 import { PButton } from '.';
 
@@ -52,7 +54,7 @@ class ErrorBoundary extends React.Component<Props> {
           <HeaderBrand
             showBrand
             showMenu
-            text={t<string>('Polkagate')}
+            text={EXTENSION_NAME}
           />
           <Grid container justifyContent='center' px='15px'>
             <Typography fontSize='18px' mt='35px'>

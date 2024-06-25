@@ -7,7 +7,7 @@ import { MESSAGE_ORIGIN_CONTENT, MESSAGE_ORIGIN_PAGE, PORT_CONTENT } from '@polk
 import { chrome } from '@polkadot/extension-inject/chrome';
 
 // connect to the extension
-const port = chrome.runtime.connect({ name: PORT_CONTENT });
+const port = browser.runtime.connect({ name: PORT_CONTENT });
 
 // send any messages from the extension back to the page
 port.onMessage.addListener((data): void => {
@@ -27,7 +27,7 @@ window.addEventListener('message', ({ data, source }: Message): void => {
 // inject our data injector
 const script = document.createElement('script');
 
-script.src = chrome.extension.getURL('page.js');
+script.src = browser.extension.getURL('page.js');
 
 script.onload = (): void => {
   // remove the injecting tag when loaded

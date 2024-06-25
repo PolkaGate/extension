@@ -1,7 +1,8 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
-import { Grid, useTheme } from '@mui/material'
+import { Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { PASSWORD_EXPIRY_MIN } from '@polkadot/extension-base/defaults';
@@ -22,12 +23,13 @@ interface Props {
 }
 
 export default function SignArea({ buttonText, error, isExternal, isFirst, isSignable, setError, signId }: Props): JSX.Element {
+  const onAction = useContext(ActionContext);
+  const { t } = useTranslation();
+
   const [savePass, setSavePass] = useState(false);
   const [isLocked, setIsLocked] = useState<boolean | null>(null);
   const [password, setPassword] = useState('');
   const [isBusy, setIsBusy] = useState(false);
-  const onAction = useContext(ActionContext);
-  const { t } = useTranslation();
 
   useEffect(() => {
     setIsLocked(null);

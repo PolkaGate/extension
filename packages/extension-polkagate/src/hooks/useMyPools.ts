@@ -1,17 +1,17 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { MyPoolInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
 import { isHexToBn } from '../util/utils';
-import { useEndpoint2, useFormatted } from '.';
+import { useInfo } from '.';
 
 export default function useMyPools(address: string): MyPoolInfo[] | null | undefined {
   const [myPools, setMyPools] = useState<MyPoolInfo[] | undefined | null>();
-  const endpoint = useEndpoint2(address);
-  const formatted = useFormatted(address);
+  const { endpoint, formatted } = useInfo(address);
 
   const getMyPools = useCallback((formatted: string, endpoint: string) => {
     const getMyPoolsWorker: Worker = new Worker(new URL('../util/workers/getMyPools.js', import.meta.url));

@@ -1,15 +1,16 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
-import { ActionContext, Header, PButton, Popup } from '../../components';
+import { ActionContext, PButton, Popup } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { HeaderBrand } from '../../partials';
-import { NEW_VERSION_ALERT } from '../../util/constants';
+import { EXTENSION_NAME, NEW_VERSION_ALERT } from '../../util/constants';
 
 interface Props {
   show: boolean;
@@ -22,7 +23,7 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
   const onAction = useContext(ActionContext);
 
   const onClose = useCallback(() => {
-    window.localStorage.setItem(NEW_VERSION_ALERT, 'ok');
+    window.localStorage.setItem('inUse_version', NEW_VERSION_ALERT);
     setShowAlert(false);
     onAction('/');
   }, [onAction, setShowAlert]);
@@ -32,13 +33,18 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
       <Grid container direction='column' py='15px'>
         <Grid container item>
           <ul style={{ margin: 0, paddingLeft: '25px' }}>
-            {notes.map((note, index) => (
-              <li key={index} style={{ paddingBottom: '5px', paddingTop: '5px', color: `${theme.palette.secondary.light}` }}>
-                <Typography color='text.primary' fontSize='14px' fontWeight={400} textAlign='left'>
-                  {note}
-                </Typography>
-              </li>
-            ))}
+            {notes.map((note, index) => {
+              const splitted = note.split(':');
+
+              return (
+                <li key={index} style={{ color: `${theme.palette.secondary.light}`, paddingBottom: '5px', paddingTop: '5px' }}>
+                  <Typography color='text.primary' fontSize='14px' fontWeight={400} textAlign='left'>
+                    <b>{splitted[0]}:</b>  {splitted[1]}
+                  </Typography>
+                </li>
+              );
+            }
+            )}
           </ul>
         </Grid>
       </Grid>
@@ -49,30 +55,26 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
     <Popup show={show}>
       <HeaderBrand
         backgroundDefault
-        noBorder
         onClose={onClose}
         showBrand
         showClose
-        showCloseX
-        text={t<string>('Polkagate')}
+        text={EXTENSION_NAME}
       />
       <Grid container direction='column' px='15px'>
-        <Grid container item justifyContent='center' pb='20px' pt='50px'>
+        <Grid container item justifyContent='center' pb='20px' pt='40px'>
           <Typography fontSize='22px' fontWeight={400}>
-            {t<string>('Important Updates')}
+            {t('Important Updates 🚀')}
           </Typography>
         </Grid>
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              t<string>('Users can now view pool commissions before joining a pool, and pool owners can set or claim pool commissions.'),
-              t<string>('The account page has been redesigned, allowing users to unlock their tokens locked for referenda voting.'),
-              t<string>('Various known issues have been fixed.')
+              'Bug Fixes: Resolved the latest Kusama runtime upgrade issue, which was causing transactions on Kusama to fail'
             ]}
           />
         </Grid>
       </Grid>
-      <PButton _onClick={onClose} text={t<string>('Close')} />
+      <PButton _onClick={onClose} text={t('Close')} />
     </Popup>
   );
 }

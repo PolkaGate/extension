@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { Chain } from '@polkadot/extension-chains/types';
 
@@ -7,8 +8,8 @@ import { useEffect, useState } from 'react';
 
 import { getMetadata } from '../messaging';
 
-export default function (genesisHash?: string | null, isPartial?: boolean): Chain | null {
-  const [chain, setChain] = useState<Chain | null>(null);
+export default function (genesisHash?: string | null, isPartial?: boolean): Chain | null | undefined {
+  const [chain, setChain] = useState<Chain | null>();
 
   useEffect((): void => {
     if (genesisHash) {
@@ -19,7 +20,7 @@ export default function (genesisHash?: string | null, isPartial?: boolean): Chai
           setChain(null);
         });
     } else {
-      setChain(null);
+      setChain(undefined);
     }
   }, [genesisHash, isPartial]);
 

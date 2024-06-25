@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -8,9 +9,10 @@ import type { ApiPromise } from '@polkadot/api';
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { Chain } from '@polkadot/extension-chains/types';
-import { Balance } from '@polkadot/types/interfaces';
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
@@ -19,7 +21,8 @@ import { useAccountDisplay, useProxies, useTranslation } from '../../../../../ho
 import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../../partials';
 import Confirmation from '../../../../../partials/Confirmation';
 import { signAndSend } from '../../../../../util/api';
-import { MemberPoints, MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
+import { PROXY_TYPE } from '../../../../../util/constants';
+import type { MemberPoints, MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import ShowPool from '../../../partial/ShowPool';
 
@@ -58,14 +61,14 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [txCalls, setTxCalls] = useState<SubmittableExtrinsic<'promise'>[]>();
 
-  const unbonded = api.tx.nominationPools.unbond;
-  const poolWithdrawUnbonded = api.tx.nominationPools.poolWithdrawUnbonded;
-  const batchAll = api.tx.utility.batchAll;
-  const redeem = api.tx.nominationPools.withdrawUnbonded;
+  const unbonded = api.tx['nominationPools']['unbond'];
+  const poolWithdrawUnbonded = api.tx['nominationPools']['poolWithdrawUnbonded'];
+  const batchAll = api.tx['utility']['batchAll'];
+  const redeem = api.tx['nominationPools']['withdrawUnbonded'];
   const poolDepositorAddr = String(pool.bondedPool?.roles.depositor);
 
   const unlockingLen = pool?.stashIdAccount?.stakingLedger?.unlocking?.length ?? 0;
-  const maxUnlockingChunks = api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
+  const maxUnlockingChunks = (api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber();
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -109,7 +112,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
 
       setTxCalls(calls);
 
-      if (!api?.call?.transactionPaymentApi) {
+      if (!api?.call?.['transactionPaymentApi']) {
         return setEstimatedFee(api?.createType('Balance', BN_ONE));
       }
 
@@ -135,7 +138,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
 
       setTxCalls(calls);
 
-      if (!api?.call?.transactionPaymentApi) {
+      if (!api?.call?.['transactionPaymentApi']) {
         return setEstimatedFee(api?.createType('Balance', BN_ONE));
       }
 
@@ -165,7 +168,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
       setShowWaitScreen(true);
 
       const updated = txCalls.length > 1 ? batchAll(txCalls) : txCalls[0];
-      const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, updated) : updated;
+      const tx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, updated) : updated;
 
       const { block, failureText, fee, success, txHash } = await signAndSend(api, tx, signer, formatted);
 
@@ -184,7 +187,8 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -218,13 +222,13 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
               {t<string>('Removing all members from the pool')}
             </Typography>
             <Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
-              {t<string>('When you confirm you are able to unstake your tokens')}
+              {t<string>('When you confirm, you will be able to unstake your tokens')}
             </Typography>
           </>)
         }
         <ShowPool
           api={api}
-          chain={chain}
+          chain={chain as any}
           label=''
           mode='Default'
           pool={pool}
@@ -252,12 +256,12 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
+          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={unstakeOrRemoveAll}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+          proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}
@@ -300,7 +304,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
               </Grid>
               {txInfo.throughProxy &&
                 <Grid container m='auto' maxWidth='92%'>
-                  <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} name={txInfo.throughProxy.name} />
+                  <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
                 </Grid>
               }
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />

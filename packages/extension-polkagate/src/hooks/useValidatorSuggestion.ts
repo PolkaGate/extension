@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../util/types';
 
@@ -7,11 +8,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getComparator } from '../popup/staking/partial/comparators';
 import { DEFAULT_FILTERS } from '../util/constants';
-import { useChainName, useStakingConsts, useValidators, useValidatorsIdentities } from '.';
+import { useStakingConsts, useValidators, useValidatorsIdentities } from '.';
 
 /**
  * @description
- * This hooks return a list 
+ * This hooks return a list of suggested validators to choose
  */
 
 export default function useValidatorSuggestion(address: string): ValidatorInfo[] | null | undefined {
@@ -19,11 +20,10 @@ export default function useValidatorSuggestion(address: string): ValidatorInfo[]
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
   const stakingConsts = useStakingConsts(address);
-  const chainName = useChainName(address);
 
   const [selected, setSelected] = useState<ValidatorInfo[] | undefined>();
 
-  const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => !v.validatorPrefs.blocked), [allValidatorsInfo]);
+  const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => v.validatorPrefs.blocked === false || v.validatorPrefs.blocked.isFalse), [allValidatorsInfo]);
 
   const onLimitValidatorsPerOperator = useCallback((validators: ValidatorInfoWithIdentity[] | undefined, limit: number): ValidatorInfoWithIdentity[] => {
     if (!validators?.length) {
@@ -70,10 +70,14 @@ export default function useValidatorSuggestion(address: string): ValidatorInfo[]
     );
     const filtered2 = onLimitValidatorsPerOperator(filtered1, DEFAULT_FILTERS.limitOfValidatorsPerOperator.value);
 
-    const filtered3 = chainName === 'Westend' ? filtered2 : filtered2.filter((v) => v?.identity?.display && v?.identity?.judgements?.length); // filter has no verified identity
+    const filtered3 = allValidatorsIdentities?.length
+      ? filtered2.filter((v) => v?.identity?.display && v?.identity?.judgements?.length) // filter those who has no verified identity
+      : filtered2;
 
-    return filtered3.sort(getComparator('Commissions')).slice(0, stakingConsts?.maxNominations);
-  }, [chainName, onLimitValidatorsPerOperator]);
+    const filtered = filtered3.length ? filtered3 : filtered2;
+
+    return filtered.sort(getComparator('Commissions')).slice(0, stakingConsts?.maxNominations);
+  }, [allValidatorsIdentities?.length, onLimitValidatorsPerOperator]);
 
   useEffect(() => {
     if (!allValidators || !stakingConsts) {

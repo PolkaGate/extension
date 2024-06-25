@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
@@ -113,43 +114,6 @@ export async function getBonded(_chain: Chain, _address: string): Promise<Valida
   });
 }
 
-export async function getStakingReward(_chain: Chain | null | undefined, _stakerAddress: string | null): Promise<string | null> {
-  if (!_stakerAddress) {
-    console.log('_stakerAddress is null in getting getStakingReward ');
-
-    return null;
-  }
-
-  return new Promise((resolve) => {
-    try {
-      const network = _chain ? _chain.name.replace(' Relay Chain', '') : 'westend';
-
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      postData('https://' + network + '.api.subscan.io/api/scan/staking_history',
-        {
-          address: _stakerAddress,
-          page: 0,
-          row: 20
-        })
-        .then((data: { message: string; data: { sum: string; }; }) => {
-          if (data.message === 'Success') {
-            const reward = data.data.sum;
-
-            console.log('# reward:', reward);
-
-            resolve(reward);
-          } else {
-            console.log(`Fetching message ${data.message}`);
-            resolve(null);
-          }
-        });
-    } catch (error) {
-      console.log('something went wrong while getting getStakingReward ');
-      resolve(null);
-    }
-  });
-}
-
 //* *******************************POOL STAKING********************************************/
 
 export async function poolJoinOrBondExtra(
@@ -203,12 +167,12 @@ export async function createPool(
       return { status: 'failed' };
     }
 
-    const created = api.tx.utility.batch([
-      api.tx.nominationPools.create(value, roles.root, roles.nominator, roles.bouncer),
-      api.tx.nominationPools.setMetadata(poolId, poolName)
+    const created = api.tx['utility']['batch']([
+      api.tx['nominationPools']['create'](value, roles.root, roles.nominator, roles.bouncer),
+      api.tx['nominationPools']['setMetadata'](poolId, poolName)
     ]);
 
-    const tx = proxy ? api.tx.proxy.proxy(depositor, proxy.proxyType, created) : created;
+    const tx = proxy ? api.tx['proxy']['proxy'](depositor, proxy.proxyType, created) : created;
 
     return signAndSend(api, tx, signer, depositor);
   } catch (error) {
@@ -250,12 +214,12 @@ export async function editPool(
     const calls = [];
 
     basePool.metadata !== pool.metadata &&
-      calls.push(api.tx.nominationPools.setMetadata(pool.member?.poolId, pool.metadata));
+      calls.push(api.tx['nominationPools']['setMetadata'](pool.member?.poolId, pool.metadata));
     JSON.stringify(basePool.bondedPool?.roles) !== JSON.stringify(pool.bondedPool?.roles) &&
-      calls.push(api.tx.nominationPools.updateRoles(pool.member?.poolId, getRole('root'), getRole('nominator'), getRole('bouncer')));
+      calls.push(api.tx['nominationPools']['updateRoles'](pool.member?.poolId, getRole('root'), getRole('nominator'), getRole('bouncer')));
 
-    const updated = api.tx.utility.batch(calls);
-    const tx = proxy ? api.tx.proxy.proxy(depositor, proxy.proxyType, updated) : updated;
+    const updated = api.tx['utility']['batch'](calls);
+    const tx = proxy ? api.tx['proxy']['proxy'](depositor, proxy.proxyType, updated) : updated;
 
     return signAndSend(api, tx, signer, depositor);
   } catch (error) {

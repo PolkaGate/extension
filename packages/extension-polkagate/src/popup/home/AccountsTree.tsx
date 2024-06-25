@@ -1,14 +1,19 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { Backdrop, Container, Grid, useTheme } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import { TFunction } from '@polkagate/apps-config/types';
+import React, { useCallback, useEffect } from 'react';
 
-import { useTranslation } from '../../hooks';
+import { PButton } from '../../components';
+import { useActiveRecoveries, useApi, useTranslation } from '../../hooks';
+import { windowOpen } from '../../messaging';
+import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import getParentNameSuri from '../../util/getParentNameSuri';
 import AccountPreview from './AccountPreview';
 
@@ -17,33 +22,45 @@ interface Props extends AccountWithChildren {
   quickActionOpen?: string | boolean;
   setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
   hideNumbers: boolean | undefined;
+  setHasActiveRecovery: React.Dispatch<React.SetStateAction<string | null | undefined>>;
 }
 
-export default function AccountsTree({ hideNumbers, parentName, quickActionOpen, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
+export const label = (account: AccountJson | undefined, parentName: string | undefined, t: TFunction): string | undefined => {
+  if (account?.isHardware) {
+    return t('Ledger');
+  }
+
+  if (account?.isQR) {
+    return t('QR-attached');
+  }
+
+  if (account?.isExternal) {
+    return t('Watch-only');
+  }
+
+  if (account?.parentAddress) {
+    return t('Derived from {{parentName}}', { replace: { parentName } });
+  }
+
+  return undefined;
+};
+
+export default function AccountsTree({ hideNumbers, parentName, quickActionOpen, setHasActiveRecovery, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const api = useApi(SOCIAL_RECOVERY_CHAINS.includes(account?.genesisHash ?? '') ? account.address : undefined);
+  const activeRecovery = useActiveRecoveries(api, account.address);
+
+  useEffect(() => {
+    setHasActiveRecovery(activeRecovery ? account?.address : null);
+  }, [account?.address, activeRecovery, setHasActiveRecovery]);
 
   const parentNameSuri = getParentNameSuri(parentName, suri);
-  const handleClose = useCallback(() => setQuickActionOpen(undefined), []);
+  const handleClose = useCallback(() => setQuickActionOpen(undefined), [setQuickActionOpen]);
 
-  const label = useMemo(
-    (): string | undefined => {
-      if (account?.isHardware) {
-        return t('Ledger');
-      }
-
-      if (account?.isExternal) {
-        return t('Address only');
-      }
-
-      if (account?.parentAddress) {
-        return t('Derived from {{parentNameSuri}}', { replace: { parentNameSuri } });
-      }
-
-      return undefined;
-    },
-    [account, parentNameSuri, t]
-  );
+  const goCloseRecovery = useCallback(() => {
+    account.address && windowOpen(`/socialRecovery/${account.address}/true`).catch(console.error);
+  }, [account.address]);
 
   return (
     <>
@@ -52,16 +69,16 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
         disableGutters
         sx={{
           backgroundColor: 'background.paper',
-          borderColor: 'secondary.main',
+          borderColor: activeRecovery ? 'warning.main' : 'secondary.main',
           borderRadius: '5px',
           borderStyle: account?.parentAddress ? 'dashed' : 'solid',
-          borderWidth: '0.5px',
+          borderWidth: activeRecovery ? '2px' : '0.5px',
           mb: '6px',
           position: 'relative'
         }}
       >
         <Grid item sx={{ bgcolor: '#454545', color: 'white', fontSize: '10px', ml: 3, position: 'absolute', px: 1, width: 'fit-content' }}>
-          {label}
+          {label(account, parentNameSuri, t)}
         </Grid>
         <AccountPreview
           {...account}
@@ -76,6 +93,14 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
           open={quickActionOpen !== undefined}
           sx={{ bgcolor: quickActionOpen === account.address ? 'transparent' : theme.palette.mode === 'dark' ? 'rgba(23, 23, 23, 0.8)' : 'rgba(241, 241, 241, 0.7)', borderRadius: '5px', bottom: '-1px', left: '-1px', position: 'absolute', right: '-1px', top: '-1px' }}
         />
+        {activeRecovery &&
+          <Grid container item pb='10px'>
+            <PButton
+              _mt='1px'
+              _onClick={goCloseRecovery}
+              text={t<string>('End Recovery')}
+            />
+          </Grid>}
       </Container>
       {account?.children?.map((child, index) => (
         <AccountsTree
@@ -84,6 +109,7 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
           hideNumbers={hideNumbers}
           parentName={account.name}
           quickActionOpen={quickActionOpen}
+          setHasActiveRecovery={setHasActiveRecovery}
           setQuickActionOpen={setQuickActionOpen}
         />
       ))}

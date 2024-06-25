@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -12,7 +13,7 @@ import { PButton, ProxyTable } from '../components';
 import Popup from '../components/Popup';
 import { useMetadata, useTranslation } from '../hooks';
 import { HeaderBrand } from '../partials';
-import { Proxy, ProxyItem } from '../util/types';
+import type { Proxy, ProxyItem } from '../util/types';
 
 interface Props {
   show: boolean;
@@ -69,10 +70,10 @@ export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, sel
         text={t<string>('Select Proxy')}
       />
       <Typography fontSize='14px' fontWeight={300} m='18px auto 0' width='90%'>
-        {t('Select an appropriate proxy of the account to do transaction on behalf.')}
+        {t('Choose a suitable proxy for the account to conduct the transaction on its behalf.')}
       </Typography>
       <ProxyTable
-        chain={chain}
+        chain={chain as any}
         label={t<string>('Proxies')}
         maxHeight='50%'
         mode='Select'

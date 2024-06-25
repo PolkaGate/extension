@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -7,12 +8,13 @@ import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
 import { Grid } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
+import { ActionContext } from '../../components';
 import AccountFeatures from '../../components/AccountFeatures';
 import AccountIcons from '../../components/AccountIcons';
 import { useApi, useChain, useFormatted, useMyAccountIdentity, useProxies } from '../../hooks';
+import useIsExtensionPopup from '../../hooks/useIsExtensionPopup';
 import { showAccount } from '../../messaging';
 import { AccountMenu } from '../../partials';
 import QuickAction from '../../partials/QuickAction';
@@ -22,7 +24,6 @@ export interface Props {
   actions?: React.ReactNode;
   address: string;
   children?: React.ReactNode;
-  genesisHash?: string | null;
   isExternal?: boolean | null;
   isHardware?: boolean | null;
   isHidden?: boolean;
@@ -36,8 +37,7 @@ export interface Props {
   hideNumbers: boolean | undefined;
 }
 
-export default function AccountPreview({ address, genesisHash, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
-  const history = useHistory();
+export default function AccountPreview({ address, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
   const chain = useChain(address);
   const api = useApi(address);
   const formatted = useFormatted(address);
@@ -45,10 +45,12 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isHi
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [recoverable, setRecoverable] = useState<boolean | undefined>();
   const identity = useMyAccountIdentity(address);
+  const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
+  const onAction = useContext(ActionContext);
+  const onExtension = useIsExtensionPopup();
 
   useEffect((): void => {
-    // eslint-disable-next-line no-void
-    api && api.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => r.isSome && setRecoverable(r.unwrap()));
+    api && api.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => setRecoverable(!!r.isSome));
   }, [api, formatted]);
 
   useEffect((): void => {
@@ -71,26 +73,28 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isHi
   }, [address, isHidden]);
 
   const goToAccount = useCallback(() => {
-    genesisHash && address && formatted && history.push({
-      pathname: `/account/${genesisHash}/${address}/`,
-      state: { api, identity }
-    });
-  }, [history, genesisHash, address, formatted, api, identity]);
+    if (chain?.genesisHash && onExtension) {
+      onAction(`/account/${chain.genesisHash}/${address}/`);
+    } else if (!onExtension) {
+      onAction(`/accountfs/${address}/0`);
+    }
+  }, [address, chain?.genesisHash, onAction, onExtension]);
 
   return (
-    <Grid alignItems='center' container position='relative' py='15px'>
+    <Grid alignItems='center' container position='relative' p='15px 0 13px'>
       <AccountIcons
-        chain={chain}
+        chain={chain as any}
         formatted={formatted || address}
         identiconTheme={identiconTheme}
-        judgements={identity?.judgements} // TODO: to fix the type issue
+        isSubId={!!identity?.displayParent}
+        judgements={_judgement}
         prefix={chain?.ss58Format ?? 42}
         proxies={proxies}
         recoverable={recoverable}
       />
       <AccountDetail
         address={address}
-        chain={chain}
+        chain={chain as any}
         formatted={formatted}
         goToAccount={goToAccount}
         hideNumbers={hideNumbers}
@@ -100,7 +104,7 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isHi
         name={name}
         toggleVisibility={_toggleVisibility}
       />
-      <AccountFeatures chain={chain} goToAccount={goToAccount} menuOnClick={menuOnClick} />
+      <AccountFeatures chain={chain as any} goToAccount={goToAccount} menuOnClick={menuOnClick} />
       {
         showAccountMenu &&
         <AccountMenu
@@ -109,7 +113,7 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isHi
           setShowMenu={setShowAccountMenu}
         />
       }
-      <Grid item sx={{ bottom: '20px', left: 0, position: 'absolute', width: 'fit-content' }}>
+      <Grid item sx={{ bottom: 0, left: 0, position: 'absolute', top: 0, width: 'fit-content' }}>
         <QuickAction address={address} quickActionOpen={quickActionOpen} setQuickActionOpen={setQuickActionOpen} />
       </Grid>
     </Grid>

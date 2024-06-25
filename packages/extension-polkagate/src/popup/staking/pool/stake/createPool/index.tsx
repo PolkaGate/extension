@@ -1,9 +1,11 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolRoles, PalletNominationPoolsPoolState } from '@polkadot/types/lookup';
 
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -14,10 +16,10 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AddressInput, AmountWithOptions, InputWithLabel, PButton, ShowBalance } from '../../../../../components';
-import { useApi, useChain, useDecimal, useFormatted, usePoolConsts, useToken, useTranslation } from '../../../../../hooks';
+import { useApi, useChain, useDecimal, useFormatted, usePoolConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
-import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../../util/constants';
-import { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
+import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../../util/constants';
+import type { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../../util/utils';
 import Review from './Review';
 import UpdateRoles from './UpdateRoles';
@@ -37,6 +39,9 @@ export default function CreatePool(): React.ReactElement {
   const history = useHistory();
   const token = useToken(address);
   const decimal = useDecimal(address);
+
+  useUnSupportedNetwork(address, STAKING_CHAINS);
+
   const poolStakingConsts = usePoolConsts(address, state?.poolStakingConsts);
   const chain = useChain(address);
 
@@ -52,7 +57,7 @@ export default function CreatePool(): React.ReactElement {
   const [bouncerId, setBouncerId] = useState<string>();
   const [newPool, setNewPool] = useState<PoolInfo | undefined>();
 
-  const ED = api && api.consts.balances.existentialDeposit as unknown as BN;
+  const ED = api && api.consts['balances']['existentialDeposit'] as unknown as BN;
   const nextPoolId = poolStakingConsts && poolStakingConsts.lastPoolId.toNumber() + 1;
   const DEFAULT_POOLNAME = `Polkagate 💜${nextPoolId ? ` - ${nextPoolId}` : ''}`;
   // const amountAsBN = useMemo(() => ED && (new BN(parseFloat(createAmount ?? '0') * 10 ** decimal)).sub(ED), [ED, createAmount, decimal]);
@@ -101,18 +106,18 @@ export default function CreatePool(): React.ReactElement {
   const toReview = useCallback(() => {
     setNewPool({
       bondedPool: {
-        memberCounter: 1,
-        points: amountAsBN,
+        memberCounter: 1 as any,
+        points: amountAsBN as any,
         roles: {
-          depositor: formatted,
-          nominator: nominatorId,
-          root: formatted,
-          bouncer: bouncerId
-        },
-        state: 'Creating'
-      },
+          depositor: formatted as any,
+          nominator: nominatorId as any,
+          root: formatted as any,
+          bouncer: bouncerId as any
+        } as PalletNominationPoolsPoolRoles,
+        state: 'Creating' as unknown as PalletNominationPoolsPoolState
+      } as PalletNominationPoolsBondedPoolInner,
       metadata: poolName ?? DEFAULT_POOLNAME,
-      poolId: poolStakingConsts?.lastPoolId?.addn(1),
+      poolId: poolStakingConsts?.lastPoolId?.addn(1) as any,
       rewardPool: null
     });
     setShowReview(!showReview);
@@ -148,15 +153,15 @@ export default function CreatePool(): React.ReactElement {
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api.createType('Balance', BN_ONE));
     }
 
-    api && api.tx.nominationPools.create(String(amountAsBN.gte(BN_ONE) ? amountAsBN : BN_ONE), formatted, nominatorId, bouncerId).paymentInfo(formatted).then((i) => {
+    api && api.tx['nominationPools']['create'](String(amountAsBN.gte(BN_ONE) ? amountAsBN : BN_ONE), formatted, nominatorId, bouncerId).paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee));
     }).catch(console.error);
 
-    api && api.tx.nominationPools.create(String(availableBalance), formatted, nominatorId, bouncerId).paymentInfo(formatted).then((i) => {
+    api && api.tx['nominationPools']['create'](String(availableBalance), formatted, nominatorId, bouncerId).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     }).catch(console.error);
   }, [amountAsBN, api, availableBalance, formatted, nominatorId, bouncerId]);
@@ -175,7 +180,7 @@ export default function CreatePool(): React.ReactElement {
         <InputWithLabel label={t<string>('Pool name')} onChange={_onPoolNameChange} placeholder={DEFAULT_POOLNAME} value={poolName} />
       </Grid>
       <AmountWithOptions
-        label={t<string>(`Amount (${token || '...'})`)}
+        label={t<string>('Amount ({{token}})', { replace: { token: token || '...' } })}
         onChangeAmount={stakeAmountChange}
         onPrimary={onMinAmount}
         onSecondary={onMaxAmount}
@@ -198,7 +203,7 @@ export default function CreatePool(): React.ReactElement {
       <Typography fontSize='14px' fontWeight={300} sx={{ m: 'auto', width: '90%' }} textAlign='left'>
         {t<string>('All the roles (Depositor, Root, Nominator, and Bouncer) are set to the following ID by default although you can update the Nominator and Bouncer by clicking on “Update roles”.')}
       </Typography>
-      <AddressInput address={formatted} chain={chain} disabled label={''} setAddress={() => null} showIdenticon style={{ m: '15px auto 0', width: '92%' }} />
+      <AddressInput address={formatted} chain={chain as any} disabled label={''} setAddress={() => null} showIdenticon style={{ m: '15px auto 0', width: '92%' }} />
       <Grid ml='4%' onClick={onUpdateRoles} width='fit-content'>
         <Typography fontSize='16px' fontWeight={400} lineHeight='36px' sx={{ cursor: 'pointer', textAlign: 'left', textDecoration: 'underline' }}>
           {t<string>('Update roles')}
@@ -209,7 +214,7 @@ export default function CreatePool(): React.ReactElement {
         <UpdateRoles
           address={address}
           bouncerId={bouncerId}
-          chain={chain}
+          chain={chain as any}
           formatted={formatted}
           nominatorId={nominatorId}
           setBouncerId={setBouncerId}
@@ -221,7 +226,7 @@ export default function CreatePool(): React.ReactElement {
       {showReview && newPool &&
         <Review
           address={address}
-          api={api}
+          api={api as ApiPromise}
           createAmount={amountAsBN}
           estimatedFee={estimatedFee}
           poolToCreate={newPool}

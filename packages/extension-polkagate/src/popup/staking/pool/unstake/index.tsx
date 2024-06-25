@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -8,7 +9,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { MyPoolInfo, PoolStakingConsts, StakingConsts } from '../../../../util/types';
 
-import { faPersonCircleXmark } from '@fortawesome/free-solid-svg-icons/faPersonCircleXmark';
+import { faPersonCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AutoDelete as AutoDeleteIcon } from '@mui/icons-material';
 import { Button, Grid, Typography, useTheme } from '@mui/material';
@@ -19,11 +20,11 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
-import { useApi, useChain, useDecimal, useFormatted, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation } from '../../../../hooks';
+import { useApi, useChain, useDecimal, useFormatted, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
+import Asset from '../../../../partials/Asset';
+import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import Asset from '../../../send/partial/Asset';
 import ShowPool from '../../partial/ShowPool';
 import RemoveAll from '../myPool/removeAll';
 import SetState from '../myPool/SetState';
@@ -37,10 +38,10 @@ interface State {
   myPool: MyPoolInfo | undefined;
 }
 
-const CONDITION_MAP = {
+export const CONDITION_MAP = {
   DESTROY: 1,
   REMOVE_ALL: 2
-}
+};
 
 export default function Index(): React.ReactElement {
   const { t } = useTranslation();
@@ -50,6 +51,9 @@ export default function Index(): React.ReactElement {
   const history = useHistory();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
+
+  useUnSupportedNetwork(address, STAKING_CHAINS);
+
   const [refresh, setRefresh] = useState<boolean>(false);
   const myPool = usePool(address, undefined, refresh);
   const formatted = useFormatted(address);
@@ -88,17 +92,18 @@ export default function Index(): React.ReactElement {
     if (staked && !unstakeAllAmount) {
       return staked.sub(amountToMachine(amount, decimal));
     }
+    return undefined;
   }, [amount, decimal, staked, unstakeAllAmount]);
   const unlockingLen = myPool?.stashIdAccount?.stakingLedger?.unlocking?.length;
-  const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
+  const maxUnlockingChunks = api && (api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber();
   const isPoolRoot = useMemo(() => String(formatted) === String(myPool?.bondedPool?.roles?.root), [formatted, myPool?.bondedPool?.roles?.root]);
   const isPoolDepositor = useMemo(() => String(formatted) === String(myPool?.bondedPool?.roles?.depositor), [formatted, myPool?.bondedPool?.roles?.depositor]);
   const poolState = useMemo(() => String(myPool?.bondedPool?.state), [myPool?.bondedPool?.state]);
   const poolMemberCounter = useMemo(() => Number(myPool?.bondedPool?.memberCounter), [myPool?.bondedPool?.memberCounter]);
   const destroyHelperText = t<string>('No one can join and all members can be removed without permissions. Once in destroying state, it cannot be reverted to another state.');
 
-  const unbonded = api && api.tx.nominationPools.unbond;
-  const poolWithdrawUnbonded = api && api.tx.nominationPools.poolWithdrawUnbonded;
+  const unbonded = api && api.tx['nominationPools']['unbond'];
+  const poolWithdrawUnbonded = api && api.tx['nominationPools']['poolWithdrawUnbonded'];
   const redeemDate = useMemo(() => {
     if (stakingConsts) {
       const date = Date.now() + stakingConsts.unbondingDuration * 24 * 60 * 60 * 1000;
@@ -141,7 +146,7 @@ export default function Index(): React.ReactElement {
 
     const params = [formatted, amountToMachine(amount, decimal)];
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -299,11 +304,9 @@ export default function Index(): React.ReactElement {
         <Asset
           address={address}
           api={api}
-          address={address}
           balance={staked}
           balanceLabel={t('Staked')}
           fee={estimatedFee}
-          genesisHash={chain?.genesisHash}
           style={{ pt: '20px' }}
         />
         <div style={{ paddingTop: '15px' }}>
@@ -323,7 +326,7 @@ export default function Index(): React.ReactElement {
       {myPool &&
         <ShowPool
           api={api}
-          chain={chain}
+          chain={chain as any}
           label={t<string>('Pool')}
           mode='Default'
           pool={myPool}
@@ -335,12 +338,13 @@ export default function Index(): React.ReactElement {
         />
       }
       {!helperButton &&
-        <Typography fontSize='16px' fontWeight={400} m='20px 0 0' textAlign='center'>
-          {t<string>('Your rewards wil be automatically withdrawn.')}
-        </Typography>}
+        <Typography fontSize='12px' fontWeight={400} m='20px 0 0' textAlign='center'>
+          {t<string>('Outstanding rewards automatically withdrawn after transaction')}
+        </Typography>
+      }
       <PButton
         _onClick={goToReview}
-        disabled={!amount || amount === '0' || !staked || staked?.isZero() || !estimatedFee || alert}
+        disabled={!!(!amount || amount === '0' || !staked || staked?.isZero() || !estimatedFee || alert)}
         text={t<string>('Next')}
       />
       {showReview && amount && api && formatted && maxUnlockingChunks && myPool &&
@@ -348,7 +352,7 @@ export default function Index(): React.ReactElement {
           address={address}
           amount={amount}
           api={api}
-          chain={chain}
+          chain={chain as any}
           estimatedFee={estimatedFee}
           formatted={formatted}
           maxUnlockingChunks={maxUnlockingChunks}
@@ -366,9 +370,7 @@ export default function Index(): React.ReactElement {
       {goChange && helperButton === 1 && myPool && formatted &&
         <SetState
           address={address}
-          api={api}
-          chain={chain}
-          formatted={formatted}
+          formatted={formatted as string}
           headerText={t<string>('Destroy Pool')}
           helperText={destroyHelperText}
           pool={myPool}
@@ -381,7 +383,6 @@ export default function Index(): React.ReactElement {
       {goChange && helperButton === 2 && myPool && formatted &&
         <RemoveAll
           address={address}
-          api={api}
           pool={myPool}
           setRefresh={setRefresh}
           setShowRemoveAll={setGoChange}

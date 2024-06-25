@@ -1,7 +1,10 @@
-// Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+// @ts-nocheck
 
 /**
  * @description
@@ -14,8 +17,9 @@ import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import { Container, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { Balance } from '@polkadot/types/interfaces';
 import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
@@ -25,9 +29,10 @@ import { useAccountDisplay, useChain, useFormatted, useProxies, useTranslation }
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
-import { Proxy, ProxyItem, SoloSettings, TxInfo } from '../../../../util/types';
+import type { Proxy, ProxyItem, SoloSettings, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
+import { PROXY_TYPE } from '../../../../util/constants';
 
 interface Props {
   address: string;
@@ -57,11 +62,11 @@ function RewardsDestination({ chain, newSettings, settings }: { settings: SoloSe
       </Typography>
       <Grid container item justifyContent='center'>
         {newSettings.payee === 'Staked'
-          ? <Typography sx={{ fontSize: '28px', fontWeight: 300 }}>
+          ? <Typography sx={{ fontSize: '28px', fontWeight: 300, textAlign: 'center' }}>
             {t('Add to staked amount')}
           </Typography>
           : <Grid container item justifyContent='center'>
-            <Identity chain={chain} formatted={destinationAddress} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+            <Identity chain={chain as any} formatted={destinationAddress} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
             <ShortAddress address={destinationAddress} />
           </Grid>
         }
@@ -78,6 +83,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
   const chain = useChain(address);
   const formatted = useFormatted(address);
   const onAction = useContext(ActionContext);
+
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -88,9 +94,9 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [tx, setTx] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>>();
 
-  const setController = api && api.tx.staking.setController; // sign by stash
-  const setPayee = api && api.tx.staking.setPayee; // sign by Controller
-  const batchAll = api && api.tx.utility.batchAll;
+  const setController = api && api.tx['staking']['setController']; // sign by stash
+  const setPayee = api && api.tx['staking']['setPayee']; // sign by Controller
+  const batchAll = api && api.tx['utility']['batchAll'];
   const isControllerDeprecated = setController ? setController.meta.args.length === 0 : undefined;
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
@@ -101,7 +107,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -155,7 +161,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const ptx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
+      const ptx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, tx) : tx;
       const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, formatted);
 
       const info = {
@@ -172,7 +178,8 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -183,7 +190,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
     }
   }, [formatted, api, tx, selectedProxyAddress, password, selectedProxy, estimatedFee, name, selectedProxyName, chain, setRefresh]);
 
-  const _onBackClick = useCallback(() => {
+  const onBackClick = useCallback(() => {
     setShow(false);
   }, [setShow]);
 
@@ -192,9 +199,9 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
 
     return (<Grid alignItems='center' container direction='column' justifyContent='center' my='5px'>
       <Typography fontSize='16px' fontWeight={300} textAlign='center'>
-        {t<string>('Controller account')}
+        {t('Controller account')}
       </Typography>
-      <Identity chain={chain} formatted={controllerId} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+      <Identity chain={chain as any} formatted={controllerId} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
       <ShortAddress address={controllerId} />
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
     </Grid>
@@ -205,11 +212,11 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
     <Motion>
       <Popup show={show}>
         <HeaderBrand
-          onBackClick={_onBackClick}
+          onBackClick={onBackClick}
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Solo Settings')}
+          text={t('Solo Settings')}
           withSteps={{ current: 2, total: 2 }}
         />
         {isPasswordError &&
@@ -221,14 +228,14 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
             <Controller />
           }
           {newSettings?.payee &&
-            <RewardsDestination chain={chain} settings={settings} newSettings={newSettings} />
+            <RewardsDestination chain={chain as any} newSettings={newSettings} settings={settings} />
           }
           <Grid alignItems='center' container item justifyContent='center' lineHeight='20px' mt='10px'>
             <Grid item>
               {t('Fee')}:
             </Grid>
             <Grid item sx={{ pl: '5px' }}>
-              <ShowValue value={estimatedFee?.toHuman()} height={16} />
+              <ShowValue height={16} value={estimatedFee?.toHuman()} />
             </Grid>
           </Grid>
         </Container>
@@ -237,12 +244,12 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
+          label={t('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={applySettings}
           proxiedAddress={settings.stashId}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+          proxyTypeFilter={PROXY_TYPE.STAKING}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

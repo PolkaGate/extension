@@ -1,19 +1,20 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Theme } from '@mui/material';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
+import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
+import type { SavedMetaData, TransactionDetail } from './types';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
-import { Chain } from '@polkadot/extension-chains/types';
-import { BN, BN_ONE, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
+import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { BLOCK_RATE, FLOATING_POINT_DIGIT, SHORT_ADDRESS_CHARACTERS } from './constants';
-import { AccountsBalanceType, SavedMetaData, TransactionDetail } from './types';
+import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS } from './constants';
 
 interface Meta {
   docs: Text[];
@@ -53,25 +54,6 @@ export function fixFloatingPoint(_number: number | string, decimalDigit = FLOATI
   return integerDigits + fractionalDigits;
 }
 
-export function balanceToHuman(_balance: AccountsBalanceType | null, _type: string, decimalDigits?: number, commify?: boolean): string {
-  if (!_balance || !_balance.balanceInfo) { return ''; }
-
-  const balance = _balance.balanceInfo;
-
-  switch (_type.toLowerCase()) {
-    case 'total':
-      return amountToHuman(String(balance.total), balance.decimals, decimalDigits, commify);
-    case 'available':
-      return amountToHuman(String(balance.available), balance.decimals, decimalDigits, commify);
-    case 'reserved':
-      return amountToHuman(String(balance.reserved), balance.decimals, decimalDigits, commify);
-    default:
-      console.log('_type is unknown in balanceToHuman!');
-
-      return '';
-  }
-}
-
 export const toHuman = (api: ApiPromise, value: unknown) => api.createType('Balance', value).toHuman();
 
 export function amountToHuman(_amount: string | number | BN | bigint | Compact<u128> | undefined, _decimals: number | undefined, decimalDigits?: number, commify?: boolean): string {
@@ -86,28 +68,27 @@ export function amountToHuman(_amount: string | number | BN | bigint | Compact<u
   return fixFloatingPoint(Number(_amount) / x, decimalDigits, commify);
 }
 
-export function amountToMachine(_amount: string | undefined, _decimals: number | undefined): BN {
-  if (!_amount || !Number(_amount) || !_decimals) {
+export function amountToMachine(amount: string | undefined, decimal: number | undefined): BN {
+  if (!amount || !Number(amount) || !decimal) {
     return BN_ZERO;
   }
 
-  const dotIndex = _amount.indexOf('.');
+  const dotIndex = amount.indexOf('.');
+  let newAmount = amount;
 
   if (dotIndex >= 0) {
-    const wholePart = _amount.slice(0, dotIndex);
-    const fractionalPart = _amount.slice(dotIndex + 1, _amount.length);
+    const wholePart = amount.slice(0, dotIndex);
+    const fractionalPart = amount.slice(dotIndex + 1);
 
-    _amount = wholePart + fractionalPart;
-    _decimals -= fractionalPart.length;
+    newAmount = wholePart + fractionalPart;
+    decimal -= fractionalPart.length;
 
-    if (_decimals < 0) {
-      throw new Error("_decimals should be more than amount's decimals digits");
+    if (decimal < 0) {
+      throw new Error("decimal should be more than amount's decimals digits");
     }
   }
 
-  const x = 10 ** _decimals;
-
-  return new BN(_amount).mul(new BN(x));
+  return new BN(newAmount).mul(BN_TEN.pow(new BN(decimal)));
 }
 
 export function getFormattedAddress(_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string {
@@ -117,22 +98,21 @@ export function getFormattedAddress(_address: string | null | undefined, _chain:
   return encodeAddress(publicKey, prefix);
 }
 
-// export function handleAccountBalance(balance: any): { available: bigint, feeFrozen: bigint, miscFrozen: bigint, reserved: bigint, total: bigint } {
-//   return {
-//     available: BigInt(String(balance.free)) - BigInt(String(balance.miscFrozen)),
-//     feeFrozen: BigInt(String(balance.feeFrozen)),
-//     miscFrozen: BigInt(String(balance.miscFrozen)),
-//     reserved: BigInt(String(balance.reserved)),
-//     total: BigInt(String(balance.free)) + BigInt(String(balance.reserved))
-//   };
-// }
-
-export function getSubstrateAddress(address: AccountId | string | undefined): string | undefined {
+export function getSubstrateAddress(address: AccountId | string | null | undefined): string | undefined {
   if (!address) {
     return undefined;
   }
 
-  const publicKey = decodeAddress(address);
+  let publicKey;
+
+  // eslint-disable-next-line no-useless-catch
+  try {
+    publicKey = decodeAddress(address, true);
+  } catch (e) {
+    console.log(e);
+
+    return undefined;
+  }
 
   return encodeAddress(publicKey, 42);
 }
@@ -192,7 +172,13 @@ export function getTransactionHistoryFromLocalStorage(
   const chainName = chain ? sanitizeChainName(chain.name) : _chainName;
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const transactionHistoryFromLocalStorage: SavedMetaData = account?.history ? JSON.parse(String(account.history)) : null;
+  let transactionHistoryFromLocalStorage: SavedMetaData | null = null;
+  try {
+    transactionHistoryFromLocalStorage = account?.['history'] ? JSON.parse(String(account['history'])) : null;
+  } catch (error) {
+    console.error('Failed to parse transaction history:', error);
+  }
+
 
   if (transactionHistoryFromLocalStorage) {
     if (transactionHistoryFromLocalStorage.chainName === chainName) {
@@ -215,9 +201,13 @@ export const getWebsiteFavicon = (url: string | undefined): string => {
 export function remainingTime(blocks: number, noMinutes?: boolean): string {
   let mins = Math.floor(blocks * BLOCK_RATE / 60);
 
-  if (!mins) { return ''; }
+  if (!mins) {
+    return '';
+  }
 
-  if (mins <= 0) { return 'finished'; }
+  if (mins <= 0) {
+    return 'finished';
+  }
 
   let hrs = Math.floor(mins / 60);
   const days = Math.floor(hrs / 24);
@@ -226,23 +216,35 @@ export function remainingTime(blocks: number, noMinutes?: boolean): string {
 
   mins -= hrs * 60;
 
-  if (!(noMinutes && days) && mins) { time += mins + ' mins '; }
+  if (!(noMinutes && days) && mins) {
+    time += mins + ' mins ';
+  }
 
   hrs -= days * 24;
 
-  if (hrs === 1) { time = hrs + ' hour ' + time; }
+  if (hrs === 1) {
+    time = hrs + ' hour ' + time;
+  }
 
-  if (hrs && hrs !== 1) { time = hrs + ' hours ' + time; }
+  if (hrs && hrs !== 1) {
+    time = hrs + ' hours ' + time;
+  }
 
-  if (days === 1) { time = days + ' day ' + time; }
+  if (days === 1) {
+    time = days + ' day ' + time;
+  }
 
-  if (days && days !== 1) { time = days + ' days ' + time; }
+  if (days && days !== 1) {
+    time = days + ' days ' + time;
+  }
 
   return time;
 }
 
 export function remainingTimeCountDown(seconds: number | undefined): string {
-  if (!seconds || seconds <= 0) { return 'finished'; }
+  if (!seconds || seconds <= 0) {
+    return 'finished';
+  }
 
   const days = Math.floor(seconds / (60 * 60 * 24));
   const [hour, min, sec] = new Date(seconds * 1000).toISOString().substring(11, 19).split(':');
@@ -303,42 +305,88 @@ export const isEqual = (a1: any[] | null, a2: any[] | null): boolean => {
   return JSON.stringify(a1Sorted) === JSON.stringify(a2Sorted);
 };
 
-// export function saveHistory(chain: Chain | null, hierarchy: AccountWithChildren[], address: string, currentTransactionDetail: TransactionDetail, _chainName?: string): [string, string] {
-//   const accountSubstrateAddress = getSubstrateAddress(address);
-//   const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress, _chainName);
-
-//   savedHistory.push(currentTransactionDetail);
-
-//   return [accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)];
-// }
-
 export function saveAsHistory(formatted: string, info: TransactionDetail) {
-  chrome.storage.local.get('history', (res: { [key: string]: TransactionDetail[] }) => {
-    const k = `${formatted}`;
-    const last = res?.history ?? {};
+  browser.storage.local.get('history')
+    .then((res) => {
+      const k = formatted; // No need for type assertion here
+      const last = (res?.['history'] ?? {}) as { [key: string]: TransactionDetail[] };
 
-    if (last[k]) {
-      last[k].push(info);
-    } else {
-      last[k] = [info];
-    }
+      if (last[k]) {
+        last[k].push(info);
+      } else {
+        last[k] = [info];
+      }
 
-    // eslint-disable-next-line no-void
-    void chrome.storage.local.set({ history: last });
-  });
+      return browser.storage.local.set({ history: last });
+    })
+    .then(() => {
+      console.log('History saved successfully');
+    })
+    .catch((error) => {
+      console.error('Error saving history:', error);
+    });
 }
 
 export async function getHistoryFromStorage(formatted: string): Promise<TransactionDetail[] | undefined> {
   return new Promise((resolve) => {
-    chrome.storage.local.get('history', (res: { [key: string]: TransactionDetail[] }) => {
-      const k = `${formatted}`;
-      const last = res?.history;
+    browser.storage.local.get('history')
+      .then((res) => {
+        console.log('res:', res)
+        const k = `${formatted}` as any;
+        const last = (res?.['history'] ?? {}) as unknown as { [key: string]: TransactionDetail[] };
 
-      resolve(last && last[k]);
-    });
+
+        resolve(last?.[k]);
+      });
   });
 }
 
 export const isHexToBn = (i: string): BN => isHex(i) ? hexToBn(i) : new BN(i);
+export const toBN = (i: any): BN => isHexToBn(String(i));
 
-export const sanitizeChainName = (chainName: string | undefined) => (chainName?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', ''));
+export const sanitizeChainName = (chainName: string | undefined) => (chainName?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', '')?.replace(' Finance', '')?.replace(/\s/g, ''));
+
+export const isEmail = (input: string | undefined) => {
+  if (!input) {
+    return false;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  return emailRegex.test(input);
+};
+
+export const isUrl = (input: string | undefined) => {
+  if (!input) {
+    return false;
+  }
+
+  const urlRegex = /^(https?:\/\/)?([\w\d]+\.)+[\w\d]{2,6}(\/[\w\d]+)*$/;
+
+  return urlRegex.test(input);
+};
+
+export const pgBoxShadow = (theme: Theme): string => theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '2px 3px 4px 0px rgba(0, 0, 0, 0.10)';
+
+export const noop = () => null;
+
+export const truncString32Bytes = (input: string | null | undefined): string | null | undefined => {
+  if (!input) {
+    return input;
+  }
+
+  const encoder = new TextEncoder();
+  let byteLength = encoder.encode(input).length;
+  let inputVal = input;
+
+  while (byteLength > 32) {
+    inputVal = inputVal.substring(0, inputVal.length - 1);
+    byteLength = encoder.encode(inputVal).length;
+  }
+
+  return inputVal;
+};
+
+export const isOnRelayChain = (genesisHash?: string) => RELAY_CHAINS_GENESISHASH.includes(genesisHash || '');
+
+export const isOnAssetHub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');

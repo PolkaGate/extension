@@ -1,14 +1,21 @@
-// Copyright 2019-2023 @polkadot/extension authors & contributors
+// Copyright 2019-2024 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 const path = require('path');
 const webpack = require('webpack');
-
 const CopyPlugin = require('copy-webpack-plugin');
 const ManifestPlugin = require('webpack-extension-manifest-plugin');
 
+const { blake2AsHex } = require('@polkadot/util-crypto');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 const pkgJson = require('./package.json');
 const manifest = require('./manifest.json');
+
+const Dotenv = require('dotenv-webpack');
+const envPath = path.resolve(__dirname, '../../', '.env');
+
+const EXT_NAME = manifest.short_name;
 
 const packages = [
   'extension',
@@ -37,11 +44,14 @@ module.exports = (entry, alias = {}) => ({
       },
       {
         exclude: /(node_modules)/,
-        test: /\.(js|mjs|ts|tsx)$/,
+        test: /\.(ts|tsx)$/,
         use: [
           {
-            loader: require.resolve('babel-loader'),
-            options: require('@polkadot/dev/config/babel-config-webpack.cjs')
+            loader: require.resolve('ts-loader'),
+            options: {
+              configFile: 'tsconfig.webpack.json',
+              transpileOnly: true
+            }
           }
         ]
       },
@@ -80,7 +90,9 @@ module.exports = (entry, alias = {}) => ({
     }),
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: JSON.stringify('production')
+        EXTENSION_PREFIX: JSON.stringify(process.env.EXTENSION_PREFIX || EXT_NAME),
+        NODE_ENV: JSON.stringify('production'),
+        PORT_PREFIX: JSON.stringify(blake2AsHex(JSON.stringify(manifest), 64))
       }
     }),
     new CopyPlugin({ patterns: [{ from: 'public' }] }),
@@ -91,13 +103,18 @@ module.exports = (entry, alias = {}) => ({
           version: pkgJson.version.split('-')[0] // remove possible -beta.xx
         }
       }
-    })
+    }),
+    new Dotenv({ path: envPath }),
+    new BundleAnalyzerPlugin()
   ],
   resolve: {
     alias: packages.reduce((alias, p) => ({
       ...alias,
       [`@polkadot/${p}`]: path.resolve(__dirname, `../${p}/src`)
     }), alias),
+    extensionAlias: {
+      '.js': ['.ts', '.tsx', '.js']
+    },
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
     fallback: {
       crypto: require.resolve('crypto-browserify'),

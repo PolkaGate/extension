@@ -1,21 +1,20 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Avatar, Grid, SxProps, Theme, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import type { DropdownOption } from '../util/types';
 
-import { useChainName } from '@polkadot/extension-polkagate/src/hooks';
+import { faQuestion } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { type SxProps, type Theme, Avatar, Grid, useTheme } from '@mui/material';
+import React, { useCallback, useMemo } from 'react';
+
+import { useChainName, useIsTestnetEnabled } from '@polkadot/extension-polkagate/src/hooks';
 import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
 import Select from './Select';
-
-interface DropdownOption {
-  text: string;
-  value: string;
-}
 
 interface Props {
   address: string | null | undefined;
@@ -26,27 +25,19 @@ interface Props {
   icon?: string;
   style: SxProps<Theme> | undefined;
   disabledItems?: string[] | number[];
+  fullWidthDropdown?: boolean;
 }
 
-function SelectChain({ address, defaultValue, disabledItems, icon = undefined, label, onChange, options, style }: Props) {
+function SelectChain({ address, defaultValue, disabledItems, fullWidthDropdown, icon = undefined, label, onChange, options, style }: Props) {
   const currentChainName = useChainName(address !== 'dummy' ? address : undefined);
   const theme = useTheme();
-  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
-  const _disabledItems = useMemo((): (string | number)[] | undefined => {
-    if (disabledItems && !isTestnetEnabled) {
-      return disabledItems.concat(TEST_NETS) as (string | number)[];
-    }
+  const isTestnetEnabled = useIsTestnetEnabled();
 
-    if (!isTestnetEnabled) {
-      return TEST_NETS;
-    }
-
-    return disabledItems;
-  }, [disabledItems, isTestnetEnabled]);
-
-  useEffect(() =>
-    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
-    , []);
+  const _disabledItems = useMemo((): (string | number)[] | undefined =>
+    !isTestnetEnabled
+      ? [...(disabledItems || []), ...TEST_NETS]
+      : disabledItems
+    , [disabledItems, isTestnetEnabled]);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     try {
@@ -58,8 +49,8 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
         return;
       }
 
-      chrome.storage.local.get('RecentChains', (res) => {
-        const accountsAndChains = res?.RecentChains ?? {};
+      browser.storage.local.get('RecentChains').then((res) => {
+        const accountsAndChains = res?.['RecentChains'] ?? {};
         let myRecentChains = accountsAndChains[address] as string[];
 
         if (!myRecentChains) {
@@ -70,15 +61,13 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
             accountsAndChains[address] = [...INITIAL_RECENT_CHAINS_GENESISHASH, currentGenesisHash];
           }
 
-          // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ RecentChains: accountsAndChains });
+          browser.storage.local.set({ RecentChains: accountsAndChains });
         } else if (myRecentChains && !(myRecentChains.includes(currentGenesisHash))) {
           myRecentChains.unshift(currentGenesisHash);
           myRecentChains.pop();
           accountsAndChains[address] = myRecentChains;
 
-          // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ RecentChains: accountsAndChains });
+          browser.storage.local.set({ RecentChains: accountsAndChains });
         }
       });
     } catch (error) {
@@ -88,21 +77,28 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
 
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' pt={1} sx={{ ...style }}>
-      <Grid item xs={10.5}>
+      <Grid item xs>
         <Select
           defaultValue={defaultValue}
-          disabledItems={_disabledItems}
+          disabledItems={_disabledItems as any[]}
+          fullWidthDropdown={fullWidthDropdown}
           isDisabled={!address}
           label={label}
-          onChange={onChangeNetwork}
+          onChange={onChangeNetwork as () => void}
           options={options}
           showLogo
         />
       </Grid>
-      <Grid item pl={1} xs={1.5}>
+      <Grid item sx={{ ml: '10px', width: 'fit-content' }}>
         {icon
-          ? <Avatar src={icon} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 31, width: 31 }} variant='square' />
-          : <Grid sx={{ bgcolor: 'action.disabledBackground', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', height: '31px', width: '31px' }}>
+          ? <Avatar src={icon} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName as string) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 31, width: 31 }} variant='square' />
+          : <Grid sx={{ bgcolor: 'divider', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', height: '31px', width: '31px' }}>
+            <FontAwesomeIcon
+              color={theme.palette.secondary.light}
+              fontSize='22px'
+              icon={faQuestion}
+              style={{ paddingLeft: '8px', paddingTop: '4px' }}
+            />
           </Grid>
         }
       </Grid>

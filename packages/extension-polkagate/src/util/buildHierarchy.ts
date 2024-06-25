@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 
@@ -7,25 +8,25 @@ import getNetworkMap from './getNetworkMap';
 
 type ChildFilter = (account: AccountJson) => AccountWithChildren;
 
-function compareByCreation (a: AccountJson, b: AccountJson): number {
+function compareByCreation(a: AccountJson, b: AccountJson): number {
   return (a.whenCreated || Infinity) - (b.whenCreated || Infinity);
 }
 
-function compareByName (a: AccountJson, b: AccountJson): number {
+function compareByName(a: AccountJson, b: AccountJson): number {
   const nameA = a.name?.toUpperCase() || '';
   const nameB = b.name?.toUpperCase() || '';
 
   return nameA.localeCompare(nameB);
 }
 
-function compareByPath (a: AccountJson, b: AccountJson): number {
+function compareByPath(a: AccountJson, b: AccountJson): number {
   const suriA = a.suri?.toUpperCase() || '';
   const suriB = b.suri?.toUpperCase() || '';
 
   return suriA.localeCompare(suriB);
 }
 
-function compareByNetwork (a: AccountJson, b: AccountJson): number {
+function compareByNetwork(a: AccountJson, b: AccountJson): number {
   const networkMap = getNetworkMap();
   const networkA = networkMap.get(a?.genesisHash || '') || '';
   const networkB = networkMap.get(b?.genesisHash || '') || '';
@@ -33,12 +34,12 @@ function compareByNetwork (a: AccountJson, b: AccountJson): number {
   return networkA.localeCompare(networkB);
 }
 
-function compareByPathThenCreation (a: AccountJson, b: AccountJson): number {
+function compareByPathThenCreation(a: AccountJson, b: AccountJson): number {
   // if the paths are equal, compare by creation time
   return compareByPath(a, b) || compareByCreation(a, b);
 }
 
-function compareByNameThenPathThenCreation (a: AccountJson, b: AccountJson): number {
+function compareByNameThenPathThenCreation(a: AccountJson, b: AccountJson): number {
   // This comparison happens after an initial sorting by network.
   // if the 2 accounts are from different networks, don't touch their order
   if (a.genesisHash !== b.genesisHash) {
@@ -49,7 +50,7 @@ function compareByNameThenPathThenCreation (a: AccountJson, b: AccountJson): num
   return compareByName(a, b) || compareByPathThenCreation(a, b);
 }
 
-export function accountWithChildren (accounts: AccountJson[]): ChildFilter {
+export function accountWithChildren(accounts: AccountJson[]): ChildFilter {
   return (account: AccountJson): AccountWithChildren => {
     const children = accounts
       .filter(({ parentAddress }) => account.address === parentAddress)
@@ -62,7 +63,7 @@ export function accountWithChildren (accounts: AccountJson[]): ChildFilter {
   };
 }
 
-export function buildHierarchy (accounts: AccountJson[]): AccountWithChildren[] {
+export function buildHierarchy(accounts: AccountJson[]): AccountWithChildren[] {
   return accounts
     .filter(({ parentAddress }) =>
       // it is a parent

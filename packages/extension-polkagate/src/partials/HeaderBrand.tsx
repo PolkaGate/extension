@@ -1,20 +1,19 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
-import { faRefresh } from '@fortawesome/free-solid-svg-icons/faRefresh';
+import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon, Close as CloseIcon, Menu as MenuIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
-import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
+import { Box, Container, Divider, Grid, IconButton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { logoBlack, logoWhite } from '../assets/logos';
-import { ActionContext, Steps } from '../components';
+import { ActionContext, FullScreenIcon, Steps, VaadinIcon } from '../components';
 import useOutsideClick from '../hooks/useOutsideClick';
-import { Step } from '../util/types';
+import type { Step } from '../util/types';
 import Menu from './Menu';
 import { AccountMenu } from '.';
 
@@ -37,9 +36,12 @@ interface Props {
   paddingBottom?: number;
   onClose?: () => void;
   backgroundDefault?: boolean;
+  showFullScreen?: boolean;
+  fullScreenURL?: string;
+  style?: SxProps<Theme> | undefined;
 }
 
-function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onClose, backgroundDefault, onBackClick, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreenURL = '/', isRefreshing, noBorder = false, style, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showFullScreen = false, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
   const [isMenuOpen, setOpenMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
@@ -64,7 +66,7 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onC
   }, [onAction]);
 
   const LeftIcon = () => (
-    <Grid item xs={1.4}>
+    <Grid item xs={showBrand ? 1.4 : 1}>
       {!showBrand &&
         <ArrowBackIosIcon
           onClick={onBackClick}
@@ -103,20 +105,25 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onC
   );
 
   const RightItem = () => (
-    <Grid item textAlign='right' xs={1.4}>
+    <Grid item textAlign='right' xs={showFullScreen && showAccountMenu ? 2.7 : 1.4}>
       {!onRefresh && !showClose &&
-        <IconButton aria-label='menu' color='inherit' edge='start' onClick={_handleMenuClick} size='small' sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}>
-          {showMenu &&
-            <MenuIcon
-              sx={{ color: showBrand ? theme.palette.mode === 'dark' ? 'text.primary' : 'secondary.light' : 'secondary.light', fontSize: 39 }}
-            />
+        <Grid container direction='row' item width='fit-content'>
+          {showFullScreen &&
+            <FullScreenIcon url={fullScreenURL} />
           }
-          {showAccountMenu &&
-            <MoreVertIcon
-              sx={{ color: 'secondary.light', fontSize: '33px' }}
-            />
-          }
-        </IconButton>
+          <IconButton aria-label='menu' color='inherit' edge='start' onClick={_handleMenuClick} size='small' sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}>
+            {showMenu &&
+              <MenuIcon
+                sx={{ color: showBrand ? theme.palette.mode === 'dark' ? 'text.primary' : 'secondary.light' : 'secondary.light', fontSize: 39 }}
+              />
+            }
+            {showAccountMenu &&
+              <MoreVertIcon
+                sx={{ color: 'secondary.light', fontSize: '33px' }}
+              />
+            }
+          </IconButton>
+        </Grid>
       }
       {!!onRefresh &&
         <IconButton aria-label='menu' color='inherit' edge='start' onClick={onRefresh} size='small' sx={{ p: 0 }}>
@@ -132,7 +139,7 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onC
         <IconButton aria-label='menu' color='inherit' edge='start' onClick={onClose || _onClose} size='small' sx={{ p: 0 }}>
           {showCloseX
             ? <CloseIcon sx={{ fontSize: 40 }} />
-            : <vaadin-icon icon={`vaadin:home${theme.palette.mode === 'light' ? '-o' : ''}`} style={{ height: '22px', width: '22px', color: `${theme.palette.secondary.light}` }} />
+            : <VaadinIcon icon={`vaadin:home${theme.palette.mode === 'light' ? '-o' : ''}`} style={{ height: '22px', width: '22px', color: `${theme.palette.secondary.light}` }} />
           }
         </IconButton>
       }
@@ -144,11 +151,12 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onC
       <Container
         disableGutters
         sx={{
-          bgcolor: (backgroundDefault && 'background.default') || (showBrand && 'background.paper'),
-          borderBottom: `${noBorder || shortBorder ? '' : '0.5px solid'}`,
+          bgcolor: backgroundDefault ? 'background.default' : showBrand ? 'background.paper' : 'transparent',
+          borderBottom: `${noBorder || shortBorder ? 'none' : '0.5px solid'}`,
           borderColor: 'secondary.light',
           lineHeight: 0,
-          p: showBrand ? '7px 30px 7px' : `18px 30px ${paddingBottom}px`
+          p: showBrand ? '7px 30px 7px' : `18px ${showFullScreen ? '5px' : '20px'} ${paddingBottom}px 20px`,
+          ...style
         }}
       >
         <Grid alignItems='center' container justifyContent='space-between'>
@@ -162,8 +170,6 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onC
       </Container>
       {isMenuOpen &&
         <Menu
-          isMenuOpen={isMenuOpen}
-          reference={setMenuRef}
           setShowMenu={setOpenMenu}
           theme={theme}
         />

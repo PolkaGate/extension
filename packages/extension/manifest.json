@@ -3,9 +3,9 @@
   "description": "The gateway to the Polkadot ecosystem",
   "homepage_url": "https://polkagate.xyz",
   "name": "PolkaGate",
-  "short_name": "PG",
+  "short_name": "PolkaGate",
   "manifest_version": 2,
-  "version": "0.1.4.0",
+  "version": "0.5.5",
   "permissions": [
     "storage",
     "unlimitedStorage",

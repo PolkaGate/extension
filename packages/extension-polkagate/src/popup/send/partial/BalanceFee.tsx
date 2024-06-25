@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -18,7 +19,7 @@ import React from 'react';
 import { BN } from '@polkadot/util';
 
 import { ShowBalance } from '../../../components';
-import { useDecimal,useToken } from '../../../hooks';
+import { useDecimal, useToken } from '../../../hooks';
 import { FLOATING_POINT_DIGIT } from '../../../util/constants';
 import { getValue } from '../../account/util';
 

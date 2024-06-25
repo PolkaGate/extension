@@ -2,32 +2,33 @@
 
 # PolkaGate
 ![license](https://img.shields.io/badge/License-Apache%202.0-blue?logo=apache&style=flat-square)
+![](https://img.shields.io/github/issues-raw/PolkaGate/polkagate-extension)
+[![ci](https://github.com/PolkaGate/polkagate-extension/actions/workflows/ci-workflow.yml/badge.svg?event=push)](https://github.com/PolkaGate/polkagate-extension/actions/workflows/ci-workflow.yml)
 ![supported by](https://img.shields.io/badge/Supported%20by-Kusama%20Treasury-%20black?logo=polkadot&style=flat-square)
 
-A user-friendly wallet to interact with the Polkadot/Substrate based blockchains through a browser. It allows users to access their Polkadot/Kusama ecosystem account(s), which can also be used to interact with decentralized apps. It injects a [@polkadot/api](https://github.com/polkadot-js/api) signer into a page, along with any associated accounts.
+A user-friendly wallet for seamless browser-based interaction with Polkadot/Substrate-based blockchains. It allows users to access their Polkadot/Kusama ecosystem account(s), which can also be used to interact with decentralized apps. It injects a [@polkadot/api](https://github.com/polkadot-js/api) signer into a page, along with any associated accounts.
 
 Polkagate extension not only has all the abilities of the original Polkadot extension, but also many new functionalities as listed below are available, where more features are coming.
 
 ## New functionalities
 
 Currently, the following features are available:
-  - Add address only account ( to be used as a watch only and proxied address) 
+  - Add watch-only account ( can be used as a proxied address) 
   - Crowdloans (View Contributions/Auctions, and contribute to Crowdloans)
-  - Staking (Solo and Pool Staking)
+  - Governance 
+  - Identity management
   - Proxy management
+  - Staking (Solo and Pool Staking)
   - Support different endpoints
-  - Transfer funds
+  - Transfer funds (Cross chain transfer)
   - View balances (crypto/USD)
   - View transaction history
   - View an address as QR code
 
 The following features will be available in the next milestone:
 
-  - Identity management
-  - Light client integration 
-  - OPenGov (Governance 2)
+  - Light client integration   
   - Social recovery
-  - Cross chain transfer
   
 
 # ![Polkagate extension intro](https://raw.githubusercontent.com/Nick-1979/PolkadotJsPlusPictures/main/polkagate/new/intro.png)
@@ -48,25 +49,10 @@ The following features will be available in the next milestone:
 
 Steps to build the extension and view your changes in a browser:
 
-1. download the files via `git clone https://github.com/polkagate/polkagate-extension.git`
-2. got to downloaded folder via `cd polkagate-extension`
-3. install dependencies via `yarn` (yarn version: 3.2.0)
-4. append the following Westend network info to './node_modules/@substrate/ss58-registry/esm/index.js'):
-
-     `{
-		"prefix": 42,
-		"network": "westend",
-		"displayName": "Westend",
-		"symbols": [
-			"WND"
-		],
-		"decimals": [
-			12
-		],
-		"standardAccount": "*25519",
-		"website": "https://polkadot.network"
-	}`
-  
+1. Download the files via `git clone https://github.com/polkagate/polkagate-extension.git`
+2. Go to downloaded folder via `cd polkagate-extension`
+3. Install dependencies via `yarn` (yarn version: 3.2.0)
+4. Replace @polkadot/networks/interfaces.js with ./interfaces/interfaces.js 
 5. Build via `yarn build`
 6. Install the extension
   - Chrome:
@@ -92,21 +78,7 @@ Once added, you can create an account or import via multiple options. To view he
 
    - It is possible via the extension. To receive some westies (Westend's native token) for a created account use [Westend Faucet](https://matrix.to/#/#westend_faucet:matrix.org)
 
-   - Or build the extension on your own, but it needs to append the following Westend network info to './node_modules/@substrate/ss58-registry/esm/index.js') before build:
-
-     `{
-		"prefix": 42,
-		"network": "westend",
-		"displayName": "Westend",
-		"symbols": [
-			"WND"
-		],
-		"decimals": [
-			12
-		],
-		"standardAccount": "*25519",
-		"website": "https://polkadot.network"
-	}`
+   - Note that you need to check 'Enable testnet chains' in the Menu/Settings to be able to work with Westend.
 
 
 <!-- ## More information 

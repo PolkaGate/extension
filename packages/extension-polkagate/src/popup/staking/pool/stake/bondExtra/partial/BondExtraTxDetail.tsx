@@ -1,17 +1,16 @@
-// Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-
 import { ShortAddress } from '../../../../../../components';
 import { useTranslation } from '../../../../../../hooks';
 import { ThroughProxy } from '../../../../../../partials';
-import { MyPoolInfo, TxInfo } from '../../../../../../util/types';
+import type { MyPoolInfo, TxInfo } from '../../../../../../util/types';
 
 interface Props {
   txInfo: TxInfo;

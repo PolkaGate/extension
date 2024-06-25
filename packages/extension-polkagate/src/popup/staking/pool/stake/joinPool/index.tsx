@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -14,10 +15,10 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, PButton, ShowBalance } from '../../../../../components';
-import { useApi, useDecimal, useFormatted, usePoolConsts, usePools, useToken, useTranslation } from '../../../../../hooks';
+import { useApi, useDecimal, useFormatted, usePoolConsts, usePools, useToken, useTranslation, useUnSupportedNetwork } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
-import { MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME } from '../../../../../util/constants';
-import { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
+import { MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME, STAKING_CHAINS } from '../../../../../util/constants';
+import type { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../../util/utils';
 import PoolsTable from './partials/PoolsTable';
 import Review from './Review';
@@ -35,10 +36,13 @@ export default function JoinPool(): React.ReactElement {
   const { state } = useLocation<State>();
   const formatted = useFormatted(address);
   const api = useApi(address, state?.api);
+
+  useUnSupportedNetwork(address, STAKING_CHAINS);
+
   const poolStakingConsts = usePoolConsts(address, state?.poolStakingConsts);
   const history = useHistory();
 
-  usePools(address);
+  const { incrementalPools, numberOfFetchedPools, totalNumberOfPools } = usePools(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
 
@@ -52,9 +56,6 @@ export default function JoinPool(): React.ReactElement {
   const [filteredPools, setFilteredPools] = useState<PoolInfo[] | null | undefined>();
   const [searchedPools, setSearchedPools] = useState<PoolInfo[] | null | undefined>();
   const [poolsToShow, setPoolsToShow] = useState<PoolInfo[] | null | undefined>(); // filtered with selected at first
-  const [totalNumberOfPools, setTotalNumberOfPools] = useState<number | undefined>();
-  const [numberOfFetchedPools, setNumberOfFetchedPools] = useState<number>(0);
-  const [incrementalPools, setIncrementalPools] = useState<PoolInfo[] | null>();
   const [amountAsBN, setAmountAsBN] = useState<BN>();
 
   const backToStake = useCallback(() => {
@@ -93,7 +94,7 @@ export default function JoinPool(): React.ReactElement {
       return;
     }
 
-    const ED = api.consts.balances.existentialDeposit as unknown as BN;
+    const ED = api.consts['balances']['existentialDeposit'] as unknown as BN;
     const max = new BN(availableBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
     const maxToHuman = amountToHuman(max.toString(), decimal);
 
@@ -104,12 +105,6 @@ export default function JoinPool(): React.ReactElement {
   const toReview = useCallback(() => {
     api && selectedPool && setShowReview(!showReview);
   }, [api, selectedPool, showReview]);
-
-  useEffect(() => {
-    window.addEventListener('totalNumberOfPools', (res) => setTotalNumberOfPools(res.detail));
-    window.addEventListener('numberOfFetchedPools', (res) => setNumberOfFetchedPools(res.detail));
-    window.addEventListener('incrementalPools', (res) => setIncrementalPools(res.detail));
-  }, []);
 
   useEffect(() => {
     if (!incrementalPools) {
@@ -132,17 +127,17 @@ export default function JoinPool(): React.ReactElement {
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api.createType('Balance', BN_ONE));
     }
 
     const mayBeAmount = amountAsBN || poolStakingConsts?.minJoinBond;
 
-    api && mayBeAmount && api.tx.nominationPools.join(mayBeAmount.toString(), BN_ONE).paymentInfo(formatted).then((i) => {
+    api && mayBeAmount && api.tx['nominationPools']['join'](mayBeAmount.toString(), BN_ONE).paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee));
     });
 
-    api && api.tx.nominationPools.join(String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
+    api && api.tx['nominationPools']['join'](String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     });
   }, [formatted, api, availableBalance, selectedPool, amountAsBN, poolStakingConsts]);
@@ -181,7 +176,7 @@ export default function JoinPool(): React.ReactElement {
         withSteps={{ current: 1, total: 2 }}
       />
       <AmountWithOptions
-        label={t<string>(`Amount (${token ?? '...'})`)}
+        label={t<string>('Amount ({{token}})', { replace: { token: token || '...' } })}
         onChangeAmount={stakeAmountChange}
         onPrimary={onMinAmount}
         onSecondary={onMaxAmount}

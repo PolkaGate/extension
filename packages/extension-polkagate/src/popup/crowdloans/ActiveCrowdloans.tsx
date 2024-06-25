@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -8,12 +9,13 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import { Crowdloan } from 'extension-polkagate/src/util/types';
+import type { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useState } from 'react';
 
-import { LinkOption } from '@polkadot/apps-config/endpoints/types';
-import { Chain } from '@polkadot/extension-chains/types';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { Progress, Warning } from '../../components';
 import { useTranslation } from '../../hooks';
@@ -89,14 +91,14 @@ export default function ActiveCrowdloans({ activeCrowdloans, api, chain, contrib
 
   return (
     <>
-      <BouncingSubTitle label={t<string>('Active Crowdloans')} style={{ fontSize: '20px', fontWeight: 400 }} />
+      <BouncingSubTitle label={t<string>('Active Crowdloans')} />
       <Grid container sx={{ height: window.innerHeight - 360, m: 'auto', width: '92%' }}>
         {activeCrowdloans?.length
           ? <>
             <Arrows onNext={goNextCrowdloan} onPrevious={goPreviousCrowdloan} />
             <ShowCrowdloan
               api={api}
-              chain={chain}
+              chain={chain as any}
               crowdloan={activeCrowdloans[itemToShow]}
               crowdloansId={crowdloansId}
               currentBlockNumber={currentBlockNumber}
@@ -123,7 +125,7 @@ export default function ActiveCrowdloans({ activeCrowdloans, api, chain, contrib
       {showContribute && selectedCrowdloan &&
         <Contribute
           api={api}
-          chain={chain}
+          chain={chain as any}
           crowdloan={selectedCrowdloan}
           crowdloansId={crowdloansId}
           currentBlockNumber={currentBlockNumber}

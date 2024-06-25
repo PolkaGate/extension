@@ -1,4 +1,4 @@
-// Copyright 2019-2023 @polkadot/extension authors & contributors
+// Copyright 2019-2024 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MessageTypes, TransportRequestMessage } from '../types';
@@ -14,24 +14,20 @@ const state = new State();
 const extension = new Extension(state);
 const tabs = new Tabs(state);
 
-export default function handler<TMessageType extends MessageTypes> ({ id, message, request }: TransportRequestMessage<TMessageType>, port: chrome.runtime.Port, extensionPortName = PORT_EXTENSION): void {
+export default function handler<TMessageType extends MessageTypes> ({ id, message, request }: TransportRequestMessage<TMessageType>, port: browser.runtime.Port, extensionPortName = PORT_EXTENSION): void {
   const isExtension = port.name === extensionPortName;
-  const sender = port.sender as chrome.runtime.MessageSender;
+  const sender = port.sender as browser.runtime.MessageSender;
   const from = isExtension
     ? 'extension'
     : (sender.tab && sender.tab.url) || sender.url || '<unknown>';
   const source = `${from}: ${id}: ${message}`;
 
-  console.log(` [in] ${source}`); // :: ${JSON.stringify(request)}`);
-
   const promise = isExtension
     ? extension.handle(id, message, request, port)
-    : tabs.handle(id, message, request, from, port);
+    : tabs.handle(id, message, request, from, port as any);
 
   promise
     .then((response): void => {
-      console.log(`[out] ${source}`); // :: ${JSON.stringify(response)}`);
-
       // between the start and the end of the promise, the user may have closed
       // the tab, in which case port will be undefined
       assert(port, 'Port has been disconnected');

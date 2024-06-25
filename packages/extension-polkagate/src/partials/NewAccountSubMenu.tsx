@@ -1,15 +1,15 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
+import { Collapse, Divider, Grid, useTheme } from '@mui/material';
+import React, { useCallback, useContext } from 'react';
 
-import { Divider, Grid, keyframes, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-
-import { AccountContext, ActionContext, MenuItem } from '../components';
+import { AccountContext, ActionContext, MenuItem, VaadinIcon } from '../components';
 import { useTranslation } from '../hooks';
+import { windowOpen } from '../messaging';
 
 interface Props {
   show: boolean;
@@ -21,67 +21,41 @@ function NewAccountSubMenu({ show }: Props): React.ReactElement<Props> {
   const onAction = useContext(ActionContext);
   const { master } = useContext(AccountContext);
 
-  const [notFirstTime, setFirstTime] = useState<boolean>(false);
+  const goToDeriveAcc = useCallback(() => {
+    master && onAction(`/derive/${master.address}`);
+  }, [master, onAction]);
 
-  useEffect(() => {
-    show ? setFirstTime(true) : setTimeout(() => setFirstTime(false), 150);
-  }, [show]);
-
-  const _goToDeriveAcc = useCallback(
-    () => {
-      master && onAction(`/derive/${master.address}`);
-    }, [master, onAction]
-  );
-
-  const _goToCreateAcc = useCallback(
-    () => {
-      onAction('/account/create');
-    }, [onAction]
-  );
-
-  const slideIn = keyframes`
-  0% {
-    display: none;
-    height: 0;
-  }
-  100%{
-    display: block;
-    height:  100px;
-  }
-`;
-
-  const slideOut = keyframes`
-  0% {
-    display: block;
-    height: 100px;
-  }
-  100%{
-    display: none;
-    height: 0;
-  }
-`;
+  const goToCreateAcc = useCallback(() => {
+    windowOpen('/account/create').catch(console.error);
+  }, []);
 
   return (
-    <Grid container display={notFirstTime ? 'inherit' : 'none'} item overflow='hidden' sx={{ animationDuration: show ? '0.3s' : '0.15s', animationFillMode: 'both', animationName: `${show ? slideIn : slideOut}` }}>
-      <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
-      <Grid container direction='column' display='block' item sx={{ p: '18px 0 15px 10px' }}>
-        <MenuItem
-          iconComponent={
-            <vaadin-icon icon='vaadin:plus-circle-o' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-          }
-          onClick={_goToCreateAcc}
-          py='4px'
-          text={t('Create new account')}
-        />
-        <MenuItem
-          iconComponent={
-            <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-          }
-          onClick={_goToDeriveAcc}
-          text={t('Derive from accounts')}
-        />
+    <Collapse easing={{ enter: '200ms', exit: '100ms' }} in={show} sx={{ width: '100%' }}>
+      <Grid container item>
+        <Divider sx={{ bgcolor: 'secondary.light', height: '1px', width: '100%' }} />
+        <Grid container direction='column' display='block' item sx={{ p: '10px', pr: 0 }}>
+          <MenuItem
+            fontSize='17px'
+            iconComponent={
+              <VaadinIcon icon='vaadin:plus-circle-o' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            }
+            onClick={goToCreateAcc}
+            py='4px'
+            text={t('Create new account')}
+            withHoverEffect
+          />
+          <MenuItem
+            fontSize='17px'
+            iconComponent={
+              <VaadinIcon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            }
+            onClick={goToDeriveAcc}
+            text={t('Derive from accounts')}
+            withHoverEffect
+          />
+        </Grid>
       </Grid>
-    </Grid>
+    </Collapse>
   );
 }
 

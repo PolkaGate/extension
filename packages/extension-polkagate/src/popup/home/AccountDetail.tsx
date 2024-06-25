@@ -1,9 +1,8 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import '@vaadin/icons';
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
@@ -11,13 +10,12 @@ import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Box, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { stars5Black, stars5White } from '../../assets/icons';
-import { CopyAddressButton, FormatBalance2, FormatPrice, Infotip } from '../../components';
-import { useChainName, useTranslation } from '../../hooks';
-import useBalances from '../../hooks/useBalances';
-import usePrice from '../../hooks/usePrice';
+import { FormatBalance2, FormatPrice, Infotip, OptionalCopyButton, VaadinIcon } from '../../components';
+import { useBalances, useChainName, useTokenPrice, useTranslation } from '../../hooks/';
 import RecentChains from '../../partials/RecentChains';
 import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
 import { BalancesInfo } from '../../util/types';
@@ -25,7 +23,7 @@ import { getValue } from '../account/util';
 
 interface Props {
   address: string;
-  chain: Chain | null;
+  chain: Chain | null | undefined;
   formatted: string | undefined | null;
   hideNumbers: boolean | undefined;
   identity: DeriveAccountRegistration | null | undefined;
@@ -46,22 +44,22 @@ const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
   const theme = useTheme();
 
   return (
-    <Infotip text={isHidden && t('This account is hidden from websites')}    >
+    <Infotip text={isHidden && t('This account is hidden from websites')}>
       <IconButton onClick={toggleVisibility} sx={{ height: '15px', ml: '7px', mt: '13px', p: 0, width: '24px' }}>
-        <vaadin-icon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
+        <VaadinIcon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
       </IconButton>
     </Infotip>
-  )
+  );
 };
 
-export default function AccountDetail({ address, chain, formatted, hideNumbers, identity, isHidden, goToAccount, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail({ address, chain, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const balances = useBalances(address);
   const chainName = useChainName(address);
-  const price = usePrice(address);
+  const { price, priceChainName, priceDate } = useTokenPrice(address);
   const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
-  const isPriceOutdated = useMemo(() => price !== undefined && Date.now() - price.date > BALANCES_VALIDITY_PERIOD, [price]);
+  const isPriceOutdated = useMemo(() => priceDate !== undefined && Date.now() - priceDate > BALANCES_VALIDITY_PERIOD, [priceDate]);
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
 
   useEffect(() => {
@@ -73,10 +71,17 @@ export default function AccountDetail({ address, chain, formatted, hideNumbers, 
   }, [balances, chainName]);
 
   const NoChainAlert = () => (
-    <Grid color='text.primary' onClick={menuOnClick} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 500, lineHeight: '27px' }}>
-      {t('Select a chain to view balance')}
-      <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 10, mb: '-1px', stroke: '#BA2882' }} />
-    </Grid>
+    <>
+      {chain === null
+        ? <Grid alignItems='center' color='text.primary' container onClick={menuOnClick} sx={{ cursor: 'pointer', lineHeight: '27px', textDecoration: 'underline' }}>
+          <Typography sx={{ fontSize: '14px', fontWeight: 500 }}>
+            {t('Select a chain to view balance')}
+          </Typography>
+          <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 12, mb: '-1px', stroke: '#BA2882' }} />
+        </Grid>
+        : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={'95%'} />
+      }
+    </>
   );
 
   const Balance = () => (
@@ -90,20 +95,20 @@ export default function AccountDetail({ address, chain, formatted, hideNumbers, 
             value={getValue('total', balanceToShow)}
           />
         </Grid>
-        : <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
+        : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
       }
     </>
   );
 
   const Price = () => (
     <>
-      {price === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== price?.chainName
-        ? <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
+      {priceChainName === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== priceChainName
+        ? <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
         : <Grid item sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 300 }}>
           <FormatPrice
             amount={getValue('total', balanceToShow)}
             decimals={balanceToShow.decimal}
-            price={price.amount}
+            price={price}
           />
         </Grid>
       }
@@ -146,12 +151,8 @@ export default function AccountDetail({ address, chain, formatted, hideNumbers, 
             toggleVisibility={toggleVisibility}
           />
         </Grid>
-        <Grid item sx={{ m: '10px 0' }}>
-          <CopyAddressButton
-            address={formatted || address}
-            showAddress
-            size={25}
-          />
+        <Grid item sx={{ m: '10px 0', width: 'fit-content' }}>
+          <OptionalCopyButton address={address} />
         </Grid>
       </Grid>
       <Grid alignItems='center' container item>

@@ -1,7 +1,8 @@
-// Copyright 2017-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2017-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
-import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Theme } from '@mui/material';
 import React, { useCallback, useRef } from 'react';

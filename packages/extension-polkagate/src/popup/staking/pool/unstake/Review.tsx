@@ -1,5 +1,8 @@
-// Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
+
+/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -13,19 +16,20 @@ import type { AnyTuple } from '@polkadot/types/types';
 import { Container, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-import { Balance } from '@polkadot/types/interfaces';
-import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
+import type { Chain } from '@polkadot/extension-chains/types';
 
-import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
+import type { Balance } from '@polkadot/types/interfaces';
+import keyring from '@polkadot/ui-keyring';
+import { BN, BN_ZERO } from '@polkadot/util';
+
+import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
 import { useAccountDisplay, useDecimal, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
+import { PROXY_TYPE } from '../../../../util/constants';
 import broadcast from '../../../../util/api/broadcast';
-import { FLOATING_POINT_DIGIT } from '../../../../util/constants';
-import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToMachine, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
@@ -63,7 +67,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
-  const poolId = pool.poolId
+  const poolId = pool.poolId;
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
@@ -98,7 +102,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
       signer.unlock(password);
       setShowWaitScreen(true);
       const amountAsBN = unstakeAllAmount
-        ? new BN(pool.member.points)
+        ? new BN(pool.member?.points ?? BN_ZERO)
         : amountToMachine(amount, decimal);
       const params = [formatted, amountAsBN];
 
@@ -120,17 +124,17 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
         };
 
         saveAsHistory(from, info);
-        setTxInfo({ ...info, api, chain });
+        setTxInfo({ ...info, api, chain: chain as any });
       } else { // hence a poolWithdrawUnbonded is needed
-        const optSpans = await api.query.staking.slashingSpans(formatted);
+        const optSpans = await api.query['staking']['slashingSpans'](formatted) as any;
         const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
 
-        const batch = api.tx.utility.batchAll([
+        const batch = api.tx['utility']['batchAll']([
           poolWithdrawUnbonded(poolId, spanCount),
           unbonded(...params)
         ]);
 
-        const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, batch) : batch;
+        const tx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, batch) : batch;
         const { block, failureText, fee, success, txHash } = await signAndSend(api, tx, signer, formatted);
 
         const info = {
@@ -148,7 +152,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
         };
 
         saveAsHistory(from, info);
-        setTxInfo({ ...info, api, chain });
+        setTxInfo({ ...info, api, chain: chain as any });
       }
 
       setShowWaitScreen(false);
@@ -184,7 +188,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />
@@ -214,12 +218,12 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
+          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={unstake}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+          proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

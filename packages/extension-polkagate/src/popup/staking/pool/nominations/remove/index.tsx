@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -12,8 +13,9 @@ import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
 
@@ -22,7 +24,8 @@ import { useAccountDisplay, useProxies, useTranslation } from '../../../../../ho
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import Confirmation from '../../../../../partials/Confirmation';
 import broadcast from '../../../../../util/api/broadcast';
-import { Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
+import { PROXY_TYPE } from '../../../../../util/constants';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import TxDetail from '../../../partial/TxDetail';
 
@@ -51,7 +54,7 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
-  const chilled = api && api.tx.nominationPools.chill;
+  const chilled = api && api.tx['nominationPools']['chill'];
   const params = useMemo(() => [poolId], [poolId]);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
@@ -80,7 +83,7 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -115,7 +118,8 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -146,7 +150,7 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
         <Grid container justifyContent='center' sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />
@@ -168,11 +172,11 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
+          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+          proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

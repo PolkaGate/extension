@@ -1,7 +1,10 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+// @ts-nocheck
 
 import type { Balance } from '@polkadot/types/interfaces';
 
@@ -10,8 +13,9 @@ import { Divider, Grid, IconButton, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { LinkOption } from '@polkadot/apps-config/endpoints/types';
-import { Chain } from '@polkadot/extension-chains/types';
+import { LinkOption } from '@polkagate/apps-config/endpoints/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { SlidePopUp } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -50,7 +54,7 @@ export default function ParachainInfo({ api, chain, crowdloan, crowdloansId, cur
       <Grid container item m='15px auto 0' width='92%'>
         <ShowCrowdloan
           api={api}
-          chain={chain}
+          chain={chain as any}
           crowdloan={crowdloan}
           crowdloansId={crowdloansId}
           currentBlockNumber={currentBlockNumber}

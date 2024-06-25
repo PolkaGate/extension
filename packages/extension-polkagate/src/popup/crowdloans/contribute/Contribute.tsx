@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,18 +10,19 @@ import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { LinkOption } from '@polkadot/apps-config/endpoints/types';
-import { Chain } from '@polkadot/extension-chains/types';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, From, PButton, Popup, ShowBalance } from '../../../components';
 import { useBalances, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../partials';
-import { FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../util/constants';
-import { Crowdloan } from '../../../util/types';
+import Asset from '../../../partials/Asset';
+import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
+import type { Crowdloan } from '../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
-import Asset from '../../send/partial/Asset';
 import ParachainInfo from '../partials/ParachainInfo';
 import ShowParachain from '../partials/ShowParachain';
 import Review from './Review';
@@ -44,7 +46,7 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
   const decimal = useDecimal(formatted);
   const token = useToken(formatted);
 
-  const tx = api && api.tx.crowdloan.contribute;
+  const tx = api && api.tx['crowdloan']['contribute'];
 
   const [showCrowdloanInfo, setShowCrowdloanInfo] = useState<boolean>(false);
   const [showReview, setShowReview] = useState<boolean>(false);
@@ -59,7 +61,7 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -90,7 +92,7 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
       return;
     }
 
-    const ED = api.consts.balances.existentialDeposit as unknown as BN;
+    const ED = api.consts['balances']['existentialDeposit'] as unknown as BN;
     const max = new BN(balances.availableBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
     const maxToHuman = amountToHuman(max.toString(), decimal);
 
@@ -137,7 +139,7 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
         />
         <ShowParachain
           api={api}
-          chain={chain}
+          chain={chain as any}
           crowdloan={crowdloan}
           crowdloansId={crowdloansId}
           setShowCrowdloanInfo={setShowCrowdloanInfo}
@@ -177,7 +179,7 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
         {showCrowdloanInfo && chain &&
           <ParachainInfo
             api={api}
-            chain={chain}
+            chain={chain as any}
             crowdloan={crowdloan}
             crowdloansId={crowdloansId}
             currentBlockNumber={currentBlockNumber}

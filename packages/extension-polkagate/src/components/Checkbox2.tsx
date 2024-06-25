@@ -1,7 +1,8 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
-import { Checkbox, FormControlLabel, SxProps, Theme } from '@mui/material';
+import { Checkbox, FormControlLabel, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
 
 import { checkBox, checkedBox } from '../assets/icons';
@@ -22,15 +23,21 @@ export default function Checkbox2({ checked = false, disabled, iconStyle, label,
       control={
         <Checkbox
           checked={checked}
-          checkedIcon={<img src={checkedBox} style={{ ...iconStyle }} />}
+          checkedIcon={<img
+            src={checkedBox as string}
+            style={{ ...iconStyle }}
+          />}
           disabled={disabled}
-          icon={<img src={checkBox} style={{ ...iconStyle }} />}
+          icon={<img
+            src={checkBox as string}
+            style={{ ...iconStyle }}
+          />}
           onChange={onChange}
           sx={{ p: 0, pr: label && '5px' }}
         />
       }
       label={
-        <span style={{ ...labelStyle }}>
+        <span style={{ ...labelStyle, userSelect: 'none' }}>
           {label}
         </span>
       }

@@ -1,13 +1,13 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-import '@vaadin/icons';
+// @ts-nocheck
 
 import { Grid, IconButton, Tooltip, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 import { useTranslation } from '../hooks';
+import { VaadinIcon } from '../components';
 
 interface Props {
   address: string | null | undefined;
@@ -15,7 +15,7 @@ interface Props {
   size?: number;
 }
 
-function CopyAddressButton ({ address, showAddress = false, size = 20 }: Props): React.ReactElement<Props> {
+function CopyAddressButton({ address, showAddress = false, size = 20 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -74,7 +74,7 @@ function CopyAddressButton ({ address, showAddress = false, size = 20 }: Props):
           }}
         >
           <CopyToClipboard text={String(address)}>
-            <vaadin-icon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}`, width: `${size}px` }} />
+            <VaadinIcon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}`, width: `${size}px` }} />
           </CopyToClipboard>
         </IconButton>
       </Tooltip>

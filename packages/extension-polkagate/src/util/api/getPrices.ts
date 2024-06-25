@@ -1,27 +1,38 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import request from 'umi-request';
 
-import { Prices } from '../types';
+import { PricesType } from '../types';
 
-export default async function getPrices(chainNames: string[], currency = 'usd'): Promise<Prices> {
-  const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${chainNames}&vs_currencies=${currency}`, {});
+/** some chains have a different priceId than its sanitizedChainName,
+ * hence we will replace their price Id using  EXTRA_PRICE_IDS */
+export const EXTRA_PRICE_IDS: Record<string, string> = {
+  nodle: 'nodle-network',
+  parallel: 'parallel-finance',
+  pendulum: 'pendulum-chain'
+};
 
-  if (chainNames.includes('pendulum')) {
-    const pendulumPrice = await getReq(`https://min-api.cryptocompare.com/data/price?fsym=PEN&tsyms=USD`, {});
+export default async function getPrices(priceIds: string[], currencyCode = 'usd') {
+  console.log(' getting prices for:', priceIds.sort());
 
-    if (pendulumPrice?.USD) {
-      prices.pendulum = { usd: pendulumPrice.USD };
-    }
+  const revisedPriceIds = priceIds.map((item) => (EXTRA_PRICE_IDS[item] || item));
+
+  const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${revisedPriceIds}&vs_currencies=${currencyCode}&include_24hr_change=true`, {});
+
+  const outputObjectPrices: PricesType = {};
+
+  for (const [key, value] of Object.entries(prices)) {
+    outputObjectPrices[key] = { change: value[`${currencyCode}_24h_change`] as number, value: value[currencyCode] as number };
   }
 
-  prices.westend = { usd: 0 };
+  const price = { currencyCode, date: Date.now(), prices: outputObjectPrices };
 
-  return { date: Date.now(), prices };
+  return price;
 }
 
-function getReq(api: string, data: Record<string, any> = {}, option?: Record<string, any>): Promise<Record<string, any>> {
+function getReq(api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<Record<string, unknown>> {
   return request.get(api, {
     data,
     ...option

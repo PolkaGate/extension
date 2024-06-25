@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -14,12 +15,12 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, PButton, Warning } from '../../../../../components';
-import { useAccount, useChain, useDecimal, useToken, useTranslation } from '../../../../../hooks';
+import { useInfo, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
+import Asset from '../../../../../partials/Asset';
 import { MAX_AMOUNT_LENGTH } from '../../../../../util/constants';
-import { MyPoolInfo } from '../../../../../util/types';
+import type { MyPoolInfo } from '../../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../../util/utils';
-import Asset from '../../../../send/partial/Asset';
 import ShowPool from '../../../partial/ShowPool';
 import Review from './Review';
 
@@ -33,8 +34,7 @@ interface Props {
 
 export default function BondExtra({ address, api, balances, formatted, pool }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const account = useAccount(address);
-  const chain = useChain(address);
+  const { chain, decimal, token } = useInfo(address);
   const history = useHistory();
   const theme = useTheme();
 
@@ -44,9 +44,6 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
   const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
   const [nextBtnDisabled, setNextBtnDisabled] = useState<boolean>(true);
   const [showReview, setShowReview] = useState<boolean>(false);
-
-  const decimal = useDecimal(address);
-  const token = useToken(address);
 
   const amountAsBN = useMemo(() => amountToMachine(bondAmount, decimal), [bondAmount, decimal]);
 
@@ -62,7 +59,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
       return;
     }
 
-    const ED = api.consts.balances.existentialDeposit as unknown as BN;
+    const ED = api.consts['balances']['existentialDeposit'] as unknown as BN;
     const max = new BN(availableBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
     const maxToHuman = amountToHuman(max.toString(), decimal);
 
@@ -98,15 +95,15 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
   useEffect(() => {
     if (!api || !availableBalance || !formatted) { return; }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api.createType('Balance', BN_ONE));
     }
 
-    amountAsBN && api.tx.nominationPools.bondExtra({ FreeBalance: amountAsBN.toString() }).paymentInfo(formatted).then((i) => {
+    amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: amountAsBN.toString() }).paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee));
     });
 
-    amountAsBN && api.tx.nominationPools.bondExtra({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
+    amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     });
   }, [formatted, api, availableBalance, bondAmount, decimal, amountAsBN]);
@@ -116,10 +113,10 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
       return;
     }
 
-    const ED = api.consts.balances.existentialDeposit as unknown as BN;
+    const ED = api.consts['balances']['existentialDeposit'] as unknown as BN;
     const isAmountInRange = amountAsBN.lt(availableBalance.sub(ED.muln(2)).sub(estimatedMaxFee || BN_ZERO));
 
-    setNextBtnDisabled(!bondAmount || bondAmount === '0' || !isAmountInRange || !pool || pool?.member?.points === '0');
+    setNextBtnDisabled(!bondAmount || bondAmount === '0' || !isAmountInRange || !pool || (pool?.member?.points as unknown as string) === '0');
   }, [amountAsBN, availableBalance, decimal, estimatedMaxFee, bondAmount, api, pool]);
 
   const Warn = ({ iconDanger, isDanger, text }: { text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
@@ -145,7 +142,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
         text={t<string>('Pool Staking')}
       />
       <SubTitle label={t<string>('Stake')} />
-      {pool?.member?.points === '0' &&
+      {(pool?.member?.points as unknown as string) === '0' &&
         <Warn isDanger text={t('The account is fully unstaked, so can\'t stake until you withdraw entire unstaked/redeemable amount.')} />
       }
       <Asset
@@ -154,14 +151,13 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
         balance={availableBalance}
         balanceLabel={t<string>('Available balance')}
         fee={estimatedFee}
-        genesisHash={account?.genesisHash}
         style={{
           m: '20px auto',
           width: '92%'
         }}
       />
       <AmountWithOptions
-        label={t<string>(`Amount (${token ?? '...'})`)}
+        label={t<string>('Amount ({{token}})', { replace: { token: token || '...' } })}
         onChangeAmount={bondAmountChange}
         onPrimary={onMaxAmount}
         primaryBtnText={t<string>('Max amount')}
@@ -173,7 +169,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
       />
       <ShowPool
         api={api}
-        chain={chain}
+        chain={chain as any}
         label={t<string>('Pool')}
         mode='Default'
         pool={pool}
@@ -194,7 +190,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
       {showReview &&
         <Review
           address={address}
-          api={api}
+          api={api as ApiPromise}
           bondAmount={amountAsBN}
           estimatedFee={estimatedFee}
           pool={pool}

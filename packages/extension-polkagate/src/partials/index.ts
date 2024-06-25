@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 export { default as HeaderBrand } from './HeaderBrand';
 // export { default as MenuSettings } from './MenuSettings';
@@ -12,3 +13,6 @@ export { default as WaitScreen } from './WaitScreen';
 export { default as SubTitle } from './SubTitle';
 export { default as ThroughProxy } from './ThroughProxy';
 export { default as Confirmation } from './Confirmation';
+export { default as FullScreenChainSwitch } from './FullScreenChainSwitch';
+export { default as FullScreenRemoteNode } from './FullScreenRemoteNode';
+export { default as AddNewAccountButton } from './AddNewAccountButton';

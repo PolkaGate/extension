@@ -1,18 +1,19 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountId } from '@polkadot/types/interfaces';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
-import { SavedValidatorsIdentities, ValidatorsIdentities } from '../util/types';
-import { useChainName, useCurrentEraIndex, useEndpoint2 } from '.';
+import type { SavedValidatorsIdentities, ValidatorsIdentities } from '../util/types';
+import { useCurrentEraIndex, useInfo, usePeopleChain } from '.';
 
-export default function useValidatorsIdentities(address: string, allValidatorsIds: AccountId[] | null | undefined, identities?: DeriveAccountInfo[]): DeriveAccountInfo[] | null | undefined {
-  const endpoint = useEndpoint2(address);
-  const chainName = useChainName(address);
+export default function useValidatorsIdentities(address: string, allValidatorsIds: AccountId[] | null | undefined, identities?: DeriveAccountInfo[] | null): DeriveAccountInfo[] | null | undefined {
+  const { chainName } = useInfo(address);
+  const { endpoint } = usePeopleChain(address);
+
   const currentEraIndex = useCurrentEraIndex(address);
 
   const [validatorsIdentities, setValidatorsIdentities] = useState<DeriveAccountInfo[] | null | undefined>();
@@ -40,16 +41,16 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
       if (info && identities?.length && info.eraIndex !== savedEraIndex) {
         console.log(`setting new identities #old was: ${validatorsIdentities?.length || '0'}`);
 
-        setNewValidatorsIdentities(info.accountsInfo);
+        setNewValidatorsIdentities(identities);
 
-        chrome.storage.local.get('validatorsIdentities', (res) => {
-          const k = `${chainName}`;
-          const last = res?.validatorsIdentities ?? {};
+        browser.storage.local.get('validatorsIdentities')
+          .then((res) => {
+            const k = `${chainName}`;
+            const last = res?.['validatorsIdentities'] ?? {};
 
-          last[k] = info;
-          // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ validatorsIdentities: last });
-        });
+            last[k] = info;
+            browser.storage.local.set({ validatorsIdentities: last });
+          });
       }
 
       getValidatorsIdWorker.terminate();
@@ -72,15 +73,13 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
       return;
     }
 
-    // eslint-disable-next-line no-void
-    void chrome.storage.local.get('validatorsIdentities', (res: { [key: string]: SavedValidatorsIdentities }) => {
-      console.log('Validators Identities in local storage:', res);
-
-      if (res?.validatorsIdentities?.[chainName]) {
-        setValidatorsIdentities(res.validatorsIdentities[chainName]?.accountsInfo);
-        setSavedEraIndex(res.validatorsIdentities[chainName]?.eraIndex);
-      }
-    });
+    browser.storage.local.get('validatorsIdentities')
+      .then((res: { [key: string]: SavedValidatorsIdentities }) => {
+        if (res?.['validatorsIdentities']?.[chainName]) {
+          setValidatorsIdentities(res['validatorsIdentities'][chainName]?.accountsInfo);
+          setSavedEraIndex(res['validatorsIdentities'][chainName]?.eraIndex);
+        }
+      });
   }, [chainName]);
 
   return newValidatorsIdentities || validatorsIdentities;

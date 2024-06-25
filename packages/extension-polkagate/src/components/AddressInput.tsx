@@ -1,22 +1,22 @@
-// Copyright 2019-2023 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-no-bind */
 
-import '@vaadin/icons';
-
-import { faPaste } from '@fortawesome/free-solid-svg-icons/faPaste';
-import { faXmarkCircle } from '@fortawesome/free-solid-svg-icons/faXmarkCircle';
+import { faPaste, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Autocomplete, Grid, IconButton, InputAdornment, SxProps, TextField, Theme, Typography, useTheme } from '@mui/material';
+import { Autocomplete, Grid, IconButton, InputAdornment, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import settings from '@polkadot/ui-settings';
 
 import { useTranslation } from '../hooks';
-import QrScanner from '../popup/import/addAddressOnly/QrScanner';
+import { VaadinIcon } from '../components';
+import QrScanner from '../popup/import/addWatchOnly/QrScanner';
 import isValidAddress from '../util/validateAddress';
 import Identicon from './Identicon';
 import Label from './Label';
@@ -29,7 +29,7 @@ interface Props {
   style?: SxProps<Theme>;
   chain?: Chain;
   address: string | undefined;
-  setAddress: React.Dispatch<React.SetStateAction<string | null | undefined>>;
+  setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>>;
   showIdenticon?: boolean;
   helperText?: string;
   placeHolder?: string;
@@ -56,7 +56,7 @@ export default function AddressInput({ addWithQr = false, allAddresses = [], cha
 
   useEffect(() => {
     if (containerRef) {
-      setDropdownWidth(`${containerRef.current?.offsetWidth + (showIdenticon ? 5 : 0)}px`);
+      setDropdownWidth(`${(containerRef.current?.offsetWidth || 0) + (showIdenticon ? 5 : 0)}px`);
     }
   }, [containerRef?.current?.offsetWidth, showIdenticon]);
 
@@ -64,7 +64,7 @@ export default function AddressInput({ addWithQr = false, allAddresses = [], cha
     setTogglePopper(false);
 
     if (!value) {
-      setAddress(null);
+      setAddress && setAddress(null);
       setEnteredAddress(undefined);
       setInValidAddress(false);
 
@@ -73,10 +73,11 @@ export default function AddressInput({ addWithQr = false, allAddresses = [], cha
 
     setInValidAddress(!(isValidAddress(value)));
     setEnteredAddress(value);
-    isValidAddress(value) ? setAddress(value) : setAddress(undefined);
+    isValidAddress(value) ? setAddress && setAddress(value) : setAddress && setAddress(undefined);
   }, [setAddress]);
 
-  const _selectAddress = useCallback((newAddr: string) => handleAddress({ target: { value: newAddr } }), [handleAddress]);
+  // @ts-ignore
+  const _selectAddress = useCallback((newAddr?: string) => handleAddress({ target: { value: newAddr } }), [handleAddress]);
 
   const openQrScanner = useCallback(() => setOpenCamera(true), []);
 
@@ -98,12 +99,12 @@ export default function AddressInput({ addWithQr = false, allAddresses = [], cha
     setTogglePopper(false);
 
     if (enteredAddress || address) {
-      setAddress(null);
+      setAddress && setAddress(null);
       setEnteredAddress(undefined);
       setInValidAddress(false);
     } else {
       navigator.clipboard.readText().then((clipText) => {
-        isValidAddress(clipText) ? setAddress(clipText) : setAddress(undefined);
+        isValidAddress(clipText) ? setAddress && setAddress(clipText) : setAddress && setAddress(undefined);
         setEnteredAddress(clipText);
         setInValidAddress(!(isValidAddress(clipText)));
       }).catch(console.error);
@@ -113,7 +114,7 @@ export default function AddressInput({ addWithQr = false, allAddresses = [], cha
   return (
     <>
       <Grid alignItems='flex-end' container justifyContent='space-between' ref={containerRef} sx={{ position: 'relative', ...style }}>
-        <Grid item xs={showIdenticon ? 10.5 : 12}>
+        <Grid item xs>
           <Label
             helperText={helperText}
             label={label}
@@ -158,7 +159,7 @@ export default function AddressInput({ addWithQr = false, allAddresses = [], cha
                             onClick={openQrScanner}
                             sx={{ p: '3px' }}
                           >
-                            <vaadin-icon icon='vaadin:qrcode' style={{ height: '16px', width: '16px', color: `${settings.camera === 'on' ? theme.palette.primary.main : theme.palette.text.disabled}` }} />
+                            <VaadinIcon icon='vaadin:qrcode' style={{ height: '16px', width: '16px', color: `${settings.camera === 'on' ? theme.palette.primary.main : theme.palette.text.disabled}` }} />
                           </IconButton>
                         }
                       </InputAdornment>
@@ -169,7 +170,7 @@ export default function AddressInput({ addWithQr = false, allAddresses = [], cha
                   sx={{ '> div.MuiOutlinedInput-root': { '> fieldset': { border: 'none' }, '> input.MuiAutocomplete-input': { border: 'none', lineHeight: '31px', p: 0 }, border: 'none', height: '31px', p: 0, px: '5px' }, bgcolor: 'background.paper', border: `${focus || inValidAddress ? '2px' : '1px'} solid`, borderColor: `${inValidAddress ? 'warning.main' : focus ? 'action.focus' : 'secondary.light'}`, borderRadius: '5px', height: '32px', lineHeight: '31px' }}
                 />
               )}
-              renderOption={(props, value) => {
+              renderOption={(_props, value) => {
                 return (
                   <Grid alignItems='center' container item justifyContent='space-between' key={value.address} onClick={() => onSelectOption(value.address)} sx={{ '&:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light', mb: '5px' }, cursor: 'pointer', p: '5px' }}>
                     <Grid container item xs={10.5}>
@@ -182,7 +183,7 @@ export default function AddressInput({ addWithQr = false, allAddresses = [], cha
                         <ShortAddress address={value.address} clipped />
                       </Grid>
                     </Grid>
-                    <Grid item justifyContent='center' xs={1.2}>
+                    <Grid container item justifyContent='center' width='fit-content'>
                       <Identicon
                         iconTheme={chain?.icon || 'polkadot'}
                         prefix={chain?.ss58Format ?? 42}
@@ -197,7 +198,7 @@ export default function AddressInput({ addWithQr = false, allAddresses = [], cha
           </Label>
         </Grid>
         {showIdenticon &&
-          <Grid item xs={1.2}>
+          <Grid item sx={{ width: 'fit-content', ml: '10px' }}>
             {isValidAddress(address)
               ? <Identicon
                 iconTheme={chain?.icon || 'polkadot'}

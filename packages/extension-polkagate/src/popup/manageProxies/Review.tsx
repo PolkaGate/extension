@@ -1,5 +1,6 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,17 +11,19 @@ import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { ActionContext, PasswordUseProxyConfirm, ProxyTable, ShowBalance, WrongPasswordAlert } from '../../components';
-import { useAccount, useAccountDisplay } from '../../hooks';
+import { ActionContext, CanPayErrorAlert, PasswordUseProxyConfirm, ProxyTable, ShowBalance, WrongPasswordAlert } from '../../components';
+import { useAccount, useAccountDisplay, useCanPayFeeAndDeposit } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { SubTitle, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
 import { signAndSend } from '../../util/api';
-import { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import { PROXY_TYPE } from '../../util/constants';
+import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getFormattedAddress, getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import ManageProxiesTxDetail from './partials/ManageProxiesTxDetail';
 
@@ -30,9 +33,10 @@ interface Props {
   chain: Chain;
   depositValue: BN;
   proxies: ProxyItem[];
+  depositToPay: BN | undefined;
 }
 
-export default function Review({ address, api, chain, depositValue, proxies }: Props): React.ReactElement {
+export default function Review({ address, api, chain, depositToPay, depositValue, proxies }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const account = useAccount(address);
@@ -51,9 +55,12 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   const formatted = getFormattedAddress(address, undefined, chain.ss58Format);
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
-  const removeProxy = api.tx.proxy.removeProxy; /** (delegate, proxyType, delay) **/
-  const addProxy = api.tx.proxy.addProxy; /** (delegate, proxyType, delay) **/
-  const batchAll = api.tx.utility.batchAll;
+
+  const canPayFeeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
+
+  const removeProxy = api.tx['proxy']['removeProxy']; /** (delegate, proxyType, delay) **/
+  const addProxy = api.tx['proxy']['addProxy']; /** (delegate, proxyType, delay) **/
+  const batchAll = api.tx['utility']['batchAll'];
 
   const goToMyAccounts = useCallback(() => {
     setShowConfirmation(false);
@@ -81,7 +88,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -97,7 +104,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const decidedTx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
+      const decidedTx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, tx) : tx;
 
       const { block, failureText, fee, success, txHash } = await signAndSend(api, decidedTx, signer, selectedProxy?.delegate ?? formatted);
 
@@ -115,7 +122,8 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
         txHash: txHash || ''
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -129,9 +137,9 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
     const addingLength = proxies.filter((item) => item.status === 'new').length;
     const removingLength = proxies.filter((item) => item.status === 'remove').length;
 
-    addingLength && setHelperText(t<string>(`You are adding ${addingLength} Prox${addingLength > 1 ? 'ies' : 'y'}`));
-    removingLength && setHelperText(t<string>(`You are removing ${removingLength} Prox${removingLength > 1 ? 'ies' : 'y'}`));
-    addingLength && removingLength && setHelperText(t<string>(`Adding ${addingLength} and removing ${removingLength} Proxies`));
+    addingLength && setHelperText(t<string>('You are adding {{addingLength}} Prox{{iesOrY}}', { replace: { addingLength, iesOrY: addingLength > 1 ? 'ies' : 'y' } }));
+    removingLength && setHelperText(t<string>('You are removing {{removingLength}} Prox{{iesOrY}}', { replace: { iesOrY: removingLength > 1 ? 'ies' : 'y', removingLength } }));
+    addingLength && removingLength && setHelperText(t<string>('Adding {{addingLength}} and removing {{removingLength}} Proxies', { replace: { addingLength, removingLength } }));
   }, [proxies, t]);
 
   useEffect(() => {
@@ -145,6 +153,9 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
       {isPasswordError &&
         <WrongPasswordAlert />
       }
+      {canPayFeeAndDeposit.isAbleToPay === false &&
+        <CanPayErrorAlert canPayStatements={canPayFeeAndDeposit.statement} />
+      }
       <Grid container my='20px'>
         <SubTitle label={t<string>('Review')} />
       </Grid>
@@ -152,7 +163,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
         {helperText}
       </Typography>
       <ProxyTable
-        chain={chain}
+        chain={chain as any}
         label={t<string>('Proxies')}
         maxHeight={window.innerHeight / 3}
         mode='Status'
@@ -193,15 +204,16 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
       </Grid>
       <PasswordUseProxyConfirm
         api={api}
-        estimatedFee={estimatedFee}
-        genesisHash={account?.genesisHash}
+        // estimatedFee={estimatedFee}
+        disabled={canPayFeeAndDeposit.isAbleToPay !== true}
+        genesisHash={account?.genesisHash as string}
         isPasswordError={isPasswordError}
-        label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
+        label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
         onChange={setPassword}
         onConfirmClick={onNext}
         proxiedAddress={address}
         proxies={proxies}
-        proxyTypeFilter={['Any', 'NonTransfer']}
+        proxyTypeFilter={PROXY_TYPE.GENERAL}
         selectedProxy={selectedProxy}
         setIsPasswordError={setIsPasswordError}
         setSelectedProxy={setSelectedProxy}
@@ -229,10 +241,9 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
           <ManageProxiesTxDetail
             address={selectedProxyAddress}
             api={api}
-            chain={chain}
+            chain={chain as any}
             deposit={depositValue}
-            name={selectedProxyName}
-            proxies={proxiesToChange}
+            proxies={proxiesToChange as ProxyItem[]}
           />
         </Confirmation>
       }

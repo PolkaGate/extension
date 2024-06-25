@@ -1,18 +1,19 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 
 import { Language as LanguageIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
-import { Avatar, Grid, IconButton, Link, SxProps, Theme, Typography } from '@mui/material';
-import { Crowdloan } from 'extension-polkagate/src/util/types';
+import { Avatar, Grid, IconButton, Link, type SxProps, type Theme, Typography } from '@mui/material';
+import type { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useState, useMemo } from 'react';
 
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import { LinkOption } from '@polkadot/apps-config/endpoints/types';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { DeriveAccountRegistration, DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 
 import { Identity } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -72,10 +73,10 @@ export default function ShowParachain({ api, chain, crowdloan, crowdloansId, lab
               }
             </Grid>
             : <Identity
-              accountInfo={accountInfo}
+              accountInfo={accountInfo as unknown as DeriveAccountInfo}
               address={crowdloan.fund.depositor}
               api={api}
-              chain={chain}
+              chain={chain as any}
               formatted={crowdloan.fund.depositor}
               noIdenticon
               returnIdentity={returnIdentity}

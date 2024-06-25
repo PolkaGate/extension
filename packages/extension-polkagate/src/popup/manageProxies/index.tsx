@@ -1,22 +1,33 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
+
+/* eslint-disable react/jsx-max-props-per-line */
+
+import type { ApiPromise } from '@polkadot/api';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { Proxy, ProxyItem } from '../../util/types';
 
 import { AddRounded as AddRoundedIcon } from '@mui/icons-material';
 import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, PButton, ProxyTable, ShowBalance } from '../../components';
-import { useAccount, useApi, useMetadata, useTranslation } from '../../hooks';
+import { useInfo, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
-import { Proxy, ProxyItem } from '../../util/types';
 import { getFormattedAddress } from '../../util/utils';
 import AddProxy from './AddProxy';
 import Review from './Review';
 
 export default function ManageProxies(): React.ReactElement {
+  const { t } = useTranslation();
+  const onAction = useContext(ActionContext);
+  const { address } = useParams<{ address: string }>();
+  const { account, api, chain } = useInfo(address);
+
   const [proxyItems, setProxyItems] = useState<ProxyItem[] | undefined>();
   const [showAddProxy, setShowAddProxy] = useState<boolean>(false);
   const [showReviewProxy, setShowReviewProxy] = useState<boolean>(false);
@@ -27,25 +38,40 @@ export default function ManageProxies(): React.ReactElement {
   const [disableToConfirmButton, setEnableToConfirmButton] = useState<boolean>(true);
   const [available, setAvailable] = useState<number>(0);
 
-  const onAction = useContext(ActionContext);
-  const { t } = useTranslation();
-  const { address } = useParams<{ address: string; }>();
-  const account = useAccount(address);
-  const chain = useMetadata(account?.genesisHash, true);
-  const api = useApi(account?.address);
+  const proxyDepositBase = api ? api.consts['proxy']['proxyDepositBase'] as unknown as BN : BN_ZERO;
+  const proxyDepositFactor = api ? api.consts['proxy']['proxyDepositFactor'] as unknown as BN : BN_ZERO;
 
-  const proxyDepositBase = api?.consts?.proxy?.proxyDepositBase || BN_ZERO;
-  const proxyDepositFactor = api?.consts.proxy?.proxyDepositFactor || BN_ZERO;
+  const depositToPay = useMemo(() => {
+    if (!proxyItems || proxyItems.length === 0) {
+      return BN_ZERO;
+    }
 
-  const _onBackClick = useCallback(() => {
+    const alreadyHasProxy = proxyItems.filter((proxyItem) => proxyItem.status === 'current');
+    const newProxiesLength = proxyItems.filter((proxyItem) => proxyItem.status === 'new').length;
+    const removeProxiesLength = proxyItems.filter((proxyItem) => proxyItem.status === 'remove').length;
+
+    if (alreadyHasProxy.length === 0 && removeProxiesLength === 0) {
+      return depositValue;
+    }
+
+    const alreadyHasProxyDeposit = (proxyDepositFactor.muln((alreadyHasProxy.length + removeProxiesLength))).add(proxyDepositBase);
+
+    if (newProxiesLength > removeProxiesLength) {
+      return alreadyHasProxyDeposit.add(proxyDepositFactor.muln(newProxiesLength - removeProxiesLength));
+    } else {
+      return BN_ZERO;
+    }
+  }, [depositValue, proxyDepositBase, proxyDepositFactor, proxyItems]);
+
+  const onBackClick = useCallback(() => {
     showReviewProxy ? setShowReviewProxy(!showReviewProxy) : onAction('/');
   }, [onAction, showReviewProxy]);
 
-  const _openAddProxy = useCallback(() => {
+  const openAddProxy = useCallback(() => {
     !disableAddProxyButton && setShowAddProxy(!showAddProxy);
   }, [disableAddProxyButton, showAddProxy]);
 
-  const _toConfirm = useCallback(() => {
+  const toConfirm = useCallback(() => {
     setShowReviewProxy(!showReviewProxy);
   }, [showReviewProxy]);
 
@@ -57,34 +83,46 @@ export default function ManageProxies(): React.ReactElement {
       anyChanges && setEnableToConfirmButton(true);
     }
 
-    setAvailable(proxyItems?.filter((item) => item.status !== 'remove')?.length);
+    setAvailable(proxyItems?.filter((item) => item.status !== 'remove')?.length || 0);
   }, [disableAddProxyButton, proxyItems]);
 
   const onSelect = useCallback((selected: Proxy) => {
-    const toDeleteIndex = proxyItems?.indexOf(proxyItems?.find((item) => item.proxy.delegate === selected.delegate && item.proxy.proxyType === selected.proxyType));
+    if (!proxyItems) {
+      return;
+    }
 
-    if (toDeleteIndex !== undefined || toDeleteIndex !== -1) {
-      if (proxyItems[toDeleteIndex].status === 'current') {
-        proxyItems[toDeleteIndex].status = 'remove';
-        setProxyItems(proxyItems);
-        checkForChanges();
+    const found = proxyItems.find(({ proxy }) => proxy.delegate === selected.delegate && proxy.proxyType === selected.proxyType);
 
-        return;
-      }
+    if (!found) {
+      return;
+    }
 
-      if (proxyItems[toDeleteIndex].status === 'remove') {
-        proxyItems[toDeleteIndex].status = 'current';
-        setProxyItems(proxyItems);
-        checkForChanges();
+    const toDeleteIndex = proxyItems.indexOf(found);
 
-        return;
-      }
+    if (toDeleteIndex === -1) {
+      return;
+    }
 
-      if (proxyItems[toDeleteIndex].status === 'new') {
-        proxyItems.splice(toDeleteIndex, 1);
-        setProxyItems(proxyItems);
-        checkForChanges();
-      }
+    if (proxyItems[toDeleteIndex].status === 'current') {
+      proxyItems[toDeleteIndex].status = 'remove';
+      setProxyItems(proxyItems);
+      checkForChanges();
+
+      return;
+    }
+
+    if (proxyItems[toDeleteIndex].status === 'remove') {
+      proxyItems[toDeleteIndex].status = 'current';
+      setProxyItems(proxyItems);
+      checkForChanges();
+
+      return;
+    }
+
+    if (proxyItems[toDeleteIndex].status === 'new') {
+      proxyItems.splice(toDeleteIndex, 1);
+      setProxyItems(proxyItems);
+      checkForChanges();
     }
   }, [checkForChanges, proxyItems]);
 
@@ -95,31 +133,33 @@ export default function ManageProxies(): React.ReactElement {
   }, [address, api, available, chain, checkForChanges, formatted, proxyDepositBase, proxyDepositFactor, proxyItems]);
 
   useEffect(() => {
-    proxyItems !== undefined && !(account?.isExternal && proxyItems.length === 0) && setEnableAddProxyButton(false);
+    proxyItems !== undefined && setEnableAddProxyButton(false);
     checkForChanges();
   }, [account?.isExternal, checkForChanges, proxyItems]);
 
   useEffect(() => {
-    setHelperText(t<string>('Add new or select to remove proxies for this account, consider the deposit that will be reserved.'));
-    proxyItems !== undefined && disableAddProxyButton && setHelperText(t<string>('This is Address Only and cannot sign transaction and there is no proxy for this account.'));
-    !disableToConfirmButton && setHelperText(t<string>('You still can modify proxies you’re adding, add new proxies, or select existing proxies to remove them, and click on Next to confirm all transactions.'));
+    setHelperText(t('Add new proxies or select existing ones to remove for this account, and please consider the deposit that will be reserved.'));
+    proxyItems !== undefined && disableAddProxyButton && setHelperText(t('This is a watch-only account and cannot sign transactions, and there is no proxy associated with this account.'));
+    !disableToConfirmButton && setHelperText(t("You can still modify the proxies you're adding, add new proxies, or select existing proxies to remove them. Once done, click 'Next' to confirm all transactions."));
   }, [disableAddProxyButton, disableToConfirmButton, proxyItems, t]);
 
   useEffect(() => {
-    formatted && api && api.query.proxy?.proxies(formatted).then((proxies) => {
-      const fetchedProxyItems = (JSON.parse(JSON.stringify(proxies[0])))?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+    formatted && api && api.query['proxy']?.['proxies'](formatted)
+      .then((proxies) => {
+        const parsed = JSON.parse(JSON.stringify((proxies as unknown as any[])[0]));
+        const fetchedProxyItems = (parsed as Proxy[])?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
-      setProxyItems(fetchedProxyItems);
-    });
+        setProxyItems(fetchedProxyItems);
+      });
   }, [api, chain, formatted]);
 
   return (
     <>
       <HeaderBrand
-        onBackClick={showAddProxy ? _openAddProxy : _onBackClick}
+        onBackClick={showAddProxy ? openAddProxy : onBackClick}
         showBackArrow
         showClose
-        text={showAddProxy ? t<string>('Add Proxy') : t<string>('Manage Proxies')}
+        text={showAddProxy ? t('Add Proxy') : t('Manage Proxies')}
       />
       {!showAddProxy && !showReviewProxy &&
         <>
@@ -127,7 +167,7 @@ export default function ManageProxies(): React.ReactElement {
             {helperText}
           </Typography>
           <Grid container m='auto' sx={{ opacity: disableAddProxyButton ? 0.5 : 1 }} width='92%'>
-            <Grid display='inline-flex' item onClick={_openAddProxy} sx={{ cursor: disableAddProxyButton ? 'context-menu' : 'pointer' }}>
+            <Grid display='inline-flex' item onClick={openAddProxy} sx={{ cursor: disableAddProxyButton ? 'context-menu' : 'pointer' }}>
               <AddRoundedIcon
                 sx={{
                   bgcolor: 'primary.main',
@@ -137,16 +177,16 @@ export default function ManageProxies(): React.ReactElement {
                 }}
               />
               <Typography fontSize='16px' fontWeight={400} lineHeight='36px' pl='10px' sx={{ textDecoration: 'underline' }}>
-                {t<string>('Add proxy')}
+                {t('Add proxy')}
               </Typography>
             </Grid>
           </Grid>
           <ProxyTable
-            chain={chain}
-            label={t<string>('Proxies')}
+            chain={chain as any}
+            label={t('Proxies')}
             maxHeight={window.innerHeight / 2.5}
             mode='Delete'
-            notFoundText={t<string>('No proxies found.')}
+            notFoundText={t('No proxies found.')}
             onSelect={onSelect}
             proxies={proxyItems}
             style={{
@@ -160,7 +200,7 @@ export default function ManageProxies(): React.ReactElement {
               fontWeight={300}
               lineHeight='23px'
             >
-              {t<string>('Deposit:')}
+              {t('Deposit:')}
             </Typography>
             <Grid item lineHeight='22px' pl='5px'>
               <ShowBalance
@@ -172,17 +212,16 @@ export default function ManageProxies(): React.ReactElement {
             </Grid>
           </Grid>
           <PButton
-            _onClick={_toConfirm}
+            _onClick={toConfirm}
             disabled={disableToConfirmButton}
-            text={t<string>('Next')}
+            text={t('Next')}
           />
         </>
       }
-      {showAddProxy && !showReviewProxy &&
+      {showAddProxy && !showReviewProxy && chain && proxyItems !== undefined &&
         <AddProxy
           address={address}
-          api={api}
-          chain={chain}
+          chain={chain as any}
           onChange={checkForChanges}
           proxyItems={proxyItems}
           setProxyItems={setProxyItems}
@@ -190,12 +229,13 @@ export default function ManageProxies(): React.ReactElement {
           showAddProxy={showAddProxy}
         />
       }
-      {showReviewProxy &&
+      {showReviewProxy && !!proxyItems?.length &&
         <Review
-          address={formatted}
-          api={api}
-          chain={chain}
-          depositValue={depositValue}
+          address={formatted as string}
+          api={api as ApiPromise}
+          chain={chain as Chain}
+          depositToPay={depositToPay}
+          depositValue={depositValue as BN}
           proxies={proxyItems}
         />
       }

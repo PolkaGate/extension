@@ -1,19 +1,21 @@
-// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { BN } from '@polkadot/util';
+import type { Proxy, ProxyItem, ProxyTypes } from '../util/types';
 
-import { Grid, SxProps, Theme, Tooltip, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Tooltip, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useAccount, useCanPayFee, useMetadata, useTranslation } from '../hooks';
 import SelectProxy from '../partials/SelectProxy';
-import { Proxy, ProxyItem, ProxyTypes } from '../util/types';
+import { noop } from '../util/utils';
 import { Identity, Password, PButton, Warning } from '.';
 
 interface Props {
@@ -35,10 +37,6 @@ interface Props {
   selectedProxy: Proxy | undefined;
   setIsPasswordError: React.Dispatch<React.SetStateAction<boolean>>;
   onConfirmClick: () => Promise<void>
-}
-
-function noop() {
-  // This function does nothing.
 }
 
 export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmText, disabled, estimatedFee, genesisHash, isPasswordError, label = '', onChange, onConfirmClick, prevState, proxiedAddress, proxies, proxyTypeFilter, selectedProxy, setIsPasswordError, setSelectedProxy, style }: Props): React.ReactElement<Props> {
@@ -80,7 +78,7 @@ export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmT
                 fontWeight={300}
                 theme={theme}
               >
-                {t('This is an Address Only account. You must use a proxy to complete this transaction.')}
+                {t('This is a watch-only account. To complete this transaction, you must use a proxy.')}
               </Warning>
             </Grid>
             <PButton
@@ -94,12 +92,12 @@ export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmT
                 fontWeight={300}
                 theme={theme}
               >
-                {t('This account doesn\'t have enough available balance to pay the transaction fee.')}
+                {t('This account lacks the required available balance to cover the transaction fee.')}
               </Warning>
             </Grid>
             : <>
-              <Grid alignItems='center' container sx={{ ...style }}>
-                <Grid item xs={proxiesToSelect?.length ? 8 : 12}>
+              <Grid alignItems='center' container sx={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', ...style }}>
+                <Grid item>
                   <Password
                     disabled={disabled}
                     isError={isPasswordError}
@@ -145,7 +143,7 @@ export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmT
                         {selectedProxy &&
                           <Identity
                             api={api}
-                            chain={chain}
+                            chain={chain as any}
                             formatted={selectedProxy?.delegate}
                             identiconSize={30}
                             showSocial={false}
@@ -155,7 +153,7 @@ export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmT
                       </>
                     }
                   >
-                    <Grid aria-label='useProxy' item onClick={goToSelectProxy} pl='10px' pt='10px' role='button' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}              >
+                    <Grid aria-label='useProxy' item onClick={goToSelectProxy} pl='5px' pt='10px' role='button' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
                       {selectedProxy ? t('Update proxy') : t('Use proxy')}
                     </Grid>
                   </Tooltip>
