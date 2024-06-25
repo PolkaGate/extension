@@ -54,10 +54,10 @@ export default function HomePageFullScreen(): React.ReactElement {
         noChainSwitch
       />
       <Grid container item sx={{ bgcolor: 'backgroundFL.secondary', maxWidth: '1282px' }}>
-        <ProfileTabs
-          orderedAccounts={initialAccountList}
-        />
-        <Grid container item justifyContent='space-around' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 105px)', maxWidth: '1282px', overflow: 'scroll', pb: '40px' }}>
+        <Grid container item justifyContent='space-around' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', pb: '40px' }}>
+          <ProfileTabs
+            orderedAccounts={initialAccountList}
+          />
           <Grid container direction='column' item rowGap='20px' width='760px'>
             {profileAccounts &&
               <DraggableAccountsList

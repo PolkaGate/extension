@@ -1,11 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import type { AccountsOrder } from '..';
 import { Grid } from '@mui/material';
-import React, { useEffect, useState, useCallback } from 'react';
-import { useTranslation } from '../../../hooks';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import ProfileTab from './ProfileTab';
+import { useProfiles } from '../../../hooks';
 
 interface Props {
   orderedAccounts: AccountsOrder[] | undefined;
@@ -14,81 +15,89 @@ interface Props {
 export const HIDDEN_PERCENT = '50%';
 
 export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
-  const { t } = useTranslation();
+  const profiles = useProfiles();
 
-  const [profiles, setProfiles] = useState<string[]>([t('All')]);
   const [selectedProfile, setSelectedProfile] = useState<string>();
   const [isHovered, setIsHovered] = useState<boolean>();
 
-  const onMouseEnter= useCallback(()=>setIsHovered(true),[])
-  const onMouseLeave= useCallback(()=>setIsHovered(false),[])
+  const [showLeftMore, setShowLeftMore] = useState(false);
+  const [showRightMore, setShowRightMore] = useState(true);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const profilesToShow = useMemo(() => {
+    if (!profiles) {
+      return undefined;
+    }
+
+    return profiles.defaultProfiles.concat(profiles.userDefinedProfiles);
+  }, [profiles, profiles?.defaultProfiles.length, profiles?.userDefinedProfiles.length]);
+
+  const onMouseEnter = useCallback(() => setIsHovered(true), []);
+  const onMouseLeave = useCallback(() => setIsHovered(false), []);
+
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setShowLeftMore(scrollLeft > 0);
+      setShowRightMore(scrollLeft + clientWidth < scrollWidth);
+    }
+  };
+
+  const handleWheel = (event: WheelEvent) => {
+    if (scrollContainerRef.current) {
+      event.preventDefault();
+      scrollContainerRef.current.scrollLeft += event.deltaY;
+      handleScroll();
+    }
+  };
 
   useEffect(() => {
-    if (!orderedAccounts) {
-      return
+    handleScroll(); // Set initial shadow states on mount
+    const ref = scrollContainerRef.current;
+    if (ref) {
+      ref.addEventListener('scroll', handleScroll);
+      ref.addEventListener('wheel', handleWheel, { passive: false });
+      return () => {
+        ref.removeEventListener('scroll', handleScroll);
+        ref.removeEventListener('wheel', handleWheel);
+      };
     }
-
-    const texts = [t('All')];
-    const hasLocal = orderedAccounts.find(({ account }) => !account.isExternal)
-    if (hasLocal) {
-      texts.push(t('Local'))
-    }
-
-    const hasLedger = orderedAccounts.find(({ account }) => account.isHardware)
-    if (hasLedger) {
-      texts.push(t('Ledger'))
-    }
-
-    const hasWatchOnly = orderedAccounts.find(({ account }) => account.isExternal && !account.isQR && !account.isHardware);
-    if (hasWatchOnly) {
-      texts.push(t('Watch-only'))
-    }
-
-    const hasQrAttached = orderedAccounts.find(({ account: { isQR } }) => isQR);
-    if (hasQrAttached) {
-      texts.push(t('QR-attached'))
-    }
-
-    const userDefinedProfiles = orderedAccounts.map(({ account: { profile } }) => profile as string).filter((item) => !!item);
-    const sortedUserDefinedProfiles = [...new Set(userDefinedProfiles)].sort();
-    if (sortedUserDefinedProfiles) {
-      texts.push(...sortedUserDefinedProfiles)
-    }
-
-    setProfiles(texts);
-  }, [orderedAccounts]);
+    return undefined;
+  }, []);
 
   return (
-    <Grid container sx={{ position: 'relative', overflow: 'auto', height: '30px', pb: '10px' }}>
+    <Grid container sx={{ display: 'flex', position: 'relative', height: '30px', mb: '10px' }}>
+      {showLeftMore && <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '20px', transform: 'rotate(-180deg)', width: 'fit-content', zIndex: 1 }} />}
       <Grid container item justifyContent='left'
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
+        columnGap='5px'
         sx={{
           bgcolor: 'backgroundFL.secondary',
-          flexWrap: 'nowrap', 
-          maxWidth: '1282px',
-          px: '20px',
-          position: 'relative',
-          transition: 'transform 0.3s ease-in-out',
-          transform: `translateY(-${HIDDEN_PERCENT})`,
-          '&:hover': {
-            transform: 'translateY(0%)'
-          }
-        }}>
+          px: '25px',
+          pb: '5px',
+          flexFlow: 'nowrap',
+          overflowX: 'scroll',
+          whiteSpace: 'nowrap'
+        }}
+        ref={scrollContainerRef} 
+        xs
+      >
         {
-          profiles?.map((profile, index) => (
+          profilesToShow?.map((profile, index) => (
             <ProfileTab
               selectedProfile={selectedProfile}
               setSelectedProfile={setSelectedProfile}
               key={index}
+              index={index}
               isHovered={isHovered}
               text={profile as string}
               orderedAccounts={orderedAccounts}
             />
           ))
         }
-      </Grid >
+      </Grid>
+      {showRightMore && <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '20px', width: 'fit-content', zIndex: 1 }} />}
     </Grid>
   );
 }
-
