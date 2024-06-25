@@ -152,8 +152,8 @@ export default function Popup(): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    assetsOnChains && setAccountsAssets(assetsOnChains);
-  }, [assetsOnChains]);
+    assetsOnChains && setAccountsAssets({...assetsOnChains});
+  }, [assetsOnChains?.timeStamp]);
 
   useEffect(() => {
     /** remove forgotten accounts from assetChains if any */
@@ -161,11 +161,13 @@ export default function Popup(): React.ReactElement {
       Object.keys(assetsOnChains.balances).forEach((_address) => {
         const found = accounts.find(({ address }) => address === _address);
 
-        !found && delete assetsOnChains.balances[_address];
-        setStorage(ASSETS_NAME_IN_STORAGE, assetsOnChains, true).catch(console.error);
+        if (!found) {
+          delete assetsOnChains.balances[_address];
+          setStorage(ASSETS_NAME_IN_STORAGE, assetsOnChains, true).catch(console.error);
+        }
       });
     }
-  }, [accounts, assetsOnChains]);
+  }, [accounts?.length, assetsOnChains?.timeStamp]);
 
   useEffect(() => {
     if (priceIds && currency?.code && !isFetchingPricesRef.current) {

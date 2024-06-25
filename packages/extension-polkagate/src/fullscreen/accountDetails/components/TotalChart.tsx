@@ -113,7 +113,7 @@ export default function TotalChart({ accountAssets, pricesInCurrency }: Props): 
     return () => {
       chartInstance.destroy();
     };
-  }, [assets, theme.palette.divider]);
+  }, [assets?.length, theme.palette.divider]);
 
   return (
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: '185px', p: '15px', width: 'inherit' }}>
