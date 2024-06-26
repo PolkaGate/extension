@@ -54,6 +54,7 @@ export interface AccountJson extends KeyringPair$Meta {
   balances?: string;
   identities?: string;
   isQR?: boolean;
+  profile?: string;
   stakingAccount?: string;
 }
 

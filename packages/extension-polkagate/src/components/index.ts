@@ -1,7 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
-/* eslint-disable header/header */
 
 export { default as AccountNamePasswordCreation } from './AccountNamePasswordCreation';
 export { default as AccountHolderWithProxy } from './AccountHolderWithProxy';
@@ -95,5 +93,6 @@ export { default as FullScreenIcon } from './FullScreenIcon';
 export { default as OptionalCopyButton } from './OptionalCopyButton';
 export { default as Waiting } from './Waiting';
 export { default as VaadinIcon } from './VaadinIcon';
+export { default as ProfileInput } from './ProfileInput';
 
 export * from './contexts';

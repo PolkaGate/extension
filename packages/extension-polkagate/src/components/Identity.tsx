@@ -21,7 +21,7 @@ import { getSubstrateAddress, isValidAddress } from '../util/utils';
 import { ChainLogo, Identicon, Infotip, ShortAddress } from '.';
 
 interface Props {
-  accountInfo?: DeriveAccountInfo;
+  accountInfo?: DeriveAccountInfo | null;
   address?: string | AccountId;
   api?: ApiPromise;
   chain?: Chain;

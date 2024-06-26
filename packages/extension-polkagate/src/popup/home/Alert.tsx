@@ -69,7 +69,9 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Bug Fixes: Resolved the latest Kusama runtime upgrade issue, which was causing transactions on Kusama to fail'
+              'Add profiles: You can now organize your accounts into different profiles, making account management much easier.',
+              'Proxy account management on asset hubs: You can now manage proxy accounts on relay chains\' asset hubs.',
+              'Fix known bugs: This update enhances performance and provides a more streamlined experience'
             ]}
           />
         </Grid>

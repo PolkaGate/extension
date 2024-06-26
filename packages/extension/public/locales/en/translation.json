@@ -1289,5 +1289,15 @@
   "Reasons": "",
   "Please wait a few seconds and don't close the window.": "",
   "Reserved Reasons": "",
-  "No reasons found!": ""
+  "No reasons found!": "",
+  "Profile Name": "",
+  "New profile": "",
+  "No user profile": "",
+  "Add to profile": "",
+  "Local": "",
+  "This account is visible to websites": "",
+  "Choose a name for the profile": "",
+  "You can add your imported proxied accounts to a profile if you wish. If not, they'll be visible in 'All' and 'Watch-only' profiles.": "",
+  "Choose a profile name:": "",
+  "Remove from {{profileName}}": ""
 }

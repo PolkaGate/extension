@@ -1279,5 +1279,15 @@
   "Reasons": "कारण",
   "Please wait a few seconds and don't close the window.": "कृपया कुछ सेकंड प्रतीक्षा करें और विंडो न बंद करें।",
   "Reserved Reasons": "आरक्षित कारण",
-  "No reasons found!": "कोई कारण नहीं मिला!"
+  "No reasons found!": "कोई कारण नहीं मिला!",
+  "Profile Name": "प्रोफाइल नाम",
+  "New profile": "नई प्रोफाइल",
+  "No user profile": "कोई उपयोगकर्ता प्रोफाइल नहीं है",
+  "Add to profile": "प्रोफाइल में जोड़ें",
+  "Local": "लोकल",
+  "This account is visible to websites": "यह खाता वेबसाइटों के लिए देखा जा सकता है",
+  "Choose a name for the profile": "प्रोफाइल के लिए नाम चुनें",
+  "You can add your imported proxied accounts to a profile if you wish. If not, they'll be visible in 'All' and 'Watch-only' profiles.": "आप अपने आयातित प्रॉक्सी खातों को एक प्रोफ़ाइल में जोड़ सकते हैं, यदि आप चाहें तो नहीं है, तो वे 'सभी' और 'देखने के लिए ही' प्रोफ़ाइलों में देखे जाएंगे।",
+  "Choose a profile name:": "एक प्रोफ़ाइल नाम चुनें:",
+  "Remove from {{profileName}}": "{{profileName}} से हटाएं"
 }
