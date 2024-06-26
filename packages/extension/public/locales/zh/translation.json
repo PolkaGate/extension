@@ -1285,5 +1285,6 @@
   "Please transfer some tokens to {{chainName}} People chain.": "请将一些令牌转移到 {{chainName}} 人链上。",
   "Reasons": "原因",
   "Please wait a few seconds and don't close the window.": "请等待几秒钟,不要关闭窗口。",
-  "Reserved Reasons": "保留原因"
+  "Reserved Reasons": "保留原因",
+  "No reasons found!": "未找到原因!"
 }

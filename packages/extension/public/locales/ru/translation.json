@@ -1276,5 +1276,6 @@
   "Please transfer some tokens to {{chainName}} People chain.": "Пожалуйста, переведите некоторые токены в цепь людей {{chainName}}.",
   "Reasons": "Поводы",
   "Please wait a few seconds and don't close the window.": "Подождите несколько секунд и не закрывайте окно.",
-  "Reserved Reasons": "Зарезервированные причины"
+  "Reserved Reasons": "Зарезервированные причины",
+  "No reasons found!": "Причины не найдены!"
 }

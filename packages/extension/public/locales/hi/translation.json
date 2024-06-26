@@ -1278,5 +1278,6 @@
   "Please transfer some tokens to {{chainName}} People chain.": "कुछ टोकन {{chainName}} लोगों की श्रृंखला में ट्रांसफर करें.",
   "Reasons": "कारण",
   "Please wait a few seconds and don't close the window.": "कृपया कुछ सेकंड प्रतीक्षा करें और विंडो न बंद करें।",
-  "Reserved Reasons": "आरक्षित कारण"
+  "Reserved Reasons": "आरक्षित कारण",
+  "No reasons found!": "कोई कारण नहीं मिला!"
 }

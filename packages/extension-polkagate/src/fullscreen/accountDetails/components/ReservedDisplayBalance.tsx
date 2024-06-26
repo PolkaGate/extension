@@ -38,7 +38,7 @@ interface WaitForReservedProps {
   style?: SxProps<Theme> | undefined;
 }
 
-function WaitForReserved ({ rows = 2, skeletonHeight = 20, skeletonWidth = 60, style }: WaitForReservedProps): React.ReactElement {
+function WaitForReserved({ rows = 2, skeletonHeight = 20, skeletonWidth = 60, style }: WaitForReservedProps): React.ReactElement {
   return (
     <Grid container justifyContent='center' sx={{ ...style }}>
       {Array.from({ length: rows }).map((_, index) => (
@@ -66,6 +66,30 @@ function WaitForReserved ({ rows = 2, skeletonHeight = 20, skeletonWidth = 60, s
 const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetailsType) => {
   const { t } = useTranslation();
 
+  const reasonsToShow = useMemo(() => {
+    const details = Object.values(reservedDetails);
+    if (details.length === 0) {
+      return undefined
+    } else {
+
+      const noReason = details.every((deposit) => deposit === null);
+
+      if (noReason) {
+        return null;
+      } else {
+        const filteredReservedDetails = Object.fromEntries(
+          Object.entries(reservedDetails).filter(([_key, value]) => value && !value.isZero())
+        );
+
+        if (Object.values(filteredReservedDetails).length > 0) {
+          return filteredReservedDetails;
+        } else {
+          return undefined;
+        }
+      }
+    }
+  }, [reservedDetails]);
+
   return (
     <Collapse in={showReservedDetails} sx={{ width: '100%' }}>
       <Divider sx={{ bgcolor: 'divider', height: '1px', m: '3px auto', width: '90%' }} />
@@ -73,9 +97,9 @@ const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetai
         <Typography fontSize='16px' fontWeight={500}>
           {t('Reasons')}
         </Typography>
-        {Object.entries(reservedDetails)?.length
+        {reasonsToShow
           ? <Grid container direction='column' item>
-            {Object.entries(reservedDetails)?.map(([key, value], index) => (
+            {Object.entries(reasonsToShow)?.map(([key, value], index) => (
               <Grid container item key={index} sx={{ fontSize: '16px' }}>
                 <Grid item sx={{ fontWeight: 300 }} xs={4}>
                   {toTitleCase(key)}
@@ -87,14 +111,18 @@ const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetai
             ))
             }
           </Grid>
-          : <WaitForReserved rows={2} />
+          : reasonsToShow === null
+            ? <Typography fontSize='16px' fontWeight={500} width='100%'>
+              {t('No reasons found!')}
+            </Typography>
+            : <WaitForReserved rows={2} />
         }
       </Grid>
     </Collapse>
   );
 };
 
-export default function ReservedDisplayBalance ({ address, amount, disabled, price }: Props): React.ReactElement {
+export default function ReservedDisplayBalance({ address, amount, disabled, price }: Props): React.ReactElement {
   const { t } = useTranslation();
   const reservedDetails = useReservedDetails(address);
   const { decimal, genesisHash, token } = useInfo(address);
@@ -114,7 +142,7 @@ export default function ReservedDisplayBalance ({ address, amount, disabled, pri
 
   useEffect(() => {
     setShowReservedDetails(false); // to reset collapsed area on chain change
-  }, [genesisHash]);
+  }, [address, genesisHash]);
 
   const toggleShowReservedDetails = useCallback(() => {
     reservedDetails && !amount?.isZero() && setShowReservedDetails(!showReservedDetails);
