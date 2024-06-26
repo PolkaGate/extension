@@ -38,8 +38,12 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
   const handleScroll = () => {
     if (scrollContainerRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+
+      const isScrollable = scrollWidth > clientWidth;
+      const tolerance = 10;
+
       setShowLeftMore(scrollLeft > 0);
-      setShowRightMore(scrollLeft + clientWidth < scrollWidth);
+      setShowRightMore(scrollLeft + clientWidth < scrollWidth - tolerance && isScrollable);
     }
   };
 
@@ -63,7 +67,7 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
       };
     }
     return undefined;
-  }, []);
+  }, [profilesToShow.length, scrollContainerRef.current]);
 
   return (
     <Grid container sx={{ display: 'flex', position: 'relative', height: '30px', mb: '10px' }}>
