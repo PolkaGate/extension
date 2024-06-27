@@ -112,10 +112,11 @@ export default function ProfileTab({ isHovered, text, selectedProfile, setSelect
         '&:hover': {
           boxShadow: shadowOnHover,
         },
-        width: 'fit-content',
-        transformOrigin: 'top',
         position: 'relative',
-        transform: hideCard ? `translateY(-${HIDDEN_PERCENT})` : undefined
+        transformOrigin: 'top',
+        transform: hideCard ? `translateY(-${HIDDEN_PERCENT})` : undefined,
+        userSelect: 'none',
+        width: 'fit-content'
       }}>
       <VaadinIcon icon={'vaadin:check'} style={{ height: '13px', visibility: isSelected ? 'visible' : 'hidden', width: '15px' }} />
       <Typography color={'text.primary'} display='block' fontSize='16px' fontWeight={isSelected ? 500 : 400} textAlign='center' sx={{ visibility: visibleContent ? 'visible' : 'hidden', transition: isSelected ? 'none' : 'visibility 0.1s ease-in-out', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
