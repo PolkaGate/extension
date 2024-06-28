@@ -19,13 +19,16 @@ export default function useProfileAccounts(initialAccountList: AccountsOrder[] |
 
     getStorage('profile').then((res) => {
       setProfile(res as string || t('All'));
-    }).catch(console.error);
+    }).catch((error) => {
+      setProfile(t('All'))
+      console.error('Error while reading profile from storage', error)
+    });
 
     watchStorage('profile', setProfile).catch(console.error);
   }, []);
 
   useLayoutEffect(() => {
-    if (!initialAccountList) {
+    if (!initialAccountList || !_profile) {
       return;
     }
 
@@ -45,7 +48,7 @@ export default function useProfileAccounts(initialAccountList: AccountsOrder[] |
         const qrAttachedAccounts = initialAccountList.filter(({ account: { isQR } }) => isQR);
         return setProfileAccounts(qrAttachedAccounts);
       default:
-        const useDefinedProfile = initialAccountList.filter(({ account }) => account?.profile && account.profile === _profile);
+        const useDefinedProfile = initialAccountList.filter(({ account }) => account?.profile && account.profile.split(',').includes(_profile));        
         return setProfileAccounts(useDefinedProfile);
     }
   }, [_profile, initialAccountList]);

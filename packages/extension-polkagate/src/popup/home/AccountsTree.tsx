@@ -1,21 +1,20 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { Backdrop, Container, Grid, useTheme } from '@mui/material';
-import { TFunction } from '@polkagate/apps-config/types';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { PButton } from '../../components';
-import { useActiveRecoveries, useApi, useTranslation } from '../../hooks';
+import { useActiveRecoveries, useApi, useTranslation, useProfiles } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import getParentNameSuri from '../../util/getParentNameSuri';
 import AccountPreview from './AccountPreview';
+import { PROFILE_COLORS, getProfileColor } from '../../fullscreen/homeFullScreen/partials/ProfileTab';
 
 interface Props extends AccountWithChildren {
   parentName?: string;
@@ -25,29 +24,67 @@ interface Props extends AccountWithChildren {
   setHasActiveRecovery: React.Dispatch<React.SetStateAction<string | null | undefined>>;
 }
 
-export const label = (account: AccountJson | undefined, parentName: string | undefined, t: TFunction): string | undefined => {
-  if (account?.isHardware) {
-    return t('Ledger');
-  }
+export function AccountLabel({ account, ml, parentName }: { account: AccountJson | undefined, parentName: string | undefined, ml?: string }): React.ReactElement {
+  const theme = useTheme();
+  const { t } = useTranslation();
 
-  if (account?.isQR) {
-    return t('QR-attached');
-  }
+  const { userDefinedProfiles, defaultProfiles } = useProfiles();
+  const { userDefinedProfiles: accountProfiles } = useProfiles(account);
 
-  if (account?.isExternal) {
-    return t('Watch-only');
-  }
+  const getColorOfUserDefinedProfile = useCallback((profile: string) => {
+    if (userDefinedProfiles.length === 0 && defaultProfiles.length === 0) {
+      return theme.palette.nay.main;
+    }
 
-  if (account?.parentAddress) {
-    return t('Derived from {{parentName}}', { replace: { parentName } });
-  }
+    const profiles = defaultProfiles.concat(userDefinedProfiles);
+    const index = profiles.findIndex((p) => p === profile);
 
-  return undefined;
+    return getProfileColor(index, theme);
+  }, [account, theme]);
+
+
+  const maybeAccountDefaultProfile = useMemo(() => {
+    if (account?.isHardware) {
+      return t('Ledger');
+    }
+
+    if (account?.isQR) {
+      return t('QR-attached');
+    }
+
+    if (account?.isExternal) {
+      return t('Watch-only');
+    }
+
+    if (account?.parentAddress) {
+      return t('Derived from {{parentName}}', { replace: { parentName } });
+    }
+
+    return undefined;
+  }, [account]);
+
+  const profiles = useMemo(() => {
+    if (maybeAccountDefaultProfile) {
+      accountProfiles.unshift(maybeAccountDefaultProfile)
+    }
+    return accountProfiles;
+  }, [account]);
+
+  return (
+    <Grid container item sx={{ display: 'flex', flexWrap: 'nowrap', fontSize: '10px', ml: ml || '15px', position: 'absolute', px: 1, width: '100%', top: 0 }}>
+      {profiles?.map((profile) =>
+        <Grid item sx={{ bgcolor: getColorOfUserDefinedProfile(profile), fontSize: '10px', ml: '5px', px: 1, width: 'fit-content' }}>
+          {profile}
+        </Grid>
+      )}
+    </Grid>
+  )
 };
 
 export default function AccountsTree({ hideNumbers, parentName, quickActionOpen, setHasActiveRecovery, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+
   const api = useApi(SOCIAL_RECOVERY_CHAINS.includes(account?.genesisHash ?? '') ? account.address : undefined);
   const activeRecovery = useActiveRecoveries(api, account.address);
 
@@ -77,9 +114,10 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
           position: 'relative'
         }}
       >
-        <Grid item sx={{ bgcolor: '#454545', color: 'white', fontSize: '10px', ml: 3, position: 'absolute', px: 1, width: 'fit-content' }}>
-          {label(account, parentNameSuri, t)}
-        </Grid>
+        <AccountLabel
+          account={account}
+          parentName={parentNameSuri}
+        />
         <AccountPreview
           {...account}
           hideNumbers={hideNumbers}
