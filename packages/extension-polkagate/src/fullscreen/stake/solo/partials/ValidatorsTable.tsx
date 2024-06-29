@@ -66,7 +66,7 @@ export default function ValidatorsTable({ activeValidators, address, allValidato
 
   useEffect(() => {
     if (maxSelected && ref.current) {
-      (ref?.current as any).scrollTop = 0;
+      (ref.current as any).scrollTop = 0;
     }
   }, [maxSelected]);
 
