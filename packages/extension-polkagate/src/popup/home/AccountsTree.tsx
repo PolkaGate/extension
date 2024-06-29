@@ -60,6 +60,7 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
         <AccountLabel
           account={account}
           parentName={parentNameSuri}
+          ml='10px'
         />
         <AccountPreview
           {...account}
