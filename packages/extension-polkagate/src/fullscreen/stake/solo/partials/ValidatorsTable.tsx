@@ -65,7 +65,7 @@ export default function ValidatorsTable({ activeValidators, address, allValidato
   }, [staked, stakingConsts]);
 
   useEffect(() => {
-    if (maxSelected && ref?.current) {
+    if (maxSelected && ref.current) {
       (ref?.current as any).scrollTop = 0;
     }
   }, [maxSelected]);
@@ -94,7 +94,7 @@ export default function ValidatorsTable({ activeValidators, address, allValidato
             width={'100%'}
           >
             {({ index, key, style }: { index: number, key:number, style:any }) => {
-              const v = validatorsToList![index];
+              const v = validatorsToList?.[index];
               const isActive = !!activeValidators?.find((av) => v.accountId === av?.accountId);
               const isOversubscribed = overSubscribed(v);
               const accountInfo = allValidatorsIdentities?.find((a) => a.accountId === v?.accountId);
