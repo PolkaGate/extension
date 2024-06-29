@@ -63,7 +63,7 @@ export function AccountLabel({ account, ml, parentName }: Props): React.ReactEle
       accountProfiles.unshift(maybeAccountDefaultProfile)
     }
     return accountProfiles;
-  }, [account]);
+  }, [account, maybeAccountDefaultProfile]);
 
   return (
     <Grid container item sx={{ display: 'flex', flexWrap: 'nowrap', fontSize: '10px', ml: ml || '15px', position: 'absolute', px: 1, width: '100%', top: 0 }}>
