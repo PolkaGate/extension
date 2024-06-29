@@ -31,6 +31,9 @@ export function AccountLabel({ account, ml, parentName }: { account: AccountJson
   const { userDefinedProfiles, defaultProfiles } = useProfiles();
   const { userDefinedProfiles: accountProfiles } = useProfiles(account);
 
+  const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
+  const shadow = useMemo(() => isDarkMode ? '0px 0px 2px 1px rgba(255, 255, 255, 0.15)' : '0px 0px 1px 1px rgba(000, 000, 000, 0.13)', [isDarkMode]);
+
   const getColorOfUserDefinedProfile = useCallback((profile: string) => {
     if (userDefinedProfiles.length === 0 && defaultProfiles.length === 0) {
       return theme.palette.nay.main;
@@ -73,7 +76,7 @@ export function AccountLabel({ account, ml, parentName }: { account: AccountJson
   return (
     <Grid container item sx={{ display: 'flex', flexWrap: 'nowrap', fontSize: '10px', ml: ml || '15px', position: 'absolute', px: 1, width: '100%', top: 0 }}>
       {profiles?.map((profile) =>
-        <Grid item sx={{ bgcolor: getColorOfUserDefinedProfile(profile), fontSize: '10px', ml: '5px', px: 1, width: 'fit-content' }}>
+        <Grid item sx={{ boxShadow: shadow, borderRadius: '0 0 5px 5px', bgcolor: getColorOfUserDefinedProfile(profile), fontSize: '11px', ml: '5px', px: 1, width: 'fit-content' }}>
           {profile}
         </Grid>
       )}
