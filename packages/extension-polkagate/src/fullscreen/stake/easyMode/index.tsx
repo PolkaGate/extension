@@ -69,11 +69,11 @@ export default function EasyMode({ address, balances, inputs, setInputs, setStep
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedMaxFee(api.createType('Balance', BN_ONE));
+      return setEstimatedMaxFee(api.createType('Balance', BN_ONE) as Balance);
     }
 
     amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
-      setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
+      setEstimatedMaxFee(api.createType('Balance', i?.partialFee) as Balance);
     });
   }, [formatted, api, availableBalance, amount, decimal, amountAsBN]);
 
