@@ -24,7 +24,7 @@ interface Props {
   withHoverEffect?: boolean;
 }
 
-export default function MenuItem({ children, disabled = false, fontSize, icon, iconComponent, onClick, pl = '0', py = '8px',showChevron, showSubMenu = false, text, withHoverEffect }: Props): React.ReactElement<Props> {
+export default function MenuItem({ children, disabled = false, fontSize, icon, iconComponent, onClick, pl = '0', py = '8px', showChevron, showSubMenu = false, text, withHoverEffect }: Props): React.ReactElement<Props> {
   const hoverEffectStyles: SxProps<Theme> = {
     '&:hover': { bgcolor: disabled ? 'none' : 'divider' },
     borderRadius: '5px',
@@ -34,7 +34,7 @@ export default function MenuItem({ children, disabled = false, fontSize, icon, i
   return (
     <>
       <Grid alignItems='center' color={disabled ? '#4B4B4B' : 'inherit'} container item justifyContent='space-between' my='4px' onClick={disabled ? noop : onClick} pl={pl} py={py} sx={{ cursor: disabled ? '' : 'pointer', ...(withHoverEffect ? hoverEffectStyles : {}) }} textAlign='left' xs={12}>
-        <Grid alignItems='center' container item xs>
+        <Grid alignItems='center' container item xs sx={{ flexWrap: 'nowrap' }}>
           <Grid alignItems='center' container item xs={1}>
             {iconComponent ??
               <Box
@@ -46,12 +46,13 @@ export default function MenuItem({ children, disabled = false, fontSize, icon, i
               />
             }
           </Grid>
-          <Grid item pl='10px'>
+          <Grid item pl='10px' xs>
             <Typography
               color={disabled ? 'text.disabled' : 'inherit'}
               fontSize={fontSize || '18px'}
               fontWeight={300}
               lineHeight='20px'
+              whiteSpace='nowrap'
             >
               {text}
             </Typography>

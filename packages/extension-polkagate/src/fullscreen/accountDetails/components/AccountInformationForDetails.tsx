@@ -120,7 +120,7 @@ const SelectedAssetBox = ({ balanceToShow, genesisHash, isBalanceOutdated, isPri
 interface AddressDetailsProps {
   accountAssets: FetchedBalance[] | null | undefined;
   address: string | undefined;
-  label?: string | undefined;
+  label?: React.ReactElement | undefined;
   price: number | undefined;
   pricesInCurrency: Prices | null | undefined;
   selectedAsset: FetchedBalance | undefined;
@@ -197,9 +197,7 @@ export default function AccountInformationForDetails({ accountAssets, address, l
 
   return (
     <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: '0px solid', borderBottomWidth: '8px', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mb: '15px', p: `20px 20px ${showAOC ? '5px' : '20px'} 20px`, position: 'relative' }}>
-      <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', left: 0, ml: 4, position: 'absolute', px: 1, top: 0, width: 'fit-content' }}>
-        {label}
-      </Grid>
+      {label}
       <Grid container item>
         <Grid container item sx={{ borderRight: '1px solid', borderRightColor: 'divider', pr: '8px', width: 'fit-content' }}>
           <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>

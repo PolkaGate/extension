@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -23,7 +22,7 @@ import AccountDetail from './AccountDetail';
 export interface Props {
   actions?: React.ReactNode;
   address: string;
-  children?: React.ReactNode;
+  // children?: React.ReactNode;
   isExternal?: boolean | null;
   isHardware?: boolean | null;
   isHidden?: boolean;
@@ -50,7 +49,7 @@ export default function AccountPreview({ address, hideNumbers, isHidden, name, q
   const onExtension = useIsExtensionPopup();
 
   useEffect((): void => {
-    api && api.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => setRecoverable(!!r.isSome));
+    api && api.query?.['recovery'] && api.query['recovery']['recoverable'](formatted).then((r:any) => setRecoverable(!!r.isSome));
   }, [api, formatted]);
 
   useEffect((): void => {

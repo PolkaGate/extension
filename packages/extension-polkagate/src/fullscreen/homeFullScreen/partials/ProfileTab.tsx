@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountsOrder } from '..';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme, type Theme } from '@mui/material';
 import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import { useProfileAccounts, useTranslation } from '../../../hooks';
 import { getStorage, setStorage, watchStorage } from '../../../components/Loading';
@@ -19,38 +19,38 @@ interface Props {
   index: number;
 }
 
+export const PROFILE_COLORS = [
+  { light: '#D1C4E9', dark: '#99004F' },
+  { light: '#C8E6C9', dark: '#468189' },
+  { light: '#B3E5FC', dark: '#846C5B' },
+  { light: '#F8BBD0', dark: '#A63C06' },
+  { light: '#ACE894', dark: '#D81B60' },
+  { light: '#F5D5ED', dark: '#2B4162' },
+  { light: '#EBCFB2', dark: '#9D8189' },
+  { light: '#FCF0CC', dark: '#5F4842' },
+];
+
+export const getProfileColor = (index: number, theme: Theme) => {
+  if (index >= 0) {
+    const _index = index % PROFILE_COLORS.length; // to return colors recursively
+    return PROFILE_COLORS[_index][theme.palette.mode]
+  }
+
+  return PROFILE_COLORS[0][theme.palette.mode]
+};
+
 export default function ProfileTab({ isHovered, text, selectedProfile, setSelectedProfile, orderedAccounts, index }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const PREDEFINED_TAB_COLORS = useMemo(() => {
-    return [
-      { lightColor: '#D1C4E9', darkColor: '#99004F' },
-      { lightColor: '#C8E6C9', darkColor: '#468189' },
-      { lightColor: '#B3E5FC', darkColor: '#846C5B' },
-      { lightColor: '#F8BBD0', darkColor: '#A63C06' },
-      { lightColor: '#ACE894', darkColor: '#D81B60' },
-      { lightColor: '#F5D5ED', darkColor: '#2B4162' },
-      { lightColor: '#EBCFB2', darkColor: '#9D8189' },
-      { lightColor: '#FCF0CC', darkColor: '#5F4842' },
-    ]
-  }, [t, theme]);
-
   const profileAccounts = useProfileAccounts(orderedAccounts, text);
 
   /** set by user click on a profile tab */
-  const [toHiddenAll, setToHiddenAll] = useState<boolean>();
+  const [toHideAll, setToHideAll] = useState<boolean>();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const shadow = useMemo(() => isDarkMode ? '0px 2px 5px 1px rgba(255, 255, 255, 0.10)' : '0px 2px 3px 1px rgba(000, 000, 000, 0.13)', [isDarkMode]);
   const shadowOnHover = useMemo(() => isDarkMode ? '0px 2px 5px 1px rgba(255, 255, 255, 0.20)' : '0px 2px 3px 1px rgba(000, 000, 000, 0.20)', [isDarkMode]);
-
-  const getColor = useCallback((index: number) => {
-    const selectedProfile = PREDEFINED_TAB_COLORS[index];
-    const color = isDarkMode ? selectedProfile?.darkColor : selectedProfile?.lightColor;
-
-    return color;
-  }, [PREDEFINED_TAB_COLORS]);
 
   const isSelected = useMemo(() => selectedProfile === text, [selectedProfile, text]);
   const visibleContent = useMemo(() => isHovered || isSelected, [isHovered, isSelected]);
@@ -58,11 +58,11 @@ export default function ProfileTab({ isHovered, text, selectedProfile, setSelect
   /** Save the current selected tab in local storage on tab click */
   const onClick = useCallback(() => {
     setStorage('profile', text);
-    isSelected && setToHiddenAll(!toHiddenAll);
-  }, [selectedProfile, toHiddenAll, text, isSelected]);
+    isSelected && setToHideAll(!toHideAll);
+  }, [selectedProfile, toHideAll, text, isSelected]);
 
   /** check to see if all accounts in a profile is hidden */
-  const isAllProfileAccountsHidden = useMemo(() => {
+  const areAllProfileAccountsHidden = useMemo(() => {
     const isHidden = profileAccounts?.length
       ? profileAccounts.every(({ account }) => account.isHidden)
       : undefined;
@@ -71,20 +71,20 @@ export default function ProfileTab({ isHovered, text, selectedProfile, setSelect
   }, [profileAccounts]);
 
   const hideAccounts = useCallback((accounts: AccountsOrder[]) => {
-    toHiddenAll !== undefined && accounts.forEach(({ account: { address } }) => {
-      showAccount(address, !toHiddenAll).catch(console.error);
+    toHideAll !== undefined && accounts.forEach(({ account: { address } }) => {
+      showAccount(address, !toHideAll).catch(console.error);
     })
-  }, [toHiddenAll]);
+  }, [toHideAll]);
 
-  const isHiddenAll = isAllProfileAccountsHidden !== undefined ? isAllProfileAccountsHidden : toHiddenAll;
+  const areAllHidden = areAllProfileAccountsHidden !== undefined ? areAllProfileAccountsHidden : toHideAll;
 
   const hideCard = useMemo(() => !Boolean(isSelected || isHovered || visibleContent), [isSelected, isHovered, visibleContent]);
 
   useEffect(() => {
-    if (profileAccounts && toHiddenAll !== undefined) {
+    if (profileAccounts && toHideAll !== undefined) {
       hideAccounts(profileAccounts);
     }
-  }, [hideAccounts, profileAccounts?.length, toHiddenAll]);
+  }, [hideAccounts, profileAccounts?.length, toHideAll]);
 
   useEffect(() => {
     /** set profile text in local storage and watch its change to apply on the UI */
@@ -104,7 +104,7 @@ export default function ProfileTab({ isHovered, text, selectedProfile, setSelect
       sx={{
         cursor: 'pointer',
         flexShrink: 0,
-        bgcolor: getColor(index) || 'background.paper',
+        bgcolor: getProfileColor(index, theme) || 'background.paper',
         borderRadius: '0 0 12px 12px',
         minWidth: '100px',
         transition: 'transform 0.2s, box-shadow 0.2s',
@@ -122,7 +122,7 @@ export default function ProfileTab({ isHovered, text, selectedProfile, setSelect
       <Typography color={'text.primary'} display='block' fontSize='16px' fontWeight={isSelected ? 500 : 400} textAlign='center' sx={{ visibility: visibleContent ? 'visible' : 'hidden', transition: isSelected ? 'none' : 'visibility 0.1s ease-in-out', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {t(text)}
       </Typography>
-      <VaadinIcon icon={isHiddenAll ? 'vaadin:eye-slash' : ''}
+      <VaadinIcon icon={areAllHidden ? 'vaadin:eye-slash' : ''}
         style={{
           height: '13px',
           visibility: visibleContent ? 'visible' : 'hidden',
