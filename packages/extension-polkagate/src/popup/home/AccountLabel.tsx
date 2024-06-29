@@ -68,7 +68,17 @@ export function AccountLabel({ account, ml, parentName }: Props): React.ReactEle
   return (
     <Grid container item sx={{ display: 'flex', flexWrap: 'nowrap', fontSize: '10px', ml: ml || '15px', position: 'absolute', px: 1, width: '100%', top: 0 }}>
       {profiles?.map((profile, index) =>
-        <Grid key={index} sx={{ boxShadow: shadow, borderRadius: '0 0 5px 5px', bgcolor: getColorOfUserDefinedProfile(profile), fontSize: '11px', ml: '5px', px: 1, width: 'fit-content' }}>
+        <Grid key={index}
+          sx={{
+            boxShadow: shadow,
+            borderRadius: '0 0 5px 5px',
+            bgcolor: getColorOfUserDefinedProfile(profile),
+            fontSize: '11px',
+            ml: '5px',
+            px: 1,
+            textWrap:'nowrap',
+            width: 'fit-content'
+          }}>
           {profile}
         </Grid>
       )}
