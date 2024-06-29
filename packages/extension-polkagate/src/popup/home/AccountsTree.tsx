@@ -3,18 +3,18 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { Backdrop, Container, Grid, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { PButton } from '../../components';
-import { useActiveRecoveries, useApi, useTranslation, useProfiles } from '../../hooks';
+import { useActiveRecoveries, useApi, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import getParentNameSuri from '../../util/getParentNameSuri';
 import AccountPreview from './AccountPreview';
-import { PROFILE_COLORS, getProfileColor } from '../../fullscreen/homeFullScreen/partials/ProfileTab';
+import { AccountLabel } from './AccountLabel';
 
 interface Props extends AccountWithChildren {
   parentName?: string;
@@ -23,66 +23,6 @@ interface Props extends AccountWithChildren {
   hideNumbers: boolean | undefined;
   setHasActiveRecovery: React.Dispatch<React.SetStateAction<string | null | undefined>>;
 }
-
-export function AccountLabel({ account, ml, parentName }: { account: AccountJson | undefined, parentName: string | undefined, ml?: string }): React.ReactElement {
-  const theme = useTheme();
-  const { t } = useTranslation();
-
-  const { userDefinedProfiles, defaultProfiles } = useProfiles();
-  const { userDefinedProfiles: accountProfiles } = useProfiles(account);
-
-  const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
-  const shadow = useMemo(() => isDarkMode ? '0px 0px 2px 1px rgba(255, 255, 255, 0.15)' : '0px 0px 1px 1px rgba(000, 000, 000, 0.13)', [isDarkMode]);
-
-  const getColorOfUserDefinedProfile = useCallback((profile: string) => {
-    if (userDefinedProfiles.length === 0 && defaultProfiles.length === 0) {
-      return theme.palette.nay.main;
-    }
-
-    const profiles = defaultProfiles.concat(userDefinedProfiles);
-    const index = profiles.findIndex((p) => p === profile);
-
-    return getProfileColor(index, theme);
-  }, [account, theme]);
-
-
-  const maybeAccountDefaultProfile = useMemo(() => {
-    if (account?.isHardware) {
-      return t('Ledger');
-    }
-
-    if (account?.isQR) {
-      return t('QR-attached');
-    }
-
-    if (account?.isExternal) {
-      return t('Watch-only');
-    }
-
-    if (account?.parentAddress) {
-      return t('Derived from {{parentName}}', { replace: { parentName } });
-    }
-
-    return undefined;
-  }, [account]);
-
-  const profiles = useMemo(() => {
-    if (maybeAccountDefaultProfile) {
-      accountProfiles.unshift(maybeAccountDefaultProfile)
-    }
-    return accountProfiles;
-  }, [account]);
-
-  return (
-    <Grid container item sx={{ display: 'flex', flexWrap: 'nowrap', fontSize: '10px', ml: ml || '15px', position: 'absolute', px: 1, width: '100%', top: 0 }}>
-      {profiles?.map((profile) =>
-        <Grid item sx={{ boxShadow: shadow, borderRadius: '0 0 5px 5px', bgcolor: getColorOfUserDefinedProfile(profile), fontSize: '11px', ml: '5px', px: 1, width: 'fit-content' }}>
-          {profile}
-        </Grid>
-      )}
-    </Grid>
-  )
-};
 
 export default function AccountsTree({ hideNumbers, parentName, quickActionOpen, setHasActiveRecovery, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();

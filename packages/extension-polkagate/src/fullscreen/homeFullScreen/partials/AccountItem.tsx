@@ -16,7 +16,7 @@ import { useAccountAssets, useChain } from '../../../hooks';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import QuickActionFullScreen from '../../../partials/QuickActionFullScreen';
 import AccountInformationForHome from './AccountInformationForHome';
-import { AccountLabel } from '../../../popup/home/AccountsTree';
+import { AccountLabel } from '../../../popup/home/AccountLabel';
 
 interface Props {
   account: AccountWithChildren;

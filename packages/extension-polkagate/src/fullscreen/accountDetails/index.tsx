@@ -17,7 +17,6 @@ import type { FetchedBalance } from '../../hooks/useAssetsBalances';
 import ExportAccountModal from '../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../popup/forgetAccount/ForgetAccountModal';
 import HistoryModal from '../../popup/history/modal/HistoryModal';
-import { AccountLabel, label } from '../../popup/home/AccountsTree';
 import DeriveAccountModal from '../../popup/newAccount/deriveAccount/modal/DeriveAccountModal';
 import ReceiveModal from '../../popup/receive/ReceiveModal';
 import RenameModal from '../../popup/rename/RenameModal';
@@ -31,6 +30,7 @@ import { openOrFocusTab } from './components/CommonTasks';
 import ReservedDisplayBalance from './components/ReservedDisplayBalance';
 import LockedInReferenda from './unlock/Review';
 import { AccountInformationForDetails, AccountSetting, AssetSelect, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
+import { AccountLabel } from '../../popup/home/AccountLabel';
 
 export enum popupNumbers {
   LOCKED_IN_REFERENDA,
