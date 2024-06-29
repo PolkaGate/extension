@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -8,9 +7,10 @@ import type { AccountId } from '@polkadot/types/interfaces';
 
 import { alpha, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+// @ts-ignore
 import { FixedSizeList as List } from 'react-window';
 
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { useInfo } from '@polkadot/extension-polkagate/src/hooks';
 import ValidatorInfoPage from '@polkadot/extension-polkagate/src/popup/staking/partial/ValidatorInfo';
 import { BN, hexToBn, isHex } from '@polkadot/util';
@@ -55,18 +55,18 @@ export default function ValidatorsTable({ activeValidators, address, allValidato
     }
 
     const threshold = stakingConsts.maxNominatorRewardedPerValidator;
-    const sortedNominators = v.exposure.others.sort((a, b) => b.value - a.value);
-    const maybeMyIndex = staked ? sortedNominators.findIndex((n) => new BN(isHex(n.value) ? hexToBn(n.value) : String(n.value)).lt(staked)) : -1;
+    const sortedNominators = v.exposure.others?.sort((a:any, b:any) => b.value - a.value);
+    const maybeMyIndex = staked ? sortedNominators?.findIndex((n:any) => new BN(isHex(n.value) ? hexToBn(n.value) : String(n.value)).lt(staked)) : -1;
 
     return {
-      notSafe: v.exposure.others.length > threshold && (maybeMyIndex > threshold || maybeMyIndex === -1),
-      safe: v.exposure.others.length > threshold && (maybeMyIndex < threshold || maybeMyIndex === -1)
+      notSafe: v.exposure.others?.length > threshold && (maybeMyIndex > threshold || maybeMyIndex === -1),
+      safe: v.exposure.others?.length > threshold && (maybeMyIndex < threshold || maybeMyIndex === -1)
     };
   }, [staked, stakingConsts]);
 
   useEffect(() => {
-    if (maxSelected) {
-      ref.current.scrollTop = 0;
+    if (maxSelected && ref?.current) {
+      (ref?.current as any).scrollTop = 0;
     }
   }, [maxSelected]);
 
@@ -93,8 +93,8 @@ export default function ValidatorsTable({ activeValidators, address, allValidato
             ref={ref}
             width={'100%'}
           >
-            {({ index, key, style }) => {
-              const v = validatorsToList[index];
+            {({ index, key, style }: { index: number, key:number, style:any }) => {
+              const v = validatorsToList![index];
               const isActive = !!activeValidators?.find((av) => v.accountId === av?.accountId);
               const isOversubscribed = overSubscribed(v);
               const accountInfo = allValidatorsIdentities?.find((a) => a.accountId === v?.accountId);

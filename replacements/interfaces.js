@@ -47,6 +47,13 @@ knownGenesis.westendPeople = [
 knownGenesis.kusamaPeople = [
     '0xc1af4cb4eb3918e5db15086c0cc5ec17fb334f728b7c65dd44bfe1e174ff8b3f'
 ];
+knownGenesis.paseo = [
+    '0x77afd6190f1554ad45fd0d31aee62aacc33c6db0ea801129acb813f913e0764f'
+];
+knownGenesis.paseoAssetHub = [
+    '0x862ce2fa5abfdc3d29ead85a9472071efc69433b0128db1d6f009967fae87952'
+];
+
 const testnets = [{
     "prefix": 42,
     "network": "westend",
@@ -55,7 +62,17 @@ const testnets = [{
     "decimals": [12],
     "standardAccount": "*25519",
     "website": "https://polkadot.network"
-}]
+},
+{
+    "prefix": 42,
+    "network": "paseo",
+    "displayName": "Paseo Testnet",
+    "symbols": ["PAS"],
+    "decimals": [10],
+    "standardAccount": "*25519",
+    "website": "https://polkadot.network"
+}];
+
 const assetHubs = [{
     "prefix": 42,
     "network": "westmint",
@@ -64,7 +81,8 @@ const assetHubs = [{
     "decimals": [12],
     "standardAccount": "*25519",
     "website": "https://polkadot.network"
-}, {
+},
+ {
     "prefix": 2,
     "network": "statemine",
     "displayName": "Kusama Asset Hub",
@@ -72,14 +90,24 @@ const assetHubs = [{
     "decimals": [12],
     "standardAccount": "*25519",
     "website": "https://kusama.network"
-}, {
+},
+ {
     "prefix": 0,
     "network": "statemint",
     "displayName": "Polkadot Asset Hub",
     "symbols": ["DOT"],
     "decimals": [10],
     "standardAccount": "*25519",
-    "website": "https://kusama.network"
+    "website": "https://polkadot.network"
+},
+{
+    "prefix": 0,
+    "network": "paseoAssetHub",
+    "displayName": "Paseo Asset Hub",
+    "symbols": ["PAS"],
+    "decimals": [10],
+    "standardAccount": "*25519",
+    "website": "https://polkadot.network"
 }];
 
 const peopleChains = [
@@ -101,9 +129,9 @@ const peopleChains = [
         "standardAccount": "*25519",
         "website": "https://kusama.network"
     }
-  ];
+];
 
-  
+
 knownSubstrate.push(...assetHubs, ...peopleChains, ...testnets);
 
 export const allNetworks = knownSubstrate.map(toExpanded);
