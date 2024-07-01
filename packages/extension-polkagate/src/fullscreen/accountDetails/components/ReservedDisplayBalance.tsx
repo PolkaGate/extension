@@ -20,6 +20,7 @@ import { toTitleCase } from '../../governance/utils/util';
 import DisplayBalance from './DisplayBalance';
 
 interface Props {
+  assetId: number | undefined,
   address: string | undefined;
   amount: BN | Balance | undefined;
   price: number | undefined;
@@ -120,17 +121,12 @@ const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetai
   );
 };
 
-export default function ReservedDisplayBalance({ address, amount, disabled, price }: Props): React.ReactElement {
+export default function ReservedDisplayBalance({ address, amount, assetId, disabled, price }: Props): React.ReactElement {
   const { t } = useTranslation();
   const reservedDetails = useReservedDetails(address);
   const { decimal, genesisHash, token } = useInfo(address);
-  const { paramAssetId } = useParams<{ address: string, paramAssetId: string }>();
 
-  const notOnNativeAsset = useMemo(() => {
-    const assetIdNumber = Number(paramAssetId);
-
-    return Number.isNaN(assetIdNumber) || assetIdNumber > 0;
-  }, [paramAssetId]);
+  const notOnNativeAsset = useMemo(() => assetId !== undefined && assetId > 0, [assetId]);
 
   const [showReservedDetails, setShowReservedDetails] = useState<boolean>(false);
 
