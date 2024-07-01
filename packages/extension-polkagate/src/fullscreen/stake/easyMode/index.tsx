@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -18,6 +17,7 @@ import type { BalancesInfo } from '../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
 import type { Inputs } from '../Entry';
 import { STEPS } from '..';
+import { POLKAGATE_POOL_IDS } from '../../../util/constants';
 
 interface Props {
   address: string
@@ -27,22 +27,16 @@ interface Props {
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>
 }
 
-const POLKAGATE_POOL_IDS = {
-  Kusama: 18,
-  Polkadot: 8,
-  Westend: 6
-};
-
 export default function EasyMode({ address, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chainName, decimal, formatted } = useInfo(address);
-  const pool = usePool(address, POLKAGATE_POOL_IDS[chainName] as number);
+  const pool = usePool(address, POLKAGATE_POOL_IDS[chainName as string] as number);
 
   const poolConsts = usePoolConsts(address);
   const stakingConsts = useStakingConsts(address);
 
-  const [amount, setAmount] = useState<string>(inputs?.extraInfo?.amount);
+  const [amount, setAmount] = useState<string>(inputs?.extraInfo?.['amount'] as string);
   const [amountAsBN, setAmountAsBN] = useState<BN>(BN_ZERO);
   const [isNextClicked, setNextIsClicked] = useState<boolean>();
   const [topStakingLimit, setTopStakingLimit] = useState<BN>();
@@ -55,7 +49,7 @@ export default function EasyMode({ address, balances, inputs, setInputs, setStep
     return !amount || !amountAsBN || !topStakingLimit || parseFloat(amount) === 0 || amountAsBN.gt(topStakingLimit);
   }, [amount, amountAsBN, topStakingLimit]);
 
-  const isBusy = !inputs?.extraInfo?.amount && isNextClicked;
+  const isBusy = !inputs?.extraInfo?.['amount'] && isNextClicked;
 
   useEffect(() => {
     if (!amountAsBN || !amount) {
@@ -75,11 +69,11 @@ export default function EasyMode({ address, balances, inputs, setInputs, setStep
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedMaxFee(api.createType('Balance', BN_ONE));
+      return setEstimatedMaxFee(api.createType('Balance', BN_ONE) as Balance);
     }
 
     amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
-      setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
+      setEstimatedMaxFee(api.createType('Balance', i?.partialFee) as Balance);
     });
   }, [formatted, api, availableBalance, amount, decimal, amountAsBN]);
 
@@ -103,8 +97,7 @@ export default function EasyMode({ address, balances, inputs, setInputs, setStep
         pool
       });
     } else {
-      console.log('waiting!');
-      console.log('waiting:', amount, amountAsBN, poolConsts, pool, api, poolConsts?.minJoinBond && amountAsBN?.gte(poolConsts?.minJoinBond));
+      console.log('waiting for pool:', pool);
     }
   }, [amount, amountAsBN, api, pool, poolConsts, setInputs]);
 

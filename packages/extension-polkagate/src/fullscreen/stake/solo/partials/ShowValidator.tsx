@@ -108,7 +108,7 @@ function ShowValidator({ accountInfo, allInOneRow = true, api, chain, check, dec
           {t('Nominators')}:
         </Grid>
         <Grid fontSize='14px' fontWeight={400} item lineHeight='22px' pl='3px'>
-          {v.exposure.others.length || t('N/A')}
+          {v.exposure.others?.length || t('N/A')}
         </Grid>
       </Grid>
       <Grid alignItems='center' container item justifyContent='flex-end' sx={{ lineHeight: '23px', pl: '2px' }} width='fit-content'>
