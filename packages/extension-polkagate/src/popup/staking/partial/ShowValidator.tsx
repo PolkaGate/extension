@@ -100,7 +100,7 @@ function ShowValidator({ accountInfo, api, chain, check, decimal, handleCheck, i
         <Grid alignItems='end' container item sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '23px' }} width='fit-content'>
           {t<string>('Nominators:')}
           <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='3px'>
-            {v.exposure.others.length || t('N/A')}
+            {v.exposure.others?.length || t('N/A')}
           </Grid>
         </Grid>
         <Grid alignItems='center' container item justifyContent='flex-end' sx={{ lineHeight: '23px', pl: '2px' }} width='fit-content'>

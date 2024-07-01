@@ -162,7 +162,7 @@ export default function Popup(): React.ReactElement {
         const found = accounts.find(({ address }) => address === _address);
 
         if (!found) {
-          assetsOnChains.balances[_address] = undefined;
+          delete assetsOnChains.balances[_address];
           setStorage(ASSETS_NAME_IN_STORAGE, assetsOnChains, true).catch(console.error);
         }
       });
