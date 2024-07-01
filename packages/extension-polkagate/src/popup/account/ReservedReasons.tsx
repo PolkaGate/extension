@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -12,7 +11,7 @@
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
 import { Container, Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { toTitleCase } from '@polkadot/extension-polkagate/src/fullscreen/governance/utils/util';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -55,6 +54,28 @@ export default function ReservedReasons({ address, assetId, identity, setShow, s
     setShow(false);
   }, [setShow]);
 
+  const reasonsToShow = useMemo(() => {
+    const details = Object.values(reservedDetails);
+
+    if (details.length === 0) {
+      return undefined
+    }
+
+    const noReason = details.every((deposit) => deposit === null);
+
+    if (noReason) {
+      return null;
+    }
+
+    const filteredReservedDetails = Object.fromEntries(
+      Object.entries(reservedDetails).filter(([_key, value]) => value && !value.isZero())
+    );
+
+    return Object.values(filteredReservedDetails).length > 0
+      ? filteredReservedDetails
+      : undefined
+  }, [reservedDetails]);
+
   return (
     <Motion>
       <Popup show={show}>
@@ -81,9 +102,9 @@ export default function ReservedReasons({ address, assetId, identity, setShow, s
           </Grid>
         </Container>
         <Container disableGutters sx={{ maxHeight: `${parent.innerHeight - 150}px`, overflowY: 'auto', px: '15px' }}>
-          {Object.entries(reservedDetails)?.length
+          {reasonsToShow
             ? <>
-              {Object.entries(reservedDetails)?.map(([key, value], index) => (
+              {Object.entries(reasonsToShow)?.map(([key, value], index) => (
                 <Grid container item key={index}>
                   <Grid alignItems='center' container justifyContent='space-between' py='5px'>
                     <Grid item sx={{ fontSize: '16px', fontWeight: 300, lineHeight: '36px' }} xs={6}>
@@ -109,13 +130,17 @@ export default function ReservedReasons({ address, assetId, identity, setShow, s
                 </Grid>
               ))}
             </>
-            : <Progress
-              fontSize={14}
-              pt={10}
-              size={100}
-              title={t('Loading information, please wait ...')}
-              type='grid'
-            />
+            : reasonsToShow === null
+              ? <Typography fontSize='16px' fontWeight={500} width='100%'>
+                {t('No reasons found!')}
+              </Typography>
+              : <Progress
+                fontSize={14}
+                pt={10}
+                size={100}
+                title={t('Loading information, please wait ...')}
+                type='grid'
+              />
           }
         </Container>
       </Popup>

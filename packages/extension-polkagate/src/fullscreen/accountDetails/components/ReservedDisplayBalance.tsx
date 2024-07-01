@@ -68,26 +68,24 @@ const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetai
 
   const reasonsToShow = useMemo(() => {
     const details = Object.values(reservedDetails);
+
     if (details.length === 0) {
       return undefined
-    } else {
-
-      const noReason = details.every((deposit) => deposit === null);
-
-      if (noReason) {
-        return null;
-      } else {
-        const filteredReservedDetails = Object.fromEntries(
-          Object.entries(reservedDetails).filter(([_key, value]) => value && !value.isZero())
-        );
-
-        if (Object.values(filteredReservedDetails).length > 0) {
-          return filteredReservedDetails;
-        } else {
-          return undefined;
-        }
-      }
     }
+
+    const noReason = details.every((deposit) => deposit === null);
+
+    if (noReason) {
+      return null;
+    }
+
+    const filteredReservedDetails = Object.fromEntries(
+      Object.entries(reservedDetails).filter(([_key, value]) => value && !value.isZero())
+    );
+
+    return Object.values(filteredReservedDetails).length > 0
+      ? filteredReservedDetails
+      : undefined
   }, [reservedDetails]);
 
   return (
@@ -131,11 +129,7 @@ export default function ReservedDisplayBalance({ address, amount, disabled, pric
   const notOnNativeAsset = useMemo(() => {
     const assetIdNumber = Number(paramAssetId);
 
-    if (isNaN(assetIdNumber) || assetIdNumber > 0) {
-      return true;
-    } else {
-      return false;
-    }
+    return Number.isNaN(assetIdNumber) || assetIdNumber > 0;
   }, [paramAssetId]);
 
   const [showReservedDetails, setShowReservedDetails] = useState<boolean>(false);
