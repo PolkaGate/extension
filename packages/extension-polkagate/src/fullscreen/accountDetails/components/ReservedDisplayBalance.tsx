@@ -12,7 +12,6 @@ import { useTranslation } from '@polkadot/extension-polkagate/src/components/tra
 import useReservedDetails, { type Reserved } from '@polkadot/extension-polkagate/src/hooks/useReservedDetails';
 import { isOnRelayChain } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
-import { useParams } from 'react-router';
 
 import { ShowValue } from '../../../components';
 import { useInfo } from '../../../hooks';
