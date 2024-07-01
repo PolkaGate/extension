@@ -125,13 +125,13 @@ export default function ReservedDisplayBalance({ address, amount, assetId, disab
   const reservedDetails = useReservedDetails(address);
   const { decimal, genesisHash, token } = useInfo(address);
 
-  const notOnNativeAsset = useMemo(() => assetId !== undefined && assetId > 0, [assetId]);
+  const notOnNativeAsset = useMemo(() => (assetId !== undefined && assetId > 0) || typeof(assetId) !== 'number' , [assetId]);
 
   const [showReservedDetails, setShowReservedDetails] = useState<boolean>(false);
 
   useEffect(() => {
     setShowReservedDetails(false); // to reset collapsed area on chain change
-  }, [address, genesisHash]);
+  }, [address, genesisHash, assetId]);
 
   const toggleShowReservedDetails = useCallback(() => {
     reservedDetails && !amount?.isZero() && setShowReservedDetails(!showReservedDetails);
