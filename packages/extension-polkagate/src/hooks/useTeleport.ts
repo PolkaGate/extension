@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import type { ParaId } from '@polkadot/types/interfaces';
@@ -70,8 +69,8 @@ export default function useTeleport(address: string | undefined): Teleport {
   const [secondEndpoint, setSecondEndpoint] = useState<ExtLinkOption | undefined>(undefined);
 
   useEffect((): void => {
-    api && api.query.parachainInfo && api.query.parachainInfo.parachainId()
-      .then(setParaId)
+    api && api.query['parachainInfo'] && api.query['parachainInfo']['parachainId']()
+      .then((id: any) => { setParaId(id) })
       .catch((error) => {
         console.error('Failed to fetch parachain ID:', error);
       });
