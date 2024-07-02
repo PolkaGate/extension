@@ -69,9 +69,9 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Add profiles: You can now organize your accounts into different profiles, making account management much easier.',
-              'Proxy account management on asset hubs: You can now manage proxy accounts on relay chains\' asset hubs.',
-              'Fix known bugs: This update enhances performance and provides a more streamlined experience'
+              'Paseo Support: The Paseo testnet and its asset hub are now accessible through the wallet.',
+              'Multiple Profile Accounts: An account can now be added to multiple profiles, allowing for better organization of accounts.',
+              'Bug Fixes and Performance Improvements: This update enhances performance and provides a more streamlined user experience by fixing known issues.'
             ]}
           />
         </Grid>
