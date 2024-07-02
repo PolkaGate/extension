@@ -6,11 +6,11 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Collapse, Divider, Grid, Skeleton, type SxProps, type Theme, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
 import useReservedDetails, { type Reserved } from '@polkadot/extension-polkagate/src/hooks/useReservedDetails';
-import { isOnAssetHub, isOnRelayChain } from '@polkadot/extension-polkagate/src/util/utils';
+import { isOnRelayChain } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
 import { ShowValue } from '../../../components';
@@ -19,6 +19,7 @@ import { toTitleCase } from '../../governance/utils/util';
 import DisplayBalance from './DisplayBalance';
 
 interface Props {
+  assetId: number | undefined,
   address: string | undefined;
   amount: BN | Balance | undefined;
   price: number | undefined;
@@ -37,7 +38,7 @@ interface WaitForReservedProps {
   style?: SxProps<Theme> | undefined;
 }
 
-function WaitForReserved ({ rows = 2, skeletonHeight = 20, skeletonWidth = 60, style }: WaitForReservedProps): React.ReactElement {
+function WaitForReserved({ rows = 2, skeletonHeight = 20, skeletonWidth = 60, style }: WaitForReservedProps): React.ReactElement {
   return (
     <Grid container justifyContent='center' sx={{ ...style }}>
       {Array.from({ length: rows }).map((_, index) => (
@@ -65,6 +66,28 @@ function WaitForReserved ({ rows = 2, skeletonHeight = 20, skeletonWidth = 60, s
 const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetailsType) => {
   const { t } = useTranslation();
 
+  const reasonsToShow = useMemo(() => {
+    const details = Object.values(reservedDetails);
+
+    if (details.length === 0) {
+      return undefined
+    }
+
+    const noReason = details.every((deposit) => deposit === null);
+
+    if (noReason) {
+      return null;
+    }
+
+    const filteredReservedDetails = Object.fromEntries(
+      Object.entries(reservedDetails).filter(([_key, value]) => value && !value.isZero())
+    );
+
+    return Object.values(filteredReservedDetails).length > 0
+      ? filteredReservedDetails
+      : undefined
+  }, [reservedDetails]);
+
   return (
     <Collapse in={showReservedDetails} sx={{ width: '100%' }}>
       <Divider sx={{ bgcolor: 'divider', height: '1px', m: '3px auto', width: '90%' }} />
@@ -72,9 +95,9 @@ const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetai
         <Typography fontSize='16px' fontWeight={500}>
           {t('Reasons')}
         </Typography>
-        {Object.entries(reservedDetails)?.length
+        {reasonsToShow
           ? <Grid container direction='column' item>
-            {Object.entries(reservedDetails)?.map(([key, value], index) => (
+            {Object.entries(reasonsToShow)?.map(([key, value], index) => (
               <Grid container item key={index} sx={{ fontSize: '16px' }}>
                 <Grid item sx={{ fontWeight: 300 }} xs={4}>
                   {toTitleCase(key)}
@@ -86,29 +109,35 @@ const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetai
             ))
             }
           </Grid>
-          : <WaitForReserved rows={2} />
+          : reasonsToShow === null
+            ? <Typography fontSize='16px' fontWeight={500} width='100%'>
+              {t('No reasons found!')}
+            </Typography>
+            : <WaitForReserved rows={2} />
         }
       </Grid>
     </Collapse>
   );
 };
 
-export default function ReservedDisplayBalance ({ address, amount, disabled, price }: Props): React.ReactElement {
+export default function ReservedDisplayBalance({ address, amount, assetId, disabled, price }: Props): React.ReactElement {
   const { t } = useTranslation();
   const reservedDetails = useReservedDetails(address);
   const { decimal, genesisHash, token } = useInfo(address);
+
+  const notOnNativeAsset = useMemo(() => (assetId !== undefined && assetId > 0) || typeof(assetId) !== 'number' , [assetId]);
 
   const [showReservedDetails, setShowReservedDetails] = useState<boolean>(false);
 
   useEffect(() => {
     setShowReservedDetails(false); // to reset collapsed area on chain change
-  }, [genesisHash]);
+  }, [address, genesisHash, assetId]);
 
   const toggleShowReservedDetails = useCallback(() => {
     reservedDetails && !amount?.isZero() && setShowReservedDetails(!showReservedDetails);
   }, [amount, reservedDetails, showReservedDetails]);
 
-  return !genesisHash || isOnAssetHub(genesisHash)
+  return !genesisHash || notOnNativeAsset
     ? <></>
     : (
       <Grid container item sx={{ '> div': { bgcolor: 'unset', boxShadow: 'none' }, bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)' }}>
@@ -116,7 +145,7 @@ export default function ReservedDisplayBalance ({ address, amount, disabled, pri
           amount={amount}
           decimal={decimal}
           disabled={disabled}
-          onClick={isOnRelayChain(genesisHash) ? toggleShowReservedDetails : undefined}
+          onClick={isOnRelayChain(genesisHash) || !notOnNativeAsset ? toggleShowReservedDetails : undefined}
           openCollapse={showReservedDetails}
           price={price}
           title={t('Reserved')}
