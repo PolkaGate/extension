@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-// @ts-nocheck
-
 /* eslint-disable import-newlines/enforce */
 /* eslint-disable object-curly-newline */
 

@@ -1,10 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 // @ts-nocheck
 
 import { balancify } from '.';
+import { NATIVE_TOKEN_ASSET_ID } from '../../constants';
 
 export async function toGetNativeToken(addresses, api, chainName) {
   const _result = {};
@@ -15,7 +15,7 @@ export async function toGetNativeToken(addresses, api, chainName) {
     const totalBalance = balances[index].freeBalance.add(balances[index].reservedBalance);
 
     _result[address] = [{
-      assetId: 0, // Rule: we set asset id 0 for native tokens
+      assetId: NATIVE_TOKEN_ASSET_ID, // Rule: we set asset id 0 for native tokens
       balanceDetails: balancify(balances[index]),
       chainName,
       decimal: api.registry.chainDecimals[0],

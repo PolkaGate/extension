@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -18,28 +17,28 @@ interface Props {
   address: string | undefined;
   chains: string[];
 }
+interface NetworkListProps {
+  address: string | undefined;
+  chains: string[];
+  selectedChainName: string | undefined;
+  setAnchorEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
+  setSelectedChainName: React.Dispatch<React.SetStateAction<string | undefined>>;
+}
 
-function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<Props> {
+const NetworkList = ({ address, chains, setAnchorEl, setSelectedChainName, selectedChainName }: NetworkListProps) => {
   const theme = useTheme();
   const options = useGenesisHashOptions();
-  const { chainName: chainNameFromAccount } = useInfo(address);
   const isTestnetEnabled = useIsTestnetEnabled();
 
-  const [selectedChainName, setSelectedChainName] = useState<string>();
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [flip, setFlip] = useState(false);
+  const selectableNetworks = useMemo(() =>
+    !chains.length
+      ? options.filter(({ text }) => text !== 'Allow use on any chain')
+      : options.filter((o) => chains.includes(o.value as any))
+    , [chains, options]);
+
+  const sanitizedLowercase = useCallback((text: string) => sanitizeChainName(text)?.toLowerCase(), []);
 
   const isTestnetDisabled = useCallback((genesisHash: string) => !isTestnetEnabled && TEST_NETS.includes(genesisHash), [isTestnetEnabled]);
-  const selectableNetworks = useMemo(() => !chains.length ? options.filter(({ text }) => text !== 'Allow use on any chain') : options.filter((o) => chains.includes(o.value)), [chains, options]);
-
-  useEffect(() => {
-    setSelectedChainName(chainNameFromAccount);
-  }, [chainNameFromAccount]);
-
-  useEffect(() => {
-    setFlip(true);
-    setTimeout(() => setFlip(false), 1000);
-  }, [selectedChainName]);
 
   const selectNetwork = useCallback((net: DropdownOption) => {
     setAnchorEl(null);
@@ -56,17 +55,8 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
     setSelectedChainName(net.text);
   }, [address, isTestnetDisabled]);
 
-  const handleClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
 
-  const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  }, []);
-
-  const sanitizedLowercase = useCallback((text: string) => sanitizeChainName(text)?.toLowerCase(), []);
-
-  const NetworkList = () => (
+  return (
     <Grid container item sx={{ maxHeight: '550px', overflow: 'hidden', overflowY: 'scroll', width: '250px' }}>
       {selectableNetworks && selectableNetworks.length > 0 &&
         selectableNetworks.map((network, index) => {
@@ -92,7 +82,34 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
           );
         })}
     </Grid>
-  );
+  )
+}
+
+function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<Props> {
+  const theme = useTheme();
+  const { chainName: chainNameFromAccount } = useInfo(address);
+
+  const [selectedChainName, setSelectedChainName] = useState<string>();
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [flip, setFlip] = useState(false);
+
+  useEffect(() => {
+    setSelectedChainName(chainNameFromAccount);
+  }, [chainNameFromAccount]);
+
+  useEffect(() => {
+    setFlip(true);
+    setTimeout(() => setFlip(false), 1000);
+  }, [selectedChainName]);
+
+
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+
+  const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  }, []);
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
@@ -132,7 +149,13 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
           vertical: 'top'
         }}
       >
-        <NetworkList />
+        <NetworkList
+          selectedChainName={selectedChainName}
+          setSelectedChainName={setSelectedChainName}
+          setAnchorEl={setAnchorEl}
+          address={address}
+          chains={chains}
+        />
       </Popover>
     </Grid>
   );
