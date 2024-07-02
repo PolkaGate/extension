@@ -42,19 +42,13 @@ export default function useReservedDetails(address: string | undefined): Reserve
 
   const setValue = useCallback((item: string, value: BN | null | undefined) => {
     setReserved((prev) => {
-      const newState = { ...prev }; // Create a copy of the previous state
-  
-      if (value) {
-        if (value.isZero()) {
-          newState[item] = null;
-        } else {
-          newState[item] = toBalance(value);
-        }
-      } else {
-        newState[item] = value;
-      }
-  
-      return newState; // Return the new state object
+      const newState = { ...prev };
+
+      newState[item] = value
+        ? value.isZero() ? null : toBalance(value)
+        : value;
+
+      return newState;
     });
   }, [toBalance]);
 
