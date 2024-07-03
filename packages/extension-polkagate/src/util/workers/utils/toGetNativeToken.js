@@ -20,7 +20,7 @@ export async function toGetNativeToken(addresses, api, chainName) {
       chainName,
       decimal: api.registry.chainDecimals[0],
       genesisHash: api.genesisHash.toString(),
-      priceId: chainName.toLowerCase().replace('assethub', ''), // based on the fact that chains native token price id is the same as their chain names
+      priceId: chainName.toLowerCase().replace('assethub', '').replace('people', ''), // based on the fact that chains native token price id is the same as their chain names
       token: api.registry.chainTokens[0],
       totalBalance: String(totalBalance)
     }];

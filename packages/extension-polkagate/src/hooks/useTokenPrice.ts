@@ -46,7 +46,7 @@ export default function useTokenPrice(address: string, assetId?: number): Price 
     // FixMe, on second fetch of asset id its type will get string which is weird!!
     const priceId = _assetId !== undefined && _assetId > 0 // note 0 is used as native token asset Id
       ? mayBeAssetsOnMultiAssetChains?.find(({ id }) => id === Number(_assetId))?.priceId
-      : EXTRA_PRICE_IDS[chainName?.toLocaleLowerCase()] || chainName?.toLocaleLowerCase()?.replace('assethub', '');
+      : EXTRA_PRICE_IDS[chainName?.toLocaleLowerCase()] || chainName?.toLocaleLowerCase()?.replace('assethub', '')?.replace('people', '');
 
     const mayBePriceValue = priceId ? pricesInCurrencies.prices?.[priceId]?.value || 0 : 0;
 

@@ -85,7 +85,7 @@ async function getAssetOnRelayChain(addresses, chainName) {
       balanceInfo.forEach(({ address, balances, pooledBalance, soloTotal }) => {
         const totalBalance = balances.freeBalance.add(balances.reservedBalance).add(pooledBalance);
         const genesisHash = api.genesisHash.toString();
-        const priceId = TEST_NETS.includes(genesisHash) ? undefined : EXTRA_PRICE_IDS[chainName] || chainName.toLowerCase(); // based on the fact that relay chains price id is the same as their sanitized names,except for testnets and some other single asset chains
+        const priceId = TEST_NETS.includes(genesisHash) ? undefined : EXTRA_PRICE_IDS[chainName] || chainName.toLowerCase().replace('people', ''); // based on the fact that relay chains price id is the same as their sanitized names,except for testnets and some other single asset chains
 
         results[address] = [{ // since some chains may have more than one asset hence we use an array here! even thought its not needed for relay chains but just to be as a general rule.
           assetId: NATIVE_TOKEN_ASSET_ID, // Rule: we set asset id 0 for native tokens

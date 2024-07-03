@@ -104,7 +104,7 @@ export default function AccountDetails(): React.ReactElement {
       return 0;
     }
 
-    const currentChainName = sanitizeChainName(chainName)?.toLocaleLowerCase()?.replace('assethub', '');
+    const currentChainName = sanitizeChainName(chainName)?.toLocaleLowerCase()?.replace('assethub', '')?.replace('people', '');
     const currentAssetPrices = pricesInCurrency?.prices?.[(selectedAssetPriceId || EXTRA_PRICE_IDS[currentChainName || ''] || currentChainName) as string];
     const mayBeTestNetPrice = pricesInCurrency?.prices && !currentAssetPrices ? 0 : undefined;
 
