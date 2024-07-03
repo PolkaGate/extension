@@ -22,6 +22,7 @@ interface Props {
   assetId: number | undefined,
   address: string | undefined;
   amount: BN | Balance | undefined;
+  assetToken?: string | undefined;
   price: number | undefined;
   disabled?: boolean;
 }
@@ -120,12 +121,12 @@ const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetai
   );
 };
 
-export default function ReservedDisplayBalance({ address, amount, assetId, disabled, price }: Props): React.ReactElement {
+export default function ReservedDisplayBalance({ address, amount, assetToken, assetId, disabled, price }: Props): React.ReactElement {
   const { t } = useTranslation();
   const reservedDetails = useReservedDetails(address);
   const { decimal, genesisHash, token } = useInfo(address);
 
-  const notOnNativeAsset = useMemo(() => (assetId !== undefined && assetId > 0) || typeof(assetId) !== 'number' , [assetId]);
+  const notOnNativeAsset = useMemo(() => (assetId !== undefined && assetId > 0) || assetToken?.toLowerCase() !== token?.toLowerCase() , [assetId, assetToken, token]);
 
   const [showReservedDetails, setShowReservedDetails] = useState<boolean>(false);
 
