@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -37,41 +36,29 @@ interface Props {
 
 type TabTitles = 'Commission' | 'Ids' | 'Members' | 'Reward' | 'Roles' | 'None';
 interface CollapseProps {
+  address: string;
   mode: TabTitles;
   pool: MyPoolInfo;
   title: string;
   show: boolean;
   open: () => void;
+  setShowClaimCommission?: React.Dispatch<React.SetStateAction<boolean | undefined>>
 }
 
-export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
+interface InsidersProps {
+  address: string;
+  poolToShow: MyPoolInfo;
+  setShowClaimCommission?: React.Dispatch<React.SetStateAction<boolean | undefined>>
+}
+
+const ShowMembers = ({ address, poolToShow }: InsidersProps) => {
   const { t } = useTranslation();
   const isExtensionPopup = useIsExtensionPopup();
 
-  const { address } = useParams<FormattedAddressState>();
-  const { decimal, formatted, token } = useInfo(address);
-  const poolToShow = usePool(address, poolId, false, pool);
+  const { api, chain, decimal, token } = useInfo(address);
+
   const poolMembers = usePoolMembers(api, poolToShow?.poolId?.toString());
   const poolPoints = useMemo(() => (poolToShow?.bondedPool ? new BN(String(poolToShow.bondedPool.points)) : BN_ONE), [poolToShow]);
-  const [itemToShow, setShow] = useState<TabTitles>('None');
-  const [showClaimCommission, setShowClaimCommission] = useState<boolean>();
-
-  const membersToShow = useMemo(() => {
-    if (!poolMembers) {
-      return;
-    }
-
-    return poolMembers.map((m) => ({ accountId: m.accountId, points: m.member.points }) as MemberPoints);
-  }, [poolMembers]);
-
-  const _closeMenu = useCallback(
-    () => setShowPoolInfo(false),
-    [setShowPoolInfo]
-  );
-
-  const openTab = useCallback((tab: TabTitles) => () => {
-    setShow(tab === itemToShow ? 'None' : tab);
-  }, [itemToShow]);
 
   const toBalance = (points: BN) => {
     const staked = points ? api?.createType('Balance', points) : undefined;
@@ -83,11 +70,15 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
     return (Number(memberPoints.muln(100)) / Number(poolPoints.isZero() ? BN_ONE : poolPoints)).toFixed(2);
   }, [poolPoints]);
 
-  const onClaimCommission = useCallback(() => {
-    setShowClaimCommission(true);
-  }, []);
+  const membersToShow = useMemo(() => {
+    if (!poolMembers) {
+      return;
+    }
 
-  const ShowMembers = () => (
+    return poolMembers.map((m) => ({ accountId: m.accountId, points: m.member.points }) as MemberPoints);
+  }, [poolMembers]);
+
+  return (
     <Grid container direction='column' display='block' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: isExtensionPopup ? '130px' : '220px', minHeight: '80px', mt: '10px', overflowX: 'hidden', overflowY: 'scroll' }}>
       <Grid container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
         <Grid item width='50%'>
@@ -134,9 +125,14 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
         </Grid>
       }
     </Grid>
-  );
+  )
+};
 
-  const ShowReward = () => (
+const ShowReward = ({ address, poolToShow }: InsidersProps) => {
+  const { t } = useTranslation();
+  const { decimal, token } = useInfo(address);
+
+  return (
     <Grid container sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', my: '10px' }}>
       <Grid container item justifyContent='center' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
         <Typography fontSize='12px' fontWeight={300} lineHeight='25px'>
@@ -153,9 +149,19 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
         />
       </Grid>
     </Grid>
-  );
+  )
+};
 
-  const ShowClaimableCommission = () => (
+const ShowClaimableCommission = ({ address, poolToShow, setShowClaimCommission }: InsidersProps) => {
+  const { t } = useTranslation();
+  const isExtensionPopup = useIsExtensionPopup();
+  const { decimal, formatted, token } = useInfo(address);
+
+  const onClaimCommission = useCallback(() => {
+    setShowClaimCommission && setShowClaimCommission(true);
+  }, []);
+
+  return (
     <Grid container sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', my: '10px', pb: '5px' }}>
       <Grid container item justifyContent='center' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
         <Typography fontSize='12px' fontWeight={300} lineHeight='25px'>
@@ -172,17 +178,26 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
         />
       </Grid>
       <PButton
-        _mt={2}
+        _mt='2px'
         _onClick={onClaimCommission}
         _variant='contained'
         /** We disabled claim commission in fullscreen */
-        disabled={!isExtensionPopup || poolToShow?.rewardPool?.totalCommissionPending === 0 || poolToShow?.bondedPool?.roles?.root !== formatted}
+        disabled={
+          !isExtensionPopup ||
+          poolToShow?.rewardPool?.totalCommissionPending as unknown as number === 0 ||
+          poolToShow?.bondedPool?.roles?.root as unknown as string !== formatted
+        }
         text={t('Claim')}
       />
     </Grid>
-  );
+  )
+};
 
-  const CollapseData = ({ mode, open, pool, show, title }: CollapseProps) => (
+
+const CollapseData = ({ address, mode, open, pool, show, title, setShowClaimCommission }: CollapseProps) => {
+  const { api, chain } = useInfo(address);
+
+  return (
     <Grid container direction='column' sx={{ m: 'auto', width: '92%' }}>
       <Grid container item justifyContent='space-between' onClick={open} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', cursor: 'pointer' }}>
         <Typography fontSize='18px' fontWeight={400} lineHeight='40px'>
@@ -193,21 +208,57 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
         </Grid>
       </Grid>
       <Collapse in={show} sx={{ width: '100%' }}>
-        {(mode === 'Ids' || mode === 'Roles') &&
-          <ShowRoles api={api} chain={chain as any} mode={mode} pool={pool} style={{ my: '10px' }} />
+        {(mode === 'Ids' || mode === 'Roles') && chain &&
+          <ShowRoles
+            api={api}
+            chain={chain}
+            mode={mode}
+            pool={pool}
+            style={{ my: '10px' }}
+          />
         }
         {mode === 'Members' &&
-          <ShowMembers />
+          <ShowMembers
+            address={address}
+            poolToShow={pool}
+          />
         }
         {mode === 'Reward' &&
-          <ShowReward />
+          <ShowReward
+            address={address}
+            poolToShow={pool}
+          />
         }
         {mode === 'Commission' &&
-          <ShowClaimableCommission />
+          <ShowClaimableCommission
+            address={address}
+            poolToShow={pool}
+            setShowClaimCommission={setShowClaimCommission}
+          />
         }
       </Collapse>
     </Grid>
+  )
+};
+
+export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
+  const isExtensionPopup = useIsExtensionPopup();
+
+  const { address } = useParams<FormattedAddressState>();
+  const { formatted } = useInfo(address);
+  const poolToShow = usePool(address, poolId, false, pool);
+  const [itemToShow, setShow] = useState<TabTitles>('None');
+  const [showClaimCommission, setShowClaimCommission] = useState<boolean>();
+
+  const _closeMenu = useCallback(
+    () => setShowPoolInfo(false),
+    [setShowPoolInfo]
   );
+
+  const openTab = useCallback((tab: TabTitles) => () => {
+    setShow(tab === itemToShow ? 'None' : tab);
+  }, [itemToShow]);
 
   const page = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt={isExtensionPopup ? '46px' : 0} sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
@@ -226,6 +277,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
             style={{ m: '10px auto', width: '92%' }}
           />
           <CollapseData
+            address={address}
             mode={itemToShow}
             open={openTab('Roles')}
             pool={poolToShow}
@@ -234,6 +286,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
           />
           {poolToShow.accounts?.rewardId &&
             <CollapseData
+              address={address}
               mode={itemToShow}
               open={openTab('Ids')}
               pool={poolToShow}
@@ -243,6 +296,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
           }
           {poolToShow.accounts?.rewardId &&
             <CollapseData
+              address={address}
               mode={itemToShow}
               open={openTab('Members')}
               pool={poolToShow}
@@ -252,6 +306,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
           }
           {poolToShow.accounts?.rewardId &&
             <CollapseData
+              address={address}
               mode={itemToShow}
               open={openTab('Reward')}
               pool={poolToShow}
@@ -261,10 +316,12 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
           }
           {poolToShow.bondedPool?.roles && Object.values(poolToShow.bondedPool.roles).includes(formatted) &&
             <CollapseData
+              address={address}
               mode={itemToShow}
               open={openTab('Commission')}
               pool={poolToShow}
               show={itemToShow === 'Commission'}
+              setShowClaimCommission={setShowClaimCommission}
               title={t('Commission')}
             />
           }
