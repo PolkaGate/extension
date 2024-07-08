@@ -23,6 +23,7 @@ import type { FormattedAddressState, MemberPoints, MyPoolInfo, PoolInfo } from '
 import ClaimCommission from '../pool/claimCommission';
 import ShowPool from './ShowPool';
 import ShowRoles from './ShowRoles';
+import type { Balance } from '@polkadot/types/interfaces';
 
 interface Props {
   address?: string;
@@ -103,7 +104,7 @@ const ShowMembers = ({ address, poolToShow }: InsidersProps) => {
             <Identity address={member.accountId} api={api} chain={chain as any} formatted={member.accountId} identiconSize={25} showShortAddress style={{ fontSize: '14px', minHeight: '45px', pl: '10px', width: '50%' }} />
             <Grid alignItems='center' container fontSize='14px' fontWeight='400' item justifyContent='center' sx={{ borderColor: 'secondary.light', borderInline: '1px solid' }} width='30%'>
               <ShowBalance
-                balance={toBalance(member.points)}
+                balance={toBalance(member.points) as Balance}
                 decimal={decimal}
                 decimalPoint={2}
                 height={22}
