@@ -1,7 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { DeriveAccountInfo, DeriveStakingAccount } from '@polkadot/api-derive/types';
+// @ts-ignore
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
 import { ApiPromise } from '@polkadot/api';
@@ -31,7 +32,7 @@ export const checkLostAccountSoloStakedBalance = (
   setLostAccountSoloUnlock: React.Dispatch<React.SetStateAction<{ amount: BN; date: number; } | undefined>>,
   setLostAccountRedeemable: React.Dispatch<React.SetStateAction<{ amount: Balance; count: number; } | undefined>>
 ) => {
-  api.derive.staking.account(lostAccountAddress).then((s) => {
+  api.derive.staking.account(lostAccountAddress).then((s: DeriveStakingAccount) => {
     setLostAccountSoloStakingBalance(new BN(s.stakingLedger.active.toString()));
 
     let unlockingValue = BN_ZERO;
@@ -55,7 +56,7 @@ export const checkLostAccountSoloStakedBalance = (
       const spanCount = span.isNone ? 0 : span.unwrap().prior.length as number + 1;
       const BZ = api.createType('Balance', BN_ZERO);
 
-      setLostAccountRedeemable({ amount: s.redeemable ?? BZ, count: spanCount });
+      setLostAccountRedeemable({ amount: s.redeemable as Balance ?? BZ, count: spanCount });
     }).catch(console.error);
 
     setLostAccountSoloUnlock({ amount: unlockingValue, date: toBeReleased.at(-1)?.date ?? 0 });
