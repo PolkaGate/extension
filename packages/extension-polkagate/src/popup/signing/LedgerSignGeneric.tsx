@@ -11,26 +11,29 @@ import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { PButton, Warning } from '../../components';
-import { useLedger } from '../../hooks/useLedger';
 import useTranslation from '../../hooks/useTranslation';
+import { useGenericLedger } from '../../hooks';
+import { hexToU8a } from '@polkadot/util';
+import getChainInfo from './getChainInfo';
+import type { ApiPromise } from '@polkadot/api';
 
 interface Props {
   accountIndex?: number;
   addressOffset?: number;
   className?: string;
   error: string | null;
-  genesisHash?: string;
+  api: ApiPromise | undefined
   onSignature?: ({ signature }: { signature: HexString }) => void;
   payload?: ExtrinsicPayload;
   setError: (value: string | null) => void;
   showError?: boolean;
 }
 
-function LedgerSign({ accountIndex, addressOffset, error, genesisHash, onSignature, payload, setError, showError = true }: Props): React.ReactElement<Props> {
+function LedgerSignGeneric({ accountIndex, addressOffset, error, api, onSignature, payload, setError, showError = true }: Props): React.ReactElement<Props> {
   const [isBusy, setIsBusy] = useState(false);
   const { t } = useTranslation();
   const theme = useTheme();
-  const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useLedger(genesisHash, accountIndex, addressOffset);
+  const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset);
 
   useEffect(() => {
     if (ledgerError) {
@@ -44,22 +47,30 @@ function LedgerSign({ accountIndex, addressOffset, error, genesisHash, onSignatu
   }, [refresh, setError]);
 
   const _onSignLedger = useCallback(
-    (): void => {
-      if (!ledger || !payload || !onSignature) {
+    async (): Promise<void> => {
+      if (!ledger || !payload || !onSignature || !api) {
         return;
       }
 
       setError(null);
       setIsBusy(true);
-      ledger.sign(payload.toU8a(true), accountIndex, addressOffset)
+
+      const metadata = await getChainInfo(api);
+
+      const _metadata = metadata ? hexToU8a(JSON.stringify(metadata)) : new Uint8Array(0);
+      
+      console.log('metadata:', _metadata)
+      
+      ledger.signTransaction(payload.toU8a(true), _metadata, accountIndex, addressOffset)
         .then((signature) => {
           onSignature(signature);
         }).catch((e: Error) => {
+
           setError(e.message);
           setIsBusy(false);
         });
     },
-    [accountIndex, addressOffset, ledger, onSignature, payload, setError]
+    [accountIndex, addressOffset, ledger, onSignature, payload, setError, api]
   );
 
   return (
@@ -90,7 +101,7 @@ function LedgerSign({ accountIndex, addressOffset, error, genesisHash, onSignatu
   );
 }
 
-export default styled(LedgerSign)`
+export default styled(LedgerSignGeneric)`
   flex-direction: column;
   padding: 6px 24px;
 

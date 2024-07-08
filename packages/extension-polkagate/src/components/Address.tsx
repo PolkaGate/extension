@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -18,7 +17,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { useAccountName, useTranslation } from '../hooks';
 import useMetadata from '../hooks/useMetadata';
 import { DEFAULT_TYPE } from '../util/defaultType';
-import { AccountContext, Identicon, SettingsContext, ShortAddress } from './';
+import { AccountContext, Checkbox2, Identicon, SettingsContext, ShortAddress } from './';
 
 export interface Props {
   actions?: React.ReactNode;
@@ -26,7 +25,6 @@ export interface Props {
   children?: React.ReactNode;
   className?: string;
   genesisHash?: string | null;
-  isHardware?: boolean | null;
   isHidden?: boolean;
   name?: string | null;
   parentName?: string | null;
@@ -38,6 +36,10 @@ export interface Props {
   width?: string;
   margin?: string;
   backgroundColor?: string;
+  check?: boolean;
+  showCheckbox?: boolean;
+  handleCheck?: (event: React.ChangeEvent<HTMLInputElement>, address: string) => void;
+
 }
 
 interface Recoded {
@@ -87,10 +89,10 @@ function recodeAddress(address: string, accounts: AccountWithChildren[], chain: 
 
 const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
 
-function Address({ address, backgroundColor, genesisHash, isHardware, margin = '20px auto', name, showCopy = true, style, type: givenType, width = '92%' }: Props): React.ReactElement<Props> {
+function Address({ address, backgroundColor, genesisHash, margin = '20px auto', name, showCopy = true, style, type: givenType, width = '92%', check, showCheckbox, handleCheck }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
-  const accountName = useAccountName(address);
+  const accountName = useAccountName(address || '');
   const settings = useContext(SettingsContext);
   const [{ formatted, genesisHash: recodedGenesis, prefix, type }, setRecoded] = useState<Recoded>(defaultRecoded);
   const chain = useMetadata(genesisHash || recodedGenesis, true);
@@ -110,7 +112,7 @@ function Address({ address, backgroundColor, genesisHash, isHardware, margin = '
           (!account && givenType === 'ethereum')
         )
           ? { account, formatted: address, type: 'ethereum' }
-          : recodeAddress(address, accounts, chain, settings)
+          : recodeAddress(address, accounts, chain as any, settings)
       );
     } catch (e) {
       console.error(e);
@@ -125,7 +127,15 @@ function Address({ address, backgroundColor, genesisHash, isHardware, margin = '
   ) as IconTheme;
 
   return (
-    <Grid container direction={'row'} justifyContent={'space-between'} sx={{ backgroundColor: backgroundColor || 'background.paper', border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', height: '70px', m: { margin }, p: '14px 8px', width: { width }, ...style }}>
+    <Grid container alignItems='center' direction='row' justifyContent='space-between' sx={{ backgroundColor: backgroundColor || 'background.paper', border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', height: '70px', m: { margin }, p: '14px 8px', width: { width }, ...style }}>
+      {showCheckbox &&
+        <Grid item width='5%'>
+          <Checkbox2
+            checked={check}
+            onChange={(e) => handleCheck && handleCheck(e, address || '')}
+          />
+        </Grid>
+      }
       <Grid item width='40px'>
         <Identicon
           className='identityIcon'

@@ -26,7 +26,6 @@
     "@polkadot/extension-chains": "^0.47.5",
     "@polkadot/extension-dapp": "^0.47.5",
     "@polkadot/extension-inject": "^0.47.5",
-    "@polkadot/hw-ledger": "latest",
     "@polkadot/keyring": "latest",
     "@polkadot/networks": "latest",
     "@polkadot/react-identicon": "latest",

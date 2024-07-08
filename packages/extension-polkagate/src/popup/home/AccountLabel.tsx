@@ -43,6 +43,9 @@ export function AccountLabel({ account, ml, parentName }: Props): React.ReactEle
 
   const maybeAccountDefaultProfile = useMemo(() => {
     if (account?.isHardware) {
+      if (account?.isGeneric) {
+        return t('Ledger-Generic');
+      }
       return t('Ledger');
     }
 

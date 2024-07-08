@@ -1,10 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-//@ts-nocheck
 
 import type { Header } from '@polkadot/types/interfaces';
 import type { AnyTuple } from '@polkadot/types/types';
@@ -33,6 +30,7 @@ import { CMD_MORTAL } from '../popup/signing/Request';
 import { send, signAndSend } from '../util/api';
 import { getSubstrateAddress, saveAsHistory } from '../util/utils';
 import { Identity, Password, PButton, Progress, TwoButtons, Warning } from '.';
+import LedgerSignGeneric from '../popup/signing/LedgerSignGeneric';
 
 interface Props {
   address: string;
@@ -155,6 +153,16 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
         version: ptx.version
       };
 
+      if (isLedger) {
+        _payload.signedExtensions.push('CheckMetadataHash');
+        // @ts-ignore
+        _payload.mode = 1  // default is 0 to ignore CheckMetadataHash
+        // @ts-ignore
+        _payload.assetId = null
+        // @ts-ignore
+        _payload.metadataHash = api.runtimeMetadata.hash.toHex()
+      }
+
       return api.registry.createType('ExtrinsicPayload', _payload, { version: _payload.version });
     } catch (error) {
       console.error('Something went wrong when making payload:', error);
@@ -168,7 +176,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
   useEffect((): void => {
     if (api && from) {
       api.rpc.chain.getHeader().then(setLastHeader).catch(console.error);
-      api.query['system']['account'](from).then((res) => setRawNonce(res?.nonce || 0)).catch(console.error);
+      api.query['system']['account'](from).then((res: any) => setRawNonce(res?.nonce || 0)).catch(console.error);
     }
   }, [api, formatted, from, selectedProxy]);
 
@@ -188,7 +196,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
   const goToSelectProxy = useCallback(() => {
     setShowProxy(true);
 
-    setStep(steps.PROXY);
+    setStep(steps['PROXY']);
   }, [setStep, steps]);
 
   const closeSelectProxy = useCallback(() => {
@@ -198,7 +206,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
   const goToQrScan = useCallback(() => {
     setShowQR(true);
 
-    setStep(steps.SIGN_QR || 200); // TODO: add to STEPS
+    setStep(steps['SIGN_QR'] || 200);
   }, [setStep, steps]);
 
   const closeQrModal = useCallback(() => {
@@ -231,10 +239,10 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
         ...extraInfo
       };
 
-      setTxInfo({ ...info, api, chain: chain as any });
+      setTxInfo({ ...info as any, api, chain: chain as any });
 
-      saveAsHistory(String(from), info);
-      setStep(steps.CONFIRM);
+      saveAsHistory(String(from), info as any);
+      setStep(steps['CONFIRM']);
     } catch (e) {
       console.log('error:', e);
     }
@@ -249,7 +257,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
       const signer = keyring.getPair(from);
 
       signer.unlock(password);
-      setStep(steps.WAIT_SCREEN);
+      setStep(steps['WAIT_SCREEN']);
 
       const txResult = await signAndSend(api, ptx, signer, formatted);
 
@@ -265,12 +273,12 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
       return;
     }
 
-    setStep(steps.WAIT_SCREEN);
+    setStep(steps['WAIT_SCREEN']);
 
     const txResult = await send(from, api, ptx, payload, signature);
 
     handleTxResult(txResult);
-  }, [api, from, handleTxResult, payload, ptx, setStep, steps.WAIT_SCREEN]);
+  }, [api, from, handleTxResult, payload, ptx, setStep, steps['WAIT_SCREEN']]);
 
   const SignWithLedger = () => (
     <>
@@ -292,16 +300,28 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
           />
         </Grid>
         <Grid item sx={{ ' button': { m: 0, width: '100%' }, mt: '80px', position: 'relative', width: '70%' }} xs={8}>
-          <LedgerSign
-            accountIndex={account?.accountIndex as number || 0}
-            addressOffset={account?.addressOffset as number || 0}
-            error={error}
-            genesisHash={account?.genesisHash || api?.genesisHash?.toHex()}
-            onSignature={onSignature}
-            payload={payload}
-            setError={setError}
-            showError={false}
-          />
+          {account?.isGeneric
+            ? <LedgerSignGeneric
+              accountIndex={account?.accountIndex as number || 0}
+              addressOffset={account?.addressOffset as number || 0}
+              error={error as string}
+              api={api}
+              onSignature={onSignature}
+              payload={payload}
+              setError={setError}
+              showError={false}
+            />
+            : <LedgerSign
+              accountIndex={account?.accountIndex as number || 0}
+              addressOffset={account?.addressOffset as number || 0}
+              error={error as string}
+              genesisHash={account?.genesisHash || api?.genesisHash?.toHex()}
+              onSignature={onSignature}
+              payload={payload}
+              setError={setError}
+              showError={false}
+            />
+          }
         </Grid>
       </Grid>
     </>
@@ -378,7 +398,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
                     onEnter={onConfirm}
                   />
                 </Grid>
-                {(!!proxies?.length || prevState?.selectedProxyAddress) &&
+                {(!!proxies?.length || (prevState as any)?.selectedProxyAddress) &&
                   <Tooltip
                     arrow
                     componentsProps={{
@@ -495,7 +515,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
                   address={formatted}
                   buttonLeft='0px'
                   cmd={CMD_MORTAL}
-                  genesisHash={account?.genesisHash || api?.genesisHash?.toHex()}
+                  genesisHash={account?.genesisHash || api?.genesisHash?.toHex() as any}
                   onSignature={onSignature}
                   payload={payload}
                 />

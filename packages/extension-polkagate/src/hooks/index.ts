@@ -48,6 +48,7 @@ export { default as useGenesisHashOptions } from './useGenesisHashOptions';
 export { default as useIsExposed } from './useIsExposed';
 export { default as useIsPopup } from './useIsPopup';
 export { useLedger } from './useLedger';
+export { useGenericLedger } from './useGenericLedger';
 export { useMapEntries } from './useMapEntries';
 export { default as useMetadata } from './useMetadata';
 export { default as useNeedsPutInFrontOf } from './useNeedsPutInFrontOf';
