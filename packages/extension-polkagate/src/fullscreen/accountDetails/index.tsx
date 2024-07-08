@@ -20,9 +20,8 @@ import HistoryModal from '../../popup/history/modal/HistoryModal';
 import DeriveAccountModal from '../../popup/newAccount/deriveAccount/modal/DeriveAccountModal';
 import ReceiveModal from '../../popup/receive/ReceiveModal';
 import RenameModal from '../../popup/rename/RenameModal';
-import { EXTRA_PRICE_IDS } from '../../util/api/getPrices';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
-import { sanitizeChainName } from '../../util/utils';
+import { getPriceIdByChainName } from '../../util/utils';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
@@ -104,8 +103,8 @@ export default function AccountDetails(): React.ReactElement {
       return 0;
     }
 
-    const currentChainName = sanitizeChainName(chainName)?.toLocaleLowerCase()?.replace('assethub', '')?.replace('people', '');
-    const currentAssetPrices = pricesInCurrency?.prices?.[(selectedAssetPriceId || EXTRA_PRICE_IDS[currentChainName || ''] || currentChainName) as string];
+    const _priceId = getPriceIdByChainName(chainName);
+    const currentAssetPrices = pricesInCurrency?.prices?.[(selectedAssetPriceId || _priceId) as string];
     const mayBeTestNetPrice = pricesInCurrency?.prices && !currentAssetPrices ? 0 : undefined;
 
     return currentAssetPrices?.value || mayBeTestNetPrice;

@@ -5,6 +5,7 @@
 
 import { balancify } from '.';
 import { NATIVE_TOKEN_ASSET_ID } from '../../constants';
+import { getPriceIdByChainName } from '../../utils';
 
 export async function toGetNativeToken(addresses, api, chainName) {
   const _result = {};
@@ -20,7 +21,7 @@ export async function toGetNativeToken(addresses, api, chainName) {
       chainName,
       decimal: api.registry.chainDecimals[0],
       genesisHash: api.genesisHash.toString(),
-      priceId: chainName.toLowerCase().replace('assethub', '').replace('people', ''), // based on the fact that chains native token price id is the same as their chain names
+      priceId: getPriceIdByChainName(chainName), // based on the fact that chains native token price id is the same as their chain names
       token: api.registry.chainTokens[0],
       totalBalance: String(totalBalance)
     }];

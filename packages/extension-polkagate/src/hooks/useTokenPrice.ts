@@ -1,15 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import { createAssets } from '@polkagate/apps-config/assets';
 import { useMemo } from 'react';
 
 import { toCamelCase } from '../fullscreen/governance/utils/util';
-import { EXTRA_PRICE_IDS } from '../util/api/getPrices';
-import { ASSET_HUBS } from '../util/constants';
+import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID } from '../util/constants';
 import type { Price } from '../util/types';
 import { useChain, useChainName, usePrices } from '.';
+import { getPriceIdByChainName } from '../util/utils';
 
 const DEFAULT_PRICE = {
   price: undefined,
@@ -35,7 +34,7 @@ export default function useTokenPrice(address: string, assetId?: number): Price 
   const _assetId = assetId !== undefined
     ? assetId
     : isAssetHub
-      ? 0 // zero is the native token's assetId on apps-config
+      ? NATIVE_TOKEN_ASSET_ID
       : undefined;
 
   return useMemo(() => {
@@ -44,9 +43,9 @@ export default function useTokenPrice(address: string, assetId?: number): Price 
     }
 
     // FixMe, on second fetch of asset id its type will get string which is weird!!
-    const priceId = _assetId !== undefined && _assetId > 0 // note 0 is used as native token asset Id
+    const priceId = _assetId !== undefined && _assetId > NATIVE_TOKEN_ASSET_ID
       ? mayBeAssetsOnMultiAssetChains?.find(({ id }) => id === Number(_assetId))?.priceId
-      : EXTRA_PRICE_IDS[chainName?.toLocaleLowerCase()] || chainName?.toLocaleLowerCase()?.replace('assethub', '')?.replace('people', '');
+      : getPriceIdByChainName(chainName);
 
     const mayBePriceValue = priceId ? pricesInCurrencies.prices?.[priceId]?.value || 0 : 0;
 
