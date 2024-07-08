@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
@@ -10,7 +9,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import getPoolAccounts from '../../../util/getPoolAccounts';
-import { SessionInfo } from './types';
+import type { SessionInfo } from './types';
 
 export const checkLostAccountBalance = (
   api: ApiPromise,
@@ -52,7 +51,7 @@ export const checkLostAccountSoloStakedBalance = (
       }
     }
 
-    api.query.staking.slashingSpans(lostAccountAddress).then((span) => {
+    api.query['staking']['slashingSpans'](lostAccountAddress).then((span: any) => {
       const spanCount = span.isNone ? 0 : span.unwrap().prior.length as number + 1;
       const BZ = api.createType('Balance', BN_ZERO);
 
@@ -69,7 +68,7 @@ export const checkLostAccountClaimedStatus = (
   lostAccountAddress: string,
   setAlreadyClaimed: React.Dispatch<React.SetStateAction<boolean | undefined>>
 ) => {
-  api.query.recovery.proxy(rescuerAccountAddress).then((p) => {
+  api.query['recovery']['proxy'](rescuerAccountAddress).then((p) => {
     if (p.isEmpty) {
       setAlreadyClaimed(false);
 
@@ -90,7 +89,7 @@ export const checkLostAccountPoolStakedBalance = (
   setLostAccountPoolUnlock: React.Dispatch<React.SetStateAction<{ amount: BN; date: number; } | undefined>>,
   setLostAccountPoolRedeemable: React.Dispatch<React.SetStateAction<{ amount: BN; count: number; } | undefined>>
 ) => {
-  api.query['nominationPools']['poolMembers'](lostAccountAddress).then(async (res) => {
+  api.query['nominationPools']['poolMembers'](lostAccountAddress).then(async (res: any) => {
     const member = res?.unwrapOr(undefined) as PalletNominationPoolsPoolMember | undefined;
 
     if (!member) {
@@ -117,7 +116,7 @@ export const checkLostAccountPoolStakedBalance = (
       api.derive.staking.account(accounts.stashId)
     ]);
 
-    const bondedPoolInfo: PalletNominationPoolsBondedPoolInner = bondedPool.unwrap() as PalletNominationPoolsBondedPoolInner;
+    const bondedPoolInfo: PalletNominationPoolsBondedPoolInner = (bondedPool as any).unwrap() as PalletNominationPoolsBondedPoolInner;
 
     const active = member.points.isZero()
       ? BN_ZERO
@@ -145,7 +144,7 @@ export const checkLostAccountPoolStakedBalance = (
       }
     }
 
-    api.query.staking.slashingSpans(lostAccountAddress).then((span) => {
+    api.query['staking']['slashingSpans'](lostAccountAddress).then((span: any) => {
       const spanCount = span.isNone ? 0 : span.unwrap().prior.length as number + 1;
 
       setLostAccountPoolRedeemable({ amount: redeemValue, count: spanCount });
@@ -173,7 +172,7 @@ export const checkLostAccountProxy = (
   lostAccountAddress: string,
   setLostAccountProxy: React.Dispatch<React.SetStateAction<boolean | undefined>>
 ) => {
-  api.query.proxy.proxies(lostAccountAddress).then((p) => {
+  api.query['proxy']['proxies'](lostAccountAddress).then((p) => {
     const proxies = p.toHuman() as [][];
 
     setLostAccountProxy(proxies[0].length > 0);
@@ -187,7 +186,7 @@ export const checkLostAccountRecoverability = (
 ) => {
   setLostAccountRecoveryInfo(undefined);
 
-  api.query.recovery && api.query.recovery.recoverable(lostAccountAddress).then((r) => {
+  api.query['recovery'] && api.query['recovery']['recoverable'](lostAccountAddress).then((r: any) => {
     if (r.isSome) {
       const unwrappedResult = r.unwrap();
 
