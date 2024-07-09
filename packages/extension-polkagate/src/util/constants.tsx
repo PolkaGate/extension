@@ -7,7 +7,8 @@ export const EXTENSION_NAME = 'Polkagate';
 export const NEW_VERSION_ALERT = 'alert_v0.6.1';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 
-export const NATIVE_TOKEN_ASSET_ID = 0;
+// fix me, since we have asset ID 0 on asset hub, it can be -1 instead!
+export const NATIVE_TOKEN_ASSET_ID = 0; // zero is the native token's assetId on apps-config
 
 export const POLKAGATE_POOL_IDS: { [key: string]: number } = {
   Kusama: 18,

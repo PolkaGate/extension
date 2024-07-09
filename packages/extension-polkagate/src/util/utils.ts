@@ -15,6 +15,7 @@ import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS } from './constants';
+import { EXTRA_PRICE_IDS } from './api/getPrices';
 
 interface Meta {
   docs: Text[];
@@ -172,7 +173,7 @@ export function getTransactionHistoryFromLocalStorage(
   const chainName = chain ? sanitizeChainName(chain.name) : _chainName;
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  let transactionHistoryFromLocalStorage: SavedMetaData | null= null;
+  let transactionHistoryFromLocalStorage: SavedMetaData | null = null;
   try {
     transactionHistoryFromLocalStorage = account?.['history'] ? JSON.parse(String(account['history'])) : null;
   } catch (error) {
@@ -382,3 +383,15 @@ export const truncString32Bytes = (input: string | null | undefined): string | n
 export const isOnRelayChain = (genesisHash?: string) => RELAY_CHAINS_GENESISHASH.includes(genesisHash || '');
 
 export const isOnAssetHub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');
+
+export const getPriceIdByChainName = (chainName?: string) => {
+  if (!chainName) {
+    return ''
+  }
+
+  const _chainName = (sanitizeChainName(chainName) as string).toLocaleLowerCase()
+
+  return EXTRA_PRICE_IDS[_chainName]
+    ||
+    _chainName?.replace('assethub', '')?.replace('people', '')
+};
