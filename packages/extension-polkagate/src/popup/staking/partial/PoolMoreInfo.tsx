@@ -37,13 +37,10 @@ interface Props {
 
 type TabTitles = 'Commission' | 'Ids' | 'Members' | 'Reward' | 'Roles' | 'None';
 interface CollapseProps {
-  address: string;
-  mode: TabTitles;
-  pool: MyPoolInfo;
   title: string;
   show: boolean;
   open: () => void;
-  setShowClaimCommission?: React.Dispatch<React.SetStateAction<boolean | undefined>>
+  children: React.ReactNode;
 }
 
 interface InsidersProps {
@@ -194,10 +191,7 @@ const ShowClaimableCommission = ({ address, poolToShow, setShowClaimCommission }
   )
 };
 
-
-const CollapseData = ({ address, mode, open, pool, show, title, setShowClaimCommission }: CollapseProps) => {
-  const { api, chain } = useInfo(address);
-
+const CollapseData = ({ open, show, title, children }: CollapseProps) => {
   return (
     <Grid container direction='column' sx={{ m: 'auto', width: '92%' }}>
       <Grid container item justifyContent='space-between' onClick={open} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', cursor: 'pointer' }}>
@@ -209,34 +203,7 @@ const CollapseData = ({ address, mode, open, pool, show, title, setShowClaimComm
         </Grid>
       </Grid>
       <Collapse in={show} sx={{ width: '100%' }}>
-        {(mode === 'Ids' || mode === 'Roles') && chain &&
-          <ShowRoles
-            api={api}
-            chain={chain}
-            mode={mode}
-            pool={pool}
-            style={{ my: '10px' }}
-          />
-        }
-        {mode === 'Members' &&
-          <ShowMembers
-            address={address}
-            poolToShow={pool}
-          />
-        }
-        {mode === 'Reward' &&
-          <ShowReward
-            address={address}
-            poolToShow={pool}
-          />
-        }
-        {mode === 'Commission' &&
-          <ShowClaimableCommission
-            address={address}
-            poolToShow={pool}
-            setShowClaimCommission={setShowClaimCommission}
-          />
-        }
+        {children}
       </Collapse>
     </Grid>
   )
@@ -278,53 +245,69 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
             style={{ m: '10px auto', width: '92%' }}
           />
           <CollapseData
-            address={address}
-            mode={itemToShow}
             open={openTab('Roles')}
-            pool={poolToShow}
             show={itemToShow === 'Roles'}
             title={t('Roles')}
-          />
+          >
+            <ShowRoles
+              api={api}
+              chain={chain}
+              mode='Roles'
+              pool={pool}
+              style={{ my: '10px' }}
+            />
+          </CollapseData>
           {poolToShow.accounts?.rewardId &&
             <CollapseData
-              address={address}
-              mode={itemToShow}
               open={openTab('Ids')}
-              pool={poolToShow}
               show={itemToShow === 'Ids'}
               title={t('Ids')}
-            />
+            >
+              <ShowRoles
+                api={api}
+                chain={chain}
+                mode='Ids'
+                pool={pool}
+                style={{ my: '10px' }}
+              />
+            </CollapseData>
           }
           {poolToShow.accounts?.rewardId &&
             <CollapseData
-              address={address}
-              mode={itemToShow}
               open={openTab('Members')}
-              pool={poolToShow}
               show={itemToShow === 'Members'}
               title={t('Members')}
-            />
+            >
+              <ShowMembers
+                address={address}
+                poolToShow={pool as MyPoolInfo}
+              />
+            </CollapseData>
           }
           {poolToShow.accounts?.rewardId &&
             <CollapseData
-              address={address}
-              mode={itemToShow}
               open={openTab('Reward')}
-              pool={poolToShow}
               show={itemToShow === 'Reward'}
               title={t('Rewards')}
-            />
+            >
+              <ShowReward
+                address={address}
+                poolToShow={pool as MyPoolInfo}
+              />
+            </CollapseData>
           }
           {poolToShow.bondedPool?.roles && Object.values(poolToShow.bondedPool.roles).includes(formatted) &&
             <CollapseData
-              address={address}
-              mode={itemToShow}
               open={openTab('Commission')}
-              pool={poolToShow}
               show={itemToShow === 'Commission'}
-              setShowClaimCommission={setShowClaimCommission}
               title={t('Commission')}
-            />
+            >
+              <ShowClaimableCommission
+                address={address}
+                poolToShow={pool as MyPoolInfo}
+                setShowClaimCommission={setShowClaimCommission}
+              />
+            </CollapseData>
           }
           {showClaimCommission && poolToShow &&
             <ClaimCommission
