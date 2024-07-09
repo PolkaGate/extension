@@ -111,7 +111,7 @@ const Arrows = ({ dataToShow, nextPrevWeek, onNext, onPrevious, pageIndex }: Arr
       <Grid alignItems='center' container item justifyContent='flex-start' maxWidth='48%' onClick={onPrevious} sx={{ cursor: pageIndex === dataToShow?.length - 1 ? 'default' : 'pointer' }} width='fit_content'>
         <KeyboardDoubleArrowLeftIcon sx={{ color: pageIndex === dataToShow?.length - 1 ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
         <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '3px', mr: '7px', my: 'auto', width: '1px' }} />
-        <Grid container direction='column' item xs={7}>
+        <Grid container direction='column' textAlign='left' item xs={7}>
           <Typography color={pageIndex === dataToShow?.length - 1 ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t('Previous')}</Typography>
           <Typography color={pageIndex === dataToShow?.length - 1 ? 'secondary.contrastText' : 'text.primary'} fontSize='12px' fontWeight={300}>{nextPrevWeek(false)}</Typography>
         </Grid>
@@ -144,7 +144,7 @@ const ChartBody = ({ api, chain, data, dataToShow, decimal, descSortedRewards, e
       <Grid item sx={{ p: '5px 10px 20px' }} xs={12}>
         <Bar data={data} options={options} />
       </Grid>
-      <Grid container sx={{ borderBottom: '2px solid', borderBottomColor: 'secondary.light', m: 'auto', width: '92%' }}>
+      <Grid container sx={{ borderBottom: '2px solid', borderBottomColor: 'secondary.light', m: 'auto', textAlign:'left', width: '92%' }}>
         <Typography fontSize='18px' fontWeight={400} width='37%'>
           {t('Date')}
         </Typography>
