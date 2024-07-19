@@ -91,6 +91,7 @@ const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAU
 
 function Address({ address, backgroundColor, genesisHash, margin = '20px auto', name, showCopy = true, style, type: givenType, width = '92%', check, showCheckbox, handleCheck }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+
   const { accounts } = useContext(AccountContext);
   const accountName = useAccountName(address || '');
   const settings = useContext(SettingsContext);
@@ -153,7 +154,7 @@ function Address({ address, backgroundColor, genesisHash, margin = '20px auto', 
           {(formatted || address)
             ? (
               <ShortAddress
-                address={formatted || address}
+                address={(formatted || address) as string}
                 clipped
                 showCopy={showCopy}
                 style={{

@@ -49,7 +49,7 @@ function retrieveLedger(genesis: string): Ledger {
 
   const def = getNetwork(genesis);
 
-  assert(def, 'There is no known Ledger app available for this chain');
+  assert(def, 'There is no known Ledger app available for this specific chain');
 
   ledger = new Ledger('webusb', def.network);
 
@@ -57,13 +57,15 @@ function retrieveLedger(genesis: string): Ledger {
 }
 
 export function useLedger(genesis?: string | null, accountIndex = 0, addressOffset = 0): State {
+  const { t } = useTranslation();
+
   const [isLoading, setIsLoading] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [refreshLock, setRefreshLock] = useState(false);
   const [warning, setWarning] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [address, setAddress] = useState<string | null>(null);
-  const { t } = useTranslation();
+  
   const ledger = useMemo(() => {
     setError(null);
     setIsLocked(false);

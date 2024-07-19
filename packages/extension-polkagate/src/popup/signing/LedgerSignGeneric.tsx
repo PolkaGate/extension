@@ -3,37 +3,50 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
 
 import { Grid, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { PButton, Warning } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
-import { useGenericLedger } from '../../hooks';
-import { hexToU8a } from '@polkadot/util';
-import getChainInfo from './getChainInfo';
-import type { ApiPromise } from '@polkadot/api';
+import { useGenericLedger, useInfo, useMetadataProof } from '../../hooks';
+import ledgerChains from '../../util/legerChains';
+
+import type { SignerPayloadJSON } from '@polkadot/types/types';
+import type { LedgerSignature } from '@polkadot/hw-ledger/types';
+import type { GenericExtrinsicPayload } from '@polkadot/types';
 
 interface Props {
   accountIndex?: number;
+  address: string | undefined;
   addressOffset?: number;
   className?: string;
   error: string | null;
-  api: ApiPromise | undefined
-  onSignature?: ({ signature }: { signature: HexString }) => void;
-  payload?: ExtrinsicPayload;
+  onSignature?: (signature: HexString, raw?: GenericExtrinsicPayload) => void;
+  payload?: SignerPayloadJSON;
   setError: (value: string | null) => void;
   showError?: boolean;
 }
 
-function LedgerSignGeneric({ accountIndex, addressOffset, error, api, onSignature, payload, setError, showError = true }: Props): React.ReactElement<Props> {
-  const [isBusy, setIsBusy] = useState(false);
+function LedgerSignGeneric({ accountIndex, address, addressOffset, error, onSignature, payload, setError, showError = true }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset);
+
+  const {api, account} = useInfo(address);
+  const metadataProof = useMetadataProof(api, payload);
+
+  const chainSlip44 = useMemo(() => {
+    if (account?.genesisHash) {
+      return ledgerChains.find(({ genesisHash }) => genesisHash.includes(account.genesisHash as any))?.slip44 ?? null
+    }
+    return null;
+  }, [account, ledgerChains]);
+
+  const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, chainSlip44);
+
+  const [isBusy, setIsBusy] = useState(false);
 
   useEffect(() => {
     if (ledgerError) {
@@ -48,30 +61,24 @@ function LedgerSignGeneric({ accountIndex, addressOffset, error, api, onSignatur
 
   const _onSignLedger = useCallback(
     async (): Promise<void> => {
-      if (!ledger || !payload || !onSignature || !api) {
+      if (!ledger || !payload || !onSignature || !api || !metadataProof) {
         return;
       }
+      const { raw, txMetadata } = metadataProof;
+
 
       setError(null);
       setIsBusy(true);
 
-      const metadata = await getChainInfo(api);
-
-      const _metadata = metadata ? hexToU8a(JSON.stringify(metadata)) : new Uint8Array(0);
-      
-      console.log('metadata:', _metadata)
-      
-      ledger.signTransaction(payload.toU8a(true), _metadata, accountIndex, addressOffset)
-        .then((signature) => {
-          onSignature(signature);
+      ledger.signTransaction(raw.toU8a(true), txMetadata, accountIndex, addressOffset)
+        .then(({ signature }: LedgerSignature) => {
+          onSignature(signature, raw);
         }).catch((e: Error) => {
 
           setError(e.message);
           setIsBusy(false);
         });
-    },
-    [accountIndex, addressOffset, ledger, onSignature, payload, setError, api]
-  );
+    }, [accountIndex, addressOffset, ledger, onSignature, payload, setError, api, metadataProof]);
 
   return (
     <Grid container>
@@ -87,7 +94,7 @@ function LedgerSignGeneric({ accountIndex, addressOffset, error, api, onSignatur
       }
       {ledgerLocked || error
         ? <PButton
-          _isBusy={isBusy || ledgerLoading}
+          _isBusy={isBusy || !metadataProof}
           _onClick={_onRefresh}
           text={t<string>('Refresh')}
         />

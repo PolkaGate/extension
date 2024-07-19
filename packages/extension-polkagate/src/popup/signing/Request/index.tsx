@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import type { AccountJson, RequestSign } from '@polkadot/extension-base/background/types';
 import type { ExtrinsicPayload } from '@polkadot/types/interfaces';
@@ -10,16 +9,17 @@ import type { HexString } from '@polkadot/util/types';
 import { useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { TypeRegistry } from '@polkadot/types';
+import { GenericExtrinsicPayload, TypeRegistry } from '@polkadot/types';
 
 import { ActionContext, Address, Warning } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { useAccount, useTranslation } from '../../../hooks';
 import { approveSignSignature } from '../../../messaging';
 import Bytes from '../Bytes';
 import Extrinsic from '../Extrinsic';
 import LedgerSign from '../LedgerSign';
 import Qr from '../Qr';
 import SignArea from './SignArea';
+import LedgerSignGeneric from '../LedgerSignGeneric';
 
 interface Props {
   account: AccountJson;
@@ -48,10 +48,12 @@ function isRawPayload(payload: SignerPayloadJSON | SignerPayloadRaw): payload is
 }
 
 export default function Request({ account: { accountIndex, addressOffset, isExternal, isHardware }, buttonText, error, isFirst, request, setError, signId, url }: Props): React.ReactElement<Props> | null {
-  const onAction = useContext(ActionContext);
-  const [{ hexBytes, payload }, setData] = useState<Data>({ hexBytes: null, payload: null });
   const { t } = useTranslation();
   const theme = useTheme();
+  const account = useAccount(request.payload?.address)
+
+  const onAction = useContext(ActionContext);
+  const [{ hexBytes, payload }, setData] = useState<Data>({ hexBytes: null, payload: null });
 
   useEffect((): void => {
     const payload = request.payload;
@@ -83,6 +85,17 @@ export default function Request({ account: { accountIndex, addressOffset, isExte
     [onAction, setError, signId]
   );
 
+  const onLedgerGenericSignature = useCallback((signature: HexString, _raw?: GenericExtrinsicPayload): void => {
+    approveSignSignature(signId, signature) // FixMe: should send raw tx and proof to app as well
+      .then(() => onAction())
+      .catch((error: Error): void => {
+        setError(error.message);
+        console.error(error);
+      });
+  },
+    [onAction, setError, signId]
+  );
+
   if (payload !== null) {
     const json = request.payload as SignerPayloadJSON;
 
@@ -92,7 +105,6 @@ export default function Request({ account: { accountIndex, addressOffset, isExte
           <Address
             address={json.address}
             genesisHash={json.genesisHash}
-            isHardware={isHardware}
             margin='15px auto'
           />
         </div>
@@ -110,26 +122,39 @@ export default function Request({ account: { accountIndex, addressOffset, isExte
             url={url}
           />
         }
-        {isHardware && (
-          <LedgerSign
-            accountIndex={accountIndex as number || 0}
-            addressOffset={addressOffset as number || 0}
-            error={error}
-            genesisHash={json.genesisHash}
-            onSignature={_onSignature}
-            payload={payload}
-            setError={setError}
-          />
+        {isHardware && account && (
+          account?.isGeneric || account?.isMigration
+            ? <LedgerSignGeneric
+              accountIndex={accountIndex as number || 0}
+              address={json.address}
+              addressOffset={addressOffset as number || 0}
+              error={error as string}
+              onSignature={onLedgerGenericSignature}
+              payload={request.payload as SignerPayloadJSON}
+              setError={setError}
+            // showError={false}
+            />
+            : <LedgerSign
+              accountIndex={accountIndex as number || 0}
+              addressOffset={addressOffset as number || 0}
+              error={error}
+              genesisHash={json.genesisHash}
+              onSignature={_onSignature}
+              payload={payload}
+              setError={setError}
+            />
         )}
-        <SignArea
-          buttonText={buttonText}
-          error={error}
-          isExternal={isExternal}
-          isFirst={isFirst}
-          isSignable
-          setError={setError}
-          signId={signId}
-        />
+        {account &&
+          <SignArea
+            buttonText={buttonText}
+            error={error}
+            isExternal={isExternal}
+            isFirst={isFirst}
+            isSignable
+            setError={setError}
+            signId={signId}
+          />
+        }
       </>
     );
   } else if (hexBytes !== null) {

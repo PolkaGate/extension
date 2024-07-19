@@ -14,11 +14,11 @@ interface LedgerApp {
 
 export abstract class BaseLedger<T extends LedgerApp> extends Ledger {
   protected app: T | null = null;
-  // readonly #chainId: number;
+  readonly txMetadataChainId?: string;
   readonly transport: LedgerTypes;
   readonly slip44: number;
 
-  constructor (transport: LedgerTypes, slip44: number) {
+  constructor (transport: LedgerTypes, slip44: number, txMetadataChainId?: string) {
     super();
 
     // u2f is deprecated
@@ -26,7 +26,7 @@ export abstract class BaseLedger<T extends LedgerApp> extends Ledger {
       throw new Error(`Unsupported transport ${transport}`);
     }
 
-    // this.#chainId = chainId;
+    this.txMetadataChainId = txMetadataChainId;
     this.transport = transport;
     this.slip44 = slip44;
   }
@@ -38,7 +38,6 @@ export abstract class BaseLedger<T extends LedgerApp> extends Ledger {
     try {
       const app = await this.getApp();
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return await fn(app);
     } catch (error) {
       this.app = null;

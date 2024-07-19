@@ -11,6 +11,8 @@ import { hexAddPrefix, hexStripPrefix, u8aToHex } from '@polkadot/util';
 
 import { BaseLedger } from './base';
 
+const ZONDAX_METADATA_URL = 'https://api.zondax.ch/polkadot/transaction/metadata';
+
 interface ResponseSign {
   returnCode: number;
   errorMessage: string;
@@ -107,43 +109,46 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
 
       const transport = await def.create();
 
-      this.app = new PolkadotGenericApp(transport);
+      this.app = this.txMetadataChainId
+        ? new PolkadotGenericApp(transport, this.txMetadataChainId, ZONDAX_METADATA_URL)
+        : new PolkadotGenericApp(transport);
+      ;
     }
 
     return this.app;
   };
 
-  protected override wrapError = async <V> (promise: Promise<V>): Promise<V> => {
-    try {
-      const result = await promise as ResponseSign;
+  protected override wrapError = async<V>(promise: Promise<V>): Promise<V> => {
+  try {
+    const result = await promise as ResponseSign;
 
-      if (!result.returnCode) {
-        return result as V;
-      } else if (result.returnCode === LEDGER_SUCCESS_CODE) {
-        return result as V;
-      } else {
-        throw new Error(result.errorMessage);
-      }
-    } catch (e) {
-      const error = e as Error;
-
-      error.message = this.mappingError(error);
-
-      throw error;
+    if (!result.returnCode) {
+      return result as V;
+    } else if (result.returnCode === LEDGER_SUCCESS_CODE) {
+      return result as V;
+    } else {
+      throw new Error(result.errorMessage);
     }
-  };
+  } catch (e) {
+    const error = e as Error;
 
-  mappingError(_error: Error): string {
-    const error = _error.message || (_error as unknown as ResponseSign).errorMessage;
+    error.message = this.mappingError(error);
 
-    if (error.includes('28160') || error.includes('CLA Not Supported')) {
-      return 'App does not seem to be open';
-    }
-
-    if (error.includes('21781')) {
-      return 'Locked device';
-    }
-
-    return error;
+    throw error;
   }
+};
+
+mappingError(_error: Error): string {
+  const error = _error.message || (_error as unknown as ResponseSign).errorMessage;
+
+  if (error.includes('28160') || error.includes('CLA Not Supported')) {
+    return 'App does not seem to be open';
+  }
+
+  if (error.includes('21781')) {
+    return 'Locked device';
+  }
+
+  return error;
+}
 }

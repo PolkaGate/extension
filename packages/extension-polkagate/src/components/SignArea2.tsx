@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Header } from '@polkadot/types/interfaces';
-import type { AnyTuple } from '@polkadot/types/types';
+import type { AnyTuple, SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 import type { Proxy, ProxyItem, ProxyTypes, TxInfo, TxResult } from '../util/types';
 
@@ -31,6 +31,7 @@ import { send, signAndSend } from '../util/api';
 import { getSubstrateAddress, saveAsHistory } from '../util/utils';
 import { Identity, Password, PButton, Progress, TwoButtons, Warning } from '.';
 import LedgerSignGeneric from '../popup/signing/LedgerSignGeneric';
+import type { GenericExtrinsicPayload } from '@polkadot/types';
 
 interface Props {
   address: string;
@@ -123,7 +124,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
     return selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, tx) : tx;
   }, [api, call, formatted, params, selectedProxy]);
 
-  const payload = useMemo(() => {
+  const signerPayload = useMemo(() => {
     if (!api || !ptx || !lastHeader || !rawNonce) {
       return;
     }
@@ -153,23 +154,21 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
         version: ptx.version
       };
 
-      if (isLedger) {
-        _payload.signedExtensions.push('CheckMetadataHash');
-        // @ts-ignore
-        _payload.mode = 1  // default is 0 to ignore CheckMetadataHash
-        // @ts-ignore
-        _payload.assetId = null
-        // @ts-ignore
-        _payload.metadataHash = api.runtimeMetadata.hash.toHex()
-      }
-
-      return api.registry.createType('ExtrinsicPayload', _payload, { version: _payload.version });
+      return _payload as SignerPayloadJSON;
     } catch (error) {
       console.error('Something went wrong when making payload:', error);
 
       return undefined;
     }
   }, [api, from, lastHeader, rawNonce, ptx]);
+
+  const payload = useMemo(() => {
+    if (!api || !signerPayload) {
+      return;
+    }
+
+    return api.registry.createType('ExtrinsicPayload', signerPayload, { version: signerPayload.version });
+  }, [api, signerPayload]);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
@@ -259,7 +258,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
       signer.unlock(password);
       setStep(steps['WAIT_SCREEN']);
 
-      const txResult = await signAndSend(api, ptx, signer, formatted);
+      const txResult = await signAndSend(api, ptx, signer);
 
       handleTxResult(txResult);
     } catch (e) {
@@ -268,6 +267,19 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
     }
   }, [api, formatted, from, handleTxResult, password, ptx, setIsPasswordError, setStep, steps]);
 
+  const onLedgerGenericSignature = useCallback(async (signature: HexString, raw?: GenericExtrinsicPayload) => {
+    if (!api || !payload || !signature || !ptx || !from) {
+      return;
+    }
+
+    const payloadToSend = raw ? raw : payload; // TODO: double check
+    setStep(steps['WAIT_SCREEN']);
+
+    const txResult = await send(from, api, ptx, payloadToSend.toHex(), signature);
+
+    handleTxResult(txResult);
+  }, [api, from, handleTxResult, payload, ptx, setStep, steps['WAIT_SCREEN']]);
+
   const onSignature = useCallback(async ({ signature }: { signature: HexString }) => {
     if (!api || !payload || !signature || !ptx || !from) {
       return;
@@ -275,7 +287,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
 
     setStep(steps['WAIT_SCREEN']);
 
-    const txResult = await send(from, api, ptx, payload, signature);
+    const txResult = await send(from, api, ptx, payload.toHex(), signature);
 
     handleTxResult(txResult);
   }, [api, from, handleTxResult, payload, ptx, setStep, steps['WAIT_SCREEN']]);
@@ -300,14 +312,14 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
           />
         </Grid>
         <Grid item sx={{ ' button': { m: 0, width: '100%' }, mt: '80px', position: 'relative', width: '70%' }} xs={8}>
-          {account?.isGeneric
+          {account?.isGeneric || account?.isMigration
             ? <LedgerSignGeneric
               accountIndex={account?.accountIndex as number || 0}
+              address={address}
               addressOffset={account?.addressOffset as number || 0}
               error={error as string}
-              api={api}
-              onSignature={onSignature}
-              payload={payload}
+              onSignature={onLedgerGenericSignature}
+              payload={signerPayload}
               setError={setError}
               showError={false}
             />

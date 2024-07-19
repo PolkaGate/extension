@@ -46,6 +46,9 @@ export function AccountLabel({ account, ml, parentName }: Props): React.ReactEle
       if (account?.isGeneric) {
         return t('Ledger-Generic');
       }
+      if (account?.isMigration) {
+        return t('Ledger-Migration');
+      }
       return t('Ledger');
     }
 

@@ -1767,6 +1767,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polkadot-api/merkleize-metadata@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@polkadot-api/merkleize-metadata@npm:1.1.1"
+  dependencies:
+    "@polkadot-api/substrate-bindings": 0.6.1
+    "@polkadot-api/utils": 0.1.1
+  checksum: c00cecea4a587ec4e9f8c5815e4d1cb5cf88da34e636faddb157c168fca856d5d305709d55d560c9c7665018df82a1cbfc29ad75518a2b096f61b2566f53c7cd
+  languageName: node
+  linkType: hard
+
 "@polkadot-api/metadata-builders@npm:0.0.1":
   version: 0.0.1
   resolution: "@polkadot-api/metadata-builders@npm:0.0.1"
@@ -1825,6 +1835,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polkadot-api/substrate-bindings@npm:0.6.1":
+  version: 0.6.1
+  resolution: "@polkadot-api/substrate-bindings@npm:0.6.1"
+  dependencies:
+    "@noble/hashes": ^1.3.1
+    "@polkadot-api/utils": 0.1.1
+    "@scure/base": ^1.1.1
+    scale-ts: ^1.6.0
+  checksum: 4a1f1fcf3ec21f880a72982ecf8da0659977adab644715d00baabc060581becf089711ed112b533afd01009b5f990644f0b2c90c9bb3ba2e2a77418c3aba19ec
+  languageName: node
+  linkType: hard
+
 "@polkadot-api/substrate-client@npm:0.0.1":
   version: 0.0.1
   resolution: "@polkadot-api/substrate-client@npm:0.0.1"
@@ -1850,6 +1872,13 @@ __metadata:
   version: 0.0.1-492c132563ea6b40ae1fc5470dec4cd18768d182.1.0
   resolution: "@polkadot-api/utils@npm:0.0.1-492c132563ea6b40ae1fc5470dec4cd18768d182.1.0"
   checksum: 0bf7b078a53f1eaf2f4cec3c41f3e82fc5afb4a347dcbc7b538723aeb1b4893834a2f1aeed425443a25ee0e1a6472c85d8be600e73a6d25ea16a0748d25c00bf
+  languageName: node
+  linkType: hard
+
+"@polkadot-api/utils@npm:0.1.1":
+  version: 0.1.1
+  resolution: "@polkadot-api/utils@npm:0.1.1"
+  checksum: ede159199bc1a0d30b623b6f5bcb0f2e10f4f112a530ecbd6bc2667c6efa7b38adc81b7a9deb687a7f2c5f00517216e2b04ac9cfd55ae8f0079176553456fdc0
   languageName: node
   linkType: hard
 
@@ -2144,6 +2173,7 @@ __metadata:
     "@fortawesome/free-regular-svg-icons": ^6.5.2
     "@fortawesome/free-solid-svg-icons": ^6.5.2
     "@fortawesome/react-fontawesome": ^0.2.2
+    "@polkadot-api/merkleize-metadata": ^1.1.1
     "@polkadot/extension-base": ^0.47.5
     "@polkadot/extension-chains": ^0.47.5
     "@polkadot/extension-dapp": ^0.47.5
@@ -2170,7 +2200,7 @@ __metadata:
     "@types/sinon-chrome": ^2.2.11
     "@types/styled-components": ^5.1.25
     "@wojtekmaj/enzyme-adapter-react-17": ^0.6.7
-    "@zondax/ledger-substrate": ^0.44.5
+    "@zondax/ledger-substrate": ^0.44.7
     enzyme: ^3.11.0
     enzyme-adapter-react-16: ^1.15.6
     file-saver: ^2.0.5
@@ -4722,14 +4752,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zondax/ledger-substrate@npm:^0.44.5":
-  version: 0.44.5
-  resolution: "@zondax/ledger-substrate@npm:0.44.5"
+"@zondax/ledger-substrate@npm:^0.44.7":
+  version: 0.44.7
+  resolution: "@zondax/ledger-substrate@npm:0.44.7"
   dependencies:
     "@ledgerhq/hw-transport": 6.31.0
     "@zondax/ledger-js": ^0.8.2
     axios: ^1.7.2
-  checksum: c2bce075f1b29971710101e3897156d717e0f9d0389eccc80ee8f4aa1e07fb85fe3dd75ceca52867a63618e686902c0e8fdfaa24bdf490172cd04cb1fcc3b678
+  checksum: e42a64278598410a705ee93a18ccb509afa0811295b6319de9576a5f9018810cf93152f4da5437282178088c762cc1750407b98f0367fdba8e0e275db763d1f4
   languageName: node
   linkType: hard
 

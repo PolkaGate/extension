@@ -32,7 +32,6 @@ export default function ImportLedger(): React.ReactElement {
         noAccountDropDown
         noChainSwitch
       />
-
       {mode === MODE.INDEX &&
         <LedgerOptions
           setMode={setMode}
@@ -49,7 +48,9 @@ export default function ImportLedger(): React.ReactElement {
         />
       }
       {mode === MODE.MIGRATION &&
-        <MigrationApp />
+        <MigrationApp
+          setMode={setMode}
+        />
       }
     </Grid>
   );

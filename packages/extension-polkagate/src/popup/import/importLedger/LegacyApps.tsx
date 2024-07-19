@@ -13,7 +13,7 @@ import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constan
 import settings from '@polkadot/ui-settings';
 
 import { AccountContext, ActionContext, Address, Select, SelectChain, TwoButtons, VaadinIcon, Warning } from '../../../components';
-import { useFullscreen, useLedger, useTranslation } from '../../../hooks';
+import { useLedger, useTranslation } from '../../../hooks';
 import { createAccountHardware, getMetadata } from '../../../messaging';
 import { Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
@@ -21,7 +21,7 @@ import ledgerChains from '../../../util/legerChains';
 import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
 import { MODE } from '.';
 
-interface AccOption {
+export interface AccOption {
   text: string;
   value: number;
 }
@@ -149,7 +149,7 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
           </Grid>
           <Grid item>
             <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-              {t('Attach ledger - legacy apps')}
+              {t('Ledger Legacy')}
             </Typography>
           </Grid>
         </Grid>

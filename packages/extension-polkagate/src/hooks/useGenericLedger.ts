@@ -1,18 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Network } from '@polkadot/networks/types';
-
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Ledger } from '@polkadot/hw-ledger';
 import uiSettings from '@polkadot/ui-settings';
 import { assert } from '@polkadot/util';
 
-import ledgerChains from '../util/legerChains';
 import useTranslation from './useTranslation';
 import { GenericLedger } from '../util/ledger/genericLedger';
-import type { PolkadotGenericApp } from '@zondax/ledger-substrate';
 
 interface StateBase {
   isLedgerCapable: boolean;
@@ -29,12 +24,6 @@ interface State extends StateBase {
   warning: string | null;
 }
 
-const POLKADOT_SLIP44 = 354;
-
-function getNetwork(genesisHash: string): Network | undefined {
-  return ledgerChains.find(({ genesisHash: [hash] }) => hash === genesisHash);
-}
-
 function getState(): StateBase {
   const isLedgerCapable = !!(window as unknown as { USB?: unknown }).USB;
 
@@ -44,21 +33,21 @@ function getState(): StateBase {
   };
 }
 
-function retrieveLedger(): GenericLedger {
+function retrieveLedger(chainSlip?: number | null, txMetadataChainId?: string): GenericLedger {
   let ledger: GenericLedger | null = null;
 
   const { isLedgerCapable } = getState();
 
   assert(isLedgerCapable, 'Incompatible browser, only Chrome is supported');
 
-  assert(POLKADOT_SLIP44, 'There is no known Ledger app available for this chain');
+  assert(chainSlip, 'There is no known Ledger app available for this chain');
 
-  ledger = new GenericLedger('webusb', POLKADOT_SLIP44);
+  ledger = new GenericLedger('webusb', chainSlip, txMetadataChainId);
 
   return ledger;
 }
 
-export function useGenericLedger( accountIndex = 0, addressOffset = 0): State {
+export function useGenericLedger(accountIndex = 0, addressOffset = 0, chainSlip?: number | null, txMetadataChainId?: string): State {
   const { t } = useTranslation();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -73,14 +62,18 @@ export function useGenericLedger( accountIndex = 0, addressOffset = 0): State {
     setIsLocked(false);
     setRefreshLock(false);
 
+    if (!chainSlip) {
+      return null;
+    }
+
     try {
-      return retrieveLedger();
+      return retrieveLedger(chainSlip, txMetadataChainId);
     } catch (error) {
       setError((error as Error).message);
     }
 
     return null;
-  }, [refreshLock]);
+  }, [refreshLock, chainSlip, txMetadataChainId]);
 
   useEffect(() => {
     if (!ledger) {
