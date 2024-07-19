@@ -249,7 +249,7 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
                     {!!Object.entries(addressList).length &&
                       <>
                         {Object.entries(addressList).map(([address, options]) => (
-                          <Grid container display={address ? 'inherit' : 'none'} item overflow='hidden' sx={{ animationDuration: address ? '300ms' : '150ms', animationFillMode: 'forwards', animationName: `${address ? showAddressAnimation : hideAddressAnimation}`, animationTimingFunction: 'linear', mt: '15px' }}>
+                          <Grid container key={address} display={address ? 'inherit' : 'none'} item overflow='hidden' sx={{ animationDuration: address ? '300ms' : '150ms', animationFillMode: 'forwards', animationName: `${address ? showAddressAnimation : hideAddressAnimation}`, animationTimingFunction: 'linear', mt: '15px' }}>
                             <Address
                               showCheckbox
                               handleCheck={handleCheck}

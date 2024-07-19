@@ -14,7 +14,7 @@ import GenericApp from './GenericApp';
 import MigrationApp from './MigrationApp';
 
 
-export const enum MODE {
+export enum MODE {
   INDEX,
   LEGACY,
   GENERIC,

@@ -85,7 +85,10 @@ export default function Request({ account: { accountIndex, addressOffset, isExte
     [onAction, setError, signId]
   );
 
-  const onLedgerGenericSignature = useCallback((signature: HexString, _raw: GenericExtrinsicPayload): void => {
+  const onLedgerGenericSignature = useCallback((signature: HexString, _raw?: GenericExtrinsicPayload): void => {
+    if(!_raw){
+      throw new Error ('No extrinsic payload to sign!')
+    }
     const _address = request.payload?.address
 
     const extrinsic = _raw.registry.createType(
