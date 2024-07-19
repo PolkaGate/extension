@@ -7,7 +7,7 @@ import { Grid, keyframes, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AddRounded as AddRoundedIcon, Engineering as AdvancedModeIcon, Layers as StandardModeIcon } from '@mui/icons-material';
 
-import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
+import { FULLSCREEN_WIDTH, POLKADOT_SLIP44 } from '@polkadot/extension-polkagate/src/util/constants';
 import settings from '@polkadot/ui-settings';
 
 import { AccountContext, ActionContext, Address, TwoButtons, VaadinIcon, Warning } from '../../../components';
@@ -83,8 +83,6 @@ const AdvanceModeBtn = ({ disabled, label, onClick, isAdvancedMode }: AdvancedMo
     </Grid>
   </Grid>
 );
-
-const POLKADOT_SLIP44 = 354;
 
 export default function GenericApp({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();

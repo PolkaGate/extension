@@ -34,7 +34,7 @@ function LedgerSignGeneric({ accountIndex, address, addressOffset, error, onSign
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const {api, account} = useInfo(address);
+  const { api, account } = useInfo(address);
   const metadataProof = useMetadataProof(api, payload);
 
   const chainSlip44 = useMemo(() => {
@@ -59,26 +59,24 @@ function LedgerSignGeneric({ accountIndex, address, addressOffset, error, onSign
     setError(null);
   }, [refresh, setError]);
 
-  const _onSignLedger = useCallback(
-    async (): Promise<void> => {
-      if (!ledger || !payload || !onSignature || !api || !metadataProof) {
-        return;
-      }
-      const { raw, txMetadata } = metadataProof;
+  const _onSignLedger = useCallback(async (): Promise<void> => {
+    if (!ledger || !payload || !onSignature || !api || !metadataProof) {
+      return;
+    }
+    const { raw, txMetadata } = metadataProof;
 
+    setError(null);
+    setIsBusy(true);
 
-      setError(null);
-      setIsBusy(true);
+    ledger.signTransaction(raw.toU8a(true), txMetadata, accountIndex, addressOffset)
+      .then(({ signature }: LedgerSignature) => {
+        onSignature(signature, raw);
+      }).catch((e: Error) => {
 
-      ledger.signTransaction(raw.toU8a(true), txMetadata, accountIndex, addressOffset)
-        .then(({ signature }: LedgerSignature) => {
-          onSignature(signature, raw);
-        }).catch((e: Error) => {
-
-          setError(e.message);
-          setIsBusy(false);
-        });
-    }, [accountIndex, addressOffset, ledger, onSignature, payload, setError, api, metadataProof]);
+        setError(e.message);
+        setIsBusy(false);
+      });
+  }, [accountIndex, addressOffset, ledger, onSignature, payload, setError, api, metadataProof]);
 
   return (
     <Grid container>
@@ -94,14 +92,14 @@ function LedgerSignGeneric({ accountIndex, address, addressOffset, error, onSign
       }
       {ledgerLocked || error
         ? <PButton
-          _isBusy={isBusy || !metadataProof}
+          _isBusy={isBusy}
           _onClick={_onRefresh}
-          text={t<string>('Refresh')}
+          text={t('Refresh')}
         />
         : <PButton
-          _isBusy={isBusy || ledgerLoading}
+          _isBusy={isBusy || ledgerLoading || !metadataProof}
           _onClick={_onSignLedger}
-          text={t<string>('Sign on Ledger')}
+          text={t('Sign on Ledger')}
         />
       }
     </Grid>

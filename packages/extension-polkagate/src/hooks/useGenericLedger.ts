@@ -8,6 +8,7 @@ import { assert } from '@polkadot/util';
 
 import useTranslation from './useTranslation';
 import { GenericLedger } from '../util/ledger/genericLedger';
+import { POLKADOT_SLIP44 } from '../util/constants';
 
 interface StateBase {
   isLedgerCapable: boolean;
@@ -40,9 +41,8 @@ function retrieveLedger(chainSlip?: number | null, txMetadataChainId?: string): 
 
   assert(isLedgerCapable, 'Incompatible browser, only Chrome is supported');
 
-  assert(chainSlip, 'There is no known Ledger app available for this chain');
 
-  ledger = new GenericLedger('webusb', chainSlip, txMetadataChainId);
+  ledger = new GenericLedger('webusb', chainSlip || POLKADOT_SLIP44, txMetadataChainId);
 
   return ledger;
 }
@@ -61,10 +61,6 @@ export function useGenericLedger(accountIndex = 0, addressOffset = 0, chainSlip?
     setError(null);
     setIsLocked(false);
     setRefreshLock(false);
-
-    if (!chainSlip) {
-      return null;
-    }
 
     try {
       return retrieveLedger(chainSlip, txMetadataChainId);
