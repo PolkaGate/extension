@@ -85,15 +85,25 @@ export default function Request({ account: { accountIndex, addressOffset, isExte
     [onAction, setError, signId]
   );
 
-  const onLedgerGenericSignature = useCallback((signature: HexString, _raw?: GenericExtrinsicPayload): void => {
-    approveSignSignature(signId, signature) // FixMe: should send raw tx and proof to app as well
+  const onLedgerGenericSignature = useCallback((signature: HexString, _raw: GenericExtrinsicPayload): void => {
+    const _address = request.payload?.address
+
+    const extrinsic = _raw.registry.createType(
+      'Extrinsic',
+      { method: _raw.method },
+      { version: 4 }
+    );
+
+    extrinsic.addSignature(_address, signature, _raw.toHex());
+
+    approveSignSignature(signId, signature, extrinsic.toHex())
       .then(() => onAction())
       .catch((error: Error): void => {
         setError(error.message);
         console.error(error);
       });
   },
-    [onAction, setError, signId]
+    [request, onAction, setError, signId]
   );
 
   if (payload !== null) {

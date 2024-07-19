@@ -300,6 +300,7 @@ export interface RequestSigningApprovePassword {
 export interface RequestSigningApproveSignature {
   id: string;
   signature: HexString;
+  signedTransaction?: HexString;
 }
 
 export interface RequestSigningCancel {
@@ -364,6 +365,7 @@ export type TransportResponseMessage<TMessageType extends MessageTypes> =
 export interface ResponseSigning {
   id: string;
   signature: HexString;
+  signedTransaction?: HexString;
 }
 
 export interface ResponseDeriveValidate {
