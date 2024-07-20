@@ -86,8 +86,8 @@ export default function Request({ account: { accountIndex, addressOffset, isExte
   );
 
   const onLedgerGenericSignature = useCallback((signature: HexString, _raw?: GenericExtrinsicPayload): void => {
-    if(!_raw){
-      throw new Error ('No extrinsic payload to sign!')
+    if (!_raw) {
+      throw new Error('No extrinsic payload to sign!')
     }
     const _address = request.payload?.address
 
@@ -145,7 +145,7 @@ export default function Request({ account: { accountIndex, addressOffset, isExte
               onSignature={onLedgerGenericSignature}
               payload={request.payload as SignerPayloadJSON}
               setError={setError}
-            // showError={false}
+              showError={false}
             />
             : <LedgerSign
               accountIndex={accountIndex as number || 0}

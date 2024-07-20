@@ -1,17 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { HexString } from '@polkadot/util/types';
 
 import { Button, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
 import { QrScanAddress } from '@polkadot/react-qr';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, PButton, Warning } from '../../../components';
+import { AccountNamePasswordCreation, ActionContext, Address, PButton, Warning } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from '../../../messaging';
 import HeaderBrand from '../../../partials/HeaderBrand';
@@ -27,20 +26,15 @@ export interface ScanType {
 export default function AttachQR(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { accounts } = useContext(AccountContext);
+
   const onAction = useContext(ActionContext);
   const [account, setAccount] = useState<ScanType | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
-  // const [genesisHash, setGenesisHash] = useState<string | null>(null);
   const [invalidQR, setInvalidQR] = useState<boolean>();
 
   const [stepOne, setStep] = useState(true);
-
-  useEffect((): void => {
-    !accounts.length && onAction();
-  }, [accounts, onAction]);
 
   const setQrLabelAndGoToHome = useCallback(() => {
     const metaData = JSON.stringify({ isQR: true });

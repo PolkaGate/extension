@@ -3,37 +3,21 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, keyframes, Typography, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AddRounded as AddRoundedIcon, Engineering as AdvancedModeIcon, Layers as StandardModeIcon } from '@mui/icons-material';
 
 import { FULLSCREEN_WIDTH, POLKADOT_SLIP44 } from '@polkadot/extension-polkagate/src/util/constants';
 import settings from '@polkadot/ui-settings';
 
-import { AccountContext, ActionContext, Address, TwoButtons, VaadinIcon, Warning } from '../../../components';
+import { ActionContext, Address, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import { useGenericLedger, useTranslation } from '../../../hooks';
 import { createAccountHardware, updateMeta } from '../../../messaging';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { MODE } from '.';
 import { noop } from '@polkadot/util';
 import { ManualLedgerImport } from './MigrationApp';
-
-const showAddressAnimation = keyframes`
-0% {
-  height: 0;
-}
-100% {
-  height: 70px;
-}
-`;
-const hideAddressAnimation = keyframes`
-0% {
-  height: 70px;
-}
-100% {
-  height: 0;
-}
-`;
+import { hideAddressAnimation, showAddressAnimation } from './partials';
 
 interface AddressOptions {
   index: number;
@@ -89,7 +73,6 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
   const theme = useTheme();
   const ref = useRef(null);
 
-  const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
 
   const [isBusy, setIsBusy] = useState(false);
@@ -182,10 +165,6 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
       })
     }
   }, [accountIndex, address, addressOffset, addressList, isAdvancedMode, handleCreateAccount]);
-
-  useEffect((): void => {
-    !accounts.length && onAction(); // TODO: double check
-  }, [accounts, onAction]);
 
   const onBack = useCallback(() => {
     setMode(MODE.INDEX);

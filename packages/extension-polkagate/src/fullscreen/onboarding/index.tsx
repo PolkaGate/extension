@@ -119,7 +119,7 @@ function Onboarding(): React.ReactElement {
           <Typography fontSize='16px' fontWeight={400} width='100%'>
             {t('At present, you do not have any accounts. To begin your journey, you can create your first account, import existing accounts, or explore the demo option to get started.')}
           </Typography>
-          <Grid alignItems='center' container item justifyContent='center' pt='80px'>
+          <Grid alignItems='center' container item justifyContent='center' pt='50px'>
             <PButton
               _ml={0}
               _mt='20px'

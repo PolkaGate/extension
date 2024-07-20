@@ -4,15 +4,15 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Grid, keyframes, Typography, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import type { Chain } from '@polkadot/extension-chains/types';
 
-import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
+import { DISABLED_NETWORKS, FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import settings from '@polkadot/ui-settings';
 
-import { AccountContext, ActionContext, Address, Select, SelectChain, TwoButtons, VaadinIcon, Warning } from '../../../components';
+import { ActionContext, Address, Select, SelectChain, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import { useLedger, useTranslation } from '../../../hooks';
 import { createAccountHardware, getMetadata } from '../../../messaging';
 import { Name } from '../../../partials';
@@ -20,6 +20,7 @@ import getLogo from '../../../util/getLogo';
 import ledgerChains from '../../../util/legerChains';
 import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
 import { MODE } from '.';
+import { AVAIL, hideAddressAnimation, showAddressAnimation } from './partials';
 
 export interface AccOption {
   text: string;
@@ -31,8 +32,6 @@ interface NetworkOption {
   value: string | null;
 }
 
-const AVAIL: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
-
 interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
 }
@@ -41,24 +40,6 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const showAddressAnimation = keyframes`
-  0% {
-    height: 0;
-  }
-  100% {
-    height: 70px;
-  }
-`;
-  const hideAddressAnimation = keyframes`
-  0% {
-    height: 70px;
-  }
-  100% {
-    height: 0;
-  }
-`;
-
-  const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
 
   const [isBusy, setIsBusy] = useState(false);
@@ -95,14 +76,18 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
   })));
 
   const networkOps = useRef(
-    [{
-      text: t('No chain selected'),
-      value: ''
-    },
-    ...ledgerChains.map(({ displayName, genesisHash }): NetworkOption => ({
-      text: displayName,
-      value: genesisHash[0]
-    }))]
+    [
+      {
+        text: t('No chain selected'),
+        value: ''
+      },
+      ...ledgerChains.filter(({ displayName }) => !DISABLED_NETWORKS.includes(displayName))
+        .map(({ displayName, genesisHash }): NetworkOption => (
+          {
+            text: displayName,
+            value: genesisHash[0]
+          }))
+    ]
   );
 
   const _onSave = useCallback(() => {
@@ -132,10 +117,6 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
 
     setAddressOffset(Number(index));
   }, []);
-
-  useEffect((): void => {
-    !accounts.length && onAction();
-  }, [accounts, onAction]);
 
   const onBack = useCallback(() => {
     setMode(MODE.INDEX);

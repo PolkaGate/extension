@@ -3,13 +3,13 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, keyframes, Typography, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { Chain } from '@polkadot/extension-chains/types';
 
-import { FULLSCREEN_WIDTH, STATEMINT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
+import { DISABLED_NETWORKS, FULLSCREEN_WIDTH, STATEMINT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { AccountContext, ActionContext, Address, Select, SelectChain, TwoButtons, VaadinIcon, Warning } from '../../../components';
+import { ActionContext, Address, Select, SelectChain, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import { useGenericLedger, useTranslation } from '../../../hooks';
 import { createAccountHardware, getMetadata, updateMeta } from '../../../messaging';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
@@ -18,23 +18,7 @@ import ledgerChains from '../../../util/legerChains';
 import getLogo from '../../../util/getLogo';
 import type { DropdownOption } from '../../../util/types';
 import type { AccOption } from './LegacyApps';
-
-const showAddressAnimation = keyframes`
-0% {
-  height: 0;
-}
-100% {
-  height: 70px;
-}
-`;
-const hideAddressAnimation = keyframes`
-0% {
-  height: 70px;
-}
-100% {
-  height: 0;
-}
-`;
+import { AVAIL, hideAddressAnimation, showAddressAnimation } from './partials';
 
 interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
@@ -45,15 +29,13 @@ interface NetworkOption {
   value: string | null;
 }
 
-const AVAIL: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
-
 interface ManualLedgerImportProps {
   accountIndex: number;
   address: string | null;
   addressOffset: number;
   genesisHash: string | undefined;
   ledgerLoading: boolean;
-  name: (index:number, offset?:number) => string;
+  name: (index: number, offset?: number) => string;
   ref: React.MutableRefObject<null>;
   setAccountIndex: React.Dispatch<React.SetStateAction<number>>;
   setAddressOffset: React.Dispatch<React.SetStateAction<number>>;
@@ -129,7 +111,6 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
   const theme = useTheme();
   const ref = useRef(null);
 
-  const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
 
   const [isBusy, setIsBusy] = useState(false);
@@ -153,10 +134,13 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
       text: t('No chain selected'),
       value: ''
     },
-    ...ledgerChains.filter(({ genesisHash }) => !genesisHash.includes(POLKADOT_GENESIS) && !genesisHash.includes(STATEMINT_GENESIS_HASH)).map(({ displayName, genesisHash }): NetworkOption => ({
-      text: displayName,
-      value: genesisHash[0]
-    }))]
+    ...ledgerChains.filter(
+      ({ displayName, genesisHash }) =>
+      !genesisHash.includes(POLKADOT_GENESIS) && !genesisHash.includes(STATEMINT_GENESIS_HASH) && !DISABLED_NETWORKS.includes(displayName)
+    ).map(({ displayName, genesisHash }): NetworkOption => ({
+        text: displayName,
+        value: genesisHash[0]
+      }))]
   );
 
   useEffect(() => {
@@ -166,7 +150,7 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
     });
   }, [genesis]);
 
-  const name = useCallback((index:number, offset?:number) => `Migration ${index ?? 0}-${offset ?? 0} `, []);
+  const name = useCallback((index: number, offset?: number) => `Migration ${index ?? 0}-${offset ?? 0} `, []);
 
   const onSave = useCallback(() => {
     address && createAccountHardware(address, 'ledger', accountIndex, addressOffset, name(accountIndex, addressOffset), newChain?.genesisHash || POLKADOT_GENESIS)
@@ -183,10 +167,6 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
         setError(error.message);
       });
   }, [accountIndex, address, onAction]);
-
-  useEffect((): void => {
-    !accounts.length && onAction();
-  }, [accounts, onAction]);
 
   const onBack = useCallback(() => {
     setMode(MODE.INDEX);
