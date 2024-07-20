@@ -47,7 +47,8 @@ const STEPS = {
   REVIEW: 1,
   WAIT_SCREEN: 2,
   CONFIRM: 3,
-  PROXY: 100
+  PROXY: 100,
+  SIGN_QR: 200
 };
 
 export default function Review({ address, api, classToUnlock, setDisplayPopup, setRefresh, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
@@ -137,7 +138,7 @@ export default function Review({ address, api, classToUnlock, setDisplayPopup, s
         {isPasswordError &&
           <WrongPasswordAlert />
         }
-        {step === STEPS.REVIEW &&
+        {[STEPS.REVIEW, STEPS.SIGN_QR].includes(step) &&
           <>
             <SubTitle label={t('Review')} style={{ paddingTop: isPasswordError ? '10px' : '25px' }} />
             <Container disableGutters sx={{ px: '30px' }}>
