@@ -90,8 +90,8 @@ export default function WhatsNew({ setShowAlert, show }: Props): React.ReactElem
           {localNews.map(({ version, notes }) =>
           (<Grid container item sx={{ backgroundColor: 'background.paper', borderTop: 1, borderColor: 'secondary.light', p: '10px' }}>
             <Grid container item justifyContent='center'>
-              <Typography fontSize='16px' fontWeight={400}>
-                {t('Version: {{version}}', { replace: { version } })}
+              <Typography fontSize='14px'>
+                {t('Version {{version}}', { replace: { version } })}
               </Typography>
             </Grid>
             <UL
@@ -106,6 +106,15 @@ export default function WhatsNew({ setShowAlert, show }: Props): React.ReactElem
             />
           </Grid>
           ))}
+          {localNews?.length && localNews.length > 1 &&
+            <PButton
+              _onClick={onClose}
+              text={t('Dismiss All')}
+              _ml={0}
+              _mt='10px'
+              _width={100}
+              _variant='outlined'
+            />}
         </Grid>
       </Grid>
     </Popup>
