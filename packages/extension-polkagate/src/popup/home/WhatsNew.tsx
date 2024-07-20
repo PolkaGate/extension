@@ -1,32 +1,52 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useState, useEffect } from 'react';
 
 import { ActionContext, PButton, Popup } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { HeaderBrand } from '../../partials';
-import { EXTENSION_NAME, NEW_VERSION_ALERT } from '../../util/constants';
+import { EXTENSION_NAME } from '../../util/constants';
+import { news, type News } from './news';
+import { useManifest } from '../../hooks';
 
 interface Props {
   show: boolean;
   setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Alert({ setShowAlert, show }: Props): React.ReactElement<Props> {
+export default function WhatsNew({ setShowAlert, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+
   const onAction = useContext(ActionContext);
+  const manifest = useManifest();
+
+  const [localNews, setLocalNews] = useState<News[]>([]);
+
+  useEffect(() => {
+    setLocalNews([...news])
+  }, [])
 
   const onClose = useCallback(() => {
-    window.localStorage.setItem('inUse_version', NEW_VERSION_ALERT);
+    window.localStorage.setItem('using_version', manifest?.version || '0.1.0');
     setShowAlert(false);
     onAction('/');
-  }, [onAction, setShowAlert]);
+  }, [onAction, setShowAlert, manifest?.version]);
+
+  const onDismiss = useCallback((_version: string) => {
+    let index = localNews.findIndex(({ version }) => version === _version);
+    localNews.splice(index, 1);
+
+    setLocalNews([...localNews]);
+
+    if (localNews.length === 0) {
+      onClose();
+    }
+  }, [onAction, setShowAlert, localNews, onClose]);
 
   const UL = ({ notes }: { notes: string[] }) => {
     return (
@@ -61,22 +81,33 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         text={EXTENSION_NAME}
       />
       <Grid container direction='column' px='15px'>
-        <Grid container item justifyContent='center' pb='20px' pt='40px'>
+        <Grid container item justifyContent='center' pb='20px' pt='30px'>
           <Typography fontSize='22px' fontWeight={400}>
-            {t('Important Updates 🚀')}
+            {t('Whats New 🚀')}
           </Typography>
         </Grid>
-        <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
-          <UL
-            notes={[
-              'Paseo Support: The Paseo testnet and its asset hub are now accessible through the wallet.',
-              'Multiple Profile Accounts: An account can now be added to multiple profiles, allowing for better organization of accounts.',
-              'Bug Fixes and Performance Improvements: This update enhances performance and provides a more streamlined user experience by fixing known issues.'
-            ]}
-          />
+        <Grid container item justifyContent='center' sx={{ height: '440px', overflow: 'scroll' }}>
+          {localNews.map(({ version, notes }) =>
+          (<Grid container item sx={{ backgroundColor: 'background.paper', borderTop: 1, borderColor: 'secondary.light', p: '10px' }}>
+            <Grid container item justifyContent='center'>
+              <Typography fontSize='16px' fontWeight={400}>
+                {t('Version: {{version}}', { replace: { version } })}
+              </Typography>
+            </Grid>
+            <UL
+              notes={notes}
+            />
+            <PButton
+              _onClick={() => onDismiss(version)}
+              text={t('Dismiss')}
+              _ml={0}
+              _mt='10px'
+              _width={100}
+            />
+          </Grid>
+          ))}
         </Grid>
       </Grid>
-      <PButton _onClick={onClose} text={t('Close')} />
     </Popup>
   );
 }
