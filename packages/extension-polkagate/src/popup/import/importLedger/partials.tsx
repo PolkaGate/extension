@@ -4,6 +4,7 @@
 import ledgerChains from '../../../util/legerChains';
 import { t } from 'i18next';
 import { keyframes } from '@mui/material';
+import { DISABLED_NETWORKS } from '../../../util/constants';
 
 export interface NetworkOption {
   text: string;
@@ -31,7 +32,7 @@ export const networkOps =   [{
     text: t('No chain selected'),
     value: ''
   },
-  ...ledgerChains.map(({ displayName, genesisHash }): NetworkOption => ({
+  ...ledgerChains.filter(({displayName})=>!DISABLED_NETWORKS.includes(displayName)).map(({ displayName, genesisHash }): NetworkOption => ({
     text: displayName,
     value: genesisHash[0]
   }))];
