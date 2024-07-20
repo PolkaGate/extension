@@ -268,17 +268,20 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
   }, [api, formatted, from, handleTxResult, password, ptx, setIsPasswordError, setStep, steps]);
 
   const onLedgerGenericSignature = useCallback(async (signature: HexString, raw?: GenericExtrinsicPayload) => {
-    if (!api || !payload || !signature || !ptx || !from) {
+    if (!api || !signature || !ptx || !from) {
       return;
     }
 
-    const payloadToSend = raw ? raw : payload; // TODO: double check
+    if (!raw) {
+      throw new Error('No raw data to send!');
+    }
+    
     setStep(steps['WAIT_SCREEN']);
 
-    const txResult = await send(from, api, ptx, payloadToSend.toHex(), signature);
+    const txResult = await send(from, api, ptx, raw.toHex(), signature);
 
     handleTxResult(txResult);
-  }, [api, from, handleTxResult, payload, ptx, setStep, steps['WAIT_SCREEN']]);
+  }, [api, from, handleTxResult, ptx, setStep, steps['WAIT_SCREEN']]);
 
   const onSignature = useCallback(async ({ signature }: { signature: HexString }) => {
     if (!api || !payload || !signature || !ptx || !from) {
@@ -311,7 +314,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
             text={t('Cancel')}
           />
         </Grid>
-        <Grid item sx={{ ' button': { m: 0, width: '100%' }, mt: '80px', position: 'relative', width: '70%' }} xs={8}>
+        <Grid item sx={{ 'button': { m: 0, width: '100%' }, mt: '80px', position: 'relative', width: '70%' }} xs={8}>
           {account?.isGeneric || account?.isMigration
             ? <LedgerSignGeneric
               accountIndex={account?.accountIndex as number || 0}
@@ -527,7 +530,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
                   address={formatted}
                   buttonLeft='0px'
                   cmd={CMD_MORTAL}
-                  genesisHash={account?.genesisHash || api?.genesisHash?.toHex() as any}
+                  genesisHash={account?.genesisHash || api?.genesisHash?.toHex() as string}
                   onSignature={onSignature}
                   payload={payload}
                 />

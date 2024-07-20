@@ -6,9 +6,7 @@
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { Chain } from '@polkadot/extension-chains/types';
-
 import { DISABLED_NETWORKS, FULLSCREEN_WIDTH, STATEMINT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
-
 import { ActionContext, Address, Select, SelectChain, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import { useGenericLedger, useTranslation } from '../../../hooks';
 import { createAccountHardware, getMetadata, updateMeta } from '../../../messaging';
@@ -17,16 +15,10 @@ import { MODE } from '.';
 import ledgerChains from '../../../util/legerChains';
 import getLogo from '../../../util/getLogo';
 import type { DropdownOption } from '../../../util/types';
-import type { AccOption } from './LegacyApps';
-import { AVAIL, hideAddressAnimation, showAddressAnimation } from './partials';
+import { accOps, addOps, hideAddressAnimation, showAddressAnimation, type NetworkOption } from './partials';
 
 interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
-}
-
-interface NetworkOption {
-  text: string;
-  value: string | null;
 }
 
 interface ManualLedgerImportProps {
@@ -44,48 +36,38 @@ interface ManualLedgerImportProps {
 export function ManualLedgerImport({ address, accountIndex, addressOffset, genesisHash, ledgerLoading, name, ref, setAccountIndex, setAddressOffset }: ManualLedgerImportProps): React.ReactElement {
   const { t } = useTranslation();
 
-  const accOps = useRef(AVAIL.map((index): AccOption => ({
-    text: t('Account index {{index}}', { replace: { index } }),
-    value: index
-  })));
-
-  const addOps = useRef(AVAIL.map((offset): AccOption => ({
-    text: t('Address offset {{offset}}', { replace: { offset } }),
-    value: offset
-  })));
-
   const _onSetAccountIndex = useCallback((_value: number | string) => {
-    const index = accOps.current.find(({ text, value }) => text === _value || value === _value)?.value || 0;
+    const index = accOps.find(({ text, value }) => text === _value || value === _value)?.value || 0;
 
     setAccountIndex(Number(index));
-  }, []);
+  }, [accOps]);
 
   const _onSetAddressOffset = useCallback((_value: number | string) => {
-    const index = addOps.current.find(({ text, value }) => text === _value || value === _value)?.value || 0;
+    const index = addOps.find(({ text, value }) => text === _value || value === _value)?.value || 0;
 
     setAddressOffset(Number(index));
-  }, []);
+  }, [addOps]);
 
   return (
     <>
       <Grid container item justifyContent='space-between' mt='15px'>
         <Grid item md={5.5} xs={12}>
           <Select
-            defaultValue={accOps.current[0].value}
+            defaultValue={accOps[0].value}
             isDisabled={ledgerLoading}
             label={t('Account index')}
             onChange={_onSetAccountIndex}
-            options={accOps.current}
+            options={accOps}
             value={accountIndex}
           />
         </Grid>
         <Grid item md={5.5} xs={12}>
           <Select
-            defaultValue={addOps.current[0].value}
+            defaultValue={addOps[0].value}
             isDisabled={ledgerLoading}
             label={t('Address offset')}
             onChange={_onSetAddressOffset}
-            options={addOps.current}
+            options={addOps}
             value={addressOffset}
           />
         </Grid>
@@ -110,7 +92,6 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const ref = useRef(null);
-
   const onAction = useContext(ActionContext);
 
   const [isBusy, setIsBusy] = useState(false);
@@ -157,8 +138,7 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
       .then(() => {
         const metaData = JSON.stringify({ isMigration: true });
 
-        updateMeta(String(address), metaData)
-          .then(() => onAction('/'))
+        updateMeta(String(address), metaData).then(() => onAction('/'))
       })
       .catch((error: Error) => {
         console.error(error);
@@ -231,8 +211,7 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
         <Grid container item justifyContent='flex-end' pt='10px'>
           <Grid container item sx={{ '> div': { width: '100%' } }} xs={7}>
             <TwoButtons
-              // FixMe: twoButtons are disabled on false input!
-              disabled={ledgerLocked ? false : (!!error || !!ledgerError || !address)}
+              disabled={ledgerLocked ? false : (!!error || !!ledgerError || !address || !newChain)}
               isBusy={ledgerLocked ? false : isBusy}
               mt='30px'
               onPrimaryClick={ledgerLocked ? refresh : onSave}

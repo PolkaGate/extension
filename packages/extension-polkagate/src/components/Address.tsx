@@ -113,7 +113,7 @@ function Address({ address, backgroundColor, genesisHash, margin = '20px auto', 
           (!account && givenType === 'ethereum')
         )
           ? { account, formatted: address, type: 'ethereum' }
-          : recodeAddress(address, accounts, chain as any, settings)
+          : recodeAddress(address, accounts, chain as Chain | null, settings)
       );
     } catch (e) {
       console.error(e);
@@ -129,11 +129,11 @@ function Address({ address, backgroundColor, genesisHash, margin = '20px auto', 
 
   return (
     <Grid container alignItems='center' direction='row' justifyContent='space-between' sx={{ backgroundColor: backgroundColor || 'background.paper', border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', height: '70px', m: { margin }, p: '14px 8px', width: { width }, ...style }}>
-      {showCheckbox &&
+      {showCheckbox && handleCheck &&
         <Grid item width='5%'>
           <Checkbox2
             checked={check}
-            onChange={(e) => handleCheck && handleCheck(e, address || '')}
+            onChange={(e) => handleCheck(e, address || '')}
           />
         </Grid>
       }
@@ -146,8 +146,8 @@ function Address({ address, backgroundColor, genesisHash, margin = '20px auto', 
           value={formatted || address}
         />
       </Grid>
-      <Grid container direction={'column'} item width='calc(95% - 40px)'>
-        <Typography fontSize={'16px'} fontWeight={400} maxWidth='95%' overflow='hidden' variant='h3' whiteSpace='nowrap'>
+      <Grid container direction={'column'} item width={`calc(${showCheckbox ? 95 : 100}% - 40px)`} pl='10px'>
+        <Typography fontSize={'16px'} fontWeight={400} maxWidth={`calc(${showCheckbox ? 95 : 100}% - 40px)`} overflow='hidden' variant='h3' whiteSpace='nowrap'>
           {name || accountName || t('<unknown>')}
         </Typography>
         <Grid container direction={'row'} item justifyContent={'space-between'}>

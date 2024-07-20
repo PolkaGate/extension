@@ -6,10 +6,8 @@
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AddRounded as AddRoundedIcon, Engineering as AdvancedModeIcon, Layers as StandardModeIcon } from '@mui/icons-material';
-
 import { FULLSCREEN_WIDTH, POLKADOT_SLIP44 } from '@polkadot/extension-polkagate/src/util/constants';
 import settings from '@polkadot/ui-settings';
-
 import { ActionContext, Address, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import { useGenericLedger, useTranslation } from '../../../hooks';
 import { createAccountHardware, updateMeta } from '../../../messaging';
@@ -72,7 +70,6 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const ref = useRef(null);
-
   const onAction = useContext(ActionContext);
 
   const [isBusy, setIsBusy] = useState(false);
@@ -96,9 +93,8 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
       return;
     }
 
-    if (address) {
-      settings.set({ ledgerConn: 'webusb' });
-    }
+    settings.set({ ledgerConn: 'webusb' });
+
     setAddressList((prev) => {
       prev[address] = {
         index: accountIndex,
@@ -107,6 +103,7 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
 
       return prev;
     })
+
     if (ref.current) {
       //@ts-ignore
       ref.current.scrollTop = ref.current.scrollHeight - ref.current.offsetHeight;
@@ -124,7 +121,7 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
       // return to home if all selected accounts are saved
       onAction('/');
     }
-  }, [savedAccountCount, numberOfSelectedAccounts]);
+  }, [savedAccountCount, numberOfSelectedAccounts, onAction]);
 
   const handleCreateAccount = useCallback((address: string, index: number, offset?: number) => {
     createAccountHardware(address, 'ledger', index, 0, name(index, offset), POLKADOT_GENESIS)
@@ -153,7 +150,6 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
     if (isAdvancedMode) {
       setIsBusy(true);
       address && handleCreateAccount(address, accountIndex, addressOffset);
-
     } else if (Object.entries(addressList).length) {
       setIsBusy(true);
 
@@ -166,20 +162,16 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
     }
   }, [accountIndex, address, addressOffset, addressList, isAdvancedMode, handleCreateAccount]);
 
-  const onBack = useCallback(() => {
-    setMode(MODE.INDEX);
-  }, []);
+  const onBack = useCallback(() => setMode(MODE.INDEX), []);
 
-  const onNewAccount = useCallback(() =>
-    setAccountIndex((prev) => prev + 1)
-    , []);
+  const onNewAccount = useCallback(() => setAccountIndex((prev) => prev + 1), []);
 
   const onAdvancedMode = useCallback(() => {
     setAdvancedMode(prevMode => !prevMode);
     setAccountIndex(0);
     setAddressOffset(0);
-
     const firstAddressEntry = Object.entries(addressList)[0];
+
     if (firstAddressEntry) {
       const [firstKey, firstValue] = firstAddressEntry;
       setAddressList({ [firstKey]: firstValue });

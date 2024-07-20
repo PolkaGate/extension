@@ -4,16 +4,13 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { HexString } from '@polkadot/util/types';
-
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import styled from 'styled-components';
-
 import { PButton, Warning } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { useGenericLedger, useInfo, useMetadataProof } from '../../hooks';
 import ledgerChains from '../../util/legerChains';
-
 import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { LedgerSignature } from '@polkadot/hw-ledger/types';
 import type { GenericExtrinsicPayload } from '@polkadot/types';
@@ -33,9 +30,10 @@ interface Props {
 function LedgerSignGeneric({ accountIndex, address, addressOffset, error, onSignature, payload, setError, showError = true }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-
   const { api, account } = useInfo(address);
   const metadataProof = useMetadataProof(api, payload);
+
+  const [isBusy, setIsBusy] = useState<boolean>(false);
 
   const chainSlip44 = useMemo(() => {
     if (account?.genesisHash) {
@@ -45,8 +43,6 @@ function LedgerSignGeneric({ accountIndex, address, addressOffset, error, onSign
   }, [account, ledgerChains]);
 
   const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, chainSlip44);
-
-  const [isBusy, setIsBusy] = useState(false);
 
   useEffect(() => {
     if (ledgerError) {
@@ -59,10 +55,11 @@ function LedgerSignGeneric({ accountIndex, address, addressOffset, error, onSign
     setError(null);
   }, [refresh, setError]);
 
-  const _onSignLedger = useCallback(async (): Promise<void> => {
+  const _onSignLedger = useCallback(() => {
     if (!ledger || !payload || !onSignature || !api || !metadataProof) {
       return;
     }
+
     const { raw, txMetadata } = metadataProof;
 
     setError(null);
@@ -71,8 +68,8 @@ function LedgerSignGeneric({ accountIndex, address, addressOffset, error, onSign
     ledger.signTransaction(raw.toU8a(true), txMetadata, accountIndex, addressOffset)
       .then(({ signature }: LedgerSignature) => {
         onSignature(signature, raw);
-      }).catch((e: Error) => {
-
+      })
+      .catch((e: Error) => {
         setError(e.message);
         setIsBusy(false);
       });

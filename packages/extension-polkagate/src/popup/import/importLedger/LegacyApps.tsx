@@ -5,32 +5,18 @@
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import type { Chain } from '@polkadot/extension-chains/types';
-
-import { DISABLED_NETWORKS, FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
+import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import settings from '@polkadot/ui-settings';
-
 import { ActionContext, Address, Select, SelectChain, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import { useLedger, useTranslation } from '../../../hooks';
 import { createAccountHardware, getMetadata } from '../../../messaging';
 import { Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
-import ledgerChains from '../../../util/legerChains';
 import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
 import { MODE } from '.';
-import { AVAIL, hideAddressAnimation, showAddressAnimation } from './partials';
-
-export interface AccOption {
-  text: string;
-  value: number;
-}
-
-interface NetworkOption {
-  text: string;
-  value: string | null;
-}
+import { accOps, addOps, hideAddressAnimation, networkOps, showAddressAnimation } from './partials';
 
 interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
@@ -39,7 +25,6 @@ interface Props {
 export default function LegacyApps({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-
   const onAction = useContext(ActionContext);
 
   const [isBusy, setIsBusy] = useState(false);
@@ -65,31 +50,6 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
     }
   }, [address]);
 
-  const accOps = useRef(AVAIL.map((value): AccOption => ({
-    text: t('Account type {{index}}', { replace: { index: value } }),
-    value
-  })));
-
-  const addOps = useRef(AVAIL.map((value): AccOption => ({
-    text: t('Address index {{index}}', { replace: { index: value } }),
-    value
-  })));
-
-  const networkOps = useRef(
-    [
-      {
-        text: t('No chain selected'),
-        value: ''
-      },
-      ...ledgerChains.filter(({ displayName }) => !DISABLED_NETWORKS.includes(displayName))
-        .map(({ displayName, genesisHash }): NetworkOption => (
-          {
-            text: displayName,
-            value: genesisHash[0]
-          }))
-    ]
-  );
-
   const _onSave = useCallback(() => {
     if (address && genesis && name) {
       setIsBusy(true);
@@ -107,20 +67,19 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
 
   // select element is returning a string
   const _onSetAccountIndex = useCallback((_value: number | string) => {
-    const index = accOps.current.find(({ text, value }) => text === _value || value === _value)?.value || 0;
+    const index = accOps.find(({ text, value }) => text === _value || value === _value)?.value || 0;
 
     setAccountIndex(Number(index));
-  }, []);
+  }, [accOps]);
 
   const _onSetAddressOffset = useCallback((_value: number | string) => {
-    const index = addOps.current.find(({ text, value }) => text === _value || value === _value)?.value || 0;
+    const index = addOps.find(({ text, value }) => text === _value || value === _value)?.value || 0;
 
     setAddressOffset(Number(index));
-  }, []);
+  }, [addOps]);
 
-  const onBack = useCallback(() => {
-    setMode(MODE.INDEX);
-  }, []);
+  const onBack = useCallback(() => setMode(MODE.INDEX), [setMode]);
+
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
       <Grid container item sx={{ display: 'block', px: '10%' }}>
@@ -142,11 +101,11 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
         <Grid container item justifyContent='space-between' mb='25px' mt='10px'>
           <SelectChain
             address={address || 'dummy'} // dummy address just to make select enable
-            defaultValue={newChain?.genesisHash || networkOps.current[0].text}
+            defaultValue={newChain?.genesisHash || networkOps[0].text}
             icon={getLogo(newChain ?? undefined)}
             label={t('Select the chain')}
             onChange={setGenesis}
-            options={networkOps.current as DropdownOption[]}
+            options={networkOps as DropdownOption[]}
             style={{ mt: 3, width: '100%' }}
           />
         </Grid>
@@ -180,21 +139,21 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
               <Grid container item justifyContent='space-between' mt='15px'>
                 <Grid item md={5.5} xs={12}>
                   <Select
-                    defaultValue={accOps.current[0].value}
+                    defaultValue={accOps[0].value}
                     isDisabled={ledgerLoading}
                     label={t('Account type')}
                     onChange={_onSetAccountIndex}
-                    options={accOps.current}
+                    options={accOps}
                     value={accountIndex}
                   />
                 </Grid>
                 <Grid item md={5.5} xs={12}>
                   <Select
-                    defaultValue={addOps.current[0].value}
+                    defaultValue={addOps[0].value}
                     isDisabled={ledgerLoading}
                     label={t('Address index')}
                     onChange={_onSetAddressOffset}
-                    options={addOps.current}
+                    options={addOps}
                     value={addressOffset}
                   />
                 </Grid>

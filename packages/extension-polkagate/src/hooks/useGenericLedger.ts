@@ -2,10 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-
 import uiSettings from '@polkadot/ui-settings';
 import { assert } from '@polkadot/util';
-
 import useTranslation from './useTranslation';
 import { GenericLedger } from '../util/ledger/genericLedger';
 import { POLKADOT_SLIP44 } from '../util/constants';
@@ -26,7 +24,7 @@ interface State extends StateBase {
 }
 
 function getState(): StateBase {
-  const isLedgerCapable = !!(window as unknown as { USB?: unknown }).USB;
+  const isLedgerCapable = 'USB' in window
 
   return {
     isLedgerCapable,
@@ -35,16 +33,11 @@ function getState(): StateBase {
 }
 
 function retrieveLedger(chainSlip?: number | null, txMetadataChainId?: string): GenericLedger {
-  let ledger: GenericLedger | null = null;
-
   const { isLedgerCapable } = getState();
 
   assert(isLedgerCapable, 'Incompatible browser, only Chrome is supported');
 
-
-  ledger = new GenericLedger('webusb', chainSlip || POLKADOT_SLIP44, txMetadataChainId);
-
-  return ledger;
+  return new GenericLedger('webusb', chainSlip || POLKADOT_SLIP44, txMetadataChainId);
 }
 
 export function useGenericLedger(accountIndex = 0, addressOffset = 0, chainSlip?: number | null, txMetadataChainId?: string): State {
