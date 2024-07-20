@@ -146,8 +146,8 @@ function Address({ address, backgroundColor, genesisHash, margin = '20px auto', 
           value={formatted || address}
         />
       </Grid>
-      <Grid container direction={'column'} item width='calc(95% - 40px)'>
-        <Typography fontSize={'16px'} fontWeight={400} maxWidth='95%' overflow='hidden' variant='h3' whiteSpace='nowrap'>
+      <Grid container direction={'column'} item width={`calc(${showCheckbox ? 95 : 100}% - 40px)`} pl='10px'>
+        <Typography fontSize={'16px'} fontWeight={400} maxWidth={`calc(${showCheckbox ? 95 : 100}% - 40px)`} overflow='hidden' variant='h3' whiteSpace='nowrap'>
           {name || accountName || t('<unknown>')}
         </Typography>
         <Grid container direction={'row'} item justifyContent={'space-between'}>
