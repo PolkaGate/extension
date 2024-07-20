@@ -6,7 +6,6 @@
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
-
 import { Infotip, Warning } from '../../../components';
 import { pgBoxShadow } from '../../../util/utils';
 
@@ -59,9 +58,9 @@ export default function LedgerOption({ subTitle, helperText, logo, noToolTip, on
         }
         {subTitle &&
           <Grid container item justifyContent='flex-start' pt='10px'>
-              <Typography fontSize='14px' fontWeight={400}>
-                {subTitle}
-              </Typography>
+            <Typography fontSize='14px' fontWeight={400}>
+              {subTitle}
+            </Typography>
           </Grid>}
       </Grid>
       <Grid alignItems='center' container item justifyContent='center' xs={1}>

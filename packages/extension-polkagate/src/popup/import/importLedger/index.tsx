@@ -5,14 +5,12 @@
 
 import { Grid } from '@mui/material';
 import React, { useState } from 'react';
-
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen } from '../../../hooks';
 import LedgerOptions from './LedgerOptions';
 import LegacyApps from './LegacyApps';
 import GenericApp from './GenericApp';
 import MigrationApp from './MigrationApp';
-
 
 export enum MODE {
   INDEX,

@@ -2,13 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
-
 import { useMemo, useState } from 'react';
 import { objectSpread, u8aToHex } from '@polkadot/util';
-
 import { GenericExtrinsicPayload, Option, u32 } from "@polkadot/types";
-// @ts-ignore
-import { OpaqueMetadata } from "@polkadot/types/interfaces";
+import type { OpaqueMetadata } from "@polkadot/types/interfaces";
 import type { SignerPayloadJSON } from '@polkadot/types/types';
 import { merkleizeMetadata } from '@polkadot-api/merkleize-metadata';
 
@@ -27,7 +24,6 @@ export default function useMetadataProof(api: ApiPromise | undefined, payload: S
       return;
     }
 
-    // @ts-ignore
     if (!payload.signedExtensions.includes('CheckMetadataHash')) {
       payload.signedExtensions.push('CheckMetadataHash');
     }
@@ -41,7 +37,6 @@ export default function useMetadataProof(api: ApiPromise | undefined, payload: S
     const maybeHexMetadata = await api.call['metadata']['metadataAtVersion']<Option<OpaqueMetadata>>(latestMetadataVersion);
     if (maybeHexMetadata.isNone) throw new Error("metadata not found");
 
-
     const { specName, specVersion } = api.runtimeVersion;
 
     const merkleizedMetadata = merkleizeMetadata(
@@ -54,8 +49,8 @@ export default function useMetadataProof(api: ApiPromise | undefined, payload: S
         tokenSymbol: api.registry.chainTokens[0]
       }
     );
-    const metadataHash = u8aToHex(merkleizedMetadata.digest());
 
+    const metadataHash = u8aToHex(merkleizedMetadata.digest());
     const newPayload = objectSpread({}, payload, { metadataHash, mode: 1 });
     const raw = api.registry.createType('ExtrinsicPayload', newPayload);
 

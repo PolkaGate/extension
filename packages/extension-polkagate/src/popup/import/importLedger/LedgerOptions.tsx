@@ -5,41 +5,29 @@
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
-
-
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
-
 import { PButton, VaadinIcon } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import LedgerOption from './LedgerOption';
 import { openOrFocusTab } from '../../../fullscreen/accountDetails/components/CommonTasks';
 import { MODE } from '.';
+import { METADATA_DASHBOARD } from './partials';
 
 interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const METADATA_DASHBOARD = 'https://dashboards.data.paritytech.io/metadata.html'
-
 export default function LedgerOptions({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const onBack = useCallback(() =>
-    openOrFocusTab('/', true)
-    , []);
+  const onBack = useCallback(() => openOrFocusTab('/', true), [openOrFocusTab]);
 
-  const onPolkadotLegacy = useCallback(() =>
-    setMode(MODE.LEGACY)
-    , []);
+  const onPolkadotLegacy = useCallback(() => setMode(MODE.LEGACY), []);
 
-  const onPolkadotGeneric = useCallback(() =>
-    setMode(MODE.GENERIC)
-    , []);
+  const onPolkadotGeneric = useCallback(() => setMode(MODE.GENERIC), []);
 
-  const onMigration = useCallback(() =>
-    setMode(MODE.MIGRATION)
-    , []);
+  const onMigration = useCallback(() => setMode(MODE.MIGRATION), []);
 
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
