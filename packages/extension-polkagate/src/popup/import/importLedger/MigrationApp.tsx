@@ -211,8 +211,7 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
         <Grid container item justifyContent='flex-end' pt='10px'>
           <Grid container item sx={{ '> div': { width: '100%' } }} xs={7}>
             <TwoButtons
-              // FixMe: twoButtons are disabled on false input!
-              disabled={ledgerLocked ? false : (!!error || !!ledgerError || !address)}
+              disabled={ledgerLocked ? false : (!!error || !!ledgerError || !address || !newChain)}
               isBusy={ledgerLocked ? false : isBusy}
               mt='30px'
               onPrimaryClick={ledgerLocked ? refresh : onSave}

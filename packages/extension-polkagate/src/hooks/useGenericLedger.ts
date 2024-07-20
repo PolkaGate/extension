@@ -24,7 +24,7 @@ interface State extends StateBase {
 }
 
 function getState(): StateBase {
-  const isLedgerCapable = !!(window as unknown as { USB?: unknown }).USB; // 'USB' in window
+  const isLedgerCapable = 'USB' in window
 
   return {
     isLedgerCapable,

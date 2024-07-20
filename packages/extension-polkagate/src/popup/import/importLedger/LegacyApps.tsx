@@ -78,7 +78,7 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
     setAddressOffset(Number(index));
   }, [addOps]);
 
-  const onBack = useCallback(() => setMode(MODE.INDEX), []);
+  const onBack = useCallback(() => setMode(MODE.INDEX), [setMode]);
 
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
