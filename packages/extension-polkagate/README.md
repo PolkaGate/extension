@@ -7,7 +7,7 @@ It is based on polkadot js extension, which injects a [@polkadot/api](https://gi
 
 Polkadot js plus extension is actually the original polkadot js extension, plus some new functionalities.
 
-## New functinalities
+## New functionalities
 
 Currently, the following features are added:
   - View balances

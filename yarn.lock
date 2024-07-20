@@ -986,10 +986,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ledgerhq/devices@npm:^8.4.0":
+  version: 8.4.0
+  resolution: "@ledgerhq/devices@npm:8.4.0"
+  dependencies:
+    "@ledgerhq/errors": ^6.17.0
+    "@ledgerhq/logs": ^6.12.0
+    rxjs: ^7.8.1
+    semver: ^7.3.5
+  checksum: 32a0fb1521ff48c53125bddb735f0d796bec867720888e2bf5841e1d15a9939d93de6065526db1a3c31feda30a7d53412a6a905c3cee1148d7c223c2ff65a660
+  languageName: node
+  linkType: hard
+
 "@ledgerhq/errors@npm:^6.16.4":
   version: 6.16.4
   resolution: "@ledgerhq/errors@npm:6.16.4"
   checksum: e2d9b7e8bb61c6e22ed481d4a17e3c169c95870c2fe98e4e982425f5642ae2b25f9ae595c032f0bc98cc26cb17c28d902cd6c7bfd3b79a651c8bd7b55e753e23
+  languageName: node
+  linkType: hard
+
+"@ledgerhq/errors@npm:^6.17.0":
+  version: 6.17.0
+  resolution: "@ledgerhq/errors@npm:6.17.0"
+  checksum: 4558d2fa2c232aea951956fdc356afa3e0d4bb4cacb83d9ee9b7d6d65f0118881d700b9588891092578cfaa384b0731d856ee5e677bd255df2738b4358da2aa4
   languageName: node
   linkType: hard
 
@@ -1045,7 +1064,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ledgerhq/hw-transport@npm:^6.27.1, @ledgerhq/hw-transport@npm:^6.30.1, @ledgerhq/hw-transport@npm:^6.30.6":
+"@ledgerhq/hw-transport@npm:6.30.6, @ledgerhq/hw-transport@npm:^6.27.1, @ledgerhq/hw-transport@npm:^6.30.1, @ledgerhq/hw-transport@npm:^6.30.6":
   version: 6.30.6
   resolution: "@ledgerhq/hw-transport@npm:6.30.6"
   dependencies:
@@ -1054,6 +1073,18 @@ __metadata:
     "@ledgerhq/logs": ^6.12.0
     events: ^3.3.0
   checksum: 89118ebc429a47043efe62ef83058a080bfa4340861272a0e3ceb2a6f898ae77ae8cdeae19b693eb7c05dd10c5d55d1eaf0ad0fab9a45db09def46afa8d1a8c0
+  languageName: node
+  linkType: hard
+
+"@ledgerhq/hw-transport@npm:6.31.0":
+  version: 6.31.0
+  resolution: "@ledgerhq/hw-transport@npm:6.31.0"
+  dependencies:
+    "@ledgerhq/devices": ^8.4.0
+    "@ledgerhq/errors": ^6.17.0
+    "@ledgerhq/logs": ^6.12.0
+    events: ^3.3.0
+  checksum: 97911686ed4de1aaedcde364616c36a9831278002d7a168ea8469c0ce79d1712ded53c1f6deec3b7a86b76cad8b7ad4ba819670e864b1acfeb873271a829ee36
   languageName: node
   linkType: hard
 
@@ -1736,6 +1767,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polkadot-api/merkleize-metadata@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@polkadot-api/merkleize-metadata@npm:1.1.1"
+  dependencies:
+    "@polkadot-api/substrate-bindings": 0.6.1
+    "@polkadot-api/utils": 0.1.1
+  checksum: c00cecea4a587ec4e9f8c5815e4d1cb5cf88da34e636faddb157c168fca856d5d305709d55d560c9c7665018df82a1cbfc29ad75518a2b096f61b2566f53c7cd
+  languageName: node
+  linkType: hard
+
 "@polkadot-api/metadata-builders@npm:0.0.1":
   version: 0.0.1
   resolution: "@polkadot-api/metadata-builders@npm:0.0.1"
@@ -1794,6 +1835,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polkadot-api/substrate-bindings@npm:0.6.1":
+  version: 0.6.1
+  resolution: "@polkadot-api/substrate-bindings@npm:0.6.1"
+  dependencies:
+    "@noble/hashes": ^1.3.1
+    "@polkadot-api/utils": 0.1.1
+    "@scure/base": ^1.1.1
+    scale-ts: ^1.6.0
+  checksum: 4a1f1fcf3ec21f880a72982ecf8da0659977adab644715d00baabc060581becf089711ed112b533afd01009b5f990644f0b2c90c9bb3ba2e2a77418c3aba19ec
+  languageName: node
+  linkType: hard
+
 "@polkadot-api/substrate-client@npm:0.0.1":
   version: 0.0.1
   resolution: "@polkadot-api/substrate-client@npm:0.0.1"
@@ -1819,6 +1872,13 @@ __metadata:
   version: 0.0.1-492c132563ea6b40ae1fc5470dec4cd18768d182.1.0
   resolution: "@polkadot-api/utils@npm:0.0.1-492c132563ea6b40ae1fc5470dec4cd18768d182.1.0"
   checksum: 0bf7b078a53f1eaf2f4cec3c41f3e82fc5afb4a347dcbc7b538723aeb1b4893834a2f1aeed425443a25ee0e1a6472c85d8be600e73a6d25ea16a0748d25c00bf
+  languageName: node
+  linkType: hard
+
+"@polkadot-api/utils@npm:0.1.1":
+  version: 0.1.1
+  resolution: "@polkadot-api/utils@npm:0.1.1"
+  checksum: ede159199bc1a0d30b623b6f5bcb0f2e10f4f112a530ecbd6bc2667c6efa7b38adc81b7a9deb687a7f2c5f00517216e2b04ac9cfd55ae8f0079176553456fdc0
   languageName: node
   linkType: hard
 
@@ -2113,12 +2173,13 @@ __metadata:
     "@fortawesome/free-regular-svg-icons": ^6.5.2
     "@fortawesome/free-solid-svg-icons": ^6.5.2
     "@fortawesome/react-fontawesome": ^0.2.2
+    "@polkadot-api/merkleize-metadata": ^1.1.1
     "@polkadot/extension-base": ^0.47.5
     "@polkadot/extension-chains": ^0.47.5
     "@polkadot/extension-dapp": ^0.47.5
     "@polkadot/extension-inject": ^0.47.5
     "@polkadot/extension-mocks": ^0.47.5
-    "@polkadot/hw-ledger": latest
+    "@polkadot/hw-ledger": ^12.6.2
     "@polkadot/keyring": latest
     "@polkadot/networks": latest
     "@polkadot/react-identicon": latest
@@ -2139,6 +2200,7 @@ __metadata:
     "@types/sinon-chrome": ^2.2.11
     "@types/styled-components": ^5.1.25
     "@wojtekmaj/enzyme-adapter-react-17": ^0.6.7
+    "@zondax/ledger-substrate": ^0.44.7
     enzyme: ^3.11.0
     enzyme-adapter-react-16: ^1.15.6
     file-saver: ^2.0.5
@@ -2170,7 +2232,6 @@ __metadata:
     "@polkadot/extension-dapp": ^0.47.5
     "@polkadot/extension-inject": ^0.47.5
     "@polkadot/extension-mocks": ^0.47.5
-    "@polkadot/hw-ledger": latest
     "@polkadot/keyring": latest
     "@polkadot/networks": latest
     "@polkadot/react-identicon": latest
@@ -2254,7 +2315,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/hw-ledger@npm:latest":
+"@polkadot/hw-ledger@npm:^12.6.2":
   version: 12.6.2
   resolution: "@polkadot/hw-ledger@npm:12.6.2"
   dependencies:
@@ -4665,6 +4726,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@zondax/ledger-js@npm:^0.8.2":
+  version: 0.8.2
+  resolution: "@zondax/ledger-js@npm:0.8.2"
+  dependencies:
+    "@ledgerhq/hw-transport": 6.30.6
+  checksum: 7b33cd87d8569732028a57e594a4674f9fa232155c227031a00985bf9b6af62774a5cdbed59a5754c998122862ded64060b042c97850a38e6b734455828b362d
+  languageName: node
+  linkType: hard
+
 "@zondax/ledger-substrate@npm:^0.41.3":
   version: 0.41.4
   resolution: "@zondax/ledger-substrate@npm:0.41.4"
@@ -4679,6 +4749,17 @@ __metadata:
   bin:
     ledger-substrate: dist/cmd/cli.js
   checksum: f28efda64edf7dfd65cdf6d3a554f57b5c0726b9f751a9ee105758a198d6cfdc963468d13ece32698d67717ba6e100509da267a5497b67418a8d0fbea28400b3
+  languageName: node
+  linkType: hard
+
+"@zondax/ledger-substrate@npm:^0.44.7":
+  version: 0.44.7
+  resolution: "@zondax/ledger-substrate@npm:0.44.7"
+  dependencies:
+    "@ledgerhq/hw-transport": 6.31.0
+    "@zondax/ledger-js": ^0.8.2
+    axios: ^1.7.2
+  checksum: e42a64278598410a705ee93a18ccb509afa0811295b6319de9576a5f9018810cf93152f4da5437282178088c762cc1750407b98f0367fdba8e0e275db763d1f4
   languageName: node
   linkType: hard
 
@@ -5307,6 +5388,17 @@ __metadata:
   dependencies:
     possible-typed-array-names: ^1.0.0
   checksum: 1aa3ffbfe6578276996de660848b6e95669d9a95ad149e3dd0c0cda77db6ee1dbd9d1dd723b65b6d277b882dd0c4b91a654ae9d3cf9e1254b7e93e4908d78fd3
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.7.2":
+  version: 1.7.2
+  resolution: "axios@npm:1.7.2"
+  dependencies:
+    follow-redirects: ^1.15.6
+    form-data: ^4.0.0
+    proxy-from-env: ^1.1.0
+  checksum: e457e2b0ab748504621f6fa6609074ac08c824bf0881592209dfa15098ece7e88495300e02cd22ba50b3468fd712fe687e629dcb03d6a3f6a51989727405aedf
   languageName: node
   linkType: hard
 
@@ -9290,7 +9382,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0":
+"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.15.6":
   version: 1.15.6
   resolution: "follow-redirects@npm:1.15.6"
   peerDependenciesMeta:
@@ -13880,6 +13972,13 @@ __metadata:
     forwarded: 0.2.0
     ipaddr.js: 1.9.1
   checksum: 29c6990ce9364648255454842f06f8c46fcd124d3e6d7c5066df44662de63cdc0bad032e9bf5a3d653ff72141cc7b6019873d685708ac8210c30458ad99f2b74
+  languageName: node
+  linkType: hard
+
+"proxy-from-env@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "proxy-from-env@npm:1.1.0"
+  checksum: ed7fcc2ba0a33404958e34d95d18638249a68c430e30fcb6c478497d72739ba64ce9810a24f53a7d921d0c065e5b78e3822759800698167256b04659366ca4d4
   languageName: node
   linkType: hard
 

@@ -88,7 +88,6 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
     api && api.query.nominationPools.globalMaxCommission().then((res: Option) => {
       if (res.isSome) {
         setMaxCommission(res.unwrap());
-        console.log('res:', res.unwrap());
       }
     });
   }, [api]);

@@ -1,16 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-
-import { Ledger } from '@polkadot/hw-ledger';
-import { Network } from '@polkadot/networks/types';
 import uiSettings from '@polkadot/ui-settings';
 import { assert } from '@polkadot/util';
-
-import ledgerChains from '../util/legerChains';
 import useTranslation from './useTranslation';
+import { GenericLedger } from '../util/ledger/genericLedger';
+import { POLKADOT_SLIP44 } from '../util/constants';
 
 interface StateBase {
   isLedgerCapable: boolean;
@@ -22,17 +18,13 @@ interface State extends StateBase {
   error: string | null;
   isLoading: boolean;
   isLocked: boolean;
-  ledger: Ledger | null;
+  ledger: GenericLedger | null;
   refresh: () => void;
   warning: string | null;
 }
 
-function getNetwork(genesisHash: string): Network | undefined {
-  return ledgerChains.find(({ genesisHash: [hash] }) => hash === genesisHash);
-}
-
 function getState(): StateBase {
-  const isLedgerCapable = !!(window as unknown as { USB?: unknown }).USB;
+  const isLedgerCapable = 'USB' in window
 
   return {
     isLedgerCapable,
@@ -40,23 +32,15 @@ function getState(): StateBase {
   };
 }
 
-function retrieveLedger(genesis: string): Ledger {
-  let ledger: Ledger | null = null;
-
+function retrieveLedger(chainSlip?: number | null, txMetadataChainId?: string): GenericLedger {
   const { isLedgerCapable } = getState();
 
   assert(isLedgerCapable, 'Incompatible browser, only Chrome is supported');
 
-  const def = getNetwork(genesis);
-
-  assert(def, 'There is no known Ledger app available for this specific chain');
-
-  ledger = new Ledger('webusb', def.network);
-
-  return ledger;
+  return new GenericLedger('webusb', chainSlip || POLKADOT_SLIP44, txMetadataChainId);
 }
 
-export function useLedger(genesis?: string | null, accountIndex = 0, addressOffset = 0): State {
+export function useGenericLedger(accountIndex = 0, addressOffset = 0, chainSlip?: number | null, txMetadataChainId?: string): State {
   const { t } = useTranslation();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -65,32 +49,23 @@ export function useLedger(genesis?: string | null, accountIndex = 0, addressOffs
   const [warning, setWarning] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [address, setAddress] = useState<string | null>(null);
-  
+
   const ledger = useMemo(() => {
     setError(null);
     setIsLocked(false);
     setRefreshLock(false);
 
-    // this trick allows to refresh the ledger on demand
-    // when it is shown as locked and the user has actually
-    // unlocked it, which we can't know.
-    if (refreshLock || genesis) {
-      if (!genesis) {
-        return null;
-      }
-
-      try {
-        return retrieveLedger(genesis);
-      } catch (error) {
-        setError((error as Error).message);
-      }
+    try {
+      return retrieveLedger(chainSlip, txMetadataChainId);
+    } catch (error) {
+      setError((error as Error).message);
     }
 
     return null;
-  }, [genesis, refreshLock]);
+  }, [refreshLock, chainSlip, txMetadataChainId]);
 
   useEffect(() => {
-    if (!ledger || !genesis) {
+    if (!ledger) {
       setAddress(null);
 
       return;
@@ -106,19 +81,18 @@ export function useLedger(genesis?: string | null, accountIndex = 0, addressOffs
         setAddress(res.address);
       }).catch((e: Error) => {
         setIsLoading(false);
-        const { network } = getNetwork(genesis) || { network: 'unknown network' };
 
         const warningMessage = e.message.includes('Code: 26628')
-          ? t<string>('Is your ledger locked?')
+          ? t('Is your ledger locked?')
           : null;
 
         const errorMessage = e.message.includes('App does not seem to be open')
-          ? t<string>('App "{{network}}" does not seem to be open', { replace: { network } })
+          ? t('App does not seem to be open')
           : e.message;
 
         setIsLocked(true);
         setWarning(warningMessage);
-        setError(t<string>(
+        setError(t(
           'Ledger error: {{errorMessage}}',
           { replace: { errorMessage } }
         ));
@@ -128,7 +102,7 @@ export function useLedger(genesis?: string | null, accountIndex = 0, addressOffs
     // If the dependency array is exhaustive, with t, the translation function, it
     // triggers a useless re-render when ledger device is connected.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountIndex, addressOffset, genesis, ledger]);
+  }, [accountIndex, addressOffset, ledger]);
 
   const refresh = useCallback(() => {
     setRefreshLock(true);

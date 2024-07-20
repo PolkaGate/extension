@@ -128,7 +128,7 @@ function Extrinsic ({ payload: { era, nonce, tip }, request: { blockNumber, gene
 
   return (
     <Grid container fontSize='16px' sx={{ '> div:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', m: '15px auto', width: '92%' }}>
-      <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
+      <Grid alignItems='center' justifyContent='space-between' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
         <Typography fontWeight={300} width='35%'>
           {t('From')}
         </Typography>
@@ -170,11 +170,11 @@ function Extrinsic ({ payload: { era, nonce, tip }, request: { blockNumber, gene
         </Grid>
       )}
       {renderMethod(method, decoded, t)}
-      <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-        <Typography fontWeight={300} width='35%'>
+      <Grid alignItems='center' container justifyContent='space-between' item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
+        <Typography fontWeight={300}>
           {t('Time to sign')}
         </Typography>
-        <Typography fontWeight={400} textAlign='right' width='65%'>
+        <Typography fontWeight={400} textAlign='right'>
           {mortalityAsString(era, blockNumber, t)}
         </Typography>
       </Grid>

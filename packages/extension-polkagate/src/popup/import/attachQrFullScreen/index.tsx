@@ -1,16 +1,15 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Button, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { QrScanAddress } from '@polkadot/react-qr';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, PButton, TwoButtons, VaadinIcon, Warning } from '../../../components';
+import { AccountNamePasswordCreation, ActionContext, Address, PButton, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from '../../../messaging';
@@ -21,17 +20,13 @@ export default function AttachQrFullScreen(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-  const { accounts } = useContext(AccountContext);
+
   const onAction = useContext(ActionContext);
   const [account, setAccount] = useState<ScanType | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
   const [invalidQR, setInvalidQR] = useState<boolean>();
-
-  useEffect((): void => {
-    !accounts.length && onAction();
-  }, [accounts, onAction]);
 
   const setQrLabelAndGoToHome = useCallback(() => {
     const metaData = JSON.stringify({ isQR: true });
