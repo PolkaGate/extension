@@ -268,17 +268,20 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
   }, [api, formatted, from, handleTxResult, password, ptx, setIsPasswordError, setStep, steps]);
 
   const onLedgerGenericSignature = useCallback(async (signature: HexString, raw?: GenericExtrinsicPayload) => {
-    if (!api || !payload || !signature || !ptx || !from) {
+    if (!api || !signature || !ptx || !from) {
       return;
     }
 
-    const payloadToSend = raw ?? payload; // TODO: double check
+    if (!raw) {
+      throw new Error('No raw data to send!');
+    }
+    
     setStep(steps['WAIT_SCREEN']);
 
-    const txResult = await send(from, api, ptx, payloadToSend.toHex(), signature);
+    const txResult = await send(from, api, ptx, raw.toHex(), signature);
 
     handleTxResult(txResult);
-  }, [api, from, handleTxResult, payload, ptx, setStep, steps['WAIT_SCREEN']]);
+  }, [api, from, handleTxResult, ptx, setStep, steps['WAIT_SCREEN']]);
 
   const onSignature = useCallback(async ({ signature }: { signature: HexString }) => {
     if (!api || !payload || !signature || !ptx || !from) {
