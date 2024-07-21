@@ -1338,5 +1338,7 @@
   "Import the account with its index and offset. Leave defaults if unchanged.": "",
   "Whats New 🚀": "",
   "Version: {{version}}": "",
-  "Dismiss": ""
+  "Dismiss": "",
+  "Version {{version}}": "",
+  "Dismiss All": ""
 }
