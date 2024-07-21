@@ -1337,5 +1337,6 @@
   "Version: {{version}}": "版本: {{version}}",
   "Dismiss": "关闭",
   "Version {{version}}": "版本 {{version}}",
-  "Dismiss All": "全部关闭"
+  "Dismiss All": "全部关闭",
+  "Address offset {{index}}": "地址偏移量 {{index}}"
 }

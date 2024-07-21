@@ -1328,5 +1328,6 @@
   "Version: {{version}}": "Версия: {{version}}",
   "Dismiss": "Отклонить",
   "Version {{version}}": "Версия {{version}}",
-  "Dismiss All": "Отклонить все"
+  "Dismiss All": "Отклонить все",
+  "Address offset {{index}}": "Смещение адреса {{index}}"
 }

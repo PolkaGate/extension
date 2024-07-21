@@ -1330,5 +1330,6 @@
   "Version: {{version}}": "संस्करण: {{version}}",
   "Dismiss": "अस्वीकृत करें",
   "Version {{version}}": "संस्करण {{version}}",
-  "Dismiss All": "सभी अस्वीकृत करें"
+  "Dismiss All": "सभी अस्वीकृत करें",
+  "Address offset {{index}}": "पता ऑफसेट {{index}}"
 }

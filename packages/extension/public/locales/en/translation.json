@@ -1340,5 +1340,6 @@
   "Version: {{version}}": "",
   "Dismiss": "",
   "Version {{version}}": "",
-  "Dismiss All": ""
+  "Dismiss All": "",
+  "Address offset {{index}}": ""
 }

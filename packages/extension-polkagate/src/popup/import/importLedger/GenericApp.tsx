@@ -14,8 +14,8 @@ import { createAccountHardware, updateMeta } from '../../../messaging';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { MODE } from '.';
 import { noop } from '@polkadot/util';
-import { ManualLedgerImport } from './MigrationApp';
 import { hideAddressAnimation, showAddressAnimation } from './partials';
+import ManualLedgerImport from './ManualLedgerImport';
 
 interface AddressOptions {
   index: number;
@@ -216,7 +216,7 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
             <Grid container sx={{ minHeight: '200px' }}>
               {!isAdvancedMode
                 ? <>
-                  <Grid container ref={ref} sx={{ minHeight: '50px', maxHeight: '450px', overflowY: 'scroll', pt: '10px', scrollbarWidth: 'thin', scrollBehavior: 'auto' }}>
+                  <Grid container ref={ref} sx={{ minHeight: '50px', maxHeight: `${window.innerHeight-475}px`, overflowY: 'scroll', pt: '10px', scrollbarWidth: 'thin', scrollBehavior: 'auto' }}>
                     {!!Object.entries(addressList).length &&
                       <>
                         {Object.entries(addressList).map(([address, options]) => (

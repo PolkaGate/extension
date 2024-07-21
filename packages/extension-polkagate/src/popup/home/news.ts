@@ -8,7 +8,7 @@ export interface News {
 
 export const news: News[] = [
   {
-    "version": "0.6.3",
+    "version": "0.6.4",
     "notes": [
       "Support for Ledger Polkadot Generic App: The new Generic Ledger App and Migration App are now supported.",
       "Fixed People Chain Price Issue: Token prices on the People Chain are now displayed correctly.",

@@ -1333,5 +1333,6 @@
 "Version: {{version}}": "Version : {{version}}",
 "Dismiss": "Rejeter",
 "Version {{version}}": "Version {{version}}",
-"Dismiss All": "Tout rejeter"
+"Dismiss All": "Tout rejeter",
+ "Address offset {{index}}": "Décalage d'adresse {{index}}"
 }

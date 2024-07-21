@@ -7,7 +7,7 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { Chain } from '@polkadot/extension-chains/types';
 import { DISABLED_NETWORKS, FULLSCREEN_WIDTH, STATEMINT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
-import { ActionContext, Address, Select, SelectChain, TwoButtons, VaadinIcon, Warning } from '../../../components';
+import { ActionContext, SelectChain, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import { useGenericLedger, useTranslation } from '../../../hooks';
 import { createAccountHardware, getMetadata, updateMeta } from '../../../messaging';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
@@ -15,77 +15,11 @@ import { MODE } from '.';
 import ledgerChains from '../../../util/legerChains';
 import getLogo from '../../../util/getLogo';
 import type { DropdownOption } from '../../../util/types';
-import { accOps, addOps, hideAddressAnimation, showAddressAnimation, type NetworkOption } from './partials';
+import { type NetworkOption } from './partials';
+import ManualLedgerImport from './ManualLedgerImport';
 
 interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
-}
-
-interface ManualLedgerImportProps {
-  accountIndex: number;
-  address: string | null;
-  addressOffset: number;
-  genesisHash: string | undefined;
-  ledgerLoading: boolean;
-  name: (index: number, offset?: number) => string;
-  ref: React.MutableRefObject<null>;
-  setAccountIndex: React.Dispatch<React.SetStateAction<number>>;
-  setAddressOffset: React.Dispatch<React.SetStateAction<number>>;
-}
-
-export function ManualLedgerImport({ address, accountIndex, addressOffset, genesisHash, ledgerLoading, name, ref, setAccountIndex, setAddressOffset }: ManualLedgerImportProps): React.ReactElement {
-  const { t } = useTranslation();
-
-  const _onSetAccountIndex = useCallback((_value: number | string) => {
-    const index = accOps.find(({ text, value }) => text === _value || value === _value)?.value || 0;
-
-    setAccountIndex(Number(index));
-  }, [accOps]);
-
-  const _onSetAddressOffset = useCallback((_value: number | string) => {
-    const index = addOps.find(({ text, value }) => text === _value || value === _value)?.value || 0;
-
-    setAddressOffset(Number(index));
-  }, [addOps]);
-
-  return (
-    <>
-      <Grid container item justifyContent='space-between' mt='15px'>
-        <Grid item md={5.5} xs={12}>
-          <Select
-            defaultValue={accOps[0].value}
-            isDisabled={ledgerLoading}
-            label={t('Account index')}
-            onChange={_onSetAccountIndex}
-            options={accOps}
-            value={accountIndex}
-          />
-        </Grid>
-        <Grid item md={5.5} xs={12}>
-          <Select
-            defaultValue={addOps[0].value}
-            isDisabled={ledgerLoading}
-            label={t('Address offset')}
-            onChange={_onSetAddressOffset}
-            options={addOps}
-            value={addressOffset}
-          />
-        </Grid>
-      </Grid>
-      <Grid container ref={ref} sx={{ minHeight: '50px', maxHeight: '500px', overflowY: 'scroll', scrollbarWidth: 'thin', scrollBehavior: 'auto' }}>
-        <Grid container display={address ? 'inherit' : 'none'} item overflow='hidden' sx={{ animationDuration: address ? '300ms' : '150ms', animationFillMode: 'forwards', animationName: `${address ? showAddressAnimation : hideAddressAnimation}`, animationTimingFunction: 'linear', mt: '15px' }}>
-          <Address
-            address={address}
-            genesisHash={genesisHash}
-            backgroundColor='background.main'
-            margin='0px'
-            name={name(accountIndex, addressOffset)}
-            style={{ width: '100%' }}
-          />
-        </Grid>
-      </Grid>
-    </>
-  )
 }
 
 export default function MigrationApp({ setMode }: Props): React.ReactElement {

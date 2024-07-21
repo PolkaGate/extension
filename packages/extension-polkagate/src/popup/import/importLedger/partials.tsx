@@ -19,12 +19,12 @@ export interface AccOption {
 const AVAIL: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
 
 export const accOps = AVAIL.map((value): AccOption => ({
-  text: t('Account type {{index}}', { replace: { index: value } }),
+  text: t('Account index {{index}}', { replace: { index: value } }),
   value
 }));
 
 export const addOps = AVAIL.map((value): AccOption => ({
-  text: t('Address index {{index}}', { replace: { index: value } }),
+  text: t('Address offset {{index}}', { replace: { index: value } }),
   value
 }));
 
