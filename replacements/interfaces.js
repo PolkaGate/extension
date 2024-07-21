@@ -41,6 +41,9 @@ function sortNetworks(a, b) {
 knownGenesis.westmint = [
     '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9'
 ];
+knownGenesis.polkadotPeople = [
+    '0x67fa177a097bfa18f77ea95ab56e9bcdfeb0e5b8a40e46298bb93e16b6fc5008'
+];
 knownGenesis.westendPeople = [
     '0x1eb6fb0ba5187434de017a70cb84d4f47142df1d571d0ef9e7e1407f2b80b93c'
 ];
@@ -128,9 +131,17 @@ const peopleChains = [
         "decimals": [12],
         "standardAccount": "*25519",
         "website": "https://kusama.network"
+    },
+    {
+        "prefix": 0,
+        "network": "polkadotPeople",
+        "displayName": "Polkadot People",
+        "symbols": ["DOT"],
+        "decimals": [10],
+        "standardAccount": "*25519",
+        "website": "https://polkadot.network"
     }
 ];
-
 
 knownSubstrate.push(...assetHubs, ...peopleChains, ...testnets);
 
