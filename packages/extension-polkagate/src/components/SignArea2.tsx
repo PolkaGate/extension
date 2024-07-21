@@ -24,14 +24,12 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { DraggableModal } from '../fullscreen/governance/components/DraggableModal';
 import SelectProxyModal2 from '../fullscreen/governance/components/SelectProxyModal2';
 import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../hooks';
-import LedgerSign from '../popup/signing/LedgerSign';
 import Qr from '../popup/signing/Qr';
 import { CMD_MORTAL } from '../popup/signing/Request';
 import { send, signAndSend } from '../util/api';
 import { getSubstrateAddress, saveAsHistory } from '../util/utils';
 import { Identity, Password, PButton, Progress, TwoButtons, Warning } from '.';
-import LedgerSignGeneric from '../popup/signing/LedgerSignGeneric';
-import type { GenericExtrinsicPayload } from '@polkadot/types';
+import SignWithLedger from './SignWithLedger';
 
 interface Props {
   address: string;
@@ -81,7 +79,6 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
 
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [password, setPassword] = useState<string>();
-  const [error, setError] = useState<string | null>();
   const [showProxy, setShowProxy] = useState<boolean>();
   const [showQR, setShowQR] = useState<boolean>();
   const [lastHeader, setLastHeader] = useState<Header>();
@@ -267,21 +264,6 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
     }
   }, [api, formatted, from, handleTxResult, password, ptx, setIsPasswordError, setStep, steps]);
 
-  const onLedgerGenericSignature = useCallback(async (signature: HexString, raw?: GenericExtrinsicPayload) => {
-    if (!api || !signature || !ptx || !from) {
-      return;
-    }
-
-    if (!raw) {
-      throw new Error('No raw data to send!');
-    }
-    
-    setStep(steps['WAIT_SCREEN']);
-
-    const txResult = await send(from, api, ptx, raw.toHex(), signature);
-
-    handleTxResult(txResult);
-  }, [api, from, handleTxResult, ptx, setStep, steps['WAIT_SCREEN']]);
 
   const onSignature = useCallback(async ({ signature }: { signature: HexString }) => {
     if (!api || !payload || !signature || !ptx || !from) {
@@ -294,53 +276,6 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
 
     handleTxResult(txResult);
   }, [api, from, handleTxResult, payload, ptx, setStep, steps['WAIT_SCREEN']]);
-
-  const SignWithLedger = () => (
-    <>
-      <Grid alignItems='center' container height='50px' item justifyContent='center' sx={{ '> div': { m: 0, p: 0 }, pt: '5px' }}>
-        <Warning
-          isDanger={!!error}
-          theme={theme}
-        >
-          {error || alertText}
-        </Warning>
-      </Grid>
-      <Grid container item justifyContent='space-between'>
-        <Grid item sx={{ mt: '18px' }} xs={3}>
-          <PButton
-            _mt='1px'
-            _onClick={onSecondaryClick}
-            _variant='outlined'
-            text={t('Cancel')}
-          />
-        </Grid>
-        <Grid item sx={{ 'button': { m: 0, width: '100%' }, mt: '80px', position: 'relative', width: '70%' }} xs={8}>
-          {account?.isGeneric || account?.isMigration
-            ? <LedgerSignGeneric
-              accountIndex={account?.accountIndex as number || 0}
-              address={address}
-              addressOffset={account?.addressOffset as number || 0}
-              error={error as string}
-              onSignature={onLedgerGenericSignature}
-              payload={signerPayload}
-              setError={setError}
-              showError={false}
-            />
-            : <LedgerSign
-              accountIndex={account?.accountIndex as number || 0}
-              addressOffset={account?.addressOffset as number || 0}
-              error={error as string}
-              genesisHash={account?.genesisHash || api?.genesisHash?.toHex()}
-              onSignature={onSignature}
-              payload={payload}
-              setError={setError}
-              showError={false}
-            />
-          }
-        </Grid>
-      </Grid>
-    </>
-  );
 
   const SignUsingProxy = () => (
     <>
@@ -396,7 +331,20 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
   return (
     <Grid container>
       {isLedger
-        ? <SignWithLedger />
+        ? <SignWithLedger
+          address={address}
+          api={api}
+          from={from}
+          alertText={alertText}
+          onSecondaryClick={onSecondaryClick}
+          signerPayload={signerPayload}
+          onSignature={onSignature}
+          payload={payload}
+          ptx={ptx}
+          setStep={setStep}
+          steps={steps}
+          handleTxResult={handleTxResult}
+        />
         : showQrSign
           ? <SignWithQR />
           : showUseProxy
