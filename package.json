@@ -82,6 +82,7 @@
     "react-tooltip": "^4.2.21",
     "react-window": "^1.8.10",
     "rehype-raw": "^6.1.1",
+    "semver": "^7.6.3",
     "style-loader": "^3.3.2",
     "umi-request": "^1.4.0"
   },
