@@ -8,6 +8,11 @@ export interface News {
 
 export const news: News[] = [
   {
+    "version": "0.6.5",
+    "notes": [
+      "Selective Account Import: You can now choose specific accounts to import from a JSON file."    ]
+  },
+  {
     "version": "0.6.4",
     "notes": [
       "Support for Ledger Polkadot Generic App: The new Generic Ledger App and Migration App are now supported.",
