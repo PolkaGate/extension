@@ -270,7 +270,7 @@ export default function RestoreJson(): React.ReactElement {
           <Grid container item justifyContent='flex-end' pt='15px'>
             <Grid container item sx={{ '> div': { m: 0, width: '100%' } }} xs={7}>
               <TwoButtons
-                disabled={stepOne || !password || isPasswordError}
+                disabled={stepOne || !password || isPasswordError || (showCheckbox && selectedAccountsInfo.length === 0)}
                 isBusy={isBusy}
                 mt='1px'
                 onPrimaryClick={onRestore}
