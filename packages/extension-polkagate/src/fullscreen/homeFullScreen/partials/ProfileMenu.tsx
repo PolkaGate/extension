@@ -13,7 +13,7 @@ import { updateMeta } from '../../../messaging';
 
 interface Props {
   address: string | undefined;
-  setUpperAnchorEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>
+  setUpperAnchorEl?: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
 }
 
 interface InputBoxProps {

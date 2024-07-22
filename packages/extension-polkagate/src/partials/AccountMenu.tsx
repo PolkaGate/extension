@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -15,6 +14,7 @@ import { useGenesisHashOptions, useInfo, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
+import ProfileMenu from '../fullscreen/homeFullScreen/partials/ProfileMenu';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -36,7 +36,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
   const hasPrivateKey = !(account?.isExternal || account?.isHardware);
 
   const onForgetAccount = useCallback(() => {
-    onAction(`/forget/${address}/${account.isExternal}`);
+    onAction(`/forget/${address}/${account?.isExternal}`);
   }, [address, account, onAction]);
 
   const goToDeriveAcc = useCallback(() => {
@@ -128,6 +128,9 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
         withHoverEffect
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
+      <ProfileMenu
+        address={address}
+      />
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
