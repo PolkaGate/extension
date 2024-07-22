@@ -41,23 +41,22 @@ export default function RestoreJson(): React.ReactElement {
   // rather use what comes from the background from jsonGetAccountInfo
   const [file, setFile] = useState<KeyringPair$Json | KeyringPairs$Json | undefined>(undefined);
 
-  const allSelected = useMemo(() => selectedAccountsInfo.length === accountsInfo.length, [selectedAccountsInfo.length, accountsInfo.length]);
+  const areAllSelected = useMemo(() =>
+    selectedAccountsInfo.length === accountsInfo.length
+    , [selectedAccountsInfo.length, accountsInfo.length]);
 
-  const handleCheck = useCallback((_event: React.ChangeEvent<HTMLInputElement>, _address: string) => {
-    const selectedAccount = accountsInfo.find(({ address }) => address === _address);
+  const handleCheck = useCallback((_event: React.ChangeEvent<HTMLInputElement>, address: string) => {
+    const selectedAccount = accountsInfo.find((account) => account.address === address);
 
     if (!selectedAccount) {
       return;
     }
 
-    const isAlreadySelected = selectedAccountsInfo.some(({ address }) => _address === address);
-    let updatedSelectedAccountsInfo;
+    const isAlreadySelected = selectedAccountsInfo.some((account) => account.address === address);
 
-    if (isAlreadySelected) {
-      updatedSelectedAccountsInfo = selectedAccountsInfo.filter(({ address }) => _address !== address);
-    } else {
-      updatedSelectedAccountsInfo = [...selectedAccountsInfo, selectedAccount];
-    }
+    const updatedSelectedAccountsInfo = isAlreadySelected
+      ? selectedAccountsInfo.filter((account) => account.address !== address) // remove item on deselect
+      : [...selectedAccountsInfo, selectedAccount]; // add item on select
 
     setSelectedAccountsInfo(updatedSelectedAccountsInfo);
   }, [accountsInfo, selectedAccountsInfo, setSelectedAccountsInfo]);
@@ -152,13 +151,13 @@ export default function RestoreJson(): React.ReactElement {
       setIsBusy(false);
       setIsPasswordError(true);
     }
-  }, [file, password, requirePassword, selectedAccountsInfo, allSelected]);
+  }, [file, password, requirePassword, selectedAccountsInfo, areAllSelected]);
 
-  const onSelectAll = useCallback(() => {
-    const toCheck = allSelected ? [] : accountsInfo;
-
-    setSelectedAccountsInfo(toCheck);
-  }, [allSelected, accountsInfo, setSelectedAccountsInfo]);
+  const onSelectDeselectAll = useCallback(() => {
+    areAllSelected
+      ? setSelectedAccountsInfo([]) // deselect all
+      : setSelectedAccountsInfo(accountsInfo); // select all
+  }, [areAllSelected, accountsInfo, setSelectedAccountsInfo]);
 
   const onBack = useCallback(() => {
     setFile(undefined);
@@ -228,9 +227,9 @@ export default function RestoreJson(): React.ReactElement {
                 })}
               </Grid>
               {showCheckbox &&
-                <Grid item onClick={onSelectAll} width='fit-content'>
+                <Grid item onClick={onSelectDeselectAll} width='fit-content'>
                   <Typography fontSize='16px' fontWeight={400} sx={{ color: theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: 'pointer', textAlign: 'left', textDecorationLine: 'underline', ml: '10px', mt: '5px', userSelect: 'none', width: 'fit-content' }}>
-                    {allSelected ? t('Deselect All') : t('Select All')}
+                    {areAllSelected ? t('Deselect All') : t('Select All')}
                   </Typography>
                 </Grid>
               }
