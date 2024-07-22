@@ -782,3 +782,8 @@ export type ProxiedAccounts = {
   proxy: string;
   proxied: string[];
 };
+
+export type AccountsOrder = {
+  id: number,
+  account: AccountWithChildren
+};

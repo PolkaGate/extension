@@ -234,3 +234,14 @@ export const PROXY_TYPE = {
   GENERAL: ['Any', 'NonTransfer'],
   CROWDLOAN: ['Any', 'NonTransfer', 'Auction']
 };
+
+export const PROFILE_COLORS = [
+  { light: '#D1C4E9', dark: '#99004F' },
+  { light: '#C8E6C9', dark: '#468189' },
+  { light: '#B3E5FC', dark: '#846C5B' },
+  { light: '#F8BBD0', dark: '#A63C06' },
+  { light: '#ACE894', dark: '#D81B60' },
+  { light: '#F5D5ED', dark: '#2B4162' },
+  { light: '#EBCFB2', dark: '#9D8189' },
+  { light: '#FCF0CC', dark: '#5F4842' },
+];

@@ -18,11 +18,7 @@ import HomeMenu from './partials/HomeMenu';
 import TotalBalancePieChart from './partials/TotalBalancePieChart';
 import WatchList, { type AssetsWithUiAndPrice } from './partials/WatchList';
 import ProfileTabs from './partials/ProfileTabs';
-
-export interface AccountsOrder {
-  id: number,
-  account: AccountWithChildren
-}
+import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
 
 export default function HomePageFullScreen(): React.ReactElement {
   useFullscreen();

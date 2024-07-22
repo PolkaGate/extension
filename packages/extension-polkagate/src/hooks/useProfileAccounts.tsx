@@ -1,10 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountsOrder } from '../fullscreen/homeFullScreen';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { getStorage, watchStorage } from '../components/Loading';
 import { useTranslation } from '.';
+import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
 
 export default function useProfileAccounts(initialAccountList: AccountsOrder[] | undefined, profile?: string) {
   const { t } = useTranslation();

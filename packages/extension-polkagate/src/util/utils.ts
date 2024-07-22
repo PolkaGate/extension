@@ -13,7 +13,7 @@ import type { SavedMetaData, TransactionDetail } from './types';
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
-
+import { PROFILE_COLORS } from '@polkadot/extension-polkagate/src/util/constants';
 import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS } from './constants';
 import { EXTRA_PRICE_IDS } from './api/getPrices';
 
@@ -383,6 +383,15 @@ export const truncString32Bytes = (input: string | null | undefined): string | n
 export const isOnRelayChain = (genesisHash?: string) => RELAY_CHAINS_GENESISHASH.includes(genesisHash || '');
 
 export const isOnAssetHub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');
+
+export const getProfileColor = (index: number, theme: Theme) => {
+  if (index >= 0) {
+    const _index = index % PROFILE_COLORS.length; // to return colors recursively
+    return PROFILE_COLORS[_index][theme.palette.mode]
+  }
+
+  return PROFILE_COLORS[0][theme.palette.mode]
+};
 
 export const getPriceIdByChainName = (chainName?: string) => {
   if (!chainName) {
