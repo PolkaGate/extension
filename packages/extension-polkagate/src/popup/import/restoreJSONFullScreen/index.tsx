@@ -197,7 +197,10 @@ export default function RestoreJson(): React.ReactElement {
           {!stepOne && accountsInfo.length &&
             <>
               <Typography fontSize='16px' fontWeight={400} width='100%' sx={{ mt: '10px' }}>
-                {t('Select accounts to be imported into the extension')}
+                {accountsInfo?.length === 1
+                  ? t('Import the account into the extension')
+                  : t('Select accounts to import into the extension')
+                }
               </Typography>
               <Grid container direction='column' sx={{ '> .tree:first-child': { borderTopLeftRadius: '5px', borderTopRightRadius: '5px' }, '> .tree:last-child': { border: 'none', borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px' }, border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: pgBoxShadow(theme), display: 'block', maxHeight: parent.innerHeight * 2 / 5, overflowY: 'scroll' }}>
                 {accountsInfo.map(({ address, genesisHash, name, type = DEFAULT_TYPE }, index) => {
