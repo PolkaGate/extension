@@ -9,7 +9,7 @@ import React, { useCallback, useState, useMemo } from 'react';
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { u8aToString } from '@polkadot/util';
-import { Address, InputFileWithLabel, Label, Password, TwoButtons, VaadinIcon, Warning, WrongPasswordAlert } from '../../../components';
+import { Address, InputFileWithLabel, Password, TwoButtons, VaadinIcon, Warning, WrongPasswordAlert } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../../../messaging';
@@ -55,8 +55,8 @@ export default function RestoreJson(): React.ReactElement {
     const isAlreadySelected = selectedAccountsInfo.some((account) => account.address === address);
 
     const updatedSelectedAccountsInfo = isAlreadySelected
-      ? selectedAccountsInfo.filter((account) => account.address !== address) // remove item on deselect
-      : [...selectedAccountsInfo, selectedAccount]; // add item on select
+      ? selectedAccountsInfo.filter((account) => account.address !== address) // remove an item on deselect
+      : [...selectedAccountsInfo, selectedAccount]; // add an item on select
 
     setSelectedAccountsInfo(updatedSelectedAccountsInfo);
   }, [accountsInfo, selectedAccountsInfo, setSelectedAccountsInfo]);
