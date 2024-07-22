@@ -43,18 +43,18 @@ export default function RestoreJson(): React.ReactElement {
 
   const allSelected = useMemo(() => selectedAccountsInfo.length === accountsInfo.length, [selectedAccountsInfo.length, accountsInfo.length]);
 
-  const handleCheck = useCallback((_event: React.ChangeEvent<HTMLInputElement>, address: string) => {
-    const selectedAccount = accountsInfo.find(({ address: _address }) => _address === address);
+  const handleCheck = useCallback((_event: React.ChangeEvent<HTMLInputElement>, _address: string) => {
+    const selectedAccount = accountsInfo.find(({ address }) => address === _address);
 
-    if (!selectedAccount || !selectedAccountsInfo) {
+    if (!selectedAccount) {
       return;
     }
 
-    const isAlreadySelected = selectedAccountsInfo.some(({ address: _address }) => _address === address);
+    const isAlreadySelected = selectedAccountsInfo.some(({ address }) => _address === address);
     let updatedSelectedAccountsInfo;
 
     if (isAlreadySelected) {
-      updatedSelectedAccountsInfo = selectedAccountsInfo.filter(({ address: _address }) => _address !== address);
+      updatedSelectedAccountsInfo = selectedAccountsInfo.filter(({ address }) => _address !== address);
     } else {
       updatedSelectedAccountsInfo = [...selectedAccountsInfo, selectedAccount];
     }
@@ -197,41 +197,39 @@ export default function RestoreJson(): React.ReactElement {
           }
           {!stepOne && accountsInfo.length &&
             <>
-              <Label
-                label={t('Accounts')}
-                style={{ margin: '20px auto 0' }}
-              >
-                <Grid container direction='column' sx={{ '> .tree:first-child': { borderTopLeftRadius: '5px', borderTopRightRadius: '5px' }, '> .tree:last-child': { border: 'none', borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px' }, border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: pgBoxShadow(theme), display: 'block', maxHeight: parent.innerHeight * 2 / 5, overflowY: 'scroll' }}>
-                  {accountsInfo.map(({ address, genesisHash, name, type = DEFAULT_TYPE }, index) => {
-                    const isSelected = !!selectedAccountsInfo.find(({ address: _address }) => _address === address);
+              <Typography fontSize='16px' fontWeight={400} width='100%' sx={{ mt: '10px' }}>
+                {t('Select accounts to be imported into the extension')}
+              </Typography>
+              <Grid container direction='column' sx={{ '> .tree:first-child': { borderTopLeftRadius: '5px', borderTopRightRadius: '5px' }, '> .tree:last-child': { border: 'none', borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px' }, border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: pgBoxShadow(theme), display: 'block', maxHeight: parent.innerHeight * 2 / 5, overflowY: 'scroll' }}>
+                {accountsInfo.map(({ address, genesisHash, name, type = DEFAULT_TYPE }, index) => {
+                  const isSelected = !!selectedAccountsInfo.find(({ address: _address }) => _address === address);
 
-                    return (
-                      <Address
-                        address={address}
-                        className='tree'
-                        genesisHash={genesisHash}
-                        key={`${index}:${address}`}
-                        name={name}
-                        style={{
-                          border: 'none',
-                          borderBottom: '1px solid',
-                          borderBottomColor: 'secondary.light',
-                          borderRadius: 'none',
-                          m: 0,
-                          width: '100%'
-                        }}
-                        type={type}
-                        check={isSelected}
-                        showCheckbox={showCheckbox}
-                        handleCheck={handleCheck}
-                      />
-                    )
-                  })}
-                </Grid>
-              </Label>
+                  return (
+                    <Address
+                      address={address}
+                      className='tree'
+                      genesisHash={genesisHash}
+                      key={`${index}:${address}`}
+                      name={name}
+                      style={{
+                        border: 'none',
+                        borderBottom: '1px solid',
+                        borderBottomColor: 'secondary.light',
+                        borderRadius: 'none',
+                        m: 0,
+                        width: '100%'
+                      }}
+                      type={type}
+                      check={isSelected}
+                      showCheckbox={showCheckbox}
+                      handleCheck={handleCheck}
+                    />
+                  )
+                })}
+              </Grid>
               {showCheckbox &&
                 <Grid item onClick={onSelectAll} width='fit-content'>
-                  <Typography fontSize='16px' fontWeight={400} sx={{ color: theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: 'pointer', textAlign: 'left', textDecorationLine: 'underline', ml: '10px', mt: '5px', width: 'fit-content' }}>
+                  <Typography fontSize='16px' fontWeight={400} sx={{ color: theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: 'pointer', textAlign: 'left', textDecorationLine: 'underline', ml: '10px', mt: '5px', userSelect: 'none', width: 'fit-content' }}>
                     {allSelected ? t('Deselect All') : t('Select All')}
                   </Typography>
                 </Grid>
