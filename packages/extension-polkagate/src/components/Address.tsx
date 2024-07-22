@@ -39,7 +39,6 @@ export interface Props {
   check?: boolean;
   showCheckbox?: boolean;
   handleCheck?: (event: React.ChangeEvent<HTMLInputElement>, address: string) => void;
-
 }
 
 interface Recoded {
@@ -89,7 +88,7 @@ function recodeAddress(address: string, accounts: AccountWithChildren[], chain: 
 
 const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
 
-function Address({ address, backgroundColor, genesisHash, margin = '20px auto', name, showCopy = true, style, type: givenType, width = '92%', check, showCheckbox, handleCheck }: Props): React.ReactElement<Props> {
+function Address({ address, backgroundColor, className = '', genesisHash, margin = '20px auto', name, showCopy = true, style, type: givenType, width = '92%', check, showCheckbox, handleCheck }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const { accounts } = useContext(AccountContext);
@@ -128,7 +127,7 @@ function Address({ address, backgroundColor, genesisHash, margin = '20px auto', 
   ) as IconTheme;
 
   return (
-    <Grid container alignItems='center' direction='row' justifyContent='space-between' sx={{ backgroundColor: backgroundColor || 'background.paper', border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', height: '70px', m: { margin }, p: '14px 8px', width: { width }, ...style }}>
+    <Grid container className={className} alignItems='center' direction='row' justifyContent='space-between' sx={{ backgroundColor: backgroundColor || 'background.paper', border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', height: '70px', m: { margin }, p: '14px 8px', width: { width }, ...style }}>
       {showCheckbox && handleCheck &&
         <Grid item width='5%'>
           <Checkbox2
