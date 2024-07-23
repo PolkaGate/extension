@@ -12,6 +12,9 @@ interface Props {
   orderedAccounts: AccountsOrder[] | undefined;
 }
 
+const ITEM_WIDTH = 130;
+const OFFSET = 10;
+
 function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
@@ -39,14 +42,14 @@ function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
     return defaultProfiles.concat(userDefinedProfiles);
   }, [defaultProfiles.length, userDefinedProfiles.length]);
 
-  const containerWidth = useMemo(() => `${profilesToShow.length * 130}px`, [profilesToShow.length]);
+  const containerWidth = useMemo(() => `${profilesToShow.length * (ITEM_WIDTH + OFFSET)}px`, [profilesToShow.length, ITEM_WIDTH, OFFSET]);
 
   const handleWheel = useCallback((event: WheelEvent) => {
     if (scrollContainerRef.current) {
       event.preventDefault();
       scrollContainerRef.current.scrollLeft += (event.deltaY || event.deltaX);
     }
-  }, []);
+  }, [scrollContainerRef?.current]);
 
   useEffect(() => {
     const ref = scrollContainerRef.current;
@@ -57,11 +60,11 @@ function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
       };
     }
     return undefined;
-  }, [profilesToShow.length, scrollContainerRef.current]);
+  }, [profilesToShow.length, scrollContainerRef.current, handleWheel]);
 
   return (
-    <Grid container item sx={{ position: 'absolute', top: '69px', width: '357px', overflowX: 'scroll', overflowY: 'hidden', whiteSpace: 'nowrap', maxWidth: '357px', zIndex: 2 }}>
-      <Grid container ref={scrollContainerRef} item sx={{ backgroundColor: 'backgroundFL.secondary', columnGap: '5px', display: 'flex', px: '10px', flexDirection: 'row', flexWrap: 'nowrap', width: containerWidth }}>
+    <Grid container item ref={scrollContainerRef} sx={{ position: 'absolute', top: '69px', width: '357px', overflowX: 'scroll', overflowY: 'hidden', whiteSpace: 'nowrap', maxWidth: '357px', zIndex: 2 }}>
+      <Grid container item sx={{ backgroundColor: 'backgroundFL.secondary', columnGap: '5px', display: 'flex', px: '10px', flexDirection: 'row', flexWrap: 'nowrap', width: containerWidth }}>
         {profilesToShow.map((profile, index) => {
           const isSelected = selectedProfile === profile;
 
