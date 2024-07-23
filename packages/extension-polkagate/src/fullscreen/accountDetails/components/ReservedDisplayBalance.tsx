@@ -66,20 +66,27 @@ function WaitForReserved({ rows = 2, skeletonHeight = 20, skeletonWidth = 60, st
 
 const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetailsType) => {
   const { t } = useTranslation();
+  const [stillFetching, setStillFetching] = useState<boolean>(false);
 
   const reasonsToShow = useMemo(() => {
-    const details = Object.values(reservedDetails);
+    const reasons = Object.values(reservedDetails);
 
-    if (details.length === 0) {
+    const isStillFetchingSomething = reasons.some((reason) => reason === undefined);
+    setStillFetching(isStillFetchingSomething);
+
+    // details are still fetching
+    if (reasons.length === 0) {
       return undefined
     }
 
-    const noReason = details.every((deposit) => deposit === null);
+    const noReason = reasons.every((reason) => reason === null);
 
+    // no reasons found
     if (noReason) {
       return null;
     }
 
+    // filter fetched reasons
     const filteredReservedDetails = Object.fromEntries(
       Object.entries(reservedDetails).filter(([_key, value]) => value && !value.isZero())
     );
@@ -109,6 +116,7 @@ const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetai
               </Grid>
             ))
             }
+            {stillFetching && <WaitForReserved rows={1} />}
           </Grid>
           : reasonsToShow === null
             ? <Typography fontSize='16px' fontWeight={500} width='100%'>
@@ -126,7 +134,7 @@ export default function ReservedDisplayBalance({ address, amount, assetToken, as
   const reservedDetails = useReservedDetails(address);
   const { decimal, genesisHash, token } = useInfo(address);
 
-  const notOnNativeAsset = useMemo(() => (assetId !== undefined && assetId > 0) || assetToken?.toLowerCase() !== token?.toLowerCase() , [assetId, assetToken, token]);
+  const notOnNativeAsset = useMemo(() => (assetId !== undefined && assetId > 0) || assetToken?.toLowerCase() !== token?.toLowerCase(), [assetId, assetToken, token]);
 
   const [showReservedDetails, setShowReservedDetails] = useState<boolean>(false);
 
