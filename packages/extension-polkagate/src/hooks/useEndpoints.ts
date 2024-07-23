@@ -15,7 +15,7 @@ import type { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
 import { useGenesisHashOptions, useTranslation } from './';
 
-const supportedLC = ['Polkadot', 'Kusama', 'Westend'];
+const supportedLC = ['Polkadot', 'Kusama', 'Westend']; // chains with supported light client
 
 export function useEndpoints(genesisHash: string | null | undefined): DropdownOption[] {
   const { t } = useTranslation();

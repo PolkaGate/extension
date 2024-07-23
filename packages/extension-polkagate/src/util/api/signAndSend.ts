@@ -1,25 +1,24 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-import type { AccountId, ExtrinsicPayload } from '@polkadot/types/interfaces';
+import type { AccountId } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
 
 import { ApiPromise } from '@polkadot/api';
-import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { KeyringPair } from '@polkadot/keyring/types';
-import { ISubmittableResult } from '@polkadot/types/types';
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { KeyringPair } from '@polkadot/keyring/types';
+import type { ExtrinsicPayloadValue, ISubmittableResult } from '@polkadot/types/types';
 
-import { TxResult } from '../types';
+import type { TxResult } from '../types';
 
 export async function signAndSend(
   api: ApiPromise,
   submittable: SubmittableExtrinsic<'promise', ISubmittableResult>,
   _signer: KeyringPair,
-  senderAddress: string | AccountId
 ): Promise<TxResult> {
   return new Promise((resolve) => {
     console.log('signing and sending a tx ...');
+
     // eslint-disable-next-line no-void
     void submittable.signAndSend(_signer, async (result) => {
       let success = true;
@@ -88,9 +87,15 @@ export async function signAndSend(
   });
 }
 
-export async function send(from: string | AccountId, api: ApiPromise, ptx: SubmittableExtrinsic<'promise', ISubmittableResult>, payload: ExtrinsicPayload, signature: HexString): Promise<TxResult> {
+export async function send(
+  from: string | AccountId,
+  api: ApiPromise,
+  ptx: SubmittableExtrinsic<'promise', ISubmittableResult>,
+  payload:  Uint8Array | ExtrinsicPayloadValue | HexString,
+  signature: HexString
+): Promise<TxResult> {
   return new Promise((resolve) => {
-    console.log('sending a tx ...');
+    console.log('sending the transaction ...');
 
     ptx.addSignature(from, signature, payload);
 

@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -15,22 +14,24 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Warning } from '../../components';
 import { getStorage, type LoginInfo } from '../../components/Loading';
-import { useAccountsOrder, useMerkleScience, useTranslation } from '../../hooks';
+import { useAccountsOrder, useMerkleScience, useTranslation, useManifest } from '../../hooks';
 import { AddNewAccountButton } from '../../partials';
 import HeaderBrand from '../../partials/HeaderBrand';
-import { EXTENSION_NAME, NEW_VERSION_ALERT } from '../../util/constants';
+import { EXTENSION_NAME } from '../../util/constants';
 import Reset from '../passwordManagement/Reset';
 import Welcome from '../welcome';
 import AccountsTree from './AccountsTree';
 import AiBackgroundImage from './AiBackgroundImage';
-import Alert from './Alert';
 import YouHave from './YouHave';
+import semver from 'semver';
+import WhatsNew from './WhatsNew';
 
 export default function Home(): React.ReactElement {
   const initialAccountList = useAccountsOrder() as AccountWithChildren[];
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
   const theme = useTheme();
+  const manifest = useManifest();
 
   useMerkleScience(undefined, undefined, true); // to download the data file
 
@@ -42,14 +43,22 @@ export default function Home(): React.ReactElement {
   const [bgImage, setBgImage] = useState<string | undefined>();
 
   useEffect(() => {
-    const value = window.localStorage.getItem('inUse_version');
-
-    if (!value) {
-      window.localStorage.setItem('inUse_version', NEW_VERSION_ALERT);
-    } else if (value !== NEW_VERSION_ALERT) {
-      setShowAlert(true);
+    if (!manifest?.version) {
+      return;
     }
-  }, []);
+    try {
+      const usingVersion = window.localStorage.getItem('using_version');
+
+      if (!usingVersion) {
+        window.localStorage.setItem('using_version', manifest.version);
+        setShowAlert(true);
+      } else if (semver.lt(usingVersion, manifest.version)) {
+        setShowAlert(true);
+      }
+    } catch (error) {
+      console.error('Error while checking version:', error)
+    }
+  }, [manifest?.version]);
 
   useEffect(() => {
     cryptoWaitReady().then(() => {
@@ -61,7 +70,7 @@ export default function Home(): React.ReactElement {
 
   return (
     <>
-      <Alert
+      <WhatsNew
         setShowAlert={setShowAlert}
         show={show}
       />

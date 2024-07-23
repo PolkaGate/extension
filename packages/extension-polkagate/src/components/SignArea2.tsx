@@ -1,13 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-//@ts-nocheck
-
 import type { Header } from '@polkadot/types/interfaces';
-import type { AnyTuple } from '@polkadot/types/types';
+import type { AnyTuple, SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 import type { Proxy, ProxyItem, ProxyTypes, TxInfo, TxResult } from '../util/types';
 
@@ -27,12 +24,12 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { DraggableModal } from '../fullscreen/governance/components/DraggableModal';
 import SelectProxyModal2 from '../fullscreen/governance/components/SelectProxyModal2';
 import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../hooks';
-import LedgerSign from '../popup/signing/LedgerSign';
 import Qr from '../popup/signing/Qr';
 import { CMD_MORTAL } from '../popup/signing/Request';
 import { send, signAndSend } from '../util/api';
 import { getSubstrateAddress, saveAsHistory } from '../util/utils';
 import { Identity, Password, PButton, Progress, TwoButtons, Warning } from '.';
+import SignWithLedger from './SignWithLedger';
 
 interface Props {
   address: string;
@@ -82,7 +79,6 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
 
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [password, setPassword] = useState<string>();
-  const [error, setError] = useState<string | null>();
   const [showProxy, setShowProxy] = useState<boolean>();
   const [showQR, setShowQR] = useState<boolean>();
   const [lastHeader, setLastHeader] = useState<Header>();
@@ -125,7 +121,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
     return selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, tx) : tx;
   }, [api, call, formatted, params, selectedProxy]);
 
-  const payload = useMemo(() => {
+  const signerPayload = useMemo(() => {
     if (!api || !ptx || !lastHeader || !rawNonce) {
       return;
     }
@@ -155,7 +151,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
         version: ptx.version
       };
 
-      return api.registry.createType('ExtrinsicPayload', _payload, { version: _payload.version });
+      return _payload as SignerPayloadJSON;
     } catch (error) {
       console.error('Something went wrong when making payload:', error);
 
@@ -163,12 +159,20 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
     }
   }, [api, from, lastHeader, rawNonce, ptx]);
 
+  const payload = useMemo(() => {
+    if (!api || !signerPayload) {
+      return;
+    }
+
+    return api.registry.createType('ExtrinsicPayload', signerPayload, { version: signerPayload.version });
+  }, [api, signerPayload]);
+
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
   useEffect((): void => {
     if (api && from) {
       api.rpc.chain.getHeader().then(setLastHeader).catch(console.error);
-      api.query['system']['account'](from).then((res) => setRawNonce(res?.nonce || 0)).catch(console.error);
+      api.query['system']['account'](from).then((res: any) => setRawNonce(res?.nonce || 0)).catch(console.error);
     }
   }, [api, formatted, from, selectedProxy]);
 
@@ -188,7 +192,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
   const goToSelectProxy = useCallback(() => {
     setShowProxy(true);
 
-    setStep(steps.PROXY);
+    setStep(steps['PROXY']);
   }, [setStep, steps]);
 
   const closeSelectProxy = useCallback(() => {
@@ -198,7 +202,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
   const goToQrScan = useCallback(() => {
     setShowQR(true);
 
-    setStep(steps.SIGN_QR || 200); // TODO: add to STEPS
+    setStep(steps['SIGN_QR'] || 200);
   }, [setStep, steps]);
 
   const closeQrModal = useCallback(() => {
@@ -231,10 +235,10 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
         ...extraInfo
       };
 
-      setTxInfo({ ...info, api, chain: chain as any });
+      setTxInfo({ ...info as any, api, chain: chain as any });
 
-      saveAsHistory(String(from), info);
-      setStep(steps.CONFIRM);
+      saveAsHistory(String(from), info as any);
+      setStep(steps['CONFIRM']);
     } catch (e) {
       console.log('error:', e);
     }
@@ -249,9 +253,9 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
       const signer = keyring.getPair(from);
 
       signer.unlock(password);
-      setStep(steps.WAIT_SCREEN);
+      setStep(steps['WAIT_SCREEN']);
 
-      const txResult = await signAndSend(api, ptx, signer, formatted);
+      const txResult = await signAndSend(api, ptx, signer);
 
       handleTxResult(txResult);
     } catch (e) {
@@ -260,52 +264,18 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
     }
   }, [api, formatted, from, handleTxResult, password, ptx, setIsPasswordError, setStep, steps]);
 
+
   const onSignature = useCallback(async ({ signature }: { signature: HexString }) => {
     if (!api || !payload || !signature || !ptx || !from) {
       return;
     }
 
-    setStep(steps.WAIT_SCREEN);
+    setStep(steps['WAIT_SCREEN']);
 
-    const txResult = await send(from, api, ptx, payload, signature);
+    const txResult = await send(from, api, ptx, payload.toHex(), signature);
 
     handleTxResult(txResult);
-  }, [api, from, handleTxResult, payload, ptx, setStep, steps.WAIT_SCREEN]);
-
-  const SignWithLedger = () => (
-    <>
-      <Grid alignItems='center' container height='50px' item justifyContent='center' sx={{ '> div': { m: 0, p: 0 }, pt: '5px' }}>
-        <Warning
-          isDanger={!!error}
-          theme={theme}
-        >
-          {error || alertText}
-        </Warning>
-      </Grid>
-      <Grid container item justifyContent='space-between'>
-        <Grid item sx={{ mt: '18px' }} xs={3}>
-          <PButton
-            _mt='1px'
-            _onClick={onSecondaryClick}
-            _variant='outlined'
-            text={t('Cancel')}
-          />
-        </Grid>
-        <Grid item sx={{ ' button': { m: 0, width: '100%' }, mt: '80px', position: 'relative', width: '70%' }} xs={8}>
-          <LedgerSign
-            accountIndex={account?.accountIndex as number || 0}
-            addressOffset={account?.addressOffset as number || 0}
-            error={error}
-            genesisHash={account?.genesisHash || api?.genesisHash?.toHex()}
-            onSignature={onSignature}
-            payload={payload}
-            setError={setError}
-            showError={false}
-          />
-        </Grid>
-      </Grid>
-    </>
-  );
+  }, [api, from, handleTxResult, payload, ptx, setStep, steps['WAIT_SCREEN']]);
 
   const SignUsingProxy = () => (
     <>
@@ -361,7 +331,20 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
   return (
     <Grid container>
       {isLedger
-        ? <SignWithLedger />
+        ? <SignWithLedger
+          address={address}
+          api={api}
+          from={from}
+          alertText={alertText}
+          onSecondaryClick={onSecondaryClick}
+          signerPayload={signerPayload}
+          onSignature={onSignature}
+          payload={payload}
+          ptx={ptx}
+          setStep={setStep}
+          steps={steps}
+          handleTxResult={handleTxResult}
+        />
         : showQrSign
           ? <SignWithQR />
           : showUseProxy
@@ -378,7 +361,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
                     onEnter={onConfirm}
                   />
                 </Grid>
-                {(!!proxies?.length || prevState?.selectedProxyAddress) &&
+                {(!!proxies?.length || (prevState as any)?.selectedProxyAddress) &&
                   <Tooltip
                     arrow
                     componentsProps={{
@@ -495,7 +478,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
                   address={formatted}
                   buttonLeft='0px'
                   cmd={CMD_MORTAL}
-                  genesisHash={account?.genesisHash || api?.genesisHash?.toHex()}
+                  genesisHash={account?.genesisHash || api?.genesisHash?.toHex() as string}
                   onSignature={onSignature}
                   payload={payload}
                 />
