@@ -12,6 +12,7 @@ import { HeaderBrand } from '../../partials';
 import { EXTENSION_NAME } from '../../util/constants';
 import { news, type News } from './news';
 import { useManifest } from '../../hooks';
+import semver from 'semver';
 
 interface Props {
   show: boolean;
@@ -28,7 +29,19 @@ export default function WhatsNew({ setShowAlert, show }: Props): React.ReactElem
   const [localNews, setLocalNews] = useState<News[]>([]);
 
   useEffect(() => {
-    setLocalNews([...news])
+    try {
+      const usingVersion = window.localStorage.getItem('using_version');
+
+      if (!usingVersion) {
+        return;
+      }
+
+      const filteredNews = news.filter(({ version }) => semver.lt(usingVersion, version));
+
+      setLocalNews([...filteredNews]);
+    } catch (error) {
+      console.error('Error while checking version:', error)
+    }
   }, [])
 
   const onClose = useCallback(() => {
@@ -36,16 +49,18 @@ export default function WhatsNew({ setShowAlert, show }: Props): React.ReactElem
     setShowAlert(false);
     onAction('/');
   }, [onAction, setShowAlert, manifest?.version]);
+  
+  useEffect(() => {
+    if (manifest && localNews?.length === 0) {
+      onClose();
+    }
+  }, [manifest, localNews, onClose])
 
   const onDismiss = useCallback((_version: string) => {
     let index = localNews.findIndex(({ version }) => version === _version);
     localNews.splice(index, 1);
 
     setLocalNews([...localNews]);
-
-    if (localNews.length === 0) {
-      onClose();
-    }
   }, [onAction, setShowAlert, localNews, onClose]);
 
   const UL = ({ notes }: { notes: string[] }) => {
@@ -83,12 +98,12 @@ export default function WhatsNew({ setShowAlert, show }: Props): React.ReactElem
       <Grid container direction='column' px='15px'>
         <Grid container item justifyContent='center' pb='20px' pt='30px'>
           <Typography fontSize='22px' fontWeight={400}>
-            {t('Whats New 🚀')}
+            {t('What\'s New 🚀')}
           </Typography>
         </Grid>
         <Grid container item justifyContent='center' sx={{ height: '440px', overflow: 'scroll' }}>
           {localNews.map(({ version, notes }) =>
-          (<Grid container item sx={{ backgroundColor: 'background.paper', borderTop: 1, borderColor: 'secondary.light', p: '10px' }}>
+          (<Grid alignContent='flex-start' container item sx={{ backgroundColor: 'background.paper', borderTop: 1, borderColor: 'secondary.light', p: '10px' }}>
             <Grid container item justifyContent='center'>
               <Typography fontSize='14px'>
                 {t('Version {{version}}', { replace: { version } })}
@@ -106,7 +121,7 @@ export default function WhatsNew({ setShowAlert, show }: Props): React.ReactElem
             />
           </Grid>
           ))}
-          {localNews?.length && localNews.length > 1 &&
+          {!!localNews?.length && localNews.length > 1 &&
             <PButton
               _onClick={onClose}
               text={t('Dismiss All')}
