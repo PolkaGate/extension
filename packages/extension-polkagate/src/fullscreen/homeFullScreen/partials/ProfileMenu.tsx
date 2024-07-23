@@ -8,7 +8,7 @@ import React, { useCallback, useContext, useState } from 'react';
 import { type TFunction } from '@polkagate/apps-config/types';
 import DoneIcon from '@mui/icons-material/Done';
 import { ActionContext, InputWithLabel, MenuItem, VaadinIcon } from '../../../components';
-import { useInfo, useTranslation, useProfiles } from '../../../hooks';
+import { useInfo, useTranslation, useProfiles, useIsExtensionPopup } from '../../../hooks';
 import { updateMeta } from '../../../messaging';
 
 interface Props {
@@ -54,15 +54,22 @@ const InputBox = ({ addToNewProfile, editName, newName, t, theme }: InputBoxProp
   );
 }
 
+enum STATUS {
+  SHOW_ADD,
+  SHOW_REMOVE
+};
+
 function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
+  const isExtensionMode = useIsExtensionPopup();
 
   const onAction = useContext(ActionContext);
   const { account, chain } = useInfo(address);
   const { userDefinedProfiles } = useProfiles();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | HTMLDivElement | null>();
+  const [status, setStatus] = useState<STATUS>();
   const [showName, setShowName] = useState<boolean>();
   const [newName, setNewName] = useState<string | undefined>();
 
@@ -75,11 +82,17 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
   const handleClose = useCallback(() => {
     setAnchorEl(null);
     setShowName(false);
-    setUpperAnchorEl(null);
+    setUpperAnchorEl && setUpperAnchorEl(null);
   }, []);
 
   const onAddClick = useCallback((event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
+    setStatus(STATUS.SHOW_ADD);
+  }, []);
+
+  const onRemoveClick = useCallback((event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
+    setAnchorEl(event.currentTarget);
+    setStatus(STATUS.SHOW_REMOVE);
   }, []);
 
   const onNewProfile = useCallback(() => {
@@ -92,7 +105,7 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
     }
 
     let profiles = profile;
-    
+
     if (account.profile) {
       const profileArray = account.profile.split(',')
       profileArray.push(profile);
@@ -100,135 +113,165 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
       profiles = [...dedupeProfiles].join(',')
     }
 
-  const metaData = JSON.stringify({ profile: profiles });
+    const metaData = JSON.stringify({ profile: profiles });
 
-  updateMeta(String(address), metaData)
-    .then(() => {
-      handleClose();
-    }).catch(console.error);
-}, [address, account]);
+    updateMeta(String(address), metaData)
+      .then(() => {
+        handleClose();
+      }).catch(console.error);
+  }, [address, account]);
 
-const onRemove = useCallback((profile: string) => {
-  if (!account?.profile) {
-    return;
-  }
-
-  const profiles = account.profile.split(',');
-  const profileIndex = profiles.findIndex((item) => item === profile);
-  profiles.splice(profileIndex, 1);
-
-  const metaData = JSON.stringify({ profile: profiles?.length ? profiles.join(',') : null });
-
-  updateMeta(String(address), metaData)
-    .then(() => {
-      handleClose();
-    }).catch(console.error);
-}, [address, account]);
-
-const Menus = () => (
-  <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
-    {showName
-      ? <InputBox
-        addToNewProfile={addToNewProfile}
-        editName={editName}
-        newName={newName}
-        t={t}
-        theme={theme}
-      />
-      : <MenuItem
-        iconComponent={
-          <VaadinIcon icon='vaadin:plus' style={{ height: '20px', color: theme.palette.text.primary }} />
-        }
-        onClick={onNewProfile}
-        text={t('New profile')}
-        withHoverEffect
-      />
+  const onRemove = useCallback((profile: string) => {
+    if (!account?.profile) {
+      return;
     }
-    <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
-    {userDefinedProfiles.length > 0
-      ? userDefinedProfiles.map((profile) => (
-        <MenuItem
+
+    const profiles = account.profile.split(',');
+    const profileIndex = profiles.findIndex((item) => item === profile);
+    profiles.splice(profileIndex, 1);
+
+    const metaData = JSON.stringify({ profile: profiles?.length ? profiles.join(',') : null });
+
+    updateMeta(String(address), metaData)
+      .then(() => {
+        handleClose();
+      }).catch(console.error);
+  }, [address, account]);
+
+  const AddMenu = () => (
+    <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
+      {showName
+        ? <InputBox
+          addToNewProfile={addToNewProfile}
+          editName={editName}
+          newName={newName}
+          t={t}
+          theme={theme}
+        />
+        : <MenuItem
           iconComponent={
-            <VaadinIcon icon='vaadin:folder-open-o' style={{ height: '20px', color: theme.palette.text.primary }} />
+            <VaadinIcon icon='vaadin:plus' style={{ height: '20px', color: theme.palette.text.primary }} />
           }
-          key={profile}
-          onClick={() => addToNewProfile(profile as string)}
-          text={profile as string}
+          onClick={onNewProfile}
+          text={t('New profile')}
           withHoverEffect
         />
-      ))
-      : <MenuItem
-        disabled
-        iconComponent={
-          <VaadinIcon icon='vaadin:minus' style={{ height: '20px', color: `${theme.palette.text.disabled}` }} />
-        }
-        text={t('No user profile')}
-        withHoverEffect
-      />
-    }
-  </Grid>
-);
-
-const open = Boolean(anchorEl);
-const id = open ? 'simple-popover 2' : undefined;
-
-return (
-  <>
-    <Grid aria-describedby={id} component='button' container item onClick={onAddClick} sx={{ bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
-      <MenuItem
-        iconComponent={
-          <VaadinIcon icon='vaadin:folder-add' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
-        }
-        text={t('Add to profile')}
-        withHoverEffect
-        showChevron
-      />
+      }
+      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
+      {userDefinedProfiles.length > 0
+        ? userDefinedProfiles.map((profile) => (
+          <MenuItem
+            iconComponent={
+              <VaadinIcon icon='vaadin:folder-open-o' style={{ height: '20px', color: theme.palette.text.primary }} />
+            }
+            key={profile}
+            onClick={() => addToNewProfile(profile as string)}
+            text={profile as string}
+            withHoverEffect
+          />
+        ))
+        : <MenuItem
+          disabled
+          iconComponent={
+            <VaadinIcon icon='vaadin:minus' style={{ height: '20px', color: `${theme.palette.text.disabled}` }} />
+          }
+          text={t('No user profile')}
+          withHoverEffect
+        />
+      }
     </Grid>
-    {!!profileNames?.length &&
-      <>
-        {profileNames.map((profileName) => (
-          <Grid component='button' container item onClick={() => onRemove(profileName)} sx={{ '> div div:last-child p': { maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }, bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
-            <MenuItem
-              iconComponent={
-                <VaadinIcon icon='vaadin:folder-remove' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
-              }
-              text={t('Remove from {{profileName}}', { replace: { profileName } })}
-              withHoverEffect
-            />
-          </Grid>
-        ))}
-        <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px', width: '100%' }} />
-      </>
-    }
-    <Popover
-      PaperProps={{
-        sx: {
-          backgroundImage: 'none',
-          bgcolor: 'background.paper',
-          border: '1px solid',
-          borderColor: theme.palette.mode === 'dark' ? 'secondary.main' : 'transparent',
-          borderRadius: '7px',
-          boxShadow: theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '0px 0px 25px 0px rgba(0, 0, 0, 0.50)'
-        }
-      }}
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        horizontal: 'right',
-        vertical: 'bottom'
-      }}
-      id={id}
-      onClose={handleClose}
-      open={open}
-      sx={{ mt: '5px' }}
-      transformOrigin={{
-        horizontal: -15,
-        vertical: 45
-      }}
-    >
-      <Menus />
-    </Popover>
-  </>
-);
+  );
+
+  const RemoveMenu = () => (
+    <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
+      {profileNames && profileNames.map((profileName) => (
+        <Grid component='button' container item onClick={() => onRemove(profileName)} sx={{ '> div div:last-child p': { maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }, bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
+          <MenuItem
+            iconComponent={
+              <VaadinIcon icon='vaadin:folder-remove' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+            }
+            text={t('Remove from {{profileName}}', { replace: { profileName } })}
+            withHoverEffect
+          />
+        </Grid>
+      ))}
+    </Grid>
+  );
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover 2' : undefined;
+
+  return (
+    <>
+      <Grid aria-describedby={id} component='button' container item onClick={onAddClick} sx={{ bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
+        <MenuItem
+          iconComponent={
+            <VaadinIcon icon='vaadin:folder-add' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+          }
+          text={t('Add to profile')}
+          withHoverEffect
+          showChevron
+        />
+      </Grid>
+      {!!profileNames?.length && !isExtensionMode &&
+        <>
+          {profileNames.map((profileName) => (
+            <Grid component='button' container item onClick={() => onRemove(profileName)} sx={{ '> div div:last-child p': { maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }, bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
+              <MenuItem
+                iconComponent={
+                  <VaadinIcon icon='vaadin:folder-remove' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+                }
+                text={t('Remove from {{profileName}}', { replace: { profileName } })}
+                withHoverEffect
+              />
+            </Grid>
+          ))}
+          <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px', width: '100%' }} />
+        </>
+      }
+      {isExtensionMode && profileNames && profileNames.length > 0 &&
+        <Grid aria-describedby={id} component='button' container item onClick={onRemoveClick} sx={{ bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
+          <MenuItem
+            iconComponent={
+              <VaadinIcon icon='vaadin:folder-remove' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+            }
+            text={t('Remove from profile')}
+            withHoverEffect
+            showChevron
+          />
+        </Grid>
+      }
+      {isExtensionMode && <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px', width: '100%' }} />}
+      <Popover
+        PaperProps={{
+          sx: {
+            backgroundImage: 'none',
+            bgcolor: 'background.paper',
+            border: '1px solid',
+            borderColor: theme.palette.mode === 'dark' ? 'secondary.main' : 'transparent',
+            borderRadius: '7px',
+            boxShadow: theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '0px 0px 25px 0px rgba(0, 0, 0, 0.50)'
+          }
+        }}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          horizontal: 'right',
+          vertical: 'bottom'
+        }}
+        id={id}
+        onClose={handleClose}
+        open={open}
+        sx={{ mt: '5px' }}
+        transformOrigin={{
+          horizontal: -15,
+          vertical: 45
+        }}
+      >
+        {status === STATUS.SHOW_ADD && <AddMenu />}
+        {status === STATUS.SHOW_REMOVE && <RemoveMenu />}
+      </Popover>
+    </>
+  );
 }
 
 export default React.memo(ProfileMenu);
