@@ -25,7 +25,10 @@ jobs:
     - name: Set up correct Yarn version
       run: corepack prepare yarn@4.1.1 --activate
 
-    - name: Install dependencies
+    - name: Install dependencies without immutable
+      run: yarn install
+
+    - name: Verify dependencies with immutable
       run: yarn install --immutable | grep -v 'YN0013'
 
     - name: ${{ matrix.step }}
