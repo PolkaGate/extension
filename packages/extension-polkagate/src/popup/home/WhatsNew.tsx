@@ -44,17 +44,17 @@ export default function WhatsNew({ setShowAlert, show }: Props): React.ReactElem
     }
   }, [])
 
-  useEffect(() => {
-    if (manifest && localNews?.length === 0) {
-      onClose();
-    }
-  }, [manifest])
-
   const onClose = useCallback(() => {
     window.localStorage.setItem('using_version', manifest?.version || '0.1.0');
     setShowAlert(false);
     onAction('/');
   }, [onAction, setShowAlert, manifest?.version]);
+  
+  useEffect(() => {
+    if (manifest && localNews?.length === 0) {
+      onClose();
+    }
+  }, [manifest, localNews, onClose])
 
   const onDismiss = useCallback((_version: string) => {
     let index = localNews.findIndex(({ version }) => version === _version);
