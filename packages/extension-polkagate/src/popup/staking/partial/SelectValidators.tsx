@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,21 +8,20 @@
  * this component opens unstake review page
  * */
 
+import type { ApiPromise } from '@polkadot/api';
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { AccountId } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
+import type { AllValidators, Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
 
 import { FilterAltOutlined as FilterIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { BN } from '@polkadot/util';
-
 import { Checkbox2, Infotip, InputFilter, Motion, PButton, Popup, Progress } from '../../../components';
 import { useChain, useDecimal, useToken, useTranslation, useValidators, useValidatorsIdentities } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import { DEFAULT_FILTERS, SYSTEM_SUGGESTION_TEXT } from '../../../util/constants';
-import type { AllValidators, Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
 import { getComparator } from '../partial/comparators';
 import Filters from '../partial/Filters';
 import ValidatorsTable from './ValidatorsTable';
@@ -170,7 +168,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
     setShowFilters(true);
   }, [setNewSelectedValidators, systemSuggestion]);
 
-  const onSystemSuggestion = useCallback((event, checked: boolean) => {
+  const onSystemSuggestion = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     setSearchKeyword('');
     setSystemSuggestion(checked);
     checked
@@ -179,7 +177,6 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
   }, [allValidators, selectBestValidators, setNewSelectedValidators, stakingConsts]);
 
   const onSearch = useCallback((filter: string) => {
-    // onSystemSuggestion(undefined, false);// to reset system suggestion on search
     setSystemSuggestion(false);
 
     setSearchKeyword(filter);
@@ -193,14 +190,14 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
 
   const isSelected = useCallback((v: ValidatorInfo) =>
     !!newSelectedValidators.find((n) => n.accountId === v.accountId)
-    , [newSelectedValidators]);
+  , [newSelectedValidators]);
 
   const handleCheck = useCallback((e: React.ChangeEvent<HTMLInputElement>, validator: ValidatorInfo) => {
     const checked = e.target.checked;
 
     setSystemSuggestion(false);
 
-    if (newSelectedValidators.length >= stakingConsts?.maxNominations && checked) {
+    if (stakingConsts?.maxNominations && newSelectedValidators.length >= stakingConsts.maxNominations && checked) {
       console.log('Max validators are selected !');
 
       return;
@@ -291,7 +288,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
                     <ValidatorsTable
                       allValidatorsIdentities={allValidatorsIdentities}
                       api={api}
-                      chain={chain as any}
+                      chain={chain}
                       decimal={decimal}
                       formatted={stashId}
                       handleCheck={handleCheck}
@@ -299,7 +296,6 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
                       isSelected={isSelected}
                       maxSelected={newSelectedValidators.length === stakingConsts?.maxNominations}
                       nominatedValidatorsIds={nominatedValidatorsIds}
-                      setSelectedValidators={setNewSelectedValidators}
                       showCheckbox
                       staked={staked}
                       stakingConsts={stakingConsts}

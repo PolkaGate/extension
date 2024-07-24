@@ -3,6 +3,11 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ApiPromise } from '@polkadot/api';
+import type { Chain } from '@polkadot/extension-chains/src/types';
+import type { Balance } from '@polkadot/types/interfaces';
+import type { FormattedAddressState, MemberPoints, MyPoolInfo, PoolInfo } from '../../../util/types';
+
 import { ArrowForwardIos as ArrowForwardIosIcon, Close as CloseIcon } from '@mui/icons-material';
 import { Collapse, Grid, IconButton, Typography } from '@mui/material';
 // @ts-ignore
@@ -10,24 +15,19 @@ import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { ApiPromise } from '@polkadot/api';
-import type { Chain } from '@polkadot/extension-chains/types';
-
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import useIsExtensionPopup from '@polkadot/extension-polkagate/src/hooks/useIsExtensionPopup';
 import { BN, BN_ONE } from '@polkadot/util';
 
 import { Identity, PButton, Progress, ShowBalance, SlidePopUp } from '../../../components';
 import { useInfo, usePool, usePoolMembers, useTranslation } from '../../../hooks';
-import type { FormattedAddressState, MemberPoints, MyPoolInfo, PoolInfo } from '../../../util/types';
 import ClaimCommission from '../pool/claimCommission';
 import ShowPool from './ShowPool';
 import ShowRoles from './ShowRoles';
-import type { Balance } from '@polkadot/types/interfaces';
 
 interface Props {
   address?: string;
-  api: ApiPromise;
+  api: ApiPromise | undefined;
   chain: Chain;
   pool: MyPoolInfo | PoolInfo | undefined;
   poolId?: number;
@@ -98,7 +98,7 @@ const ShowMembers = ({ address, poolToShow }: InsidersProps) => {
       {membersToShow?.length
         ? membersToShow.map((member, index) => (
           <Grid container item key={index} sx={{ '&:last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
-            <Identity address={member.accountId} api={api} chain={chain as any} formatted={member.accountId} identiconSize={25} showShortAddress style={{ fontSize: '14px', minHeight: '45px', width: '50%' }} />
+            <Identity address={member.accountId} api={api} chain={chain} formatted={member.accountId} identiconSize={25} showShortAddress style={{ fontSize: '14px', minHeight: '45px', width: '50%' }} />
             <Grid alignItems='center' container fontSize='14px' fontWeight='400' item justifyContent='center' sx={{ borderColor: 'secondary.light', borderInline: '1px solid' }} width='30%'>
               <ShowBalance
                 balance={toBalance(member.points) as Balance}
@@ -206,10 +206,10 @@ const CollapseData = ({ open, show, title, children }: CollapseProps) => {
         {children}
       </Collapse>
     </Grid>
-  )
+  );
 };
 
-export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
+export default function PoolMoreInfo ({ api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const isExtensionPopup = useIsExtensionPopup();
 
@@ -239,7 +239,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
         ? <Grid container direction='column' item rowGap='5px'>
           <ShowPool
             api={api}
-            chain={chain as any}
+            chain={chain}
             mode='Default'
             pool={poolToShow}
             style={{ m: '10px auto', width: '92%' }}

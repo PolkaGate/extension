@@ -5,16 +5,15 @@
 /* eslint-disable react/jsx-first-prop-new-line */
 
 import { Container, Grid, useTheme } from '@mui/material';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 
-import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Warning } from '../../components';
 import { getStorage, type LoginInfo } from '../../components/Loading';
-import { useAccountsOrder, useMerkleScience, useTranslation, useManifest } from '../../hooks';
+import { useAccountsOrder, useMerkleScience, useProfileAccounts, useTranslation, useManifest } from '../../hooks';
 import { AddNewAccountButton } from '../../partials';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { EXTENSION_NAME } from '../../util/constants';
@@ -25,9 +24,17 @@ import AiBackgroundImage from './AiBackgroundImage';
 import YouHave from './YouHave';
 import semver from 'semver';
 import WhatsNew from './WhatsNew';
+import ProfileTabs from './ProfileTabs';
+import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
 
 export default function Home(): React.ReactElement {
-  const initialAccountList = useAccountsOrder() as AccountWithChildren[];
+  const accountsOrder = useAccountsOrder(true) as AccountsOrder[] | undefined;
+  const profileAccounts = useProfileAccounts(accountsOrder) as AccountsOrder[] | undefined;
+
+  const initialAccountList = useMemo(() => {
+    return profileAccounts?.map(({ account }) => account) || [];
+  }, [profileAccounts]);
+
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
   const theme = useTheme();
@@ -84,7 +91,8 @@ export default function Home(): React.ReactElement {
               ? `linear-gradient(180deg, #171717 10.79%, rgba(23, 23, 23, 0.70) 100%), url(${bgImage ?? ''})`
               : `linear-gradient(180deg, #F1F1F1 10.79%, rgba(241, 241, 241, 0.70) 100%), url(${bgImage ?? ''})`),
           backgroundSize: '100% 100%',
-          height: window.innerHeight
+          height: window.innerHeight,
+          position: 'relative'
         }}
         >
           <Grid padding='0px' textAlign='center' xs={12}>
@@ -109,9 +117,10 @@ export default function Home(): React.ReactElement {
               </Warning>
             </Grid>
           }
+          <ProfileTabs orderedAccounts={accountsOrder} />
           <YouHave hideNumbers={hideNumbers} setHideNumbers={setHideNumbers} />
           <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`, mt: '10px', overflowY: 'scroll', p: 0, width: '92%' }]}>
-            {initialAccountList?.map((json, index): React.ReactNode => (
+            {initialAccountList.map((json, index): React.ReactNode => (
               <AccountsTree
                 {...json}
                 hideNumbers={hideNumbers}

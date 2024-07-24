@@ -7,8 +7,8 @@ import { useCallback, useContext, useLayoutEffect, useState } from 'react';
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { AccountContext } from '../components';
-import { AccountsOrder } from '../fullscreen/homeFullScreen';
 import { saveNewOrder } from '../fullscreen/homeFullScreen/partials/DraggableAccountList';
+import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
 
 export default function useAccountsOrder(isFullScreenMode?: boolean) {
   const { accounts: accountsInExtension, hierarchy } = useContext(AccountContext);

@@ -1,14 +1,15 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountsOrder } from '..';
-import { Grid, Typography, useTheme, type Theme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import { useProfileAccounts, useTranslation } from '../../../hooks';
 import { getStorage, setStorage, watchStorage } from '../../../components/Loading';
 import { VaadinIcon } from '../../../components/index';
 import { showAccount } from '../../../messaging';
 import { HIDDEN_PERCENT } from './ProfileTabs';
+import type { AccountsOrder } from '@polkadot/extension-polkagate/src/util/types';
+import { getProfileColor } from '@polkadot/extension-polkagate/src/util/utils';
 
 interface Props {
   orderedAccounts: AccountsOrder[] | undefined
@@ -18,26 +19,6 @@ interface Props {
   text: string;
   index: number;
 }
-
-export const PROFILE_COLORS = [
-  { light: '#D1C4E9', dark: '#99004F' },
-  { light: '#C8E6C9', dark: '#468189' },
-  { light: '#B3E5FC', dark: '#846C5B' },
-  { light: '#F8BBD0', dark: '#A63C06' },
-  { light: '#ACE894', dark: '#D81B60' },
-  { light: '#F5D5ED', dark: '#2B4162' },
-  { light: '#EBCFB2', dark: '#9D8189' },
-  { light: '#FCF0CC', dark: '#5F4842' },
-];
-
-export const getProfileColor = (index: number, theme: Theme) => {
-  if (index >= 0) {
-    const _index = index % PROFILE_COLORS.length; // to return colors recursively
-    return PROFILE_COLORS[_index][theme.palette.mode]
-  }
-
-  return PROFILE_COLORS[0][theme.palette.mode]
-};
 
 export default function ProfileTab({ isHovered, text, selectedProfile, setSelectedProfile, orderedAccounts, index }: Props): React.ReactElement {
   const { t } = useTranslation();

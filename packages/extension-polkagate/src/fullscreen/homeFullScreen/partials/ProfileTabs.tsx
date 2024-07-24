@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import type { AccountsOrder } from '..';
 import { Grid } from '@mui/material';
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import ProfileTab from './ProfileTab';
 import { useProfiles } from '../../../hooks';
+import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
 
 interface Props {
   orderedAccounts: AccountsOrder[] | undefined;
