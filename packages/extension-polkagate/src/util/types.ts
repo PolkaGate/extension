@@ -1,29 +1,25 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
-/* eslint-disable header/header */
-/* eslint-disable camelcase */
 
+//@ts-nocheck
+
+import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
+import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/promise/types';
 import type { DeriveAccountInfo, DeriveAccountRegistration, DeriveBalancesAll, DeriveCollectiveProposal, DeriveElectionsInfo, DeriveProposal, DeriveReferendumExt, DeriveStakingAccount, DeriveStakingQuery } from '@polkadot/api-derive/types';
+import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { InjectedExtension } from '@polkadot/extension-inject/types';
+import type { Balance } from '@polkadot/types/interfaces';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 import type { KeypairType } from '@polkadot/util-crypto/types';
+import type { LatestReferenda } from '../fullscreen/governance/utils/types';
+import type { CurrencyItemType } from '../fullscreen/homeFullScreen/partials/Currency';
+import type { SavedAssets } from '../hooks/useAssetsBalances';
 
 import { type SxProps, type Theme } from '@mui/material';
-import { LinkOption } from '@polkagate/apps-config/endpoints/types';
-
-import { ApiPromise } from '@polkadot/api';
-import { AccountJson } from '@polkadot/extension-base/background/types';
-import type { Chain } from '@polkadot/extension-chains/types';
-
-import { InjectedExtension } from '@polkadot/extension-inject/types';
-import type { Balance } from '@polkadot/types/interfaces';
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
-
-import { LatestReferenda } from '../fullscreen/governance/utils/types';
-import { CurrencyItemType } from '../fullscreen/homeFullScreen/partials/Currency';
-import { SavedAssets } from '../hooks/useAssetsBalances';
 
 export interface TransactionStatus {
   blockNumber: string | null;
@@ -775,15 +771,15 @@ export interface DropdownOption {
 
 export type TransferType = 'All' | 'Max' | 'Normal';
 
-export type CanPayFee = { isAbleToPay: boolean | undefined, statement: number };
+export interface CanPayFee { isAbleToPay: boolean | undefined, statement: number }
 
-export type ProxiedAccounts = {
+export interface ProxiedAccounts {
   genesisHash: string;
   proxy: string;
   proxied: string[];
-};
+}
 
-export type AccountsOrder = {
+export interface AccountsOrder {
   id: number,
   account: AccountWithChildren
-};
+}

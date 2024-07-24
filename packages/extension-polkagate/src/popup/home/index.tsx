@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
-/* eslint-disable react/jsx-first-prop-new-line */
 
-import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
+import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { Container, Grid, useTheme } from '@mui/material';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
@@ -16,7 +15,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Warning } from '../../components';
 import { getStorage, type LoginInfo } from '../../components/Loading';
-import { useAccountsOrder, useManifest,useMerkleScience, useProfileAccounts, useTranslation } from '../../hooks';
+import { useAccountsOrder, useManifest, useMerkleScience, useProfileAccounts, useTranslation } from '../../hooks';
 import { AddNewAccountButton } from '../../partials';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { EXTENSION_NAME } from '../../util/constants';
@@ -28,18 +27,15 @@ import ProfileTabs from './ProfileTabs';
 import WhatsNew from './WhatsNew';
 import YouHave from './YouHave';
 
-export default function Home(): React.ReactElement {
-  const accountsOrder = useAccountsOrder(true) as AccountsOrder[] | undefined;
-  const profileAccounts = useProfileAccounts(accountsOrder) as AccountsOrder[] | undefined;
-
-  const initialAccountList = useMemo(() => {
-    return profileAccounts?.map(({ account }) => account) || [];
-  }, [profileAccounts]);
-
+export default function Home (): React.ReactElement {
   const { t } = useTranslation();
-  const { accounts, hierarchy } = useContext(AccountContext);
   const theme = useTheme();
   const manifest = useManifest();
+
+  const accountsOrder = useAccountsOrder(true);
+  const profileAccounts = useProfileAccounts(accountsOrder);
+
+  const { accounts, hierarchy } = useContext(AccountContext);
 
   useMerkleScience(undefined, undefined, true); // to download the data file
 
@@ -49,6 +45,9 @@ export default function Home(): React.ReactElement {
   const [hasActiveRecovery, setHasActiveRecovery] = useState<string | null | undefined>(); // if exists, include the account address
   const [loginInfo, setLoginInfo] = useState<LoginInfo>();
   const [bgImage, setBgImage] = useState<string | undefined>();
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  const initialAccountList = useMemo((): AccountWithChildren[] => profileAccounts?.map(({ account }) => account) || [], [profileAccounts]);
 
   useEffect(() => {
     if (!manifest?.version) {
@@ -125,8 +124,9 @@ export default function Home(): React.ReactElement {
             {initialAccountList.map((json, index): React.ReactNode => (
               <AccountsTree
                 {...json}
+                address={json.address}
                 hideNumbers={hideNumbers}
-                key={`${index}:${json.address}`}
+                key={index}
                 quickActionOpen={quickActionOpen}
                 setHasActiveRecovery={setHasActiveRecovery}
                 setQuickActionOpen={setQuickActionOpen}
