@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
+import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
 import type { PoolFilter, PoolInfo } from '../../../../../../util/types';
 
@@ -62,6 +63,7 @@ export default function PoolsTable ({ address, api, filteredPools, maxHeight = w
     poolsToShow && setSelected && setSelected(poolsToShow[Number(event.target.value)]);
 
     if (ref.current) {
+      //@ts-ignore
       ref.current.scrollTop = 0;
     }
   }, [poolsToShow, setSelected]);
@@ -167,7 +169,7 @@ export default function PoolsTable ({ address, api, filteredPools, maxHeight = w
                         <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
                           <ShowBalance
                             api={api}
-                            balance={poolStaked(pool.bondedPool?.points as BN)}
+                            balance={poolStaked(pool.bondedPool?.points as BN) as Balance}
                             decimal={decimal}
                             decimalPoint={2}
                             height={22}

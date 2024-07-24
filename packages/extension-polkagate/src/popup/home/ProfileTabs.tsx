@@ -6,7 +6,7 @@
 import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
 
 import { Grid } from '@mui/material';
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef,useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { getStorage, watchStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 
@@ -35,7 +35,7 @@ function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
       .catch(console.error);
 
     watchStorage('profile', setSelectedProfile).catch(console.error);
-  }, [t, watchStorage, getStorage]);
+  }, [t]);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -45,30 +45,36 @@ function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
     }
 
     return defaultProfiles.concat(userDefinedProfiles);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultProfiles.length, userDefinedProfiles.length]);
 
-  const containerWidth = useMemo(() => `${profilesToShow.length * (ITEM_WIDTH + OFFSET)}px`, [profilesToShow.length, ITEM_WIDTH, OFFSET]);
+  const containerWidth = useMemo(() =>
+    `${profilesToShow.length * (ITEM_WIDTH + OFFSET)}px`
+    , [profilesToShow.length]);
 
   const handleWheel = useCallback((event: WheelEvent) => {
     if (scrollContainerRef.current) {
       event.preventDefault();
       scrollContainerRef.current.scrollLeft += (event.deltaY || event.deltaX);
     }
-  }, [scrollContainerRef?.current]);
+  }, []);
 
   useEffect(() => {
     const ref = scrollContainerRef.current;
+
     if (ref) {
       ref.addEventListener('wheel', handleWheel, { passive: false });
+
       return () => {
         ref.removeEventListener('wheel', handleWheel);
       };
     }
+
     return undefined;
-  }, [profilesToShow.length, scrollContainerRef.current, handleWheel]);
+  }, [profilesToShow.length, handleWheel]);
 
   return (
-    <Grid container item ref={scrollContainerRef} sx={{ position: 'absolute', top: '69px', width: '357px', overflowX: 'scroll', overflowY: 'hidden', whiteSpace: 'nowrap', maxWidth: '357px', zIndex: 2 }}>
+    <Grid container item ref={scrollContainerRef} sx={{ maxWidth: '357px', overflowX: 'scroll', overflowY: 'hidden', position: 'absolute', top: '69px', whiteSpace: 'nowrap', width: '357px', zIndex: 2 }}>
       <Grid container item sx={{ backgroundColor: 'backgroundFL.secondary', columnGap: '5px', display: 'flex', px: '10px', flexDirection: 'row', flexWrap: 'nowrap', width: containerWidth }}>
         {profilesToShow.map((profile, index) => {
           const isSelected = selectedProfile === profile;

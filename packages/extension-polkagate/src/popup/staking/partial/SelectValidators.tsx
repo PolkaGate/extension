@@ -168,7 +168,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
     setShowFilters(true);
   }, [setNewSelectedValidators, systemSuggestion]);
 
-  const onSystemSuggestion = useCallback((event, checked: boolean) => {
+  const onSystemSuggestion = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     setSearchKeyword('');
     setSystemSuggestion(checked);
     checked
@@ -177,7 +177,6 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
   }, [allValidators, selectBestValidators, setNewSelectedValidators, stakingConsts]);
 
   const onSearch = useCallback((filter: string) => {
-    // onSystemSuggestion(undefined, false);// to reset system suggestion on search
     setSystemSuggestion(false);
 
     setSearchKeyword(filter);
@@ -191,14 +190,14 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
 
   const isSelected = useCallback((v: ValidatorInfo) =>
     !!newSelectedValidators.find((n) => n.accountId === v.accountId)
-    , [newSelectedValidators]);
+  , [newSelectedValidators]);
 
   const handleCheck = useCallback((e: React.ChangeEvent<HTMLInputElement>, validator: ValidatorInfo) => {
     const checked = e.target.checked;
 
     setSystemSuggestion(false);
 
-    if (newSelectedValidators.length >= stakingConsts?.maxNominations && checked) {
+    if (stakingConsts?.maxNominations && newSelectedValidators.length >= stakingConsts.maxNominations && checked) {
       console.log('Max validators are selected !');
 
       return;
@@ -289,7 +288,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
                     <ValidatorsTable
                       allValidatorsIdentities={allValidatorsIdentities}
                       api={api}
-                      chain={chain as any}
+                      chain={chain}
                       decimal={decimal}
                       formatted={stashId}
                       handleCheck={handleCheck}
@@ -297,7 +296,6 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
                       isSelected={isSelected}
                       maxSelected={newSelectedValidators.length === stakingConsts?.maxNominations}
                       nominatedValidatorsIds={nominatedValidatorsIds}
-                      setSelectedValidators={setNewSelectedValidators}
                       showCheckbox
                       staked={staked}
                       stakingConsts={stakingConsts}

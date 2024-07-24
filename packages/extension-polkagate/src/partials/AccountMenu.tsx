@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { HexString } from '@polkadot/util/types';
+
 import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
@@ -51,7 +53,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     const availableGenesisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;
 
-    address && tieAccount(address, availableGenesisHash).catch(console.error);
+    address && tieAccount(address, availableGenesisHash as HexString).catch(console.error);
     setGenesis(availableGenesisHash ?? undefined);
   }, [address]);
 

@@ -4,12 +4,13 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
-import type { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/src/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { FormattedAddressState, MemberPoints, MyPoolInfo, PoolInfo } from '../../../util/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon, Close as CloseIcon } from '@mui/icons-material';
 import { Collapse, Grid, IconButton, Typography } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router';

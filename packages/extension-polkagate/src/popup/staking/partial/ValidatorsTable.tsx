@@ -27,10 +27,10 @@ interface Props {
   api?: ApiPromise;
   activeValidators?: ValidatorInfo[] | undefined;
   allValidatorsIdentities?: DeriveAccountInfo[] | null | undefined;
-  chain?: Chain;
+  chain?: Chain | null;
   decimal?: number;
   formatted?: AccountId | string;
-  handleCheck?: (checked: boolean, validator: ValidatorInfo) => void;
+  handleCheck?: (checked: React.ChangeEvent<HTMLInputElement>, validator: ValidatorInfo) => void;
   height?: number;
   isSelected?: (v: ValidatorInfo) => boolean;
   maxSelected?: boolean;
@@ -40,7 +40,7 @@ interface Props {
   showCheckbox?: boolean;
   validatorsToList: ValidatorInfo[] | null | undefined;
   token?: string;
-  nominatedValidatorsIds?: AccountId[] | null | undefined;
+  nominatedValidatorsIds?: AccountId[] | string[] | null | undefined;
 }
 
 export default function ValidatorsTable ({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
@@ -113,7 +113,7 @@ export default function ValidatorsTable ({ activeValidators, allValidatorsIdenti
                   <ShowValidator
                     accountInfo={accountInfo}
                     api={api}
-                    chain={chain as any}
+                    chain={chain}
                     check={check}
                     decimal={decimal}
                     handleCheck={handleCheck}
