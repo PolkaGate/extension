@@ -1,12 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
+import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
+
 import { Grid } from '@mui/material';
-import React, { useState, useLayoutEffect, useCallback, useMemo, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef,useState } from 'react';
+
+import { getStorage, watchStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+
 import { useProfiles, useTranslation } from '../../hooks';
 import ProfileTab from './ProfileTab';
-import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
-import { getStorage, watchStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 
 interface Props {
   orderedAccounts: AccountsOrder[] | undefined;
@@ -70,12 +75,12 @@ function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
 
           return (
             <ProfileTab
-              key={`${index}:${profile}`}
               index={index}
-              text={profile as string}
-              orderedAccounts={orderedAccounts}
               isSelected={isSelected}
+              key={`${index}:${profile}`}
+              orderedAccounts={orderedAccounts}
               selectedProfile={selectedProfile}
+              text={profile}
             />);
         })}
       </Grid>

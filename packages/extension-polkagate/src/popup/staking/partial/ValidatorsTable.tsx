@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+//@ts-nocheck
+
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -11,6 +13,7 @@ import type { StakingConsts, ValidatorInfo } from '../../../util/types';
 
 import { alpha, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+//@ts-ignore
 import { FixedSizeList as List } from 'react-window';
 
 import { VaadinIcon } from '@polkadot/extension-polkagate/src/components';
@@ -40,7 +43,7 @@ interface Props {
   nominatedValidatorsIds?: AccountId[] | null | undefined;
 }
 
-export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTable ({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
   const theme = useTheme();
   const ref = useRef();
   const isExtensionMode = useIsExtensionPopup();

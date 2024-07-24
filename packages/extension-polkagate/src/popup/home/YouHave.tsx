@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { YouHaveType } from '../../hooks/useYouHave';
 
 import { Box, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect } from 'react';
@@ -12,7 +13,6 @@ import { FormatPrice, HideIcon, ShowIcon } from '../../components';
 import { useYouHave } from '../../hooks';
 import { PRICE_VALIDITY_PERIOD } from '../../hooks/usePrices';
 import useTranslation from '../../hooks/useTranslation';
-import { YouHaveType } from '../../hooks/useYouHave';
 
 interface Props {
   hideNumbers: boolean | undefined;
