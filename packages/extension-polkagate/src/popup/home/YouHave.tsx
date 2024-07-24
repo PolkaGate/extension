@@ -22,7 +22,7 @@ interface Props {
 export const isPriceOutdated = (youHave: YouHaveType | null | undefined): boolean | undefined =>
   youHave ? (Date.now() - youHave.date > 2 * PRICE_VALIDITY_PERIOD) : undefined;
 
-export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.ReactElement {
+export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const youHave = useYouHave();
@@ -39,10 +39,10 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
   }, [setHideNumbers]);
 
   return (
-    <Grid container pt='22px' sx={{ position: 'relative', zIndex: 1 }} textAlign='center'>
+    <Grid container pt='35px' sx={{ position: 'relative', zIndex: 1 }} textAlign='center'>
       <Grid item xs={12}>
-        <Typography sx={{ fontSize: '18px' }}>
-          {t('You have')}
+        <Typography sx={{ fontSize: '16px', fontVariant: 'small-caps' }}>
+          {t('My Portfolio')}
         </Typography>
       </Grid>
       <Grid container item justifyContent='center' xs={12}>
