@@ -52,6 +52,10 @@ function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
     `${profilesToShow.length * (ITEM_WIDTH + OFFSET)}px`
     , [profilesToShow.length]);
 
+  const showProfileTabs = useMemo(() =>
+    profilesToShow?.length > 2
+    , [profilesToShow.length]);
+
   const handleWheel = useCallback((event: WheelEvent) => {
     if (scrollContainerRef.current) {
       event.preventDefault();
@@ -74,23 +78,26 @@ function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
   }, [profilesToShow.length, handleWheel]);
 
   return (
-    <Grid container item ref={scrollContainerRef} sx={{ maxWidth: '357px', overflowX: 'scroll', overflowY: 'hidden', position: 'absolute', top: '69px', whiteSpace: 'nowrap', width: '357px', zIndex: 2 }}>
-      <Grid container item justifyContent='center' sx={{ backgroundColor: 'backgroundFL.secondary', columnGap: '5px', display: 'flex', px: '10px', flexDirection: 'row', flexWrap: 'nowrap', width: containerWidth }}>
-        {profilesToShow.map((profile, index) => {
-          const isSelected = selectedProfile === profile;
+    <>
+      {showProfileTabs &&
+        <Grid container item ref={scrollContainerRef} sx={{ maxWidth: '357px', overflowX: 'scroll', overflowY: 'hidden', pb: '13px', position: 'absolute', top: '69px', whiteSpace: 'nowrap', width: '357px', zIndex: 2 }}>
+          <Grid container item justifyContent='center' sx={{ backgroundColor: 'backgroundFL.secondary', columnGap: '5px', display: 'flex', px: '10px', flexDirection: 'row', flexWrap: 'nowrap', width: containerWidth }}>
+            {profilesToShow.map((profile, index) => {
+              const isSelected = selectedProfile === profile;
 
-          return (
-            <ProfileTab
-              index={index}
-              isSelected={isSelected}
-              key={`${index}:${profile}`}
-              orderedAccounts={orderedAccounts}
-              selectedProfile={selectedProfile}
-              text={profile}
-            />);
-        })}
-      </Grid>
-    </Grid>
+              return (
+                <ProfileTab
+                  index={index}
+                  isSelected={isSelected}
+                  key={`${index}:${profile}`}
+                  orderedAccounts={orderedAccounts}
+                  selectedProfile={selectedProfile}
+                  text={profile}
+                />);
+            })}
+          </Grid>
+        </Grid>}
+    </>
   );
 }
 
