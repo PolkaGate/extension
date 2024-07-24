@@ -4,6 +4,9 @@
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { BalancesInfo } from '@polkadot/extension-polkagate/util/types';
+import type { BN } from '@polkadot/util';
+import type { HexString } from '@polkadot/util/types';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
 import { ArrowForwardIos as ArrowForwardIosIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
@@ -11,7 +14,6 @@ import { Box, Button, Divider, Grid, Skeleton, Typography, useTheme } from '@mui
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
-import { BN } from '@polkadot/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
 import { ActionContext, Identicon, Identity, OptionalCopyButton, ShortAddress2 } from '../../../components';
@@ -24,11 +26,10 @@ import DeriveAccountModal from '../../../popup/newAccount/deriveAccount/modal/De
 import RenameModal from '../../../popup/rename/RenameModal';
 import { amountToHuman } from '../../../util/utils';
 import AccountIconsFs from '../../accountDetails/components/AccountIconsFs';
+import { EyeIconFullScreen } from '../../accountDetails/components/AccountInformationForDetails';
 import AOC from '../../accountDetails/components/AOC';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import FullScreenAccountMenu from './FullScreenAccountMenu';
-import type { BalancesInfo } from '@polkadot/extension-polkagate/util/types';
-import { EyeIconFullScreen } from '../../accountDetails/components/AccountInformationForDetails';
 
 interface AddressDetailsProps {
   accountAssets: FetchedBalance[] | null | undefined;
@@ -39,7 +40,7 @@ interface AddressDetailsProps {
   isChild?: boolean;
 }
 
-type AccountButtonType = { text: string, onClick: () => void, icon: React.ReactNode };
+interface AccountButtonType { text: string, onClick: () => void, icon: React.ReactNode }
 
 export enum POPUPS_NUMBER {
   DERIVE_ACCOUNT,
@@ -49,7 +50,7 @@ export enum POPUPS_NUMBER {
   MANAGE_PROFILE
 };
 
-export default function AccountInformationForHome({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -119,7 +120,7 @@ export default function AccountInformationForHome({ accountAssets, address, hide
   );
 
   const onAssetBoxClicked = useCallback((asset: FetchedBalance | undefined) => {
-    address && asset && tieAccount(address, asset.genesisHash).finally(() => {
+    address && asset && tieAccount(address, asset.genesisHash as HexString).finally(() => {
       setSelectedAsset(asset);
     }).catch(console.error);
   }, [address, setSelectedAsset]);
@@ -160,7 +161,7 @@ export default function AccountInformationForHome({ accountAssets, address, hide
                 accountInfo={accountInfo}
                 address={address}
                 api={api}
-                chain={chain as any}
+                chain={chain}
                 noIdenticon
                 onClick={goToDetails}
                 style={{ width: 'calc(100% - 40px)' }}

@@ -12,6 +12,7 @@ import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '../util/constants';
 import getLogo from '../util/getLogo';
 import type { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
+import type { HexString } from '@polkadot/util/types';
 
 interface Props {
   address: string | undefined;
@@ -51,10 +52,9 @@ const NetworkList = ({ address, chains, setAnchorEl, setSelectedChainName, selec
       return;
     }
 
-    tieAccount(address, net.value as string).catch(console.error);
+    tieAccount(address, net.value as HexString).catch(console.error);
     setSelectedChainName(net.text);
-  }, [address, isTestnetDisabled]);
-
+  }, [address, isTestnetDisabled, setAnchorEl, setSelectedChainName]);
 
   return (
     <Grid container item sx={{ maxHeight: '550px', overflow: 'hidden', overflowY: 'scroll', width: '250px' }}>

@@ -17,6 +17,7 @@ import getLogo from '../../../util/getLogo';
 import type { DropdownOption } from '../../../util/types';
 import { type NetworkOption } from './partials';
 import ManualLedgerImport from './ManualLedgerImport';
+import type { HexString } from '@polkadot/util/types';
 
 interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
@@ -51,11 +52,11 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
     },
     ...ledgerChains.filter(
       ({ displayName, genesisHash }) =>
-      !genesisHash.includes(POLKADOT_GENESIS) && !genesisHash.includes(STATEMINT_GENESIS_HASH) && !DISABLED_NETWORKS.includes(displayName)
+        !genesisHash.includes(POLKADOT_GENESIS) && !genesisHash.includes(STATEMINT_GENESIS_HASH) && !DISABLED_NETWORKS.includes(displayName)
     ).map(({ displayName, genesisHash }): NetworkOption => ({
-        text: displayName,
-        value: genesisHash[0]
-      }))]
+      text: displayName,
+      value: genesisHash[0]
+    }))]
   );
 
   useEffect(() => {
@@ -68,11 +69,13 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
   const name = useCallback((index: number, offset?: number) => `Migration ${index ?? 0}-${offset ?? 0} `, []);
 
   const onSave = useCallback(() => {
-    address && createAccountHardware(address, 'ledger', accountIndex, addressOffset, name(accountIndex, addressOffset), newChain?.genesisHash || POLKADOT_GENESIS)
+    address && createAccountHardware(address, 'ledger', accountIndex, addressOffset, name(accountIndex, addressOffset), (newChain?.genesisHash || POLKADOT_GENESIS) as HexString)
       .then(() => {
         const metaData = JSON.stringify({ isMigration: true });
 
-        updateMeta(String(address), metaData).then(() => onAction('/'))
+        updateMeta(String(address), metaData)
+          .then(() => onAction('/'))
+          .catch(console.error);
       })
       .catch((error: Error) => {
         console.error(error);

@@ -9,6 +9,7 @@
  * this component shows an account information in detail
  * */
 
+import type { HexString } from '@polkadot/util/types';
 import type { BalancesInfo, FormattedAddressState } from '../../util/types';
 
 import { faCoins, faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
@@ -139,7 +140,7 @@ export default function AccountDetails(): React.ReactElement {
   const _onChangeNetwork = useCallback((newGenesisHash: string) => {
     const availableGenesisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;
 
-    address && tieAccount(address, availableGenesisHash).catch(console.error);
+    address && tieAccount(address, availableGenesisHash as HexString).catch(console.error);
   }, [address]);
 
   const _onChangeAsset = useCallback((id: number) => {

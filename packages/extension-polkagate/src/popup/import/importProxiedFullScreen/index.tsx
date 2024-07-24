@@ -3,17 +3,18 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { HexString } from '@polkadot/util/types';
+
 import { Grid, Typography, useTheme } from '@mui/material';
 // @ts-ignore
 import Chance from 'chance';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
-import type { Chain } from '@polkadot/extension-chains/types';
-
 import Bread from '@polkadot/extension-polkagate/src/fullscreen/partials/Bread';
 import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 
-import { AccountContext, ProfileInput, Label, SelectChain, TwoButtons, VaadinIcon } from '../../../components';
+import { AccountContext, Label, ProfileInput, SelectChain, TwoButtons, VaadinIcon } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useGenesisHashOptions, useInfo, useProxiedAccounts, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata, tieAccount, updateMeta } from '../../../messaging';
@@ -36,7 +37,7 @@ function ImportProxiedFS(): React.ReactElement {
     accounts
       .filter(({ isExternal, isHardware, isQR }) => !isExternal || isQR || isHardware)
       .map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name])
-    , [accounts]);
+  , [accounts]);
 
   const [selectedAddress, setSelectedAddress] = useState<string | undefined>(undefined);
   const [selectedProxied, setSelectedProxied] = useState<string[]>([]);
@@ -64,7 +65,7 @@ function ImportProxiedFS(): React.ReactElement {
   const onChangeGenesis = useCallback((genesisHash?: string | null) => {
     setSelectedProxied([]);
 
-    genesisHash && tieAccount(selectedAddress ?? '', genesisHash)
+    genesisHash && tieAccount(selectedAddress ?? '', genesisHash as HexString)
       .then(() => getMetadata(genesisHash, true))
       .then(setChain)
       .catch(console.error);
@@ -82,7 +83,7 @@ function ImportProxiedFS(): React.ReactElement {
         const address = selectedProxied[index];
         const randomName = (chance?.name() as string)?.split(' ')?.[0] || `Proxied ${index + 1}`;
 
-        await createAccountExternal(randomName, address, chain?.genesisHash ?? WESTEND_GENESIS_HASH)
+        await createAccountExternal(randomName, address, (chain?.genesisHash ?? WESTEND_GENESIS_HASH) as HexString);
 
         /** add the proxied account to the profile if has chosen by user */
         if (profileName) {
