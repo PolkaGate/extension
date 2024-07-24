@@ -15,8 +15,8 @@ import { FullScreenHeader } from '../governance/FullScreenHeader';
 import HeaderComponents from './components/HeaderComponents';
 import DraggableAccountsList from './partials/DraggableAccountList';
 import HomeMenu from './partials/HomeMenu';
-import TotalBalancePieChart from './partials/TotalBalancePieChart';
-import WatchList, { type AssetsWithUiAndPrice } from './partials/WatchList';
+import TotalBalancePieChart, { type AssetsWithUiAndPrice } from './partials/TotalBalancePieChart';
+import WatchList from './partials/WatchList';
 import ProfileTabs from './partials/ProfileTabs';
 
 export interface AccountsOrder {

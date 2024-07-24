@@ -1,34 +1,23 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowDropDown as ArrowDropDownIcon, ArrowDropDown as DownIcon, ArrowDropUp as UpIcon } from '@mui/icons-material';
-import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Collapse, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { DisplayLogo } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, usePrices, useTranslation } from '../../../hooks';
-import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import getLogo2 from '../../../util/getLogo2';
+import type { AssetsWithUiAndPrice } from './TotalBalancePieChart';
 
 interface Props {
   groupedAssets: AssetsWithUiAndPrice[] | undefined
 }
 
-export interface AssetsWithUiAndPrice extends FetchedBalance {
-  percent: number;
-  price: number;
-  ui: {
-    color: string | undefined;
-    logo: string | undefined;
-  };
-}
-
 function WatchList({ groupedAssets }: Props): React.ReactElement {
-  const theme = useTheme();
   const { t } = useTranslation();
   const currency = useCurrency();
   const pricesInCurrencies = usePrices();
@@ -37,7 +26,7 @@ function WatchList({ groupedAssets }: Props): React.ReactElement {
 
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
-  const DisplayAssetRow = ({ asset }: { asset: FetchedBalance }) => {
+  const DisplayAssetRow = ({ asset }: { asset: AssetsWithUiAndPrice }) => {
     const logoInfo = useMemo(() => asset && getLogo2(asset.genesisHash, asset.token), [asset]);
     const change = pricesInCurrencies ? pricesInCurrencies.prices[asset.priceId]?.change : 0;
 

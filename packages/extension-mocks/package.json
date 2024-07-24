@@ -3,7 +3,7 @@
   "bugs": "https://github.com/polkagate/extension/issues",
   "description": "Definitions for all known chains as exposed by the extension.",
   "engines": {
-    "node": ">=18"
+    "node": ">=18.18"
   },
   "homepage": "https://github.com/polkagate/extension/tree/master/packages/extension-mocks#readme",
   "license": "Apache-2.0",

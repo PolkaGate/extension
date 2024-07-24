@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-  
+
 jobs:
   pr:
     strategy:
@@ -14,10 +14,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    
     - uses: actions/setup-node@v3
       with:
         node-version: 'lts/*'
+
+    - name: Enable Corepack
+      run: corepack enable
+
+    - name: Set up correct Yarn version
+      run: corepack prepare yarn@4.1.1 --activate
+
+    - name: Install dependencies without immutable
+      run: yarn install
+
+    - name: Verify dependencies with immutable
+      run: yarn install --immutable | grep -v 'YN0013'
+
     - name: ${{ matrix.step }}
-      run: |
-        yarn install --immutable | grep -v 'YN0013'
-        yarn ${{ matrix.step }}
+      run: yarn ${{ matrix.step }}

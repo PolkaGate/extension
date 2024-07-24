@@ -1,6 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -8,6 +8,8 @@
  * @description
  * this component shows an account information in detail
  * */
+
+import type { BalancesInfo, FormattedAddressState } from '../../util/types';
 
 import { faCoins, faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -25,7 +27,6 @@ import { useBalances, useGenesisHashOptions, useInfo, useMyAccountIdentity, useT
 import { tieAccount, windowOpen } from '../../messaging';
 import { FullScreenRemoteNode, HeaderBrand } from '../../partials';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
-import type { BalancesInfo, FormattedAddressState } from '../../util/types';
 import StakingOption from '../staking/Options';
 import LockedInReferenda from './unlock/LockedInReferenda';
 import AccountBrief from './AccountBrief';
@@ -125,7 +126,7 @@ export default function AccountDetails(): React.ReactElement {
       : showStakingOptions
         ? theme.palette.secondary.main
         : theme.palette.text.primary
-    , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
+  , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
 
   const goToOthers = useCallback(() => {
     setShowOthers(true);
@@ -169,7 +170,7 @@ export default function AccountDetails(): React.ReactElement {
     <Motion>
       <HeaderBrand
         _centerItem={
-          <Identity address={address} api={api} chain={chain as any} formatted={formatted} identiconSize={40} showSocial={false} style={{ fontSize: '32px', height: '40px', lineHeight: 'initial', maxWidth: '65%' }} subIdOnly />
+          <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={40} showSocial={false} style={{ fontSize: '32px', height: '40px', lineHeight: 'initial', maxWidth: '65%' }} subIdOnly />
         }
         address={address}
         fullScreenURL={`/accountfs/${address}/0`}
@@ -194,7 +195,7 @@ export default function AccountDetails(): React.ReactElement {
             address={address}
             assetId={assetId}
             label={t<string>('Asset')}
-            onChange={_onChangeAsset as any}
+            onChange={_onChangeAsset}
             setAssetId={setAssetId}
             style={{ width: '27%' }}
           />
@@ -269,7 +270,7 @@ export default function AccountDetails(): React.ReactElement {
             divider
             icon={
               showStakingOptions
-                ? <Box component='img' src={stakingClose} width='30px' />
+                ? <Box component='img' src={stakingClose as string} width='30px' />
                 : <FontAwesomeIcon
                   color={stakingIconColor}
                   icon={faCoins}
@@ -309,7 +310,7 @@ export default function AccountDetails(): React.ReactElement {
         <Others
           address={address}
           balances={balances}
-          chain={chain as any}
+          chain={chain}
           identity={identity}
           setShow={setShowOthers}
           show={showOthers}

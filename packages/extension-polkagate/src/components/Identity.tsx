@@ -1,19 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Email as EmailIcon, Language as LanguageIcon, X as XIcon } from '@mui/icons-material';
-import { Box, Grid, Link, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
-import { grey } from '@mui/material/colors';
-import React, { useEffect, useMemo } from 'react';
-
-import { ApiPromise } from '@polkadot/api';
-import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import type { ApiPromise } from '@polkadot/api';
+import type { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import type { Chain } from '@polkadot/extension-chains/types';
-
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
+
+import { Email as EmailIcon, Language as LanguageIcon, X as XIcon } from '@mui/icons-material';
+import { Box, Grid, Link, Typography, useTheme } from '@mui/material';
+import { grey } from '@mui/material/colors';
+import React, { type CSSProperties, useEffect, useMemo } from 'react';
 
 import { ms, msGreen, msWarning, riot } from '../assets/icons';
 import { useAccountName, useChain, useFormatted2, useIdentity, useMerkleScience, useTranslation } from '../hooks';
@@ -24,7 +22,7 @@ interface Props {
   accountInfo?: DeriveAccountInfo | null;
   address?: string | AccountId;
   api?: ApiPromise;
-  chain?: Chain;
+  chain?: Chain | null;
   direction?: 'row' | 'column';
   formatted?: string | AccountId;
   identiconSize?: number;
@@ -33,7 +31,7 @@ interface Props {
   noIdenticon?: boolean;
   onClick?: () => void;
   returnIdentity?: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | undefined>>;// to return back identity when needed
-  style?: SxProps<Theme>;
+  style?: CSSProperties;
   showChainLogo?: boolean;
   showShortAddress?: boolean;
   showSocial?: boolean;
@@ -41,7 +39,7 @@ interface Props {
   subIdOnly?: boolean;
 }
 
-function Identity({ accountInfo, address, api, chain, direction = 'column', formatted, identiconSize = 40, judgement, name, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity ({ accountInfo, address, api, chain, direction = 'column', formatted, identiconSize = 40, judgement, name, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -52,8 +50,8 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
   const _formatted = useFormatted2(address, formatted, chain)?.toString();
   const msData = useMerkleScience(_formatted, chain);
 
-  const isMSgreen = ['Exchange', 'Donation'].includes(msData?.tag_type_verbose);
-  const isMSwarning = ['Scam', 'High Risk Organization', 'Theft', 'Sanctions'].includes(msData?.tag_type_verbose);
+  const isMSgreen = ['Exchange', 'Donation'].includes(msData?.tag_type_verbose as string);
+  const isMSwarning = ['Scam', 'High Risk Organization', 'Theft', 'Sanctions'].includes(msData?.tag_type_verbose as string);
   const _showSocial = msData ? false : showSocial;
 
   const genesisHash = chain?.genesisHash || api?.genesisHash?.toHex();

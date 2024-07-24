@@ -1,11 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import { createWsEndpoints, externalLinks } from '@polkagate/apps-config';
 import { createAssets } from '@polkagate/apps-config/assets';
 
-import { Chain } from '../../../extension-chains/src/types';
+import type { Chain } from '../../../extension-chains/src/types';
 import { toCamelCase } from '../fullscreen/governance/utils/util';
 import getNetworkMap from './getNetworkMap';
 import { sanitizeChainName } from './utils';
@@ -13,8 +12,8 @@ import { sanitizeChainName } from './utils';
 const endpoints = createWsEndpoints(() => '');
 
 export interface LogoInfo {
-  logo: string;
-  color: string;
+  logo?: string | undefined;
+  color?: string | undefined;
   subLogo?: string;
 }
 
@@ -49,7 +48,7 @@ export default function getLogo2(info: string | undefined | Chain, token?: strin
   if (!endpoint) {
     mayBeExternalLogo = Object
       .entries(externalLinks)
-      .find(([name, { chains, create, homepage, isActive, paths, ui }]): React.ReactNode | null =>
+      .find(([name]): React.ReactNode | null =>
         name.toLowerCase() === iconName
       );
   }

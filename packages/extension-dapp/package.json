@@ -3,7 +3,7 @@
   "bugs": "https://github.com/polkagate/extension/issues",
   "description": "Provides an interfaces around the injected globals for ease of access by dapp developers.",
   "engines": {
-    "node": ">=18"
+    "node": ">=18.18"
   },
   "homepage": "https://github.com/polkagate/extension/tree/master/packages/extension-dapp#readme",
   "license": "Apache-2.0",
