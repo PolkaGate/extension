@@ -4,22 +4,22 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useState, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import semver from 'semver';
 
 import { ActionContext, PButton, Popup } from '../../components';
+import { useManifest } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { HeaderBrand } from '../../partials';
 import { EXTENSION_NAME } from '../../util/constants';
-import { news, type News } from './news';
-import { useManifest } from '../../hooks';
-import semver from 'semver';
+import { type News, news } from './news';
 
 interface Props {
   show: boolean;
   setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function WhatsNew({ setShowAlert, show }: Props): React.ReactElement<Props> {
+export default function WhatsNew ({ setShowAlert, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -40,28 +40,29 @@ export default function WhatsNew({ setShowAlert, show }: Props): React.ReactElem
 
       setLocalNews([...filteredNews]);
     } catch (error) {
-      console.error('Error while checking version:', error)
+      console.error('Error while checking version:', error);
     }
-  }, [])
+  }, []);
 
   const onClose = useCallback(() => {
     window.localStorage.setItem('using_version', manifest?.version || '0.1.0');
     setShowAlert(false);
     onAction('/');
   }, [onAction, setShowAlert, manifest?.version]);
-  
+
   useEffect(() => {
     if (manifest && localNews?.length === 0) {
       onClose();
     }
-  }, [manifest, localNews, onClose])
+  }, [manifest, localNews, onClose]);
 
   const onDismiss = useCallback((_version: string) => {
-    let index = localNews.findIndex(({ version }) => version === _version);
+    const index = localNews.findIndex(({ version }) => version === _version);
+
     localNews.splice(index, 1);
 
     setLocalNews([...localNews]);
-  }, [onAction, setShowAlert, localNews, onClose]);
+  }, [localNews]);
 
   const UL = ({ notes }: { notes: string[] }) => {
     return (
@@ -102,33 +103,34 @@ export default function WhatsNew({ setShowAlert, show }: Props): React.ReactElem
           </Typography>
         </Grid>
         <Grid container item justifyContent='center' sx={{ height: '440px', overflow: 'scroll' }}>
-          {localNews.map(({ version, notes }) =>
-          (<Grid alignContent='flex-start' container item sx={{ backgroundColor: 'background.paper', borderTop: 1, borderColor: 'secondary.light', p: '10px' }}>
-            <Grid container item justifyContent='center'>
-              <Typography fontSize='14px'>
-                {t('Version {{version}}', { replace: { version } })}
-              </Typography>
+          {localNews.map(({ notes, version }) =>
+            (<Grid alignContent='flex-start' container item key={version} sx={{ backgroundColor: 'background.paper', borderColor: 'secondary.light', borderTop: 1, p: '10px' }}>
+              <Grid container item justifyContent='center'>
+                <Typography fontSize='14px'>
+                  {t('Version {{version}}', { replace: { version } })}
+                </Typography>
+              </Grid>
+              <UL
+                notes={notes}
+              />
+              <PButton
+                _ml={0}
+                _mt='10px'
+                // eslint-disable-next-line react/jsx-no-bind
+                _onClick={() => onDismiss(version)}
+                _width={100}
+                text={t('Dismiss')}
+              />
             </Grid>
-            <UL
-              notes={notes}
-            />
-            <PButton
-              _onClick={() => onDismiss(version)}
-              text={t('Dismiss')}
-              _ml={0}
-              _mt='10px'
-              _width={100}
-            />
-          </Grid>
-          ))}
+            ))}
           {!!localNews?.length && localNews.length > 1 &&
             <PButton
-              _onClick={onClose}
-              text={t('Dismiss All')}
               _ml={0}
               _mt='10px'
-              _width={100}
+              _onClick={onClose}
               _variant='outlined'
+              _width={100}
+              text={t('Dismiss All')}
             />}
         </Grid>
       </Grid>
