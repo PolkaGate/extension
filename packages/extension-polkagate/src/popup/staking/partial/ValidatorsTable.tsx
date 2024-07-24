@@ -1,23 +1,22 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ApiPromise } from '@polkadot/api';
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 import type { AccountId } from '@polkadot/types/interfaces';
+import type { StakingConsts, ValidatorInfo } from '../../../util/types';
 
 import { alpha, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
-import { ApiPromise } from '@polkadot/api';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import type { Chain } from '@polkadot/extension-chains/types';
 import { VaadinIcon } from '@polkadot/extension-polkagate/src/components';
 import { useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
 import { BN, hexToBn, isHex } from '@polkadot/util';
 
-import type { StakingConsts, ValidatorInfo } from '../../../util/types';
 import ShowValidator from './ShowValidator';
 import ValidatorInfoPage from './ValidatorInfo';
 
@@ -135,7 +134,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
         <Grid ml='-15px'>
           <ValidatorInfoPage
             api={api}
-            chain={chain as any}
+            chain={chain}
             isFullscreen={!isExtensionMode}
             setShowValidatorInfo={setShowValidatorInfo}
             showValidatorInfo={showValidatorInfo}
