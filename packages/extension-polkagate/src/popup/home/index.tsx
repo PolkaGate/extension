@@ -119,7 +119,7 @@ export default function Home(): React.ReactElement {
           }
           <ProfileTabs orderedAccounts={accountsOrder} />
           <YouHave hideNumbers={hideNumbers} setHideNumbers={setHideNumbers} />
-          <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`, mt: '10px', overflowY: 'scroll', p: 0, width: '92%' }]}>
+          <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 233 : 190)}px`, mt: '10px', overflowY: 'scroll', p: 0, width: '92%' }]}>
             {initialAccountList.map((json, index): React.ReactNode => (
               <AccountsTree
                 {...json}

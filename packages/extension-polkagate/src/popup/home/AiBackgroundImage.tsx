@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -13,7 +12,7 @@ import { useTranslation } from '../../hooks';
 
 const imagePath = `https://raw.githubusercontent.com/PolkaGate/backgrounds/main/${process.env['BG_THEME'] || 'general'}`;
 
-type BgImage = {
+interface BgImage {
   dark: string;
   light: string;
 }
@@ -88,7 +87,7 @@ export default function AiBackgroundImage({ bgImage, setBgImage }: Props): React
   }, [mode, tryToApplyImg]);
 
   return (
-    <Grid container justifyContent='space-between' sx={{ backgroundColor: 'background.default', bottom: '3px', color: theme.palette.text.primary, position: 'absolute', zIndex: 6, p: '0 10px 0' }}>
+    <Grid container justifyContent='space-between' sx={{ backgroundColor: 'background.default', bottom: '0px', color: theme.palette.text.primary, position: 'absolute', zIndex: 6, p: '0 10px 0' }}>
       <Grid item onClick={clearBackground} xs={1.5}>
         {bgImage &&
           <Typography sx={{ cursor: 'pointer', fontSize: '11px', userSelect: 'none' }}>
