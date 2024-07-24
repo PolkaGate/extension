@@ -98,7 +98,7 @@ const ShowMembers = ({ address, poolToShow }: InsidersProps) => {
       {membersToShow?.length
         ? membersToShow.map((member, index) => (
           <Grid container item key={index} sx={{ '&:last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
-            <Identity address={member.accountId} api={api} chain={chain as any} formatted={member.accountId} identiconSize={25} showShortAddress style={{ fontSize: '14px', minHeight: '45px', pl: '10px', width: '50%' }} />
+            <Identity address={member.accountId} api={api} chain={chain as any} formatted={member.accountId} identiconSize={25} showShortAddress style={{ fontSize: '14px', minHeight: '45px', width: '50%' }} />
             <Grid alignItems='center' container fontSize='14px' fontWeight='400' item justifyContent='center' sx={{ borderColor: 'secondary.light', borderInline: '1px solid' }} width='30%'>
               <ShowBalance
                 balance={toBalance(member.points) as Balance}

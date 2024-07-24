@@ -1341,5 +1341,8 @@
   "Dismiss": "",
   "Version {{version}}": "",
   "Dismiss All": "",
-  "Address offset {{index}}": ""
+  "Address offset {{index}}": "",
+  "What's New 🚀": "",
+  "Import the account into the extension": "",
+  "Select accounts to import into the extension": ""
 }
