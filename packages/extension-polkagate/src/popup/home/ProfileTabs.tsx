@@ -48,13 +48,9 @@ function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultProfiles.length, userDefinedProfiles.length]);
 
-  const containerWidth = useMemo(() =>
-    `${profilesToShow.length * (ITEM_WIDTH + OFFSET)}px`
-    , [profilesToShow.length]);
+  const containerWidth = useMemo(() => `${profilesToShow.length * (ITEM_WIDTH + OFFSET)}px`, [profilesToShow.length]);
 
-  const showProfileTabs = useMemo(() =>
-    profilesToShow?.length > 2
-    , [profilesToShow.length]);
+  const showProfileTabs = useMemo(() => profilesToShow?.length > 2, [profilesToShow.length]);
 
   const handleWheel = useCallback((event: WheelEvent) => {
     if (scrollContainerRef.current) {
@@ -80,8 +76,8 @@ function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
   return (
     <>
       {showProfileTabs &&
-        <Grid container item ref={scrollContainerRef} sx={{ maxWidth: '357px', overflowX: 'scroll', overflowY: 'hidden', pb: '13px', position: 'absolute', top: '69px', whiteSpace: 'nowrap', width: '357px', zIndex: 2 }}>
-          <Grid container item justifyContent='center' sx={{ backgroundColor: 'backgroundFL.secondary', columnGap: '5px', display: 'flex', px: '10px', flexDirection: 'row', flexWrap: 'nowrap', width: containerWidth }}>
+        <Grid container item ref={scrollContainerRef} sx={{ maxWidth: '357px', overflowX: 'scroll', overflowY: 'hidden', position: 'absolute', top: '69px', whiteSpace: 'nowrap', width: '357px', zIndex: 2 }}>
+          <Grid container item justifyContent='center' sx={{ backgroundColor: 'backgroundFL.secondary', columnGap: '5px', display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', px: '10px', width: containerWidth }}>
             {profilesToShow.map((profile, index) => {
               const isSelected = selectedProfile === profile;
 
@@ -91,7 +87,6 @@ function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
                   isSelected={isSelected}
                   key={`${index}:${profile}`}
                   orderedAccounts={orderedAccounts}
-                  selectedProfile={selectedProfile}
                   text={profile}
                 />);
             })}

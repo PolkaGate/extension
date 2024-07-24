@@ -1,26 +1,30 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Typography, useTheme, Collapse } from '@mui/material';
-import React, { useCallback, useMemo, useEffect, useState } from 'react';
-import { useProfileAccounts, useTranslation } from '../../hooks';
-import { setStorage } from '../../components/Loading';
-import { VaadinIcon } from '../../components/index';
-import { showAccount } from '../../messaging';
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { AccountsOrder } from '@polkadot/extension-polkagate/src/util/types';
+
+import { Collapse, Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
 import { getProfileColor } from '@polkadot/extension-polkagate/src/util/utils';
+
+import { VaadinIcon } from '../../components/index';
+import { setStorage } from '../../components/Loading';
+import { useProfileAccounts, useTranslation } from '../../hooks';
+import { showAccount } from '../../messaging';
 
 interface Props {
   orderedAccounts: AccountsOrder[] | undefined;
   text: string;
   index: number;
   isSelected: boolean;
-  selectedProfile: string | undefined;
 }
 
 const COLLAPSED_SIZE = '20px';
 
-export default function ProfileTab({ text, orderedAccounts, index, isSelected, selectedProfile }: Props): React.ReactElement {
+export default function ProfileTab ({ index, isSelected, orderedAccounts, text }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -38,9 +42,9 @@ export default function ProfileTab({ text, orderedAccounts, index, isSelected, s
 
   /** Save the current selected tab in local storage on tab click */
   const onClick = useCallback(() => {
-    setStorage('profile', text);
+    setStorage('profile', text).catch(console.error);
     isSelected && setToHideAll(!toHideAll);
-  }, [selectedProfile, toHideAll, text, isSelected]);
+  }, [toHideAll, text, isSelected]);
 
   /** check to see if all accounts in a profile is hidden */
   const areAllProfileAccountsHidden = useMemo(() => {
@@ -54,7 +58,7 @@ export default function ProfileTab({ text, orderedAccounts, index, isSelected, s
   const hideAccounts = useCallback((accounts: AccountsOrder[]) => {
     toHideAll !== undefined && accounts.forEach(({ account: { address } }) => {
       showAccount(address, !toHideAll).catch(console.error);
-    })
+    });
   }, [toHideAll]);
 
   const areAllHidden = areAllProfileAccountsHidden !== undefined ? areAllProfileAccountsHidden : toHideAll;
@@ -63,19 +67,37 @@ export default function ProfileTab({ text, orderedAccounts, index, isSelected, s
     if (profileAccounts && toHideAll !== undefined) {
       hideAccounts(profileAccounts);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hideAccounts, profileAccounts?.length, toHideAll]);
 
   const onMouseEnter = useCallback(() => setIsHovered(true), []);
   const onMouseLeave = useCallback(() => setIsHovered(false), []);
 
   return (
-    <Collapse collapsedSize={COLLAPSED_SIZE} in={visibleContent} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} orientation='horizontal' sx={{ '&:hover': { boxShadow: shadowOnHover }, bgcolor: getProfileColor(index, theme) || 'background.paper', borderRadius: '10px', boxShadow: shadow, cursor: 'pointer', height: COLLAPSED_SIZE, mb: '5px', px: '8px' }}>
-      <Grid alignItems='center' justifyContent='center' container item sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', minWidth: '40px', width: 'fit-content' }}>
+    <Collapse
+      collapsedSize={COLLAPSED_SIZE}
+      in={visibleContent}
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      orientation='horizontal'
+      sx={{
+        '&:hover': { boxShadow: shadowOnHover },
+        bgcolor: getProfileColor(index, theme) || 'background.paper',
+        borderRadius: '10px',
+        boxShadow: shadow,
+        cursor: 'pointer',
+        height: COLLAPSED_SIZE,
+        mb: '5px',
+        px: '8px'
+      }}
+    >
+      <Grid alignItems='center' container item justifyContent='center' sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', minWidth: '40px', width: 'fit-content' }}>
         <Typography color='text.primary' fontSize='14px' fontWeight={isSelected ? 500 : 400} textAlign='center' sx={{ maxWidth: '100px', overflowX: 'hidden', textOverflow: 'ellipsis', transition: 'visibility 0.1s ease', visibility: visibleContent ? 'visible' : 'hidden', whiteSpace: 'nowrap', width: 'fit-content' }}>
           {t(text)}
         </Typography>
         {areAllHidden && isSelected &&
-          <VaadinIcon icon='vaadin:eye-slash' style={{ height: '13px', display: 'block', marginLeft: '5px', width: '15px' }} />}
+          <VaadinIcon icon='vaadin:eye-slash' style={{ display: 'block', height: '13px', marginLeft: '5px', width: '15px' }} />}
       </Grid>
     </Collapse>
   );

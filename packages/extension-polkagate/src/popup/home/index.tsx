@@ -4,8 +4,11 @@
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 
+import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
+
 import { Container, Grid, useTheme } from '@mui/material';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
+import semver from 'semver';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
@@ -13,7 +16,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Warning } from '../../components';
 import { getStorage, type LoginInfo } from '../../components/Loading';
-import { useAccountsOrder, useMerkleScience, useProfileAccounts, useTranslation, useManifest } from '../../hooks';
+import { useAccountsOrder, useManifest,useMerkleScience, useProfileAccounts, useTranslation } from '../../hooks';
 import { AddNewAccountButton } from '../../partials';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { EXTENSION_NAME } from '../../util/constants';
@@ -21,11 +24,9 @@ import Reset from '../passwordManagement/Reset';
 import Welcome from '../welcome';
 import AccountsTree from './AccountsTree';
 import AiBackgroundImage from './AiBackgroundImage';
-import YouHave from './YouHave';
-import semver from 'semver';
-import WhatsNew from './WhatsNew';
 import ProfileTabs from './ProfileTabs';
-import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
+import WhatsNew from './WhatsNew';
+import YouHave from './YouHave';
 
 export default function Home(): React.ReactElement {
   const accountsOrder = useAccountsOrder(true) as AccountsOrder[] | undefined;
@@ -53,6 +54,7 @@ export default function Home(): React.ReactElement {
     if (!manifest?.version) {
       return;
     }
+
     try {
       const usingVersion = window.localStorage.getItem('using_version');
 
@@ -63,7 +65,7 @@ export default function Home(): React.ReactElement {
         setShowAlert(true);
       }
     } catch (error) {
-      console.error('Error while checking version:', error)
+      console.error('Error while checking version:', error);
     }
   }, [manifest?.version]);
 
@@ -119,7 +121,7 @@ export default function Home(): React.ReactElement {
           }
           <ProfileTabs orderedAccounts={accountsOrder} />
           <YouHave hideNumbers={hideNumbers} setHideNumbers={setHideNumbers} />
-          <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 233 : 190)}px`, mt: '10px', overflowY: 'scroll', p: 0, width: '92%' }]}>
+          <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`, mt: '10px', overflowY: 'scroll', p: 0, width: '92%' }]}>
             {initialAccountList.map((json, index): React.ReactNode => (
               <AccountsTree
                 {...json}
