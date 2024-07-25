@@ -1335,5 +1335,16 @@
   "Ledger Account Migration": "",
   "Open Polkadot Migration App on the ledger device.": "",
   "Select the chain from which you want to migrate your account.": "",
-  "Import the account with its index and offset. Leave defaults if unchanged.": ""
+  "Import the account with its index and offset. Leave defaults if unchanged.": "",
+  "Whats New 🚀": "",
+  "Version: {{version}}": "",
+  "Dismiss": "",
+  "Version {{version}}": "",
+  "Dismiss All": "",
+  "Address offset {{index}}": "",
+  "What's New 🚀": "",
+  "Import the account into the extension": "",
+  "Select accounts to import into the extension": "",
+  "Remove from profile": "",
+  "My Portfolio": ""
 }

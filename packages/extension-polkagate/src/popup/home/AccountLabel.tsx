@@ -9,7 +9,7 @@ import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { useTranslation, useProfiles, useIsExtensionPopup } from '../../hooks';
-import { getProfileColor } from '../../fullscreen/homeFullScreen/partials/ProfileTab';
+import { getProfileColor } from '@polkadot/extension-polkagate/src/util/utils';
 
 interface Props {
   account: AccountJson | undefined;

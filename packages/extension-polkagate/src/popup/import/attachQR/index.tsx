@@ -45,11 +45,11 @@ export default function AttachQR(): React.ReactElement {
   const onCreate = useCallback(() => {
     if (account && name) {
       if (account.isAddress) {
-        createAccountExternal(name, account.content, account.genesisHash as string)
+        createAccountExternal(name, account.content, account.genesisHash as HexString)
           .then(() => setQrLabelAndGoToHome())
           .catch((error: Error) => console.error(error));
       } else if (password) {
-        createAccountSuri(name, password, account.content, 'sr25519', account.genesisHash as string)
+        createAccountSuri(name, password, account.content, 'sr25519', account.genesisHash as HexString)
           .then(() => setQrLabelAndGoToHome())
           .catch((error: Error) => console.error(error));
       }
@@ -153,7 +153,7 @@ export default function AttachQR(): React.ReactElement {
               </>
             }
           </Grid>
-          <Typography fontSize='14px' fontWeight={300} m='auto' pt='20px' textAlign='center' width='92%'          >
+          <Typography fontSize='14px' fontWeight={300} m='auto' pt='20px' textAlign='center' width='92%' >
             {t('Hold the QR code in front of the device’s camera')}
           </Typography>
         </>

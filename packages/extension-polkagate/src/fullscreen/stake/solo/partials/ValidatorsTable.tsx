@@ -3,20 +3,20 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { AccountId } from '@polkadot/types/interfaces';
+import type { StakingConsts, ValidatorInfo } from '../../../../util/types';
 
 import { alpha, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 // @ts-ignore
 import { FixedSizeList as List } from 'react-window';
 
-import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { useInfo } from '@polkadot/extension-polkagate/src/hooks';
 import ValidatorInfoPage from '@polkadot/extension-polkagate/src/popup/staking/partial/ValidatorInfo';
 import { BN, hexToBn, isHex } from '@polkadot/util';
 
 import { VaadinIcon } from '../../../../components';
-import type { StakingConsts, ValidatorInfo } from '../../../../util/types';
 import ShowValidator from './ShowValidator';
 
 interface Props {

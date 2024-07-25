@@ -8,8 +8,7 @@ import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import React, { useCallback, useLayoutEffect, useState } from 'react';
-
-import { AccountsOrder } from '..';
+import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
 import AccountItem from './AccountItem';
 
 interface Props {

@@ -17,6 +17,7 @@ import getLogo from '../../../util/getLogo';
 import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
 import { MODE } from '.';
 import { accOps, addOps, hideAddressAnimation, networkOps, showAddressAnimation } from './partials';
+import type { HexString } from '@polkadot/util/types';
 
 interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
@@ -54,7 +55,7 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
     if (address && genesis && name) {
       setIsBusy(true);
 
-      createAccountHardware(address, 'ledger', accountIndex, addressOffset, name, genesis)
+      createAccountHardware(address, 'ledger', accountIndex, addressOffset, name, genesis as HexString)
         .then(() => onAction('/'))
         .catch((error: Error) => {
           console.error(error);
@@ -141,7 +142,7 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
                   <Select
                     defaultValue={accOps[0].value}
                     isDisabled={ledgerLoading}
-                    label={t('Account type')}
+                    label={t('Account index')}
                     onChange={_onSetAccountIndex}
                     options={accOps}
                     value={accountIndex}
@@ -151,13 +152,12 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
                   <Select
                     defaultValue={addOps[0].value}
                     isDisabled={ledgerLoading}
-                    label={t('Address index')}
+                    label={t('Address offset')}
                     onChange={_onSetAddressOffset}
                     options={addOps}
                     value={addressOffset}
                   />
                 </Grid>
-
               </Grid>
             }
           </>

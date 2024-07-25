@@ -3,7 +3,7 @@
   "bugs": "https://github.com/polkagate/extension/issues",
   "description": "A generic injector (usable to any extension), that populates the base exposed interfaces to be used by dapps.",
   "engines": {
-    "node": ">=18"
+    "node": ">=18.18"
   },
   "homepage": "https://github.com/polkagate/extension/tree/master/packages/extension-inject#readme",
   "license": "Apache-2.0",

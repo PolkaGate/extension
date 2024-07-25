@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
 
 import { Grid } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
@@ -15,14 +15,9 @@ import { FullScreenHeader } from '../governance/FullScreenHeader';
 import HeaderComponents from './components/HeaderComponents';
 import DraggableAccountsList from './partials/DraggableAccountList';
 import HomeMenu from './partials/HomeMenu';
-import TotalBalancePieChart from './partials/TotalBalancePieChart';
-import WatchList, { type AssetsWithUiAndPrice } from './partials/WatchList';
 import ProfileTabs from './partials/ProfileTabs';
-
-export interface AccountsOrder {
-  id: number,
-  account: AccountWithChildren
-}
+import TotalBalancePieChart, { type AssetsWithUiAndPrice } from './partials/TotalBalancePieChart';
+import WatchList from './partials/WatchList';
 
 export default function HomePageFullScreen(): React.ReactElement {
   useFullscreen();

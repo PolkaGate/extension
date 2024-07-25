@@ -28,6 +28,7 @@ export const FLOATING_POINT_DIGIT = 4;
 export const BLOCK_RATE = 6; // sec
 export const DEFAULT_TOKEN_DECIMALS = 12;
 
+export const DEFAULT_COLOR = 'green'
 export const SHORT_ADDRESS_CHARACTERS = 4;
 export const MAX_REWARDS_TO_SHOW = 100;
 export const MAX_HISTORY_RECORD_TO_SHOW = 40;
@@ -235,3 +236,14 @@ export const PROXY_TYPE = {
   GENERAL: ['Any', 'NonTransfer'],
   CROWDLOAN: ['Any', 'NonTransfer', 'Auction']
 };
+
+export const PROFILE_COLORS = [
+  { light: '#D1C4E9', dark: '#99004F' },
+  { light: '#C8E6C9', dark: '#468189' },
+  { light: '#B3E5FC', dark: '#846C5B' },
+  { light: '#F8BBD0', dark: '#A63C06' },
+  { light: '#ACE894', dark: '#D81B60' },
+  { light: '#F5D5ED', dark: '#2B4162' },
+  { light: '#EBCFB2', dark: '#9D8189' },
+  { light: '#FCF0CC', dark: '#5F4842' },
+];
