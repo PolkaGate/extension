@@ -25,6 +25,7 @@ function ProfileTabs ({ orderedAccounts }: Props): React.ReactElement {
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
 
   const [selectedProfile, setSelectedProfile] = useState<string>();
+  const [isContainerHovered, setIsContainerHovered] = useState<boolean>(false);
 
   useLayoutEffect(() => {
     /** set profile text in local storage and watch its change to apply on the UI */
@@ -73,11 +74,14 @@ function ProfileTabs ({ orderedAccounts }: Props): React.ReactElement {
     return undefined;
   }, [profilesToShow.length, handleWheel]);
 
+  const onMouseEnter = useCallback(() => setIsContainerHovered(true), []);
+  const onMouseLeave = useCallback(() => setIsContainerHovered(false), []);
+
   return (
     <>
       {showProfileTabs &&
-        <Grid container item ref={scrollContainerRef} sx={{ maxWidth: '357px', overflowX: 'scroll', overflowY: 'hidden', position: 'absolute', top: '69px', whiteSpace: 'nowrap', width: '357px', zIndex: 2 }}>
-          <Grid container item justifyContent='center' sx={{ backgroundColor: 'backgroundFL.secondary', columnGap: '5px', display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', px: '10px', width: containerWidth }}>
+        <Grid container item ref={scrollContainerRef} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} sx={{ maxWidth: '357px', overflowX: 'scroll', overflowY: 'hidden', position: 'absolute', top: '138px', whiteSpace: 'nowrap', width: '357px', zIndex: 2 }}>
+          <Grid container item sx={{ backgroundColor: 'backgroundFL.secondary', columnGap: '5px', display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', px: '15px', width: containerWidth }}>
             {profilesToShow.map((profile, index) => {
               const isSelected = selectedProfile === profile;
 
@@ -88,6 +92,7 @@ function ProfileTabs ({ orderedAccounts }: Props): React.ReactElement {
                   key={`${index}:${profile}`}
                   orderedAccounts={orderedAccounts}
                   text={profile}
+                  isContainerHovered={isContainerHovered}
                 />);
             })}
           </Grid>
