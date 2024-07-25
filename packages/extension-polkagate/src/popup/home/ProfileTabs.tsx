@@ -80,7 +80,7 @@ function ProfileTabs ({ orderedAccounts }: Props): React.ReactElement {
   return (
     <>
       {showProfileTabs &&
-        <Grid container item ref={scrollContainerRef} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} sx={{ maxWidth: '357px', overflowX: 'scroll', overflowY: 'hidden', position: 'absolute', top: '138px', whiteSpace: 'nowrap', width: '357px', zIndex: 2 }}>
+        <Grid container item onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} ref={scrollContainerRef} sx={{ maxWidth: '357px', overflowX: 'scroll', overflowY: 'hidden', position: 'absolute', top: '138px', whiteSpace: 'nowrap', width: '357px', zIndex: 2 }}>
           <Grid container item sx={{ backgroundColor: 'backgroundFL.secondary', columnGap: '5px', display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', px: '15px', width: containerWidth }}>
             {profilesToShow.map((profile, index) => {
               const isSelected = selectedProfile === profile;
@@ -88,11 +88,11 @@ function ProfileTabs ({ orderedAccounts }: Props): React.ReactElement {
               return (
                 <ProfileTab
                   index={index}
+                  isContainerHovered={isContainerHovered}
                   isSelected={isSelected}
                   key={`${index}:${profile}`}
                   orderedAccounts={orderedAccounts}
                   text={profile}
-                  isContainerHovered={isContainerHovered}
                 />);
             })}
           </Grid>

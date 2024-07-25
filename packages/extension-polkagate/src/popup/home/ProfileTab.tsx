@@ -8,12 +8,11 @@ import type { AccountsOrder } from '@polkadot/extension-polkagate/src/util/types
 import { Collapse, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { getProfileColor } from '@polkadot/extension-polkagate/src/util/utils';
-
 import { VaadinIcon } from '../../components/index';
 import { setStorage } from '../../components/Loading';
 import { useProfileAccounts, useTranslation } from '../../hooks';
 import { showAccount } from '../../messaging';
+import { getProfileColor } from '../../util/utils';
 
 interface Props {
   orderedAccounts: AccountsOrder[] | undefined;
@@ -26,7 +25,7 @@ interface Props {
 const COLLAPSED_SIZE = '20px';
 const HIDDEN_PERCENT = '50%';
 
-export default function ProfileTab({ index, isSelected, orderedAccounts, text, isContainerHovered }: Props): React.ReactElement {
+export default function ProfileTab ({ index, isContainerHovered, isSelected, orderedAccounts, text }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -76,7 +75,7 @@ export default function ProfileTab({ index, isSelected, orderedAccounts, text, i
   const onMouseLeave = useCallback(() => setIsHovered(false), []);
 
   return (
-    <Grid container item sx={{ transition: 'transform 0.2s', transform: !isContainerHovered && !isSelected ? `translateY(${HIDDEN_PERCENT})` : undefined, width: 'fit-content' }}>
+    <Grid container item sx={{ transform: !isContainerHovered && !isSelected ? `translateY(${HIDDEN_PERCENT})` : undefined, transition: 'transform 0.2s', width: 'fit-content' }}>
       <Collapse
         collapsedSize={COLLAPSED_SIZE}
         in={visibleContent}
@@ -91,11 +90,11 @@ export default function ProfileTab({ index, isSelected, orderedAccounts, text, i
           boxShadow: shadow,
           cursor: 'pointer',
           height: COLLAPSED_SIZE,
-          my: '2px'          
+          my: '2px'
         }}
       >
-        <Grid alignItems='center' container item justifyContent='center' sx={{ display: 'flex', px: '8px', flexDirection: 'row', flexWrap: 'nowrap', minWidth: '40px', width: 'fit-content' }}>
-          <Typography color='text.primary' fontSize='14px' fontWeight={isSelected ? 500 : 400} textAlign='center' sx={{ maxWidth: '100px', overflowX: 'hidden', textOverflow: 'ellipsis', transition: 'visibility 0.1s ease', visibility: visibleContent ? 'visible' : 'hidden', whiteSpace: 'nowrap', width: 'fit-content' }}>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', minWidth: '40px', px: '8px', width: 'fit-content' }}>
+          <Typography color='text.primary' fontSize='14px' fontWeight={isSelected ? 500 : 400} sx={{ maxWidth: '100px', overflowX: 'hidden', textOverflow: 'ellipsis', transition: 'visibility 0.1s ease', visibility: visibleContent ? 'visible' : 'hidden', whiteSpace: 'nowrap', width: 'fit-content' }} textAlign='center'>
             {t(text)}
           </Typography>
           {areAllHidden && isSelected &&
