@@ -39,7 +39,7 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
   }, [setHideNumbers]);
 
   return (
-    <Grid container pt='22px' sx={{ position: 'relative', zIndex: 1 }} textAlign='center'>
+    <Grid container sx={{ textAlign: 'center', pb: '23px', position: 'relative', pt: '3px', zIndex: 1 }}>
       <Grid item xs={12}>
         <Typography sx={{ fontSize: '16px', fontVariant: 'small-caps' }}>
           {t('My Portfolio')}

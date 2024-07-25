@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Theme } from '@mui/material';
+import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -10,12 +11,11 @@ import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
 import type { SavedMetaData, TransactionDetail } from './types';
 
-import { ApiPromise } from '@polkadot/api';
 import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
-import { PROFILE_COLORS } from '@polkadot/extension-polkagate/src/util/constants';
-import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS } from './constants';
+
 import { EXTRA_PRICE_IDS } from './api/getPrices';
+import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, PROFILE_COLORS, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS } from './constants';
 
 interface Meta {
   docs: Text[];
@@ -384,23 +384,23 @@ export const isOnRelayChain = (genesisHash?: string) => RELAY_CHAINS_GENESISHASH
 
 export const isOnAssetHub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');
 
-export const getProfileColor = (index: number, theme: Theme) => {
+export const getProfileColor = (index: number, theme: Theme): string => {
   if (index >= 0) {
     const _index = index % PROFILE_COLORS.length; // to return colors recursively
-    return PROFILE_COLORS[_index][theme.palette.mode]
+
+    return PROFILE_COLORS[_index][theme.palette.mode];
   }
 
-  return PROFILE_COLORS[0][theme.palette.mode]
+  return PROFILE_COLORS[0][theme.palette.mode];
 };
 
 export const getPriceIdByChainName = (chainName?: string) => {
   if (!chainName) {
-    return ''
+    return '';
   }
 
-  const _chainName = (sanitizeChainName(chainName) as string).toLocaleLowerCase()
+  const _chainName = (sanitizeChainName(chainName) as string).toLocaleLowerCase();
 
-  return EXTRA_PRICE_IDS[_chainName]
-    ||
-    _chainName?.replace('assethub', '')?.replace('people', '')
+  return EXTRA_PRICE_IDS[_chainName] ||
+    _chainName?.replace('assethub', '')?.replace('people', '');
 };
