@@ -10,10 +10,10 @@ export interface News {
 
 export const news: News[] = [
   {
-    version: '0.6.5',
+    version: '0.6.6',
     notes: [
-      'Selective Account Import: You can now choose specific accounts to import from a JSON file.',
-      'View Profiles in Extension Mode: You can now switch and work with profiles in extension mode, in addition to the full-screen mode.'
+      'Selective Account Import: Choose specific accounts to import from a JSON file.',
+      'View Profiles in Extension Mode: Switch and work with profiles in extension mode, as well as in full-screen mode.'
     ]
   },
   {
