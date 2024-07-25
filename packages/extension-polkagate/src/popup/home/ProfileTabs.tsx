@@ -81,7 +81,7 @@ function ProfileTabs ({ orderedAccounts }: Props): React.ReactElement {
     <>
       {showProfileTabs &&
         <Grid container item onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} ref={scrollContainerRef} sx={{ maxWidth: '357px', overflowX: 'scroll', overflowY: 'hidden', position: 'absolute', top: '138px', whiteSpace: 'nowrap', width: '357px', zIndex: 2 }}>
-          <Grid container item sx={{ backgroundColor: 'backgroundFL.secondary', columnGap: '5px', display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', px: '15px', width: containerWidth }}>
+          <Grid container item sx={{ backgroundColor: 'backgroundFL.secondary', columnGap: '5px', display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', pl: '25px', pr: '15px', width: containerWidth }}>
             {profilesToShow.map((profile, index) => {
               const isSelected = selectedProfile === profile;
 
