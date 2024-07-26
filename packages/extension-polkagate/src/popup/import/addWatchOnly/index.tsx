@@ -1,13 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { HexString } from '@polkadot/util/types';
+import type { Proxy, ProxyItem } from '../../../util/types';
 
 import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
-import type { Chain } from '@polkadot/extension-chains/types';
-
+import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
@@ -16,14 +20,13 @@ import { useApiWithChain, useGenesisHashOptions, useTranslation } from '../../..
 import { createAccountExternal, getMetadata } from '../../../messaging';
 import { HeaderBrand, Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
-import type { Proxy, ProxyItem } from '../../../util/types';
 
-export default function AddAddressOnly(): React.ReactElement {
+export default function AddAddressOnly (): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 
-  const [realAddress, setRealAddress] = useState<string | undefined>();
-  const [chain, setChain] = useState<Chain>();
+  const [realAddress, setRealAddress] = useState<string | null | undefined>();
+  const [chain, setChain] = useState<Chain | null>();
   const [name, setName] = useState<string | null | undefined>();
   const [proxies, setProxies] = useState<ProxyItem[] | undefined>();
   const [isBusy, setIsBusy] = useState(false);
@@ -45,7 +48,7 @@ export default function AddAddressOnly(): React.ReactElement {
   }, [realAddress, chain]);
 
   useEffect(() => {
-    realAddress && api && api.query['proxy']?.['proxies'](realAddress).then((proxies) => {
+    realAddress && api?.query['proxy']?.['proxies'](realAddress).then((proxies) => {
       // @ts-ignore
       const fetchedProxyItems = (JSON.parse(JSON.stringify(proxies[0])))?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
@@ -62,7 +65,7 @@ export default function AddAddressOnly(): React.ReactElement {
 
   const onChangeGenesis = useCallback((genesisHash?: string | null): void => {
     setProxies(undefined);
-    genesisHash && getMetadata(genesisHash, true).then((chain) => setChain(chain as Chain)).catch((error): void => {
+    genesisHash && getMetadata(genesisHash, true).then(setChain).catch((error): void => {
       console.error(error);
     });
   }, []);
@@ -71,14 +74,17 @@ export default function AddAddressOnly(): React.ReactElement {
     if (name && realAddress && chain?.genesisHash) {
       setIsBusy(true);
 
-      createAccountExternal(name, realAddress, chain.genesisHash)
-        .then(() => onAction('/'))
+      createAccountExternal(name, realAddress, chain.genesisHash as HexString)
+        .then(() => {
+          setStorage('profile', PROFILE_TAGS.WATCH_ONLY).catch(console.error);
+          openOrFocusTab('/', true);
+        })
         .catch((error: Error) => {
           setIsBusy(false);
           console.error(error);
         });
     }
-  }, [chain?.genesisHash, name, onAction, realAddress]);
+  }, [chain?.genesisHash, name, realAddress]);
 
   return (
     <>
@@ -98,9 +104,9 @@ export default function AddAddressOnly(): React.ReactElement {
       <AddressInput
         addWithQr
         address={realAddress}
-        chain={chain as any}
+        chain={chain}
         label={t<string>('Account ID')}
-        setAddress={setRealAddress as any}
+        setAddress={setRealAddress}
         style={{ m: '15px auto 0', width: '92%' }}
       />
       <Name

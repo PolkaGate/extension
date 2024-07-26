@@ -8,13 +8,13 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 import { getStorage, watchStorage } from '../components/Loading';
 import { useTranslation } from '.';
 
-// const DEFAULT_PROFILE_TAGS = {
-//   ALL: 'All',
-//   LEDGER: 'Ledger',
-//   LOCAL: 'Local',
-//   QR_ATTACHED: 'QR-attached',
-//   WATCH_ONLY: 'Watch-only'
-// };
+export const PROFILE_TAGS = {
+  ALL: 'All',
+  LEDGER: 'Ledger',
+  LOCAL: 'Local',
+  QR_ATTACHED: 'QR-attached',
+  WATCH_ONLY: 'Watch-only'
+};
 
 export default function useProfileAccounts (initialAccountList: AccountsOrder[] | undefined, profile?: string) {
   const { t } = useTranslation();
@@ -45,24 +45,28 @@ export default function useProfileAccounts (initialAccountList: AccountsOrder[] 
     let accounts;
 
     switch (_profile) {
-      case t('All'):
+      case t(PROFILE_TAGS.ALL):
         return setProfileAccounts(initialAccountList);
-      case t('Local'):
+
+      case t(PROFILE_TAGS.LOCAL):
         accounts = initialAccountList.filter(({ account: { isExternal } }) => !isExternal);
 
         return setProfileAccounts(accounts);
-      case t('Ledger'):
+
+      case t(PROFILE_TAGS.LEDGER):
         accounts = initialAccountList.filter(({ account: { isHardware } }) => isHardware);
 
         return setProfileAccounts(accounts);
-      case t('Watch-only'):
-        accounts = initialAccountList.filter(({ account: { isExternal, isHardware, isQR } }) => isExternal && !isQR && !isHardware);
-
-        return setProfileAccounts(accounts);
-      case t('QR-attached'):
+      case t(PROFILE_TAGS.QR_ATTACHED):
         accounts = initialAccountList.filter(({ account: { isQR } }) => isQR);
 
         return setProfileAccounts(accounts);
+
+      case t(PROFILE_TAGS.WATCH_ONLY):
+        accounts = initialAccountList.filter(({ account: { isExternal, isHardware, isQR } }) => isExternal && !isQR && !isHardware);
+
+        return setProfileAccounts(accounts);
+
       default:
         accounts = initialAccountList.filter(({ account }) => account?.profile && account.profile.split(',').includes(_profile));
 

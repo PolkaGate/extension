@@ -11,8 +11,11 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import Chance from 'chance';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
+import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import Bread from '@polkadot/extension-polkagate/src/fullscreen/partials/Bread';
 import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 
 import { AccountContext, Label, ProfileInput, SelectChain, TwoButtons, VaadinIcon } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
@@ -23,7 +26,7 @@ import getLogo from '../../../util/getLogo';
 import AddressDropdownFullScreen from '../../newAccount/deriveFromAccountsFullscreen/AddressDropdownFullScreen';
 import ProxiedTable from '../importProxied/ProxiedTable';
 
-function ImportProxiedFS(): React.ReactElement {
+function ImportProxiedFS (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -92,9 +95,11 @@ function ImportProxiedFS(): React.ReactElement {
           await updateMeta(address, metaData);
         }
       }
+
       return true;
     } catch (error) {
       console.error('Failed to create proxied accounts:', error);
+
       return false;
     }
   }, [chain?.genesisHash, chance, selectedProxied, profileName]);
@@ -103,9 +108,10 @@ function ImportProxiedFS(): React.ReactElement {
     setIsBusy(true);
     createProxids().then(() => {
       setIsBusy(false);
-      window.close();
-    })
-  }, [createProxids]);
+      setStorage('profile', profileName || PROFILE_TAGS.WATCH_ONLY).catch(console.error);
+      openOrFocusTab('/', true);
+    }).catch(console.error);
+  }, [createProxids, profileName]);
 
   const backHome = useCallback(() => {
     window.close();
@@ -123,7 +129,7 @@ function ImportProxiedFS(): React.ReactElement {
           <Title
             height='85px'
             logo={
-              <VaadinIcon icon='vaadin:sitemap' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px', transform: 'rotate(180deg)' }} />
+              <VaadinIcon icon='vaadin:sitemap' style={{ color: `${theme.palette.text.primary}`, height: '40px', transform: 'rotate(180deg)', width: '40px' }} />
             }
             text={t('Import proxied accounts')}
           />
@@ -157,7 +163,7 @@ function ImportProxiedFS(): React.ReactElement {
             {selectedAddress && chain &&
               <ProxiedTable
                 api={api}
-                chain={chain as any}
+                chain={chain}
                 label={t('Proxied account(s)')}
                 maxHeight='200px'
                 minHeight={tableMinHeight ? `${tableMinHeight}px` : undefined}
@@ -169,9 +175,9 @@ function ImportProxiedFS(): React.ReactElement {
             }
             {proxiedAccounts && proxiedAccounts?.proxy === formatted && !!proxiedAccounts.proxied.length &&
               <ProfileInput
-                profileName={profileName}
                 helperText={t('You can add your imported proxied accounts to a profile if you wish. If not, they\'ll be visible in \'All\' and \'Watch-only\' profiles.')}
                 label={t('Choose a profile name:')}
+                profileName={profileName}
                 setProfileName={setProfileName}
                 style={{ my: '30px', width: '54%' }}
               />

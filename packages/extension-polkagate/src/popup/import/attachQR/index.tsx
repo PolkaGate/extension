@@ -8,6 +8,9 @@ import type { HexString } from '@polkadot/util/types';
 import { Button, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
+import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { QrScanAddress } from '@polkadot/react-qr';
 
 import { AccountNamePasswordCreation, ActionContext, Address, PButton, Warning } from '../../../components';
@@ -23,24 +26,26 @@ export interface ScanType {
   name?: string | undefined;
 }
 
-export default function AttachQR(): React.ReactElement {
+export default function AttachQR (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-
   const onAction = useContext(ActionContext);
+
   const [account, setAccount] = useState<ScanType | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
   const [invalidQR, setInvalidQR] = useState<boolean>();
-
   const [stepOne, setStep] = useState(true);
 
   const setQrLabelAndGoToHome = useCallback(() => {
     const metaData = JSON.stringify({ isQR: true });
 
-    updateMeta(String(address), metaData).then(() => onAction('/')).catch(console.error);
-  }, [address, onAction]);
+    updateMeta(String(address), metaData).then(() => {
+      setStorage('profile', PROFILE_TAGS.QR_ATTACHED).catch(console.error);
+      openOrFocusTab('/', true);
+    }).catch(console.error);
+  }, [address]);
 
   const onCreate = useCallback(() => {
     if (account && name) {
@@ -60,7 +65,6 @@ export default function AttachQR(): React.ReactElement {
     (qrAccount: ScanType) => {
       setAccount(qrAccount);
       setName(qrAccount?.name || null);
-      // setGenesisHash(qrAccount.genesisHash);
       setStep(false);
 
       if (qrAccount.isAddress) {
@@ -128,7 +132,7 @@ export default function AttachQR(): React.ReactElement {
       <HeaderBrand
         onBackClick={_onBackClick}
         showBackArrow
-        text={t<string>('Attach QR-signer')}
+        text={t('Attach QR-signer')}
         withSteps={{
           current: `${stepOne ? 1 : 2}`,
           total: 2

@@ -6,6 +6,7 @@
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
+
 import { Infotip, Warning } from '../../../components';
 import { pgBoxShadow } from '../../../util/utils';
 
@@ -21,10 +22,10 @@ interface OptionProps {
   noToolTip?: boolean;
   showQuestionMark?: boolean;
   logo?: unknown;
-  rotations?: any;
+  rotations?: SxProps<Theme>;
 }
 
-export default function LedgerOption({ subTitle, helperText, logo, noToolTip, onClick, rotations, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
+export default function LedgerOption ({ helperText, logo, noToolTip, onClick, rotations, showQuestionMark, style, subTitle, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
   const theme = useTheme();
 
   return (

@@ -3,21 +3,27 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { Chain } from '@polkadot/extension-chains/types';
-import { DISABLED_NETWORKS, FULLSCREEN_WIDTH, STATEMINT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
-import { ActionContext, SelectChain, TwoButtons, VaadinIcon, Warning } from '../../../components';
-import { useGenericLedger, useTranslation } from '../../../hooks';
-import { createAccountHardware, getMetadata, updateMeta } from '../../../messaging';
-import { POLKADOT_GENESIS } from '@polkagate/apps-config';
-import { MODE } from '.';
-import ledgerChains from '../../../util/legerChains';
-import getLogo from '../../../util/getLogo';
-import type { DropdownOption } from '../../../util/types';
-import { type NetworkOption } from './partials';
-import ManualLedgerImport from './ManualLedgerImport';
 import type { HexString } from '@polkadot/util/types';
+import type { DropdownOption } from '../../../util/types';
+
+import { Grid, Typography, useTheme } from '@mui/material';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import { DISABLED_NETWORKS, FULLSCREEN_WIDTH, STATEMINT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
+
+import { SelectChain, TwoButtons, VaadinIcon, Warning } from '../../../components';
+import { setStorage } from '../../../components/Loading';
+import { openOrFocusTab } from '../../../fullscreen/accountDetails/components/CommonTasks';
+import { useGenericLedger, useTranslation } from '../../../hooks';
+import { PROFILE_TAGS } from '../../../hooks/useProfileAccounts';
+import { createAccountHardware, getMetadata, updateMeta } from '../../../messaging';
+import getLogo from '../../../util/getLogo';
+import ledgerChains from '../../../util/legerChains';
+import ManualLedgerImport from './ManualLedgerImport';
+import { type NetworkOption } from './partials';
+import { MODE } from '.';
 
 interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
@@ -27,7 +33,6 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const ref = useRef(null);
-  const onAction = useContext(ActionContext);
 
   const [isBusy, setIsBusy] = useState(false);
   const [accountIndex, setAccountIndex] = useState<number>(0);
@@ -36,12 +41,11 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
   const [genesis, setGenesis] = useState<string | null>(null);
   const [newChain, setNewChain] = useState<Chain | null>(null);
 
-  const chainSlip44 = useMemo(() => {
-    if (newChain?.genesisHash) {
-      return ledgerChains.find(({ genesisHash }) => genesisHash.includes(newChain.genesisHash as any))?.slip44 ?? null
-    }
-    return null;
-  }, [newChain, ledgerChains]);
+  const chainSlip44 = useMemo(() =>
+    newChain?.genesisHash
+      ? ledgerChains.find(({ genesisHash }) => genesisHash.includes(newChain.genesisHash as HexString))?.slip44 ?? null
+      : null
+  , [newChain]);
 
   const { address, error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, chainSlip44);
 
@@ -74,7 +78,10 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
         const metaData = JSON.stringify({ isMigration: true });
 
         updateMeta(String(address), metaData)
-          .then(() => onAction('/'))
+          .then(() => {
+            setStorage('profile', PROFILE_TAGS.LEDGER).catch(console.error);
+            openOrFocusTab('/', true);
+          })
           .catch(console.error);
       })
       .catch((error: Error) => {
@@ -83,11 +90,11 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
         setIsBusy(false);
         setError(error.message);
       });
-  }, [accountIndex, address, onAction]);
+  }, [accountIndex, address, addressOffset, name, newChain?.genesisHash]);
 
   const onBack = useCallback(() => {
     setMode(MODE.INDEX);
-  }, []);
+  }, [setMode]);
 
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>

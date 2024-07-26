@@ -1,20 +1,23 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { HexString } from '@polkadot/util/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import { Collapse, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { Chain } from '@polkadot/extension-chains/types';
-
+import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { objectSpread } from '@polkadot/util';
 
-import { ActionContext, Address, InputWithLabel, SelectChain, TextAreaWithLabel, TwoButtons, VaadinIcon, Warning } from '../../../components';
+import { Address, InputWithLabel, SelectChain, TextAreaWithLabel, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useGenesisHashOptions, useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri, getMetadata, validateSeed } from '../../../messaging';
@@ -29,12 +32,11 @@ export interface AccountInfo {
   suri: string;
 }
 
-export default function ImportSeed(): React.ReactElement {
+export default function ImportSeed (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
   const genesisOptions = useGenesisHashOptions();
-  const onAction = useContext(ActionContext);
 
   const [isBusy, setIsBusy] = useState(false);
   const [seed, setSeed] = useState<string | null>(null);
@@ -47,7 +49,7 @@ export default function ImportSeed(): React.ReactElement {
   const [path, setPath] = useState<string | null>(null);
   const [showMore, setShowMore] = useState<boolean>(false);
   const [name, setName] = useState<string | null | undefined>();
-  const [password, setPassword] = useState<string | null | string>();
+  const [password, setPassword] = useState<string | null >();
 
   const chain = useMetadata(account?.genesis, true);
 
@@ -106,14 +108,17 @@ export default function ImportSeed(): React.ReactElement {
       setIsBusy(true);
       await resetOnForgotPassword();
 
-      createAccountSuri(name, password, account.suri, type, account.genesis)
-        .then(() => onAction('/'))
+      createAccountSuri(name, password, account.suri, type, account.genesis as HexString | undefined)
+        .then(() => {
+          setStorage('profile', PROFILE_TAGS.LOCAL).catch(console.error);
+          openOrFocusTab('/', true);
+        })
         .catch((error): void => {
           setIsBusy(false);
           console.error(error);
         });
     }
-  }, [account, name, onAction, password, type]);
+  }, [account, name, password, type]);
 
   const pasteSeed = useCallback(() => {
     navigator.clipboard.readText().then((clipText) => {
@@ -212,7 +217,6 @@ export default function ImportSeed(): React.ReactElement {
             firstPassStyle={{ marginBlock: '10px' }}
             label={t<string>('Password for this account (more than 5 characters)')}
             onChange={onPassChange}
-            // eslint-disable-next-line react/jsx-no-bind
             onEnter={password && name && !error && !!seed ? onCreate : () => null}
           />
           <Grid alignItems='flex-end' container item justifyContent='flex-start' onClick={toggleMore}>
