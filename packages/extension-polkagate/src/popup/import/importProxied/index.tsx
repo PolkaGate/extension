@@ -111,7 +111,7 @@ function ImportProxied (): React.ReactElement {
           onSelect={onParentChange}
           selectedAddress={selectedAddress}
           selectedGenesis={accountGenesishash as string}
-          selectedName={accountName!}
+          selectedName={accountName as string}
           withoutChainLogo
         />
       </Label>
