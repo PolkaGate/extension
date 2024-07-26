@@ -1338,5 +1338,10 @@
   "Dismiss": "关闭",
   "Version {{version}}": "版本 {{version}}",
   "Dismiss All": "全部关闭",
-  "Address offset {{index}}": "地址偏移量 {{index}}"
+  "Address offset {{index}}": "地址偏移量 {{index}}",
+  "What's New 🚀": "新功能 🚀",
+  "Import the account into the extension": "将帐户导入扩展程序",
+  "Select accounts to import into the extension": "选择要导入扩展程序的帐户",
+  "Remove from profile": "从个人资料中删除",
+  "My Portfolio": "我的投资组合"
 }

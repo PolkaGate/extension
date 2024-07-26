@@ -1329,5 +1329,10 @@
   "Dismiss": "Отклонить",
   "Version {{version}}": "Версия {{version}}",
   "Dismiss All": "Отклонить все",
-  "Address offset {{index}}": "Смещение адреса {{index}}"
+  "Address offset {{index}}": "Смещение адреса {{index}}",
+  "What's New 🚀": "Что нового 🚀",
+  "Import the account into the extension": "Импортировать аккаунт в расширение",
+  "Select accounts to import into the extension": "Выберите аккаунты для импорта в расширение",
+  "Remove from profile": "Удалить из профиля",
+  "My Portfolio": "Мой Портфель"
 }

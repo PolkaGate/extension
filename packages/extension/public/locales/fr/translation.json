@@ -1334,5 +1334,10 @@
 "Dismiss": "Rejeter",
 "Version {{version}}": "Version {{version}}",
 "Dismiss All": "Tout rejeter",
- "Address offset {{index}}": "Décalage d'adresse {{index}}"
+"Address offset {{index}}": "Décalage d'adresse {{index}}",
+"What's New 🚀": "Quoi de neuf 🚀",
+"Import the account into the extension": "Importer le compte dans l'extension",
+"Select accounts to import into the extension": "Sélectionnez les comptes à importer dans l'extension",
+"Remove from profile": "Retirer du profil",
+"My Portfolio": "Mon Portefeuille"
 }
