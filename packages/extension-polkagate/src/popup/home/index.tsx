@@ -1,6 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
@@ -31,10 +32,8 @@ export default function Home (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const manifest = useManifest();
-
   const accountsOrder = useAccountsOrder(true);
   const profileAccounts = useProfileAccounts(accountsOrder);
-
   const { accounts, hierarchy } = useContext(AccountContext);
 
   useMerkleScience(undefined, undefined, true); // to download the data file

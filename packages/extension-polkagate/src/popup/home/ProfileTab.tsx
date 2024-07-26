@@ -8,23 +8,24 @@ import type { AccountsOrder } from '@polkadot/extension-polkagate/src/util/types
 import { Collapse, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { getProfileColor } from '@polkadot/extension-polkagate/src/util/utils';
-
 import { VaadinIcon } from '../../components/index';
 import { setStorage } from '../../components/Loading';
 import { useProfileAccounts, useTranslation } from '../../hooks';
 import { showAccount } from '../../messaging';
+import { getProfileColor } from '../../util/utils';
 
 interface Props {
   orderedAccounts: AccountsOrder[] | undefined;
   text: string;
   index: number;
   isSelected: boolean;
+  isContainerHovered: boolean;
 }
 
 const COLLAPSED_SIZE = '20px';
+const HIDDEN_PERCENT = '50%';
 
-export default function ProfileTab ({ index, isSelected, orderedAccounts, text }: Props): React.ReactElement {
+export default function ProfileTab ({ index, isContainerHovered, isSelected, orderedAccounts, text }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -35,8 +36,8 @@ export default function ProfileTab ({ index, isSelected, orderedAccounts, text }
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
-  const shadow = useMemo(() => isDarkMode ? '0px 1px 2px 1px rgba(255, 255, 255, 0.10)' : '0px 1px 2px 1px rgba(000, 000, 000, 0.13)', [isDarkMode]);
-  const shadowOnHover = useMemo(() => isDarkMode ? '0px 1px 2px 1px rgba(255, 255, 255, 0.20)' : '0px 1px 2px 1px rgba(000, 000, 000, 0.20)', [isDarkMode]);
+  const shadow = useMemo(() => isDarkMode ? '0px 0px 2px 1px rgba(255, 255, 255, 0.10)' : '0px 0px 2px 1px rgba(000, 000, 000, 0.13)', [isDarkMode]);
+  const shadowOnHover = useMemo(() => isDarkMode ? '0px 0px 3px 1px rgba(255, 255, 255, 0.20)' : '0px 0px 3px 1px rgba(000, 000, 000, 0.20)', [isDarkMode]);
 
   const visibleContent = useMemo(() => isHovered || isSelected, [isHovered, isSelected]);
 
@@ -74,31 +75,32 @@ export default function ProfileTab ({ index, isSelected, orderedAccounts, text }
   const onMouseLeave = useCallback(() => setIsHovered(false), []);
 
   return (
-    <Collapse
-      collapsedSize={COLLAPSED_SIZE}
-      in={visibleContent}
-      onClick={onClick}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      orientation='horizontal'
-      sx={{
-        '&:hover': { boxShadow: shadowOnHover },
-        bgcolor: getProfileColor(index, theme) || 'background.paper',
-        borderRadius: '10px',
-        boxShadow: shadow,
-        cursor: 'pointer',
-        height: COLLAPSED_SIZE,
-        mb: '5px',
-        px: '8px'
-      }}
-    >
-      <Grid alignItems='center' container item justifyContent='center' sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', minWidth: '40px', width: 'fit-content' }}>
-        <Typography color='text.primary' fontSize='14px' fontWeight={isSelected ? 500 : 400} textAlign='center' sx={{ maxWidth: '100px', overflowX: 'hidden', textOverflow: 'ellipsis', transition: 'visibility 0.1s ease', visibility: visibleContent ? 'visible' : 'hidden', whiteSpace: 'nowrap', width: 'fit-content' }}>
-          {t(text)}
-        </Typography>
-        {areAllHidden && isSelected &&
-          <VaadinIcon icon='vaadin:eye-slash' style={{ display: 'block', height: '13px', marginLeft: '5px', width: '15px' }} />}
-      </Grid>
-    </Collapse>
+    <Grid container item sx={{ transform: !isContainerHovered && !isSelected ? `translateY(${HIDDEN_PERCENT})` : undefined, transition: 'transform 0.2s', width: 'fit-content' }}>
+      <Collapse
+        collapsedSize={COLLAPSED_SIZE}
+        in={visibleContent}
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        orientation='horizontal'
+        sx={{
+          '&:hover': { boxShadow: shadowOnHover },
+          bgcolor: getProfileColor(index, theme) || 'background.paper',
+          borderRadius: '10px',
+          boxShadow: shadow,
+          cursor: 'pointer',
+          height: COLLAPSED_SIZE,
+          my: '2px'
+        }}
+      >
+        <Grid alignItems='center' container item justifyContent='center' sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', minWidth: '40px', px: '8px', width: 'fit-content' }}>
+          <Typography color='text.primary' fontSize='14px' fontWeight={isSelected ? 500 : 400} sx={{ maxWidth: '100px', overflowX: 'hidden', textOverflow: 'ellipsis', transition: 'visibility 0.1s ease', visibility: visibleContent ? 'visible' : 'hidden', whiteSpace: 'nowrap', width: 'fit-content' }} textAlign='center'>
+            {t(text)}
+          </Typography>
+          {areAllHidden && isSelected &&
+            <VaadinIcon icon='vaadin:eye-slash' style={{ display: 'block', height: '13px', marginLeft: '5px', width: '15px' }} />}
+        </Grid>
+      </Collapse>
+    </Grid>
   );
 }
