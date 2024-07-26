@@ -28,7 +28,7 @@ import ProfileTabs from './ProfileTabs';
 import WhatsNew from './WhatsNew';
 import YouHave from './YouHave';
 
-export default function Home (): React.ReactElement {
+export default function Home(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const manifest = useManifest();
@@ -117,9 +117,9 @@ export default function Home (): React.ReactElement {
               </Warning>
             </Grid>
           }
-          <ProfileTabs orderedAccounts={accountsOrder} />
           <YouHave hideNumbers={hideNumbers} setHideNumbers={setHideNumbers} />
-          <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`, mt: '10px', overflowY: 'scroll', p: 0, width: '92%' }]}>
+          <ProfileTabs orderedAccounts={accountsOrder} />
+          <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`, overflowY: 'scroll', p: 0, width: '92%' }]}>
             {initialAccountList.map((json, index): React.ReactNode => (
               <AccountsTree
                 {...json}
