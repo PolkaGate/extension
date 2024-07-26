@@ -8,8 +8,9 @@ import type { AccountJson } from '@polkadot/extension-base/background/types';
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { useTranslation, useProfiles, useIsExtensionPopup } from '../../hooks';
 import { getProfileColor } from '@polkadot/extension-polkagate/src/util/utils';
+
+import { useIsExtensionPopup, useProfiles, useSelectedProfile, useTranslation } from '../../hooks';
 
 interface Props {
   account: AccountJson | undefined;
@@ -17,13 +18,14 @@ interface Props {
   ml?: string;
 }
 
-export function AccountLabel({ account, ml, parentName }: Props): React.ReactElement<Props> {
+export function AccountLabel ({ account, ml, parentName }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const isExtensionMode = useIsExtensionPopup();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const { accountProfiles, userDefinedProfiles, defaultProfiles } = useProfiles(account);
+  const selectedProfile = useSelectedProfile();
+  const { accountProfiles, defaultProfiles, userDefinedProfiles } = useProfiles(account);
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const shadow = useMemo(() => isDarkMode ? '0px 0px 2px 1px rgba(255, 255, 255, 0.15)' : '0px 0px 1px 1px rgba(000, 000, 000, 0.13)', [isDarkMode]);
@@ -38,17 +40,18 @@ export function AccountLabel({ account, ml, parentName }: Props): React.ReactEle
     const index = profiles.findIndex((p) => p === profile);
 
     return getProfileColor(index, theme);
-  }, [account, theme]);
-
+  }, [defaultProfiles, theme, userDefinedProfiles]);
 
   const maybeAccountDefaultProfile = useMemo(() => {
     if (account?.isHardware) {
       if (account?.isGeneric) {
         return t('Ledger-Generic');
       }
+
       if (account?.isMigration) {
         return t('Ledger-Migration');
       }
+
       return t('Ledger');
     }
 
@@ -65,18 +68,26 @@ export function AccountLabel({ account, ml, parentName }: Props): React.ReactEle
     }
 
     return undefined;
-  }, [account]);
+  }, [account, parentName, t]);
 
   const profiles = useMemo(() => {
+    const profileSet = new Set(accountProfiles);
+
     if (maybeAccountDefaultProfile) {
-      accountProfiles.unshift(maybeAccountDefaultProfile)
+      profileSet.add(maybeAccountDefaultProfile);
     }
-    return accountProfiles;
-  }, [account, maybeAccountDefaultProfile]);
+
+    if (selectedProfile) {
+      profileSet.delete(selectedProfile);
+    }
+
+    return Array.from(profileSet);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [maybeAccountDefaultProfile, selectedProfile]);
 
   const handleWheel = (event: WheelEvent) => {
     if (scrollContainerRef.current) {
-      const { scrollWidth, clientWidth } = scrollContainerRef.current;
+      const { clientWidth, scrollWidth } = scrollContainerRef.current;
 
       const isScrollable = scrollWidth > clientWidth;
 
@@ -90,27 +101,31 @@ export function AccountLabel({ account, ml, parentName }: Props): React.ReactEle
 
     if (ref) {
       ref.addEventListener('wheel', handleWheel, { passive: false });
+
       return () => {
         ref.removeEventListener('wheel', handleWheel);
       };
     }
+
     return undefined;
-  }, [profiles.length, scrollContainerRef.current]);
+  }, [profiles.length]);
 
   return (
     <Grid container item ref={scrollContainerRef} sx={{ display: 'flex', flexWrap: 'nowrap', fontSize: '10px', left: ml || '15px', position: 'absolute', px: 1, top: 0, height: '17px', overflowX: 'scroll', whiteSpace: 'nowrap', width: containerMaxWidth, zIndex: 1 }}>
       {profiles?.map((profile, index) =>
-        <Grid key={index}
+        <Grid
+          key={index}
           sx={{
-            boxShadow: shadow,
-            borderRadius: '0 0 5px 5px',
             bgcolor: getColorOfUserDefinedProfile(profile),
+            borderRadius: '0 0 5px 5px',
+            boxShadow: shadow,
             fontSize: '11px',
             ml: '5px',
             px: 1,
             textWrap: 'nowrap',
             width: 'fit-content'
-          }}>
+          }}
+        >
           {profile}
         </Grid>
       )}
