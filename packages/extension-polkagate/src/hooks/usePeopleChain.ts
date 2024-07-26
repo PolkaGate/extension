@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import type { Chain } from '@polkadot/extension-chains/types';
 
 
-import { KUSAMA_PEOPLE_GENESIS_HASH, PASEO_GENESIS_HASH, POLKADOT_GENESIS_HASH, RELAY_CHAINS_NAMES, WESTEND_PEOPLE_GENESIS_HASH } from '../util/constants';
+import { KUSAMA_PEOPLE_GENESIS_HASH, PASEO_GENESIS_HASH, POLKADOT_PEOPLE_GENESIS_HASH, RELAY_CHAINS_NAMES, WESTEND_PEOPLE_GENESIS_HASH } from '../util/constants';
 import getChain from '../util/getChain';
 import { sanitizeChainName } from '../util/utils';
 import { useInfo, useMetadata } from '.';
@@ -32,7 +32,7 @@ const getPeopleChainGenesisHash = (chainName: string | undefined) => {
     case 'Kusama':
       return KUSAMA_PEOPLE_GENESIS_HASH;
     case 'Polkadot':
-      return POLKADOT_GENESIS_HASH; // should be changed to POLKADOT_PEOPLE_GENESIS_HASH in the future
+      return POLKADOT_PEOPLE_GENESIS_HASH; // should be changed to POLKADOT_PEOPLE_GENESIS_HASH in the future
     case 'Paseo':
       return PASEO_GENESIS_HASH;
     default:

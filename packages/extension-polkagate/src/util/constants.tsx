@@ -47,9 +47,9 @@ export const STATEMINE_GENESIS_HASH = '0x48239ef607d7928874027a43a67689209727dfb
 export const STATEMINT_GENESIS_HASH = '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f';
 export const PASEO_ASSET_HUB_GENESIS_HASH = '0x862ce2fa5abfdc3d29ead85a9472071efc69433b0128db1d6f009967fae87952';
 
-export const WESTEND_PEOPLE_GENESIS_HASH = '0x1eb6fb0ba5187434de017a70cb84d4f47142df1d571d0ef9e7e1407f2b80b93c';
+export const POLKADOT_PEOPLE_GENESIS_HASH = '0x67fa177a097bfa18f77ea95ab56e9bcdfeb0e5b8a40e46298bb93e16b6fc5008';
 export const KUSAMA_PEOPLE_GENESIS_HASH = '0xc1af4cb4eb3918e5db15086c0cc5ec17fb334f728b7c65dd44bfe1e174ff8b3f';
-export const POLKADOT_PEOPLE_GENESIS_HASH = '';
+export const WESTEND_PEOPLE_GENESIS_HASH = '0x1eb6fb0ba5187434de017a70cb84d4f47142df1d571d0ef9e7e1407f2b80b93c';
 
 
 /** relay chains info */
@@ -114,9 +114,10 @@ export const STAKING_CHAINS = [
   PASEO_GENESIS_HASH
 ];
 
-export const PEOPLE_CHAINS = ['Kusama', 'Westend', 'KusamaPeople', 'WestendPeople'];
+export const PEOPLE_CHAINS = ['Polkadot', 'Kusama', 'Westend', 'PolkadotPeople', 'KusamaPeople', 'WestendPeople'];
 
 export const PEOPLE_CHAINS_GENESIS_HASHES = [
+  POLKADOT_PEOPLE_GENESIS_HASH,
   WESTEND_PEOPLE_GENESIS_HASH,
   KUSAMA_PEOPLE_GENESIS_HASH
 ];
