@@ -10,11 +10,12 @@ export interface News {
 
 export const news: News[] = [
   {
-    version: '0.6.7',
+    version: '0.6.8',
     notes: [
       'Support for Polkadot People Chain: Create and manage accounts\' on-chain identities on the Polkadot People Chain with 10 times fewer reserved tokens.',
       'Selective Account Import: Choose specific accounts to import from a JSON file.',
-      'View Profiles in Extension Mode: Switch and work with profiles in extension mode, as well as in full-screen mode.'
+      'View Profiles in Extension Mode: Switch and work with profiles in extension mode, as well as in full-screen mode.',
+      'Update Wallpapers: Olympic-themed wallpapers are now available for selection.'
     ]
   },
   {
