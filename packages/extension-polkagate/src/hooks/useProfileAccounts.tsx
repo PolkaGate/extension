@@ -45,24 +45,24 @@ export default function useProfileAccounts (initialAccountList: AccountsOrder[] 
     let accounts;
 
     switch (_profile) {
-      case t('{{all}}', { replace: { all: PROFILE_TAGS.ALL } }):
+      case t(PROFILE_TAGS.ALL):
         return setProfileAccounts(initialAccountList);
 
-      case t('{{local}}', { replace: { local: PROFILE_TAGS.LOCAL } }):
+      case t(PROFILE_TAGS.LOCAL):
         accounts = initialAccountList.filter(({ account: { isExternal } }) => !isExternal);
 
         return setProfileAccounts(accounts);
 
-      case t('{{ledger}}', { replace: { ledger: PROFILE_TAGS.LEDGER } }):
+      case t(PROFILE_TAGS.LEDGER):
         accounts = initialAccountList.filter(({ account: { isHardware } }) => isHardware);
 
         return setProfileAccounts(accounts);
-      case t('{{qrAttached}}', { replace: { qrAttached: PROFILE_TAGS.QR_ATTACHED } }):
+      case t(PROFILE_TAGS.QR_ATTACHED):
         accounts = initialAccountList.filter(({ account: { isQR } }) => isQR);
 
         return setProfileAccounts(accounts);
 
-      case t('{{watchOnly}}', { replace: { watchOnly: PROFILE_TAGS.WATCH_ONLY } }):
+      case t(PROFILE_TAGS.WATCH_ONLY):
         accounts = initialAccountList.filter(({ account: { isExternal, isHardware, isQR } }) => isExternal && !isQR && !isHardware);
 
         return setProfileAccounts(accounts);
