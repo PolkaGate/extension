@@ -1,13 +1,15 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, Label } from '../../../components';
+import { AccountContext, AccountNamePasswordCreation, Address, Label } from '../../../components';
+import { setStorage } from '../../../components/Loading';
+import { openOrFocusTab } from '../../../fullscreen/accountDetails/components/CommonTasks';
 import { useTranslation } from '../../../hooks';
+import { PROFILE_TAGS } from '../../../hooks/useProfileAccounts';
 import { deriveAccount } from '../../../messaging';
 import HeaderBrand from '../../../partials/HeaderBrand';
 import SelectParent from './SelectParent';
@@ -29,11 +31,11 @@ interface ConfirmState {
   parentPassword: string;
 }
 
-function Derive({ isLocked }: Props): React.ReactElement<Props> {
+function Derive ({ isLocked }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
   const { address: parentAddress } = useParams<AddressState>();
+
   const [isBusy, setIsBusy] = useState(false);
   const [account, setAccount] = useState<null | PathState>(null);
   const [name, setName] = useState<string | null>(null);
@@ -57,12 +59,15 @@ function Derive({ isLocked }: Props): React.ReactElement<Props> {
 
     setIsBusy(true);
     deriveAccount(parentAddress, account.suri, parentPassword, name, password, parentGenesis)
-      .then(() => onAction('/'))
+      .then(() => {
+        setStorage('profile', PROFILE_TAGS.LOCAL).catch(console.error);
+        openOrFocusTab('/', true);
+      })
       .catch((error): void => {
         setIsBusy(false);
         console.error(error);
       });
-  }, [account, onAction, parentAddress, parentGenesis, parentPassword]);
+  }, [account, parentAddress, parentGenesis, parentPassword]);
 
   const _onDerivationConfirmed = useCallback(({ account, parentPassword }: ConfirmState) => {
     setAccount(account);
@@ -72,12 +77,12 @@ function Derive({ isLocked }: Props): React.ReactElement<Props> {
 
   const _onBackClick = useCallback(() => {
     if (stepOne) {
-      onAction('/');
+      openOrFocusTab('/', true);
     } else {
       setAccount(null);
       setStep(true);
     }
-  }, [onAction, stepOne]);
+  }, [stepOne]);
 
   return (
     <>

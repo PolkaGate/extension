@@ -1,14 +1,22 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { ResponseJsonGetAccountInfo } from '@polkadot/extension-base/background/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
+
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+
+import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
-import { u8aToString } from '@polkadot/util';
+import { stringToU8a, u8aToString } from '@polkadot/util';
+import { jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
+
 import { Address, InputFileWithLabel, Password, TwoButtons, VaadinIcon, Warning, WrongPasswordAlert } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
@@ -17,12 +25,10 @@ import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { isKeyringPairs$Json } from '../../../util/typeGuards';
 import { pgBoxShadow } from '../../../util/utils';
 import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/resetAccounts';
-import { jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
-import { stringToU8a } from '@polkadot/util';
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
-export default function RestoreJson(): React.ReactElement {
+export default function RestoreJson (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -43,7 +49,7 @@ export default function RestoreJson(): React.ReactElement {
 
   const areAllSelected = useMemo(() =>
     selectedAccountsInfo.length === accountsInfo.length
-    , [selectedAccountsInfo.length, accountsInfo.length]);
+  , [selectedAccountsInfo.length, accountsInfo.length]);
 
   const handleCheck = useCallback((_event: React.ChangeEvent<HTMLInputElement>, address: string) => {
     const selectedAccount = accountsInfo.find((account) => account.address === address);
@@ -123,7 +129,7 @@ export default function RestoreJson(): React.ReactElement {
 
     try {
       if (isKeyringPairs$Json(file)) {
-        let encryptFile = undefined;
+        let encryptFile;
         const selected = selectedAccountsInfo.map(({ address }) => address);
 
         // The JSON file will be decrypted first. After filtering for the selected accounts,
@@ -133,25 +139,28 @@ export default function RestoreJson(): React.ReactElement {
           const unlockedAccounts = JSON.parse(u8aToString(decryptedFile)) as KeyringPair$Json[];
           const filteredAccounts = unlockedAccounts.filter(({ address }) => selected.includes(address));
           const fileAsU8a = stringToU8a(JSON.stringify(filteredAccounts));
+
           encryptFile = jsonEncrypt(fileAsU8a, file.encoding.content, password) as KeyringPairs$Json;
         }
 
         batchRestore(encryptFile ?? file, password)
           .then(() => {
+            setStorage('profile', PROFILE_TAGS.ALL).catch(console.error);
             openOrFocusTab('/', true);
-          });
+          }).catch(console.error);
       } else {
         jsonRestore(file, password)
           .then(() => {
+            setStorage('profile', PROFILE_TAGS.ALL).catch(console.error);
             openOrFocusTab('/', true);
-          });
+          }).catch(console.error);
       }
     } catch (error) {
       console.error(error);
       setIsBusy(false);
       setIsPasswordError(true);
     }
-  }, [file, password, requirePassword, selectedAccountsInfo, areAllSelected]);
+  }, [file, requirePassword, password, selectedAccountsInfo, accountsInfo.length]);
 
   const onSelectDeselectAll = useCallback(() => {
     areAllSelected
@@ -178,7 +187,10 @@ export default function RestoreJson(): React.ReactElement {
         <Grid container item sx={{ display: 'block', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
-              <VaadinIcon icon='vaadin:file-text' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
+              <VaadinIcon
+                icon='vaadin:file-text'
+                style={{ color: `${theme.palette.text.primary}`, height: '40px', width: '40px' }}
+              />
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
@@ -196,23 +208,30 @@ export default function RestoreJson(): React.ReactElement {
           }
           {!stepOne && accountsInfo.length &&
             <>
-              <Typography fontSize='16px' fontWeight={400} width='100%' sx={{ mt: '10px' }}>
+              <Typography fontSize='16px' fontWeight={400} sx={{ mt: '10px' }} width='100%'>
                 {accountsInfo?.length === 1
                   ? t('Import the account into the extension')
                   : t('Select accounts to import into the extension')
                 }
               </Typography>
-              <Grid container direction='column' sx={{ '> .tree:first-child': { borderTopLeftRadius: '5px', borderTopRightRadius: '5px' }, '> .tree:last-child': { border: 'none', borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px' }, border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: pgBoxShadow(theme), display: 'block', maxHeight: parent.innerHeight * 2 / 5, overflowY: 'scroll' }}>
+              <Grid
+                container
+                direction='column'
+                sx={{ '> .tree:first-child': { borderTopLeftRadius: '5px', borderTopRightRadius: '5px' }, '> .tree:last-child': { border: 'none', borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px' }, border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: pgBoxShadow(theme), display: 'block', maxHeight: parent.innerHeight * 2 / 5, overflowY: 'scroll' }}
+              >
                 {accountsInfo.map(({ address, genesisHash, name, type = DEFAULT_TYPE }, index) => {
                   const isSelected = !!selectedAccountsInfo.find(({ address: _address }) => _address === address);
 
                   return (
                     <Address
                       address={address}
+                      check={isSelected}
                       className='tree'
                       genesisHash={genesisHash}
+                      handleCheck={handleCheck}
                       key={`${index}:${address}`}
                       name={name}
+                      showCheckbox={showCheckbox}
                       style={{
                         border: 'none',
                         borderBottom: '1px solid',
@@ -222,16 +241,17 @@ export default function RestoreJson(): React.ReactElement {
                         width: '100%'
                       }}
                       type={type}
-                      check={isSelected}
-                      showCheckbox={showCheckbox}
-                      handleCheck={handleCheck}
                     />
-                  )
+                  );
                 })}
               </Grid>
               {showCheckbox &&
                 <Grid item onClick={onSelectDeselectAll} width='fit-content'>
-                  <Typography fontSize='16px' fontWeight={400} sx={{ color: theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: 'pointer', textAlign: 'left', textDecorationLine: 'underline', ml: '10px', mt: '5px', userSelect: 'none', width: 'fit-content' }}>
+                  <Typography
+                    fontSize='16px'
+                    fontWeight={400}
+                    sx={{ color: theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: 'pointer', textAlign: 'left', textDecorationLine: 'underline', ml: '10px', mt: '5px', userSelect: 'none', width: 'fit-content' }}
+                  >
                     {areAllSelected ? t('Deselect All') : t('Select All')}
                   </Typography>
                 </Grid>

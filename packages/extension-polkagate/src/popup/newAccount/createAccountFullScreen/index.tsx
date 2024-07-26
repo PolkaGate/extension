@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -12,8 +11,10 @@ import { FULLSCREEN_WIDTH, POLKADOT_GENESIS_HASH } from '@polkadot/extension-pol
 import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 
 import { Checkbox2, InputWithLabel, TwoButtons, VaadinIcon } from '../../../components';
+import { setStorage } from '../../../components/Loading';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
+import { PROFILE_TAGS } from '../../../hooks/useProfileAccounts';
 import { createAccountSuri, createSeed } from '../../../messaging';
 import CopySeedButton from './components/CopySeedButton';
 import DownloadSeedButton from './components/DownloadSeedButton';
@@ -44,7 +45,7 @@ const MnemonicSeedDisplay = ({ seed, style }: { style?: SxProps<Theme>, seed: nu
   );
 };
 
-function CreateAccount(): React.ReactElement {
+function CreateAccount (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -87,7 +88,10 @@ function CreateAccount(): React.ReactElement {
       setIsBusy(true);
 
       createAccountSuri(name, password, seed, DEFAULT_TYPE, POLKADOT_GENESIS_HASH)
-        .then(() => openOrFocusTab('/', true))
+        .then(() => {
+          setStorage('profile', PROFILE_TAGS.LOCAL).catch(console.error);
+          openOrFocusTab('/', true);
+        })
         .catch((error: Error): void => {
           setIsBusy(false);
           console.error(error);

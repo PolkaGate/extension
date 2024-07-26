@@ -1346,5 +1346,10 @@
   "Import the account into the extension": "",
   "Select accounts to import into the extension": "",
   "Remove from profile": "",
-  "My Portfolio": ""
+  "My Portfolio": "",
+  "{{all}}": "",
+  "{{local}}": "",
+  "{{ledger}}": "",
+  "{{qrAttached}}": "",
+  "{{watchOnly}}": ""
 }

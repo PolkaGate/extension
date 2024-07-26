@@ -5,13 +5,15 @@
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
+
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { PButton, VaadinIcon } from '../../../components';
+import { openOrFocusTab } from '../../../fullscreen/accountDetails/components/CommonTasks';
 import { useTranslation } from '../../../hooks';
 import LedgerOption from './LedgerOption';
-import { openOrFocusTab } from '../../../fullscreen/accountDetails/components/CommonTasks';
-import { MODE } from '.';
 import { METADATA_DASHBOARD } from './partials';
+import { MODE } from '.';
 
 interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
@@ -21,20 +23,20 @@ export default function LedgerOptions({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const onBack = useCallback(() => openOrFocusTab('/', true), [openOrFocusTab]);
+  const onBack = useCallback(() => openOrFocusTab('/', true), []);
 
-  const onPolkadotLegacy = useCallback(() => setMode(MODE.LEGACY), []);
+  const onPolkadotLegacy = useCallback(() => setMode(MODE.LEGACY), [setMode]);
 
-  const onPolkadotGeneric = useCallback(() => setMode(MODE.GENERIC), []);
+  const onPolkadotGeneric = useCallback(() => setMode(MODE.GENERIC), [setMode]);
 
-  const onMigration = useCallback(() => setMode(MODE.MIGRATION), []);
+  const onMigration = useCallback(() => setMode(MODE.MIGRATION), [setMode]);
 
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
       <Grid container item sx={{ display: 'block', px: '10%' }}>
         <Grid alignContent='center' alignItems='center' container item>
           <Grid item sx={{ mr: '20px' }}>
-            <VaadinIcon icon='vaadin:wallet' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
+            <VaadinIcon icon='vaadin:wallet' style={{ color: `${theme.palette.text.primary}`, height: '40px', width: '40px' }} />
           </Grid>
           <Grid item>
             <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
@@ -57,22 +59,22 @@ export default function LedgerOptions({ setMode }: Props): React.ReactElement {
         </Typography>
         <Grid container item justifyContent='space-between' mb='25px' mt='10px' rowGap='15px'>
           <LedgerOption
-            title={t('Polkadot Generic app')}
-            logo={<VaadinIcon icon='vaadin:file-tree' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />}
-            subTitle={t('It can be used with all supported Polkadot chains and parachains.')}
+            logo={<VaadinIcon icon='vaadin:file-tree' style={{ color: `${theme.palette.text.primary}`, height: '40px', width: '40px' }} />}
             onClick={onPolkadotGeneric}
+            subTitle={t('It can be used with all supported Polkadot chains and parachains.')}
+            title={t('Polkadot Generic app')}
           />
           <LedgerOption
-            title={t('Migration app')}
-            logo={<VaadinIcon icon='vaadin:automation' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />}
-            subTitle={t('Migrate your accounts from the Legacy apps to the Polkadot Generic app.')}
+            logo={<VaadinIcon icon='vaadin:automation' style={{ color: `${theme.palette.text.primary}`, height: '40px', width: '40px' }} />}
             onClick={onMigration}
+            subTitle={t('Migrate your accounts from the Legacy apps to the Polkadot Generic app.')}
+            title={t('Migration app')}
           />
           <LedgerOption
-            title={t('Legacy apps')}
-            logo={<VaadinIcon icon='vaadin:form' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />}
-            subTitle={t('Each chain and parachain may have a dedicated app on the Ledger device, but this is now deprecated as chains upgrade to align with the Polkadot generic app.')}
+            logo={<VaadinIcon icon='vaadin:form' style={{ color: `${theme.palette.text.primary}`, height: '40px', width: '40px' }} />}
             onClick={onPolkadotLegacy}
+            subTitle={t('Each chain and parachain may have a dedicated app on the Ledger device, but this is now deprecated as chains upgrade to align with the Polkadot generic app.')}
+            title={t('Legacy apps')}
           />
         </Grid>
         <Grid container item sx={{ '> div': { m: 0, width: '64%' }, justifyContent: 'flex-end', mt: '5px' }}>
