@@ -86,11 +86,11 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
   }, [chain]);
 
   const movingParts = (
-    <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
-      <Grid container item justifyContent='center' my='20px' pl='8px'>
-        <Identity address={address} api={api} chain={chain as any} formatted={formatted} identiconSize={35} showSocial={false} subIdOnly />
+    <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt={hasPrivateKey ? '30px' : '123px'} px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
+      <Grid container item justifyContent='center' mt='7px' pl='8px'>
+        <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={35} showSocial={false} subIdOnly />
       </Grid>
-      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
+      <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
       <MenuItem
         disabled={isDisabled(IDENTITY_CHAINS)}
         iconComponent={
@@ -107,7 +107,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       <MenuItem
         disabled={isDisabled(PROXY_CHAINS)}
         iconComponent={
-          <VaadinIcon icon='vaadin:sitemap' style={{ height: '18px', color: `${isDisabled(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:sitemap' style={{ color: `${isDisabled(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}`, height: '18px' }} />
         }
         onClick={onManageProxies}
         text={t('Manage proxies')}
@@ -129,32 +129,33 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
         text={t('Social recovery')}
         withHoverEffect
       />
-      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
+      <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
       <ProfileMenu
         address={address}
       />
       {hasPrivateKey &&
-        <MenuItem
-          iconComponent={
-            <VaadinIcon icon='vaadin:download-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-          }
-          onClick={onExportAccount}
-          text={t('Export account')}
-          withHoverEffect
-        />}
-      {hasPrivateKey &&
-        <MenuItem
-          iconComponent={
-            <VaadinIcon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-          }
-          onClick={goToDeriveAcc}
-          text={t('Derive new account')}
-          withHoverEffect
-        />
+        <>
+          <MenuItem
+            iconComponent={
+              <VaadinIcon icon='vaadin:download-alt' style={{ color: `${theme.palette.text.primary}`, height: '18px' }} />
+            }
+            onClick={onExportAccount}
+            text={t('Export account')}
+            withHoverEffect
+          />
+          <MenuItem
+            iconComponent={
+              <VaadinIcon icon='vaadin:road-branch' style={{ color: `${theme.palette.text.primary}`, height: '18px' }} />
+            }
+            onClick={goToDeriveAcc}
+            text={t('Derive new account')}
+            withHoverEffect
+          />
+        </>
       }
       <MenuItem
         iconComponent={
-          <VaadinIcon icon='vaadin:edit' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:edit' style={{ color: `${theme.palette.text.primary}`, height: '18px' }} />
         }
         onClick={onRenameAccount}
         text={t('Rename')}
@@ -162,13 +163,13 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       />
       <MenuItem
         iconComponent={
-          <VaadinIcon icon='vaadin:file-remove' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:file-remove' style={{ color: `${theme.palette.text.primary}`, height: '18px' }} />
         }
         onClick={onForgetAccount}
         text={t('Forget account')}
         withHoverEffect
       />
-      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
+      <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
       <SelectChain
         address={address}
         defaultValue={chain?.genesisHash ?? options[0].text}
@@ -188,7 +189,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
           left: '15px',
           p: 0,
           position: 'absolute',
-          top: '65px'
+          top: hasPrivateKey ? '38px' : '135px'
         }}
       >
         <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />
