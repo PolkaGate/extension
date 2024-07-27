@@ -1,10 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+import type { Theme } from '@mui/material';
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Theme } from '@mui/material';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -23,7 +23,7 @@ interface Props {
   marginRight?: number;
 }
 
-function Warning({ children, className = '', isBelowInput, isDanger }: Props): React.ReactElement<Props> {
+function Warning ({ children, className = '', isBelowInput, isDanger }: Props): React.ReactElement<Props> {
   return (
     <div className={`${className} ${isDanger ? 'danger' : ''} ${isBelowInput ? 'belowInput' : ''}`}>
       <FontAwesomeIcon

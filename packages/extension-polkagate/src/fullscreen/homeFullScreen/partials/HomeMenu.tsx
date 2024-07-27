@@ -1,12 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
+
+import { noop } from '@polkadot/util';
 
 import { AccountContext, VaadinIcon } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -17,7 +18,7 @@ import ImportAccSubMenuFullScreen from './ImportAccSubMenuFullScreen';
 import SettingSubMenuFullScreen from './SettingSubMenuFullScreen';
 
 interface TaskButtonProps {
-  icon: JSX.Element;
+  icon: React.JSX.Element;
   text: string;
   onClick: () => void;
   secondaryIconType?: 'popup' | 'page';
@@ -35,7 +36,7 @@ export const TaskButton = ({ children, disabled, extra, hasChildren, icon, isSub
 
   return (
     <>
-      <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minHeight: isSubMenu ? '40px' : '45px', p: '5px 0px 5px 10px', my: '5px' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? noop : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minHeight: isSubMenu ? '40px' : '45px', p: '5px 0px 5px 10px', my: '5px' }}>
         <Grid container item xs={2}>
           {icon}
         </Grid>
@@ -68,7 +69,6 @@ export default function HomeMenu(): React.ReactElement {
   const [showSetting, setShowSetting] = useState<boolean>(false);
   const [showExportAll, setShowExportAll] = useState<boolean>(false);
 
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const areAllExternalAccounts = useMemo(() => accounts.every(({ isExternal }) => isExternal), [accounts]);
 
   const onCreate = useCallback(() => {
