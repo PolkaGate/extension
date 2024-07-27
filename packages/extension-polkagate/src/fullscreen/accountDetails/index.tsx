@@ -248,7 +248,7 @@ export default function AccountDetails(): React.ReactElement {
                       title={t('Solo Stake')}
                       token={balancesToShow?.token}
                     />}
-                  {supportStaking &&
+                  {supportStaking && !balancesToShow?.pooledBalance?.isZero() &&
                     <DisplayBalance
                       amount={balancesToShow?.pooledBalance}
                       decimal={balancesToShow?.decimal}
