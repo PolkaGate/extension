@@ -3,20 +3,22 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Lock } from '../../hooks/useAccountLocks';
+import type { FetchedBalance } from '../../hooks/useAssetsBalances';
+
 import { faFileInvoice } from '@fortawesome/free-solid-svg-icons';
-import { Grid } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext } from '../../components';
+import { AccountContext, ActionContext, Warning } from '../../components';
 import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
-import type { Lock } from '../../hooks/useAccountLocks';
-import type { FetchedBalance } from '../../hooks/useAssetsBalances';
 import ExportAccountModal from '../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../popup/forgetAccount/ForgetAccountModal';
 import HistoryModal from '../../popup/history/modal/HistoryModal';
+import { AccountLabel } from '../../popup/home/AccountLabel';
 import DeriveAccountModal from '../../popup/newAccount/deriveAccount/modal/DeriveAccountModal';
 import ReceiveModal from '../../popup/receive/ReceiveModal';
 import RenameModal from '../../popup/rename/RenameModal';
@@ -29,7 +31,6 @@ import { openOrFocusTab } from './components/CommonTasks';
 import ReservedDisplayBalance from './components/ReservedDisplayBalance';
 import LockedInReferenda from './unlock/Review';
 import { AccountInformationForDetails, AccountSetting, AssetSelect, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
-import { AccountLabel } from '../../popup/home/AccountLabel';
 
 export enum popupNumbers {
   LOCKED_IN_REFERENDA,
@@ -50,6 +51,7 @@ export interface UnlockInformationType {
 export default function AccountDetails(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
+  const theme = useTheme();
   const { address, paramAssetId } = useParams<{ address: string, paramAssetId?: string }>();
   const { accounts } = useContext(AccountContext);
   const currency = useCurrency();
@@ -95,6 +97,10 @@ export default function AccountDetails(): React.ReactElement {
       : { ...(balances || {}), ...(selectedAsset || {}) };
   }, [assetId, balances, chainName, selectedAsset]);
 
+  const isDualStaking = useMemo(() =>
+    balancesToShow?.soloTotal && balancesToShow?.pooledBalance && !balancesToShow.soloTotal.isZero() && !balancesToShow.pooledBalance.isZero()
+  , [balancesToShow?.pooledBalance, balancesToShow?.soloTotal]);
+
   const currentPrice = useMemo((): number | undefined => {
     const selectedAssetPriceId = selectedAsset?.priceId;
 
@@ -104,7 +110,7 @@ export default function AccountDetails(): React.ReactElement {
     }
 
     const _priceId = getPriceIdByChainName(chainName);
-    const currentAssetPrices = pricesInCurrency?.prices?.[(selectedAssetPriceId || _priceId) as string];
+    const currentAssetPrices = pricesInCurrency?.prices?.[(selectedAssetPriceId || _priceId)];
     const mayBeTestNetPrice = pricesInCurrency?.prices && !currentAssetPrices ? 0 : undefined;
 
     return currentAssetPrices?.value || mayBeTestNetPrice;
@@ -182,8 +188,8 @@ export default function AccountDetails(): React.ReactElement {
                 label={
                   <AccountLabel
                     account={account}
-                    parentName={hasParent?.name || ''}
                     ml='0px'
+                    parentName={hasParent?.name || ''}
                   />
                 }
                 price={currentPrice}
@@ -194,6 +200,17 @@ export default function AccountDetails(): React.ReactElement {
               />
               {genesisHash &&
                 <>
+                  {isDualStaking &&
+                    <Grid container sx={{ '> div': { pl: '3px' } }}>
+                      <Warning
+                        iconDanger
+                        marginTop={0}
+                        theme={theme}
+                      >
+                        {t('Nomination Pools are evolving! Unstake your solo staked funds soon to benefit from automatic pool migration, which allows participation in both a pool and governance, and avoid manual changes.')}
+                      </Warning>
+                    </Grid>
+                  }
                   {isOnAssetHub &&
                     <AssetSelect
                       address={address}
@@ -221,7 +238,7 @@ export default function AccountDetails(): React.ReactElement {
                       title={t('Locked')}
                       token={balancesToShow?.token}
                     />}
-                  {supportStaking &&
+                  {supportStaking && !balancesToShow?.soloTotal?.isZero() &&
                     <DisplayBalance
                       amount={balancesToShow?.soloTotal}
                       decimal={balancesToShow?.decimal}
