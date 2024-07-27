@@ -131,7 +131,7 @@ export default function Home(): React.ReactElement {
                 setQuickActionOpen={setQuickActionOpen}
               />
             ))}
-            {accounts?.length < 4 &&
+            {initialAccountList?.length < 4 &&
               <AddNewAccountButton />
             }
           </Container>
