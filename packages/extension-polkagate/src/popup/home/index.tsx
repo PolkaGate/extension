@@ -28,13 +28,13 @@ import ProfileTabs from './ProfileTabs';
 import WhatsNew from './WhatsNew';
 import YouHave from './YouHave';
 
-export default function Home(): React.ReactElement {
+export default function Home (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const manifest = useManifest();
   const accountsOrder = useAccountsOrder(true);
   const profileAccounts = useProfileAccounts(accountsOrder);
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { hierarchy } = useContext(AccountContext);
 
   useMerkleScience(undefined, undefined, true); // to download the data file
 
@@ -131,7 +131,7 @@ export default function Home(): React.ReactElement {
                 setQuickActionOpen={setQuickActionOpen}
               />
             ))}
-            {accounts?.length < 4 &&
+            {initialAccountList?.length < 4 &&
               <AddNewAccountButton />
             }
           </Container>
