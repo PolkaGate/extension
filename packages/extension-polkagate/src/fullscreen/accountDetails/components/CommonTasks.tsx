@@ -30,7 +30,7 @@ interface Props {
 }
 
 interface TaskButtonProps {
-  icon: unknown;
+  icon: React.JSX.Element;
   text: string;
   onClick: () => void;
   secondaryIconType: 'popup' | 'page';
@@ -106,7 +106,7 @@ export const TaskButton = ({ disabled, icon, loading, mr = '25px', noBorderButto
   );
 };
 
-export default function CommonTasks({ address, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
+export default function CommonTasks ({ address, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -130,7 +130,7 @@ export default function CommonTasks({ address, assetId, balance, genesisHash, se
     (api?.tx?.['nominationPools']?.['migrateDelegation'] && balance?.pooledBalance?.isZero())
   ,
   [api, balance?.pooledBalance, hasSoloStake]);
-  
+
   const goToSend = useCallback(() => {
     address && genesisHash &&
       openOrFocusTab(`/send/${address}/${assetId || ''}`, true);
