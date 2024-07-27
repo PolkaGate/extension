@@ -130,9 +130,7 @@ export default function CommonTasks({ address, assetId, balance, genesisHash, se
     (api?.tx?.['nominationPools']?.['migrateDelegation'] && balance?.pooledBalance?.isZero())
   ,
   [api, balance?.pooledBalance, hasSoloStake]);
-
-  console.log('canManageSoloStake:',canManageSoloStake)
-
+  
   const goToSend = useCallback(() => {
     address && genesisHash &&
       openOrFocusTab(`/send/${address}/${assetId || ''}`, true);
