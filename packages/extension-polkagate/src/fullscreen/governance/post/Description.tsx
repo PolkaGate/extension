@@ -1,13 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Proposal, Referendum } from '../utils/types';
 
 import { ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Divider, Grid, Paper, Typography, useTheme } from '@mui/material';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 
@@ -18,7 +19,6 @@ import { nFormatter } from '../../../components/FormatPrice';
 import { useApi, useChain, useDecimal, useToken, useTokenPrice, useTranslation } from '../../../hooks';
 import { LabelValue } from '../TrackStats';
 import { STATUS_COLOR } from '../utils/consts';
-import { Proposal, Referendum } from '../utils/types';
 import { formalizedStatus, formatRelativeTime, pascalCaseToTitleCase } from '../utils/util';
 import { hexAddressToFormatted } from './Metadata';
 
@@ -48,7 +48,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
   const content = useMemo(() => {
     const res = referendum?.content?.includes('login and tell us more about your proposal') ? t(DEFAULT_CONTENT) : referendum?.content
 
-    return res || ''//?.replace(/<br\s*\/?>/gi, ' ') || '';
+    return res || '';// ?.replace(/<br\s*\/?>/gi, ' ') || '';
   }, [referendum?.content, t]);
 
   useEffect(() => {
@@ -56,12 +56,12 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [referendum?.content]);
 
-  const handleChange = (event, isExpanded: boolean) => {
+  const handleChange = useCallback((_event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded);
-  };
+  }, []);
 
   const VDivider = () => (
-    <Divider flexItem orientation='vertical' sx={{ mx: '2%', my: '10px', bgcolor: theme.palette.mode === 'light' ? 'inherit' : 'text.disabled' }} />
+    <Divider flexItem orientation='vertical' sx={{ bgcolor: theme.palette.mode === 'light' ? 'inherit' : 'text.disabled', mx: '2%', my: '10px' }} />
   );
 
   return (
@@ -97,7 +97,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
                   {t('By')}:
                 </Grid>
                 <Grid item maxWidth='30%'>
-                  <Identity api={api} chain={chain as any} formatted={referendum?.proposer} identiconSize={25} showShortAddress={!!referendum?.proposer} showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+                  <Identity api={api} chain={chain} formatted={referendum?.proposer} identiconSize={25} showShortAddress={!!referendum?.proposer} showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
                 </Grid>
                 <VDivider />
                 <Grid item sx={{ fontSize: '14px', fontWeight: 400, opacity: 0.6 }}>
@@ -119,10 +119,10 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
                           noBorder
                           value={
                             <ShowBalance
-                              balance={new BN(referendum?.requested)}
-                              decimal={decimal}
+                              balance={new BN(referendum.requested)}
+                              decimal={referendum?.decimal || decimal}
                               decimalPoint={2}
-                              token={token}
+                              token={referendum?.token || token}
                             />
                           }
                           valueStyle={{ fontSize: 16, fontWeight: 500, pl: '5px' }}

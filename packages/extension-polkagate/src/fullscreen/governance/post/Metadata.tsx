@@ -1,27 +1,27 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { Referendum } from '../utils/types';
+
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Link, Typography, useTheme } from '@mui/material';
-import React from 'react';
-import { JsonToTable } from "react-json-to-table";
+import React, { useCallback, useMemo } from 'react';
+import { JsonToTable } from 'react-json-to-table';
 
-import type { Chain } from '@polkadot/extension-chains/types';
-
+import { isObject, isString } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { subscan } from '../../../assets/icons';
 import { Identity, ShowBalance, ShowValue } from '../../../components';
-import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../hooks';
+import { useInfo, useTranslation } from '../../../hooks';
 import { isValidAddress } from '../../../util/utils';
 import { LabelValue } from '../TrackStats';
-import { Referendum } from '../utils/types';
 import { pascalCaseToTitleCase } from '../utils/util';
 
-export function hexAddressToFormatted(hexString: string, chain: Chain | undefined): string | undefined {
+export function hexAddressToFormatted (hexString: string, chain: Chain | null | undefined): string | undefined {
   try {
     if (!chain || !hexString) {
       return undefined;
@@ -43,27 +43,47 @@ interface Props {
   referendum: Referendum | undefined;
 }
 
-export default function Metadata({ address, decisionDepositPayer, referendum }: Props): React.ReactElement {
+export default function Metadata ({ address, decisionDepositPayer, referendum }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const api = useApi(address);
-  const chain = useChain(address);
-  const chainName = useChainName(address);
-  const decimal = useDecimal(address);
-  const token = useToken(address);
+
+  const { api, chain, chainName, decimal, token } = useInfo(address);
 
   const [expanded, setExpanded] = React.useState(false);
   const [showJson, setShowJson] = React.useState(false);
 
   const referendumLinkOnsSubscan = () => `https://${chainName}.subscan.io/referenda_v2/${String(referendum?.index)}`;
-  const mayBeBeneficiary = referendum?.call?.args?.beneficiary?.value || hexAddressToFormatted(referendum?.call?.args?.beneficiary, chain) || referendum?.call?.args?.beneficiary?.toString() as unknown as string;
 
-  const handleChange = (event, isExpanded: boolean) => {
+  const mayBeBeneficiary = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    const _beneficiary = referendum?.call?.args?.['beneficiary']?.value;
+
+    if (!_beneficiary) {
+      return undefined;
+    }
+
+    if (isString(_beneficiary)) {
+      return hexAddressToFormatted(_beneficiary as string, chain) || _beneficiary.toString();
+    }
+
+    if (isObject(_beneficiary)) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const _address = _beneficiary?.['interior']?.value?.id as string;
+
+      return _address
+        ? hexAddressToFormatted(_address, chain) || _address.toString()
+        : undefined;
+    }
+
+    return undefined;
+  }, [chain, referendum?.call?.args]);
+
+  const handleChange = useCallback((_event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded);
-  };
+  }, []);
 
   return (
-    <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%', mt: 1, borderRadius: '10px', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main' }}>
+    <Accordion expanded={expanded} onChange={handleChange} sx={{ border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', mt: 1, px: '3%', width: 'inherit' }}>
       <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
         <Grid container item>
           <Grid container item xs={12}>
@@ -145,14 +165,14 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
           {mayBeBeneficiary &&
             <>
               <LabelValue
-                label={t('Requested For')}
+                label={t('Requested for')}
                 labelStyle={{ minWidth: '20%' }}
                 style={{ justifyContent: 'flex-start' }}
                 value={<ShowBalance
-                  balance={referendum?.call?.args?.amount || referendum?.requested}
-                  decimal={decimal}
+                  balance={referendum?.call?.args?.['amount'] as string || referendum?.requested}
+                  decimal={referendum?.decimal || decimal}
                   decimalPoint={2}
-                  token={token}
+                  token={referendum?.token || token}
                 />}
                 valueStyle={{ fontSize: 16, fontWeight: 500 }}
               />
@@ -165,7 +185,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
                     isValidAddress(mayBeBeneficiary)
                       ? <Identity
                         api={api}
-                        chain={chain as any}
+                        chain={chain}
                         formatted={mayBeBeneficiary}
                         identiconSize={25}
                         showShortAddress
@@ -235,8 +255,9 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
           />
           <Grid container item>
             <Link
+              // eslint-disable-next-line react/jsx-no-bind
               onClick={() => setShowJson(!showJson)}
-              sx={{ cursor: 'pointer', color: `${theme.palette.secondary.main}` }}
+              sx={{ color: `${theme.palette.secondary.main}`, cursor: 'pointer' }}
               underline='none'
             >
               <Typography sx={{ py: 2 }}>

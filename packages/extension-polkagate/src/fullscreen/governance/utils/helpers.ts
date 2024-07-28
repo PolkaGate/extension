@@ -1,15 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+import type { ApiPromise } from '@polkadot/api';
 import type { AccountId32 } from '@polkadot/types/interfaces/runtime';
-
-import { ApiPromise } from '@polkadot/api';
-import { BN } from '@polkadot/util';
+import type { BN } from '@polkadot/util';
+import type { LatestReferenda, Origins, Referendum, ReferendumPA, ReferendumSb, TopMenu } from './types';
 
 import { postData } from '../../../util/api';
 import { FINISHED_REFERENDUM_STATUSES, TRACK_LIMIT_TO_LOAD_PER_REQUEST } from './consts';
-import { LatestReferenda, Origins, Referendum, ReferendumPA, ReferendumSb, TopMenu } from './types';
 
 export const LOCKS = [1, 10, 20, 30, 40, 50, 60];
 export interface Statistics {
@@ -28,7 +26,7 @@ export interface Statistics {
   'OriginsCount': number
 }
 
-export type VoteType = {
+export interface VoteType {
   decision: string;
   voter: string;
   balance: {
@@ -40,7 +38,7 @@ export type VoteType = {
   votePower?: BN;
 }
 
-export type AbstainVoteType = {
+export interface AbstainVoteType {
   decision: string;
   voter: string;
   balance: {
@@ -55,7 +53,7 @@ export type AbstainVoteType = {
   votePower?: BN;
 }
 
-export type AllVotesType = {
+export interface AllVotesType {
   abstain: {
     count: number;
     votes: AbstainVoteType[];
@@ -70,7 +68,7 @@ export type AllVotesType = {
   }
 }
 
-export type FilteredVotes = {
+export interface FilteredVotes {
   abstain: AbstainVoteType[];
   no: VoteType[];
   yes: VoteType[];
@@ -132,13 +130,13 @@ export async function getReferendumVotesFromSubscan(chainName: string, referendu
           }
         });
     } catch (error) {
-      console.log('something went wrong while getting referendum votes ');
+      console.log('something went wrong while getting referendum votes ', error);
       resolve(null);
     }
   });
 }
 
-export async function getLatestReferendums(chainName: string, listingLimit = 30): Promise<LatestReferenda[] | null> {
+export async function getLatestReferendums (chainName: string, listingLimit = 30): Promise<LatestReferenda[] | null> {
   // console.log(`Getting Latest referendum on ${chainName} from PA ...`);
 
   const requestOptions = {

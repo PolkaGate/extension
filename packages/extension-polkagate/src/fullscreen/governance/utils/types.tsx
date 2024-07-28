@@ -1,11 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
-
-import type { PalletReferendaTrackInfo } from '@polkadot/types/lookup';
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
-import { BN } from '@polkadot/util';
+import type { PalletReferendaTrackInfo } from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
 
 export type TopMenu = 'Referenda' | 'Fellowship';
 export type Origins = 'root' | 'whitelisted_caller' | 'staking_admin' | 'treasurer' | 'lease_admin' | 'general_admin' | 'auction_admin' | 'referendum_canceller' | 'small_tipper' | 'big_tipper' | 'small_spender' | 'medium_spender' | 'big_spender';
@@ -51,6 +49,7 @@ export interface ReferendumHistory {
 }
 
 export interface ReferendumPA {
+  assetId?: string;
   bond: any;
   chainName: 'Polkadot' | 'Kusama';
   comments: CommentType[];
@@ -214,7 +213,10 @@ export type Track = [
   info: PalletReferendaTrackInfo
 ];
 
-export type Referendum = {
+export interface Referendum {
+  assetId?: string;
+  token?: string;
+  decimal?: number;
   ayesAmount?: string | undefined,
   ayesCount?: number | undefined,
   call?: {
@@ -244,7 +246,7 @@ export type Referendum = {
   submissionBlockOC?: number;
   submissionAmount?: string | undefined,
   supportAmount?: string | undefined,
-  title?: string | undefined,
+  title?: string | null,
   timelinePA?: {
     created_at: Date,
     hash: string,
@@ -256,7 +258,7 @@ export type Referendum = {
   trackId?: number | undefined,
   trackName?: string | undefined,
   type?: string | undefined
-};
+}
 
 export interface DelegationInfo {
   track: BN;

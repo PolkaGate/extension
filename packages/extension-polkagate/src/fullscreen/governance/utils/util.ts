@@ -1,24 +1,24 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-import type { PalletConvictionVotingVoteVoting } from '@polkadot/types/lookup';
-
-import { TFunction } from '@polkagate/apps-config/types';
-
-import { ApiPromise } from '@polkadot/api';
+import type { TFunction } from '@polkagate/apps-config/types';
+import type { ApiPromise } from '@polkadot/api';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
-import { BN, BN_MAX_INTEGER, bnMin, extractTime } from '@polkadot/util';
+import type { PalletConvictionVotingVoteVoting } from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
+import type { Vote } from '../post/myVote/util';
+import type { DelegationInfo, Track } from './types';
+
+import { BN_MAX_INTEGER, bnMin, extractTime } from '@polkadot/util';
 
 import { remainingTime } from '../../../util/utils';
-import { isAye, Vote } from '../post/myVote/util';
-import { DelegationInfo, Track } from './types';
+import { isAye } from '../post/myVote/util';
 
 type Result = [blockInterval: number, timeStr: string, time: number];
 
 export const capitalizeFirstLetter = (str: string): string => str.replace(/^\w/, (c) => c.toUpperCase());
 
-export function toSnakeCase(input: string | undefined): string | undefined {
+export function toSnakeCase (input: string | undefined): string | undefined {
   if (!input) {
     return undefined;
   }
@@ -31,7 +31,7 @@ export function toSnakeCase(input: string | undefined): string | undefined {
   return output;
 }
 
-export function convertToCamelCase(input: string): string {
+export function convertToCamelCase (input: string): string {
   const parts = input.split(';');
   const camelCased = parts.map((part, index) =>
     index === 0 ? part : part.replace(/(?:^|-)(.)/g, (_, c) => c.toUpperCase())
@@ -85,7 +85,7 @@ export function toTitleCase(input: string | undefined): string | undefined {
   return words.join(' ');
 }
 
-export function pascalCaseToTitleCase(str: string): string | undefined {
+export function pascalCaseToTitleCase (str?: string): string | undefined {
   if (!str) {
     return undefined;
   }

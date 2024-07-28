@@ -1,14 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
+import type { Asset } from '@polkagate/apps-config/assets/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
+
 import { createAssets } from '@polkagate/apps-config/assets';
-import { Asset } from '@polkagate/apps-config/assets/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { AccountJson } from '@polkadot/extension-base/background/types';
 import { BN } from '@polkadot/util';
 
 import { getStorage, setStorage, watchStorage } from '../components/Loading';
@@ -41,7 +41,7 @@ interface BalancesDetails {
   votingBalance?: BN
 }
 
-type MessageBody = {
+interface MessageBody {
   assetId?: number,
   totalBalance: string,
   chainName: string,
@@ -50,7 +50,7 @@ type MessageBody = {
   priceId: string,
   token: string,
   balanceDetails?: string,
-};
+}
 
 export const BN_MEMBERS = [
   'totalBalance',
@@ -153,7 +153,7 @@ export default function useAssetsBalances(accounts: AccountJson[] | null): Saved
       Object.entries(assetsPerChain).forEach(([genesisHash, fetchedBalance]) => {
         const toBeDeletedIndexes: string[] = [];
 
-        fetchedBalance.forEach(({ token, totalBalance }, index) => {
+        fetchedBalance.forEach(({ token, totalBalance }, _index) => {
           if (new BN(totalBalance).isZero()) {
             toBeDeletedIndexes.push(token);
           }

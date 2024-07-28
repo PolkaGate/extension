@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Proposal } from '../utils/types';
 
 import { Container, Grid } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -16,7 +17,6 @@ import { FullScreenHeader } from '../FullScreenHeader';
 import Toolbar from '../Toolbar';
 import { ENDED_STATUSES } from '../utils/consts';
 import { isFinished } from '../utils/helpers';
-import { Proposal } from '../utils/types';
 import { getVoteType, toTitleCase } from '../utils/util';
 import CastVote from './castVote';
 import Chronology from './Chronology';
@@ -28,13 +28,11 @@ import StatusInfo from './StatusInfo';
 import Support from './Support';
 import Voting from './Voting';
 
-export default function ReferendumPost(): React.ReactElement {
+export default function ReferendumPost (): React.ReactElement {
   const { t } = useTranslation();
   const { address, postId, topMenu } = useParams<{ address?: string | undefined, topMenu?: 'referenda' | 'fellowship' | undefined, postId?: string | undefined }>();
   const [refresh, setRefresh] = useState<boolean>(false);
   const referendum = useReferendum(address, topMenu, postId && Number(postId), refresh);
-
-  // console.log('* referendum:', referendum);
 
   const history = useHistory();
   const { state } = useLocation();
