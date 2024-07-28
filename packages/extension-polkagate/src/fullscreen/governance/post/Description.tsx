@@ -8,7 +8,7 @@ import type { Proposal, Referendum } from '../utils/types';
 import { ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Divider, Grid, Paper, Typography, useTheme } from '@mui/material';
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useCallback,useEffect, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 
@@ -30,7 +30,7 @@ interface Props {
 
 const DEFAULT_CONTENT = 'This referendum does not have a description provided by the creator. Please research and learn about the proposal before casting your vote.'
 
-export default function ReferendumDescription({ address, currentTreasuryApprovalList, referendum }: Props): React.ReactElement {
+export default function ReferendumDescription ({ address, currentTreasuryApprovalList, referendum }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -39,11 +39,21 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
   const token = useToken(address);
   const { price } = useTokenPrice(address);
 
-  const requestedInUSD = useMemo(() => referendum?.requested && price && decimal && (Number(referendum.requested) / 10 ** decimal) * price, [decimal, price, referendum]);
+  const requestedInUSD = useMemo(() => {
+    const STABLE_COIN_PRICE = 1;
+    const _decimal = referendum?.decimal || decimal;
+    const _price = referendum?.assetId ? STABLE_COIN_PRICE : price;
+
+    if (!referendum?.requested || !_decimal || !_price) {
+      return undefined;
+    }
+
+    return (Number(referendum.requested) / 10 ** _decimal) * _price;
+  }, [decimal, price, referendum]);
 
   const [expanded, setExpanded] = useState<boolean>(false);
 
-  const mayBeBeneficiary = hexAddressToFormatted(referendum?.proposed_call?.args?.beneficiary, chain);
+  const mayBeBeneficiary = hexAddressToFormatted(referendum?.proposed_call?.args?.beneficiary as string, chain);
   const mayBeTreasuryProposalId = useMemo(() => currentTreasuryApprovalList?.find((p) => p.beneficiary === mayBeBeneficiary)?.id, [currentTreasuryApprovalList, mayBeBeneficiary]);
   const content = useMemo(() => {
     const res = referendum?.content?.includes('login and tell us more about your proposal') ? t(DEFAULT_CONTENT) : referendum?.content
@@ -129,7 +139,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
                         />
                       </Grid>
                       <Divider flexItem orientation='vertical' sx={{ mx: '7px', my: '8px', bgcolor: theme.palette.mode === 'light' ? 'inherit' : 'text.disabled' }} />
-                      <Grid item sx={{ color: theme.palette.mode === 'light' && 'text.disabled', opacity: theme.palette.mode === 'dark' && 0.6 }}>
+                      <Grid item sx={{ color: theme.palette.mode === 'light' ? 'text.disabled' : undefined, opacity: theme.palette.mode === 'dark' ? 0.6 : 1 }}>
                         {`$${requestedInUSD ? nFormatter(requestedInUSD, 2) : '0'}`}
                       </Grid>
                     </Grid>
