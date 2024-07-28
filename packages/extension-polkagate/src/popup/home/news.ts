@@ -10,6 +10,12 @@ export interface News {
 
 export const news: News[] = [
   {
+    version: '0.6.9',
+    notes: [
+      'Support for Stablecoin Requests in Treasury: Accurately displaying requests for USDT on the Asset Hub through Governance mechanisms.'
+    ]
+  },
+  {
     version: '0.6.8',
     notes: [
       'Support for Polkadot People Chain: Create and manage accounts\' on-chain identities on the Polkadot People Chain with 10 times fewer reserved tokens.',
