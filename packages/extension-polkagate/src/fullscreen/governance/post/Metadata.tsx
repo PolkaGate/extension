@@ -21,7 +21,7 @@ import { isValidAddress } from '../../../util/utils';
 import { LabelValue } from '../TrackStats';
 import { pascalCaseToTitleCase } from '../utils/util';
 
-export function hexAddressToFormatted (hexString: string, chain: Chain | null | undefined): string | undefined {
+export function hexAddressToFormatted(hexString: string, chain: Chain | null | undefined): string | undefined {
   try {
     if (!chain || !hexString) {
       return undefined;
@@ -37,13 +37,37 @@ export function hexAddressToFormatted (hexString: string, chain: Chain | null | 
   }
 }
 
+export const getBeneficiary = (referendum: Referendum, chain: Chain) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+  const beneficiary = referendum?.call?.args?.['beneficiary']?.value;
+
+  if (!beneficiary) {
+    return undefined;
+  }
+
+  if (isString(beneficiary)) {
+    return hexAddressToFormatted(beneficiary as string, chain) || beneficiary.toString();
+  }
+
+  if (isObject(beneficiary)) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const _address = beneficiary?.['interior']?.value?.id as string;
+
+    return _address
+      ? hexAddressToFormatted(_address, chain) || _address.toString()
+      : undefined;
+  }
+
+  return undefined;
+};
+
 interface Props {
   decisionDepositPayer: string | undefined;
   address: string | undefined;
   referendum: Referendum | undefined;
 }
 
-export default function Metadata ({ address, decisionDepositPayer, referendum }: Props): React.ReactElement {
+export default function Metadata({ address, decisionDepositPayer, referendum }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -55,28 +79,13 @@ export default function Metadata ({ address, decisionDepositPayer, referendum }:
   const referendumLinkOnsSubscan = () => `https://${chainName}.subscan.io/referenda_v2/${String(referendum?.index)}`;
 
   const mayBeBeneficiary = useMemo(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    const _beneficiary = referendum?.call?.args?.['beneficiary']?.value;
-
-    if (!_beneficiary) {
-      return undefined;
-    }
-
-    if (isString(_beneficiary)) {
-      return hexAddressToFormatted(_beneficiary as string, chain) || _beneficiary.toString();
-    }
-
-    if (isObject(_beneficiary)) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const _address = _beneficiary?.['interior']?.value?.id as string;
-
-      return _address
-        ? hexAddressToFormatted(_address, chain) || _address.toString()
-        : undefined;
+    if (referendum?.call && chain) {
+      return getBeneficiary(referendum, chain);
     }
 
     return undefined;
-  }, [chain, referendum?.call?.args]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chain, referendum?.call]);
 
   const handleChange = useCallback((_event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded);
@@ -84,7 +93,7 @@ export default function Metadata ({ address, decisionDepositPayer, referendum }:
 
   return (
     <Accordion expanded={expanded} onChange={handleChange} sx={{ border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', mt: 1, px: '3%', width: 'inherit' }}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : undefined, px: 0 }}>
         <Grid container item>
           <Grid container item xs={12}>
             <Typography fontSize={24} fontWeight={500}>

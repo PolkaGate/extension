@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ApiPromise } from '@polkadot/api';
 import type { AccountId32 } from '@polkadot/types/interfaces/runtime';
 import type { BN } from '@polkadot/util';
 import type { LatestReferenda, Origins, Referendum, ReferendumPA, ReferendumSb, TopMenu } from './types';
@@ -86,7 +85,7 @@ export async function getReferendumStatistics(chainName: string, type: 'referend
         {
           'Content-Type': 'application/json'
         })
-        .then((data: { message: string; data }) => {
+        .then((data: { message: string; data: Statistics | PromiseLike<Statistics | null> | null }) => {
           if (data.message === 'Success') {
             // console.log('Referendum Statistics:', data.data);
 
@@ -97,7 +96,7 @@ export async function getReferendumStatistics(chainName: string, type: 'referend
           }
         });
     } catch (error) {
-      console.log('something went wrong while getting referendum statistics');
+      console.log('something went wrong while getting referendum statistics', error);
       resolve(null);
     }
   });
@@ -121,7 +120,7 @@ export async function getReferendumVotesFromSubscan(chainName: string, referendu
           referendum_index: referendumIndex,
           row: 99
         })
-        .then((data: { message: string; data: { count: number, list: string[]; } }) => {
+        .then((data: { message: string; data: string | PromiseLike<string | null> | null }) => {
           if (data.message === 'Success') {
             resolve(data.data);
           } else {
@@ -136,7 +135,7 @@ export async function getReferendumVotesFromSubscan(chainName: string, referendu
   });
 }
 
-export async function getLatestReferendums (chainName: string, listingLimit = 30): Promise<LatestReferenda[] | null> {
+export async function getLatestReferendums(chainName: string, listingLimit = 30): Promise<LatestReferenda[] | null> {
   // console.log(`Getting Latest referendum on ${chainName} from PA ...`);
 
   const requestOptions = {
@@ -180,13 +179,14 @@ export async function getAllVotesFromPA(chainName: string, refIndex: number, lis
       if (data) {
         // console.log(`All votes on ${chainName} from PA:`, data);
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return data;
       } else {
         return null;
       }
     })
     .catch((error) => {
-      console.log(`Error getting latest referendum on ${chainName}:`, error.message);
+      console.log(`Error getting latest referendum on ${chainName}:`, error);
 
       return null;
     });
@@ -206,7 +206,7 @@ export async function getTrackOrFellowshipReferendumsPA(chainName: string, page 
       if (data.posts?.length) {
         console.log(`Referendums on ${chainName}/ track:${track} from PA:`, data.posts);
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
         return data.posts;
       } else {
         console.log('Fetched message:', data);
@@ -265,13 +265,13 @@ export async function getReferendumSb(chainName: string, type: TopMenu, postId: 
         {
           referendum_index: referendumIndex
         })
-        .then((data: { message: string; data }) => {
+        .then((data: { message: string; data: ReferendumSb }) => {
           if (data.message === 'Success') {
             // console.log(`Ref ${postId} info from Sb:`, data.data);
-            const ref = data.data as ReferendumSb;
+            const ref = data.data;
 
             ref.timeline?.forEach((r) => {
-              r.timestamp = new Date(r.time * 1000).toISOString();
+              r.timestamp = r.time ? new Date(r.time * 1000).toISOString() as unknown as Date : undefined;
             });
 
             resolve({ ...ref, chainName });
@@ -281,7 +281,7 @@ export async function getReferendumSb(chainName: string, type: TopMenu, postId: 
           }
         });
     } catch (error) {
-      console.log('something went wrong while getting referendum statistics');
+      console.log('something went wrong while getting referendum statistics', error);
       resolve(null);
     }
   });
@@ -323,10 +323,10 @@ export async function getReferendumsListSb(chainName: string, type: TopMenu, lis
         {
           // page:1,
           row: listingLimit
-          // status:	//completed | active
+          // status://completed | active
           // Origins:
         })
-        .then((data: { message: string; data }) => {
+        .then((data: { message: string; data: RefListSb | PromiseLike<RefListSb | null> | null }) => {
           if (data.message === 'Success') {
             console.log('Ref list from Sb:', data.data);
 
@@ -337,25 +337,8 @@ export async function getReferendumsListSb(chainName: string, type: TopMenu, lis
           }
         });
     } catch (error) {
-      console.log('something went wrong while getting referendums list');
+      console.log('something went wrong while getting referendums list', error);
       resolve(null);
     }
   });
-}
-
-export async function getTreasuryProposalNumber(referendumIndex: number, api: ApiPromise): Promise<number> {
-  // Get the referendum information
-  const referendumInfo = await api.query.democracy.referendumInfoOf(referendumIndex);
-  console.log('referendumInfo.unwrap():', referendumInfo.unwrap().toString())
-
-  // Get the proposal index from the referendum information
-  const proposalIndex = referendumInfo.unwrap().index.toNumber();
-
-  // Get the treasury proposal information
-  const proposal = await api.query.treasury.proposals(proposalIndex);
-
-  // Get the proposal number from the proposal information
-  const proposalNumber = proposal.toHuman().proposal.id as number;
-
-  return proposalNumber;
 }

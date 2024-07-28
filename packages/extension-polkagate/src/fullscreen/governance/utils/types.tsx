@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
+// @ts-ignore
 import type { PalletReferendaTrackInfo } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 
@@ -43,7 +44,7 @@ export interface CommentType {
 }
 
 export interface ReferendumHistory {
-  timestamp: Date,
+  timestamp?: number | Date,
   status: string,
   block: number
 }
@@ -122,12 +123,12 @@ export interface ReferendumPA {
 export interface Timeline {
   block: number;
   status: string;
-  time: number;
-  timestamp?: Date;
-  prophecy: boolean;
-  index: number;
-  extrinsic_index: string;
-  params: null;
+  time?: number ;
+  timestamp?: number | Date;
+  prophecy?: boolean;
+  index?: number;
+  extrinsic_index?: string;
+  params?: null;
 }
 
 export interface ReferendumSb {
@@ -146,7 +147,7 @@ export interface ReferendumSb {
     identity: boolean;
   };
   beneficiary_amount: string;
-  chainName: 'Polkadot' | 'Kusama';
+  chainName: string;
   created_block: number;
   created_block_timestamp: number;
   decision_deposit_account: {

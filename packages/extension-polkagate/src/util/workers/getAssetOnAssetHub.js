@@ -39,14 +39,16 @@ async function getAssetOnAssetHub(addresses, assetsToBeFetched, chainName) {
 
       const item = {
         assetId: asset.id,
-        availableBalance: isFrozen ? 0 : _balance,
+        balanceDetails: {
+          availableBalance: isFrozen ? 0 : _balance,
+          lockedBalance: isFrozen ? _balance : 0,
+          reservedBalance: isFrozen ? balance : 0 // JUST to comply with the rule that total=available + reserve
+        },
         chainName,
         decimal,
         genesisHash: api.genesisHash.toString(),
         isAsset: true,
-        lockedBalance: isFrozen ? _balance : 0,
         priceId: asset?.priceId,
-        reservedBalance: isFrozen ? balance : 0, // JUST to comply with the rule that total=available + reserve
         token,
         totalBalance: _balance
       };

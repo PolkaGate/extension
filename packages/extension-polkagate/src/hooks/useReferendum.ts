@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Chain } from '@polkadot/extension-chains/types';
+import type { Option, u32, u64 } from '@polkadot/types';
+import type { AssetMetadata } from '@polkadot/types/interfaces';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
-import type { PalletRankedCollectiveTally, PalletReferendaReferendumInfoRankedCollectiveTally } from '@polkadot/types/lookup';
-import type { u32 } from '@polkadot/types-codec';
+// @ts-ignore
+import type { PalletConvictionVotingTally, PalletReferendaReferendumInfoConvictionVotingTally } from '@polkadot/types/lookup';
 import type { OnchainVotes } from '../fullscreen/governance/utils/getAllVotes';
 import type { Referendum, ReferendumHistory, ReferendumPA, ReferendumSb, TopMenu } from '../fullscreen/governance/utils/types';
 
@@ -32,7 +34,7 @@ const getAssetHubByChainName = (chainName?: string) => {
   return undefined;
 }
 
-export default function useReferendum(address: AccountId | string | undefined, type: TopMenu | undefined, id: number, refresh?: boolean, getOnChain?: boolean, isConcluded?: boolean, withoutOnChainVoteCounts = false): Referendum | undefined {
+export default function useReferendum(address: AccountId | string | undefined, type: TopMenu | undefined, id: number | undefined, refresh?: boolean, getOnChain?: boolean, isConcluded?: boolean, withoutOnChainVoteCounts = false): Referendum | undefined {
   const chainName = useChainName(address);
   const api = useApi(address);
   const assetHubApi = useApiWithChain2(getAssetHubByChainName(chainName) as Chain);
@@ -41,14 +43,14 @@ export default function useReferendum(address: AccountId | string | undefined, t
   const [savedReferendum, setSavedReferendum] = useState<Referendum>();
   const [referendumPA, setReferendumPA] = useState<ReferendumPA | null>();
   const [referendumSb, setReferendumSb] = useState<ReferendumSb | null>();
-  const [onChainTally, setOnChainTally] = useState<PalletRankedCollectiveTally>();
+  const [onChainTally, setOnChainTally] = useState<PalletConvictionVotingTally>();
   const [onchainVotes, setOnchainVotes] = useState<OnchainVotes | null>();
-  const [onchainRefInfo, setOnchainRefInfo] = useState<PalletReferendaReferendumInfoRankedCollectiveTally | undefined>();
+  const [onchainRefInfo, setOnchainRefInfo] = useState<PalletReferendaReferendumInfoConvictionVotingTally | undefined>();
   const [notInLocalStorage, setNotInLocalStorage] = useState<boolean>();
   const [createdAtOC, setCreatedAtOC] = useState<number>(); // OC stands for On Chain ;)
   const [mayOriginOC, setMaybeOriginDC] = useState<string>();
   const [statusOC, setStatusOC] = useState<ReferendumHistory[]>();
-  const [assetMetadata, setAssetMetadata] = useState();
+  const [assetMetadata, setAssetMetadata] = useState<AssetMetadata | null>(null);
 
   const ayesAmount = useMemo(() => onChainTally?.ayes?.toString() || referendumSb?.ayes_amount || referendumPA?.tally?.ayes, [referendumPA, referendumSb, onChainTally]);
   const naysAmount = useMemo(() => onChainTally?.nays?.toString() || referendumSb?.nays_amount || referendumPA?.tally?.nays, [referendumPA, referendumSb, onChainTally]);
@@ -107,7 +109,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
           : onchainRefInfo?.isTimedOut
             ? onchainRefInfo.asTimedOut[1].isSome ? onchainRefInfo.asTimedOut[1].value.who.toString() : undefined
             : undefined
-    , [onchainRefInfo]);
+  , [onchainRefInfo]);
 
   const submissionAmountOC = useMemo(() => onchainRefInfo?.isOngoing
     ? onchainRefInfo.asOngoing.submissionDeposit.amount.toString()
@@ -120,7 +122,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
           : onchainRefInfo?.isTimedOut
             ? onchainRefInfo.asTimedOut[1].isSome ? onchainRefInfo.asTimedOut[1].value.amount.toString() : undefined
             : undefined
-    , [onchainRefInfo]);
+  , [onchainRefInfo]);
 
   const timeLineOC = useMemo(() => onchainRefInfo?.isOngoing
     ? [
@@ -129,7 +131,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
       onchainRefInfo.asOngoing.deciding.isSome && onchainRefInfo.asOngoing.deciding.value.confirming.isSome && onchainRefInfo.asOngoing.deciding.value.confirming ? onchainRefInfo.asOngoing.deciding.value.confirming.value.toNumber() : undefined
     ]
     : undefined
-    , [onchainRefInfo]);
+  , [onchainRefInfo]);
 
   const convertBlockNumberToDate = useCallback(async (blockNumber: u32 | number): Promise<number | undefined> => {
     if (!api) {
@@ -140,11 +142,23 @@ export default function useReferendum(address: AccountId | string | undefined, t
       const blockHash = await api.rpc.chain.getBlockHash(blockNumber);
       const { block } = await api.rpc.chain.getBlock(blockHash);
 
-      const timestamp = block.extrinsics[0] && block.extrinsics[0].method.args[0] ? block.extrinsics[0].method.args[0].toNumber() as number : undefined;
+      const firstExtrinsic = block.extrinsics[0];
 
-      return timestamp;
+      if (firstExtrinsic?.method && firstExtrinsic.method.args.length > 0) {
+        const timestampArg = firstExtrinsic.method.args[0] as u64;
+
+        const timestamp = typeof timestampArg.toNumber === 'function'
+          ? timestampArg.toNumber()
+          : undefined;
+
+        return timestamp;
+      }
+
+      return undefined;
     } catch (error) {
       console.error('Error:', error);
+
+      return undefined;
     }
   }, [api]);
 
@@ -206,8 +220,9 @@ export default function useReferendum(address: AccountId | string | undefined, t
 
   useEffect(() => {
     api && id !== undefined && api.query?.['referenda']?.['referendumInfoFor'] && api.query['referenda']['referendumInfoFor'](id)
-      .then((res) => {
-        const mayBeUnwrappedResult = (res.isSome && res.unwrap()) as PalletReferendaReferendumInfoRankedCollectiveTally | undefined;
+      .then((result) => {
+        const res = result as Option<PalletReferendaReferendumInfoConvictionVotingTally>;
+        const mayBeUnwrappedResult = (res.isSome && res.unwrap()) as PalletReferendaReferendumInfoConvictionVotingTally | undefined;
         const mayBeOngoingRef = mayBeUnwrappedResult?.isOngoing ? mayBeUnwrappedResult?.asOngoing : undefined;
         const mayBeTally = mayBeOngoingRef ? mayBeOngoingRef.tally : undefined;
 
@@ -216,8 +231,10 @@ export default function useReferendum(address: AccountId | string | undefined, t
         setOnchainRefInfo(mayBeUnwrappedResult);
         setOnChainTally(mayBeTally);
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const mayBeOrigin = mayBeUnwrappedResult?.isOngoing ? JSON.parse(JSON.stringify(mayBeUnwrappedResult?.asOngoing?.origin)) : undefined;
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
         setMaybeOriginDC(mayBeOrigin?.origins);
       }).catch(console.error);
   }, [api, id, refresh]);
@@ -233,7 +250,9 @@ export default function useReferendum(address: AccountId | string | undefined, t
   useEffect(() => {
     if (referendumPA?.assetId && assetHubApi?.query?.['assets']) {
       assetHubApi.query['assets']['metadata'](referendumPA.assetId)
-        .then((metadata) => {
+        .then((assetMetadata) => {
+          const metadata = assetMetadata as AssetMetadata;
+
           setAssetMetadata(metadata);
         }).catch(console.error);
     }
@@ -248,15 +267,16 @@ export default function useReferendum(address: AccountId | string | undefined, t
       assetId: referendumPA?.assetId,
       ayesAmount,
       ayesCount,
+      // @ts-expect-error comes from two different sources
       call: referendumPA?.proposed_call || referendumSb?.pre_image,
       chainName: referendumPA?.chainName || referendumSb?.chainName || chainName,
       comments: referendumPA?.comments,
       content: referendumPA?.content,
       created_at: referendumPA?.created_at || (referendumSb?.created_block_timestamp && referendumSb.created_block_timestamp * 1000) || createdAtOC,
-      decimal: assetMetadata?.decimals?.toNumber() as number,
+      decimal: assetMetadata?.decimals?.toNumber(),
       decisionDepositAmount: referendumPA?.decision_deposit_amount || referendumSb?.decision_deposit_balance ||
-        (onchainRefInfo?.isOngoing ? onchainRefInfo.asOngoing.decisionDeposit.value.amount && onchainRefInfo.asOngoing.decisionDeposit.value.amount.toString() : undefined),
-      decisionDepositPayer: referendumSb?.decision_deposit_account?.address || (onchainRefInfo?.isOngoing ? onchainRefInfo.asOngoing.decisionDeposit.value.who && onchainRefInfo.asOngoing.decisionDeposit.value.who.toString() : undefined),
+        (onchainRefInfo?.isOngoing ? onchainRefInfo.asOngoing.decisionDeposit.value.amount?.toString() : undefined),
+      decisionDepositPayer: referendumSb?.decision_deposit_account?.address || (onchainRefInfo?.isOngoing ? onchainRefInfo.asOngoing.decisionDeposit.value.who?.toString() : undefined),
       enactAfter: referendumPA?.enactment_after_block ||
         (onchainRefInfo?.isOngoing
           ? onchainRefInfo.asOngoing.enactment.isAfter
@@ -276,14 +296,13 @@ export default function useReferendum(address: AccountId | string | undefined, t
       naysCount,
       proposer: referendumPA?.proposer || referendumSb?.account?.address || proposerOC,
       requested: referendumPA?.requested || referendumSb?.beneficiary_amount, // needs double check if is the same as requestedFor
-      // requestedFor: referendumPA?.proposed_call?.args?.amount,
       status: referendumPA?.status || referendumSb?.status || onChainStatus,
       statusHistory: referendumPA?.statusHistory || referendumSb?.timeline || statusOC,
       submissionAmount: referendumPA?.submitted_amount || referendumSb?.pre_image?.amount || submissionAmountOC,
       submissionBlockOC: onchainRefInfo?.isOngoing
         ? onchainRefInfo.asOngoing.submitted.toNumber()
         : undefined,
-      supportAmount: referendumSb?.support_amount || (onchainRefInfo?.isOngoing ? onchainRefInfo.asOngoing.tally?.support : undefined),
+      supportAmount: referendumSb?.support_amount || (onchainRefInfo?.isOngoing ? onchainRefInfo.asOngoing.tally?.support?.toString() : undefined),
       timelinePA: referendumPA?.timeline,
       timelineSb: referendumSb?.timeline || statusOC,
       title: referendumPA ? referendumPA.title ? referendumPA.title : null : undefined,
@@ -326,7 +345,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
     /** to save the finished referendum in the local storage*/
     chrome.storage.local.get('latestFinishedReferenda', (res) => {
       const k = `${chainName}`;
-      const last = (res?.latestFinishedReferenda as ReferendumData) ?? {};
+      const last = (res?.['latestFinishedReferenda'] as ReferendumData) ?? {};
 
       if (!last[k]) {
         last[k] = [referendum];
@@ -353,7 +372,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
     /** look if the referendum id is already saved in local */
     chainName && chrome.storage.local.get('latestFinishedReferenda', (res) => {
       const k = `${chainName}`;
-      const last = (res?.latestFinishedReferenda as ReferendumData) ?? {};
+      const last = (res?.['latestFinishedReferenda'] as ReferendumData) ?? {};
 
       // console.log('last[k]:', last[k]);
 

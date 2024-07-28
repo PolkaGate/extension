@@ -20,7 +20,7 @@ import { useApi, useChain, useDecimal, useToken, useTokenPrice, useTranslation }
 import { LabelValue } from '../TrackStats';
 import { STATUS_COLOR } from '../utils/consts';
 import { formalizedStatus, formatRelativeTime, pascalCaseToTitleCase } from '../utils/util';
-import { hexAddressToFormatted } from './Metadata';
+import { getBeneficiary } from './Metadata';
 
 interface Props {
   address: string | undefined;
@@ -53,10 +53,18 @@ export default function ReferendumDescription ({ address, currentTreasuryApprova
 
   const [expanded, setExpanded] = useState<boolean>(false);
 
-  const mayBeBeneficiary = hexAddressToFormatted(referendum?.proposed_call?.args?.beneficiary as string, chain);
+  const mayBeBeneficiary = useMemo(() => {
+    if (referendum?.call && chain) {
+      return getBeneficiary(referendum, chain);
+    }
+
+    return undefined;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chain, referendum?.call]);
+
   const mayBeTreasuryProposalId = useMemo(() => currentTreasuryApprovalList?.find((p) => p.beneficiary === mayBeBeneficiary)?.id, [currentTreasuryApprovalList, mayBeBeneficiary]);
   const content = useMemo(() => {
-    const res = referendum?.content?.includes('login and tell us more about your proposal') ? t(DEFAULT_CONTENT) : referendum?.content
+    const res = referendum?.content?.includes('login and tell us more about your proposal') ? t(DEFAULT_CONTENT) : referendum?.content;
 
     return res || '';// ?.replace(/<br\s*\/?>/gi, ' ') || '';
   }, [referendum?.content, t]);
@@ -138,7 +146,7 @@ export default function ReferendumDescription ({ address, currentTreasuryApprova
                           valueStyle={{ fontSize: 16, fontWeight: 500, pl: '5px' }}
                         />
                       </Grid>
-                      <Divider flexItem orientation='vertical' sx={{ mx: '7px', my: '8px', bgcolor: theme.palette.mode === 'light' ? 'inherit' : 'text.disabled' }} />
+                      <Divider flexItem orientation='vertical' sx={{  bgcolor: theme.palette.mode === 'light' ? 'inherit' : 'text.disabled', mx: '7px', my: '8px' }} />
                       <Grid item sx={{ color: theme.palette.mode === 'light' ? 'text.disabled' : undefined, opacity: theme.palette.mode === 'dark' ? 0.6 : 1 }}>
                         {`$${requestedInUSD ? nFormatter(requestedInUSD, 2) : '0'}`}
                       </Grid>
@@ -146,7 +154,7 @@ export default function ReferendumDescription ({ address, currentTreasuryApprova
                   </>
                 }
               </Grid>
-              <Grid item sx={{ bgcolor: STATUS_COLOR[referendum?.status], border: '0.01px solid primary.main', borderRadius: '30px', color: 'white', fontSize: '16px', fontWeight: 400, lineHeight: '24px', mb: '5px', px: '10px', textAlign: 'center', width: 'fit-content' }}>
+              <Grid item sx={{ bgcolor: referendum?.status ? STATUS_COLOR[referendum.status] : undefined , border: '0.01px solid primary.main', borderRadius: '30px', color: 'white', fontSize: '16px', fontWeight: 400, lineHeight: '24px', mb: '5px', px: '10px', textAlign: 'center', width: 'fit-content' }}>
                 {pascalCaseToTitleCase(formalizedStatus(referendum?.status))}
               </Grid>
             </Grid>

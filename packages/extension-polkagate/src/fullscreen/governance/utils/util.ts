@@ -4,17 +4,19 @@
 import type { TFunction } from '@polkagate/apps-config/types';
 import type { ApiPromise } from '@polkadot/api';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
+// @ts-ignore
 import type { PalletConvictionVotingVoteVoting } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
+import type { Time } from '@polkadot/util/types';
 import type { Vote } from '../post/myVote/util';
 import type { DelegationInfo, Track } from './types';
 
-import { BN_MAX_INTEGER, bnMin, extractTime } from '@polkadot/util';
+import { BN_MAX_INTEGER, bnMin, extractTime, isBn } from '@polkadot/util';
 
 import { remainingTime } from '../../../util/utils';
 import { isAye } from '../post/myVote/util';
 
-type Result = [blockInterval: number, timeStr: string, time: number];
+type Result = [blockInterval: number, timeStr: string, time: Time];
 
 export const capitalizeFirstLetter = (str: string): string => str.replace(/^\w/, (c) => c.toUpperCase());
 
@@ -31,7 +33,7 @@ export function toSnakeCase (input: string | undefined): string | undefined {
   return output;
 }
 
-export function convertToCamelCase (input: string): string {
+export function convertToCamelCase(input: string): string {
   const parts = input.split(';');
   const camelCased = parts.map((part, index) =>
     index === 0 ? part : part.replace(/(?:^|-)(.)/g, (_, c) => c.toUpperCase())
@@ -85,7 +87,7 @@ export function toTitleCase(input: string | undefined): string | undefined {
   return words.join(' ');
 }
 
-export function pascalCaseToTitleCase (str?: string): string | undefined {
+export function pascalCaseToTitleCase(str?: string): string | undefined {
   if (!str) {
     return undefined;
   }
@@ -161,10 +163,12 @@ export const blockToX = (block: BlockNumber, noUnit = false) => {
   if (mayBeMins >= 1) {
     return `${mayBeMins}` + (!noUnit ? ` ${mayBeMins > 1 ? 'mins' : 'min'}` : '');
   }
+
+  return undefined;
 };
 
 export const blockToUnit = (block: BlockNumber): string | undefined => {
-  const b = block?.toNumber();
+  const b = isBn(block) ? block?.toNumber() : block;
 
   if (!b) {
     return undefined;
@@ -217,7 +221,11 @@ export const getPeriodScale = (blockNumber: BlockNumber): number | undefined => 
   return undefined;
 };
 
-export const formalizedStatus = (status: string): string => {
+export const formalizedStatus = (status?: string): string | undefined => {
+  if (!status) {
+    return;
+  }
+
   let output = status;
 
   switch (status) {
@@ -299,14 +307,14 @@ export function calcBlockTime(blockTime: BN, blocks: BN, t: TFunction): Result {
 }
 
 export async function getMyDelegationInfo(api: ApiPromise | undefined, formatted: string | AccountId | undefined, tracks: Track[] | undefined): Promise<DelegationInfo[] | null | undefined> {
-  if (!api || !formatted || !tracks || !tracks.length || !api?.query?.convictionVoting) {
+  if (!api || !formatted || !tracks?.length || !api?.query?.['convictionVoting']) {
     return undefined;
   }
 
   const delegatedTracks: DelegationInfo[] = [];
 
   for (const track of tracks) {
-    const votingFor = await api.query.convictionVoting.votingFor(String(formatted), track[0]) as unknown as PalletConvictionVotingVoteVoting | undefined;
+    const votingFor = await api.query['convictionVoting']['votingFor'](String(formatted), track[0]) as unknown as PalletConvictionVotingVoteVoting | undefined;
 
     votingFor && votingFor.isDelegating && delegatedTracks.push({
       conviction: votingFor.asDelegating.conviction.toNumber(),
