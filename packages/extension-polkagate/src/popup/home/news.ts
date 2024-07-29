@@ -10,6 +10,12 @@ export interface News {
 
 export const news: News[] = [
   {
+    version: '0.6.9',
+    notes: [
+      'Hide Numbers on Login Page. Add an option to hide numbers on the login page before logging in.'
+    ]
+  },
+  {
     version: '0.6.8',
     notes: [
       'Support for Polkadot People Chain: Create and manage accounts\' on-chain identities on the Polkadot People Chain with 10 times fewer reserved tokens.',
