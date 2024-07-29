@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { TopMenu } from './utils/types';
 
 import { Breadcrumbs, Grid, Link, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
@@ -12,13 +13,13 @@ import { capitalizeFirstLetter } from './utils/util';
 
 interface Props {
   address: string | undefined;
-  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string>>
-  topMenu: 'referenda' | 'fellowship';
+  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string | undefined>>
+  topMenu: TopMenu | undefined;
   subMenu: string;
   postId?: string | undefined;
 }
 
-export default function Bread({ address, postId, setSelectedSubMenu, subMenu, topMenu }: Props): React.ReactElement {
+export default function Bread ({ address, postId, setSelectedSubMenu, subMenu, topMenu }: Props): React.ReactElement {
   const history = useHistory();
 
   const backToSubMenu = useCallback(() => {
@@ -37,7 +38,7 @@ export default function Bread({ address, postId, setSelectedSubMenu, subMenu, to
       <Breadcrumbs aria-label='breadcrumb' color='text.primary'>
         <Link onClick={backToTopMenu} sx={{ cursor: 'pointer' }} underline='hover'>
           <Typography color='text.primary' sx={{ fontWeight: 500 }}>
-            {capitalizeFirstLetter(topMenu)}
+            {capitalizeFirstLetter(topMenu || '')}
           </Typography>
         </Link>
         {postId

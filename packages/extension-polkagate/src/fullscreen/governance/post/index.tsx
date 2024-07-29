@@ -1,8 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { AnyJson } from '@polkadot/types-codec/types';
+import type { Proposal, TopMenu } from '../utils/types';
 
 import { Container, Grid } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -16,7 +18,6 @@ import { FullScreenHeader } from '../FullScreenHeader';
 import Toolbar from '../Toolbar';
 import { ENDED_STATUSES } from '../utils/consts';
 import { isFinished } from '../utils/helpers';
-import { Proposal } from '../utils/types';
 import { getVoteType, toTitleCase } from '../utils/util';
 import CastVote from './castVote';
 import Chronology from './Chronology';
@@ -28,16 +29,20 @@ import StatusInfo from './StatusInfo';
 import Support from './Support';
 import Voting from './Voting';
 
-export default function ReferendumPost(): React.ReactElement {
-  const { t } = useTranslation();
-  const { address, postId, topMenu } = useParams<{ address?: string | undefined, topMenu?: 'referenda' | 'fellowship' | undefined, postId?: string | undefined }>();
-  const [refresh, setRefresh] = useState<boolean>(false);
-  const referendum = useReferendum(address, topMenu, postId && Number(postId), refresh);
+interface LocationState {
+  selectedSubMenu: string;
+}
 
-  // console.log('* referendum:', referendum);
+export default function ReferendumPost (): React.ReactElement {
+  const { t } = useTranslation();
+  const { address, postId, topMenu } = useParams<{ address?: string | undefined, topMenu?: TopMenu | undefined, postId?: string | undefined }>();
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const referendum = useReferendum(address, topMenu, postId ? Number(postId) : undefined, refresh);
 
   const history = useHistory();
-  const { state } = useLocation();
+  const location = useLocation();
+  const state = location.state as LocationState;
+
   const chainName = useChainName(address);
   const api = useApi(address);
   const ref = useRef('');
@@ -55,7 +60,7 @@ export default function ReferendumPost(): React.ReactElement {
   const notVoted = useMemo(() => vote === null || (vote && !('standard' in vote || 'splitAbstain' in vote || ('delegating' in vote && vote?.delegating?.voted))), [vote]);
 
   const trackName = useMemo((): string | undefined => {
-    const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendum?.trackName) as string | undefined;
+    const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendum?.trackName);
 
     return name && toTitleCase(name);
   }, [referendum?.trackName, state?.selectedSubMenu]);
@@ -85,25 +90,26 @@ export default function ReferendumPost(): React.ReactElement {
       return;
     }
 
-    api.query.treasury?.approvals().then((approvals) => {
-      if (approvals.toJSON().length) {
-        const approvalsIds = approvals.toJSON();
+    api.query['treasury']?.['approvals']()
+      .then((approvals) => {
+        const approvalsIds = approvals?.toJSON() as AnyJson[];
 
-        Promise.all(
-          approvals.toJSON().map((index) => api.query.treasury.proposals(index))
-        ).then((res) => {
-          let proposals = JSON.parse(JSON.stringify(res)) as Proposal[];
+        if (approvalsIds?.length) {
+          Promise.all(
+            approvalsIds?.map((index) => api.query['treasury']['proposals'](index))
+          ).then((res) => {
+            let proposals = JSON.parse(JSON.stringify(res)) as Proposal[];
 
-          proposals = proposals.map((p, index) => {
-            p.id = approvalsIds[index] as number;
+            proposals = proposals.map((p, index) => {
+              p.id = approvalsIds[index] as number;
 
-            return p;
-          });
+              return p;
+            });
 
-          setCurrentTreasuryApprovalList(proposals);
-        }).catch(console.error);
-      }
-    }).catch(console.error);
+            setCurrentTreasuryApprovalList(proposals);
+          }).catch(console.error);
+        }
+      }).catch(console.error);
   }, [api]);
 
   useEffect(() => {
@@ -115,8 +121,8 @@ export default function ReferendumPost(): React.ReactElement {
 
   const onCastVote = useCallback(() => setShowCastVote(true), []);
 
-  const isOngoing = !ENDED_STATUSES.includes(referendum?.status);
-  const cantModify = ENDED_STATUSES.includes(referendum?.status) && vote;
+  const isOngoing = !ENDED_STATUSES.includes(referendum?.status || '');
+  const cantModify = ENDED_STATUSES.includes(referendum?.status || '') && vote;
   const isAgainstOutcome = useMemo(() => {
     const voteType = getVoteType(vote);
 
@@ -171,7 +177,7 @@ export default function ReferendumPost(): React.ReactElement {
                     _mt='1px'
                     _onClick={onCastVote}
                     _width={100}
-                    disabled={topMenu === 'fellowship'}
+                    disabled={topMenu?.toLowerCase() === 'fellowship'}
                     text={hasVoted ? t<string>('Manage my Vote') : t<string>('Cast a Vote')}
                   />
                 </Grid>
@@ -208,7 +214,7 @@ export default function ReferendumPost(): React.ReactElement {
       {showCastVote &&
         <CastVote
           address={address}
-          cantModify={cantModify}
+          cantModify={!!cantModify}
           hasVoted={hasVoted}
           myVote={vote}
           notVoted={notVoted}

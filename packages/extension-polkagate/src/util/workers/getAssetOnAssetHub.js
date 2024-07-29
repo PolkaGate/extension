@@ -1,23 +1,26 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable import-newlines/enforce */
 /* eslint-disable object-curly-newline */
 
 import { BN_ZERO } from '@polkadot/util';
 
+// eslint-disable-next-line import/extensions
 import { closeWebsockets, fastestEndpoint, getChainEndpoints, toGetNativeToken } from './utils';
 
+// @ts-ignore
 async function getAssetOnAssetHub(addresses, assetsToBeFetched, chainName) {
   const endpoints = getChainEndpoints(chainName);
   const { api, connections } = await fastestEndpoint(endpoints, false);
 
   const results = await toGetNativeToken(addresses, api, chainName);
 
+  // @ts-ignore
   const nonNativeAssets = assetsToBeFetched.filter((asset) => !asset.extras?.isNative);
 
   for (const asset of nonNativeAssets) {
+    // @ts-ignore
     const maybeTheAssetOfAddresses = addresses.map((address) => api.query.assets.account(asset.id, address));
     const assetMetaData = api.query.assets.metadata(asset.id);
 
@@ -36,20 +39,23 @@ async function getAssetOnAssetHub(addresses, assetsToBeFetched, chainName) {
 
       const item = {
         assetId: asset.id,
-        availableBalance: isFrozen ? 0 : _balance,
+        balanceDetails: {
+          availableBalance: isFrozen ? 0 : _balance,
+          lockedBalance: isFrozen ? _balance : 0,
+          reservedBalance: isFrozen ? balance : 0 // JUST to comply with the rule that total=available + reserve
+        },
         chainName,
         decimal,
         genesisHash: api.genesisHash.toString(),
         isAsset: true,
-        lockedBalance: isFrozen ? _balance : 0,
         priceId: asset?.priceId,
-        reservedBalance: isFrozen ? balance : 0, // JUST to comply with the rule that total=available + reserve
         token,
         totalBalance: _balance
       };
 
       const _index = addresses[index];
 
+      // @ts-ignore
       results[_index]?.push(item) ?? (results[_index] = [item]);
     });
   }

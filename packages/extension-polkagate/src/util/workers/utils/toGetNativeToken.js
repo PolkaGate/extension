@@ -3,11 +3,12 @@
 
 // @ts-nocheck
 
-import { balancify } from '.';
 import { NATIVE_TOKEN_ASSET_ID } from '../../constants';
 import { getPriceIdByChainName } from '../../utils';
+// eslint-disable-next-line import/extensions
+import { balancify } from '.';
 
-export async function toGetNativeToken(addresses, api, chainName) {
+export async function toGetNativeToken (addresses, api, chainName) {
   const _result = {};
 
   const balances = await Promise.all(addresses.map((address) => api.derive.balances.all(address)));

@@ -3,20 +3,20 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
+
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { Backdrop, Grid, useTheme } from '@mui/material';
 import React, { useContext, useMemo, useState } from 'react';
 
-import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
-
 import { AccountContext } from '../../../components';
 import { useAccountAssets, useChain } from '../../../hooks';
-import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import QuickActionFullScreen from '../../../partials/QuickActionFullScreen';
-import AccountInformationForHome from './AccountInformationForHome';
 import { AccountLabel } from '../../../popup/home/AccountLabel';
+import AccountInformationForHome from './AccountInformationForHome';
 
 interface Props {
   account: AccountWithChildren;
@@ -54,8 +54,8 @@ function AccountItem({ account, hideNumbers, id, quickActionOpen, setQuickAction
         <DragIndicatorIcon {...listeners} sx={{ ':active': { cursor: 'grabbing' }, color: 'secondary.contrastText', cursor: 'grab', fontSize: '25px', position: 'absolute', right: '5px', top: '5px' }} />
         <AccountLabel
           account={account}
-          parentName={hasParent?.name ?? ''}
           ml='30px'
+          parentName={hasParent?.name ?? ''}
         />
         <AccountInformationForHome
           accountAssets={accountAssets}

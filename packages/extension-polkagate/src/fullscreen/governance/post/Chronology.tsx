@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Proposal, Referendum, ReferendumHistory } from '../utils/types';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Square from '@mui/icons-material/Square';
@@ -21,11 +22,10 @@ import { BN } from '@polkadot/util';
 import { subscan } from '../../../assets/icons';
 import { useApi, useChain, useChainName, useCurrentBlockNumber, useTranslation } from '../../../hooks';
 import { STATUS_COLOR, TREASURY_TRACKS } from '../utils/consts';
-import { Proposal, Referendum, ReferendumHistory } from '../utils/types';
 import { pascalCaseToTitleCase, toSnakeCase } from '../utils/util';
-import { hexAddressToFormatted } from './Metadata';
+import { getBeneficiary } from './Metadata';
 
-const toFormattedDate = ((dateString: Date | undefined): string | undefined => {
+const toFormattedDate = ((dateString: number | Date | undefined): string | undefined => {
   if (!dateString) {
     return undefined;
   }
@@ -59,7 +59,7 @@ function getAwardedDate(currentBlockNumber: number, executionBlockNumber: number
   return endBlockDate;
 }
 
-export default function Chronology({ address, currentTreasuryApprovalList, referendum }: Props): React.ReactElement<Props> {
+export default function Chronology ({ address, currentTreasuryApprovalList, referendum }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const chain = useChain(address);
   const api = useApi(address);
@@ -67,27 +67,33 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
   const theme = useTheme();
   const chainName = useChainName(address);
 
-  const spendPeriod = api && new BN(api.consts.treasury.spendPeriod).toNumber();
+  const spendPeriod = api && new BN(api.consts['treasury']['spendPeriod'] as unknown as BN).toNumber();
 
-  const sortedHistory = useMemo((): ReferendumHistory[] => referendum?.statusHistory?.sort((a, b) => b.block - a.block), [referendum]);
+  const sortedHistory = useMemo((): ReferendumHistory[] | undefined => referendum?.statusHistory?.sort((a, b) => b.block - a.block), [referendum]);
   const subscanLink = (blockNum: number) => 'https://' + chainName + '.subscan.io/block/' + String(blockNum);
   /** not a totally correct way to find but will work in most times */
   const [expanded, setExpanded] = React.useState(false);
   const [treasuryAwardedBlock, setTreasuryAwardedBlock] = React.useState<number>();
-  const isTreasury = TREASURY_TRACKS.includes(toSnakeCase(referendum?.trackName));
+  const isTreasury = TREASURY_TRACKS.includes(toSnakeCase(referendum?.trackName) || '');
   const isExecuted = referendum?.status === 'Executed';
   const mayBeExecutionBlock = sortedHistory?.find((h) => h.status === 'Executed')?.block;
-  const mayBeBeneficiary = hexAddressToFormatted(referendum?.proposed_call?.args?.beneficiary, chain);
+  const mayBeBeneficiary = useMemo(() => {
+    if (referendum?.call && chain) {
+      return getBeneficiary(referendum, chain);
+    }
+
+    return undefined;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chain, referendum?.call]);
+
   const mayBeAwardedDate = useMemo(() =>
     (currentBlockNumber && spendPeriod && mayBeExecutionBlock && getAwardedDate(currentBlockNumber, mayBeExecutionBlock, spendPeriod)) ||
     referendum?.timelinePA?.[1]?.statuses?.[1]?.timestamp
-    , [currentBlockNumber, mayBeExecutionBlock, spendPeriod, referendum]);
+  , [currentBlockNumber, mayBeExecutionBlock, spendPeriod, referendum]);
 
   /** in rare case as ref 160 the proposers are not the same! needs more research */
-  // const isInTreasuryQueue = isExecuted && !!currentTreasuryApprovalList?.find((item) => item.proposer === referendum.proposer && String(item.value) === referendum.requested && item.beneficiary === mayBeBeneficiary);
   const isInTreasuryQueue = useMemo(() => isExecuted && currentTreasuryApprovalList && !!currentTreasuryApprovalList?.find((item) => String(item.value) === referendum.requested && item.beneficiary === mayBeBeneficiary), [currentTreasuryApprovalList, isExecuted, mayBeBeneficiary, referendum]);
   const isAwardedBasedOnPA = useMemo(() => referendum?.timelinePA?.[1]?.type === 'TreasuryProposal' && referendum?.timelinePA?.[1]?.statuses?.[1]?.status === 'Awarded', [referendum]);
-  const isApprovedBasedOnPA = useMemo(() => referendum?.timelinePA?.[1]?.type === 'TreasuryProposal' && referendum?.timelinePA?.[1]?.statuses?.[0]?.status === 'Approved', [referendum]);
   const isTreasuryProposalBasedOnPA = useMemo(() => referendum?.timelinePA?.[1]?.type === 'TreasuryProposal', [referendum]);
 
   const treasuryLabel = useMemo(() => {
@@ -100,6 +106,8 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
     if (currentTreasuryApprovalList) {
       return isInTreasuryQueue ? 'To be Awarded' : 'Awarded';
     }
+
+    return undefined;
   }, [currentTreasuryApprovalList, isAwardedBasedOnPA, isInTreasuryQueue, isTreasuryProposalBasedOnPA, referendum]);
 
   useEffect(() => {
@@ -107,7 +115,7 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [referendum?.statusHistory?.length]);
 
-  const handleChange = useCallback((event, isExpanded: boolean) => {
+  const handleChange = useCallback((_event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded);
   }, []);
 
@@ -145,7 +153,7 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
                       <Grid container justifyContent='flex-start' pt='3px'>
                         <Grid item xs={2}>
                           <Link
-                            href={`${subscanLink(treasuryAwardedBlock)}`}
+                            href={ treasuryAwardedBlock ? `${subscanLink(treasuryAwardedBlock)}` : undefined}
                             rel='noreferrer'
                             target='_blank'
                             underline='none'
