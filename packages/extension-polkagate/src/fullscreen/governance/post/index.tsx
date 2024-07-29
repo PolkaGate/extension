@@ -146,9 +146,9 @@ export default function ReferendumPost (): React.ReactElement {
           subMenu={toTitleCase(referendum?.trackName) || state?.selectedSubMenu || '...'}
           topMenu={topMenu}
         />
-        <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', top: 160 }}>
+        <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll' }}>
           <Grid container justifyContent='space-between'>
-            <Grid container item md={8.9} sx={{ height: '100%' }}>
+            <Grid container item md={8.9} sx={{ height: '100%', ml: '5px' }}>
               <Description
                 address={address}
                 currentTreasuryApprovalList={currentTreasuryApprovalList}
@@ -169,7 +169,7 @@ export default function ReferendumPost (): React.ReactElement {
                 referendum={referendum}
               />
             </Grid>
-            <Grid container item md={2.9} sx={{ height: '100%', maxWidth: '290px' }}>
+            <Grid container item md={2.9} sx={{ height: '100%', maxWidth: '290px', mx: '5px' }}>
               {(isOngoing || (hasVoted && isAgainstOutcome)) &&
                 <Grid item sx={{ mb: '10px' }} xs={12}>
                   <PButton

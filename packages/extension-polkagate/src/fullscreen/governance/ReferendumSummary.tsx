@@ -1,26 +1,28 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Theme } from '@mui/material';
+import type { LatestReferenda } from './utils/types';
+
 import { OpenInNewRounded as OpenInNewIcon, ScheduleRounded as ClockIcon } from '@mui/icons-material/';
-import { Divider, Grid, Theme, useTheme } from '@mui/material';
+import { Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
 
-import { BN } from '@polkadot/util';
+import { noop } from '@polkadot/util';
 
 import { Identity } from '../../components';
 import { useApi, useChain, useFormatted, useReferendum, useTrack, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
-import { pgBoxShadow } from '../../util/utils';
+import { isHexToBn, pgBoxShadow } from '../../util/utils';
 import DecisionDeposit from './post/decisionDeposit';
 import PayDecisionDeposit from './post/decisionDeposit/PayDecisionDeposit';
 import VoteChart from './post/VoteChart';
 import { ENDED_STATUSES, STATUS_COLOR } from './utils/consts';
-import { LatestReferenda } from './utils/types';
 import { capitalizeFirstLetter, formalizedStatus, formatRelativeTime, pascalCaseToTitleCase } from './utils/util';
 
 interface Props {
@@ -35,7 +37,7 @@ const VerticalBar = ({ theme }: { theme: Theme }) => (
   </Grid>
 );
 
-function ReferendumSummary({ key, myVotedReferendaIndexes, refSummary }: Props): React.ReactElement<Props> {
+function ReferendumSummary ({ key, myVotedReferendaIndexes, refSummary }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -55,9 +57,9 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, refSummary }: Props):
 
   const resultInPercent = useMemo(() => {
     if (newReferendum?.ayesAmount && newReferendum?.naysAmount) {
-      const ayesBN = new BN(newReferendum?.ayesAmount);
-      const naysBN = new BN(newReferendum?.naysAmount);
-      const total = (Number(newReferendum?.ayesAmount) + Number(new BN(newReferendum?.naysAmount)));
+      const ayesBN = isHexToBn(newReferendum?.ayesAmount);
+      const naysBN = isHexToBn(newReferendum?.naysAmount);
+      const total = (Number(ayesBN) + Number(naysBN));
 
       if (total === 0) {
         return;
@@ -67,6 +69,8 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, refSummary }: Props):
         ? `${t('Aye')} ${parseFloat((Number(newReferendum?.ayesAmount) / total * 100).toFixed(2))}%`
         : `${t('Nay')} ${parseFloat((Number(newReferendum?.naysAmount) / total * 100).toFixed(2))}%`;
     }
+
+    return undefined;
   }, [newReferendum, t]);
 
   const openReferendum = useCallback(() => {
@@ -81,7 +85,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, refSummary }: Props):
   }, [address, refSummary.post_id, refSummary.type]);
 
   return (
-    <Grid container item key={key} onClick={!openDecisionDeposit ? openReferendum : () => null} sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', cursor: 'pointer', height: '109px', my: '13px', p: '0 20px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' }, position: 'relative' }}>
+    <Grid container item key={key} onClick={!openDecisionDeposit ? openReferendum : noop} sx={{ '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' }, bgcolor: 'background.paper', borderRadius: '10px', boxShadow: theme.palette.mode === 'light' ? pgBoxShadow(theme) : undefined, cursor: 'pointer', height: '109px', my: '13px', p: '0 20px', position: 'relative' }}>
       <Grid container item sx={{ height: '30px' }}>
         {isThisMine &&
           <Grid item sx={{ bgcolor: 'text.primary', color: 'label.main', fontSize: '12px', height: '20px', mr: '15px', textAlign: 'center', width: '85px' }}>
@@ -106,7 +110,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, refSummary }: Props):
             {t('By')}:
           </Grid>
           <Grid item sx={{ maxWidth: '22%', mb: '10px' }}>
-            <Identity api={api} chain={chain as any} formatted={refSummary.proposer} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, height: '38px', lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+            <Identity api={api} chain={chain} formatted={refSummary.proposer} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, height: '38px', lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
           </Grid>
           <VerticalBar theme={theme} />
           {origin &&
