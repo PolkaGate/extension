@@ -1,6 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -18,6 +19,7 @@ import { subscan } from '../../../assets/icons';
 import { Identity, ShowBalance, ShowValue } from '../../../components';
 import { useInfo, useTranslation } from '../../../hooks';
 import { isValidAddress } from '../../../util/utils';
+import useStyles from '../styles/styles';
 import { LabelValue } from '../TrackStats';
 import { pascalCaseToTitleCase } from '../utils/util';
 
@@ -67,11 +69,11 @@ interface Props {
   referendum: Referendum | undefined;
 }
 
-export default function Metadata({ address, decisionDepositPayer, referendum }: Props): React.ReactElement {
+export default function Metadata ({ address, decisionDepositPayer, referendum }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-
   const { api, chain, chainName, decimal, token } = useInfo(address);
+  const style = useStyles();
 
   const [expanded, setExpanded] = React.useState(false);
   const [showJson, setShowJson] = React.useState(false);
@@ -84,7 +86,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
     }
 
     return undefined;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chain, referendum?.call]);
 
   const handleChange = useCallback((_event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -92,7 +94,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
   }, []);
 
   return (
-    <Accordion expanded={expanded} onChange={handleChange} sx={{ border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', mt: 1, px: '3%', width: 'inherit' }}>
+    <Accordion expanded={expanded} onChange={handleChange} style={style.accordionStyle}>
       <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : undefined, px: 0 }}>
         <Grid container item>
           <Grid container item xs={12}>
@@ -118,7 +120,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
             value={
               <Identity
                 api={api}
-                chain={chain as any}
+                chain={chain}
                 formatted={referendum?.proposer}
                 identiconSize={25}
                 showShortAddress
@@ -148,7 +150,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
               value={
                 <Identity
                   api={api}
-                  chain={chain as any}
+                  chain={chain}
                   formatted={decisionDepositPayer}
                   identiconSize={25}
                   showShortAddress={!!decisionDepositPayer}
@@ -257,7 +259,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
                 underline='none'
                 width='25px'
               >
-                <Box alt={'subscan'} component='img' height='25px' width='25px' mt='5px' src={subscan as string} />
+                <Box alt={'subscan'} component='img' height='25px' mt='5px' src={subscan as string} width='25px' />
               </Link>
             }
             valueStyle={{ fontSize: 16, fontWeight: 500 }}

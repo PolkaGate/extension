@@ -1,6 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Proposal, Referendum } from '../utils/types';
@@ -8,7 +9,7 @@ import type { Proposal, Referendum } from '../utils/types';
 import { ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Divider, Grid, Paper, Typography, useTheme } from '@mui/material';
-import React, { useCallback,useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 
@@ -17,6 +18,7 @@ import { BN } from '@polkadot/util';
 import { Identity, ShowBalance, ShowValue } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useApi, useChain, useDecimal, useToken, useTokenPrice, useTranslation } from '../../../hooks';
+import useStyles from '../styles/styles';
 import { LabelValue } from '../TrackStats';
 import { STATUS_COLOR } from '../utils/consts';
 import { formalizedStatus, formatRelativeTime, pascalCaseToTitleCase } from '../utils/util';
@@ -28,7 +30,7 @@ interface Props {
   currentTreasuryApprovalList: Proposal[] | undefined;
 }
 
-const DEFAULT_CONTENT = 'This referendum does not have a description provided by the creator. Please research and learn about the proposal before casting your vote.'
+const DEFAULT_CONTENT = 'This referendum does not have a description provided by the creator. Please research and learn about the proposal before casting your vote.';
 
 export default function ReferendumDescription ({ address, currentTreasuryApprovalList, referendum }: Props): React.ReactElement {
   const { t } = useTranslation();
@@ -38,6 +40,7 @@ export default function ReferendumDescription ({ address, currentTreasuryApprova
   const decimal = useDecimal(address);
   const token = useToken(address);
   const { price } = useTokenPrice(address);
+  const style = useStyles();
 
   const requestedInUSD = useMemo(() => {
     const STABLE_COIN_PRICE = 1;
@@ -59,7 +62,7 @@ export default function ReferendumDescription ({ address, currentTreasuryApprova
     }
 
     return undefined;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chain, referendum?.call]);
 
   const mayBeTreasuryProposalId = useMemo(() => currentTreasuryApprovalList?.find((p) => p.beneficiary === mayBeBeneficiary)?.id, [currentTreasuryApprovalList, mayBeBeneficiary]);
@@ -85,13 +88,13 @@ export default function ReferendumDescription ({ address, currentTreasuryApprova
   return (
     <>
       {mayBeTreasuryProposalId &&
-        <Paper elevation={1} sx={{ height: 36, width: 'inherit', mt: '5px', mb: '2px', pt: '5px' }}>
+        <Paper elevation={1} sx={{ height: 36, mb: '2px', mt: '5px', pt: '5px', width: 'inherit' }}>
           <Typography sx={{ fontSize: '18px', fontWeight: 500, textAlign: 'center' }}>
             {t('This Referendum is now Treasury Proposal #{{proposalId}}', { replace: { proposalId: mayBeTreasuryProposalId } })}
           </Typography>
         </Paper>
       }
-      <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%', borderRadius: '10px', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main' }}>
+      <Accordion expanded={expanded} onChange={handleChange} style={{ ...style.accordionStyle, marginTop: 0 }}>
         <AccordionSummary
           expandIcon={
             <ExpandMoreIcon
