@@ -1,17 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
+
+import type { DropdownOption } from '../util/types';
 
 import { useEffect, useMemo, useState } from 'react';
 
 import { getAllMetadata } from '../messaging';
 import chains from '../util/chains';
-import { DropdownOption } from '../util/types';
-import { useTranslation } from '.';
 
 const RELAY_CHAIN = 'Relay Chain';
 
 export default function (showAnyChain = true): DropdownOption[] {
-  const { t } = useTranslation();
   const [metadataChains, setMetadataChains] = useState<DropdownOption[]>([]);
 
   useEffect(() => {

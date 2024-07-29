@@ -1,18 +1,20 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { PalletConvictionVotingVoteVoting } from '@polkadot/types/lookup';
 
-import { ApiPromise } from '@polkadot/api';
 import { TFunction } from '@polkagate/apps-config/types';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+
+import { ApiPromise } from '@polkadot/api';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_MAX_INTEGER, bnMin, extractTime } from '@polkadot/util';
 
 import { remainingTime } from '../../../util/utils';
 import { isAye, Vote } from '../post/myVote/util';
 import { DelegationInfo, Track } from './types';
 
-type Result = [blockInterval: number, timeStr: string, time: Time];
+type Result = [blockInterval: number, timeStr: string, time: number];
 
 export const capitalizeFirstLetter = (str: string): string => str.replace(/^\w/, (c) => c.toUpperCase());
 
@@ -39,9 +41,13 @@ export function convertToCamelCase(input: string): string {
 }
 
 export function toCamelCase(str: string): string {
+  if (!str) {
+    return '';
+  }
+
   return str.replace(/(?:^\w|[A-Z]|\b\w)/g, (match, index) => {
     return index === 0 ? match.toLowerCase() : match.toUpperCase();
-  }).replace(/\s+/g, '');
+  })?.replace(/\s+/g, '');
 }
 
 export function toPascalCase(input: string): string | undefined {
@@ -53,7 +59,7 @@ export function toPascalCase(input: string): string | undefined {
   let words = input.replace(/[_-]/g, ' ').split(' ');
 
   // Convert each word to title case
-  words = words.map(word => {
+  words = words.map((word) => {
     return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
   });
 
@@ -68,7 +74,7 @@ export function toTitleCase(input: string | undefined): string | undefined {
 
   // Replace all occurrences of capital letters with a space followed by the lowercase letter
   // Replace underscores and hyphens with spaces
-  let words = input.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').split(' ');
+  let words = input.replace(/([A-Z])/g, ' $1')?.replace(/[_-]/g, ' ')?.split(' ');
 
   // Convert each word to title case
   words = words.map((word) => {
@@ -88,10 +94,10 @@ export function pascalCaseToTitleCase(str: string): string | undefined {
   let result = str.replace(/([A-Z])/g, ' $1');
 
   // Replace underscores with spaces
-  result = result.replace(/_/g, ' ');
+  result = result?.replace(/_/g, ' ');
 
   // Capitalize the first letter of each word
-  result = result.split(' ').map(word => {
+  result = result.split(' ').map((word) => {
     return word.charAt(0).toUpperCase() + word.slice(1);
   }).join(' ');
 

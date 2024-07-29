@@ -1,9 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import '@vaadin/icons';
 
 import { ArrowBackIos as ArrowBackIosIcon, Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import { Divider, Grid, Pagination, SxProps, Typography, useTheme } from '@mui/material';
@@ -11,7 +10,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { Identity, ShowBalance } from '../../../../components';
+import { Identity, ShowBalance, VaadinIcon } from '../../../../components';
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
 import { AbstainVoteType, VoteType } from '../../utils/helpers';
@@ -189,7 +188,7 @@ export default function Delegators({ address, closeDelegators, handleCloseStanda
           <Grid item sx={{ pl: '6px' }} xs>
             <Identity
               api={api}
-              chain={chain}
+              chain={chain as any}
               formatted={standard.voter}
               identiconSize={28}
               showShortAddress
@@ -248,7 +247,7 @@ export default function Delegators({ address, closeDelegators, handleCloseStanda
               {t('Delegators ({{count}})', { replace: { count: delegatorList?.length } })}
             </Grid>
             <Grid item width='22%'>
-              <vaadin-icon icon='vaadin:sort' onClick={onSortVotes} style={{ height: '20px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
+              <VaadinIcon icon='vaadin:sort' onClick={onSortVotes} style={{ height: '20px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
               {t('Amount')}
             </Grid>
             <Grid item width='15%'>
@@ -263,7 +262,7 @@ export default function Delegators({ address, closeDelegators, handleCloseStanda
           {votesToShow?.map((vote, index) => (
             <Grid alignItems='flex-start' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400, py: '6px' }}>
               <Grid container item justifyContent='flex-start' width='35%'>
-                <Identity api={api} chain={chain} formatted={vote.voter} identiconSize={28} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+                <Identity api={api} chain={chain as any} formatted={vote.voter} identiconSize={28} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
               </Grid>
               <Grid container item justifyContent='center' width='22%'>
                 <ShowBalance api={api} balance={vote.balance?.value || vote.balance?.abstain || vote.balance?.aye || vote.balance?.nay} decimal={decimal} decimalPoint={2} token={token} />

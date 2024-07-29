@@ -3,22 +3,19 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { BalancesInfo } from '../../util/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Box, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-
 import { stars5Black, stars5White } from '../../assets/icons';
-import { FormatBalance2, FormatPrice, Infotip,OptionalCopyButton } from '../../components';
+import { FormatBalance2, FormatPrice, Infotip, OptionalCopyButton, VaadinIcon } from '../../components';
 import { useBalances, useChainName, useTokenPrice, useTranslation } from '../../hooks/';
 import RecentChains from '../../partials/RecentChains';
 import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
-import { BalancesInfo } from '../../util/types';
 import { getValue } from '../account/util';
 
 interface Props {
@@ -44,9 +41,9 @@ const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
   const theme = useTheme();
 
   return (
-    <Infotip text={isHidden && t('This account is hidden from websites')}>
+    <Infotip text={isHidden ? t('This account is hidden from websites') : t('This account is visible to websites')}>
       <IconButton onClick={toggleVisibility} sx={{ height: '15px', ml: '7px', mt: '13px', p: 0, width: '24px' }}>
-        <vaadin-icon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
+        <VaadinIcon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
       </IconButton>
     </Infotip>
   );
@@ -58,6 +55,7 @@ export default function AccountDetail ({ address, chain, goToAccount, hideNumber
   const balances = useBalances(address);
   const chainName = useChainName(address);
   const { price, priceChainName, priceDate } = useTokenPrice(address);
+
   const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
   const isPriceOutdated = useMemo(() => priceDate !== undefined && Date.now() - priceDate > BALANCES_VALIDITY_PERIOD, [priceDate]);
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
@@ -136,7 +134,7 @@ export default function AccountDetail ({ address, chain, goToAccount, hideNumber
       }
     </Grid>
   );
-
+  
   return (
     <Grid container direction='column' sx={{ width: '70%' }}>
       <Grid container direction='row' item sx={{ lineHeight: '20px' }}>

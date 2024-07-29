@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,14 +10,14 @@ import React, { useCallback, useEffect } from 'react';
 import { HideIcon, ShowIcon } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import Currency from '../partials/Currency';
-import FavoriteTokens from '../partials/FavoriteChains';
+import FavoriteChains from '../partials/FavoriteChains';
 
 interface Props {
   hideNumbers: boolean | undefined;
   setHideNumbers: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function HeaderComponents ({ hideNumbers, setHideNumbers }: Props): React.ReactElement {
+export default function HeaderComponents({ hideNumbers, setHideNumbers }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const onHideClick = useCallback(() => {
@@ -45,7 +46,7 @@ export default function HeaderComponents ({ hideNumbers, setHideNumbers }: Props
   return (
     <Grid columnGap='18px' container item pl='18px' width='fit-content'>
       <Currency />
-      <FavoriteTokens />
+      <FavoriteChains />
       <HideNumbers />
     </Grid>
   );

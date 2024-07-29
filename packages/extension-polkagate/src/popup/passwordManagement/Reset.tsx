@@ -1,20 +1,19 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import '@vaadin/icons';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { PButton } from '../../components';
+import { PButton, VaadinIcon } from '../../components';
 import { useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { EXTENSION_NAME } from '../../util/constants';
 
-function Reset (): React.ReactElement {
+function Reset(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -47,7 +46,7 @@ function Reset (): React.ReactElement {
           _onClick={_goToRestoreFromJson}
           _variant={'contained'}
           startIcon={
-            <vaadin-icon icon='vaadin:file-text' style={{ height: '18px', color: `${theme.palette.text.main}` }} />
+            <VaadinIcon icon='vaadin:file-text' style={{ height: '18px', color: `${theme.palette.text.main}` }} />
           }
           text={t<string>('Restore from JSON File')}
         />
@@ -61,7 +60,7 @@ function Reset (): React.ReactElement {
           _onClick={_goToImport}
           _variant={'contained'}
           startIcon={
-            <vaadin-icon icon='vaadin:book' style={{ height: '18px', color: `${theme.palette.text.main}` }} />
+            <VaadinIcon icon='vaadin:book' style={{ height: '18px', color: `${theme.palette.text.main}` }} />
           }
           text={t<string>('Import from Recovery Phrase')}
         />

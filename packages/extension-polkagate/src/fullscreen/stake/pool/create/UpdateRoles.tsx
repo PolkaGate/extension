@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -7,7 +8,8 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { AccountContext, AddressInput, PButton } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
@@ -26,7 +28,7 @@ interface Props {
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function UpdateRoles ({ address, bouncerId, chain, nominatorId, setBouncerId, setNominatorId, setShow, show }: Props): React.ReactElement {
+export default function UpdateRoles({ address, bouncerId, chain, nominatorId, setBouncerId, setNominatorId, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);
   const [updateBtnDisable, setUpdateBtnDisable] = useState<boolean>(false);
@@ -65,7 +67,7 @@ export default function UpdateRoles ({ address, bouncerId, chain, nominatorId, s
         <AddressInput
           address={newNominatorId}
           allAddresses={allAddresses}
-          chain={chain}
+          chain={chain as any}
           label={t('Nominator')}
           setAddress={setNewNominatorId}
           showIdenticon
@@ -77,7 +79,7 @@ export default function UpdateRoles ({ address, bouncerId, chain, nominatorId, s
         <AddressInput
           address={newBouncerId}
           allAddresses={allAddresses}
-          chain={chain}
+          chain={chain as any}
           label={t('Bouncer')}
           setAddress={setNewBouncerId}
           showIdenticon

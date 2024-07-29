@@ -1,15 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import '@vaadin/icons';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { WrongPasswordAlert } from '../../../components';
+import { VaadinIcon, WrongPasswordAlert } from '../../../components';
 import { getStorage, LoginInfo } from '../../../components/Loading';
 import { useTranslation } from '../../../hooks';
 import Confirmation from '../../../popup/passwordManagement/Confirmation';
@@ -23,7 +22,7 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ManageLoginPassword ({ open, setDisplayPopup }: Props): React.ReactElement {
+export default function ManageLoginPassword({ open, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -57,7 +56,7 @@ export default function ManageLoginPassword ({ open, setDisplayPopup }: Props): 
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid alignItems='flex-start' container justifyContent='flex-start' sx={{ width: 'fit-content' }}>
             <Grid item>
-              <vaadin-icon icon='vaadin:key' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+              <VaadinIcon icon='vaadin:key' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
             </Grid>
             <Grid item sx={{ pl: '10px' }}>
               <Typography fontSize='22px' fontWeight={700}>

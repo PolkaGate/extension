@@ -1,17 +1,16 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
-import { faAddressCard } from '@fortawesome/free-solid-svg-icons';
+import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
-import { ActionContext, SocialRecoveryIcon } from '../../../components';
+import { ActionContext, SocialRecoveryIcon, VaadinIcon } from '../../../components';
 import { useInfo, useTranslation } from '../../../hooks';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 import { popupNumbers } from '..';
@@ -22,7 +21,7 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function AccountSetting ({ address, setDisplayPopup }: Props): React.ReactElement {
+export default function AccountSetting({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { account, chain } = useInfo(address);
@@ -30,7 +29,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
 
   const [showAccountSettings, setShowAccountSettings] = useState<boolean>();
 
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const identityDisable = useMemo(() => !IDENTITY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
   const proxyDisable = useMemo(() => !PROXY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
   const socialRecoveryDisable = useMemo(() => !SOCIAL_RECOVERY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
@@ -82,13 +80,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
         <Grid alignItems='center' container direction='column' item justifyContent='center'>
           <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto 15px', width: '90%' }} />
           <TaskButton
-            disabled={proxyDisable}
-            icon={<vaadin-icon icon='vaadin:sitemap' style={{ height: '30px', color: `${proxyDisable ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
-            onClick={onManageProxies}
-            secondaryIconType='page'
-            text={t('Manage proxies')}
-          />
-          <TaskButton
             disabled={identityDisable}
             icon={
               <FontAwesomeIcon
@@ -100,6 +91,13 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
             onClick={onManageIdentity}
             secondaryIconType='page'
             text={t('Manage identity')}
+          />
+          <TaskButton
+            disabled={proxyDisable}
+            icon={<VaadinIcon icon='vaadin:sitemap' style={{ height: '30px', color: `${proxyDisable ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
+            onClick={onManageProxies}
+            secondaryIconType='page'
+            text={t('Manage proxies')}
           />
           <TaskButton
             disabled={socialRecoveryDisable}
@@ -119,26 +117,26 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
           />
           <TaskButton
             disabled={hardwareOrExternalAccount}
-            icon={<vaadin-icon icon='vaadin:download-alt' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
+            icon={<VaadinIcon icon='vaadin:download-alt' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
             onClick={onExportAccount}
             secondaryIconType='popup'
             text={t('Export account')}
           />
           <TaskButton
             disabled={hardwareOrExternalAccount}
-            icon={<vaadin-icon icon='vaadin:road-branch' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
+            icon={<VaadinIcon icon='vaadin:road-branch' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
             onClick={goToDeriveAcc}
             secondaryIconType='popup'
             text={t('Derive new account')}
           />
           <TaskButton
-            icon={<vaadin-icon icon='vaadin:edit' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
+            icon={<VaadinIcon icon='vaadin:edit' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
             onClick={onRenameAccount}
             secondaryIconType='popup'
             text={t('Rename')}
           />
           <TaskButton
-            icon={<vaadin-icon icon='vaadin:file-remove' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
+            icon={<VaadinIcon icon='vaadin:file-remove' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
             noBorderButton
             onClick={onForgetAccount}
             secondaryIconType='popup'

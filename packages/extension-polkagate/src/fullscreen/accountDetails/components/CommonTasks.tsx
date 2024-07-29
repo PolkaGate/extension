@@ -1,18 +1,23 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { BalancesInfo } from 'extension-polkagate/src/util/types';
+import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
 import { faCoins, faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import { BalancesInfo } from 'extension-polkagate/src/util/types';
+// @ts-ignore
+import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useMemo } from 'react';
 
+import { noop } from '@polkadot/util';
+
 import { PoolStakingIcon } from '../../../components';
-import { useTranslation } from '../../../hooks';
-import { FetchedBalance } from '../../../hooks/useAssetsBalances';
+import { useApi, useTranslation } from '../../../hooks';
 import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../../util/constants';
 import { popupNumbers } from '..';
 
@@ -25,7 +30,7 @@ interface Props {
 }
 
 interface TaskButtonProps {
-  icon: unknown;
+  icon: React.JSX.Element;
   text: string;
   onClick: () => void;
   secondaryIconType: 'popup' | 'page';
@@ -33,11 +38,12 @@ interface TaskButtonProps {
   disabled?: boolean;
   show?: boolean;
   mr?: string;
+  loading?: boolean;
 }
 
 export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): void => {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    if (tabs[0] && tabs[0].url) {
+    if (tabs[0]?.url) {
       const extensionUrl = tabs[0].url;
       const extensionBaseUrl = extensionUrl.split('#')[0];
 
@@ -50,7 +56,7 @@ export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): 
 
         closeCurrentTab && window.close();
 
-        if (existingTab && existingTab.id) {
+        if (existingTab?.id) {
           chrome.tabs.update(existingTab.id, { active: true }).catch(console.error);
         } else {
           chrome.tabs.create({ url: tabUrl }).catch(console.error);
@@ -62,15 +68,14 @@ export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): 
   });
 };
 
-export const TaskButton = ({ disabled, icon, mr = '25px', noBorderButton = false, onClick, secondaryIconType, show = true, text }: TaskButtonProps) => {
+export const TaskButton = ({ disabled, icon, loading, mr = '25px', noBorderButton = false, onClick, secondaryIconType, show = true, text }: TaskButtonProps) => {
   const theme = useTheme();
 
   return (
     <>
       {show &&
         <>
-          {/* eslint-disable-next-line react/jsx-no-bind */}
-          <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', m: 'auto', minHeight: '45px', p: '5px 10px' }} width='90%'>
+          <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? noop : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', m: 'auto', minHeight: '45px', p: '5px 10px' }} width='90%'>
             <Grid container item mr={mr} xs={1.5}>
               {icon}
             </Grid>
@@ -79,10 +84,18 @@ export const TaskButton = ({ disabled, icon, mr = '25px', noBorderButton = false
                 {text}
               </Typography>
             </Grid>
-            {secondaryIconType === 'page' &&
+            {secondaryIconType === 'page' && !loading &&
               <Grid alignItems='center' container item justifyContent='flex-end' xs={2}>
                 <ArrowForwardIosRoundedIcon sx={{ color: disabled ? 'text.disabled' : 'secondary.light', fontSize: '26px', stroke: disabled ? theme.palette.text.disabled : theme.palette.secondary.light, strokeWidth: 1 }} />
               </Grid>
+            }
+            {loading &&
+              <Circle
+                color={theme.palette.primary.main}
+                scaleEnd={0.7}
+                scaleStart={0.4}
+                size={25}
+              />
             }
           </Grid>
           {!noBorderButton && <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto', width: '85%' }} />
@@ -96,18 +109,31 @@ export const TaskButton = ({ disabled, icon, mr = '25px', noBorderButton = false
 export default function CommonTasks ({ address, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const api = useApi(address);
 
   const governanceDisabled = useMemo(() => !GOVERNANCE_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
-  const stakingDisabled = useMemo(() => !STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
-  const stakingIconColor = useMemo(() => stakingDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary, [stakingDisabled, theme.palette.action.disabledBackground, theme.palette.text.primary]);
+  const { stakingDisabled, stakingNotReady } = useMemo(() => {
+    const stakingDisabled = !STAKING_CHAINS.includes(genesisHash ?? '');
+    const stakingNotReady = !balance?.soloTotal || !balance?.pooledBalance;
+
+    return { stakingDisabled, stakingNotReady };
+  }, [balance?.pooledBalance, balance?.soloTotal, genesisHash]);
+  const stakingIconColor = useMemo(() => stakingDisabled || stakingNotReady ? theme.palette.action.disabledBackground : theme.palette.text.primary, [stakingDisabled, theme.palette.action.disabledBackground, theme.palette.text.primary, stakingNotReady]);
 
   const hasSoloStake = Boolean(balance?.soloTotal && !balance.soloTotal.isZero());
   const hasPoolStake = Boolean(balance?.pooledBalance && !balance.pooledBalance.isZero());
   const notStakedYet = !hasPoolStake && !hasSoloStake;
 
+  const canManageSoloStake = useMemo(() =>
+    hasSoloStake ||
+    (api && !api.tx?.['nominationPools']?.['migrateDelegation']) ||
+    (api?.tx?.['nominationPools']?.['migrateDelegation'] && balance?.pooledBalance?.isZero())
+  ,
+  [api, balance?.pooledBalance, hasSoloStake]);
+
   const goToSend = useCallback(() => {
     address && genesisHash &&
-      openOrFocusTab(`/send/${address}/${assetId}`);
+      openOrFocusTab(`/send/${address}/${assetId || ''}`, true);
   }, [address, assetId, genesisHash]);
 
   const goToReceive = useCallback(() => {
@@ -179,7 +205,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
           text={t('Governance')}
         />
         <TaskButton
-          disabled={stakingDisabled}
+          disabled={stakingDisabled || stakingNotReady}
           icon={
             <FontAwesomeIcon
               color={stakingIconColor}
@@ -187,6 +213,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
               icon={faCoins}
             />
           }
+          loading={!stakingDisabled && stakingNotReady}
           onClick={goToStaking}
           secondaryIconType='page'
           show={notStakedYet}
@@ -204,7 +231,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
           }
           onClick={goToSoloStaking}
           secondaryIconType='page'
-          show={(hasSoloStake || hasPoolStake) && !stakingDisabled}
+          show={(hasSoloStake || hasPoolStake) && !stakingDisabled && !!canManageSoloStake}
           text={t('Stake Solo')}
         />
         <TaskButton

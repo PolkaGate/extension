@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -15,7 +16,7 @@ interface Props {
   fullWidth?: boolean;
 }
 
-export default function CollapseIt ({ children, fullWidth, open, show, title }: Props): React.ReactElement {
+export default function CollapseIt({ children, fullWidth, open, show, title }: Props): React.ReactElement {
   return (
     <Grid container direction='column' m='auto' width={fullWidth ? '100%' : '92%'}>
       <Grid container item justifyContent='space-between' onClick={() => open(title)} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', cursor: 'pointer' }}>

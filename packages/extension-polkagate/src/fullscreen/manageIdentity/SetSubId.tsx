@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -34,7 +35,7 @@ interface Props {
   totalSubIdsDeposit: BN;
 }
 
-export default function SetSubId ({ api, mode, parentAddress, parentDisplay, resetSubIds, setMode, setStep, setSubIdAccountsToSubmit, setSubIdsParams, subIdAccounts, subIdAccountsToSubmit, subIdsParams, totalSubIdsDeposit }: Props): React.ReactElement {
+export default function SetSubId({ api, mode, parentAddress, parentDisplay, resetSubIds, setMode, setStep, setSubIdAccountsToSubmit, setSubIdsParams, subIdAccounts, subIdAccountsToSubmit, subIdsParams, totalSubIdsDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(parentAddress);

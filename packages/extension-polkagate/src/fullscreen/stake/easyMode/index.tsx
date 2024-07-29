@@ -1,20 +1,23 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Balance } from '@polkadot/types/interfaces';
+
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { BN_ZERO } from '@polkadot/util';
+import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AmountWithOptions, ShowBalance, TwoButtons } from '../../../components';
+import { AmountWithOptions, Infotip2, ShowBalance, ShowBalance3, TwoButtons, Warning } from '../../../components';
 import { useTranslation } from '../../../components/translate';
-import { useInfo, useMinToReceiveRewardsInSolo2, usePool, usePoolConsts, useStakingConsts, useValidatorSuggestion } from '../../../hooks';
-import { BalancesInfo } from '../../../util/types';
+import { useInfo, usePool, usePoolConsts, useStakingConsts } from '../../../hooks';
+import type { BalancesInfo } from '../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
-import { Inputs } from '../Entry';
+import type { Inputs } from '../Entry';
 import { STEPS } from '..';
+import { POLKAGATE_POOL_IDS } from '../../../util/constants';
 
 interface Props {
   address: string
@@ -24,87 +27,79 @@ interface Props {
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>
 }
 
-const POLKAGATE_POOL_IDS = {
-  Kusama: 18,
-  Polkadot: 8,
-  Westend: 6
-};
-
-const SAFETY_MARGIN_FACTOR_FOR_MIN_TO_SOLO_STAKE = 1.2;
-
-export default function EasyMode ({ address, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function EasyMode({ address, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { api, chainName, decimal } = useInfo(address);
-  const pool = usePool(address, POLKAGATE_POOL_IDS[chainName]);
+  const { api, chainName, decimal, formatted } = useInfo(address);
+  const pool = usePool(address, POLKAGATE_POOL_IDS[chainName as string] as number);
 
   const poolConsts = usePoolConsts(address);
   const stakingConsts = useStakingConsts(address);
-  const minToReceiveRewardsInSolo = useMinToReceiveRewardsInSolo2(address);
-  const autoSelectedValidators = useValidatorSuggestion(address);
 
-  const [amount, setAmount] = useState<string>(inputs?.extraInfo?.amount);
+  const [amount, setAmount] = useState<string>(inputs?.extraInfo?.['amount'] as string);
+  const [amountAsBN, setAmountAsBN] = useState<BN>(BN_ZERO);
   const [isNextClicked, setNextIsClicked] = useState<boolean>();
+  const [topStakingLimit, setTopStakingLimit] = useState<BN>();
+  const [alert, setAlert] = useState<string | undefined>();
+  const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
 
-  const buttonDisable = !amount;
-  const isBusy = !inputs?.extraInfo?.amount && isNextClicked;
+  const availableBalance = useMemo(() => balances?.availableBalance, [balances?.availableBalance]);
+
+  const buttonDisable = useMemo(() => {
+    return !amount || !amountAsBN || !topStakingLimit || parseFloat(amount) === 0 || amountAsBN.gt(topStakingLimit);
+  }, [amount, amountAsBN, topStakingLimit]);
+
+  const isBusy = !inputs?.extraInfo?.['amount'] && isNextClicked;
 
   useEffect(() => {
-    if (amount && minToReceiveRewardsInSolo && poolConsts) {
-      const amountAsBN = amountToMachine(amount, decimal);
-
-      if (amountAsBN.gt(minToReceiveRewardsInSolo.muln(SAFETY_MARGIN_FACTOR_FOR_MIN_TO_SOLO_STAKE))) {
-        // can stake solo
-        if (api && autoSelectedValidators?.length) {
-          const bonded = api.tx.staking.bond;
-          const bondParams = [amountAsBN, 'Staked'];
-
-          const nominated = api.tx.staking.nominate;
-          const ids = autoSelectedValidators.map((v) => v.accountId);
-
-          const call = api.tx.utility.batchAll;
-          const params = [[bonded(...bondParams), nominated(ids)]];
-
-          const extraInfo = {
-            action: 'Solo Staking',
-            amount,
-            subAction: 'Stake'
-          };
-
-          setInputs({
-            call,
-            extraInfo,
-            mode: STEPS.EASY_STAKING,
-            params,
-            selectedValidators: autoSelectedValidators
-          });
-        }
-      } else if (amountAsBN.gte(poolConsts.minJoinBond)) {
-        // can join the pool
-        if (pool && api) {
-          const call = api.tx.nominationPools.join;
-          const params = [amountAsBN, pool.poolId];
-
-          const extraInfo = {
-            action: 'Pool Staking',
-            amount,
-            poolName: pool.metadata,
-            subAction: 'Join'
-          };
-
-          pool && setInputs({
-            call,
-            extraInfo,
-            mode: STEPS.EASY_STAKING,
-            params,
-            pool
-          });
-        }
-      } else {
-        console.log('cant stake!');
-      }
+    if (!amountAsBN || !amount) {
+      return setAlert(undefined);
     }
-  }, [amount, api, autoSelectedValidators, decimal, minToReceiveRewardsInSolo, pool, poolConsts, setInputs]);
+
+    if (amountAsBN.gt(topStakingLimit || BN_MAX_INTEGER)) {
+      return setAlert(t('It is more than top staking limit.'));
+    }
+
+    return setAlert(undefined);
+  }, [amount, amountAsBN, topStakingLimit, t]);
+
+  useEffect(() => {
+    if (!api || !availableBalance || !formatted) {
+      return;
+    }
+
+    if (!api?.call?.['transactionPaymentApi']) {
+      return setEstimatedMaxFee(api.createType('Balance', BN_ONE) as Balance);
+    }
+
+    amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
+      setEstimatedMaxFee(api.createType('Balance', i?.partialFee) as Balance);
+    });
+  }, [formatted, api, availableBalance, amount, decimal, amountAsBN]);
+
+  useEffect(() => {
+    if (amount && amountAsBN && poolConsts && pool && api && amountAsBN.gte(poolConsts.minJoinBond)) {
+      const call = api.tx['nominationPools']['join'];
+      const params = [amountAsBN, pool.poolId];
+
+      const extraInfo = {
+        action: 'Easy Staking',
+        amount,
+        poolName: pool.metadata,
+        subAction: 'stake'
+      };
+
+      pool && setInputs({
+        call,
+        extraInfo,
+        mode: STEPS.EASY_STAKING,
+        params,
+        pool
+      });
+    } else {
+      console.log('waiting for pool:', pool);
+    }
+  }, [amount, amountAsBN, api, pool, poolConsts, setInputs]);
 
   const onChangeAmount = useCallback((value: string) => {
     if (!balances) {
@@ -119,23 +114,27 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
 
     setInputs(undefined);
     setAmount(value);
+    setAmountAsBN(amountToMachine(value, balances.decimal));
   }, [balances, setInputs]);
 
   const thresholds = useMemo(() => {
-    if (!stakingConsts || !decimal || !balances || !poolConsts) {
+    if (!stakingConsts || !decimal || !estimatedMaxFee || !availableBalance || !poolConsts) {
       return;
     }
 
     const ED = stakingConsts.existentialDeposit;
-    let max = balances.freeBalance.sub(ED.muln(2));
+    let max = availableBalance.sub(ED.muln(2)).sub(estimatedMaxFee);
+
     let min = poolConsts.minJoinBond;
 
     if (min.gt(max)) {
       min = max = BN_ZERO;
     }
 
+    setTopStakingLimit(max);
+
     return { max, min };
-  }, [balances, decimal, poolConsts, stakingConsts]);
+  }, [availableBalance, decimal, estimatedMaxFee, poolConsts, stakingConsts]);
 
   const onThresholdAmount = useCallback((maxMin: 'max' | 'min') => {
     if (!thresholds || !decimal) {
@@ -145,6 +144,7 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
     setInputs(undefined);
 
     setAmount(amountToHuman(thresholds[maxMin].toString(), decimal));
+    setAmountAsBN(thresholds[maxMin]);
   }, [thresholds, decimal, setInputs]);
 
   const onMaxClick = useCallback(
@@ -171,6 +171,23 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
     isNextClicked && !isBusy && goToReview();
   }, [goToReview, isBusy, isNextClicked]);
 
+  const Warn = ({ text }: { text: string }) => {
+    const theme = useTheme();
+
+    return (
+      <Grid container sx={{ '> div': { mr: '0', mt: 0, pl: '5px' } }}>
+        <Warning
+          fontWeight={400}
+          iconDanger
+          isBelowInput
+          theme={theme}
+        >
+          {text}
+        </Warning>
+      </Grid>
+    );
+  };
+
   return (
     <Grid container item>
       <Typography fontSize='16px' fontWeight={500} pb='15px' width='100%'>
@@ -178,13 +195,13 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
       </Typography>
       <Grid alignItems='center' container item justifyContent='flex-start' pt='20px'>
         <AmountWithOptions
-          label={t('How much are you looking to stake?') }
+          label={t('How much are you looking to stake?')}
           labelFontSize='16px'
           onChangeAmount={onChangeAmount}
           onPrimary={onMaxClick}
           onSecondary={onMinClick}
           primaryBtnText={t('Max amount')}
-          secondaryBtnText={ t('Min amount')}
+          secondaryBtnText={t('Min amount')}
           style={{
             fontSize: '16px',
             mt: '15px',
@@ -193,13 +210,18 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
           textSpace='15px'
           value={amount}
         />
+        {alert &&
+          <Warn text={alert} />
+        }
         <Grid container item pb='10px'>
           <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '58.25%' }}>
             <Grid item sx={{ fontSize: '16px', fontWeight: 400 }}>
-              {t('Available Balance')}
+              <Infotip2 showInfoMark text={t('The maximum amount you can stake, considering the existential deposit and future transaction fees.')}>
+                {t('Top staking limit')}
+              </Infotip2>
             </Grid>
             <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
-              <ShowBalance balance={balances?.availableBalance} decimal={decimal} decimalPoint={2} token={balances?.token} />
+              <ShowBalance balance={topStakingLimit} decimal={decimal} decimalPoint={2} token={balances?.token} />
             </Grid>
           </Grid>
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '58.25%' }}>
@@ -207,7 +229,7 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
               {t('Minimum to earn rewards')}
             </Grid>
             <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
-              <ShowBalance balance={poolConsts?.minJoinBond} decimal={decimal} decimalPoint={2} token={balances?.token} />
+              <ShowBalance3 address={address} balance={poolConsts?.minJoinBond} />
             </Grid>
           </Grid>
         </Grid>
@@ -233,9 +255,9 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
               secondaryBtnText={t('Back')}
             />
             {isBusy &&
-            <Typography sx={{ fontSize: '15px' }}>
-              {t('Please wait while we are fetching information!')}
-            </Typography>
+              <Typography sx={{ fontSize: '15px' }}>
+                {t('Please wait while we are fetching information!')}
+              </Typography>
             }
           </Grid>
         </Grid>

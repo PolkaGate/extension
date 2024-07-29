@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -56,13 +57,14 @@ const ToBeReleased = ({ decimal, showUnstaking, text, toBeReleased, token }: ToB
           <Grid fontWeight={400} item>
             <ShowBalance balance={amount} decimal={decimal} token={token} />
           </Grid>
-        </Grid>))
+        </Grid>
+      ))
       }
     </Grid>
   </Collapse>
 );
 
-export default function DisplayBalance ({ actions, address, amount, icons, isUnstaking, marginTop = '10px', onClicks, title, toBeReleased }: DisplayBalanceProps): React.ReactElement {
+export default function DisplayBalance({ actions, address, amount, icons, isUnstaking, marginTop = '10px', onClicks, title, toBeReleased }: DisplayBalanceProps): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const price = useNativeTokenPrice(address);
@@ -160,26 +162,27 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
           text={t('To be released')}
           toBeReleased={toBeReleased}
           token={token}
-        />}
+        />
+      }
       {amount && !amount.isZero() &&
-      <Box
-        sx={{
-          '&::before': {
-            borderBottom: `20px solid ${triangleColor}`,
-            borderBottomLeftRadius: '20%',
-            borderRight: '20px solid transparent',
+        <Box
+          sx={{
+            '&::before': {
+              borderBottom: `20px solid ${triangleColor}`,
+              borderBottomLeftRadius: '20%',
+              borderRight: '20px solid transparent',
+              bottom: 0,
+              content: '""',
+              height: 0,
+              left: 0,
+              position: 'absolute',
+              width: 0
+            },
             bottom: 0,
-            content: '""',
-            height: 0,
             left: 0,
-            position: 'absolute',
-            width: 0
-          },
-          bottom: 0,
-          left: 0,
-          position: 'absolute'
-        }}
-      />}
+            position: 'absolute'
+          }}
+        />}
     </Grid>
   );
 }

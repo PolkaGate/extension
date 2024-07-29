@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -16,9 +17,10 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Container, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-import { Balance } from '@polkadot/types/interfaces';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { Balance } from '@polkadot/types/interfaces';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
@@ -27,8 +29,8 @@ import { useAccountDisplay, useFormatted, useProxies, useToken, useTranslation }
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
-import { SYSTEM_SUGGESTION_TEXT } from '../../../../util/constants';
-import { Proxy, ProxyItem, SoloSettings, TxInfo, ValidatorInfo } from '../../../../util/types';
+import { PROXY_TYPE, SYSTEM_SUGGESTION_TEXT } from '../../../../util/constants';
+import type { Proxy, ProxyItem, SoloSettings, TxInfo, ValidatorInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import RewardsDestination from './partials/RewardDestination';
 import ShowValidators from './partials/ShowValidators';
@@ -104,18 +106,18 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
       let batchCall;
 
       if (isFirstTimeStaking && selectedValidators) {
-        const nominated = api.tx.staking.nominate;
-        const setController = api.tx.staking.setController;
+        const nominated = api.tx['staking']['nominate'];
+        const setController = api.tx['staking']['setController'];
         const isControllerDeprecated = setController.meta.args.length === 0;
         const ids = selectedValidators.map((v) => v.accountId);
         const txs = [tx(...params), nominated(ids)];
 
         settings.controllerId !== settings.stashId && !isControllerDeprecated && txs.push(setController(settings.controllerId));
-        batchCall = api.tx.utility.batchAll(txs);
+        batchCall = api.tx['utility']['batchAll'](txs);
       }
 
       const extrinsic = batchCall || tx(...params);
-      const ptx = selectedProxy ? api.tx.proxy.proxy(settings.stashId, selectedProxy.proxyType, extrinsic) : extrinsic;
+      const ptx = selectedProxy ? api.tx['proxy']['proxy'](settings.stashId, selectedProxy.proxyType, extrinsic) : extrinsic;
 
       const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, settings.stashId);
 
@@ -126,14 +128,15 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
+        from: { address: formatted as string, name },
         subAction: isFirstTimeStaking && selectedValidators ? 'Stake/Nominate' : 'Stake',  // TODO: should be Stake Extra?
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
 
       setShowWaitScreen(false);
@@ -144,16 +147,16 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
     }
   }, [settings.stashId, settings.controllerId, formatted, tx, selectedProxyAddress, password, isFirstTimeStaking, selectedValidators, api, params, selectedProxy, amount, estimatedFee, name, selectedProxyName, chain]);
 
-  const _onBackClick = useCallback(() => {
+  const onBackClick = useCallback(() => {
     setShow(false);
   }, [setShow]);
 
   const Controller = useCallback(() => (
     <Grid alignItems='center' container direction='column' justifyContent='center'>
       <Typography fontSize='16px' fontWeight={300} textAlign='center'>
-        {t<string>('Controller account')}
+        {t('Controller account')}
       </Typography>
-      <Identity chain={chain} formatted={settings.controllerId} identiconSize={31} style={{ height: '35px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+      <Identity chain={chain as any} formatted={settings.controllerId} identiconSize={31} style={{ height: '35px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
       <ShortAddress address={settings.controllerId} />
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
     </Grid>
@@ -163,11 +166,11 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
     <Motion>
       <Popup show={show}>
         <HeaderBrand
-          onBackClick={_onBackClick}
+          onBackClick={onBackClick}
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Staking')}
+          text={t('Staking')}
           withSteps={{
             current: 2,
             total: 2
@@ -180,7 +183,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
             style={{ mt: '-5px' }}
@@ -201,7 +204,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
           {isFirstTimeStaking
             ? <Grid alignContent='center' container justifyContent='center'>
               <Grid item sx={{ alignSelf: 'center', mr: '20px', width: 'fit=content' }}>
-                <Infotip fontSize='13px' iconTop={5} showQuestionMark text={t<string>(SYSTEM_SUGGESTION_TEXT)}>
+                <Infotip fontSize='13px' iconTop={5} showQuestionMark text={t(SYSTEM_SUGGESTION_TEXT)}>
                   <Typography sx={{ fontWeight: 300 }}>
                     {t('Selected Validators ({{count}})', { replace: { count: selectedValidators?.length } })}
                   </Typography>
@@ -226,12 +229,12 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
+          label={t('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={stake}
           proxiedAddress={settings.stashId}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+          proxyTypeFilter={PROXY_TYPE.STAKING}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}
@@ -260,7 +263,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
           </Confirmation>)
         }
         {showSelectedValidators && !!selectedValidators?.length &&
-          <ShowValidators address={address} api={api} chain={chain} selectedValidators={selectedValidators} setShowSelectedValidators={setShowSelectedValidators} showSelectedValidators={showSelectedValidators} staked={total} />
+          <ShowValidators address={address} api={api} chain={chain as any} selectedValidators={selectedValidators} setShowSelectedValidators={setShowSelectedValidators} showSelectedValidators={showSelectedValidators} staked={total} />
         }
       </Popup>
     </Motion>

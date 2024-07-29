@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -8,7 +9,8 @@ import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Link, Typogra
 import React from 'react';
 import { JsonToTable } from "react-json-to-table";
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { subscan } from '../../../assets/icons';
@@ -54,7 +56,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
   const [showJson, setShowJson] = React.useState(false);
 
   const referendumLinkOnsSubscan = () => `https://${chainName}.subscan.io/referenda_v2/${String(referendum?.index)}`;
-  const mayBeBeneficiary = referendum?.call?.args?.beneficiary?.value || hexAddressToFormatted(referendum?.call?.args?.beneficiary, chain) || referendum?.call?.args?.beneficiary?.toString() as unknown as  string;
+  const mayBeBeneficiary = referendum?.call?.args?.beneficiary?.value || hexAddressToFormatted(referendum?.call?.args?.beneficiary, chain) || referendum?.call?.args?.beneficiary?.toString() as unknown as string;
 
   const handleChange = (event, isExpanded: boolean) => {
     setExpanded(isExpanded);
@@ -87,7 +89,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
             value={
               <Identity
                 api={api}
-                chain={chain}
+                chain={chain as any}
                 formatted={referendum?.proposer}
                 identiconSize={25}
                 showShortAddress
@@ -117,7 +119,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
               value={
                 <Identity
                   api={api}
-                  chain={chain}
+                  chain={chain as any}
                   formatted={decisionDepositPayer}
                   identiconSize={25}
                   showShortAddress={!!decisionDepositPayer}
@@ -163,7 +165,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
                     isValidAddress(mayBeBeneficiary)
                       ? <Identity
                         api={api}
-                        chain={chain}
+                        chain={chain as any}
                         formatted={mayBeBeneficiary}
                         identiconSize={25}
                         showShortAddress

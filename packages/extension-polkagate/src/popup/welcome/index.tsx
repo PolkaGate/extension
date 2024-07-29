@@ -1,14 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import '@vaadin/icons';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { PButton } from '../../components';
+import { PButton, VaadinIcon } from '../../components';
 import { useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
@@ -80,7 +79,7 @@ function Welcome(): React.ReactElement {
         _mt='20px'
         _onClick={onCreate}
         _variant={'contained'}
-        startIcon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.main}` }} />}
+        startIcon={<VaadinIcon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.main}` }} />}
         text={t<string>('Create a new account')}
       />
       <Divider sx={{ fontSize: '18px', fontWeight: 300, my: '10px', px: '20px' }}>

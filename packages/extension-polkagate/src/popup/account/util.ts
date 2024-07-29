@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,7 +11,7 @@
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { BalancesInfo } from '../../util/types';
+import type { BalancesInfo } from '../../util/types';
 
 export const getValue = (type: string, balances: BalancesInfo | null | undefined): BN | undefined => {
   if (!balances) {
@@ -20,9 +21,9 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
   switch (type.toLocaleLowerCase()) {
     case ('total'):
     case ('total balance'):
-      return balances?.totalBalance
-        ? new BN(balances.totalBalance)
-        : new BN(balances.freeBalance).add(new BN(balances.reservedBalance)).add(balances?.pooledBalance ? new BN(balances.pooledBalance) : BN_ZERO);
+      return balances?.freeBalance && balances.reservedBalance
+        ? new BN(balances.freeBalance).add(new BN(balances.reservedBalance)).add(balances?.pooledBalance ? new BN(balances.pooledBalance) : BN_ZERO)
+        : new BN(balances?.totalBalance || 0);
     case ('pooled balance'):
     case ('pool stake'):
       return balances?.pooledBalance ?? BN_ZERO;
@@ -64,4 +65,3 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
       return undefined;
   }
 };
-

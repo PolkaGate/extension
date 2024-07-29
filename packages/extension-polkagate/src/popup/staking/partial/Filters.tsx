@@ -1,23 +1,26 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+//@ts-nocheck
+
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { getComparator } from '@polkadot/extension-polkagate/src/popup/staking/partial/comparators';
 import { DEFAULT_FILTERS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { Checkbox2, Input, Select, SlidePopUp, TwoButtons } from '../../../components';
-import { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
 
 interface Props {
-  allValidatorsIdentities: DeriveAccountInfo[] | undefined;
+  allValidatorsIdentities: DeriveAccountInfo[] | undefined | null;
   allValidators: ValidatorInfo[] | null | undefined;
   isFullscreen?: boolean;
   show: boolean;
@@ -29,7 +32,7 @@ interface Props {
   filters: Filter;
   setFilters: React.Dispatch<React.SetStateAction<Filter>>;
   setSortValue: React.Dispatch<React.SetStateAction<number | undefined>>;
-  sortValue: number;
+  sortValue: number | undefined;
   apply: boolean;
   setApply: React.Dispatch<React.SetStateAction<boolean>>;
   onLimitValidatorsPerOperator: (validators: ValidatorInfoWithIdentity[] | undefined, limit: number) => ValidatorInfoWithIdentity[];

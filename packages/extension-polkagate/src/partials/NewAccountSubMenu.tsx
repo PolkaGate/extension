@@ -1,14 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import '@vaadin/icons';
 
 import { Collapse, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
-import { AccountContext, ActionContext, MenuItem } from '../components';
+import { AccountContext, ActionContext, MenuItem, VaadinIcon } from '../components';
 import { useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 
@@ -38,7 +37,7 @@ function NewAccountSubMenu({ show }: Props): React.ReactElement<Props> {
           <MenuItem
             fontSize='17px'
             iconComponent={
-              <vaadin-icon icon='vaadin:plus-circle-o' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+              <VaadinIcon icon='vaadin:plus-circle-o' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
             }
             onClick={goToCreateAcc}
             py='4px'
@@ -48,7 +47,7 @@ function NewAccountSubMenu({ show }: Props): React.ReactElement<Props> {
           <MenuItem
             fontSize='17px'
             iconComponent={
-              <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+              <VaadinIcon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
             }
             onClick={goToDeriveAcc}
             text={t('Derive from accounts')}

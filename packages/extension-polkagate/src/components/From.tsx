@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,10 +11,11 @@
 
 import type { ApiPromise } from '@polkadot/api';
 
-import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { useChain, useFormatted } from '../hooks';
 import { getSubstrateAddress } from '../util/utils';
@@ -42,7 +44,7 @@ function From({ address, api, _chain, formatted, style, title }: Props): React.R
       </Typography>
       <Grid alignItems='center' container justifyContent='flex-start' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, py: '5px', mt: '2px' }}>
         <Grid item sx={{ fontSize: '28px', fontWeight: 400, maxWidth: '67%' }}>
-          <Identity address={_address} api={api} chain={chain} formatted={formatted || _formatted} identiconSize={31} showSocial={false} />
+          <Identity address={_address} api={api} chain={chain as any} formatted={formatted || _formatted} identiconSize={31} showSocial={false} />
         </Grid>
         <Grid item sx={{ width: '30%', pl: '5px' }}>
           <ShortAddress address={formatted || _formatted || _address} style={{ fontSize: '16px', fontWeight: 300, justifyContent: 'flex-start', mt: '5px' }} />

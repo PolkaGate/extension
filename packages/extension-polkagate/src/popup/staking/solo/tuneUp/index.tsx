@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -8,36 +9,31 @@
  * this component opens withdraw rewards review page
  * */
 
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+
 import { Divider, Grid, Link } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { useLocation } from 'react-router-dom';
 
-import State from '@polkadot/extension-base/background/handlers/State';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
 
 import { ActionContext, Motion, PasswordUseProxyConfirm, Progress, ShortAddress, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useApi, useChain, useChainName, useFormatted, useNeedsPutInFrontOf, useNeedsRebag, useProxies, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
+import { useAccountDisplay, useInfo, useNeedsPutInFrontOf, useNeedsRebag, useProxies, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
-import { STAKING_CHAINS } from '../../../../util/constants';
+import { PROXY_TYPE, STAKING_CHAINS } from '../../../../util/constants';
 import getLogo from '../../../../util/getLogo';
-import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './TxDetail';
 
-export default function TuneUp (): React.ReactElement {
+export default function TuneUp(): React.ReactElement {
   const { t } = useTranslation();
-  const { state } = useLocation<State>();
   const { address } = useParams<{ address: string }>();
-  const api = useApi(address, state?.api);
-  const chain = useChain(address);
-  const chainName = useChainName(address);
-  const formatted = useFormatted(address);
+  const { api, chain, chainName, formatted } = useInfo(address);
   const onAction = useContext(ActionContext);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
@@ -60,8 +56,8 @@ export default function TuneUp (): React.ReactElement {
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
-  const rebaged = api && api.tx.voterList.rebag;
-  const putInFrontOf = api && api.tx.voterList.putInFrontOf;
+  const rebaged = api && api.tx['voterList']['rebag'];
+  const putInFrontOf = api && api.tx['voterList']['putInFrontOf'];
 
   const goToStakingHome = useCallback(() => {
     onAction(`/solo/${address}`);
@@ -78,7 +74,7 @@ export default function TuneUp (): React.ReactElement {
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -123,7 +119,8 @@ export default function TuneUp (): React.ReactElement {
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
 
       setShowWaitScreen(false);
@@ -134,7 +131,7 @@ export default function TuneUp (): React.ReactElement {
     }
   }, [formatted, api, rebaged, putInFrontOf, selectedProxyAddress, password, rebagInfo?.shouldRebag, putInFrontInfo?.lighter, selectedProxy, estimatedFee, name, selectedProxyName, chain]);
 
-  const _onBackClick = useCallback(() => {
+  const onBackClick = useCallback(() => {
     onAction(`/solo/nominations/${address}`);
   }, [address, onAction]);
 
@@ -144,7 +141,7 @@ export default function TuneUp (): React.ReactElement {
     onAction('/');
   }, [onAction]);
 
-  const LabelValue = ({ label, mt = '30px', noDivider, value }: { label: string, value: string | Element, mt?: string, noDivider?: boolean }) => (
+  const LabelValue = ({ label, mt = '30px', noDivider, value }: { label: string, value: string | React.JSX.Element, mt?: string, noDivider?: boolean }) => (
     <>
       <Grid item mt={mt} textAlign='center' xs={12}>
         <Typography fontSize='14px' fontWeight={300}>
@@ -165,11 +162,11 @@ export default function TuneUp (): React.ReactElement {
   return (
     <Motion>
       <HeaderBrand
-        onBackClick={_onBackClick}
+        onBackClick={onBackClick}
         shortBorder
         showBackArrow
         showClose
-        text={t<string>('Tune Up')}
+        text={t('Tune Up')}
       />
       {isPasswordError &&
         <WrongPasswordAlert />
@@ -182,8 +179,8 @@ export default function TuneUp (): React.ReactElement {
             <Typography fontSize='14px' fontWeight={300}>
               {t('Changing your account\'s position to be a better one.')}
             </Typography>
-            <LabelValue label={t('Current bag upper')} value={rebagInfo?.currentUpper} />
-            <LabelValue label={t('My staked amount')} mt='5px' value={rebagInfo?.currentWeight} />
+            <LabelValue label={t('Current bag upper')} value={rebagInfo?.currentUpper as string} />
+            <LabelValue label={t('My staked amount')} mt='5px' value={rebagInfo?.currentWeight as string} />
             {!putInFrontInfo?.shouldPutInFront
               ? <Grid item mt='10px' textAlign='center' xs={12}>
                 <Typography fontSize='15px' fontWeight={400}>
@@ -198,7 +195,7 @@ export default function TuneUp (): React.ReactElement {
                   <>
                     <ShortAddress address={putInFrontInfo?.lighter} />
                     <Grid item sx={{ mt: '12px' }}>
-                      <Link href={`${subscanLink(putInFrontInfo?.lighter)}`} rel='noreferrer' target='_blank' underline='none'>
+                      <Link href={`${subscanLink(putInFrontInfo?.lighter as string)}`} rel='noreferrer' target='_blank' underline='none'>
                         <Grid alt={'subscan'} component='img' src={getLogo('subscan')} sx={{ height: 40, width: 40 }} />
                       </Link>
                     </Grid>
@@ -214,12 +211,12 @@ export default function TuneUp (): React.ReactElement {
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
+          label={t('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={submit}
           proxiedAddress={selectedProxyAddress}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+          proxyTypeFilter={PROXY_TYPE.STAKING}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

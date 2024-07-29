@@ -1,20 +1,22 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { Proxy, ProxyItem } from '../util/types';
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import BackspaceIcon from '@mui/icons-material/Backspace';
-import { FormControlLabel, Grid, Radio, SxProps, Theme, Typography } from '@mui/material';
+import { FormControlLabel, Grid, Radio, type SxProps, type Theme, Typography } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { Chain } from '@polkadot/extension-chains/types';
-
 import { useApi, useApiWithChain, useTranslation } from '../hooks';
-import { NameAddress, Proxy, ProxyItem } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
 import Label from './Label';
 import { AccountContext, Checkbox2 as Checkbox, Identity } from '.';
@@ -48,9 +50,15 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
     setWarningTest(text);
   }, [chain?.name, mode, notFoundText, t]);
 
-  const isAvailable = useCallback((proxy: Proxy): NameAddress | undefined =>
-    accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate) && (proxyTypeFilter ? proxyTypeFilter.includes(proxy.proxyType) : true))
-    , [accounts, proxyTypeFilter]);
+  const isAvailable = useCallback((proxy: Proxy): boolean | undefined => {
+    const exists = accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate) && (proxyTypeFilter ? proxyTypeFilter.includes(proxy.proxyType) : true));
+
+    if (mode === 'Availability') {
+      return !!exists;
+    } else if (mode === 'Select') {
+      return exists && !exists?.isExternal;
+    }
+  }, [accounts, mode, proxyTypeFilter]);
 
   const handleSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     proxies && onSelect && onSelect(proxies[Number(event.target.value)].proxy);
@@ -157,7 +165,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
                   return (
                     <Grid container item key={index} sx={{ '> div:not(:last-child)': { borderRight: '1px solid', borderRightColor: 'secondary.light' }, bgcolor: fade(proxyItem) ? 'primary.contrastText' : 'transparent', height: '41px', opacity: fade(proxyItem) ? 0.7 : 1, textAlign: 'center' }} xs={12}>
                       <Grid alignItems='center' container item justifyContent='left' pl='3px' xs={mode === 'None' ? 6.1 : 4.7}>
-                        <Identity api={api ?? api2} chain={chain} formatted={proxyItem.proxy.delegate} identiconSize={25} showShortAddress showSocial={false} style={{ 'div:nth-child(2)': { maxWidth: '85px' }, fontSize: '12px' }} subIdOnly />
+                        <Identity api={api ?? api2} chain={chain as any} formatted={proxyItem.proxy.delegate} identiconSize={25} showShortAddress showSocial={false} style={{ 'div:nth-child(2)': { maxWidth: '85px' }, fontSize: '12px' }} subIdOnly />
                       </Grid>
                       <Grid alignItems='center' container height='100%' item justifyContent='center' xs={mode === 'None' ? 4.5 : 3.9}>
                         <Typography fontSize='12px' fontWeight={400}>

@@ -1,26 +1,25 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import type { ApiPromise } from '@polkadot/api';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { AccountContext, AddressInput, InputWithLabel, PButton, Select, Warning } from '../../components';
-import { useAccountIdOrName, useAccountInfo2, useFormatted, useTranslation } from '../../hooks';
+import { useAccountDisplay, useFormatted, useIdentity, useTranslation } from '../../hooks';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
-import { Proxy, ProxyItem } from '../../util/types';
+import type { Proxy, ProxyItem } from '../../util/types';
 import { sanitizeChainName } from '../../util/utils';
 import ShowIdentity from './partials/ShowIdentity';
 
 interface Props {
   address: string;
-  api: ApiPromise;
   showAddProxy: boolean;
   setShowAddProxy: React.Dispatch<React.SetStateAction<boolean>>;
   chain: Chain;
@@ -38,26 +37,27 @@ const isEqualProxy = (a: Proxy, b: Proxy) => {
   return a.delay === b.delay && a.delegate === b.delegate && a.proxyType === b.proxyType;
 };
 
-export default function AddProxy ({ address, api, chain, onChange, proxyItems, setProxyItems, setShowAddProxy, showAddProxy }: Props): React.ReactElement {
+export default function AddProxy({ address, chain, onChange, proxyItems, setProxyItems, setShowAddProxy, showAddProxy }: Props): React.ReactElement {
+  const theme = useTheme();
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);
   const formatted = useFormatted(address);
-  const accountDisplayName = useAccountIdOrName(formatted);
+  const accountDisplayName = useAccountDisplay(formatted);
 
-  const theme = useTheme();
-
-  const [realAddress, setRealAddress] = useState<string | undefined>();
+  const [realAddress, setRealAddress] = useState<string | null | undefined>();
   const [selectedProxyType, setSelectedProxyType] = useState<string | null>('Any');
   const [delay, setDelay] = useState<number>(0);
   const [addButtonDisabled, setAddButtonDisabled] = useState<boolean>(true);
 
-  const proxyAccountIdentity = useAccountInfo2(api, realAddress);
+  const proxyAccountIdentity = useIdentity(chain.genesisHash, realAddress as string);
 
   const myselfAsProxy = useMemo(() => formatted === realAddress, [formatted, realAddress]);
   const possibleProxy = useMemo(() => ({ delay, delegate: realAddress, proxyType: selectedProxyType }) as Proxy, [delay, realAddress, selectedProxyType]);
   const alreadyExisting = useMemo(() => !!(proxyItems?.find((item) => isEqualProxy(item.proxy, possibleProxy))), [possibleProxy, proxyItems]);
 
-  const PROXY_TYPE = CHAIN_PROXY_TYPES[sanitizeChainName(chain.name) as keyof typeof CHAIN_PROXY_TYPES];
+  const chainName = sanitizeChainName(chain?.name);
+  const proxyTypeIndex = chainName?.toLowerCase()?.includes('assethub') ? 'AssetHubs' : chainName;
+  const PROXY_TYPE = CHAIN_PROXY_TYPES[proxyTypeIndex as keyof typeof CHAIN_PROXY_TYPES];
 
   const proxyTypeOptions = PROXY_TYPE.map((type: string): DropdownOption => ({
     text: type,
@@ -106,9 +106,9 @@ export default function AddProxy ({ address, api, chain, onChange, proxyItems, s
         {t("You can add an account included in this extension as a proxy of {{accountDisplayName}} to sign certain types of transactions on {{accountDisplayName}}'s behalf.", { replace: { accountDisplayName } })}
       </Typography>
       <AddressInput
-        address={realAddress}
+        address={realAddress as string}
         allAddresses={allAddresses}
-        chain={chain}
+        chain={chain as any}
         helperText={t('The account address which will be a proxy account')}
         label='Account ID'
         setAddress={setRealAddress}
@@ -143,7 +143,7 @@ export default function AddProxy ({ address, api, chain, onChange, proxyItems, s
       </Grid>
       {realAddress && !(myselfAsProxy || alreadyExisting) &&
         <ShowIdentity
-          accountIdentity={proxyAccountIdentity?.identity}
+          accountIdentity={proxyAccountIdentity !==undefined && proxyAccountIdentity?.identity || null}
           style={{ m: 'auto', width: '92%' }}
         />
       }

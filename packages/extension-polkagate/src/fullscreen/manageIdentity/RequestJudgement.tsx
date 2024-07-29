@@ -1,7 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { DropdownOption } from '../../util/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -12,10 +15,9 @@ import { BN } from '@polkadot/util';
 
 import { PButton, Select, ShowBalance, TwoButtons } from '../../components';
 import { useTranslation } from '../../components/translate';
-import { useChain, useChainName } from '../../hooks';
+import { useInfo } from '../../hooks';
 import FailSuccessIcon from '../../popup/history/partials/FailSuccessIcon';
-import { REGISTRARS_LIST } from '../../util/constants';
-import { DropdownOption } from '../../util/types';
+import { REGISTRARS_LIST, TEST_NETS } from '../../util/constants';
 import { pgBoxShadow } from '../../util/utils';
 import { toTitleCase } from '../governance/utils/util';
 import DisplayIdentity from './component/DisplayIdentity';
@@ -34,19 +36,16 @@ interface Props {
   idJudgement: IdJudgement;
 }
 
-export default function RequestJudgement ({ address, api, idJudgement, maxFeeValue, selectedRegistrar, setMaxFeeValue, setMode, setSelectedRegistrar, setSelectedRegistrarName, setStep }: Props): React.ReactElement {
+export default function RequestJudgement({ address, api, idJudgement, maxFeeValue, selectedRegistrar, setMaxFeeValue, setMode, setSelectedRegistrar, setSelectedRegistrarName, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const chainName = useChainName(address);
-  const chain = useChain(address);
-
-  const isWestend = chainName?.toLowerCase() === 'westend';
+  const { chain, chainName } = useInfo(address);
 
   const [registrarsList, setRegistrarsList] = useState<DropdownOption[] | undefined>();
   const [registrarsMaxFee, setRegistrarsMaxFee] = useState<{ text: string, fee: BN }[] | undefined>();
 
   // Filtering out W3F as an option since their registrar is now closed!
-  const filteredRegistrarsList = useMemo(() => registrarsList?.filter(({ value }) => String(value) !== String(REGISTRARS_LIST[2].index)), [registrarsList]);
+  const filteredRegistrarsList = useMemo(() => registrarsList?.filter(({ text }) => text !== 'Web3Foundation'), [registrarsList]);
 
   useEffect(() => {
     if (!api) {
@@ -61,6 +60,8 @@ export default function RequestJudgement ({ address, api, idJudgement, maxFeeVal
 
       registrarsInfo.forEach((regInfo) => {
         const found = REGISTRARS_LIST.find((reg) => reg.addresses.includes(String(regInfo.account)));
+
+        const isWestend = TEST_NETS.includes(api.genesisHash.toHex());
 
         if (found) {
           registrar.push({
@@ -80,10 +81,10 @@ export default function RequestJudgement ({ address, api, idJudgement, maxFeeVal
       setRegistrarsMaxFee(registrarsFee);
       setRegistrarsList(registrar);
     }).catch(console.error);
-  }, [api, isWestend]);
+  }, [api]);
 
   useEffect(() => {
-    if (!filteredRegistrarsList || selectedRegistrar !== undefined) {
+    if (!filteredRegistrarsList?.length || selectedRegistrar !== undefined) {
       return;
     }
 
@@ -91,7 +92,7 @@ export default function RequestJudgement ({ address, api, idJudgement, maxFeeVal
   }, [filteredRegistrarsList, selectedRegistrar, setSelectedRegistrar]);
 
   useEffect(() => {
-    if (!registrarsMaxFee || !registrarsList) {
+    if (!registrarsMaxFee || !registrarsList?.length) {
       return;
     }
 
@@ -118,7 +119,7 @@ export default function RequestJudgement ({ address, api, idJudgement, maxFeeVal
   }, [setMode, setStep]);
 
   return (
-    <Grid container item sx={{ display: 'block'}}>
+    <Grid container item sx={{ display: 'block' }}>
       <Typography fontSize='30px' fontWeight={700} pb='25px' pt='25px'>
         {idJudgement
           ? <>
@@ -138,13 +139,13 @@ export default function RequestJudgement ({ address, api, idJudgement, maxFeeVal
           <DisplayIdentity
             address={address}
             api={api}
-            chain={chain}
+            chain={chain as any}
           />
           <Grid alignItems='flex-end' container item justifyContent='space-between' m='auto'>
             <Grid alignContent='flex-start' container justifyContent='center' sx={{ '> div div div': { fontSize: '16px', fontWeight: 400 }, position: 'relative', width: '65%' }}>
               <Select
                 defaultValue={selectedRegistrar ?? filteredRegistrarsList?.at(0)?.value}
-                isDisabled={!filteredRegistrarsList || idJudgement === 'FeePaid' || (idJudgement !== null && idJudgement !== 'FeePaid')}
+                isDisabled={!filteredRegistrarsList?.length || idJudgement === 'FeePaid' || (idJudgement !== null && idJudgement !== 'FeePaid')}
                 label={t('Registrar')}
                 onChange={selectRegistrar}
                 options={filteredRegistrarsList || []}

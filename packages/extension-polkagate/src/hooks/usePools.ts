@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { DeriveStakingAccount } from '@polkadot/api-derive/types';
 import type { Codec } from '@polkadot/types/types';
@@ -39,7 +40,7 @@ type UsePools = {
   totalNumberOfPools: number | undefined;
 }
 
-export default function usePools (address: string): UsePools {
+export default function usePools(address: string): UsePools {
   const api = useApi(address);
 
   const [totalNumberOfPools, setTotalNumberOfPools] = useState<number | undefined>();
@@ -83,7 +84,7 @@ export default function usePools (address: string): UsePools {
 
         queries.push(Promise.all([
           api.query.nominationPools.metadata(poolId),
-          api.query.nominationPools.bondedPools(poolId),
+          api.query['nominationPools']['bondedPools'](poolId),
           api.query.nominationPools.rewardPools(poolId),
           api.derive.staking.account(stashId)
         ]));

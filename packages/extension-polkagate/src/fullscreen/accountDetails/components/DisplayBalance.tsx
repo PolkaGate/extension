@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -6,27 +6,27 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton, Theme, Typography } from '@mui/material';
+import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance } from '../../../components';
 
-interface DisplayBalanceProps {
+interface Props {
   amount: BN | Balance | undefined;
   title: string;
   token: string | undefined;
   decimal: number | undefined;
   price: number | undefined;
   onClick?: () => void;
-  theme?: Theme;
-  isDarkTheme: boolean;
   disabled?: boolean;
+  openCollapse?: boolean;
 }
 
-export default function DisplayBalance ({ amount, decimal, disabled, isDarkTheme, onClick, price, theme, title, token }: DisplayBalanceProps): React.ReactElement {
+export default function DisplayBalance({ amount, decimal, disabled, onClick, price, openCollapse, title, token }: Props): React.ReactElement {
+  const theme = useTheme();
+
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px 40px' }}>
       <Typography fontSize='18px' fontWeight={400}>
@@ -51,18 +51,27 @@ export default function DisplayBalance ({ amount, decimal, disabled, isDarkTheme
             skeletonHeight={20}
           />
         </Grid>
-        {onClick && theme &&
+        {onClick &&
           <Grid item m='auto' pl='8px'>
             <IconButton
-              onClick={disabled ? noop : onClick}
+              disabled={disabled}
+              onClick={onClick}
               sx={{ p: '8px' }}
             >
               <ArrowForwardIosRoundedIcon
                 sx={{
-                  color: disabled ? 'text,disabled' : 'secondary.light',
+                  color: disabled ? 'action.disabledBackground' : 'secondary.light',
                   fontSize: '24px',
-                  stroke: `${disabled ? theme.palette.text.disabled : theme.palette.secondary.light}`,
-                  strokeWidth: 1.5
+                  stroke: `${disabled ? theme.palette.action.disabledBackground : theme.palette.secondary.light}`,
+                  strokeWidth: 1.5,
+                  transform:
+                    openCollapse !== undefined
+                      ? openCollapse
+                        ? 'rotate(-90deg)'
+                        : 'rotate(90deg)'
+                      : 'none',
+                  transitionDuration: '0.3s',
+                  transitionProperty: 'transform'
                 }}
               />
             </IconButton>

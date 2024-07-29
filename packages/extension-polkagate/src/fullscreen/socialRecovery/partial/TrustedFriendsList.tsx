@@ -1,13 +1,14 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { useTranslation } from '../../../hooks';
 import { pgBoxShadow } from '../../../util/utils';
@@ -15,7 +16,6 @@ import { AddressWithIdentity } from '../components/SelectTrustedFriend';
 import TrustedFriendAccount from '../components/TrustedFriendAccount';
 
 interface Props {
-  api: ApiPromise | undefined;
   chain: Chain | null | undefined;
   friendsList: string[] | AddressWithIdentity[];
   title?: string;
@@ -23,7 +23,7 @@ interface Props {
   onRemoveFriend?: (addr: AddressWithIdentity) => void;
 }
 
-export default function TrustedFriendsList({ api, chain, friendsList, onRemoveFriend, style, title }: Props): React.ReactElement {
+export default function TrustedFriendsList({ chain, friendsList, onRemoveFriend, style, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -42,8 +42,7 @@ export default function TrustedFriendsList({ api, chain, friendsList, onRemoveFr
       {friendsList.map((friend, index) => (
         <TrustedFriendAccount
           accountInfo={typeof (friend) === 'object' ? friend.accountIdentity : undefined}
-          api={api}
-          chain={chain}
+          chain={chain as any}
           formatted={typeof (friend) === 'object' ? friend.address : String(friend)}
           iconType='minus'
           key={index}

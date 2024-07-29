@@ -1,10 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 /**
- * @description  this component is used to show an account balance in some pages like contributeToCrowdloan
+ * @description  this component is used to show an account's balance
  * */
 import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
@@ -29,7 +30,7 @@ export interface Props {
   withCurrency?: boolean;
 }
 
-export default function ShowBalance ({ api, balance, decimalPoint, withCurrency = true, height = 20, skeletonWidth = 90, decimal = undefined, token = undefined }: Props): React.ReactElement<Props> {
+export default function ShowBalance({ api, balance, decimalPoint, withCurrency = true, height = 20, skeletonWidth = 90, decimal = undefined, token = undefined }: Props): React.ReactElement<Props> {
   return (
     <Grid alignItems='center' container justifyContent='center' width='fit-content'>
       {

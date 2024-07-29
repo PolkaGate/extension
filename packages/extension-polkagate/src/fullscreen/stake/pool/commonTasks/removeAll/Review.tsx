@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -8,16 +9,18 @@ import type { ApiPromise } from '@polkadot/api';
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
+import { PROXY_TYPE } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN } from '@polkadot/util';
 
 import { AccountHolderWithProxy, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../../components';
 import { useEstimatedFee, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
-import { MemberPoints, MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
-import { Inputs } from '../../../Entry';
+import type { MemberPoints, MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
+import type { Inputs } from '../../../Entry';
 import { STEPS } from '../../stake';
 import { Mode } from '.';
 
@@ -35,7 +38,7 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<Mode | undefined>>;
 }
 
-export default function Review ({ address, api, chain, mode, pool, poolMembers, setMode, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, api, chain, mode, pool, poolMembers, setMode, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
@@ -43,8 +46,8 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
-  const [membersToUnboundAll, setMembersToUnboundAll] = useState<MemberPoints[] | undefined>();
-  const [membersToRemoveAll, setMembersToRemoveAll] = useState<MemberPoints[] | undefined>();
+  const [membersToUnbond, setMembersToUnbond] = useState<MemberPoints[] | undefined>();
+  const [membersToRemove, setMembersToRemove] = useState<MemberPoints[] | undefined>();
   const [inputs, setInputs] = useState<Inputs | undefined>();
 
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
@@ -79,57 +82,65 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
 
       const membersToUnbond = nonZeroPointMembers.filter((m) => m.accountId !== poolDepositorAddr);
 
-      setMembersToUnboundAll(membersToUnbond);
+      setMembersToUnbond(membersToUnbond);
     } else {
       const membersToRemove = poolMembers.filter((m) => m.accountId !== poolDepositorAddr);
 
-      setMembersToRemoveAll(membersToRemove);
+      setMembersToRemove(membersToRemove);
     }
   }, [poolMembers, mode, poolDepositorAddr]);
 
   useEffect(() => {
-    if ((!membersToUnboundAll && !membersToRemoveAll) || !formatted || !api) {
+    if ((!membersToUnbond && !membersToRemove) || !formatted || !api) {
       return;
     }
 
-    const batchAll = api.tx.utility.batchAll;
+    const batchAll = api.tx['utility']['batchAll'];
 
     if (mode === 'UnbondAll') {
-      const unbonded = api.tx.nominationPools.unbond;
+      const unbonded = api.tx['nominationPools']['unbond'];
 
-      const params = membersToUnboundAll?.map((m) => [m.accountId, m.points]);
+      const members = membersToUnbond?.map((m) => [m.accountId, m.points]);
 
-      if (!params || params.length === 0) {
+      if (!members || members.length === 0) {
         return;
       }
 
-      const call = params.length > 1
+      const call = members.length > 1
         ? batchAll
         : unbonded;
 
+      const params = members.length > 1
+        ? [members.map((member) => unbonded(...member))]
+        : members[0];
+
       setInputs({
         call,
-        params: params.length > 1 ? params : params[0]
+        params
       });
     } else if (mode === 'RemoveAll') {
-      const redeem = api.tx.nominationPools.withdrawUnbonded;
+      const redeem = api.tx['nominationPools']['withdrawUnbonded'];
 
-      const params = membersToRemoveAll?.map((m) => [m.accountId, m.points]);
+      const members = membersToRemove?.map((m) => [m.accountId, m.points]);
 
-      if (!params || params.length === 0) {
+      if (!members || members.length === 0) {
         return;
       }
 
-      const call = params.length > 1
+      const call = members.length > 1
         ? batchAll
         : redeem;
 
+      const params = members.length > 1
+        ? [members.map((member) => redeem(...member))]
+        : members[0];
+
       setInputs({
         call,
-        params: params.length > 1 ? params : params[0]
+        params
       });
     }
-  }, [api, formatted, membersToRemoveAll, membersToUnboundAll, mode, setInputs]);
+  }, [api, formatted, membersToRemove, membersToUnbond, mode, setInputs]);
 
   const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
 
@@ -142,7 +153,7 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
           }
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             style={{ mt: 'auto' }}
             title={t('Account holder')}
@@ -150,20 +161,20 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
           {mode === 'UnbondAll'
             ? (<Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
-              {t<string>('Unstaking all members of the pool except yourself forcefully.')}
+              {t('Unstaking all members of the pool except yourself forcefully.')}
             </Typography>)
             : (<>
               <Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }} textAlign='center'>
-                {t<string>('Removing all members from the pool')}
+                {t('Removing all members from the pool')}
               </Typography>
               <Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
-                {t<string>('When you confirm, you will be able to unstake your tokens')}
+                {t('When you confirm, you will be able to unstake your tokens')}
               </Typography>
             </>)
           }
           <ShowPool
             api={api}
-            chain={chain}
+            chain={chain as any}
             label=''
             mode='Default'
             pool={pool}
@@ -184,7 +195,7 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
               onSecondaryClick={onBackClick}
               params={inputs?.params}
               primaryBtnText={t('Confirm')}
-              proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+              proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
               secondaryBtnText={t('Back')}
               selectedProxy={selectedProxy}
               setIsPasswordError={setIsPasswordError}
@@ -204,7 +215,7 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
           closeSelectProxy={closeProxy}
           height={500}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+          proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
           selectedProxy={selectedProxy}
           setSelectedProxy={setSelectedProxy}
         />

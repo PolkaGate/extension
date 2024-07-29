@@ -1,15 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { MsData } from '../util/getMS';
+
 import { useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
-
 import { POLKADOT_GENESIS_HASH } from '../util/constants';
-import { getJsonFileFromRepo, MsData } from '../util/getMS';
+import { getJsonFileFromRepo } from '../util/getMS';
 
-export default function useMerkleScience (address: string | AccountId | null | undefined, chain: Chain | undefined, initialize?: boolean): MsData | undefined {
+export default function useMerkleScience (address: string | AccountId | null | undefined, chain: Chain | null | undefined, initialize?: boolean): MsData | undefined {
   const [data, setData] = useState<MsData>();
 
   useEffect(() => {
@@ -18,7 +19,7 @@ export default function useMerkleScience (address: string | AccountId | null | u
     }
 
     chrome.storage.local.get('merkleScience', (res) => {
-      const data = res?.merkleScience as MsData[];
+      const data = res?.['merkleScience'] as MsData[];
       const found = data?.find((d) => d.address?.toLowerCase() === String(address).toLowerCase());
 
       setData(found);

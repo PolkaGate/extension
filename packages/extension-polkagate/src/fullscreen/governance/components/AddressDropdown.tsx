@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -74,7 +75,7 @@ export default function AddressDropdown({ api, chainGenesis, onSelect, selectedA
                 <Grid alignItems='center' container item key={index} onClick={_onSelect(address)} sx={{ cursor: 'pointer', zIndex: 10 }}>
                   <Identity
                     address={address}
-                    chain={chain}
+                    chain={chain as any}
                     identiconSize={24}
                     showSocial={false}
                     style={{

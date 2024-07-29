@@ -1,8 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
+import type { InitiateRecoveryConfig, SocialRecoveryModes, WithdrawInfo } from './util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -19,7 +21,6 @@ import ActiveProxyStatus from './partial/ActiveProxyStatus';
 import InitiatedRecoveryStatus from './partial/InitiatedRecoveryStatus';
 import LostAccountRecoveryInfo from './partial/LostAccountRecoveryInfo';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
-import { InitiateRecoveryConfig, SocialRecoveryModes, WithdrawInfo } from './util/types';
 import { checkLostAccountRecoverability } from './util/utils';
 import { STEPS } from '.';
 
@@ -40,7 +41,7 @@ interface Props {
   setLostAccountRecoveryInfo: React.Dispatch<React.SetStateAction<false | PalletRecoveryRecoveryConfig | null | undefined>>;
 }
 
-export default function InitiateRecovery ({ accountsInfo, activeProxy, address, api, initiatedRecovery, lostAccountRecoveryInfo, mode, setLostAccountAddress, setLostAccountRecoveryInfo, setMode, setStep, setTotalDeposit, withdrawInfo }: Props): React.ReactElement {
+export default function InitiateRecovery({ accountsInfo, activeProxy, address, api, initiatedRecovery, lostAccountRecoveryInfo, mode, setLostAccountAddress, setLostAccountRecoveryInfo, setMode, setStep, setTotalDeposit, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { chain, decimal, formatted, token } = useInfo(address);
@@ -168,7 +169,7 @@ export default function InitiateRecovery ({ accountsInfo, activeProxy, address, 
           {initiatedRecovery
             ? <InitiatedRecoveryStatus
               api={api}
-              chain={chain}
+              chain={chain as any}
               delayRemainBlock={Math.max(0, delayEndBlock - (currentBlockNumber ?? 0))}
               goWithdraw={goWithdraw}
               initiatedRecovery={initiatedRecovery}
@@ -205,7 +206,7 @@ export default function InitiateRecovery ({ accountsInfo, activeProxy, address, 
           <SelectTrustedFriend
             accountsInfo={accountsInfo}
             api={api}
-            chain={chain}
+            chain={chain as any}
             disabled={false}
             helperText={t<string>('Find the account you want to rescue by entering their address or any associated identity details, such as their name, email, Twitter, etc.')}
             iconType='none'

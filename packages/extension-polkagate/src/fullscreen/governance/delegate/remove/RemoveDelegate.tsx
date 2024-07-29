@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,6 +10,7 @@
  * */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { Proxy, TxInfo } from '../../../../util/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -16,11 +18,10 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../components';
-import { useAccountInfo2, useInfo, useTracks, useTranslation } from '../../../../hooks';
+import { useIdentity, useInfo, useTracks, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
-import { Proxy, TxInfo } from '../../../../util/types';
+import { PROXY_TYPE } from '../../../../util/constants';
 import DisplayValue from '../../post/castVote/partial/DisplayValue';
-import { GOVERNANCE_PROXY } from '../../utils/consts';
 import ReferendaTable from '../partial/ReferendaTable';
 import TracksList from '../partial/TracksList';
 import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '..';
@@ -38,16 +39,16 @@ interface Props {
   selectedProxy: Proxy | undefined;
 }
 
-export default function RemoveDelegate ({ address, classicDelegateInformation, formatted, mixedDelegateInformation, selectedProxy, setModalHeight, setSelectedTracksLength, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
+export default function RemoveDelegate({ address, classicDelegateInformation, formatted, mixedDelegateInformation, selectedProxy, setModalHeight, setSelectedTracksLength, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const { api, chain, decimal, token } = useInfo(address);
+  const { api, chain, decimal, genesisHash, token } = useInfo(address);
   const { tracks } = useTracks(address);
   const delegateeAddress = classicDelegateInformation
     ? classicDelegateInformation.delegateeAddress
     : mixedDelegateInformation
       ? mixedDelegateInformation.delegatee
       : undefined;
-  const delegateeName = useAccountInfo2(api, delegateeAddress)?.identity?.display;
+  const delegateeName = useIdentity(genesisHash, delegateeAddress)?.identity?.display;
   const ref = useRef(null);
 
   const [isPasswordError, setIsPasswordError] = useState(false);
@@ -55,8 +56,8 @@ export default function RemoveDelegate ({ address, classicDelegateInformation, f
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
-  const undelegate = api && api.tx.convictionVoting.undelegate;
-  const batch = api && api.tx.utility.batchAll;
+  const undelegate = api && api.tx['convictionVoting']['undelegate'];
+  const batch = api && api.tx['utility']['batchAll'];
 
   const delegatedTracks = useMemo(() => {
     if (classicDelegateInformation) {
@@ -91,7 +92,7 @@ export default function RemoveDelegate ({ address, classicDelegateInformation, f
 
     setSelectedTracksLength(params.length);
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
@@ -134,7 +135,7 @@ export default function RemoveDelegate ({ address, classicDelegateInformation, f
           <Identity
             address={address}
             api={api}
-            chain={chain}
+            chain={chain as any}
             direction='row'
             identiconSize={31}
             showShortAddress
@@ -145,7 +146,7 @@ export default function RemoveDelegate ({ address, classicDelegateInformation, f
         </Grid>
         {selectedProxyAddress &&
           <Grid container m='auto' maxWidth='92%'>
-            <ThroughProxy address={selectedProxyAddress} chain={chain} />
+            <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
           </Grid>
         }
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
@@ -155,7 +156,7 @@ export default function RemoveDelegate ({ address, classicDelegateInformation, f
           </Typography>
           <Identity
             api={api}
-            chain={chain}
+            chain={chain as any}
             direction='row'
             formatted={delegateeAddress}
             identiconSize={31}
@@ -211,7 +212,7 @@ export default function RemoveDelegate ({ address, classicDelegateInformation, f
             isPasswordError={isPasswordError}
             onSecondaryClick={onBackClick}
             primaryBtnText={t('Confirm')}
-            proxyTypeFilter={GOVERNANCE_PROXY}
+            proxyTypeFilter={PROXY_TYPE.GOVERNANCE}
             secondaryBtnText={t('Back')}
             selectedProxy={selectedProxy}
             setIsPasswordError={setIsPasswordError}

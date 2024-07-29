@@ -1,20 +1,22 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { ApiPromise } from '@polkadot/api';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { BN } from '@polkadot/util';
+import type { ValidatorInfo } from '../../../../../util/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
-import { BN } from '@polkadot/util';
 
 import { SlidePopUp } from '../../../../../components';
 import { useInfo, useIsExtensionPopup, useTranslation } from '../../../../../hooks';
-import { ValidatorInfo } from '../../../../../util/types';
 import ValidatorsTable from '../../../partial/ValidatorsTable';
 
 interface Props {
@@ -60,9 +62,9 @@ export default function ShowValidators({ address, api, chain, selectedValidators
         onClick={onClose}
         sx={{
           left: isExtensionPopup ? '15px' : undefined,
-          right: isExtensionPopup ? undefined : '30px',
           p: 0,
           position: 'absolute',
+          right: isExtensionPopup ? undefined : '30px',
           top: isExtensionPopup ? '65px' : '35px'
         }}
       >

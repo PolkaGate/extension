@@ -1,37 +1,42 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
+import type { HexString } from '@polkadot/util/types';
+import type { AddressState } from '../../../util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { canDerive } from '@polkadot/extension-base/utils';
+import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import Bread from '@polkadot/extension-polkagate/src/fullscreen/partials/Bread';
+import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext, Label, Password, Warning } from '../../../components';
+import { AccountContext, AccountNamePasswordCreation, ActionContext, Label, Password, VaadinIcon, Warning } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { deriveAccount, validateAccount, validateDerivationPath } from '../../../messaging';
 import { nextDerivationPath } from '../../../util/nextDerivationPath';
-import { AddressState } from '../../../util/types';
 import DerivationPath from '../deriveAccount/DerivationPath';
 import AddressDropdownFullScreen from './AddressDropdownFullScreen';
 
 // match any single slash
 const singleSlashRegex = /([^/]|^)\/([^/]|$)/;
 
-function DeriveFromAccounts (): React.ReactElement {
+function DeriveFromAccounts(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
   const { address: parentAddress } = useParams<AddressState>();
+
   const defaultPath = useMemo(() => nextDerivationPath(accounts, parentAddress), [accounts, parentAddress]);
   const [suriPath, setSuriPath] = useState<null | string>(defaultPath);
 
@@ -99,8 +104,11 @@ function DeriveFromAccounts (): React.ReactElement {
     }
 
     setIsBusy(true);
-    deriveAccount(parentAddress, account.suri, validatedParentPassword, name, password, parentGenesis)
-      .then(() => openOrFocusTab('/', true))
+    deriveAccount(parentAddress, account.suri, validatedParentPassword, name, password, parentGenesis as HexString | null)
+      .then(() => {
+        setStorage('profile', PROFILE_TAGS.LOCAL).catch(console.error);
+        openOrFocusTab('/', true);
+      })
       .catch((error): void => {
         setIsBusy(false);
         console.error(error);
@@ -109,7 +117,7 @@ function DeriveFromAccounts (): React.ReactElement {
 
   const onParentChange = useCallback((address: string) => {
     setParentPassword('');
-    onAction(`/fullscreenDerive/${address}`);
+    onAction(`/derivefs/${address}`);
   }, [onAction]);
 
   const onParentPasswordEnter = useCallback((password: string): void => {
@@ -137,16 +145,15 @@ function DeriveFromAccounts (): React.ReactElement {
       />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', position: 'relative' }}>
         <Grid container item sx={{ display: 'block', mb: '20px', px: '10%' }}>
-          <Grid alignContent='center' alignItems='center' container item>
-            <Grid item sx={{ mr: '20px' }}>
-              <vaadin-icon icon='vaadin:road-branch' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
-            </Grid>
-            <Grid item>
-              <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t('Derive from accounts')}
-              </Typography>
-            </Grid>
-          </Grid>
+          <Bread />
+          <Title
+            height='70px'
+            logo={
+              <VaadinIcon icon='vaadin:road-branch' style={{ color: `${theme.palette.text.primary}`, height: '40px', width: '40px' }} />
+            }
+            padding='0px'
+            text={t('Derive from accounts')}
+          />
           <Typography fontSize='16px' fontWeight={400} width='100%'>
             {t('A derived account inherits the recovery phrase from its parent, but has a unique derivation path. Please select a parent account and enter its password to proceed.')}
           </Typography>

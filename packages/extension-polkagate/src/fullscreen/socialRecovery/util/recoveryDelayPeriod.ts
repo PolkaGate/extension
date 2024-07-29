@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 export default function recoveryDelayPeriod(blocks: number, dateDetailLength?: number): string {
   const units = ['Year', 'Week', 'Day', 'Hour', 'Minute', 'Second'];

@@ -1,11 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-/* eslint-disable header/header */
+// @ts-nocheck
+
 /* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
- * this component shows an account balances information in detail
+ * this component shows an account balances extra info
  * */
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -13,14 +14,15 @@ import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { Container, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { Identicon, Motion, Popup } from '../../components';
 import { useAccountName, useFormatted, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { STAKING_CHAINS } from '../../util/constants';
-import { BalancesInfo } from '../../util/types';
+import type { BalancesInfo } from '../../util/types';
 import LabelBalancePrice from './LabelBalancePrice';
 
 interface Props {
@@ -81,9 +83,9 @@ export default function Others({ address, balances, chain, identity, setShow, sh
         </Container>
         <Container disableGutters sx={{ maxHeight: `${parent.innerHeight - 150}px`, overflowY: 'auto', px: '15px' }}>
           {chain?.genesisHash && STAKING_CHAINS.includes(chain.genesisHash) &&
-            <LabelBalancePrice address={address} balances={balances} label={'Free Balance'} title={t('Free Balance')} />
+            <LabelBalancePrice address={address as string} balances={balances} label={'Free Balance'} title={t('Free Balance')} />
           }
-          <LabelBalancePrice address={address} balances={balances} label={'Voting Balance'} title={t('Voting Balance')} />
+          <LabelBalancePrice address={address as string} balances={balances} label={'Voting Balance'} title={t('Voting Balance')} />
         </Container>
       </Popup>
     </Motion>

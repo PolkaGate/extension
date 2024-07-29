@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -7,6 +8,9 @@
  * @description
  * this component shows an account information in detail
  * */
+
+import type { HexString } from '@polkadot/util/types';
+import type { BalancesInfo, FormattedAddressState } from '../../util/types';
 
 import { faCoins, faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -16,29 +20,30 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
+import { isOnRelayChain } from '@polkadot/extension-polkagate/src/util/utils';
+
 import { stakingClose } from '../../assets/icons';
 import { ActionContext, Assets, Chain, HorizontalMenuItem, Identity, Motion } from '../../components';
 import { useBalances, useGenesisHashOptions, useInfo, useMyAccountIdentity, useTranslation } from '../../hooks';
 import { tieAccount, windowOpen } from '../../messaging';
 import { FullScreenRemoteNode, HeaderBrand } from '../../partials';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
-import { BalancesInfo, FormattedAddressState } from '../../util/types';
 import StakingOption from '../staking/Options';
 import LockedInReferenda from './unlock/LockedInReferenda';
 import AccountBrief from './AccountBrief';
 import LabelBalancePrice from './LabelBalancePrice';
 import Others from './Others';
+import ReservedReasons from './ReservedReasons';
 
-export default function AccountDetails (): React.ReactElement {
+export default function AccountDetails(): React.ReactElement {
+  const theme = useTheme();
   const { t } = useTranslation();
   const history = useHistory();
   const onAction = useContext(ActionContext);
-  const theme = useTheme();
   const { pathname } = useLocation();
   const { address, genesisHash } = useParams<FormattedAddressState>();
   const { api, chain, chainName, formatted } = useInfo(address);
   const identity = useMyAccountIdentity(address);
-
   const genesisOptions = useGenesisHashOptions();
 
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -46,7 +51,10 @@ export default function AccountDetails (): React.ReactElement {
   const balances = useBalances(address, refresh, setRefresh, false, assetId); // if assetId is undefined and chain is assethub it will fetch native token's balance
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
+  const [showReservedReasons, setShowReservedReasons] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
+
+  const showReservedChevron = useMemo(() => balances && !balances?.reservedBalance.isZero() && isOnRelayChain(genesisHash), [balances, genesisHash]);
 
   const gotToHome = useCallback(() => {
     if (showStakingOptions) {
@@ -73,7 +81,7 @@ export default function AccountDetails (): React.ReactElement {
   }, [chain, goToAccount]);
 
   const goToSend = useCallback(() => {
-    address && windowOpen(`/send/${address}/${assetId}`).catch(console.error);
+    address && windowOpen(`/send/${address}/${assetId || ''}`).catch(console.error);
   }, [address, assetId]);
 
   const goToStaking = useCallback(() => {
@@ -125,10 +133,14 @@ export default function AccountDetails (): React.ReactElement {
     setShowOthers(true);
   }, []);
 
+  const onReservedReasons = useCallback(() => {
+    setShowReservedReasons(true);
+  }, []);
+
   const _onChangeNetwork = useCallback((newGenesisHash: string) => {
     const availableGenesisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;
 
-    address && tieAccount(address, availableGenesisHash).catch(console.error);
+    address && tieAccount(address, availableGenesisHash as HexString).catch(console.error);
   }, [address]);
 
   const _onChangeAsset = useCallback((id: number) => {
@@ -183,7 +195,6 @@ export default function AccountDetails (): React.ReactElement {
           <Assets
             address={address}
             assetId={assetId}
-            defaultValue={-1}
             label={t<string>('Asset')}
             onChange={_onChangeAsset}
             setAssetId={setAssetId}
@@ -202,14 +213,14 @@ export default function AccountDetails (): React.ReactElement {
             {assetId !== undefined
               ? <>
                 <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferable'} title={t('Transferable')} />
-                { balances?.lockedBalance &&
+                {balances?.lockedBalance &&
                   <LabelBalancePrice address={address} balances={balanceToShow} label={'Locked'} title={t('Locked')} />
                 }
-                { balances?.reservedBalance && !balances?.lockedBalance &&
+                {balances?.reservedBalance && !balances?.lockedBalance &&
                   <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} title={t('Reserved')} />
                 }
               </>
-              : < >
+              : <>
                 <LabelBalancePrice address={address} balances={balanceToShow} label={'Total'} title={t('Total')} />
                 <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferable'} onClick={goToSend} title={t('Transferable')} />
                 {STAKING_CHAINS.includes(genesisHash)
@@ -223,7 +234,7 @@ export default function AccountDetails (): React.ReactElement {
                   ? <LockedInReferenda address={address} refresh={refresh} setRefresh={setRefresh} />
                   : <LabelBalancePrice address={address} balances={balanceToShow} label={'Locked'} title={t('Locked')} />
                 }
-                <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} title={t('Reserved')} />
+                <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} onClick={showReservedChevron ? onReservedReasons : undefined} title={t('Reserved')} />
                 <OthersRow />
               </>
             }
@@ -260,7 +271,7 @@ export default function AccountDetails (): React.ReactElement {
             divider
             icon={
               showStakingOptions
-                ? <Box component='img' src={stakingClose} width='30px' />
+                ? <Box component='img' src={stakingClose as string} width='30px' />
                 : <FontAwesomeIcon
                   color={stakingIconColor}
                   icon={faCoins}
@@ -304,6 +315,15 @@ export default function AccountDetails (): React.ReactElement {
           identity={identity}
           setShow={setShowOthers}
           show={showOthers}
+        />
+      }
+      {showReservedReasons && balances &&
+        <ReservedReasons
+          address={address}
+          assetId={balances?.assetId}
+          identity={identity}
+          setShow={setShowReservedReasons}
+          show={showReservedReasons}
         />
       }
     </Motion>

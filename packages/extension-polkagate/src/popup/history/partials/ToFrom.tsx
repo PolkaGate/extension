@@ -1,12 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
-import { Divider, Grid, Typography } from '@mui/material';
+import { Divider, Grid } from '@mui/material';
 import React from 'react';
 
 import { CopyAddressButton } from '../../../components';
 
-export default function ToFrom({ item, mt = 0, noDivider = false, toCopy }: { item: string | undefined, mt?: number, noDivider?: boolean, toCopy?: string }) {
+export default function ToFrom({ item, mt = 0, noDivider = false, toCopy }: { item: string | undefined | any, mt?: number, noDivider?: boolean, toCopy?: string }) {
   return (
     <>
       {item &&

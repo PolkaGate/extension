@@ -3,19 +3,22 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
+import type { HexString } from '@polkadot/util/types';
 
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import { Collapse, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
+import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { keyring } from '@polkadot/ui-keyring';
 import { objectSpread } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { ActionContext, Address, InputWithLabel, TextAreaWithLabel, TwoButtons, Warning } from '../../../components';
+import { Address, InputWithLabel, TextAreaWithLabel, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useGenesisHashOptions, useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri } from '../../../messaging';
@@ -29,12 +32,11 @@ export interface AccountInfo {
   suri: string;
 }
 
-export default function ImportRawSeed (): React.ReactElement {
+export default function ImportRawSeed(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
   const genesisOptions = useGenesisHashOptions();
-  const onAction = useContext(ActionContext);
 
   const [isBusy, setIsBusy] = useState(false);
   const [seed, setSeed] = useState<string | null>(null);
@@ -44,7 +46,7 @@ export default function ImportRawSeed (): React.ReactElement {
   const [address, setAddress] = useState('');
   const [type, setType] = useState(DEFAULT_TYPE);
   const [name, setName] = useState<string | null | undefined>();
-  const [password, setPassword] = useState<string | null | string>();
+  const [password, setPassword] = useState<string | null>();
 
   const chain = useMetadata(account?.genesis, true);
 
@@ -112,14 +114,17 @@ export default function ImportRawSeed (): React.ReactElement {
       setIsBusy(true);
       await resetOnForgotPassword();
 
-      createAccountSuri(name, password, account.suri, type, account.genesis)
-        .then(() => onAction('/'))
+      createAccountSuri(name, password, account.suri, type, account.genesis as HexString)
+        .then(() => {
+          setStorage('profile', PROFILE_TAGS.LOCAL).catch(console.error);
+          openOrFocusTab('/', true);
+        })
         .catch((error): void => {
           setIsBusy(false);
           console.error(error);
         });
     }
-  }, [account, name, onAction, password, type]);
+  }, [account, name, password, type]);
 
   const pasteSeed = useCallback(() => {
     navigator.clipboard.readText().then((clipText) => {
@@ -147,7 +152,7 @@ export default function ImportRawSeed (): React.ReactElement {
         <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
-              <vaadin-icon icon='vaadin:book-dollar' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
+              <VaadinIcon icon='vaadin:book-dollar' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
@@ -215,7 +220,6 @@ export default function ImportRawSeed (): React.ReactElement {
             firstPassStyle={{ marginBlock: '10px' }}
             label={t('Password for this account (more than 5 characters)')}
             onChange={onPassChange}
-            // eslint-disable-next-line react/jsx-no-bind
             onEnter={password && name && !error && !!seed ? onImport : () => null}
           />
           <Grid container item justifyContent='flex-end' mt='50px'>

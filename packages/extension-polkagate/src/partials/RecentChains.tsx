@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
@@ -22,7 +23,7 @@ interface Props {
   currentChainName: string | undefined;
 }
 
-function RecentChains ({ address, currentChainName }: Props): React.ReactElement<Props> {
+function RecentChains({ address, currentChainName }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const account = useAccount(address);
   const genesisHashes = useGenesisHashOptions();

@@ -1,89 +1,93 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 /* eslint-disable header/header */
 
-import { BN } from '@polkadot/util';
-
 export const EXTENSION_NAME = 'Polkagate';
-export const NEW_VERSION_ALERT = 'alert_v0.4.5';
+export const NEW_VERSION_ALERT = 'alert_v0.6.1';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
-export const DEFAULT_CHAIN_INDEX = 1;
-export const DEFAULT_MAX_COMMISSION = 10;
-export const DEFAULT_LIMIT_OF_VALIDATORS_PER_OPERATOR = 2;
+
+export const POLKADOT_SLIP44 = 354;
+
+// fix me, since we have asset ID 0 on asset hub, it can be -1 instead!
+export const NATIVE_TOKEN_ASSET_ID = 0; // zero is the native token's assetId on apps-config
+
+export const POLKAGATE_POOL_IDS: { [key: string]: number } = {
+  Kusama: 18,
+  Polkadot: 8,
+  Westend: 6,
+  Paseo: 3
+};
+
 // export const EXTENSION_FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf2WHD0oVR0NS7tW6C1U025H1XBEZXqwxvFvPhcoFa18eHQiA/viewform';
-export const BALANCES_VALIDITY_PERIOD = 5 * 60 * 1000; // to show outdated balance i grey
-export const ENVIRONMENT = 'production'; // development or production
-export const PREFERRED_POOL_ID_ON_WESTEND = new BN(6);
-export const PREFERRED_POOL_ID_ON_KUSAMA = undefined;
-export const PREFERRED_POOL_ID_ON_POLKADOT = undefined;
-export const DEVELOPMENT_ENDPOINT = 'wss://109.109.36.23:443';
-export const SELECTED_COLOR = '#fffbed';
-export const POLKADOT_COLOR = '#E6007A';
+
+export const BALANCES_VALIDITY_PERIOD = 5 * 60 * 1000; // to show outdated balance in grey
 export const AUCTION_GRACE_PERIOD = 27000;// blocks
 export const MAX_NOMINATIONS = 16;
 export const FLOATING_POINT_DIGIT = 4;
 export const BLOCK_RATE = 6; // sec
 export const DEFAULT_TOKEN_DECIMALS = 12;
-export const MIN_EXTRA_BOND = 1 / (10 ** FLOATING_POINT_DIGIT);
-export const DEFAULT_COIN = 'WND';
-export const DEFAULT_CHAIN_NAME = 'Westend';
-export const DEFAULT_VALIDATOR_COMMISSION_FILTER = 20;
-export const TRANSACTION_HISTORY_DEFAULT_ROWS = 6;
+
+export const DEFAULT_COLOR = 'green'
 export const SHORT_ADDRESS_CHARACTERS = 4;
-export const MAX_VOTES = 16;
 export const MAX_REWARDS_TO_SHOW = 100;
 export const MAX_HISTORY_RECORD_TO_SHOW = 40;
 export const MAX_AMOUNT_LENGTH = 15;
 export const TIME_TO_SHAKE_ICON = 5000;// msec
+
 export const CHAINS_WITH_BLACK_LOGO = ['statescan', 'Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'Pendulum', 'Pendulum chain', 'Zeitgeist', 'Westend Collectives'];
 export const TOKENS_WITH_BLACK_LOGO = ['KSM', 'PEN', 'ZTG'];
 export const CHAINS_ON_POLKAHOLIC = ['Pendulum', 'Pendulum chain', 'Amplitude', 'Amplitude chain'];
 export const DISABLED_NETWORKS = ['3DP network', 'xx network', 'Polkadex Mainnet', 'Stafi'];
-export const RELAY_CHAINS = [
-  {
-    name: 'Polkadot',
-    symbol: 'DOT'
-  },
-  {
-    name: 'Kusama',
-    symbol: 'KSM'
-  },
-  {
-    name: 'Westend',
-    symbol: 'WND'
-  }
-];
 
-export const POLKADOT_GENESIS_HASH = '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3';
-export const KUSAMA_GENESIS_HASH = '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe';
-export const WESTEND_GENESIS_HASH = '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e';
 export const ACALA_GENESIS_HASH = '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c';
 
 export const WESTMINT_GENESIS_HASH = '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9';
 export const STATEMINE_GENESIS_HASH = '0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a'; // KUSAMA ASSET HUB
 export const STATEMINT_GENESIS_HASH = '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f';
+export const PASEO_ASSET_HUB_GENESIS_HASH = '0x862ce2fa5abfdc3d29ead85a9472071efc69433b0128db1d6f009967fae87952';
+
+export const POLKADOT_PEOPLE_GENESIS_HASH = '0x67fa177a097bfa18f77ea95ab56e9bcdfeb0e5b8a40e46298bb93e16b6fc5008';
+export const KUSAMA_PEOPLE_GENESIS_HASH = '0xc1af4cb4eb3918e5db15086c0cc5ec17fb334f728b7c65dd44bfe1e174ff8b3f';
+export const WESTEND_PEOPLE_GENESIS_HASH = '0x1eb6fb0ba5187434de017a70cb84d4f47142df1d571d0ef9e7e1407f2b80b93c';
+
+
+/** relay chains info */
+export const RELAY_CHAINS_NAMES = ['Polkadot', 'Kusama', 'Westend', 'Paseo'];
+
+export const POLKADOT_GENESIS_HASH = '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3';
+export const KUSAMA_GENESIS_HASH = '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe';
+export const WESTEND_GENESIS_HASH = '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e';
+export const PASEO_GENESIS_HASH = '0x77afd6190f1554ad45fd0d31aee62aacc33c6db0ea801129acb813f913e0764f';
 
 export const RELAY_CHAINS_GENESISHASH = [
   POLKADOT_GENESIS_HASH,
   KUSAMA_GENESIS_HASH,
-  WESTEND_GENESIS_HASH
+  WESTEND_GENESIS_HASH,
+  PASEO_GENESIS_HASH
 ];
 
 export const ASSET_HUBS = [
   WESTMINT_GENESIS_HASH,
   STATEMINE_GENESIS_HASH,
-  STATEMINT_GENESIS_HASH
+  STATEMINT_GENESIS_HASH,
+  PASEO_ASSET_HUB_GENESIS_HASH
 ];
 
 export const TEST_NETS = [
   WESTEND_GENESIS_HASH,
-  WESTMINT_GENESIS_HASH
+  WESTMINT_GENESIS_HASH,
+  WESTEND_PEOPLE_GENESIS_HASH,
+  PASEO_GENESIS_HASH,
+  PASEO_ASSET_HUB_GENESIS_HASH
 ];
 
 export const PROXY_CHAINS = [
   POLKADOT_GENESIS_HASH,
   KUSAMA_GENESIS_HASH,
-  WESTEND_GENESIS_HASH
+  WESTEND_GENESIS_HASH,
+  PASEO_GENESIS_HASH,
+  ...ASSET_HUBS
 ];
 
 export const CROWDLOANS_CHAINS = [
@@ -105,12 +109,22 @@ export const SOCIAL_RECOVERY_CHAINS = [
 // used to enable/disable staking icon in account page
 export const STAKING_CHAINS = [
   POLKADOT_GENESIS_HASH,
+  KUSAMA_GENESIS_HASH,
   WESTEND_GENESIS_HASH,
-  KUSAMA_GENESIS_HASH
+  PASEO_GENESIS_HASH
+];
+
+export const PEOPLE_CHAINS = ['Polkadot', 'Kusama', 'Westend', 'PolkadotPeople', 'KusamaPeople', 'WestendPeople'];
+
+export const PEOPLE_CHAINS_GENESIS_HASHES = [
+  POLKADOT_PEOPLE_GENESIS_HASH,
+  WESTEND_PEOPLE_GENESIS_HASH,
+  KUSAMA_PEOPLE_GENESIS_HASH
 ];
 
 export const IDENTITY_CHAINS = [
   ...STAKING_CHAINS,
+  ...PEOPLE_CHAINS_GENESIS_HASHES,
   '0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6', // Astar
   '0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931ddad144059b1eb884e5b', // Bifrost
   '0xa85cfb9b9fd4d622a5b28289a02347af987d8f73fa3108450e2b4a11c1ce5755', // Basilic
@@ -141,24 +155,10 @@ export const CONFIRMING_STATE = ['fail', 'success', 'confirming'];
 const PROXY_TYPE_POLKADOT = ['Any', 'NonTransfer', 'Staking', 'Governance', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
 const PROXY_TYPE_KUSAMA = ['Any', 'NonTransfer', 'Staking', 'Society', 'Governance', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
 const PROXY_TYPE_WESTEND = ['Any', 'NonTransfer', 'Staking', 'Governance', 'SudoBalances', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
+const PROXY_TYPE_ASSET_HUBS = ['Any', 'NonTransfer', 'CancelProxy', 'Assets', 'AssetOwner', 'AssetManager', 'Collator'];
+const PROXY_TYPE_PASEO = ['Any', 'NonTransfer', 'Staking', 'Governance', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
 
-export const CHAIN_PROXY_TYPES = { Kusama: PROXY_TYPE_KUSAMA, Polkadot: PROXY_TYPE_POLKADOT, Westend: PROXY_TYPE_WESTEND };
-
-export const DEFAULT_IDENTITY = {
-  // 'judgments': [],
-  //  'deposit':202580000000,
-  info: {
-    // 'additional':[],
-    display: null,
-    legal: null,
-    web: null,
-    //  'riot':{'none':null},
-    email: null,
-    //  'pgpFingerprint':null,
-    //  'image':{'none':null},
-    twitter: null
-  }
-};
+export const CHAIN_PROXY_TYPES = { Kusama: PROXY_TYPE_KUSAMA, Polkadot: PROXY_TYPE_POLKADOT, Westend: PROXY_TYPE_WESTEND, AssetHubs: PROXY_TYPE_ASSET_HUBS, Paseo: PROXY_TYPE_PASEO };
 
 export const VOTE_MAP = {
   AYE: 1,
@@ -227,3 +227,23 @@ export const USD_CURRENCY = {
 
 export const FULLSCREEN_WIDTH = '900px';
 export const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed', '/account/import-raw-seed', '/forgot-password', '/reset-wallet'];
+
+export const PROXY_TYPE = {
+  STAKING: ['Any', 'NonTransfer', 'Staking'],
+  NOMINATION_POOLS: ['Any', 'NonTransfer', 'Staking', 'NominationPools'],
+  GOVERNANCE: ['Any', 'NonTransfer', 'Governance'],
+  SEND_FUND: ['Any'],
+  GENERAL: ['Any', 'NonTransfer'],
+  CROWDLOAN: ['Any', 'NonTransfer', 'Auction']
+};
+
+export const PROFILE_COLORS = [
+  { light: '#D1C4E9', dark: '#99004F' },
+  { light: '#C8E6C9', dark: '#468189' },
+  { light: '#B3E5FC', dark: '#846C5B' },
+  { light: '#F8BBD0', dark: '#A63C06' },
+  { light: '#ACE894', dark: '#D81B60' },
+  { light: '#F5D5ED', dark: '#2B4162' },
+  { light: '#EBCFB2', dark: '#9D8189' },
+  { light: '#FCF0CC', dark: '#5F4842' },
+];

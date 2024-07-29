@@ -1,8 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable sort-keys */
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Prices } from '../../../util/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { Chart, registerables } from 'chart.js';
@@ -13,16 +15,14 @@ import { BN } from '@polkadot/util';
 import { DisplayLogo } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, useTranslation } from '../../../hooks';
-import { FetchedBalance } from '../../../hooks/useAssetsBalances';
+import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import getLogo2 from '../../../util/getLogo2';
-import { Prices } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import { adjustColor } from '../../homeFullScreen/partials/TotalBalancePieChart';
+import { DEFAULT_COLOR } from '../../../util/constants';
 
-interface TotalChartProps {
-  isDarkTheme: boolean;
+interface Props {
   accountAssets: FetchedBalance[] | null | undefined;
-  nativeAssetPrice: number | undefined;
   pricesInCurrency: Prices | null | undefined
 }
 
@@ -32,7 +32,7 @@ interface AssetsToShow extends FetchedBalance {
   color: string
 }
 
-export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrency }: TotalChartProps): React.ReactElement {
+export default function TotalChart({ accountAssets, pricesInCurrency }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const currency = useCurrency();
@@ -54,7 +54,7 @@ export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrenc
       /** to add asset's worth and color */
       accountAssets.forEach((asset, index) => {
         const assetWorth = calPrice(priceOf(asset.priceId), asset.totalBalance, asset.decimal);
-        const assetColor = getLogo2(asset.genesisHash, asset.token)?.color || 'green';
+        const assetColor = getLogo2(asset.genesisHash, asset.token)?.color || DEFAULT_COLOR;
 
         _assets[index].worth = assetWorth;
         _assets[index].color = adjustColor(asset.token, assetColor, theme);
@@ -82,6 +82,7 @@ export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrenc
     const worths = assets?.map(({ worth }) => worth);
     const colors = assets?.map(({ color }) => color);
 
+    //@ts-ignore
     const chartInstance = new Chart(chartRef.current, {
       data: {
         datasets: [{
@@ -98,9 +99,9 @@ export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrenc
           tooltip: {
             callbacks: {
               label: function (context) {
-                const index = colors?.findIndex((val) => val === context.element.options.backgroundColor);
+                const index = colors?.findIndex((val) => val === context.element.options['backgroundColor']);
 
-                return assets?.[index]?.token as string;
+                return index && index != -1 ? assets?.[index]?.token as string :'UNIT';
               }
             }
           }
@@ -113,7 +114,7 @@ export default function TotalChart({ accountAssets, isDarkTheme, pricesInCurrenc
     return () => {
       chartInstance.destroy();
     };
-  }, [assets, theme.palette.divider]);
+  }, [assets?.length, theme.palette.divider]);
 
   return (
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: '185px', p: '15px', width: 'inherit' }}>

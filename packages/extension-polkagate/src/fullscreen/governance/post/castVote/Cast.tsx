@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -104,7 +105,7 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
   const [voteAmount, setVoteAmount] = React.useState<string>('0');
   const [conviction, setConviction] = useState<number>();
 
-  const tx = api && api.tx.convictionVoting.vote;
+  const tx = api && api.tx['convictionVoting']['vote'];
 
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
   const myDelegations = previousVote?.delegations?.votes;
@@ -163,7 +164,7 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
@@ -210,7 +211,7 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
       return;
     }
 
-    const ED = api.consts.balances.existentialDeposit as unknown as BN;
+    const ED = api.consts['balances']['existentialDeposit'] as unknown as BN;
     const max = new BN(balances.votingBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedFee));
     const maxToHuman = amountToHuman(max.toString(), decimal);
 

@@ -1,5 +1,8 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
+
+/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -11,9 +14,9 @@ import type { ApiPromise } from '@polkadot/api';
 import { Container, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-import { Balance } from '@polkadot/types/interfaces';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
@@ -22,12 +25,13 @@ import { useAccountDisplay, useDecimal, useProxies, useTranslation } from '../..
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
-import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import { PROXY_TYPE } from '../../../../util/constants';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from '../partials/TxDetail';
 
 interface Props {
-  address: AccountId;
+  address: string;
   show: boolean;
   formatted: string;
   api: ApiPromise;
@@ -56,7 +60,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
-  const tx = api.tx.fastUnstake.registerFastUnstake;
+  const tx = api.tx['fastUnstake']['registerFastUnstake'];
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -75,7 +79,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -109,7 +113,8 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
 
       setShowWaitScreen(false);
@@ -120,7 +125,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
     }
   }, [formatted, selectedProxyAddress, password, api, tx, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain]);
 
-  const _onBackClick = useCallback(() => {
+  const onBackClick = useCallback(() => {
     setShow(false);
   }, [setShow]);
 
@@ -128,11 +133,11 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
     <Motion>
       <Popup show={show}>
         <HeaderBrand
-          onBackClick={_onBackClick}
+          onBackClick={onBackClick}
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Fast Unstake')}
+          text={t('Fast Unstake')}
           withSteps={{ current: 2, total: 2 }}
         />
         {isPasswordError &&
@@ -143,7 +148,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
               isDanger
               theme={theme}
             >
-              {t<string>('You’ve used an incorrect password. Try again.')}
+              {t('You’ve used an incorrect password. Try again.')}
             </Warning>
           </Grid>
         }
@@ -151,13 +156,13 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />
           <AmountFee
             address={address}
-            amount={<ShowBalance2 address={String(address)} balance={amount}/>}
+            amount={<ShowBalance2 address={String(address)} balance={amount} />}
             fee={estimatedFee}
             label={t('Unstake amount')}
             showDivider
@@ -176,12 +181,12 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
+          label={t('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={submit}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+          proxyTypeFilter={PROXY_TYPE.STAKING}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}
@@ -205,7 +210,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
             txInfo={txInfo}
           >
             <TxDetail
-              label={t<string>('Unstaked amount')}
+              label={t('Unstaked amount')}
               txInfo={txInfo}
             />
           </Confirmation>)

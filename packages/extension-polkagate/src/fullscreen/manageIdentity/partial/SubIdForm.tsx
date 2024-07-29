@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -8,7 +9,8 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { InputWithLabel } from '../../../components';
 import { useTranslation } from '../../../components/translate';
@@ -28,7 +30,7 @@ interface Props {
   error?: boolean;
 }
 
-export default function SubIdForm ({ address, addressesToSelect, api, chain, error = false, index, name, onRemove, setSubAddress, setSubName }: Props): React.ReactElement {
+export default function SubIdForm({ address, addressesToSelect, api, chain, error = false, index, name, onRemove, setSubAddress, setSubName }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -49,7 +51,7 @@ export default function SubIdForm ({ address, addressesToSelect, api, chain, err
       <SubIdInput
         address={address}
         api={api}
-        chain={chain}
+        chain={chain as any}
         disabled={false}
         label={t('Account')}
         selectableAddresses={addressesToSelect}

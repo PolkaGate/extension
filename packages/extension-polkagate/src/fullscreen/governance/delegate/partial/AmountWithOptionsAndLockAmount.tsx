@@ -1,7 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { BalancesInfo } from '../../../../util/types';
 
 import { Grid, Typography } from '@mui/material';
 import React, { useMemo } from 'react';
@@ -11,7 +14,6 @@ import { BN, isBn } from '@polkadot/util';
 import { AmountWithOptions, Infotip2, ShowBalance } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
 import { Lock } from '../../../../hooks/useAccountLocks';
-import { BalancesInfo } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
 import { getLockedUntil } from '../../utils/util';
 

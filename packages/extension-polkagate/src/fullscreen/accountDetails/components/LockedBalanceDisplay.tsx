@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,12 +11,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance } from '../../../components';
-import { useAccountLocks, useCurrentBlockNumber, useHasDelegated, useTranslation } from '../../../hooks';
+import { useAccountLocks, useCurrentBlockNumber, useHasDelegated, useInfo, useTranslation } from '../../../hooks';
 import { Lock } from '../../../hooks/useAccountLocks';
 import blockToDate from '../../../popup/crowdloans/partials/blockToDate';
 import { TIME_TO_SHAKE_ICON } from '../../../util/constants';
@@ -23,9 +22,6 @@ import { popupNumbers, UnlockInformationType } from '..';
 
 interface DisplayBalanceProps {
   address: string | undefined;
-  formatted: string | undefined;
-  chain: Chain | null | undefined;
-  api: ApiPromise | undefined;
   title: string;
   token: string | undefined;
   decimal: number | undefined;
@@ -35,9 +31,11 @@ interface DisplayBalanceProps {
   setUnlockInformation: React.Dispatch<React.SetStateAction<UnlockInformationType | undefined>>;
 }
 
-export default function LockedBalanceDisplay ({ address, api, chain, decimal, formatted, price, refreshNeeded, setDisplayPopup, setUnlockInformation, title, token }: DisplayBalanceProps): React.ReactElement {
+export default function LockedBalanceDisplay({ address, decimal, price, refreshNeeded, setDisplayPopup, setUnlockInformation, title, token }: DisplayBalanceProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+
+  const { api, chain, formatted } = useInfo(address);
 
   const delegatedBalance = useHasDelegated(address, refreshNeeded);
   const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting', false, refreshNeeded);
@@ -54,7 +52,7 @@ export default function LockedBalanceDisplay ({ address, api, chain, decimal, fo
   const isDisable = useMemo(() => !unlockableAmount || unlockableAmount.isZero() || !classToUnlock || !totalLocked, [classToUnlock, totalLocked, unlockableAmount]);
   const hasDescription = useMemo(() =>
     (unlockableAmount && !unlockableAmount.isZero()) || (delegatedBalance && !delegatedBalance.isZero()) || timeToUnlock
-  , [delegatedBalance, timeToUnlock, unlockableAmount]);
+    , [delegatedBalance, timeToUnlock, unlockableAmount]);
 
   useEffect(() => {
     if (unlockableAmount && !unlockableAmount.isZero()) {

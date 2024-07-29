@@ -3,11 +3,17 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { HexString } from '@polkadot/util/types';
+
 import { Typography } from '@mui/material';
+// @ts-ignore
 import Chance from 'chance';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 
 import { AccountContext, ActionContext, Label, PButton, SelectChain } from '../../../components';
 import { useGenesisHashOptions, useInfo, useProxiedAccounts, useTranslation } from '../../../hooks';
@@ -21,7 +27,7 @@ import ProxiedTable from './ProxiedTable';
 function ImportProxied (): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
   const genesisOptions = useGenesisHashOptions();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const chance = new Chance();
@@ -29,10 +35,10 @@ function ImportProxied (): React.ReactElement {
   const selectableChains = useMemo(() => genesisOptions.filter(({ value }) => PROXY_CHAINS.includes(value as string)), [genesisOptions]);
 
   const allAddresses = useMemo(() =>
-    hierarchy
+    accounts
       .filter(({ isExternal, isHardware, isQR }) => !isExternal || isQR || isHardware)
       .map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name])
-  , [hierarchy]);
+  , [accounts]);
 
   const [selectedAddress, setSelectedAddress] = useState<string | undefined>(undefined);
   const [selectedProxied, setSelectedProxied] = useState<string[]>([]);
@@ -51,7 +57,7 @@ function ImportProxied (): React.ReactElement {
   const onChangeGenesis = useCallback((genesisHash?: string | null) => {
     setSelectedProxied([]);
 
-    genesisHash && tieAccount(selectedAddress ?? '', genesisHash)
+    genesisHash && tieAccount(selectedAddress ?? '', genesisHash as HexString)
       .then(() => getMetadata(genesisHash, true))
       .then(setChain)
       .catch(console.error);
@@ -62,19 +68,25 @@ function ImportProxied (): React.ReactElement {
     setSelectedAddress(address);
   }, []);
 
-  const onImport = useCallback(() => {
+  const createProxids = useCallback(async () => {
     setIsBusy(true);
-    selectedProxied.forEach((address, index) => {
+
+    for (let index = 0; index < selectedProxied.length; index++) {
+      const address = selectedProxied[index];
       const randomName = (chance?.name() as string)?.split(' ')?.[0] || `Proxied ${index + 1}`;
 
-      createAccountExternal(randomName, address, chain?.genesisHash ?? WESTEND_GENESIS_HASH).catch((error: Error) => {
-        setIsBusy(false);
-        console.error(error);
-      });
-    });
+      await createAccountExternal(randomName, address, (chain?.genesisHash ?? WESTEND_GENESIS_HASH) as HexString);
+    }
+  }, [chain?.genesisHash, chance, selectedProxied]);
 
-    onAction('/');
-  }, [chain?.genesisHash, chance, onAction, selectedProxied]);
+  const onImport = useCallback(() => {
+    setIsBusy(true);
+    createProxids().then(() => {
+      setIsBusy(false);
+      setStorage('profile', PROFILE_TAGS.WATCH_ONLY).catch(console.error);
+      openOrFocusTab('/', true);
+    }).catch(console.error);
+  }, [createProxids]);
 
   const onBackClick = useCallback(() => {
     onAction('/');
@@ -88,7 +100,7 @@ function ImportProxied (): React.ReactElement {
         text={t('Import Proxied')}
       />
       <Typography fontSize='14px' fontWeight={300} m='25px auto' textAlign='left' width='88%'>
-        {t('Import proxied account(s) to have it as watch-only account in the extension.')}
+        {t('Import proxied account(s) to have them as watch-only accounts in the extension.')}
       </Typography>
       <Label
         label={t('Choose proxy account')}
@@ -98,12 +110,13 @@ function ImportProxied (): React.ReactElement {
           allAddresses={allAddresses}
           onSelect={onParentChange}
           selectedAddress={selectedAddress}
-          selectedGenesis={accountGenesishash}
-          selectedName={accountName}
+          selectedGenesis={accountGenesishash as string}
+          selectedName={accountName as string}
           withoutChainLogo
         />
       </Label>
-      {selectedAddress && <SelectChain
+      {selectedAddress &&
+      <SelectChain
         address={selectedAddress}
         fullWidthDropdown
         icon={getLogo(chain ?? undefined)}
@@ -111,18 +124,19 @@ function ImportProxied (): React.ReactElement {
         onChange={onChangeGenesis}
         options={selectableChains}
         style={{ m: '15px auto', width: '92%' }}
-      />}
+      />
+      }
       {selectedAddress && chain &&
-        <ProxiedTable
-          api={api}
-          chain={chain}
-          label={t('Proxied account(s)')}
-          maxHeight='140px'
-          proxiedAccounts={proxiedAccounts?.proxy === formatted ? proxiedAccounts?.proxied : undefined}
-          selectedProxied={selectedProxied}
-          setSelectedProxied={setSelectedProxied}
-          style={{ m: '0 auto', width: '92%' }}
-        />
+      <ProxiedTable
+        api={api}
+        chain={chain}
+        label={t('Proxied account(s)')}
+        maxHeight='140px'
+        proxiedAccounts={proxiedAccounts?.proxy === formatted ? proxiedAccounts?.proxied : undefined}
+        selectedProxied={selectedProxied}
+        setSelectedProxied={setSelectedProxied}
+        style={{ m: '0 auto', width: '92%' }}
+      />
       }
       <PButton
         _isBusy={isBusy}

@@ -1,20 +1,18 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
-import { faAddressCard } from '@fortawesome/free-solid-svg-icons';
+import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Popover, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
-import { ActionContext, MenuItem, SocialRecoveryIcon } from '../../../components';
+import { ActionContext, MenuItem, SocialRecoveryIcon, VaadinIcon } from '../../../components';
 import { useInfo, useTranslation } from '../../../hooks';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
-import { POPUPS_NUMBER } from './AccountInformation';
+import { POPUPS_NUMBER } from './AccountInformationForHome';
+import ProfileMenu from './ProfileMenu';
 
 interface Props {
   address: string | undefined;
@@ -22,22 +20,18 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-function FullScreenAccountMenu ({ address, baseButton, setDisplayPopup }: Props): React.ReactElement<Props> {
-  const theme = useTheme();
+const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
+  : {
+    address: string | undefined,
+    handleClose: () => void,
+    setAnchorEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>,
+    setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>,
+  }) => {
   const { t } = useTranslation();
-  const { account, chain } = useInfo(address);
+  const theme = useTheme();
   const onAction = useContext(ActionContext);
 
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-
-  const handleClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
-
-  const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  }, []);
-
+  const { account, chain } = useInfo(address);
   const hasPrivateKey = !(account?.isExternal || account?.isHardware);
 
   const onForgetAccount = useCallback(() => {
@@ -80,17 +74,8 @@ function FullScreenAccountMenu ({ address, baseButton, setDisplayPopup }: Props)
     }
   }, [chain]);
 
-  const AccountMenu = () => (
+  return (
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
-      <MenuItem
-        disabled={isDisable(PROXY_CHAINS)}
-        iconComponent={
-          <vaadin-icon icon='vaadin:sitemap' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
-        }
-        onClick={onManageProxies}
-        text={t<string>('Manage proxies')}
-        withHoverEffect
-      />
       <MenuItem
         disabled={isDisable(IDENTITY_CHAINS)}
         iconComponent={
@@ -102,6 +87,15 @@ function FullScreenAccountMenu ({ address, baseButton, setDisplayPopup }: Props)
         }
         onClick={onManageId}
         text={t('Manage identity')}
+        withHoverEffect
+      />
+      <MenuItem
+        disabled={isDisable(PROXY_CHAINS)}
+        iconComponent={
+          <VaadinIcon icon='vaadin:sitemap' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
+        }
+        onClick={onManageProxies}
+        text={t<string>('Manage proxies')}
         withHoverEffect
       />
       <MenuItem
@@ -121,10 +115,14 @@ function FullScreenAccountMenu ({ address, baseButton, setDisplayPopup }: Props)
         withHoverEffect
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
+      <ProfileMenu
+        address={address}
+        setUpperAnchorEl={setAnchorEl}
+      />
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
-            <vaadin-icon icon='vaadin:download-alt' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:download-alt' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
           }
           onClick={onExportAccount}
           text={t('Export account')}
@@ -134,7 +132,7 @@ function FullScreenAccountMenu ({ address, baseButton, setDisplayPopup }: Props)
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
-            <vaadin-icon icon='vaadin:road-branch' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:road-branch' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
           }
           onClick={goToDeriveAcc}
           text={t('Derive new account')}
@@ -143,7 +141,7 @@ function FullScreenAccountMenu ({ address, baseButton, setDisplayPopup }: Props)
       }
       <MenuItem
         iconComponent={
-          <vaadin-icon icon='vaadin:edit' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:edit' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
         }
         onClick={onRenameAccount}
         text={t('Rename')}
@@ -151,14 +149,28 @@ function FullScreenAccountMenu ({ address, baseButton, setDisplayPopup }: Props)
       />
       <MenuItem
         iconComponent={
-          <vaadin-icon icon='vaadin:file-remove' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:file-remove' style={{ color: `${theme.palette.text.primary}`, height: '20px' }} />
         }
         onClick={onForgetAccount}
         text={t('Forget account')}
         withHoverEffect
       />
     </Grid>
-  );
+  )
+};
+
+function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props): React.ReactElement<Props> {
+  const theme = useTheme();
+
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+
+  const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  }, []);
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
@@ -186,7 +198,12 @@ function FullScreenAccountMenu ({ address, baseButton, setDisplayPopup }: Props)
           vertical: 'top'
         }}
       >
-        <AccountMenu />
+        <Menus
+          address={address}
+          setDisplayPopup={setDisplayPopup}
+          handleClose={handleClose}
+          setAnchorEl={setAnchorEl}
+        />
       </Popover>
     </>
   );

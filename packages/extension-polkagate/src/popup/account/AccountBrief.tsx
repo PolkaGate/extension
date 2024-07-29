@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -7,8 +8,6 @@
  * @description
  * this component show a brief of an account on home pages like staking/crowdloans homepages
  * */
-
-import '@vaadin/icons';
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
@@ -28,7 +27,7 @@ interface Props {
   showDivider?: boolean;
 }
 
-function AccountBrief ({ address, identity, showDivider = true, showName = true }: Props): React.ReactElement<Props> {
+function AccountBrief({ address, identity, showDivider = true, showName = true }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { account, chainName, formatted } = useInfo(address);
   const history = useHistory();
@@ -77,7 +76,7 @@ function AccountBrief ({ address, identity, showDivider = true, showName = true 
           </Infotip>
           <Infotip placement='top' text={t('Subscan')}>
             <Link
-              href={`${subscanLink(formatted)}`}
+              href={`${subscanLink(formatted as string)}`}
               rel='noreferrer'
               target='_blank'
               underline='none'

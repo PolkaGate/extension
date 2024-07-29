@@ -1,24 +1,25 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { CanPayErrorAlert, ShowBalance, SignArea2, WrongPasswordAlert } from '../../components';
+import { CanPayErrorAlert, ShowBalance, SignArea2, WrongPasswordAlert, VaadinIcon } from '../../components';
 import { useCanPayFeeAndDeposit, useFormatted, useTranslation } from '../../hooks';
 import { ThroughProxy } from '../../partials';
-import { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import { PROXY_TYPE } from '../../util/constants';
 import { pgBoxShadow } from '../../util/utils';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
@@ -40,7 +41,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function Review ({ address, api, chain, depositedValue, newDepositValue, proxyItems, setRefresh, setStep, step }: Props): React.ReactElement {
+function Review({ address, api, chain, depositedValue, newDepositValue, proxyItems, setRefresh, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const formatted = useFormatted(address);
@@ -66,9 +67,9 @@ function Review ({ address, api, chain, depositedValue, newDepositValue, proxyIt
   }, [depositedValue, newDepositValue]);
 
   const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
-  const removeProxy = api && api.tx.proxy.removeProxy; /** (delegate, proxyType, delay) **/
-  const addProxy = api && api.tx.proxy.addProxy; /** (delegate, proxyType, delay) **/
-  const batchAll = api && api.tx.utility.batchAll;
+  const removeProxy = api && api.tx['proxy']['removeProxy']; /** (delegate, proxyType, delay) **/
+  const addProxy = api && api.tx['proxy']['addProxy']; /** (delegate, proxyType, delay) **/
+  const batchAll = api && api.tx['utility']['batchAll'];
 
   const changedItems = useMemo(() => proxyItems?.filter(({ status }) => status !== 'current'), [proxyItems]);
 
@@ -130,7 +131,7 @@ function Review ({ address, api, chain, depositedValue, newDepositValue, proxyIt
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -151,7 +152,7 @@ function Review ({ address, api, chain, depositedValue, newDepositValue, proxyIt
     <Grid container item>
       <Title
         logo={
-          <vaadin-icon icon='vaadin:sitemap' style={{ fontSize: '25px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:sitemap' style={{ fontSize: '25px', color: `${theme.palette.text.primary}` }} />
         }
         text={
           [STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step)
@@ -176,13 +177,13 @@ function Review ({ address, api, chain, depositedValue, newDepositValue, proxyIt
             {selectedProxyAddress &&
               <Grid container m='auto' maxWidth='92%'>
                 <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
-                <ThroughProxy address={selectedProxyAddress} chain={chain} />
+                <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
               </Grid>
             }
             <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
             <ProxyTableFL
               api={api}
-              chain={chain}
+              chain={chain as any}
               labelAlignment='center'
               proxyItems={changedItems}
               status='Read-Only'
@@ -219,7 +220,7 @@ function Review ({ address, api, chain, depositedValue, newDepositValue, proxyIt
               isPasswordError={isPasswordError}
               onSecondaryClick={backToManage}
               primaryBtnText={t('Confirm')}
-              proxyTypeFilter={['Any', 'NonTransfer']}
+              proxyTypeFilter={PROXY_TYPE.GENERAL}
               secondaryBtnText={t('Cancel')}
               selectedProxy={selectedProxy}
               setIsPasswordError={setIsPasswordError}

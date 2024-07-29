@@ -4,8 +4,9 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Header } from '@polkadot/types/interfaces';
-import type { AnyTuple } from '@polkadot/types/types';
+import type { AnyTuple, SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
+import type { Proxy, ProxyItem, ProxyTypes, TxInfo, TxResult } from '../util/types';
 
 import { faSignature } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,25 +14,26 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Tooltip, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
+import { ApiPromise } from '@polkadot/api';
+import type { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
 import { AccountsStore } from '@polkadot/extension-base/stores';
-import { ISubmittableResult } from '@polkadot/types/types';
+import type { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { DraggableModal } from '../fullscreen/governance/components/DraggableModal';
 import SelectProxyModal2 from '../fullscreen/governance/components/SelectProxyModal2';
 import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../hooks';
-import LedgerSign from '../popup/signing/LedgerSign';
 import Qr from '../popup/signing/Qr';
 import { CMD_MORTAL } from '../popup/signing/Request';
 import { send, signAndSend } from '../util/api';
-import { Proxy, ProxyItem, ProxyTypes, TxInfo, TxResult } from '../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../util/utils';
 import { Identity, Password, PButton, Progress, TwoButtons, Warning } from '.';
+import SignWithLedger from './SignWithLedger';
 
 interface Props {
   address: string;
+  mayBeApi?: ApiPromise;
   call: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined | SubmittableExtrinsic<'promise', ISubmittableResult>;
   disabled?: boolean;
   isPasswordError?: boolean;
@@ -54,7 +56,7 @@ interface Props {
   extraInfo: Record<string, unknown>;
   steps: Record<string, number>;
   setRefresh?: React.Dispatch<React.SetStateAction<boolean>>;
-  previousStep?:number;
+  previousStep?: number;
 }
 
 /**
@@ -63,17 +65,20 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-export default function SignArea ({ address, call, disabled, extraInfo, isPasswordError, onSecondaryClick, params, previousStep, prevState, primaryBtn, primaryBtnText, proxyModalHeight, proxyTypeFilter, secondaryBtnText, selectedProxy, setIsPasswordError, setRefresh, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, token }: Props): React.ReactElement<Props> {
+export default function SignArea({ address, call, disabled, extraInfo, isPasswordError, mayBeApi, onSecondaryClick, params, prevState, previousStep, primaryBtn, primaryBtnText, proxyModalHeight, proxyTypeFilter, secondaryBtnText, selectedProxy, setIsPasswordError, setRefresh, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, token }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { account, api, chain, formatted } = useInfo(address);
+  const { account, api: apiFromAddress, chain, formatted } = useInfo(address);
+
+  // To handle system chain apis like people chain
+  const api = mayBeApi || apiFromAddress;
+
   const senderName = useAccountDisplay(address);
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxy?.delegate));
   const proxies = useProxies(api, formatted);
 
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [password, setPassword] = useState<string>();
-  const [error, setError] = useState<string | null>();
   const [showProxy, setShowProxy] = useState<boolean>();
   const [showQR, setShowQR] = useState<boolean>();
   const [lastHeader, setLastHeader] = useState<Header>();
@@ -110,12 +115,13 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
       return;
     }
 
+    // @ts-ignore
     const tx = (params ? call(...params) : call) as SubmittableExtrinsic<'promise', ISubmittableResult>;
 
-    return selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
+    return selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, tx) : tx;
   }, [api, call, formatted, params, selectedProxy]);
 
-  const payload = useMemo(() => {
+  const signerPayload = useMemo(() => {
     if (!api || !ptx || !lastHeader || !rawNonce) {
       return;
     }
@@ -145,7 +151,7 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
         version: ptx.version
       };
 
-      return api.registry.createType('ExtrinsicPayload', _payload, { version: _payload.version });
+      return _payload as SignerPayloadJSON;
     } catch (error) {
       console.error('Something went wrong when making payload:', error);
 
@@ -153,12 +159,20 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
     }
   }, [api, from, lastHeader, rawNonce, ptx]);
 
+  const payload = useMemo(() => {
+    if (!api || !signerPayload) {
+      return;
+    }
+
+    return api.registry.createType('ExtrinsicPayload', signerPayload, { version: signerPayload.version });
+  }, [api, signerPayload]);
+
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
   useEffect((): void => {
     if (api && from) {
       api.rpc.chain.getHeader().then(setLastHeader).catch(console.error);
-      api.query.system.account(from).then((res) => setRawNonce(res?.nonce || 0)).catch(console.error);
+      api.query['system']['account'](from).then((res: any) => setRawNonce(res?.nonce || 0)).catch(console.error);
     }
   }, [api, formatted, from, selectedProxy]);
 
@@ -178,7 +192,7 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
   const goToSelectProxy = useCallback(() => {
     setShowProxy(true);
 
-    setStep(steps.PROXY);
+    setStep(steps['PROXY']);
   }, [setStep, steps]);
 
   const closeSelectProxy = useCallback(() => {
@@ -188,7 +202,7 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
   const goToQrScan = useCallback(() => {
     setShowQR(true);
 
-    setStep(steps.SIGN_QR || 200); // TODO: add to STEPS
+    setStep(steps['SIGN_QR'] || 200);
   }, [setStep, steps]);
 
   const closeQrModal = useCallback(() => {
@@ -221,9 +235,10 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
         ...extraInfo
       };
 
-      setTxInfo({ ...info, api, chain });
-      saveAsHistory(String(from), info);
-      setStep(steps.CONFIRM);
+      setTxInfo({ ...info as any, api, chain: chain as any });
+
+      saveAsHistory(String(from), info as any);
+      setStep(steps['CONFIRM']);
     } catch (e) {
       console.log('error:', e);
     }
@@ -238,9 +253,9 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
       const signer = keyring.getPair(from);
 
       signer.unlock(password);
-      setStep(steps.WAIT_SCREEN);
+      setStep(steps['WAIT_SCREEN']);
 
-      const txResult = await signAndSend(api, ptx, signer, formatted);
+      const txResult = await signAndSend(api, ptx, signer);
 
       handleTxResult(txResult);
     } catch (e) {
@@ -249,52 +264,18 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
     }
   }, [api, formatted, from, handleTxResult, password, ptx, setIsPasswordError, setStep, steps]);
 
+
   const onSignature = useCallback(async ({ signature }: { signature: HexString }) => {
     if (!api || !payload || !signature || !ptx || !from) {
       return;
     }
 
-    setStep(steps.WAIT_SCREEN);
+    setStep(steps['WAIT_SCREEN']);
 
-    const txResult = await send(from, api, ptx, payload, signature);
+    const txResult = await send(from, api, ptx, payload.toHex(), signature);
 
     handleTxResult(txResult);
-  }, [api, from, handleTxResult, payload, ptx, setStep, steps.WAIT_SCREEN]);
-
-  const SignWithLedger = () => (
-    <>
-      <Grid alignItems='center' container height='50px' item justifyContent='center' sx={{ '> div': { m: 0, p: 0 }, pt: '5px' }}>
-        <Warning
-          isDanger={!!error}
-          theme={theme}
-        >
-          {error || alertText}
-        </Warning>
-      </Grid>
-      <Grid container item justifyContent='space-between'>
-        <Grid item sx={{ mt: '18px' }} xs={3}>
-          <PButton
-            _mt='1px'
-            _onClick={onSecondaryClick}
-            _variant='outlined'
-            text={t('Cancel')}
-          />
-        </Grid>
-        <Grid item sx={{ ' button': { m: 0, width: '100%' }, mt: '80px', position: 'relative', width: '70%' }} xs={8}>
-          <LedgerSign
-            accountIndex={account?.accountIndex as number || 0}
-            addressOffset={account?.addressOffset as number || 0}
-            error={error}
-            genesisHash={account?.genesisHash || api?.genesisHash?.toHex()}
-            onSignature={onSignature}
-            payload={payload}
-            setError={setError}
-            showError={false}
-          />
-        </Grid>
-      </Grid>
-    </>
-  );
+  }, [api, from, handleTxResult, payload, ptx, setStep, steps['WAIT_SCREEN']]);
 
   const SignUsingProxy = () => (
     <>
@@ -350,7 +331,20 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
   return (
     <Grid container>
       {isLedger
-        ? <SignWithLedger />
+        ? <SignWithLedger
+          address={address}
+          api={api}
+          from={from}
+          alertText={alertText}
+          onSecondaryClick={onSecondaryClick}
+          signerPayload={signerPayload}
+          onSignature={onSignature}
+          payload={payload}
+          ptx={ptx}
+          setStep={setStep}
+          steps={steps}
+          handleTxResult={handleTxResult}
+        />
         : showQrSign
           ? <SignWithQR />
           : showUseProxy
@@ -367,55 +361,55 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
                     onEnter={onConfirm}
                   />
                 </Grid>
-                {(!!proxies?.length || prevState?.selectedProxyAddress) &&
-                <Tooltip
-                  arrow
-                  componentsProps={{
-                    popper: {
-                      sx: {
-                        '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-18kejt8': {
-                          mb: '3px',
-                          p: '3px 15px'
-                        },
-                        '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-1yuxi3g': {
-                          mb: '3px',
-                          p: '3px 15px'
-                        },
-                        visibility: selectedProxy ? 'visible' : 'hidden'
+                {(!!proxies?.length || (prevState as any)?.selectedProxyAddress) &&
+                  <Tooltip
+                    arrow
+                    componentsProps={{
+                      popper: {
+                        sx: {
+                          '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-18kejt8': {
+                            mb: '3px',
+                            p: '3px 15px'
+                          },
+                          '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-1yuxi3g': {
+                            mb: '3px',
+                            p: '3px 15px'
+                          },
+                          visibility: selectedProxy ? 'visible' : 'hidden'
+                        }
+                      },
+                      tooltip: {
+                        sx: {
+                          '& .MuiTooltip-arrow': {
+                            color: '#fff',
+                            height: '10px'
+                          },
+                          backgroundColor: '#fff',
+                          color: '#000',
+                          fontWeight: 400
+                        }
                       }
-                    },
-                    tooltip: {
-                      sx: {
-                        '& .MuiTooltip-arrow': {
-                          color: '#fff',
-                          height: '10px'
-                        },
-                        backgroundColor: '#fff',
-                        color: '#000',
-                        fontWeight: 400
-                      }
+                    }}
+                    leaveDelay={300}
+                    placement='top-start'
+                    sx={{ width: 'fit-content' }}
+                    title={
+                      <>
+                        {selectedProxy &&
+                          <Identity
+                            chain={chain as any}
+                            formatted={selectedProxy?.delegate}
+                            identiconSize={30}
+                            style={{ fontSize: '14px' }}
+                          />
+                        }
+                      </>
                     }
-                  }}
-                  leaveDelay={300}
-                  placement='top-start'
-                  sx={{ width: 'fit-content' }}
-                  title={
-                    <>
-                      {selectedProxy &&
-                        <Identity
-                          chain={chain}
-                          formatted={selectedProxy?.delegate}
-                          identiconSize={30}
-                          style={{ fontSize: '14px' }}
-                        />
-                      }
-                    </>
-                  }
-                >
-                  <Grid aria-label='useProxy' item onClick={goToSelectProxy} pl='10px' pt='10px' role='button' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
-                    {selectedProxy ? t('Update proxy') : t('Use proxy')}
-                  </Grid>
-                </Tooltip>
+                  >
+                    <Grid aria-label='useProxy' item onClick={goToSelectProxy} pl='10px' pt='10px' role='button' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
+                      {selectedProxy ? t('Update proxy') : t('Use proxy')}
+                    </Grid>
+                  </Tooltip>
                 }
               </Grid>
               <Grid alignItems='center' container id='TwoButtons' item sx={{ '> div': { m: 0, width: '100%' }, pt: '15px' }}>
@@ -484,11 +478,11 @@ export default function SignArea ({ address, call, disabled, extraInfo, isPasswo
                   address={formatted}
                   buttonLeft='0px'
                   cmd={CMD_MORTAL}
-                  genesisHash={account?.genesisHash || api?.genesisHash?.toHex()}
+                  genesisHash={account?.genesisHash || api?.genesisHash?.toHex() as string}
                   onSignature={onSignature}
                   payload={payload}
                 />
-                : <Progress pt='20px' title={t('API is not connected yet ...')} type='grid'/>
+                : <Progress pt='20px' title={t('API is not connected yet ...')} type='grid' />
               }
             </Grid>
           </Grid>

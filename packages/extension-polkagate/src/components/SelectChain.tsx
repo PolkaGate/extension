@@ -1,11 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { DropdownOption } from '../util/types';
+
 import { faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, Grid, SxProps, Theme, useTheme } from '@mui/material';
+import { type SxProps, type Theme, Avatar, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
 import { useChainName, useIsTestnetEnabled } from '@polkadot/extension-polkagate/src/hooks';
@@ -14,11 +17,6 @@ import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '@polkadot/extension-polkagate
 import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
 import Select from './Select';
 
-interface DropdownOption {
-  text: string;
-  value: string;
-}
-
 interface Props {
   address: string | null | undefined;
   defaultValue?: string | undefined;
@@ -26,12 +24,13 @@ interface Props {
   options: DropdownOption[];
   label: string;
   icon?: string;
+  isDisabled?: boolean;
   style: SxProps<Theme> | undefined;
   disabledItems?: string[] | number[];
   fullWidthDropdown?: boolean;
 }
 
-function SelectChain({ address, defaultValue, disabledItems, fullWidthDropdown, icon = undefined, label, onChange, options, style }: Props) {
+function SelectChain({ address, defaultValue, disabledItems, fullWidthDropdown, icon = undefined, isDisabled, label, onChange, options, style }: Props) {
   const currentChainName = useChainName(address !== 'dummy' ? address : undefined);
   const theme = useTheme();
   const isTestnetEnabled = useIsTestnetEnabled();
@@ -87,7 +86,7 @@ function SelectChain({ address, defaultValue, disabledItems, fullWidthDropdown, 
           defaultValue={defaultValue}
           disabledItems={_disabledItems}
           fullWidthDropdown={fullWidthDropdown}
-          isDisabled={!address}
+          isDisabled={!address || isDisabled}
           label={label}
           onChange={onChangeNetwork}
           options={options}

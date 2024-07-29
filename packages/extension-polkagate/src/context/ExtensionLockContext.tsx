@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import React, { createContext, useContext, useState } from 'react';
 
@@ -20,7 +21,7 @@ export const useExtensionLockContext = (): ExtensionLockContextProps => {
   return context;
 };
 
-export const ExtensionLockProvider: React.FC = ({ children }) => {
+export const ExtensionLockProvider: React.FC<{ children: React.ReactElement }> = ({ children }: any) => {
   const [isExtensionLocked, setIsExtensionLocked] = useState(true);
 
   const setExtensionLock = (lock: boolean) => {

@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -11,14 +12,15 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { ChainLogo, PButton, ShowBalance2, TwoButtons, Warning } from '../../components';
 import { useTranslation } from '../../hooks';
 import { pgBoxShadow } from '../../util/utils';
 import TrustedFriendsList from './partial/TrustedFriendsList';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
-import { RecoveryConfigType, SocialRecoveryModes } from './util/types';
+import type { RecoveryConfigType, SocialRecoveryModes } from './util/types';
 import { STEPS } from '.';
 
 interface Props {
@@ -30,7 +32,7 @@ interface Props {
   setRecoveryConfig: React.Dispatch<React.SetStateAction<RecoveryConfigType>>;
 }
 
-export default function RecoveryDetail ({ api, chain, recoveryInformation, setMode, setRecoveryConfig, setStep }: Props): React.ReactElement {
+export default function RecoveryDetail({ api, chain, recoveryInformation, setMode, setRecoveryConfig, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -102,8 +104,7 @@ export default function RecoveryDetail ({ api, chain, recoveryInformation, setMo
         </Typography>
       </Grid>
       <TrustedFriendsList
-        api={api}
-        chain={chain}
+        chain={chain as any}
         friendsList={recoveryInformation.friends.map((friend) => String(friend))}
         style={{ maxHeight: '255px' }}
         title={t<string>('Trusted friends')}

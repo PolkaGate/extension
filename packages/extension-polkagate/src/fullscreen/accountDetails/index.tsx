@@ -1,7 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Lock } from '../../hooks/useAccountLocks';
+import type { FetchedBalance } from '../../hooks/useAssetsBalances';
 
 import { faFileInvoice } from '@fortawesome/free-solid-svg-icons';
 import { Grid, useTheme } from '@mui/material';
@@ -10,36 +13,33 @@ import { useParams } from 'react-router';
 
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext } from '../../components';
+import { AccountContext, ActionContext, Warning } from '../../components';
 import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
-import { Lock } from '../../hooks/useAccountLocks';
-import { FetchedBalance } from '../../hooks/useAssetsBalances';
-import { getValue } from '../../popup/account/util';
 import ExportAccountModal from '../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../popup/forgetAccount/ForgetAccountModal';
 import HistoryModal from '../../popup/history/modal/HistoryModal';
-import { label } from '../../popup/home/AccountsTree';
+import { AccountLabel } from '../../popup/home/AccountLabel';
 import DeriveAccountModal from '../../popup/newAccount/deriveAccount/modal/DeriveAccountModal';
 import ReceiveModal from '../../popup/receive/ReceiveModal';
 import RenameModal from '../../popup/rename/RenameModal';
-import { EXTRA_PRICE_IDS } from '../../util/api/getPrices';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
-import { amountToHuman, sanitizeChainName } from '../../util/utils';
+import { getPriceIdByChainName } from '../../util/utils';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
 import { openOrFocusTab } from './components/CommonTasks';
+import ReservedDisplayBalance from './components/ReservedDisplayBalance';
 import LockedInReferenda from './unlock/Review';
-import { AccountInformation, AccountSetting, ChangeAssets, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
+import { AccountInformationForDetails, AccountSetting, AssetSelect, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
 
-export const popupNumbers = {
-  LOCKED_IN_REFERENDA: 1,
-  FORGET_ACCOUNT: 2,
-  RENAME: 3,
-  EXPORT_ACCOUNT: 4,
-  DERIVE_ACCOUNT: 5,
-  RECEIVE: 6,
-  HISTORY: 7
+export enum popupNumbers {
+  LOCKED_IN_REFERENDA,
+  FORGET_ACCOUNT,
+  RENAME,
+  EXPORT_ACCOUNT,
+  DERIVE_ACCOUNT,
+  RECEIVE,
+  HISTORY
 };
 
 export interface UnlockInformationType {
@@ -48,19 +48,14 @@ export interface UnlockInformationType {
   unlockableAmount: BN;
 }
 
-const isRelayChain = (chainName: string) =>
-  chainName.toLowerCase() === 'kusama' ||
-  chainName.toLowerCase() === 'polkadot' ||
-  chainName.toLowerCase() === 'westend';
-
-export default function AccountDetails (): React.ReactElement {
+export default function AccountDetails(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
   const { address, paramAssetId } = useParams<{ address: string, paramAssetId?: string }>();
   const { accounts } = useContext(AccountContext);
   const currency = useCurrency();
-  const { account, api, chain, chainName, formatted } = useInfo(address);
+  const { account, api, chainName, genesisHash } = useInfo(address);
   const onAction = useContext(ActionContext);
   const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();
@@ -71,27 +66,40 @@ export default function AccountDetails (): React.ReactElement {
   const [displayPopup, setDisplayPopup] = useState<number | undefined>();
   const [unlockInformation, setUnlockInformation] = useState<UnlockInformationType | undefined>();
 
-  const assetId = useMemo(() => assetIdOnAssetHub || selectedAsset?.assetId, [assetIdOnAssetHub, selectedAsset?.assetId]);
+  const assetId = useMemo(() => assetIdOnAssetHub !== undefined ? assetIdOnAssetHub : selectedAsset?.assetId, [assetIdOnAssetHub, selectedAsset?.assetId]);
 
   const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId || undefined);
-
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette]);
-  const isOnAssetHub = useMemo(() => ASSET_HUBS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
-  const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
-  const supportStaking = useMemo(() => STAKING_CHAINS.includes(chain?.genesisHash ?? ''), [chain?.genesisHash]);
+  const isOnAssetHub = useMemo(() => ASSET_HUBS.includes(genesisHash ?? ''), [genesisHash]);
+  const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
+  const supportStaking = useMemo(() => STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const showTotalChart = useMemo(() => accountAssets && accountAssets.length > 0 && accountAssets.filter((_asset) => pricesInCurrency && currency && pricesInCurrency.prices[_asset?.priceId]?.value > 0 && !new BN(_asset.totalBalance).isZero()), [accountAssets, currency, pricesInCurrency]);
   const hasParent = useMemo(() => account ? accounts.find(({ address }) => address === account.parentAddress) : undefined, [account, accounts]);
 
   const balancesToShow = useMemo(() => {
-    // TODO: if we add solo balance to fetched assets then we can dismiss this condition and just use selectedAsset || balances
-    if (!chainName) {
+    /** when there is only one we show that one */
+    if ((selectedAsset === undefined && balances) || (selectedAsset && balances === undefined)) {
+      return selectedAsset || balances;
+    }
+
+    /** when both exist but are inconsistent, we show that which matches chain asset id */
+    if (selectedAsset && balances && (selectedAsset.genesisHash !== balances.genesisHash || (selectedAsset.genesisHash === balances.genesisHash && selectedAsset.assetId !== balances.assetId))) {
+      return selectedAsset?.assetId === assetId ? selectedAsset : balances;
+    }
+
+    // FixMe: is chainName check necessary?
+    if (!chainName || (balances?.genesisHash && selectedAsset?.genesisHash && balances.genesisHash !== selectedAsset.genesisHash)) {
       return;
     }
 
-    return balances?.date > selectedAsset?.date
+    /** when both exists on the same chain, we show one which is more recent */
+    return balances?.date && selectedAsset?.date && balances.date > selectedAsset.date
       ? { ...(selectedAsset || {}), ...(balances || {}) }
       : { ...(balances || {}), ...(selectedAsset || {}) };
-  }, [balances, chainName, selectedAsset]);
+  }, [assetId, balances, chainName, selectedAsset]);
+
+  const isDualStaking = useMemo(() =>
+    balancesToShow?.soloTotal && balancesToShow?.pooledBalance && !balancesToShow.soloTotal.isZero() && !balancesToShow.pooledBalance.isZero()
+  , [balancesToShow?.pooledBalance, balancesToShow?.soloTotal]);
 
   const currentPrice = useMemo((): number | undefined => {
     const selectedAssetPriceId = selectedAsset?.priceId;
@@ -101,60 +109,50 @@ export default function AccountDetails (): React.ReactElement {
       return 0;
     }
 
-    const currentChainName = sanitizeChainName(chainName)?.toLocaleLowerCase()?.replace('assethub', '');
-    const currentAssetPrices = pricesInCurrency?.prices?.[(selectedAssetPriceId || EXTRA_PRICE_IDS[currentChainName || ''] || currentChainName) as string];
+    const _priceId = getPriceIdByChainName(chainName);
+    const currentAssetPrices = pricesInCurrency?.prices?.[(selectedAssetPriceId || _priceId)];
     const mayBeTestNetPrice = pricesInCurrency?.prices && !currentAssetPrices ? 0 : undefined;
 
     return currentAssetPrices?.value || mayBeTestNetPrice;
   }, [selectedAsset, chainName, pricesInCurrency?.prices]);
 
-  const nativeAssetPrice = useMemo(() => {
-    if (!pricesInCurrency || !balances || !currentPrice) {
-      return undefined;
-    }
-
-    const totalBalance = getValue('total', balances);
-
-    return parseFloat(amountToHuman(totalBalance, balances.decimal)) * currentPrice;
-  }, [balances, currentPrice, pricesInCurrency]);
-
   useEffect(() => {
     // reset assetId on chain switch
     assetIdOnAssetHub && setAssetIdOnAssetHub(undefined);
+
+    // reset selected asset on a chain switch only if its differ from current selected asset's chain
+    genesisHash !== selectedAsset?.genesisHash && setSelectedAsset(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chain]);
+  }, [genesisHash]);
 
   useEffect(() => {
-    // will match the selected assetId when you select another asset through AOC
-    selectedAsset && setAssetIdOnAssetHub(selectedAsset?.assetId);
-  }, [selectedAsset]);
+    if (selectedAsset !== undefined && paramAssetId && assetId !== undefined && assetId !== parseInt(paramAssetId)) {
+      onAction(`/accountfs/${address}/${assetId}`);
+    }
+  }, [accountAssets, address, assetId, onAction, paramAssetId, selectedAsset]);
 
   useEffect(() => {
-    accountAssets !== undefined && onAction(`/accountfs/${address}/${assetId || '0'}`);
-  }, [accountAssets, address, assetId, onAction]);
-
-  useEffect(() => {
-    if (paramAssetId === undefined) {
+    if (paramAssetId === undefined || !paramAssetId || !genesisHash || selectedAsset) {
       return;
     }
 
-    const mayBeAssetIdSelectedInHomePage = parseInt(paramAssetId);
+    const mayBeAssetIdSelectedInHomePage = assetId !== undefined ? assetId : parseInt(paramAssetId);
 
     if (mayBeAssetIdSelectedInHomePage >= 0 && accountAssets) {
-      const found = accountAssets.find(({ assetId, genesisHash }) => assetId === mayBeAssetIdSelectedInHomePage && account?.genesisHash === genesisHash);
+      const found = accountAssets.find(({ assetId, genesisHash: _genesisHash }) => assetId === mayBeAssetIdSelectedInHomePage && genesisHash === _genesisHash);
 
-      setSelectedAsset(found);
+      found && setSelectedAsset(found);
     }
-  }, [account?.genesisHash, accountAssets, paramAssetId]);
+  }, [genesisHash, accountAssets, assetId, paramAssetId, selectedAsset]);
 
   const onChangeAsset = useCallback((id: number) => {
     if (id === -1) { // this is the id of native token
-      setSelectedAsset(undefined);
+      setAssetIdOnAssetHub(0);
 
-      return setAssetIdOnAssetHub(undefined);
+      return;
     }
 
-    setAssetIdOnAssetHub(id); // this works for assethubs atm
+    setAssetIdOnAssetHub(id); // this works for asset hubs atm
   }, []);
 
   const goToSend = useCallback(() => {
@@ -162,13 +160,13 @@ export default function AccountDetails (): React.ReactElement {
   }, [address, assetId, onAction]);
 
   const goToSoloStaking = useCallback(() => {
-    address && account?.genesisHash && STAKING_CHAINS.includes(account.genesisHash) &&
+    address && genesisHash && STAKING_CHAINS.includes(genesisHash) &&
       openOrFocusTab(`/solofs/${address}/`);
-  }, [account?.genesisHash, address]);
+  }, [genesisHash, address]);
 
   const goToPoolStaking = useCallback(() => {
-    address && account?.genesisHash && STAKING_CHAINS.includes(account.genesisHash) && openOrFocusTab(`/poolfs/${address}/`);
-  }, [account?.genesisHash, address]);
+    address && genesisHash && STAKING_CHAINS.includes(genesisHash) && openOrFocusTab(`/poolfs/${address}/`);
+  }, [genesisHash, address]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
@@ -184,26 +182,37 @@ export default function AccountDetails (): React.ReactElement {
           />
           <Grid container item justifyContent='space-between' mb='15px'>
             <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 300px - 3%)'>
-              <AccountInformation
+              <AccountInformationForDetails
                 accountAssets={accountAssets}
                 address={address}
-                api={api}
-                balances={balancesToShow}
-                chain={chain}
-                chainName={chainName}
-                formatted={formatted}
-                isDarkTheme={isDarkTheme}
-                label={label(account, hasParent?.name || '', t)}
+                label={
+                  <AccountLabel
+                    account={account}
+                    ml='0px'
+                    parentName={hasParent?.name || ''}
+                  />
+                }
                 price={currentPrice}
                 pricesInCurrency={pricesInCurrency}
-                selectedAsset={selectedAsset}
+                selectedAsset={balancesToShow as any}
                 setAssetIdOnAssetHub={setAssetIdOnAssetHub}
                 setSelectedAsset={setSelectedAsset}
               />
-              {account?.genesisHash &&
+              {genesisHash &&
                 <>
+                  {isDualStaking &&
+                    <Grid container sx={{ '> div': { pl: '3px' } }}>
+                      <Warning
+                        iconDanger
+                        marginTop={0}
+                        theme={theme}
+                      >
+                        {t('Nomination Pools are evolving! Unstake your solo staked funds soon to benefit from automatic pool migration, which allows participation in both a pool and governance, and avoid manual changes.')}
+                      </Warning>
+                    </Grid>
+                  }
                   {isOnAssetHub &&
-                    <ChangeAssets
+                    <AssetSelect
                       address={address}
                       assetId={assetId}
                       label={t('Assets')}
@@ -215,10 +224,9 @@ export default function AccountDetails (): React.ReactElement {
                   <DisplayBalance
                     amount={balancesToShow?.availableBalance}
                     decimal={balancesToShow?.decimal}
-                    isDarkTheme={isDarkTheme}
+                    disabled={!balancesToShow?.availableBalance || balancesToShow?.availableBalance.isZero()}
                     onClick={goToSend}
                     price={currentPrice}
-                    theme={theme}
                     title={t('Transferable')}
                     token={balancesToShow?.token}
                   />
@@ -226,42 +234,34 @@ export default function AccountDetails (): React.ReactElement {
                     <DisplayBalance
                       amount={balancesToShow?.lockedBalance}
                       decimal={balancesToShow?.decimal}
-                      isDarkTheme={isDarkTheme}
                       price={currentPrice} // TODO: double check
                       title={t('Locked')}
                       token={balancesToShow?.token}
                     />}
-                  {supportStaking &&
+                  {supportStaking && !balancesToShow?.soloTotal?.isZero() &&
                     <DisplayBalance
                       amount={balancesToShow?.soloTotal}
                       decimal={balancesToShow?.decimal}
                       disabled={!balancesToShow?.soloTotal || balancesToShow?.soloTotal?.isZero()}
-                      isDarkTheme={isDarkTheme}
                       onClick={goToSoloStaking}
                       price={currentPrice}
-                      theme={theme}
                       title={t('Solo Stake')}
                       token={balancesToShow?.token}
                     />}
-                  {supportStaking &&
+                  {supportStaking && !balancesToShow?.pooledBalance?.isZero() &&
                     <DisplayBalance
                       amount={balancesToShow?.pooledBalance}
                       decimal={balancesToShow?.decimal}
                       disabled={!balancesToShow?.pooledBalance || balancesToShow?.pooledBalance?.isZero()}
-                      isDarkTheme={isDarkTheme}
                       onClick={goToPoolStaking}
                       price={currentPrice}
-                      theme={theme}
                       title={t('Pool Stake')}
                       token={balancesToShow?.token}
                     />}
                   {supportGov &&
                     <LockedBalanceDisplay
                       address={address}
-                      api={api}
-                      chain={chain}
                       decimal={balancesToShow?.decimal}
-                      formatted={String(formatted)}
                       price={currentPrice}
                       refreshNeeded={refreshNeeded}
                       setDisplayPopup={setDisplayPopup}
@@ -270,15 +270,12 @@ export default function AccountDetails (): React.ReactElement {
                       token={balancesToShow?.token}
                     />
                   }
-                  {!isOnAssetHub &&
-                    <DisplayBalance
-                      amount={balancesToShow?.reservedBalance}
-                      decimal={balancesToShow?.decimal}
-                      isDarkTheme={isDarkTheme}
-                      price={currentPrice} // TODO: double check
-                      title={t('Reserved')}
-                      token={balancesToShow?.token}
-                    />}
+                  <ReservedDisplayBalance
+                    address={address}
+                    amount={balancesToShow?.reservedBalance}
+                    disabled={!balancesToShow?.reservedBalance || balancesToShow?.reservedBalance?.isZero()}
+                    price={currentPrice}
+                  />
                 </>
               }
             </Grid>
@@ -286,17 +283,15 @@ export default function AccountDetails (): React.ReactElement {
               {showTotalChart &&
                 <TotalChart
                   accountAssets={accountAssets}
-                  isDarkTheme={isDarkTheme}
-                  nativeAssetPrice={nativeAssetPrice}
                   pricesInCurrency={pricesInCurrency}
                 />
               }
-              {account?.genesisHash &&
+              {genesisHash &&
                 <CommonTasks
                   address={address}
                   assetId={assetId}
-                  balance={balancesToShow}
-                  genesisHash={account?.genesisHash}
+                  balance={balancesToShow as any}
+                  genesisHash={genesisHash}
                   setDisplayPopup={setDisplayPopup}
                 />
               }
@@ -304,7 +299,7 @@ export default function AccountDetails (): React.ReactElement {
                 address={address}
                 setDisplayPopup={setDisplayPopup}
               />
-              {account?.genesisHash &&
+              {genesisHash &&
                 <ExternalLinks
                   address={address}
                 />

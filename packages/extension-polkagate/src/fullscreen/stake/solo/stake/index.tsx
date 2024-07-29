@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -8,7 +9,7 @@ import { Payee, ValidatorInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Infotip2, ShowBalance, TwoButtons, Warning } from '../../../../components';
@@ -16,7 +17,7 @@ import { useTranslation } from '../../../../components/translate';
 import { useAvailableToSoloStake, useBalances, useInfo, useMinToReceiveRewardsInSolo2, useStakingAccount, useStakingConsts } from '../../../../hooks';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import SelectValidators from '../partials/SelectValidators';
 import SetPayee from '../partials/SetPayee';
 
@@ -44,7 +45,7 @@ const Warn = ({ text }: { text: string }) => {
   );
 };
 
-export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props): React.ReactElement {
+export default function SoloStake({ inputs, onBack, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const { api, decimal, formatted, genesisHash, token } = useInfo(address);
@@ -70,12 +71,12 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
 
   const { call, params } = useMemo(() => {
     if (amountAsBN && api && newSelectedValidators && payee) {
-      const bonded = api.tx.staking.bond;
+      const bonded = api.tx['staking']['bond'];
       const bondParams = [amountAsBN, payee];
 
-      const nominated = api.tx.staking.nominate;
+      const nominated = api.tx['staking']['nominate'];
       const ids = newSelectedValidators.map((v) => v.accountId);
-      const call = api.tx.utility.batchAll;
+      const call = api.tx['utility']['batchAll'];
       const params = [[bonded(...bondParams), nominated(ids)]];
 
       return { call, params };
@@ -108,8 +109,6 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
   }, [api, availableToSoloStake, t, amountAsBN, stakingConsts?.minNominatorBond, amount, stakingAccount?.stakingLedger?.total]);
 
   useEffect(() => {
-    console.log('call && params && newSelectedValidators && payee:', call, params, newSelectedValidators, payee);
-
     if (call && params && newSelectedValidators && payee) {
       const extraInfo = {
         action: 'Solo Staking',
@@ -242,7 +241,7 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
               value={amount}
             />
             {alert &&
-          <Warn text={alert} />
+              <Warn text={alert} />
             }
             <Grid container item pb='10px'>
               <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '58.25%' }}>
@@ -300,7 +299,7 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
           />
           <Grid container item sx={{ '> div': { m: 0, width: '64%' }, justifyContent: 'flex-end', mt: '15px' }}>
             <TwoButtons
-              disabled={buttonDisable}
+              disabled={!newSelectedValidators?.length}
               isBusy={isBusy}
               mt='1px'
               onPrimaryClick={onNext}

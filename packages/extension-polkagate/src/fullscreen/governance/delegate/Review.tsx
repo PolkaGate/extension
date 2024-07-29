@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,16 +10,16 @@
  * */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { Proxy, TxInfo } from '../../../util/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../components';
-import { useAccountInfo2, useInfo, useTracks, useTranslation } from '../../../hooks';
+import { useIdentity, useInfo, useTracks, useTranslation } from '../../../hooks';
 import { ThroughProxy } from '../../../partials';
-import { Proxy, TxInfo } from '../../../util/types';
+import { PROXY_TYPE } from '../../../util/constants';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
-import { GOVERNANCE_PROXY } from '../utils/consts';
 import TracksList from './partial/TracksList';
 import { DelegateInformation, STEPS } from '.';
 
@@ -35,19 +36,19 @@ interface Props {
   selectedProxy: Proxy | undefined;
 }
 
-export default function Review ({ address, delegateInformation, estimatedFee, selectedProxy, setModalHeight, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
+export default function Review({ address, delegateInformation, estimatedFee, selectedProxy, setModalHeight, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const { api, chain, token } = useInfo(address);
+  const { api, chain, genesisHash, token } = useInfo(address);
   const ref = useRef(null);
   const { tracks } = useTracks(address);
-  const delegateeName = useAccountInfo2(api, delegateInformation.delegateeAddress)?.identity?.display;
+  const delegateeName = useIdentity(genesisHash, delegateInformation.delegateeAddress)?.identity?.display;
 
   const [isPasswordError, setIsPasswordError] = useState(false);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
-  const delegate = api && api.tx.convictionVoting.delegate;
-  const batch = api && api.tx.utility.batchAll;
+  const delegate = api && api.tx['convictionVoting']['delegate'];
+  const batch = api && api.tx['utility']['batchAll'];
 
   useEffect(() => {
     if (ref) {
@@ -94,7 +95,7 @@ export default function Review ({ address, delegateInformation, estimatedFee, se
           <Identity
             address={address}
             api={api}
-            chain={chain}
+            chain={chain as any}
             direction='row'
             identiconSize={31}
             showSocial={false}
@@ -104,7 +105,7 @@ export default function Review ({ address, delegateInformation, estimatedFee, se
         </Grid>
         {selectedProxyAddress &&
           <Grid container m='auto' maxWidth='92%'>
-            <ThroughProxy address={selectedProxyAddress} chain={chain} />
+            <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
           </Grid>
         }
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
@@ -115,7 +116,7 @@ export default function Review ({ address, delegateInformation, estimatedFee, se
           <Identity
             address={delegateInformation.delegateeAddress}
             api={api}
-            chain={chain}
+            chain={chain as any}
             direction='row'
             identiconSize={31}
             showSocial={false}
@@ -151,7 +152,7 @@ export default function Review ({ address, delegateInformation, estimatedFee, se
           isPasswordError={isPasswordError}
           onSecondaryClick={onBackClick}
           primaryBtnText={t('Confirm')}
-          proxyTypeFilter={GOVERNANCE_PROXY}
+          proxyTypeFilter={PROXY_TYPE.GOVERNANCE}
           secondaryBtnText={t('Back')}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}

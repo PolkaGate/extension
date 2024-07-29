@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -8,21 +8,20 @@
  * this component opens unstake review page
  * */
 
+import type { ApiPromise } from '@polkadot/api';
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { AccountId } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
+import type { AllValidators, Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
 
 import { FilterAltOutlined as FilterIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { BN } from '@polkadot/util';
-
 import { Checkbox2, Infotip, InputFilter, Motion, PButton, Popup, Progress } from '../../../components';
 import { useChain, useDecimal, useToken, useTranslation, useValidators, useValidatorsIdentities } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import { DEFAULT_FILTERS, SYSTEM_SUGGESTION_TEXT } from '../../../util/constants';
-import { AllValidators, Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
 import { getComparator } from '../partial/comparators';
 import Filters from '../partial/Filters';
 import ValidatorsTable from './ValidatorsTable';
@@ -32,11 +31,10 @@ interface Props {
   validatorsIdentities?: DeriveAccountInfo[] | null | undefined;
   validatorsInfo?: AllValidators;
   api: ApiPromise;
-  nominatedValidatorsIds?: AccountId[] | null | undefined;
-  poolId?: BN;
+  nominatedValidatorsIds?: string[] | AccountId[] | null | undefined;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
-  stashId: AccountId;
+  stashId: AccountId | string;
   stakingConsts: StakingConsts | null | undefined;
   staked: BN;
   title: string;
@@ -45,7 +43,7 @@ interface Props {
   setShowReview: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function SelectValidators({ address, api, newSelectedValidators, nominatedValidatorsIds, poolId, setNewSelectedValidators, setShow, setShowReview, show, staked, stakingConsts, stashId, title, validatorsIdentities, validatorsInfo }: Props): React.ReactElement {
+export default function SelectValidators({ address, api, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, setShow, setShowReview, show, staked, stakingConsts, stashId, title, validatorsIdentities, validatorsInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const token = useToken(address);
@@ -55,7 +53,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
   const allValidatorsInfo = useValidators(address, validatorsInfo);
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds, validatorsIdentities);
-  const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => v.validatorPrefs.blocked === false || v.validatorPrefs.blocked?.isFalse), [allValidatorsInfo]);
+  const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => (v.validatorPrefs.blocked as unknown as boolean) === false || v.validatorPrefs.blocked?.isFalse), [allValidatorsInfo]);
   const [systemSuggestion, setSystemSuggestion] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [filteredValidators, setFilteredValidators] = useState<ValidatorInfo[] | undefined>(allValidators);
@@ -87,7 +85,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
     if (systemSuggestion && newSelectedValidators?.length) {
       const notSelected = allValidators?.filter((a) => !newSelectedValidators.find((n) => a.accountId === n.accountId));
 
-      setValidatorsToList(newSelectedValidators.concat(notSelected));
+      setValidatorsToList(newSelectedValidators.concat(notSelected as ValidatorInfo[]));
     }
   }, [systemSuggestion, newSelectedValidators, allValidators]);
 
@@ -119,7 +117,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
       v.identity = vId?.identity;
     });
 
-    aDeepCopyOfValidators.sort((v1, v2) => ('' + v1?.identity?.displayParent).localeCompare(v2?.identity?.displayParent));
+    aDeepCopyOfValidators.sort((v1, v2) => ('' + v1?.identity?.displayParent).localeCompare(v2?.identity?.displayParent as string));
 
     let counter = 1;
     let indicator = aDeepCopyOfValidators[0];
@@ -170,7 +168,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
     setShowFilters(true);
   }, [setNewSelectedValidators, systemSuggestion]);
 
-  const onSystemSuggestion = useCallback((event, checked: boolean) => {
+  const onSystemSuggestion = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     setSearchKeyword('');
     setSystemSuggestion(checked);
     checked
@@ -179,7 +177,6 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
   }, [allValidators, selectBestValidators, setNewSelectedValidators, stakingConsts]);
 
   const onSearch = useCallback((filter: string) => {
-    // onSystemSuggestion(undefined, false);// to reset system suggestion on search
     setSystemSuggestion(false);
 
     setSearchKeyword(filter);
@@ -193,14 +190,14 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
 
   const isSelected = useCallback((v: ValidatorInfo) =>
     !!newSelectedValidators.find((n) => n.accountId === v.accountId)
-    , [newSelectedValidators]);
+  , [newSelectedValidators]);
 
   const handleCheck = useCallback((e: React.ChangeEvent<HTMLInputElement>, validator: ValidatorInfo) => {
     const checked = e.target.checked;
 
     setSystemSuggestion(false);
 
-    if (newSelectedValidators.length >= stakingConsts?.maxNominations && checked) {
+    if (stakingConsts?.maxNominations && newSelectedValidators.length >= stakingConsts.maxNominations && checked) {
       console.log('Max validators are selected !');
 
       return;
@@ -299,7 +296,6 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
                       isSelected={isSelected}
                       maxSelected={newSelectedValidators.length === stakingConsts?.maxNominations}
                       nominatedValidatorsIds={nominatedValidatorsIds}
-                      setSelectedValidators={setNewSelectedValidators}
                       showCheckbox
                       staked={staked}
                       stakingConsts={stakingConsts}

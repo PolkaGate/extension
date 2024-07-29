@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,8 +14,8 @@ import type { ApiPromise } from '@polkadot/api';
 import { Container, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { Balance } from '@polkadot/types/interfaces';
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
@@ -23,7 +24,8 @@ import { useAccountDisplay, useChain, useDecimal, useFormatted, useProxies, useT
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../partials';
 import Confirmation from '../../../partials/Confirmation';
 import broadcast from '../../../util/api/broadcast';
-import { Proxy, ProxyItem, StakingConsts, TxInfo, ValidatorInfo } from '../../../util/types';
+import { PROXY_TYPE } from '../../../util/constants';
+import type { Proxy, ProxyItem, StakingConsts, TxInfo, ValidatorInfo } from '../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import TxDetail from './TxDetail';
 import ValidatorsTable from './ValidatorsTable';
@@ -58,7 +60,7 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
-  const nominated = api && (poolId ? api.tx.nominationPools.nominate : api.tx.staking.nominate);
+  const nominated = api && (poolId ? api.tx['nominationPools']['nominate'] : api.tx['staking']['nominate']);
   const params = useMemo(() => {
     const selectedValidatorsAccountId = newSelectedValidators.map((v) => v.accountId);
 
@@ -85,7 +87,7 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -125,7 +127,7 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -164,7 +166,7 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
           <ValidatorsTable
             allValidatorsIdentities={allValidatorsIdentities}
             api={api}
-            chain={chain}
+            chain={chain as any}
             decimal={decimal}
             formatted={formatted}
             height={window.innerHeight - 320}
@@ -192,7 +194,7 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
           onConfirmClick={nominate}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', poolId ? 'NominationPools' : 'Staking']}
+          proxyTypeFilter={poolId ? PROXY_TYPE.NOMINATION_POOLS : PROXY_TYPE.STAKING}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

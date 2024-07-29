@@ -1,19 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
-import { faSitemap } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-import { ActionContext, MenuItem } from '../components';
+import { ActionContext, MenuItem, VaadinIcon } from '../components';
 import { useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 
@@ -22,7 +19,7 @@ interface Props {
   show: boolean;
 }
 
-function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactElement<Props> {
+function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -63,7 +60,7 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
           <MenuItem
             fontSize='17px'
             iconComponent={
-              <vaadin-icon icon='vaadin:file-text' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+              <VaadinIcon icon='vaadin:file-text' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
             }
             onClick={onRestoreFromJson}
             py='4px'
@@ -73,7 +70,7 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
           <MenuItem
             fontSize='17px'
             iconComponent={
-              <vaadin-icon icon='vaadin:book' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+              <VaadinIcon icon='vaadin:book' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
             }
             onClick={onImportAcc}
             py='4px'
@@ -83,7 +80,7 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
           <MenuItem
             fontSize='17px'
             iconComponent={
-              <vaadin-icon icon='vaadin:book-dollar' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+              <VaadinIcon icon='vaadin:book-dollar' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
             }
             onClick={onImportRawSeed}
             py='4px'
@@ -93,7 +90,7 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
           <MenuItem
             fontSize='17px'
             iconComponent={
-              <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}`, transform: 'rotate(180deg)' }} />
+              <VaadinIcon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}`, transform: 'rotate(180deg)' }} />
             }
             onClick={onImportProxied}
             py='4px'
@@ -103,7 +100,7 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
           <MenuItem
             fontSize='17px'
             iconComponent={
-              <vaadin-icon icon='vaadin:tag' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+              <VaadinIcon icon='vaadin:tag' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
             }
             onClick={onAddWatchOnly}
             py='4px'
@@ -114,7 +111,7 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
             disabled={settings.camera !== 'on'}
             fontSize='17px'
             iconComponent={
-              <vaadin-icon icon='vaadin:qrcode' style={{ height: '18px', color: `${settings.camera === 'on' ? 'theme.palette.text.primary' : 'theme.palette.text.disabled'}` }} />
+              <VaadinIcon icon='vaadin:qrcode' style={{ height: '18px', color: `${settings.camera === 'on' ? 'theme.palette.text.primary' : 'theme.palette.text.disabled'}` }} />
             }
             onClick={onAttachQR}
             py='4px'
@@ -130,7 +127,7 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
           <MenuItem
             fontSize='17px'
             iconComponent={
-              <vaadin-icon icon='vaadin:wallet' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+              <VaadinIcon icon='vaadin:wallet' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
             }
             onClick={onImportLedger}
             py='4px'

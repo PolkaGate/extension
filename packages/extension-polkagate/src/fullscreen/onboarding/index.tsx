@@ -1,9 +1,8 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import '@vaadin/icons';
 
 import { faHome } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,16 +11,20 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { AccountContext, ActionContext, PButton } from '../../components';
+import { AccountContext, ActionContext, PButton, VaadinIcon } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
-import { windowOpen } from '../../messaging';
+import { createAccountExternal, windowOpen } from '../../messaging';
 import Privacy from '../../popup/welcome/Privacy';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 
-function Onboarding (): React.ReactElement {
+const demoAccount = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
+
+function Onboarding(): React.ReactElement {
   useFullscreen();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
+  const [isBusy, setIsBusy] = useState(false);
 
   const { t } = useTranslation();
   const theme = useTheme();
@@ -45,6 +48,17 @@ function Onboarding (): React.ReactElement {
       windowOpen('/account/import-ledger').catch(console.error);
     }, []
   );
+
+  const onExploreDemo = useCallback((): void => {
+    setIsBusy(true);
+
+    createAccountExternal('Demo Account ☔️', demoAccount, POLKADOT_GENESIS)
+      .then(() => onAction('/'))
+      .catch((error: Error) => {
+        setIsBusy(false);
+        console.error(error);
+      });
+  }, [onAction]);
 
   const onCreate = useCallback(
     (): void => {
@@ -103,15 +117,15 @@ function Onboarding (): React.ReactElement {
             {t('We appreciate your choice in selecting Polkagate as your gateway to the Polkadot ecosystem! 🌟')}
           </Typography>
           <Typography fontSize='16px' fontWeight={400} width='100%'>
-            {t('At present, you do not have any accounts. To begin your journey, you can create your first account or import existing accounts to get started.')}
+            {t('At present, you do not have any accounts. To begin your journey, you can create your first account, import existing accounts, or explore the demo option to get started.')}
           </Typography>
-          <Grid alignItems='center' container item justifyContent='center' pt='80px'>
+          <Grid alignItems='center' container item justifyContent='center' pt='50px'>
             <PButton
               _ml={0}
               _mt='20px'
               _onClick={onCreate}
               _variant={'contained'}
-              startIcon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.main}` }} />}
+              startIcon={<VaadinIcon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.main}` }} />}
               text={t('Create a new account')}
             />
             <Divider sx={{ fontSize: '20px', fontWeight: 400, my: '25px', width: '88%' }}>
@@ -159,8 +173,14 @@ function Onboarding (): React.ReactElement {
                 _onClick={onImportLedger}
                 _variant={'outlined'}
                 text={t('Attach ledger device')}
+              />  <PButton
+                _ml={0}
+                _mt='15px'
+                _isBusy={isBusy}
+                _onClick={onExploreDemo}
+                _variant={'contained'}
+                text={t('Explore a demo')}
               />
-
             </Grid>
             <Grid container justifyContent='center'>
               {/* eslint-disable-next-line react/jsx-no-bind */}

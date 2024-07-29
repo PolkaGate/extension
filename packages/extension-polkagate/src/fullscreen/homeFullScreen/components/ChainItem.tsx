@@ -1,14 +1,16 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+import type { DropdownOption } from '../../../util/types';
+
 import { Avatar, Grid, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
 import { Switch } from '../../../components';
 import { CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
-import { DropdownOption } from '../../../util/types';
 import { sanitizeChainName } from '../../../util/utils';
 
 interface Props {
@@ -27,7 +29,7 @@ function ChainItem({ chain, disabled, isSelected, onclick }: Props): React.React
       <Grid alignItems='center' container item mr='10px' width='fit-content'>
         <Avatar
           src={getLogo2(chain.text)?.logo}
-          sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(sanitizeChainName(String(chain.value)) || '') && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 25, width: 25, mr: '10px' }}
+          sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(sanitizeChainName(chain.text) || '') && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 25, width: 25, mr: '10px' }}
           variant='square'
         />
         <Typography fontSize='16px' fontWeight={selectedItem ? 500 : 400}>

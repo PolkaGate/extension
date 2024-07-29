@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -21,7 +22,7 @@ import { Progress } from '../../../../components';
 import { useInfo, useTranslation } from '../../../../hooks';
 import { getNominationPoolsClaimedRewards } from '../../../../util/api';
 import { MAX_HISTORY_RECORD_TO_SHOW } from '../../../../util/constants';
-import { ClaimedRewardInfo, SubscanClaimedRewardInfo } from '../../../../util/types';
+import type { ClaimedRewardInfo, SubscanClaimedRewardInfo } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
 
 ChartJS.register(
@@ -45,7 +46,7 @@ interface Props {
   address?: string;
 }
 
-export default function ClaimedRewardsChart ({ address }: Props): React.ReactElement {
+export default function ClaimedRewardsChart({ address }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { chainName, decimal, token } = useInfo(address);
@@ -348,7 +349,7 @@ export default function ClaimedRewardsChart ({ address }: Props): React.ReactEle
 
   const Arrows = ({ onNext, onPrevious }: ArrowsProps) => (
     <Grid container justifyContent='space-between' m='auto' width='96%'>
-      <Grid alignItems='center' container item justifyContent='flex-start' maxWidth='49.5%' onClick={onPrevious} sx={{ cursor: dataToShow && pageIndex === dataToShow.length - 1 ? 'default' : 'pointer' }} width='fit_content'>
+      <Grid alignItems='center' container item justifyContent='flex-start' maxWidth='50%' onClick={onPrevious} sx={{ cursor: dataToShow && pageIndex === dataToShow.length - 1 ? 'default' : 'pointer' }} width='fit_content'>
         <KeyboardDoubleArrowLeftIcon sx={{ color: dataToShow && pageIndex === dataToShow?.length - 1 ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
         <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '3px', mr: '7px', my: 'auto', width: '1px' }} />
         <Grid container direction='column' item xs={7}>
@@ -356,7 +357,7 @@ export default function ClaimedRewardsChart ({ address }: Props): React.ReactEle
           <Typography color={dataToShow && pageIndex === dataToShow.length - 1 ? 'secondary.contrastText' : 'text.primary'} fontSize='12px' fontWeight={300}>{nextPrevWeek(false)}</Typography>
         </Grid>
       </Grid>
-      <Grid alignItems='center' container item justifyContent='flex-end' maxWidth='49.5%' onClick={onNext} sx={{ cursor: pageIndex === 0 ? 'default' : 'pointer' }} width='fit_content'>
+      <Grid alignItems='center' container item justifyContent='flex-end' maxWidth='50%' onClick={onNext} sx={{ cursor: pageIndex === 0 ? 'default' : 'pointer' }} width='fit_content'>
         <Grid container direction='column' item textAlign='right' xs={7}>
           <Typography color={pageIndex === 0 ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t('Next')}</Typography>
           <Typography color={pageIndex === 0 ? 'secondary.contrastText' : 'text.primary'} fontSize='12px' fontWeight={300}>{nextPrevWeek(true)}</Typography>
@@ -368,7 +369,7 @@ export default function ClaimedRewardsChart ({ address }: Props): React.ReactEle
   );
 
   return (
-    <Grid alignItems={ 'flex-start'} container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: 'fit-content', minHeight: claimedRewardsInfo === null ? 'fit-content' : '310px', p: '10px', width: 'inherit' }}>
+    <Grid alignItems={'flex-start'} container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: 'fit-content', minHeight: claimedRewardsInfo === null ? 'fit-content' : '295px', p: '10px', width: 'inherit' }}>
       <Grid alignItems='center' container item justifyContent='center' sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <FontAwesomeIcon
           color={`${theme.palette.text.primary}`}
@@ -424,11 +425,18 @@ export default function ClaimedRewardsChart ({ address }: Props): React.ReactEle
                 </>
               </Collapse>
               <Divider sx={{ bgcolor: 'divider', height: '2px', mt: '5px', width: '100%' }} />
-              <Grid alignItems='center' container item onClick={toggleDetails} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
-                <Typography color='secondary.light' fontSize='16px' fontWeight={400}>
-                  {t<string>(showDetails ? t('Less') : t('More'))}
-                </Typography>
-                <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showDetails ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+              <Grid alignItems='flex-start' container item justifyContent='space-between'>
+                <Grid item>
+                  <Typography color='text.disabled' fontSize='10px'>
+                    {'Powered by Subscan'}
+                  </Typography>
+                </Grid>
+                <Grid container item onClick={toggleDetails} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
+                  <Typography color='secondary.light' fontSize='16px' fontWeight={400}>
+                    {t(showDetails ? t('Less') : t('More'))}
+                  </Typography>
+                  <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showDetails ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+                </Grid>
               </Grid>
             </Grid>
           </Grid>

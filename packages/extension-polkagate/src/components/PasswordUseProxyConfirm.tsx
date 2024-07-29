@@ -1,19 +1,20 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { BN } from '@polkadot/util';
+import type { Proxy, ProxyItem, ProxyTypes } from '../util/types';
 
-import { Grid, SxProps, Theme, Tooltip, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Tooltip, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useAccount, useCanPayFee, useMetadata, useTranslation } from '../hooks';
 import SelectProxy from '../partials/SelectProxy';
-import { Proxy, ProxyItem, ProxyTypes } from '../util/types';
 import { noop } from '../util/utils';
 import { Identity, Password, PButton, Warning } from '.';
 
@@ -142,7 +143,7 @@ export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmT
                         {selectedProxy &&
                           <Identity
                             api={api}
-                            chain={chain}
+                            chain={chain as any}
                             formatted={selectedProxy?.delegate}
                             identiconSize={30}
                             showSocial={false}

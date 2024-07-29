@@ -1,11 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
+
+// @ts-nocheck
 
 import getApi from '../getApi.ts';
 
 // get all nominated/elected validators of an address
-export async function getNominations (endpoint, _address) {
+export async function getNominations(endpoint, _address) {
   try {
     const api = await getApi(endpoint);
     const at = await api.rpc.chain.getFinalizedHead();

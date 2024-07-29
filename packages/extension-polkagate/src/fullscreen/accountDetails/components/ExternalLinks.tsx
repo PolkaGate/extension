@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -22,9 +23,8 @@ export default function ExternalLinks({ address }: Props): React.ReactElement {
   const chainName = useChainName(address);
   const formatted = useFormatted(address);
 
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const subIDURL = useMemo(() => `https://sub.id/${formatted ?? address ?? ''}`, [address, formatted]);
- 
+
   const subscanURL = useMemo(() => {
     // Subscan does not support Pendulum
     if (chainName === 'Pendulum') {
@@ -74,7 +74,7 @@ export default function ExternalLinks({ address }: Props): React.ReactElement {
   };
 
   return (
-    <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} >
+    <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }}>
       <LinkButton
         linkName='subid'
         linkURL={subIDURL}

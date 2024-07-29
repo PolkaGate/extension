@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { YouHaveType } from '../../hooks/useYouHave';
+
 import { Box, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect } from 'react';
 
@@ -11,7 +13,6 @@ import { FormatPrice, HideIcon, ShowIcon } from '../../components';
 import { useYouHave } from '../../hooks';
 import { PRICE_VALIDITY_PERIOD } from '../../hooks/usePrices';
 import useTranslation from '../../hooks/useTranslation';
-import { YouHaveType } from '../../hooks/useYouHave';
 
 interface Props {
   hideNumbers: boolean | undefined;
@@ -38,10 +39,10 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
   }, [setHideNumbers]);
 
   return (
-    <Grid container pt='15px' sx={{ position: 'relative', zIndex: 1 }} textAlign='center'>
+    <Grid container sx={{ pb: '10px', position: 'relative', pt: '5px', textAlign: 'center', zIndex: 1 }}>
       <Grid item xs={12}>
-        <Typography sx={{ fontSize: '18px' }}>
-          {t('You have')}
+        <Typography sx={{ fontSize: '16px', fontVariant: 'small-caps' }}>
+          {t('My Portfolio')}
         </Typography>
       </Grid>
       <Grid container item justifyContent='center' xs={12}>

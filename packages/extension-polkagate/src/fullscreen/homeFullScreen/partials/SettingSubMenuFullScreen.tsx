@@ -1,9 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import '@vaadin/icons';
 
 import { Box, Collapse, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -11,7 +10,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import settings from '@polkadot/ui-settings';
 
 import { checkBox, checkedBox } from '../../../assets/icons';
-import { AccountContext, Select } from '../../../components';
+import { AccountContext, Select, VaadinIcon } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
 import { useIsTestnetEnabled, useTranslation } from '../../../hooks';
 import { setNotification, tieAccount } from '../../../messaging';
@@ -26,7 +25,7 @@ interface Props {
   show: boolean;
 }
 
-export default function SettingSubMenuFullScreen ({ show }: Props): React.ReactElement {
+export default function SettingSubMenuFullScreen({ show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
@@ -122,7 +121,7 @@ export default function SettingSubMenuFullScreen ({ show }: Props): React.ReactE
             />
             <TaskButton
               icon={
-                <vaadin-icon icon='vaadin:lines-list' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+                <VaadinIcon icon='vaadin:lines-list' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
               }
               isSubMenu
               onClick={onAuthManagement}
@@ -130,7 +129,7 @@ export default function SettingSubMenuFullScreen ({ show }: Props): React.ReactE
             />
             <TaskButton
               icon={
-                <vaadin-icon icon='vaadin:key' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+                <VaadinIcon icon='vaadin:key' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
               }
               isSubMenu
               onClick={onManageLoginPassword}

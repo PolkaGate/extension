@@ -1,29 +1,27 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { faMinus, faPersonCircleXmark } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { AutoDelete as AutoDeleteIcon } from '@mui/icons-material';
-import { Button, Grid, Typography, useTheme } from '@mui/material';
+import { faMinus } from '@fortawesome/free-solid-svg-icons';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import Asset from '@polkadot/extension-polkagate/src/partials/Asset';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
-import { CONDITION_MAP } from '@polkadot/extension-polkagate/src/popup/staking/pool/unstake';
 import { MAX_AMOUNT_LENGTH } from '@polkadot/extension-polkagate/src/util/constants';
-import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
 import { useInfo, usePool, usePoolConsts, useTranslation } from '../../../../hooks';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { ModalTitle } from '../../solo/commonTasks/configurePayee';
@@ -37,7 +35,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function Unstake ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function Unstake({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);
@@ -48,12 +46,11 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [inputs, setInputs] = useState<Inputs>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
-  const [amount, setAmount] = useState<string>();
+  const [amountAsBN, setAmountAsBN] = useState<BN>();
+  const [amount, setAmount] = useState<string | undefined>();
+
   const [alert, setAlert] = useState<string | undefined>();
-  const [helperText, setHelperText] = useState<string | undefined>();
-  const [unstakeAllAmount, setUnstakeAllAmount] = useState<boolean>(false);
-  const [helperButton, setShowHelperButton] = useState<number>();
-  const [goChange, setGoChange] = useState<boolean>(false);
+  const [unstakeMaxAmount, setUnstakeMaxAmount] = useState<boolean>(false);
 
   const staked = useMemo(() => {
     if (myPool && myPool.member?.points && myPool.stashIdAccount && myPool.bondedPool) {
@@ -70,33 +67,51 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
   }, [myPool]);
 
   const totalStakeAfter = useMemo(() => {
-    if (unstakeAllAmount) {
+    if (unstakeMaxAmount || !amountAsBN) {
       return BN_ZERO;
     }
 
-    if (staked && !unstakeAllAmount) {
-      return staked.sub(amountToMachine(amount, decimal));
+    if (staked && !unstakeMaxAmount) {
+      return staked.sub(amountAsBN);
     }
 
     return undefined;
-  }, [amount, decimal, staked, unstakeAllAmount]);
+  }, [amountAsBN, staked, unstakeMaxAmount]);
 
   const unlockingLen = myPool?.stashIdAccount?.stakingLedger?.unlocking?.length;
-  const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
+  const maxUnlockingChunks = api && (api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber();
   const isPoolRoot = useMemo(() => String(formatted) === String(myPool?.bondedPool?.roles?.root), [formatted, myPool?.bondedPool?.roles?.root]);
   const isPoolDepositor = useMemo(() => String(formatted) === String(myPool?.bondedPool?.roles?.depositor), [formatted, myPool?.bondedPool?.roles?.depositor]);
   const poolState = useMemo(() => String(myPool?.bondedPool?.state), [myPool?.bondedPool?.state]);
   const poolMemberCounter = useMemo(() => Number(myPool?.bondedPool?.memberCounter), [myPool?.bondedPool?.memberCounter]);
 
-  const unbonded = api && api.tx.nominationPools.unbond;
-  const poolWithdrawUnbonded = api && api.tx.nominationPools.poolWithdrawUnbonded;
+  const unbonded = api && api.tx['nominationPools']['unbond'];
+  const poolWithdrawUnbonded = api && api.tx['nominationPools']['poolWithdrawUnbonded'];
 
-  useEffect(() => {
-    if (!amount) {
-      return;
+  const helperText = useMemo(() => {
+    if (!myPool || !formatted || !amountAsBN || !staked) {
+      return undefined;
     }
 
-    const amountAsBN = amountToMachine(amount, decimal);
+    const partial = staked.sub(amountAsBN);
+
+    if (isPoolDepositor && isPoolRoot && poolState !== 'Destroying' && partial.isZero()) {
+      return t('You need to change the pool state to Destroying first to be able to unstake.');
+    }
+
+    if (isPoolDepositor && isPoolRoot && poolState === 'Destroying' && poolMemberCounter !== 1 && partial.isZero()) {
+      return t('You need to remove all members first to be able to unstake.');
+    }
+
+    return undefined;
+  }, [amountAsBN, formatted, isPoolDepositor, isPoolRoot, myPool, poolMemberCounter, poolState, staked, t]);
+
+  useEffect(() => {
+    if (!amountAsBN) {
+      setAlert(undefined);
+
+      return;
+    }
 
     if (amountAsBN.gt(staked ?? BN_ZERO)) {
       return setAlert(t('It is more than already staked.'));
@@ -106,7 +121,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
       return setAlert(t('Remaining stake amount should not be less than {{min}} {{token}}', { replace: { min: amountToHuman(poolConsts.minCreateBond, decimal), token } }));
     }
 
-    if (api && staked && poolConsts && !staked.sub(amountAsBN).isZero() && !unstakeAllAmount && staked.sub(amountAsBN).lt(poolConsts.minJoinBond)) {
+    if (api && staked && poolConsts && !staked.sub(amountAsBN).isZero() && !unstakeMaxAmount && staked.sub(amountAsBN).lt(poolConsts.minJoinBond)) {
       const remained = api.createType('Balance', staked.sub(amountAsBN)).toHuman();
       const min = api.createType('Balance', poolConsts.minJoinBond).toHuman();
 
@@ -114,16 +129,16 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
     }
 
     setAlert(undefined);
-  }, [amount, api, poolConsts, decimal, staked, t, unstakeAllAmount, isPoolDepositor, poolMemberCounter, poolState, token]);
+  }, [amountAsBN, api, poolConsts, decimal, staked, t, unstakeMaxAmount, isPoolDepositor, poolMemberCounter, poolState, token]);
 
   useEffect(() => {
     if (!api) {
       return;
     }
 
-    const params = [formatted, amountToMachine(amount, decimal)];
+    const params = [formatted, amountAsBN];
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -140,35 +155,10 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
         void poolWithdrawUnbonded(...dummyParams).paymentInfo(formatted).then((j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee))));
       }
     }).catch(console.error);
-  }, [amount, api, decimal, formatted, maxUnlockingChunks, poolWithdrawUnbonded, unbonded, unlockingLen]);
-
-  useEffect(() => {
-    if (!myPool || !formatted || !poolConsts || !staked) {
-      return;
-    }
-
-    const partial = staked.sub(poolConsts.minCreateBond);
-
-    if (isPoolDepositor && isPoolRoot && poolState !== 'Destroying' && partial.isZero()) {
-      setHelperText(t<string>('You need to change the pool state to Destroying first to be able to unstake.'));
-      setShowHelperButton(CONDITION_MAP.DESTROY);
-
-      return;
-    }
-
-    if (isPoolDepositor && isPoolRoot && poolState === 'Destroying' && poolMemberCounter !== 1 && partial.isZero()) {
-      setHelperText(t<string>('You need to remove all members first to be able to unstake.'));
-      setShowHelperButton(CONDITION_MAP.REMOVE_ALL);
-
-      return;
-    }
-
-    setShowHelperButton(undefined);
-    setHelperText(undefined);
-  }, [formatted, isPoolDepositor, isPoolRoot, myPool, poolConsts, poolMemberCounter, poolState, staked, t]);
+  }, [amountAsBN, api, decimal, formatted, maxUnlockingChunks, poolWithdrawUnbonded, unbonded, unlockingLen]);
 
   const onChangeAmount = useCallback((value: string) => {
-    setUnstakeAllAmount(false);
+    setUnstakeMaxAmount(false);
 
     if (decimal && value.length > decimal - 1) {
       console.log(`The amount digits is more than decimal:${decimal}`);
@@ -176,17 +166,19 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
       return;
     }
 
+    setAmountAsBN(amountToMachine(value.slice(0, MAX_AMOUNT_LENGTH), decimal));
     setAmount(value.slice(0, MAX_AMOUNT_LENGTH));
   }, [decimal]);
 
-  const onAllAmount = useCallback(() => {
-    if (!myPool || !formatted || !poolConsts || !staked || staked.isZero()) {
+  const onMaxAmount = useCallback(() => {
+    if (!decimal || !myPool || !formatted || !poolConsts || !staked || staked.isZero()) {
       return;
     }
 
     if ((isPoolRoot || isPoolDepositor) && poolState === 'Destroying' && poolMemberCounter === 1) {
-      setUnstakeAllAmount(true);
-      setAmount(amountToHuman(staked.toString(), decimal));
+      setUnstakeMaxAmount(true);
+      setAmountAsBN(staked);
+      setAmount(amountToHuman(staked, decimal));
 
       return;
     }
@@ -194,36 +186,31 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
     if (isPoolDepositor && (poolState !== 'Destroying' || poolMemberCounter !== 1)) {
       const partial = staked.sub(poolConsts.minCreateBond);
 
-      setUnstakeAllAmount(false);
-      !partial.isZero() && setAmount(amountToHuman(partial, decimal));
+      setUnstakeMaxAmount(false);
+
+      if (!partial.isZero()) {
+        setAmountAsBN(partial);
+        setAmount(amountToHuman(partial, decimal));
+      }
 
       return;
     }
 
-    if (!isPoolDepositor && !isPoolRoot) { // TODO: do we really need this condition @Amir
-      setUnstakeAllAmount(true);
-      setAmount(amountToHuman(staked.toString(), decimal));
+    if (!isPoolDepositor && !isPoolRoot) {
+      setUnstakeMaxAmount(true);
+      setAmountAsBN(staked);
+      setAmount(amountToHuman(staked, decimal));
     }
   }, [decimal, formatted, isPoolDepositor, isPoolRoot, myPool, poolConsts, poolMemberCounter, poolState, staked]);
 
-  const goToDestroying = useCallback(() => {
-    helperButton === 1 && setGoChange(!goChange);
-  }, [goChange, helperButton]);
-
-  const goToRemoveAll = useCallback(() => {
-    helperButton === 2 && setGoChange(!goChange);
-  }, [goChange, helperButton]);
-
   useEffect(() => {
     const handleInput = async () => {
-      if (amount && api && maxUnlockingChunks && unlockingLen !== undefined && myPool?.poolId && unbonded && poolWithdrawUnbonded) {
-        const amountAsBN = amountToMachine(amount, decimal);
-
-        const batch = api.tx.utility.batchAll;
+      if (amountAsBN && api && maxUnlockingChunks && unlockingLen !== undefined && poolConsts && myPool?.poolId && unbonded && poolWithdrawUnbonded) {
+        const batch = api.tx['utility']['batchAll'];
 
         const unbondedParams = [formatted, amountAsBN];
 
-        const optSpans = await api.query.staking.slashingSpans(formatted);
+        const optSpans = await api.query['staking']['slashingSpans'](formatted) as any;
         const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1 as number;
         const poolId = myPool.poolId;
 
@@ -236,7 +223,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
 
         const extraInfo = {
           action: 'Pool Staking',
-          amount,
+          amount: amountToHuman(amountAsBN, decimal),
           subAction: 'unstake',
           totalStakeAfter
         };
@@ -250,7 +237,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
     };
 
     handleInput().catch(console.error);
-  }, [amount, api, decimal, formatted, maxUnlockingChunks, myPool?.poolId, poolWithdrawUnbonded, totalStakeAfter, unbonded, unlockingLen]);
+  }, [amountAsBN, api, decimal, formatted, isPoolDepositor, isPoolRoot, maxUnlockingChunks, myPool?.poolId, poolConsts, poolWithdrawUnbonded, staked, totalStakeAfter, unbonded, unlockingLen, unstakeMaxAmount]);
 
   const Warn = ({ belowInput, iconDanger, isDanger, text }: { belowInput?: boolean, text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
     <Grid container sx={{ '> div': { mr: '0', mt: '5px', pl: '5px' }, mt: isDanger ? '15px' : 0 }}>
@@ -292,27 +279,6 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
             {helperText &&
               <Grid container height='78px' justifyContent='center' m='auto' width='92%'>
                 <Warn isDanger text={helperText} />
-                {helperButton &&
-                  <Button
-                    onClick={helperButton === 1 ? goToDestroying : goToRemoveAll}
-                    startIcon={
-                      helperButton === 1
-                        ? (
-                          <AutoDeleteIcon
-                            sx={{ color: 'text.primary', fontSize: '21px' }}
-                          />)
-                        : (
-                          <FontAwesomeIcon
-                            color={theme.palette.text.primary}
-                            fontSize='18px'
-                            icon={faPersonCircleXmark}
-                          />)
-                    }
-                    sx={{ color: 'text.primary', fontSize: '14px', fontWeight: 400, mt: '10px', textDecorationLine: 'underline', textTransform: 'capitalize' }}
-                    variant='text'
-                  >
-                    {helperButton === 1 ? t<string>('Destroying') : t<string>('RemoveAll')}
-                  </Button>}
               </Grid>
             }
             <Grid item sx={{ mx: '15px' }} xs={12}>
@@ -327,11 +293,10 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
                 }}
               />
               <AmountWithOptions
-                disabled={!!helperButton}
-                label={t<string>('Amount ({{token}})', { replace: { token } })}
+                label={t('Amount ({{token}})', { replace: { token } })}
                 onChangeAmount={onChangeAmount}
-                onPrimary={onAllAmount}
-                primaryBtnText={t<string>('All amount')}
+                onPrimary={onMaxAmount}
+                primaryBtnText={t('Max amount')}
                 value={amount}
               />
               {alert &&
@@ -341,8 +306,8 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
             {myPool &&
               <ShowPool
                 api={api}
-                chain={chain}
-                label={t<string>('Pool')}
+                chain={chain as any}
+                label={t('Pool')}
                 mode='Default'
                 pool={myPool}
                 showInfo
@@ -352,13 +317,13 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
                 }}
               />
             }
-            {!helperButton &&
+            {!helperText &&
               <Typography fontSize='14px' m='20px auto' textAlign='center'>
-                {t<string>('Outstanding rewards automatically withdrawn after transaction')}
+                {t('Outstanding rewards automatically withdrawn after transaction')}
               </Typography>
             }
             <TwoButtons
-              disabled={!inputs}
+              disabled={!inputs || !!helperText || !!alert || amountAsBN?.isZero()}
               ml='0'
               onPrimaryClick={onNext}
               onSecondaryClick={onCancel}

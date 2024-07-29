@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-/* eslint-disable header/header */
 
 export { default as AccountNamePasswordCreation } from './AccountNamePasswordCreation';
 export { default as AccountHolderWithProxy } from './AccountHolderWithProxy';
@@ -70,6 +69,7 @@ export { default as SlidePopUp } from './SlidePopUp';
 export { default as Steps } from './Steps';
 export { default as ShowBalance } from './ShowBalance';
 export { default as ShowBalance2 } from './ShowBalance2';
+export { default as ShowBalance3 } from './ShowBalance3';
 export { default as SelectChain } from './SelectChain';
 export { default as TextAreaWithLabel } from './TextAreaWithLabel';
 export { default as TwoButtons } from './TwoButtons';
@@ -92,5 +92,7 @@ export { default as DisplayLogo } from './DisplayLogo';
 export { default as FullScreenIcon } from './FullScreenIcon';
 export { default as OptionalCopyButton } from './OptionalCopyButton';
 export { default as Waiting } from './Waiting';
+export { default as VaadinIcon } from './VaadinIcon';
+export { default as ProfileInput } from './ProfileInput';
 
 export * from './contexts';

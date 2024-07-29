@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,13 +14,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
-import { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_MAX_INTEGER, BN_ONE } from '@polkadot/util';
 
 import { PButton, Progress, Warning } from '../../../../components';
 import { useBalances, useInfo, useIsExposed, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
-import { Inputs } from '../../Entry';
+import type { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { STEPS } from '../../pool/stake';
@@ -48,7 +49,7 @@ export default function FastUnstake({ address, setRefresh, setShow, show }: Prop
   const [inputs, setInputs] = useState<Inputs>();
 
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
-  const fastUnstakeDeposit = api && api.consts.fastUnstake.deposit as unknown as BN;
+  const fastUnstakeDeposit = api && api.consts['fastUnstake']['deposit'] as unknown as BN;
   const availableBalance = getValue('available', myBalances);
   const hasEnoughDeposit = fastUnstakeDeposit && stakingConsts && myBalances && estimatedFee && availableBalance
     ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(availableBalance || BN_MAX_INTEGER)
@@ -69,7 +70,7 @@ export default function FastUnstake({ address, setRefresh, setShow, show }: Prop
       return;
     }
 
-    const call = api.tx.fastUnstake.registerFastUnstake;
+    const call = api.tx['fastUnstake']['registerFastUnstake'];
     const availableBalanceAfter = availableBalance.add(staked);
 
     const params = [];
@@ -93,7 +94,7 @@ export default function FastUnstake({ address, setRefresh, setShow, show }: Prop
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -161,7 +162,7 @@ export default function FastUnstake({ address, setRefresh, setShow, show }: Prop
                 </Grid>
               </Grid>
               {isEligible === undefined &&
-                <Progress pt={'60px'} size={115} title={t('Please wait a few seconds and don\'t close the extension.')} type='grid' />
+                <Progress pt={'60px'} size={115} title={t('Please wait a few seconds and don\'t close the window.')} type='grid' />
               }
               <Grid bottom='70px' item position='absolute'>
                 {isEligible !== undefined &&

@@ -5,10 +5,10 @@ import { createAssets } from '@polkagate/apps-config/assets';
 import { useMemo } from 'react';
 
 import { toCamelCase } from '../fullscreen/governance/utils/util';
-import { EXTRA_PRICE_IDS } from '../util/api/getPrices';
-import { ASSET_HUBS } from '../util/constants';
-import { Price } from '../util/types';
+import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID } from '../util/constants';
+import type { Price } from '../util/types';
 import { useChain, useChainName, usePrices } from '.';
+import { getPriceIdByChainName } from '../util/utils';
 
 const DEFAULT_PRICE = {
   price: undefined,
@@ -23,7 +23,7 @@ const assetsChains = createAssets();
  * @param address : accounts substrate address
  * @returns price : price of the token which the address is already switched to
  */
-export default function useTokenPrice (address: string, assetId?: number): Price | typeof DEFAULT_PRICE {
+export default function useTokenPrice(address: string, assetId?: number): Price | typeof DEFAULT_PRICE {
   const chainName = useChainName(address);
   const chain = useChain(address);
   const isAssetHub = ASSET_HUBS.includes(chain?.genesisHash || '');
@@ -34,7 +34,7 @@ export default function useTokenPrice (address: string, assetId?: number): Price
   const _assetId = assetId !== undefined
     ? assetId
     : isAssetHub
-      ? 0 // zero is the native token's assetId on apps-config
+      ? NATIVE_TOKEN_ASSET_ID
       : undefined;
 
   return useMemo(() => {
@@ -42,11 +42,12 @@ export default function useTokenPrice (address: string, assetId?: number): Price
       return DEFAULT_PRICE;
     }
 
-    const mayBePriceValue = pricesInCurrencies.prices?.[
-      _assetId !== undefined
-        ? mayBeAssetsOnMultiAssetChains?.[_assetId]?.priceId as string
-        : EXTRA_PRICE_IDS[chainName?.toLocaleLowerCase()] || chainName?.toLocaleLowerCase()
-    ]?.value || 0;
+    // FixMe, on second fetch of asset id its type will get string which is weird!!
+    const priceId = _assetId !== undefined && _assetId > NATIVE_TOKEN_ASSET_ID
+      ? mayBeAssetsOnMultiAssetChains?.find(({ id }) => id === Number(_assetId))?.priceId
+      : getPriceIdByChainName(chainName);
+
+    const mayBePriceValue = priceId ? pricesInCurrencies.prices?.[priceId]?.value || 0 : 0;
 
     return {
       price: mayBePriceValue,

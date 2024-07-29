@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -39,7 +40,7 @@ export default function AdvancedOptions({ address, setStep }: Props): React.Reac
   }, [setStep]);
 
   return (
-    <Grid container justifyContent='flex-end' pt='5px'>
+    <Grid container justifyContent='flex-end' pt='15px' rowGap='12px'>
       <StakingSubOption
         api={api}
         balance={minToReceiveRewardsInSolo}
@@ -53,7 +54,6 @@ export default function AdvancedOptions({ address, setStep }: Props): React.Reac
         }
         onClick={onSoloStake}
         style={{
-          my: '5px',
           pr: '6%',
           width: '87%'
         }}
@@ -72,7 +72,6 @@ export default function AdvancedOptions({ address, setStep }: Props): React.Reac
         }
         onClick={onJoinPool}
         style={{
-          my: '5px',
           pr: '6%',
           width: '87%'
         }}
@@ -91,7 +90,6 @@ export default function AdvancedOptions({ address, setStep }: Props): React.Reac
         }
         onClick={onCreatePool}
         style={{
-          my: '5px',
           pr: '6%',
           width: '87%'
         }}

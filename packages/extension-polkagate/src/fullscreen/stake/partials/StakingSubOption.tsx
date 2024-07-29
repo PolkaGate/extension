@@ -1,16 +1,18 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
 import { ShowBalance, Warning } from '../../../components';
+import { pgBoxShadow } from '../../../util/utils';
 
 interface OptionProps {
   api?: ApiPromise;
@@ -21,14 +23,14 @@ interface OptionProps {
   onClick: () => void;
   style?: SxProps<Theme> | undefined;
   warningText?: string;
-  logo?: any;
+  logo?: unknown;
 }
 
-export default function StakingSubOption ({ api, balance, balanceText, logo, onClick, style, title, warningText }: OptionProps): React.ReactElement {
+export default function StakingSubOption({ api, balance, balanceText, logo, onClick, style, title, warningText }: OptionProps): React.ReactElement {
   const theme = useTheme();
 
   return (
-    <Grid alignItems='center' container justifyContent='space-between' sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.main', borderRadius: '5px', p: '10px 14px', ...style }}>
+    <Grid alignItems='center' container justifyContent='space-between' onClick={onClick} sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.main', borderRadius: '5px', boxShadow: pgBoxShadow(theme), cursor: 'pointer', p: '10px 14px', ...style }}>
       <Grid alignItems='center' container item xs={4.5}>
         <Grid item mr='10px' width='fit-content'>
           {logo}
@@ -55,10 +57,8 @@ export default function StakingSubOption ({ api, balance, balanceText, logo, onC
         </Grid>
         <Grid item xs={1}>
           <ArrowForwardIosIcon
-            onClick={onClick}
             sx={{
               color: 'secondary.light',
-              cursor: 'pointer',
               fontSize: 36,
               stroke: theme.palette.secondary.light,
               strokeWidth: 1

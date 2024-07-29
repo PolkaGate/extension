@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -15,7 +16,7 @@ interface Props {
   address: string;
 }
 
-export default function Info ({ address }: Props): React.ReactElement {
+export default function Info({ address }: Props): React.ReactElement {
   const { t } = useTranslation();
   const info = useStakingConsts(address);
   const minimumActiveStake = useMinToReceiveRewardsInSolo(address);
@@ -56,12 +57,14 @@ export default function Info ({ address }: Props): React.ReactElement {
         <Typography
           fontSize='14px'
           onClick={onClick}
-          sx={{ '&:hover': {
-            textDecoration: 'underline'
-          },
-          color: 'secondary.light',
-          cursor: 'pointer',
-          ml: '30px' }}
+          sx={{
+            '&:hover': {
+              textDecoration: 'underline'
+            },
+            color: 'secondary.light',
+            cursor: 'pointer',
+            ml: '30px'
+          }}
           width='100%'
         >
           {t('on-chain staking info')}

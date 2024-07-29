@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -26,11 +27,11 @@ interface State extends StateBase {
   warning: string | null;
 }
 
-function getNetwork (genesisHash: string): Network | undefined {
+function getNetwork(genesisHash: string): Network | undefined {
   return ledgerChains.find(({ genesisHash: [hash] }) => hash === genesisHash);
 }
 
-function getState (): StateBase {
+function getState(): StateBase {
   const isLedgerCapable = !!(window as unknown as { USB?: unknown }).USB;
 
   return {
@@ -39,7 +40,7 @@ function getState (): StateBase {
   };
 }
 
-function retrieveLedger (genesis: string): Ledger {
+function retrieveLedger(genesis: string): Ledger {
   let ledger: Ledger | null = null;
 
   const { isLedgerCapable } = getState();
@@ -48,21 +49,23 @@ function retrieveLedger (genesis: string): Ledger {
 
   const def = getNetwork(genesis);
 
-  assert(def, 'There is no known Ledger app available for this chain');
+  assert(def, 'There is no known Ledger app available for this specific chain');
 
   ledger = new Ledger('webusb', def.network);
 
   return ledger;
 }
 
-export function useLedger (genesis?: string | null, accountIndex = 0, addressOffset = 0): State {
+export function useLedger(genesis?: string | null, accountIndex = 0, addressOffset = 0): State {
+  const { t } = useTranslation();
+
   const [isLoading, setIsLoading] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [refreshLock, setRefreshLock] = useState(false);
   const [warning, setWarning] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [address, setAddress] = useState<string | null>(null);
-  const { t } = useTranslation();
+  
   const ledger = useMemo(() => {
     setError(null);
     setIsLocked(false);
@@ -122,9 +125,9 @@ export function useLedger (genesis?: string | null, accountIndex = 0, addressOff
         console.error(e);
         setAddress(null);
       });
-  // If the dependency array is exhaustive, with t, the translation function, it
-  // triggers a useless re-render when ledger device is connected.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // If the dependency array is exhaustive, with t, the translation function, it
+    // triggers a useless re-render when ledger device is connected.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountIndex, addressOffset, genesis, ledger]);
 
   const refresh = useCallback(() => {

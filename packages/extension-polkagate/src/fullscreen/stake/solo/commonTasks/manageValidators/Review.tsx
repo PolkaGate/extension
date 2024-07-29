@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -7,14 +8,15 @@ import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
-import { Balance } from '@polkadot/types/interfaces';
-import { BN_ZERO } from '@polkadot/util';
+import { PROXY_TYPE } from '@polkadot/extension-polkagate/src/util/constants';
+import type { Balance } from '@polkadot/types/interfaces';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ShowBalance, SignArea2, WrongPasswordAlert } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
 import { useInfo, useStakingAccount, useStakingConsts, useValidators, useValidatorsIdentities } from '../../../../../hooks';
-import { Proxy, TxInfo } from '../../../../../util/types';
-import { Inputs } from '../../../Entry';
+import type { Proxy, TxInfo } from '../../../../../util/types';
+import type { Inputs } from '../../../Entry';
 import { STEPS } from '../../../pool/stake';
 import ValidatorsTable from '../../partials/ValidatorsTable';
 
@@ -26,7 +28,7 @@ interface Props {
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>
 }
 
-export default function Review ({ address, inputs, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, inputs, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const stakingConsts = useStakingConsts(address);
@@ -77,9 +79,8 @@ export default function Review ({ address, inputs, setStep, setTxInfo, step }: P
           allValidatorsIdentities={allValidatorsIdentities}
           formatted={formatted}
           height={window.innerHeight - 444}
-          staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
+          staked={(stakingAccount?.stakingLedger?.active as unknown as BN) ?? BN_ZERO}
           stakingConsts={stakingConsts}
-          token={token}
           validatorsToList={selectedValidators}
         />
         <DisplayValue dividerHeight='1px' title={t('Fee')}>
@@ -100,7 +101,7 @@ export default function Review ({ address, inputs, setStep, setTxInfo, step }: P
             onSecondaryClick={handleCancel}
             params={params}
             primaryBtnText={t('Confirm')}
-            proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+            proxyTypeFilter={PROXY_TYPE.STAKING}
             secondaryBtnText={t('Back')}
             selectedProxy={selectedProxy}
             setIsPasswordError={setIsPasswordError}

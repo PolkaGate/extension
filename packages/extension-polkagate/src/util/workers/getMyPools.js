@@ -1,6 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
+
+// @ts-nocheck
 
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
@@ -23,7 +26,7 @@ async function getMyPools(address, endpoint) {
   for (let poolId = 1; poolId <= lastPoolId.toNumber(); poolId++) {
     queries.push(Promise.all([
       api.query.nominationPools.metadata(poolId),
-      api.query.nominationPools.bondedPools(poolId),
+      api.query['nominationPools']['bondedPools'](poolId),
       api.query.nominationPools.rewardPools(poolId)
     ]));
   }

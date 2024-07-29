@@ -1,26 +1,26 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Prices } from '../../../util/types';
 
 import { ArrowDropDown as ArrowDropDownIcon, MoreHoriz as MoreHorizIcon } from '@mui/icons-material';
 import { Collapse, Grid, Skeleton, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountJson } from '@polkadot/extension-base/background/types';
+import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 
 import { DisplayLogo, FormatPrice, ShowBalance } from '../../../components';
 import { usePrices, useTranslation } from '../../../hooks';
 import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import getLogo2 from '../../../util/getLogo2';
-import { BalancesInfo, Prices } from '../../../util/types';
 
 interface Props {
-  account: AccountJson | undefined;
   api: ApiPromise | undefined;
   selectedAsset: FetchedBalance | undefined;
-  balanceToShow: BalancesInfo | undefined;
   accountAssets: FetchedBalance[] | null | undefined;
   onclick: (asset: FetchedBalance | undefined) => void;
   mode?: 'Home' | 'Detail';
@@ -30,9 +30,7 @@ interface Props {
 interface AssetBoxProps {
   api: ApiPromise | undefined,
   pricesInCurrencies: Prices | null | undefined,
-  account: AccountJson | undefined,
   selectedAsset: FetchedBalance | undefined,
-  balanceToShow: BalancesInfo | undefined,
   asset: FetchedBalance | undefined,
   mode: 'Home' | 'Detail',
   onclick: (asset: FetchedBalance | undefined) => void;
@@ -45,44 +43,49 @@ interface BalanceRowProps {
   pricesInCurrencies: Prices | null | undefined
 }
 
-const BalanceRow = ({ api, asset, pricesInCurrencies }: BalanceRowProps) => (
-  <Grid alignItems='flex-start' container direction='column' item pl='5px' xs>
-    <Grid item sx={{ fontSize: '14px', fontWeight: 600, lineHeight: 1 }}>
-      <ShowBalance
-        api={api}
-        balance={asset.totalBalance}
-        decimal={asset.decimal}
-        decimalPoint={2}
-        token={asset.token}
-      />
-    </Grid>
-    <Grid item sx={{ fontSize: '13px', fontWeight: 400, lineHeight: 1 }}>
-      <FormatPrice
-        amount={asset.totalBalance}
-        decimals={asset.decimal}
-        price={pricesInCurrencies?.prices?.[asset.priceId]?.value ?? 0}
-      />
-    </Grid>
-  </Grid>
-);
-
-const AssetsBoxes = ({ account, api, asset, balanceToShow, hideNumbers, mode, onclick, pricesInCurrencies, selectedAsset }: AssetBoxProps) => {
-  const isAssetSelected = (asset && asset.genesisHash === account?.genesisHash && asset.token === balanceToShow?.token) || (asset?.genesisHash === selectedAsset?.genesisHash && asset?.token === selectedAsset?.token);
-
-  const homeMode = (mode === 'Home' && isAssetSelected);
-  const logoInfo = useMemo(() => asset && getLogo2(asset.genesisHash, asset.token), [asset]);
+const BalanceRow = ({ api, asset, pricesInCurrencies }: BalanceRowProps) => {
+  const total = getValue('total', asset);
 
   return (
-    <Grid alignItems='center' container item justifyContent='center' onClick={() => asset ? onclick(asset) : null} sx={{ border: asset ? `${isAssetSelected ? '3px' : '1px'} solid` : 'none', borderColor: 'secondary.light', borderRadius: '8px', boxShadow: isAssetSelected ? '0px 2px 5px 2px #00000040' : 'none', cursor: asset ? 'pointer' : 'default', height: 'fit-content', p: asset ? '5px' : 0, width: 'fit-content' }}>
-      {asset
+    <Grid alignItems='flex-start' container direction='column' item pl='5px' xs>
+      <Grid item sx={{ fontSize: '14px', fontWeight: 600, lineHeight: 1 }}>
+        <ShowBalance
+          api={api}
+          balance={total}
+          decimal={asset.decimal}
+          decimalPoint={2}
+          token={asset.token}
+        />
+      </Grid>
+      <Grid item sx={{ fontSize: '13px', fontWeight: 400, lineHeight: 1 }}>
+        <FormatPrice
+          amount={total}
+          decimals={asset.decimal}
+          price={pricesInCurrencies?.prices?.[asset.priceId]?.value ?? 0}
+        />
+      </Grid>
+    </Grid>
+  );
+};
+
+const AssetsBoxes = ({ api, asset, hideNumbers, mode, onclick, pricesInCurrencies, selectedAsset }: AssetBoxProps) => {
+  const isAssetSelected = asset?.genesisHash === selectedAsset?.genesisHash && asset?.token === selectedAsset?.token && asset?.assetId === selectedAsset?.assetId;
+  const _assetToShow = isAssetSelected && selectedAsset?.date && asset?.date && selectedAsset.date > asset.date ? selectedAsset : asset;
+
+  const homeMode = (mode === 'Home' && isAssetSelected);
+  const logoInfo = useMemo(() => _assetToShow && getLogo2(_assetToShow.genesisHash, _assetToShow.token), [_assetToShow]);
+
+  return (
+    <Grid alignItems='center' container item justifyContent='center' onClick={() => _assetToShow ? onclick(_assetToShow) : null} sx={{ border: _assetToShow ? `${isAssetSelected ? '3px' : '1px'} solid` : 'none', borderColor: 'secondary.light', borderRadius: '8px', boxShadow: isAssetSelected ? '0px 2px 5px 2px #00000040' : 'none', cursor: _assetToShow ? 'pointer' : 'default', height: 'fit-content', p: _assetToShow ? '5px' : 0, width: 'fit-content' }}>
+      {_assetToShow
         ? <>
           <Grid alignItems='center' container item mr={logoInfo?.subLogo && '2px'} width='fit-content'>
-            <DisplayLogo assetSize='25px' baseTokenSize='16px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+            <DisplayLogo assetSize='25px' baseTokenSize='16px' genesisHash={_assetToShow.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
           </Grid>
           {(mode === 'Detail' || (homeMode && !hideNumbers)) &&
             <BalanceRow
               api={api}
-              asset={asset}
+              asset={_assetToShow}
               pricesInCurrencies={pricesInCurrencies}
             />
           }
@@ -93,7 +96,7 @@ const AssetsBoxes = ({ account, api, asset, balanceToShow, hideNumbers, mode, on
   );
 };
 
-function AOC ({ account, accountAssets, api, balanceToShow, hideNumbers, mode = 'Detail', onclick, selectedAsset }: Props) {
+function AOC({ accountAssets, api, hideNumbers, mode = 'Detail', onclick, selectedAsset }: Props) {
   const { t } = useTranslation();
   const pricesInCurrencies = usePrices();
 
@@ -105,7 +108,7 @@ function AOC ({ account, accountAssets, api, balanceToShow, hideNumbers, mode = 
     if (accountAssets && accountAssets.length > 0) {
       return accountAssets;
     } else {
-      return [undefined, undefined];
+      return [undefined, undefined]; // two undefined to show two skeletons
     }
   }, [accountAssets]);
 
@@ -119,10 +122,8 @@ function AOC ({ account, accountAssets, api, balanceToShow, hideNumbers, mode = 
           <Grid container gap='15px' item justifyContent='flex-start' sx={{ height: 'fit-content', minHeight: '50px', overflow: 'hidden', p: '5px 1%' }}>
             {assets.map((asset, index) => (
               <AssetsBoxes
-                account={account}
                 api={api}
                 asset={asset}
-                balanceToShow={balanceToShow}
                 hideNumbers={hideNumbers}
                 key={index}
                 mode={mode}
@@ -134,7 +135,7 @@ function AOC ({ account, accountAssets, api, balanceToShow, hideNumbers, mode = 
           </Grid>
         </Collapse>
       </Grid>
-      {accountAssets?.length &&
+      {!!accountAssets?.length &&
         <Grid alignItems='center' container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: 'pointer', width: '65px' }}>
           {mode === 'Detail'
             ? accountAssets.length > 5 &&

@@ -3,18 +3,24 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faSitemap } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { HexString } from '@polkadot/util/types';
+
 import { Grid, Typography, useTheme } from '@mui/material';
+// @ts-ignore
 import Chance from 'chance';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import Bread from '@polkadot/extension-polkagate/src/fullscreen/partials/Bread';
+import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 
-import { AccountContext, Label, SelectChain, TwoButtons } from '../../../components';
+import { AccountContext, Label, ProfileInput, SelectChain, TwoButtons, VaadinIcon } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useGenesisHashOptions, useInfo, useProxiedAccounts, useTranslation } from '../../../hooks';
-import { createAccountExternal, getMetadata, tieAccount } from '../../../messaging';
+import { createAccountExternal, getMetadata, tieAccount, updateMeta } from '../../../messaging';
 import { FULLSCREEN_WIDTH, PROXY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
 import getLogo from '../../../util/getLogo';
 import AddressDropdownFullScreen from '../../newAccount/deriveFromAccountsFullscreen/AddressDropdownFullScreen';
@@ -24,22 +30,23 @@ function ImportProxiedFS (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
   const genesisOptions = useGenesisHashOptions();
   const chance = new Chance();
 
   const selectableChains = useMemo(() => genesisOptions.filter(({ value }) => PROXY_CHAINS.includes(value as string)), [genesisOptions]);
 
   const allAddresses = useMemo(() =>
-    hierarchy
+    accounts
       .filter(({ isExternal, isHardware, isQR }) => !isExternal || isQR || isHardware)
       .map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name])
-  , [hierarchy]);
+  , [accounts]);
 
   const [selectedAddress, setSelectedAddress] = useState<string | undefined>(undefined);
   const [selectedProxied, setSelectedProxied] = useState<string[]>([]);
   const [chain, setChain] = useState<Chain | null>(null);
   const [isBusy, setIsBusy] = useState(false);
+  const [profileName, setProfileName] = useState<string>();
 
   const proxiedAccounts = useProxiedAccounts(chain ? selectedAddress : undefined);
   const { api, formatted } = useInfo(chain ? selectedAddress : undefined);
@@ -50,10 +57,18 @@ function ImportProxiedFS (): React.ReactElement {
     return { accountGenesishash: selectedAccount?.genesisHash, accountName: selectedAccount?.name };
   }, [accounts, selectedAddress]);
 
+  const tableMinHeight = useMemo(() => {
+    const TABLE_MAX_POSSIBLE_HEIGHT = window.innerHeight - 550;
+    const HEIGHT_PER_ROW = 47;
+    const _minHeight = proxiedAccounts?.proxied?.length ? (proxiedAccounts.proxied.length + 1) * HEIGHT_PER_ROW : undefined;
+
+    return _minHeight && _minHeight > TABLE_MAX_POSSIBLE_HEIGHT ? TABLE_MAX_POSSIBLE_HEIGHT : _minHeight;
+  }, [proxiedAccounts?.proxied?.length]);
+
   const onChangeGenesis = useCallback((genesisHash?: string | null) => {
     setSelectedProxied([]);
 
-    genesisHash && tieAccount(selectedAddress ?? '', genesisHash)
+    genesisHash && tieAccount(selectedAddress ?? '', genesisHash as HexString)
       .then(() => getMetadata(genesisHash, true))
       .then(setChain)
       .catch(console.error);
@@ -61,22 +76,42 @@ function ImportProxiedFS (): React.ReactElement {
 
   const onParentChange = useCallback((address: string) => {
     setSelectedProxied([]);
+    setChain(null);
     setSelectedAddress(address);
   }, []);
 
+  const createProxids = useCallback(async () => {
+    try {
+      for (let index = 0; index < selectedProxied.length; index++) {
+        const address = selectedProxied[index];
+        const randomName = (chance?.name() as string)?.split(' ')?.[0] || `Proxied ${index + 1}`;
+
+        await createAccountExternal(randomName, address, (chain?.genesisHash ?? WESTEND_GENESIS_HASH) as HexString);
+
+        /** add the proxied account to the profile if has chosen by user */
+        if (profileName) {
+          const metaData = JSON.stringify({ profile: profileName });
+
+          await updateMeta(address, metaData);
+        }
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Failed to create proxied accounts:', error);
+
+      return false;
+    }
+  }, [chain?.genesisHash, chance, selectedProxied, profileName]);
+
   const onImport = useCallback(() => {
     setIsBusy(true);
-    selectedProxied.forEach((address, index) => {
-      const randomName = (chance?.name() as string)?.split(' ')?.[0] || `Proxied ${index + 1}`;
-
-      createAccountExternal(randomName, address, chain?.genesisHash ?? WESTEND_GENESIS_HASH).catch((error: Error) => {
-        setIsBusy(false);
-        console.error(error);
-      });
-    });
-
-    window.close();
-  }, [chain?.genesisHash, chance, selectedProxied]);
+    createProxids().then(() => {
+      setIsBusy(false);
+      setStorage('profile', profileName || PROFILE_TAGS.WATCH_ONLY).catch(console.error);
+      openOrFocusTab('/', true);
+    }).catch(console.error);
+  }, [createProxids, profileName]);
 
   const backHome = useCallback(() => {
     window.close();
@@ -90,18 +125,16 @@ function ImportProxiedFS (): React.ReactElement {
       />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', position: 'relative' }}>
         <Grid container item sx={{ display: 'block', mb: '20px', px: '10%' }}>
-          <Grid alignContent='center' alignItems='center' container item>
-            <Grid item sx={{ mr: '20px' }}>
-              <vaadin-icon icon='vaadin:sitemap' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px', transform: 'rotate(180deg)' }} />
-            </Grid>
-            <Grid item>
-              <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t('Import proxied accounts')}
-              </Typography>
-            </Grid>
-          </Grid>
-          <Typography fontSize='16px' fontWeight={400} textAlign='left' width='100%'>
-            {t('Import proxied account(s) to have it as watch-only account in the extension.')}
+          <Bread />
+          <Title
+            height='85px'
+            logo={
+              <VaadinIcon icon='vaadin:sitemap' style={{ color: `${theme.palette.text.primary}`, height: '40px', transform: 'rotate(180deg)', width: '40px' }} />
+            }
+            text={t('Import proxied accounts')}
+          />
+          <Typography fontSize='16px' fontWeight={400} pt='20px' textAlign='left' width='100%'>
+            {t('Import proxied account(s) to have them as watch-only accounts in the extension.')}
           </Typography>
           <Grid container item sx={{ my: '30px' }}>
             <Label
@@ -119,6 +152,7 @@ function ImportProxiedFS (): React.ReactElement {
             </Label>
             <SelectChain
               address={selectedAddress}
+              defaultValue={chain?.genesisHash}
               fullWidthDropdown
               icon={getLogo(chain ?? undefined)}
               label={t('Select the chain')}
@@ -132,10 +166,20 @@ function ImportProxiedFS (): React.ReactElement {
                 chain={chain}
                 label={t('Proxied account(s)')}
                 maxHeight='200px'
+                minHeight={tableMinHeight ? `${tableMinHeight}px` : undefined}
                 proxiedAccounts={proxiedAccounts?.proxy === formatted ? proxiedAccounts?.proxied : undefined}
                 selectedProxied={selectedProxied}
                 setSelectedProxied={setSelectedProxied}
                 style={{ m: '0 auto' }}
+              />
+            }
+            {proxiedAccounts && proxiedAccounts?.proxy === formatted && !!proxiedAccounts.proxied.length &&
+              <ProfileInput
+                helperText={t('You can add your imported proxied accounts to a profile if you wish. If not, they\'ll be visible in \'All\' and \'Watch-only\' profiles.')}
+                label={t('Choose a profile name:')}
+                profileName={profileName}
+                setProfileName={setProfileName}
+                style={{ my: '30px', width: '54%' }}
               />
             }
             <Grid container item sx={{ '> div': { m: 0, width: '64%' }, borderTop: '1px solid', borderTopColor: 'divider', bottom: '40px', height: '50px', justifyContent: 'flex-end', left: '10%', position: 'absolute', width: '80%' }}>

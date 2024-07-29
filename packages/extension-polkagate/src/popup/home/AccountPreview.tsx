@@ -12,7 +12,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { ActionContext } from '../../components';
 import AccountFeatures from '../../components/AccountFeatures';
 import AccountIcons from '../../components/AccountIcons';
-import { useApi, useChain, useFormatted, useMyAccountIdentity, useProxies } from '../../hooks';
+import { useInfo, useMyAccountIdentity, useProxies } from '../../hooks';
 import useIsExtensionPopup from '../../hooks/useIsExtensionPopup';
 import { showAccount } from '../../messaging';
 import { AccountMenu } from '../../partials';
@@ -22,8 +22,7 @@ import AccountDetail from './AccountDetail';
 export interface Props {
   actions?: React.ReactNode;
   address: string;
-  children?: React.ReactNode;
-  genesisHash?: string | null;
+  // children?: React.ReactNode;
   isExternal?: boolean | null;
   isHardware?: boolean | null;
   isHidden?: boolean;
@@ -37,20 +36,21 @@ export interface Props {
   hideNumbers: boolean | undefined;
 }
 
-export default function AccountPreview({ address, genesisHash, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
-  const chain = useChain(address);
-  const api = useApi(address);
-  const formatted = useFormatted(address);
+export default function AccountPreview ({ address, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
+  const onExtension = useIsExtensionPopup();
+  const { api, chain, formatted } = useInfo(address);
+  const onAction = useContext(ActionContext);
   const proxies = useProxies(api, formatted);
+  const identity = useMyAccountIdentity(address);
+
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [recoverable, setRecoverable] = useState<boolean | undefined>();
-  const identity = useMyAccountIdentity(address);
+
   const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
-  const onAction = useContext(ActionContext);
-  const onExtension = useIsExtensionPopup();
 
   useEffect((): void => {
-    api && api.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => setRecoverable(!!r.isSome));
+    api?.query?.['recovery']?.['recoverable'](formatted)
+      .then((r: any) => setRecoverable(!!r.isSome)).catch(console.error);
   }, [api, formatted]);
 
   useEffect((): void => {

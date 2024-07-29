@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,17 +14,18 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
 import { ExpandedRewards } from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/pending';
-import { Balance } from '@polkadot/types/interfaces';
+import type { Balance } from '@polkadot/types/interfaces';
 import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, Warning, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useApi, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
+import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
-import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import { PROXY_TYPE } from '../../../../util/constants';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './TxDetail';
 
@@ -35,16 +37,12 @@ interface Props {
   selectedToPayout: ExpandedRewards[]
 }
 
-export default function Review ({ address, amount, selectedToPayout, setShow, show }: Props): React.ReactElement {
+export default function Review({ address, amount, selectedToPayout, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const api = useApi(address);
-  const chain = useChain(address);
-  const formatted = useFormatted(address);
-  const decimal = useDecimal(address);
+  const { api, chain, decimal, formatted, token } = useInfo(address);
   const name = useAccountDisplay(address);
   const proxies = useProxies(api, formatted);
-  const token = useToken(address);
   const onAction = useContext(ActionContext);
 
   const [password, setPassword] = useState<string | undefined>();
@@ -61,8 +59,8 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
-  const payoutStakers = api && api.tx.staking.payoutStakersByPage;
-  const batch = api && api.tx.utility.batchAll;
+  const payoutStakers = api && api.tx['staking']['payoutStakersByPage'];
+  const batch = api && api.tx['utility']['batchAll'];
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -93,7 +91,7 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -118,7 +116,7 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const ptx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
+      const ptx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, tx) : tx;
       const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, formatted);
 
       const info = {
@@ -135,7 +133,8 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
 
       setShowWaitScreen(false);
@@ -146,7 +145,7 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
     }
   }, [amountInHuman, api, chain, estimatedFee, formatted, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, tx]);
 
-  const _onBackClick = useCallback(() => {
+  const onBackClick = useCallback(() => {
     setShow(false);
   }, [setShow]);
 
@@ -154,11 +153,11 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
     <Motion>
       <Popup show={show}>
         <HeaderBrand
-          onBackClick={_onBackClick}
+          onBackClick={onBackClick}
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Payout')}
+          text={t('Payout')}
           withSteps={{
             current: 2,
             total: 2
@@ -171,7 +170,7 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
         <Container disableGutters sx={{ px: '20px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />
@@ -190,7 +189,7 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
               marginTop={2}
               theme={theme}
             >
-              {t<string>('Usually, validators pay out the pending rewards themselves, but you can initiate the payout yourself if you prefer.')}
+              {t('Usually, validators pay out the pending rewards themselves, but you can initiate the payout yourself if you prefer.')}
             </Warning>
           </Grid>
         </Container>
@@ -199,12 +198,12 @@ export default function Review ({ address, amount, selectedToPayout, setShow, sh
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
+          label={t('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={unstake}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+          proxyTypeFilter={PROXY_TYPE.STAKING}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

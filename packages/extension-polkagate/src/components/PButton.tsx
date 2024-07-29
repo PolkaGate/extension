@@ -1,7 +1,9 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { Button, Grid, useTheme } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React from 'react';
 
@@ -16,10 +18,10 @@ interface Props {
   startIcon?: React.ReactNode;
   text: string;
   _variant?: 'text' | 'contained' | 'outlined';
-  _width?: number;
+  _width?: number | string;
 }
 
-function PButton ({ _fontSize = '16px', _isBusy, _ml = 6, _mt, _onClick, _variant = 'contained', _width = 88, disabled = false, left, startIcon, text }: Props): React.ReactElement<Props> {
+function PButton({ _fontSize = '16px', _isBusy, _ml = 6, _mt, _onClick, _variant = 'contained', _width = 88, disabled = false, left, startIcon, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (

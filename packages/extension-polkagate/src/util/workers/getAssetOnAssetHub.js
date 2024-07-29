@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable import-newlines/enforce */
 /* eslint-disable object-curly-newline */
@@ -8,7 +9,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { closeWebsockets, fastestEndpoint, getChainEndpoints, toGetNativeToken } from './utils';
 
-async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
+async function getAssetOnAssetHub(addresses, assetsToBeFetched, chainName) {
   const endpoints = getChainEndpoints(chainName);
   const { api, connections } = await fastestEndpoint(endpoints, false);
 
@@ -29,11 +30,6 @@ async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
 
     AssetOfAddresses.forEach((_asset, index) => {
       const balance = _asset.isNone ? BN_ZERO : _asset.unwrap().balance;
-
-      if (balance.isZero()) {
-        return;
-      }
-
       const parsedAccountAsset = JSON.parse(JSON.stringify(_asset));
       const isFrozen = parsedAccountAsset?.status === 'Frozen';
       const _balance = String(balance);

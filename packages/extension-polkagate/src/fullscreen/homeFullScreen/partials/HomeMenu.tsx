@@ -1,15 +1,15 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import '@vaadin/icons';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
-import { AccountContext } from '../../../components';
+import { noop } from '@polkadot/util';
+
+import { AccountContext, VaadinIcon } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import VersionSocial from '../../../partials/VersionSocial';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
@@ -18,7 +18,7 @@ import ImportAccSubMenuFullScreen from './ImportAccSubMenuFullScreen';
 import SettingSubMenuFullScreen from './SettingSubMenuFullScreen';
 
 interface TaskButtonProps {
-  icon: JSX.Element;
+  icon: React.JSX.Element;
   text: string;
   onClick: () => void;
   secondaryIconType?: 'popup' | 'page';
@@ -36,7 +36,7 @@ export const TaskButton = ({ children, disabled, extra, hasChildren, icon, isSub
 
   return (
     <>
-      <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minHeight: isSubMenu ? '40px' : '45px', p: '5px 0px 5px 10px', my: '5px' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? noop : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minHeight: isSubMenu ? '40px' : '45px', p: '5px 0px 5px 10px', my: '5px' }}>
         <Grid container item xs={2}>
           {icon}
         </Grid>
@@ -60,7 +60,7 @@ export const TaskButton = ({ children, disabled, extra, hasChildren, icon, isSub
   );
 };
 
-export default function HomeMenu (): React.ReactElement {
+export default function HomeMenu(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts, master } = useContext(AccountContext);
@@ -69,7 +69,6 @@ export default function HomeMenu (): React.ReactElement {
   const [showSetting, setShowSetting] = useState<boolean>(false);
   const [showExportAll, setShowExportAll] = useState<boolean>(false);
 
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const areAllExternalAccounts = useMemo(() => accounts.every(({ isExternal }) => isExternal), [accounts]);
 
   const onCreate = useCallback(() => {
@@ -92,7 +91,7 @@ export default function HomeMenu (): React.ReactElement {
 
   const onDeriveFromAccounts = useCallback(() => {
     if (!areAllExternalAccounts && master) {
-      openOrFocusTab(`/fullscreenDerive/${master.address}`);
+      openOrFocusTab(`/derivefs/${master.address}`);
     }
   }, [areAllExternalAccounts, master]);
 
@@ -101,7 +100,7 @@ export default function HomeMenu (): React.ReactElement {
       <Grid alignItems='center' container direction='column' display='block' item justifyContent='center' sx={{ pb: '40px' }}>
         <TaskButton
           icon={
-            <vaadin-icon icon='vaadin:plus-circle' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
+            <VaadinIcon icon='vaadin:plus-circle' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
           onClick={onCreate}
           secondaryIconType='page'
@@ -110,7 +109,7 @@ export default function HomeMenu (): React.ReactElement {
         <TaskButton
           disabled={areAllExternalAccounts}
           icon={
-            <vaadin-icon icon='vaadin:road-branch' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
+            <VaadinIcon icon='vaadin:road-branch' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
           onClick={onDeriveFromAccounts}
           secondaryIconType='page'
@@ -119,7 +118,7 @@ export default function HomeMenu (): React.ReactElement {
         <TaskButton
           hasChildren
           icon={
-            <vaadin-icon icon='vaadin:upload-alt' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
+            <VaadinIcon icon='vaadin:upload-alt' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
           onClick={onImportClick}
           secondaryIconType='page'
@@ -131,7 +130,7 @@ export default function HomeMenu (): React.ReactElement {
         <TaskButton
           disabled={areAllExternalAccounts}
           icon={
-            <vaadin-icon icon='vaadin:download' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
+            <VaadinIcon icon='vaadin:download' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
           onClick={onExportAll}
           secondaryIconType='popup'
@@ -140,7 +139,7 @@ export default function HomeMenu (): React.ReactElement {
         <TaskButton
           hasChildren
           icon={
-            <vaadin-icon icon='vaadin:cog' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
+            <VaadinIcon icon='vaadin:cog' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
           noBorderButton
           onClick={onSettingClick}

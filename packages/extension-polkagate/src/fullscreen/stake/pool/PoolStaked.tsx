@@ -1,9 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import '@vaadin/icons';
 
 import type { BalancesInfo, MyPoolInfo } from '../../../util/types';
 
@@ -39,7 +38,7 @@ interface Props {
   unlockingAmount: BN | undefined;
 }
 
-export default function PoolStaked ({ address, balances, pool, redeemable, setShow, toBeReleased, unlockingAmount }: Props): React.ReactElement {
+export default function PoolStaked({ address, balances, pool, redeemable, setShow, toBeReleased, unlockingAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain } = useInfo(address);
@@ -110,7 +109,7 @@ export default function PoolStaked ({ address, balances, pool, redeemable, setSh
               amount={claimable}
               icons={[faSquarePlus, faArrowCircleDown]}
               onClicks={[onStakeRewards, onWithdrawRewards]}
-              title={t('Claimable Rewards')}
+              title={t('Claimable rewards')}
             />
             <DisplayBalance
               actions={[t('withdraw')]}
@@ -150,7 +149,7 @@ export default function PoolStaked ({ address, balances, pool, redeemable, setSh
                 </Grid>
                 <ShowPool
                   api={api}
-                  chain={chain}
+                  chain={chain as any}
                   labelPosition='center'
                   mode='Default'
                   pool={pool}

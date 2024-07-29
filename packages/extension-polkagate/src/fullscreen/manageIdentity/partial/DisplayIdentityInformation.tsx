@@ -1,9 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faDiscord, faTwitter } from '@fortawesome/free-brands-svg-icons';
+import { faDiscord, faGithub, faXTwitter } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Box, Grid, Typography, useTheme } from '@mui/material';
@@ -26,9 +27,10 @@ interface Props {
   identity: DeriveAccountRegistration;
 }
 
-export default function DisplayIdentityInformation ({ identity }: Props): React.ReactElement {
+export default function DisplayIdentityInformation({ identity }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const emptyFieldColor = useMemo(() => theme.palette.mode === 'light' ? '#F3EDF1' : '#212121', [theme.palette.mode]);
 
@@ -59,7 +61,7 @@ export default function DisplayIdentityInformation ({ identity }: Props): React.
       <IdentityItems
         icon={
           <FontAwesomeIcon
-            color='#007CC4'
+            color={theme.palette.success.main}
             fontSize='30px'
             icon={faGlobe}
           />
@@ -81,12 +83,12 @@ export default function DisplayIdentityInformation ({ identity }: Props): React.
       <IdentityItems
         icon={
           <FontAwesomeIcon
-            color='#2AA9E0'
+            color={isDark ? 'white' : 'black'}
             fontSize='30px'
-            icon={faTwitter}
+            icon={faXTwitter}
           />
         }
-        title={t('Twitter')}
+        title={t('X')}
         value={identity.twitter ?? null}
       />
       <IdentityItems
@@ -94,7 +96,17 @@ export default function DisplayIdentityInformation ({ identity }: Props): React.
           <Box component='img' src={riot as string} sx={{ height: '30px', mb: '2px', width: '30px' }} />
         }
         title={t('Element')}
-        value={identity.riot ?? null}
+        value={identity.matrix || identity.riot || null}
+      />
+      <IdentityItems
+        icon={
+          <FontAwesomeIcon
+            color='rgb(178, 58, 120)'
+            fontSize='30px'
+            icon={faGithub}
+          />}
+        title={t('Github')}
+        value={identity.github ?? null}
       />
       <IdentityItems
         icon={
@@ -106,7 +118,7 @@ export default function DisplayIdentityInformation ({ identity }: Props): React.
         }
         noBorder
         title={t('Discord')}
-        value={identity.other?.discord ?? null}
+        value={identity.other?.discord || identity?.discord || null}
       />
     </Grid>
   );

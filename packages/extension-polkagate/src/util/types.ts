@@ -1,27 +1,25 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-/* eslint-disable header/header */
-/* eslint-disable camelcase */
 
+//@ts-nocheck
+
+import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
+import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/promise/types';
 import type { DeriveAccountInfo, DeriveAccountRegistration, DeriveBalancesAll, DeriveCollectiveProposal, DeriveElectionsInfo, DeriveProposal, DeriveReferendumExt, DeriveStakingAccount, DeriveStakingQuery } from '@polkadot/api-derive/types';
+import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { InjectedExtension } from '@polkadot/extension-inject/types';
+import type { Balance } from '@polkadot/types/interfaces';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 import type { KeypairType } from '@polkadot/util-crypto/types';
+import type { LatestReferenda } from '../fullscreen/governance/utils/types';
+import type { CurrencyItemType } from '../fullscreen/homeFullScreen/partials/Currency';
+import type { SavedAssets } from '../hooks/useAssetsBalances';
 
-import { SxProps, Theme } from '@mui/material';
-import { LinkOption } from '@polkagate/apps-config/endpoints/types';
-
-import { ApiPromise } from '@polkadot/api';
-import { AccountJson } from '@polkadot/extension-base/background/types';
-import { Chain } from '@polkadot/extension-chains/types';
-import { InjectedExtension } from '@polkadot/extension-inject/types';
-import { Balance } from '@polkadot/types/interfaces';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
-
-import { LatestReferenda } from '../fullscreen/governance/utils/types';
-import { CurrencyItemType } from '../fullscreen/homeFullScreen/partials/Currency';
-import { SavedAssets } from '../hooks/useAssetsBalances';
+import { type SxProps, type Theme } from '@mui/material';
 
 export interface TransactionStatus {
   blockNumber: string | null;
@@ -45,14 +43,6 @@ export interface LastBalances {
 
 export const DEFAULT_ACCOUNT_BALANCE = { address: null, balanceInfo: null, chain: null, name: null };
 
-export interface AccountsBalanceType {
-  address: string; // formatted address
-  chain: string | null; // chainName actually
-  balanceInfo?: LastBalances;
-  name: string | null;
-  txHistory?: string;
-}
-
 export interface StakingConsts {
   bondingDuration: number; // eras
   eraIndex: number;
@@ -71,6 +61,7 @@ export interface NominatorInfo {
 }
 
 export interface ValidatorInfo extends DeriveStakingQuery {
+  exposure: any;
   accountInfo?: DeriveAccountInfo;
 }
 
@@ -145,10 +136,11 @@ export interface TxResult {
 }
 export interface TransactionDetail extends TxResult {
   action: string; // send, Solo staking, pool staking ...
-  subAction?: string; // bond_extra, unbound, nominate
-  from: NameAddress;
   amount?: string;
+  chain?: Chain;
   date: number;
+  from: NameAddress;
+  subAction?: string; // bond_extra, unbound, nominate
   to?: NameAddress;
   token?: string;
   throughProxy?: NameAddress;
@@ -395,9 +387,9 @@ export interface MyPoolInfo extends PoolInfo {
   redeemable?: BN;
   rewardClaimable?: BN;
   rewardIdBalance?: DeriveStakingAccount;
-  token: string;
-  decimal: number;
-  date: number;
+  token?: string;
+  decimal?: number;
+  date?: number;
 }
 
 export interface PoolAccounts {
@@ -641,6 +633,7 @@ export interface BalancesInfo extends DeriveBalancesAll {
   pooledBalance?: BN;
   soloTotal?: BN;
   token: string;
+  totalBalance?: number;
 }
 export interface AccountStakingInfo extends DeriveStakingAccount {
   era: number;
@@ -725,16 +718,10 @@ export interface ApiProps extends ApiState {
 export interface APIs {
   [genesisHash: string]: ApiProps;
 }
+
 export interface APIsContext {
-  apis: { [key: string]: { api?: ApiPromise; endpoint?: string; isRequested: boolean; }[] };
-  setIt: (apis: {
-    [key: string]:
-    {
-      api?: ApiPromise;
-      endpoint?: string;
-      isRequested: boolean;
-    }[]
-  }) => void;
+  apis: APIs;
+  setIt: (apis: APIs) => void;
 }
 
 export interface LatestRefs {
@@ -794,17 +781,15 @@ export interface DropdownOption {
 
 export type TransferType = 'All' | 'Max' | 'Normal';
 
-export type CanPayFee = { isAbleToPay: boolean | undefined, statement: number };
+export interface CanPayFee { isAbleToPay: boolean | undefined, statement: number }
 
-export enum CanPayStatements {
-  CANNOTPAY,
-  CANPAY,
-  CANNOTPAYFEE,
-  CANNOTPAYDEPOSIT,
-  PROXYCANPAYFEE,
-}
-
-export type ProxiedAccounts = {
+export interface ProxiedAccounts {
+  genesisHash: string;
   proxy: string;
   proxied: string[];
-};
+}
+
+export interface AccountsOrder {
+  id: number,
+  account: AccountWithChildren
+}

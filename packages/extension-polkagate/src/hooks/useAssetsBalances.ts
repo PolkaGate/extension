@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -76,6 +77,7 @@ export interface FetchedBalance {
   decimal: number,
   genesisHash: string,
   priceId: string,
+  price: number,
   token: string,
   availableBalance: BN,
   soloTotal?: BN,
@@ -94,11 +96,11 @@ export interface FetchedBalance {
 const DEFAULT_SAVED_ASSETS = { balances: {} as AssetsBalancesPerAddress, timeStamp: Date.now() };
 
 export const ASSETS_NAME_IN_STORAGE = 'assets';
-const BALANCE_VALIDITY_PERIOD = 2 * 1000 * 60;
+const BALANCE_VALIDITY_PERIOD = 1 * 1000 * 60;
 
 const isUpToDate = (date?: number): boolean | undefined => date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
 
-function allHexToBN (balances: string | undefined): BalancesDetails | {} {
+function allHexToBN(balances: string | undefined): BalancesDetails | {} {
   if (!balances) {
     return {};
   }
@@ -120,7 +122,7 @@ const assetsChains = createAssets();
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: React.Dispatch<React.SetStateAction<AlertsType[]>>): SavedAssets | undefined | null {
+export default function useAssetsBalances(accounts: AccountJson[] | null): SavedAssets | undefined | null {
   const isTestnetEnabled = useIsTestnetEnabled();
   const selectedChains = useSelectedChains();
   const { t } = useTranslation();
@@ -143,7 +145,37 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
 
       setIsUpdate(isUpToDate(_timeStamp));
     }).catch(console.error);
-  }, [SHOULD_FETCH_ASSETS, workersCalled?.length]);
+  }, [SHOULD_FETCH_ASSETS]);
+
+  const removeZeroBalanceRecords = useCallback((toBeSavedAssets: SavedAssets): SavedAssets => {
+    const _toBeSavedAssets = { ...toBeSavedAssets };
+    const balances = (_toBeSavedAssets)?.balances || [];
+
+    Object.entries(balances).forEach(([address, assetsPerChain]) => {
+      Object.entries(assetsPerChain).forEach(([genesisHash, fetchedBalance]) => {
+        const toBeDeletedIndexes: string[] = [];
+
+        fetchedBalance.forEach(({ token, totalBalance }, index) => {
+          if (new BN(totalBalance).isZero()) {
+            toBeDeletedIndexes.push(token);
+          }
+        });
+
+        toBeDeletedIndexes.forEach((_token) => {
+          const index = _toBeSavedAssets.balances[address][genesisHash].findIndex(({ token }) => _token === token);
+
+          index >= 0 && _toBeSavedAssets.balances[address][genesisHash].splice(index, 1);
+        });
+
+        // if fetched balances array on the chain is empty then remove that genesis hash from the structure
+        if (!fetchedBalance.length) {
+          delete _toBeSavedAssets.balances[address][genesisHash];
+        }
+      });
+    });
+
+    return _toBeSavedAssets;
+  }, []);
 
   const handleAccountsSaving = useCallback(() => {
     const toBeSavedAssets = fetchedAssets || DEFAULT_SAVED_ASSETS;
@@ -154,15 +186,18 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       toBeSavedAssets.balances[address] = {};
     });
 
-    setFetchedAssets(toBeSavedAssets);
-    setStorage(ASSETS_NAME_IN_STORAGE, toBeSavedAssets, true).catch(console.error);
+    // Remove assets whose balances drop to zero and have not been retrieved to be combined
+    const updatedAssetsToBeSaved = removeZeroBalanceRecords(toBeSavedAssets);
+
+    setFetchedAssets(updatedAssetsToBeSaved);
+    setStorage(ASSETS_NAME_IN_STORAGE, updatedAssetsToBeSaved, true).catch(console.error);
     setWorkersCalled(undefined);
-  }, [addresses, fetchedAssets]);
+    setIsUpdate(true);
+  }, [addresses, fetchedAssets, removeZeroBalanceRecords]);
 
   useEffect(() => {
     /** when one round fetch is done, we will save fetched assets in storage */
     if (addresses && workersCalled?.length === 0) {
-      setWorkersCalled(undefined);
       handleAccountsSaving();
       setAlerts((perv) => [...perv, { message: t('Accounts balances updated!'), type: 'info' }]);
     }
@@ -308,7 +343,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       const message = e.data;
 
       if (!message) {
-        console.info(`fetchAssetOnAssetHubs: No assets found on ${chainName}`);
+        console.info(`No assets found on ${chainName}`);
         handleSetWorkersCall(worker, 'terminate');
 
         return;
@@ -354,7 +389,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       const message = e.data;
 
       if (!message) {
-        console.info('fetchAssetsOnHydraDx: No assets found on HydraDx');
+        console.info(`No assets found on ${chainName}`);
         handleSetWorkersCall(worker, 'terminate');
 
         return;
