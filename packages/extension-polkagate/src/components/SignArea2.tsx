@@ -3,21 +3,20 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ApiPromise } from '@polkadot/api';
+import type { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
 import type { Header } from '@polkadot/types/interfaces';
-import type { AnyTuple, SignerPayloadJSON } from '@polkadot/types/types';
+import type { AnyTuple, ISubmittableResult, SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 import type { Proxy, ProxyItem, ProxyTypes, TxInfo, TxResult } from '../util/types';
 
 import { faSignature } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Grid, Tooltip, Typography, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import type { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
 import { AccountsStore } from '@polkadot/extension-base/stores';
-import type { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
@@ -26,10 +25,11 @@ import SelectProxyModal2 from '../fullscreen/governance/components/SelectProxyMo
 import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../hooks';
 import Qr from '../popup/signing/Qr';
 import { CMD_MORTAL } from '../popup/signing/Request';
-import { send, signAndSend } from '../util/api';
+import { send } from '../util/api';
 import { getSubstrateAddress, saveAsHistory } from '../util/utils';
-import { Identity, Password, PButton, Progress, TwoButtons, Warning } from '.';
 import SignWithLedger from './SignWithLedger';
+import SignWithPassword from './SignWithPassword';
+import { PButton, Progress, TwoButtons, Warning } from '.';
 
 interface Props {
   address: string;
@@ -78,7 +78,6 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
   const proxies = useProxies(api, formatted);
 
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
-  const [password, setPassword] = useState<string>();
   const [showProxy, setShowProxy] = useState<boolean>();
   const [showQR, setShowQR] = useState<boolean>();
   const [lastHeader, setLastHeader] = useState<Header>();
@@ -182,13 +181,6 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
 
-  const _onChange = useCallback(
-    (pass: string): void => {
-      pass.length > 3 && pass && setPassword(pass);
-      pass.length > 3 && pass && setIsPasswordError && setIsPasswordError(false);
-    }, [setIsPasswordError]
-  );
-
   const goToSelectProxy = useCallback(() => {
     setShowProxy(true);
 
@@ -244,27 +236,6 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
     }
   }, [api, chain, extraInfo, formatted, from, selectedProxyAddress, selectedProxyName, senderName, setRefresh, setStep, setTxInfo, steps, token]);
 
-  const onConfirm = useCallback(async () => {
-    try {
-      if (!formatted || !api || !ptx || !from) {
-        return;
-      }
-
-      const signer = keyring.getPair(from);
-
-      signer.unlock(password);
-      setStep(steps['WAIT_SCREEN']);
-
-      const txResult = await signAndSend(api, ptx, signer);
-
-      handleTxResult(txResult);
-    } catch (e) {
-      console.log('error:', e);
-      setIsPasswordError(true);
-    }
-  }, [api, formatted, from, handleTxResult, password, ptx, setIsPasswordError, setStep, steps]);
-
-
   const onSignature = useCallback(async ({ signature }: { signature: HexString }) => {
     if (!api || !payload || !signature || !ptx || !from) {
       return;
@@ -275,7 +246,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
     const txResult = await send(from, api, ptx, payload.toHex(), signature);
 
     handleTxResult(txResult);
-  }, [api, from, handleTxResult, payload, ptx, setStep, steps['WAIT_SCREEN']]);
+  }, [api, from, handleTxResult, payload, ptx, setStep, steps]);
 
   const SignUsingProxy = () => (
     <>
@@ -333,96 +304,44 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
       {isLedger
         ? <SignWithLedger
           address={address}
+          alertText={alertText}
           api={api}
           from={from}
-          alertText={alertText}
+          handleTxResult={handleTxResult}
           onSecondaryClick={onSecondaryClick}
-          signerPayload={signerPayload}
           onSignature={onSignature}
           payload={payload}
           ptx={ptx}
           setStep={setStep}
+          signerPayload={signerPayload}
           steps={steps}
-          handleTxResult={handleTxResult}
         />
         : showQrSign
           ? <SignWithQR />
           : showUseProxy
             ? <SignUsingProxy />
-            : <>
-              <Grid alignItems='center' container item>
-                <Grid item xs>
-                  <Password
-                    disabled={disabled}
-                    isError={isPasswordError}
-                    isFocused={true}
-                    label={t('Password for {{name}}', { replace: { name: selectedProxyName || senderName || '' } })}
-                    onChange={_onChange}
-                    onEnter={onConfirm}
-                  />
-                </Grid>
-                {(!!proxies?.length || (prevState as any)?.selectedProxyAddress) &&
-                  <Tooltip
-                    arrow
-                    componentsProps={{
-                      popper: {
-                        sx: {
-                          '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-18kejt8': {
-                            mb: '3px',
-                            p: '3px 15px'
-                          },
-                          '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-1yuxi3g': {
-                            mb: '3px',
-                            p: '3px 15px'
-                          },
-                          visibility: selectedProxy ? 'visible' : 'hidden'
-                        }
-                      },
-                      tooltip: {
-                        sx: {
-                          '& .MuiTooltip-arrow': {
-                            color: '#fff',
-                            height: '10px'
-                          },
-                          backgroundColor: '#fff',
-                          color: '#000',
-                          fontWeight: 400
-                        }
-                      }
-                    }}
-                    leaveDelay={300}
-                    placement='top-start'
-                    sx={{ width: 'fit-content' }}
-                    title={
-                      <>
-                        {selectedProxy &&
-                          <Identity
-                            chain={chain as any}
-                            formatted={selectedProxy?.delegate}
-                            identiconSize={30}
-                            style={{ fontSize: '14px' }}
-                          />
-                        }
-                      </>
-                    }
-                  >
-                    <Grid aria-label='useProxy' item onClick={goToSelectProxy} pl='10px' pt='10px' role='button' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
-                      {selectedProxy ? t('Update proxy') : t('Use proxy')}
-                    </Grid>
-                  </Tooltip>
-                }
-              </Grid>
-              <Grid alignItems='center' container id='TwoButtons' item sx={{ '> div': { m: 0, width: '100%' }, pt: '15px' }}>
-                <TwoButtons
-                  disabled={!password || isPasswordError || primaryBtn || disabled}
-                  mt='8px'
-                  onPrimaryClick={onConfirm}
-                  onSecondaryClick={onSecondaryClick}
-                  primaryBtnText={primaryBtnText ?? t('Confirm')}
-                  secondaryBtnText={secondaryBtnText ?? t('Back')}
-                />
-              </Grid>
-            </>
+            : <SignWithPassword
+              address={address}
+              api={api}
+              disabled={disabled}
+              from={from}
+              goToSelectProxy={goToSelectProxy}
+              handleTxResult={handleTxResult}
+              isPasswordError={isPasswordError}
+              onSecondaryClick={onSecondaryClick}
+              prevState={prevState}
+              primaryBtn={primaryBtn}
+              primaryBtnText={primaryBtnText}
+              proxies={proxies}
+              ptx={ptx}
+              secondaryBtnText={secondaryBtnText}
+              selectedProxy={selectedProxy}
+              selectedProxyName={selectedProxyName}
+              senderName={senderName}
+              setIsPasswordError={setIsPasswordError}
+              setStep={setStep}
+              steps={steps}
+            />
       }
       {showProxy && setSelectedProxy &&
         <DraggableModal onClose={closeSelectProxy} open={showProxy}>

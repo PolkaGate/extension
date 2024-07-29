@@ -114,53 +114,55 @@ export default function RestoreJson (): React.ReactElement {
     }
   }, []);
 
-  const onRestore = useCallback(async (): Promise<void> => {
-    if (!file) {
-      return;
+  const filterAndEncryptFile = useCallback(async (jsonFile: KeyringPairs$Json, selected: string[]) => {
+    const decryptedFile = jsonDecrypt(jsonFile, password);
+    const unlockedAccounts = JSON.parse(u8aToString(decryptedFile)) as KeyringPair$Json[];
+    const filteredAccounts = unlockedAccounts.filter(({ address }) => selected.includes(address));
+    const fileAsU8a = stringToU8a(JSON.stringify(filteredAccounts));
+
+    return jsonEncrypt(fileAsU8a, jsonFile.encoding.content, password) as KeyringPairs$Json;
+  }, [password]);
+
+  const handleKeyringPairsJson = useCallback(async (jsonFile: KeyringPairs$Json) => {
+    const selected = selectedAccountsInfo.map(({ address }) => address);
+    let encryptFile = jsonFile;
+
+    if (selected.length !== accountsInfo.length) {
+      encryptFile = await filterAndEncryptFile(encryptFile, selected);
     }
 
-    if (requirePassword && !password) {
+    await batchRestore(encryptFile, password);
+  }, [accountsInfo.length, filterAndEncryptFile, password, selectedAccountsInfo]);
+
+  const handleRegularJson = useCallback(async (jsonFile: KeyringPair$Json) => {
+    await jsonRestore(jsonFile, password);
+  }, [password]);
+
+  const onRestore = useCallback(async (): Promise<void> => {
+    if (!file || (requirePassword && !password)) {
       return;
     }
 
     setIsBusy(true);
 
-    await resetOnForgotPassword();
-
     try {
+      await resetOnForgotPassword();
+
       if (isKeyringPairs$Json(file)) {
-        let encryptFile;
-        const selected = selectedAccountsInfo.map(({ address }) => address);
-
-        // The JSON file will be decrypted first. After filtering for the selected accounts,
-        //  it will be re-encrypted and then restored as a new file.
-        if (selected.length !== accountsInfo.length) {
-          const decryptedFile = jsonDecrypt(file, password); // will throw an error if the password is incorrect
-          const unlockedAccounts = JSON.parse(u8aToString(decryptedFile)) as KeyringPair$Json[];
-          const filteredAccounts = unlockedAccounts.filter(({ address }) => selected.includes(address));
-          const fileAsU8a = stringToU8a(JSON.stringify(filteredAccounts));
-
-          encryptFile = jsonEncrypt(fileAsU8a, file.encoding.content, password) as KeyringPairs$Json;
-        }
-
-        batchRestore(encryptFile ?? file, password)
-          .then(() => {
-            setStorage('profile', PROFILE_TAGS.ALL).catch(console.error);
-            openOrFocusTab('/', true);
-          }).catch(console.error);
+        await handleKeyringPairsJson(file);
       } else {
-        jsonRestore(file, password)
-          .then(() => {
-            setStorage('profile', PROFILE_TAGS.ALL).catch(console.error);
-            openOrFocusTab('/', true);
-          }).catch(console.error);
+        await handleRegularJson(file);
       }
+
+      await setStorage('profile', PROFILE_TAGS.ALL);
+      openOrFocusTab('/', true);
     } catch (error) {
       console.error(error);
-      setIsBusy(false);
       setIsPasswordError(true);
+    } finally {
+      setIsBusy(false);
     }
-  }, [file, requirePassword, password, selectedAccountsInfo, accountsInfo.length]);
+  }, [file, requirePassword, password, handleKeyringPairsJson, handleRegularJson]);
 
   const onSelectDeselectAll = useCallback(() => {
     areAllSelected
