@@ -1,14 +1,18 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
+import type { Asset } from '@polkagate/apps-config/assets/types';
+import type React from 'react';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
+import type { AlertsType } from '../util/types';
+
 import { createAssets } from '@polkagate/apps-config/assets';
-import { Asset } from '@polkagate/apps-config/assets/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { AccountJson } from '@polkadot/extension-base/background/types';
 import { BN } from '@polkadot/util';
 
 import { getStorage, setStorage, watchStorage } from '../components/Loading';
@@ -16,7 +20,6 @@ import { toCamelCase } from '../fullscreen/governance/utils/util';
 import allChains from '../util/chains';
 import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
-import { AlertsType } from '../util/types';
 import { isHexToBn } from '../util/utils';
 import useSelectedChains from './useSelectedChains';
 import { useIsTestnetEnabled, useTranslation } from '.';
@@ -42,7 +45,7 @@ interface BalancesDetails {
   votingBalance?: BN
 }
 
-type MessageBody = {
+interface MessageBody {
   assetId?: number,
   totalBalance: string,
   chainName: string,
@@ -51,7 +54,7 @@ type MessageBody = {
   priceId: string,
   token: string,
   balanceDetails?: string,
-};
+}
 
 export const BN_MEMBERS = [
   'totalBalance',
@@ -122,7 +125,7 @@ const assetsChains = createAssets();
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances(accounts: AccountJson[] | null): SavedAssets | undefined | null {
+export default function useAssetsBalances(accounts: AccountJson[] | null, setAlerts: React.Dispatch<React.SetStateAction<AlertsType[]>>): SavedAssets | undefined | null {
   const isTestnetEnabled = useIsTestnetEnabled();
   const selectedChains = useSelectedChains();
   const { t } = useTranslation();
