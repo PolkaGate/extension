@@ -1,14 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { SxProps } from '@mui/material';
 import type { Statistics } from './utils/helpers';
 
 import { Container, Divider, Grid, Typography, useMediaQuery } from '@mui/material';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 
@@ -95,7 +94,6 @@ export function AllReferendaStats ({ address, topMenu }: Props): React.ReactElem
   const decimal = useDecimal(address);
   const token = useToken(address);
   const { price } = useTokenPrice(address);
-  const myRef = useRef();
 
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined | null>();
   const [treasuryStats, setTreasuryStats] = useState<TreasuryStats | undefined>();
@@ -144,7 +142,7 @@ export function AllReferendaStats ({ address, topMenu }: Props): React.ReactElem
         const approved = pendingBounties.add(pendingProposals);
         const spendable = treasuryBalance.sub(approved);
         // const rt = remainingTime(remainingSpendPeriod.toNumber(), true);
-        const dateFormat = { day: 'numeric', hour: '2-digit', hour12: true, hourCycle: 'h23', minute: '2-digit', month: 'short' };
+        const dateFormat = { day: 'numeric', hour: '2-digit', hour12: true, hourCycle: 'h23', minute: '2-digit', month: 'short' } as Intl.DateTimeFormatOptions;
 
         const rt = blockToDate(remainingSpendPeriod.add(bestNumber).toNumber(), bestNumber.toNumber(), dateFormat);
         const nextBurn = (api.consts['treasury']['burn'] as unknown as BN).mul(treasuryBalance).div(BN_MILLION);
@@ -253,7 +251,7 @@ export function AllReferendaStats ({ address, topMenu }: Props): React.ReactElem
             </Typography>
           </Grid>
           <Grid alignItems='flex-start' container direction='column' item pt='10px' width={firstBreakpoint ? 'fit-content' : '100%'}>
-            <Grid alignItems='center' container item ref={myRef} sx={{ fontSize: '18px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em', pt: '10px' }} width='fit-content'>
+            <Grid alignItems='center' container item sx={{ fontSize: '18px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em', pt: '10px', width: 'fit-content' }}>
               <ShowValue value={treasuryStats?.remainingTimeToSpend} width='150px' />
             </Grid>
             <Grid container item sx={{ fontSize: '16px', letterSpacing: '-0.015em' }} width='fit-content'>

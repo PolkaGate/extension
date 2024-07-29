@@ -1,11 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Theme } from '@mui/material';
-import type { LatestReferenda } from './utils/types';
+import type { LatestReferenda, TopMenu } from './utils/types';
 
 import { OpenInNewRounded as OpenInNewIcon, ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import { Divider, Grid, useTheme } from '@mui/material';
@@ -41,7 +40,7 @@ function ReferendumSummary ({ key, myVotedReferendaIndexes, refSummary }: Props)
   const { t } = useTranslation();
   const history = useHistory();
 
-  const { address, topMenu } = useParams<{ address?: string | undefined, topMenu?: string | undefined }>();
+  const { address, topMenu } = useParams<{ address?: string | undefined, topMenu?: TopMenu | undefined }>();
   const newReferendum = useReferendum(address, topMenu, refSummary?.post_id, undefined, true, ENDED_STATUSES.includes(refSummary.status), true);
   const api = useApi(address);
   const formatted = useFormatted(address);

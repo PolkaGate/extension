@@ -44,7 +44,7 @@ const DEFAULT_FILTER = {
   status: REFERENDA_STATUS[0]
 };
 
-export default function SearchBox({ address, myVotedReferendaIndexes, referenda, setFilteredReferenda }: Props): React.ReactElement {
+export default function SearchBox ({ address, myVotedReferendaIndexes, referenda, setFilteredReferenda }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const formatted = useFormatted(address);
@@ -168,10 +168,8 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
             {statusOptions &&
               <Select
                 defaultValue={'All'}
-                // label={t<string>('Status')}
                 onChange={onChangeStatus}
                 options={statusOptions}
-              // value={REFERENDA_STATUS.findIndex((s) => s === filter?.status?.[0]) || 'All'}
               />
             }
           </Grid>
