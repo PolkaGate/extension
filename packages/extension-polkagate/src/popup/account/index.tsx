@@ -54,7 +54,12 @@ export default function AccountDetails(): React.ReactElement {
   const [showReservedReasons, setShowReservedReasons] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
 
-  const showReservedChevron = useMemo(() => balances && !balances?.reservedBalance.isZero() && isOnRelayChain(genesisHash), [balances, genesisHash]);
+  const notOnNativeAsset = useMemo(() => {
+    const assetIdNumber = Number(assetId);
+
+    return assetIdNumber > 0;
+  }, [assetId]);
+  const showReservedChevron = useMemo(() => balances && !balances?.reservedBalance.isZero() && (isOnRelayChain(genesisHash) || !notOnNativeAsset), [balances, genesisHash, notOnNativeAsset]);
 
   const gotToHome = useCallback(() => {
     if (showStakingOptions) {

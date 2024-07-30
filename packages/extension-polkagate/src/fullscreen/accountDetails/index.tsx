@@ -146,7 +146,7 @@ export default function AccountDetails(): React.ReactElement {
   }, [genesisHash, accountAssets, assetId, paramAssetId, selectedAsset]);
 
   const onChangeAsset = useCallback((id: number) => {
-    if (id === -1) { // this is the id of native token
+    if (id === -1) { // this is the id of native token on drop down list
       setAssetIdOnAssetHub(0);
 
       return;
@@ -271,8 +271,10 @@ export default function AccountDetails(): React.ReactElement {
                     />
                   }
                   <ReservedDisplayBalance
+                    assetId={assetId}
                     address={address}
                     amount={balancesToShow?.reservedBalance}
+                    assetToken={balancesToShow?.token}
                     disabled={!balancesToShow?.reservedBalance || balancesToShow?.reservedBalance?.isZero()}
                     price={currentPrice}
                   />
