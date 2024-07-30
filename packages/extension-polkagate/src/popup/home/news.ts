@@ -12,6 +12,7 @@ export const news: News[] = [
   {
     version: '0.6.9',
     notes: [
+      'Support for Stablecoin Requests in Treasury: Accurately displaying requests for USDT on the Asset Hub through Governance mechanisms.',
       'Hide Numbers on Login Page. Add an option to hide numbers on the login page before logging in.'
     ]
   },

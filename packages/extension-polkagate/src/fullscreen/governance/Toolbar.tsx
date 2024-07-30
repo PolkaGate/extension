@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { DecidingCount } from '../../hooks/useDecidingCount';
@@ -21,13 +21,13 @@ import { Delegate } from './delegate';
 interface Props {
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   menuOpen: boolean;
-  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string | undefined>>;
   decidingCounts: DecidingCount | undefined;
 }
 
 const MENU_DELAY = 150; // mili sec
 
-export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement {
+export default function Toolbar ({ decidingCounts, menuOpen, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship', postId?: string }>();

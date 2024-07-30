@@ -1,8 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-export default function blockToDate(blockNumber?: number, currentBlock?: number, option?: Intl.DateTimeFormatOptions) {
+export default function blockToDate (blockNumber?: number, currentBlock?: number, option?: Intl.DateTimeFormatOptions) {
   if (!blockNumber || !currentBlock) {
     return 'N/A';
   }

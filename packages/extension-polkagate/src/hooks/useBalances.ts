@@ -1,13 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Asset } from '@polkagate/apps-config/assets/types';
+import type { Option } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
 // @ts-ignore
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
-import type { Option } from '@polkadot/types';
+import type { BalancesInfo, SavedBalances } from '../util/types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
-import type { Asset } from '@polkagate/apps-config/assets/types';
 import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
@@ -17,7 +18,6 @@ import { toCamelCase } from '../fullscreen/governance/utils/util';
 import { updateMeta } from '../messaging';
 import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID } from '../util/constants';
 import getPoolAccounts from '../util/getPoolAccounts';
-import type { BalancesInfo, SavedBalances } from '../util/types';
 import { useInfo, useStakingAccount } from '.';
 
 const assetsChains = createAssets();
