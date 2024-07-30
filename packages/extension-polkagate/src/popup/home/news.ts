@@ -10,10 +10,11 @@ export interface News {
 
 export const news: News[] = [
   {
-    version: '0.6.9',
+    version: '0.7.0',
     notes: [
       'Support for Stablecoin Requests in Treasury: Accurately displaying requests for USDT on the Asset Hub through Governance mechanisms.',
-      'Hide Numbers on Login Page. Add an option to hide numbers on the login page before logging in.'
+      'Hide Numbers on Login Page: Add an option to hide numbers on the login page before logging in.',
+      'Nomination Pools are evolving: New alerts for dual stakers (solo and pool) to stay on one. Unstake solo funds soon for automatic pool migration, enabling pool and governance participation without manual changes.'
     ]
   },
   {
