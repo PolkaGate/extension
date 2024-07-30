@@ -1,17 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
-/* eslint-disable header/header */
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
  * this component shows an account information in detail
  * */
 
-import { BN, BN_ZERO } from '@polkadot/util';
-
 import type { BalancesInfo } from '../../util/types';
+
+import { BN, BN_ZERO } from '@polkadot/util';
 
 export const getValue = (type: string, balances: BalancesInfo | null | undefined): BN | undefined => {
   if (!balances) {
