@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -19,7 +18,6 @@ import { useIsLoginEnabled, useIsPopup, useTranslation } from '../hooks';
 import { lockExtension, setNotification } from '../messaging';
 import { NO_PASS_PERIOD } from '../util/constants';
 import getLanguageOptions from '../util/getLanguageOptions';
-import type { DropdownOption } from '../util/types';
 
 interface Props {
   isTestnetEnabledChecked: boolean | undefined;
@@ -39,7 +37,6 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
 
   const [notification, updateNotification] = useState(settings.notification);
   const [camera, setCamera] = useState(settings.camera === 'on');
-  const [prefix, setPrefix] = useState(`${settings.prefix === -1 ? 42 : settings.prefix}`);
 
   const languageOptions = useMemo(() => getLanguageOptions(), []);
   const notificationOptions = useMemo(() => ['Extension', 'PopUp', 'Window'].map((item) => ({ text: item, value: item.toLowerCase() })), []);
@@ -47,10 +44,6 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
   useEffect(() => {
     settings.set({ camera: camera ? 'on' : 'off' });
   }, [camera]);
-
-  const prefixOptions = settings.availablePrefixes
-    .filter(({ value }) => value !== -1)
-    .map(({ text, value }): DropdownOption => ({ text, value: `${value}` }));
 
   const onLockExtension = useCallback((): void => {
     updateStorage('loginInfo', { lastLoginTime: Date.now() - NO_PASS_PERIOD }).then(() => {
@@ -63,13 +56,8 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
     onAction('/auth-list');
   }, [onAction]);
 
-  const onChangeLang = useCallback((value: string): void => {
-    settings.set({ i18nLang: value });
-  }, []);
-
-  const onChangePrefix = useCallback((value: string): void => {
-    setPrefix(value);
-    settings.set({ prefix: parseInt(value, 10) });
+  const onChangeLang = useCallback((value: string | number): void => {
+    settings.set({ i18nLang: value as string });
   }, []);
 
   const onChangeTheme = useCallback((): void => {
@@ -80,11 +68,13 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
     onAction('/login-password');
   }, [onAction]);
 
-  const onChangeNotification = useCallback((value: string): void => {
-    setNotification(value).catch(console.error);
+  const onChangeNotification = useCallback((value: string | number): void => {
+    const _value = value as string;
 
-    updateNotification(value);
-    settings.set({ notification: value });
+    setNotification(_value).catch(console.error);
+
+    updateNotification(_value);
+    settings.set({ notification: _value });
   }, []);
 
   const toggleCamera = useCallback(() => {
@@ -93,7 +83,7 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
 
   useEffect(() => {
     getStorage('testnet_enabled').then((res) => {
-      setTestnetEnabledChecked(res as boolean);
+      setTestnetEnabledChecked(!!res);
     }).catch(console.error);
   }, [setTestnetEnabledChecked]);
 
@@ -177,7 +167,7 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
             <MenuItem
               fontSize='17px'
               iconComponent={
-                <VaadinIcon icon='vaadin:key' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+                <VaadinIcon icon='vaadin:key' style={{ color: `${theme.palette.text.primary}`, height: '18px'}} />
               }
               onClick={onManageLoginPassword}
               py='2px'
@@ -186,6 +176,7 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
           </Grid>
           <Grid item pt='12px'>
             <Select
+              defaultValue={languageOptions[0].value}
               label={t('Language')}
               onChange={onChangeLang}
               options={languageOptions}
@@ -194,20 +185,13 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
           </Grid>
           <Grid item pt='10px'>
             <Select
+              defaultValue={notificationOptions[1].value}
               label={t('Notification')}
               onChange={onChangeNotification}
               options={notificationOptions}
               value={notification ?? notificationOptions[1].value}
             />
           </Grid>
-          {/* <Grid item pt='7px'>
-          <Select
-            label={t('Default display address format')}
-            onChange={onChangePrefix}
-            options={prefixOptions}
-            value={prefix ?? prefixOptions[2].value}
-          />
-        </Grid> */}
         </Grid>
       </Grid>
     </Collapse>

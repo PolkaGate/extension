@@ -1,11 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import type { AccountJson, AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { CurrencyItemType } from '@polkadot/extension-polkagate/src/fullscreen/homeFullScreen/partials/Currency';
-import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import type { APIs, Fetching, LatestRefs, Prices, PricesInCurrencies } from '@polkadot/extension-polkagate/src/util/types';
+import type { SettingsStruct } from '@polkadot/ui-settings/types';
 
 import { AnimatePresence } from 'framer-motion';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -13,11 +12,16 @@ import { Route, Switch, useLocation } from 'react-router';
 
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
+import { ErrorBoundary, Loading } from '@polkadot/extension-polkagate/src/components';
+import { AccountContext, AccountsAssetsContext, ActionContext, APIContext, AuthorizeReqContext, CurrencyContext, FetchingContext, MediaContext, MetadataReqContext, ReferendaContext, SettingsContext, SigningReqContext } from '@polkadot/extension-polkagate/src/components/contexts';
+import { getStorage, type LoginInfo, setStorage, updateStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { ExtensionLockProvider } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
 import AccountFS from '@polkadot/extension-polkagate/src/fullscreen/accountDetails';
 import Governance from '@polkadot/extension-polkagate/src/fullscreen/governance';
 import ReferendumPost from '@polkadot/extension-polkagate/src/fullscreen/governance/post';
 import ManageIdentity from '@polkadot/extension-polkagate/src/fullscreen/manageIdentity';
 import FullScreenManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxies';
+import Onboarding from '@polkadot/extension-polkagate/src/fullscreen/onboarding';
 import Send from '@polkadot/extension-polkagate/src/fullscreen/sendFund';
 import SocialRecovery from '@polkadot/extension-polkagate/src/fullscreen/socialRecovery';
 import Stake from '@polkadot/extension-polkagate/src/fullscreen/stake';
@@ -25,29 +29,20 @@ import PoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/pool';
 import ManageValidatorsPoolfs from '@polkadot/extension-polkagate/src/fullscreen/stake/pool/commonTasks/manageValidators';
 import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/solo';
 import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/commonTasks/manageValidators';
-import { isPriceUpToDate } from '@polkadot/extension-polkagate/src/hooks/usePrices';
-import AddWatchOnly from '@polkadot/extension-polkagate/src/popup/import/addWatchOnly';
-import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
-import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
-import LoginPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement';
-import ForgotPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement/ForgotPasswordFS';
-import ResetWallet from '@polkadot/extension-polkagate/src/popup/passwordManagement/ResetFS';
-import uiSettings from '@polkadot/ui-settings';
-
-import { ErrorBoundary, Loading } from '@polkadot/extension-polkagate/src/components';
-import { AccountContext, AccountsAssetsContext, ActionContext, APIContext, AuthorizeReqContext, CurrencyContext, FetchingContext, MediaContext, MetadataReqContext, ReferendaContext, SettingsContext, SigningReqContext } from '@polkadot/extension-polkagate/src/components/contexts';
-import { type LoginInfo, getStorage, setStorage, updateStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import { ExtensionLockProvider } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
-import Onboarding from '@polkadot/extension-polkagate/src/fullscreen/onboarding';
 import { usePriceIds } from '@polkadot/extension-polkagate/src/hooks';
-import useAssetsBalances, { type SavedAssets, ASSETS_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
+import useAssetsBalances, { ASSETS_NAME_IN_STORAGE,type SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
+import { isPriceUpToDate } from '@polkadot/extension-polkagate/src/hooks/usePrices';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '@polkadot/extension-polkagate/src/messaging';
-import { getPrices } from '@polkadot/extension-polkagate/src/util/api';
-import { buildHierarchy } from '@polkadot/extension-polkagate/src/util/buildHierarchy';
+import AccountEx from '@polkadot/extension-polkagate/src/popup/account';
+import AuthList from '@polkadot/extension-polkagate/src/popup/authManagement';
 import Authorize from '@polkadot/extension-polkagate/src/popup/authorize';
+import CrowdLoans from '@polkadot/extension-polkagate/src/popup/crowdloans';
 import Export from '@polkadot/extension-polkagate/src/popup/export/Export';
 import ExportAll from '@polkadot/extension-polkagate/src/popup/export/ExportAll';
+import ForgetAccount from '@polkadot/extension-polkagate/src/popup/forgetAccount';
+import History from '@polkadot/extension-polkagate/src/popup/history';
 import Accounts from '@polkadot/extension-polkagate/src/popup/home/ManageHome';
+import AddWatchOnly from '@polkadot/extension-polkagate/src/popup/import/addWatchOnly';
 import AddWatchOnlyFullScreen from '@polkadot/extension-polkagate/src/popup/import/addWatchOnlyFullScreen';
 import AttachQR from '@polkadot/extension-polkagate/src/popup/import/attachQR';
 import AttachQrFullScreen from '@polkadot/extension-polkagate/src/popup/import/attachQrFullScreen';
@@ -57,7 +52,18 @@ import ImportProxiedFullScreen from '@polkadot/extension-polkagate/src/popup/imp
 import ImportRawSeed from '@polkadot/extension-polkagate/src/popup/import/importRawSeedFullScreen';
 import ImportSeed from '@polkadot/extension-polkagate/src/popup/import/importSeedFullScreen';
 import RestoreJson from '@polkadot/extension-polkagate/src/popup/import/restoreJSONFullScreen';
+import ManageProxies from '@polkadot/extension-polkagate/src/popup/manageProxies';
+import Metadata from '@polkadot/extension-polkagate/src/popup/metadata';
 import CreateAccount from '@polkadot/extension-polkagate/src/popup/newAccount/createAccountFullScreen';
+import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
+import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
+import LoginPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement';
+import ForgotPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement/ForgotPasswordFS';
+import ResetWallet from '@polkadot/extension-polkagate/src/popup/passwordManagement/ResetFS';
+import PhishingDetected from '@polkadot/extension-polkagate/src/popup/PhishingDetected';
+import Receive from '@polkadot/extension-polkagate/src/popup/receive';
+import Rename from '@polkadot/extension-polkagate/src/popup/rename';
+import Signing from '@polkadot/extension-polkagate/src/popup/signing';
 import Pool from '@polkadot/extension-polkagate/src/popup/staking/pool';
 import PoolInformation from '@polkadot/extension-polkagate/src/popup/staking/pool/myPool';
 import PoolNominations from '@polkadot/extension-polkagate/src/popup/staking/pool/nominations';
@@ -73,22 +79,14 @@ import SoloPayout from '@polkadot/extension-polkagate/src/popup/staking/solo/rew
 import SoloStake from '@polkadot/extension-polkagate/src/popup/staking/solo/stake';
 import TuneUp from '@polkadot/extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo/unstake';
-import AccountEx from '@polkadot/extension-polkagate/src/popup/account';
-import AuthList from '@polkadot/extension-polkagate/src/popup/authManagement';
-import CrowdLoans from '@polkadot/extension-polkagate/src/popup/crowdloans';
-import ForgetAccount from '@polkadot/extension-polkagate/src/popup/forgetAccount';
-import History from '@polkadot/extension-polkagate/src/popup/history';
-import ManageProxies from '@polkadot/extension-polkagate/src/popup/manageProxies';
-import Metadata from '@polkadot/extension-polkagate/src/popup/metadata';
-import PhishingDetected from '@polkadot/extension-polkagate/src/popup/PhishingDetected';
-import Receive from '@polkadot/extension-polkagate/src/popup/receive';
-import Rename from '@polkadot/extension-polkagate/src/popup/rename';
-import Signing from '@polkadot/extension-polkagate/src/popup/signing';
+import { getPrices } from '@polkadot/extension-polkagate/src/util/api';
+import { buildHierarchy } from '@polkadot/extension-polkagate/src/util/buildHierarchy';
+import uiSettings from '@polkadot/ui-settings';
 
 const startSettings = uiSettings.get();
 
 // Request permission for video, based on access we can hide/show import
-async function requestMediaAccess(cameraOn: boolean): Promise<boolean> {
+async function requestMediaAccess (cameraOn: boolean): Promise<boolean> {
   if (!cameraOn) {
     return false;
   }
@@ -104,7 +102,7 @@ async function requestMediaAccess(cameraOn: boolean): Promise<boolean> {
   return false;
 }
 
-function initAccountContext(accounts: AccountJson[]): AccountsContext {
+function initAccountContext (accounts: AccountJson[]): AccountsContext {
   const hierarchy = buildHierarchy(accounts);
   const master = hierarchy.find(({ isExternal, type }) => !isExternal && canDerive(type));
 
@@ -115,7 +113,7 @@ function initAccountContext(accounts: AccountJson[]): AccountsContext {
   };
 }
 
-export default function Popup(): React.ReactElement {
+export default function Popup (): React.ReactElement {
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
   const assetsOnChains = useAssetsBalances(accounts);
   const priceIds = usePriceIds();
@@ -255,15 +253,15 @@ export default function Popup(): React.ReactElement {
       .catch(console.error);
   }, [cameraOn]);
 
-  function wrapWithErrorBoundary(component: React.ReactElement, trigger?: string): React.ReactElement {
+  function wrapWithErrorBoundary (component: React.ReactElement, trigger?: string): React.ReactElement {
     return <ErrorBoundary trigger={trigger}>{component}</ErrorBoundary>;
   }
 
-  const Root = authRequests && authRequests.length
+  const Root = authRequests?.length
     ? wrapWithErrorBoundary(<Authorize />, 'authorize')
-    : metaRequests && metaRequests.length
+    : metaRequests?.length
       ? wrapWithErrorBoundary(<Metadata />, 'metadata')
-      : signRequests && signRequests.length
+      : signRequests?.length
         ? wrapWithErrorBoundary(<Signing />, 'signing')
         : wrapWithErrorBoundary(<Accounts />, 'accounts');
 
