@@ -41,7 +41,9 @@ export default function SignWithLedger ({ address, alertText, api, from, handleT
 
   const [error, setError] = useState<string | null>();
 
-  const isPolkadotOrItsSystemChains = chainName?.toLowerCase()?.includes('polkadot');
+  // hope this works for future system chains
+  // we have used startWith instead of includes since there is chains like AvN Polkadot !
+  const isPolkadotOrItsSystemChains = chainName?.toLowerCase()?.startsWith('polkadot');
 
   const onLedgerGenericSignature = useCallback(async (signature: HexString, raw?: GenericExtrinsicPayload) => {
     if (!api || !signature || !ptx || !from) {
