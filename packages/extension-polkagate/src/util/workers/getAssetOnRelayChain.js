@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 /* eslint-disable import-newlines/enforce */
@@ -7,10 +8,10 @@
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { TEST_NETS, NATIVE_TOKEN_ASSET_ID } from '../constants';
+import { NATIVE_TOKEN_ASSET_ID,TEST_NETS } from '../constants';
 import getPoolAccounts from '../getPoolAccounts';
-import { balancify, closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
 import { getPriceIdByChainName } from '../utils';
+import { balancify, closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
 
 async function getPooledBalance(api, address) {
   const response = await api.query['nominationPools']['poolMembers'](address);

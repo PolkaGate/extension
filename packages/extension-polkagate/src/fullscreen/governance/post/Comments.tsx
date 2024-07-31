@@ -1,42 +1,46 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Referendum } from '../utils/types';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Button, Grid, Typography, useTheme } from '@mui/material';
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { useChainName, useTranslation } from '../../../hooks';
-import { Referendum } from '../utils/types';
+import useStyles from '../styles/styles';
 import CommentView from './Comment';
 import Replies from './Replies';
 
-export default function Comments({ address, referendum }: { address: string | undefined, referendum: Referendum | undefined }): React.ReactElement {
+export default function Comments ({ address, referendum }: { address: string | undefined, referendum: Referendum | undefined }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const ChainName = useChainName(address);
+  const style = useStyles();
+
   const [expanded, setExpanded] = React.useState(false);
 
   const type = referendum?.type === 'FellowshipReferendum' ? 'fellowship' : 'referenda';
 
-  const handleChange = (event, isExpanded: boolean) => {
+  const handleChange = useCallback((_event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded);
-  };
+  }, []);
 
   const sortedComments = useMemo(() => referendum?.comments?.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)), [referendum]);
 
-  const openPolkassembly = () => {
+  const openPolkassembly = useCallback(() => {
     window.open(`https://${ChainName}.polkassembly.io/referenda/${referendum?.index}`, '_blank');
-  };
+  }, [ChainName, referendum?.index]);
 
-  function openSubsquare() {
+  const openSubsquare = useCallback(() => {
     window.open(`https://${ChainName}.subsquare.io/${type}/referendum/${referendum?.index}`, '_blank');
-  }
+  }, [ChainName, referendum?.index, type]);
 
   return (
-    <Accordion expanded={expanded} onChange={handleChange} sx={{ border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', my: 1, px: '3%', width: 'inherit' }}>
+    <Accordion expanded={expanded} onChange={handleChange} style={style.accordionStyle}>
       <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : 'none', px: 0 }}>
         <Grid container item>
           <Grid container item xs={12}>

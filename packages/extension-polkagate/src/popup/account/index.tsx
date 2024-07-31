@@ -23,7 +23,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { isOnRelayChain } from '@polkadot/extension-polkagate/src/util/utils';
 
 import { stakingClose } from '../../assets/icons';
-import { ActionContext, Assets, Chain, HorizontalMenuItem, Identity, Motion } from '../../components';
+import { ActionContext, Assets, Chain, HorizontalMenuItem, Identity, Motion, Warning } from '../../components';
 import { useBalances, useGenesisHashOptions, useInfo, useMyAccountIdentity, useTranslation } from '../../hooks';
 import { tieAccount, windowOpen } from '../../messaging';
 import { FullScreenRemoteNode, HeaderBrand } from '../../partials';
@@ -55,6 +55,10 @@ export default function AccountDetails(): React.ReactElement {
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
 
   const showReservedChevron = useMemo(() => balances && !balances?.reservedBalance.isZero() && isOnRelayChain(genesisHash), [balances, genesisHash]);
+  const supportStaking = useMemo(() => STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
+  const isDualStaking = useMemo(() =>
+    balanceToShow?.soloTotal && balanceToShow?.pooledBalance && !balanceToShow.soloTotal.isZero() && !balanceToShow.pooledBalance.isZero()
+    , [balanceToShow?.pooledBalance, balanceToShow?.soloTotal]);
 
   const gotToHome = useCallback(() => {
     if (showStakingOptions) {
@@ -85,8 +89,8 @@ export default function AccountDetails(): React.ReactElement {
   }, [address, assetId]);
 
   const goToStaking = useCallback(() => {
-    STAKING_CHAINS.includes(genesisHash) && setShowStakingOptions(!showStakingOptions);
-  }, [genesisHash, showStakingOptions]);
+    supportStaking && setShowStakingOptions(!showStakingOptions);
+  }, [showStakingOptions, supportStaking]);
 
   const goToHistory = useCallback(() => {
     chainName && formatted &&
@@ -122,12 +126,12 @@ export default function AccountDetails(): React.ReactElement {
   }, [address, api, history, pathname]);
 
   const stakingIconColor = useMemo(() =>
-    !STAKING_CHAINS.includes(genesisHash)
+    !supportStaking
       ? theme.palette.action.disabledBackground
       : showStakingOptions
         ? theme.palette.secondary.main
         : theme.palette.text.primary
-  , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
+    , [supportStaking, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
 
   const goToOthers = useCallback(() => {
     setShowOthers(true);
@@ -221,12 +225,27 @@ export default function AccountDetails(): React.ReactElement {
                 }
               </>
               : <>
+                {isDualStaking &&
+                  <Grid container sx={{ '> div': { pl: '3px' }, borderBottom: 1, borderColor: 'secondary.light', mb: '5px', pb: '5px' }}>
+                    <Warning
+                      iconDanger
+                      marginRight={1}
+                      marginTop={0}
+                      theme={theme}
+                    >
+                      {t('Nomination Pools are evolving! Unstake your solo staked funds soon to benefit from automatic pool migration, which allows participation in both a pool and governance, and avoid manual changes.')}
+                    </Warning>
+                  </Grid>
+                }
                 <LabelBalancePrice address={address} balances={balanceToShow} label={'Total'} title={t('Total')} />
                 <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferable'} onClick={goToSend} title={t('Transferable')} />
-                {STAKING_CHAINS.includes(genesisHash)
+                {supportStaking
                   ? <>
-                    <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Stake'} onClick={goToSoloStaking} title={t('Solo Stake')} />
-                    <LabelBalancePrice address={address} balances={balanceToShow} label={'Pool Stake'} onClick={goToPoolStaking} title={t('Pool Stake')} />
+                    {!balanceToShow?.soloTotal?.isZero() &&
+                      <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Stake'} onClick={goToSoloStaking} title={t('Solo Stake')} />}
+                    {!balanceToShow?.pooledBalance?.isZero() &&
+                      <LabelBalancePrice address={address} balances={balanceToShow} label={'Pool Stake'} onClick={goToPoolStaking} title={t('Pool Stake')} />
+                    }
                   </>
                   : <LabelBalancePrice address={address} balances={balanceToShow} label={'Free'} title={t('Free')} />
                 }
@@ -239,7 +258,7 @@ export default function AccountDetails(): React.ReactElement {
               </>
             }
           </Grid>
-          : <StakingOption setShowStakingOptions={setShowStakingOptions} showStakingOptions={showStakingOptions} />
+          : <StakingOption balance={balanceToShow} setShowStakingOptions={setShowStakingOptions} showStakingOptions={showStakingOptions} />
         }
         <Grid container justifyContent='space-around' sx={{ bgcolor: 'background.default', borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, height: '62px', left: '4%', position: 'absolute', pt: '7px', pb: '5px', width: '92%' }}>
           <HorizontalMenuItem
@@ -278,7 +297,7 @@ export default function AccountDetails(): React.ReactElement {
                   size='lg'
                 />
             } onClick={goToStaking}
-            textDisabled={!STAKING_CHAINS.includes(genesisHash)}
+            textDisabled={!supportStaking}
             title={t<string>('Stake')}
           />
           <HorizontalMenuItem

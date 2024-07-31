@@ -1,15 +1,15 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
+import type { Asset } from '@polkagate/apps-config/assets/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
+
 import { createAssets } from '@polkagate/apps-config/assets';
-import { Asset } from '@polkagate/apps-config/assets/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { AccountJson } from '@polkadot/extension-base/background/types';
-import { BN } from '@polkadot/util';
+import { BN, isObject } from '@polkadot/util';
 
 import { getStorage, setStorage, watchStorage } from '../components/Loading';
 import { toCamelCase } from '../fullscreen/governance/utils/util';
@@ -41,7 +41,7 @@ interface BalancesDetails {
   votingBalance?: BN
 }
 
-type MessageBody = {
+interface MessageBody {
   assetId?: number,
   totalBalance: string,
   chainName: string,
@@ -50,7 +50,7 @@ type MessageBody = {
   priceId: string,
   token: string,
   balanceDetails?: string,
-};
+}
 
 export const BN_MEMBERS = [
   'totalBalance',
@@ -70,15 +70,16 @@ export const BN_MEMBERS = [
 
 export interface FetchedBalance {
   assetId?: number,
+  availableBalance: BN,
+  balanceDetails?: any,
   totalBalance: BN,
   chainName: string,
   date?: number,
   decimal: number,
   genesisHash: string,
   priceId: string,
-  price: number,
+  price?: number,
   token: string,
-  availableBalance: BN,
   soloTotal?: BN,
   pooledBalance?: BN,
   lockedBalance?: BN,
@@ -87,7 +88,7 @@ export interface FetchedBalance {
   vestingTotal?: BN,
   freeBalance?: BN,
   frozenFee?: BN,
-  frozenMisc: BN,
+  frozenMisc?: BN,
   reservedBalance?: BN,
   votingBalance?: BN
 }
@@ -99,16 +100,18 @@ const BALANCE_VALIDITY_PERIOD = 1 * 1000 * 60;
 
 const isUpToDate = (date?: number): boolean | undefined => date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
 
-function allHexToBN(balances: string | undefined): BalancesDetails | {} {
+function allHexToBN (balances: object | string | undefined): BalancesDetails | {} {
   if (!balances) {
     return {};
   }
 
-  const parsedBalances = JSON.parse(balances) as BalancesDetails;
+  const parsedBalances = isObject(balances) ? balances : JSON.parse(balances as string) as BalancesDetails;
   const _balances = {} as BalancesDetails;
 
   Object.keys(parsedBalances).forEach((item) => {
-    _balances[item] = isHexToBn(parsedBalances[item] as string);
+    const key = item as keyof BalancesDetails;
+
+    _balances[key] = isHexToBn(parsedBalances[key] as unknown as string);
   });
 
   return _balances;
@@ -153,7 +156,7 @@ export default function useAssetsBalances(accounts: AccountJson[] | null): Saved
       Object.entries(assetsPerChain).forEach(([genesisHash, fetchedBalance]) => {
         const toBeDeletedIndexes: string[] = [];
 
-        fetchedBalance.forEach(({ token, totalBalance }, index) => {
+        fetchedBalance.forEach(({ token, totalBalance }, _index) => {
           if (new BN(totalBalance).isZero()) {
             toBeDeletedIndexes.push(token);
           }
@@ -308,8 +311,9 @@ export default function useAssetsBalances(accounts: AccountJson[] | null): Saved
         /** We use index 0 because we consider each relay chain has only one asset */
         _assets[address] = [
           {
+            price: undefined,
             ...parsedMessage[address][0],
-            ...allHexToBN(parsedMessage[address][0].balanceDetails),
+            ...allHexToBN(parsedMessage[address][0].balanceDetails) as BalancesDetails,
             date: Date.now(),
             decimal: Number(parsedMessage[address][0].decimal),
             totalBalance: isHexToBn(parsedMessage[address][0].totalBalance)
@@ -353,8 +357,7 @@ export default function useAssetsBalances(accounts: AccountJson[] | null): Saved
           .map((message) => {
             const _asset = {
               ...message,
-              availableBalance: isHexToBn(message.availableBalance as string),
-              ...allHexToBN(message.balanceDetails),
+              ...allHexToBN(message.balanceDetails) as BalancesDetails,
               date: Date.now(),
               decimal: Number(message.decimal),
               totalBalance: isHexToBn(message.totalBalance)
@@ -400,7 +403,7 @@ export default function useAssetsBalances(accounts: AccountJson[] | null): Saved
           (message) => {
             const temp = {
               ...message,
-              ...allHexToBN(message.balanceDetails),
+              ...allHexToBN(message.balanceDetails) as BalancesDetails,
               date: Date.now(),
               decimal: Number(message.decimal),
               totalBalance: isHexToBn(message.totalBalance)

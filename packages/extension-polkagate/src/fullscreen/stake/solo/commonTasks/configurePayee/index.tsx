@@ -1,25 +1,25 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import type { SxProps } from '@mui/material';
+import type { AccountStakingInfo, Payee, SoloSettings, TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { Inputs } from '../../../Entry';
 
-import { faCog } from '@fortawesome/free-solid-svg-icons';
+import { faHandHoldingDollar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
-import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Skeleton, SxProps, Typography, useTheme } from '@mui/material';
+import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
-import { AccountStakingInfo, Payee, SoloSettings, TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman, upperCaseFirstChar } from '@polkadot/extension-polkagate/src/util/utils';
 
 import { AccountInputWithIdentity, TwoButtons, Warning } from '../../../../../components';
 import { useInfo, useStakingAccount, useStakingConsts, useTranslation } from '../../../../../hooks';
-import type { Inputs } from '../../../Entry';
 import Confirmation from '../../../partials/Confirmation';
 import Review from '../../../partials/Review';
 import { STEPS } from '../../../pool/stake';
@@ -75,15 +75,15 @@ export const ModalTitle = ({ icon, onCancel, setStep, step, text }: { text: stri
   );
 };
 
-export default function ConfigurePayee({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function ConfigurePayee ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);
 
-  const stakingConsts = useStakingConsts(address);
+  const stakingConsts = useStakingConsts(address as string);
   const stakingAccount = useStakingAccount(address, undefined, undefined, undefined, true);
 
-  const [rewardDestinationValue, setRewardDestinationValue] = useState<'Staked' | 'Others'>();
+  const [rewardDestinationValue, setRewardDestinationValue] = useState<string>();
   const [rewardDestinationAccount, setRewardDestinationAccount] = useState<string | undefined>();
   const [newPayee, setNewPayee] = useState<Payee>();
   const [step, setStep] = useState(STEPS.INDEX);
@@ -108,11 +108,14 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
     let payee: Payee;
 
     if (destinationType === 'account') {
+      //@ts-ignore
+      const rewardDestinationAccount = parsedStakingAccount.rewardDestination.account as string;
+
       payee = {
-        Account: parsedStakingAccount.rewardDestination.account as string
+        Account: rewardDestinationAccount
       };
 
-      setRewardDestinationAccount(parsedStakingAccount.rewardDestination.account as string);
+      setRewardDestinationAccount(rewardDestinationAccount);
     } else {
       payee = upperCaseFirstChar(destinationType) as Payee;
 
@@ -129,7 +132,7 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
   const getOptionLabel = useCallback((s: SoloSettings): 'Staked' | 'Others' => s?.payee === 'Staked' ? 'Staked' : 'Others', []);
   const optionDefaultVal = useMemo(() => settings && getOptionLabel(settings), [getOptionLabel, settings]);
 
-  const setPayee = api && api.tx['staking']['setPayee'];
+  const setPayee = api?.tx['staking']['setPayee'];
 
   useEffect(() => {
     if (!setPayee || !api || !address || !newPayee) {
@@ -154,7 +157,8 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
 
   const ED = useMemo(() => stakingConsts?.existentialDeposit && decimal && amountToHuman(stakingConsts.existentialDeposit, decimal), [decimal, stakingConsts?.existentialDeposit]);
 
-  const onSelectionMethodChange = useCallback((event: React.ChangeEvent<HTMLInputElement>, value: 'Staked' | 'Others'): void => {
+  const onSelectionMethodChange = useCallback((_event: React.ChangeEvent<HTMLInputElement>, value: string): void => {
+    // value:'Staked' | 'Others'
     setRewardDestinationValue(value);
 
     if (value === 'Staked') {
@@ -162,7 +166,8 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
     }
   }, []);
 
-  const makePayee = useCallback((value: 'Staked' | 'Others', account?: string) => {
+  const makePayee = useCallback((value: string, account?: string) => {
+    // value: 'Staked' | 'Others'
     if (!settings) {
       return;
     }
@@ -207,7 +212,7 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
     setShow(false);
   }, [setShow]);
 
-  const Warn = ({ text, style = {} }: { text: string, style?: SxProps }) => (
+  const Warn = ({ style = {}, text }: { text: string, style?: SxProps }) => (
     <Grid container justifyContent='center' sx={style}>
       <Warning
         fontWeight={400}
@@ -223,7 +228,7 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
       <>
         {step !== STEPS.WAIT_SCREEN &&
           <ModalTitle
-            icon={faCog}
+            icon={faHandHoldingDollar}
             onCancel={onCancel}
             setStep={setStep}
             step={step}
@@ -255,8 +260,9 @@ export default function ConfigurePayee({ address, setRefresh, setShow, show }: P
                 <>
                   <AccountInputWithIdentity
                     address={rewardDestinationAccount}
-                    chain={chain as any}
+                    chain={chain}
                     label={t('Specific account')}
+                    //@ts-ignore
                     setAddress={setRewardDestinationAccount}
                     style={{ pt: '25px', px: '15px' }}
                   />
