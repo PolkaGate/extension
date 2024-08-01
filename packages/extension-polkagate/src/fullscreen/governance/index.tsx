@@ -31,7 +31,7 @@ import { TrackStats } from './TrackStats';
 
 export type Fellowship = [string, number];
 
-export default function Governance (): React.ReactElement {
+export default function Governance(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const { state } = useLocation();
@@ -57,7 +57,7 @@ export default function Governance (): React.ReactElement {
   const [myVotedReferendaIndexes, setMyVotedReferendaIndexes] = useState<number[] | null>();
   const [fellowships, setFellowships] = useState<Fellowship[] | null>();
   const [notSupportedChain, setNotSupportedChain] = useState<boolean>();
-  const [manifest, setManifest] = useState<chrome.runtime.Manifest>();
+  const [manifest, setManifest] = useState<browser.runtime.Manifest>();
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
   const notSupported = useMemo(() => chain?.genesisHash && !(GOVERNANCE_CHAINS.includes(chain.genesisHash ?? '')), [chain?.genesisHash]);
@@ -66,7 +66,7 @@ export default function Governance (): React.ReactElement {
     fetch('./manifest.json')
       .then((response) => {
         return response.json();
-      }).then((data: chrome.runtime.Manifest) => {
+      }).then((data: browser.runtime.Manifest) => {
         setManifest(data);
       }).catch((e: Error) => {
         console.log(e.message);
@@ -211,7 +211,7 @@ export default function Governance (): React.ReactElement {
     fetchRef(_key).then(() => setIsFetching(false)).catch(console.error);
     setReferenda(refsContext.refs?.[_key]);
 
-    async function fetchRef (key: string) {
+    async function fetchRef(key: string) {
       if (!chainName) {
         return;
       }

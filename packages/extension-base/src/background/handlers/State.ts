@@ -62,7 +62,7 @@ interface SignRequest extends Resolver<ResponseSigning> {
 
 const NOTIFICATION_URL = browser.runtime.getURL('notification.html');
 
-const POPUP_WINDOW_OPTS: chrome.windows.CreateData = {
+const POPUP_WINDOW_OPTS: browser.windows.CreateData = {
   focused: true,
   height: 621,
   left: 150,
@@ -72,7 +72,7 @@ const POPUP_WINDOW_OPTS: chrome.windows.CreateData = {
   width: 357
 };
 
-const NORMAL_WINDOW_OPTS: chrome.windows.CreateData = {
+const NORMAL_WINDOW_OPTS: browser.windows.CreateData = {
   focused: true,
   type: 'normal',
   url: NOTIFICATION_URL
@@ -207,7 +207,7 @@ export default class State {
   private popupOpen(): void {
     this.#notification !== 'extension' &&
       browser.windows.create(
-        this.#notification === 'window' ? NORMAL_WINDOW_OPTS as any: POPUP_WINDOW_OPTS
+        this.#notification === 'window' ? NORMAL_WINDOW_OPTS as any : POPUP_WINDOW_OPTS
       ).then(
         (window): void => {
           if (window) {

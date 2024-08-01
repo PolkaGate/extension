@@ -27,7 +27,7 @@ describe('Extension', () => {
   const suri = 'seed sock milk update focus rotate barely fade car face mechanic mercy';
   const password = 'passw0rd';
 
-  async function createExtension (): Promise<Extension> {
+  async function createExtension(): Promise<Extension> {
     await cryptoWaitReady();
 
     keyring.loadAll({ store: new AccountsStore() });
@@ -59,7 +59,7 @@ describe('Extension', () => {
         name: 'parent',
         password,
         suri
-      }, {} as chrome.runtime.Port);
+      }, {} as browser.runtime.Port);
     const { address } = await extension.handle('id', 'pri(seed.validate)', type && type === 'ethereum'
       ? {
         suri,
@@ -67,7 +67,7 @@ describe('Extension', () => {
       }
       : {
         suri
-      }, {} as chrome.runtime.Port);
+      }, {} as browser.runtime.Port);
 
     return address;
   };
@@ -81,7 +81,7 @@ describe('Extension', () => {
     const result = await extension.handle('id', 'pri(accounts.export)', {
       address,
       password
-    }, {} as chrome.runtime.Port);
+    }, {} as browser.runtime.Port);
 
     expect(result.exportedJson.address).toBe(address);
     expect(result.exportedJson.encoded).toBeDefined();
@@ -99,7 +99,7 @@ describe('Extension', () => {
         parentAddress: address,
         parentPassword: password,
         suri: '//path'
-      }, {} as chrome.runtime.Port);
+      }, {} as browser.runtime.Port);
 
       expect(result).toStrictEqual({
         address: '5FP3TT3EruYBNh8YM8yoxsreMx7uZv1J1zNX7fFhoC5enwmN',
@@ -112,7 +112,7 @@ describe('Extension', () => {
         parentAddress: address,
         parentPassword: password,
         suri: 'invalid-path'
-      }, {} as chrome.runtime.Port)).rejects.toStrictEqual(new Error('"invalid-path" is not a valid derivation path'));
+      }, {} as browser.runtime.Port)).rejects.toStrictEqual(new Error('"invalid-path" is not a valid derivation path'));
     });
 
     test('pri(derivation.validate) throws for invalid password', async () => {
@@ -120,7 +120,7 @@ describe('Extension', () => {
         parentAddress: address,
         parentPassword: 'invalid-password',
         suri: '//path'
-      }, {} as chrome.runtime.Port)).rejects.toStrictEqual(new Error('invalid password'));
+      }, {} as browser.runtime.Port)).rejects.toStrictEqual(new Error('invalid password'));
     });
 
     test('pri(derivation.create) adds a derived account', async () => {
@@ -130,7 +130,7 @@ describe('Extension', () => {
         parentPassword: password,
         password,
         suri: '//path'
-      }, {} as chrome.runtime.Port);
+      }, {} as browser.runtime.Port);
       expect(keyring.getAccounts()).toHaveLength(2);
     });
 
@@ -141,7 +141,7 @@ describe('Extension', () => {
         parentPassword: password,
         password,
         suri: '//path'
-      }, {} as chrome.runtime.Port);
+      }, {} as browser.runtime.Port);
       expect(keyring.getAccount('5FP3TT3EruYBNh8YM8yoxsreMx7uZv1J1zNX7fFhoC5enwmN')?.meta.parentAddress).toEqual(address);
     });
   });
@@ -161,13 +161,13 @@ describe('Extension', () => {
         address,
         newPass,
         oldPass: wrongPass
-      }, {} as chrome.runtime.Port)).rejects.toStrictEqual(new Error('oldPass is invalid'));
+      }, {} as browser.runtime.Port)).rejects.toStrictEqual(new Error('oldPass is invalid'));
 
       await expect(extension.handle('id', 'pri(accounts.changePassword)', {
         address,
         newPass,
         oldPass: password
-      }, {} as chrome.runtime.Port)).resolves.toEqual(true);
+      }, {} as browser.runtime.Port)).resolves.toEqual(true);
 
       const pair = keyring.getPair(address);
 
@@ -210,7 +210,7 @@ describe('Extension', () => {
       const signatureExpected = registry
         .createType('ExtrinsicPayload', payload, { version: payload.version }).sign(pair);
 
-      tabs.handle('1615191860871.5', 'pub(extrinsic.sign)', payload, 'http://localhost:3000', {} as chrome.runtime.Port)
+      tabs.handle('1615191860871.5', 'pub(extrinsic.sign)', payload, 'http://localhost:3000', {} as browser.runtime.Port)
         .then((result) => {
           expect((result as ResponseSigning)?.signature).toEqual(signatureExpected.signature);
         }).catch((err) => console.log(err));
@@ -219,7 +219,7 @@ describe('Extension', () => {
         id: state.allSignRequests[0].id,
         password,
         savePass: false
-      }, {} as chrome.runtime.Port)).resolves.toEqual(true);
+      }, {} as browser.runtime.Port)).resolves.toEqual(true);
     });
 
     test('signs with default signed extensions - ethereum', async () => {
@@ -256,7 +256,7 @@ describe('Extension', () => {
       const signatureExpected = registry
         .createType('ExtrinsicPayload', ethPayload, { version: ethPayload.version }).sign(ethPair);
 
-      tabs.handle('1615191860871.5', 'pub(extrinsic.sign)', ethPayload, 'http://localhost:3000', {} as chrome.runtime.Port)
+      tabs.handle('1615191860871.5', 'pub(extrinsic.sign)', ethPayload, 'http://localhost:3000', {} as browser.runtime.Port)
         .then((result) => {
           expect((result as ResponseSigning)?.signature).toEqual(signatureExpected.signature);
         }).catch((err) => console.log(err));
@@ -265,7 +265,7 @@ describe('Extension', () => {
         id: state.allSignRequests[0].id,
         password,
         savePass: false
-      }, {} as chrome.runtime.Port)).resolves.toEqual(true);
+      }, {} as browser.runtime.Port)).resolves.toEqual(true);
     });
 
     test('signs with user extensions, known types', async () => {
@@ -318,7 +318,7 @@ describe('Extension', () => {
       const signatureExpected = registry
         .createType('ExtrinsicPayload', payload, { version: payload.version }).sign(pair);
 
-      tabs.handle('1615191860771.5', 'pub(extrinsic.sign)', payload, 'http://localhost:3000', {} as chrome.runtime.Port)
+      tabs.handle('1615191860771.5', 'pub(extrinsic.sign)', payload, 'http://localhost:3000', {} as browser.runtime.Port)
         .then((result) => {
           expect((result as ResponseSigning)?.signature).toEqual(signatureExpected.signature);
         }).catch((err) => console.log(err));
@@ -327,7 +327,7 @@ describe('Extension', () => {
         id: state.allSignRequests[0].id,
         password,
         savePass: false
-      }, {} as chrome.runtime.Port)).resolves.toEqual(true);
+      }, {} as browser.runtime.Port)).resolves.toEqual(true);
     });
 
     test('override default signed extension', async () => {
@@ -374,7 +374,7 @@ describe('Extension', () => {
       const signatureExpected = registry
         .createType('ExtrinsicPayload', payload, { version: payload.version }).sign(pair);
 
-      tabs.handle('1615191860771.5', 'pub(extrinsic.sign)', payload, 'http://localhost:3000', {} as chrome.runtime.Port)
+      tabs.handle('1615191860771.5', 'pub(extrinsic.sign)', payload, 'http://localhost:3000', {} as browser.runtime.Port)
         .then((result) => {
           expect((result as ResponseSigning)?.signature).toEqual(signatureExpected.signature);
         }).catch((err) => console.log(err));
@@ -383,7 +383,7 @@ describe('Extension', () => {
         id: state.allSignRequests[0].id,
         password,
         savePass: false
-      }, {} as chrome.runtime.Port)).resolves.toEqual(true);
+      }, {} as browser.runtime.Port)).resolves.toEqual(true);
     });
 
     test('signs with user extensions, additional types', async () => {
@@ -441,7 +441,7 @@ describe('Extension', () => {
       const signatureExpected = registry
         .createType('ExtrinsicPayload', payload, { version: payload.version }).sign(pair);
 
-      tabs.handle('1615191860771.5', 'pub(extrinsic.sign)', payload, 'http://localhost:3000', {} as chrome.runtime.Port)
+      tabs.handle('1615191860771.5', 'pub(extrinsic.sign)', payload, 'http://localhost:3000', {} as browser.runtime.Port)
         .then((result) => {
           expect((result as ResponseSigning)?.signature).toEqual(signatureExpected.signature);
         }).catch((err) => console.log(err));
@@ -450,7 +450,7 @@ describe('Extension', () => {
         id: state.allSignRequests[0].id,
         password,
         savePass: false
-      }, {} as chrome.runtime.Port)).resolves.toEqual(true);
+      }, {} as browser.runtime.Port)).resolves.toEqual(true);
     });
   });
 });

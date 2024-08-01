@@ -3,7 +3,7 @@
 // @ts-nocheck
 
 export default function (): boolean {
-  const extensionViews = chrome.extension.getViews({ type: 'popup' });
+  const extensionViews = browser.extension.getViews({ type: 'popup' });
   const isPopupOpenedByExtension = extensionViews.includes(window);
 
   return isPopupOpenedByExtension;
