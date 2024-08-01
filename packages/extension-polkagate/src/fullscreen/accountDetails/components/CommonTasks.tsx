@@ -42,14 +42,14 @@ interface TaskButtonProps {
 }
 
 export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): void => {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+  browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     if (tabs[0]?.url) {
       const extensionUrl = tabs[0].url;
       const extensionBaseUrl = extensionUrl.split('#')[0];
 
       const tabUrl = `${extensionBaseUrl}#${relativeUrl}`;
 
-      chrome.tabs.query({}, function (allTabs) {
+      browser.tabs.query({}, function (allTabs) {
         const existingTab = allTabs.find(function (tab) {
           return tab.url === tabUrl;
         });
@@ -57,9 +57,9 @@ export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): 
         closeCurrentTab && window.close();
 
         if (existingTab?.id) {
-          chrome.tabs.update(existingTab.id, { active: true }).catch(console.error);
+          browser.tabs.update(existingTab.id, { active: true }).catch(console.error);
         } else {
-          chrome.tabs.create({ url: tabUrl }).catch(console.error);
+          browser.tabs.create({ url: tabUrl }).catch(console.error);
         }
       });
     } else {
@@ -106,7 +106,7 @@ export const TaskButton = ({ disabled, icon, loading, mr = '25px', noBorderButto
   );
 };
 
-export default function CommonTasks ({ address, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
+export default function CommonTasks({ address, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -128,8 +128,8 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
     hasSoloStake ||
     (api && !api.tx?.['nominationPools']?.['migrateDelegation']) ||
     (api?.tx?.['nominationPools']?.['migrateDelegation'] && balance?.pooledBalance?.isZero())
-  ,
-  [api, balance?.pooledBalance, hasSoloStake]);
+    ,
+    [api, balance?.pooledBalance, hasSoloStake]);
 
   const goToSend = useCallback(() => {
     address && genesisHash &&
