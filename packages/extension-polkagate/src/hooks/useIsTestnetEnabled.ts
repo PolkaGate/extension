@@ -14,7 +14,7 @@ export default function useIsTestnetEnabled(): boolean | undefined {
       setTestnetIsEnabled(!!res);
     }).catch(console.error);
 
-    browser.storage.onChanged.addListener(function (changes, areaName) {
+    chrome.storage.onChanged.addListener(function (changes, areaName) {
       if (areaName === 'local' && 'testnet_enabled' in changes) {
         const newValue = changes.testnet_enabled.newValue as boolean;
 

@@ -4,6 +4,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
 

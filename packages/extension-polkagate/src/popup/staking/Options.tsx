@@ -1,10 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+import type { ApiPromise } from '@polkadot/api';
+import type { BalancesInfo } from '@polkadot/extension-polkagate/util/types';
 
 import { Boy as BoyIcon } from '@mui/icons-material';
 import { Box, Slide, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -14,14 +16,14 @@ import { PoolStakingIcon } from '../../components';
 import { useApi, useMinToReceiveRewardsInSolo, usePoolConsts, useStakingConsts, useTranslation, useUnSupportedNetwork } from '../../hooks';
 import { STAKING_CHAINS } from '../../util/constants';
 import StakingOption from './partial/StakingOption';
-import type { ApiPromise } from '@polkadot/api';
 
 interface Props {
   showStakingOptions: boolean;
   setShowStakingOptions: React.Dispatch<React.SetStateAction<boolean>>;
+  balance: BalancesInfo | undefined
 }
 
-export default function Options({ setShowStakingOptions, showStakingOptions }: Props): React.ReactElement {
+export default function Options({ balance, setShowStakingOptions, showStakingOptions }: Props): React.ReactElement {
   const { t } = useTranslation();
   const history = useHistory();
   const theme = useTheme();
@@ -35,6 +37,13 @@ export default function Options({ setShowStakingOptions, showStakingOptions }: P
   const minimumActiveStake = useMinToReceiveRewardsInSolo(address);
 
   const [minToReceiveRewardsInSolo, setMinToReceiveRewardsInSolo] = useState<BN | undefined>();
+
+  const hasSoloStake = Boolean(balance?.soloTotal && !balance.soloTotal.isZero());
+  const hasPoolStake = Boolean(balance?.pooledBalance && !balance.pooledBalance.isZero());
+
+  const isMigrationEnabled = useMemo(() => !!api?.tx?.['nominationPools']?.['migrateDelegation'], [api]);
+  const disableSolo = useMemo(() => isMigrationEnabled && hasPoolStake && !hasSoloStake, [hasPoolStake, hasSoloStake, isMigrationEnabled]);
+  const disablePool = useMemo(() => isMigrationEnabled && hasSoloStake && !hasPoolStake, [hasPoolStake, hasSoloStake, isMigrationEnabled]);
 
   useEffect(() => {
     if (!stakingConsts || !minimumActiveStake) {
@@ -61,7 +70,12 @@ export default function Options({ setShowStakingOptions, showStakingOptions }: P
   }, [address, api, history, pathname, stakingConsts]);
 
   return (
-    <Slide direction='up' in={showStakingOptions} mountOnEnter unmountOnExit>
+    <Slide
+      direction='up'
+      in={showStakingOptions}
+      mountOnEnter
+      unmountOnExit
+    >
       <Box sx={{ zIndex: -1 }}>
         <StakingOption
           api={api}
@@ -69,6 +83,7 @@ export default function Options({ setShowStakingOptions, showStakingOptions }: P
           balanceText={t('Minimum to join a pool')}
           buttonText={t<string>('Enter')}
           helperText={t('All the members of a pool act as a single nominator and the earnings of the pool are split pro rata to a member\'s stake in the bonded pool.')}
+          isDisabled={disablePool}
           logo={<PoolStakingIcon color={theme.palette.text.primary} />}
           onClick={goToPoolStaking}
           showQuestionMark
@@ -85,6 +100,7 @@ export default function Options({ setShowStakingOptions, showStakingOptions }: P
           balanceText={t('Minimum to receive rewards')}
           buttonText={t<string>('Enter')}
           helperText={t('Each solo staker will be responsible to nominate validators and keep eyes on them to re-nominate if needed.')}
+          isDisabled={disableSolo}
           logo={
             <BoyIcon
               sx={{

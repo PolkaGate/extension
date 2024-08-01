@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -23,12 +24,13 @@ interface Props {
   options: DropdownOption[];
   label: string;
   icon?: string;
+  isDisabled?: boolean;
   style: SxProps<Theme> | undefined;
   disabledItems?: string[] | number[];
   fullWidthDropdown?: boolean;
 }
 
-function SelectChain({ address, defaultValue, disabledItems, fullWidthDropdown, icon = undefined, label, onChange, options, style }: Props) {
+function SelectChain({ address, defaultValue, disabledItems, fullWidthDropdown, icon = undefined, isDisabled, label, onChange, options, style }: Props) {
   const currentChainName = useChainName(address !== 'dummy' ? address : undefined);
   const theme = useTheme();
   const isTestnetEnabled = useIsTestnetEnabled();
@@ -49,8 +51,8 @@ function SelectChain({ address, defaultValue, disabledItems, fullWidthDropdown, 
         return;
       }
 
-      browser.storage.local.get('RecentChains').then((res) => {
-        const accountsAndChains = res?.['RecentChains'] ?? {};
+      chrome.storage.local.get('RecentChains', (res) => {
+        const accountsAndChains = res?.RecentChains ?? {};
         let myRecentChains = accountsAndChains[address] as string[];
 
         if (!myRecentChains) {
@@ -61,13 +63,15 @@ function SelectChain({ address, defaultValue, disabledItems, fullWidthDropdown, 
             accountsAndChains[address] = [...INITIAL_RECENT_CHAINS_GENESISHASH, currentGenesisHash];
           }
 
-          browser.storage.local.set({ RecentChains: accountsAndChains });
+          // eslint-disable-next-line no-void
+          void chrome.storage.local.set({ RecentChains: accountsAndChains });
         } else if (myRecentChains && !(myRecentChains.includes(currentGenesisHash))) {
           myRecentChains.unshift(currentGenesisHash);
           myRecentChains.pop();
           accountsAndChains[address] = myRecentChains;
 
-          browser.storage.local.set({ RecentChains: accountsAndChains });
+          // eslint-disable-next-line no-void
+          void chrome.storage.local.set({ RecentChains: accountsAndChains });
         }
       });
     } catch (error) {
@@ -80,18 +84,18 @@ function SelectChain({ address, defaultValue, disabledItems, fullWidthDropdown, 
       <Grid item xs>
         <Select
           defaultValue={defaultValue}
-          disabledItems={_disabledItems as any[]}
+          disabledItems={_disabledItems}
           fullWidthDropdown={fullWidthDropdown}
-          isDisabled={!address}
+          isDisabled={!address || isDisabled}
           label={label}
-          onChange={onChangeNetwork as () => void}
+          onChange={onChangeNetwork}
           options={options}
           showLogo
         />
       </Grid>
       <Grid item sx={{ ml: '10px', width: 'fit-content' }}>
         {icon
-          ? <Avatar src={icon} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName as string) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 31, width: 31 }} variant='square' />
+          ? <Avatar src={icon} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 31, width: 31 }} variant='square' />
           : <Grid sx={{ bgcolor: 'divider', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', height: '31px', width: '31px' }}>
             <FontAwesomeIcon
               color={theme.palette.secondary.light}

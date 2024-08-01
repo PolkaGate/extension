@@ -17,7 +17,6 @@ import { openOrFocusTab } from '../fullscreen/accountDetails/components/CommonTa
 import { useAccount, useTranslation } from '../hooks';
 import HistoryModal from '../popup/history/modal/HistoryModal';
 import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
-import { noop } from '@polkadot/util';
 
 interface Props {
   address: AccountId | string;
@@ -37,30 +36,6 @@ type QuickActionButtonType = {
 
 const ARROW_ICON_SIZE = 17;
 const ACTION_ICON_SIZE = '27px';
-
-const QuickActionButton = ({ disabled, divider, icon, onClick, title }: QuickActionButtonType) => {
-  const theme = useTheme();
-  
-  return (
-    <>
-      <Grid alignItems='center' container direction='column' display='flex' item justifyContent='center' onClick={!disabled ? onClick : noop} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minWidth: '80px', p: '0 5px', width: 'fit-content' }}>
-        <Grid alignItems='center' container height='40px' item justifyContent='center' width='fit-content'>
-          {icon}
-        </Grid>
-        <Grid alignItems='center' height='25px' item textAlign='center' width='max-content'>
-          <Typography fontSize='14px' fontWeight={theme.palette.mode === 'dark' ? 300 : 400} sx={{ opacity: disabled ? 0.7 : 1, pt: '3px' }}>
-            {title}
-          </Typography>
-        </Grid>
-      </Grid>
-      {divider &&
-        <Grid alignItems='center' item justifyContent='center'>
-          <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '30px', width: '2px' }} />
-        </Grid>
-      }
-    </>
-  );
-};
 
 export default function QuickActionFullScreen({ address, assetId, containerRef, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
@@ -94,7 +69,31 @@ export default function QuickActionFullScreen({ address, assetId, containerRef, 
     setShowHistory(true);
   }, []);
 
+  const nullF = useCallback(() => null, []);
+
   const isSlideOpen = quickActionOpen === address;
+
+  const QuickActionButton = ({ disabled, divider, icon, onClick, title }: QuickActionButtonType) => {
+    return (
+      <>
+        <Grid alignItems='center' container direction='column' display='flex' item justifyContent='center' onClick={!disabled ? onClick : nullF} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minWidth: '80px', p: '0 5px', width: 'fit-content' }}>
+          <Grid alignItems='center' container height='40px' item justifyContent='center' width='fit-content'>
+            {icon}
+          </Grid>
+          <Grid alignItems='center' height='25px' item textAlign='center' width='max-content'>
+            <Typography fontSize='14px' fontWeight={theme.palette.mode === 'dark' ? 300 : 400} sx={{ opacity: disabled ? 0.7 : 1, pt: '3px' }}>
+              {title}
+            </Typography>
+          </Grid>
+        </Grid>
+        {divider &&
+          <Grid alignItems='center' item justifyContent='center'>
+            <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '30px', width: '2px' }} />
+          </Grid>
+        }
+      </>
+    );
+  };
 
   const movingParts = (
     <Grid alignItems='center' bgcolor='background.paper' container justifyContent='space-around' sx={{ border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '0 6px 6px 0', boxShadow: '0px 0px 10px 5px rgba(0, 0, 0, 0.55)', flexFlow: 'nowrap', p: '5px 10px 5px 20px', width: 'calc(fit-content + 50px)' }}>

@@ -1,17 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faCog, faHand } from '@fortawesome/free-solid-svg-icons';
+import type { BN } from '@polkadot/util';
+
+import { faHand, faHandHoldingDollar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { openOrFocusTab, TaskButton } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { useInfo, useStakingAccount, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
-import { BN } from '@polkadot/util';
 
 import ConfigurePayee from '../commonTasks/configurePayee';
 
@@ -22,7 +22,7 @@ interface Props {
 
 }
 
-export default function CommonTasks({ address, setRefresh, staked }: Props): React.ReactElement {
+export default function CommonTasks ({ address, setRefresh, staked }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { genesisHash } = useInfo(address);
@@ -67,7 +67,7 @@ export default function CommonTasks({ address, setRefresh, staked }: Props): Rea
               <FontAwesomeIcon
                 color={`${iconColor}`}
                 fontSize='22px'
-                icon={faCog}
+                icon={faHandHoldingDollar}
               />
             }
             mr='0px'

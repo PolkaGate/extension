@@ -3,7 +3,7 @@
   "bugs": "https://github.com/polkagate/extension/issues",
   "description": "A user-friendly wallet for seamless browser-based interaction with Polkadot/Substrate-based blockchains.",
   "engines": {
-    "node": ">=18"
+    "node": ">=18.18"
   },
   "homepage": "https://github.com/polkagate/extension/tree/master/packages/extension-polkagate#readme",
   "license": "Apache-2.0",
@@ -22,11 +22,12 @@
     "@fortawesome/free-regular-svg-icons": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@polkadot-api/merkleize-metadata": "^1.1.1",
     "@polkadot/extension-base": "^0.47.5",
     "@polkadot/extension-chains": "^0.47.5",
     "@polkadot/extension-dapp": "^0.47.5",
     "@polkadot/extension-inject": "^0.47.5",
-    "@polkadot/hw-ledger": "latest",
+    "@polkadot/hw-ledger": "^12.6.2",
     "@polkadot/keyring": "latest",
     "@polkadot/networks": "latest",
     "@polkadot/react-identicon": "latest",
@@ -37,6 +38,7 @@
     "@polkadot/ui-settings": "^3.6.6",
     "@polkadot/util": "latest",
     "@polkadot/util-crypto": "latest",
+    "@zondax/ledger-substrate": "^0.44.7",
     "file-saver": "^2.0.5",
     "i18next": "^21.8.8",
     "react": "^18.1.0",

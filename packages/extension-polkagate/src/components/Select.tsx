@@ -1,12 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { DropdownOption } from '../util/types';
 
-import { type SelectChangeEvent, Avatar, FormControl, Grid, InputBase, MenuItem, Select, Typography } from '@mui/material';
+import { Avatar, FormControl, Grid, InputBase, MenuItem, Select, type SelectChangeEvent, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -17,11 +17,11 @@ import { sanitizeChainName } from '../util/utils';
 import Label from './Label';
 
 interface Props {
-  defaultValue?: string | number | undefined;
+  defaultValue: string | number | undefined;
   value?: string | number | undefined;
   onChange?: (value: number | string) => void;
   options: DropdownOption[];
-  label: string;
+  label?: string;
   isDisabled?: boolean;
   showLogo?: boolean;
   _mt?: string | number;
@@ -30,7 +30,7 @@ interface Props {
   fullWidthDropdown?: boolean;
 }
 
-function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, fullWidthDropdown, helperText, isDisabled = false, label, onChange, options, showLogo = false, value }: Props) {
+function CustomizedSelect ({ _mt = 0, defaultValue, disabledItems, fullWidthDropdown, helperText, isDisabled = false, label, onChange, options, showLogo = false, value }: Props) {
   const theme = useTheme();
 
   const [showMenu, setShowMenu] = useState<boolean>(false);

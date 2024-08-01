@@ -12,24 +12,26 @@ import { ActionContext, MenuItem, SocialRecoveryIcon, VaadinIcon } from '../../.
 import { useInfo, useTranslation } from '../../../hooks';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 import { POPUPS_NUMBER } from './AccountInformationForHome';
+import ProfileMenu from './ProfileMenu';
 
 interface Props {
   address: string | undefined;
   baseButton: React.ReactNode;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
-interface AccountMenuProps {
-  address: string | undefined;
-  setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
-  handleClose: () => void
-}
 
-const AccountMenu = ({ address, handleClose, setDisplayPopup }: AccountMenuProps) => {
-  const { t } = useTranslation();  
+const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
+  : {
+    address: string | undefined,
+    handleClose: () => void,
+    setAnchorEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>,
+    setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>,
+  }) => {
+  const { t } = useTranslation();
   const theme = useTheme();
+  const onAction = useContext(ActionContext);
 
   const { account, chain } = useInfo(address);
-  const onAction = useContext(ActionContext);
   const hasPrivateKey = !(account?.isExternal || account?.isHardware);
 
   const onForgetAccount = useCallback(() => {
@@ -71,6 +73,7 @@ const AccountMenu = ({ address, handleClose, setDisplayPopup }: AccountMenuProps
       return !supportedChains.includes(chain.genesisHash ?? '');
     }
   }, [chain]);
+
   return (
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
       <MenuItem
@@ -112,6 +115,10 @@ const AccountMenu = ({ address, handleClose, setDisplayPopup }: AccountMenuProps
         withHoverEffect
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
+      <ProfileMenu
+        address={address}
+        setUpperAnchorEl={setAnchorEl}
+      />
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
@@ -165,7 +172,6 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
     setAnchorEl(event.currentTarget);
   }, []);
 
-
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
 
@@ -192,10 +198,11 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
           vertical: 'top'
         }}
       >
-        <AccountMenu 
-        address={address}
-        handleClose={handleClose}
-        setDisplayPopup={setDisplayPopup}
+        <Menus
+          address={address}
+          setDisplayPopup={setDisplayPopup}
+          handleClose={handleClose}
+          setAnchorEl={setAnchorEl}
         />
       </Popover>
     </>

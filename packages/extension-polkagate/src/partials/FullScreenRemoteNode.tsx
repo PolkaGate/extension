@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,7 +10,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
-import type { ChromeStorageGetResponse } from '../components/RemoteNodeSelector';
+import { ChromeStorageGetResponse } from '../components/RemoteNodeSelector';
 import { useEndpoints, useInfo } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
 import CalculateNodeDelay from '../util/calculateNodeDelay';
@@ -73,7 +74,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
     const mappedEndpoints = endpointOptions.map((endpoint) => ({ delay: null, name: endpoint.text.replace(/^via\s/, ''), value: endpoint.value }));
 
     setCurrentDelay(undefined);
-    setEndpointsDelay(mappedEndpoints as any);
+    setEndpointsDelay(mappedEndpoints);
   }, [endpointOptions]);
 
   const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
@@ -89,22 +90,21 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
       });
     });
 
-    chainName && address && browser.storage.local.get('endpoints')
-      .then((res: { endpoints?: ChromeStorageGetResponse }) => {
-        const i = `${address}`;
-        const j = `${chainName}`;
-        const savedEndpoints: ChromeStorageGetResponse = res?.endpoints || {};
+    chainName && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
+      const i = `${address}`;
+      const j = `${chainName}`;
+      const savedEndpoints: ChromeStorageGetResponse = res?.endpoints || {};
 
-        savedEndpoints[i] = savedEndpoints[i] || {};
-        // @ts-ignore
-        savedEndpoints[i][j] = newEndpoint;
+      savedEndpoints[i] = savedEndpoints[i] || {};
 
-        browser.storage.local.set({ endpoints: savedEndpoints });
-      });
+      savedEndpoints[i][j] = newEndpoint;
+
+      // eslint-disable-next-line no-void
+      void chrome.storage.local.set({ endpoints: savedEndpoints });
+    });
   }, [address, chainName]);
 
   useEffect(() => {
-    // @ts-ignore
     if (fetchedApiAndDelay && fetchedApiAndDelay.fetchedApi && fetchedApiAndDelay.fetchedApi?._options?.provider?.endpoint === endpointUrl) {
       setApi(fetchedApiAndDelay.fetchedApi);
       setCurrentDelay(fetchedApiAndDelay.fetchedDelay);
@@ -122,7 +122,6 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
         setFetchedApiAndDelay({ fetchedApi: response.api, fetchedDelay: response.delay });
         setEndpointsDelay((prevEndpoints) => {
           return prevEndpoints?.map((endpoint) => {
-            //@ts-ignore
             if (endpoint.value === response.api?._options?.provider?.endpoint) {
               return { ...endpoint, delay: response.delay };
             }

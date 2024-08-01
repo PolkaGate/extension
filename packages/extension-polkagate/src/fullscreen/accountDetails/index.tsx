@@ -3,27 +3,27 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Lock } from '../../hooks/useAccountLocks';
+import type { FetchedBalance } from '../../hooks/useAssetsBalances';
+
 import { faFileInvoice } from '@fortawesome/free-solid-svg-icons';
-import { Grid } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext } from '../../components';
+import { AccountContext, ActionContext, Warning } from '../../components';
 import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
-import type { Lock } from '../../hooks/useAccountLocks';
-import type { FetchedBalance } from '../../hooks/useAssetsBalances';
 import ExportAccountModal from '../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../popup/forgetAccount/ForgetAccountModal';
 import HistoryModal from '../../popup/history/modal/HistoryModal';
-import { label } from '../../popup/home/AccountsTree';
+import { AccountLabel } from '../../popup/home/AccountLabel';
 import DeriveAccountModal from '../../popup/newAccount/deriveAccount/modal/DeriveAccountModal';
 import ReceiveModal from '../../popup/receive/ReceiveModal';
 import RenameModal from '../../popup/rename/RenameModal';
-import { EXTRA_PRICE_IDS } from '../../util/api/getPrices';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
-import { sanitizeChainName } from '../../util/utils';
+import { getPriceIdByChainName } from '../../util/utils';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
@@ -32,14 +32,14 @@ import ReservedDisplayBalance from './components/ReservedDisplayBalance';
 import LockedInReferenda from './unlock/Review';
 import { AccountInformationForDetails, AccountSetting, AssetSelect, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
 
-export const popupNumbers = {
-  LOCKED_IN_REFERENDA: 1,
-  FORGET_ACCOUNT: 2,
-  RENAME: 3,
-  EXPORT_ACCOUNT: 4,
-  DERIVE_ACCOUNT: 5,
-  RECEIVE: 6,
-  HISTORY: 7
+export enum popupNumbers {
+  LOCKED_IN_REFERENDA,
+  FORGET_ACCOUNT,
+  RENAME,
+  EXPORT_ACCOUNT,
+  DERIVE_ACCOUNT,
+  RECEIVE,
+  HISTORY
 };
 
 export interface UnlockInformationType {
@@ -51,6 +51,7 @@ export interface UnlockInformationType {
 export default function AccountDetails(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
+  const theme = useTheme();
   const { address, paramAssetId } = useParams<{ address: string, paramAssetId?: string }>();
   const { accounts } = useContext(AccountContext);
   const currency = useCurrency();
@@ -96,6 +97,10 @@ export default function AccountDetails(): React.ReactElement {
       : { ...(balances || {}), ...(selectedAsset || {}) };
   }, [assetId, balances, chainName, selectedAsset]);
 
+  const isDualStaking = useMemo(() =>
+    balancesToShow?.soloTotal && balancesToShow?.pooledBalance && !balancesToShow.soloTotal.isZero() && !balancesToShow.pooledBalance.isZero()
+  , [balancesToShow?.pooledBalance, balancesToShow?.soloTotal]);
+
   const currentPrice = useMemo((): number | undefined => {
     const selectedAssetPriceId = selectedAsset?.priceId;
 
@@ -104,8 +109,8 @@ export default function AccountDetails(): React.ReactElement {
       return 0;
     }
 
-    const currentChainName = sanitizeChainName(chainName)?.toLocaleLowerCase()?.replace('assethub', '');
-    const currentAssetPrices = pricesInCurrency?.prices?.[(selectedAssetPriceId || EXTRA_PRICE_IDS[currentChainName || ''] || currentChainName) as string];
+    const _priceId = getPriceIdByChainName(chainName);
+    const currentAssetPrices = pricesInCurrency?.prices?.[(selectedAssetPriceId || _priceId)];
     const mayBeTestNetPrice = pricesInCurrency?.prices && !currentAssetPrices ? 0 : undefined;
 
     return currentAssetPrices?.value || mayBeTestNetPrice;
@@ -180,7 +185,13 @@ export default function AccountDetails(): React.ReactElement {
               <AccountInformationForDetails
                 accountAssets={accountAssets}
                 address={address}
-                label={label(account, hasParent?.name || '', t)}
+                label={
+                  <AccountLabel
+                    account={account}
+                    ml='0px'
+                    parentName={hasParent?.name || ''}
+                  />
+                }
                 price={currentPrice}
                 pricesInCurrency={pricesInCurrency}
                 selectedAsset={balancesToShow as any}
@@ -189,6 +200,17 @@ export default function AccountDetails(): React.ReactElement {
               />
               {genesisHash &&
                 <>
+                  {isDualStaking &&
+                    <Grid container sx={{ '> div': { pl: '3px' } }}>
+                      <Warning
+                        iconDanger
+                        marginTop={0}
+                        theme={theme}
+                      >
+                        {t('Nomination Pools are evolving! Unstake your solo staked funds soon to benefit from automatic pool migration, which allows participation in both a pool and governance, and avoid manual changes.')}
+                      </Warning>
+                    </Grid>
+                  }
                   {isOnAssetHub &&
                     <AssetSelect
                       address={address}
@@ -216,7 +238,7 @@ export default function AccountDetails(): React.ReactElement {
                       title={t('Locked')}
                       token={balancesToShow?.token}
                     />}
-                  {supportStaking &&
+                  {supportStaking && !balancesToShow?.soloTotal?.isZero() &&
                     <DisplayBalance
                       amount={balancesToShow?.soloTotal}
                       decimal={balancesToShow?.decimal}
@@ -226,7 +248,7 @@ export default function AccountDetails(): React.ReactElement {
                       title={t('Solo Stake')}
                       token={balancesToShow?.token}
                     />}
-                  {supportStaking &&
+                  {supportStaking && !balancesToShow?.pooledBalance?.isZero() &&
                     <DisplayBalance
                       amount={balancesToShow?.pooledBalance}
                       decimal={balancesToShow?.decimal}

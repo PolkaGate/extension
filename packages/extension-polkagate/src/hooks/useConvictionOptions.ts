@@ -1,9 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
+// @ts-nocheck
 /* eslint-disable header/header */
 
-import type { TFunction } from '@polkagate/apps-config/types';
+/**
+ * @description
+ * This hook will get and calculate the conviction options
+ */
+
+import { TFunction } from '@polkagate/apps-config/types';
 import { useCallback, useEffect, useState } from 'react';
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -19,9 +24,9 @@ export default function useConvictionOptions(address: string | AccountId | undef
   const [savedConvictionOptions, setSavedConvictionOptions] = useState<{ text: string; value: number }[] | undefined>();
   const genesisHash = useChain(address)?.genesisHash;
   const api = useApi(address);
-  const voteLockingPeriod = api && api.consts['convictionVoting']?.['voteLockingPeriod'];
+  const voteLockingPeriod = api && api.consts.convictionVoting?.voteLockingPeriod;
 
-  const getConvictionOptions = useCallback((blockTime: BN, voteLockingPeriod: any, genesisHash: string) => {
+  const getConvictionOptions = useCallback((blockTime, voteLockingPeriod, genesisHash) => {
     const options = [
       { text: t('0.1x voting balance, no lockup period'), value: 0.1 },
       ...CONVICTIONS.map(([value, duration, durationBn]): { text: string; value: number } => ({
@@ -38,13 +43,15 @@ export default function useConvictionOptions(address: string | AccountId | undef
       }))
     ];
 
-    browser.storage.local.get('Convictions').then((res) => {
+    // eslint-disable-next-line no-void
+    chrome.storage.local.get('Convictions', (res) => {
       const k = `${genesisHash}`;
-      const last = res?.['Convictions'] || {};
+      const last = res?.Convictions || {};
 
       last[k] = options;
 
-      browser.storage.local.set({ Convictions: last });
+      // eslint-disable-next-line no-void
+      void chrome.storage.local.set({ Convictions: last });
     });
 
     setConvictionOptions(options);
@@ -64,9 +71,11 @@ export default function useConvictionOptions(address: string | AccountId | undef
     }
 
     /** load Convictions from storage */
-    browser.storage.local.get('Convictions').then((res) => {
-      if (res?.['Convictions']?.[genesisHash]) {
-        setSavedConvictionOptions(res['Convictions'][genesisHash]);
+    chrome.storage.local.get('Convictions', (res) => {
+      // console.log('ConvictionOptions in local storage:', res);
+
+      if (res?.Convictions?.[genesisHash]) {
+        setSavedConvictionOptions(res.Convictions[genesisHash]);
 
         return;
       }

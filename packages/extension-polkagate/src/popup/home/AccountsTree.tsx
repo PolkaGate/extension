@@ -1,13 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { Backdrop, Container, Grid, useTheme } from '@mui/material';
-import { TFunction } from '@polkagate/apps-config/types';
 import React, { useCallback, useEffect } from 'react';
 
 import { PButton } from '../../components';
@@ -15,6 +13,7 @@ import { useActiveRecoveries, useApi, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import getParentNameSuri from '../../util/getParentNameSuri';
+import { AccountLabel } from './AccountLabel';
 import AccountPreview from './AccountPreview';
 
 interface Props extends AccountWithChildren {
@@ -25,29 +24,10 @@ interface Props extends AccountWithChildren {
   setHasActiveRecovery: React.Dispatch<React.SetStateAction<string | null | undefined>>;
 }
 
-export const label = (account: AccountJson | undefined, parentName: string | undefined, t: TFunction): string | undefined => {
-  if (account?.isHardware) {
-    return t('Ledger');
-  }
-
-  if (account?.isQR) {
-    return t('QR-attached');
-  }
-
-  if (account?.isExternal) {
-    return t('Watch-only');
-  }
-
-  if (account?.parentAddress) {
-    return t('Derived from {{parentName}}', { replace: { parentName } });
-  }
-
-  return undefined;
-};
-
-export default function AccountsTree({ hideNumbers, parentName, quickActionOpen, setHasActiveRecovery, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
+export default function AccountsTree ({ hideNumbers, parentName, quickActionOpen, setHasActiveRecovery, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+
   const api = useApi(SOCIAL_RECOVERY_CHAINS.includes(account?.genesisHash ?? '') ? account.address : undefined);
   const activeRecovery = useActiveRecoveries(api, account.address);
 
@@ -77,9 +57,11 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
           position: 'relative'
         }}
       >
-        <Grid item sx={{ bgcolor: '#454545', color: 'white', fontSize: '10px', ml: 3, position: 'absolute', px: 1, width: 'fit-content' }}>
-          {label(account, parentNameSuri, t)}
-        </Grid>
+        <AccountLabel
+          account={account}
+          ml='10px'
+          parentName={parentNameSuri}
+        />
         <AccountPreview
           {...account}
           hideNumbers={hideNumbers}

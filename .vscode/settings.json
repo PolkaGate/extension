@@ -1,6 +1,8 @@
 {
     "cSpell.words": [
+        "divn",
         "Ekbatanifard",
+        "iadd",
         "Infotip",
         "judgements",
         "Kusama",
@@ -8,5 +10,6 @@
         "Polkagate",
         "Roboto",
         "suri"
-    ]
+    ],
+    "references.preferredLocation": "view"
 }

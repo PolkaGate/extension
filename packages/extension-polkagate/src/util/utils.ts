@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Theme } from '@mui/material';
+import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -10,11 +11,11 @@ import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
 import type { SavedMetaData, TransactionDetail } from './types';
 
-import { ApiPromise } from '@polkadot/api';
 import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS } from './constants';
+import { EXTRA_PRICE_IDS } from './api/getPrices';
+import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, PROFILE_COLORS, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS } from './constants';
 
 interface Meta {
   docs: Text[];
@@ -306,45 +307,37 @@ export const isEqual = (a1: any[] | null, a2: any[] | null): boolean => {
 };
 
 export function saveAsHistory(formatted: string, info: TransactionDetail) {
-  browser.storage.local.get('history')
-    .then((res) => {
-      const k = formatted; // No need for type assertion here
-      const last = (res?.['history'] ?? {}) as { [key: string]: TransactionDetail[] };
+  chrome.storage.local.get('history', (res) => {
+    const k = `${formatted}` as any;
+    const last = (res?.['history'] ?? {}) as unknown as { [key: string]: TransactionDetail[] };
 
-      if (last[k]) {
-        last[k].push(info);
-      } else {
-        last[k] = [info];
-      }
+    if (last[k]) {
+      last[k].push(info);
+    } else {
+      last[k] = [info];
+    }
 
-      return browser.storage.local.set({ history: last });
-    })
-    .then(() => {
-      console.log('History saved successfully');
-    })
-    .catch((error) => {
-      console.error('Error saving history:', error);
-    });
+    // eslint-disable-next-line no-void
+    void chrome.storage.local.set({ history: last });
+  });
 }
 
 export async function getHistoryFromStorage(formatted: string): Promise<TransactionDetail[] | undefined> {
   return new Promise((resolve) => {
-    browser.storage.local.get('history')
-      .then((res) => {
-        console.log('res:', res)
-        const k = `${formatted}` as any;
-        const last = (res?.['history'] ?? {}) as unknown as { [key: string]: TransactionDetail[] };
+    chrome.storage.local.get('history', (res) => {
+      const k = `${formatted}` as any;
+      const last = (res?.['history'] ?? {}) as unknown as { [key: string]: TransactionDetail[] };
 
 
-        resolve(last?.[k]);
-      });
+      resolve(last?.[k]);
+    });
   });
 }
 
 export const isHexToBn = (i: string): BN => isHex(i) ? hexToBn(i) : new BN(i);
 export const toBN = (i: any): BN => isHexToBn(String(i));
 
-export const sanitizeChainName = (chainName: string | undefined) => (chainName?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', '')?.replace(' Finance', '')?.replace(/\s/g, ''));
+export const sanitizeChainName = (chainName: string | undefined) => (chainName?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', '')?.replace(' Finance', '')?.replace(' Testnet', '')?.replace(/\s/g, ''));
 
 export const isEmail = (input: string | undefined) => {
   if (!input) {
@@ -390,3 +383,24 @@ export const truncString32Bytes = (input: string | null | undefined): string | n
 export const isOnRelayChain = (genesisHash?: string) => RELAY_CHAINS_GENESISHASH.includes(genesisHash || '');
 
 export const isOnAssetHub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');
+
+export const getProfileColor = (index: number, theme: Theme): string => {
+  if (index >= 0) {
+    const _index = index % PROFILE_COLORS.length; // to return colors recursively
+
+    return PROFILE_COLORS[_index][theme.palette.mode];
+  }
+
+  return PROFILE_COLORS[0][theme.palette.mode];
+};
+
+export const getPriceIdByChainName = (chainName?: string) => {
+  if (!chainName) {
+    return '';
+  }
+
+  const _chainName = (sanitizeChainName(chainName) as string).toLocaleLowerCase();
+
+  return EXTRA_PRICE_IDS[_chainName] ||
+    _chainName?.replace('assethub', '')?.replace('people', '');
+};

@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
 // @ts-nocheck
+
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { PalletIdentityRegistration } from '@polkadot/types/lookup';
 
@@ -29,11 +29,10 @@ export default function useAccountsInfo(api: ApiPromise | undefined, chain: Chai
   const getAccountsInfo = useCallback(() => {
     try {
       setFetching(true);
-      _api && _api.query['identity']['identityOf'].entries().then((ids) => {
+      _api && _api.query.identity.identityOf.entries().then((ids) => {
         console.log(`${ids?.length} accountsInfo fetched from ${chain?.name ?? ''}`);
 
         const fetchedAccountsInfo = ids.map(([key, value]) => {
-          // @ts-ignore
           const { info, judgements } = value.unwrap()[0] as PalletIdentityRegistration;
 
           return {
@@ -43,7 +42,6 @@ export default function useAccountsInfo(api: ApiPromise | undefined, chain: Chai
               email: hexToString(info.email.asRaw.toHex()),
               judgements,
               legal: hexToString(info.legal.asRaw.toHex()),
-              // @ts-ignore
               riot: hexToString((info.riot || info.matrix).asRaw.toHex()),
               twitter: hexToString(info.twitter.asRaw.toHex()),
               web: hexToString(info.web.asRaw.toHex())
@@ -51,15 +49,17 @@ export default function useAccountsInfo(api: ApiPromise | undefined, chain: Chai
           };
         });
 
-        setInfos(fetchedAccountsInfo as any);
+        setInfos(fetchedAccountsInfo);
 
-        browser.storage.local.get('AccountsInfo').then((res) => {
+        // eslint-disable-next-line no-void
+        chrome.storage.local.get('AccountsInfo', (res) => {
           const k = `${chain?.genesisHash}`;
-          const last = res?.['Convictions'] || {};
+          const last = res?.Convictions || {};
 
           last[k] = JSON.stringify(fetchedAccountsInfo);
 
-          browser.storage.local.set({ AccountsInfo: last });
+          // eslint-disable-next-line no-void
+          void chrome.storage.local.set({ AccountsInfo: last });
         });
       }).catch(console.error);
       setFetching(false);
@@ -74,11 +74,11 @@ export default function useAccountsInfo(api: ApiPromise | undefined, chain: Chai
       return;
     }
 
-    browser.storage.local.get('AccountsInfo').then((res) => {
+    chrome.storage.local.get('AccountsInfo', (res) => {
       console.log('AccountsInfo in local storage:', res);
 
-      if (res?.['AccountsInfo']?.[chain.genesisHash as string]) {
-        const parsedInfos = JSON.parse(res['AccountsInfo']?.[chain?.genesisHash as string]);
+      if (res?.AccountsInfo?.[chain.genesisHash]) {
+        const parsedInfos = JSON.parse(res.AccountsInfo?.[chain?.genesisHash]);
 
         setInfos(parsedInfos);
       }

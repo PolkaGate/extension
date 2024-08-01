@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { MyPoolInfo } from '../util/types';
 
@@ -36,16 +37,17 @@ export default function usePool(address?: AccountId | string, id?: number, refre
         setNewPool(null);
 
         /** reset isFetching */
-        isFetching.fetching[String(stakerAddress)]['getPool'] = false;
+        isFetching.fetching[String(stakerAddress)].getPool = false;
         isFetching.set(isFetching.fetching);
 
-        browser.storage.local.get('MyPools').then((res) => {
+        chrome.storage.local.get('MyPools', (res) => {
           const k = `${stakerAddress}`;
-          const mySavedPools = res?.['MyPools'] || {};
+          const mySavedPools = res?.MyPools || {};
 
           mySavedPools[k] = null; // to remove old saved pool, even set empty for not already pool staked account
 
-          browser.storage.local.set({ MyPools: mySavedPools });
+          // eslint-disable-next-line no-void
+          void chrome.storage.local.set({ MyPools: mySavedPools });
         });
 
         getPoolWorker.terminate();
@@ -57,16 +59,12 @@ export default function usePool(address?: AccountId | string, id?: number, refre
 
       /** convert hex strings to BN strings*  MUST be string since nested BNs can not be saved in local storage safely*/
       if (parsedInfo.member) {
-        // @ts-ignore
-        parsedInfo.member.points = isHexToBn(parsedInfo.member.points as any).toString();
+        parsedInfo.member.points = isHexToBn(parsedInfo.member.points).toString();
       }
 
-      // @ts-ignore
-      parsedInfo.bondedPool.points = isHexToBn(parsedInfo.bondedPool.points as any).toString();
-      // @ts-ignore
-      parsedInfo.stashIdAccount.stakingLedger.active = isHexToBn(parsedInfo.stashIdAccount.stakingLedger.active as any).toString();
-      // @ts-ignore
-      parsedInfo.stashIdAccount.stakingLedger.total = isHexToBn(parsedInfo.stashIdAccount.stakingLedger.total as any).toString();
+      parsedInfo.bondedPool.points = isHexToBn(parsedInfo.bondedPool.points).toString();
+      parsedInfo.stashIdAccount.stakingLedger.active = isHexToBn(parsedInfo.stashIdAccount.stakingLedger.active).toString();
+      parsedInfo.stashIdAccount.stakingLedger.total = isHexToBn(parsedInfo.stashIdAccount.stakingLedger.total).toString();
 
       console.log('*** My pool info from worker is:', parsedInfo);
 
@@ -74,19 +72,20 @@ export default function usePool(address?: AccountId | string, id?: number, refre
 
       /** reset isFetching */
       if (isFetching.fetching[String(stakerAddress)]) {
-        isFetching.fetching[String(stakerAddress)]['getPool'] = false;
+        isFetching.fetching[String(stakerAddress)].getPool = false;
         isFetching.set(isFetching.fetching);
       }
 
       /** save my pool to local storage if it is not fetched by id, note, a pool to join is fetched by Id*/
-      !id && browser.storage.local.get('MyPools').then((res) => {
+      !id && chrome.storage.local.get('MyPools', (res) => {
         const k = `${stakerAddress}`;
-        const last = res?.['MyPools'] || {};
+        const last = res?.MyPools || {};
 
         parsedInfo.date = Date.now();
         last[k] = parsedInfo;
 
-        browser.storage.local.set({ MyPools: last });
+        // eslint-disable-next-line no-void
+        void chrome.storage.local.set({ MyPools: last });
       });
 
       getPoolWorker.terminate();
@@ -108,12 +107,12 @@ export default function usePool(address?: AccountId | string, id?: number, refre
     //   return;
     // }
 
-    if (!isFetching.fetching[String(formatted)]?.['getPool']) {
+    if (!isFetching.fetching[String(formatted)]?.getPool) {
       if (!isFetching.fetching[String(formatted)]) {
         isFetching.fetching[String(formatted)] = {}; // to initialize
       }
 
-      isFetching.fetching[String(formatted)]['getPool'] = true;
+      isFetching.fetching[String(formatted)].getPool = true;
       isFetching.set(isFetching.fetching);
 
       getPoolInfo(endpoint, formatted, id);
@@ -122,7 +121,7 @@ export default function usePool(address?: AccountId | string, id?: number, refre
       setWaiting(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFetching.fetching[String(formatted)]?.['length'], endpoint, formatted, getPoolInfo, id, pool]);
+  }, [isFetching.fetching[String(formatted)]?.length, endpoint, formatted, getPoolInfo, id, pool]);
 
   useEffect(() => {
     refresh && console.log('refreshing ...');
@@ -135,11 +134,11 @@ export default function usePool(address?: AccountId | string, id?: number, refre
     }
 
     /** load pool from storage */
-    browser.storage.local.get('MyPools').then((res) => {
+    chrome.storage.local.get('MyPools', (res) => {
       console.log('MyPools in local storage:', res);
 
-      if (res?.['MyPools']?.[formatted] !== undefined) {
-        setSavedPool(res['MyPools'][formatted]);
+      if (res?.MyPools?.[formatted] !== undefined) {
+        setSavedPool(res.MyPools[formatted]);
 
         return;
       }
@@ -153,7 +152,7 @@ export default function usePool(address?: AccountId | string, id?: number, refre
       return;
     }
 
-    browser.storage.onChanged.addListener((changes, namespace) => {
+    chrome.storage.onChanged.addListener((changes, namespace) => {
       for (const [key, { newValue }] of Object.entries(changes)) {
         if (key === 'MyPools' && namespace === 'local') {
           setSavedPool(newValue[formatted]);

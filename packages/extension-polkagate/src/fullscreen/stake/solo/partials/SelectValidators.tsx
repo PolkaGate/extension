@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+//@ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 /**
@@ -160,7 +160,7 @@ export default function SelectValidators({ address, newSelectedValidators, nomin
     setShowFilters(true);
   }, [setNewSelectedValidators, systemSuggestion]);
 
-  const onSystemSuggestion = useCallback((event, checked: boolean) => {
+  const onSystemSuggestion = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     setSearchKeyword('');
     setSystemSuggestion(checked);
     checked
@@ -190,7 +190,7 @@ export default function SelectValidators({ address, newSelectedValidators, nomin
 
     setSystemSuggestion(false);
 
-    if (stakingConsts?.maxNominations && newSelectedValidators.length >= stakingConsts?.maxNominations && checked) {
+    if (stakingConsts?.maxNominations && newSelectedValidators.length >= stakingConsts.maxNominations && checked) {
       console.log('Max validators are selected !');
 
       return;

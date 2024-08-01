@@ -1,11 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { DropdownOption } from '../util/types';
 
-import { FormControl, Grid, InputBase, MenuItem, Select, type SelectChangeEvent, type SxProps, type Theme, Typography } from '@mui/material';
+import { FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, type SxProps, type Theme, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -97,19 +98,14 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
   }, [defaultValue, onChange]);
 
   const updateRecentChains = useCallback((currentGenesisHash: string) => {
-    browser.storage.local.get('RecentChains').then((res) => {
-      if (browser.runtime.lastError) {
-        console.error(browser.runtime.lastError);
-
-        return;
-      }
-      if (!address) {
-        console.error('address is null while saving recent chains!');
+    chrome.storage.local.get('RecentChains', (res) => {
+      if (chrome.runtime.lastError) {
+        console.error(chrome.runtime.lastError);
 
         return;
       }
 
-      const accountsAndChains = res?.['RecentChains'] ?? {};
+      const accountsAndChains = res?.RecentChains ?? {};
       const myRecentChains = accountsAndChains[address] as string[];
 
       if (!myRecentChains) {
@@ -120,9 +116,9 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
           accountsAndChains[address] = [...INITIAL_RECENT_CHAINS_GENESISHASH, currentGenesisHash];
         }
 
-        browser.storage.local.set({ RecentChains: accountsAndChains }).then(() => {
-          if (browser.runtime.lastError) {
-            console.error(browser.runtime.lastError);
+        chrome.storage.local.set({ RecentChains: accountsAndChains }, () => {
+          if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
           }
         });
       } else if (myRecentChains && !(myRecentChains.includes(currentGenesisHash))) {
@@ -130,9 +126,9 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
         myRecentChains.pop();
         accountsAndChains[address] = myRecentChains;
 
-        browser.storage.local.set({ RecentChains: accountsAndChains }).then(() => {
-          if (browser.runtime.lastError) {
-            console.error(browser.runtime.lastError);
+        chrome.storage.local.set({ RecentChains: accountsAndChains }, () => {
+          if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
           }
         });
       }
@@ -210,7 +206,7 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
                 const text = _options.find((option) => value === option.value || value === option.text)?.text?.split(/\s*\(/)[0];
 
                 return (
-                  <Item height='50px' logoSize={29} text={text as string} />
+                  <Item height='50px' logoSize={29} text={text} />
                 );
               }}
               sx={{

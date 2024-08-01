@@ -1,17 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 /* eslint-disable import-newlines/enforce */
 /* eslint-disable object-curly-newline */
 
-// @ts-nocheck
-
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { EXTRA_PRICE_IDS } from '../api/getPrices';
-import { TEST_NETS } from '../constants';
+import { NATIVE_TOKEN_ASSET_ID,TEST_NETS } from '../constants';
 import getPoolAccounts from '../getPoolAccounts';
+import { getPriceIdByChainName } from '../utils';
 import { balancify, closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
 
 async function getPooledBalance(api, address) {
@@ -87,10 +86,12 @@ async function getAssetOnRelayChain(addresses, chainName) {
       balanceInfo.forEach(({ address, balances, pooledBalance, soloTotal }) => {
         const totalBalance = balances.freeBalance.add(balances.reservedBalance).add(pooledBalance);
         const genesisHash = api.genesisHash.toString();
-        const priceId = TEST_NETS.includes(genesisHash) ? undefined : EXTRA_PRICE_IDS[chainName] || chainName.toLowerCase(); // based on the fact that relay chains price id is the same as their sanitized names,except for testnets and some other single asset chains
+        const priceId = TEST_NETS.includes(genesisHash)
+          ? undefined
+          : getPriceIdByChainName(chainName);
 
         results[address] = [{ // since some chains may have more than one asset hence we use an array here! even thought its not needed for relay chains but just to be as a general rule.
-          assetId: 0, // Rule: we set asset id 0 for native tokens
+          assetId: NATIVE_TOKEN_ASSET_ID, // Rule: we set asset id 0 for native tokens
           balanceDetails: balancify({ ...balances, pooledBalance, soloTotal }),
           chainName,
           decimal: api.registry.chainDecimals[0],

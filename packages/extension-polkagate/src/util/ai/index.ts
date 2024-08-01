@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { Theme } from '@mui/material';
 
@@ -25,7 +26,7 @@ export const getImage = async (theme: Theme): Promise<string> => {
 
   const image = response.data[0].b64_json as string;
 
-  browser.storage.local.set({ backgroundImage: { [theme.palette.mode]: image } }).catch(console.error);
+  chrome.storage.local.set({ backgroundImage: { [theme.palette.mode]: image } }).catch(console.error);
 
   return image;
 };

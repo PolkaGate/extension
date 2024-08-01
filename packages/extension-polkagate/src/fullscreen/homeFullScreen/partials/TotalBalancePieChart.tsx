@@ -1,11 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
-import { Box, Collapse, Divider, Grid, Theme, Typography, useTheme } from '@mui/material';
+import { Box, Collapse, Divider, Grid, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
@@ -14,9 +13,9 @@ import { stars6Black, stars6White } from '../../../assets/icons';
 import { AccountsAssetsContext, DisplayLogo } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, usePrices, useTranslation, useYouHave } from '../../../hooks';
-import { FetchedBalance } from '../../../hooks/useAssetsBalances';
+import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { isPriceOutdated } from '../../../popup/home/YouHave';
-import { TEST_NETS, TOKENS_WITH_BLACK_LOGO } from '../../../util/constants';
+import { DEFAULT_COLOR, TEST_NETS, TOKENS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import { amountToHuman } from '../../../util/utils';
 import Chart from './Chart';
@@ -26,17 +25,37 @@ interface Props {
   setGroupedAssets: React.Dispatch<React.SetStateAction<AssetsWithUiAndPrice[] | undefined>>
 }
 
-interface AssetsWithUiAndPrice extends FetchedBalance {
+export interface AssetsWithUiAndPrice {
   percent: number;
   price: number;
+  totalBalance: number;
   ui: {
     color: string | undefined;
     logo: string | undefined;
   };
+  assetId?: number,
+  chainName: string,
+  date?: number,
+  decimal: number,
+  genesisHash: string,
+  priceId: string,
+  token: string,
+  availableBalance: BN,
+  soloTotal?: BN,
+  pooledBalance?: BN,
+  lockedBalance?: BN,
+  vestingLocked?: BN,
+  vestedClaimable?: BN,
+  vestingTotal?: BN,
+  freeBalance?: BN,
+  frozenFee?: BN,
+  frozenMisc: BN,
+  reservedBalance?: BN,
+  votingBalance?: BN
 }
 
-export function adjustColor(token: string, color: string, theme: Theme): string {
-  if ((TOKENS_WITH_BLACK_LOGO.find((t) => t === token) && theme.palette.mode === 'dark')) {
+export function adjustColor(token: string, color: string | undefined, theme: Theme): string {
+  if (color && (TOKENS_WITH_BLACK_LOGO.find((t) => t === token) && theme.palette.mode === 'dark')) {
     const cleanedColor = color.replace(/^#/, '');
 
     // Convert hexadecimal to RGB
@@ -55,7 +74,7 @@ export function adjustColor(token: string, color: string, theme: Theme): string 
     return invertedHex;
   }
 
-  return color;
+  return color || DEFAULT_COLOR;
 }
 
 function TotalBalancePieChart({ hideNumbers, setGroupedAssets }: Props): React.ReactElement {
@@ -75,8 +94,6 @@ function TotalBalancePieChart({ hideNumbers, setGroupedAssets }: Props): React.R
       parseFloat(Math.trunc(num) === 0 ? num.toFixed(decimal) : num.toFixed(1))
     , []);
 
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
-
   const assets = useMemo((): AssetsWithUiAndPrice[] | undefined => {
     if (!accountsAssets || !youHave || !pricesInCurrencies) {
       return undefined;
@@ -88,18 +105,19 @@ function TotalBalancePieChart({ hideNumbers, setGroupedAssets }: Props): React.R
     Object.keys(balances).forEach((address) => {
       Object.keys(balances?.[address]).forEach((genesisHash) => {
         if (!TEST_NETS.includes(genesisHash)) {
+          //@ts-ignore
           allAccountsAssets = allAccountsAssets.concat(balances[address][genesisHash]);
         }
       });
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-    const groupedAssets = Object.groupBy(allAccountsAssets, ({ genesisHash, token }) => `${token}_${genesisHash}`);
+    //@ts-ignore
+    const groupedAssets = Object.groupBy(allAccountsAssets, ({ genesisHash, token }: { genesisHash: string, token: string }) => `${token}_${genesisHash}`);
     const aggregatedAssets = Object.keys(groupedAssets).map((index) => {
       const assetSample = groupedAssets[index][0] as AssetsWithUiAndPrice;
       const ui = getLogo2(assetSample?.genesisHash, assetSample?.token);
       const assetPrice = pricesInCurrencies.prices[assetSample.priceId]?.value;
-      const accumulatedPricePerAsset = groupedAssets[index].reduce((sum, { totalBalance }) => sum.add(new BN(totalBalance)), BN_ZERO) as BN;
+      const accumulatedPricePerAsset = groupedAssets[index].reduce((sum: BN, { totalBalance }: FetchedBalance) => sum.add(new BN(totalBalance)), BN_ZERO) as BN;
 
       const balancePrice = calPrice(assetPrice, accumulatedPricePerAsset, assetSample.decimal ?? 0);
 
@@ -135,11 +153,11 @@ function TotalBalancePieChart({ hideNumbers, setGroupedAssets }: Props): React.R
 
   useEffect(() => {
     assets && setGroupedAssets([...assets]);
-  }, [assets?.length, setGroupedAssets]);
+  }, [assets, setGroupedAssets]);
 
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
-  const DisplayAssetRow = ({ asset }: { asset: FetchedBalance }) => {
+  const DisplayAssetRow = ({ asset }: { asset: AssetsWithUiAndPrice }) => {
     const logoInfo = useMemo(() => asset && getLogo2(asset.genesisHash, asset.token), [asset]);
 
     return (
@@ -166,8 +184,8 @@ function TotalBalancePieChart({ hideNumbers, setGroupedAssets }: Props): React.R
   return (
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px 10px', width: '430px' }}>
       <Grid alignItems='center' container gap='15px' item justifyContent='center'>
-        <Typography fontSize='28px' fontWeight={400}>
-          {t('You have')}
+        <Typography sx={{ fontSize: '28px', fontVariant: 'small-caps', fontWeight: 400 }}>
+          {t('My Portfolio')}
         </Typography>
         {hideNumbers || hideNumbers === undefined
           ? <Box

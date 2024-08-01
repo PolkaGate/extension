@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import React, { useCallback } from 'react';
 
@@ -23,16 +24,17 @@ export default function RemoteNodeSelector({ address, genesisHash }: Props): Rea
   const endpointOptions = useEndpoints(genesisHash || account?.genesisHash);
 
   const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
-    chainName && address && browser.storage.local.get('endpoints').then((res: { endpoints?: ChromeStorageGetResponse }) => {
+    chainName && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
       const i = `${address}`;
       const j = `${chainName}`;
       const savedEndpoints: ChromeStorageGetResponse = res?.endpoints || {};
 
       savedEndpoints[i] = savedEndpoints[i] || {};
 
-      savedEndpoints[i]![j] = newEndpoint;
+      savedEndpoints[i][j] = newEndpoint;
 
-      browser.storage.local.set({ endpoints: savedEndpoints });
+      // eslint-disable-next-line no-void
+      void chrome.storage.local.set({ endpoints: savedEndpoints });
     });
   }, [address, chainName]);
 
@@ -42,7 +44,7 @@ export default function RemoteNodeSelector({ address, genesisHash }: Props): Rea
         <Select
           _mt='10px'
           label={t<string>('Remote node')}
-          onChange={_onChangeEndpoint as ()=>void}
+          onChange={_onChangeEndpoint}
           options={endpointOptions}
           value={endpoint}
         />}

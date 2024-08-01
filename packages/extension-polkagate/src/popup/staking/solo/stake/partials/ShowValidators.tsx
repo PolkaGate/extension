@@ -1,22 +1,22 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { ApiPromise } from '@polkadot/api';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { BN } from '@polkadot/util';
+import type { ValidatorInfo } from '../../../../../util/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import type { Chain } from '@polkadot/extension-chains/types';
-
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
-import { BN } from '@polkadot/util';
 
 import { SlidePopUp } from '../../../../../components';
 import { useInfo, useIsExtensionPopup, useTranslation } from '../../../../../hooks';
-import type { ValidatorInfo } from '../../../../../util/types';
 import ValidatorsTable from '../../../partial/ValidatorsTable';
 
 interface Props {
@@ -50,7 +50,7 @@ export default function ShowValidators({ address, api, chain, selectedValidators
       </Grid>
       <ValidatorsTable
         api={api}
-        chain={chain as any}
+        chain={chain}
         decimal={decimal}
         height={isExtensionPopup ? tableHeight : MODAL_HEIGHT - 50}
         staked={staked}

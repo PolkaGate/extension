@@ -12,7 +12,7 @@ import { useTranslation } from '../../hooks';
 
 const imagePath = `https://raw.githubusercontent.com/PolkaGate/backgrounds/main/${process.env['BG_THEME'] || 'general'}`;
 
-type BgImage = {
+interface BgImage {
   dark: string;
   light: string;
 }
@@ -33,14 +33,14 @@ export default function AiBackgroundImage({ bgImage, setBgImage }: Props): React
   const clearBackground = useCallback((): void => {
     setBgImage(undefined);
     imgRef.current[mode] = 0;
-    browser.storage.local.get('backgroundImage')
-      .then((res) => {
-        if (res?.['backgroundImage']?.[mode]) {
-          res['backgroundImage'][mode] = '';
+    chrome.storage.local.get('backgroundImage', (res) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (res?.['backgroundImage']?.[mode]) {
+        res['backgroundImage'][mode] = '';
 
-          browser.storage.local.set({ backgroundImage: res['backgroundImage'] as BgImage }).catch(console.error);
-        }
-      });
+        chrome.storage.local.set({ backgroundImage: res['backgroundImage'] as BgImage }).catch(console.error);
+      }
+    });
   }, [mode, setBgImage]);
 
   const handleImageError = useCallback(() => {
@@ -48,11 +48,11 @@ export default function AiBackgroundImage({ bgImage, setBgImage }: Props): React
   }, [clearBackground]);
 
   const updateImageUrlInStorage = useCallback((imgUrl: string) => {
-    imgUrl && browser.storage.local.get('backgroundImage').then((res) => {
+    imgUrl && chrome.storage.local.get('backgroundImage', (res) => {
       const maybeSavedImageUrl = (res?.['backgroundImage'] || DEFAULT_BG_IMG) as BgImage;
 
       maybeSavedImageUrl[mode] = imgUrl;
-      browser.storage.local.set({ backgroundImage: maybeSavedImageUrl }).catch(console.error);
+      chrome.storage.local.set({ backgroundImage: maybeSavedImageUrl }).catch(console.error);
     });
 
     imgRef.current[mode] = imgRef.current[mode] + 1;
@@ -72,7 +72,8 @@ export default function AiBackgroundImage({ bgImage, setBgImage }: Props): React
 
   useEffect(() => {
     /** initiate background image on load and UI theme change */
-    browser.storage.local.get('backgroundImage').then((res) => {
+    chrome.storage.local.get('backgroundImage', (res) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       const imgUrl = res?.['backgroundImage']?.[mode] as string;
 
       tryToApplyImg(imgUrl);
@@ -86,7 +87,7 @@ export default function AiBackgroundImage({ bgImage, setBgImage }: Props): React
   }, [mode, tryToApplyImg]);
 
   return (
-    <Grid container justifyContent='space-between' sx={{ backgroundColor: 'background.default', bottom: '3px', color: theme.palette.text.primary, position: 'absolute', zIndex: 6, p: '0 10px 0' }}>
+    <Grid container justifyContent='space-between' sx={{ backgroundColor: 'background.default', bottom: '0px', color: theme.palette.text.primary, position: 'absolute', zIndex: 6, p: '0 10px 0' }}>
       <Grid item onClick={clearBackground} xs={1.5}>
         {bgImage &&
           <Typography sx={{ cursor: 'pointer', fontSize: '11px', userSelect: 'none' }}>

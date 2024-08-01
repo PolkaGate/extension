@@ -1,11 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { AccountId } from '@polkadot/types/interfaces';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
 import type { SavedValidatorsIdentities, ValidatorsIdentities } from '../util/types';
 import { useCurrentEraIndex, useInfo, usePeopleChain } from '.';
@@ -43,14 +44,14 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
 
         setNewValidatorsIdentities(identities);
 
-        browser.storage.local.get('validatorsIdentities')
-          .then((res) => {
-            const k = `${chainName}`;
-            const last = res?.['validatorsIdentities'] ?? {};
+        chrome.storage.local.get('validatorsIdentities', (res) => {
+          const k = `${chainName}`;
+          const last = res?.validatorsIdentities ?? {};
 
-            last[k] = info;
-            browser.storage.local.set({ validatorsIdentities: last });
-          });
+          last[k] = info;
+          // eslint-disable-next-line no-void
+          void chrome.storage.local.set({ validatorsIdentities: last });
+        });
       }
 
       getValidatorsIdWorker.terminate();
@@ -73,13 +74,13 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
       return;
     }
 
-    browser.storage.local.get('validatorsIdentities')
-      .then((res: { [key: string]: SavedValidatorsIdentities }) => {
-        if (res?.['validatorsIdentities']?.[chainName]) {
-          setValidatorsIdentities(res['validatorsIdentities'][chainName]?.accountsInfo);
-          setSavedEraIndex(res['validatorsIdentities'][chainName]?.eraIndex);
-        }
-      });
+    // eslint-disable-next-line no-void
+    void chrome.storage.local.get('validatorsIdentities', (res: { [key: string]: SavedValidatorsIdentities }) => {
+      if (res?.validatorsIdentities?.[chainName]) {
+        setValidatorsIdentities(res.validatorsIdentities[chainName]?.accountsInfo);
+        setSavedEraIndex(res.validatorsIdentities[chainName]?.eraIndex);
+      }
+    });
   }, [chainName]);
 
   return newValidatorsIdentities || validatorsIdentities;

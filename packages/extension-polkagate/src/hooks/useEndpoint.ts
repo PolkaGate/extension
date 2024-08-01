@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { createWsEndpoints } from '@polkagate/apps-config';
 import { useEffect, useState } from 'react';
@@ -26,10 +27,10 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
       return;
     }
 
-    browser.storage.local.get('endpoints').then((res) => {
+    chrome.storage.local.get('endpoints', (res) => {
       const i = `${String(address)}`;
       const j = `${chainName}`;
-      const savedEndpoint = res?.['endpoints']?.[i]?.[j] as string | undefined;
+      const savedEndpoint = res?.endpoints?.[i]?.[j] as string | undefined;
 
       if (savedEndpoint) {
         setEndpoint(savedEndpoint);
@@ -53,8 +54,7 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
   }, [_endpoint, address, chainName, t]);
 
   useEffect(() => {
-    address && chainName && browser.storage.onChanged.addListener((changes, namespace) => {
-      // @ts-ignore
+    address && chainName && chrome.storage.onChanged.addListener((changes, namespace) => {
       for (const [key, { newValue, oldValue }] of Object.entries(changes)) {
         if (key === 'endpoints' && namespace === 'local') {
           const maybeNewEndpoint = newValue?.[String(address)]?.[chainName];

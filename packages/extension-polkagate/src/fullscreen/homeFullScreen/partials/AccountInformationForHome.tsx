@@ -1,22 +1,24 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { BalancesInfo } from '@polkadot/extension-polkagate/util/types';
+import type { BN } from '@polkadot/util';
+import type { HexString } from '@polkadot/util/types';
+import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
+
 import { ArrowForwardIos as ArrowForwardIosIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
-import { Box, Button, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
+import { Box, Button, Divider, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
-import { BN } from '@polkadot/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
-import { ActionContext, Identicon, Identity, Infotip, OptionalCopyButton, ShortAddress2, VaadinIcon } from '../../../components';
+import { ActionContext, Identicon, Identity, OptionalCopyButton, ShortAddress2 } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, useIdentity, useInfo, usePrices, useTranslation } from '../../../hooks';
-import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { showAccount, tieAccount } from '../../../messaging';
 import ExportAccountModal from '../../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../../popup/forgetAccount/ForgetAccountModal';
@@ -24,6 +26,7 @@ import DeriveAccountModal from '../../../popup/newAccount/deriveAccount/modal/De
 import RenameModal from '../../../popup/rename/RenameModal';
 import { amountToHuman } from '../../../util/utils';
 import AccountIconsFs from '../../accountDetails/components/AccountIconsFs';
+import { EyeIconFullScreen } from '../../accountDetails/components/AccountInformationForDetails';
 import AOC from '../../accountDetails/components/AOC';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import FullScreenAccountMenu from './FullScreenAccountMenu';
@@ -37,31 +40,17 @@ interface AddressDetailsProps {
   isChild?: boolean;
 }
 
-type AccountButtonType = { text: string, onClick: () => void, icon: React.ReactNode };
+interface AccountButtonType { text: string, onClick: () => void, icon: React.ReactNode }
 
-export const POPUPS_NUMBER = {
-  DERIVE_ACCOUNT: 4,
-  EXPORT_ACCOUNT: 3,
-  FORGET_ACCOUNT: 1,
-  RENAME: 2
+export enum POPUPS_NUMBER {
+  DERIVE_ACCOUNT,
+  EXPORT_ACCOUNT,
+  FORGET_ACCOUNT,
+  RENAME,
+  MANAGE_PROFILE
 };
 
-const AccountButton = ({ icon, onClick, text }: AccountButtonType) => {
-  const theme = useTheme();
-
-  return (
-    <Button
-      endIcon={icon}
-      onClick={onClick}
-      sx={{ '&:hover': { bgcolor: 'divider' }, color: theme.palette.secondary.light, fontSize: '16px', fontWeight: 400, height: '53px', textTransform: 'none', width: 'fit-content' }}
-      variant='text'
-    >
-      {text}
-    </Button>
-  )
-};
-
-export default function AccountInformationForHome({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -77,17 +66,12 @@ export default function AccountInformationForHome({ accountAssets, address, hide
   const calculatePrice = useCallback((amount: BN, decimal: number, price: number) => parseFloat(amountToHuman(amount, decimal)) * price, []);
 
   const assetsToShow = useMemo(() => {
-    if (!pricesInCurrencies) {
-      return undefined;
-    } else if (!accountAssets) {
+    if (!accountAssets || !pricesInCurrencies) {
       return accountAssets; // null  or undefined
     } else {
-      const sortedAssets = accountAssets.sort((a, b) =>
-        calculatePrice(b.totalBalance, b.decimal, pricesInCurrencies.prices?.[b.priceId]?.value ?? 0)
-        - calculatePrice(a.totalBalance, a.decimal, pricesInCurrencies.prices?.[a.priceId]?.value ?? 0)
-      );
+      const sortedAssets = accountAssets.sort((a, b) => calculatePrice(b.totalBalance, b.decimal, pricesInCurrencies.prices?.[b.priceId]?.value ?? 0) - calculatePrice(a.totalBalance, a.decimal, pricesInCurrencies.prices?.[a.priceId]?.value ?? 0));
 
-      return sortedAssets.filter((_asset) => !getValue('total', _asset)?.isZero());
+      return sortedAssets.filter((_asset) => !getValue('total', _asset as unknown as BalancesInfo)?.isZero());
     }
   }, [accountAssets, calculatePrice, pricesInCurrencies]);
 
@@ -124,8 +108,19 @@ export default function AccountInformationForHome({ accountAssets, address, hide
     </Grid>
   );
 
+  const AccountButton = ({ icon, onClick, text }: AccountButtonType) => (
+    <Button
+      endIcon={icon}
+      onClick={onClick}
+      sx={{ '&:hover': { bgcolor: 'divider' }, color: theme.palette.secondary.light, fontSize: '16px', fontWeight: 400, height: '53px', textTransform: 'none', width: 'fit-content' }}
+      variant='text'
+    >
+      {text}
+    </Button>
+  );
+
   const onAssetBoxClicked = useCallback((asset: FetchedBalance | undefined) => {
-    address && asset && tieAccount(address, asset.genesisHash).finally(() => {
+    address && asset && tieAccount(address, asset.genesisHash as HexString).finally(() => {
       setSelectedAsset(asset);
     }).catch(console.error);
   }, [address, setSelectedAsset]);
@@ -166,18 +161,17 @@ export default function AccountInformationForHome({ accountAssets, address, hide
                 accountInfo={accountInfo}
                 address={address}
                 api={api}
-                chain={chain as any}
+                chain={chain}
                 noIdenticon
                 onClick={goToDetails}
                 style={{ width: 'calc(100% - 40px)' }}
                 subIdOnly
               />
               <Grid item width='40px'>
-                <Infotip text={account?.isHidden && t('This account is hidden from websites')}>
-                  <IconButton onClick={toggleVisibility} sx={{ height: '20px', ml: '7px', mt: '13px', p: 0, width: '28px' }}>
-                    <VaadinIcon icon={account?.isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
-                  </IconButton>
-                </Infotip>
+                <EyeIconFullScreen
+                  isHidden={account?.isHidden}
+                  onClick={toggleVisibility}
+                />
               </Grid>
             </Grid>
             <Grid alignItems='center' container item>

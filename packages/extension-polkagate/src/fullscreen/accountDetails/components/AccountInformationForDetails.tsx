@@ -1,22 +1,22 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { BN } from '@polkadot/util';
+import type { HexString } from '@polkadot/util/types';
+import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
+import type { BalancesInfo, Prices } from '../../../util/types';
 
 import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { BN } from '@polkadot/util';
-
 import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, Infotip2, OptionalCopyButton, ShortAddress2, VaadinIcon } from '../../../components';
 import { useIdentity, useInfo, useTranslation } from '../../../hooks';
-import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { showAccount, tieAccount } from '../../../messaging';
 import { getValue } from '../../../popup/account/util';
 import { BALANCES_VALIDITY_PERIOD } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
-import type { BalancesInfo, Prices } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import AccountIconsFs from './AccountIconsFs';
 import AOC from './AOC';
@@ -102,7 +102,7 @@ const SelectedAssetBox = ({ balanceToShow, genesisHash, isBalanceOutdated, isPri
       {genesisHash
         ? <>
           <Grid item pl='7px'>
-            <DisplayLogo assetSize='42px' baseTokenSize='20px' genesisHash={balanceToShow?.genesisHash} logo={logoInfo?.logo as string} subLogo={logoInfo?.subLogo as string} />
+            <DisplayLogo assetSize='42px' baseTokenSize='20px' genesisHash={balanceToShow?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
           </Grid>
           <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
             <BalanceRow balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} isPriceOutdated={isPriceOutdated} price={price} />
@@ -121,7 +121,7 @@ const SelectedAssetBox = ({ balanceToShow, genesisHash, isBalanceOutdated, isPri
 interface AddressDetailsProps {
   accountAssets: FetchedBalance[] | null | undefined;
   address: string | undefined;
-  label?: string | undefined;
+  label?: React.ReactElement | undefined;
   price: number | undefined;
   pricesInCurrency: Prices | null | undefined;
   selectedAsset: FetchedBalance | undefined;
@@ -129,8 +129,20 @@ interface AddressDetailsProps {
   setAssetIdOnAssetHub: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function AccountInformationForDetails({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export const EyeIconFullScreen = ({ isHidden, onClick }: { isHidden: boolean | undefined, onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+
+  return (
+    <Infotip text={isHidden ? t('This account is hidden from websites') : t('This account is visible to websites')}>
+      <IconButton onClick={onClick} sx={{ height: '20px', ml: '7px', mt: '13px', p: 0, width: '28px' }}>
+        <VaadinIcon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
+      </IconButton>
+    </Infotip>
+  );
+};
+
+export default function AccountInformationForDetails ({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const theme = useTheme();
   const { account, api, chain, formatted, genesisHash, token } = useInfo(address);
 
@@ -160,7 +172,7 @@ export default function AccountInformationForDetails({ accountAssets, address, l
     if (!sortedAccountAssets) {
       return sortedAccountAssets; // null or undefined!
     } else {
-      return sortedAccountAssets.filter((_asset) => !getValue('total', _asset)?.isZero());
+      return sortedAccountAssets.filter((_asset) => !getValue('total', _asset as unknown as BalancesInfo)?.isZero());
     }
   }, [sortedAccountAssets]);
 
@@ -174,7 +186,7 @@ export default function AccountInformationForDetails({ accountAssets, address, l
   }, [account?.genesisHash, accountAssets, setSelectedAsset]);
 
   const onAssetBoxClicked = useCallback((asset: FetchedBalance | undefined) => {
-    address && asset && tieAccount(address, asset.genesisHash).finally(() => {
+    address && asset && tieAccount(address, asset.genesisHash as HexString).finally(() => {
       setAssetIdOnAssetHub(undefined);
       setSelectedAsset(asset);
     }).catch(console.error);
@@ -186,9 +198,7 @@ export default function AccountInformationForDetails({ accountAssets, address, l
 
   return (
     <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: '0px solid', borderBottomWidth: '8px', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mb: '15px', p: `20px 20px ${showAOC ? '5px' : '20px'} 20px`, position: 'relative' }}>
-      <Grid item sx={{ bgcolor: theme.palette.nay.main, color: 'white', fontSize: '10px', left: 0, ml: 4, position: 'absolute', px: 1, top: 0, width: 'fit-content' }}>
-        {label}
-      </Grid>
+      {label}
       <Grid container item>
         <Grid container item sx={{ borderRight: '1px solid', borderRightColor: 'divider', pr: '8px', width: 'fit-content' }}>
           <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>
@@ -211,17 +221,16 @@ export default function AccountInformationForDetails({ accountAssets, address, l
                 accountInfo={accountInfo}
                 address={address}
                 api={api}
-                chain={chain as any}
+                chain={chain}
                 noIdenticon
                 style={{ width: 'calc(100% - 40px)' }}
               // subIdOnly
               />
               <Grid item width='40px'>
-                <Infotip text={account?.isHidden && t('This account is hidden from websites')}>
-                  <IconButton onClick={toggleVisibility} sx={{ height: '20px', ml: '7px', mt: '13px', p: 0, width: '28px' }}>
-                    <VaadinIcon icon={account?.isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
-                  </IconButton>
-                </Infotip>
+                <EyeIconFullScreen
+                  isHidden={account?.isHidden}
+                  onClick={toggleVisibility}
+                />
               </Grid>
             </Grid>
             <Grid alignItems='center' container item>
@@ -234,7 +243,7 @@ export default function AccountInformationForDetails({ accountAssets, address, l
             </Grid>
           </Grid>
           <SelectedAssetBox
-            balanceToShow={selectedAsset}
+            balanceToShow={selectedAsset as unknown as BalancesInfo}
             genesisHash={genesisHash}
             isBalanceOutdated={isBalanceOutdated}
             isPriceOutdated={!!isPriceOutdated}

@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -44,8 +45,8 @@ function Chain({ address, allowAnyChainOption, defaultValue, disabledItems, labe
         return;
       }
 
-      browser.storage.local.get('RecentChains').then((res) => {
-        const accountsAndChains = res?.['RecentChains'] ?? {};
+      chrome.storage.local.get('RecentChains', (res) => {
+        const accountsAndChains = res?.RecentChains ?? {};
         let myRecentChains = accountsAndChains[address] as string[];
 
         if (!myRecentChains) {
@@ -56,13 +57,15 @@ function Chain({ address, allowAnyChainOption, defaultValue, disabledItems, labe
             accountsAndChains[address] = [...INITIAL_RECENT_CHAINS_GENESISHASH, currentGenesisHash];
           }
 
-          browser.storage.local.set({ RecentChains: accountsAndChains });
+          // eslint-disable-next-line no-void
+          void chrome.storage.local.set({ RecentChains: accountsAndChains });
         } else if (myRecentChains && !(myRecentChains.includes(currentGenesisHash))) {
           myRecentChains.unshift(currentGenesisHash);
           myRecentChains.pop();
           accountsAndChains[address] = myRecentChains;
 
-          browser.storage.local.set({ RecentChains: accountsAndChains });
+          // eslint-disable-next-line no-void
+          void chrome.storage.local.set({ RecentChains: accountsAndChains });
         }
       });
     } catch (error) {
@@ -74,10 +77,10 @@ function Chain({ address, allowAnyChainOption, defaultValue, disabledItems, labe
     <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ ...style }}>
       <Select2
         defaultValue={defaultValue}
-        disabledItems={_disabledItems as any[]}
+        disabledItems={_disabledItems}
         isDisabled={!address}
         label={label}
-        onChange={onChangeNetwork as ()=>void}
+        onChange={onChangeNetwork}
         options={options}
         showLogo
       />

@@ -1,13 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-import type { Balance } from '@polkadot/types/interfaces';
-import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
+import type { Asset } from '@polkagate/apps-config/assets/types';
 import type { Option } from '@polkadot/types';
+import type { Balance } from '@polkadot/types/interfaces';
+// @ts-ignore
+import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
+import type { BalancesInfo, SavedBalances } from '../util/types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
-import type { Asset } from '@polkagate/apps-config/assets/types';
 import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
@@ -15,13 +16,11 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { FetchingContext } from '../components';
 import { toCamelCase } from '../fullscreen/governance/utils/util';
 import { updateMeta } from '../messaging';
-import { ASSET_HUBS } from '../util/constants';
+import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID } from '../util/constants';
 import getPoolAccounts from '../util/getPoolAccounts';
-import type { BalancesInfo, SavedBalances } from '../util/types';
 import { useInfo, useStakingAccount } from '.';
 
 const assetsChains = createAssets();
-const NATIVE_TOKEN_ASSET_ID = 0;
 
 // TODO: decouple thi shook to smaller independent ones like usePoolBalance, useAssetBalance, useNativeBalance ...
 export default function useBalances(address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: number): BalancesInfo | undefined {
@@ -80,7 +79,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
       const rewards = myClaimable as Balance;
       let unlockingValue = BN_ZERO;
 
-      member?.unbondingEras?.forEach((value) => {
+      member?.unbondingEras?.forEach((value: BN) => {
         unlockingValue = unlockingValue.add(value);
       });
 

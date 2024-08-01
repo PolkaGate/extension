@@ -1,14 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { closestCenter, DndContext, type DragEndEvent } from '@dnd-kit/core';
+import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import React, { useCallback, useLayoutEffect, useState } from 'react';
-
-import type { AccountsOrder } from '..';
+import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
 import AccountItem from './AccountItem';
 
 interface Props {
@@ -19,7 +19,7 @@ interface Props {
 export const saveNewOrder = (newOrder: AccountsOrder[]) => {
   const addressOrder = newOrder.map(({ account }) => account.address);
 
-  browser.storage.local.set({ addressOrder }).catch(console.error);
+  chrome.storage.local.set({ addressOrder }).catch(console.error);
 };
 
 export default function DraggableAccountList({ hideNumbers, initialAccountList }: Props) {
@@ -30,7 +30,7 @@ export default function DraggableAccountList({ hideNumbers, initialAccountList }
     setAccountsOrder(initialAccountList);
   }, [initialAccountList, initialAccountList.length]);
 
-  const getItemPos = useCallback((_id: any) => accountsOrder?.findIndex(({ id }) => _id === id), [accountsOrder]);
+  const getItemPos = useCallback((_id) => accountsOrder?.findIndex(({ id }) => _id === id), [accountsOrder]);
 
   const handleDrag = useCallback((event: DragEndEvent) => {
     const { active, over } = event;

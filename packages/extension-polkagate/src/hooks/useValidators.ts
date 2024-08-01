@@ -1,10 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { AllValidators, ValidatorInfo, Validators } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
+import type { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { useCurrentEraIndex, useInfo } from '.';
@@ -38,16 +40,16 @@ export default function useValidators(address: string, validators?: AllValidator
   const [newInfo, setNewValidatorsInfo] = useState<AllValidators | undefined | null>();
 
   const saveValidatorsInfoInStorage = useCallback((inf: AllValidators) => {
-    browser.storage.local.get('validatorsInfo').then((res) => {
+    chrome.storage.local.get('validatorsInfo', (res) => {
       const k = `${chainName as string}`;
-      const last = res?.['validatorsInfo'] ?? {};
+      const last = res?.validatorsInfo ?? {};
 
       last[k] = inf;
-      browser.storage.local.set({ validatorsInfo: last }).catch(console.error);
+      chrome.storage.local.set({ validatorsInfo: last }).catch(console.error);
     });
   }, [chainName]);
 
-  const getValidatorsInfo = useCallback((endpoint: string, savedValidators = []) => {
+  const getValidatorsInfo = useCallback((chain: Chain, endpoint: string, savedValidators = []) => {
     const getValidatorsInfoWorker: Worker = new Worker(new URL('../util/workers/getValidatorsInfo.js', import.meta.url));
 
     getValidatorsInfoWorker.postMessage({ endpoint });
@@ -61,8 +63,8 @@ export default function useValidators(address: string, validators?: AllValidator
       const info: Validators | null = e.data;
 
       if (info && JSON.stringify(savedValidators) !== JSON.stringify(info)) {
-        setNewValidatorsInfo(info as any);
-        saveValidatorsInfoInStorage(info as any);
+        setNewValidatorsInfo(info);
+        saveValidatorsInfoInStorage(info);
       }
 
       getValidatorsInfoWorker.terminate();
@@ -77,15 +79,14 @@ export default function useValidators(address: string, validators?: AllValidator
     /** We don't save paged eraStakers in storage,
      *  saving will be stopped after Polkadot runtime upgrade
      * */
-    if (api.query['staking']['erasStakersPaged']) {
+    if (api.query.staking.erasStakersPaged) {
       return;
     }
 
-    browser.storage.local.get('validatorsInfo').then((res: { [key: string]: Validators }) => {
-      // @ts-ignore
-      if (res?.['validatorsInfo']?.[chainName]) {
-        // @ts-ignore
-        setValidatorsInfo(res['validatorsInfo'][chainName]);
+    // eslint-disable-next-line no-void
+    void chrome.storage.local.get('validatorsInfo', (res: { [key: string]: Validators }) => {
+      if (res?.validatorsInfo?.[chainName]) {
+        setValidatorsInfo(res.validatorsInfo[chainName]);
       }
     });
   }, [api, chainName]);
@@ -104,8 +105,8 @@ export default function useValidators(address: string, validators?: AllValidator
       }
 
       const [prefs, overview] = await Promise.all([
-        api.query['staking']['validators'].entries(),
-        api.query['staking']['erasStakersOverview'].entries(currentEraIndex)
+        api.query.staking.validators.entries(),
+        api.query.staking.erasStakersOverview.entries(currentEraIndex)
       ]);
 
       const validatorPrefs: Record<string, Prefs> = Object.fromEntries(
@@ -117,9 +118,7 @@ export default function useValidators(address: string, validators?: AllValidator
 
       const currentEraValidatorsOverview: Record<string, ExposureOverview> = Object.fromEntries(
         overview.map(([keys, value]) => {
-          // @ts-ignore
           const validatorAddress = keys.toHuman()[1] as string;
-          // @ts-ignore
           const uv = value.unwrap() as ExposureOverview;
 
           return [validatorAddress, { nominatorCount: uv.nominatorCount, own: uv.own, pageCount: uv.pageCount, total: uv.total }];
@@ -129,7 +128,7 @@ export default function useValidators(address: string, validators?: AllValidator
 
       const validatorsPaged = await Promise.all(
         validatorKeys.map((v) =>
-          api.query['staking']['erasStakersPaged'].entries(currentEraIndex, v)
+          api.query.staking.erasStakersPaged.entries(currentEraIndex, v)
         )
       );
 
@@ -140,7 +139,7 @@ export default function useValidators(address: string, validators?: AllValidator
           const validatorAddress = pages[0][0].args[1].toString();
 
           currentNominators[validatorAddress] = [];
-          // @ts-ignore
+
           pages.forEach(([, value]) => currentNominators[validatorAddress].push(...(value.unwrap()?.others || [])));
         }
       });
@@ -151,27 +150,27 @@ export default function useValidators(address: string, validators?: AllValidator
       Object.keys(validatorPrefs).forEach((v) => {
         Object.keys(currentEraValidatorsOverview).includes(v)
           ? current.push({
-            accountId: v as any,
+            accountId: v,
             exposure: {
               ...currentEraValidatorsOverview[v],
               others: currentNominators[v]
             },
-            stashId: v as any,
-            validatorPrefs: validatorPrefs[v] as any
+            stashId: v,
+            validatorPrefs: validatorPrefs[v]
             // rewardDestination:
             // stakingLedger: PalletStakingStakingLedger
             // nominators: AccountId[];
-          } as any)
+          })
           : waiting.push({
-            accountId: v as any,
-            stashId: v as any,
-            validatorPrefs: validatorPrefs[v] as any,
+            accountId: v,
+            stashId: v,
+            validatorPrefs: validatorPrefs[v],
             exposure: {
               own: BN_ZERO,
               total: BN_ZERO,
               others: []
             }
-          } as any);
+          });
       });
       const inf = {
         current,
@@ -182,11 +181,11 @@ export default function useValidators(address: string, validators?: AllValidator
       setNewValidatorsInfo(inf);
     };
 
-    if (api && currentEraIndex && api.query['staking']['erasStakersOverview']) {
+    if (api && currentEraIndex && api.query.staking.erasStakersOverview) {
       getValidatorsPaged().catch(console.error);
     } else {
       /** get validators info, including current and waiting, should be called after savedValidators gets value */
-      endpoint && chain && currentEraIndex && currentEraIndex !== info?.eraIndex && getValidatorsInfo(endpoint, info as any);
+      endpoint && chain && currentEraIndex && currentEraIndex !== info?.eraIndex && getValidatorsInfo(chain, endpoint, info);
     }
   }, [api, chain, currentEraIndex, endpoint, getValidatorsInfo, info, validators]);
 

@@ -2,17 +2,18 @@
   "author": "polkagate@outlook.com",
   "bugs": "https://github.com/polkagate/extension/issues",
   "engines": {
-    "node": ">=18"
+    "node": ">=18.18"
   },
   "homepage": "https://github.com/polkagate/extension#readme",
   "license": "Apache-2.0",
-  "packageManager": "yarn@3.2.0",
+  "packageManager": "yarn@4.1.1",
   "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/polkagate/extension.git"
   },
   "sideEffects": false,
+  "type": "module",
   "version": "0.47.5",
   "versions": {
     "git": "0.44.7-9-x",
@@ -22,8 +23,7 @@
     "packages/*"
   ],
   "scripts": {
-    "analyze": "webpack-bundle-analyzer .stats.json",
-    "build": "polkadot-dev-build-ts && yarn build:zip && yarn build:rollup && webpack --profile --json > ./stats.json",
+    "build": "polkadot-dev-build-ts && yarn build:zip && yarn build:rollup",
     "build:before": "yarn build:i18n",
     "build:i18n": "i18next-scanner --config i18next-scanner.config.cjs",
     "build:release": "polkadot-ci-ghact-build",
@@ -65,7 +65,7 @@
     "@polkadot/types-support": "^11.2.1",
     "@polkadot/util": "^12.6.2",
     "@polkadot/util-crypto": "^12.6.2",
-    "@polkagate/apps-config": "^0.133.87",
+    "@polkagate/apps-config": "^0.140.3",
     "@substrate/connect": "^0.7.32",
     "@vaadin/icons": "^23.2.3",
     "babel-plugin-transform-import-meta": "^2.1.1",
@@ -83,6 +83,7 @@
     "react-tooltip": "^4.2.21",
     "react-window": "^1.8.10",
     "rehype-raw": "^6.1.1",
+    "semver": "^7.6.3",
     "style-loader": "^3.3.2",
     "umi-request": "^1.4.0"
   },
@@ -99,7 +100,7 @@
     "jsdom-worker-fix": "^0.1.8",
     "openai": "^4.0.0",
     "sinon-chrome": "^3.0.1",
-    "webpack-bundle-analyzer": "^4.10.2"
+    "webpack-bundle-analyzer": "^4.9.0"
   },
   "resolutions": {
     "@polkadot/api": "^11.2.1",

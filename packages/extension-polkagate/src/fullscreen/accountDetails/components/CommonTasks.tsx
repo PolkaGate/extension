@@ -1,8 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { BalancesInfo } from 'extension-polkagate/src/util/types';
+import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
 import { faCoins, faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,12 +12,12 @@ import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, Q
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 // @ts-ignore
 import { Circle } from 'better-react-spinkit';
-import { BalancesInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useMemo } from 'react';
 
+import { noop } from '@polkadot/util';
+
 import { PoolStakingIcon } from '../../../components';
-import { useTranslation } from '../../../hooks';
-import { FetchedBalance } from '../../../hooks/useAssetsBalances';
+import { useApi, useTranslation } from '../../../hooks';
 import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../../util/constants';
 import { popupNumbers } from '..';
 
@@ -28,7 +30,7 @@ interface Props {
 }
 
 interface TaskButtonProps {
-  icon: unknown;
+  icon: React.JSX.Element;
   text: string;
   onClick: () => void;
   secondaryIconType: 'popup' | 'page';
@@ -40,30 +42,25 @@ interface TaskButtonProps {
 }
 
 export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): void => {
-
-  console.info('openOrFocusTab.', relativeUrl);
-
-  browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    console.info('tabs.', tabs);
-
-    if (tabs[0] && tabs[0].url) {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    if (tabs[0]?.url) {
       const extensionUrl = tabs[0].url;
       const extensionBaseUrl = extensionUrl.split('#')[0];
 
       const tabUrl = `${extensionBaseUrl}#${relativeUrl}`;
 
-      browser.tabs.query({}, function (allTabs) {
+      chrome.tabs.query({}, function (allTabs) {
         const existingTab = allTabs.find(function (tab) {
           return tab.url === tabUrl;
         });
 
-        if (existingTab && existingTab.id) {
-          browser.tabs.update(existingTab.id, { active: true }).catch(console.error);
-        } else {
-          browser.tabs.create({ url: tabUrl }).catch(console.error);
-        }
-        
         closeCurrentTab && window.close();
+
+        if (existingTab?.id) {
+          chrome.tabs.update(existingTab.id, { active: true }).catch(console.error);
+        } else {
+          chrome.tabs.create({ url: tabUrl }).catch(console.error);
+        }
       });
     } else {
       console.error('Unable to retrieve extension URL.');
@@ -78,8 +75,7 @@ export const TaskButton = ({ disabled, icon, loading, mr = '25px', noBorderButto
     <>
       {show &&
         <>
-          {/* eslint-disable-next-line react/jsx-no-bind */}
-          <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', m: 'auto', minHeight: '45px', p: '5px 10px' }} width='90%'>
+          <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? noop : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', m: 'auto', minHeight: '45px', p: '5px 10px' }} width='90%'>
             <Grid container item mr={mr} xs={1.5}>
               {icon}
             </Grid>
@@ -110,9 +106,10 @@ export const TaskButton = ({ disabled, icon, loading, mr = '25px', noBorderButto
   );
 };
 
-export default function CommonTasks({ address, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
+export default function CommonTasks ({ address, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const api = useApi(address);
 
   const governanceDisabled = useMemo(() => !GOVERNANCE_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const { stakingDisabled, stakingNotReady } = useMemo(() => {
@@ -126,6 +123,13 @@ export default function CommonTasks({ address, assetId, balance, genesisHash, se
   const hasSoloStake = Boolean(balance?.soloTotal && !balance.soloTotal.isZero());
   const hasPoolStake = Boolean(balance?.pooledBalance && !balance.pooledBalance.isZero());
   const notStakedYet = !hasPoolStake && !hasSoloStake;
+
+  const canManageSoloStake = useMemo(() =>
+    hasSoloStake ||
+    (api && !api.tx?.['nominationPools']?.['migrateDelegation']) ||
+    (api?.tx?.['nominationPools']?.['migrateDelegation'] && balance?.pooledBalance?.isZero())
+  ,
+  [api, balance?.pooledBalance, hasSoloStake]);
 
   const goToSend = useCallback(() => {
     address && genesisHash &&
@@ -227,7 +231,7 @@ export default function CommonTasks({ address, assetId, balance, genesisHash, se
           }
           onClick={goToSoloStaking}
           secondaryIconType='page'
-          show={(hasSoloStake || hasPoolStake) && !stakingDisabled}
+          show={(hasSoloStake || hasPoolStake) && !stakingDisabled && !!canManageSoloStake}
           text={t('Stake Solo')}
         />
         <TaskButton

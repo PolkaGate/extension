@@ -10,20 +10,11 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { DisplayLogo } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, usePrices, useTranslation } from '../../../hooks';
-import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import getLogo2 from '../../../util/getLogo2';
+import type { AssetsWithUiAndPrice } from './TotalBalancePieChart';
 
 interface Props {
   groupedAssets: AssetsWithUiAndPrice[] | undefined
-}
-
-export interface AssetsWithUiAndPrice extends FetchedBalance {
-  percent: number;
-  price: number;
-  ui: {
-    color: string | undefined;
-    logo: string | undefined;
-  };
 }
 
 function WatchList({ groupedAssets }: Props): React.ReactElement {
@@ -35,7 +26,7 @@ function WatchList({ groupedAssets }: Props): React.ReactElement {
 
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
-  const DisplayAssetRow = ({ asset }: { asset: FetchedBalance }) => {
+  const DisplayAssetRow = ({ asset }: { asset: AssetsWithUiAndPrice }) => {
     const logoInfo = useMemo(() => asset && getLogo2(asset.genesisHash, asset.token), [asset]);
     const change = pricesInCurrencies ? pricesInCurrencies.prices[asset.priceId]?.change : 0;
 

@@ -1,15 +1,15 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
+
 import { useCallback, useContext, useLayoutEffect, useState } from 'react';
 
-import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
-
 import { AccountContext } from '../components';
-import type { AccountsOrder } from '../fullscreen/homeFullScreen';
 import { saveNewOrder } from '../fullscreen/homeFullScreen/partials/DraggableAccountList';
 
-export default function useAccountsOrder(isFullScreenMode?: boolean) {
+export default function useAccountsOrder(isFullScreenMode?: boolean): AccountsOrder[] | undefined {
   const { accounts: accountsInExtension, hierarchy } = useContext(AccountContext);
 
   const [initialAccountList, setInitialAccountList] = useState<AccountsOrder[] | undefined>();
@@ -21,7 +21,7 @@ export default function useAccountsOrder(isFullScreenMode?: boolean) {
   }, []);
 
   useLayoutEffect(() => {
-    browser.storage.local.get('addressOrder').then(({ addressOrder }: { addressOrder?: string[] }) => {
+    chrome.storage.local.get('addressOrder').then(({ addressOrder }: { addressOrder?: string[] }) => {
       if (addressOrder && addressOrder.length > 0) {
         const accountsOrder: AccountsOrder[] = [];
         let idCounter = 0;
@@ -90,7 +90,7 @@ export default function useAccountsOrder(isFullScreenMode?: boolean) {
     }).catch(console.error);
   }, [accountsInExtension, accountsInExtension.length, flattenHierarchy, hierarchy, setInitialAccountList]);
 
-  return isFullScreenMode
+  return (isFullScreenMode
     ? initialAccountList
-    : initialAccountList?.map(({ account }) => account);
+    : initialAccountList?.map(({ account }) => account)) as AccountsOrder[] | undefined;
 }
