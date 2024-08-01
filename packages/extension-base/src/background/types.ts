@@ -300,6 +300,7 @@ export interface RequestSigningApprovePassword {
 export interface RequestSigningApproveSignature {
   id: string;
   signature: HexString;
+  signedTransaction?: HexString;
 }
 
 export interface RequestSigningCancel {

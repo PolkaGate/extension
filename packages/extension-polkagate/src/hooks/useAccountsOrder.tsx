@@ -21,7 +21,7 @@ export default function useAccountsOrder(isFullScreenMode?: boolean): AccountsOr
   }, []);
 
   useLayoutEffect(() => {
-    chrome.storage.local.get('addressOrder').then(({ addressOrder }: { addressOrder?: string[] }) => {
+    browser.storage.local.get('addressOrder').then(({ addressOrder }: { addressOrder?: string[] }) => {
       if (addressOrder && addressOrder.length > 0) {
         const accountsOrder: AccountsOrder[] = [];
         let idCounter = 0;

@@ -19,7 +19,7 @@ interface Props {
 export const saveNewOrder = (newOrder: AccountsOrder[]) => {
   const addressOrder = newOrder.map(({ account }) => account.address);
 
-  chrome.storage.local.set({ addressOrder }).catch(console.error);
+  browser.storage.local.set({ addressOrder }).catch(console.error);
 };
 
 export default function DraggableAccountList({ hideNumbers, initialAccountList }: Props) {

@@ -30,7 +30,7 @@ import ManageValidatorsPoolfs from '@polkadot/extension-polkagate/src/fullscreen
 import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/solo';
 import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/commonTasks/manageValidators';
 import { usePriceIds } from '@polkadot/extension-polkagate/src/hooks';
-import useAssetsBalances, { ASSETS_NAME_IN_STORAGE,type SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
+import useAssetsBalances, { ASSETS_NAME_IN_STORAGE, type SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import { isPriceUpToDate } from '@polkadot/extension-polkagate/src/hooks/usePrices';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '@polkadot/extension-polkagate/src/messaging';
 import AccountEx from '@polkadot/extension-polkagate/src/popup/account';
@@ -86,7 +86,7 @@ import uiSettings from '@polkadot/ui-settings';
 const startSettings = uiSettings.get();
 
 // Request permission for video, based on access we can hide/show import
-async function requestMediaAccess (cameraOn: boolean): Promise<boolean> {
+async function requestMediaAccess(cameraOn: boolean): Promise<boolean> {
   if (!cameraOn) {
     return false;
   }
@@ -102,7 +102,7 @@ async function requestMediaAccess (cameraOn: boolean): Promise<boolean> {
   return false;
 }
 
-function initAccountContext (accounts: AccountJson[]): AccountsContext {
+function initAccountContext(accounts: AccountJson[]): AccountsContext {
   const hierarchy = buildHierarchy(accounts);
   const master = hierarchy.find(({ isExternal, type }) => !isExternal && canDerive(type));
 
@@ -113,7 +113,7 @@ function initAccountContext (accounts: AccountJson[]): AccountsContext {
   };
 }
 
-export default function Popup (): React.ReactElement {
+export default function Popup(): React.ReactElement {
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
   const assetsOnChains = useAssetsBalances(accounts);
   const priceIds = usePriceIds();
@@ -217,7 +217,7 @@ export default function Popup (): React.ReactElement {
 
   useEffect(() => {
     const fetchLoginInfo = async () => {
-      chrome.storage.onChanged.addListener(function (changes, areaName) {
+      browser.storage.onChanged.addListener(function (changes, areaName) {
         if (areaName === 'local' && 'loginInfo' in changes) {
           const newValue = changes['loginInfo'].newValue as LoginInfo;
 
@@ -253,7 +253,7 @@ export default function Popup (): React.ReactElement {
       .catch(console.error);
   }, [cameraOn]);
 
-  function wrapWithErrorBoundary (component: React.ReactElement, trigger?: string): React.ReactElement {
+  function wrapWithErrorBoundary(component: React.ReactElement, trigger?: string): React.ReactElement {
     return <ErrorBoundary trigger={trigger}>{component}</ErrorBoundary>;
   }
 

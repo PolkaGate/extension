@@ -29,21 +29,21 @@ export default function useTracks(address: string | undefined): { fellowshipTrac
 
   // useEffect(() => {
   //   if (api && chainName && newTracks) {
-  //     chrome.storage.local.get('tracks', (res) => {
+  //     browser.storage.local.get('tracks', (res) => {
   //       const k = `${chainName}`;
   //       const last = res?.tracks ?? {};
 
   //       last[k] = JSON.parse(JSON.stringify(newTracks));
 
   //       // eslint-disable-next-line no-void
-  //       void chrome.storage.local.set({ tracks: last });
+  //       void browser.storage.local.set({ tracks: last });
   //     });
   //   }
   // }, [chainName, savedTracks, api, newTracks]);
 
   // useEffect(() => {
   //   if (chainName && !newTracks?.tracks) {
-  //     chrome.storage.local.get('tracks', (res) => {
+  //     browser.storage.local.get('tracks', (res) => {
 
   //       console.log('res:', res)
   //       setSavedTracks(res?.tracks?.[chainName]);

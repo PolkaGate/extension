@@ -109,7 +109,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
           : onchainRefInfo?.isTimedOut
             ? onchainRefInfo.asTimedOut[1].isSome ? onchainRefInfo.asTimedOut[1].value.who.toString() : undefined
             : undefined
-  , [onchainRefInfo]);
+    , [onchainRefInfo]);
 
   const submissionAmountOC = useMemo(() => onchainRefInfo?.isOngoing
     ? onchainRefInfo.asOngoing.submissionDeposit.amount.toString()
@@ -122,7 +122,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
           : onchainRefInfo?.isTimedOut
             ? onchainRefInfo.asTimedOut[1].isSome ? onchainRefInfo.asTimedOut[1].value.amount.toString() : undefined
             : undefined
-  , [onchainRefInfo]);
+    , [onchainRefInfo]);
 
   const timeLineOC = useMemo(() => onchainRefInfo?.isOngoing
     ? [
@@ -131,7 +131,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
       onchainRefInfo.asOngoing.deciding.isSome && onchainRefInfo.asOngoing.deciding.value.confirming.isSome && onchainRefInfo.asOngoing.deciding.value.confirming ? onchainRefInfo.asOngoing.deciding.value.confirming.value.toNumber() : undefined
     ]
     : undefined
-  , [onchainRefInfo]);
+    , [onchainRefInfo]);
 
   const convertBlockNumberToDate = useCallback(async (blockNumber: u32 | number): Promise<number | undefined> => {
     if (!api) {
@@ -343,7 +343,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
     }
 
     /** to save the finished referendum in the local storage*/
-    chrome.storage.local.get('latestFinishedReferenda', (res) => {
+    browser.storage.local.get('latestFinishedReferenda', (res) => {
       const k = `${chainName}`;
       const last = (res?.['latestFinishedReferenda'] as ReferendumData) ?? {};
 
@@ -364,13 +364,13 @@ export default function useReferendum(address: AccountId | string | undefined, t
       }
 
       // eslint-disable-next-line no-void
-      void chrome.storage.local.set({ latestFinishedReferenda: last });
+      void browser.storage.local.set({ latestFinishedReferenda: last });
     });
   }, [chainName, referendum, referendumPA, referendumSb]);
 
   useEffect(() => {
     /** look if the referendum id is already saved in local */
-    chainName && chrome.storage.local.get('latestFinishedReferenda', (res) => {
+    chainName && browser.storage.local.get('latestFinishedReferenda', (res) => {
       const k = `${chainName}`;
       const last = (res?.['latestFinishedReferenda'] as ReferendumData) ?? {};
 

@@ -24,7 +24,7 @@ export default function RemoteNodeSelector({ address, genesisHash }: Props): Rea
   const endpointOptions = useEndpoints(genesisHash || account?.genesisHash);
 
   const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
-    chainName && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
+    chainName && address && browser.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
       const i = `${address}`;
       const j = `${chainName}`;
       const savedEndpoints: ChromeStorageGetResponse = res?.endpoints || {};
@@ -34,7 +34,7 @@ export default function RemoteNodeSelector({ address, genesisHash }: Props): Rea
       savedEndpoints[i][j] = newEndpoint;
 
       // eslint-disable-next-line no-void
-      void chrome.storage.local.set({ endpoints: savedEndpoints });
+      void browser.storage.local.set({ endpoints: savedEndpoints });
     });
   }, [address, chainName]);
 

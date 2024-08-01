@@ -27,7 +27,7 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
       return;
     }
 
-    chrome.storage.local.get('endpoints', (res) => {
+    browser.storage.local.get('endpoints', (res) => {
       const i = `${String(address)}`;
       const j = `${chainName}`;
       const savedEndpoint = res?.endpoints?.[i]?.[j] as string | undefined;
@@ -54,7 +54,7 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
   }, [_endpoint, address, chainName, t]);
 
   useEffect(() => {
-    address && chainName && chrome.storage.onChanged.addListener((changes, namespace) => {
+    address && chainName && browser.storage.onChanged.addListener((changes, namespace) => {
       for (const [key, { newValue, oldValue }] of Object.entries(changes)) {
         if (key === 'endpoints' && namespace === 'local') {
           const maybeNewEndpoint = newValue?.[String(address)]?.[chainName];

@@ -26,7 +26,7 @@ export const getImage = async (theme: Theme): Promise<string> => {
 
   const image = response.data[0].b64_json as string;
 
-  chrome.storage.local.set({ backgroundImage: { [theme.palette.mode]: image } }).catch(console.error);
+  browser.storage.local.set({ backgroundImage: { [theme.palette.mode]: image } }).catch(console.error);
 
   return image;
 };

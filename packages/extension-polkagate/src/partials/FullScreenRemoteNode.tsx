@@ -90,7 +90,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
       });
     });
 
-    chainName && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
+    chainName && address && browser.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
       const i = `${address}`;
       const j = `${chainName}`;
       const savedEndpoints: ChromeStorageGetResponse = res?.endpoints || {};
@@ -100,7 +100,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
       savedEndpoints[i][j] = newEndpoint;
 
       // eslint-disable-next-line no-void
-      void chrome.storage.local.set({ endpoints: savedEndpoints });
+      void browser.storage.local.set({ endpoints: savedEndpoints });
     });
   }, [address, chainName]);
 

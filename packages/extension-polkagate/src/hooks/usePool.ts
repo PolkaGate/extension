@@ -40,14 +40,14 @@ export default function usePool(address?: AccountId | string, id?: number, refre
         isFetching.fetching[String(stakerAddress)].getPool = false;
         isFetching.set(isFetching.fetching);
 
-        chrome.storage.local.get('MyPools', (res) => {
+        browser.storage.local.get('MyPools', (res) => {
           const k = `${stakerAddress}`;
           const mySavedPools = res?.MyPools || {};
 
           mySavedPools[k] = null; // to remove old saved pool, even set empty for not already pool staked account
 
           // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ MyPools: mySavedPools });
+          void browser.storage.local.set({ MyPools: mySavedPools });
         });
 
         getPoolWorker.terminate();
@@ -77,7 +77,7 @@ export default function usePool(address?: AccountId | string, id?: number, refre
       }
 
       /** save my pool to local storage if it is not fetched by id, note, a pool to join is fetched by Id*/
-      !id && chrome.storage.local.get('MyPools', (res) => {
+      !id && browser.storage.local.get('MyPools', (res) => {
         const k = `${stakerAddress}`;
         const last = res?.MyPools || {};
 
@@ -85,7 +85,7 @@ export default function usePool(address?: AccountId | string, id?: number, refre
         last[k] = parsedInfo;
 
         // eslint-disable-next-line no-void
-        void chrome.storage.local.set({ MyPools: last });
+        void browser.storage.local.set({ MyPools: last });
       });
 
       getPoolWorker.terminate();
@@ -134,7 +134,7 @@ export default function usePool(address?: AccountId | string, id?: number, refre
     }
 
     /** load pool from storage */
-    chrome.storage.local.get('MyPools', (res) => {
+    browser.storage.local.get('MyPools', (res) => {
       console.log('MyPools in local storage:', res);
 
       if (res?.MyPools?.[formatted] !== undefined) {
@@ -152,7 +152,7 @@ export default function usePool(address?: AccountId | string, id?: number, refre
       return;
     }
 
-    chrome.storage.onChanged.addListener((changes, namespace) => {
+    browser.storage.onChanged.addListener((changes, namespace) => {
       for (const [key, { newValue }] of Object.entries(changes)) {
         if (key === 'MyPools' && namespace === 'local') {
           setSavedPool(newValue[formatted]);

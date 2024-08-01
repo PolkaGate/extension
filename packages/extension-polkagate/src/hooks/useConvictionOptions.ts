@@ -44,14 +44,14 @@ export default function useConvictionOptions(address: string | AccountId | undef
     ];
 
     // eslint-disable-next-line no-void
-    chrome.storage.local.get('Convictions', (res) => {
+    browser.storage.local.get('Convictions', (res) => {
       const k = `${genesisHash}`;
       const last = res?.Convictions || {};
 
       last[k] = options;
 
       // eslint-disable-next-line no-void
-      void chrome.storage.local.set({ Convictions: last });
+      void browser.storage.local.set({ Convictions: last });
     });
 
     setConvictionOptions(options);
@@ -71,7 +71,7 @@ export default function useConvictionOptions(address: string | AccountId | undef
     }
 
     /** load Convictions from storage */
-    chrome.storage.local.get('Convictions', (res) => {
+    browser.storage.local.get('Convictions', (res) => {
       // console.log('ConvictionOptions in local storage:', res);
 
       if (res?.Convictions?.[genesisHash]) {

@@ -307,7 +307,7 @@ export const isEqual = (a1: any[] | null, a2: any[] | null): boolean => {
 };
 
 export function saveAsHistory(formatted: string, info: TransactionDetail) {
-  chrome.storage.local.get('history', (res) => {
+  browser.storage.local.get('history', (res) => {
     const k = `${formatted}` as any;
     const last = (res?.['history'] ?? {}) as unknown as { [key: string]: TransactionDetail[] };
 
@@ -318,13 +318,13 @@ export function saveAsHistory(formatted: string, info: TransactionDetail) {
     }
 
     // eslint-disable-next-line no-void
-    void chrome.storage.local.set({ history: last });
+    void browser.storage.local.set({ history: last });
   });
 }
 
 export async function getHistoryFromStorage(formatted: string): Promise<TransactionDetail[] | undefined> {
   return new Promise((resolve) => {
-    chrome.storage.local.get('history', (res) => {
+    browser.storage.local.get('history', (res) => {
       const k = `${formatted}` as any;
       const last = (res?.['history'] ?? {}) as unknown as { [key: string]: TransactionDetail[] };
 

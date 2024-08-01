@@ -40,12 +40,12 @@ export default function useValidators(address: string, validators?: AllValidator
   const [newInfo, setNewValidatorsInfo] = useState<AllValidators | undefined | null>();
 
   const saveValidatorsInfoInStorage = useCallback((inf: AllValidators) => {
-    chrome.storage.local.get('validatorsInfo', (res) => {
+    browser.storage.local.get('validatorsInfo', (res) => {
       const k = `${chainName as string}`;
       const last = res?.validatorsInfo ?? {};
 
       last[k] = inf;
-      chrome.storage.local.set({ validatorsInfo: last }).catch(console.error);
+      browser.storage.local.set({ validatorsInfo: last }).catch(console.error);
     });
   }, [chainName]);
 
@@ -84,7 +84,7 @@ export default function useValidators(address: string, validators?: AllValidator
     }
 
     // eslint-disable-next-line no-void
-    void chrome.storage.local.get('validatorsInfo', (res: { [key: string]: Validators }) => {
+    void browser.storage.local.get('validatorsInfo', (res: { [key: string]: Validators }) => {
       if (res?.validatorsInfo?.[chainName]) {
         setValidatorsInfo(res.validatorsInfo[chainName]);
       }

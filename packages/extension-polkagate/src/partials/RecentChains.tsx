@@ -51,7 +51,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
       return;
     }
 
-    chrome.storage.local.get('RecentChains', (res) => {
+    browser.storage.local.get('RecentChains', (res) => {
       const allRecentChains = res?.RecentChains;
       const myRecentChains = allRecentChains?.[address] as string[];
 

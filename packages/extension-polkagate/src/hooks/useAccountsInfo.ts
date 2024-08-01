@@ -52,14 +52,14 @@ export default function useAccountsInfo(api: ApiPromise | undefined, chain: Chai
         setInfos(fetchedAccountsInfo);
 
         // eslint-disable-next-line no-void
-        chrome.storage.local.get('AccountsInfo', (res) => {
+        browser.storage.local.get('AccountsInfo', (res) => {
           const k = `${chain?.genesisHash}`;
           const last = res?.Convictions || {};
 
           last[k] = JSON.stringify(fetchedAccountsInfo);
 
           // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ AccountsInfo: last });
+          void browser.storage.local.set({ AccountsInfo: last });
         });
       }).catch(console.error);
       setFetching(false);
@@ -74,7 +74,7 @@ export default function useAccountsInfo(api: ApiPromise | undefined, chain: Chai
       return;
     }
 
-    chrome.storage.local.get('AccountsInfo', (res) => {
+    browser.storage.local.get('AccountsInfo', (res) => {
       console.log('AccountsInfo in local storage:', res);
 
       if (res?.AccountsInfo?.[chain.genesisHash]) {

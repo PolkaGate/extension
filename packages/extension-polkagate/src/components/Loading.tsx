@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { Theme} from '@mui/material';
+import type { Theme } from '@mui/material';
 
 import { Box, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -55,7 +55,7 @@ export const updateStorage = async (label: string, newInfo: object) => {
 
 export const getStorage = (label: string, parse = false): Promise<object | string> => {
   return new Promise((resolve, reject) => {
-    chrome.storage.local.get([label], (result) => {
+    browser.storage.local.get([label], (result) => {
       if (chrome.runtime.lastError) {
         reject(chrome.runtime.lastError);
       } else {
@@ -67,7 +67,7 @@ export const getStorage = (label: string, parse = false): Promise<object | strin
 
 export const watchStorage = (label: string, setChanges: ((value: any) => void), parse = false) => {
   return new Promise((resolve) => {
-    chrome.storage.onChanged.addListener(function (changes, areaName) {
+    browser.storage.onChanged.addListener(function (changes, areaName) {
       if (areaName === 'local' && label in changes) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const newValue = changes[label].newValue;
@@ -82,7 +82,7 @@ export const setStorage = (label: string, data: unknown, stringify = false) => {
   return new Promise<boolean>((resolve) => {
     const _data = stringify ? JSON.stringify(data) : data;
 
-    chrome.storage.local.set({ [label]: _data }, () => {
+    browser.storage.local.set({ [label]: _data }, () => {
       if (chrome.runtime.lastError) {
         console.log('Error while setting storage:', chrome.runtime.lastError);
         resolve(false);
@@ -111,7 +111,7 @@ const FlyingLogo = ({ theme }: { theme: Theme }) => (
   />
 );
 
-export default function Loading ({ children }: Props): React.ReactElement<Props> {
+export default function Loading({ children }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const manifest = useManifest();
 
@@ -250,7 +250,7 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
             {isFlying && isPopupOpenedByExtension
               ? <FlyingLogo theme={theme} />
               : <>
-                { step !== undefined && [STEPS.ASK_TO_SET_PASSWORD, STEPS.SHOW_LOGIN].includes(step) && (isPopupOpenedByExtension || isExtensionLocked) &&
+                {step !== undefined && [STEPS.ASK_TO_SET_PASSWORD, STEPS.SHOW_LOGIN].includes(step) && (isPopupOpenedByExtension || isExtensionLocked) &&
                   <Grid container item justifyContent='center' mt='33px' my='35px'>
                     <StillLogo theme={theme} />
                   </Grid>

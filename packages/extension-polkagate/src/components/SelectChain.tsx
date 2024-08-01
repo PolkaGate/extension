@@ -51,7 +51,7 @@ function SelectChain({ address, defaultValue, disabledItems, fullWidthDropdown, 
         return;
       }
 
-      chrome.storage.local.get('RecentChains', (res) => {
+      browser.storage.local.get('RecentChains', (res) => {
         const accountsAndChains = res?.RecentChains ?? {};
         let myRecentChains = accountsAndChains[address] as string[];
 
@@ -64,14 +64,14 @@ function SelectChain({ address, defaultValue, disabledItems, fullWidthDropdown, 
           }
 
           // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ RecentChains: accountsAndChains });
+          void browser.storage.local.set({ RecentChains: accountsAndChains });
         } else if (myRecentChains && !(myRecentChains.includes(currentGenesisHash))) {
           myRecentChains.unshift(currentGenesisHash);
           myRecentChains.pop();
           accountsAndChains[address] = myRecentChains;
 
           // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ RecentChains: accountsAndChains });
+          void browser.storage.local.set({ RecentChains: accountsAndChains });
         }
       });
     } catch (error) {

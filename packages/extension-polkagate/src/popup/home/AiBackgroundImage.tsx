@@ -33,12 +33,12 @@ export default function AiBackgroundImage({ bgImage, setBgImage }: Props): React
   const clearBackground = useCallback((): void => {
     setBgImage(undefined);
     imgRef.current[mode] = 0;
-    chrome.storage.local.get('backgroundImage', (res) => {
+    browser.storage.local.get('backgroundImage', (res) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (res?.['backgroundImage']?.[mode]) {
         res['backgroundImage'][mode] = '';
 
-        chrome.storage.local.set({ backgroundImage: res['backgroundImage'] as BgImage }).catch(console.error);
+        browser.storage.local.set({ backgroundImage: res['backgroundImage'] as BgImage }).catch(console.error);
       }
     });
   }, [mode, setBgImage]);
@@ -48,11 +48,11 @@ export default function AiBackgroundImage({ bgImage, setBgImage }: Props): React
   }, [clearBackground]);
 
   const updateImageUrlInStorage = useCallback((imgUrl: string) => {
-    imgUrl && chrome.storage.local.get('backgroundImage', (res) => {
+    imgUrl && browser.storage.local.get('backgroundImage', (res) => {
       const maybeSavedImageUrl = (res?.['backgroundImage'] || DEFAULT_BG_IMG) as BgImage;
 
       maybeSavedImageUrl[mode] = imgUrl;
-      chrome.storage.local.set({ backgroundImage: maybeSavedImageUrl }).catch(console.error);
+      browser.storage.local.set({ backgroundImage: maybeSavedImageUrl }).catch(console.error);
     });
 
     imgRef.current[mode] = imgRef.current[mode] + 1;
@@ -72,7 +72,7 @@ export default function AiBackgroundImage({ bgImage, setBgImage }: Props): React
 
   useEffect(() => {
     /** initiate background image on load and UI theme change */
-    chrome.storage.local.get('backgroundImage', (res) => {
+    browser.storage.local.get('backgroundImage', (res) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       const imgUrl = res?.['backgroundImage']?.[mode] as string;
 
