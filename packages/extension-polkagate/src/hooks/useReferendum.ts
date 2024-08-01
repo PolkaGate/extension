@@ -343,7 +343,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
     }
 
     /** to save the finished referendum in the local storage*/
-    browser.storage.local.get('latestFinishedReferenda', (res) => {
+    browser.storage.local.get('latestFinishedReferenda').then((res) => {
       const k = `${chainName}`;
       const last = (res?.['latestFinishedReferenda'] as ReferendumData) ?? {};
 
@@ -365,12 +365,12 @@ export default function useReferendum(address: AccountId | string | undefined, t
 
       // eslint-disable-next-line no-void
       void browser.storage.local.set({ latestFinishedReferenda: last });
-    });
+    }).catch(console.error);
   }, [chainName, referendum, referendumPA, referendumSb]);
 
   useEffect(() => {
     /** look if the referendum id is already saved in local */
-    chainName && browser.storage.local.get('latestFinishedReferenda', (res) => {
+    chainName && browser.storage.local.get('latestFinishedReferenda').then((res) => {
       const k = `${chainName}`;
       const last = (res?.['latestFinishedReferenda'] as ReferendumData) ?? {};
 
@@ -393,7 +393,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
       }
 
       setNotInLocalStorage(true);
-    });
+    }).catch(console.error);
   }, [chainName, id, type]);
 
   return savedReferendum || referendum;

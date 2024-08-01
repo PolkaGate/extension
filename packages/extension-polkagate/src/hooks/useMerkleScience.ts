@@ -18,12 +18,12 @@ export default function useMerkleScience(address: string | AccountId | null | un
       return;
     }
 
-    browser.storage.local.get('merkleScience', (res) => {
+    browser.storage.local.get('merkleScience').then((res) => {
       const data = res?.['merkleScience'] as MsData[];
       const found = data?.find((d) => d.address?.toLowerCase() === String(address).toLowerCase());
 
       setData(found);
-    });
+    }).catch(console.error);
   }, [address, chain]);
 
   useEffect(() => {

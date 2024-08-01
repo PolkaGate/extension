@@ -55,13 +55,13 @@ export const updateStorage = async (label: string, newInfo: object) => {
 
 export const getStorage = (label: string, parse = false): Promise<object | string> => {
   return new Promise((resolve, reject) => {
-    browser.storage.local.get([label], (result) => {
+    browser.storage.local.get([label]).then((result) => {
       if (browser.runtime.lastError) {
         reject(browser.runtime.lastError);
       } else {
         resolve(parse ? JSON.parse((result[label] || '{}') as string) as object : result[label] as object);
       }
-    });
+    }).catch(console.error);
   });
 };
 
@@ -82,14 +82,14 @@ export const setStorage = (label: string, data: unknown, stringify = false) => {
   return new Promise<boolean>((resolve) => {
     const _data = stringify ? JSON.stringify(data) : data;
 
-    browser.storage.local.set({ [label]: _data }, () => {
+    browser.storage.local.set({ [label]: _data }).then(() => {
       if (browser.runtime.lastError) {
         console.log('Error while setting storage:', browser.runtime.lastError);
         resolve(false);
       } else {
         resolve(true);
       }
-    });
+    }).catch(console.error);
   });
 };
 

@@ -26,7 +26,7 @@ class MessagingFake {
 
 const messagingFake = new MessagingFake();
 
-browser.runtime.connect.returns(messagingFake);
+chrome.runtime.connect.returns(messagingFake);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-member-access
 (window as any).chrome = chrome;

@@ -33,14 +33,14 @@ export default function AiBackgroundImage({ bgImage, setBgImage }: Props): React
   const clearBackground = useCallback((): void => {
     setBgImage(undefined);
     imgRef.current[mode] = 0;
-    browser.storage.local.get('backgroundImage', (res) => {
+    browser.storage.local.get('backgroundImage').then((res) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (res?.['backgroundImage']?.[mode]) {
         res['backgroundImage'][mode] = '';
 
         browser.storage.local.set({ backgroundImage: res['backgroundImage'] as BgImage }).catch(console.error);
       }
-    });
+    }).catch(console.error);
   }, [mode, setBgImage]);
 
   const handleImageError = useCallback(() => {
@@ -48,12 +48,12 @@ export default function AiBackgroundImage({ bgImage, setBgImage }: Props): React
   }, [clearBackground]);
 
   const updateImageUrlInStorage = useCallback((imgUrl: string) => {
-    imgUrl && browser.storage.local.get('backgroundImage', (res) => {
+    imgUrl && browser.storage.local.get('backgroundImage').then((res) => {
       const maybeSavedImageUrl = (res?.['backgroundImage'] || DEFAULT_BG_IMG) as BgImage;
 
       maybeSavedImageUrl[mode] = imgUrl;
       browser.storage.local.set({ backgroundImage: maybeSavedImageUrl }).catch(console.error);
-    });
+    }).catch(console.error);
 
     imgRef.current[mode] = imgRef.current[mode] + 1;
   }, [mode]);
@@ -72,12 +72,12 @@ export default function AiBackgroundImage({ bgImage, setBgImage }: Props): React
 
   useEffect(() => {
     /** initiate background image on load and UI theme change */
-    browser.storage.local.get('backgroundImage', (res) => {
+    browser.storage.local.get('backgroundImage').then((res) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       const imgUrl = res?.['backgroundImage']?.[mode] as string;
 
       tryToApplyImg(imgUrl);
-    });
+    }).catch(console.error);
   }, [tryToApplyImg, mode]);
 
   const onAiBackground = useCallback((): void => {

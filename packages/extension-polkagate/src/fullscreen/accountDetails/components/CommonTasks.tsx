@@ -42,14 +42,14 @@ interface TaskButtonProps {
 }
 
 export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): void => {
-  browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+  browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
     if (tabs[0]?.url) {
       const extensionUrl = tabs[0].url;
       const extensionBaseUrl = extensionUrl.split('#')[0];
 
       const tabUrl = `${extensionBaseUrl}#${relativeUrl}`;
 
-      browser.tabs.query({}, function (allTabs) {
+      browser.tabs.query({}).then((allTabs) => {
         const existingTab = allTabs.find(function (tab) {
           return tab.url === tabUrl;
         });
@@ -61,11 +61,11 @@ export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): 
         } else {
           browser.tabs.create({ url: tabUrl }).catch(console.error);
         }
-      });
+      }).catch(console.error);
     } else {
       console.error('Unable to retrieve extension URL.');
     }
-  });
+  }).catch(console.error);
 };
 
 export const TaskButton = ({ disabled, icon, loading, mr = '25px', noBorderButton = false, onClick, secondaryIconType, show = true, text }: TaskButtonProps) => {

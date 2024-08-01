@@ -31,6 +31,7 @@ const port = browser.runtime.connect({ name: PORT_EXTENSION });
 const handlers: Handlers = {};
 
 // setup a listener for messages, any incoming resolves the promise
+// @ts-ignore
 port.onMessage.addListener((data: Message['data']): void => {
   const handler = handlers[data.id];
 
