@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -26,7 +25,7 @@ interface Props {
   closeSelectProxy: () => void
 }
 
-export default function SelectProxyModal2({ address, closeSelectProxy, height, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props): React.ReactElement<Props> {
+export default function SelectProxyModal2 ({ address, closeSelectProxy, height, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const chain = useChain(address);
   const ref = useRef(selectedProxy);
@@ -55,8 +54,8 @@ export default function SelectProxyModal2({ address, closeSelectProxy, height, p
         {t('Choose a suitable proxy for the account to conduct the transaction on its behalf.')}
       </Typography>
       <ProxyTable
-        chain={chain as any}
-        label={t<string>('Proxies')}
+        chain={chain}
+        label={t('Proxies')}
         maxHeight='300px'
         mode='Select'
         onSelect={_setSelectedProxy}
@@ -70,7 +69,7 @@ export default function SelectProxyModal2({ address, closeSelectProxy, height, p
       />
       <Grid container item justifyContent='flex-end' onClick={onDeselect}>
         <Typography fontSize='14px' fontWeight={400} lineHeight='36px' sx={{ cursor: _selectedProxy ? 'pointer' : 'default', textAlign: 'right', textDecoration: 'underline', userSelect: 'none' }}>
-          {t<string>('Clear selection and use the proxied')}
+          {t('Clear selection and use the proxied')}
         </Typography>
       </Grid>
       <PButton
