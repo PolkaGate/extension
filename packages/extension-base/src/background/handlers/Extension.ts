@@ -7,7 +7,8 @@ import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types'
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 // added for plus to import RequestUpdateMeta
-import type { AccountJson, AllowedPath, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestAuthorizeReject, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestTypes, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
+import type { AccountJson, AllowedPath, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestAuthorizeReject, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestTypes, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
+import type State from './State';
 
 import { ALLOWED_PATH, PASSWORD_EXPIRY_MS, START_WITH_PATH } from '@polkadot/extension-base/defaults';
 import { TypeRegistry } from '@polkadot/types';
@@ -17,7 +18,6 @@ import { assert, isHex } from '@polkadot/util';
 import { keyExtractSuri, mnemonicGenerate, mnemonicValidate } from '@polkadot/util-crypto';
 
 import { withErrorLog } from './helpers';
-import State from './State';
 import { createSubscription, unsubscribe } from './subscriptions';
 
 type CachedUnlocks = Record<string, number>;
@@ -123,12 +123,12 @@ export default class Extension {
 
     chrome.tabs.query({}, function (tabs) {
       for (let i = 0; i < tabs.length; i++) {
-        const tabParsedUrl = new URL(tabs[i].url as string);
+        const tabParsedUrl = new URL(tabs[i].url!);
 
         const tabDomain = `${tabParsedUrl?.protocol}//${tabParsedUrl?.hostname}/`;
 
         if (tabDomain === currentDomain) {
-          chrome.tabs.reload(tabs[i].id as number).catch(console.error);
+          chrome.tabs.reload(tabs[i].id!).catch(console.error);
         }
       }
     });
@@ -213,16 +213,20 @@ export default class Extension {
     return true;
   }
 
-  private authorizeApprove ({ id }: RequestAuthorizeApprove): boolean {
+  private authorizeApprove ({ authorizedAccounts, id }: RequestAuthorizeApprove): boolean {
     const queued = this.#state.getAuthRequest(id);
 
     assert(queued, 'Unable to find request');
 
     const { resolve } = queued;
 
-    resolve(true);
+    resolve({ authorizedAccounts, result: true });
 
     return true;
+  }
+
+  private async authorizeUpdate ({ authorizedAccounts, url }: RequestUpdateAuthorizedAccounts): Promise<void> {
+    return await this.#state.updateAuthorizedAccounts({ authorizedAccounts, url });
   }
 
   private getAuthList (): ResponseAuthorizeList {
@@ -532,12 +536,14 @@ export default class Extension {
     return true;
   }
 
-  private toggleAuthorization (url: string): ResponseAuthorizeList {
-    return { list: this.#state.toggleAuthorization(url) as AuthUrls };
+  private async toggleAuthorization (url: string): Promise<ResponseAuthorizeList> {
+    return { list: await this.#state.toggleAuthorization(url) as AuthUrls };
   }
 
-  private removeAuthorization (url: string): ResponseAuthorizeList {
-    return { list: this.#state.removeAuthorization(url) as AuthUrls};
+  private async removeAuthorization (url: string): Promise<ResponseAuthorizeList> {
+    const remAuth = await this.#state.removeAuthorization(url);
+
+    return { list: remAuth };
   }
 
   // Weird thought, the eslint override is not needed in Tabs
@@ -561,6 +567,9 @@ export default class Extension {
 
       case 'pri(authorize.requests)':
         return this.authorizeSubscribe(id, port);
+
+      case 'pri(authorize.update)':
+        return this.authorizeUpdate(request as RequestUpdateAuthorizedAccounts);
 
       case 'pri(accounts.create.external)':
         return this.accountsCreateExternal(request as RequestAccountCreateExternal);

@@ -1,106 +1,89 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { AuthUrlInfo } from '@polkadot/extension-base/background/types';
+
+import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
-import type { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/handlers/State';
-
-import { ActionContext, InputFilter, Label, PButton } from '../../components';
-import { useTranslation } from '../../hooks';
-import { getAuthList, removeAuthorization, toggleAuthorization } from '../../messaging';
+import { ActionContext, VaadinIcon } from '../../components';
+import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
+import { useIsExtensionPopup, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
-import WebsiteEntry from './WebsiteEntry';
+import ManageAuthorizedAccounts from './ManageAuthorizedAccounts';
+import ManageAuthorizedDapps from './ManageAuthorizedDapps';
 
-export default function AuthManagement(): React.ReactElement {
-  const { t } = useTranslation();
-  const [authList, setAuthList] = useState<AuthUrls | null>(null);
-  const [filter, setFilter] = useState('');
+interface Props {
+  open?: boolean;
+  setDisplayPopup?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function AuthManagement ({ open, setDisplayPopup }: Props): React.ReactElement {
   const theme = useTheme();
+  const { t } = useTranslation();
   const onAction = useContext(ActionContext);
+  const isExtensionMode = useIsExtensionPopup();
 
-  useEffect(() => {
-    getAuthList()
-      .then(({ list }) => setAuthList(list as AuthUrls))
-      .catch((e) => console.error(e));
-  }, []);
+  const [dappInfo, setDappInfo] = useState<AuthUrlInfo | undefined>();
 
-  const _onChangeFilter = useCallback((filter: string) => {
-    setFilter(filter);
-  }, []);
+  const onBackClick = useCallback(() => {
+    dappInfo
+      ? setDappInfo(undefined)
+      : onAction('/');
+  }, [dappInfo, onAction]);
 
-  const toggleAuth = useCallback((url: string) => {
-    toggleAuthorization(url)
-      .then(({ list }) => setAuthList(list as AuthUrls))
-      .catch(console.error);
-  }, []);
+  const backToAccount = useCallback(() => setDisplayPopup?.(false), [setDisplayPopup]);
 
-  const removeAuth = useCallback((url: string) => {
-    removeAuthorization(url)
-      .then(({ list }) => setAuthList(list as AuthUrls))
-      .catch(console.error);
-  }, []);
+  const ExtensionMode = () => (
+    <>
+      <HeaderBrand
+        onBackClick={onBackClick}
+        showBackArrow
+        text={dappInfo ? t('Connected Accounts') : t('Manage Website Access')}
+      />
+      {dappInfo
+        ? <ManageAuthorizedAccounts info={dappInfo} setDappInfo={setDappInfo} />
+        : <ManageAuthorizedDapps setDappInfo={setDappInfo} />
+      }
+    </>
+  );
 
-  const _onBackClick = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
+  const FSMode = () => (
+    <DraggableModal onClose={backToAccount} open={!!open}>
+      <Grid container item>
+        <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
+          <Grid alignItems='flex-start' container justifyContent='flex-start' sx={{ width: 'fit-content' }}>
+            <Grid item>
+              <VaadinIcon icon='vaadin:lines-list' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
+            </Grid>
+            <Grid item sx={{ pl: '10px' }}>
+              <Typography fontSize='22px' fontWeight={700}>
+                {t('Manage Website Access')}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid item>
+            <CloseIcon onClick={backToAccount} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
+          </Grid>
+        </Grid>
+        {dappInfo
+          ? <ManageAuthorizedAccounts info={dappInfo} setDappInfo={setDappInfo} />
+          : <ManageAuthorizedDapps setDappInfo={setDappInfo} />
+        }
+      </Grid>
+    </DraggableModal>
+  );
 
   return (
     <>
-      <HeaderBrand
-        onBackClick={_onBackClick}
-        showBackArrow
-        text={t('Manage Website Access')}
-      />
-      <Typography fontSize='14px' fontWeight={300} m='20px auto' width='90%'>
-        {t<string>('Allow or deny website(s) to request access to the extension\'s visible accounts')}
-      </Typography>
-      <Grid item position='relative' px='15px'>
-        <InputFilter
-          label={t<string>('Search')}
-          onChange={_onChangeFilter}
-          placeholder={'www.example.com'}
-          theme={theme}
-          value={filter}
-          withReset
-        />
-      </Grid>
-      <Label
-        label={t<string>('Websites')}
-        style={{
-          margin: '20px auto 0',
-          width: '92%'
-        }}
-      >
-        <Grid container direction='column' justifyContent='center' minHeight='38px' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '12px', fontWeight: '400', maxHeight: window.innerHeight - 320 }}>
-          {!authList || !Object.entries(authList)?.length
-            ? <Grid alignItems='center' container item pl='10px' textAlign='left'>
-              {t<string>('No website request yet!')}
-            </Grid>
-            : <Grid container item sx={{ overflow: 'scroll' }}>
-              {Object.entries(authList)
-                .filter(([url]: [string, AuthUrlInfo]) => url.includes(filter))
-                .map(
-                  ([url, info]: [string, AuthUrlInfo]) =>
-                    <WebsiteEntry
-                      info={info}
-                      key={url}
-                      removeAuth={removeAuth}
-                      toggleAuth={toggleAuth}
-                      url={url}
-                    />
-                )}
-            </Grid>
-          }
-        </Grid>
-      </Label>
-      <PButton
-        _onClick={_onBackClick}
-        text={t<string>('Back')}
-      />
+      {
+        isExtensionMode
+          ? <ExtensionMode />
+          : <FSMode />
+      }
     </>
   );
 }

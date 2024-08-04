@@ -6,12 +6,12 @@
 import type { InjectedAccount, InjectedMetadataKnown, MetadataDef, ProviderList, ProviderMeta } from '@polkadot/extension-inject/types';
 import type { KeyringPair, KeyringPair$Json, KeyringPair$Meta } from '@polkadot/keyring/types';
 import type { JsonRpcResponse } from '@polkadot/rpc-provider/types';
+import type { TypeRegistry } from '@polkadot/types';
 import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
-
-import { TypeRegistry } from '@polkadot/types';
+import type { AuthResponse } from './handlers/State';
 
 export type AuthUrls = Record<string, AuthUrlInfo>;
 export interface AuthUrlInfo {
@@ -64,6 +64,10 @@ export type AccountWithChildren = AccountJson & {
   children?: AccountWithChildren[];
 }
 
+export interface RequestAccountUnsubscribe {
+  id: string;
+}
+
 export interface AccountsContext {
   accounts: AccountJson[];
   hierarchy: AccountWithChildren[];
@@ -109,6 +113,7 @@ export interface RequestSignatures {
   'pri(accounts.validate)': [RequestAccountValidate, boolean];
   'pri(accounts.changePassword)': [RequestAccountChangePassword, boolean];
   'pri(authorize.approve)': [RequestAuthorizeApprove, boolean];
+  'pri(authorize.update)': [RequestUpdateAuthorizedAccounts, void];
   'pri(authorize.list)': [null, ResponseAuthorizeList];
   'pri(authorize.reject)': [RequestAuthorizeReject, boolean];
   'pri(authorize.requests)': [RequestAuthorizeSubscribe, boolean, AuthorizeRequest[]];
@@ -135,8 +140,8 @@ export interface RequestSignatures {
   'pri(window.open)': [AllowedPath, boolean];
   // public/external requests, i.e. from a page
   'pub(accounts.list)': [RequestAccountList, InjectedAccount[]];
-  'pub(accounts.subscribe)': [RequestAccountSubscribe, boolean, InjectedAccount[]];
-  'pub(authorize.tab)': [RequestAuthorizeTab, null];
+  'pub(accounts.subscribe)': [RequestAccountSubscribe, string, InjectedAccount[]];
+  'pub(authorize.tab)': [RequestAuthorizeTab, Promise<AuthResponse>];
   'pub(bytes.sign)': [SignerPayloadRaw, ResponseSigning];
   'pub(extrinsic.sign)': [SignerPayloadJSON, ResponseSigning];
   'pub(metadata.list)': [null, InjectedMetadataKnown[]];
@@ -172,7 +177,13 @@ export interface RequestAuthorizeTab {
 }
 
 export interface RequestAuthorizeApprove {
+  authorizedAccounts: string[];
   id: string;
+}
+
+export interface RequestUpdateAuthorizedAccounts {
+  url: string;
+  authorizedAccounts: string[]
 }
 
 export interface RequestAuthorizeReject {

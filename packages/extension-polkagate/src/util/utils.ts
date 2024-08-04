@@ -404,3 +404,26 @@ export const getPriceIdByChainName = (chainName?: string) => {
   return EXTRA_PRICE_IDS[_chainName] ||
     _chainName?.replace('assethub', '')?.replace('people', '');
 };
+
+export function areArraysEqual<T> (arrays: T[][]): boolean {
+  if (arrays.length < 2) {
+    return true; // Single array or empty input is considered equal
+  }
+
+  const referenceArrayLength = arrays[0].length;
+
+  // Check if all inputs are arrays of the same length
+  const allValidArrays = arrays.every((array) => Array.isArray(array) && array.length === referenceArrayLength);
+
+  if (!allValidArrays) {
+    return false;
+  }
+
+  // Create sorted copies of the arrays
+  const sortedArrays = arrays.map((array) => array.sort());
+
+  // Compare each sorted array with the first sorted array
+  return sortedArrays.every((sortedArray) =>
+    sortedArray.every((element, index) => element === sortedArrays[0][index])
+  );
+}
