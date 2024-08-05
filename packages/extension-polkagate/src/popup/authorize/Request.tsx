@@ -11,7 +11,7 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { AccountContext, AccountsTable, ActionContext, ButtonWithCancel, Warning } from '../../components';
 import { useFavIcon, useTranslation } from '../../hooks';
 import { approveAuthRequest, rejectAuthRequest } from '../../messaging';
-import { areArraysEqual } from '../../util/utils';
+import { areArraysEqual, extractBaseUrl } from '../../util/utils';
 
 interface Props {
   authRequest: AuthorizeRequest;
@@ -50,7 +50,7 @@ export default function Request ({ authRequest }: Props): React.ReactElement<Pro
           variant='circular'
         />
         <span style={{ fontSize: '15px', fontWeight: 400, overflowWrap: 'anywhere' }}>
-          {authRequest.url}
+          {extractBaseUrl(authRequest.url)}
         </span>
       </Grid>
       <Grid container item sx={{ '>div': { marginBottom: '15px', marginTop: '10px' } }}>

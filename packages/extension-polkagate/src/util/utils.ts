@@ -405,7 +405,7 @@ export const getPriceIdByChainName = (chainName?: string) => {
     _chainName?.replace('assethub', '')?.replace('people', '');
 };
 
-export function areArraysEqual<T> (arrays: T[][]): boolean {
+export function areArraysEqual<T>(arrays: T[][]): boolean {
   if (arrays.length < 2) {
     return true; // Single array or empty input is considered equal
   }
@@ -426,4 +426,20 @@ export function areArraysEqual<T> (arrays: T[][]): boolean {
   return sortedArrays.every((sortedArray) =>
     sortedArray.every((element, index) => element === sortedArrays[0][index])
   );
+}
+
+export function extractBaseUrl(url: string | undefined) {
+  try {
+    if (!url) {
+      return;
+    }
+
+    const urlObj = new URL(url);
+
+    return `${urlObj.protocol}//${urlObj.hostname}`;
+  } catch (error) {
+    console.error('Invalid URL:', error);
+
+    return null;
+  }
 }

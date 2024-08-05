@@ -8,7 +8,8 @@ import React, { useCallback, useContext, useMemo } from 'react';
 
 import { useTranslation } from '../hooks';
 import Label from './Label';
-import { AccountContext, Identity, Switch } from '.';
+import { AccountContext, Identity, PButton, Switch } from '.';
+import { openOrFocusTab } from '../fullscreen/accountDetails/components/CommonTasks';
 
 type AccountTypeFilterType = ['Watch-Only' | 'Hardware' | 'QR'];
 
@@ -25,7 +26,7 @@ interface Props {
 const CHECKED_COLOR = '#46890C';
 const NOT_CHECKED_COLOR = '#838383';
 
-export default function AccountsTable ({ accountTypeFilter, areAllCheck, label, maxHeight = '112px', selectedAccounts, setSelectedAccounts, style }: Props): React.ReactElement<Props> {
+export default function AccountsTable({ accountTypeFilter, areAllCheck, label, maxHeight = '112px', selectedAccounts, setSelectedAccounts, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
@@ -59,6 +60,10 @@ export default function AccountsTable ({ accountTypeFilter, areAllCheck, label, 
       : setSelectedAccounts(accounts.map(({ address }) => address)); // select all
   }, [accounts, areAllCheck, setSelectedAccounts]);
 
+  const createOrImport = useCallback(() => {
+    openOrFocusTab('/onboarding');
+  }, []);
+
   return (
     <Grid container item sx={{ position: 'relative', ...style }}>
       <Label label={label ?? t('Accounts')} style={{ fontWeight: 300, position: 'relative', width: '100%' }}>
@@ -75,6 +80,17 @@ export default function AccountsTable ({ accountTypeFilter, areAllCheck, label, 
               </Typography>
             </Grid>
           </Grid>
+          {accountsToShow.length === 0 &&
+            <Grid container item justifyContent='center' py='20px' xs={12}>
+              {t('There is no account to display!')}
+              <PButton
+                _ml={0}
+                _mt='5px'
+                _onClick={createOrImport}
+                text={t('Create or Import account(s)')}
+              />
+            </Grid>
+          }
           {accountsToShow.map(({ address }, index) => (
             <Grid container item key={index} sx={{ '> div:not(:last-child)': { borderRight: '1px solid', borderRightColor: 'secondary.light' }, height: '41px', textAlign: 'center' }} xs={12}>
               <Grid alignItems='center' container item justifyContent='left' pl='15px' xs={8}>
@@ -93,7 +109,7 @@ export default function AccountsTable ({ accountTypeFilter, areAllCheck, label, 
           ))}
         </Grid>
       </Label>
-      {areAllCheck !== undefined &&
+      {areAllCheck !== undefined && accounts.length > 0 &&
         <Grid container item justifyContent='flex-end' onClick={toggleSelectAll} sx={{ color: 'secondary.light', cursor: 'pointer', fontWeight: 500, pr: '10px', textDecoration: 'underline' }}>
           {!areAllCheck && t('Connect all')}
           {areAllCheck && t('Disconnect all')}

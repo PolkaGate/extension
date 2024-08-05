@@ -92,7 +92,7 @@ export default function useFavIcon (url: string | null | undefined): string | nu
   }, [fetchFaviconAlt]);
 
   useEffect(() => {
-    if (isLoading || !url || faviconUrl !== undefined) {
+    if (isLoading || !url) {
       return;
     }
 

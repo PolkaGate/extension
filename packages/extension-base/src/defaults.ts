@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-base authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-const ALLOWED_PATH = ['/', '/account/import-ledger', '/account/restore-json'] as const;
+const ALLOWED_PATH = ['/', '/account/import-ledger', '/account/restore-json', '/onboarding'] as const;
 // Added for Polkagate
 const START_WITH_PATH = [
   '/account/',
