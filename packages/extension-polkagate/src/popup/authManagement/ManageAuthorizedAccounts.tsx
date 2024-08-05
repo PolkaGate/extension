@@ -8,7 +8,8 @@ import type { AuthUrlInfo } from '@polkadot/extension-base/background/handlers/S
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useLayoutEffect, useMemo, useState } from 'react';
 
-import { AccountContext, AccountsTable, ButtonWithCancel } from '../../components';
+import { AccountContext, AccountsTable, TwoButtons } from '../../components';
+import { useIsExtensionPopup } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { toggleAuthorization, updateAuthorization } from '../../messaging';
 import { areArraysEqual } from '../../util/utils';
@@ -20,6 +21,7 @@ interface Props {
 
 export default function ManageAuthorizedAccounts ({ info, onBackClick }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const isExtensionMode = useIsExtensionPopup();
   const { accounts } = useContext(AccountContext);
 
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
@@ -64,11 +66,13 @@ export default function ManageAuthorizedAccounts ({ info, onBackClick }: Props):
         setSelectedAccounts={setSelectedAccounts}
         style={{ margin: '35px auto 0', width: '92%' }}
       />
-      <ButtonWithCancel
-        _onClick={onApply}
-        _onClickCancel={onBackClick}
+      <TwoButtons
         disabled={noChanges}
-        text={t('Apply')}
+        ml={isExtensionMode ? undefined : '0'}
+        onPrimaryClick={onApply}
+        onSecondaryClick={onBackClick}
+        primaryBtnText={t('Apply')}
+        width={isExtensionMode ? undefined : '88%'}
       />
     </>
   );
