@@ -292,7 +292,7 @@ export default function Popup (): React.ReactElement {
                                       <Route path='/account/import-raw-seed'>{wrapWithErrorBoundary(<ImportRawSeed />, 'import-raw-seed')}</Route>
                                       <Route path='/account/restore-json'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json')}</Route>
                                       <Route path='/accountfs/:address/:paramAssetId'>{wrapWithErrorBoundary(<AccountFS />, 'account')}</Route>
-                                      <Route path='/auth-list'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
+                                      <Route path='/auth-list/:id?'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
                                       <Route path='/crowdloans/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
                                       <Route path='/derive/:address/locked'>{wrapWithErrorBoundary(<Derive isLocked />, 'derived-address-locked')}</Route>
                                       <Route path='/derive/:address'>{wrapWithErrorBoundary(<Derive />, 'derive-address')}</Route>

@@ -15,10 +15,10 @@ import { areArraysEqual } from '../../util/utils';
 
 interface Props {
   info: AuthUrlInfo;
-  setDappInfo: React.Dispatch<React.SetStateAction<AuthUrlInfo | undefined>>;
+  onBackClick: () => void;
 }
 
-export default function ManageAuthorizedAccounts ({ info, setDappInfo }: Props): React.ReactElement<Props> {
+export default function ManageAuthorizedAccounts ({ info, onBackClick }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
 
@@ -32,10 +32,6 @@ export default function ManageAuthorizedAccounts ({ info, setDappInfo }: Props):
   useLayoutEffect(() => {
     setSelectedAccounts(info.authorizedAccounts ?? allAccounts);
   }, [allAccounts, info.authorizedAccounts]);
-
-  const onBackClick = useCallback(() => {
-    setDappInfo(undefined);
-  }, [setDappInfo]);
 
   const onApply = useCallback((): void => {
     // If there are no authorized accounts, it means the dApp is rejected.

@@ -7,11 +7,13 @@ import type { AuthUrlInfo } from '@polkadot/extension-base/background/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router';
 
 import { ActionContext, VaadinIcon } from '../../components';
 import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
 import { useIsExtensionPopup, useTranslation } from '../../hooks';
+import { getAuthList } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 import ManageAuthorizedAccounts from './ManageAuthorizedAccounts';
 import ManageAuthorizedDapps from './ManageAuthorizedDapps';
@@ -26,16 +28,29 @@ export default function AuthManagement ({ open, setDisplayPopup }: Props): React
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const isExtensionMode = useIsExtensionPopup();
+  const { id: dappId } = useParams<{ id: string | undefined }>();
 
   const [dappInfo, setDappInfo] = useState<AuthUrlInfo | undefined>();
 
+  useEffect(() => {
+    if (dappId) {
+      getAuthList()
+        .then(({ list: authList }) => {
+          if (dappId in authList) {
+            setDappInfo(authList[dappId]);
+          }
+        })
+        .catch(console.error);
+    }
+  }, [dappId]);
+
   const onBackClick = useCallback(() => {
-    dappInfo
+    dappInfo && !dappId
       ? setDappInfo(undefined)
       : onAction('/');
-  }, [dappInfo, onAction]);
+  }, [dappInfo, dappId, onAction]);
 
-  const backToAccount = useCallback(() => setDisplayPopup?.(false), [setDisplayPopup]);
+  const backToAccountFS = useCallback(() => setDisplayPopup?.(false), [setDisplayPopup]);
 
   const ExtensionMode = () => (
     <>
@@ -45,14 +60,14 @@ export default function AuthManagement ({ open, setDisplayPopup }: Props): React
         text={dappInfo ? t('Connected Accounts') : t('Manage Website Access')}
       />
       {dappInfo
-        ? <ManageAuthorizedAccounts info={dappInfo} setDappInfo={setDappInfo} />
+        ? <ManageAuthorizedAccounts info={dappInfo} onBackClick={onBackClick} />
         : <ManageAuthorizedDapps setDappInfo={setDappInfo} />
       }
     </>
   );
 
   const FSMode = () => (
-    <DraggableModal onClose={backToAccount} open={!!open}>
+    <DraggableModal onClose={backToAccountFS} open={!!open}>
       <Grid container item>
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid alignItems='flex-start' container justifyContent='flex-start' sx={{ width: 'fit-content' }}>
@@ -66,11 +81,11 @@ export default function AuthManagement ({ open, setDisplayPopup }: Props): React
             </Grid>
           </Grid>
           <Grid item>
-            <CloseIcon onClick={backToAccount} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
+            <CloseIcon onClick={backToAccountFS} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
           </Grid>
         </Grid>
         {dappInfo
-          ? <ManageAuthorizedAccounts info={dappInfo} setDappInfo={setDappInfo} />
+          ? <ManageAuthorizedAccounts info={dappInfo} onBackClick={onBackClick} />
           : <ManageAuthorizedDapps setDappInfo={setDappInfo} />
         }
       </Grid>
