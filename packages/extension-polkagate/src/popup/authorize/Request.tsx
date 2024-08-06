@@ -70,9 +70,13 @@ export default function Request ({ authRequest }: Props): React.ReactElement<Pro
           width: '90%'
         }}
       />
-      <Typography fontSize='14px' fontWeight={300} m='10px auto 0' width='90%'>
-        {t('only approve this request if you trust the application. Approving gives the application access to the addresses of your accounts.')}
-      </Typography>
+      <Grid container item sx={{ '>div': { margin: '10px auto 0' } }}>
+        <Warning theme={theme}>
+          <Typography fontSize='14px' fontWeight={300} width='90%'>
+            {t('only approve this request if you trust the application. Approving gives the application access to the addresses of your accounts.')}
+          </Typography>
+        </Warning>
+      </Grid>
       <ButtonWithCancel
         _onClick={onApprove}
         _onClickCancel={onReject}
