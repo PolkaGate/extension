@@ -1,33 +1,32 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faHome } from '@fortawesome/free-solid-svg-icons';
+import { faBook, faBookJournalWhills, faCirclePlus, faFileCode, faHome, faMagnifyingGlassArrowRight, faQrcode, faTag, faWallet } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { AccountContext, ActionContext, PButton, VaadinIcon } from '../../components';
+import { AccountContext, ActionContext } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
 import { createAccountExternal, windowOpen } from '../../messaging';
 import Privacy from '../../popup/welcome/Privacy';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
-import { POLKADOT_GENESIS } from '@polkagate/apps-config';
+import IconBox from './IconBox';
 
 const demoAccount = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
 
 function Onboarding(): React.ReactElement {
+  const { t } = useTranslation();
+
   useFullscreen();
+
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
-  const [isBusy, setIsBusy] = useState(false);
-
-  const { t } = useTranslation();
-  const theme = useTheme();
 
   const [showPrivacyAndSecurity, setShowPrivacyAndSecurity] = useState(false);
 
@@ -50,12 +49,9 @@ function Onboarding(): React.ReactElement {
   );
 
   const onExploreDemo = useCallback((): void => {
-    setIsBusy(true);
-
     createAccountExternal('Demo Account ☔️', demoAccount, POLKADOT_GENESIS)
       .then(() => onAction('/'))
       .catch((error: Error) => {
-        setIsBusy(false);
         console.error(error);
       });
   }, [onAction]);
@@ -101,11 +97,9 @@ function Onboarding(): React.ReactElement {
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
               <FontAwesomeIcon
-                color={theme.palette.primary.main}
                 fontSize='30px'
                 icon={faHome}
               />
-
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
@@ -119,72 +113,50 @@ function Onboarding(): React.ReactElement {
           <Typography fontSize='16px' fontWeight={400} width='100%'>
             {t('At present, you do not have any accounts. To begin your journey, you can create your first account, import existing accounts, or explore the demo option to get started.')}
           </Typography>
-          <Grid alignItems='center' container item justifyContent='center' pt='50px'>
-            <PButton
-              _ml={0}
-              _mt='20px'
-              _onClick={onCreate}
-              _variant={'contained'}
-              startIcon={<VaadinIcon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.main}` }} />}
-              text={t('Create a new account')}
+          <Grid alignItems='center' container item justifyContent='space-between' pt='60px' rowGap='5px' width='700px'>
+            <IconBox
+              icon={faCirclePlus}
+              label={t('Create a New Account')}
+              onClick={onCreate}
             />
-            <Divider sx={{ fontSize: '20px', fontWeight: 400, my: '25px', width: '88%' }}>
-              {t('Or')}
-            </Divider>
-            <Grid container item justifyContent='center' mb='25px'>
-              <PButton
-                _ml={0}
-                _mt='0'
-                _onClick={onRestoreFromJson}
-                _variant={'outlined'}
-                text={t('Restore from JSON file')}
-              />
-              <PButton
-                _ml={0}
-                _mt='15px'
-                _onClick={onImport}
-                _variant={'outlined'}
-                text={t('Import from recovery phrase')}
-              />
-              <PButton
-                _ml={0}
-                _mt='15px'
-                _onClick={onImportRawSeed}
-                _variant={'outlined'}
-                text={t('Import from raw seed')}
-              />
-              <PButton
-                _ml={0}
-                _mt='15px'
-                _onClick={onAddWatchOnly}
-                _variant={'outlined'}
-                text={t('Add watch-only account')}
-              />
-              <PButton
-                _ml={0}
-                _mt='15px'
-                _onClick={onAttachQR}
-                _variant={'outlined'}
-                text={t('Attach QR-signer')}
-              />
-              <PButton
-                _ml={0}
-                _mt='15px'
-                _onClick={onImportLedger}
-                _variant={'outlined'}
-                text={t('Attach ledger device')}
-              />  <PButton
-                _ml={0}
-                _mt='15px'
-                _isBusy={isBusy}
-                _onClick={onExploreDemo}
-                _variant={'contained'}
-                text={t('Explore a demo')}
-              />
-            </Grid>
+            <IconBox
+              icon={faFileCode}
+              label={t('Restore from JSON File')}
+              onClick={onRestoreFromJson}
+            />
+            <IconBox
+              icon={faBook}
+              label={t('Import from Recovery Phrase')}
+              onClick={onImport}
+            />
+            <IconBox
+              icon={faBookJournalWhills}
+              label={t('Import from Raw Seed')}
+              onClick={onImportRawSeed}
+            />
+            <IconBox
+              icon={faWallet}
+              label={t('Attach Ledger Device')}
+              onClick={onImportLedger}
+            />
+            <IconBox
+              icon={faQrcode}
+              label={t('Attach QR-Signer')}
+              onClick={onAttachQR}
+            />
+            <IconBox
+              icon={faTag}
+              label={t('Add Watch-only Account')}
+              onClick={onAddWatchOnly}
+            />
+            <IconBox
+              icon={faMagnifyingGlassArrowRight}
+              label={t('Explore a Demo')}
+              onClick={onExploreDemo}
+            />
             <Grid container justifyContent='center'>
               {/* eslint-disable-next-line react/jsx-no-bind */}
-              <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ bottom: 0, cursor: 'pointer', fontSize: '12px', position: 'absolute', textAlign: 'center', textDecoration: 'underline' }}>
+              <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ bottom: 10, cursor: 'pointer', fontSize: '12px', position: 'absolute', textAlign: 'center', textDecoration: 'underline' }}>
                 {t('Privacy and Security')}
               </Typography>
             </Grid>

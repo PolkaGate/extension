@@ -1347,5 +1347,11 @@
   "Select accounts to import into the extension": "",
   "Remove from profile": "",
   "My Portfolio": "",
-  "Nomination Pools are evolving! Unstake your solo staked funds soon to benefit from automatic pool migration, which allows participation in both a pool and governance, and avoid manual changes.": ""
+  "Nomination Pools are evolving! Unstake your solo staked funds soon to benefit from automatic pool migration, which allows participation in both a pool and governance, and avoid manual changes.": "",
+  "Create a New Account": "",
+  "Attach Ledger Device": "",
+  "Attach QR-Signer": "",
+  "Import from Raw Seed": "",
+  "Add Watch-only Account": "",
+  "Explore a Demo": ""
 }
