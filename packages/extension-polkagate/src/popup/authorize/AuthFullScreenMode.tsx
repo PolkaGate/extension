@@ -123,6 +123,7 @@ function AuthFullScreenMode (): React.ReactElement {
           <Grid container item justifyContent='flex-end' pt='5px'>
             <Grid container item sx={{ '> div': { width: '100%' } }} xs={7}>
               <TwoButtons
+                disabled={selectedAccounts.length === 0}
                 mt='15px'
                 onPrimaryClick={onApprove}
                 onSecondaryClick={onReject}

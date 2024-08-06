@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
-import React, { useCallback, useContext, useEffect,useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AuthorizeReqContext } from '../../components';
 import { HeaderBrand } from '../../partials';
