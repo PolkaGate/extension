@@ -27,8 +27,6 @@ export default function Connected (): React.ReactElement {
   const checkTab = useCallback(async () => {
     setChecking(true);
 
-    console.log('checking');
-
     try {
       const { list: authList } = await getAuthList();
 
@@ -42,7 +40,7 @@ export default function Connected (): React.ReactElement {
         return;
       }
 
-      const availableDapp = Object.values(authList).find(({ url }) => url === tab.url);
+      const availableDapp = Object.values(authList).find(({ url }) => tab.url?.startsWith(url));
 
       setDappId(availableDapp?.id);
       setIsConnected(!!availableDapp);
