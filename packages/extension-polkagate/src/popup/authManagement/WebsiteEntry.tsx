@@ -28,8 +28,6 @@ export default function WebsiteEntry ({ authList, filter, setDappInfo, setToRemo
 
   const accountsLength = useMemo(() => accounts.length, [accounts.length]);
 
-  console.log('info:', authList);
-
   const manageAuthorizedAccount = useCallback((info: AuthUrlInfo) => {
     setDappInfo(info);
   }, [setDappInfo]);
@@ -53,24 +51,25 @@ export default function WebsiteEntry ({ authList, filter, setDappInfo, setToRemo
             .map(([url, info]: [string, AuthUrlInfo]) => {
               const isAlreadyExist = !!toRemove.find((toRemoveUrl) => toRemoveUrl === url);
 
-              return (<Grid container item key={url} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
-                <Typography fontSize='14px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light', lineHeight: '30px', overflowX: 'hidden', pl: '5px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '67%' }}>
-                  {url}
-                </Typography>
-                <Grid alignItems='center' container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light', lineHeight: '30px', width: '25%' }}>
-                  {info.isAllowed && `(${info?.authorizedAccounts?.length ?? accountsLength})`}
-                  {info.isAllowed && <RecentActorsIcon onClick={() => manageAuthorizedAccount(info)} sx={{ color: theme.palette.secondary.light, cursor: 'pointer', fontSize: '25px', ml: '5px' }} />}
-                  {!info.isAllowed &&
-                    <Typography fontSize='14px' onClick={() => manageAuthorizedAccount(info)} sx={{ color: 'secondary.light', cursor: 'pointer', textDecoration: 'underline' }}>
-                      {t('No access')}
-                    </Typography>
-                  }
+              return (
+                <Grid container item key={url} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
+                  <Typography fontSize='14px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light', lineHeight: '30px', overflowX: 'hidden', pl: '5px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '67%' }}>
+                    {url}
+                  </Typography>
+                  <Grid alignItems='center' container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light', lineHeight: '30px', width: '25%' }}>
+                    {info.isAllowed && `(${info?.authorizedAccounts?.length ?? accountsLength})`}
+                    {info.isAllowed && <RecentActorsIcon onClick={() => manageAuthorizedAccount(info)} sx={{ color: theme.palette.secondary.light, cursor: 'pointer', fontSize: '25px', ml: '5px' }} />}
+                    {!info.isAllowed &&
+                      <Typography fontSize='14px' onClick={() => manageAuthorizedAccount(info)} sx={{ color: 'secondary.light', cursor: 'pointer', textDecoration: 'underline' }}>
+                        {t('No access')}
+                      </Typography>
+                    }
+                  </Grid>
+                  <Grid alignItems='center' container item justifyContent='center' onClick={() => manageRemove(url, isAlreadyExist)} sx={{ width: '8%' }}>
+                    {!isAlreadyExist && <RemoveAuth color={theme.palette.secondary.light} />}
+                    {isAlreadyExist && <ReplayIcon style={{ color: theme.palette.secondary.light, cursor: 'pointer' }} />}
+                  </Grid>
                 </Grid>
-                <Grid alignItems='center' container item justifyContent='center' onClick={() => manageRemove(url, isAlreadyExist)} sx={{ width: '8%' }}>
-                  {!isAlreadyExist && <RemoveAuth color={theme.palette.secondary.light} />}
-                  {isAlreadyExist && <ReplayIcon style={{ color: theme.palette.secondary.light, cursor: 'pointer' }} />}
-                </Grid>
-              </Grid>
               );
             }
             )}
