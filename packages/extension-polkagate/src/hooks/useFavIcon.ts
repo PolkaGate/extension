@@ -5,7 +5,6 @@ import { useCallback, useEffect, useState } from 'react';
 
 export default function useFavIcon (url: string | null | undefined): string | null | undefined {
   const [faviconUrl, setFaviconUrl] = useState<string | null | undefined>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const checkImageExists = useCallback(async (_url: string): Promise<boolean> => {
     try {
@@ -39,8 +38,6 @@ export default function useFavIcon (url: string | null | undefined): string | nu
   }, [checkImageExists]);
 
   const fetchFavicon = useCallback(async (_url: string) => {
-    setIsLoading(true);
-
     try {
       const response = await fetch(_url);
 
@@ -86,18 +83,21 @@ export default function useFavIcon (url: string | null | undefined): string | nu
     } catch (error) {
       console.error(`Error fetching favicon for ${_url}:`, error);
       setFaviconUrl(null);
-    } finally {
-      setIsLoading(false);
     }
   }, [fetchFaviconAlt]);
 
   useEffect(() => {
-    if (isLoading || !url) {
+    if (faviconUrl || !url) {
       return;
     }
 
     fetchFavicon(url).catch(console.error);
-  }, [faviconUrl, fetchFavicon, isLoading, url]);
+  }, [faviconUrl, fetchFavicon, url]);
+
+  useEffect(() => {
+    // reset faviconUrl based on url changes, applicable when there are multiple auth requests
+    setFaviconUrl(undefined);
+  }, [url]);
 
   return faviconUrl;
 }

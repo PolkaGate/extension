@@ -30,7 +30,7 @@ import ManageValidatorsPoolfs from '@polkadot/extension-polkagate/src/fullscreen
 import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/solo';
 import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/commonTasks/manageValidators';
 import { usePriceIds } from '@polkadot/extension-polkagate/src/hooks';
-import useAssetsBalances, { ASSETS_NAME_IN_STORAGE,type SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
+import useAssetsBalances, { ASSETS_NAME_IN_STORAGE, type SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import { isPriceUpToDate } from '@polkadot/extension-polkagate/src/hooks/usePrices';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '@polkadot/extension-polkagate/src/messaging';
 import AccountEx from '@polkadot/extension-polkagate/src/popup/account';
@@ -151,6 +151,7 @@ export default function Popup (): React.ReactElement {
 
   useEffect(() => {
     assetsOnChains && setAccountsAssets({ ...assetsOnChains });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assetsOnChains?.timeStamp]);
 
   useEffect(() => {
@@ -165,6 +166,7 @@ export default function Popup (): React.ReactElement {
         }
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts?.length, assetsOnChains?.timeStamp]);
 
   useEffect(() => {
@@ -257,13 +259,15 @@ export default function Popup (): React.ReactElement {
     return <ErrorBoundary trigger={trigger}>{component}</ErrorBoundary>;
   }
 
-  const Root = authRequests?.length
-    ? wrapWithErrorBoundary(<Authorize />, 'authorize')
-    : metaRequests?.length
-      ? wrapWithErrorBoundary(<Metadata />, 'metadata')
-      : signRequests?.length
-        ? wrapWithErrorBoundary(<Signing />, 'signing')
-        : wrapWithErrorBoundary(<Accounts />, 'accounts');
+  const Root = useCallback(() =>
+    authRequests?.length
+      ? wrapWithErrorBoundary(<Authorize />, 'authorize')
+      : metaRequests?.length
+        ? wrapWithErrorBoundary(<Metadata />, 'metadata')
+        : signRequests?.length
+          ? wrapWithErrorBoundary(<Signing />, 'signing')
+          : wrapWithErrorBoundary(<Accounts />, 'accounts')
+  , [authRequests?.length, metaRequests?.length, signRequests?.length]);
 
   return (
     <AnimatePresence mode='wait'>

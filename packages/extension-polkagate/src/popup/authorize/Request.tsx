@@ -15,9 +15,10 @@ import { areArraysEqual, extractBaseUrl } from '../../util/utils';
 
 interface Props {
   authRequest: AuthorizeRequest;
+  hasBanner: boolean;
 }
 
-export default function Request ({ authRequest }: Props): React.ReactElement<Props> {
+export default function Request ({ authRequest, hasBanner }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
@@ -60,7 +61,7 @@ export default function Request ({ authRequest }: Props): React.ReactElement<Pro
       </Grid>
       <AccountsTable
         areAllCheck={areAllCheck}
-        maxHeight='170px'
+        maxHeight= { hasBanner ? '150px' : '170px'}
         selectedAccounts={selectedAccounts}
         setSelectedAccounts={setSelectedAccounts}
         style={{

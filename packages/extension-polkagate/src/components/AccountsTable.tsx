@@ -110,7 +110,7 @@ export default function AccountsTable ({ accountTypeFilter, areAllCheck, label, 
             </Grid>
           }
           {accountsToShow.map(({ address }, index) => (
-            <Grid container item key={index} sx={{ '> div:not(:last-child)': { borderRight: '1px solid', borderRightColor: 'secondary.light' }, height: '41px', textAlign: 'center' }} xs={12}>
+            <Grid container item key={index} sx={{ '> div:not(:last-child)': { borderRight: '1px solid', borderRightColor: 'secondary.light' }, height: '37px', textAlign: 'center' }} xs={12}>
               <Grid alignItems='center' container item justifyContent='left' pl='15px' xs={8}>
                 <Identity address={address} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: '14px' }} subIdOnly />
               </Grid>
@@ -128,7 +128,7 @@ export default function AccountsTable ({ accountTypeFilter, areAllCheck, label, 
         </Grid>
       </Label>
       {areAllCheck !== undefined && accountsToShow.length > 0 &&
-        <Grid container item justifyContent='flex-end' onClick={toggleSelectAll} sx={{ color: 'secondary.light', cursor: 'pointer', fontWeight: 500, pr: '10px', textDecoration: 'underline' }}>
+        <Grid container item justifyContent='flex-end' onClick={toggleSelectAll} sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: '14px', pr: '15px', textDecoration: 'underline' }}>
           {!areAllCheck && t('Connect all')}
           {areAllCheck && t('Disconnect all')}
         </Grid>}

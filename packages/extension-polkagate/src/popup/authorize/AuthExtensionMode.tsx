@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect,useState } from 'react';
 
 import { AuthorizeReqContext } from '../../components';
 import { HeaderBrand } from '../../partials';
@@ -16,22 +16,17 @@ export default function AuthExtensionMode (): React.ReactElement {
   const [requestIndex, setRequestIndex] = useState<number>(0);
 
   useEffect(() => {
-    if (requests.length > 0 && requestIndex > requests.length - 1) {
-      setRequestIndex(0);
-    }
-  }, [requestIndex, requests, requests.length]);
+    // reset index when the request size changes due to request approve or rejection
+    setRequestIndex(0);
+  }, [requests.length]);
 
   const onNextAuth = useCallback(() => {
-    if (requestIndex >= 0 && requestIndex < requests.length - 1) {
-      setRequestIndex((requestIndex) => requestIndex + 1);
-    }
-  }, [requestIndex, requests.length]);
+    setRequestIndex((index) => index < requests.length - 1 ? index + 1 : 0);
+  }, [requests.length]);
 
   const onPreviousAuth = useCallback(() => {
-    if (requestIndex > 0 && requestIndex <= requests.length - 1) {
-      setRequestIndex((requestIndex) => requestIndex - 1);
-    }
-  }, [requestIndex, requests.length]);
+    setRequestIndex((index) => index > 0 ? index - 1 : requests.length - 1);
+  }, [requests.length]);
 
   return (
     <Grid container>
@@ -49,6 +44,7 @@ export default function AuthExtensionMode (): React.ReactElement {
       {requests[requestIndex] &&
         <Request
           authRequest={requests[requestIndex]}
+          hasBanner={requests.length > 1}
         />}
     </Grid>
   );
