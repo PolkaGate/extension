@@ -23,9 +23,70 @@ interface Props {
   setDisplayPopup?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function AuthManagement ({ open, setDisplayPopup }: Props): React.ReactElement {
-  const theme = useTheme();
+interface ExtensionModeType {
+  onBackClick: () => void;
+  dappInfo: AuthUrlInfo | undefined;
+  setDappInfo: React.Dispatch<React.SetStateAction<AuthUrlInfo | undefined>>;
+}
+
+interface FSModeType {
+  backToAccountFS: () => void;
+  onBackClick: () => void;
+  dappInfo: AuthUrlInfo | undefined;
+  setDappInfo: React.Dispatch<React.SetStateAction<AuthUrlInfo | undefined>>;
+  open: boolean;
+}
+
+const ExtensionMode = ({ dappInfo, onBackClick, setDappInfo }: ExtensionModeType) => {
   const { t } = useTranslation();
+
+  return (
+    <>
+      <HeaderBrand
+        onBackClick={onBackClick}
+        showBackArrow
+        text={dappInfo ? t('Connected Accounts') : t('Manage Website Access')}
+      />
+      {dappInfo
+        ? <ManageAuthorizedAccounts info={dappInfo} onBackClick={onBackClick} />
+        : <ManageAuthorizedDapps setDappInfo={setDappInfo} />
+      }
+    </>
+  );
+};
+
+const FSMode = ({ backToAccountFS, dappInfo, onBackClick, open, setDappInfo }: FSModeType) => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+
+  return (
+    <DraggableModal onClose={backToAccountFS} open={!!open}>
+      <Grid container item>
+        <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
+          <Grid alignItems='flex-start' container justifyContent='flex-start' sx={{ width: 'fit-content' }}>
+            <Grid item>
+              <VaadinIcon icon='vaadin:lines-list' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
+            </Grid>
+            <Grid item sx={{ pl: '10px' }}>
+              <Typography fontSize='22px' fontWeight={700}>
+                {t('Manage Website Access')}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid item>
+            <CloseIcon onClick={backToAccountFS} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
+          </Grid>
+        </Grid>
+        {dappInfo
+          ? <ManageAuthorizedAccounts info={dappInfo} onBackClick={onBackClick} />
+          : <ManageAuthorizedDapps backToAccountFS={backToAccountFS} setDappInfo={setDappInfo} />
+        }
+      </Grid>
+    </DraggableModal>
+  );
+};
+
+export default function AuthManagement ({ open, setDisplayPopup }: Props): React.ReactElement {
   const onAction = useContext(ActionContext);
   const isExtensionMode = useIsExtensionPopup();
   const { id: dappId } = useParams<{ id: string | undefined }>();
@@ -52,52 +113,12 @@ export default function AuthManagement ({ open, setDisplayPopup }: Props): React
 
   const backToAccountFS = useCallback(() => setDisplayPopup?.(false), [setDisplayPopup]);
 
-  const ExtensionMode = () => (
-    <>
-      <HeaderBrand
-        onBackClick={onBackClick}
-        showBackArrow
-        text={dappInfo ? t('Connected Accounts') : t('Manage Website Access')}
-      />
-      {dappInfo
-        ? <ManageAuthorizedAccounts info={dappInfo} onBackClick={onBackClick} />
-        : <ManageAuthorizedDapps setDappInfo={setDappInfo} />
-      }
-    </>
-  );
-
-  const FSMode = () => (
-    <DraggableModal onClose={backToAccountFS} open={!!open}>
-      <Grid container item>
-        <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
-          <Grid alignItems='flex-start' container justifyContent='flex-start' sx={{ width: 'fit-content' }}>
-            <Grid item>
-              <VaadinIcon icon='vaadin:lines-list' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
-            </Grid>
-            <Grid item sx={{ pl: '10px' }}>
-              <Typography fontSize='22px' fontWeight={700}>
-                {t('Manage Website Access')}
-              </Typography>
-            </Grid>
-          </Grid>
-          <Grid item>
-            <CloseIcon onClick={backToAccountFS} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-          </Grid>
-        </Grid>
-        {dappInfo
-          ? <ManageAuthorizedAccounts info={dappInfo} onBackClick={onBackClick} />
-          : <ManageAuthorizedDapps setDappInfo={setDappInfo} />
-        }
-      </Grid>
-    </DraggableModal>
-  );
-
   return (
     <>
       {
         isExtensionMode
-          ? <ExtensionMode />
-          : <FSMode />
+          ? <ExtensionMode dappInfo={dappInfo} onBackClick={onBackClick} setDappInfo={setDappInfo} />
+          : <FSMode backToAccountFS={backToAccountFS} dappInfo={dappInfo} onBackClick={onBackClick} open={!!open} setDappInfo={setDappInfo} />
       }
     </>
   );

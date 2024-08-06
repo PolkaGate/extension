@@ -9,7 +9,7 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { AccountContext, AccountsTable, ActionContext, AuthorizeReqContext, TwoButtons, VaadinIcon } from '../../components';
+import { AccountContext, AccountsTable, ActionContext, AuthorizeReqContext, TwoButtons, VaadinIcon, Warning } from '../../components';
 import { FullScreenHeader } from '../../fullscreen/governance/FullScreenHeader';
 import { useFavIcon, useFullscreen, useTranslation } from '../../hooks';
 import { approveAuthRequest, rejectAuthRequest } from '../../messaging';
@@ -101,21 +101,27 @@ function AuthFullScreenMode (): React.ReactElement {
               {extractBaseUrl(requests[requestIndex].url)}
             </span>
           </Grid>
-          <Typography fontSize='16px' fontWeight={400} width='100%'>
-            {t('The application is requesting access to your accounts. Please select the accounts you wish to connect.')}
-          </Typography>
+          <Grid container item sx={{ '>div': { marginBottom: '15px', marginTop: '10px' } }}>
+            <Warning theme={theme}>
+              <span style={{ fontSize: '14px', fontWeight: 400, overflowWrap: 'anywhere' }}>
+                {t('The application is requesting access to your accounts. Please select the accounts you wish to connect.')}
+              </span>
+            </Warning>
+          </Grid>
           <AccountsTable
             areAllCheck={areAllCheck}
             maxHeight='250px'
             selectedAccounts={selectedAccounts}
             setSelectedAccounts={setSelectedAccounts}
-            style={{
-              my: '20px'
-            }}
+            style={{ my: '20px' }}
           />
-          <Typography fontSize='14px' fontWeight={300} m='10px auto 15px'>
-            {t('only approve this request if you trust the application. Approving gives the application access to the addresses of your accounts.')}
-          </Typography>
+          <Grid container item sx={{ '>div': { margin: '10px auto 15px' } }}>
+            <Warning theme={theme}>
+              <Typography fontSize='14px' fontWeight={400}>
+                {t('only approve this request if you trust the application. Approving gives the application access to the addresses of your accounts.')}
+              </Typography>
+            </Warning>
+          </Grid>
           <Grid container item justifyContent='flex-end' pt='5px'>
             <Grid container item sx={{ '> div': { width: '100%' } }} xs={7}>
               <TwoButtons
