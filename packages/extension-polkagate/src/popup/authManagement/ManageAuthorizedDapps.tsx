@@ -8,6 +8,8 @@ import type { AuthUrlInfo } from '@polkadot/extension-base/background/types';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
+import { noop } from '@polkadot/util';
+
 import { ActionContext, InputFilter, PButton, TwoButtons } from '../../components';
 import { useIsExtensionPopup } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
@@ -15,10 +17,11 @@ import { removeAuthorization } from '../../messaging';
 import DappList from './DappList';
 
 interface Props {
-  setDappInfo: React.Dispatch<React.SetStateAction<AuthUrlInfo | undefined>>
+  setDappInfo: React.Dispatch<React.SetStateAction<AuthUrlInfo | undefined>>;
+  backToAccountFS?: () => void | undefined;
 }
 
-export default function ManageAuthorizedDapps ({ setDappInfo }: Props): React.ReactElement {
+export default function ManageAuthorizedDapps ({ backToAccountFS, setDappInfo }: Props): React.ReactElement {
   const isExtensionMode = useIsExtensionPopup();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -80,7 +83,7 @@ export default function ManageAuthorizedDapps ({ setDappInfo }: Props): React.Re
       {toRemove.length === 0 &&
         <PButton
           _ml={isExtensionMode ? undefined : 0}
-          _onClick={onBackClick}
+          _onClick={isExtensionMode ? onBackClick : backToAccountFS ?? noop}
           _width={isExtensionMode ? undefined : 88}
           text={t('Back')}
         />}
