@@ -13,6 +13,7 @@ export const news: News[] = [
     version: '0.7.2',
     notes: [
       'Granular access to dApps: Select specific accounts when authorizing websites to access your accounts.',
+      'Show connected dapp on the Home page: The logo appears next to the PolkaGate logo and is clickable to manage accounts.',
       'Support for Stablecoin Requests in Treasury: Accurately displaying requests for USDT on the Asset Hub through Governance mechanisms.',
       'Hide Numbers on Login Page: Add an option to hide numbers on the login page before logging in.',
       'Nomination Pools are evolving: New alerts for dual stakers (solo and pool) to stay on one. Unstake solo funds soon for automatic pool migration, enabling pool and governance participation without manual changes.'
