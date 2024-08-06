@@ -10,7 +10,7 @@ export interface News {
 
 export const news: News[] = [
   {
-    version: '0.7.2',
+    version: '0.7.3',
     notes: [
       'Granular access to dApps: Select specific accounts when authorizing websites to access your accounts.',
       'Show connected dapp on the Home page: The logo appears next to the PolkaGate logo and is clickable to manage accounts.',
