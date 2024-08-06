@@ -1367,5 +1367,6 @@
   "No access": "",
   "Authentication Request": "",
   "The application is requesting access to your accounts. Please select the accounts you wish to connect.": "",
-  "Allow this request only if you trust the application. This grants access to your account addresses.": ""
+  "Allow this request only if you trust the application. This grants access to your account addresses.": "",
+  "Manage connections to": ""
 }

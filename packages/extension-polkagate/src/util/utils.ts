@@ -174,12 +174,12 @@ export function getTransactionHistoryFromLocalStorage(
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let transactionHistoryFromLocalStorage: SavedMetaData | null = null;
+
   try {
     transactionHistoryFromLocalStorage = account?.['history'] ? JSON.parse(String(account['history'])) : null;
   } catch (error) {
     console.error('Failed to parse transaction history:', error);
   }
-
 
   if (transactionHistoryFromLocalStorage) {
     if (transactionHistoryFromLocalStorage.chainName === chainName) {
@@ -405,7 +405,7 @@ export const getPriceIdByChainName = (chainName?: string) => {
     _chainName?.replace('assethub', '')?.replace('people', '');
 };
 
-export function areArraysEqual<T>(arrays: T[][]): boolean {
+export function areArraysEqual<T> (arrays: T[][]): boolean {
   if (arrays.length < 2) {
     return true; // Single array or empty input is considered equal
   }
@@ -428,7 +428,7 @@ export function areArraysEqual<T>(arrays: T[][]): boolean {
   );
 }
 
-export function extractBaseUrl(url: string | undefined) {
+export function extractBaseUrl (url: string | undefined) {
   try {
     if (!url) {
       return;
