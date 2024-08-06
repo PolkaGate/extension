@@ -53,12 +53,10 @@ export default function Request ({ authRequest }: Props): React.ReactElement<Pro
           {extractBaseUrl(authRequest.url)}
         </span>
       </Grid>
-      <Grid container item sx={{ '>div': { marginBottom: '15px', marginTop: '10px' } }}>
-        <Warning theme={theme}>
-          <span style={{ overflowWrap: 'anywhere' }}>
-            {t('The application is requesting access to your accounts. Please select the accounts you wish to connect.')}
-          </span>
-        </Warning>
+      <Grid container item sx={{ m: '10px 20px' }}>
+        <Typography fontSize='14px' fontWeight={300}>
+          {t('The application is requesting access to your accounts. Please select the accounts you wish to connect.')}
+        </Typography>
       </Grid>
       <AccountsTable
         areAllCheck={areAllCheck}
@@ -73,7 +71,7 @@ export default function Request ({ authRequest }: Props): React.ReactElement<Pro
       <Grid container item sx={{ '>div': { margin: '10px auto 0' } }}>
         <Warning theme={theme}>
           <Typography fontSize='14px' fontWeight={300} width='90%'>
-            {t('only approve this request if you trust the application. Approving gives the application access to the addresses of your accounts.')}
+            {t('Allow this request only if you trust the application. This grants access to your account addresses.')}
           </Typography>
         </Warning>
       </Grid>

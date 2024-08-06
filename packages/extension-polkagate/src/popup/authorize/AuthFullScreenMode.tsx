@@ -101,12 +101,10 @@ function AuthFullScreenMode (): React.ReactElement {
               {extractBaseUrl(requests[requestIndex].url)}
             </span>
           </Grid>
-          <Grid container item sx={{ '>div': { marginBottom: '15px', marginTop: '10px' } }}>
-            <Warning theme={theme}>
-              <span style={{ fontSize: '14px', fontWeight: 400, overflowWrap: 'anywhere' }}>
-                {t('The application is requesting access to your accounts. Please select the accounts you wish to connect.')}
-              </span>
-            </Warning>
+          <Grid container item sx={{ marginBottom: '15px', marginTop: '10px' }}>
+            <Typography fontSize='14px' fontWeight={400}>
+              {t('The application is requesting access to your accounts. Please select the accounts you wish to connect.')}
+            </Typography>
           </Grid>
           <AccountsTable
             areAllCheck={areAllCheck}
@@ -118,7 +116,7 @@ function AuthFullScreenMode (): React.ReactElement {
           <Grid container item sx={{ '>div': { margin: '10px auto 15px' } }}>
             <Warning theme={theme}>
               <Typography fontSize='14px' fontWeight={400}>
-                {t('only approve this request if you trust the application. Approving gives the application access to the addresses of your accounts.')}
+                {t('Allow this request only if you trust the application. This grants access to your account addresses.')}
               </Typography>
             </Warning>
           </Grid>

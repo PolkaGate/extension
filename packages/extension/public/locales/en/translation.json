@@ -1353,5 +1353,19 @@
   "Attach QR-Signer": "",
   "Import from Raw Seed": "",
   "Add Watch-only Account": "",
-  "Explore a Demo": ""
+  "Explore a Demo": "",
+  "Connected": "",
+  "There is no account to display!": "",
+  "Create or Import account(s)": "",
+  "You accounts are hidden (invisible) to websites!": "",
+  "Visible accounts": "",
+  "Connect all": "",
+  "Disconnect all": "",
+  "Access": "",
+  "Connected Accounts": "",
+  "Manage connections to ": "",
+  "No access": "",
+  "Authentication Request": "",
+  "The application is requesting access to your accounts. Please select the accounts you wish to connect.": "",
+  "Allow this request only if you trust the application. This grants access to your account addresses.": ""
 }
