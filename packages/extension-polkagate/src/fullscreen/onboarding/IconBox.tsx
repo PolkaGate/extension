@@ -9,13 +9,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
+import { pgBoxShadow } from '../../util/utils';
+
 interface Props {
   icon: IconProp;
   label: string;
   onClick: () => void;
 }
 
-function IconBox({ icon, label, onClick }: Props): React.ReactElement<Props> {
+function IconBox ({ icon, label, onClick }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const [hovered, setHovered] = useState<boolean>(false);
@@ -36,15 +38,15 @@ function IconBox({ icon, label, onClick }: Props): React.ReactElement<Props> {
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      sx={{ bgcolor: hovered ? theme.palette.primary.main : theme.palette.background.paper, height: '90px', width: '300px', borderRadius: '10px', cursor: 'pointer', mb: '10px', position: 'relative', px: '15px' }}
+      sx={{ bgcolor: hovered ? theme.palette.primary.main : theme.palette.background.paper, borderRadius: '10px', boxShadow: theme.palette.mode === 'light' ? pgBoxShadow(theme) : undefined, cursor: 'pointer', height: '90px', mb: '10px', position: 'relative', px: '15px', width: '300px' }}
     >
       <FontAwesomeIcon
-        pulse={hovered}
         fontSize='40px'
         icon={icon}
+        pulse={hovered}
         style={{ color: hovered && theme.palette.mode === 'light' ? theme.palette.text.secondary : theme.palette.text.primary }}
       />
-      <Typography fontSize='14px' fontWeight={400} sx={{ color: hovered && theme.palette.mode === 'light' ? theme.palette.text.secondary : theme.palette.text.primary, position: 'absolute', left: '100px' }} width='100%'>
+      <Typography fontSize='14px' fontWeight={400} sx={{ color: hovered && theme.palette.mode === 'light' ? theme.palette.text.secondary : theme.palette.text.primary, left: '100px', position: 'absolute', width: '100%' }}>
         {label}
       </Typography>
     </Grid>
