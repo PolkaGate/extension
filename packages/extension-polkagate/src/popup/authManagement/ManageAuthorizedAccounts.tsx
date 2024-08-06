@@ -51,11 +51,11 @@ export default function ManageAuthorizedAccounts ({ info, onBackClick }: Props):
 
   return (
     <>
-      <Grid container item justifyContent='space-between' sx={{ m: '15px auto', width: '92%' }}>
+      <Grid container item sx={{ m: '15px auto', width: '92%' }}>
         <Typography>
-          {t('Manage connections to ')}
+          {t('Manage connections to')}
         </Typography>
-        <Typography sx={{ textDecoration: 'underline' }}>
+        <Typography sx={{ pl: '3px', textDecoration: 'underline' }}>
           {info.id}
         </Typography>
       </Grid>
