@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -12,7 +11,7 @@ import keyring from '@polkadot/ui-keyring';
 
 import { ActionContext, Address, ButtonWithCancel, Checkbox2 as Checkbox, Password, Warning, WrongPasswordAlert } from '../../components';
 import { useTranslation } from '../../hooks';
-import { forgetAccount } from '../../messaging';
+import { forgetAccount, getAuthList, removeAuthorization, updateAuthorization } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 
 // const acceptedFormats = ['application/json', 'text/plain'].join(', ');
@@ -21,7 +20,7 @@ interface Props extends RouteComponentProps<{ address: string, isExternal: strin
   className?: string;
 }
 
-function ForgetAccount({ match: { params: { address, isExternal } } }: Props): React.ReactElement<Props> {
+function ForgetAccount ({ match: { params: { address, isExternal } } }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
@@ -31,56 +30,68 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
   const theme = useTheme();
   const needsPasswordConfirmation = isExternal !== 'true';
 
-  const _goHome = useCallback(
-    () => onAction('/'),
-    [onAction]
-  );
+  const goHome = useCallback(() => onAction('/'), [onAction]);
 
-  const _onClickForget = useCallback(
-    (): void => {
-      try {
-        setIsBusy(true);
+  const updateAuthAccountsList = useCallback(async (_address: string) => {
+    try {
+      const { list } = await getAuthList();
 
-        if (needsPasswordConfirmation) {
-          const signer = keyring.getPair(address);
+      const updatePromises = Object.entries(list)
+        .filter(([, { authorizedAccounts }]) => authorizedAccounts.includes(_address))
+        .map(([url, { authorizedAccounts }]) => {
+          const newAuthAddressList = authorizedAccounts.filter((authAddress) => authAddress !== _address);
 
-          signer.unlock(password);
-        }
+          if (newAuthAddressList.length === 0) {
+            return Promise.all([updateAuthorization(newAuthAddressList, url), removeAuthorization(url)]);
+          }
 
-        forgetAccount(address)
-          .then(() => {
-            setIsBusy(false);
-            onAction('/');
-          })
-          .catch((error: Error) => {
-            setIsBusy(false);
-            console.error(error);
-          });
-      } catch (e) {
-        setIsPasswordError(true);
-        setIsBusy(false);
+          return updateAuthorization(newAuthAddressList, url);
+        });
+
+      await Promise.all(updatePromises);
+    } catch (error) {
+      console.error('Error updating auth accounts list:', error);
+    }
+  }, []);
+
+  const onClickForget = useCallback((): void => {
+    try {
+      setIsBusy(true);
+
+      if (needsPasswordConfirmation) {
+        const signer = keyring.getPair(address);
+
+        signer.unlock(password);
       }
-    },
-    [address, needsPasswordConfirmation, onAction, password]
-  );
 
-  const _onChangePass = useCallback(
-    (pass: string): void => {
-      setPassword(pass);
-      setIsPasswordError(false);
-    }, []
-  );
+      forgetAccount(address)
+        .then(async () => {
+          await updateAuthAccountsList(address);
+          setIsBusy(false);
+          onAction('/');
+        })
+        .catch((error: Error) => {
+          setIsBusy(false);
+          console.error(error);
+        });
+    } catch (error) {
+      setIsPasswordError(true);
+      setIsBusy(false);
+      console.error(error);
+    }
+  }, [address, needsPasswordConfirmation, onAction, password, updateAuthAccountsList]);
 
-  const _onBackClick = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
+  const onChangePass = useCallback((pass: string): void => {
+    setPassword(pass);
+    setIsPasswordError(false);
+  }, []);
 
   return (
     <>
       <HeaderBrand
-        onBackClick={_onBackClick}
+        onBackClick={goHome}
         showBackArrow
-        text={t<string>('Forget Account')}
+        text={t('Forget Account')}
       />
       {isPasswordError &&
         <WrongPasswordAlert />
@@ -103,9 +114,9 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
             <Password
               isError={isPasswordError}
               isFocused
-              label={t<string>('Password for this account')}
-              onChange={_onChangePass}
-              onEnter={_onClickForget}
+              label={t('Password for this account')}
+              onChange={onChangePass}
+              onEnter={onClickForget}
             />
             {isPasswordError && (
               <Warning
@@ -113,7 +124,7 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
                 isDanger
                 theme={theme}
               >
-                {t<string>('incorrect password')}
+                {t('incorrect password')}
               </Warning>
             )}
           </>
@@ -121,8 +132,9 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
             <Checkbox
               checked={checkConfirmed}
               iconStyle={{ transform: 'scale:(1.13)' }}
-              label={t<string>('I want to forget this account.')}
+              label={t('I want to forget this account.')}
               labelStyle={{ fontSize: '16px', marginLeft: '7px' }}
+              // eslint-disable-next-line react/jsx-no-bind
               onChange={() => setCheckConfirmed(!checkConfirmed)}
               style={{ ml: '5px' }}
             />)
@@ -130,10 +142,10 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
       </Grid>
       <ButtonWithCancel
         _isBusy={isBusy}
-        _onClick={_onClickForget}
-        _onClickCancel={_goHome}
+        _onClick={onClickForget}
+        _onClickCancel={goHome}
         disabled={!checkConfirmed && !password?.length}
-        text={t<string>('Forget')}
+        text={t('Forget')}
       />
     </>
   );

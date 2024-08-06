@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { combineLatest, type Subscription } from 'rxjs';
 import type { InjectedAccount, InjectedMetadataKnown, MetadataDef, ProviderMeta } from '@polkadot/extension-inject/types';
 import type { KeyringPair } from '@polkadot/keyring/types';
 import type { JsonRpcResponse } from '@polkadot/rpc-provider/types';
@@ -9,6 +8,8 @@ import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types'
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 import type { MessageTypes, RequestAccountList, RequestAccountUnsubscribe, RequestAuthorizeTab, RequestRpcSend, RequestRpcSubscribe, RequestRpcUnsubscribe, RequestTypes, ResponseRpcListProviders, ResponseSigning, ResponseTypes, SubscriptionMessageTypes } from '../types';
 import type State from './State';
+
+import { combineLatest, type Subscription } from 'rxjs';
 
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
@@ -62,9 +63,9 @@ export default class Tabs {
       return [];
     }
 
-    const accessAccounts = accounts.filter((allAcc) => auth.authorizedAccounts
+    const accessAccounts = accounts.filter(({ address }) => auth.authorizedAccounts
       // we have a list, use it
-      ? auth.authorizedAccounts.includes(allAcc.address)
+      ? auth.authorizedAccounts.includes(address)
       // if no authorizedAccounts and isAllowed return all - these are old converted urls
       : auth.isAllowed
     );
