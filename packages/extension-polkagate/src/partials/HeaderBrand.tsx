@@ -77,7 +77,7 @@ const LeftIcon = ({ onBackClick, showBackArrow, showBrand }: {
   );
 };
 
-function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreenURL = '/', isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showFullScreen = false, showMenu, style, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreenURL = '/', isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showFullScreen = false, showMenu, style, text, withSteps = null }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const onAction = useContext(ActionContext);
   const setIconRef = useRef(null);
@@ -101,8 +101,6 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreenURL = 
   const _onClose = useCallback(() => {
     onAction('/');
   }, [onAction]);
-
-
 
   const CenterItem = () => (
     <Grid display='inline-flex' item>
