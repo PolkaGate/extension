@@ -6,10 +6,11 @@
 import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo } from 'react';
 
+import { openOrFocusTab } from '../fullscreen/accountDetails/components/CommonTasks';
 import { useTranslation } from '../hooks';
+import { showAccount } from '../messaging';
 import Label from './Label';
 import { AccountContext, Identity, PButton, Switch } from '.';
-import { openOrFocusTab } from '../fullscreen/accountDetails/components/CommonTasks';
 
 type AccountTypeFilterType = ['Watch-Only' | 'Hardware' | 'QR'];
 
@@ -26,7 +27,7 @@ interface Props {
 const CHECKED_COLOR = '#46890C';
 const NOT_CHECKED_COLOR = '#838383';
 
-export default function AccountsTable({ accountTypeFilter, areAllCheck, label, maxHeight = '112px', selectedAccounts, setSelectedAccounts, style }: Props): React.ReactElement<Props> {
+export default function AccountsTable ({ accountTypeFilter, areAllCheck, label, maxHeight = '112px', selectedAccounts, setSelectedAccounts, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
@@ -64,6 +65,12 @@ export default function AccountsTable({ accountTypeFilter, areAllCheck, label, m
     openOrFocusTab('/onboarding');
   }, []);
 
+  const visibleAccounts = useCallback(() => {
+    accounts.forEach(({ address }) => {
+      showAccount(address, true).catch(console.error);
+    });
+  }, [accounts]);
+
   return (
     <Grid container item sx={{ position: 'relative', ...style }}>
       <Label label={label ?? t('Accounts')} style={{ fontWeight: 300, position: 'relative', width: '100%' }}>
@@ -80,7 +87,7 @@ export default function AccountsTable({ accountTypeFilter, areAllCheck, label, m
               </Typography>
             </Grid>
           </Grid>
-          {accountsToShow.length === 0 &&
+          {accounts.length === 0 &&
             <Grid container item justifyContent='center' py='20px' xs={12}>
               {t('There is no account to display!')}
               <PButton
@@ -88,6 +95,17 @@ export default function AccountsTable({ accountTypeFilter, areAllCheck, label, m
                 _mt='5px'
                 _onClick={createOrImport}
                 text={t('Create or Import account(s)')}
+              />
+            </Grid>
+          }
+          {accounts.length > 0 && accountsToShow.length === 0 &&
+            <Grid container item justifyContent='center' py='20px' xs={12}>
+              {t('You accounts are hidden (invisible) to websites!')}
+              <PButton
+                _ml={0}
+                _mt='5px'
+                _onClick={visibleAccounts}
+                text={t('Visible accounts')}
               />
             </Grid>
           }
@@ -109,7 +127,7 @@ export default function AccountsTable({ accountTypeFilter, areAllCheck, label, m
           ))}
         </Grid>
       </Label>
-      {areAllCheck !== undefined && accounts.length > 0 &&
+      {areAllCheck !== undefined && accountsToShow.length > 0 &&
         <Grid container item justifyContent='flex-end' onClick={toggleSelectAll} sx={{ color: 'secondary.light', cursor: 'pointer', fontWeight: 500, pr: '10px', textDecoration: 'underline' }}>
           {!areAllCheck && t('Connect all')}
           {areAllCheck && t('Disconnect all')}
