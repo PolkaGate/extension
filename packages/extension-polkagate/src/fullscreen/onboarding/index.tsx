@@ -113,7 +113,7 @@ function Onboarding(): React.ReactElement {
           <Typography fontSize='16px' fontWeight={400} width='100%'>
             {t('At present, you do not have any accounts. To begin your journey, you can create your first account, import existing accounts, or explore the demo option to get started.')}
           </Typography>
-          <Grid alignItems='center' container item justifyContent='space-between' width='700px' pt='60px'>
+          <Grid alignItems='center' container item justifyContent='space-between' pt='60px' rowGap='5px' width='700px'>
             <IconBox
               icon={faCirclePlus}
               label={t('Create a New Account')}
