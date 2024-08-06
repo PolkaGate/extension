@@ -73,7 +73,7 @@ export default function Connected (): React.ReactElement {
     <Avatar
       onClick={openConnected}
       src={favIconUrl ?? undefined}
-      sx={{ borderRadius: '50%', bottom: 0, cursor: 'pointer', height: '15px', position: 'absolute', right: 0, width: '15px' }}
+      sx={{ borderRadius: '50%', bottom: 5, cursor: 'pointer', height: '15px', position: 'absolute', right: 10, width: '15px' }}
       variant='circular'
     />
   );
