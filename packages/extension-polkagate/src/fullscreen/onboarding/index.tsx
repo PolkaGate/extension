@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faBook, faBookJournalWhills, faCirclePlus, faFileCode, faHome, faMagnifyingGlassArrowRight, faQrcode, faTag, faWallet} from '@fortawesome/free-solid-svg-icons';
+import { faBook, faBookJournalWhills, faCirclePlus, faFileCode, faHome, faMagnifyingGlassArrowRight, faQrcode, faTag, faWallet } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, Typography } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
@@ -120,16 +120,6 @@ function Onboarding(): React.ReactElement {
               onClick={onCreate}
             />
             <IconBox
-              icon={faWallet}
-              label={t('Attach Ledger Device')}
-              onClick={onImportLedger}
-            />
-            <IconBox
-              icon={faQrcode}
-              label={t('Attach QR-Signer')}
-              onClick={onAttachQR}
-            />
-            <IconBox
               icon={faFileCode}
               label={t('Restore from JSON File')}
               onClick={onRestoreFromJson}
@@ -145,6 +135,16 @@ function Onboarding(): React.ReactElement {
               onClick={onImportRawSeed}
             />
             <IconBox
+              icon={faWallet}
+              label={t('Attach Ledger Device')}
+              onClick={onImportLedger}
+            />
+            <IconBox
+              icon={faQrcode}
+              label={t('Attach QR-Signer')}
+              onClick={onAttachQR}
+            />
+            <IconBox
               icon={faTag}
               label={t('Add Watch-only Account')}
               onClick={onAddWatchOnly}
@@ -156,7 +156,7 @@ function Onboarding(): React.ReactElement {
             />
             <Grid container justifyContent='center'>
               {/* eslint-disable-next-line react/jsx-no-bind */}
-              <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ bottom: 0, cursor: 'pointer', fontSize: '12px', position: 'absolute', textAlign: 'center', textDecoration: 'underline' }}>
+              <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ bottom: 10, cursor: 'pointer', fontSize: '12px', position: 'absolute', textAlign: 'center', textDecoration: 'underline' }}>
                 {t('Privacy and Security')}
               </Typography>
             </Grid>
