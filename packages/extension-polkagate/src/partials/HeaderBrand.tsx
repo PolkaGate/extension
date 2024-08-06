@@ -14,9 +14,9 @@ import React, { useCallback, useContext, useRef, useState } from 'react';
 import { logoBlack, logoWhite } from '../assets/logos';
 import { ActionContext, FullScreenIcon, Steps, VaadinIcon } from '../components';
 import useOutsideClick from '../hooks/useOutsideClick';
+import Connected from './Connected';
 import Menu from './Menu';
 import { AccountMenu } from '.';
-import Connected from './Connected';
 
 interface Props {
   address?: string;
@@ -42,31 +42,14 @@ interface Props {
   style?: SxProps<Theme> | undefined;
 }
 
-function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreenURL = '/', isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showFullScreen = false, showMenu, style, text, withSteps = null }: Props): React.ReactElement<Props> {
-  const [isMenuOpen, setOpenMenu] = useState(false);
-  const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
-  const setIconRef = useRef(null);
-  const setMenuRef = useRef(null);
+const LeftIcon = ({ onBackClick, showBackArrow, showBrand }: {
+  showBrand: boolean | undefined;
+  onBackClick?: () => void;
+  showBackArrow?: boolean;
+}) => {
   const theme = useTheme();
-  const onAction = useContext(ActionContext);
 
-  useOutsideClick([setIconRef, setMenuRef], (): void => {
-    isMenuOpen && setOpenMenu(!isMenuOpen);
-  });
-
-  const _handleMenuClick = useCallback(() => {
-    if (address) {
-      setShowAccountMenu((open) => !open);
-    } else {
-      setOpenMenu((open) => !open);
-    }
-  }, [address]);
-
-  const _onClose = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
-
-  const LeftIcon = () => (
+  return (
     <Grid item xs={showBrand ? 1.4 : 1}>
       {!showBrand &&
         <ArrowBackIosIcon
@@ -92,6 +75,34 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreenURL = 
       }
     </Grid>
   );
+};
+
+function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreenURL = '/', isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showFullScreen = false, showMenu, style, text, withSteps = null }: Props): React.ReactElement<Props> {
+  const theme = useTheme();
+  const onAction = useContext(ActionContext);
+  const setIconRef = useRef(null);
+  const setMenuRef = useRef(null);
+
+  const [isMenuOpen, setOpenMenu] = useState(false);
+  const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
+
+  useOutsideClick([setIconRef, setMenuRef], (): void => {
+    isMenuOpen && setOpenMenu(!isMenuOpen);
+  });
+
+  const _handleMenuClick = useCallback(() => {
+    if (address) {
+      setShowAccountMenu((open) => !open);
+    } else {
+      setOpenMenu((open) => !open);
+    }
+  }, [address]);
+
+  const _onClose = useCallback(() => {
+    onAction('/');
+  }, [onAction]);
+
+
 
   const CenterItem = () => (
     <Grid display='inline-flex' item>
@@ -164,7 +175,11 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreenURL = 
         }}
       >
         <Grid alignItems='center' container justifyContent='space-between'>
-          <LeftIcon />
+          <LeftIcon
+            onBackClick={onBackClick}
+            showBackArrow={showBackArrow}
+            showBrand={showBrand}
+          />
           {_centerItem ?? <CenterItem />}
           <RightItem />
         </Grid>
