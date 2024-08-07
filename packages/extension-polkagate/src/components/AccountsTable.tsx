@@ -65,7 +65,7 @@ export default function AccountsTable ({ accountTypeFilter, areAllCheck, label, 
     openOrFocusTab('/onboarding');
   }, []);
 
-  const visibleAccounts = useCallback(() => {
+  const makeAccountsVisible = useCallback(() => {
     accounts.forEach(({ address }) => {
       showAccount(address, true).catch(console.error);
     });
@@ -104,8 +104,8 @@ export default function AccountsTable ({ accountTypeFilter, areAllCheck, label, 
               <PButton
                 _ml={0}
                 _mt='5px'
-                _onClick={visibleAccounts}
-                text={t('Visible accounts')}
+                _onClick={makeAccountsVisible}
+                text={t('Make accounts visible')}
               />
             </Grid>
           }

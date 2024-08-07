@@ -1348,7 +1348,6 @@
   "There is no account to display!": "प्रदर्शित करने के लिए कोई खाता नहीं है!",
   "Create or Import account(s)": "खाता(खाते) बनाएं या आयात करें",
   "You accounts are hidden (invisible) to websites!": "आपके खाते वेबसाइटों से छिपे (अदृश्य) हैं!",
-  "Visible accounts": "दिखने वाले खाते",
   "Connect all": "सभी को कनेक्ट करें",
   "Disconnect all": "सभी को डिस्कनेक्ट करें",
   "Access": "पहुँच",
@@ -1358,5 +1357,6 @@
   "The application is requesting access to your accounts. Please select the accounts you wish to connect.": "एप्लिकेशन आपके खातों तक पहुंच का अनुरोध कर रहा है। कृपया उन खातों का चयन करें जिन्हें आप कनेक्ट करना चाहते हैं।",
   "Allow this request only if you trust the application. This grants access to your account addresses.": "इस अनुरोध को केवल तभी अनुमति दें यदि आप एप्लिकेशन पर भरोसा करते हैं। यह आपके खाता पते तक पहुंच प्रदान करता है।",
   "Manage connections to": "से कनेक्शनों का प्रबंधन करें",
-  "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.": "नियंत्रण करें कि कौन से दिखने वाले खाते वेबसाइटों द्वारा एक्सेस किए जा सकते हैं। एक्सेस सूची को समायोजित करके या वेबसाइट प्रविष्टि को हटाकर एक्सेस को अपडेट या अस्वीकार करें। केवल आपके दिखने वाले खातों तक ही पहुंच हो सकती है।"
+  "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.": "नियंत्रण करें कि कौन से दिखने वाले खाते वेबसाइटों द्वारा एक्सेस किए जा सकते हैं। एक्सेस सूची को समायोजित करके या वेबसाइट प्रविष्टि को हटाकर एक्सेस को अपडेट या अस्वीकार करें। केवल आपके दिखने वाले खातों तक ही पहुंच हो सकती है।",
+  "Make accounts visible": "खातों को दृश्यमान बनाएं"
 }

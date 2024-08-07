@@ -1346,7 +1346,6 @@
   "There is no account to display!": "Нет аккаунтов для отображения!",
   "Create or Import account(s)": "Создать или импортировать аккаунт(ы)",
   "You accounts are hidden (invisible) to websites!": "Ваши аккаунты скрыты (невидимы) для сайтов!",
-  "Visible accounts": "Видимые аккаунты",
   "Connect all": "Подключить все",
   "Disconnect all": "Отключить все",
   "Access": "Доступ",
@@ -1356,5 +1355,6 @@
   "The application is requesting access to your accounts. Please select the accounts you wish to connect.": "Приложение запрашивает доступ к вашим аккаунтам. Пожалуйста, выберите аккаунты, которые вы хотите подключить.",
   "Allow this request only if you trust the application. This grants access to your account addresses.": "Разрешите этот запрос только если вы доверяете приложению. Это предоставляет доступ к адресам ваших аккаунтов.",
   "Manage connections to": "Управлять подключениями к",
-  "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.": "Контролируйте, какие видимые аккаунты могут получить доступ к сайтам. Обновите или откажите в доступе, отрегулировав список доступа или удалив запись сайта. Доступны могут быть только ваши видимые аккаунты."
+  "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.": "Контролируйте, какие видимые аккаунты могут получить доступ к сайтам. Обновите или откажите в доступе, отрегулировав список доступа или удалив запись сайта. Доступны могут быть только ваши видимые аккаунты.",
+  "Make accounts visible": "Сделать аккаунты видимыми"
 }

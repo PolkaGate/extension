@@ -1358,7 +1358,6 @@
   "There is no account to display!": "",
   "Create or Import account(s)": "",
   "You accounts are hidden (invisible) to websites!": "",
-  "Visible accounts": "",
   "Connect all": "",
   "Disconnect all": "",
   "Access": "",
@@ -1368,5 +1367,6 @@
   "The application is requesting access to your accounts. Please select the accounts you wish to connect.": "",
   "Allow this request only if you trust the application. This grants access to your account addresses.": "",
   "Manage connections to": "",
-  "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.": ""
+  "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.": "",
+  "Make accounts visible": ""
 }

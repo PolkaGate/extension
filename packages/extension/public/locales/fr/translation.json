@@ -1351,7 +1351,6 @@
   "There is no account to display!": "Il n'y a aucun compte à afficher!",
   "Create or Import account(s)": "Créer ou importer des comptes",
   "You accounts are hidden (invisible) to websites!": "Vos comptes sont cachés (invisibles) pour les sites web!",
-  "Visible accounts": "Comptes visibles",
   "Connect all": "Connecter tout",
   "Disconnect all": "Déconnecter tout",
   "Access": "Accès",
@@ -1361,5 +1360,6 @@
   "The application is requesting access to your accounts. Please select the accounts you wish to connect.": "L'application demande l'accès à vos comptes. Veuillez sélectionner les comptes que vous souhaitez connecter.",
   "Allow this request only if you trust the application. This grants access to your account addresses.": "Autorisez cette demande uniquement si vous faites confiance à l'application. Cela permet d'accéder aux adresses de vos comptes.",
   "Manage connections to": "Gérer les connexions à",
-  "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.": "Contrôlez les comptes visibles que les sites web peuvent accéder. Mettez à jour ou refusez l'accès en ajustant la liste d'accès ou en supprimant l'entrée du site web. Seuls vos comptes visibles peuvent être accessibles."
+  "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.": "Contrôlez les comptes visibles que les sites web peuvent accéder. Mettez à jour ou refusez l'accès en ajustant la liste d'accès ou en supprimant l'entrée du site web. Seuls vos comptes visibles peuvent être accessibles.",
+  "Make accounts visible": "Rendre les comptes visibles"
 }
