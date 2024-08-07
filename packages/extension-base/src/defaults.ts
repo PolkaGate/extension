@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-base authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-const ALLOWED_PATH = ['/', '/account/import-ledger', '/account/restore-json'] as const;
+const ALLOWED_PATH = ['/', '/account/import-ledger', '/account/restore-json', '/onboarding'] as const;
 // Added for Polkagate
 const START_WITH_PATH = [
   '/account/',
@@ -31,13 +31,13 @@ const PHISHING_PAGE_REDIRECT = '/phishing-page-detected';
 
 export {
   ALLOWED_PATH,
+  EXTENSION_PREFIX,
+  MESSAGE_ORIGIN_CONTENT,
+  MESSAGE_ORIGIN_PAGE,
   PASSWORD_EXPIRY_MIN,
   PASSWORD_EXPIRY_MS,
   PHISHING_PAGE_REDIRECT,
-  EXTENSION_PREFIX,
   PORT_CONTENT,
   PORT_EXTENSION,
-  START_WITH_PATH, // Added for Polkagate
-  MESSAGE_ORIGIN_PAGE,
-  MESSAGE_ORIGIN_CONTENT
+  START_WITH_PATH// Added for Polkagate
 };

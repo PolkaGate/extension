@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -21,7 +20,7 @@ interface Props {
   _isBusy?: boolean;
 }
 
-export default function ButtonWithCancel({ _isBusy, _mt, _onClick, _onClickCancel, cancelText, disabled = false, text }: Props): React.ReactElement<Props> {
+export default function ButtonWithCancel ({ _isBusy, _mt, _onClick, _onClickCancel, cancelText, disabled = false, text }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -46,7 +45,7 @@ export default function ButtonWithCancel({ _isBusy, _mt, _onClick, _onClickCance
       </Grid>
       <Grid item xs={5.8}>
         {_isBusy
-          ? <Grid alignItems='center' container justifyContent='center' sx={{ border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', backgroundColor: 'secondary.main', textTransform: 'none', fontSize: '18px', fontWeight: 400, height: '36px', textTransform: 'none', width: '100%' }}>
+          ? <Grid alignItems='center' container justifyContent='center' sx={{ backgroundColor: 'secondary.main', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', fontSize: '18px', fontWeight: 400, height: '36px', textTransform: 'none', width: '100%' }}>
             <Circle color='white' scaleEnd={0.7} scaleStart={0.4} size={25} />
           </Grid>
           : <Button

@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Collapse, Divider, Grid, useTheme } from '@mui/material';
@@ -14,12 +14,12 @@ import { AccountContext, Select, VaadinIcon } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
 import { useIsTestnetEnabled, useTranslation } from '../../../hooks';
 import { setNotification, tieAccount } from '../../../messaging';
+import ManageWebAccess from '../../../popup/authManagement';
 import { TEST_NETS } from '../../../util/constants';
 import getLanguageOptions from '../../../util/getLanguageOptions';
 import EnableTestNetsModal from './EnableTestNetsModal';
 import { TaskButton } from './HomeMenu';
 import ManageLoginPassword from './ManageLoginPassword';
-import ManageWebAccess from './ManageWebAccess';
 
 interface Props {
   show: boolean;
@@ -121,7 +121,7 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
             />
             <TaskButton
               icon={
-                <VaadinIcon icon='vaadin:lines-list' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+                <VaadinIcon icon='vaadin:lines-list' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
               }
               isSubMenu
               onClick={onAuthManagement}
@@ -129,7 +129,7 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
             />
             <TaskButton
               icon={
-                <VaadinIcon icon='vaadin:key' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+                <VaadinIcon icon='vaadin:key' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
               }
               isSubMenu
               onClick={onManageLoginPassword}
