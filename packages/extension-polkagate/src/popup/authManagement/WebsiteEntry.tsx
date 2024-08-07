@@ -19,9 +19,10 @@ interface Props {
   setDappInfo: React.Dispatch<React.SetStateAction<AuthUrlInfo | undefined>>;
   toRemove: string[];
   setToRemove: React.Dispatch<React.SetStateAction<string[]>>;
+  maxHeight: number;
 }
 
-export default function WebsiteEntry ({ authList, filter, setDappInfo, setToRemove, toRemove }: Props): React.ReactElement<Props> {
+export default function WebsiteEntry({ authList, filter, maxHeight, setDappInfo, setToRemove, toRemove }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
@@ -45,7 +46,7 @@ export default function WebsiteEntry ({ authList, filter, setDappInfo, setToRemo
         ? <Grid alignItems='center' container item justifyContent='center' sx={{ height: '40px', textAlign: 'center' }}>
           {t('No website request yet!')}
         </Grid>
-        : <Grid container item sx={{ '& :last-child': { borderBottom: 'none' }, overflow: 'scroll' }}>
+        : <Grid container item sx={{ '& :last-child': { borderBottom: 'none' }, maxHeight: { maxHeight }, overflow: 'scroll' }}>
           {Object.entries(authList)
             .filter(([url]: [string, AuthUrlInfo]) => url.includes(filter ?? ''))
             .map(([url, info]: [string, AuthUrlInfo]) => {

@@ -21,7 +21,7 @@ interface Props {
   backToAccountFS?: () => void | undefined;
 }
 
-export default function ManageAuthorizedDapps ({ backToAccountFS, setDappInfo }: Props): React.ReactElement {
+export default function ManageAuthorizedDapps({ backToAccountFS, setDappInfo }: Props): React.ReactElement {
   const isExtensionMode = useIsExtensionPopup();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -60,7 +60,7 @@ export default function ManageAuthorizedDapps ({ backToAccountFS, setDappInfo }:
   return (
     <>
       <Typography fontSize='14px' fontWeight={300} m='20px auto' width='90%'>
-        {t('Allow or deny website(s) to request access to the extension\'s visible accounts')}
+        {t('Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.')}
       </Typography>
       <Grid container item position='relative' px='15px' sx={{ '> div': { width: '100%' } }}>
         <InputFilter
@@ -74,6 +74,7 @@ export default function ManageAuthorizedDapps ({ backToAccountFS, setDappInfo }:
       </Grid>
       <DappList
         filter={filter}
+        maxHeight={isExtensionMode ? window.innerHeight - 400 : 260}
         refresh={refresh}
         setDappInfo={setDappInfo}
         setRefresh={setRefresh}
@@ -82,19 +83,19 @@ export default function ManageAuthorizedDapps ({ backToAccountFS, setDappInfo }:
       />
       {toRemove.length === 0 &&
         <PButton
-          _ml={isExtensionMode ? undefined : 0}
+          _ml={isExtensionMode ? undefined : 3}
           _onClick={isExtensionMode ? onBackClick : backToAccountFS ?? noop}
-          _width={isExtensionMode ? undefined : 88}
+          _width={isExtensionMode ? undefined : 81}
           text={t('Back')}
         />}
       {toRemove.length > 0 &&
         <TwoButtons
           isBusy={isBusy}
-          ml={isExtensionMode ? undefined : '0'}
+          ml={isExtensionMode ? undefined : '3%'}
           onPrimaryClick={removeAuthorizedDapps}
           onSecondaryClick={onReset}
           primaryBtnText={t('Apply')}
-          width={isExtensionMode ? undefined : '88%'}
+          width={isExtensionMode ? undefined : '81%'}
         />
       }
     </>

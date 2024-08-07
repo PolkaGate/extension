@@ -129,8 +129,7 @@ export default function AccountsTable ({ accountTypeFilter, areAllCheck, label, 
       </Label>
       {areAllCheck !== undefined && accountsToShow.length > 0 &&
         <Grid container item justifyContent='flex-end' onClick={toggleSelectAll} sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: '14px', pr: '15px', textDecoration: 'underline' }}>
-          {!areAllCheck && t('Connect all')}
-          {areAllCheck && t('Disconnect all')}
+          {areAllCheck ? t('Disconnect all') : t('Connect all')}
         </Grid>}
     </Grid>
   );

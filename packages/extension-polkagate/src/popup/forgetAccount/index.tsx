@@ -22,12 +22,13 @@ interface Props extends RouteComponentProps<{ address: string, isExternal: strin
 
 function ForgetAccount ({ match: { params: { address, isExternal } } }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
   const onAction = useContext(ActionContext);
+
   const [isBusy, setIsBusy] = useState(false);
   const [password, setPassword] = useState<string>('');
   const [checkConfirmed, setCheckConfirmed] = useState<boolean>(false);
   const [isPasswordError, setIsPasswordError] = useState(false);
-  const theme = useTheme();
   const needsPasswordConfirmation = isExternal !== 'true';
 
   const goHome = useCallback(() => onAction('/'), [onAction]);

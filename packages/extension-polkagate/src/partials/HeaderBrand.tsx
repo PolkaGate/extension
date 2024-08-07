@@ -14,7 +14,7 @@ import React, { useCallback, useContext, useRef, useState } from 'react';
 import { logoBlack, logoWhite } from '../assets/logos';
 import { ActionContext, FullScreenIcon, Steps, VaadinIcon } from '../components';
 import useOutsideClick from '../hooks/useOutsideClick';
-import Connected from './Connected';
+import ConnectedDappIcon from './ConnectedDappIcon';
 import Menu from './Menu';
 import { AccountMenu } from '.';
 
@@ -70,7 +70,7 @@ const LeftIcon = ({ onBackClick, showBackArrow, showBrand }: {
             src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
             sx={{ height: 52, width: 52 }}
           />
-          <Connected />
+          <ConnectedDappIcon />
         </Grid>
       }
     </Grid>

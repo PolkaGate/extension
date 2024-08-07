@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -11,7 +10,7 @@ import { DEFAULT_SELECTED_CHAINS } from '../util/defaultSelectedChains';
  * @description get the selected chains
  * @returns a list of selected chains genesis hashes
  */
-export default function useSelectedChains(): string[] | undefined {
+export default function useSelectedChains (): string[] | undefined {
   const [selected, setSelected] = useState<string[] | undefined>();
   const defaultSelectedGenesisHashes = useMemo(() => DEFAULT_SELECTED_CHAINS.map(({ value }) => value as string), []);
 

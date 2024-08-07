@@ -20,9 +20,10 @@ interface Props {
   setToRemove: React.Dispatch<React.SetStateAction<string[]>>;
   refresh: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  maxHeight: number;
 }
 
-export default function DappList ({ filter, refresh, setDappInfo, setRefresh, setToRemove, toRemove }: Props): React.ReactElement {
+export default function DappList ({ filter, maxHeight, refresh, setDappInfo, setRefresh, setToRemove, toRemove }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [authList, setAuthList] = useState<AuthUrls | null>(null);
@@ -34,7 +35,7 @@ export default function DappList ({ filter, refresh, setDappInfo, setRefresh, se
         setRefresh(false);
       })
       .catch((e) => console.error(e));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh]); // to ignore setRefresh
 
   return (
@@ -45,7 +46,7 @@ export default function DappList ({ filter, refresh, setDappInfo, setRefresh, se
         width: '92%'
       }}
     >
-      <Grid container direction='column' justifyContent='center' minHeight='38px' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '12px', fontWeight: '400', maxHeight: window.innerHeight - 320 }}>
+      <Grid container direction='column' justifyContent='center' minHeight='38px' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '12px', fontWeight: '400' }}>
         <Grid container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
           <Typography fontSize='14px' fontWeight={400} sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light', lineHeight: '30px' }} textAlign='center' width='67%'>
             {t('Origin')}
@@ -60,6 +61,7 @@ export default function DappList ({ filter, refresh, setDappInfo, setRefresh, se
         <WebsiteEntry
           authList={authList}
           filter={filter}
+          maxHeight={maxHeight}
           setDappInfo={setDappInfo}
           setToRemove={setToRemove}
           toRemove={toRemove}
