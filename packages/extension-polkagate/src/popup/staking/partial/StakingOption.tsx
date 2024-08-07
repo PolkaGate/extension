@@ -1,17 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { ApiPromise } from '@polkadot/api';
+import type { ToolTipPlacement } from '@polkadot/extension-polkagate/src/components/Infotip';
+import type { BN } from '@polkadot/util';
 
 import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import { BN } from '@polkadot/util';
-
 import { Infotip, PButton, ShowBalance, Warning } from '../../../components';
-import type { ToolTipPlacement } from '@polkadot/extension-polkagate/src/components/Infotip';
 
 interface OptionProps {
   api?: ApiPromise;
@@ -32,7 +31,7 @@ interface OptionProps {
   logo?: any;
 }
 
-export default function StakingOption({ api, balance, balanceText, buttonText, helperText, isBusy, isDisabled, logo, noToolTip, onClick, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
+export default function StakingOption ({ api, balance, balanceText, buttonText, helperText, isBusy, isDisabled, logo, noToolTip, onClick, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
   const theme = useTheme();
 
   return (

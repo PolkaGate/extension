@@ -24,6 +24,7 @@ import ReferendumPost from '@polkadot/extension-polkagate/src/fullscreen/governa
 import ManageIdentity from '@polkadot/extension-polkagate/src/fullscreen/manageIdentity';
 import FullScreenManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxies';
 import Onboarding from '@polkadot/extension-polkagate/src/fullscreen/onboarding';
+import Onboarding from '@polkadot/extension-polkagate/src/fullscreen/onboarding';
 import Send from '@polkadot/extension-polkagate/src/fullscreen/sendFund';
 import SocialRecovery from '@polkadot/extension-polkagate/src/fullscreen/socialRecovery';
 import Stake from '@polkadot/extension-polkagate/src/fullscreen/stake';
@@ -33,6 +34,8 @@ import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/solo';
 import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/commonTasks/manageValidators';
 import { usePriceIds } from '@polkadot/extension-polkagate/src/hooks';
 import useAssetsBalances, { ASSETS_NAME_IN_STORAGE,type SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
+import { usePriceIds } from '@polkadot/extension-polkagate/src/hooks';
+import useAssetsBalances, { ASSETS_NAME_IN_STORAGE,type SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import { isPriceUpToDate } from '@polkadot/extension-polkagate/src/hooks/usePrices';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '@polkadot/extension-polkagate/src/messaging';
 import AlertBox from '@polkadot/extension-polkagate/src/partials/AlertBox';
@@ -40,11 +43,15 @@ import AccountEx from '@polkadot/extension-polkagate/src/popup/account';
 import AuthList from '@polkadot/extension-polkagate/src/popup/authManagement';
 import Authorize from '@polkadot/extension-polkagate/src/popup/authorize';
 import CrowdLoans from '@polkadot/extension-polkagate/src/popup/crowdloans';
+import CrowdLoans from '@polkadot/extension-polkagate/src/popup/crowdloans';
 import Export from '@polkadot/extension-polkagate/src/popup/export/Export';
 import ExportAll from '@polkadot/extension-polkagate/src/popup/export/ExportAll';
 import ForgetAccount from '@polkadot/extension-polkagate/src/popup/forgetAccount';
 import History from '@polkadot/extension-polkagate/src/popup/history';
+import ForgetAccount from '@polkadot/extension-polkagate/src/popup/forgetAccount';
+import History from '@polkadot/extension-polkagate/src/popup/history';
 import Accounts from '@polkadot/extension-polkagate/src/popup/home/ManageHome';
+import AddWatchOnly from '@polkadot/extension-polkagate/src/popup/import/addWatchOnly';
 import AddWatchOnly from '@polkadot/extension-polkagate/src/popup/import/addWatchOnly';
 import AddWatchOnlyFullScreen from '@polkadot/extension-polkagate/src/popup/import/addWatchOnlyFullScreen';
 import AttachQR from '@polkadot/extension-polkagate/src/popup/import/attachQR';
@@ -57,7 +64,18 @@ import ImportSeed from '@polkadot/extension-polkagate/src/popup/import/importSee
 import RestoreJson from '@polkadot/extension-polkagate/src/popup/import/restoreJSONFullScreen';
 import ManageProxies from '@polkadot/extension-polkagate/src/popup/manageProxies';
 import Metadata from '@polkadot/extension-polkagate/src/popup/metadata';
+import ManageProxies from '@polkadot/extension-polkagate/src/popup/manageProxies';
+import Metadata from '@polkadot/extension-polkagate/src/popup/metadata';
 import CreateAccount from '@polkadot/extension-polkagate/src/popup/newAccount/createAccountFullScreen';
+import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
+import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
+import LoginPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement';
+import ForgotPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement/ForgotPasswordFS';
+import ResetWallet from '@polkadot/extension-polkagate/src/popup/passwordManagement/ResetFS';
+import PhishingDetected from '@polkadot/extension-polkagate/src/popup/PhishingDetected';
+import Receive from '@polkadot/extension-polkagate/src/popup/receive';
+import Rename from '@polkadot/extension-polkagate/src/popup/rename';
+import Signing from '@polkadot/extension-polkagate/src/popup/signing';
 import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
 import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
 import LoginPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement';
@@ -85,11 +103,14 @@ import SoloUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo/un
 import { getPrices } from '@polkadot/extension-polkagate/src/util/api';
 import { buildHierarchy } from '@polkadot/extension-polkagate/src/util/buildHierarchy';
 import uiSettings from '@polkadot/ui-settings';
+import { getPrices } from '@polkadot/extension-polkagate/src/util/api';
+import { buildHierarchy } from '@polkadot/extension-polkagate/src/util/buildHierarchy';
+import uiSettings from '@polkadot/ui-settings';
 
 const startSettings = uiSettings.get();
 
 // Request permission for video, based on access we can hide/show import
-async function requestMediaAccess(cameraOn: boolean): Promise<boolean> {
+async function requestMediaAccess (cameraOn: boolean): Promise<boolean> {
   if (!cameraOn) {
     return false;
   }
@@ -105,7 +126,7 @@ async function requestMediaAccess(cameraOn: boolean): Promise<boolean> {
   return false;
 }
 
-function initAccountContext(accounts: AccountJson[]): AccountsContext {
+function initAccountContext (accounts: AccountJson[]): AccountsContext {
   const hierarchy = buildHierarchy(accounts);
   const master = hierarchy.find(({ isExternal, type }) => !isExternal && canDerive(type));
 
@@ -116,7 +137,7 @@ function initAccountContext(accounts: AccountJson[]): AccountsContext {
   };
 }
 
-export default function Popup(): React.ReactElement {
+export default function Popup (): React.ReactElement {
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
   const priceIds = usePriceIds();
   const isFetchingPricesRef = useRef(false);
@@ -267,11 +288,11 @@ export default function Popup(): React.ReactElement {
     </ErrorBoundary>;
   }
 
-  const Root = authRequests && authRequests.length
+  const Root = authRequests?.length
     ? wrapWithErrorBoundary(<Authorize />, 'authorize')
-    : metaRequests && metaRequests.length
+    : metaRequests?.length
       ? wrapWithErrorBoundary(<Metadata />, 'metadata')
-      : signRequests && signRequests.length
+      : signRequests?.length
         ? wrapWithErrorBoundary(<Signing />, 'signing')
         : wrapWithErrorBoundary(<Accounts />, 'accounts');
 

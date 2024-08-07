@@ -48,7 +48,7 @@ async function getPooledBalance(api, address) {
   return active.add(rewards).add(unlockingValue);
 }
 
-async function getBalances(chainName, addresses) {
+async function getBalances (chainName, addresses) {
   const chainEndpoints = getChainEndpoints(chainName);
 
   const { api, connections } = await fastestEndpoint(chainEndpoints, false);

@@ -54,13 +54,14 @@ export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): 
           return tab.url === tabUrl;
         });
 
-        closeCurrentTab && window.close();
 
         if (existingTab?.id) {
           chrome.tabs.update(existingTab.id, { active: true }).catch(console.error);
         } else {
           chrome.tabs.create({ url: tabUrl }).catch(console.error);
         }
+
+        closeCurrentTab && window.close();
       });
     } else {
       console.error('Unable to retrieve extension URL.');

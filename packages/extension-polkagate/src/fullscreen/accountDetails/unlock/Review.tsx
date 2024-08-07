@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,27 +9,30 @@
  * */
 
 import type { ApiPromise } from '@polkadot/api';
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { Balance } from '@polkadot/types/interfaces';
+import type { ISubmittableResult } from '@polkadot/types/types';
+import type { BN } from '@polkadot/util';
+import type { Lock } from '../../../hooks/useAccountLocks';
 import type { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 
-import { useTheme } from '@emotion/react';
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Container, Grid, Typography } from '@mui/material';
+import { faLockOpen, faUserAstronaut } from '@fortawesome/free-solid-svg-icons';
+import { Container, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { ISubmittableResult } from '@polkadot/types/types';
-import { BN, BN_ONE, isBn } from '@polkadot/util';
+import { BN_ONE, isBn } from '@polkadot/util';
 
 import { AccountHolderWithProxy, AmountFee, SignArea2, Warning, WrongPasswordAlert } from '../../../components';
-import { useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../hooks';
-import { Lock } from '../../../hooks/useAccountLocks';
+import { useInfo, useProxies, useTranslation } from '../../../hooks';
 import { SubTitle } from '../../../partials';
+import { PROXY_TYPE } from '../../../util/constants';
 import { amountToHuman } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
 import SelectProxyModal2 from '../../governance/components/SelectProxyModal2';
 import WaitScreen from '../../governance/partials/WaitScreen';
+import { ModalTitle } from '../../stake/solo/commonTasks/configurePayee';
 import Confirmation from './Confirmation';
-import { PROXY_TYPE } from '../../../util/constants';
+import { STEPS } from '../../stake/pool/stake';
 
 interface Props {
   address: string;
@@ -43,27 +45,18 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const STEPS = {
-  REVIEW: 1,
-  WAIT_SCREEN: 2,
-  CONFIRM: 3,
-  PROXY: 100,
-  SIGN_QR: 200
-};
-
-export default function Review({ address, api, classToUnlock, setDisplayPopup, setRefresh, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
+export default function Review ({ address, api, classToUnlock, setDisplayPopup, setRefresh, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const formatted = useFormatted(address);
   const theme = useTheme();
+
+  const { chain, decimal, formatted, token } = useInfo(address);
   const proxies = useProxies(api, formatted);
-  const chain = useChain(address);
-  const token = useToken(address);
-  const decimal = useDecimal(address);
+
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [estimatedFee, setEstimatedFee] = useState<BN>();
+  const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [params, setParams] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>[]>();
   const [step, setStep] = useState<number>(STEPS.REVIEW);
 
@@ -102,7 +95,7 @@ export default function Review({ address, api, classToUnlock, setDisplayPopup, s
     setParams(params);
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance | undefined);
     }
 
     batchAll(params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
@@ -125,16 +118,13 @@ export default function Review({ address, api, classToUnlock, setDisplayPopup, s
   return (
     <DraggableModal onClose={onClose} open={show}>
       <Grid alignItems='center' container justifyContent='center' maxHeight='650px' overflow='hidden'>
-        <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
-          <Grid item>
-            <Typography fontSize='22px' fontWeight={700}>
-              {step === STEPS.PROXY ? t('Select Proxy') : t('Unlocking')}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <CloseIcon onClick={step === STEPS.PROXY ? closeProxy : onClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-          </Grid>
-        </Grid>
+        <ModalTitle
+          icon={step === STEPS.PROXY ? faUserAstronaut : faLockOpen}
+          onCancel={step === STEPS.PROXY ? closeProxy : onClose}
+          setStep={setStep}
+          step={step}
+          text={step === STEPS.PROXY ? t('Select Proxy') : t('Unlocking')}
+        />
         {isPasswordError &&
           <WrongPasswordAlert />
         }
@@ -144,7 +134,7 @@ export default function Review({ address, api, classToUnlock, setDisplayPopup, s
             <Container disableGutters sx={{ px: '30px' }}>
               <AccountHolderWithProxy
                 address={address}
-                chain={chain as any}
+                chain={chain}
                 selectedProxyAddress={selectedProxyAddress}
                 showDivider
                 style={{ mt: '-5px' }}
