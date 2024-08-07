@@ -5,11 +5,12 @@
 
 import '@vaadin/icons';
 
+import type { AlertsType } from '../util/types';
+
 import { Alert as _Alert, Slide } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useTranslation } from '../hooks';
-import { AlertsType } from '../util/types';
 
 interface Props {
   alert: AlertsType;

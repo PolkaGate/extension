@@ -147,7 +147,7 @@ export default function useAssetsBalances(accounts: AccountJson[] | null, setAle
     SHOULD_FETCH_ASSETS && getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
       const _timeStamp = (savedAssets as SavedAssets)?.timeStamp;
 
-      setIsUpdate(isUpToDate(_timeStamp));
+      setIsUpdate(Boolean(isUpToDate(_timeStamp)));
     }).catch(console.error);
   }, [SHOULD_FETCH_ASSETS]);
 
