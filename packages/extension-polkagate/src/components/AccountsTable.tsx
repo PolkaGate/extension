@@ -100,7 +100,7 @@ export default function AccountsTable ({ accountTypeFilter, areAllCheck, label, 
           }
           {accounts.length > 0 && accountsToShow.length === 0 &&
             <Grid container item justifyContent='center' py='20px' xs={12}>
-              {t('You accounts are hidden (invisible) to websites!')}
+              {t('Your accounts are hidden (invisible) to websites!')}
               <PButton
                 _ml={0}
                 _mt='5px'
