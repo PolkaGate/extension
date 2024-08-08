@@ -348,7 +348,9 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
 
     const _canNotTransfer = _isAvailableZero || _maxFee.gte(balances.availableBalance);
     const allAmount = _canNotTransfer ? '0' : amountToHuman(balances.availableBalance.sub(_maxFee).toString(), balances.decimal);
-    const maxAmount = _canNotTransfer ? '0' : amountToHuman(balances.availableBalance.sub(_maxFee).sub(ED).toString(), balances.decimal);
+
+    const maybeMaxAmount = balances.availableBalance.sub(_maxFee).sub(ED);
+    const maxAmount = _canNotTransfer || maybeMaxAmount.isNeg() ? '0' : amountToHuman(maybeMaxAmount.toString(), balances.decimal);
 
     setAmount(type === 'All' ? allAmount : maxAmount);
   }, [api, assetId, balances, ED, maxFee]);
