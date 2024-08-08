@@ -92,7 +92,7 @@ export const Title = ({ height, icon, logo, ml, onBackClick, padding = '30px 0px
 
 const isAssethub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');
 
-export default function InputPage({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function InputPage ({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, formatted } = useInfo(address);
@@ -389,9 +389,9 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
           // eslint-disable-next-line react/jsx-no-bind
           onPrimary={() => setWholeAmount('All')}
           // eslint-disable-next-line react/jsx-no-bind
-          onSecondary={() => setWholeAmount('Max')}
-          primaryBtnText={t('All amount')}
-          secondaryBtnText={t('Max amount')}
+          // onSecondary={() => setWholeAmount('Max')}
+          primaryBtnText={t('Transfer All')}
+          // secondaryBtnText={t('Max amount')}
           style={{
             fontSize: '16px',
             mt: '25px',

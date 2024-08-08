@@ -1369,5 +1369,6 @@
   "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.": "",
   "Make accounts visible": "",
   "How much would you like to send?": "",
-  "Existential Deposit: {{ED}}": ""
+  "Existential Deposit: {{ED}}": "",
+  "Transfer All": ""
 }
