@@ -1357,5 +1357,7 @@
   "Allow this request only if you trust the application. This grants access to your account addresses.": "इस अनुरोध को केवल तभी अनुमति दें यदि आप एप्लिकेशन पर भरोसा करते हैं। यह आपके खाता पते तक पहुंच प्रदान करता है।",
   "Manage connections to": "से कनेक्शनों का प्रबंधन करें",
   "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.": "नियंत्रण करें कि कौन से दिखने वाले खाते वेबसाइटों द्वारा एक्सेस किए जा सकते हैं। एक्सेस सूची को समायोजित करके या वेबसाइट प्रविष्टि को हटाकर एक्सेस को अपडेट या अस्वीकार करें। केवल आपके दिखने वाले खातों तक ही पहुंच हो सकती है।",
-  "Make accounts visible": "खातों को दृश्यमान बनाएं"
+  "Make accounts visible": "खातों को दृश्यमान बनाएं",
+  "How much would you like to send?": "आप कितना भेजना चाहेंगे?",
+  "Existential Deposit: {{ED}}": "न्यूनतम जमा: {{ED}}"
 }

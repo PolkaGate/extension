@@ -1364,5 +1364,7 @@
   "Allow this request only if you trust the application. This grants access to your account addresses.": "仅在您信任该应用程序的情况下才允许此请求。这将授予访问您的账户地址的权限。",
   "Manage connections to": "管理连接到",
   "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.": "控制哪些可见账户网站可以访问。通过调整访问列表或删除网站条目来更新或拒绝访问。只有您的可见账户可以被访问。",
-  "Make accounts visible": "使账户可见"
+  "Make accounts visible": "使账户可见",
+  "How much would you like to send?": "您想发送多少？",
+  "Existential Deposit: {{ED}}": "最低余额: {{ED}}"
 }

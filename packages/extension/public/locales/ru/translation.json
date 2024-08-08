@@ -1355,5 +1355,7 @@
   "Allow this request only if you trust the application. This grants access to your account addresses.": "Разрешите этот запрос только если вы доверяете приложению. Это предоставляет доступ к адресам ваших аккаунтов.",
   "Manage connections to": "Управлять подключениями к",
   "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.": "Контролируйте, какие видимые аккаунты доступны для сайтов. Обновите или откажите в доступе, изменив список или удалив запись сайта. Доступны только ваши видимые аккаунты.",
-  "Make accounts visible": "Сделать аккаунты видимыми"
+  "Make accounts visible": "Сделать аккаунты видимыми",
+  "How much would you like to send?": "Сколько вы хотите отправить?",
+  "Existential Deposit: {{ED}}": "Экзистенциальный депозит: {{ED}}"
 }

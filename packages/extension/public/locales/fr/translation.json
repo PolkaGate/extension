@@ -1360,5 +1360,7 @@
   "Allow this request only if you trust the application. This grants access to your account addresses.": "Autorisez cette demande uniquement si vous faites confiance à l'application. Cela permet d'accéder aux adresses de vos comptes.",
   "Manage connections to": "Gérer les connexions à",
   "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.": "Contrôlez les comptes visibles auxquels les sites web peuvent accéder. Mettez à jour ou refusez l'accès en ajustant la liste ou en supprimant l'entrée du site. Seuls vos comptes visibles sont accessibles.",
-  "Make accounts visible": "Rendre les comptes visibles"
+  "Make accounts visible": "Rendre les comptes visibles",
+  "How much would you like to send?": "Combien souhaitez-vous envoyer ?",
+  "Existential Deposit: {{ED}}": "Dépôt existentiel : {{ED}}"
 }
