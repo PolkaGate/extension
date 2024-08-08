@@ -92,7 +92,7 @@ export const Title = ({ height, icon, logo, ml, onBackClick, padding = '30px 0px
 
 const isAssethub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');
 
-export default function InputPage ({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function InputPage({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, formatted } = useInfo(address);
@@ -169,7 +169,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     }
 
     return api.tx?.[module] && (
-      ['Normal', 'Max'].includes(transferType)
+      transferType === 'Normal'
         ? api.tx[module]['transferKeepAlive']
         : assetId !== undefined
           ? api.tx[module]['transfer']
@@ -335,12 +335,12 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     isCrossChain && call(...crossChainParams).paymentInfo(formatted).then((i) => setEstimatedCrossChainFee(i?.partialFee)).catch(console.error);
   }, [call, formatted, isCrossChain, crossChainParams]);
 
-  const setWholeAmount = useCallback((type: TransferType) => {
+  const setWholeAmount = useCallback(() => {
     if (!api || !balances?.availableBalance || !maxFee || !balances || !ED) {
       return;
     }
 
-    setTransferType(type);
+    setTransferType('All');
 
     const _isAvailableZero = balances.availableBalance.isZero();
 
@@ -349,10 +349,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     const _canNotTransfer = _isAvailableZero || _maxFee.gte(balances.availableBalance);
     const allAmount = _canNotTransfer ? '0' : amountToHuman(balances.availableBalance.sub(_maxFee).toString(), balances.decimal);
 
-    const maybeMaxAmount = balances.availableBalance.sub(_maxFee).sub(ED);
-    const maxAmount = _canNotTransfer || maybeMaxAmount.isNeg() ? '0' : amountToHuman(maybeMaxAmount.toString(), balances.decimal);
-
-    setAmount(type === 'All' ? allAmount : maxAmount);
+    setAmount(allAmount);
   }, [api, assetId, balances, ED, maxFee]);
 
   const _onChangeAmount = useCallback((value: string) => {
@@ -386,12 +383,8 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
           label={t('How much would you like to send?')}
           labelFontSize='16px'
           onChangeAmount={_onChangeAmount}
-          // eslint-disable-next-line react/jsx-no-bind
-          onPrimary={() => setWholeAmount('All')}
-          // eslint-disable-next-line react/jsx-no-bind
-          // onSecondary={() => setWholeAmount('Max')}
-          primaryBtnText={t('Transfer All')}
-          // secondaryBtnText={t('Max amount')}
+          onPrimary={setWholeAmount}
+          primaryBtnText={t('Max amount')}
           style={{
             fontSize: '16px',
             mt: '25px',
