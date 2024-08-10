@@ -715,9 +715,13 @@ export interface ApiProps extends ApiState {
   isWaitingInjected: boolean;
 }
 
-export interface APIs {
-  [genesisHash: string]: ApiProps;
+interface ApiPropsNew {
+  api?: ApiPromise;
+  endpoint: string;
+  isRequested: boolean;
 }
+
+export type APIs = Record<string, ApiPropsNew[]>;
 
 export interface APIsContext {
   apis: APIs;

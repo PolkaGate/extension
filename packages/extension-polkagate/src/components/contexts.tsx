@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import type { AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
@@ -26,8 +25,7 @@ const SettingsContext = React.createContext<SettingsStruct>(settings.get());
 const SigningReqContext = React.createContext<SigningRequest[]>([]);
 const ToastContext = React.createContext<({ show: (message: string) => void })>({ show: noop });
 
-export {
-  AccountContext,
+export { AccountContext,
   AccountsAssetsContext,
   ActionContext,
   APIContext,
@@ -39,5 +37,4 @@ export {
   ReferendaContext,
   SettingsContext,
   SigningReqContext,
-  ToastContext
-};
+  ToastContext };
