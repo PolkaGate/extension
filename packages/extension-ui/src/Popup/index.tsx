@@ -29,7 +29,7 @@ import PoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/pool';
 import ManageValidatorsPoolfs from '@polkadot/extension-polkagate/src/fullscreen/stake/pool/commonTasks/manageValidators';
 import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/solo';
 import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/commonTasks/manageValidators';
-import { usePriceIds } from '@polkadot/extension-polkagate/src/hooks';
+import { useIsExtensionPopup, usePriceIds } from '@polkadot/extension-polkagate/src/hooks';
 import useAssetsBalances, { ASSETS_NAME_IN_STORAGE, type SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import { isPriceUpToDate } from '@polkadot/extension-polkagate/src/hooks/usePrices';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '@polkadot/extension-polkagate/src/messaging';
@@ -118,6 +118,7 @@ export default function Popup (): React.ReactElement {
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
   const priceIds = usePriceIds();
   const isFetchingPricesRef = useRef(false);
+  const isExtensionMode = useIsExtensionPopup();
 
   useLocation();// just to trigger component to fix forgot pass issue
 
@@ -154,7 +155,7 @@ export default function Popup (): React.ReactElement {
 
   useEffect(() => {
     assetsOnChains && setAccountsAssets({ ...assetsOnChains });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assetsOnChains?.timeStamp]);
 
   useEffect(() => {
@@ -169,7 +170,7 @@ export default function Popup (): React.ReactElement {
         }
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts?.length, assetsOnChains?.timeStamp]);
 
   useEffect(() => {
@@ -262,8 +263,7 @@ export default function Popup (): React.ReactElement {
     return <ErrorBoundary trigger={trigger}>
       <>
         {component}
-        <AlertBox />
-      </>
+        {!isExtensionMode && <AlertBox />}      </>
     </ErrorBoundary>;
   }
 
