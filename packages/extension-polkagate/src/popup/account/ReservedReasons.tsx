@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,12 +9,12 @@
  * */
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { Container, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { toTitleCase } from '@polkadot/extension-polkagate/src/fullscreen/governance/utils/util';
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { FormatPrice, Identicon, Motion, Popup, Progress, ShowBalance3 } from '../../components';
 import { useAccountName, useInfo, useReservedDetails, useTokenPrice, useTranslation } from '../../hooks';
@@ -29,7 +28,7 @@ interface Props {
   setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function ReservedReasons({ address, assetId, identity, setShow, show }: Props): React.ReactElement<void> {
+export default function ReservedReasons ({ address, assetId, identity, setShow, show }: Props): React.ReactElement<void> {
   const { t } = useTranslation();
   const { chain, decimal, formatted } = useInfo(address);
   const accountName = useAccountName(address);

@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
 
 import { Collapse, Divider, Grid, Skeleton, type SxProps, type Theme, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -11,7 +12,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
 import useReservedDetails, { type Reserved } from '@polkadot/extension-polkagate/src/hooks/useReservedDetails';
 import { isOnAssetHub, isOnRelayChain } from '@polkadot/extension-polkagate/src/util/utils';
-import { BN } from '@polkadot/util';
 
 import { ShowValue } from '../../../components';
 import { useInfo } from '../../../hooks';
