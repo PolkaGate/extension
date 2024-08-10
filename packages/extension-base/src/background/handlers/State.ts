@@ -21,21 +21,29 @@ interface Resolver<T> {
   resolve: (result: T) => void;
 }
 
-interface AuthRequest extends Resolver<boolean> {
+export interface AuthResponse {
+  result: boolean;
+  authorizedAccounts: string[];
+}
+
+interface AuthRequest extends Resolver<AuthResponse> {
   id: string;
   idStr: string;
   request: RequestAuthorizeTab;
   url: string;
 }
 
+export interface UpdateAuthorizedAccounts { url: string, authorizedAccounts: string[] }
+
 export type AuthUrls = Record<string, AuthUrlInfo>;
 
 export interface AuthUrlInfo {
   count: number;
   id: string;
-  isAllowed: boolean;
+  isAllowed?: boolean;
   origin: string;
   url: string;
+  authorizedAccounts: string[];
 }
 
 interface MetaRequest extends Resolver<boolean> {
@@ -120,8 +128,11 @@ function extractMetadata (store: MetadataStore): void {
   });
 }
 
+const AUTH_URLS_KEY = 'authUrls';
+const DEFAULT_AUTH_ACCOUNTS = 'defaultAuthAccounts';
+
 export default class State {
-  readonly #authUrls: AuthUrls = {};
+  #authUrls: AuthUrls = {};
 
   readonly #authRequests: Record<string, AuthRequest> = {};
 
@@ -147,16 +158,41 @@ export default class State {
 
   public readonly signSubject: BehaviorSubject<SigningRequest[]> = new BehaviorSubject<SigningRequest[]>([]);
 
+  public readonly authUrlSubjects: Record<string, BehaviorSubject<AuthUrlInfo>> = {};
+
+  public defaultAuthAccountSelection: string[] = [];
+
   constructor (providers: Providers = {}) {
     this.#providers = providers;
 
     extractMetadata(this.#metaStore);
 
     // retrieve previously set authorizations
-    chrome.storage.local.get('authUrls', (res) => {
+    chrome.storage.local.get(AUTH_URLS_KEY, (res) => {
       // @ts-ignore
-      this.#authUrls = (res?.['authUrls'] || {}) as AuthUrls;
+      this.#authUrls = JSON.parse(res?.[AUTH_URLS_KEY] as string || {}) as AuthUrls;
     });
+  }
+
+  public async init () {
+    // retrieve previously set authorizations
+    const storageAuthUrls: Record<string, string> = await chrome.storage.local.get(AUTH_URLS_KEY);
+    const authString = storageAuthUrls?.[AUTH_URLS_KEY] || '{}';
+    const previousAuth = JSON.parse(authString) as AuthUrls;
+
+    this.#authUrls = previousAuth;
+
+    // Initialize authUrlSubjects for each URL
+    Object.entries(previousAuth).forEach(([url, authInfo]) => {
+      this.authUrlSubjects[url] = new BehaviorSubject<AuthUrlInfo>(authInfo);
+    });
+
+    // retrieve previously set default auth accounts
+    const storageDefaultAuthAccounts: Record<string, string> = await chrome.storage.local.get(DEFAULT_AUTH_ACCOUNTS);
+    const defaultAuthString: string = storageDefaultAuthAccounts?.[DEFAULT_AUTH_ACCOUNTS] || '[]';
+    const previousDefaultAuth = JSON.parse(defaultAuthString) as string[];
+
+    this.defaultAuthAccountSelection = previousDefaultAuth;
   }
 
   public get knownMetadata (): MetadataDef[] {
@@ -217,12 +253,16 @@ export default class State {
         });
   }
 
-  private authComplete = (id: string, resolve: (result: boolean) => void, reject: (error: Error) => void): Resolver<boolean> => {
-    const complete = (result: boolean | Error) => {
-      const isAllowed = result === true;
+  private authComplete = (id: string, resolve: (resValue: AuthResponse) => void, reject: (error: Error) => void): Resolver<AuthResponse> => {
+    const complete = async (authorizedAccounts: string[] = []) => {
       const { idStr, request: { origin }, url } = this.#authRequests[id];
 
-      this.#authUrls[this.stripUrl(url)] = {
+      const strippedUrl = this.stripUrl(url);
+
+      const isAllowed = !!authorizedAccounts.length;
+
+      const authInfo: AuthUrlInfo = {
+        authorizedAccounts,
         count: 0,
         id: idStr,
         isAllowed,
@@ -230,25 +270,45 @@ export default class State {
         url
       };
 
-      this.saveCurrentAuthList();
+      this.#authUrls[strippedUrl] = authInfo;
+
+      if (!this.authUrlSubjects[strippedUrl]) {
+        this.authUrlSubjects[strippedUrl] = new BehaviorSubject<AuthUrlInfo>(authInfo);
+      } else {
+        this.authUrlSubjects[strippedUrl].next(authInfo);
+      }
+
+      await this.saveCurrentAuthList();
+      await this.updateDefaultAuthAccounts(authorizedAccounts);
       delete this.#authRequests[id];
       this.updateIconAuth(true);
     };
 
     return {
-      reject: (error: Error): void => {
-        complete(error);
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      reject: async (error: Error): Promise<void> => {
+        await complete();
         reject(error);
       },
-      resolve: (result: boolean): void => {
-        complete(result);
-        resolve(result);
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      resolve: async ({ authorizedAccounts, result }: AuthResponse): Promise<void> => {
+        await complete(authorizedAccounts);
+        resolve({ authorizedAccounts, result });
       }
     };
   };
 
-  private saveCurrentAuthList () {
-    chrome.storage.local.set({ authUrls: this.#authUrls }).catch(console.error);
+  private async saveCurrentAuthList () {
+    await chrome.storage.local.set({ [AUTH_URLS_KEY]: JSON.stringify(this.#authUrls) });
+  }
+
+  private async saveDefaultAuthAccounts () {
+    await chrome.storage.local.set({ [DEFAULT_AUTH_ACCOUNTS]: JSON.stringify(this.defaultAuthAccountSelection) });
+  }
+
+  public async updateDefaultAuthAccounts (newList: string[]) {
+    this.defaultAuthAccountSelection = newList;
+    await this.saveDefaultAuthAccounts();
   }
 
   private metaComplete = (id: string, resolve: (result: boolean) => void, reject: (error: Error) => void): Resolver<boolean> => {
@@ -287,7 +347,7 @@ export default class State {
     };
   };
 
-  private stripUrl (url: string): string {
+  public stripUrl (url: string): string {
     assert(url && (url.startsWith('http:') || url.startsWith('https:') || url.startsWith('ipfs:') || url.startsWith('ipns:')), `Invalid url ${url}, expected to start with http: or https: or ipfs: or ipns:`);
 
     const parts = url.split('/');
@@ -314,24 +374,29 @@ export default class State {
     }
   }
 
-  public toggleAuthorization (url: string): AuthUrls {
+  public async updateAuthorizedAccounts ({ authorizedAccounts, url }: UpdateAuthorizedAccounts): Promise<void> {
+    this.#authUrls[url].authorizedAccounts = authorizedAccounts;
+    await this.saveCurrentAuthList();
+  }
+
+  public async toggleAuthorization (url: string): Promise<AuthUrls> {
     const entry = this.#authUrls[url];
 
     assert(entry, `The source ${url} is not known`);
 
     this.#authUrls[url].isAllowed = !entry.isAllowed;
-    this.saveCurrentAuthList();
+    await this.saveCurrentAuthList();
 
     return this.#authUrls;
   }
 
-  public removeAuthorization (url: string): AuthUrls {
+  public async removeAuthorization (url: string): Promise<AuthUrls> {
     const entry = this.#authUrls[url];
 
     assert(entry, `The source ${url} is not known`);
 
     delete this.#authUrls[url];
-    this.saveCurrentAuthList();
+    await this.saveCurrentAuthList();
 
     return this.#authUrls;
   }
@@ -351,7 +416,7 @@ export default class State {
     this.updateIcon(shouldClose);
   }
 
-  public async authorizeUrl (url: string, request: RequestAuthorizeTab): Promise<boolean> {
+  public async authorizeUrl (url: string, request: RequestAuthorizeTab): Promise<AuthResponse> {
     const idStr = this.stripUrl(url);
 
     // Do not enqueue duplicate authorization requests.
@@ -362,9 +427,12 @@ export default class State {
 
     if (this.#authUrls[idStr]) {
       // this url was seen in the past
-      assert(this.#authUrls[idStr].isAllowed, `The source ${url} is not allowed to interact with this extension`);
+      assert(this.#authUrls[idStr].authorizedAccounts || this.#authUrls[idStr].isAllowed, `The source ${url} is not allowed to interact with this extension`);
 
-      return false;
+      return {
+        authorizedAccounts: [],
+        result: false
+      };
     }
 
     return new Promise((resolve, reject): void => {

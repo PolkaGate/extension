@@ -37,6 +37,7 @@ export { default as useDecimal } from './useDecimal';
 export { default as useEndpoint } from './useEndpoint';
 export { useEndpoints } from './useEndpoints';
 export { default as useEstimatedFee } from './useEstimatedFee';
+export { default as useFavIcon } from './useFavIcon';
 export { default as useFormatted } from './useFormatted';
 export { default as useFormatted2 } from './useFormatted2';
 export { default as useFullscreen } from './useFullscreen';

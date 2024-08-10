@@ -1,15 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
+import type { Option } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { PalletMultisigMultisig, PalletPreimageRequestStatus, PalletRecoveryRecoveryConfig, PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaReferendumStatusRankedCollectiveTally, PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Option } from '@polkadot/types';
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { PROXY_CHAINS } from '../util/constants';
 import useActiveRecoveries from './useActiveRecoveries';
@@ -18,7 +20,7 @@ import { useInfo } from '.';
 type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society' | 'multisig' | 'preimage';
 export type Reserved = { [key in Item]?: Balance };
 
-export default function useReservedDetails(address: string | undefined): Reserved {
+export default function useReservedDetails (address: string | undefined): Reserved {
   const { api, formatted, genesisHash } = useInfo(address);
   const activeRecoveries = useActiveRecoveries(api);
   const [reserved, setReserved] = useState<Reserved>({});
@@ -29,7 +31,7 @@ export default function useReservedDetails(address: string | undefined): Reserve
       : activeRecoveries === null
         ? null
         : undefined
-    , [activeRecoveries, formatted]);
+  , [activeRecoveries, formatted]);
 
   const toBalance = useCallback((value: BN) => {
     if (!api) {
@@ -43,15 +45,15 @@ export default function useReservedDetails(address: string | undefined): Reserve
     if (!api || !genesisHash) {
       return;
     }
-    
+
     try {
       // TODO: needs to incorporate people chain?
       /** fetch identity  */
-      api.query?.identity?.identityOf(formatted).then(async (id) => {
-        const basicDeposit = api.consts.identity.basicDeposit as unknown as BN;
-        const subAccountDeposit = api.consts.identity.subAccountDeposit as unknown as BN;
+      api.query?.['identity']?.['identityOf'](formatted).then(async (id) => {
+        const basicDeposit = api.consts['identity']['basicDeposit'] as unknown as BN;
+        // const subAccountDeposit = api.consts['identity']['subAccountDeposit'] as unknown as BN;
 
-        const subs = await api.query.identity.subsOf(formatted);
+        const subs = await api.query['identity']['subsOf'](formatted);
 
         const subAccountsDeposit = (subs ? subs[0] : BN_ZERO) as unknown as BN;
 
@@ -65,8 +67,8 @@ export default function useReservedDetails(address: string | undefined): Reserve
       }).catch(console.error);
 
       /** fetch proxy  */
-      if (api.query?.proxy && PROXY_CHAINS.includes(genesisHash)) {
-        api.query.proxy.proxies(formatted).then((p) => {
+      if (api.query?.['proxy'] && PROXY_CHAINS.includes(genesisHash)) {
+        api.query['proxy']['proxies'](formatted).then((p) => {
           const mayBeDeposit = p?.[1] as BN;
 
           if (!mayBeDeposit?.isZero()) {
@@ -80,7 +82,7 @@ export default function useReservedDetails(address: string | undefined): Reserve
       }
 
       /** fetch social recovery  */
-      api.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => {
+      api.query?.['recovery']?.['recoverable'](formatted).then((r) => {
         const recoveryInfo = r.isSome ? r.unwrap() as unknown as PalletRecoveryRecoveryConfig : null;
 
         recoveryInfo?.deposit && setReserved((prev) => {
@@ -91,10 +93,10 @@ export default function useReservedDetails(address: string | undefined): Reserve
       }).catch(console.error);
 
       /** Fetch referenda  */
-      if (api.query?.referenda?.referendumInfoFor) {
+      if (api.query?.['referenda']?.['referendumInfoFor']) {
         let referendaDepositSum = BN_ZERO;
 
-        api.query.referenda.referendumInfoFor.entries().then((referenda) => {
+        api.query['referenda']['referendumInfoFor'].entries().then((referenda) => {
           referenda.forEach(([_, value]) => {
             if (value.isSome) {
               const ref = (value.unwrap()) as PalletReferendaReferendumInfoRankedCollectiveTally | undefined;
@@ -136,10 +138,10 @@ export default function useReservedDetails(address: string | undefined): Reserve
       }
 
       /** Fetch bounties  */
-      if (api.query?.bounties?.bounties) {
+      if (api.query?.['bounties']?.['bounties']) {
         let sum = BN_ZERO;
 
-        api.query.bounties.bounties.entries().then((bounties) => {
+        api.query['bounties']['bounties'].entries().then((bounties) => {
           bounties.forEach(([_, value]) => {
             if (value.isSome) {
               const bounty = (value.unwrap());
@@ -161,10 +163,10 @@ export default function useReservedDetails(address: string | undefined): Reserve
       }
 
       /** Fetch indices  */
-      if (api.query?.indices?.accounts) {
+      if (api.query?.['indices']?.['accounts']) {
         let sum = BN_ZERO;
 
-        api.query.indices.accounts.entries().then((indices) => {
+        api.query['indices']['accounts'].entries().then((indices) => {
           indices.forEach(([_, value]) => {
             if (value.isSome) {
               const [address, deposit, _status] = value.unwrap() as [AccountId, BN, boolean];
@@ -186,10 +188,10 @@ export default function useReservedDetails(address: string | undefined): Reserve
       }
 
       /** Fetch multisig  */
-      if (api.query?.multisig) {
+      if (api.query?.['multisig']) {
         let sum = BN_ZERO;
 
-        api.query.multisig.multisigs.entries().then((multisigs) => {
+        api.query['multisig']['multisigs'].entries().then((multisigs) => {
           multisigs.forEach(([_, value]) => {
             if (value.isSome) {
               const { deposit, depositor } = value.unwrap() as PalletMultisigMultisig;
@@ -211,10 +213,10 @@ export default function useReservedDetails(address: string | undefined): Reserve
       }
 
       /** Fetch preImage  */
-      if (api.query?.preimage?.requestStatusFor) {
+      if (api.query?.['preimage']?.['requestStatusFor']) {
         let sum = BN_ZERO;
 
-        api.query.preimage.requestStatusFor.entries().then((preimages) => {
+        api.query['preimage']['requestStatusFor'].entries().then((preimages) => {
           preimages.forEach(([_, value]) => {
             if (value.isSome) {
               const status = value.unwrap() as PalletPreimageRequestStatus;
@@ -242,11 +244,11 @@ export default function useReservedDetails(address: string | undefined): Reserve
       }
 
       /** Fetch society  */
-      if (api.query?.society) {
+      if (api.query?.['society']) {
         let sum = BN_ZERO;
 
-        api.query.society.bids().then(async (bids) => {
-          (bids as unknown as PalletSocietyBid[]).forEach(({ _value, kind, who }) => {
+        api.query['society']['bids']().then(async (bids) => {
+          (bids as unknown as PalletSocietyBid[]).forEach(({ kind, who }) => {
             if (who.toString() === formatted) {
               const deposit = kind.isDeposit ? kind.asDeposit : BN_ZERO;
 
@@ -254,7 +256,7 @@ export default function useReservedDetails(address: string | undefined): Reserve
             }
           });
 
-          const candidates = await api.query.society.candidates(formatted) as Option<PalletSocietyCandidacy>;
+          const candidates = await api.query['society']['candidates'](formatted) as Option<PalletSocietyCandidacy>;
 
           if (candidates.isSome) {
             const { kind } = candidates.unwrap();

@@ -1,8 +1,6 @@
 // Copyright 2017-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
 import type { Theme } from '@mui/material';
 
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -37,7 +35,7 @@ export default function InputFilter ({ autoFocus = true, label, onChange, placeh
   return (
     <div style={{ position: 'relative' }}>
       <Label
-        label={label}
+        label={label ?? ''}
       >
         <Input
           autoCapitalize='off'

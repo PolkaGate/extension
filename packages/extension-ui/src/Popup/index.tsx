@@ -30,7 +30,7 @@ import ManageValidatorsPoolfs from '@polkadot/extension-polkagate/src/fullscreen
 import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/solo';
 import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/commonTasks/manageValidators';
 import { usePriceIds } from '@polkadot/extension-polkagate/src/hooks';
-import useAssetsBalances, { ASSETS_NAME_IN_STORAGE,type SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
+import useAssetsBalances, { ASSETS_NAME_IN_STORAGE, type SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import { isPriceUpToDate } from '@polkadot/extension-polkagate/src/hooks/usePrices';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '@polkadot/extension-polkagate/src/messaging';
 import AlertBox from '@polkadot/extension-polkagate/src/partials/AlertBox';
@@ -267,13 +267,15 @@ export default function Popup (): React.ReactElement {
     </ErrorBoundary>;
   }
 
-  const Root = authRequests?.length
-    ? wrapWithErrorBoundary(<Authorize />, 'authorize')
-    : metaRequests?.length
-      ? wrapWithErrorBoundary(<Metadata />, 'metadata')
-      : signRequests?.length
-        ? wrapWithErrorBoundary(<Signing />, 'signing')
-        : wrapWithErrorBoundary(<Accounts />, 'accounts');
+  const Root = useCallback(() =>
+    authRequests?.length
+      ? wrapWithErrorBoundary(<Authorize />, 'authorize')
+      : metaRequests?.length
+        ? wrapWithErrorBoundary(<Metadata />, 'metadata')
+        : signRequests?.length
+          ? wrapWithErrorBoundary(<Signing />, 'signing')
+          : wrapWithErrorBoundary(<Accounts />, 'accounts')
+  , [authRequests?.length, metaRequests?.length, signRequests?.length]);
 
   return (
     <AnimatePresence mode='wait'>
@@ -303,7 +305,7 @@ export default function Popup (): React.ReactElement {
                                         <Route path='/account/import-raw-seed'>{wrapWithErrorBoundary(<ImportRawSeed />, 'import-raw-seed')}</Route>
                                         <Route path='/account/restore-json'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json')}</Route>
                                         <Route path='/accountfs/:address/:paramAssetId'>{wrapWithErrorBoundary(<AccountFS />, 'account')}</Route>
-                                        <Route path='/auth-list'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
+                                        <Route path='/auth-list/:id?'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
                                         <Route path='/crowdloans/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
                                         <Route path='/derive/:address/locked'>{wrapWithErrorBoundary(<Derive isLocked />, 'derived-address-locked')}</Route>
                                         <Route path='/derive/:address'>{wrapWithErrorBoundary(<Derive />, 'derive-address')}</Route>
