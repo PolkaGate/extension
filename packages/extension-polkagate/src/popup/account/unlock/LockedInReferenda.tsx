@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
@@ -10,6 +11,7 @@
  * */
 
 import type { PalletBalancesBalanceLock } from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
 
 import { faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,7 +19,7 @@ import { Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { noop } from '@polkadot/extension-polkagate/src/util/utils';
-import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
+import { BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance, ShowValue } from '../../../components';
 import { useAccountLocks, useApi, useChain, useCurrentBlockNumber, useDecimal, useFormatted, useHasDelegated, useToken, useTokenPrice, useTranslation } from '../../../hooks';

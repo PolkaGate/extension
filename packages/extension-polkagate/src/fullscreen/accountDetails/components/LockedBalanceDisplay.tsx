@@ -1,24 +1,26 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+// @ts-ignore
 import type { PalletBalancesBalanceLock } from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
+import type { Lock } from '../../../hooks/useAccountLocks';
+import type { UnlockInformationType } from '..';
 
 import { faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
+import { BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance } from '../../../components';
 import { useAccountLocks, useCurrentBlockNumber, useHasDelegated, useInfo, useTranslation } from '../../../hooks';
-import { Lock } from '../../../hooks/useAccountLocks';
 import blockToDate from '../../../popup/crowdloans/partials/blockToDate';
 import { TIME_TO_SHAKE_ICON } from '../../../util/constants';
-import { popupNumbers, UnlockInformationType } from '..';
+import { popupNumbers } from '..';
 
 interface DisplayBalanceProps {
   address: string | undefined;
@@ -31,7 +33,7 @@ interface DisplayBalanceProps {
   setUnlockInformation: React.Dispatch<React.SetStateAction<UnlockInformationType | undefined>>;
 }
 
-export default function LockedBalanceDisplay({ address, decimal, price, refreshNeeded, setDisplayPopup, setUnlockInformation, title, token }: DisplayBalanceProps): React.ReactElement {
+export default function LockedBalanceDisplay ({ address, decimal, price, refreshNeeded, setDisplayPopup, setUnlockInformation, title, token }: DisplayBalanceProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -50,9 +52,10 @@ export default function LockedBalanceDisplay({ address, decimal, price, refreshN
 
   const classToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock) && ref.classId.lt(BN_MAX_INTEGER)) : undefined;
   const isDisable = useMemo(() => !unlockableAmount || unlockableAmount.isZero() || !classToUnlock || !totalLocked, [classToUnlock, totalLocked, unlockableAmount]);
+
   const hasDescription = useMemo(() =>
     (unlockableAmount && !unlockableAmount.isZero()) || (delegatedBalance && !delegatedBalance.isZero()) || timeToUnlock
-    , [delegatedBalance, timeToUnlock, unlockableAmount]);
+  , [delegatedBalance, timeToUnlock, unlockableAmount]);
 
   useEffect(() => {
     if (unlockableAmount && !unlockableAmount.isZero()) {
@@ -139,12 +142,14 @@ export default function LockedBalanceDisplay({ address, decimal, price, refreshN
   }, [api, biggestOngoingLock, currentBlock, referendaLocks, t]);
 
   useEffect(() => {
-    if (!api?.query?.balances || !formatted || api?.genesisHash?.toString() !== chain?.genesisHash) {
+    if (!api?.query?.['balances'] || !formatted || api?.genesisHash?.toString() !== chain?.genesisHash) {
       return setMiscRefLock(undefined);
     }
 
     // eslint-disable-next-line no-void
-    void api.query.balances.locks(formatted).then((locks: PalletBalancesBalanceLock[]) => {
+    void api.query['balances']['locks'](formatted).then((_locks) => {
+      const locks = _locks as unknown as PalletBalancesBalanceLock[];
+
       if (locks?.length) {
         const foundRefLock = locks.find((l) => l.id.toHuman() === 'pyconvot');
 

@@ -4,6 +4,7 @@
 //@ts-nocheck
 
 import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
+import type React from 'react';
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/promise/types';
 import type { DeriveAccountInfo, DeriveAccountRegistration, DeriveBalancesAll, DeriveCollectiveProposal, DeriveElectionsInfo, DeriveProposal, DeriveReferendumExt, DeriveStakingAccount, DeriveStakingQuery } from '@polkadot/api-derive/types';
@@ -523,11 +524,6 @@ export interface ClaimedRewardInfo {
   timeStamp: number;
 }
 
-export interface AlertType {
-  text: string;
-  severity: 'error' | 'warning' | 'info' | 'success'
-}
-
 export type ProxyTypes = 'Any' | 'Auction' | 'CancelProxy' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'SudoBalances' | 'Society' | 'NominationPools';
 
 export interface Proxy {
@@ -756,14 +752,16 @@ export interface AccountsAssetsContextType {
   setAccountsAssets: (savedAccountAssets: SavedAssets) => void;
 }
 
-export type AlertsType = {
-  type: 'warning' | 'error' | 'info';
-  message: string;
+export type Severity= 'error' | 'warning' | 'info' | 'success'
+
+export interface AlertType {
+  text: Severity;
+  severity: 'error' | 'warning' | 'info' | 'success'
 }
 
 export interface AlertContextType {
-  alerts: AlertsType[];
-  setAlerts: (alerts: AlertsType[]) => void;
+  alerts: AlertType[];
+  setAlerts: React.Dispatch<React.SetStateAction<AlertType[]>>;
 }
 
 // TODO: FixMe, Controller is deprecated

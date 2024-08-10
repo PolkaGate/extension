@@ -3,7 +3,7 @@
 
 import type { AccountJson, AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { CurrencyItemType } from '@polkadot/extension-polkagate/src/fullscreen/homeFullScreen/partials/Currency';
-import type { AlertsType, APIs, Fetching, LatestRefs, Prices, PricesInCurrencies } from '@polkadot/extension-polkagate/src/util/types';
+import type { AlertType, APIs, Fetching, LatestRefs, Prices, PricesInCurrencies } from '@polkadot/extension-polkagate/src/util/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
 
 import { AnimatePresence } from 'framer-motion';
@@ -42,7 +42,7 @@ import Export from '@polkadot/extension-polkagate/src/popup/export/Export';
 import ExportAll from '@polkadot/extension-polkagate/src/popup/export/ExportAll';
 import ForgetAccount from '@polkadot/extension-polkagate/src/popup/forgetAccount';
 import History from '@polkadot/extension-polkagate/src/popup/history';
-import Accounts from '@polkadot/extension-polkagate/src/popup/home/ManageHome';
+import Home from '@polkadot/extension-polkagate/src/popup/home/ManageHome';
 import AddWatchOnly from '@polkadot/extension-polkagate/src/popup/import/addWatchOnly';
 import AddWatchOnlyFullScreen from '@polkadot/extension-polkagate/src/popup/import/addWatchOnlyFullScreen';
 import AttachQR from '@polkadot/extension-polkagate/src/popup/import/attachQR';
@@ -134,7 +134,7 @@ export default function Popup (): React.ReactElement {
   const [accountsAssets, setAccountsAssets] = useState<SavedAssets | null | undefined>();
   const [currency, setCurrency] = useState<CurrencyItemType>();
   const [loginInfo, setLoginInfo] = useState<LoginInfo>();
-  const [alerts, setAlerts] = useState<AlertsType[]>([]);
+  const [alerts, setAlerts] = useState<AlertType[]>([]);
 
   const assetsOnChains = useAssetsBalances(accounts, setAlerts);
 
@@ -274,7 +274,7 @@ export default function Popup (): React.ReactElement {
         ? wrapWithErrorBoundary(<Metadata />, 'metadata')
         : signRequests?.length
           ? wrapWithErrorBoundary(<Signing />, 'signing')
-          : wrapWithErrorBoundary(<Accounts />, 'accounts')
+          : wrapWithErrorBoundary(<Home />, 'accounts')
   , [authRequests?.length, metaRequests?.length, signRequests?.length]);
 
   return (

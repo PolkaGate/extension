@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -16,7 +15,7 @@ interface Props {
   address: string;
 }
 
-export default function Info({ address }: Props): React.ReactElement {
+export default function Info ({ address }: Props): React.ReactElement {
   const { t } = useTranslation();
   const info = useStakingConsts(address);
   const minimumActiveStake = useMinToReceiveRewardsInSolo(address);

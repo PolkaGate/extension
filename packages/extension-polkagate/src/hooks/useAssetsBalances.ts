@@ -4,12 +4,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import type { Asset } from '@polkagate/apps-config/assets/types';
-import type React from 'react';
 import type { AccountJson } from '@polkadot/extension-base/background/types';
-import type { AlertsType } from '../util/types';
+import type { AlertType } from '../util/types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, isObject } from '@polkadot/util';
 
@@ -24,8 +23,8 @@ import { useIsTestnetEnabled, useTranslation } from '.';
 
 type WorkerMessage = Record<string, MessageBody[]>;
 type Assets = Record<string, FetchedBalance[]>;
-type AssetsBalancesPerChain = { [genesisHash: string]: FetchedBalance[] };
-type AssetsBalancesPerAddress = { [address: string]: AssetsBalancesPerChain };
+interface AssetsBalancesPerChain { [genesisHash: string]: FetchedBalance[] }
+interface AssetsBalancesPerAddress { [address: string]: AssetsBalancesPerChain }
 export interface SavedAssets { balances: AssetsBalancesPerAddress, timeStamp: number }
 
 interface BalancesDetails {
@@ -126,7 +125,7 @@ const assetsChains = createAssets();
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances(accounts: AccountJson[] | null, setAlerts: React.Dispatch<React.SetStateAction<AlertsType[]>>): SavedAssets | undefined | null {
+export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>): SavedAssets | undefined | null {
   const isTestnetEnabled = useIsTestnetEnabled();
   const selectedChains = useSelectedChains();
   const { t } = useTranslation();
@@ -203,7 +202,7 @@ export default function useAssetsBalances(accounts: AccountJson[] | null, setAle
     /** when one round fetch is done, we will save fetched assets in storage */
     if (addresses && workersCalled?.length === 0) {
       handleAccountsSaving();
-      setAlerts((perv) => [...perv, { message: t('Accounts balances updated!'), type: 'info' }]);
+      setAlerts((perv) => [...perv, { severity: 'info', text: t('Accounts\' balances updated!') }]);
     }
   }, [accounts, addresses, handleAccountsSaving, setAlerts, t, workersCalled?.length]);
 
@@ -468,7 +467,7 @@ export default function useAssetsBalances(accounts: AccountJson[] | null, setAle
       return;
     }
 
-    setAlerts((perv) => [...perv, { message: t('Updating accounts balances'), type: 'info' }]);
+    setAlerts((perv) => [...perv, { severity: 'info', text: t('Updating accounts balances ...') }]);
     const _selectedChains = isTestnetEnabled ? selectedChains : selectedChains.filter((genesisHash) => !TEST_NETS.includes(genesisHash));
     const multipleAssetsChainsNames = Object.keys(assetsChains);
 

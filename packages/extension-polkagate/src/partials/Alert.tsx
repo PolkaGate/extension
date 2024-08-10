@@ -5,15 +5,15 @@
 
 import '@vaadin/icons';
 
-import type { AlertsType } from '../util/types';
+import type { AlertType } from '../util/types';
 
-import { Alert as _Alert, Slide } from '@mui/material';
+import { Alert as MuiAlert, Slide } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useTranslation } from '../hooks';
 
 interface Props {
-  alert: AlertsType;
+  alert: AlertType;
 }
 
 function Alert ({ alert }: Props): React.ReactElement {
@@ -22,7 +22,7 @@ function Alert ({ alert }: Props): React.ReactElement {
   const [showAlert, setShowAlert] = useState<boolean>(true);
 
   const { bgcolor, borderColor } = useMemo(() => {
-    switch (alert.type) {
+    switch (alert.severity) {
       case 'warning':
         return { bgcolor: '#FFBF00', borderColor: '#FF5722 ' };
 
@@ -35,25 +35,27 @@ function Alert ({ alert }: Props): React.ReactElement {
       default:
         return { bgcolor: '#fff', borderColor: '#fff' };
     }
-  }, [alert.type]);
+  }, [alert.severity]);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       setShowAlert(false);
     }, 10000);
+
+    return () => clearTimeout(timeoutId);
   }, []);
 
   const closeAlert = useCallback(() => setShowAlert(false), []);
 
   return (
     <Slide direction='left' in={showAlert} mountOnEnter unmountOnExit>
-      <_Alert
+      <MuiAlert
         onClose={closeAlert}
-        severity={alert.type}
-        sx={{ bgcolor, border: '2px solid', borderColor, color: 'black', width: '100%' }}
+        severity={alert.severity}
+        sx={{ bgcolor, border: '2px solid', borderColor, color: 'black', width: 'fit-content' }}
       >
-        {t(alert.message)}
-      </_Alert>
+        {t(alert.text)}
+      </MuiAlert>
     </Slide>
   );
 }
