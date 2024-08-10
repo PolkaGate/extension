@@ -52,7 +52,8 @@ function Alert ({ alert }: Props): React.ReactElement {
       <MuiAlert
         onClose={closeAlert}
         severity={alert.severity}
-        sx={{ bgcolor, border: '2px solid', borderColor, color: 'black', width: 'fit-content' }}
+        sx={{ width: 'fit-content' }}
+        // sx={{ bgcolor, border: '2px solid', borderColor, color: 'black', width: 'fit-content' }}
       >
         {t(alert.text)}
       </MuiAlert>

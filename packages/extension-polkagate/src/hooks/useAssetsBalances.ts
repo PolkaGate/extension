@@ -202,7 +202,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     /** when one round fetch is done, we will save fetched assets in storage */
     if (addresses && workersCalled?.length === 0) {
       handleAccountsSaving();
-      setAlerts((perv) => [...perv, { severity: 'info', text: t('Accounts\' balances updated!') }]);
+      setAlerts((perv) => [...perv, { severity: 'success', text: t('Accounts\' balances updated!') }]);
     }
   }, [accounts, addresses, handleAccountsSaving, setAlerts, t, workersCalled?.length]);
 
