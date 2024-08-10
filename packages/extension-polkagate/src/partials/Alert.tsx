@@ -8,7 +8,7 @@ import '@vaadin/icons';
 import type { AlertType } from '../util/types';
 
 import { Alert as MuiAlert, Slide } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { useTranslation } from '../hooks';
 
@@ -20,22 +20,6 @@ function Alert ({ alert }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [showAlert, setShowAlert] = useState<boolean>(true);
-
-  const { bgcolor, borderColor } = useMemo(() => {
-    switch (alert.severity) {
-      case 'warning':
-        return { bgcolor: '#FFBF00', borderColor: '#FF5722 ' };
-
-      case 'error':
-        return { bgcolor: '#DC143C', borderColor: '#FF5252 ' };
-
-      case 'info':
-        return { bgcolor: '#89CFF0', borderColor: '#6495ED' };
-
-      default:
-        return { bgcolor: '#fff', borderColor: '#fff' };
-    }
-  }, [alert.severity]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -53,7 +37,6 @@ function Alert ({ alert }: Props): React.ReactElement {
         onClose={closeAlert}
         severity={alert.severity}
         sx={{ width: 'fit-content' }}
-        // sx={{ bgcolor, border: '2px solid', borderColor, color: 'black', width: 'fit-content' }}
       >
         {t(alert.text)}
       </MuiAlert>
