@@ -10,9 +10,9 @@ import { AlertContext } from '../components';
 export default function useAlerts () {
   const { setAlerts } = useContext(AlertContext);
 
-  const addAlert = useCallback((text: string, severity: Severity) => {
+  const notify = useCallback((text: string, severity: Severity) => {
     setAlerts((prev) => [...prev, { severity, text }]);
   }, [setAlerts]);
 
-  return { addAlert };
+  return { notify };
 }

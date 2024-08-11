@@ -26,7 +26,7 @@ interface Props {
 export default function ForgetAccountModal ({ account, setDisplayPopup }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
-  const { addAlert } = useAlerts();
+  const { notify } = useAlerts();
 
   const [isBusy, setIsBusy] = useState(false);
   const [password, setPassword] = useState<string>('');
@@ -77,7 +77,7 @@ export default function ForgetAccountModal ({ account, setDisplayPopup }: Props)
         .then(async () => {
           await updateAuthAccountsList(account.address);
           setIsBusy(false);
-          addAlert(t('The account has been successfully removed!'), 'success');
+          notify(t('The account has been successfully removed!'), 'success');
 
           backToAccount();
           onAction('/');
@@ -91,7 +91,7 @@ export default function ForgetAccountModal ({ account, setDisplayPopup }: Props)
       setIsBusy(false);
       console.error('Error forgetting an account:', error);
     }
-  }, [account.address, addAlert, backToAccount, needsPasswordConfirmation, onAction, password, t, updateAuthAccountsList]);
+  }, [account.address, notify, backToAccount, needsPasswordConfirmation, onAction, password, t, updateAuthAccountsList]);
 
   const onChangePass = useCallback((pass: string): void => {
     setPassword(pass);

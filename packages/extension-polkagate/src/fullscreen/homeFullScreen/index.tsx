@@ -21,7 +21,7 @@ export default function HomePageFullScreen (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
-  const { addAlert } = useAlerts();
+  const { notify } = useAlerts();
   const initialAccountList = useAccountsOrder(true);
   const { accounts: accountsInExtension } = useContext(AccountContext);
 
@@ -32,11 +32,11 @@ export default function HomePageFullScreen (): React.ReactElement {
 
   useEffect(() => {
     if (accountsInExtension && accountsInExtension?.length === 0) {
-      addAlert(t('No accounts found!'), 'info');
+      notify(t('No accounts found!'), 'info');
 
       onAction('/onboarding');
     }
-  }, [accountsInExtension, addAlert, onAction, t]);
+  }, [accountsInExtension, notify, onAction, t]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>

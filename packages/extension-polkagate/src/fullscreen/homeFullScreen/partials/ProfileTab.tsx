@@ -28,7 +28,7 @@ interface Props {
 export default function ProfileTab ({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { addAlert } = useAlerts();
+  const { notify } = useAlerts();
 
   const profileAccounts = useProfileAccounts(orderedAccounts, text);
 
@@ -61,8 +61,8 @@ export default function ProfileTab ({ index, isHovered, orderedAccounts, selecte
     toHideAll !== undefined && accounts.forEach(({ account: { address } }) => {
       showAccount(address, !toHideAll).catch(console.error);
     });
-    addAlert(t('All accounts in the {{text}} profile have been {{verb}}.', { replace: { text, verb: toHideAll ? 'hidden' : 'unhidden' } }), 'info');
-  }, [addAlert, t, text, toHideAll]);
+    notify(t('All accounts in the {{text}} profile have been {{verb}}.', { replace: { text, verb: toHideAll ? 'hidden' : 'unhidden' } }), 'info');
+  }, [notify, t, text, toHideAll]);
 
   const areAllHidden = areAllProfileAccountsHidden !== undefined ? areAllProfileAccountsHidden : toHideAll;
 

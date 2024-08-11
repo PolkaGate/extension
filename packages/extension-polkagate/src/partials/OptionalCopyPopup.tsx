@@ -23,7 +23,7 @@ function OptionalCopyPopup({ address, setAnchorEl }: Props): React.ReactElement 
   const { t } = useTranslation();
   const { chain, chainName } = useInfo(address);
   const options = useGenesisHashOptions();
-  const { addAlert } = useAlerts();
+  const { notify } = useAlerts();
 
   const [defaultAddress, setDefaultAddress] = useState<string | undefined>(address);
   const [formattedAddress, setFormattedAddress] = useState<string | undefined>();
@@ -48,11 +48,11 @@ function OptionalCopyPopup({ address, setAnchorEl }: Props): React.ReactElement 
     if (formattedAddress || defaultAddress) {
       setCopied(true);
       navigator.clipboard.writeText(formattedAddress ?? defaultAddress ?? address ?? '').catch((err) => console.error('Error copying text: ', err));
-      addAlert(t('The account address, formatted for {{chainName}}, has been copied to the clipboard!', { replace: { chainName: selectedChainName || chainName } }), 'info');
+      notify(t('The account address, formatted for {{chainName}}, has been copied to the clipboard!', { replace: { chainName: selectedChainName || chainName } }), 'info');
 
       setTimeout(() => setAnchorEl(null), 300);
     }
-  }, [addAlert, address, chainName, defaultAddress, formattedAddress, selectedChainName, setAnchorEl, t]);
+  }, [notify, address, chainName, defaultAddress, formattedAddress, selectedChainName, setAnchorEl, t]);
 
   const onChangeNetwork = useCallback((value: string | number) => {
     setSelectedGenesisHash(value as HexString);
