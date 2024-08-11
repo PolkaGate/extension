@@ -755,8 +755,8 @@ export interface AccountsAssetsContextType {
 export type Severity= 'error' | 'warning' | 'info' | 'success'
 
 export interface AlertType {
-  text: Severity;
-  severity: 'error' | 'warning' | 'info' | 'success'
+  text: string;
+  severity: Severity
 }
 
 export interface AlertContextType {
