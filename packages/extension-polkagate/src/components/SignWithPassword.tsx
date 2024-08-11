@@ -64,7 +64,7 @@ export default function SignWithPassword ({ address, api, disabled, from, goToSe
       signer.unlock(password);
       setStep(steps['WAIT_SCREEN']);
 
-      const txResult = await signAndSend(api, ptx, signer);
+      const txResult = await signAndSend(api, ptx, signer, formatted);
 
       handleTxResult(txResult);
     } catch (e) {

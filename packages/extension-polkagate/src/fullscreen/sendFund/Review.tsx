@@ -1,10 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { BalancesInfo, Proxy, TxInfo } from '../../util/types';
+import type { Inputs } from '.';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -17,7 +17,6 @@ import { PROXY_TYPE } from '../../util/constants';
 import { amountToMachine, pgBoxShadow } from '../../util/utils';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
 import { STEPS } from '../stake/pool/stake';
-import type { Inputs } from '.';
 
 interface Props {
   address: string;
@@ -29,7 +28,7 @@ interface Props {
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
 }
 
-export default function Review({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review ({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const api = useApi(address);
   const chain = useChain(address);
@@ -64,7 +63,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
               <Identity
                 address={address}
                 api={api}
-                chain={chain as any}
+                chain={chain}
                 direction='row'
                 identiconSize={31}
                 showSocial={false}
@@ -75,7 +74,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
           </DisplayValue>
           {selectedProxyAddress &&
             <Grid container m='auto' maxWidth='92%'>
-              <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
+              <ThroughProxy address={selectedProxyAddress} chain={chain} />
             </Grid>
           }
           <DisplayValue dividerHeight='1px' title={t('Amount')}>
@@ -102,7 +101,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
               <Identity
                 address={inputs?.recipientAddress}
                 api={api}
-                chain={chain as any}
+                chain={chain}
                 direction='row'
                 identiconSize={31}
                 showSocial={false}

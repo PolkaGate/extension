@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ProxyTypes } from "./types";
+
 /* eslint-disable header/header */
 
 export const EXTENSION_NAME = 'Polkagate';
@@ -12,11 +14,11 @@ export const POLKADOT_SLIP44 = 354;
 // fix me, since we have asset ID 0 on asset hub, it can be -1 instead!
 export const NATIVE_TOKEN_ASSET_ID = 0; // zero is the native token's assetId on apps-config
 
-export const POLKAGATE_POOL_IDS: { [key: string]: number } = {
+export const POLKAGATE_POOL_IDS: Record<string, number> = {
   Kusama: 18,
+  Paseo: 3,
   Polkadot: 8,
-  Westend: 6,
-  Paseo: 3
+  Westend: 6
 };
 
 // export const EXTENSION_FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf2WHD0oVR0NS7tW6C1U025H1XBEZXqwxvFvPhcoFa18eHQiA/viewform';
@@ -28,7 +30,7 @@ export const FLOATING_POINT_DIGIT = 4;
 export const BLOCK_RATE = 6; // sec
 export const DEFAULT_TOKEN_DECIMALS = 12;
 
-export const DEFAULT_COLOR = 'green'
+export const DEFAULT_COLOR = 'green';
 export const SHORT_ADDRESS_CHARACTERS = 4;
 export const MAX_REWARDS_TO_SHOW = 100;
 export const MAX_HISTORY_RECORD_TO_SHOW = 40;
@@ -228,13 +230,15 @@ export const USD_CURRENCY = {
 export const FULLSCREEN_WIDTH = '900px';
 export const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed', '/account/import-raw-seed', '/forgot-password', '/reset-wallet'];
 
-export const PROXY_TYPE = {
-  STAKING: ['Any', 'NonTransfer', 'Staking'],
-  NOMINATION_POOLS: ['Any', 'NonTransfer', 'Staking', 'NominationPools'],
-  GOVERNANCE: ['Any', 'NonTransfer', 'Governance'],
-  SEND_FUND: ['Any'],
+type ProxyTypeIndex = 'CROWDLOAN' | 'GENERAL' | 'GOVERNANCE'| 'NOMINATION_POOLS' | 'SEND_FUND'| 'STAKING';
+
+export const PROXY_TYPE: Record<ProxyTypeIndex, ProxyTypes[]> = {
+  CROWDLOAN: ['Any', 'NonTransfer', 'Auction'],
   GENERAL: ['Any', 'NonTransfer'],
-  CROWDLOAN: ['Any', 'NonTransfer', 'Auction']
+  GOVERNANCE: ['Any', 'NonTransfer', 'Governance'],
+  NOMINATION_POOLS: ['Any', 'NonTransfer', 'Staking', 'NominationPools'],
+  SEND_FUND: ['Any'],
+  STAKING: ['Any', 'NonTransfer', 'Staking']
 };
 
 export const PROFILE_COLORS = [

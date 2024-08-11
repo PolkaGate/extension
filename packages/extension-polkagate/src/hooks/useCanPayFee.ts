@@ -1,22 +1,21 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
 
 import { useEffect, useState } from 'react';
-
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { getValue } from '../popup/account/util';
 import { useBalances } from '.';
 
-export default function useCanPayFee(formatted: AccountId | string | undefined, estimatedFee: Balance | undefined): boolean | undefined {
+export default function useCanPayFee (formatted: string | undefined, estimatedFee: Balance | BN | undefined): boolean | undefined {
   const balances = useBalances(formatted);
   const [canPayFee, setCanPayFee] = useState<boolean | undefined>();
 
   useEffect(() =>
-    balances && estimatedFee && setCanPayFee(getValue('available', balances)?.gt(estimatedFee)), [balances, estimatedFee]);
+    balances && estimatedFee && setCanPayFee(getValue('available', balances)?.gt(estimatedFee))
+  , [balances, estimatedFee]);
 
   return canPayFee;
 }

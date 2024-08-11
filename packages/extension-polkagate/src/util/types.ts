@@ -129,8 +129,8 @@ interface stashAccountDisplay {
 }
 
 export interface TxResult {
-  block: number;
-  txHash: string;
+  block?: number;
+  txHash?: string;
   fee?: string;
   success: boolean;
   failureText?: string;
@@ -524,7 +524,7 @@ export interface ClaimedRewardInfo {
   timeStamp: number;
 }
 
-export type ProxyTypes = 'Any' | 'Auction' | 'CancelProxy' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'SudoBalances' | 'Society' | 'NominationPools';
+export type ProxyTypes = 'Any' | 'Auction' | 'CancelProxy' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'Society' | 'NominationPools';
 
 export interface Proxy {
   delay: number;

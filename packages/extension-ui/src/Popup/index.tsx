@@ -259,13 +259,14 @@ export default function Popup (): React.ReactElement {
       .catch(console.error);
   }, [cameraOn]);
 
-  function wrapWithErrorBoundary (component: React.ReactElement, trigger?: string): React.ReactElement {
+  const wrapWithErrorBoundary = useCallback((component: React.ReactElement, trigger?: string): React.ReactElement => {
     return <ErrorBoundary trigger={trigger}>
       <>
         {component}
-        {!isExtensionMode && <AlertBox />}      </>
+        {!isExtensionMode && <AlertBox />}
+      </>
     </ErrorBoundary>;
-  }
+  }, [isExtensionMode]);
 
   const Root = useCallback(() =>
     authRequests?.length
@@ -275,7 +276,7 @@ export default function Popup (): React.ReactElement {
         : signRequests?.length
           ? wrapWithErrorBoundary(<Signing />, 'signing')
           : wrapWithErrorBoundary(<Home />, 'accounts')
-  , [authRequests?.length, metaRequests?.length, signRequests?.length]);
+  , [authRequests?.length, metaRequests?.length, signRequests?.length, wrapWithErrorBoundary]);
 
   return (
     <AnimatePresence mode='wait'>
