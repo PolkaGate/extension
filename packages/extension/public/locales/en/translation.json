@@ -1377,5 +1377,6 @@
   "All accounts in the {{text}} profile have been {{verb}}.": "",
   "Accounts' balances updated!": "",
   "Updating accounts balances ...": "",
-  "The account has been successfully removed!": ""
+  "The account has been successfully removed!": "",
+  "The account address, formatted for {{chainName}}, has been copied to the clipboard!": ""
 }
