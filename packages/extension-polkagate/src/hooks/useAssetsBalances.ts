@@ -467,7 +467,6 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       return;
     }
 
-    setAlerts((perv) => [...perv, { severity: 'info', text: t('Updating accounts balances ...') }]);
     const _selectedChains = isTestnetEnabled ? selectedChains : selectedChains.filter((genesisHash) => !TEST_NETS.includes(genesisHash));
     const multipleAssetsChainsNames = Object.keys(assetsChains);
 
@@ -485,7 +484,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
 
       fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);
     });
-  }, [SHOULD_FETCH_ASSETS, addresses, fetchAssets, isTestnetEnabled, isUpdate, isWorking, selectedChains, setAlerts, t]);
+  }, [SHOULD_FETCH_ASSETS, addresses, fetchAssets, isTestnetEnabled, isUpdate, isWorking, selectedChains]);
 
   return fetchedAssets;
 }
