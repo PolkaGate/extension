@@ -1378,5 +1378,6 @@
   "Accounts' balances updated!": "",
   "Updating accounts balances ...": "",
   "The account has been successfully removed!": "",
-  "The account address, formatted for {{chainName}}, has been copied to the clipboard!": ""
+  "The account address, formatted for {{chainName}}, has been copied to the clipboard!": "",
+  "The transaction has been successfully finalized!": "success"
 }

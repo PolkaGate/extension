@@ -9,10 +9,13 @@ import { Grid } from '@mui/material';
 import React, { useContext } from 'react';
 
 import { AlertContext } from '../components';
+import { useTransactionState } from '../hooks';
 import Alert from './Alert';
 
 function AlertBox (): React.ReactElement {
   const { alerts } = useContext(AlertContext);
+
+  useTransactionState();
 
   return (
     <Grid container display='flex' item justifyContent='flex-end' sx={{ maxWidth: '400px', position: 'absolute', right: '20px', rowGap: '15px', top: '85px', zIndex: 100 }}>
