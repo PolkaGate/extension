@@ -6,13 +6,13 @@
 import type { AccountsOrder } from '@polkadot/extension-polkagate/src/util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getProfileColor } from '@polkadot/extension-polkagate/src/util/utils';
 
-import { AlertContext, VaadinIcon } from '../../../components/index';
+import { VaadinIcon } from '../../../components/index';
 import { getStorage, setStorage, watchStorage } from '../../../components/Loading';
-import { useProfileAccounts, useTranslation } from '../../../hooks';
+import { useAlerts, useProfileAccounts, useTranslation } from '../../../hooks';
 import { showAccount } from '../../../messaging';
 import { HIDDEN_PERCENT } from './ProfileTabs';
 
@@ -28,8 +28,7 @@ interface Props {
 export default function ProfileTab ({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { setAlerts } = useContext(AlertContext);
-
+  const { notify } = useAlerts();
   const profileAccounts = useProfileAccounts(orderedAccounts, text);
 
   /** set by user click on a profile tab */
@@ -61,15 +60,8 @@ export default function ProfileTab ({ index, isHovered, orderedAccounts, selecte
     toHideAll !== undefined && accounts.forEach(({ account: { address } }) => {
       showAccount(address, !toHideAll).catch(console.error);
     });
-    setAlerts((perv) =>
-      [...perv,
-        {
-          severity: 'info',
-          text: t('All accounts in the {{text}} profile have been {{verb}}.', { replace: { text, verb: toHideAll ? 'hidden' : 'unhidden' } })
-        }
-      ]
-    );
-  }, [setAlerts, t, text, toHideAll]);
+    notify(t('All accounts in the {{text}} profile have been {{verb}}.', { replace: { text, verb: toHideAll ? 'hidden' : 'unhidden' } }), 'info');
+  }, [notify, t, text, toHideAll]);
 
   const areAllHidden = areAllProfileAccountsHidden !== undefined ? areAllProfileAccountsHidden : toHideAll;
 
