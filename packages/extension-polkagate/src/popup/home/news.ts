@@ -10,6 +10,12 @@ export interface News {
 
 export const news: News[] = [
   {
+    version: '0.7.4',
+    notes: [
+      'Alerts keep you informed. They have been added to notify you about tasks running in the background.'
+    ]
+  },
+  {
     version: '0.7.3',
     notes: [
       'Granular Access to dApps: Select specific accounts when authorizing websites to access your accounts.',

@@ -13,7 +13,7 @@ import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { ActionContext, ButtonWithCancel, Checkbox2 as Checkbox, NewAddress, Password, Warning, WrongPasswordAlert } from '../../components';
+import { ActionContext, AlertContext, ButtonWithCancel, Checkbox2 as Checkbox, NewAddress, Password, Warning, WrongPasswordAlert } from '../../components';
 import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
 import { useTranslation } from '../../hooks';
 import { forgetAccount, getAuthList, removeAuthorization, updateAuthorization } from '../../messaging';
@@ -26,6 +26,8 @@ interface Props {
 export default function ForgetAccountModal ({ account, setDisplayPopup }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
+  const { setAlerts } = useContext(AlertContext);
+
   const [isBusy, setIsBusy] = useState(false);
   const [password, setPassword] = useState<string>('');
   const [checkConfirmed, setCheckConfirmed] = useState<boolean>(false);
@@ -75,6 +77,8 @@ export default function ForgetAccountModal ({ account, setDisplayPopup }: Props)
         .then(async () => {
           await updateAuthAccountsList(account.address);
           setIsBusy(false);
+          setAlerts((perv) => [...perv, { severity: 'success', text: t('The account has been successfully removed!') }]);
+
           backToAccount();
           onAction('/');
         })
@@ -87,7 +91,7 @@ export default function ForgetAccountModal ({ account, setDisplayPopup }: Props)
       setIsBusy(false);
       console.error('Error forgetting an account:', error);
     }
-  }, [account.address, backToAccount, needsPasswordConfirmation, onAction, password, updateAuthAccountsList]);
+  }, [account.address, backToAccount, needsPasswordConfirmation, onAction, password, setAlerts, t, updateAuthAccountsList]);
 
   const onChangePass = useCallback((pass: string): void => {
     setPassword(pass);

@@ -43,12 +43,12 @@ export enum popupNumbers {
 };
 
 export interface UnlockInformationType {
-  classToUnlock: Lock[];
-  totalLocked: BN;
-  unlockableAmount: BN;
+  classToUnlock: Lock[] | undefined;
+  totalLocked: BN | null | undefined;
+  unlockableAmount: BN | undefined;
 }
 
-export default function AccountDetails(): React.ReactElement {
+export default function AccountDetails (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();

@@ -5,9 +5,10 @@
 
 import type { Asset } from '@polkagate/apps-config/assets/types';
 import type { AccountJson } from '@polkadot/extension-base/background/types';
+import type { AlertType } from '../util/types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, isObject } from '@polkadot/util';
 
@@ -18,12 +19,12 @@ import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constan
 import getChainName from '../util/getChainName';
 import { isHexToBn } from '../util/utils';
 import useSelectedChains from './useSelectedChains';
-import { useIsTestnetEnabled } from '.';
+import { useIsTestnetEnabled, useTranslation } from '.';
 
 type WorkerMessage = Record<string, MessageBody[]>;
 type Assets = Record<string, FetchedBalance[]>;
-type AssetsBalancesPerChain = { [genesisHash: string]: FetchedBalance[] };
-type AssetsBalancesPerAddress = { [address: string]: AssetsBalancesPerChain };
+interface AssetsBalancesPerChain { [genesisHash: string]: FetchedBalance[] }
+interface AssetsBalancesPerAddress { [address: string]: AssetsBalancesPerChain }
 export interface SavedAssets { balances: AssetsBalancesPerAddress, timeStamp: number }
 
 interface BalancesDetails {
@@ -124,9 +125,10 @@ const assetsChains = createAssets();
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances(accounts: AccountJson[] | null): SavedAssets | undefined | null {
+export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>): SavedAssets | undefined | null {
   const isTestnetEnabled = useIsTestnetEnabled();
   const selectedChains = useSelectedChains();
+  const { t } = useTranslation();
 
   /** to limit calling of this heavy call on just home and account details */
   const SHOULD_FETCH_ASSETS = window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs');
@@ -138,13 +140,13 @@ export default function useAssetsBalances(accounts: AccountJson[] | null): Saved
   const [fetchedAssets, setFetchedAssets] = useState<SavedAssets | undefined | null>();
   const [isWorking, setIsWorking] = useState<boolean>(false);
   const [workersCalled, setWorkersCalled] = useState<Worker[]>();
-  const [isUpdate, setIsUpdate] = useState<boolean>();
+  const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
   useEffect(() => {
     SHOULD_FETCH_ASSETS && getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
       const _timeStamp = (savedAssets as SavedAssets)?.timeStamp;
 
-      setIsUpdate(isUpToDate(_timeStamp));
+      setIsUpdate(Boolean(isUpToDate(_timeStamp)));
     }).catch(console.error);
   }, [SHOULD_FETCH_ASSETS]);
 
@@ -200,8 +202,9 @@ export default function useAssetsBalances(accounts: AccountJson[] | null): Saved
     /** when one round fetch is done, we will save fetched assets in storage */
     if (addresses && workersCalled?.length === 0) {
       handleAccountsSaving();
+      setAlerts((perv) => [...perv, { severity: 'success', text: t('Accounts\' balances updated!') }]);
     }
-  }, [accounts, addresses, handleAccountsSaving, workersCalled?.length]);
+  }, [accounts, addresses, handleAccountsSaving, setAlerts, t, workersCalled?.length]);
 
   useEffect(() => {
     /** chain list may have changed */
@@ -464,6 +467,7 @@ export default function useAssetsBalances(accounts: AccountJson[] | null): Saved
       return;
     }
 
+    setAlerts((perv) => [...perv, { severity: 'info', text: t('Updating accounts balances ...') }]);
     const _selectedChains = isTestnetEnabled ? selectedChains : selectedChains.filter((genesisHash) => !TEST_NETS.includes(genesisHash));
     const multipleAssetsChainsNames = Object.keys(assetsChains);
 
@@ -481,7 +485,7 @@ export default function useAssetsBalances(accounts: AccountJson[] | null): Saved
 
       fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);
     });
-  }, [SHOULD_FETCH_ASSETS, addresses, fetchAssets, isTestnetEnabled, isUpdate, isWorking, selectedChains]);
+  }, [SHOULD_FETCH_ASSETS, addresses, fetchAssets, isTestnetEnabled, isUpdate, isWorking, selectedChains, setAlerts, t]);
 
   return fetchedAssets;
 }

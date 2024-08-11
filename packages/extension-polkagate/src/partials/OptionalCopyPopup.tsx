@@ -1,17 +1,18 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { HexString } from '@polkadot/util/types';
+
 import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useContext, useLayoutEffect, useState } from 'react';
 
 import { selectableNetworks } from '@polkadot/networks';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { PButton, Select, ShortAddress } from '../components';
-import { useChain, useGenesisHashOptions, useTranslation } from '../hooks';
+import { AlertContext, PButton, Select, ShortAddress } from '../components';
+import { useGenesisHashOptions, useInfo, useTranslation } from '../hooks';
 
 interface Props {
   address: string | undefined;
@@ -20,12 +21,14 @@ interface Props {
 
 function OptionalCopyPopup({ address, setAnchorEl }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const chain = useChain(address);
+  const { chain, chainName } = useInfo(address);
   const options = useGenesisHashOptions();
+  const { setAlerts } = useContext(AlertContext);
 
   const [defaultAddress, setDefaultAddress] = useState<string | undefined>(address);
   const [formattedAddress, setFormattedAddress] = useState<string | undefined>();
-  const [selectedNetwork, setSelectedNetwork] = useState<string | undefined>();
+  const [selectedGenesisHash, setSelectedGenesisHash] = useState<string | undefined>();
+  const [selectedChainName, setSelectedChainName] = useState<string | undefined>();
   const [copied, setCopied] = useState<boolean>(false);
 
   const formatAddress = useCallback((prefix: number) => {
@@ -45,14 +48,27 @@ function OptionalCopyPopup({ address, setAnchorEl }: Props): React.ReactElement 
     if (formattedAddress || defaultAddress) {
       setCopied(true);
       navigator.clipboard.writeText(formattedAddress ?? defaultAddress ?? address ?? '').catch((err) => console.error('Error copying text: ', err));
+      setAlerts((perv) =>
+        [
+          ...perv,
+          {
+            severity: 'info',
+            text: t('The account address, formatted for {{chainName}}, has been copied to the clipboard!', {
+              replace: { chainName: selectedChainName || chainName }
+            })
+          }
+        ]);
+
       setTimeout(() => setAnchorEl(null), 300);
     }
-  }, [address, defaultAddress, formattedAddress, setAnchorEl]);
+  }, [address, chainName, defaultAddress, formattedAddress, selectedChainName, setAlerts, setAnchorEl, t]);
 
-  const onChangeNetwork = useCallback((value: string) => {
-    setSelectedNetwork(value);
-    const _selectedNetwork = selectableNetworks.find(({ genesisHash }) => genesisHash.includes(value));
+  const onChangeNetwork = useCallback((value: string | number) => {
+    setSelectedGenesisHash(value as HexString);
+    const _selectedNetwork = selectableNetworks.find(({ genesisHash }) => genesisHash.includes(value as HexString));
     const prefix = _selectedNetwork?.prefix;
+
+    setSelectedChainName(_selectedNetwork?.displayName);
 
     const formatted = formatAddress(prefix ?? 42);
 
@@ -71,7 +87,7 @@ function OptionalCopyPopup({ address, setAnchorEl }: Props): React.ReactElement 
         onChange={onChangeNetwork}
         options={options}
         showLogo
-        value={selectedNetwork}
+        value={selectedGenesisHash}
       />
       <Grid container item sx={{ bgcolor: 'divider', borderRadius: '5px', my: '15px', p: '5px 10px' }}>
         <ShortAddress address={formattedAddress ?? defaultAddress} charsCount={12} />

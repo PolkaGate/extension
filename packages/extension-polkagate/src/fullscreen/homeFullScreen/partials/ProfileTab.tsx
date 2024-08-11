@@ -6,11 +6,11 @@
 import type { AccountsOrder } from '@polkadot/extension-polkagate/src/util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { getProfileColor } from '@polkadot/extension-polkagate/src/util/utils';
 
-import { VaadinIcon } from '../../../components/index';
+import { AlertContext, VaadinIcon } from '../../../components/index';
 import { getStorage, setStorage, watchStorage } from '../../../components/Loading';
 import { useProfileAccounts, useTranslation } from '../../../hooks';
 import { showAccount } from '../../../messaging';
@@ -25,9 +25,10 @@ interface Props {
   index: number;
 }
 
-export default function ProfileTab({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
+export default function ProfileTab ({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const { setAlerts } = useContext(AlertContext);
 
   const profileAccounts = useProfileAccounts(orderedAccounts, text);
 
@@ -60,7 +61,15 @@ export default function ProfileTab({ index, isHovered, orderedAccounts, selected
     toHideAll !== undefined && accounts.forEach(({ account: { address } }) => {
       showAccount(address, !toHideAll).catch(console.error);
     });
-  }, [toHideAll]);
+    setAlerts((perv) =>
+      [...perv,
+        {
+          severity: 'info',
+          text: t('All accounts in the {{text}} profile have been {{verb}}.', { replace: { text, verb: toHideAll ? 'hidden' : 'unhidden' } })
+        }
+      ]
+    );
+  }, [setAlerts, t, text, toHideAll]);
 
   const areAllHidden = areAllProfileAccountsHidden !== undefined ? areAllProfileAccountsHidden : toHideAll;
 

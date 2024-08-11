@@ -30,19 +30,19 @@ import { amountToHuman } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
 import SelectProxyModal2 from '../../governance/components/SelectProxyModal2';
 import WaitScreen from '../../governance/partials/WaitScreen';
+import { STEPS } from '../../stake/pool/stake';
 import { ModalTitle } from '../../stake/solo/commonTasks/configurePayee';
 import Confirmation from './Confirmation';
-import { STEPS } from '../../stake/pool/stake';
 
 interface Props {
   address: string;
   api: ApiPromise;
-  classToUnlock: Lock[]
+  classToUnlock: Lock[] | undefined
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>
-  show: boolean;
-  unlockableAmount: BN;
-  totalLocked: BN;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  show: boolean;
+  totalLocked: BN | null | undefined;
+  unlockableAmount: BN | undefined;
 }
 
 export default function Review ({ address, api, classToUnlock, setDisplayPopup, setRefresh, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
@@ -75,7 +75,7 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
   }), [amount, estimatedFee]);
 
   useEffect((): void => {
-    if (!formatted) {
+    if (!formatted || !classToUnlock) {
       return;
     }
 
@@ -145,11 +145,11 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
                 amount={amount}
                 fee={estimatedFee}
                 label={t('Available to unlock')}
-                showDivider={!totalLocked.sub(unlockableAmount).isZero()}
+                showDivider={unlockableAmount && !totalLocked?.sub(unlockableAmount).isZero()}
                 token={token}
                 withFee
               />
-              {!totalLocked.sub(unlockableAmount).isZero() &&
+              {unlockableAmount && !totalLocked?.sub(unlockableAmount).isZero() &&
                 <Warning
                   theme={theme}
                 >
