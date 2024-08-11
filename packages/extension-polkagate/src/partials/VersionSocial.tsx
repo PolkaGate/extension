@@ -1,10 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Email as EmailIcon, Language as LanguageIcon, X as XIcon } from '@mui/icons-material';
+import { Email as EmailIcon, Language as LanguageIcon, X as XIcon, YouTube as YouTubeIcon } from '@mui/icons-material';
 import { Box, Grid, Link, useTheme } from '@mui/material';
 import React from 'react';
 
@@ -29,17 +28,20 @@ export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => {
       <Link href='https://polkagate.xyz' pl='5px' rel='noreferrer' target='_blank'>
         <LanguageIcon sx={{ color: 'success.main', fontSize: iconSize }} />
       </Link>
+      <Link href='https://www.youtube.com/@polkagate' pl='5px' rel='noreferrer' target='_blank'>
+        <YouTubeIcon sx={{ color: 'red', fontSize: iconSize + 1 }} />
+      </Link>
       <Link href='https://twitter.com/@polkagate' pl='5px' rel='noreferrer' target='_blank'>
         <XIcon sx={{ color: isDark ? 'white' : 'black', fontSize: iconSize - 2.5 }} />
       </Link>
       <Link href='https://matrix.to/#/#polkagate:matrix.org' pl='5px' rel='noreferrer' target='_blank'>
-        <Box component='img' src={riot} sx={{ height: iconSize === 15 ? '12px' : '17px', width: iconSize === 15 ? '12px' : '17px', pt: '1px' }} />
+        <Box component='img' src={riot as string} sx={{ height: iconSize === 15 ? '12px' : '17px', pt: '1px', width: iconSize === 15 ? '12px' : '17px' }} />
       </Link>
     </Grid>
   );
 };
 
-function VersionSocial({ fontSize, iconSize = 15 }: Props): React.ReactElement<Props> {
+function VersionSocial ({ fontSize, iconSize = 15 }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const manifest = useManifest();
 
