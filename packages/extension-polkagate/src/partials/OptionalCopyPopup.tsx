@@ -6,13 +6,13 @@
 import type { HexString } from '@polkadot/util/types';
 
 import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useState } from 'react';
 
 import { selectableNetworks } from '@polkadot/networks';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AlertContext, PButton, Select, ShortAddress } from '../components';
-import { useGenesisHashOptions, useInfo, useTranslation } from '../hooks';
+import { PButton, Select, ShortAddress } from '../components';
+import { useAlerts, useGenesisHashOptions, useInfo, useTranslation } from '../hooks';
 
 interface Props {
   address: string | undefined;
@@ -23,7 +23,7 @@ function OptionalCopyPopup({ address, setAnchorEl }: Props): React.ReactElement 
   const { t } = useTranslation();
   const { chain, chainName } = useInfo(address);
   const options = useGenesisHashOptions();
-  const { setAlerts } = useContext(AlertContext);
+  const { addAlert } = useAlerts();
 
   const [defaultAddress, setDefaultAddress] = useState<string | undefined>(address);
   const [formattedAddress, setFormattedAddress] = useState<string | undefined>();
@@ -48,20 +48,11 @@ function OptionalCopyPopup({ address, setAnchorEl }: Props): React.ReactElement 
     if (formattedAddress || defaultAddress) {
       setCopied(true);
       navigator.clipboard.writeText(formattedAddress ?? defaultAddress ?? address ?? '').catch((err) => console.error('Error copying text: ', err));
-      setAlerts((perv) =>
-        [
-          ...perv,
-          {
-            severity: 'info',
-            text: t('The account address, formatted for {{chainName}}, has been copied to the clipboard!', {
-              replace: { chainName: selectedChainName || chainName }
-            })
-          }
-        ]);
+      addAlert(t('The account address, formatted for {{chainName}}, has been copied to the clipboard!', { replace: { chainName: selectedChainName || chainName } }), 'info');
 
       setTimeout(() => setAnchorEl(null), 300);
     }
-  }, [address, chainName, defaultAddress, formattedAddress, selectedChainName, setAlerts, setAnchorEl, t]);
+  }, [addAlert, address, chainName, defaultAddress, formattedAddress, selectedChainName, setAnchorEl, t]);
 
   const onChangeNetwork = useCallback((value: string | number) => {
     setSelectedGenesisHash(value as HexString);

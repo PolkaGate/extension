@@ -6,8 +6,8 @@
 import { Grid } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 
-import { AccountContext, ActionContext, AlertContext } from '../../components';
-import { useAccountsOrder, useFullscreen, useProfileAccounts, useTranslation } from '../../hooks';
+import { AccountContext, ActionContext } from '../../components';
+import { useAccountsOrder, useAlerts, useFullscreen, useProfileAccounts, useTranslation } from '../../hooks';
 import { AddNewAccountButton } from '../../partials';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import HeaderComponents from './components/HeaderComponents';
@@ -21,7 +21,7 @@ export default function HomePageFullScreen (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
-  const { setAlerts } = useContext(AlertContext);
+  const { addAlert } = useAlerts();
   const initialAccountList = useAccountsOrder(true);
   const { accounts: accountsInExtension } = useContext(AccountContext);
 
@@ -32,11 +32,11 @@ export default function HomePageFullScreen (): React.ReactElement {
 
   useEffect(() => {
     if (accountsInExtension && accountsInExtension?.length === 0) {
-      setAlerts((perv) => [...perv, { severity: 'info', text: t('No accounts found!') }]);
+      addAlert(t('No accounts found!'), 'info');
 
       onAction('/onboarding');
     }
-  }, [accountsInExtension, onAction, setAlerts, t]);
+  }, [accountsInExtension, addAlert, onAction, t]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
