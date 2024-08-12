@@ -30,9 +30,9 @@ export default function useApiWithChain (chain: Chain | null | undefined, api?: 
     }
 
     if (chain?.genesisHash && apisContext?.apis[chain.genesisHash]) {
-      const maybeApi = apisContext?.apis[chain.genesisHash].api;
+      const maybeApi = apisContext?.apis[chain.genesisHash].find(({api}) => api?.isConnected)?.api;
 
-      if (maybeApi?.isConnected) {
+      if (maybeApi) {
         console.log(`♻ using the saved api for ${chain.name} in useApiWithChain`);
 
         return setApi(maybeApi);
