@@ -10,6 +10,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { useCurrentEraIndex, useInfo } from '.';
+import { AUTO_MODE } from '../util/constants';
 
 export interface ExposureOverview {
   total: BN;
@@ -185,7 +186,7 @@ export default function useValidators(address: string, validators?: AllValidator
       getValidatorsPaged().catch(console.error);
     } else {
       /** get validators info, including current and waiting, should be called after savedValidators gets value */
-      endpoint && chain && currentEraIndex && currentEraIndex !== info?.eraIndex && getValidatorsInfo(chain, endpoint, info);
+      endpoint && endpoint !== AUTO_MODE.value && chain && currentEraIndex && currentEraIndex !== info?.eraIndex && getValidatorsInfo(chain, endpoint, info);
     }
   }, [api, chain, currentEraIndex, endpoint, getValidatorsInfo, info, validators]);
 

@@ -10,6 +10,7 @@ import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
 import type { SavedValidatorsIdentities, ValidatorsIdentities } from '../util/types';
 import { useCurrentEraIndex, useInfo, usePeopleChain } from '.';
+import { AUTO_MODE } from '../util/constants';
 
 export default function useValidatorsIdentities(address: string, allValidatorsIds: AccountId[] | null | undefined, identities?: DeriveAccountInfo[] | null): DeriveAccountInfo[] | null | undefined {
   const { chainName } = useInfo(address);
@@ -66,7 +67,7 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
     }
 
     /** get validators info, including current and waiting, should be called after savedValidators gets value */
-    endpoint && allValidatorsIds && !newValidatorsIdentities && currentEraIndex && currentEraIndex !== savedEraIndex && getValidatorsIdentities(endpoint, allValidatorsIds);
+    endpoint && endpoint !== AUTO_MODE.value && allValidatorsIds && !newValidatorsIdentities && currentEraIndex && currentEraIndex !== savedEraIndex && getValidatorsIdentities(endpoint, allValidatorsIds);
   }, [endpoint, getValidatorsIdentities, allValidatorsIds, newValidatorsIdentities, currentEraIndex, savedEraIndex, identities]);
 
   useEffect(() => {

@@ -1,6 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+import type { ChromeStorageGetResponse } from '../util/types';
 
 import React, { useCallback } from 'react';
 
@@ -12,18 +13,16 @@ interface Props {
   genesisHash: string | undefined;
 }
 
-export type ChromeStorageGetResponse = {
-  [key: string]: {
-    [key: string]: string | undefined;
-  } | undefined;
-};
-
-export default function RemoteNodeSelector({ address, genesisHash }: Props): React.ReactElement {
+export default function RemoteNodeSelector ({ address, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { account, chainName, endpoint } = useInfo(address);
   const endpointOptions = useEndpoints(genesisHash || account?.genesisHash);
 
-  const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
+  const onChangeEndpoint = useCallback((newEndpoint?: string | number): void => {
+    if (!newEndpoint || typeof (newEndpoint) === 'number' || !chainName || !address) {
+      return;
+    }
+
     chainName && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
       const i = `${address}`;
       const j = `${chainName}`;
@@ -31,7 +30,10 @@ export default function RemoteNodeSelector({ address, genesisHash }: Props): Rea
 
       savedEndpoints[i] = savedEndpoints[i] || {};
 
-      savedEndpoints[i][j] = newEndpoint;
+      savedEndpoints[i][j] = {
+        endpoint: newEndpoint,
+        timestamp: Date.now()
+      };
 
       // eslint-disable-next-line no-void
       void chrome.storage.local.set({ endpoints: savedEndpoints });
@@ -43,8 +45,9 @@ export default function RemoteNodeSelector({ address, genesisHash }: Props): Rea
       {endpoint &&
         <Select
           _mt='10px'
-          label={t<string>('Remote node')}
-          onChange={_onChangeEndpoint}
+          defaultValue={undefined}
+          label={t('Remote node')}
+          onChange={onChangeEndpoint}
           options={endpointOptions}
           value={endpoint}
         />}

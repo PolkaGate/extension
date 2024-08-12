@@ -1,12 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
 import type { MyPoolInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
+import { AUTO_MODE } from '../util/constants';
 import { isHexToBn } from '../util/utils';
 import { useInfo } from '.';
 
@@ -37,6 +36,7 @@ export default function useMyPools (address: string): MyPoolInfo[] | null | unde
 
       parsedPoolsInfo?.forEach((p: MyPoolInfo) => {
         if (p?.bondedPool?.points) {
+          // @ts-ignore
           p.bondedPool.points = isHexToBn(p.bondedPool.points);
         }
       });
@@ -49,7 +49,7 @@ export default function useMyPools (address: string): MyPoolInfo[] | null | unde
   }, []);
 
   useEffect(() => {
-    formatted && endpoint && getMyPools(String(formatted), endpoint);
+    formatted && endpoint && endpoint !== AUTO_MODE.value && getMyPools(String(formatted), endpoint);
   }, [formatted, endpoint, getMyPools]);
 
   return myPools;

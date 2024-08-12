@@ -1,17 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { PutInFrontInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
-
+import { AUTO_MODE } from '../util/constants';
 import { useEndpoint, useStashId } from '.';
 
-export default function useNeedsPutInFrontOf(address: string): PutInFrontInfo | undefined {
-  const endpoint = useEndpoint(address);
+export default function useNeedsPutInFrontOf (address: string): PutInFrontInfo | undefined {
+  const { endpoint } = useEndpoint(address);
   const stashId = useStashId(address);
 
   const [info, setPutInFrontOfInfo] = useState<PutInFrontInfo | undefined>();
@@ -25,9 +24,9 @@ export default function useNeedsPutInFrontOf(address: string): PutInFrontInfo | 
       console.log(err);
     };
 
-    worker.onmessage = (e: MessageEvent<any>) => {
+    worker.onmessage = (e: MessageEvent<unknown>) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const lighter: string | undefined = e.data;
+      const lighter = e.data as string | undefined;
 
       lighter && console.log('lighter to runPutInFrontOf:', lighter);
 
@@ -37,7 +36,7 @@ export default function useNeedsPutInFrontOf(address: string): PutInFrontInfo | 
   }, []);
 
   useEffect(() => {
-    stashId && endpoint && checkNeedsPutInFrontOf(endpoint, stashId);
+    stashId && endpoint && endpoint !== AUTO_MODE.value && checkNeedsPutInFrontOf(endpoint, stashId);
   }, [stashId, endpoint, checkNeedsPutInFrontOf]);
 
   return info;
