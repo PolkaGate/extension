@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Theme } from '@mui/material';
-import type { ApiPromise } from '@polkadot/api';
+import { ApiPromise, WsProvider } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
-import type { SavedMetaData, TransactionDetail } from './types';
+import type { DropdownOption, SavedMetaData, TransactionDetail } from './types';
 
 import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
@@ -442,4 +442,31 @@ export function extractBaseUrl (url: string | undefined) {
 
     return null;
   }
+}
+
+export async function fastestConnection (endpoints: DropdownOption[]) {
+  const connections = endpoints.map((endpoint) => {
+    const wsProvider = new WsProvider(endpoint.value as string);
+
+    const connection = ApiPromise.create({ provider: wsProvider });
+
+    return {
+      connection,
+      wsProvider
+    };
+  });
+
+  const api = await Promise.any(connections.map(({ connection }) => connection));
+  // @ts-ignore
+  const selectedEndpoint = api.registry.knownTypes.provider.endpoint as string;
+  const filteredConnections = connections.filter(({ wsProvider }) => wsProvider.endpoint !== selectedEndpoint);
+
+  filteredConnections.forEach(({ wsProvider }) => {
+    wsProvider.disconnect().catch(console.error);
+  });
+
+  return {
+    api,
+    selectedEndpoint
+  };
 }
