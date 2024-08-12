@@ -251,3 +251,8 @@ export const PROFILE_COLORS = [
   { light: '#EBCFB2', dark: '#9D8189' },
   { light: '#FCF0CC', dark: '#5F4842' },
 ];
+
+export const AUTO_MODE = {
+  text: 'Auto Mode',
+  value: 'AutoMode'
+};
