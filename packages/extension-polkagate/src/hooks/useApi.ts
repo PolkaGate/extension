@@ -1,17 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { APIContext } from '../components';
 import LCConnector from '../util/api/lightClient-connect';
 import { useEndpoint, useGenesisHash } from '.';
 
-export default function useApi(address: AccountId | string | undefined, stateApi?: ApiPromise, _endpoint?: string, _genesisHash?: string): ApiPromise | undefined {
+export default function useApi (address: AccountId | string | undefined, stateApi?: ApiPromise, _endpoint?: string, _genesisHash?: string): ApiPromise | undefined {
   const endpoint = useEndpoint(address, _endpoint);
   const apisContext = useContext(APIContext);
   const chainGenesisHash = useGenesisHash(address, _genesisHash);
@@ -40,13 +40,15 @@ export default function useApi(address: AccountId | string | undefined, stateApi
   }, [apisContext]);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     if (!chainGenesisHash || (api && api.isConnected && api._options.provider?.endpoint === endpoint)) {
       return;
     }
 
     const savedApi = apisContext?.apis[chainGenesisHash]?.find((sApi) => sApi.endpoint === endpoint);
 
-    if (savedApi && savedApi.api && savedApi.api.isConnected) {
+    if (savedApi?.api && savedApi.api.isConnected) {
       // console.log(`♻ Using the saved API for ${chainGenesisHash} through this endpoint ${savedApi.api._options.provider.endpoint as string ?? ''}`);
       setApi(savedApi.api);
 

@@ -26,8 +26,7 @@ const SettingsContext = React.createContext<SettingsStruct>(settings.get());
 const SigningReqContext = React.createContext<SigningRequest[]>([]);
 const ToastContext = React.createContext<({ show: (message: string) => void })>({ show: noop });
 
-export {
-  AccountContext,
+export { AccountContext,
   AccountsAssetsContext,
   ActionContext,
   AlertContext,
@@ -40,5 +39,4 @@ export {
   ReferendaContext,
   SettingsContext,
   SigningReqContext,
-  ToastContext
-};
+  ToastContext };
