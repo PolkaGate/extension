@@ -13,7 +13,6 @@ import { useActiveRecoveries, useApi, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import getParentNameSuri from '../../util/getParentNameSuri';
-import { pgBoxShadow } from '../../util/utils';
 import { AccountLabel } from './AccountLabel';
 import AccountPreview from './AccountPreview';
 
