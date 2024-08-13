@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { sanitizeChainName } from '../util/utils';
 import { useGenesisHashOptions, useTranslation } from './';
+import { AUTO_MODE } from '../util/constants';
 
 const supportedLC = ['Polkadot', 'Kusama', 'Westend']; // chains with supported light client
 
@@ -40,11 +41,16 @@ export function useEndpoints (genesisHash: string | null | undefined): DropdownO
         String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase() ?? ''))
     );
 
-    return chainName
+    const endpointOptions = chainName
       ? supportedLC.includes(chainName)
         ? endpoints?.map((endpoint) => ({ text: endpoint.textBy, value: endpoint.value }))
         : endpoints?.filter((e) => String(e.value).startsWith('wss')).map((e) => ({ text: e.textBy, value: e.value }))
       : undefined;
+
+    endpointOptions && endpointOptions?.length > 1 &&
+      endpointOptions?.unshift(AUTO_MODE);
+
+    return endpointOptions;
     // return endpoints?.filter((e) => String(e.value).startsWith('wss')).map((e) => ({ text: e.textBy, value: e.value }));
   }, [allEndpoints, genesisHash, genesisOptions]);
 
