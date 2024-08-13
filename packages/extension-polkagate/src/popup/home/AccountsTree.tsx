@@ -13,6 +13,7 @@ import { useActiveRecoveries, useApi, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import getParentNameSuri from '../../util/getParentNameSuri';
+import { pgBoxShadow } from '../../util/utils';
 import { AccountLabel } from './AccountLabel';
 import AccountPreview from './AccountPreview';
 
@@ -49,10 +50,11 @@ export default function AccountsTree ({ hideNumbers, parentName, quickActionOpen
         disableGutters
         sx={{
           backgroundColor: 'background.paper',
-          borderColor: activeRecovery ? 'warning.main' : 'secondary.main',
+          borderColor: activeRecovery ? 'warning.main' : undefined,
           borderRadius: '5px',
           borderStyle: account?.parentAddress ? 'dashed' : 'solid',
-          borderWidth: activeRecovery ? '2px' : '0.5px',
+          borderWidth: activeRecovery ? '2px' : 0,
+          boxShadow: theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.05)' : '2px 3px 4px 0px rgba(0, 0, 0, 0.10)',
           mb: '6px',
           position: 'relative'
         }}
