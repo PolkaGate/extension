@@ -10,7 +10,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 
 import { APIContext } from '../components';
 import LCConnector from '../util/api/lightClient-connect';
-import { AUTO_MODE, NO_PASS_PERIOD as ENDPOINT_TIMEOUT } from '../util/constants';
+import { AUTO_MODE } from '../util/constants';
 import { fastestConnection } from '../util/utils';
 import { useChainName, useEndpoint, useEndpoints, useGenesisHash } from '.';
 
@@ -28,7 +28,7 @@ type ApiAction =
 const apiReducer = (state: ApiState, action: ApiAction): ApiState => {
   switch (action.type) {
     case 'SET_API':
-      return { ...state, api: action.payload, isLoading: false, error: null };
+      return { ...state, api: action.payload, error: null, isLoading: false };
     case 'SET_LOADING':
       return { ...state, isLoading: action.payload };
     case 'SET_ERROR':
@@ -38,8 +38,8 @@ const apiReducer = (state: ApiState, action: ApiAction): ApiState => {
   }
 };
 
-export default function useApi (address: AccountId | string | undefined, stateApi?: ApiPromise, _endpoint?: string, _genesisHash?: string): ApiPromise | undefined {
-  const { endpoint, timestamp } = useEndpoint(address, _endpoint);
+export default function useApi(address: AccountId | string | undefined, stateApi?: ApiPromise, _endpoint?: string, _genesisHash?: string): ApiPromise | undefined {
+  const { endpoint } = useEndpoint(address, _endpoint);
   const apisContext = useContext(APIContext);
   const chainGenesisHash = useGenesisHash(address, _genesisHash);
   const chainName = useChainName(address);
@@ -50,6 +50,46 @@ export default function useApi (address: AccountId | string | undefined, stateAp
     error: null,
     isLoading: false
   });
+
+  const updateEndpoint = useCallback((address: string, chainName: string, selectedEndpoint: string, cbFunction?: () => void) => {
+    chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
+      const i = `${address}`;
+      const j = `${chainName}`;
+      const savedEndpoints: ChromeStorageGetResponse = res?.endpoints || {};
+
+      savedEndpoints[i] = savedEndpoints[i] || {};
+
+      savedEndpoints[i][j] = {
+        endpoint: selectedEndpoint,
+        timestamp: Date.now()
+      };
+
+      chrome.storage.local.set({ endpoints: savedEndpoints })
+        .finally(() => cbFunction && cbFunction())
+        .catch(console.error);
+    });
+  }, []);
+
+  // checks for if there is an available API connection, then will change the address endpoint to the available API's endpoint
+  // return false if it was not successful to find an available API and true vise versa
+  const connectToExisted = useCallback((address: string, chainName: string, genesisHash: string): boolean => {
+    for (const apiItem in apisContext.apis) {
+      if (apiItem === genesisHash) {
+        const availableApi = apisContext.apis[genesisHash].find(({ api }) => api?.isConnected);
+
+        if (!availableApi?.api) {
+          return false;
+        }
+
+        dispatch({ payload: availableApi.api, type: 'SET_API' });
+        updateEndpoint(address, chainName, availableApi.endpoint);
+
+        return true;
+      }
+    }
+
+    return false;
+  }, [apisContext.apis, updateEndpoint]);
 
   const handleNewApi = useCallback((api: ApiPromise, endpoint: string, onAutoMode?: boolean) => {
     dispatch({ payload: api, type: 'SET_API' });
@@ -88,49 +128,15 @@ export default function useApi (address: AccountId | string | undefined, stateAp
       .catch((error) => dispatch({ payload: error as Error, type: 'SET_ERROR' }));
   }, [handleNewApi]);
 
-  const handleAutoMode = useCallback((address: string, chainName: string, endpointToCheck: string, timeStampToCheck: number | undefined) => {
-    if (timeStampToCheck === undefined || (Date.now() - timeStampToCheck) > 10000 || endpointToCheck === AUTO_MODE.value) {
-      const withoutLC = endpoints.filter(({ value }) => String(value).startsWith('wss'));
+  const handleAutoMode = useCallback((address: string, chainName: string) => {
+    const withoutLC = endpoints.filter(({ value }) => String(value).startsWith('wss'));
 
-      fastestConnection(withoutLC)
-        .then(({ api, selectedEndpoint }) => {
-          chainName && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
-            const i = `${address}`;
-            const j = `${chainName}`;
-            const savedEndpoints: ChromeStorageGetResponse = res?.endpoints || {};
-
-            savedEndpoints[i] = savedEndpoints[i] || {};
-
-            savedEndpoints[i][j] = {
-              endpoint: selectedEndpoint,
-              timestamp: Date.now()
-            };
-
-            chrome.storage.local.set({ endpoints: savedEndpoints })
-              .finally(() => handleNewApi(api, selectedEndpoint, true))
-              .catch(console.error);
-          });
-        })
-        .catch(console.error);
-    } else {
-      chainName && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
-        const i = `${address}`;
-        const j = `${chainName}`;
-        const savedEndpoints: ChromeStorageGetResponse = res?.endpoints || {};
-
-        savedEndpoints[i] = savedEndpoints[i] || {};
-
-        savedEndpoints[i][j] = {
-          endpoint: endpointToCheck,
-          timestamp: Date.now()
-        };
-
-        chrome.storage.local.set({ endpoints: savedEndpoints })
-          .then(() => connectToEndpoint(endpointToCheck))
-          .catch(console.error);
-      });
-    }
-  }, [connectToEndpoint, endpoints, handleNewApi]);
+    fastestConnection(withoutLC)
+      .then(({ api, selectedEndpoint }) => {
+        updateEndpoint(address, chainName, selectedEndpoint, () => handleNewApi(api, selectedEndpoint, true));
+      })
+      .catch(console.error);
+  }, [endpoints, handleNewApi, updateEndpoint]);
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -160,8 +166,18 @@ export default function useApi (address: AccountId | string | undefined, stateAp
       return;
     }
 
-    if (endpoint?.startsWith('wss') || endpoint === AUTO_MODE.value || !timestamp) {
-      handleAutoMode(String(address), chainName, endpoint, timestamp);
+    if (endpoint === AUTO_MODE.value) {
+      const result = connectToExisted(String(address), chainName, chainGenesisHash);
+
+      if (result) {
+        return;
+      }
+
+      handleAutoMode(String(address), chainName);
+    }
+
+    if (endpoint?.startsWith('wss')) {
+      connectToEndpoint(endpoint);
     }
 
     if (endpoint?.startsWith('light')) {
@@ -174,13 +190,12 @@ export default function useApi (address: AccountId | string | undefined, stateAp
     }
 
     const toSaveApi = apisContext.apis[chainGenesisHash] ?? [];
-    const isOutDatedEndpoint = Date.now() - (timestamp ?? 0) > ENDPOINT_TIMEOUT;
 
-    toSaveApi.push({ endpoint: isOutDatedEndpoint ? AUTO_MODE.value : endpoint, isRequested: true });
+    toSaveApi.push({ endpoint, isRequested: true });
 
     apisContext.apis[chainGenesisHash] = toSaveApi;
     apisContext.setIt(apisContext.apis);
-  }, [address, state.api, apisContext, chainGenesisHash, chainName, endpoint, handleAutoMode, handleNewApi, timestamp]);
+  }, [address, apisContext, chainGenesisHash, chainName, connectToEndpoint, connectToExisted, endpoint, handleAutoMode, handleNewApi, state.api]);
 
   useEffect(() => {
     const pollingInterval = setInterval(() => {
