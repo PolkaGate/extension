@@ -796,9 +796,9 @@ export interface AccountsOrder {
   account: AccountWithChildren
 }
 
-export interface savedEndpoint {
+export interface SavedEndpoint {
   endpoint: string;
   timestamp: number;
 }
 
-export type ChromeStorageGetResponse = Record<string, Record<string, savedEndpoint | undefined> | undefined>;
+export type ChromeStorageGetResponse = Record<string, Record<string, SavedEndpoint | undefined> | undefined>;
