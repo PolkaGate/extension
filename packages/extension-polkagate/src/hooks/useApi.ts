@@ -14,12 +14,14 @@ import { AUTO_MODE } from '../util/constants';
 import { fastestConnection } from '../util/utils';
 import { useChainName, useEndpoint, useEndpoints, useGenesisHash } from '.';
 
+// Define types for API state and actions
 interface ApiState {
-  api: ApiPromise | undefined;
-  isLoading: boolean;
-  error: Error | null;
+  api: ApiPromise | undefined; // The API object, initially undefined
+  isLoading: boolean; // Whether the API connection is in the loading state
+  error: Error | null; // Any error that occurs during the API connection process
 }
 
+// Reducer function to manage API state
 type ApiAction =
   | { type: 'SET_API'; payload: ApiPromise }
   | { type: 'SET_LOADING'; payload: boolean }
@@ -38,7 +40,7 @@ const apiReducer = (state: ApiState, action: ApiAction): ApiState => {
   }
 };
 
-export default function useApi(address: AccountId | string | undefined, stateApi?: ApiPromise, _endpoint?: string, _genesisHash?: string): ApiPromise | undefined {
+export default function useApi (address: AccountId | string | undefined, stateApi?: ApiPromise, _endpoint?: string, _genesisHash?: string): ApiPromise | undefined {
   const { endpoint } = useEndpoint(address, _endpoint);
   const apisContext = useContext(APIContext);
   const chainGenesisHash = useGenesisHash(address, _genesisHash);
@@ -70,8 +72,8 @@ export default function useApi(address: AccountId | string | undefined, stateApi
     });
   }, []);
 
-  // checks for if there is an available API connection, then will change the address endpoint to the available API's endpoint
-  // return false if it was not successful to find an available API and true vise versa
+  // Checks if there is an available API connection, then will change the address endpoint to the available API's endpoint
+  // Returns false if it was not successful to find an available API and true vice versa
   const connectToExisted = useCallback((address: string, chainName: string, genesisHash: string): boolean => {
     for (const apiItem in apisContext.apis) {
       if (apiItem === genesisHash) {
@@ -91,18 +93,22 @@ export default function useApi(address: AccountId | string | undefined, stateApi
     return false;
   }, [apisContext.apis, updateEndpoint]);
 
+  // Handles a new API connection and updates the context with the new API
   const handleNewApi = useCallback((api: ApiPromise, endpoint: string, onAutoMode?: boolean) => {
     dispatch({ payload: api, type: 'SET_API' });
 
     const genesisHash = String(api.genesisHash.toHex());
     const toSaveApi = apisContext.apis[genesisHash] ?? [];
 
+    // Remove any existing API with the same endpoint
+    // it happens when the API is requested and not connected yet
     const indexToDelete = toSaveApi.findIndex((sApi) => sApi.endpoint === endpoint);
 
     if (indexToDelete !== -1) {
       toSaveApi.splice(indexToDelete, 1);
     }
 
+    // If in auto mode, remove any auto mode endpoint
     if (onAutoMode) {
       const indexToDelete = toSaveApi.findIndex((sApi) => sApi.endpoint === AUTO_MODE.value);
 
@@ -119,6 +125,8 @@ export default function useApi(address: AccountId | string | undefined, stateApi
     apisContext.setIt(apisContext.apis);
   }, [apisContext]);
 
+  // Connects to a specific WebSocket endpoint and creates a new API instance
+  // when it is not on Auto Mode
   const connectToEndpoint = useCallback((endpointToConnect: string) => {
     dispatch({ payload: true, type: 'SET_LOADING' });
     const wsProvider = new WsProvider(endpointToConnect);
@@ -128,9 +136,11 @@ export default function useApi(address: AccountId | string | undefined, stateApi
       .catch((error) => dispatch({ payload: error as Error, type: 'SET_ERROR' }));
   }, [handleNewApi]);
 
+  // Handles auto mode by finding the fastest endpoint and connecting to it
   const handleAutoMode = useCallback((address: string, chainName: string) => {
     const withoutLC = endpoints.filter(({ value }) => String(value).startsWith('wss'));
 
+    // Finds the fastest available endpoint and connects to it
     fastestConnection(withoutLC)
       .then(({ api, selectedEndpoint }) => {
         updateEndpoint(address, chainName, selectedEndpoint, () => handleNewApi(api, selectedEndpoint, true));
@@ -138,13 +148,15 @@ export default function useApi(address: AccountId | string | undefined, stateApi
       .catch(console.error);
   }, [endpoints, handleNewApi, updateEndpoint]);
 
+  // Manages the API connection when the address, endpoint, or genesis hash changes
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    if (!address || !chainGenesisHash || !chainName || (state.api && state.api._options.provider?.endpoint === endpoint)) {
+    if (!address || !chainGenesisHash || !chainName || !endpoint || (state.api && state.api._options.provider?.endpoint === endpoint)) {
       return;
     }
 
+    // Check if there is a saved API that is already connected
     const savedApi = apisContext?.apis[chainGenesisHash]?.find((sApi) => sApi.endpoint === endpoint);
 
     if (savedApi?.api && savedApi.api.isConnected) {
@@ -154,18 +166,22 @@ export default function useApi(address: AccountId | string | undefined, stateApi
       return;
     }
 
+    // If the API is already being requested, skip the connection process
+    // It can be either Auto Mode or a specific endpoint
     if (savedApi?.isRequested === true) {
       // console.log('API is already requested, waiting...');
 
       return;
     }
 
+    // Validate the endpoint format (it should start with 'wss', 'light', or be in auto mode)
     if (!endpoint?.startsWith('wss') && !endpoint?.startsWith('light') && endpoint !== AUTO_MODE.value) {
       console.log('📌 📌  Unsupported endpoint detected 📌 📌 ', endpoint);
 
       return;
     }
 
+    // If in auto mode, check existing connections or find a new one
     if (endpoint === AUTO_MODE.value) {
       const result = connectToExisted(String(address), chainName, chainGenesisHash);
 
@@ -176,10 +192,12 @@ export default function useApi(address: AccountId | string | undefined, stateApi
       handleAutoMode(String(address), chainName);
     }
 
+    // Connect to a WebSocket endpoint if provided
     if (endpoint?.startsWith('wss')) {
       connectToEndpoint(endpoint);
     }
 
+    // Connect to a light client endpoint if provided
     if (endpoint?.startsWith('light')) {
       LCConnector(endpoint).then((LCapi) => {
         handleNewApi(LCapi, endpoint);
@@ -198,9 +216,12 @@ export default function useApi(address: AccountId | string | undefined, stateApi
   }, [address, apisContext, chainGenesisHash, chainName, connectToEndpoint, connectToExisted, endpoint, handleAutoMode, handleNewApi, state.api]);
 
   useEffect(() => {
+    // Set up a polling interval to check for a connected API every 1 second
     const pollingInterval = setInterval(() => {
+      // Find the saved API for the current chain and endpoint
       const savedApi = apisContext?.apis[chainGenesisHash ?? '']?.find((sApi) => sApi.endpoint === endpoint);
 
+      // If the saved API is connected, update the state and clear the polling interval
       if (savedApi?.api?.isConnected) {
         dispatch({ payload: savedApi.api, type: 'SET_API' });
         clearInterval(pollingInterval);
