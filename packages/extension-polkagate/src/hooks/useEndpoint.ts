@@ -72,6 +72,7 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
     }
   }, [_endpoint, fetchEndpoint]);
 
+  // @ts-ignore
   useEffect(() => {
     if (address && chainName && initialFetchDone.current) {
       const handleStorageChange = (changes: Record<string, chrome.storage.StorageChange>, namespace: string) => {
