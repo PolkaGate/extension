@@ -92,7 +92,8 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
         chrome.storage.onChanged.removeListener(handleStorageChange);
       };
     }
-  }, [address, chainName]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address, chainName, initialFetchDone.current]);
 
   return endpoint;
 }
