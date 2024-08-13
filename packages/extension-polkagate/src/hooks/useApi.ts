@@ -6,7 +6,6 @@ import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { isObject } from '@polkadot/util';
 
 import { APIContext } from '../components';
 import LCConnector from '../util/api/lightClient-connect';
@@ -62,8 +61,7 @@ export default function useApi (address: AccountId | string | undefined, stateAp
       return;
     }
 
-    // isObject is used because the endpoint is changing to be object while working on auto mode
-    if (isObject(endpoint) || (!endpoint?.startsWith('wss') && !endpoint?.startsWith('light'))) {
+    if (!endpoint?.startsWith('wss') && !endpoint?.startsWith('light')) {
       console.log('📌 📌  Unsupported endpoint detected 📌 📌 ', endpoint);
 
       return;
