@@ -8,11 +8,14 @@ import type { ChromeStorageGetResponse } from '../util/types';
 
 import { SignalCellular0BarOutlined as LightClientEndpointIcon, SignalCellularAlt as SignalCellularAltIcon, SignalCellularAlt1Bar as SignalCellularAlt1BarIcon, SignalCellularAlt2Bar as SignalCellularAlt2BarIcon } from '@mui/icons-material';
 import { Grid, Popover, Skeleton, Typography, useTheme } from '@mui/material';
+// @ts-ignore
+import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useEndpoints, useInfo } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
 import CalculateNodeDelay from '../util/calculateNodeDelay';
+import { AUTO_MODE } from '../util/constants';
 
 interface Props {
   address: string | undefined;
@@ -215,8 +218,16 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
               <Typography fontSize='16px' fontWeight={selectedEndpoint ? 500 : 400} pr='10px'>
                 {endpoint.name}
               </Typography>
-              {!endpoint.name.includes('light client') &&
+              {(!endpoint.name.includes('light client') && endpoint.name !== AUTO_MODE.text) &&
                 <NodeStatusAndDelay endpointDelay={endpoint.delay} isSelected={selectedEndpoint} />
+              }
+              {endpoint.name === AUTO_MODE.text && selectedEndpoint &&
+                <Circle
+                  color={theme.palette.primary.main}
+                  scaleEnd={0.7}
+                  scaleStart={0.4}
+                  size={22}
+                />
               }
             </Grid>
           );
