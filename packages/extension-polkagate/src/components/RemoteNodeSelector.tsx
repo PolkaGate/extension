@@ -6,6 +6,7 @@ import type { ChromeStorageGetResponse } from '../util/types';
 import React, { useCallback } from 'react';
 
 import { useEndpoints, useInfo, useTranslation } from '../hooks';
+import { AUTO_MODE } from '../util/constants';
 import { Select } from '.';
 
 interface Props {
@@ -32,6 +33,7 @@ export default function RemoteNodeSelector ({ address, genesisHash }: Props): Re
 
       savedEndpoints[i][j] = {
         endpoint: newEndpoint,
+        isOnManuel: newEndpoint !== AUTO_MODE.value,
         timestamp: Date.now()
       };
 

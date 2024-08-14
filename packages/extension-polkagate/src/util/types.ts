@@ -799,6 +799,7 @@ export interface AccountsOrder {
 export interface SavedEndpoint {
   endpoint: string;
   timestamp: number;
+  isOnManuel: boolean;
 }
 
 export type ChromeStorageGetResponse = Record<string, Record<string, SavedEndpoint | undefined> | undefined>;

@@ -12,7 +12,7 @@ import { Grid, Popover, Skeleton, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useEndpoints, useInfo } from '../hooks';
+import { useEndpoint, useEndpoints, useInfo } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
 import CalculateNodeDelay from '../util/calculateNodeDelay';
 import { AUTO_MODE } from '../util/constants';
@@ -26,7 +26,8 @@ type EndpointsDelay = { name: string, delay: number | null | undefined, value: s
 
 function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactElement {
   const theme = useTheme();
-  const { account, chainName, endpoint: endpointUrl } = useInfo(address);
+  const { account, chainName } = useInfo(address);
+  const { endpoint: endpointUrl, isOnManuel } = useEndpoint(address);
   const genesisHash = account?.genesisHash;
   const endpointOptions = useEndpoints(genesisHash);
   const onExtension = useIsExtensionPopup();
@@ -101,6 +102,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
 
       savedEndpoints[i][j] = {
         endpoint: newEndpoint,
+        isOnManuel: newEndpoint !== AUTO_MODE.value,
         timestamp: Date.now()
       };
 
@@ -211,11 +213,12 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
       {endpointsDelay && endpointsDelay.length > 0 &&
         endpointsDelay.map((endpoint, index) => {
           const selectedEndpoint = endpoint.name === sanitizedCurrentEndpointName;
+          const isOnAutoMode = endpoint.value === AUTO_MODE.value && !isOnManuel;
 
           return (
             // eslint-disable-next-line react/jsx-no-bind
-            <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={() => onChangeEndpoint(endpoint.value)} py='5px' sx={{ ':hover': { bgcolor: 'rgba(186, 40, 130, 0.1)' }, bgcolor: selectedEndpoint ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', my: '3px', px: '15px', width: '100%' }}>
-              <Typography fontSize='16px' fontWeight={selectedEndpoint ? 500 : 400} pr='10px'>
+            <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={() => onChangeEndpoint(endpoint.value)} py='5px' sx={{ ':hover': { bgcolor: 'rgba(186, 40, 130, 0.1)' }, bgcolor: selectedEndpoint || isOnAutoMode ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', my: '3px', px: '15px', width: '100%' }}>
+              <Typography fontSize='16px' fontWeight={selectedEndpoint || isOnAutoMode ? 500 : 400} pr='10px'>
                 {endpoint.name}
               </Typography>
               {(!endpoint.name.includes('light client') && endpoint.name !== AUTO_MODE.text) &&

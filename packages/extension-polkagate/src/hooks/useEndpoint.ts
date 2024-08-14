@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
-import type { ChromeStorageGetResponse } from '../util/types';
+import type { ChromeStorageGetResponse, SavedEndpoint } from '../util/types';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -12,23 +12,26 @@ import { useChainName } from '.';
 interface EndpointType {
   endpoint: string | undefined;
   timestamp: number | undefined;
+  isOnManuel: boolean | undefined;
 }
 
-export default function useEndpoint(address: AccountId | string | undefined, _endpoint?: string): EndpointType {
+export default function useEndpoint (address: AccountId | string | undefined, _endpoint?: string): EndpointType {
   const chainName = useChainName(address);
-  const [endpoint, setEndpoint] = useState<EndpointType>({ endpoint: undefined, timestamp: undefined });
+  const [endpoint, setEndpoint] = useState<EndpointType>({ endpoint: undefined, isOnManuel: undefined, timestamp: undefined });
   const initialFetchDone = useRef(false);
 
-  const isEndpointValid = useCallback((toCheck: EndpointType | undefined): boolean =>
+  const isEndpointValid = useCallback((toCheck: SavedEndpoint | undefined): boolean =>
     !!toCheck &&
     typeof toCheck.timestamp === 'number' &&
     typeof toCheck.endpoint === 'string' &&
-    Date.now() - toCheck.timestamp <= ENDPOINT_TIMEOUT,
-    []);
+    typeof toCheck.isOnManuel === 'boolean' &&
+    Date.now() - toCheck.timestamp <= ENDPOINT_TIMEOUT &&
+    toCheck.isOnManuel === true
+  , []);
 
   const fetchEndpoint = useCallback(async () => {
     if (!address || !chainName) {
-      setEndpoint({ endpoint: undefined, timestamp: undefined });
+      setEndpoint({ endpoint: undefined, isOnManuel: undefined, timestamp: undefined });
 
       return;
     }
@@ -40,11 +43,17 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
 
       savedEndpoints[addressKey] = savedEndpoints[addressKey] || {};
 
+      // console.log('savedEndpoints:', savedEndpoints);
+
       if (!savedEndpoints[addressKey][chainName] || !isEndpointValid(savedEndpoints[addressKey][chainName])) {
-        const auto = {
+        const auto: SavedEndpoint = {
           endpoint: AUTO_MODE.value,
+          isOnManuel: false,
           timestamp: Date.now()
         };
+
+        addressKey === '5CBCVHGxPGFTFuKjKYDZiW5T8nNkM51rG6gPkPHdjgyUeQDn' && console.log('first:', savedEndpoints[addressKey]);
+        addressKey === '5ECro2Szgee3YLDpDQYRAti3zJ6CnxmdvLAgmfDNoeBuaHMc' && console.log('second:', savedEndpoints[addressKey]);
 
         savedEndpoints[addressKey][chainName] = auto;
 
@@ -53,6 +62,7 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
       } else {
         setEndpoint({
           endpoint: savedEndpoints[addressKey][chainName].endpoint,
+          isOnManuel: savedEndpoints[addressKey][chainName].isOnManuel,
           timestamp: savedEndpoints[addressKey][chainName].timestamp
         });
       }
@@ -65,34 +75,35 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
 
   useEffect(() => {
     if (_endpoint) {
-      setEndpoint({ endpoint: _endpoint, timestamp: Date.now() });
+      setEndpoint({ endpoint: _endpoint, isOnManuel: true, timestamp: Date.now() });
       initialFetchDone.current = true;
     } else {
       fetchEndpoint().catch(console.error);
     }
   }, [_endpoint, fetchEndpoint]);
 
-  // @ts-ignore
   useEffect(() => {
-    if (address && chainName && initialFetchDone.current) {
-      const handleStorageChange = (changes: Record<string, chrome.storage.StorageChange>, namespace: string) => {
-        if (changes['endpoints'] && namespace === 'local') {
-          const newValue = changes['endpoints'].newValue as ChromeStorageGetResponse | undefined;
-          const maybeNewEndpoint = newValue?.[String(address)]?.[chainName];
-
-          if (maybeNewEndpoint) {
-            setEndpoint({ endpoint: maybeNewEndpoint.endpoint, timestamp: maybeNewEndpoint.timestamp });
-          }
-        }
-      };
-
-      chrome.storage.onChanged.addListener(handleStorageChange);
-
-      return () => {
-        chrome.storage.onChanged.removeListener(handleStorageChange);
-      };
+    if (!address || !chainName || !initialFetchDone.current) {
+      return;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    const handleStorageChange = (changes: Record<string, chrome.storage.StorageChange>, namespace: string) => {
+      if (changes['endpoints'] && namespace === 'local') {
+        const newValue = changes['endpoints'].newValue as ChromeStorageGetResponse | undefined;
+        const maybeNewEndpoint = newValue?.[String(address)]?.[chainName];
+
+        if (maybeNewEndpoint) {
+          setEndpoint({ endpoint: maybeNewEndpoint.endpoint, isOnManuel: maybeNewEndpoint.isOnManuel, timestamp: maybeNewEndpoint.timestamp });
+        }
+      }
+    };
+
+    chrome.storage.onChanged.addListener(handleStorageChange);
+
+    return () => {
+      chrome.storage.onChanged.removeListener(handleStorageChange);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, chainName, initialFetchDone.current]);
 
   return endpoint;
