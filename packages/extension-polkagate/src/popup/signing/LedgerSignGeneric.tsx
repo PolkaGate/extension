@@ -9,13 +9,14 @@ import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 
 import { Grid, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { PButton, Warning } from '../../components';
 import { useGenericLedger, useInfo, useMetadataProof } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { POLKADOT_SLIP44 } from '../../util/constants';
+import ledgerChains from '../../util/legerChains';
 
 interface Props {
   accountIndex?: number;
@@ -29,25 +30,29 @@ interface Props {
   showError?: boolean;
 }
 
-function LedgerSignGeneric ({ accountIndex, address, addressOffset, error, onSignature, payload, setError, showError = true }: Props): React.ReactElement<Props> {
+function LedgerSignGeneric({ accountIndex, address, addressOffset, error, onSignature, payload, setError, showError = true }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { api } = useInfo(address);
+  const { account, api } = useInfo(address);
   const metadataProof = useMetadataProof(api, payload);
 
   const [isBusy, setIsBusy] = useState<boolean>(false);
 
-  // const chainSlip44 = useMemo(() => {
-  //   if (account?.genesisHash) {
-  //     const ledgerChain = ledgerChains.find(({ genesisHash }) => genesisHash.includes(account.genesisHash));
+  const chainSlip44 = useMemo(() => {
+    if (account?.isGeneric) {
+      return POLKADOT_SLIP44;
+    }
 
-  //     return ledgerChain?.slip44 ?? null;
-  //   }
+    if (account?.genesisHash) {
+      const ledgerChain = ledgerChains.find(({ genesisHash }) => genesisHash.includes(account.genesisHash as HexString));
 
-  //   return null;
-  // }, [account]);
+      return ledgerChain?.slip44 ?? null;
+    }
 
-  const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, POLKADOT_SLIP44);
+    return null;
+  }, [account]);
+
+  const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, chainSlip44);
 
   useEffect(() => {
     if (ledgerError) {
