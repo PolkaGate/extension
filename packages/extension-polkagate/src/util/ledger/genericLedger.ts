@@ -1,11 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { wrapBytes } from '@polkadot/extension-dapp/wrapBytes';
+import type { AccountOptions, LedgerAddress, LedgerSignature, LedgerVersion } from '@polkadot/hw-ledger/types';
+
 import { PolkadotGenericApp } from '@zondax/ledger-substrate';
 
+import { wrapBytes } from '@polkadot/extension-dapp/wrapBytes';
 import { LEDGER_SUCCESS_CODE } from '@polkadot/hw-ledger/constants';
-import type { AccountOptions, LedgerAddress, LedgerSignature, LedgerVersion } from '@polkadot/hw-ledger/types';
 import { transports } from '@polkadot/hw-ledger-transports';
 import { hexAddPrefix, hexStripPrefix, u8aToHex } from '@polkadot/util';
 
@@ -18,14 +19,14 @@ interface ResponseSign {
   errorMessage: string;
 }
 
-export async function loadWasm() {
+export async function loadWasm () {
   const imports = {}; // Omitted the contents since it's most likely irrelevant
 
   return await WebAssembly.instantiateStreaming(fetch('./metadata_shortener.wasm'), imports);
 }
 
 export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
-  getVersion(): Promise<LedgerVersion> {
+  getVersion (): Promise<LedgerVersion> {
     return this.withApp(async (app): Promise<LedgerVersion> => {
       const { deviceLocked: locked, major, minor, patch, testMode } = await app.getVersion();
 
@@ -37,7 +38,7 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
     });
   }
 
-  serializePath(accountOffset = 0, addressOffset = 0, accountOptions?: Partial<AccountOptions>): string {
+  serializePath (accountOffset = 0, addressOffset = 0, accountOptions?: Partial<AccountOptions>): string {
     const account = (accountOptions?.account || 0) + (accountOffset || 0);
     const addressIndex = (accountOptions?.addressIndex || 0) + (addressOffset || 0);
     const change = accountOptions?.change || 0;
@@ -45,7 +46,7 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
     return `m/44'/${this.slip44}'/${account}'/${change}'/${addressIndex}'`;
   }
 
-  getAddress(confirm?: boolean, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerAddress> {
+  getAddress (confirm?: boolean, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerAddress> {
     return this.withApp(async (app): Promise<LedgerAddress> => {
       const path = this.serializePath(accountOffset, addressOffset, accountOptions);
 
@@ -58,7 +59,7 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
     });
   }
 
-  async signTransaction(tx: Uint8Array, metadata: Uint8Array, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerSignature> {
+  async signTransaction (tx: Uint8Array, metadata: Uint8Array, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerSignature> {
     return this.withApp(async (app): Promise<LedgerSignature> => {
       const path = this.serializePath(accountOffset, addressOffset, accountOptions);
       const { signature } = await this.wrapError((app.signWithMetadata(path, Buffer.from(tx), Buffer.from(metadata))));
@@ -69,7 +70,7 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
     });
   }
 
-  async sign(tx: Uint8Array, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerSignature> {
+  async sign (tx: Uint8Array, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerSignature> {
     return this.withApp(async (app): Promise<LedgerSignature> => {
       const path = this.serializePath(accountOffset, addressOffset, accountOptions);
       const { signature } = await this.wrapError((app.sign(path, Buffer.from(tx))));
@@ -80,7 +81,7 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
     });
   }
 
-  async signMessage(message: Uint8Array, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerSignature> {
+  async signMessage (message: Uint8Array, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerSignature> {
     return this.withApp(async (app): Promise<LedgerSignature> => {
       const path = this.serializePath(accountOffset, addressOffset, accountOptions);
 
@@ -112,43 +113,42 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
       this.app = this.txMetadataChainId
         ? new PolkadotGenericApp(transport, this.txMetadataChainId, ZONDAX_METADATA_URL)
         : new PolkadotGenericApp(transport);
-      ;
     }
 
     return this.app;
   };
 
   protected override wrapError = async<V>(promise: Promise<V>): Promise<V> => {
-  try {
-    const result = await promise as ResponseSign;
+    try {
+      const result = await promise as ResponseSign;
 
-    if (!result.returnCode) {
-      return result as V;
-    } else if (result.returnCode === LEDGER_SUCCESS_CODE) {
-      return result as V;
-    } else {
-      throw new Error(result.errorMessage);
+      if (!result.returnCode) {
+        return result as V;
+      } else if (result.returnCode === LEDGER_SUCCESS_CODE) {
+        return result as V;
+      } else {
+        throw new Error(result.errorMessage);
+      }
+    } catch (e) {
+      const error = e as Error;
+
+      error.message = this.mappingError(error);
+
+      throw error;
     }
-  } catch (e) {
-    const error = e as Error;
+  };
 
-    error.message = this.mappingError(error);
+  mappingError (_error: Error): string {
+    const error = _error.message || (_error as unknown as ResponseSign).errorMessage;
 
-    throw error;
+    if (error.includes('28160') || error.includes('CLA Not Supported')) {
+      return 'App does not seem to be open';
+    }
+
+    if (error.includes('21781')) {
+      return 'Locked device';
+    }
+
+    return error;
   }
-};
-
-mappingError(_error: Error): string {
-  const error = _error.message || (_error as unknown as ResponseSign).errorMessage;
-
-  if (error.includes('28160') || error.includes('CLA Not Supported')) {
-    return 'App does not seem to be open';
-  }
-
-  if (error.includes('21781')) {
-    return 'Locked device';
-  }
-
-  return error;
-}
 }

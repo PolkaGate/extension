@@ -63,7 +63,7 @@ export default function HomePageFullScreen (): React.ReactElement {
                   initialAccountList={profileAccounts}
                 />
               }
-              {initialAccountList && initialAccountList?.length <= 2 &&
+              {profileAccounts && profileAccounts?.length <= 2 &&
                 <AddNewAccountButton />
               }
             </Grid>
