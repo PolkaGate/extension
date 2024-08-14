@@ -405,7 +405,12 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
               {t('Transferable amount')}
             </Typography>
           </Infotip2>
-          <ShowBalance api={api} balance={balances?.availableBalance} />
+          <ShowBalance
+            balance={balances?.availableBalance}
+            decimal={balances?.decimal}
+            decimalPoint={4}
+            token={balances?.token}
+          />
         </Grid>
       </Grid>
       <Typography fontSize='20px' fontWeight={500} pt='30px'>
