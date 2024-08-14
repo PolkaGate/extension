@@ -71,7 +71,7 @@ const AdvanceModeBtn = ({ disabled, isAdvancedMode, label, onClick }: AdvancedMo
   </Grid>
 );
 
-export default function GenericApp({ setMode }: Props): React.ReactElement {
+export default function GenericApp ({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const ref = useRef(null);
