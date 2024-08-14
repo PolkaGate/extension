@@ -3,17 +3,19 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { HexString } from '@polkadot/util/types';
-import { Grid, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
-import styled from 'styled-components';
-import { PButton, Warning } from '../../components';
-import useTranslation from '../../hooks/useTranslation';
-import { useGenericLedger, useInfo, useMetadataProof } from '../../hooks';
-import ledgerChains from '../../util/legerChains';
-import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { LedgerSignature } from '@polkadot/hw-ledger/types';
 import type { GenericExtrinsicPayload } from '@polkadot/types';
+import type { SignerPayloadJSON } from '@polkadot/types/types';
+import type { HexString } from '@polkadot/util/types';
+
+import { Grid, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
+import styled from 'styled-components';
+
+import { PButton, Warning } from '../../components';
+import { useGenericLedger, useInfo, useMetadataProof } from '../../hooks';
+import useTranslation from '../../hooks/useTranslation';
+import { POLKADOT_SLIP44 } from '../../util/constants';
 
 interface Props {
   accountIndex?: number;
@@ -27,22 +29,25 @@ interface Props {
   showError?: boolean;
 }
 
-function LedgerSignGeneric({ accountIndex, address, addressOffset, error, onSignature, payload, setError, showError = true }: Props): React.ReactElement<Props> {
+function LedgerSignGeneric ({ accountIndex, address, addressOffset, error, onSignature, payload, setError, showError = true }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { api, account } = useInfo(address);
+  const { api } = useInfo(address);
   const metadataProof = useMetadataProof(api, payload);
 
   const [isBusy, setIsBusy] = useState<boolean>(false);
 
-  const chainSlip44 = useMemo(() => {
-    if (account?.genesisHash) {
-      return ledgerChains.find(({ genesisHash }) => genesisHash.includes(account.genesisHash as any))?.slip44 ?? null
-    }
-    return null;
-  }, [account, ledgerChains]);
+  // const chainSlip44 = useMemo(() => {
+  //   if (account?.genesisHash) {
+  //     const ledgerChain = ledgerChains.find(({ genesisHash }) => genesisHash.includes(account.genesisHash));
 
-  const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, chainSlip44);
+  //     return ledgerChain?.slip44 ?? null;
+  //   }
+
+  //   return null;
+  // }, [account]);
+
+  const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, POLKADOT_SLIP44);
 
   useEffect(() => {
     if (ledgerError) {
