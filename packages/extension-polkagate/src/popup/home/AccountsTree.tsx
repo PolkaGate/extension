@@ -49,11 +49,11 @@ export default function AccountsTree ({ hideNumbers, parentName, quickActionOpen
         disableGutters
         sx={{
           backgroundColor: 'background.paper',
-          borderColor: activeRecovery ? 'warning.main' : 'secondary.main',
+          borderColor: activeRecovery ? 'warning.main' : undefined,
           borderRadius: '5px',
           borderStyle: account?.parentAddress ? 'dashed' : 'solid',
-          borderWidth: activeRecovery ? '2px' : '0.5px',
-          mb: '6px',
+          borderWidth: activeRecovery ? '2px' : 0,
+          boxShadow: theme.palette.mode === 'dark' ? '0px 0px 3px rgba(50, 50, 50, 1)' : '0px 0px 3px 2px rgba(0, 0, 0, 0.1)',
           position: 'relative'
         }}
       >

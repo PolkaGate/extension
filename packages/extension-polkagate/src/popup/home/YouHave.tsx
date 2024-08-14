@@ -61,12 +61,12 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
             </Typography>
           </Grid>
         }
-        <Grid alignItems='center' direction='column' item onClick={onHideClick} sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', display: 'flex', position: 'absolute', pt: '3px', right: '31px' }}>
+        <Grid alignItems='center' direction='column' item onClick={onHideClick} sx={{ backgroundColor: 'background.paper', borderRadius: '5px', cursor: 'pointer', display: 'flex', position: 'absolute', pt: '3px', right: '20px' }}>
           {hideNumbers
             ? <ShowIcon />
             : <HideIcon />
           }
-          <Typography sx={{ color: 'secondary.light', fontSize: '12px', fontWeight: 500 }}>
+          <Typography sx={{ color: 'secondary.light', fontSize: '12px', fontWeight: 500, userSelect: 'none' }}>
             {hideNumbers ? t('Show') : t('Hide')}
           </Typography>
         </Grid>
