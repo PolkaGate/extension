@@ -41,7 +41,7 @@ const apiReducer = (state: ApiState, action: ApiAction): ApiState => {
 };
 
 export default function useApi (address: AccountId | string | undefined, stateApi?: ApiPromise, _endpoint?: string, _genesisHash?: string): ApiPromise | undefined {
-  const { endpoint } = useEndpoint(address, _endpoint);
+  const { checkForNewOne, endpoint } = useEndpoint(address, _endpoint);
   const apisContext = useContext(APIContext);
   const chainGenesisHash = useGenesisHash(address, _genesisHash);
   const chainName = useChainName(address);
@@ -63,6 +63,7 @@ export default function useApi (address: AccountId | string | undefined, stateAp
 
       savedEndpoints[i][j] = {
         endpoint: selectedEndpoint,
+        isOnManuel: !!savedEndpoints[i][j]?.isOnManuel,
         timestamp: Date.now()
       };
 
@@ -182,8 +183,9 @@ export default function useApi (address: AccountId | string | undefined, stateAp
     }
 
     // If in auto mode, check existing connections or find a new one
+    // 'checkForNewOne' will force to find a new connection
     if (endpoint === AUTO_MODE.value) {
-      const result = connectToExisted(String(address), chainName, chainGenesisHash);
+      const result = !checkForNewOne && connectToExisted(String(address), chainName, chainGenesisHash);
 
       if (result) {
         return;
@@ -213,7 +215,7 @@ export default function useApi (address: AccountId | string | undefined, stateAp
 
     apisContext.apis[chainGenesisHash] = toSaveApi;
     apisContext.setIt(apisContext.apis);
-  }, [address, apisContext, chainGenesisHash, chainName, connectToEndpoint, connectToExisted, endpoint, handleAutoMode, handleNewApi, state.api]);
+  }, [address, apisContext, chainGenesisHash, chainName, checkForNewOne, connectToEndpoint, connectToExisted, endpoint, handleAutoMode, handleNewApi, state.api]);
 
   useEffect(() => {
     // Set up a polling interval to check for a connected API every 1 second

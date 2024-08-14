@@ -30,8 +30,10 @@ export default function RemoteNodeSelector ({ address, genesisHash }: Props): Re
       const savedEndpoints: ChromeStorageGetResponse = res?.endpoints || {};
 
       savedEndpoints[i] = savedEndpoints[i] || {};
+      const checkForNewOne = newEndpoint === AUTO_MODE.value && !savedEndpoints[i][j]?.isOnManuel;
 
       savedEndpoints[i][j] = {
+        checkForNewOne,
         endpoint: newEndpoint,
         isOnManuel: newEndpoint !== AUTO_MODE.value,
         timestamp: Date.now()

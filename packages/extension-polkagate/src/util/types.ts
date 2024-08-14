@@ -800,6 +800,7 @@ export interface SavedEndpoint {
   endpoint: string;
   timestamp: number;
   isOnManuel: boolean;
+  checkForNewOne?: boolean;
 }
 
 export type ChromeStorageGetResponse = Record<string, Record<string, SavedEndpoint | undefined> | undefined>;

@@ -10,6 +10,7 @@ import { AUTO_MODE, NO_PASS_PERIOD as ENDPOINT_TIMEOUT } from '../util/constants
 import { useChainName } from '.';
 
 interface EndpointType {
+  checkForNewOne?: boolean;
   endpoint: string | undefined;
   timestamp: number | undefined;
   isOnManuel: boolean | undefined;
@@ -17,7 +18,7 @@ interface EndpointType {
 
 export default function useEndpoint (address: AccountId | string | undefined, _endpoint?: string): EndpointType {
   const chainName = useChainName(address);
-  const [endpoint, setEndpoint] = useState<EndpointType>({ endpoint: undefined, isOnManuel: undefined, timestamp: undefined });
+  const [endpoint, setEndpoint] = useState<EndpointType>({ checkForNewOne: undefined, endpoint: undefined, isOnManuel: undefined, timestamp: undefined });
   const initialFetchDone = useRef(false);
 
   const isEndpointValid = useCallback((toCheck: SavedEndpoint | undefined): boolean =>
@@ -43,17 +44,12 @@ export default function useEndpoint (address: AccountId | string | undefined, _e
 
       savedEndpoints[addressKey] = savedEndpoints[addressKey] || {};
 
-      // console.log('savedEndpoints:', savedEndpoints);
-
       if (!savedEndpoints[addressKey][chainName] || !isEndpointValid(savedEndpoints[addressKey][chainName])) {
         const auto: SavedEndpoint = {
           endpoint: AUTO_MODE.value,
           isOnManuel: false,
           timestamp: Date.now()
         };
-
-        addressKey === '5CBCVHGxPGFTFuKjKYDZiW5T8nNkM51rG6gPkPHdjgyUeQDn' && console.log('first:', savedEndpoints[addressKey]);
-        addressKey === '5ECro2Szgee3YLDpDQYRAti3zJ6CnxmdvLAgmfDNoeBuaHMc' && console.log('second:', savedEndpoints[addressKey]);
 
         savedEndpoints[addressKey][chainName] = auto;
 
@@ -93,7 +89,7 @@ export default function useEndpoint (address: AccountId | string | undefined, _e
         const maybeNewEndpoint = newValue?.[String(address)]?.[chainName];
 
         if (maybeNewEndpoint) {
-          setEndpoint({ endpoint: maybeNewEndpoint.endpoint, isOnManuel: maybeNewEndpoint.isOnManuel, timestamp: maybeNewEndpoint.timestamp });
+          setEndpoint({ checkForNewOne: maybeNewEndpoint?.checkForNewOne, endpoint: maybeNewEndpoint.endpoint, isOnManuel: maybeNewEndpoint.isOnManuel, timestamp: maybeNewEndpoint.timestamp });
         }
       }
     };

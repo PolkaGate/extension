@@ -24,7 +24,7 @@ interface Props {
 
 type EndpointsDelay = { name: string, delay: number | null | undefined, value: string }[];
 
-function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactElement {
+function FullScreenRemoteNode ({ address, iconSize = 35 }: Props): React.ReactElement {
   const theme = useTheme();
   const { account, chainName } = useInfo(address);
   const { endpoint: endpointUrl, isOnManuel } = useEndpoint(address);
@@ -99,8 +99,10 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
       const savedEndpoints: ChromeStorageGetResponse = res?.endpoints || {};
 
       savedEndpoints[i] = savedEndpoints[i] || {};
+      const checkForNewOne = newEndpoint === AUTO_MODE.value && !savedEndpoints[i][j]?.isOnManuel;
 
       savedEndpoints[i][j] = {
+        checkForNewOne,
         endpoint: newEndpoint,
         isOnManuel: newEndpoint !== AUTO_MODE.value,
         timestamp: Date.now()
@@ -213,7 +215,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
       {endpointsDelay && endpointsDelay.length > 0 &&
         endpointsDelay.map((endpoint, index) => {
           const selectedEndpoint = endpoint.name === sanitizedCurrentEndpointName;
-          const isOnAutoMode = endpoint.value === AUTO_MODE.value && !isOnManuel;
+          const isOnAutoMode = endpoint.name === AUTO_MODE.text && !isOnManuel;
 
           return (
             // eslint-disable-next-line react/jsx-no-bind
@@ -224,7 +226,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
               {(!endpoint.name.includes('light client') && endpoint.name !== AUTO_MODE.text) &&
                 <NodeStatusAndDelay endpointDelay={endpoint.delay} isSelected={selectedEndpoint} />
               }
-              {endpoint.name === AUTO_MODE.text && selectedEndpoint &&
+              {isOnAutoMode && selectedEndpoint &&
                 <Circle
                   color={theme.palette.primary.main}
                   scaleEnd={0.7}
