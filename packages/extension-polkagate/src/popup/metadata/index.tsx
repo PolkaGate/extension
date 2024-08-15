@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import React, { useCallback, useContext } from 'react';
 
@@ -9,7 +8,7 @@ import useTranslation from '../../hooks/useTranslation';
 import { rejectMetaRequest } from '../../messaging';
 import Request from './Request';
 
-export default function Metadata(): React.ReactElement {
+export default function Metadata (): React.ReactElement {
   const { t } = useTranslation();
   const requests = useContext(MetadataReqContext);
   const onAction = useContext(ActionContext);
