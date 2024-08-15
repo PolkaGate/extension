@@ -64,7 +64,7 @@ const AdvanceModeBtn = ({ disabled, isAdvancedMode, label, onClick }: AdvancedMo
         ? <StandardModeIcon sx={{ color: 'primary.main', fontSize: '25px' }} />
         : <AdvancedModeIcon sx={{ color: 'primary.main', fontSize: '25px' }} />
       }
-      <Typography fontSize='16px' fontWeight={400} lineHeight='36px' pl='10px' sx={{ textDecoration: 'underline' }}>
+      <Typography fontSize='16px' fontWeight={400} lineHeight='35px' pl='10px' sx={{ textDecoration: 'underline' }}>
         {label}
       </Typography>
     </Grid>
