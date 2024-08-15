@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson, RequestSign } from '@polkadot/extension-base/background/types';
+import type { GenericExtrinsicPayload } from '@polkadot/types';
 import type { ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
@@ -9,7 +10,7 @@ import type { HexString } from '@polkadot/util/types';
 import { useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { GenericExtrinsicPayload, TypeRegistry } from '@polkadot/types';
+import { TypeRegistry } from '@polkadot/types';
 
 import { ActionContext, Address, Warning } from '../../../components';
 import { useAccount, useTranslation } from '../../../hooks';
@@ -17,9 +18,9 @@ import { approveSignSignature } from '../../../messaging';
 import Bytes from '../Bytes';
 import Extrinsic from '../Extrinsic';
 import LedgerSign from '../LedgerSign';
+import LedgerSignGeneric from '../LedgerSignGeneric';
 import Qr from '../Qr';
 import SignArea from './SignArea';
-import LedgerSignGeneric from '../LedgerSignGeneric';
 
 interface Props {
   account: AccountJson;
@@ -43,14 +44,14 @@ export const CMD_SIGN_MESSAGE = 3;
 // keep it global, we can and will re-use this across requests
 const registry = new TypeRegistry();
 
-function isRawPayload(payload: SignerPayloadJSON | SignerPayloadRaw): payload is SignerPayloadRaw {
+function isRawPayload (payload: SignerPayloadJSON | SignerPayloadRaw): payload is SignerPayloadRaw {
   return !!(payload as SignerPayloadRaw).data;
 }
 
-export default function Request({ account: { accountIndex, addressOffset, isExternal, isHardware }, buttonText, error, isFirst, request, setError, signId, url }: Props): React.ReactElement<Props> | null {
+export default function Request ({ account: { accountIndex, addressOffset, isExternal, isHardware }, buttonText, error, isFirst, request, setError, signId, url }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const theme = useTheme();
-  const account = useAccount(request.payload?.address)
+  const account = useAccount(request.payload?.address);
 
   const onAction = useContext(ActionContext);
   const [{ hexBytes, payload }, setData] = useState<Data>({ hexBytes: null, payload: null });
@@ -87,7 +88,7 @@ export default function Request({ account: { accountIndex, addressOffset, isExte
 
   const onLedgerGenericSignature = useCallback((signature: HexString, _raw?: GenericExtrinsicPayload): void => {
     if (!_raw) {
-      throw new Error('No extrinsic payload to sign!')
+      throw new Error('No extrinsic payload to sign!');
     }
     const _address = request.payload?.address
 
@@ -105,9 +106,7 @@ export default function Request({ account: { accountIndex, addressOffset, isExte
         setError(error.message);
         console.error(error);
       });
-  },
-    [request, onAction, setError, signId]
-  );
+  }, [request, onAction, setError, signId]);
 
   if (payload !== null) {
     const json = request.payload as SignerPayloadJSON;

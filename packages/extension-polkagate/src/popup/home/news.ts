@@ -10,9 +10,10 @@ export interface News {
 
 export const news: News[] = [
   {
-    version: '0.7.4',
+    version: '0.7.5',
     notes: [
-      'Alerts keep you informed. They have been added to notify you about tasks running in the background.'
+      'Alerts now keep you informed: Notifications have been added to update you on tasks running in the background.',
+      'Resolved several Ledger issues: These include fixing the missing offset in advanced mode, addressing a Kusama-related bug, and resolving a race condition when accessing the port. If you encounter issues while signing with your Ledger, please reimport your Ledger accounts.'
     ]
   },
   {
