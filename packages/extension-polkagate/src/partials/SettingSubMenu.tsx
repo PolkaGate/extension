@@ -96,6 +96,7 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
             <Grid item>
               <Switch
                 checkedLabel={t('Dark')}
+                defaultColor
                 fontSize='17px'
                 isChecked={theme.palette.mode === 'dark'}
                 onChange={onChangeTheme}
