@@ -1,8 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Grid } from '@mui/material';
 import React, { useCallback } from 'react';
+
 import { Address, Select } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { accOps, addOps, hideAddressAnimation, showAddressAnimation } from './partials';
@@ -19,20 +22,20 @@ interface Props {
   setAddressOffset: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function ManualLedgerImport({ address, accountIndex, addressOffset, genesisHash, ledgerLoading, name, ref, setAccountIndex, setAddressOffset }: Props): React.ReactElement {
+export default function ManualLedgerImport ({ accountIndex, address, addressOffset, genesisHash, ledgerLoading, name, ref, setAccountIndex, setAddressOffset }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const _onSetAccountIndex = useCallback((_value: number | string) => {
     const index = accOps.find(({ text, value }) => text === _value || value === _value)?.value || 0;
 
     setAccountIndex(Number(index));
-  }, [accOps]);
+  }, [setAccountIndex]);
 
   const _onSetAddressOffset = useCallback((_value: number | string) => {
-    const index = addOps.find(({ text, value }) => text === _value || value === _value)?.value || 0;
+    const offset = addOps.find(({ text, value }) => text === _value || value === _value)?.value || 0;
 
-    setAddressOffset(Number(index));
-  }, [addOps]);
+    setAddressOffset(Number(offset));
+  }, [setAddressOffset]);
 
   return (
     <>
@@ -62,8 +65,8 @@ export default function ManualLedgerImport({ address, accountIndex, addressOffse
         <Grid container display={address ? 'inherit' : 'none'} item overflow='hidden' sx={{ animationDuration: address ? '300ms' : '150ms', animationFillMode: 'forwards', animationName: `${address ? showAddressAnimation : hideAddressAnimation}`, animationTimingFunction: 'linear', mt: '15px' }}>
           <Address
             address={address}
-            genesisHash={genesisHash}
             backgroundColor='background.main'
+            genesisHash={genesisHash}
             margin='0px'
             name={name(accountIndex, addressOffset)}
             style={{ width: '100%' }}
