@@ -1366,5 +1366,12 @@
   "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.": "控制哪些可见账户网站可以访问。通过调整访问列表或删除网站条目来更新或拒绝访问。只有您的可见账户可以被访问。",
   "Make accounts visible": "使账户可见",
   "How much would you like to send?": "您想发送多少？",
-  "Existential Deposit: {{ED}}": "最低余额: {{ED}}"
+  "Existential Deposit: {{ED}}": "最低余额: {{ED}}",
+  "Accounts balances updated!": "账户余额已更新！",
+  "No accounts found!": "未找到账户！",
+  "All accounts in the {{text}} profile have been {{verb}}.": "{{text}}配置文件中的所有账户已被{{verb}}。",
+  "Accounts' balances updated!": "账户余额已更新！",
+  "The account has been successfully removed!": "账户已成功移除！",
+  "The account address, formatted for {{chainName}}, has been copied to the clipboard!": "账户地址已根据{{chainName}}格式化并复制到剪贴板！",
+  "The transaction has been finalized!": "交易已完成！"
 }

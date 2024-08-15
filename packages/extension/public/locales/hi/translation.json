@@ -1359,5 +1359,12 @@
   "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.": "नियंत्रण करें कि कौन से दिखने वाले खाते वेबसाइटों द्वारा एक्सेस किए जा सकते हैं। एक्सेस सूची को समायोजित करके या वेबसाइट प्रविष्टि को हटाकर एक्सेस को अपडेट या अस्वीकार करें। केवल आपके दिखने वाले खातों तक ही पहुंच हो सकती है।",
   "Make accounts visible": "खातों को दृश्यमान बनाएं",
   "How much would you like to send?": "आप कितना भेजना चाहेंगे?",
-  "Existential Deposit: {{ED}}": "न्यूनतम जमा: {{ED}}"
+  "Existential Deposit: {{ED}}": "न्यूनतम जमा: {{ED}}",
+  "Accounts balances updated!": "खातों का बैलेंस अपडेट किया गया!",
+  "No accounts found!": "कोई खाते नहीं मिले!",
+  "All accounts in the {{text}} profile have been {{verb}}.": "{{text}} प्रोफ़ाइल के सभी खाते {{verb}} हो चुके हैं।",
+  "Accounts' balances updated!": "खातों का बैलेंस अपडेट किया गया!",
+  "The account has been successfully removed!": "खाता सफलतापूर्वक हटा दिया गया है!",
+  "The account address, formatted for {{chainName}}, has been copied to the clipboard!": "खाते का पता, {{chainName}} के लिए स्वरूपित किया गया, क्लिपबोर्ड पर कॉपी कर लिया गया है!",
+  "The transaction has been finalized!": "लेनदेन को अंतिम रूप दे दिया गया है!"
 }
