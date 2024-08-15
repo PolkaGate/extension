@@ -29,7 +29,7 @@ export default function LedgerOption ({ helperText, logo, noToolTip, onClick, ro
   const theme = useTheme();
 
   return (
-    <Grid alignItems='center' container justifyContent='center' onClick={onClick} sx={{ backgroundColor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', boxShadow: pgBoxShadow(theme), cursor: 'pointer', p: '10px 14px', pl: 0, ...style }}>
+    <Grid alignItems='center' container justifyContent='center' onClick={onClick} sx={{ backgroundColor: 'background.paper', borderRadius: '5px', boxShadow: pgBoxShadow(theme), cursor: 'pointer', p: '10px 14px', pl: 0, ...style }}>
       <Grid alignItems='center' container item justifyContent='center' mr='7px' xs={2}>
         {logo as any}
       </Grid>

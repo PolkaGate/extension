@@ -1,18 +1,24 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { ApiPromise } from '@polkadot/api';
+import type { BN } from '@polkadot/util';
+import type { ToolTipPlacement } from '../../../components/Infotip';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import { BN } from '@polkadot/util';
-
 import { Infotip, ShowBalance, Warning } from '../../../components';
 import { pgBoxShadow } from '../../../util/utils';
+
+interface RotationStyle {
+  transform: string;
+  transitionDuration: string;
+  transitionProperty: string;
+}
 
 interface OptionProps {
   api?: ApiPromise;
@@ -24,20 +30,20 @@ interface OptionProps {
   style?: SxProps<Theme> | undefined;
   warningText?: string;
   helperText?: string;
-  tipPlace?: string;
+  tipPlace?: ToolTipPlacement;
   noToolTip?: boolean;
   showQuestionMark?: boolean;
   logo?: unknown;
-  rotations?: unknown;
+  rotations?: RotationStyle;
 }
 
-export default function StakingMode({ api, balance, balanceText, helperText, logo, noToolTip, onClick, rotations, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
+export default function StakingMode ({ api, balance, balanceText, helperText, logo, noToolTip, onClick, rotations, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
   const theme = useTheme();
 
   return (
-    <Grid alignItems='center' container justifyContent='center' onClick={onClick} sx={{ backgroundColor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', boxShadow: pgBoxShadow(theme), cursor: 'pointer', p: '10px 14px', pl: 0, ...style }}>
+    <Grid alignItems='center' container justifyContent='center' onClick={onClick} sx={{ backgroundColor: 'background.paper', borderRadius: '5px', boxShadow: pgBoxShadow(theme), cursor: 'pointer', p: '10px 14px', pl: 0, ...style }}>
       <Grid alignItems='center' container item justifyContent='center' mr='7px' xs={2}>
-        {logo}
+        {logo as any}
       </Grid>
       <Grid item xs>
         <Typography color='secondary.light' fontSize='22px' fontWeight={500}>
