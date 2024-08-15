@@ -190,7 +190,8 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
     };
 
     handleInitLoginInfo().catch(console.error);
-  }, [setExtensionLock]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onPassChange = useCallback((pass: string | null): void => {
     if (!pass) {
