@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { TxInfo } from '../../util/types';
 
 import { faChessQueen, faCoins, faRocket } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -16,7 +17,6 @@ import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constan
 import { PButton, PoolStakingIcon } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { useFullscreen, useInfo, usePoolConsts } from '../../hooks';
-import type { TxInfo } from '../../util/types';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
@@ -46,7 +46,7 @@ export const STEPS = {
 
 export type StepsType = typeof STEPS[keyof typeof STEPS];
 
-export default function StakingOptions(): React.ReactElement {
+export default function StakingOptions (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
