@@ -32,9 +32,9 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
     case ('available balance'):
       return balances.availableBalance;
     case ('transferable'):
-      return balances.reservedBalance.gte(balances.frozenBalance || BN_ZERO)
+      return balances.reservedBalance && balances.reservedBalance.gte(balances.frozenBalance || BN_ZERO)
         ? balances.freeBalance
-        : balances.freeBalance.sub(balances.frozenBalance.sub(balances.reservedBalance));
+        : balances.freeBalance?.sub(balances.frozenBalance.sub(balances.reservedBalance));
     case ('reserved'):
       return balances.reservedBalance;
     case ('others'):

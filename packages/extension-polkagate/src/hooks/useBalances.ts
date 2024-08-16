@@ -99,12 +99,13 @@ export default function useBalances(address: string | undefined, refresh?: boole
     const ED = api.consts['balances']['existentialDeposit'] as unknown as BN;
 
     formatted && api.derive.balances?.all(formatted).then((allBalances) => {
+      //@ts-ignore
       api.query['system']['account'](formatted).then(({ data: systemBalance }) => {
         const frozenBalance = systemBalance.frozen as BN;
 
         setNewBalances({
-          assetId: NATIVE_TOKEN_ASSET_ID,
           ED,
+          assetId: NATIVE_TOKEN_ASSET_ID,
           ...allBalances,
           chainName,
           date: Date.now(),
@@ -117,6 +118,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
         isFetching.fetching[String(formatted)]['balances'] = false;
         isFetching.set(isFetching.fetching);
       }).catch(console.error);
+    }).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, chain?.genesisHash, chainName, formatted, isFetching.fetching[String(formatted)]?.['length'], setRefresh]);
 

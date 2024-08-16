@@ -5,6 +5,7 @@
 
 import type { Lock } from '../../hooks/useAccountLocks';
 import type { FetchedBalance } from '../../hooks/useAssetsBalances';
+import type { BalancesInfo } from '../../util/types';
 
 import { faFileInvoice } from '@fortawesome/free-solid-svg-icons';
 import { Grid, useTheme } from '@mui/material';
@@ -15,6 +16,7 @@ import { BN } from '@polkadot/util';
 
 import { AccountContext, ActionContext, Warning } from '../../components';
 import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
+import { getValue } from '../../popup/account/util';
 import ExportAccountModal from '../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../popup/forgetAccount/ForgetAccountModal';
 import HistoryModal from '../../popup/history/modal/HistoryModal';
@@ -222,7 +224,7 @@ export default function AccountDetails (): React.ReactElement {
                     />
                   }
                   <DisplayBalance
-                    amount={getValue('Transferable', balancesToShow)}
+                    amount={getValue('Transferable', balancesToShow as BalancesInfo)}
                     decimal={balancesToShow?.decimal}
                     disabled={!balancesToShow?.availableBalance || balancesToShow?.availableBalance.isZero()}
                     onClick={goToSend}
