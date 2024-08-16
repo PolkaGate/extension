@@ -52,7 +52,6 @@ export { default as useIsExposed } from './useIsExposed';
 export { default as useIsExtensionPopup } from './useIsExtensionPopup';
 export { default as useIsLoginEnabled } from './useIsLoginEnabled';
 export { default as useIsMounted } from './useIsMounted';
-export { default as useIsPopup } from './useIsPopup';
 export { default as useIsTestnetEnabled } from './useIsTestnetEnabled';
 export { default as useIsValidator } from './useIsValidator';
 export { useLedger } from './useLedger';

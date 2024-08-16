@@ -1,10 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-export default function (): boolean {
-  const extensionViews = chrome.extension.getViews({ type: 'popup' });
-  const isPopupOpenedByExtension = extensionViews.includes(window);
+export default function useIsExtensionPopup (): boolean {
+  if (chrome?.extension?.getViews) {
+    const extensionViews = chrome.extension.getViews({ type: 'popup' });
+    const isPopupOpenedByExtension = extensionViews.includes(window);
 
-  return isPopupOpenedByExtension;
+    if (isPopupOpenedByExtension) {
+      return true;
+    }
+  }
+
+  const isSmallWindow = window.innerWidth <= 357 && window.innerHeight <= 621;
+
+  return isSmallWindow;
 }
