@@ -99,6 +99,7 @@ export default function AccountDetails (): React.ReactElement {
       : { ...(balances || {}), ...(selectedAsset || {}) };
   }, [assetId, balances, chainName, selectedAsset]);
 
+  const transferableBalance = useMemo(() => getValue('transferable', balancesToShow as BalancesInfo), [balancesToShow]);
   const isDualStaking = useMemo(() =>
     balancesToShow?.soloTotal && balancesToShow?.pooledBalance && !balancesToShow.soloTotal.isZero() && !balancesToShow.pooledBalance.isZero()
   , [balancesToShow?.pooledBalance, balancesToShow?.soloTotal]);
@@ -224,9 +225,9 @@ export default function AccountDetails (): React.ReactElement {
                     />
                   }
                   <DisplayBalance
-                    amount={getValue('Transferable', balancesToShow as BalancesInfo)}
+                    amount={transferableBalance}
                     decimal={balancesToShow?.decimal}
-                    disabled={!balancesToShow?.availableBalance || balancesToShow?.availableBalance.isZero()}
+                    disabled={!transferableBalance || transferableBalance.isZero()}
                     onClick={goToSend}
                     price={currentPrice}
                     title={t('Transferable')}

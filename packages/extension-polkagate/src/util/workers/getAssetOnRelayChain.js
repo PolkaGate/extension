@@ -82,7 +82,7 @@ async function getBalances (chainName, addresses) {
   }
 }
 
-async function getAssetOnRelayChain(addresses, chainName) {
+async function getAssetOnRelayChain (addresses, chainName) {
   const results = {};
 
   await getBalances(chainName, addresses)

@@ -237,6 +237,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
         date: savedBalances[chainName].date,
         decimal: savedBalances[chainName].decimal,
         freeBalance: new BN(sb['freeBalance']),
+        frozenBalance: new BN(sb['frozenBalance'] || '0'),
         genesisHash: sb['genesisHash'],
         lockedBalance: new BN(sb['lockedBalance']),
         pooledBalance: new BN(sb['pooledBalance']),
@@ -245,7 +246,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
         vestedBalance: new BN(sb['vestedBalance']),
         vestedClaimable: new BN(sb['vestedClaimable']),
         votingBalance: new BN(sb['votingBalance'])
-      } as any;
+      } as BalancesInfo;
 
       setBalances({
         ...lastBalances,
