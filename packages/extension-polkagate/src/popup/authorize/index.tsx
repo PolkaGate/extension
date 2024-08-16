@@ -1,55 +1,44 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AuthorizeReqContext } from '../../components';
-import { HeaderBrand } from '../../partials';
-import { EXTENSION_NAME } from '../../util/constants';
-import TransactionIndex from '../signing/TransactionIndex';
-import Request from './Request';
+import { useIsExtensionPopup } from '../../hooks';
+import AuthExtensionMode from './AuthExtensionMode';
+import AuthFullScreenMode from './AuthFullScreenMode';
 
 export default function Authorize (): React.ReactElement {
+  const isExtensionMode = useIsExtensionPopup();
+  const extensionMode = window.location.pathname.includes('notification');
   const requests = useContext(AuthorizeReqContext);
 
   const [requestIndex, setRequestIndex] = useState<number>(0);
 
   useEffect(() => {
-    if (requests.length > 0 && requestIndex > requests.length - 1) {
-      setRequestIndex(0);
-    }
-  }, [requestIndex, requests, requests.length]);
+    // reset index when the request size changes due to request approve or rejection
+    setRequestIndex(0);
+  }, [requests.length]);
 
   const onNextAuth = useCallback(() => {
-    if (requestIndex >= 0 && requestIndex < requests.length - 1) {
-      setRequestIndex((requestIndex) => requestIndex + 1);
-    }
-  }, [requestIndex, requests.length]);
+    setRequestIndex((index) => index < requests.length - 1 ? index + 1 : 0);
+  }, [requests.length]);
 
   const onPreviousAuth = useCallback(() => {
-    if (requestIndex > 0 && requestIndex <= requests.length - 1) {
-      setRequestIndex((requestIndex) => requestIndex - 1);
-    }
-  }, [requestIndex, requests.length]);
+    setRequestIndex((index) => index > 0 ? index - 1 : requests.length - 1);
+  }, [requests.length]);
 
-  return (
-    <Grid container>
-      <HeaderBrand
-        showBrand
-        text={EXTENSION_NAME}
-      />
-      {requests.length > 1 &&
-        <TransactionIndex
-          index={requestIndex}
-          onNextClick={onNextAuth}
-          onPreviousClick={onPreviousAuth}
-          totalItems={requests.length}
-        />}
-      {requests[requestIndex] &&
-        <Request
-          authRequest={requests[requestIndex]}
-        />}
-    </Grid>
-  );
+  return extensionMode || isExtensionMode
+    ? <AuthExtensionMode
+      onNextAuth={onNextAuth}
+      onPreviousAuth={onPreviousAuth}
+      requestIndex={requestIndex}
+      requests={requests}
+    />
+    : <AuthFullScreenMode
+      onNextAuth={onNextAuth}
+      onPreviousAuth={onPreviousAuth}
+      requestIndex={requestIndex}
+      requests={requests}
+    />;
 }

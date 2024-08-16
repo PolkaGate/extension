@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,17 +11,17 @@ import React, { useCallback } from 'react';
 import { QrScanSignature } from '@polkadot/react-qr';
 
 import { SlidePopUp } from '../../../components';
+import { DraggableModal } from '../../../fullscreen/governance/components/DraggableModal';
 import { useTranslation } from '../../../hooks';
 import useIsExtensionPopup from '../../../hooks/useIsExtensionPopup';
-import { DraggableModal } from '../../../fullscreen/governance/components/DraggableModal';
 
 interface Props {
   openCamera: boolean;
   setOpenCamera: React.Dispatch<React.SetStateAction<boolean>>;
-  setAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setAddress: React.Dispatch<React.SetStateAction<string | undefined>> | ((newAddr?: string) => void);
 }
 
-export default function QrScanner ({ openCamera, setAddress, setOpenCamera }: Props): React.ReactElement<Props> {
+export default function QrScanner({ openCamera, setAddress, setOpenCamera }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
 
@@ -31,11 +32,18 @@ export default function QrScanner ({ openCamera, setAddress, setOpenCamera }: Pr
       return;
     }
 
-    const firstColon = signature.indexOf(':');
-    const secondColon = signature.indexOf(':', firstColon + 1);
-    const address = signature.substring(firstColon + 1, secondColon);
+    let address: string;
 
-    setAddress(address);
+    if (signature.includes(':')) {
+      const firstColon = signature.indexOf(':');
+      const secondColon = signature.indexOf(':', firstColon + 1);
+
+      address = signature.substring(firstColon + 1, secondColon);
+    } else if (signature.startsWith('0x')) { // NOVA WALLET QR CODE
+      address = signature.slice(2);
+    }
+
+    setAddress(address ?? signature);
     setOpenCamera(false);
   }, [setAddress, setOpenCamera]);
 
@@ -59,9 +67,10 @@ export default function QrScanner ({ openCamera, setAddress, setOpenCamera }: Pr
       <IconButton
         onClick={onClose}
         sx={{
-          left: '15px',
+          left: !isExtension ? undefined : '15px',
           p: 0,
           position: 'absolute',
+          right: !isExtension ? '15px' : undefined,
           top: isExtension ? '65px' : '10px'
         }}
       >

@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -8,10 +9,12 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { InputWithLabel } from '../../../components';
 import { useTranslation } from '../../../components/translate';
+import { truncString32Bytes } from '../../../util/utils';
 import SubIdInput from '../component/SubIdInput';
 
 interface Props {
@@ -32,7 +35,7 @@ export default function SubIdForm({ address, addressesToSelect, api, chain, erro
   const theme = useTheme();
 
   const onNameChange = useCallback((value: string | null) => {
-    setSubName && setSubName(value, index);
+    setSubName && setSubName(truncString32Bytes(value), index);
   }, [index, setSubName]);
 
   const onAddressChange = useCallback((value: string | null) => {
@@ -48,14 +51,14 @@ export default function SubIdForm({ address, addressesToSelect, api, chain, erro
       <SubIdInput
         address={address}
         api={api}
-        chain={chain}
+        chain={chain as any}
         disabled={false}
-        label={t<string>('Account')}
+        label={t('Account')}
         selectableAddresses={addressesToSelect}
         setAddress={onAddressChange}
       />
       <InputWithLabel
-        label={t<string>('Sub ID')}
+        label={t('Sub ID')}
         onChange={onNameChange}
         value={name ?? ''}
       />
@@ -69,7 +72,7 @@ export default function SubIdForm({ address, addressesToSelect, api, chain, erro
             />
           </Grid>
           <Typography fontSize='16px' fontWeight={400} sx={{ textDecoration: 'underline' }}>
-            {t<string>('Remove')}
+            {t('Remove')}
           </Typography>
         </Grid>
       </Grid>

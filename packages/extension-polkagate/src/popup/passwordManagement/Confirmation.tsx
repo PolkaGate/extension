@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -8,7 +9,7 @@ import { Grid, Typography } from '@mui/material';
 import React from 'react';
 
 import { PButton } from '../../components';
-import { useTranslation } from '../../hooks';
+import { useIsExtensionPopup, useTranslation } from '../../hooks';
 import { STEPS } from './constants';
 
 interface Props {
@@ -16,8 +17,9 @@ interface Props {
   onBackClick: () => void
 }
 
-function Confirmation ({ onBackClick, step }: Props): React.ReactElement {
+function Confirmation({ onBackClick, step }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const isExtensionMode = useIsExtensionPopup();
 
   return (
     <>
@@ -27,7 +29,7 @@ function Confirmation ({ onBackClick, step }: Props): React.ReactElement {
             bgcolor: 'success.main',
             borderRadius: '50%',
             color: 'white',
-            fontSize: 50,
+            fontSize: isExtensionMode ? 50 : 80,
             stroke: 'white'
           }}
         />
@@ -40,10 +42,10 @@ function Confirmation ({ onBackClick, step }: Props): React.ReactElement {
           </Typography>
         </Grid>
       </Grid>
-      <Grid container justifyContent='center' sx={{ px: '10%' }}>
+      <Grid container justifyContent='center' sx={{ bottom: '15px', height: '40px', ml: isExtensionMode ? '8%' : 0, position: 'absolute', width: isExtensionMode ? '84%' : '87%' }}>
         <PButton
           _ml={0}
-          _mt='300px'
+          _mt='1px'
           _onClick={onBackClick}
           _width={100}
           text={t('Done')}

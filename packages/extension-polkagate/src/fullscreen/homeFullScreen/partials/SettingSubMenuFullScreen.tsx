@@ -1,9 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
-
-import '@vaadin/icons';
 
 import { Box, Collapse, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -11,16 +10,16 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import settings from '@polkadot/ui-settings';
 
 import { checkBox, checkedBox } from '../../../assets/icons';
-import { AccountContext, Select } from '../../../components';
+import { AccountContext, Select, VaadinIcon } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
 import { useIsTestnetEnabled, useTranslation } from '../../../hooks';
 import { setNotification, tieAccount } from '../../../messaging';
+import ManageWebAccess from '../../../popup/authManagement';
 import { TEST_NETS } from '../../../util/constants';
 import getLanguageOptions from '../../../util/getLanguageOptions';
 import EnableTestNetsModal from './EnableTestNetsModal';
 import { TaskButton } from './HomeMenu';
 import ManageLoginPassword from './ManageLoginPassword';
-import ManageWebAccess from './ManageWebAccess';
 
 interface Props {
   show: boolean;
@@ -118,27 +117,27 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
               }
               isSubMenu
               onClick={toggleCamera}
-              text={t<string>('Allow QR camera access')}
+              text={t('Allow QR camera access')}
             />
             <TaskButton
               icon={
-                <vaadin-icon icon='vaadin:lines-list' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+                <VaadinIcon icon='vaadin:lines-list' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
               }
               isSubMenu
               onClick={onAuthManagement}
-              text={t<string>('Manage website access')}
+              text={t('Manage website access')}
             />
             <TaskButton
               icon={
-                <vaadin-icon icon='vaadin:key' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+                <VaadinIcon icon='vaadin:key' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
               }
               isSubMenu
               onClick={onManageLoginPassword}
-              text={t<string>('Manage login password')}
+              text={t('Manage login password')}
             />
             <Grid item pt='12px'>
               <Select
-                label={t<string>('Language')}
+                label={t('Language')}
                 onChange={onChangeLang}
                 options={languageOptions}
                 value={settings.i18nLang !== 'default' ? settings.i18nLang : languageOptions[0].value}
@@ -146,7 +145,7 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
             </Grid>
             <Grid item pt='10px'>
               <Select
-                label={t<string>('Notification')}
+                label={t('Notification')}
                 onChange={onChangeNotification}
                 options={notificationOptions}
                 value={notification ?? notificationOptions[1].value}

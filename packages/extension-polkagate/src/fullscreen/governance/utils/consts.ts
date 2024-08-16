@@ -9,7 +9,6 @@ export const TRACK_LIMIT_TO_LOAD_PER_REQUEST = LATEST_REFERENDA_LIMIT_TO_LOAD_PE
 export const REFERENDA_LIMIT_SAVED_LOCAL = 2 * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST;
 
 export const FINISHED_REFERENDUM_STATUSES = ['Cancelled', 'Confirmed', 'Executed', 'Rejected', 'TimedOut'];
-export const GOVERNANCE_PROXY = ['Any', 'NonTransfer', 'Governance'];
 
 export const REFERENDA_STATUS = [
   ['All'],
@@ -24,7 +23,7 @@ export const REFERENDA_STATUS = [
   ['TimedOut']
 ];
 
-export const STATUS_COLOR = {
+export const STATUS_COLOR: Record<string, string> = {
   Awarded: '#32CD32',
   Cancelled: '#737373',
   ConfirmAborted: '#FF9999',

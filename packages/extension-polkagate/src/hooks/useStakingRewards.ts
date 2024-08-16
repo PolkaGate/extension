@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /** 
  * @description
@@ -8,11 +9,11 @@
 
 import { useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { postData } from '../util/api';
-import { AccountStakingInfo } from '../util/types';
+import type { AccountStakingInfo } from '../util/types';
 import { useChainName, useStakingRewardDestinationAddress } from '.';
 
 export async function getStakingReward(chainName: string, address: AccountId | string | null): Promise<string | null> {
@@ -22,7 +23,7 @@ export async function getStakingReward(chainName: string, address: AccountId | s
     return null;
   }
 
-  console.log(`Getting Staking Reward from subscan  on chain:${chainName} for address:${address} ... `);
+  console.log(`Getting Staking Reward from subscan  on ${chainName} for ${address} ... `);
 
   return new Promise((resolve) => {
     try {

@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
@@ -25,9 +26,10 @@ interface Props {
 function RecentChains({ address, currentChainName }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const account = useAccount(address);
+  const genesisHashes = useGenesisHashOptions();
+
   const [showRecentChains, setShowRecentChains] = useState<boolean>(false);
   const [notFirstTime, setFirstTime] = useState<boolean>(false);
-  const genesisHashes = useGenesisHashOptions();
   const [recentChains, setRecentChains] = useState<string[]>();
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
   const [currentSelectedChain, setCurrentSelectedChain] = useState<string | undefined>(currentChainName);

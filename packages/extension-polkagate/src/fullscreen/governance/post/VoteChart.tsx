@@ -1,6 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid } from '@mui/material';
@@ -9,7 +10,7 @@ import { Pulse } from 'better-react-spinkit';
 import { Chart, registerables } from 'chart.js';
 import React, { useEffect, useMemo, useRef } from 'react';
 
-import { BN } from '@polkadot/util';
+import { isHexToBn } from '../../../util/utils';
 
 interface Props {
   ayes: string | undefined;
@@ -19,33 +20,41 @@ interface Props {
   showTooltip?: boolean;
 }
 
-function VoteChart({ ayes, height, nays, noBorderColor = false, showTooltip = true }: Props): React.ReactElement<Props> {
+function VoteChart ({ ayes, height, nays, noBorderColor = false, showTooltip = true }: Props): React.ReactElement<Props> {
   const chartRef = useRef(null);
 
   Chart.register(...registerables);
 
   const ayesPercent = useMemo(() => {
     if (ayes && nays) {
-      const totalAmount = (Number(ayes) + Number(new BN(nays)));
+      const ayesBN = isHexToBn(ayes);
+      const naysBN = isHexToBn(nays);
+      const totalAmount = (Number(ayesBN) + Number(naysBN));
 
       if (totalAmount === 0) {
         return 0;
       }
 
-      return Number(ayes) / totalAmount * 100;
+      return Number(ayesBN) / totalAmount * 100;
     }
+
+    return undefined;
   }, [ayes, nays]);
 
   const naysPercent = useMemo(() => {
     if (ayes && nays) {
-      const totalAmount = (Number(ayes) + Number(new BN(nays)));
+      const ayesBN = isHexToBn(ayes);
+      const naysBN = isHexToBn(nays);
+      const totalAmount = (Number(ayesBN) + Number(naysBN));
 
       if (totalAmount === 0) {
         return 0;
       }
 
-      return Number(nays) / totalAmount * 100;
+      return Number(naysBN) / totalAmount * 100;
     }
+
+    return undefined;
   }, [ayes, nays]);
 
   useEffect(() => {
@@ -57,7 +66,7 @@ function VoteChart({ ayes, height, nays, noBorderColor = false, showTooltip = tr
       datasets: [{
         backgroundColor: [
           '#008080',
-          '#FF5722',
+          '#FF5722'
           // '#BBBBBB'
         ],
         borderColor: noBorderColor ? 'transparent' : 'white',
@@ -134,7 +143,7 @@ function VoteChart({ ayes, height, nays, noBorderColor = false, showTooltip = tr
   }, [ayesPercent, naysPercent, noBorderColor, showTooltip]);
 
   return (
-    <Grid alignItems='center' container justifyContent='center' sx={{ height: height || '240px', width: '100%' }} >
+    <Grid alignItems='center' container justifyContent='center' sx={{ height: height || '240px', width: '100%' }}>
       {ayes && nays
         ? <canvas id='chartCanvas' ref={chartRef} />
         : <Grid alignItems='center' container height='100%' item justifyContent='center'>

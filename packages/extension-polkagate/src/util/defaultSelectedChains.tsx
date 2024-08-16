@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { DropdownOption } from './types';
+
 import { ACALA_GENESIS_HASH, KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, STATEMINE_GENESIS_HASH, STATEMINT_GENESIS_HASH, WESTEND_GENESIS_HASH, WESTMINT_GENESIS_HASH } from './constants';
-import { DropdownOption } from './types';
 
 export const DEFAULT_SELECTED_CHAINS: DropdownOption[] = [
   {

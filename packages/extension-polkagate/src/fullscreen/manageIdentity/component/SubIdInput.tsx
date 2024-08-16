@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-no-bind */
@@ -10,7 +11,8 @@ import { Autocomplete, Grid, IconButton, InputAdornment, SxProps, TextField, The
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { Identity, Label, Warning } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -151,7 +153,7 @@ export default function SubIdInput({ api, selectableAddresses = [], chain = unde
                 <Grid alignItems='center' container item justifyContent='space-between' key={address} onClick={() => onSelectOption(address)} sx={{ '&:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light', mb: '5px' }, cursor: 'pointer', p: '5px' }}>
                   <Identity
                     api={api}
-                    chain={chain}
+                    chain={chain as any}
                     direction='row'
                     formatted={address}
                     identiconSize={28}
@@ -174,7 +176,7 @@ export default function SubIdInput({ api, selectableAddresses = [], chain = unde
             marginTop={0}
             theme={theme}
           >
-            {t<string>('Invalid address')}
+            {t('Invalid address')}
           </Warning>
         </Grid>
       }

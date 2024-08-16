@@ -1,25 +1,28 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
-import type { PalletIdentityIdentityInfo } from '@polkadot/types/lookup';
+import type { PalletIdentityLegacyIdentityInfo } from '@polkadot/types/lookup';
+import type { BalancesInfo, Proxy, ProxyItem, TxInfo } from '../../util/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
+import { PEOPLE_CHAINS, PROXY_TYPE } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN, BN_ONE } from '@polkadot/util';
 
 import { CanPayErrorAlert, Identity, Motion, ShowBalance, SignArea2, Warning, WrongPasswordAlert } from '../../components';
-import { useCanPayFeeAndDeposit, useFormatted, useProxies } from '../../hooks';
+import { useCanPayFeeAndDeposit, useInfo, useProxies } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
-import { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { pgBoxShadow } from '../../util/utils';
 import { DraggableModal } from '../governance/components/DraggableModal';
 import SelectProxyModal2 from '../governance/components/SelectProxyModal2';
@@ -29,7 +32,7 @@ import { toTitleCase } from '../governance/utils/util';
 import Confirmation from './partial/Confirmation';
 import DisplaySubId from './partial/DisplaySubId';
 import IdentityTable from './partial/IdentityTable';
-import { Mode, STEPS, SubIdAccountsToSubmit, SubIdsParams } from '.';
+import { type Mode, STEPS, type SubIdAccountsToSubmit, type SubIdsParams } from '.';
 
 interface Props {
   address: string;
@@ -38,7 +41,7 @@ interface Props {
   depositToPay: BN | undefined;
   depositValue: BN;
   identityToSet: DeriveAccountRegistration | null | undefined;
-  infoParams: PalletIdentityIdentityInfo | null | undefined;
+  infoParams: PalletIdentityLegacyIdentityInfo | null | undefined;
   subIdsParams: SubIdsParams | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   step: number;
@@ -52,25 +55,35 @@ interface Props {
 
 export default function Review({ address, api, chain, depositToPay, depositValue, identityToSet, infoParams, maxFeeAmount, mode, parentDisplay, selectedRegistrar, selectedRegistrarName, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const formatted = useFormatted(address);
+  const { chainName, formatted } = useInfo(address);
   const proxies = useProxies(api, formatted);
   const theme = useTheme();
+
+  const isPeopleChainEnabled = PEOPLE_CHAINS.includes(chainName || '');
+  const isOnPeopleChain = chainName?.toLowerCase()?.includes('people');
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
+  const [balances, setBalances] = useState<BalancesInfo>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
-  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxyAddress, estimatedFee, depositToPay);
+  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxyAddress, estimatedFee, depositToPay, balances);
 
-  const setIdentity = api && api.tx.identity.setIdentity;
-  const clearIdentity = api && api.tx.identity.clearIdentity;
-  const setSubs = api && api.tx.identity.setSubs;
-  const requestJudgement = api && api.tx.identity.requestJudgement;
-  const cancelRequest = api && api.tx.identity.cancelRequest;
+  const setIdentity = api && api.tx['identity']['setIdentity'];
+  const clearIdentity = api && api.tx['identity']['clearIdentity'];
+  const setSubs = api && api.tx['identity']['setSubs'];
+  const requestJudgement = api && api.tx['identity']['requestJudgement'];
+  const cancelRequest = api && api.tx['identity']['cancelRequest'];
+
+  useEffect(() => {
+    formatted && api && api.derive.balances?.all(formatted).then((b) => {
+      setBalances(b);
+    });
+  }, [api, formatted]);
 
   const subIdsToShow: SubIdAccountsToSubmit | undefined = useMemo(() => {
     if (mode !== 'ManageSubId' || !subIdsParams) {
@@ -122,12 +135,16 @@ export default function Review({ address, api, chain, depositToPay, depositValue
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
-    // eslint-disable-next-line no-void
-    void tx.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
+    tx.paymentInfo(formatted)
+      .then((i) => setEstimatedFee(i?.partialFee))
+      .catch((error) => {
+        console.error(' error while fetching fee:', error);
+        setEstimatedFee(api?.createType('Balance', BN_ONE));
+      });
   }, [api, formatted, tx]);
 
   const extraInfo = useMemo(() => ({
@@ -156,11 +173,11 @@ export default function Review({ address, api, chain, depositToPay, depositValue
   }, [setRefresh, setStep]);
 
   return (
-    <Motion style={{ height: '100%', paddingInline: '10%', width: '100%' }}>
+    <Motion style={{ height: '100%', width: '100%' }}>
       <>
         <Grid container py='25px'>
           <Typography fontSize='30px' fontWeight={700}>
-            {(step === STEPS.REVIEW || step === STEPS.PROXY) && (
+            {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) && (
               <>
                 {mode === 'Set' && t('Review On-chain Identity')}
                 {mode === 'Clear' && t('Clear On-chain Identity')}
@@ -204,25 +221,31 @@ export default function Review({ address, api, chain, depositToPay, depositValue
             )}
           </Typography>
         </Grid>
-        {(step === STEPS.REVIEW || step === STEPS.PROXY) &&
+        {[STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <>
             {isPasswordError &&
               <WrongPasswordAlert />
             }
             {feeAndDeposit.isAbleToPay === false &&
-              <CanPayErrorAlert canPayStatements={feeAndDeposit.statement} />
+              <CanPayErrorAlert
+                canPayStatements={feeAndDeposit.statement}
+                extraText={isPeopleChainEnabled && !isOnPeopleChain
+                  ? t('Please transfer some tokens to {{chainName}} People chain.', { replace: { chainName } })
+                  : undefined
+                }
+              />
             }
             <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), mb: '20px', p: '1% 3%' }}>
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {mode === 'ManageSubId'
-                    ? t<string>('Parent account')
-                    : t<string>('Account holder')}
+                    ? t('Parent account')
+                    : t('Account holder')}
                 </Typography>
                 <Identity
                   address={address}
                   api={api}
-                  chain={chain}
+                  chain={chain as any}
                   direction='row'
                   identiconSize={31}
                   showSocial={false}
@@ -232,14 +255,14 @@ export default function Review({ address, api, chain, depositToPay, depositValue
               </Grid>
               {selectedProxyAddress &&
                 <Grid container m='auto' maxWidth='92%'>
-                  <ThroughProxy address={selectedProxyAddress} chain={chain} />
+                  <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
                 </Grid>
               }
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
               {identityToSet && (mode === 'Set' || mode === 'Modify') &&
                 <>
                   <Typography sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
-                    {t<string>('Identity')}
+                    {t('Identity')}
                   </Typography>
                   <IdentityTable
                     identity={identityToSet}
@@ -256,8 +279,8 @@ export default function Review({ address, api, chain, depositToPay, depositValue
                     theme={theme}
                   >
                     {mode === 'Clear'
-                      ? t<string>('You are about to clear the on-chain identity for this account.')
-                      : t<string>('You are about to clear the on-chain sub-identity(ies) for this account.')
+                      ? t('You are about to clear the on-chain identity for this account.')
+                      : t('You are about to clear the on-chain sub-identity(ies) for this account.')
                     }
                   </Warning>
                 </Grid>
@@ -265,7 +288,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
               {mode === 'ManageSubId' && subIdsToShow && subIdsToShow.length > 0 && parentDisplay &&
                 <Grid container item>
                   <Typography fontSize='14px' fontWeight={400} textAlign='center' width='100%'>
-                    {t<string>('Sub-identity(ies)')}
+                    {t('Sub-identity(ies)')}
                   </Typography>
                   <Grid container gap='10px' item sx={{ height: 'fit-content', maxHeight: '250px', overflow: 'hidden', overflowY: 'scroll' }}>
                     {subIdsToShow.map((subs, index) => (
@@ -281,7 +304,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
               {mode === 'RequestJudgement' &&
                 <Grid container direction='column' item>
                   <Typography fontSize='16px' fontWeight={400} textAlign='center' width='100%'>
-                    {t<string>('Registrar')}
+                    {t('Registrar')}
                   </Typography>
                   <Typography fontSize='28px' fontWeight={400} textAlign='center' width='100%'>
                     {selectedRegistrarName}
@@ -296,16 +319,16 @@ export default function Review({ address, api, chain, depositToPay, depositValue
                     isBelowInput
                     theme={theme}
                   >
-                    {t<string>('You are about to cancel your judgement request for this account.')}
+                    {t('You are about to cancel your judgement request for this account.')}
                   </Warning>
                 </Grid>
               }
               {mode !== 'CancelJudgement' &&
                 <DisplayValue title={mode === 'Clear'
-                  ? t<string>('Deposit that will be released')
+                  ? t('Deposit that will be released')
                   : mode === 'RequestJudgement'
-                    ? t<string>('Registration fee')
-                    : t<string>('Total Deposit')}
+                    ? t('Registration fee')
+                    : t('Total Deposit')}
                 >
                   <ShowBalance
                     api={api}
@@ -316,7 +339,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
                     height={22}
                   />
                 </DisplayValue>}
-              <DisplayValue title={t<string>('Fee')}>
+              <DisplayValue title={t('Fee')}>
                 <Grid alignItems='center' container item sx={{ height: '42px' }}>
                   <ShowBalance
                     api={api}
@@ -333,10 +356,11 @@ export default function Review({ address, api, chain, depositToPay, depositValue
                 disabled={feeAndDeposit.isAbleToPay !== true}
                 extraInfo={extraInfo}
                 isPasswordError={isPasswordError}
+                mayBeApi={api}
                 onSecondaryClick={handleClose}
-                primaryBtnText={t<string>('Confirm')}
-                proxyTypeFilter={['Any', 'NonTransfer']}
-                secondaryBtnText={t<string>('Cancel')}
+                primaryBtnText={t('Confirm')}
+                proxyTypeFilter={PROXY_TYPE.GENERAL}
+                secondaryBtnText={t('Cancel')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
                 setStep={setStep}
@@ -352,7 +376,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
             <Grid container item>
               <Grid alignItems='center' container item justifyContent='space-between'>
                 <Typography fontSize='22px' fontWeight={700}>
-                  {t<string>('Select Proxy')}
+                  {t('Select Proxy')}
                 </Typography>
                 <Grid item>
                   <CloseIcon onClick={closeSelectProxy} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
@@ -360,10 +384,10 @@ export default function Review({ address, api, chain, depositToPay, depositValue
               </Grid>
               <SelectProxyModal2
                 address={address}
-                height={500}
                 closeSelectProxy={() => setStep(STEPS.REVIEW)}
+                height={500}
                 proxies={proxyItems}
-                proxyTypeFilter={['Any', 'NonTransfer']}
+                proxyTypeFilter={PROXY_TYPE.GENERAL}
                 selectedProxy={selectedProxy}
                 setSelectedProxy={setSelectedProxy}
               />

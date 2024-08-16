@@ -1,12 +1,15 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
- * this component opens send review page
+ * this component opens Modify and Remove Delegate pages
  * */
+
+import type { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
 
 import { KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography } from '@mui/material';
@@ -15,16 +18,15 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { BN } from '@polkadot/util';
 
 import { Identity, Motion, TwoButtons } from '../../../components';
-import { useApi, useChain, useDecimal, useToken, useTracks, useTranslation } from '../../../hooks';
-import { Lock } from '../../../hooks/useAccountLocks';
-import { BalancesInfo, Proxy, ProxyItem, TxInfo } from '../../../util/types';
+import { useInfo, useTracks, useTranslation } from '../../../hooks';
+import type { Lock } from '../../../hooks/useAccountLocks';
 import { amountToHuman } from '../../../util/utils';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
-import ModifyDelegate, { ModifyModes } from './modify/ModifyDelegate';
+import ModifyDelegate, { type ModifyModes } from './modify/ModifyDelegate';
 import ReferendaTable from './partial/ReferendaTable';
 import TracksList from './partial/TracksList';
 import RemoveDelegate from './remove/RemoveDelegate';
-import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '.';
+import { type AlreadyDelegateInformation, type DelegateInformation, type DelegationStatus, STEPS } from '.';
 
 interface Props {
   address: string | undefined;
@@ -33,7 +35,7 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   step: number;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
-  setStatus: React.Dispatch<React.SetStateAction<'Delegate' | 'Remove' | 'Modify'>>;
+  setStatus: React.Dispatch<React.SetStateAction<DelegationStatus>>;
   setSelectedTracksLength: React.Dispatch<React.SetStateAction<number | undefined>>;
   lockedAmount: BN | undefined;
   balances: BalancesInfo | undefined;
@@ -41,9 +43,9 @@ interface Props {
   setDelegateInformation: React.Dispatch<React.SetStateAction<DelegateInformation | undefined>>;
   setModalHeight: React.Dispatch<React.SetStateAction<number | undefined>>;
   selectedProxy: Proxy | undefined;
-  proxyItems: ProxyItem[] | undefined;
   setMode: React.Dispatch<React.SetStateAction<ModifyModes>>;
   mode: ModifyModes;
+  status: DelegationStatus;
 }
 
 interface ArrowsProps {
@@ -51,12 +53,9 @@ interface ArrowsProps {
   onPrevious: () => void;
 }
 
-export default function DelegationDetails({ accountLocks, address, balances, filteredDelegation, formatted, lockedAmount, mode, proxyItems, selectedProxy, setDelegateInformation, setModalHeight, setMode, setSelectedTracksLength, setStatus, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
+export default function DelegationDetails({ accountLocks, address, balances, filteredDelegation, formatted, lockedAmount, mode, selectedProxy, setDelegateInformation, setModalHeight, setMode, setSelectedTracksLength, setStatus, setStep, setTxInfo, status, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const api = useApi(address);
-  const chain = useChain(address);
-  const token = useToken(address);
-  const decimal = useDecimal(address);
+  const { api, chain, decimal, token } = useInfo(address);
   const { tracks } = useTracks(address);
   const ref = useRef(null);
 
@@ -133,13 +132,13 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
       <Grid alignItems='center' container item justifyContent='center' xs={10}>
         <Grid alignItems='center' container direction='column' justifyContent='center' width='90%'>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t<string>('Delegatee')}
+            {t('Delegatee')}
           </Typography>
           <Identity
             api={api}
-            chain={chain}
+            chain={chain as any}
             direction='row'
-            formatted={filteredDelegation[delegateeIndex].delegatee}
+            formatted={filteredDelegation ? filteredDelegation[delegateeIndex].delegatee : ''}
             identiconSize={31}
             showSocial={false}
             style={{ maxWidth: '100%', width: 'fit-content' }}
@@ -177,12 +176,12 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
         <Grid container ref={ref}>
           <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>('Delegate from')}
+              {t('Delegate from')}
             </Typography>
             <Identity
               address={address}
               api={api}
-              chain={chain}
+              chain={chain as any}
               direction='row'
               identiconSize={31}
               showSocial={false}
@@ -196,11 +195,11 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
               ? <Arrows onNext={nextDelegatee} onPrevious={previousDelegatee} />
               : <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '10px', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Delegatee')}
+                  {t('Delegatee')}
                 </Typography>
                 <Identity
                   api={api}
-                  chain={chain}
+                  chain={chain as any}
                   direction='row'
                   formatted={filteredDelegation[0].delegatee}
                   identiconSize={31}
@@ -223,17 +222,17 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
           }
           {filteredDelegation && !variousDelegation &&
             <>
-              <DisplayValue title={t<string>('Delegated Value ({{token}})', { replace: { token } })} topDivider={false}>
+              <DisplayValue title={t('Delegated Value ({{token}})', { replace: { token } })} topDivider={false}>
                 <Typography fontSize='28px' fontWeight={400}>
                   {delegateAmountInHuman}
                 </Typography>
               </DisplayValue>
-              <DisplayValue title={t<string>('Vote Multiplier')}>
+              <DisplayValue title={t('Vote Multiplier')}>
                 <Typography fontSize='28px' fontWeight={400}>
                   {`${delegatedConviction}x`}
                 </Typography>
               </DisplayValue>
-              <DisplayValue title={t<string>('Number of Referenda Categories')}>
+              <DisplayValue title={t('Number of Referenda Categories')}>
                 <Grid container direction='row'>
                   <Typography fontSize='28px' fontWeight={400} width='fit-content'>
                     {`${filteredDelegation[delegateeIndex].info.length} of ${tracks?.length ?? 15}`}
@@ -248,19 +247,18 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
               mt='1px'
               onPrimaryClick={goModify}
               onSecondaryClick={goRemove}
-              primaryBtnText={t<string>('Modify')}
-              secondaryBtnText={t<string>('Remove')}
+              primaryBtnText={t('Modify')}
+              secondaryBtnText={t('Remove')}
             />
           </Grid>
         </Grid>
       }
-      {(step === STEPS.REMOVE || step === STEPS.PROXY) && filteredDelegation && variousDelegation !== undefined &&
+      {[STEPS.REMOVE, STEPS.PROXY, STEPS.SIGN_QR].includes(step) && status === 'Remove' && filteredDelegation && variousDelegation !== undefined &&
         <RemoveDelegate
           address={address}
           classicDelegateInformation={variousDelegation ? undefined : classicDelegation}
           formatted={formatted}
           mixedDelegateInformation={variousDelegation ? filteredDelegation[delegateeIndex] : undefined}
-          proxyItems={proxyItems}
           selectedProxy={selectedProxy}
           setModalHeight={setModalHeight}
           setSelectedTracksLength={setSelectedTracksLength}
@@ -269,7 +267,7 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
           step={step}
         />
       }
-      {(step === STEPS.MODIFY || step === STEPS.PROXY) && filteredDelegation && variousDelegation !== undefined &&
+      {[STEPS.MODIFY, STEPS.PROXY, STEPS.SIGN_QR].includes(step) && status === 'Modify' && filteredDelegation && variousDelegation !== undefined &&
         <ModifyDelegate
           accountLocks={accountLocks}
           address={address}
@@ -280,7 +278,6 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
           mixedDelegateInformation={variousDelegation ? filteredDelegation[delegateeIndex] : undefined}
           mode={mode}
           otherDelegatedTracks={otherDelegatedTracks}
-          proxyItems={proxyItems}
           selectedProxy={selectedProxy}
           setDelegateInformation={setDelegateInformation}
           setModalHeight={setModalHeight}

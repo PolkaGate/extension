@@ -1,8 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
+import type { InitiateRecoveryConfig, SocialRecoveryModes, WithdrawInfo } from './util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -12,14 +14,13 @@ import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { PButton, RescueRecoveryIcon, SocialRecoveryIcon, TwoButtons } from '../../components';
-import { useChain, useCurrentBlockNumber, useDecimal, useFormatted, useToken, useTranslation } from '../../hooks';
+import { useCurrentBlockNumber, useInfo, useTranslation } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import SelectTrustedFriend, { AddressWithIdentity } from './components/SelectTrustedFriend';
 import ActiveProxyStatus from './partial/ActiveProxyStatus';
 import InitiatedRecoveryStatus from './partial/InitiatedRecoveryStatus';
 import LostAccountRecoveryInfo from './partial/LostAccountRecoveryInfo';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
-import { InitiateRecoveryConfig, SocialRecoveryModes, WithdrawInfo } from './util/types';
 import { checkLostAccountRecoverability } from './util/utils';
 import { STEPS } from '.';
 
@@ -43,11 +44,8 @@ interface Props {
 export default function InitiateRecovery({ accountsInfo, activeProxy, address, api, initiatedRecovery, lostAccountRecoveryInfo, mode, setLostAccountAddress, setLostAccountRecoveryInfo, setMode, setStep, setTotalDeposit, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const chain = useChain(address);
-  const decimal = useDecimal(address);
-  const token = useToken(address);
+  const { chain, decimal, formatted, token } = useInfo(address);
   const currentBlockNumber = useCurrentBlockNumber(address);
-  const formatted = useFormatted(address);
 
   const [lostAccount, setLostAccount] = useState<AddressWithIdentity>();
   const [goReview, setGoReview] = useState<boolean>(false);
@@ -155,7 +153,7 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
   }, [lostAccountRecoveryInfo, setMode, setTotalDeposit]);
 
   return (
-    <Grid container item sx={{ display: 'block', px: '10%' }}>
+    <Grid container item sx={{ display: 'block' }}>
       {initiatedRecovery || activeProxy
         ? <>
           <Grid alignItems='center' container item pt='20px' width='fit-content'>
@@ -171,7 +169,7 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
           {initiatedRecovery
             ? <InitiatedRecoveryStatus
               api={api}
-              chain={chain}
+              chain={chain as any}
               delayRemainBlock={Math.max(0, delayEndBlock - (currentBlockNumber ?? 0))}
               goWithdraw={goWithdraw}
               initiatedRecovery={initiatedRecovery}
@@ -208,7 +206,7 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
           <SelectTrustedFriend
             accountsInfo={accountsInfo}
             api={api}
-            chain={chain}
+            chain={chain as any}
             disabled={false}
             helperText={t<string>('Find the account you want to rescue by entering their address or any associated identity details, such as their name, email, Twitter, etc.')}
             iconType='none'

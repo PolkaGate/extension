@@ -1,11 +1,12 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-import { faDiscord, faTwitter } from '@fortawesome/free-brands-svg-icons';
+import { faDiscord, faGithub, faXTwitter } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, useTheme } from '@mui/material';
 import React from 'react';
 
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -21,30 +22,37 @@ interface Props {
   setEmail: React.Dispatch<React.SetStateAction<string | undefined>>;
   setWeb: React.Dispatch<React.SetStateAction<string | undefined>>;
   setTwitter: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setMatrix: React.Dispatch<React.SetStateAction<string | undefined>>;
   setRiot: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setGithub: React.Dispatch<React.SetStateAction<string | undefined>>;
   setDiscord: React.Dispatch<React.SetStateAction<string | undefined>>;
   display: string | undefined;
   legal: string | undefined;
   email: string | undefined;
   web: string | undefined;
+  github: string | undefined;
   twitter: string | undefined;
+  matrix: string | undefined;
   riot: string | undefined;
   discord: string | undefined;
+  isPeopleChainEnabled: boolean
 }
 
-export default function SetIdentityForm ({ discord, display, email, identity, legal, riot, setDiscord, setDisplay, setEmail, setLegal, setRiot, setTwitter, setWeb, twitter, web }: Props): React.ReactElement {
+export default function SetIdentityForm({ discord, display, email, github, identity, isPeopleChainEnabled, legal, matrix, riot, setDiscord, setDisplay, setEmail, setGithub, setLegal, setMatrix, setRiot, setTwitter, setWeb, twitter, web }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Grid container item sx={{ borderBottom: '2px solid', borderBottomColor: '#D5CCD0', display: 'block', height: 'fit-content', py: '20px' }}>
       <IdentityInfoInput
         setter={setDisplay}
-        title={t<string>('Display Name (Mandatory)')}
+        title={t('Display Name (Mandatory)')}
         value={display ?? identity?.display}
       />
       <IdentityInfoInput
         setter={setLegal}
-        title={t<string>('Legal Name')}
+        title={t('Legal Name')}
         value={legal ?? identity?.legal}
       />
       <IdentityInfoInput
@@ -56,43 +64,59 @@ export default function SetIdentityForm ({ discord, display, email, identity, le
           />
         }
         setter={setEmail}
-        title={t<string>('Email')}
+        title={t('Email')}
         type='email'
         value={email ?? identity?.email}
       />
       <IdentityInfoInput
         icon={
           <FontAwesomeIcon
-            color='#007CC4'
+            color={theme.palette.success.main}
             fontSize='30px'
             icon={faGlobe}
           />
         }
         setter={setWeb}
-        title={t<string>('Website')}
+        title={t('Website')}
         type='url'
         value={web ?? identity?.web}
       />
       <IdentityInfoInput
         icon={
           <FontAwesomeIcon
-            color='#2AA9E0'
+            color={isDark ? 'white' : 'black'}
             fontSize='30px'
-            icon={faTwitter}
+            icon={faXTwitter}
           />
         }
         setter={setTwitter}
-        title={t<string>('Twitter')}
+        title={t('X')}
         value={twitter ?? identity?.twitter}
       />
       <IdentityInfoInput
         icon={
           <Box component='img' src={riotIcon as string} sx={{ height: '30px', mb: '2px', width: '30px' }} />
         }
-        setter={setRiot}
-        title={t<string>('Element')}
-        value={riot ?? identity?.riot}
+        setter={isPeopleChainEnabled ? setMatrix : setRiot}
+        title={t('Element')}
+        value={isPeopleChainEnabled
+          ? matrix ?? identity?.matrix as string
+          : riot || identity?.riot
+        }
       />
+      {isPeopleChainEnabled &&
+        <IdentityInfoInput
+          icon={
+            <FontAwesomeIcon
+              color='rgb(178, 58, 120)'
+              fontSize='30px'
+              icon={faGithub}
+            />}
+          setter={setGithub}
+          title={t('Github')}
+          value={github ?? identity?.github as string}
+        />
+      }
       <IdentityInfoInput
         icon={
           <FontAwesomeIcon
@@ -102,8 +126,11 @@ export default function SetIdentityForm ({ discord, display, email, identity, le
           />
         }
         setter={setDiscord}
-        title={t<string>('Discord')}
-        value={discord ?? identity?.other?.discord}
+        title={t('Discord')}
+        value={isPeopleChainEnabled
+          ? discord || identity?.discord as string
+          : discord || identity?.other?.discord
+        }
       />
     </Grid>
   );

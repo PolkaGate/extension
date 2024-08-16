@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 interface Commit {
   commit: {
@@ -46,12 +47,12 @@ export async function getLastMsUpdateTime(): Promise<string> {
       const lastCommit = commits[0];
       const lastUpdate = lastCommit.commit.author.date;
 
-      console.log('Last update time:', lastUpdate);
+      console.log('Merkle Science: Last update time:', lastUpdate);
 
       return lastUpdate;
     }
   } catch (error) {
-    console.error('Error occurred while fetching the last update time:', error.message);
+    console.error('Merkle Science: Error occurred while fetching the last update time:', error?.message);
   }
 
   return '';
@@ -68,9 +69,9 @@ export async function getJsonFileFromRepo(): Promise<MsData[] | undefined> {
 
       return json?.results;
     } else {
-      throw new Error(`Failed to fetch JSON file. Status: ${response.status}`);
+      throw new Error(`Merkle Science: Failed to fetch JSON file. Status: ${response.status}`);
     }
   } catch (error) {
-    throw new Error(`Failed to fetch JSON file: ${error.message}`);
+    throw new Error(`Merkle Science: Failed to fetch JSON file: ${error?.message}`);
   }
 }

@@ -1,21 +1,21 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Theme } from '@mui/material';
+import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
+import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
+import type { SavedMetaData, TransactionDetail } from './types';
 
-import { Theme } from '@mui/material';
-
-import { ApiPromise } from '@polkadot/api';
-import { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
-import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { BLOCK_RATE, FLOATING_POINT_DIGIT, SHORT_ADDRESS_CHARACTERS } from './constants';
-import { AccountsBalanceType, SavedMetaData, TransactionDetail } from './types';
+import { EXTRA_PRICE_IDS } from './api/getPrices';
+import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, PROFILE_COLORS, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS } from './constants';
 
 interface Meta {
   docs: Text[];
@@ -53,27 +53,6 @@ export function fixFloatingPoint(_number: number | string, decimalDigit = FLOATI
   const fractionalDigits = sNumber.slice(dotIndex, dotIndex + decimalDigit + 1);
 
   return integerDigits + fractionalDigits;
-}
-
-export function balanceToHuman(_balance: AccountsBalanceType | null, _type: string, decimalDigits?: number, commify?: boolean): string {
-  if (!_balance || !_balance.balanceInfo) {
-    return '';
-  }
-
-  const balance = _balance.balanceInfo;
-
-  switch (_type.toLowerCase()) {
-    case 'total':
-      return amountToHuman(String(balance.total), balance.decimals, decimalDigits, commify);
-    case 'available':
-      return amountToHuman(String(balance.available), balance.decimals, decimalDigits, commify);
-    case 'reserved':
-      return amountToHuman(String(balance.reserved), balance.decimals, decimalDigits, commify);
-    default:
-      console.log('_type is unknown in balanceToHuman!');
-
-      return '';
-  }
 }
 
 export const toHuman = (api: ApiPromise, value: unknown) => api.createType('Balance', value).toHuman();
@@ -120,7 +99,7 @@ export function getFormattedAddress(_address: string | null | undefined, _chain:
   return encodeAddress(publicKey, prefix);
 }
 
-export function getSubstrateAddress(address: AccountId | string | undefined): string | undefined {
+export function getSubstrateAddress(address: AccountId | string | null | undefined): string | undefined {
   if (!address) {
     return undefined;
   }
@@ -194,7 +173,13 @@ export function getTransactionHistoryFromLocalStorage(
   const chainName = chain ? sanitizeChainName(chain.name) : _chainName;
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const transactionHistoryFromLocalStorage: SavedMetaData = account?.history ? JSON.parse(String(account.history)) : null;
+  let transactionHistoryFromLocalStorage: SavedMetaData | null = null;
+
+  try {
+    transactionHistoryFromLocalStorage = account?.['history'] ? JSON.parse(String(account['history'])) : null;
+  } catch (error) {
+    console.error('Failed to parse transaction history:', error);
+  }
 
   if (transactionHistoryFromLocalStorage) {
     if (transactionHistoryFromLocalStorage.chainName === chainName) {
@@ -214,7 +199,7 @@ export const getWebsiteFavicon = (url: string | undefined): string => {
   return 'https://s2.googleusercontent.com/s2/favicons?domain=' + url;
 };
 
-export function remainingTime (blocks: number, noMinutes?: boolean): string {
+export function remainingTime(blocks: number, noMinutes?: boolean): string {
   let mins = Math.floor(blocks * BLOCK_RATE / 60);
 
   if (!mins) {
@@ -322,9 +307,9 @@ export const isEqual = (a1: any[] | null, a2: any[] | null): boolean => {
 };
 
 export function saveAsHistory(formatted: string, info: TransactionDetail) {
-  chrome.storage.local.get('history', (res: { [key: string]: TransactionDetail[] }) => {
-    const k = `${formatted}`;
-    const last = res?.history ?? {};
+  chrome.storage.local.get('history', (res) => {
+    const k = `${formatted}` as any;
+    const last = (res?.['history'] ?? {}) as unknown as { [key: string]: TransactionDetail[] };
 
     if (last[k]) {
       last[k].push(info);
@@ -339,18 +324,20 @@ export function saveAsHistory(formatted: string, info: TransactionDetail) {
 
 export async function getHistoryFromStorage(formatted: string): Promise<TransactionDetail[] | undefined> {
   return new Promise((resolve) => {
-    chrome.storage.local.get('history', (res: { [key: string]: TransactionDetail[] }) => {
-      const k = `${formatted}`;
-      const last = res?.history;
+    chrome.storage.local.get('history', (res) => {
+      const k = `${formatted}` as any;
+      const last = (res?.['history'] ?? {}) as unknown as { [key: string]: TransactionDetail[] };
 
-      resolve(last && last[k]);
+
+      resolve(last?.[k]);
     });
   });
 }
 
 export const isHexToBn = (i: string): BN => isHex(i) ? hexToBn(i) : new BN(i);
+export const toBN = (i: any): BN => isHexToBn(String(i));
 
-export const sanitizeChainName = (chainName: string | undefined) => (chainName?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', '')?.replace(' Finance', '')?.replace(/\s/g, ''));
+export const sanitizeChainName = (chainName: string | undefined) => (chainName?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', '')?.replace(' Finance', '')?.replace(' Testnet', '')?.replace(/\s/g, ''));
 
 export const isEmail = (input: string | undefined) => {
   if (!input) {
@@ -374,4 +361,85 @@ export const isUrl = (input: string | undefined) => {
 
 export const pgBoxShadow = (theme: Theme): string => theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '2px 3px 4px 0px rgba(0, 0, 0, 0.10)';
 
-export const nullFunction = () => null;
+export const noop = () => null;
+
+export const truncString32Bytes = (input: string | null | undefined): string | null | undefined => {
+  if (!input) {
+    return input;
+  }
+
+  const encoder = new TextEncoder();
+  let byteLength = encoder.encode(input).length;
+  let inputVal = input;
+
+  while (byteLength > 32) {
+    inputVal = inputVal.substring(0, inputVal.length - 1);
+    byteLength = encoder.encode(inputVal).length;
+  }
+
+  return inputVal;
+};
+
+export const isOnRelayChain = (genesisHash?: string) => RELAY_CHAINS_GENESISHASH.includes(genesisHash || '');
+
+export const isOnAssetHub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');
+
+export const getProfileColor = (index: number, theme: Theme): string => {
+  if (index >= 0) {
+    const _index = index % PROFILE_COLORS.length; // to return colors recursively
+
+    return PROFILE_COLORS[_index][theme.palette.mode];
+  }
+
+  return PROFILE_COLORS[0][theme.palette.mode];
+};
+
+export const getPriceIdByChainName = (chainName?: string) => {
+  if (!chainName) {
+    return '';
+  }
+
+  const _chainName = (sanitizeChainName(chainName) as string).toLocaleLowerCase();
+
+  return EXTRA_PRICE_IDS[_chainName] ||
+    _chainName?.replace('assethub', '')?.replace('people', '');
+};
+
+export function areArraysEqual<T> (arrays: T[][]): boolean {
+  if (arrays.length < 2) {
+    return true; // Single array or empty input is considered equal
+  }
+
+  const referenceArrayLength = arrays[0].length;
+
+  // Check if all inputs are arrays of the same length
+  const allValidArrays = arrays.every((array) => Array.isArray(array) && array.length === referenceArrayLength);
+
+  if (!allValidArrays) {
+    return false;
+  }
+
+  // Create sorted copies of the arrays
+  const sortedArrays = arrays.map((array) => array.sort());
+
+  // Compare each sorted array with the first sorted array
+  return sortedArrays.every((sortedArray) =>
+    sortedArray.every((element, index) => element === sortedArrays[0][index])
+  );
+}
+
+export function extractBaseUrl (url: string | undefined) {
+  try {
+    if (!url) {
+      return;
+    }
+
+    const urlObj = new URL(url);
+
+    return `${urlObj.protocol}//${urlObj.hostname}`;
+  } catch (error) {
+    console.error('Invalid URL:', error);
+
+    return null;
+  }
+}

@@ -1,5 +1,8 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
+
+/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -11,17 +14,19 @@ import type { ApiPromise } from '@polkadot/api';
 import { Container } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-import { Balance } from '@polkadot/types/interfaces';
-import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import type { Chain } from '@polkadot/extension-chains/types';
 
-import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
+import type { Balance } from '@polkadot/types/interfaces';
+import keyring from '@polkadot/ui-keyring';
+import { BN, BN_ONE } from '@polkadot/util';
+
+import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
 import { useAccountDisplay, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
-import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import { PROXY_TYPE } from '../../../../util/constants';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
@@ -42,6 +47,7 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
+
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -53,7 +59,7 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
-  const tx = api.tx.nominationPools.bondExtra;
+  const tx = api.tx['nominationPools']['bondExtra'];
   const params = useMemo(() => ['Rewards'], []);
   const decimal = api.registry.chainDecimals[0];
 
@@ -74,7 +80,7 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -109,7 +115,8 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -140,7 +147,7 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain}
+            chain={chain as any}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />
@@ -155,7 +162,7 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
           />
           <AmountFee
             address={address}
-            amount={<ShowBalance2 address={address} balance={amount.add(staked).sub(estimatedFee ?? BN_ZERO)} />}
+            amount={<ShowBalance2 address={address} balance={amount.add(staked)} />}
             label={t('Total stake after')}
             style={{ pt: '5px' }}
           />
@@ -170,7 +177,7 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
           onConfirmClick={submit}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+          proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

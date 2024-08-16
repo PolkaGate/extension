@@ -1,12 +1,13 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme, Typography } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import React from 'react';
 
-import { useApi, useFormatted, useTranslation } from '../hooks';
+import { useInfo, useIsExtensionPopup, useTranslation } from '../hooks';
 import { Identity, ShortAddress } from '.';
 
 interface Props {
@@ -15,15 +16,16 @@ interface Props {
   title?: string;
 }
 
-function AccountHolder ({ address, style, title }: Props): React.ReactElement {
+function AccountHolder({ address, style, title }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const formatted = useFormatted(address);
-  const api = useApi(address);
+  const isExtensionPopup = useIsExtensionPopup();
+
+  const { api, formatted } = useInfo(address);
 
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center' py='5px' sx={style}>
-      <Typography fontSize='16px' fontWeight={300} height='18px' textAlign='center'>
-        {title ?? t<string>('Account holder')}
+      <Typography fontSize='16px' fontWeight={isExtensionPopup ? 300 : 400} height='18px' textAlign='center'>
+        {title ?? t('Account holder')}
       </Typography>
       <Identity
         address={address}

@@ -1,9 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { BalancesInfo } from '../../../../util/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Grid, Typography } from '@mui/material';
@@ -16,7 +18,6 @@ import { Convictions, PButton } from '../../../../components';
 import { useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useFormatted, useToken, useTranslation } from '../../../../hooks';
 import { Lock } from '../../../../hooks/useAccountLocks';
 import { MAX_AMOUNT_LENGTH } from '../../../../util/constants';
-import { BalancesInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { Track } from '../../utils/types';
 import AmountWithOptionsAndLockAmount from '../partial/AmountWithOptionsAndLockAmount';
@@ -52,8 +53,8 @@ export default function DelegateVote({ accountLocks, address, api, balances, del
   const [checked, setChecked] = useState<BN[]>([]);
   const [maxFee, setMaxFee] = useState<Balance>();
 
-  const delegate = api && api.tx.convictionVoting.delegate;
-  const batch = api && api.tx.utility.batchAll;
+  const delegate = api && api.tx['convictionVoting']['delegate'];
+  const batch = api && api.tx['utility']['batchAll'];
 
   const delegateAmountBN = useMemo(() => (amountToMachine(delegateAmount, decimal)), [decimal, delegateAmount]);
   const delegatePower = useMemo(() => {
@@ -72,7 +73,7 @@ export default function DelegateVote({ accountLocks, address, api, balances, del
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return setMaxFee(api?.createType('Balance', BN_ONE));
     }
@@ -142,7 +143,7 @@ export default function DelegateVote({ accountLocks, address, api, balances, del
       return;
     }
 
-    const ED = api.consts.balances.existentialDeposit as unknown as BN;
+    const ED = api.consts['balances']['existentialDeposit'] as unknown as BN;
     const max = new BN(balances.votingBalance.toString()).sub(ED.muln(2)).sub(new BN(maxFee));
     const maxToHuman = balances.votingBalance?.isZero() ? BN_ZERO : amountToHuman(max.toString(), decimal);
 

@@ -1,16 +1,19 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 /**
  * @description
  * this component shows a subtitle beneath the header
  * */
 
+import type { Step } from '../util/types';
+
 import { Divider, Grid } from '@mui/material';
 import React from 'react';
 
 import { Steps } from '../components';
-import { Step } from '../util/types';
 
 interface Props {
   label: string;
@@ -20,10 +23,10 @@ interface Props {
   lineHeight?: string;
 }
 
-function SubTitle({ label, mt, withSteps, lineHeight = '35px', style = { fontSize: '16px', fontWeight: 500, mb: '5px' } }: Props) {
+function SubTitle ({ label, lineHeight = '35px', mt, style = { fontSize: '16px', fontWeight: 500, marginBottom: '5px' }, withSteps }: Props) {
   return (
     <Grid alignItems='center' container item justifyContent='center' mt={mt ?? '-15px'} style={{ ...style }}>
-      <Grid item sx={{ lineHeight, pr: '5px' }} >
+      <Grid item sx={{ lineHeight, pr: '5px' }}>
         {label}
       </Grid>
       {withSteps &&
@@ -36,7 +39,7 @@ function SubTitle({ label, mt, withSteps, lineHeight = '35px', style = { fontSiz
         </Grid>
       }
       <Grid container item justifyContent='center' xs={12}>
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '138px', margin: 'auto' }} />
+        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', margin: 'auto', width: '138px' }} />
       </Grid>
     </Grid>
   );

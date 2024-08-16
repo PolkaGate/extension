@@ -3,8 +3,8 @@
 
 import React, { useEffect, useState } from 'react';
 
-import useIsExtensionPopup from '../../hooks/useIsExtensionPopup';
 import HomePageFullScreen from '../../fullscreen/homeFullScreen';
+import useIsExtensionPopup from '../../hooks/useIsExtensionPopup';
 import Home from '.';
 
 export default function ManageHome (): React.ReactElement {

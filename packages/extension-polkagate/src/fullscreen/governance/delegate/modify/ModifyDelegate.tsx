@@ -1,14 +1,16 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
- * this component opens send review page
+ * this component opens Modify Delegate review page
  * */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { BalancesInfo, Proxy, TxInfo } from '../../../../util/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -18,13 +20,12 @@ import { ISubmittableResult } from '@polkadot/types/types';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../components';
-import { useAccountInfo, useApi, useChain, useCurrentBlockNumber, useDecimal, useToken, useTracks, useTranslation } from '../../../../hooks';
+import { useCurrentBlockNumber, useIdentity, useInfo, useTracks, useTranslation } from '../../../../hooks';
 import { Lock } from '../../../../hooks/useAccountLocks';
 import { ThroughProxy } from '../../../../partials';
-import { BalancesInfo, Proxy, TxInfo } from '../../../../util/types';
+import { PROXY_TYPE } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import DisplayValue from '../../post/castVote/partial/DisplayValue';
-import { GOVERNANCE_PROXY } from '../../utils/consts';
 import TracksList from '../partial/TracksList';
 import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '..';
 import Modify from './Modify';
@@ -52,10 +53,7 @@ export type ModifyModes = 'Modify' | 'ReviewModify';
 
 export default function ModifyDelegate({ accountLocks, address, balances, classicDelegateInformation, formatted, lockedAmount, mixedDelegateInformation, mode, otherDelegatedTracks, selectedProxy, setDelegateInformation, setModalHeight, setMode, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const decimal = useDecimal(address);
-  const token = useToken(address);
-  const api = useApi(address);
-  const chain = useChain(address);
+  const { api, chain, decimal, genesisHash, token } = useInfo(address);
   const { tracks } = useTracks(address);
   const currentBlock = useCurrentBlockNumber(address);
   const ref = useRef(null);
@@ -65,7 +63,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
     : mixedDelegateInformation
       ? mixedDelegateInformation.delegatee
       : undefined;
-  const delegateeName = useAccountInfo(api, delegateeAddress)?.identity.display;
+  const delegateeName = useIdentity(genesisHash, delegateeAddress)?.identity?.display;
 
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
@@ -78,9 +76,9 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
   const [newConviction, setNewConviction] = useState<number | undefined>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const undelegate = api && api.tx.convictionVoting.undelegate;
-  const delegate = api && api.tx.convictionVoting.delegate;
-  const batch = api && api.tx.utility.batchAll;
+  const undelegate = api && api.tx['convictionVoting']['undelegate'];
+  const delegate = api && api.tx['convictionVoting']['delegate'];
+  const batch = api && api.tx['utility']['batchAll'];
 
   const acceptableConviction = useMemo(() => newConviction !== undefined ? newConviction === 0.1 ? 0 : newConviction : conviction === 0.1 ? 0 : conviction, [conviction, newConviction]);
 
@@ -181,7 +179,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
@@ -196,10 +194,11 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
     amount: newDelegateAmount ?? delegateAmount,
     fee: String(estimatedFee || 0),
     subAction: 'Modify Delegate',
-    to: { address: delegateeAddress, name: delegateeName },
+    to: { address: delegateeAddress, name: delegateeName }
   }), [delegateAmount, delegateeAddress, delegateeName, estimatedFee, newDelegateAmount]);
 
   useEffect(() => {
+    console.log('resets');
     setDelegateInformation({
       delegateAmount: newDelegateAmount ?? delegateAmount,
       delegateAmountBN: newDelegateAmountBN.isZero() ? delegateAmountBN : newDelegateAmountBN,
@@ -224,122 +223,120 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
 
   return (
     <Motion>
-      {step === STEPS.MODIFY &&
-        <Grid container ref={ref}>
-          {mode === 'Modify' &&
-            <Modify
-              accountLocks={accountLocks}
-              address={address}
-              api={api}
-              balances={balances}
-              chain={chain}
-              conviction={newConviction ?? conviction}
-              currentBlock={currentBlock}
-              decimal={decimal}
-              delegateAmount={newDelegateAmount ?? delegateAmount}
-              delegatePower={delegatePower}
-              delegatedTracks={delegatedTracks}
-              delegateeAddress={delegateeAddress}
-              estimatedFee={estimatedFee}
-              lockedAmount={lockedAmount}
-              nextButtonDisabled={nextButtonDisabled}
-              otherDelegatedTracks={otherDelegatedTracks}
-              selectedTracks={newSelectedTracks}
-              setConviction={setNewConviction}
-              setDelegateAmount={setNewDelegateAmount}
-              setMode={setMode}
-              setSelectedTracks={setNewSelectedTracks}
-              setStep={setStep}
-              token={token}
-              tracks={tracks}
-            />
-          }
-          {mode === 'ReviewModify' &&
-            <>
-              {isPasswordError &&
-                <WrongPasswordAlert />
-              }
-              <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: isPasswordError ? 0 : '10px', width: '90%' }}>
-                <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Delegate from')}
-                </Typography>
-                <Identity
-                  address={address}
-                  api={api}
-                  chain={chain}
-                  direction='row'
-                  identiconSize={31}
-                  showShortAddress
-                  showSocial={false}
-                  style={{ maxWidth: '100%', width: 'fit-content' }}
-                  withShortAddress
-                />
+      <Grid container ref={ref}>
+        {mode === 'Modify' &&
+          <Modify
+            accountLocks={accountLocks}
+            address={address}
+            api={api}
+            balances={balances}
+            chain={chain as any}
+            conviction={newConviction ?? conviction}
+            currentBlock={currentBlock}
+            decimal={decimal}
+            delegateAmount={newDelegateAmount ?? delegateAmount}
+            delegatePower={delegatePower}
+            delegatedTracks={delegatedTracks}
+            delegateeAddress={delegateeAddress}
+            estimatedFee={estimatedFee}
+            lockedAmount={lockedAmount}
+            nextButtonDisabled={nextButtonDisabled}
+            otherDelegatedTracks={otherDelegatedTracks}
+            selectedTracks={newSelectedTracks}
+            setConviction={setNewConviction}
+            setDelegateAmount={setNewDelegateAmount}
+            setMode={setMode}
+            setSelectedTracks={setNewSelectedTracks}
+            setStep={setStep}
+            token={token}
+            tracks={tracks}
+          />
+        }
+        {mode === 'ReviewModify' &&
+          <>
+            {isPasswordError &&
+              <WrongPasswordAlert />
+            }
+            <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: isPasswordError ? 0 : '10px', width: '90%' }}>
+              <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+                {t('Delegate from')}
+              </Typography>
+              <Identity
+                address={address}
+                api={api}
+                chain={chain as any}
+                direction='row'
+                identiconSize={31}
+                showShortAddress
+                showSocial={false}
+                style={{ maxWidth: '100%', width: 'fit-content' }}
+                withShortAddress
+              />
+            </Grid>
+            {selectedProxyAddress &&
+              <Grid container m='auto' maxWidth='92%'>
+                <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
               </Grid>
-              {selectedProxyAddress &&
-                <Grid container m='auto' maxWidth='92%'>
-                  <ThroughProxy address={selectedProxyAddress} chain={chain} />
-                </Grid>
-              }
-              <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
-              <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
-                <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Delegatee')}
+            }
+            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
+            <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
+              <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+                {t('Delegatee')}
+              </Typography>
+              <Identity
+                api={api}
+                chain={chain as any}
+                direction='row'
+                formatted={delegateeAddress}
+                identiconSize={31}
+                showShortAddress
+                showSocial={false}
+                style={{ maxWidth: '100%', width: 'fit-content' }}
+                withShortAddress
+              />
+            </Grid>
+            <DisplayValue title={t('Delegated Value ({{token}})', { replace: { token } })}>
+              <Typography fontSize='28px' fontWeight={400}>
+                {newDelegateAmount ?? delegateAmount}
+              </Typography>
+            </DisplayValue>
+            <DisplayValue title={t('Vote Multiplier')}>
+              <Typography fontSize='28px' fontWeight={400}>
+                {`${acceptableConviction === 0 ? 0.1 : acceptableConviction}x`}
+              </Typography>
+            </DisplayValue>
+            <DisplayValue title={t('Number of Referenda Categories')}>
+              <Grid container direction='row'>
+                <Typography fontSize='28px' fontWeight={400} width='fit-content'>
+                  {`${newSelectedTracks.length ?? selectedTracks.length} of ${tracks?.length ?? 15}`}
                 </Typography>
-                <Identity
-                  api={api}
-                  chain={chain}
-                  direction='row'
-                  formatted={delegateeAddress}
-                  identiconSize={31}
-                  showShortAddress
-                  showSocial={false}
-                  style={{ maxWidth: '100%', width: 'fit-content' }}
-                  withShortAddress
-                />
+                <TracksList selectedTracks={newSelectedTracks ?? selectedTracks} tracks={tracks} />
               </Grid>
-              <DisplayValue title={t<string>('Delegated Value ({{token}})', { replace: { token } })}>
-                <Typography fontSize='28px' fontWeight={400}>
-                  {newDelegateAmount ?? delegateAmount}
-                </Typography>
-              </DisplayValue>
-              <DisplayValue title={t<string>('Vote Multiplier')}>
-                <Typography fontSize='28px' fontWeight={400}>
-                  {`${acceptableConviction === 0 ? 0.1 : acceptableConviction}x`}
-                </Typography>
-              </DisplayValue>
-              <DisplayValue title={t<string>('Number of Referenda Categories')}>
-                <Grid container direction='row'>
-                  <Typography fontSize='28px' fontWeight={400} width='fit-content'>
-                    {`${newSelectedTracks.length ?? selectedTracks.length} of ${tracks?.length ?? 15}`}
-                  </Typography>
-                  <TracksList selectedTracks={newSelectedTracks ?? selectedTracks} tracks={tracks} />
-                </Grid>
-              </DisplayValue>
-              <DisplayValue title={t<string>('Fee')}>
-                <ShowValue height={20} value={estimatedFee?.toHuman()} />
-              </DisplayValue>
-              <Grid container item pt='10px'>
-                <SignArea2
-                  address={address}
-                  call={tx}
-                  extraInfo={extraInfo}
-                  isPasswordError={isPasswordError}
-                  onSecondaryClick={onBackClick}
-                  primaryBtnText={t<string>('Confirm')}
-                  proxyTypeFilter={GOVERNANCE_PROXY}
-                  secondaryBtnText={t<string>('Back')}
-                  selectedProxy={selectedProxy}
-                  setIsPasswordError={setIsPasswordError}
-                  setStep={setStep}
-                  setTxInfo={setTxInfo}
-                  step={step}
-                  steps={STEPS}
-                />
-              </Grid>
-            </>
-          }
-        </Grid>
-      }
+            </DisplayValue>
+            <DisplayValue title={t('Fee')}>
+              <ShowValue height={20} value={estimatedFee?.toHuman()} />
+            </DisplayValue>
+            <Grid container item pt='10px'>
+              <SignArea2
+                address={address}
+                call={tx}
+                extraInfo={extraInfo}
+                isPasswordError={isPasswordError}
+                onSecondaryClick={onBackClick}
+                primaryBtnText={t('Confirm')}
+                proxyTypeFilter={PROXY_TYPE.GOVERNANCE}
+                secondaryBtnText={t('Back')}
+                selectedProxy={selectedProxy}
+                setIsPasswordError={setIsPasswordError}
+                setStep={setStep}
+                setTxInfo={setTxInfo}
+                step={step}
+                steps={STEPS}
+              />
+            </Grid>
+          </>
+        }
+      </Grid>
     </Motion>
   );
 }

@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { AccountId } from '@polkadot/types/interfaces';
 
@@ -7,12 +8,13 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
-import { SavedValidatorsIdentities, ValidatorsIdentities } from '../util/types';
-import { useChainName, useCurrentEraIndex, useEndpoint } from '.';
+import type { SavedValidatorsIdentities, ValidatorsIdentities } from '../util/types';
+import { useCurrentEraIndex, useInfo, usePeopleChain } from '.';
 
-export default function useValidatorsIdentities(address: string, allValidatorsIds: AccountId[] | null | undefined, identities?: DeriveAccountInfo[]): DeriveAccountInfo[] | null | undefined {
-  const endpoint = useEndpoint(address);
-  const chainName = useChainName(address);
+export default function useValidatorsIdentities(address: string, allValidatorsIds: AccountId[] | null | undefined, identities?: DeriveAccountInfo[] | null): DeriveAccountInfo[] | null | undefined {
+  const { chainName } = useInfo(address);
+  const { endpoint } = usePeopleChain(address);
+
   const currentEraIndex = useCurrentEraIndex(address);
 
   const [validatorsIdentities, setValidatorsIdentities] = useState<DeriveAccountInfo[] | null | undefined>();
@@ -40,7 +42,7 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
       if (info && identities?.length && info.eraIndex !== savedEraIndex) {
         console.log(`setting new identities #old was: ${validatorsIdentities?.length || '0'}`);
 
-        setNewValidatorsIdentities(info.accountsInfo);
+        setNewValidatorsIdentities(identities);
 
         chrome.storage.local.get('validatorsIdentities', (res) => {
           const k = `${chainName}`;
@@ -74,8 +76,6 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
 
     // eslint-disable-next-line no-void
     void chrome.storage.local.get('validatorsIdentities', (res: { [key: string]: SavedValidatorsIdentities }) => {
-      console.log('Validators Identities in local storage:', res);
-
       if (res?.validatorsIdentities?.[chainName]) {
         setValidatorsIdentities(res.validatorsIdentities[chainName]?.accountsInfo);
         setSavedEraIndex(res.validatorsIdentities[chainName]?.eraIndex);

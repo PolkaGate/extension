@@ -3,12 +3,14 @@
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { createAssets } from '@polkagate/apps-config/assets';
-import { Asset } from '@polkagate/apps-config/assets/types';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { Asset } from '@polkagate/apps-config/assets/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
+import type { AlertType } from '../util/types';
 
-import { AccountJson } from '@polkadot/extension-base/background/types';
-import { BN } from '@polkadot/util';
+import { createAssets } from '@polkagate/apps-config/assets';
+import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+
+import { BN, isObject } from '@polkadot/util';
 
 import { getStorage, setStorage, watchStorage } from '../components/Loading';
 import { toCamelCase } from '../fullscreen/governance/utils/util';
@@ -17,12 +19,12 @@ import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constan
 import getChainName from '../util/getChainName';
 import { isHexToBn } from '../util/utils';
 import useSelectedChains from './useSelectedChains';
-import { useIsTestnetEnabled } from '.';
+import { useIsTestnetEnabled, useTranslation } from '.';
 
 type WorkerMessage = Record<string, MessageBody[]>;
 type Assets = Record<string, FetchedBalance[]>;
-type AssetsBalancesPerChain = { [genesisHash: string]: FetchedBalance[] };
-type AssetsBalancesPerAddress = { [address: string]: AssetsBalancesPerChain };
+interface AssetsBalancesPerChain { [genesisHash: string]: FetchedBalance[] }
+interface AssetsBalancesPerAddress { [address: string]: AssetsBalancesPerChain }
 export interface SavedAssets { balances: AssetsBalancesPerAddress, timeStamp: number }
 
 interface BalancesDetails {
@@ -40,7 +42,7 @@ interface BalancesDetails {
   votingBalance?: BN
 }
 
-type MessageBody = {
+interface MessageBody {
   assetId?: number,
   totalBalance: string,
   chainName: string,
@@ -49,7 +51,7 @@ type MessageBody = {
   priceId: string,
   token: string,
   balanceDetails?: string,
-};
+}
 
 export const BN_MEMBERS = [
   'totalBalance',
@@ -70,13 +72,16 @@ export const BN_MEMBERS = [
 
 export interface FetchedBalance {
   assetId?: number,
+  availableBalance: BN,
+  balanceDetails?: any,
   totalBalance: BN,
   chainName: string,
+  date?: number,
   decimal: number,
   genesisHash: string,
   priceId: string,
+  price?: number,
   token: string,
-  availableBalance: BN,
   soloTotal?: BN,
   pooledBalance?: BN,
   lockedBalance?: BN,
@@ -85,7 +90,7 @@ export interface FetchedBalance {
   vestingTotal?: BN,
   freeBalance?: BN,
   frozenFee?: BN,
-  frozenMisc: BN,
+  frozenMisc?: BN,
   reservedBalance?: BN,
   votingBalance?: BN
 }
@@ -93,21 +98,23 @@ export interface FetchedBalance {
 const DEFAULT_SAVED_ASSETS = { balances: {} as AssetsBalancesPerAddress, timeStamp: Date.now() };
 
 export const ASSETS_NAME_IN_STORAGE = 'assets';
-const BALANCE_VALIDITY_PERIOD = 2 * 1000 * 60;
+const BALANCE_VALIDITY_PERIOD = 1 * 1000 * 60;
 
 const isUpToDate = (date?: number): boolean | undefined => date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
 
-function allHexToBN (balances: string | undefined): BalancesDetails | unknown {
+function allHexToBN (balances: object | string | undefined): BalancesDetails | {} {
   if (!balances) {
     return {};
   }
 
-  const parsedBalances = JSON.parse(balances) as BalancesDetails;
+  const parsedBalances = isObject(balances) ? balances : JSON.parse(balances as string) as BalancesDetails;
   const _balances = {} as BalancesDetails;
 
   Object.keys(parsedBalances).forEach((item) => {
-    if (parsedBalances[item] !== 'undefined') {
-      _balances[item] = isHexToBn(parsedBalances[item] as string);
+    const key = item as keyof BalancesDetails;
+
+    if (parsedBalances[key] !== 'undefined') {
+      _balances[key] = isHexToBn(parsedBalances[key] as unknown as string);
     }
   });
 
@@ -121,8 +128,13 @@ const assetsChains = createAssets();
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances (accounts: AccountJson[] | null): SavedAssets | undefined | null {
+export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>): SavedAssets | undefined | null {
   const isTestnetEnabled = useIsTestnetEnabled();
+  const selectedChains = useSelectedChains();
+  const { t } = useTranslation();
+
+  /** to limit calling of this heavy call on just home and account details */
+  const SHOULD_FETCH_ASSETS = window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs');
 
   /** We need to trigger address change when a new address is added, without affecting other account fields. Therefore, we use the length of the accounts array as a dependency. */
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -131,16 +143,45 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
   const [fetchedAssets, setFetchedAssets] = useState<SavedAssets | undefined | null>();
   const [isWorking, setIsWorking] = useState<boolean>(false);
   const [workersCalled, setWorkersCalled] = useState<Worker[]>();
-  const [isUpdate, setIsUpdate] = useState<boolean>();
-  const selectedChains = useSelectedChains();
+  const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
   useEffect(() => {
-    getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
+    SHOULD_FETCH_ASSETS && getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
       const _timeStamp = (savedAssets as SavedAssets)?.timeStamp;
 
-      setIsUpdate(isUpToDate(_timeStamp));
+      setIsUpdate(Boolean(isUpToDate(_timeStamp)));
     }).catch(console.error);
-  }, [workersCalled?.length]);
+  }, [SHOULD_FETCH_ASSETS]);
+
+  const removeZeroBalanceRecords = useCallback((toBeSavedAssets: SavedAssets): SavedAssets => {
+    const _toBeSavedAssets = { ...toBeSavedAssets };
+    const balances = (_toBeSavedAssets)?.balances || [];
+
+    Object.entries(balances).forEach(([address, assetsPerChain]) => {
+      Object.entries(assetsPerChain).forEach(([genesisHash, fetchedBalance]) => {
+        const toBeDeletedIndexes: string[] = [];
+
+        fetchedBalance.forEach(({ token, totalBalance }, _index) => {
+          if (new BN(totalBalance).isZero()) {
+            toBeDeletedIndexes.push(token);
+          }
+        });
+
+        toBeDeletedIndexes.forEach((_token) => {
+          const index = _toBeSavedAssets.balances[address][genesisHash].findIndex(({ token }) => _token === token);
+
+          index >= 0 && _toBeSavedAssets.balances[address][genesisHash].splice(index, 1);
+        });
+
+        // if fetched balances array on the chain is empty then remove that genesis hash from the structure
+        if (!fetchedBalance.length) {
+          delete _toBeSavedAssets.balances[address][genesisHash];
+        }
+      });
+    });
+
+    return _toBeSavedAssets;
+  }, []);
 
   const handleAccountsSaving = useCallback(() => {
     const toBeSavedAssets = fetchedAssets || DEFAULT_SAVED_ASSETS;
@@ -151,18 +192,22 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
       toBeSavedAssets.balances[address] = {};
     });
 
-    setFetchedAssets(toBeSavedAssets);
-    setStorage(ASSETS_NAME_IN_STORAGE, toBeSavedAssets, true).catch(console.error);
+    // Remove assets whose balances drop to zero and have not been retrieved to be combined
+    const updatedAssetsToBeSaved = removeZeroBalanceRecords(toBeSavedAssets);
+
+    setFetchedAssets(updatedAssetsToBeSaved);
+    setStorage(ASSETS_NAME_IN_STORAGE, updatedAssetsToBeSaved, true).catch(console.error);
     setWorkersCalled(undefined);
-  }, [addresses, fetchedAssets]);
+    setIsUpdate(true);
+  }, [addresses, fetchedAssets, removeZeroBalanceRecords]);
 
   useEffect(() => {
     /** when one round fetch is done, we will save fetched assets in storage */
     if (addresses && workersCalled?.length === 0) {
-      setWorkersCalled(undefined);
       handleAccountsSaving();
+      setAlerts((perv) => [...perv, { severity: 'success', text: t('Accounts\' balances updated!') }]);
     }
-  }, [accounts, addresses, handleAccountsSaving, workersCalled?.length]);
+  }, [accounts, addresses, handleAccountsSaving, setAlerts, t, workersCalled?.length]);
 
   useEffect(() => {
     /** chain list may have changed */
@@ -181,6 +226,10 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
   }, [workersCalled?.length]);
 
   useEffect(() => {
+    if (!SHOULD_FETCH_ASSETS) {
+      return;
+    }
+
     if (!addresses) {
       console.info('useAssetsBalances: no addresses to fetch assets!');
 
@@ -196,7 +245,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
     }).catch(console.error);
 
     watchStorage(ASSETS_NAME_IN_STORAGE, setFetchedAssets, true).catch(console.error);
-  }, [addresses]);
+  }, [SHOULD_FETCH_ASSETS, addresses]);
 
   const handleSetWorkersCall = useCallback((worker: Worker, terminate?: 'terminate') => {
     terminate && worker.terminate();
@@ -265,15 +314,18 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
       const parsedMessage = JSON.parse(message) as WorkerMessage;
 
       Object.keys(parsedMessage).forEach((address) => {
-        /** We use index 0 because each relay chain has only one asset */
+        /** We use index 0 because we consider each relay chain has only one asset */
         _assets[address] = [
           {
+            price: undefined,
             ...parsedMessage[address][0],
-            ...allHexToBN(parsedMessage[address][0].balanceDetails),
+            ...allHexToBN(parsedMessage[address][0].balanceDetails) as BalancesDetails,
+            date: Date.now(),
             decimal: Number(parsedMessage[address][0].decimal),
             totalBalance: isHexToBn(parsedMessage[address][0].totalBalance)
           }];
 
+        /** since balanceDetails is already converted all to BN, hence we can delete that field */
         delete _assets[address][0].balanceDetails;
       });
 
@@ -298,7 +350,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
       const message = e.data;
 
       if (!message) {
-        console.info(`fetchAssetOnAssetHubs: No assets found on ${chainName}`);
+        console.info(`No assets found on ${chainName}`);
         handleSetWorkersCall(worker, 'terminate');
 
         return;
@@ -311,8 +363,8 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
           .map((message) => {
             const _asset = {
               ...message,
-              availableBalance: isHexToBn(message.availableBalance),
-              ...allHexToBN(message.balanceDetails),
+              ...allHexToBN(message.balanceDetails) as BalancesDetails,
+              date: Date.now(),
               decimal: Number(message.decimal),
               totalBalance: isHexToBn(message.totalBalance)
             };
@@ -343,7 +395,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
       const message = e.data;
 
       if (!message) {
-        console.info('fetchAssetsOnHydraDx: No assets found on HydraDx');
+        console.info(`No assets found on ${chainName}`);
         handleSetWorkersCall(worker, 'terminate');
 
         return;
@@ -355,10 +407,13 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
       Object.keys(parsedMessage).forEach((address) => {
         _assets[address] = parsedMessage[address].map(
           (message) => {
-            const temp = { ...message,
-              ...allHexToBN(message.balanceDetails),
+            const temp = {
+              ...message,
+              ...allHexToBN(message.balanceDetails) as BalancesDetails,
+              date: Date.now(),
               decimal: Number(message.decimal),
-              totalBalance: isHexToBn(message.totalBalance) };
+              totalBalance: isHexToBn(message.totalBalance)
+            };
 
             delete temp.balanceDetails;
 
@@ -411,7 +466,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
   }, [addresses, fetchAssetOnAssetHubs, fetchAssetOnRelayChain, fetchMultiAssetChainAssets]);
 
   useEffect(() => {
-    if (!addresses || addresses.length === 0 || isWorking || isUpdate || !selectedChains || isTestnetEnabled === undefined) {
+    if (!SHOULD_FETCH_ASSETS || !addresses || addresses.length === 0 || isWorking || isUpdate || !selectedChains || isTestnetEnabled === undefined) {
       return;
     }
 
@@ -432,7 +487,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null): Save
 
       fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);
     });
-  }, [addresses, fetchAssets, isTestnetEnabled, isUpdate, isWorking, selectedChains]);
+  }, [SHOULD_FETCH_ASSETS, addresses, fetchAssets, isTestnetEnabled, isUpdate, isWorking, selectedChains]);
 
   return fetchedAssets;
 }

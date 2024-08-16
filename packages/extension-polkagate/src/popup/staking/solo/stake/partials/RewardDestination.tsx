@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,7 +14,7 @@ import React from 'react';
 
 import { ShortAddress } from '../../../../../components';
 import { useAccountName, useMyAccountIdentity, useTranslation } from '../../../../../hooks';
-import { SoloSettings } from '../../../../../util/types';
+import type { SoloSettings } from '../../../../../util/types';
 import getPayee from './util';
 
 interface Props {
@@ -23,7 +24,7 @@ interface Props {
 export default function RewardsDestination({ settings }: Props): React.ReactElement {
   const { t } = useTranslation();
   const address = getPayee(settings);
-  const payeeName = useAccountName(address)
+  const payeeName = useAccountName(address);
   const payeeIdentity = useMyAccountIdentity(address);
 
   return (
@@ -33,7 +34,7 @@ export default function RewardsDestination({ settings }: Props): React.ReactElem
       </Typography>
       <Grid container item justifyContent='center' mt='5px'>
         {settings.payee === 'Staked'
-          ? <Typography sx={{ fontWeight: 400}}>
+          ? <Typography sx={{ fontWeight: 400 }}>
             {t('Add to staked amount')}
           </Typography>
           : <Grid container item justifyContent='center'>

@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -11,7 +12,7 @@ import React from 'react';
 
 interface Props {
   text: NonNullable<React.ReactNode> | string | null | undefined;
-  children: React.ReactElement<any, any>;
+  children: React.ReactElement<unknown, any>;
   placement?: 'top' | 'bottom' | 'left' | 'right' | 'bottom-end' | 'bottom-start' | 'left-end' | 'left-start' | 'right-end' | 'right-start' | 'top-end' | 'top-start' | undefined
   showQuestionMark?: boolean;
   showInfoMark?: boolean;

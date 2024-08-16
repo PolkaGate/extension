@@ -3,11 +3,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
-import React from 'react';
+import type { ApiPromise } from '@polkadot/api';
+import type { ToolTipPlacement } from '@polkadot/extension-polkagate/src/components/Infotip';
+import type { BN } from '@polkadot/util';
 
-import { ApiPromise } from '@polkadot/api';
-import { BN } from '@polkadot/util';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import React from 'react';
 
 import { Infotip, PButton, ShowBalance, Warning } from '../../../components';
 
@@ -30,7 +31,7 @@ interface OptionProps {
   logo?: any;
 }
 
-export default function StakingOption({ api, balance, balanceText, buttonText, helperText, isBusy, isDisabled, logo, noToolTip, onClick, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
+export default function StakingOption ({ api, balance, balanceText, buttonText, helperText, isBusy, isDisabled, logo, noToolTip, onClick, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
   const theme = useTheme();
 
   return (
@@ -42,7 +43,7 @@ export default function StakingOption({ api, balance, balanceText, buttonText, h
           </Grid>
         }
         <Grid item>
-          <Infotip iconLeft={6} iconTop={8} placement={tipPlace} showQuestionMark={!noToolTip && showQuestionMark} text={helperText}>
+          <Infotip iconLeft={6} iconTop={8} placement={tipPlace as ToolTipPlacement} showQuestionMark={!noToolTip && showQuestionMark} text={helperText}>
             <Typography fontSize='20px' fontWeight={400}>
               {title}
             </Typography>

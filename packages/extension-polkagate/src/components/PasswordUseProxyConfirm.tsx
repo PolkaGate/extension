@@ -3,17 +3,17 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ApiPromise } from '@polkadot/api';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { BN } from '@polkadot/util';
+import type { Proxy, ProxyItem, ProxyTypes } from '../util/types';
 
-import { Grid, SxProps, Theme, Tooltip, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Tooltip, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-
-import { ApiPromise } from '@polkadot/api';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useAccount, useCanPayFee, useMetadata, useTranslation } from '../hooks';
 import SelectProxy from '../partials/SelectProxy';
-import { Proxy, ProxyItem, ProxyTypes } from '../util/types';
+import { noop } from '../util/utils';
 import { Identity, Password, PButton, Warning } from '.';
 
 interface Props {
@@ -37,14 +37,10 @@ interface Props {
   onConfirmClick: () => Promise<void>
 }
 
-function noop() {
-  // This function does nothing.
-}
-
-export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmText, disabled, estimatedFee, genesisHash, isPasswordError, label = '', onChange, onConfirmClick, prevState, proxiedAddress, proxies, proxyTypeFilter, selectedProxy, setIsPasswordError, setSelectedProxy, style }: Props): React.ReactElement<Props> {
+export default function PasswordUseProxyConfirm ({ api, confirmDisabled, confirmText, disabled, estimatedFee, genesisHash, isPasswordError, label = '', onChange, onConfirmClick, prevState, proxiedAddress, proxies, proxyTypeFilter, selectedProxy, setIsPasswordError, setSelectedProxy, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const canPayFee = useCanPayFee(selectedProxy?.delegate || proxiedAddress, estimatedFee);
+  const canPayFee = useCanPayFee(selectedProxy?.delegate || proxiedAddress as string, estimatedFee);
   const account = useAccount(proxiedAddress);
   const chain = useMetadata(genesisHash, true);
   const [password, setPassword] = useState<string>();
@@ -109,7 +105,7 @@ export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmT
                     onEnter={confirmDisabled ? noop : onConfirmClick}
                   />
                 </Grid>
-                {(!!proxiesToSelect?.length || prevState?.selectedProxyAddress) &&
+                {(!!proxiesToSelect?.length || prevState?.['selectedProxyAddress']) &&
                   <Tooltip
                     arrow
                     componentsProps={{
@@ -171,7 +167,6 @@ export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmT
       </Grid>
       <SelectProxy
         genesisHash={genesisHash}
-        proxiedAddress={proxiedAddress}
         proxies={proxiesToSelect}
         proxyTypeFilter={proxyTypeFilter}
         selectedProxy={selectedProxy}

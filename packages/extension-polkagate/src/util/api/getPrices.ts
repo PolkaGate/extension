@@ -1,9 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import request from 'umi-request';
+//@ts-nocheck
 
-import { PricesType } from '../types';
+import type { PricesType } from '../types';
+
+import request from 'umi-request';
 
 /** some chains have a different priceId than its sanitizedChainName,
  * hence we will replace their price Id using  EXTRA_PRICE_IDS */
@@ -14,7 +16,7 @@ export const EXTRA_PRICE_IDS: Record<string, string> = {
 };
 
 export default async function getPrices (priceIds: string[], currencyCode = 'usd') {
-  console.log(' getting prices3 for:', priceIds.sort());
+  console.log(' getting prices for:', priceIds.sort());
 
   const revisedPriceIds = priceIds.map((item) => (EXTRA_PRICE_IDS[item] || item));
 

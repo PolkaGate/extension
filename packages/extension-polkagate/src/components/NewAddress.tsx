@@ -1,12 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
-import { useAccount, useChain, useFormatted, useTranslation } from '../hooks';
+import { useInfo, useTranslation } from '../hooks';
 import { Identicon, ShortAddress } from './';
 
 export interface Props {
@@ -19,9 +20,7 @@ export interface Props {
 export default function NewAddress({ address, name, showCopy, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const account = useAccount(address);
-  const chain = useChain(address);
-  const formatted = useFormatted(address);
+  const { account, chain, formatted } = useInfo(address);
 
   const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette]);
 
@@ -36,7 +35,7 @@ export default function NewAddress({ address, name, showCopy, style }: Props): R
         />
       </Grid>
       <Grid alignItems='flex-start' container direction='column' item style={{ maxWidth: '85%' }} xs>
-        <Typography fontSize='16px' fontWeight={400} maxWidth='95%' overflow='hidden' variant='h3' whiteSpace='nowrap' textOverflow='ellipsis'>
+        <Typography fontSize='16px' fontWeight={400} maxWidth='95%' overflow='hidden' textOverflow='ellipsis' variant='h3' whiteSpace='nowrap'>
           {name ?? account?.name ?? t('<unknown>')}
         </Typography>
         <Grid container item justifyContent='space-between'>

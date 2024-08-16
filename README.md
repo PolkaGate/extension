@@ -10,7 +10,7 @@ A user-friendly wallet for seamless browser-based interaction with Polkadot/Subs
 
 Polkagate extension not only has all the abilities of the original Polkadot extension, but also many new functionalities as listed below are available, where more features are coming.
 
-## New functionalities
+## Functionalities
 
 Currently, the following features are available:
   - Add watch-only account ( can be used as a proxied address) 
@@ -24,16 +24,13 @@ Currently, the following features are available:
   - View balances (crypto/USD)
   - View transaction history
   - View an address as QR code
-
-The following features will be available in the next milestone:
-
   - Light client integration   
   - Social recovery
-  
+  - Account Profiles
 
-# ![Polkagate extension intro](https://raw.githubusercontent.com/Nick-1979/PolkadotJsPlusPictures/main/polkagate/new/intro.png)
+![Group 40093](https://github.com/PolkaGate/extension/assets/46442452/35cc6c13-532c-415e-a8e6-5285bc56e204)
 
-<!-- ### More photos [wiki](https://github.com/Nick-1979/polkadot-Js-Plus-extension/wiki/How-To's) -->
+![image](https://github.com/PolkaGate/extension/assets/46442452/8ad947dd-58a4-4ff3-9aa7-8613121b8938)
 
 
 ## Installation 

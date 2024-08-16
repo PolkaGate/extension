@@ -1,27 +1,25 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import type { ApiPromise } from '@polkadot/api';
-import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { AccountContext, AddressInput, InputWithLabel, PButton, Select, Warning } from '../../components';
-import { useAccountIdOrName, useFormatted, useTranslation } from '../../hooks';
+import { useAccountDisplay, useFormatted, useIdentity, useTranslation } from '../../hooks';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
-import { Proxy, ProxyItem } from '../../util/types';
+import type { Proxy, ProxyItem } from '../../util/types';
 import { sanitizeChainName } from '../../util/utils';
 import ShowIdentity from './partials/ShowIdentity';
 
 interface Props {
   address: string;
-  api: ApiPromise;
   showAddProxy: boolean;
   setShowAddProxy: React.Dispatch<React.SetStateAction<boolean>>;
   chain: Chain;
@@ -39,25 +37,27 @@ const isEqualProxy = (a: Proxy, b: Proxy) => {
   return a.delay === b.delay && a.delegate === b.delegate && a.proxyType === b.proxyType;
 };
 
-export default function AddProxy({ address, api, chain, onChange, proxyItems, setProxyItems, setShowAddProxy, showAddProxy }: Props): React.ReactElement {
+export default function AddProxy({ address, chain, onChange, proxyItems, setProxyItems, setShowAddProxy, showAddProxy }: Props): React.ReactElement {
+  const theme = useTheme();
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);
   const formatted = useFormatted(address);
-  const accountDisplayName = useAccountIdOrName(formatted);
+  const accountDisplayName = useAccountDisplay(formatted);
 
-  const theme = useTheme();
-
-  const [realAddress, setRealAddress] = useState<string | undefined>();
+  const [realAddress, setRealAddress] = useState<string | null | undefined>();
   const [selectedProxyType, setSelectedProxyType] = useState<string | null>('Any');
   const [delay, setDelay] = useState<number>(0);
-  const [accountInfo, setAccountInfo] = useState<DeriveAccountInfo | undefined | null>();
   const [addButtonDisabled, setAddButtonDisabled] = useState<boolean>(true);
+
+  const proxyAccountIdentity = useIdentity(chain.genesisHash, realAddress as string);
 
   const myselfAsProxy = useMemo(() => formatted === realAddress, [formatted, realAddress]);
   const possibleProxy = useMemo(() => ({ delay, delegate: realAddress, proxyType: selectedProxyType }) as Proxy, [delay, realAddress, selectedProxyType]);
   const alreadyExisting = useMemo(() => !!(proxyItems?.find((item) => isEqualProxy(item.proxy, possibleProxy))), [possibleProxy, proxyItems]);
 
-  const PROXY_TYPE = CHAIN_PROXY_TYPES[sanitizeChainName(chain.name) as keyof typeof CHAIN_PROXY_TYPES];
+  const chainName = sanitizeChainName(chain?.name);
+  const proxyTypeIndex = chainName?.toLowerCase()?.includes('assethub') ? 'AssetHubs' : chainName;
+  const PROXY_TYPE = CHAIN_PROXY_TYPES[proxyTypeIndex as keyof typeof CHAIN_PROXY_TYPES];
 
   const proxyTypeOptions = PROXY_TYPE.map((type: string): DropdownOption => ({
     text: type,
@@ -87,7 +87,6 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
   useEffect(() => {
     if (!realAddress || !selectedProxyType || myselfAsProxy) {
       setAddButtonDisabled(true);
-      setAccountInfo(undefined);
 
       return;
     }
@@ -101,26 +100,16 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
     setAddButtonDisabled(false);
   }, [alreadyExisting, myselfAsProxy, realAddress, selectedProxyType]);
 
-  useEffect(() => {
-    realAddress && api && api.derive.accounts.info(realAddress).then((info) => {
-      if (info.identity.display) {
-        setAccountInfo(info.identity);
-      } else {
-        setAccountInfo(null);
-      }
-    });
-  }, [api, realAddress]);
-
   return (
     <>
       <Typography fontSize='14px' fontWeight={300} m='20px auto 15px' textAlign='left' width='90%'>
-        {t<string>("You can add an account included in this extension as a proxy of {{accountDisplayName}} to sign certain types of transactions on {{accountDisplayName}}'s behalf.", { replace: { accountDisplayName } })}
+        {t("You can add an account included in this extension as a proxy of {{accountDisplayName}} to sign certain types of transactions on {{accountDisplayName}}'s behalf.", { replace: { accountDisplayName } })}
       </Typography>
       <AddressInput
-        address={realAddress}
+        address={realAddress as string}
         allAddresses={allAddresses}
-        chain={chain}
-        helperText={t<string>('The account address which will be a proxy account')}
+        chain={chain as any}
+        helperText={t('The account address which will be a proxy account')}
         label='Account ID'
         setAddress={setRealAddress}
         showIdenticon
@@ -132,8 +121,8 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
       <Grid sx={{ m: 'auto', width: '92%' }}>
         <Select
           defaultValue={proxyTypeOptions[0].value}
-          helperText={t<string>('The permissions allowed for this proxy account')}
-          label={t<string>('Proxy type')}
+          helperText={t('The permissions allowed for this proxy account')}
+          label={t('Proxy type')}
           onChange={_selectProxyType}
           options={proxyTypeOptions}
           value={selectedProxyType || proxyTypeOptions[0].value}
@@ -142,19 +131,19 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
       <Grid alignItems='end' container sx={{ m: '15px auto', width: '92%' }}>
         <Grid item xs={4}>
           <InputWithLabel
-            helperText={t<string>('The announcement period required of the initial proxy. Generally will be zero.')}
-            label={t<string>('Delay')}
+            helperText={t('The announcement period required of the initial proxy. Generally will be zero.')}
+            label={t('Delay')}
             onChange={_selectDelay}
             value={delay.toString()}
           />
         </Grid>
         <Typography fontSize='16px' fontWeight={300} pb='4px' pl='10px'>
-          {t<string>('Block(s)')}
+          {t('Block(s)')}
         </Typography>
       </Grid>
       {realAddress && !(myselfAsProxy || alreadyExisting) &&
         <ShowIdentity
-          accountIdentity={accountInfo}
+          accountIdentity={proxyAccountIdentity !==undefined && proxyAccountIdentity?.identity || null}
           style={{ m: 'auto', width: '92%' }}
         />
       }
@@ -168,15 +157,15 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
             theme={theme}
           >
             {myselfAsProxy
-              ? t<string>('Cannot set your account as a proxy for itself.')
-              : t<string>('You\'ve already included this proxy.')}
+              ? t('Cannot set your account as a proxy for itself.')
+              : t('You\'ve already included this proxy.')}
           </Warning>
         </Grid>
       }
       <PButton
         _onClick={_addProxy}
         disabled={addButtonDisabled}
-        text={t<string>('Add')}
+        text={t('Add')}
       />
     </>
   );

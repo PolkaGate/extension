@@ -1,54 +1,81 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, useTheme } from '@mui/material';
-import React, { useCallback } from 'react';
+import type { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/handlers/State';
 
-import { AuthUrlInfo } from '@polkadot/extension-base/background/handlers/State';
+import { RecentActors as RecentActorsIcon, Replay as ReplayIcon } from '@mui/icons-material';
+import { Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useContext, useMemo } from 'react';
 
-import { RemoveAuth, Switch } from '../../components';
+import { AccountContext, RemoveAuth } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 
 interface Props {
-  info: AuthUrlInfo;
-  toggleAuth: (url: string) => void;
-  removeAuth: (url: string) => void;
-  url: string;
+  authList: AuthUrls | null;
+  filter: string | undefined;
+  setDappInfo: React.Dispatch<React.SetStateAction<AuthUrlInfo | undefined>>;
+  toRemove: string[];
+  setToRemove: React.Dispatch<React.SetStateAction<string[]>>;
+  maxHeight: number;
 }
 
-export default function WebsiteEntry({ info, removeAuth, toggleAuth, url }: Props): React.ReactElement<Props> {
+export default function WebsiteEntry({ authList, filter, maxHeight, setDappInfo, setToRemove, toRemove }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const { accounts } = useContext(AccountContext);
 
-  const switchAccess = useCallback(() => {
-    toggleAuth(url);
-  }, [toggleAuth, url]);
+  const accountsLength = useMemo(() => accounts.length, [accounts.length]);
 
-  const _removeAuth = useCallback(() => {
-    removeAuth(url);
-  }, [removeAuth, url]);
+  const manageAuthorizedAccount = useCallback((info: AuthUrlInfo) => {
+    setDappInfo(info);
+  }, [setDappInfo]);
+
+  const manageRemove = useCallback((url: string, removing: boolean) => {
+    setToRemove(removing
+      ? toRemove.filter((toRemoveUrl) => toRemoveUrl !== url) // remove from list
+      : [...toRemove, url] // add to list
+    );
+  }, [setToRemove, toRemove]);
 
   return (
-    <Grid container item sx={{ '&:last-child': { borderBottom: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
-      <Grid alignItems='center' container item maxWidth='163px' xs sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light', overflowX: 'hidden', pl: '5px', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-        {url}
-      </Grid>
-      <Grid alignItems='center' container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light' }} xs={5.2}>
-        <Switch
-          checkedLabel={t<string>('Allowed')}
-          fontSize='12px'
-          fontWeight={400}
-          isChecked={info.isAllowed}
-          onChange={switchAccess}
-          theme={theme}
-          uncheckedLabel={t<string>('Denied')}
-        />
-      </Grid>
-      <Grid alignItems='center' container item justifyContent='center' onClick={_removeAuth} sx={{ width: 'fit-content', px:'5px' }}>
-        <RemoveAuth />
-      </Grid>
-    </Grid>
+    <>
+      {!authList || !Object.entries(authList)?.length
+        ? <Grid alignItems='center' container item justifyContent='center' sx={{ height: '40px', textAlign: 'center' }}>
+          {t('No website request yet!')}
+        </Grid>
+        : <Grid container item sx={{ '& :last-child': { borderBottom: 'none' }, maxHeight: { maxHeight }, overflow: 'scroll' }}>
+          {Object.entries(authList)
+            .filter(([url]: [string, AuthUrlInfo]) => url.includes(filter ?? ''))
+            .map(([url, info]: [string, AuthUrlInfo]) => {
+              const isAlreadyExist = !!toRemove.find((toRemoveUrl) => toRemoveUrl === url);
+
+              return (
+                <Grid container item key={url} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
+                  <Typography fontSize='14px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light', lineHeight: '30px', overflowX: 'hidden', pl: '5px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '67%' }}>
+                    {url}
+                  </Typography>
+                  <Grid alignItems='center' container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light', lineHeight: '30px', width: '25%' }}>
+                    {info.isAllowed && `(${info?.authorizedAccounts?.length ?? accountsLength})`}
+                    {info.isAllowed && <RecentActorsIcon onClick={() => manageAuthorizedAccount(info)} sx={{ color: theme.palette.secondary.light, cursor: 'pointer', fontSize: '25px', ml: '5px' }} />}
+                    {!info.isAllowed &&
+                      <Typography fontSize='14px' onClick={() => manageAuthorizedAccount(info)} sx={{ color: 'secondary.light', cursor: 'pointer', textDecoration: 'underline' }}>
+                        {t('No access')}
+                      </Typography>
+                    }
+                  </Grid>
+                  <Grid alignItems='center' container item justifyContent='center' onClick={() => manageRemove(url, isAlreadyExist)} sx={{ width: '8%' }}>
+                    {!isAlreadyExist && <RemoveAuth color={theme.palette.secondary.light} />}
+                    {isAlreadyExist && <ReplayIcon style={{ color: theme.palette.secondary.light, cursor: 'pointer' }} />}
+                  </Grid>
+                </Grid>
+              );
+            }
+            )}
+        </Grid>
+      }
+    </>
   );
 }

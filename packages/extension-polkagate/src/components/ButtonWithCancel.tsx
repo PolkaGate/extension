@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Button, Grid, useTheme } from '@mui/material';
+// @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React from 'react';
 
@@ -44,7 +45,7 @@ export default function ButtonWithCancel ({ _isBusy, _mt, _onClick, _onClickCanc
       </Grid>
       <Grid item xs={5.8}>
         {_isBusy
-          ? <Grid alignItems='center' container justifyContent='center' sx={{ border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', backgroundColor: 'secondary.main', textTransform: 'none', fontSize: '18px', fontWeight: 400, height: '36px', textTransform: 'none', width: '100%' }}>
+          ? <Grid alignItems='center' container justifyContent='center' sx={{ backgroundColor: 'secondary.main', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', fontSize: '18px', fontWeight: 400, height: '36px', textTransform: 'none', width: '100%' }}>
             <Circle color='white' scaleEnd={0.7} scaleStart={0.4} size={25} />
           </Grid>
           : <Button

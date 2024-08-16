@@ -3,23 +3,27 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { HexString } from '@polkadot/util/types';
+import type { Proxy, ProxyItem } from '../../../util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
-import { Chain } from '@polkadot/extension-chains/types';
+import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
+import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { ActionContext, AddressInput, ProxyTable, SelectChain, TwoButtons } from '../../../components';
+import { AddressInput, ProxyTable, SelectChain, TwoButtons, VaadinIcon } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useApiWithChain, useFullscreen, useGenesisHashOptions, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata } from '../../../messaging';
 import { Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
-import { ProxyItem } from '../../../util/types';
 
 export interface AccountInfo {
   address: string;
@@ -31,11 +35,10 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-  const onAction = useContext(ActionContext);
 
   const [isBusy, setIsBusy] = useState(false);
-  const [realAddress, setRealAddress] = useState<string | undefined>();
-  const [chain, setChain] = useState<Chain>();
+  const [realAddress, setRealAddress] = useState<string | null | undefined>();
+  const [chain, setChain] = useState<Chain | null>();
   const [name, setName] = useState<string | null | undefined>();
   const [proxies, setProxies] = useState<ProxyItem[] | undefined>();
 
@@ -55,7 +58,8 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
   }, [realAddress, chain]);
 
   useEffect(() => {
-    realAddress && api && api.query.proxy?.proxies(realAddress).then((proxies) => {
+    realAddress && api?.query['proxy']?.['proxies'](realAddress).then((proxies) => {
+      // @ts-expect-error will be resolved later
       const fetchedProxyItems = (JSON.parse(JSON.stringify(proxies[0])))?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
       setProxies(fetchedProxyItems);
@@ -66,16 +70,19 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
     if (name && realAddress && chain?.genesisHash) {
       setIsBusy(true);
 
-      createAccountExternal(name, realAddress, chain.genesisHash)
-        .then(() => onAction('/'))
+      createAccountExternal(name, realAddress, chain.genesisHash as HexString)
+        .then(() => {
+          setStorage('profile', PROFILE_TAGS.WATCH_ONLY).catch(console.error);
+          openOrFocusTab('/', true);
+        })
         .catch((error: Error) => {
           setIsBusy(false);
           console.error(error);
         });
     }
-  }, [chain?.genesisHash, name, onAction, realAddress]);
+  }, [chain?.genesisHash, name, realAddress]);
 
-  const onCancel = useCallback(() => onAction('/'), [onAction]);
+  const onCancel = useCallback(() => window.close(), []);
 
   const onNameChange = useCallback((name: string | null) => setName(name), []);
 
@@ -92,26 +99,26 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
-              <vaadin-icon icon='vaadin:tag' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
+              <VaadinIcon icon='vaadin:tag' style={{ color: `${theme.palette.text.primary}`, height: '40px', width: '40px' }} />
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t<string>('Add Watch-Only Account')}
+                {t('Add Watch-Only Account')}
               </Typography>
             </Grid>
           </Grid>
           <Typography fontSize='16px' fontWeight={400} width='100%'>
-            {t<string>('Enter the watch-only address. It can also serve as a proxied account, but without transaction signing. A proxy account in the extension is needed for signing.')}
+            {t('Enter the watch-only address. It can also serve as a proxied account, but without transaction signing. A proxy account in the extension is needed for signing.')}
           </Typography>
           <AddressInput
             addWithQr
             address={realAddress}
             chain={chain}
-            label={t<string>('Account ID')}
+            label={t('Account ID')}
             setAddress={setRealAddress}
             style={{ m: '30px auto 0', width: '100%' }}
           />
@@ -128,7 +135,7 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
                 defaultValue={chain?.genesisHash}
                 disabledItems={disabledItems}
                 icon={getLogo(chain ?? undefined)}
-                label={t<string>('Select the chain')}
+                label={t('Select the chain')}
                 onChange={onChangeGenesis}
                 options={genesisOptions}
                 style={{ my: '13px', width: '100%' }}
@@ -137,7 +144,7 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
           </Grid>
           <ProxyTable
             chain={realAddress ? chain : undefined}
-            label={t<string>('Proxies')}
+            label={t('Proxies')}
             mode='Availability'
             proxies={proxies}
             style={{
@@ -153,8 +160,8 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
                 mt='1px'
                 onPrimaryClick={onAdd}
                 onSecondaryClick={onCancel}
-                primaryBtnText={t<string>('Add')}
-                secondaryBtnText={t<string>('Cancel')}
+                primaryBtnText={t('Add')}
+                secondaryBtnText={t('Cancel')}
               />
             </Grid>
           </Grid>

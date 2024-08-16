@@ -3,14 +3,17 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Vote } from './util';
+
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
 import { ShowBalance } from '../../../../components';
 import { useApi, useDecimal, useToken, useTranslation } from '../../../../hooks';
+import { pgBoxShadow } from '../../../../util/utils';
 import { getVoteType } from '../../utils/util';
-import { getConviction, Vote } from './util';
+import { getConviction } from './util';
 
 interface Props {
   address: string | undefined;
@@ -19,12 +22,14 @@ interface Props {
   isFinished: boolean | undefined;
 }
 
-export default function MyVote({ address, isFinished, notVoted, vote }: Props): React.ReactElement {
+export default function MyVote ({ address, isFinished, notVoted, vote }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
+
+  // @ts-ignore
   const voteBalance = useMemo((): number | undefined => (vote?.standard?.balance || vote?.splitAbstain?.abstain || vote?.delegating?.balance), [vote]);
   const voteType = getVoteType(vote);
   const voteMethod = vote?.standard?.balance || vote?.splitAbstain?.abstain
@@ -32,7 +37,7 @@ export default function MyVote({ address, isFinished, notVoted, vote }: Props): 
     : vote?.delegating?.voted && vote?.delegating?.balance && t('Delegated');
 
   return (
-    <Grid alignItems={'center'} container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', mb: '10px', py: '10px', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main' }} xs={12}>
+    <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: theme.palette.mode === 'light' ? pgBoxShadow(theme) : undefined, mb: '10px', py: '10px' }} xs={12}>
       <Grid alignItems='baseline' container item spacing={0.2} sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mx: '25px' }} xs={12}>
         <Grid item>
           <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>

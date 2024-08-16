@@ -1,9 +1,11 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
+import type { InitiateRecoveryConfig, RecoveryConfigType, SessionInfo, SocialRecoveryModes, WithdrawInfo } from './util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -11,16 +13,17 @@ import { useParams } from 'react-router';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
+
 import { BN, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { Warning } from '../../components';
-import { useAccountsInfo, useActiveRecoveries, useApi, useChain, useFormatted, useFullscreen, useLostAccountInformation, useTranslation } from '../../hooks';
-import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
+import { useAccountsInfo, useActiveRecoveries, useFullscreen, useInfo, useLostAccountInformation, useTranslation } from '../../hooks';
+import { FULLSCREEN_WIDTH, SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
+import Bread from '../partials/Bread';
 import { AddressWithIdentity } from './components/SelectTrustedFriend';
 import RecoveryCheckProgress from './partial/RecoveryCheckProgress';
-import { InitiateRecoveryConfig, RecoveryConfigType, SessionInfo, SocialRecoveryModes, WithdrawInfo } from './util/types';
 import Home from './Home';
 import InitiateRecovery from './InitiateRecovery';
 import RecoveryDetail from './RecoveryDetail';
@@ -40,18 +43,16 @@ export const STEPS = {
   WAIT_SCREEN: 8,
   CONFIRM: 9,
   UNSUPPORTED: 10,
-  PROXY: 100
+  PROXY: 100,
+  SIGN_QR: 200
 };
 
-export default function SocialRecovery (): React.ReactElement {
+export default function SocialRecovery(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
-
-  const { address, closeRecovery } = useParams<{ address: string, closeRecovery: string }>();
-  const api = useApi(address);
   const theme = useTheme();
-  const chain = useChain(address);
-  const formatted = useFormatted(address);
+  const { address, closeRecovery } = useParams<{ address: string, closeRecovery: string }>();
+  const { api, chain, formatted } = useInfo(address);
   const accountsInfo = useAccountsInfo(api, chain);
 
   const [step, setStep] = useState<number>(STEPS.CHECK_SCREEN);
@@ -80,14 +81,14 @@ export default function SocialRecovery (): React.ReactElement {
       : activeRecoveries === null
         ? null
         : undefined
-  , [activeRecoveries, formatted]);
+    , [activeRecoveries, formatted]);
   const activeLost = useMemo(() =>
     activeRecoveries && formatted
       ? activeRecoveries.filter((active) => active.lost === String(formatted)).at(-1) ?? null
       : activeRecoveries === null
         ? null
         : undefined
-  , [activeRecoveries, formatted]);
+    , [activeRecoveries, formatted]);
 
   useEffect(() => {
     unsupportedChain ? setStep(STEPS.UNSUPPORTED) : setStep(STEPS.CHECK_SCREEN);
@@ -224,7 +225,8 @@ export default function SocialRecovery (): React.ReactElement {
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='socialRecovery' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '3%' }}>
+        <Bread />
         {step === STEPS.UNSUPPORTED &&
           <Grid alignItems='center' container direction='column' display='block' item>
             <Typography fontSize='30px' fontWeight={700} p='30px 0 60px 80px'>
@@ -250,7 +252,7 @@ export default function SocialRecovery (): React.ReactElement {
             activeLost={activeLost}
             activeProxy={activeProxy}
             activeRescue={activeRescue}
-            chain={chain}
+            chain={chain as any}
             recoveryInfo={recoveryInfo}
             setLostAccountAddress={setLostAccountAddress}
             setMode={setMode}
@@ -260,7 +262,7 @@ export default function SocialRecovery (): React.ReactElement {
         {step === STEPS.RECOVERY_DETAIL && recoveryInfo &&
           <RecoveryDetail
             api={api}
-            chain={chain}
+            chain={chain as any}
             recoveryInformation={recoveryInfo}
             setMode={setMode}
             setRecoveryConfig={setRecoveryConfig}
@@ -307,13 +309,13 @@ export default function SocialRecovery (): React.ReactElement {
             setVouchRecoveryInfo={setVouchRecoveryInfo}
           />
         }
-        {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) && chain && recoveryInfo !== undefined &&
+        {[STEPS.REVIEW, STEPS.WAIT_SCREEN, STEPS.CONFIRM, STEPS.PROXY, STEPS.SIGN_QR].includes(step) && chain && recoveryInfo !== undefined &&
           <Review
             activeLost={activeLost}
             address={address}
             allActiveRecoveries={activeRecoveries}
             api={api}
-            chain={chain}
+            chain={chain as any}
             depositValue={totalDeposit}
             lostAccountAddress={lostAccountAddress}
             mode={mode}

@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -21,9 +22,12 @@ import { AccountHolderWithProxy, ActionContext, AmountFee, PasswordUseProxyConfi
 import { useAccountDisplay, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
 import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import { broadcast } from '../../../../../util/api';
-import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
+import { PROXY_TYPE } from '../../../../../util/constants';
+import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import BondExtraTxDetail from './partial/BondExtraTxDetail';
+import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
+import type { DeriveStakingAccount } from '@polkadot/api-derive/types';
 
 interface Props {
   api: ApiPromise;
@@ -54,8 +58,8 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
-  const totalStaked = new BN(pool.member.points).isZero() ? BN_ZERO : (new BN(pool.member.points).mul(new BN(pool.stashIdAccount.stakingLedger.active))).div(new BN(pool.bondedPool.points));
-  const bondExtra = api.tx.nominationPools.bondExtra;
+  const totalStaked = new BN((pool.member as PalletNominationPoolsPoolMember).points).isZero() ? BN_ZERO : (new BN((pool.member as PalletNominationPoolsPoolMember).points).mul(new BN((pool.stashIdAccount as DeriveStakingAccount).stakingLedger.active as unknown as BN))).div(new BN((pool.bondedPool as PalletNominationPoolsBondedPoolInner).points));
+  const bondExtra = api.tx['nominationPools']['bondExtra'];
 
   const _onBackClick = useCallback(() => {
     setShowReview(!showReview);
@@ -92,11 +96,12 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
         from: { address: formatted, name },
         subAction: 'Stake',
         success,
-        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
+        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 
-      setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain: chain as any });
+
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -128,7 +133,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
         <SubTitle label={t<string>('Review')} />
         <AccountHolderWithProxy
           address={address}
-          chain={chain}
+          chain={chain as any}
           selectedProxyAddress={selectedProxyAddress}
           showDivider
           style={{ m: 'auto', width: '90%' }
@@ -152,7 +157,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
         <AmountFee
           address={address}
-          amount={<ShowBalance2 address={address} balance={bondAmount?.add(totalStaked)}/>}
+          amount={<ShowBalance2 address={address} balance={bondAmount?.add(totalStaked)} />}
           label={t('Total stake after')}
           style={{ pt: '2px' }}
         />
@@ -165,7 +170,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
           onConfirmClick={BondExtra}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
+          proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

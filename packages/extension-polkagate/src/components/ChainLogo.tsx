@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -19,7 +20,7 @@ interface Props {
   size?: number;
 }
 
-function ChainLogo ({ chainName, genesisHash, showDefault = true, size = 25 }: Props): React.ReactElement<Props> {
+function ChainLogo({ chainName, genesisHash, showDefault = true, size = 25 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const foundChainName = allChains.find((chain) => chain.genesisHash === genesisHash)?.chain;
   const _chainName = sanitizeChainName(foundChainName || chainName);
@@ -37,7 +38,7 @@ function ChainLogo ({ chainName, genesisHash, showDefault = true, size = 25 }: P
             : <FontAwesomeIcon
               fontSize='15px'
               icon={fas[convertToCamelCase(logo)]}
-              style={{ borderRadius: '50%', border: '0.5px solid', width:size, height:size, filter: (CHAINS_WITH_BLACK_LOGO.includes(_chainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '' }}
+              style={{ borderRadius: '50%', border: '0.5px solid', width: size, height: size, filter: (CHAINS_WITH_BLACK_LOGO.includes(_chainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '' }}
             />
           }
         </>

@@ -1,15 +1,9 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-interface Option {
-  info?: string;
-  isDisabled?: boolean;
-  isHeader?: boolean;
-  text: React.ReactNode;
-  value: string | number;
-}
+import type { DropdownOption } from './types';
 
-export default function getLanguageOptions (): Option[] {
+export default function getLanguageOptions (): DropdownOption[] {
   return [
     // default/native
     {

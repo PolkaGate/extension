@@ -1,15 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Timeline, Track } from '../utils/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { Infotip2, ShowValue } from '../../../components';
 import { useCurrentBlockNumber, useTranslation } from '../../../hooks';
-import { remainingTime } from '../../../util/utils';
-import { Timeline, Track } from '../utils/types';
+import { pgBoxShadow, remainingTime } from '../../../util/utils';
 import { blockToUnit, blockToX, getPeriodScale } from '../utils/util';
 import PayDecisionDeposit from './decisionDeposit/PayDecisionDeposit';
 import DecisionDeposit from './decisionDeposit';
@@ -24,7 +26,7 @@ interface Props {
   refIndex: number | undefined;
 }
 
-export default function StatusInfo({ address, isDecisionDepositPlaced, isOngoing, refIndex, status, timeline, track }: Props): React.ReactElement | null {
+export default function StatusInfo ({ address, isDecisionDepositPlaced, isOngoing, refIndex, status, timeline, track }: Props): React.ReactElement | null {
   const { t } = useTranslation();
   const theme = useTheme();
   const [remainingBlocks, setRemainingBlocks] = useState<number>();
@@ -49,7 +51,7 @@ export default function StatusInfo({ address, isDecisionDepositPlaced, isOngoing
     }
   }, [status, t]);
 
-  const getUnitPassed = useCallback((timelineIndex: number, periodKey: string): number | undefined => {
+  const getUnitPassed = useCallback((timelineIndex: number, periodKey: string): number | null | undefined => {
     if (track?.[1]?.[periodKey] && timeline?.[timelineIndex]?.block && currentBlock) {
       const startBlock = timeline[timelineIndex].block;
       const periodInBlock = Number(track[1][periodKey]);
@@ -81,7 +83,7 @@ export default function StatusInfo({ address, isDecisionDepositPlaced, isOngoing
   }
 
   return (
-    <Grid alignItems={decisionUnitPassed || confirmUnitPassed ? 'center' : 'end'} container item justifyContent='space-between' sx={{ p: '10px 25px', bgcolor: 'background.paper', borderRadius: '10px', mb: '10px', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main' }} xs={12}>
+    <Grid alignItems={decisionUnitPassed || confirmUnitPassed ? 'center' : 'end'} container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: theme.palette.mode === 'light' ? pgBoxShadow(theme) : undefined, mb: '10px', p: '10px 25px' }} xs={12}>
       <Grid item>
         <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
           {_status || t('Status')}

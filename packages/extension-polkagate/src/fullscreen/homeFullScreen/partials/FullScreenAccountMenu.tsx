@@ -1,22 +1,18 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
-import { faAddressCard } from '@fortawesome/free-solid-svg-icons';
+import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Popover, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 
-import { ActionContext, Chain, MenuItem, SocialRecoveryIcon } from '../../../components';
-import { useAccount, useChain, useGenesisHashOptions, useTranslation } from '../../../hooks';
-import { tieAccount } from '../../../messaging';
-import { FullScreenRemoteNode } from '../../../partials';
+import { ActionContext, MenuItem, SocialRecoveryIcon, VaadinIcon } from '../../../components';
+import { useInfo, useTranslation } from '../../../hooks';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
-import { POPUPS_NUMBER } from './AccountInformation';
+import { POPUPS_NUMBER } from './AccountInformationForHome';
+import ProfileMenu from './ProfileMenu';
 
 interface Props {
   address: string | undefined;
@@ -24,25 +20,18 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props): React.ReactElement<Props> {
-  const theme = useTheme();
+const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
+  : {
+    address: string | undefined,
+    handleClose: () => void,
+    setAnchorEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>,
+    setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>,
+  }) => {
   const { t } = useTranslation();
-  const chain = useChain(address);
-  const account = useAccount(address);
+  const theme = useTheme();
   const onAction = useContext(ActionContext);
-  const options = useGenesisHashOptions();
 
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-  const [genesisHash, setGenesis] = useState<string | undefined>(chain?.genesisHash);
-
-  const handleClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
-
-  const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  }, []);
-
+  const { account, chain } = useInfo(address);
   const hasPrivateKey = !(account?.isExternal || account?.isHardware);
 
   const onForgetAccount = useCallback(() => {
@@ -54,12 +43,6 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
     address && setDisplayPopup(POPUPS_NUMBER.DERIVE_ACCOUNT);
     handleClose();
   }, [address, handleClose, setDisplayPopup]);
-
-  const onChangeNetwork = useCallback((newGenesisHash: string) => {
-    const availableGenesisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;
-
-    address && tieAccount(address, availableGenesisHash).then(() => setGenesis(availableGenesisHash ?? undefined)).catch(console.error);
-  }, [address]);
 
   const onRenameAccount = useCallback(() => {
     address && setDisplayPopup(POPUPS_NUMBER.RENAME);
@@ -83,52 +66,44 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
     address && onAction(`/socialRecovery/${address}/false`);
   }, [address, onAction]);
 
-  const AccountMenu = () => (
-    <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '20px' }}>
-      {/* <Grid container item>
-        <Chain
-          address={address}
-          allowAnyChainOption
-          defaultValue={genesisHash ?? chain?.genesisHash ?? options[0].text}
-          label={t<string>('Chain')}
-          onChange={onChangeNetwork}
-          style={{ '> div div div div div div': { height: '23px', width: '23px' }, '> div div div#selectChain': { borderRadius: '5px', height: '30px' }, '> div p': { fontSize: '16px', p: 0 }, textAlign: 'left', width: '84%' }}
-        />
-        <Grid alignContent='flex-end' container item justifyContent='center' width='15%' zIndex={1}>
-          {(genesisHash ?? chain?.genesisHash) &&
-            <FullScreenRemoteNode
-              address={address}
-              iconSize={25}
-            />}
-        </Grid>
-      </Grid>
-      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} /> */}
+  const isDisable = useCallback((supportedChains: string[]) => {
+    if (!chain) {
+      return true;
+    } else {
+      return !supportedChains.includes(chain.genesisHash ?? '');
+    }
+  }, [chain]);
+
+  return (
+    <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
       <MenuItem
-        disabled={!chain || !(PROXY_CHAINS.includes(chain.genesisHash ?? ''))}
-        iconComponent={
-          <vaadin-icon icon='vaadin:sitemap' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
-        }
-        onClick={onManageProxies}
-        text={t<string>('Manage proxies')}
-      />
-      <MenuItem
-        disabled={!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))}
+        disabled={isDisable(IDENTITY_CHAINS)}
         iconComponent={
           <FontAwesomeIcon
-            color={(!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))) ? theme.palette.text.disabled : theme.palette.text.primary}
+            color={isDisable(IDENTITY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}
             fontSize={20}
             icon={faAddressCard}
           />
         }
         onClick={onManageId}
         text={t('Manage identity')}
+        withHoverEffect
       />
       <MenuItem
-        disabled={!chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))}
+        disabled={isDisable(PROXY_CHAINS)}
+        iconComponent={
+          <VaadinIcon icon='vaadin:sitemap' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
+        }
+        onClick={onManageProxies}
+        text={t<string>('Manage proxies')}
+        withHoverEffect
+      />
+      <MenuItem
+        disabled={isDisable(SOCIAL_RECOVERY_CHAINS)}
         iconComponent={
           <SocialRecoveryIcon
             color={
-              !chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))
+              isDisable(SOCIAL_RECOVERY_CHAINS)
                 ? theme.palette.text.disabled
                 : theme.palette.text.primary}
             height={24}
@@ -136,43 +111,66 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
           />
         }
         onClick={onSocialRecovery}
-        text={t('Social Recovery')}
+        text={t('Social recovery')}
+        withHoverEffect
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
+      <ProfileMenu
+        address={address}
+        setUpperAnchorEl={setAnchorEl}
+      />
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
-            <vaadin-icon icon='vaadin:download-alt' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:download-alt' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
           }
           onClick={onExportAccount}
           text={t('Export account')}
+          withHoverEffect
         />
       }
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
-            <vaadin-icon icon='vaadin:road-branch' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:road-branch' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
           }
           onClick={goToDeriveAcc}
           text={t('Derive new account')}
+          withHoverEffect
         />
       }
       <MenuItem
         iconComponent={
-          <vaadin-icon icon='vaadin:edit' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:edit' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
         }
         onClick={onRenameAccount}
         text={t('Rename')}
+        withHoverEffect
       />
       <MenuItem
         iconComponent={
-          <vaadin-icon icon='vaadin:file-remove' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:file-remove' style={{ color: `${theme.palette.text.primary}`, height: '20px' }} />
         }
         onClick={onForgetAccount}
         text={t('Forget account')}
+        withHoverEffect
       />
     </Grid>
-  );
+  )
+};
+
+function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props): React.ReactElement<Props> {
+  const theme = useTheme();
+
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+
+  const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  }, []);
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
@@ -200,7 +198,12 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
           vertical: 'top'
         }}
       >
-        <AccountMenu />
+        <Menus
+          address={address}
+          setDisplayPopup={setDisplayPopup}
+          handleClose={handleClose}
+          setAnchorEl={setAnchorEl}
+        />
       </Popover>
     </>
   );

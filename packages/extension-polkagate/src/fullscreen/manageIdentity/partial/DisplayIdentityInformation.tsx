@@ -1,9 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faDiscord, faTwitter } from '@fortawesome/free-brands-svg-icons';
+import { faDiscord, faGithub, faXTwitter } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Box, Grid, Typography, useTheme } from '@mui/material';
@@ -29,6 +30,7 @@ interface Props {
 export default function DisplayIdentityInformation({ identity }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const emptyFieldColor = useMemo(() => theme.palette.mode === 'light' ? '#F3EDF1' : '#212121', [theme.palette.mode]);
 
@@ -41,7 +43,7 @@ export default function DisplayIdentityInformation({ identity }: Props): React.R
         </Typography>
       </Grid>
       <Typography fontSize='18px' fontWeight={value ? 700 : 400} maxWidth='70%' overflow='hidden' textOverflow='ellipsis'>
-        {value ?? t<string>('Not set yet.')}
+        {value ?? t('Not set yet.')}
       </Typography>
     </Grid>
   );
@@ -49,22 +51,22 @@ export default function DisplayIdentityInformation({ identity }: Props): React.R
   return (
     <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), display: 'block', height: 'fit-content', p: '8px 18px' }}>
       <IdentityItems
-        title={t<string>('Display Name')}
+        title={t('Display Name')}
         value={identity.display ?? null}
       />
       <IdentityItems
-        title={t<string>('Legal Name')}
+        title={t('Legal Name')}
         value={identity.legal ?? null}
       />
       <IdentityItems
         icon={
           <FontAwesomeIcon
-            color='#007CC4'
+            color={theme.palette.success.main}
             fontSize='30px'
             icon={faGlobe}
           />
         }
-        title={t<string>('Website')}
+        title={t('Website')}
         value={identity.web ?? null}
       />
       <IdentityItems
@@ -75,26 +77,36 @@ export default function DisplayIdentityInformation({ identity }: Props): React.R
             icon={faEnvelope}
           />
         }
-        title={t<string>('Email')}
+        title={t('Email')}
         value={identity.email ?? null}
       />
       <IdentityItems
         icon={
           <FontAwesomeIcon
-            color='#2AA9E0'
+            color={isDark ? 'white' : 'black'}
             fontSize='30px'
-            icon={faTwitter}
+            icon={faXTwitter}
           />
         }
-        title={t<string>('Twitter')}
+        title={t('X')}
         value={identity.twitter ?? null}
       />
       <IdentityItems
         icon={
           <Box component='img' src={riot as string} sx={{ height: '30px', mb: '2px', width: '30px' }} />
         }
-        title={t<string>('Element')}
-        value={identity.riot ?? null}
+        title={t('Element')}
+        value={identity.matrix || identity.riot || null}
+      />
+      <IdentityItems
+        icon={
+          <FontAwesomeIcon
+            color='rgb(178, 58, 120)'
+            fontSize='30px'
+            icon={faGithub}
+          />}
+        title={t('Github')}
+        value={identity.github ?? null}
       />
       <IdentityItems
         icon={
@@ -105,8 +117,8 @@ export default function DisplayIdentityInformation({ identity }: Props): React.R
           />
         }
         noBorder
-        title={t<string>('Discord')}
-        value={identity.other?.discord ?? null}
+        title={t('Discord')}
+        value={identity.other?.discord || identity?.discord || null}
       />
     </Grid>
   );

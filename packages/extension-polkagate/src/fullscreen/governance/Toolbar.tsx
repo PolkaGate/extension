@@ -1,7 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { DecidingCount } from '../../hooks/useDecidingCount';
+import type { TopMenu } from './utils/types';
 
 import { Groups as FellowshipIcon, HowToVote as ReferendaIcon } from '@mui/icons-material/';
 import { Button, ClickAwayListener, Container, Grid, Typography, useTheme } from '@mui/material';
@@ -9,42 +13,34 @@ import React, { useCallback, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { useApi, useTranslation } from '../../hooks';
-import { DecidingCount } from '../../hooks/useDecidingCount';
 import FellowshipMenu from './topMenu/FellowshipMenu';
 import ReferendaMenu from './topMenu/ReferendaMenu';
 import { MAX_WIDTH } from './utils/consts';
-import { TopMenu } from './utils/types';
 import { Delegate } from './delegate';
-import { SubmitReferendum } from './submitReferendum';
 
 interface Props {
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   menuOpen: boolean;
-  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string | undefined>>;
   decidingCounts: DecidingCount | undefined;
 }
 
 const MENU_DELAY = 150; // mili sec
 
-export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement {
+export default function Toolbar ({ decidingCounts, menuOpen, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { address, postId, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship', postId?: string }>();
+  const { address, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship', postId?: string }>();
   const api = useApi(address);
   const ref = useRef<{ timeoutId: NodeJS.Timeout | null }>({ timeoutId: null });
 
-  const [openSubmitReferendum, setOpenSubmitReferendum] = useState(false);
   const [openDelegate, setOpenDelegate] = useState(false);
   const [showDelegationNote, setShowDelegationNote] = useState<boolean>(true);
   const [hoveredTopMenu, setHoveredTopMenu] = useState<'referenda' | 'fellowship'>(topMenu);
 
   React.useEffect(() => {
     setShowDelegationNote(window.localStorage.getItem('delegate_about_disabled') !== 'true');
-  }, [openDelegate, openSubmitReferendum]);
-
-  const handleOpenSubmitReferendum = () => {
-    setOpenSubmitReferendum(true);
-  };
+  }, [openDelegate]);
 
   const handleOpenDelegate = () => {
     setOpenDelegate(true);
@@ -60,7 +56,7 @@ export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSele
     }, MENU_DELAY);
   }, [setMenuOpen]);
 
-  const onTopMenuMenuMouseLeave = useCallback((item: TopMenu) => {
+  const onTopMenuMenuMouseLeave = useCallback(() => {
     !menuOpen && clearTimeout(ref.current.timeoutId as NodeJS.Timeout);// Clear any existing timeout
   }, [menuOpen]);
 
@@ -165,14 +161,6 @@ export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSele
       }
       {menuOpen && hoveredTopMenu === 'fellowship' &&
         <FellowshipMenu address={address} decidingCounts={decidingCounts?.fellowship} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
-      }
-      {openSubmitReferendum &&
-        <SubmitReferendum
-          address={address}
-          api={api}
-          open={openSubmitReferendum}
-          setOpen={setOpenSubmitReferendum}
-        />
       }
       {openDelegate &&
         <Delegate

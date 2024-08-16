@@ -1,14 +1,13 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import type { RegistrationJudgement } from '@polkadot/types/interfaces';
 
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForward as ArrowForwardIcon, Replay as UndoIcon } from '@mui/icons-material';
-import { Divider, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
@@ -133,7 +132,7 @@ export default function DisplaySubId({ addressesToSelect, api, error = false, in
                     />
                   }
                   onClick={onModify}
-                  text={t<string>('Modify')}
+                  text={t('Modify')}
                 />
                 <ManageButton
                   icon={toRemove
@@ -149,8 +148,8 @@ export default function DisplaySubId({ addressesToSelect, api, error = false, in
                   onClick={onRemoveItem}
                   style={{ zIndex: toRemove ? 10 : 1 }}
                   text={toRemove
-                    ? t<string>('Undo')
-                    : t<string>('Remove')}
+                    ? t('Undo')
+                    : t('Remove')}
                 />
               </Grid>
             </Grid>
@@ -161,7 +160,7 @@ export default function DisplaySubId({ addressesToSelect, api, error = false, in
           address={subIdInfo.address}
           addressesToSelect={addressesToSelect}
           api={api}
-          chain={chain}
+          chain={chain as any}
           error={error}
           index={index}
           name={subIdInfo.name}

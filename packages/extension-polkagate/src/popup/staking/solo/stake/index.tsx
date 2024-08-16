@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -12,14 +13,14 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
-import { useApi, useBalances, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork, useValidatorSuggestion } from '../../../../hooks';
+import { useAvailableToSoloStake, useBalances, useInfo, useStakingAccount, useStakingConsts, useTranslation, useUnSupportedNetwork, useValidatorSuggestion } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
+import Asset from '../../../../partials/Asset';
 import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import Asset from '../../../../partials/Asset';
 import SelectValidators from '../../partial/SelectValidators';
 import Review from './Review';
 import Settings from './Settings';
@@ -31,23 +32,20 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
-  const token = useToken(address);
-  const decimal = useDecimal(address);
+  const { api, chain, decimal, formatted, token } = useInfo(address);
   const history = useHistory();
-  const api = useApi(address, state?.api);
-  const chain = useChain(address);
-  const formatted = useFormatted(address);
   const balances = useBalances(address);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const autoSelectedValidators = useValidatorSuggestion(address);
+  const availableToSoloStake = useAvailableToSoloStake(address);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [amount, setAmount] = useState<string>();
@@ -57,18 +55,15 @@ export default function Index (): React.ReactElement {
   const [showAdvanceSettings, setShowAdvanceSettings] = useState<boolean>();
   const [validatorSelectionMethod, setValidatorSelectionMethod] = useState<'auto' | 'manual'>('auto');
   const [showSelectValidator, setShowSelectValidator] = useState<boolean>(false);
-
   const [manualSelectedValidators, setManualSelectedValidators] = useState<ValidatorInfo[]>([]);
 
   useEffect(() => {
     setSettings({ controllerId: formatted, payee: 'Staked', stashId: formatted });
   }, [formatted]);
 
-  // const VALIDATOR_SELECTION_OPTIONS = [{ text: t('Auto'), value: 1 }, { text: t('Manual'), value: 2 }];
-  const staked = useMemo(() => stakingAccount ? stakingAccount.stakingLedger.active : BN_ZERO, [stakingAccount]);
+  const staked = useMemo(() => stakingAccount ? stakingAccount.stakingLedger.active as unknown as BN : BN_ZERO, [stakingAccount]);
   const totalAfterStake = useMemo(() => decimal ? staked?.add(amountToMachine(amount, decimal)) : BN_ZERO, [amount, decimal, staked]);
-  const isFirstTimeStaking = !!stakingAccount?.stakingLedger?.total?.isZero();
-  const availableToSoloStake = balances?.freeBalance && staked && balances.freeBalance.sub(staked);
+  const isFirstTimeStaking = !!(stakingAccount?.stakingLedger?.total as unknown as BN)?.isZero();
 
   const thresholds = useMemo(() => {
     if (!stakingConsts || !decimal || !balances || !stakingAccount || !availableToSoloStake) {
@@ -79,7 +74,7 @@ export default function Index (): React.ReactElement {
     let max = availableToSoloStake.sub(ED.muln(2));
     let min = stakingConsts.minNominatorBond;
 
-    if (!stakingAccount.stakingLedger.active.isZero()) {
+    if (!(stakingAccount.stakingLedger.active as unknown as BN).isZero()) {
       min = BN_ZERO;
     }
 
@@ -90,15 +85,15 @@ export default function Index (): React.ReactElement {
     return { max, min };
   }, [availableToSoloStake, balances, decimal, stakingAccount, stakingConsts]);
 
-  const bond = api && api.tx.staking.bond;// (controller: MultiAddress, value: Compact<u128>, payee: PalletStakingRewardDestination)
-  const bondExtra = api && api.tx.staking.bondExtra;// (max_additional: Compact<u128>)
-  const batchAll = api && api.tx.utility.batchAll;
-  const nominated = api && api.tx.staking.nominate;
+  const bond = api && api.tx['staking']['bond'];// (controller: MultiAddress, value: Compact<u128>, payee: PalletStakingRewardDestination)
+  const bondExtra = api && api.tx['staking']['bondExtra'];// (max_additional: Compact<u128>)
+  const batchAll = api && api.tx['utility']['batchAll'];
+  const nominated = api && api.tx['staking']['nominate'];
   const isControllerDeprecated = bond ? bond.meta.args.length === 2 : undefined;
 
   const tx = isFirstTimeStaking ? bond : bondExtra;
   const amountAsBN = useMemo(() => amountToMachine(amount ?? '0', decimal), [amount, decimal]);
-  const params = useMemo(() => stakingAccount?.stakingLedger?.total?.isZero()
+  const params = useMemo(() => (stakingAccount?.stakingLedger?.total as unknown as BN)?.isZero()
     ? isControllerDeprecated
       ? [amountAsBN, settings.payee]
       : [settings.stashId, amountAsBN, settings.payee]
@@ -118,7 +113,7 @@ export default function Index (): React.ReactElement {
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       setEstimatedFee(api.createType('Balance', BN_ONE));
 
       return;
@@ -137,7 +132,7 @@ export default function Index (): React.ReactElement {
 
   useEffect(() => {
     if (!amountAsBN || !amount) {
-      return;
+      return setAlert(undefined);
     }
 
     if (amountAsBN.gt(availableToSoloStake ?? BN_ZERO)) {
@@ -150,7 +145,7 @@ export default function Index (): React.ReactElement {
       return setAlert(t('The minimum to be a staker is: {{minNominatorBond}}', { replace: { minNominatorBond } }));
     }
 
-    setAlert(undefined);
+    return setAlert(undefined);
   }, [api, availableToSoloStake, t, amountAsBN, stakingConsts?.minNominatorBond, isFirstTimeStaking, amount]);
 
   const onBackClick = useCallback(() => {
@@ -197,7 +192,7 @@ export default function Index (): React.ReactElement {
   }, [validatorSelectionMethod]);
 
   const onSelectionMethodChange = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
-    setValidatorSelectionMethod(event.target.value);
+    setValidatorSelectionMethod(event.target.value as "auto" | "manual");
   }, []);
 
   const Warn = ({ text }: { text: string }) => (
@@ -220,7 +215,7 @@ export default function Index (): React.ReactElement {
         shortBorder
         showBackArrow
         showClose
-        text={t<string>('Solo Staking')}
+        text={t('Solo Staking')}
       />
       <SubTitle
         label={t('Stake')}
@@ -237,12 +232,12 @@ export default function Index (): React.ReactElement {
         />
         <div style={{ paddingTop: '30px' }}>
           <AmountWithOptions
-            label={t<string>('Amount ({{token}})', { replace: { token } })}
+            label={t('Amount ({{token}})', { replace: { token } })}
             onChangeAmount={onChangeAmount}
             onPrimary={() => onThresholdAmount('max')}
             onSecondary={() => onThresholdAmount('min')}
-            primaryBtnText={t<string>('Max amount')}
-            secondaryBtnText={isFirstTimeStaking ? t<string>('Min amount') : undefined}
+            primaryBtnText={t('Max amount')}
+            secondaryBtnText={isFirstTimeStaking ? t('Min amount') : undefined}
             value={amount}
           />
           {alert &&
@@ -281,14 +276,14 @@ export default function Index (): React.ReactElement {
         _isBusy={isFirstTimeStaking && showReview && !autoSelectedValidators}
         _onClick={goToNext}
         disabled={!!alert || !amount || amount === '0' || !availableToSoloStake || availableToSoloStake?.isZero() || availableToSoloStake?.lte(estimatedFee?.addn(Number(amount) || 0) || BN_ZERO)}
-        text={t<string>('Next')}
+        text={t('Next')}
       />
       {showReview && amount && api && formatted && staked && chain && tx && params && (isFirstTimeStaking && validatorSelectionMethod === 'auto' ? autoSelectedValidators : true) &&
         <Review
           address={address}
           amount={amount}
           api={api}
-          chain={chain}
+          chain={chain as any}
           estimatedFee={estimatedFee}
           isFirstTimeStaking={isFirstTimeStaking}
           params={params}
@@ -315,14 +310,13 @@ export default function Index (): React.ReactElement {
       {validatorSelectionMethod === 'manual' && showSelectValidator && formatted &&
         <SelectValidators
           address={address}
-          api={api}
-          chain={chain}
+          api={api as ApiPromise}
           newSelectedValidators={manualSelectedValidators}
           setNewSelectedValidators={setManualSelectedValidators}
           setShow={setShowSelectValidator}
           setShowReview={setShowReview}
           show={showSelectValidator}
-          staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
+          staked={(stakingAccount?.stakingLedger?.active ?? BN_ZERO) as BN}
           stakingConsts={stakingConsts}
           stashId={formatted}
           title={t('Select Validators')}

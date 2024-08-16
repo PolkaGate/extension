@@ -1,26 +1,29 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Data } from '@polkadot/types';
-import type { PalletIdentityIdentityInfo, PalletIdentityRegistration } from '@polkadot/types/lookup';
+import type { PalletIdentityLegacyIdentityInfo, PalletIdentityRegistration } from '@polkadot/types/lookup';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import { CubeGrid } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { ApiPromise } from '@polkadot/api';
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import { AccountsStore } from '@polkadot/extension-base/stores';
+import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import type { AccountsStore } from '@polkadot/extension-base/stores';
+import { sanitizeChainName } from '@polkadot/extension-polkagate/src/util/utils';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { Warning } from '../../components';
-import { useApi, useChain, useChainName, useFormatted, useFullscreen, useTranslation } from '../../hooks';
+import { Progress, Warning } from '../../components';
+import { useApiWithChain2, useFormatted, useFullscreen, usePeopleChain, useTranslation } from '../../hooks';
+import { FULLSCREEN_WIDTH } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
+import Bread from '../partials/Bread';
 import PreviewIdentity from './Preview';
 import RequestJudgement from './RequestJudgement';
 import Review from './Review';
@@ -39,7 +42,8 @@ export const STEPS = {
   WAIT_SCREEN: 8,
   CONFIRM: 9,
   UNSUPPORTED: 10,
-  PROXY: 100
+  PROXY: 100,
+  SIGN_QR: 200
 };
 
 type SubAccounts = [string, string[]];
@@ -48,7 +52,11 @@ export type SubIdAccountsToSubmit = { address: string | undefined; name: string 
 export type SubIdsParams = (string | Data | undefined)[][] | undefined;
 export type IdJudgement = 'Reasonable' | 'KnownGood' | 'FeePaid' | null | undefined;
 
-function getRawValue (value: Data) {
+function getRawValue(value: Data) {
+  if (!value) {
+    return;
+  }
+
   const text = u8aToString(value.asRaw.toU8a(true));
 
   return text === ''
@@ -56,25 +64,26 @@ function getRawValue (value: Data) {
     : text;
 }
 
-export function setData (value: string | undefined): Data {
+export function setData(value: string | undefined): Data {
   return value
-    ? { ['raw']: value }
-    : { ['none']: null };
+    ? { raw: value }
+    : { none: null };
 }
 
-export default function ManageIdentity (): React.ReactElement {
+export default function ManageIdentity(): React.ReactElement {
   useFullscreen();
-  const { address } = useParams<{ address: string }>();
-  const api = useApi(address);
   const { t } = useTranslation();
   const theme = useTheme();
-  const chain = useChain(address);
-  const chainName = useChainName(address);
+  const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
+
+  const { peopleChain: chain } = usePeopleChain(address);
+  const api = useApiWithChain2(chain);
+  const chainName = sanitizeChainName(chain?.name);
 
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null | undefined>();
   const [identityToSet, setIdentityToSet] = useState<DeriveAccountRegistration | null | undefined>();
-  const [infoParams, setInfoParams] = useState<PalletIdentityIdentityInfo | null | undefined>();
+  const [infoParams, setInfoParams] = useState<PalletIdentityLegacyIdentityInfo | null | undefined>();
   const [subIdsParams, setSubIdsParams] = useState<SubIdsParams | undefined>();
   const [idJudgement, setIdJudgement] = useState<IdJudgement>();
   const [subIdAccounts, setSubIdAccounts] = useState<{ address: string, name: string }[] | null | undefined>();
@@ -111,20 +120,23 @@ export default function ManageIdentity (): React.ReactElement {
   };
 
   const basicDepositValue = useMemo(() => api ? getConstantValue(api, 'basicDeposit') : BN_ZERO, [api]);
+  // TODO: fieldDeposit is removed on people chain on favour of byteDeposit
   const fieldDepositValue = useMemo(() => api ? getConstantValue(api, 'fieldDeposit') : BN_ZERO, [api]);
   const subAccountDeposit = useMemo(() => api ? getConstantValue(api, 'subAccountDeposit') : BN_ZERO, [api]);
 
   const totalDeposit = useMemo(() => {
+    const discord = identityToSet?.other?.discord || identityToSet?.discord as string;
+
     if (mode === 'Set' || step === STEPS.INDEX) {
-      return basicDepositValue.add(identityToSet?.other?.discord ? fieldDepositValue : BN_ZERO);
+      return basicDepositValue.add(discord ? fieldDepositValue : BN_ZERO);
     }
 
     if (mode === 'Modify' || step === STEPS.MODIFY) {
-      return basicDepositValue.add(identityToSet?.other?.discord ? fieldDepositValue : BN_ZERO);
+      return basicDepositValue.add(discord ? fieldDepositValue : BN_ZERO);
     }
 
     if (mode === 'Clear' || step === STEPS.REMOVE || step === STEPS.PREVIEW) {
-      return basicDepositValue.add(identity?.other?.discord ? fieldDepositValue : BN_ZERO).add(subIdAccounts ? subAccountDeposit.muln(subIdAccounts.length) : BN_ZERO);
+      return basicDepositValue.add(discord ? fieldDepositValue : BN_ZERO).add(subIdAccounts ? subAccountDeposit.muln(subIdAccounts.length) : BN_ZERO);
     }
 
     if (mode === 'ManageSubId' || step === STEPS.MANAGE_SUBID) {
@@ -134,9 +146,11 @@ export default function ManageIdentity (): React.ReactElement {
     }
 
     return BN_ZERO;
-  }, [basicDepositValue, fieldDepositValue, identity?.other?.discord, identityToSet?.other?.discord, mode, step, subAccountDeposit, subIdAccounts, subIdAccountsToSubmit]);
+  }, [basicDepositValue, fieldDepositValue, identityToSet, mode, step, subAccountDeposit, subIdAccounts, subIdAccountsToSubmit]);
 
   const depositToPay = useMemo(() => {
+    const discord = identity?.other?.discord || identity?.discord as string;
+
     if (!mode || ['Clear', 'CancelJudgement'].includes(mode)) {
       return BN_ZERO;
     }
@@ -150,7 +164,7 @@ export default function ManageIdentity (): React.ReactElement {
     }
 
     if (mode === 'Modify') {
-      const alreadyIdDeposit = basicDepositValue.add(identity?.other?.discord ? fieldDepositValue : BN_ZERO);
+      const alreadyIdDeposit = basicDepositValue.add(discord ? fieldDepositValue : BN_ZERO);
 
       return totalDeposit.gt(alreadyIdDeposit) ? totalDeposit.sub(alreadyIdDeposit) : BN_ZERO;
     }
@@ -167,7 +181,7 @@ export default function ManageIdentity (): React.ReactElement {
     }
 
     return BN_ZERO;
-  }, [basicDepositValue, fieldDepositValue, identity?.other?.discord, maxFeeValue, mode, subAccountDeposit, subIdAccounts, subIdAccountsToSubmit, totalDeposit]);
+  }, [basicDepositValue, fieldDepositValue, identity?.discord, identity?.other?.discord, maxFeeValue, mode, subAccountDeposit, subIdAccounts, subIdAccountsToSubmit, totalDeposit]);
 
   const fetchIdentity = useCallback(() => {
     setStep(STEPS.CHECK_SCREEN);
@@ -178,14 +192,21 @@ export default function ManageIdentity (): React.ReactElement {
       api?.query.identity.identityOf(address)
         .then((id) => {
           if (!id.isEmpty) {
-            const { info, judgements } = id.unwrap() as PalletIdentityRegistration;
+            const { info, judgements } = id.unwrap()[0] as PalletIdentityRegistration;
 
             const idToSet: DeriveAccountRegistration | null = {
+              discord: getRawValue(info.discord),
               display: getRawValue(info.display),
               email: getRawValue(info.email),
+              github: getRawValue(info.github),
               legal: getRawValue(info.legal),
-              other: { discord: info.additional.length > 0 ? getRawValue(info.additional[0][1]) : undefined },
-              riot: getRawValue(info.riot),
+              matrix: getRawValue(info.matrix),
+              other: {
+                discord: info.additional?.length > 0
+                  ? getRawValue(info.additional[0][1])
+                  : undefined
+              }, // deprecated
+              riot: getRawValue(info.riot), // deprecated
               twitter: getRawValue(info.twitter),
               web: getRawValue(info.web),
               judgements
@@ -196,14 +217,14 @@ export default function ManageIdentity (): React.ReactElement {
             } else {
               const judgementInHuman = judgements.toHuman();
               const judgementType = judgementInHuman[0][1] as string;
+              const registrar = judgementInHuman[0][0] as string;
 
               if (['Reasonable', 'KnownGood'].includes(judgementType)) {
+                setSelectedRegistrar(registrar);
                 setIdJudgement(judgementType as 'Reasonable' | 'KnownGood');
               } else {
-                const feePaidReg = judgementInHuman[0][0] as string;
-
                 setIdJudgement('FeePaid');
-                setSelectedRegistrar(feePaidReg);
+                setSelectedRegistrar(registrar);
               }
             }
 
@@ -236,15 +257,28 @@ export default function ManageIdentity (): React.ReactElement {
       return;
     }
 
-    setInfoParams({
-      additional: identityToSet.other?.discord ? [[{ raw: 'Discord' }, { raw: identityToSet.other?.discord }]] : [],
-      display: { ['raw']: identityToSet?.display },
+    const _identity: PalletIdentityLegacyIdentityInfo = {
+      discord: setData(identityToSet?.other?.discord || identityToSet?.discord as string),
+      display: { raw: identityToSet?.display },
       email: setData(identityToSet?.email),
       legal: setData(identityToSet?.legal),
-      riot: setData(identityToSet?.riot),
       twitter: setData(identityToSet?.twitter),
       web: setData(identityToSet?.web)
-    });
+    };
+
+    if (identityToSet?.riot) {
+      _identity.riot = setData(identityToSet?.riot);
+    }
+
+    if (identityToSet?.matrix) {
+      _identity.matrix = setData(identityToSet?.matrix as string);
+    }
+
+    if (identityToSet?.github) {
+      _identity.github = setData(identityToSet?.github as string);
+    }
+
+    setInfoParams(_identity);
   }, [identityToSet]);
 
   useEffect(() => {
@@ -281,7 +315,7 @@ export default function ManageIdentity (): React.ReactElement {
 
   useEffect(() => {
     clear();
-  }, [chain?.genesisHash, chainName, clear]);
+  }, [chain?.genesisHash, clear]);
 
   useEffect(() => {
     const fetchSubAccounts = async () => {
@@ -330,28 +364,23 @@ export default function ManageIdentity (): React.ReactElement {
 
   const resetSubIds = useCallback(() => setResetSubId(true), []);
 
-  const IdentityCheckProgress = () => {
-    return (
-      <Grid alignItems='center' container direction='column' height='100%' item justifyContent='center'>
-        <CubeGrid col={3} color={theme.palette.secondary.main} row={3} size={200} style={{ opacity: '0.4' }} />
-        <Typography pt='15px'>
-          {t<string>('Checking account\'s on-chain Identity, please wait...')}
-        </Typography>
-      </Grid>
-    );
-  };
-
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='manageIdentity' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='flex-start' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '3%' }}>
+        <Bread />
         {step === STEPS.CHECK_SCREEN &&
-          <IdentityCheckProgress />
+          <Progress
+            gridSize={200}
+            pt='250px'
+            title={t('Checking account\'s on-chain Identity, please wait...')}
+            type='grid'
+          />
         }
         {step === STEPS.UNSUPPORTED &&
           <Grid alignItems='center' container direction='column' display='block' item>
             <Typography fontSize='30px' fontWeight={700} p='30px 0 60px 80px'>
-              {t<string>('Manage Identity')}
+              {t('Manage Identity')}
             </Typography>
             <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', width: '400px' }}>
               <Warning
@@ -359,7 +388,7 @@ export default function ManageIdentity (): React.ReactElement {
                 isBelowInput
                 theme={theme}
               >
-                {t<string>('The chosen blockchain does not support on-chain identity.')}
+                {t('The chosen blockchain does not support on-chain identity.')}
               </Warning>
             </Grid>
           </Grid>
@@ -420,11 +449,11 @@ export default function ManageIdentity (): React.ReactElement {
             setStep={setStep}
           />
         }
-        {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) &&
+        {[STEPS.REVIEW, STEPS.WAIT_SCREEN, STEPS.CONFIRM, STEPS.PROXY, STEPS.SIGN_QR].includes(step) &&
           <Review
             address={address}
             api={api}
-            chain={chain}
+            chain={chain as any}
             depositToPay={depositToPay}
             depositValue={totalDeposit}
             identityToSet={identityToSet}

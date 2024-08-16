@@ -1,10 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-nocheck
+/* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 
-import '@vaadin/icons';
+import type { LatestReferenda } from './utils/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Grid, useTheme } from '@mui/material';
@@ -13,7 +15,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Checkbox2, InputFilter, Select } from '../../components';
 import { useFormatted, useTranslation } from '../../hooks';
 import { REFERENDA_STATUS } from './utils/consts';
-import { LatestReferenda } from './utils/types';
 
 interface Props {
   address: string;
@@ -22,7 +23,7 @@ interface Props {
   myVotedReferendaIndexes: number[] | null | undefined;
 }
 
-type Filter = {
+interface Filter {
   advanced: {
     refIndex?: boolean;
     titles?: boolean;
@@ -43,12 +44,12 @@ const DEFAULT_FILTER = {
   status: REFERENDA_STATUS[0]
 };
 
-export default function SearchBox({ address, myVotedReferendaIndexes, referenda, setFilteredReferenda }: Props): React.ReactElement {
+export default function SearchBox ({ address, myVotedReferendaIndexes, referenda, setFilteredReferenda }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const formatted = useFormatted(address);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
-  const [filter, setFilter] = useState<Filter>(JSON.parse(JSON.stringify(DEFAULT_FILTER)));
+  const [filter, setFilter] = useState<Filter>(JSON.parse(JSON.stringify(DEFAULT_FILTER)) as Filter);
 
   const statusOptions = useMemo(() => REFERENDA_STATUS.map((status, index) => {
     return {
@@ -167,10 +168,8 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
             {statusOptions &&
               <Select
                 defaultValue={'All'}
-                // label={t<string>('Status')}
                 onChange={onChangeStatus}
                 options={statusOptions}
-              // value={REFERENDA_STATUS.findIndex((s) => s === filter?.status?.[0]) || 'All'}
               />
             }
           </Grid>
@@ -195,7 +194,7 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
         </Grid>
       </Grid>
       {showAdvanced &&
-        <Grid alignItems='center' bgcolor='background.paper' borderRadius='0px 0px 5px 5px' container fontSize='16px' fontWeight='400' height='52px' justifyContent='flex-start' pl='22px' >
+        <Grid alignItems='center' container justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '5px', fontSize: '16px', fontWeight: '400', height: '52px', pl: '22px', width: '90%' }}>
           <Grid item>
             {t('Search in:')}
           </Grid>

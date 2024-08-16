@@ -3,7 +3,9 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Grid, Theme, useTheme } from '@mui/material';
+import type { Theme} from '@mui/material';
+
+import { Box, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { blake2AsHex } from '@polkadot/util-crypto';
@@ -12,32 +14,30 @@ import { logoBlack, logoMotionDark, logoMotionLight, logoWhite } from '../assets
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import { useManifest } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
-import ForgotPasswordConfirmation from '../popup/home/ForgotPasswordConfirmation';
 import { isPasswordCorrect } from '../popup/passwordManagement';
 import AskToSetPassword from '../popup/passwordManagement/AskToSetPassword';
 import { STEPS } from '../popup/passwordManagement/constants';
 import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPassword';
+import ForgotPasswordConfirmation from '../popup/passwordManagement/ForgotPasswordConfirmation';
 import Login from '../popup/passwordManagement/Login';
 import PasswordSettingAlert from '../popup/passwordManagement/PasswordSettingAlert';
-import { MAYBE_LATER_PERIOD, NO_PASS_PERIOD } from '../util/constants';
+import { ALLOWED_URL_ON_RESET_PASSWORD, MAYBE_LATER_PERIOD, NO_PASS_PERIOD } from '../util/constants';
 
 interface Props {
   children?: React.ReactNode;
 }
 
-const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed'];
-
-export type LoginInfo = {
+export interface LoginInfo {
   status: 'noLogin' | 'mayBeLater' | 'justSet' | 'set' | 'forgot' | 'reset';
   lastLoginTime?: number;
   hashedPassword?: string;
   addressesToForget?: string[];
 }
 
-export const updateStorage = async (label: string, newInfo: unknown) => {
+export const updateStorage = async (label: string, newInfo: object) => {
   try {
     // Retrieve the previous value
-    const previousData = await getStorage(label);
+    const previousData = await getStorage(label) as object;
 
     // Update the previous data with the new data
     const updatedData = { ...previousData, ...newInfo } as unknown;
@@ -47,26 +47,26 @@ export const updateStorage = async (label: string, newInfo: unknown) => {
 
     return true;
   } catch (error) {
-    console.error('Error while updating data');
+    console.error('Error while updating data', error);
 
     return false;
   }
 };
 
-export const getStorage = (label: string, parse = false) => {
+export const getStorage = (label: string, parse = false): Promise<object | string> => {
   return new Promise((resolve, reject) => {
     chrome.storage.local.get([label], (result) => {
       if (chrome.runtime.lastError) {
         reject(chrome.runtime.lastError);
       } else {
-        resolve(parse ? JSON.parse((result[label] || '{}') as string) : result[label]);
+        resolve(parse ? JSON.parse((result[label] || '{}') as string) as object : result[label] as object);
       }
     });
   });
 };
 
 export const watchStorage = (label: string, setChanges: ((value: any) => void), parse = false) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     chrome.storage.onChanged.addListener(function (changes, areaName) {
       if (areaName === 'local' && label in changes) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -114,6 +114,7 @@ const FlyingLogo = ({ theme }: { theme: Theme }) => (
 export default function Loading ({ children }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const manifest = useManifest();
+
   const { isExtensionLocked, setExtensionLock } = useExtensionLockContext();
   const isPopupOpenedByExtension = useIsExtensionPopup();
 
@@ -250,7 +251,7 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
             {isFlying && isPopupOpenedByExtension
               ? <FlyingLogo theme={theme} />
               : <>
-                {[STEPS.ASK_TO_SET_PASSWORD, STEPS.SHOW_LOGIN].includes(step) && (isPopupOpenedByExtension || isExtensionLocked) &&
+                { step !== undefined && [STEPS.ASK_TO_SET_PASSWORD, STEPS.SHOW_LOGIN].includes(step) && (isPopupOpenedByExtension || isExtensionLocked) &&
                   <Grid container item justifyContent='center' mt='33px' my='35px'>
                     <StillLogo theme={theme} />
                   </Grid>
@@ -268,7 +269,7 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
                     setStep={setStep}
                   />
                 }
-                {[STEPS.SHOW_LOGIN].includes(step) &&
+                {step !== undefined && [STEPS.SHOW_LOGIN].includes(step) &&
                   <Login
                     isPasswordError={isPasswordError}
                     onPassChange={onPassChange}

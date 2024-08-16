@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,6 +11,7 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 import type { AnyTuple } from '@polkadot/types/types';
+import type { Proxy, TxInfo } from '../../../../util/types';
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -19,10 +21,10 @@ import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { BN_ZERO } from '@polkadot/util';
 
 import { Identity, Motion, ShowBalance, ShowValue, SignArea2, Warning, WrongPasswordAlert } from '../../../../components';
-import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
+import { useInfo, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
-import { Proxy, TxInfo } from '../../../../util/types';
-import { ENDED_STATUSES, GOVERNANCE_PROXY, STATUS_COLOR } from '../../utils/consts';
+import { ENDED_STATUSES, STATUS_COLOR } from '../../utils/consts';
+import { PROXY_TYPE } from '../../../../util/constants';
 import DisplayValue from './partial/DisplayValue';
 import { STEPS, VoteInformation } from '.';
 
@@ -37,16 +39,14 @@ interface Props {
   tx: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   status: string | undefined;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-  setModalHeight: React.Dispatch<React.SetStateAction<number | undefined>>
+  setModalHeight: React.Dispatch<React.SetStateAction<number | undefined>>;
+  txType: 'Remove' | 'Vote';
 }
 
-export default function Review({ address, estimatedFee, selectedProxy, setModalHeight, setRefresh, setStep, setTxInfo, status, step, tx, voteInformation }: Props): React.ReactElement<Props> {
+export default function Review({ address, estimatedFee, selectedProxy, setModalHeight, setRefresh, setStep, setTxInfo, status, step, tx, txType, voteInformation }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const decimal = useDecimal(address);
-  const token = useToken(address);
   const theme = useTheme();
-  const api = useApi(address);
-  const chain = useChain(address);
+  const { api, chain, decimal, token } = useInfo(address);
   const ref = useRef(null);
 
   const [isPasswordError, setIsPasswordError] = useState(false);
@@ -57,7 +57,7 @@ export default function Review({ address, estimatedFee, selectedProxy, setModalH
     action: 'Governance',
     amount: voteInformation.voteBalance,
     fee: String(estimatedFee || 0),
-    subAction: step === STEPS.REMOVE ? 'Remove vote' : 'Vote',
+    subAction: step === STEPS.REMOVE ? 'Remove vote' : 'Vote'
   }), [estimatedFee, step, voteInformation.voteBalance]);
 
   const VoteStatus = ({ vote }: { vote: 'Aye' | 'Nay' | 'Abstain' }) => {
@@ -65,7 +65,7 @@ export default function Review({ address, estimatedFee, selectedProxy, setModalH
       <Grid alignItems='center' container>
         <Grid item>
           <Typography fontSize='28px' fontWeight={500}>
-            {t<string>(vote)}
+            {t(vote)}
           </Typography>
         </Grid>
         <Grid alignItems='center' container item width='fit-content'>
@@ -81,7 +81,7 @@ export default function Review({ address, estimatedFee, selectedProxy, setModalH
   };
 
   const params = useMemo(() => {
-    if (step === STEPS.REVIEW) {
+    if (txType === 'Vote') {
       if (['Aye', 'Nay'].includes(voteInformation.voteType)) {
         return ([voteInformation.refIndex, {
           Standard: {
@@ -101,10 +101,10 @@ export default function Review({ address, estimatedFee, selectedProxy, setModalH
           }
         }]);
       }
-    } else if (step === STEPS.REMOVE) {
+    } else if (txType === 'Remove') {
       return [voteInformation.trackId, voteInformation.refIndex];
     }
-  }, [step, voteInformation]);
+  }, [txType, voteInformation.refIndex, voteInformation.trackId, voteInformation.voteAmountBN, voteInformation.voteConvictionValue, voteInformation.voteType]);
 
   useEffect(() => {
     if (ref) {
@@ -113,8 +113,8 @@ export default function Review({ address, estimatedFee, selectedProxy, setModalH
   }, [setModalHeight]);
 
   const onBackClick = useCallback(() =>
-    setStep(step === STEPS.REVIEW ? STEPS.INDEX : STEPS.PREVIEW)
-  , [setStep, step]);
+    setStep(txType === 'Vote' ? STEPS.INDEX : STEPS.PREVIEW)
+    , [setStep, txType]);
 
   return (
     <Motion style={{ height: '100%' }}>
@@ -126,19 +126,20 @@ export default function Review({ address, estimatedFee, selectedProxy, setModalH
           <Warning
             fontWeight={400}
             isBelowInput
+            marginRight={40}
             theme={theme}
           >
-            {t<string>('Think twice before removing your vote. It may affect the outcome.')}
+            {t('Think twice before removing your vote. It may affect the outcome.')}
           </Warning>
         }
         <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: isPasswordError ? 0 : '10px', width: '90%' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t<string>('Account holder')}
+            {t('Account holder')}
           </Typography>
           <Identity
             address={address}
             api={api}
-            chain={chain}
+            chain={chain as any}
             direction='row'
             identiconSize={35}
             showSocial={false}
@@ -148,30 +149,30 @@ export default function Review({ address, estimatedFee, selectedProxy, setModalH
         </Grid>
         {selectedProxyAddress &&
           <Grid container m='auto' maxWidth='92%'>
-            <ThroughProxy address={selectedProxyAddress} chain={chain} />
+            <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
           </Grid>
         }
-        <DisplayValue title={t<string>('Vote')}>
+        <DisplayValue title={t('Vote')}>
           <VoteStatus vote={voteInformation.voteType} />
         </DisplayValue>
-        <DisplayValue title={t<string>('Vote Value ({{token}})', { replace: { token } })}>
+        <DisplayValue title={t('Vote Value ({{token}})', { replace: { token } })}>
           <Typography fontSize='28px' fontWeight={400}>
             {voteInformation.voteBalance}
           </Typography>
         </DisplayValue>
         {voteInformation.voteLockUpUpPeriod &&
-          <DisplayValue title={t<string>('Lock up Period')}>
+          <DisplayValue title={t('Lock up Period')}>
             <Typography fontSize='28px' fontWeight={400}>
               {voteInformation.voteLockUpUpPeriod}
             </Typography>
           </DisplayValue>
         }
-        <DisplayValue title={t<string>('Final vote power')}>
+        <DisplayValue title={t('Final vote power')}>
           <Typography fontSize='28px' fontWeight={400}>
             <ShowBalance balance={voteInformation.votePower} decimal={decimal} decimalPoint={2} token={token} />
           </Typography>
         </DisplayValue>
-        <DisplayValue title={t<string>('Fee')}>
+        <DisplayValue title={t('Fee')}>
           <ShowValue height={20} value={estimatedFee?.toHuman()} />
         </DisplayValue>
         <Grid container item mt='15px'>
@@ -182,9 +183,10 @@ export default function Review({ address, estimatedFee, selectedProxy, setModalH
             isPasswordError={isPasswordError}
             onSecondaryClick={onBackClick}
             params={params}
-            primaryBtnText={t<string>('Confirm')}
-            proxyTypeFilter={GOVERNANCE_PROXY}
-            secondaryBtnText={t<string>('Back')}
+            previousStep={txType === 'Vote' ? STEPS.REVIEW : STEPS.REMOVE}
+            primaryBtnText={t('Confirm')}
+            proxyTypeFilter={PROXY_TYPE.GOVERNANCE}
+            secondaryBtnText={t('Back')}
             selectedProxy={selectedProxy}
             setIsPasswordError={setIsPasswordError}
             setRefresh={setRefresh}

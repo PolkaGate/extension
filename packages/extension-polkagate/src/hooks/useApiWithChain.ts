@@ -1,16 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Chain } from '@polkadot/extension-chains/types';
+
 import { createWsEndpoints } from '@polkagate/apps-config';
 import { useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
 
 import { APIContext } from '../components';
 import { sanitizeChainName } from '../util/utils';
 
-export default function useApiWithChain(chain: Chain | undefined, api?: ApiPromise): ApiPromise | undefined {
+export default function useApiWithChain (chain: Chain | null | undefined, api?: ApiPromise): ApiPromise | undefined {
   const apisContext = useContext(APIContext);
   const [_api, setApi] = useState<ApiPromise | undefined>();
 
@@ -29,9 +30,9 @@ export default function useApiWithChain(chain: Chain | undefined, api?: ApiPromi
     }
 
     if (chain?.genesisHash && apisContext?.apis[chain.genesisHash]) {
-      const maybeApi = apisContext?.apis[chain.genesisHash].api;
+      const maybeApi = apisContext?.apis[chain.genesisHash].find(({api}) => api?.isConnected)?.api;
 
-      if (maybeApi?.isConnected) {
+      if (maybeApi) {
         console.log(`♻ using the saved api for ${chain.name} in useApiWithChain`);
 
         return setApi(maybeApi);

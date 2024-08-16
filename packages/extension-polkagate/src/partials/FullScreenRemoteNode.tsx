@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,9 +11,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 
 import { ChromeStorageGetResponse } from '../components/RemoteNodeSelector';
-import { useAccount, useChainName, useEndpoint, useEndpoints } from '../hooks';
-import CalculateNodeDelay from '../util/calculateNodeDelay';
+import { useEndpoints, useInfo } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
+import CalculateNodeDelay from '../util/calculateNodeDelay';
 
 interface Props {
   address: string | undefined;
@@ -23,13 +24,11 @@ type EndpointsDelay = { name: string, delay: number | null | undefined, value: s
 
 function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactElement {
   const theme = useTheme();
-  const account = useAccount(address);
+  const { account, chainName, endpoint: endpointUrl } = useInfo(address);
   const genesisHash = account?.genesisHash;
   const endpointOptions = useEndpoints(genesisHash);
   const onExtension = useIsExtensionPopup();
 
-  const endpointUrl = useEndpoint(address);
-  const chainName = useChainName(address);
   const isLightClient = endpointUrl?.startsWith('light');
 
   const [currentDelay, setCurrentDelay] = useState<number | undefined>();

@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -8,13 +9,14 @@
  * this component shows an account information in detail
  * */
 
+import type { BalancesInfo } from '../../util/types';
+
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, useTheme } from '@mui/material';
 import React from 'react';
 
 import { FormatPrice, ShowBalance } from '../../components';
 import { useApi, useTokenPrice } from '../../hooks';
-import { BalancesInfo } from '../../util/types';
 import { getValue } from './util';
 
 interface Props {
@@ -31,7 +33,7 @@ export default function LabelBalancePrice ({ address, balances, label, onClick, 
 
   const value = getValue(label, balances);
   const api = useApi(address);
-  const { price } = useTokenPrice(address, balances?.assetId);
+  const { price } = useTokenPrice(address as string, balances?.assetId);
 
   return (
     <>
@@ -62,7 +64,7 @@ export default function LabelBalancePrice ({ address, balances, label, onClick, 
             </Grid>
           </Grid>
           {onClick &&
-            <Grid item textAlign='right' sx={{ width: 'fit-content', ml: '8px' }}>
+            <Grid item sx={{ width: 'fit-content', ml: '8px' }} textAlign='right'>
               <IconButton
                 onClick={onClick}
                 sx={{ p: 0 }}

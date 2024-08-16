@@ -6,15 +6,23 @@
 import type { InjectedAccount, InjectedMetadataKnown, MetadataDef, ProviderList, ProviderMeta } from '@polkadot/extension-inject/types';
 import type { KeyringPair, KeyringPair$Json, KeyringPair$Meta } from '@polkadot/keyring/types';
 import type { JsonRpcResponse } from '@polkadot/rpc-provider/types';
+import type { TypeRegistry } from '@polkadot/types';
 import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
+import type { AuthResponse } from './handlers/State';
 
-import { TypeRegistry } from '@polkadot/types';
-
-import { ALLOWED_PATH } from '../defaults';
-import { AuthUrls } from './handlers/State';
+export type AuthUrls = Record<string, AuthUrlInfo>;
+export interface AuthUrlInfo {
+  count: number;
+  id: string;
+  // this is from pre-0.44.1
+  isAllowed?: boolean;
+  origin: string;
+  url: string;
+  authorizedAccounts: string[];
+}
 
 type KeysWithDefinedValues<T> = {
   [K in keyof T]: T[K] extends undefined ? never : K
@@ -32,7 +40,7 @@ export type SeedLengths = 12 | 24;
 
 export interface AccountJson extends KeyringPair$Meta {
   address: string;
-  genesisHash?: string | null;
+  genesisHash?: HexString | null;
   isExternal?: boolean;
   isHardware?: boolean;
   isHidden?: boolean;
@@ -45,7 +53,10 @@ export interface AccountJson extends KeyringPair$Meta {
   // added for polkagate
   balances?: string;
   identities?: string;
+  isGeneric?: boolean;
+  isMigration?: boolean;
   isQR?: boolean;
+  profile?: string;
   stakingAccount?: string;
 }
 
@@ -53,7 +64,11 @@ export type AccountWithChildren = AccountJson & {
   children?: AccountWithChildren[];
 }
 
-export type AccountsContext = {
+export interface RequestAccountUnsubscribe {
+  id: string;
+}
+
+export interface AccountsContext {
   accounts: AccountJson[];
   hierarchy: AccountWithChildren[];
   master?: AccountJson;
@@ -98,6 +113,7 @@ export interface RequestSignatures {
   'pri(accounts.validate)': [RequestAccountValidate, boolean];
   'pri(accounts.changePassword)': [RequestAccountChangePassword, boolean];
   'pri(authorize.approve)': [RequestAuthorizeApprove, boolean];
+  'pri(authorize.update)': [RequestUpdateAuthorizedAccounts, void];
   'pri(authorize.list)': [null, ResponseAuthorizeList];
   'pri(authorize.reject)': [RequestAuthorizeReject, boolean];
   'pri(authorize.requests)': [RequestAuthorizeSubscribe, boolean, AuthorizeRequest[]];
@@ -124,17 +140,17 @@ export interface RequestSignatures {
   'pri(window.open)': [AllowedPath, boolean];
   // public/external requests, i.e. from a page
   'pub(accounts.list)': [RequestAccountList, InjectedAccount[]];
-  'pub(accounts.subscribe)': [RequestAccountSubscribe, boolean, InjectedAccount[]];
-  'pub(authorize.tab)': [RequestAuthorizeTab, null];
+  'pub(accounts.subscribe)': [RequestAccountSubscribe, string, InjectedAccount[]];
+  'pub(authorize.tab)': [RequestAuthorizeTab, Promise<AuthResponse>];
   'pub(bytes.sign)': [SignerPayloadRaw, ResponseSigning];
   'pub(extrinsic.sign)': [SignerPayloadJSON, ResponseSigning];
   'pub(metadata.list)': [null, InjectedMetadataKnown[]];
   'pub(metadata.provide)': [MetadataDef, boolean];
   'pub(phishing.redirectIfDenied)': [null, boolean];
   'pub(rpc.listProviders)': [void, ResponseRpcListProviders];
-  'pub(rpc.send)': [RequestRpcSend, JsonRpcResponse];
+  'pub(rpc.send)': [RequestRpcSend, JsonRpcResponse<unknown>];
   'pub(rpc.startProvider)': [string, ProviderMeta];
-  'pub(rpc.subscribe)': [RequestRpcSubscribe, number, JsonRpcResponse];
+  'pub(rpc.subscribe)': [RequestRpcSubscribe, number, JsonRpcResponse<unknown>];
   'pub(rpc.subscribeConnected)': [null, boolean, boolean];
   'pub(rpc.unsubscribe)': [RequestRpcUnsubscribe, boolean];
 }
@@ -161,7 +177,13 @@ export interface RequestAuthorizeTab {
 }
 
 export interface RequestAuthorizeApprove {
+  authorizedAccounts: string[];
   id: string;
+}
+
+export interface RequestUpdateAuthorizedAccounts {
+  url: string;
+  authorizedAccounts: string[]
 }
 
 export interface RequestAuthorizeReject {
@@ -182,13 +204,13 @@ export type RequestMetadataSubscribe = null;
 
 export interface RequestAccountCreateExternal {
   address: string;
-  genesisHash?: string | null;
+  genesisHash?: HexString | null;
   name: string;
 }
 
 export interface RequestAccountCreateSuri {
   name: string;
-  genesisHash?: string | null;
+  genesisHash?: HexString | null;
   password: string;
   suri: string;
   type?: KeypairType;
@@ -198,7 +220,7 @@ export interface RequestAccountCreateHardware {
   accountIndex: number;
   address: string;
   addressOffset: number;
-  genesisHash: string;
+  genesisHash: HexString;
   hardwareType: string;
   name: string;
 }
@@ -211,7 +233,7 @@ export interface RequestAccountChangePassword {
 
 export interface RequestAccountEdit {
   address: string;
-  genesisHash?: string | null;
+  genesisHash?: HexString | null;
   name: string;
 }
 
@@ -226,7 +248,7 @@ export interface RequestAccountShow {
 
 export interface RequestAccountTie {
   address: string;
-  genesisHash: string | null;
+  genesisHash: HexString | null;
 }
 
 export interface RequestAccountValidate {
@@ -236,7 +258,7 @@ export interface RequestAccountValidate {
 
 export interface RequestDeriveCreate {
   name: string;
-  genesisHash?: string | null;
+  genesisHash?: HexString | null;
   suri: string;
   parentAddress: string;
   parentPassword: string;
@@ -289,6 +311,7 @@ export interface RequestSigningApprovePassword {
 export interface RequestSigningApproveSignature {
   id: string;
   signature: HexString;
+  signedTransaction?: HexString;
 }
 
 export interface RequestSigningCancel {
@@ -353,6 +376,7 @@ export type TransportResponseMessage<TMessageType extends MessageTypes> =
 export interface ResponseSigning {
   id: string;
   signature: HexString;
+  signedTransaction?: HexString;
 }
 
 export interface ResponseDeriveValidate {
@@ -409,12 +433,12 @@ export interface ResponseJsonRestore {
   error: string | null;
 }
 
-export type AllowedPath = typeof ALLOWED_PATH[number];
+export type AllowedPath = string; // typeof ALLOWED_PATH[number];
 
 export interface ResponseJsonGetAccountInfo {
   address: string;
   name: string;
-  genesisHash: string;
+  genesisHash: HexString;
   type: KeypairType;
 }
 

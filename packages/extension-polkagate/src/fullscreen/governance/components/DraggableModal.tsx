@@ -1,10 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Modal } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import { Box, Modal, useTheme } from '@mui/material';
+import React, { useCallback, useMemo, useState } from 'react';
 
 interface Props {
   width?: number;
@@ -15,7 +16,11 @@ interface Props {
   onClose: () => void
 }
 
-export function DraggableModal({ children, maxHeight = 740, minHeight = 570, onClose, open, width = 500 }: Props): React.ReactElement<Props> {
+export function DraggableModal ({ children, maxHeight = 740, minHeight = 615, onClose, open, width = 500 }: Props): React.ReactElement<Props> {
+  const theme = useTheme();
+
+  const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
+
   const [isDragging, setIsDragging] = useState(false);
   const initialX = (window.innerWidth - width) / 2;
   const initialY = (window.innerHeight - maxHeight) / 2;
@@ -55,7 +60,8 @@ export function DraggableModal({ children, maxHeight = 740, minHeight = 570, onC
 
   const style = {
     bgcolor: 'background.default',
-    border: '2px solid #000',
+    border: isDarkMode ? '0.5px solid' : 'none',
+    borderColor: 'secondary.light',
     borderRadius: '10px',
     boxShadow: 24,
     cursor: isDragging ? 'grabbing' : 'grab',
@@ -67,10 +73,10 @@ export function DraggableModal({ children, maxHeight = 740, minHeight = 570, onC
     pt: 2,
     px: 4,
     top: modalPosition.y,
-    border: 1,
-    borderColor: 'secondary.light',
-    // transform: 'translate(-50%, -50%)',
-    width: `${width}px`
+    width: `${width}px`,
+    '&:focus': {
+      outline: 'none' // Remove outline when Box is focused
+    }
   };
 
   return (

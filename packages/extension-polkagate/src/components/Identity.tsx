@@ -3,35 +3,35 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Email as EmailIcon, Language as LanguageIcon, Twitter as TwitterIcon } from '@mui/icons-material';
-import { Box, Grid, Link, SxProps, Theme, Typography } from '@mui/material';
-import { grey } from '@mui/material/colors';
-import React, { useEffect, useMemo } from 'react';
+import type { ApiPromise } from '@polkadot/api';
+import type { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { ApiPromise } from '@polkadot/api';
-import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import { Chain } from '@polkadot/extension-chains/types';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import { Email as EmailIcon, Language as LanguageIcon, X as XIcon } from '@mui/icons-material';
+import { Box, Grid, Link, Typography, useTheme } from '@mui/material';
+import { grey } from '@mui/material/colors';
+import React, { type CSSProperties, useEffect, useMemo } from 'react';
 
 import { ms, msGreen, msWarning, riot } from '../assets/icons';
-import { useAccountInfo, useAccountName, useChain, useFormatted2, useMerkleScience, useTranslation } from '../hooks';
+import { useAccountName, useChain, useFormatted2, useIdentity, useMerkleScience, useTranslation } from '../hooks';
 import { getSubstrateAddress, isValidAddress } from '../util/utils';
 import { ChainLogo, Identicon, Infotip, ShortAddress } from '.';
 
 interface Props {
-  accountInfo?: DeriveAccountInfo;
+  accountInfo?: DeriveAccountInfo | null;
   address?: string | AccountId;
   api?: ApiPromise;
-  chain?: Chain;
+  chain?: Chain | null;
   direction?: 'row' | 'column';
   formatted?: string | AccountId;
   identiconSize?: number;
-  judgement?: any;
+  judgement?: unknown;
   name?: string;
   noIdenticon?: boolean;
   onClick?: () => void;
   returnIdentity?: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | undefined>>;// to return back identity when needed
-  style?: SxProps<Theme>;
+  style?: CSSProperties;
   showChainLogo?: boolean;
   showShortAddress?: boolean;
   showSocial?: boolean;
@@ -39,20 +39,25 @@ interface Props {
   subIdOnly?: boolean;
 }
 
-function Identity({ accountInfo, address, api, chain, direction = 'column', formatted, identiconSize = 40, judgement, name, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity ({ accountInfo, address, api, chain, direction = 'column', formatted, identiconSize = 40, judgement, name, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
+
+  const isDark = theme.palette.mode === 'dark';
+
   const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
   const _chain = useChain(address, chain);
-  const _formatted = useFormatted2(address, formatted, chain);
+  const _formatted = useFormatted2(address, formatted, chain)?.toString();
   const msData = useMerkleScience(_formatted, chain);
-  const _api = api;
 
-  const isMSgreen = ['Exchange', 'Donation'].includes(msData?.tag_type_verbose);
-  const isMSwarning = ['Scam', 'High Risk Organization', 'Theft', 'Sanctions'].includes(msData?.tag_type_verbose);
+  const isMSgreen = ['Exchange', 'Donation'].includes(msData?.tag_type_verbose as string);
+  const isMSwarning = ['Scam', 'High Risk Organization', 'Theft', 'Sanctions'].includes(msData?.tag_type_verbose as string);
   const _showSocial = msData ? false : showSocial;
 
-  const _accountInfo = useAccountInfo(_api, _formatted, accountInfo);
-  const _judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
+  const genesisHash = chain?.genesisHash || api?.genesisHash?.toHex();
+  const _accountInfo = useIdentity(genesisHash, _formatted, accountInfo);
+
+  const _judgement = useMemo(() => judgement || (_accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi)), [_accountInfo?.identity?.judgements, judgement]);
 
   const merkleScienceTooltip = useMemo(() => (msData &&
     <Typography variant='body2'>
@@ -87,14 +92,14 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
             <Identicon
               iconTheme={_chain?.icon ?? 'polkadot'}
               isSubId={!!_accountInfo?.identity?.displayParent}
-              judgement={judgement || _judgement}
+              judgement={_judgement}
               prefix={_chain?.ss58Format ?? 42}
               size={identiconSize}
               value={_formatted || address}
             />
           </Grid>
         }
-        <Grid direction='column' item maxWidth='fit-content' onClick={onClick || undefined} overflow='hidden' sx={{ cursor: onClick ? 'pointer' : 'default', fontSize: style?.fontSize as string ?? '28px', fontWeight: 400, textAlign: 'left' }} textOverflow='ellipsis' whiteSpace='nowrap' xs>
+        <Grid direction='column' item maxWidth='fit-content' onClick={onClick || undefined} overflow='hidden' sx={{ cursor: onClick ? 'pointer' : 'inherit', fontSize: style?.fontSize as string ?? '28px', fontWeight: 400, textAlign: 'left' }} textOverflow='ellipsis' whiteSpace='nowrap' xs>
           {msData
             ? <Grid container item sx={{ flexWrap: 'nowrap' }}>
               <Grid display='flex' item sx={{ width: '25px' }}>
@@ -126,9 +131,18 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
               {_accountInfo?.identity.display && subIdOnly &&
                 _accountInfo?.identity?.display
               }
-              {_accountInfo?.nickname ? _accountInfo?.nickname : ''}
-              {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname) && name ? name : ''}
-              {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name) && accountName ? accountName : ''}
+              {_accountInfo?.nickname
+                ? _accountInfo?.nickname
+                : ''
+              }
+              {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname) && name
+                ? name
+                : ''
+              }
+              {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name) && accountName
+                ? accountName
+                : ''
+              }
               {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName)
                 ? showShortAddress && isValidAddress(String(_formatted))
                   ? <ShortAddress address={_formatted} style={{ fontSize: style?.fontSize as string || '11px', justifyContent: 'flex-start' }} />
@@ -151,32 +165,24 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
         {_showSocial &&
           <Grid container id='socials' item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', mt: '3%', px: '5px', width: 'fit-content' }}>
             {_accountInfo?.identity?.email &&
-              <Grid item>
-                <Link href={`mailto:${_accountInfo.identity.email}`}>
-                  <EmailIcon sx={{ color: '#1E5AEF', fontSize: 15 }} />
-                </Link>
-              </Grid>
+              <Link href={`mailto:${_accountInfo.identity.email}`}>
+                <EmailIcon sx={{ color: '#007CC4', fontSize: 15 }} />
+              </Link>
             }
             {_accountInfo?.identity?.web &&
-              <Grid item pl='5px'>
-                <Link href={_accountInfo?.identity.web} rel='noreferrer' target='_blank'>
-                  <LanguageIcon sx={{ color: '#007CC4', fontSize: 15 }} />
-                </Link>
-              </Grid>
+              <Link href={_accountInfo?.identity.web} pl='5px' rel='noreferrer' target='_blank'>
+                <LanguageIcon sx={{ color: 'success.main', fontSize: 15 }} />
+              </Link>
             }
             {_accountInfo?.identity?.twitter &&
-              <Grid item pl='5px'>
-                <Link href={`https://twitter.com/${_accountInfo.identity.twitter}`} rel='noreferrer' target='_blank'>
-                  <TwitterIcon sx={{ color: '#2AA9E0', fontSize: 15 }} />
-                </Link>
-              </Grid>
+              <Link href={`https://twitter.com/${_accountInfo.identity.twitter}`} pl='5px' rel='noreferrer' target='_blank'>
+                <XIcon sx={{ color: isDark ? 'white' : 'black', fontSize: 14 }} />
+              </Link>
             }
             {_accountInfo?.identity?.riot &&
-              <Grid item pl='5px'>
-                <Link href={`https://matrix.to/#/${_accountInfo.identity.riot}`} rel='noreferrer' target='_blank'>
-                  <Box component='img' src={riot} sx={{ height: '12px', mb: '2px', width: '12px' }} />
-                </Link>
-              </Grid>
+              <Link href={`https://matrix.to/#/${_accountInfo.identity.riot}`} pl='5px' rel='noreferrer' target='_blank'>
+                <Box component='img' src={riot} sx={{ height: '12px', mb: '2px', width: '12px' }} />
+              </Link>
             }
           </Grid>
         }

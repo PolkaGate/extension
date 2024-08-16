@@ -6,17 +6,21 @@
 
 import { BN_ZERO } from '@polkadot/util';
 
+// eslint-disable-next-line import/extensions
 import { closeWebsockets, fastestEndpoint, getChainEndpoints, toGetNativeToken } from './utils';
 
-async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
+// @ts-ignore
+async function getAssetOnAssetHub(addresses, assetsToBeFetched, chainName) {
   const endpoints = getChainEndpoints(chainName);
   const { api, connections } = await fastestEndpoint(endpoints, false);
 
   const results = await toGetNativeToken(addresses, api, chainName);
 
+  // @ts-ignore
   const nonNativeAssets = assetsToBeFetched.filter((asset) => !asset.extras?.isNative);
 
   for (const asset of nonNativeAssets) {
+    // @ts-ignore
     const maybeTheAssetOfAddresses = addresses.map((address) => api.query.assets.account(asset.id, address));
     const assetMetaData = api.query.assets.metadata(asset.id);
 
@@ -29,33 +33,31 @@ async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
 
     AssetOfAddresses.forEach((_asset, index) => {
       const balance = _asset.isNone ? BN_ZERO : _asset.unwrap().balance;
-
-      if (balance.isZero()) {
-        return;
-      }
-
       const parsedAccountAsset = JSON.parse(JSON.stringify(_asset));
       const isFrozen = parsedAccountAsset?.status === 'Frozen';
       const _balance = String(balance);
 
       const item = {
         assetId: asset.id,
-        availableBalance: isFrozen ? 0 : _balance,
+        balanceDetails: {
+          availableBalance: isFrozen ? 0 : _balance,
+          lockedBalance: isFrozen ? _balance : 0,
+          reservedBalance: isFrozen ? balance : 0 // JUST to comply with the rule that total=available + reserve
+        },
         chainName,
         decimal,
         freeBalance: isFrozen ? 0 : _balance, // JUST to comply with the rule ...
         frozenBalance: isFrozen ? balance : 0, // JUST to comply with the rule that total=available + reserve
         genesisHash: api.genesisHash.toString(),
         isAsset: true,
-        lockedBalance: isFrozen ? _balance : 0,
         priceId: asset?.priceId,
-        reservedBalance: isFrozen ? balance : 0, // JUST to comply with the rule that total=available + reserve
         token,
         totalBalance: _balance
       };
 
       const _index = addresses[index];
 
+      // @ts-ignore
       results[_index]?.push(item) ?? (results[_index] = [item]);
     });
   }

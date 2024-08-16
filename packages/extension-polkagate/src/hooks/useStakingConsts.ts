@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { StakingConsts } from '../util/types';
 
@@ -7,15 +8,14 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { useChainName, useCurrentEraIndex, useEndpoint, useToken } from '.';
+import { useCurrentEraIndex, useInfo } from '.';
 
 export default function useStakingConsts(address: string, stateConsts?: StakingConsts): StakingConsts | null | undefined {
-  const [savedConsts, setSavedConsts] = useState<StakingConsts | undefined | null>();
-  const [newConsts, setNewConsts] = useState<StakingConsts | undefined | null>();
-  const endpoint = useEndpoint(address);
-  const chainName = useChainName(address);
+  const { chainName, endpoint, token } = useInfo(address);
   const eraIndex = useCurrentEraIndex(address);
-  const token = useToken(address);
+
+  const [newConsts, setNewConsts] = useState<StakingConsts | undefined | null>();
+  const [savedConsts, setSavedConsts] = useState<StakingConsts | undefined | null>();
 
   const getStakingConsts = useCallback((chainName: string, endpoint: string) => {
     const getStakingConstsWorker: Worker = new Worker(new URL('../util/workers/getStakingConsts.js', import.meta.url));

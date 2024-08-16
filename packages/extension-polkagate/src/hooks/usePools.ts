@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import type { DeriveStakingAccount } from '@polkadot/api-derive/types';
 import type { Codec } from '@polkadot/types/types';
@@ -33,9 +34,24 @@ const handleInfo = (info: [Codec, Codec, Codec, DeriveStakingAccount][], lastBat
     }
   })?.filter((f) => f !== undefined);
 
-export default function usePools(address: string): PoolInfo[] | null | undefined {
-  const [pools, setPools] = useState<PoolInfo[] | undefined | null>();
+type UsePools = {
+  incrementalPools: PoolInfo[] | null | undefined;
+  numberOfFetchedPools: number;
+  totalNumberOfPools: number | undefined;
+}
+
+export default function usePools(address: string): UsePools {
   const api = useApi(address);
+
+  const [totalNumberOfPools, setTotalNumberOfPools] = useState<number | undefined>();
+  const [numberOfFetchedPools, setNumberOfFetchedPools] = useState<number>(0);
+  const [incrementalPools, setIncrementalPools] = useState<PoolInfo[] | null>();
+
+  useEffect(() => {
+    window.addEventListener('totalNumberOfPools', (res) => setTotalNumberOfPools(res.detail));
+    window.addEventListener('numberOfFetchedPools', (res) => setNumberOfFetchedPools(res.detail));
+    window.addEventListener('incrementalPools', (res) => setIncrementalPools(res.detail));
+  }, []);
 
   const getPools = useCallback(async (api: ApiPromise) => {
     const lastPoolId = ((await api.query.nominationPools.lastPoolId())?.toNumber() || 0) as number;
@@ -45,7 +61,11 @@ export default function usePools(address: string): PoolInfo[] | null | undefined
     window.dispatchEvent(new CustomEvent('totalNumberOfPools', { detail: lastPoolId }));
 
     if (!lastPoolId) {
-      setPools(null);
+      setTotalNumberOfPools(undefined);
+      setNumberOfFetchedPools(0);
+      setIncrementalPools(null);
+
+      return;
     }
 
     let poolsInfo: PoolInfo[] = [];
@@ -64,7 +84,7 @@ export default function usePools(address: string): PoolInfo[] | null | undefined
 
         queries.push(Promise.all([
           api.query.nominationPools.metadata(poolId),
-          api.query.nominationPools.bondedPools(poolId),
+          api.query['nominationPools']['bondedPools'](poolId),
           api.query.nominationPools.rewardPools(poolId),
           api.derive.staking.account(stashId)
         ]));
@@ -79,24 +99,15 @@ export default function usePools(address: string): PoolInfo[] | null | undefined
       window.dispatchEvent(new CustomEvent('numberOfFetchedPools', { detail: upperBond }));
       window.dispatchEvent(new CustomEvent('incrementalPools', { detail: poolsInfo }));
     }
-
-    console.log('getting pools owners identities...');
-    const identities = await Promise.all(poolsInfo.map((pool) => api.derive.accounts.info(pool.bondedPool.roles?.root || pool.bondedPool.roles.depositor)));
-
-    poolsInfo = poolsInfo.map((p, index) => {
-      p.identity = identities[index].identity;
-
-      return p;
-    });
-
-    console.log(`${identities?.length} identities of pool owners are fetched`);
-
-    setPools(poolsInfo);
   }, []);
 
   useEffect(() => {
     api && getPools(api);
   }, [api, getPools]);
 
-  return pools;
+  return {
+    incrementalPools,
+    numberOfFetchedPools,
+    totalNumberOfPools
+  };
 }

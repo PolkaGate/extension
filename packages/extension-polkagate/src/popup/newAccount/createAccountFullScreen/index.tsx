@@ -1,16 +1,20 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { FULLSCREEN_WIDTH, POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
+import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 
-import { ActionContext, Checkbox2, InputWithLabel, TwoButtons } from '../../../components';
+import { Checkbox2, InputWithLabel, TwoButtons, VaadinIcon } from '../../../components';
+import { setStorage } from '../../../components/Loading';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
+import { PROFILE_TAGS } from '../../../hooks/useProfileAccounts';
 import { createAccountSuri, createSeed } from '../../../messaging';
 import CopySeedButton from './components/CopySeedButton';
 import DownloadSeedButton from './components/DownloadSeedButton';
@@ -45,7 +49,6 @@ function CreateAccount (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-  const onAction = useContext(ActionContext);
 
   const [seed, setSeed] = useState<null | string>(null);
   const [name, setName] = useState<string | null | undefined>();
@@ -59,7 +62,6 @@ function CreateAccount (): React.ReactElement {
         setSeed(seed);
       })
       .catch(console.error);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onNameChange = useCallback((enteredName: string) => {
@@ -85,18 +87,19 @@ function CreateAccount (): React.ReactElement {
     if (name && password && seed) {
       setIsBusy(true);
 
-      createAccountSuri(name, password, seed)
-        .then(() => onAction('/'))
+      createAccountSuri(name, password, seed, DEFAULT_TYPE, POLKADOT_GENESIS_HASH)
+        .then(() => {
+          setStorage('profile', PROFILE_TAGS.LOCAL).catch(console.error);
+          openOrFocusTab('/', true);
+        })
         .catch((error: Error): void => {
           setIsBusy(false);
           console.error(error);
         });
     }
-  }, [name, onAction, password, seed]);
+  }, [name, password, seed]);
 
-  const onCancel = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
+  const onCancel = useCallback(() => window.close(), []);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
@@ -104,11 +107,11 @@ function CreateAccount (): React.ReactElement {
         noAccountDropDown
         noChainSwitch
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
-              <vaadin-icon icon='vaadin:plus-circle' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
+              <VaadinIcon icon='vaadin:plus-circle' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>

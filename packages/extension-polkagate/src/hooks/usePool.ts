@@ -1,25 +1,24 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-nocheck
+
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { MyPoolInfo } from '../util/types';
 
 import { useCallback, useContext, useEffect, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
-
 import { FetchingContext } from '../components';
 import { isHexToBn } from '../util/utils';
-import { useDecimal, useEndpoint, useFormatted, useToken } from '.';
+import { useInfo } from '.';
 
-export default function usePool(address?: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
-  const formatted = useFormatted(address);
-  const endpoint = useEndpoint(address);
+export default function usePool (address?: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
+  const { decimal: currentDecimal, endpoint, formatted, token: currentToken } = useInfo(address);
   const isFetching = useContext(FetchingContext);
+
   const [savedPool, setSavedPool] = useState<MyPoolInfo | undefined | null>();
   const [newPool, setNewPool] = useState<MyPoolInfo | undefined | null>();
   const [waiting, setWaiting] = useState<boolean>();
-  const currentToken = useToken(address);
-  const currentDecimal = useDecimal(address);
 
   const getPoolInfo = useCallback((endpoint: string, stakerAddress: AccountId | string, id: number | undefined = undefined) => {
     const getPoolWorker: Worker = new Worker(new URL('../util/workers/getPool.js', import.meta.url));
@@ -102,11 +101,11 @@ export default function usePool(address?: AccountId | string, id?: number, refre
       return;
     }
 
-    if (id) { /** do not save pool in local storage when pool is fetched via id, which is used in join pool page */
-      getPoolInfo(endpoint, formatted, id);
+    // if (id) { /** do not save pool in local storage when pool is fetched via id, which is used in join pool page */
+    //   getPoolInfo(endpoint, formatted, id);
 
-      return;
-    }
+    //   return;
+    // }
 
     if (!isFetching.fetching[String(formatted)]?.getPool) {
       if (!isFetching.fetching[String(formatted)]) {

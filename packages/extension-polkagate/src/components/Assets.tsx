@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme } from '@mui/material';
+import { Grid, type SxProps, type Theme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { useAccountAssetsOptions, useAssetHubAssets, useChain, useTokens } from '@polkadot/extension-polkagate/src/hooks';
@@ -12,7 +12,7 @@ import Select2 from './Select2';
 
 interface Props {
   address: string | null | undefined;
-  onChange: (value: string | number) => void;
+  onChange: (value: any) => void;
   label: string;
   style: SxProps<Theme> | undefined;
   assetId: number | undefined;
@@ -21,10 +21,10 @@ interface Props {
 }
 
 function Assets ({ address, assetId, label, onChange, setAssetId, style }: Props) {
-  const tokens = useTokens(address);
+  const tokens = useTokens(address as string);
   const chain = useChain(address);
-  const assetHubOptions = useAssetHubAssets(address); // TODO: should we show zero or spam assets?!
-  const multiChainAssetsOptions = useAccountAssetsOptions(address);
+  const assetHubOptions = useAssetHubAssets(address as string); // TODO: should we show zero or spam assets?!
+  const multiChainAssetsOptions = useAccountAssetsOptions(address as string);
   const options = useMemo(() =>
     assetHubOptions
       ? (tokens || []).concat(assetHubOptions || [])
@@ -35,6 +35,7 @@ function Assets ({ address, assetId, label, onChange, setAssetId, style }: Props
 
   useEffect(() => {
     setAssetId(undefined); // this will set the asset to the native asset on chain switch
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chain]);
 
   useEffect(() => {

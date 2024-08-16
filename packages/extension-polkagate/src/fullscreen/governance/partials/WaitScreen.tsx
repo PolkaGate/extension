@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography, useTheme } from '@mui/material';
+//@ts-ignore
 import { Circle, CubeGrid } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -14,12 +15,12 @@ interface Props {
   showCube?: boolean;
 }
 
-function WaitScreen({ defaultText, showCube = false }: Props): React.ReactElement {
+function WaitScreen ({ defaultText, showCube = false }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const [text, setText] = useState<string>(defaultText || t<string>('We are working on your transaction.'));
+  const [text, setText] = useState<string>(defaultText || t('We are working on your transaction.'));
 
-  const handleTxEvent = useCallback((s: CustomEventInit<any>) => {
+  const handleTxEvent = useCallback((s: CustomEventInit<unknown>) => {
     const event = s.detail;
 
     if (event) {
@@ -27,16 +28,16 @@ function WaitScreen({ defaultText, showCube = false }: Props): React.ReactElemen
 
       switch (state) {
         case ('ready'):
-          setText(t<string>('The transaction is ready.'));
+          setText(t('The transaction is ready.'));
           break;
         case ('broadcast'):
-          setText(t<string>('The transaction is sent.'));
+          setText(t('The transaction is sent.'));
           break;
         case ('inBlock'):
-          setText(t<string>('The transaction is now in Blockchain.'));
+          setText(t('The transaction is now in Blockchain.'));
           break;
         default:
-          setText(t<string>(`The transaction is in ${state} state`));
+          setText(t(`The transaction is in ${state} state`));
       }
     }
   }, [t]);
@@ -53,11 +54,11 @@ function WaitScreen({ defaultText, showCube = false }: Props): React.ReactElemen
         </Typography>
       </Grid>
       {showCube
-        ? <CubeGrid col={3} color={theme.palette.secondary.main} row={3} size={135} style={{ opacity: '0.4', margin: 'auto' }} />
+        ? <CubeGrid col={3} color={theme.palette.secondary.main} row={3} size={135} style={{ margin: 'auto', opacity: '0.4' }} />
         : <Circle color='#E30B7B' scaleEnd={0.7} scaleStart={0.4} size={115} style={{ margin: 'auto' }} />
       }
       <Typography sx={{ fontSize: '18px', fontWeight: 300, m: 'auto', pt: '70px', px: '20px', textAlign: 'center', width: 'fit-content' }}>
-        {t<string>('Please wait a few seconds and don’t close the window.')}
+        {t('Please wait a few seconds and don’t close the window.')}
       </Typography>
     </Grid>
   );

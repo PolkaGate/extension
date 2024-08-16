@@ -1,22 +1,26 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { TFunction } from '@polkagate/apps-config/types';
+import type { ApiPromise } from '@polkadot/api';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
+// @ts-ignore
 import type { PalletConvictionVotingVoteVoting } from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
+import type { Time } from '@polkadot/util/types';
+import type { Vote } from '../post/myVote/util';
+import type { DelegationInfo, Track } from './types';
 
-import { ApiPromise } from '@polkadot/api';
-import { TFunction } from '@polkagate/apps-config/types';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
-import { BN, BN_MAX_INTEGER, bnMin, extractTime } from '@polkadot/util';
+import { BN_MAX_INTEGER, bnMin, extractTime, isBn } from '@polkadot/util';
 
 import { remainingTime } from '../../../util/utils';
-import { isAye, Vote } from '../post/myVote/util';
-import { DelegationInfo, Track } from './types';
+import { isAye } from '../post/myVote/util';
 
 type Result = [blockInterval: number, timeStr: string, time: Time];
 
 export const capitalizeFirstLetter = (str: string): string => str.replace(/^\w/, (c) => c.toUpperCase());
 
-export function toSnakeCase(input: string | undefined): string | undefined {
+export function toSnakeCase (input: string | undefined): string | undefined {
   if (!input) {
     return undefined;
   }
@@ -39,9 +43,13 @@ export function convertToCamelCase(input: string): string {
 }
 
 export function toCamelCase(str: string): string {
+  if (!str) {
+    return '';
+  }
+
   return str.replace(/(?:^\w|[A-Z]|\b\w)/g, (match, index) => {
     return index === 0 ? match.toLowerCase() : match.toUpperCase();
-  }).replace(/\s+/g, '');
+  })?.replace(/\s+/g, '');
 }
 
 export function toPascalCase(input: string): string | undefined {
@@ -53,7 +61,7 @@ export function toPascalCase(input: string): string | undefined {
   let words = input.replace(/[_-]/g, ' ').split(' ');
 
   // Convert each word to title case
-  words = words.map(word => {
+  words = words.map((word) => {
     return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
   });
 
@@ -68,7 +76,7 @@ export function toTitleCase(input: string | undefined): string | undefined {
 
   // Replace all occurrences of capital letters with a space followed by the lowercase letter
   // Replace underscores and hyphens with spaces
-  let words = input.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').split(' ');
+  let words = input.replace(/([A-Z])/g, ' $1')?.replace(/[_-]/g, ' ')?.split(' ');
 
   // Convert each word to title case
   words = words.map((word) => {
@@ -79,7 +87,7 @@ export function toTitleCase(input: string | undefined): string | undefined {
   return words.join(' ');
 }
 
-export function pascalCaseToTitleCase(str: string): string | undefined {
+export function pascalCaseToTitleCase(str?: string): string | undefined {
   if (!str) {
     return undefined;
   }
@@ -88,10 +96,10 @@ export function pascalCaseToTitleCase(str: string): string | undefined {
   let result = str.replace(/([A-Z])/g, ' $1');
 
   // Replace underscores with spaces
-  result = result.replace(/_/g, ' ');
+  result = result?.replace(/_/g, ' ');
 
   // Capitalize the first letter of each word
-  result = result.split(' ').map(word => {
+  result = result.split(' ').map((word) => {
     return word.charAt(0).toUpperCase() + word.slice(1);
   }).join(' ');
 
@@ -155,10 +163,12 @@ export const blockToX = (block: BlockNumber, noUnit = false) => {
   if (mayBeMins >= 1) {
     return `${mayBeMins}` + (!noUnit ? ` ${mayBeMins > 1 ? 'mins' : 'min'}` : '');
   }
+
+  return undefined;
 };
 
 export const blockToUnit = (block: BlockNumber): string | undefined => {
-  const b = block?.toNumber();
+  const b = isBn(block) ? block?.toNumber() : block;
 
   if (!b) {
     return undefined;
@@ -211,7 +221,11 @@ export const getPeriodScale = (blockNumber: BlockNumber): number | undefined => 
   return undefined;
 };
 
-export const formalizedStatus = (status: string): string => {
+export const formalizedStatus = (status?: string): string | undefined => {
+  if (!status) {
+    return;
+  }
+
   let output = status;
 
   switch (status) {
@@ -293,14 +307,14 @@ export function calcBlockTime(blockTime: BN, blocks: BN, t: TFunction): Result {
 }
 
 export async function getMyDelegationInfo(api: ApiPromise | undefined, formatted: string | AccountId | undefined, tracks: Track[] | undefined): Promise<DelegationInfo[] | null | undefined> {
-  if (!api || !formatted || !tracks || !tracks.length || !api?.query?.convictionVoting) {
+  if (!api || !formatted || !tracks?.length || !api?.query?.['convictionVoting']) {
     return undefined;
   }
 
   const delegatedTracks: DelegationInfo[] = [];
 
   for (const track of tracks) {
-    const votingFor = await api.query.convictionVoting.votingFor(String(formatted), track[0]) as unknown as PalletConvictionVotingVoteVoting | undefined;
+    const votingFor = await api.query['convictionVoting']['votingFor'](String(formatted), track[0]) as unknown as PalletConvictionVotingVoteVoting | undefined;
 
     votingFor && votingFor.isDelegating && delegatedTracks.push({
       conviction: votingFor.asDelegating.conviction.toNumber(),

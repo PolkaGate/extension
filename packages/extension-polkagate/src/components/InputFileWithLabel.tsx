@@ -1,9 +1,10 @@
 // Copyright 2017-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Grid, SxProps, Theme, useTheme } from '@mui/material';
+import { Box, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { createRef, useCallback, useState } from 'react';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
 
@@ -11,7 +12,7 @@ import { formatNumber, hexToU8a, isHex, u8aToString } from '@polkadot/util';
 
 import { upload } from '../assets/icons';
 import useTranslation from '../hooks/useTranslation';
-import { pgBoxShadow } from '../util/utils';
+import { noop, pgBoxShadow } from '../util/utils';
 import Label from './Label';
 import PButton from './PButton';
 
@@ -96,8 +97,6 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
 
   );
 
-  const nullFunction = useCallback(() => null, []);
-
   const dropZone = (
     <Dropzone
       accept={accept}
@@ -124,7 +123,7 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
                   <PButton
                     _fontSize='18px'
                     _mt='21px'
-                    _onClick={nullFunction}
+                    _onClick={noop}
                     _variant='outlined'
                     text={t<string>('Browse file')}
                   />

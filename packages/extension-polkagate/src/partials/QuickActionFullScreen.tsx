@@ -1,24 +1,22 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import '@vaadin/icons';
 
 import { faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon, Boy as BoyIcon } from '@mui/icons-material';
 import { Box, ClickAwayListener, Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useCallback, useMemo, useState } from 'react';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { PoolStakingIcon } from '../components';
-import { useAccount, useApi, useTranslation } from '../hooks';
-import { windowOpen } from '../messaging';
+import { openOrFocusTab } from '../fullscreen/accountDetails/components/CommonTasks';
+import { useAccount, useTranslation } from '../hooks';
 import HistoryModal from '../popup/history/modal/HistoryModal';
-import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
+import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 
 interface Props {
   address: AccountId | string;
@@ -39,48 +37,37 @@ type QuickActionButtonType = {
 const ARROW_ICON_SIZE = 17;
 const ACTION_ICON_SIZE = '27px';
 
-export default function QuickActionFullScreen ({ address, assetId, containerRef, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
+export default function QuickActionFullScreen({ address, assetId, containerRef, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const history = useHistory();
   const account = useAccount(address);
-  const api = useApi(address);
 
   const [showHistory, setShowHistory] = useState<boolean>();
+
+  const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
 
   const handleOpen = useCallback(() => setQuickActionOpen(String(address)), [address, setQuickActionOpen]);
   const handleClose = useCallback(() => quickActionOpen === address && setQuickActionOpen(undefined), [address, quickActionOpen, setQuickActionOpen]);
 
   const goToSend = useCallback(() => {
-    address && account?.genesisHash && windowOpen(`/send/${String(address)}/${assetId || ''}`).catch(console.error);
+    address && account?.genesisHash && openOrFocusTab(`/send/${String(address)}/${assetId || ''}`);
   }, [account?.genesisHash, address, assetId]);
 
   const goToPoolStaking = useCallback(() => {
-    address && STAKING_CHAINS.includes(account?.genesisHash ?? '') && history.push({
-      pathname: `/pool/${String(address)}/`,
-      state: { api }
-    });
-  }, [account?.genesisHash, address, api, history]);
+    address && openOrFocusTab(`/poolfs/${String(address)}/`);
+  }, [address]);
 
   const goToSoloStaking = useCallback(() => {
-    address && STAKING_CHAINS.includes(account?.genesisHash ?? '') && history.push({
-      pathname: `/solo/${String(address)}/`,
-      state: { api }
-    });
-  }, [account?.genesisHash, address, api, history]);
+    address && openOrFocusTab(`/solofs/${String(address)}/`);
+  }, [address]);
 
-  const goToCrowdLoans = useCallback(() => {
-    address && CROWDLOANS_CHAINS.includes(account?.genesisHash ?? '') &&
-      history.push({
-        pathname: `/crowdloans/${String(address)}`
-      });
-  }, [account?.genesisHash, address, history]);
+  const goToGovernance = useCallback(() => {
+    supportGov && address && openOrFocusTab(`/governance/${address}/referenda`);
+  }, [address, supportGov]);
 
-  const goToGovernanceOrHistory = useCallback(() => {
-    GOVERNANCE_CHAINS.includes(account?.genesisHash ?? '')
-      ? windowOpen(`/governance/${address}/referenda`).catch(console.error)
-      : setShowHistory(true);
-  }, [account?.genesisHash, address]);
+  const goToHistory = useCallback(() => {
+    setShowHistory(true);
+  }, []);
 
   const nullF = useCallback(() => null, []);
 
@@ -157,13 +144,20 @@ export default function QuickActionFullScreen ({ address, assetId, containerRef,
         title={t('Solo Staking')}
       />
       <QuickActionButton
-        disabled={!CROWDLOANS_CHAINS.includes(account?.genesisHash ?? '')}
+        disabled={!account?.genesisHash || !supportGov}
         divider
         icon={
-          <vaadin-icon icon='vaadin:piggy-bank-coin' style={{ height: '30px', color: `${CROWDLOANS_CHAINS.includes(account?.genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}` }} />
-        }
-        onClick={goToCrowdLoans}
-        title={t('Crowdloans')}
+          <FontAwesomeIcon
+            color={
+              supportGov
+                ? theme.palette.text.primary
+                : theme.palette.action.disabledBackground
+            }
+            icon={faVoteYea}
+            style={{ height: ACTION_ICON_SIZE }}
+          />}
+        onClick={goToGovernance}
+        title={t('Governance')}
       />
       <QuickActionButton
         disabled={!account?.genesisHash}
@@ -174,11 +168,11 @@ export default function QuickActionFullScreen ({ address, assetId, containerRef,
                 ? theme.palette.text.primary
                 : theme.palette.action.disabledBackground
             }
-            icon={GOVERNANCE_CHAINS.includes(account?.genesisHash ?? '') ? faVoteYea : faHistory}
+            icon={faHistory}
             style={{ height: ACTION_ICON_SIZE }}
           />}
-        onClick={goToGovernanceOrHistory}
-        title={t<string>(GOVERNANCE_CHAINS.includes(account?.genesisHash ?? '') ? 'Governance' : 'History')}
+        onClick={goToHistory}
+        title={t('History')}
       />
     </Grid>
   );

@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
@@ -7,7 +8,7 @@ import React from 'react';
 import { ShortAddress } from '../../../../../../components';
 import { useTranslation } from '../../../../../../hooks';
 import { ThroughProxy } from '../../../../../../partials';
-import { PoolInfo, TxInfo } from '../../../../../../util/types';
+import type { PoolInfo, TxInfo } from '../../../../../../util/types';
 
 interface Props {
   txInfo: TxInfo;
@@ -64,7 +65,7 @@ export default function CreatePoolTxDetail({ pool, txInfo }: Props): React.React
         </Grid>
       </Grid>
       {txInfo.throughProxy?.address &&
-        <ThroughProxy address={txInfo.throughProxy?.address} />
+        <ThroughProxy address={txInfo.throughProxy?.address} chain={txInfo?.chain} />
       }
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
       <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>

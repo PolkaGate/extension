@@ -1,11 +1,12 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
-import { Check as CheckIcon } from '@mui/icons-material';
 
+import { Check as CheckIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -15,7 +16,7 @@ import { PButton, Progress, TwoButtons, VouchRecoveryIcon, Warning } from '../..
 import { useAccountsInfo, useChain, useTranslation } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import SelectTrustedFriend, { AddressWithIdentity } from './components/SelectTrustedFriend';
-import { SocialRecoveryModes } from './util/types';
+import type { SocialRecoveryModes } from './util/types';
 import { STEPS } from '.';
 
 interface Props {
@@ -158,7 +159,7 @@ export default function Vouch({ activeRecoveries, address, api, setMode, setStep
   }, [lostAccount, rescuerAccount, setMode, setStep, setVouchRecoveryInfo]);
 
   return (
-    <Grid container item sx={{ display: 'block', px: '10%' }}>
+    <Grid container item sx={{ display: 'block' }}>
       <Grid alignContent='center' alignItems='center' container item>
         <Grid item sx={{ mr: '20px' }}>
           <VouchRecoveryIcon
@@ -182,7 +183,7 @@ export default function Vouch({ activeRecoveries, address, api, setMode, setStep
       <SelectTrustedFriend
         accountsInfo={accountsInfo}
         api={api}
-        chain={chain}
+        chain={chain as any}
         disabled={false}
         helperText={t<string>('Find the lost account by entering their address or any associated identity details, such as their name, email, Twitter, etc.')}
         iconType='none'
@@ -194,7 +195,7 @@ export default function Vouch({ activeRecoveries, address, api, setMode, setStep
       <SelectTrustedFriend
         accountsInfo={accountsInfo}
         api={api}
-        chain={chain}
+        chain={chain as any}
         disabled={false}
         helperText={t<string>('Find the rescuer account by entering their address or any associated identity details, such as their name, email, Twitter, etc.')}
         iconType='none'

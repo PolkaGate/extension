@@ -1,27 +1,26 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-/* eslint-disable header/header */
-/* eslint-disable camelcase */
 
+//@ts-nocheck
+
+import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
+import type React from 'react';
+import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/promise/types';
 import type { DeriveAccountInfo, DeriveAccountRegistration, DeriveBalancesAll, DeriveCollectiveProposal, DeriveElectionsInfo, DeriveProposal, DeriveReferendumExt, DeriveStakingAccount, DeriveStakingQuery } from '@polkadot/api-derive/types';
+import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { InjectedExtension } from '@polkadot/extension-inject/types';
+import type { Balance } from '@polkadot/types/interfaces';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 import type { KeypairType } from '@polkadot/util-crypto/types';
+import type { LatestReferenda } from '../fullscreen/governance/utils/types';
+import type { CurrencyItemType } from '../fullscreen/homeFullScreen/partials/Currency';
+import type { SavedAssets } from '../hooks/useAssetsBalances';
 
-import { SxProps, Theme } from '@mui/material';
-import { LinkOption } from '@polkagate/apps-config/endpoints/types';
-
-import { ApiPromise } from '@polkadot/api';
-import { AccountJson } from '@polkadot/extension-base/background/types';
-import { Chain } from '@polkadot/extension-chains/types';
-import { InjectedExtension } from '@polkadot/extension-inject/types';
-import { Balance } from '@polkadot/types/interfaces';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
-
-import { LatestReferenda } from '../fullscreen/governance/utils/types';
-import { CurrencyItemType } from '../fullscreen/homeFullScreen/partials/Currency';
-import { SavedAssets } from '../hooks/useAssetsBalances';
+import { type SxProps, type Theme } from '@mui/material';
 
 export interface TransactionStatus {
   blockNumber: string | null;
@@ -45,14 +44,6 @@ export interface LastBalances {
 
 export const DEFAULT_ACCOUNT_BALANCE = { address: null, balanceInfo: null, chain: null, name: null };
 
-export interface AccountsBalanceType {
-  address: string; // formatted address
-  chain: string | null; // chainName actually
-  balanceInfo?: LastBalances;
-  name: string | null;
-  txHistory?: string;
-}
-
 export interface StakingConsts {
   bondingDuration: number; // eras
   eraIndex: number;
@@ -71,6 +62,7 @@ export interface NominatorInfo {
 }
 
 export interface ValidatorInfo extends DeriveStakingQuery {
+  exposure: any;
   accountInfo?: DeriveAccountInfo;
 }
 
@@ -137,19 +129,21 @@ interface stashAccountDisplay {
 }
 
 export interface TxResult {
-  block: number;
-  txHash: string;
+  block?: number;
+  txHash?: string;
   fee?: string;
   success: boolean;
   failureText?: string;
 }
 export interface TransactionDetail extends TxResult {
   action: string; // send, Solo staking, pool staking ...
-  subAction?: string; // bond_extra, unbound, nominate
-  from: NameAddress;
   amount?: string;
+  chain?: Chain;
   date: number;
+  from: NameAddress;
+  subAction?: string; // bond_extra, unbound, nominate
   to?: NameAddress;
+  token?: string;
   throughProxy?: NameAddress;
 }
 
@@ -159,6 +153,8 @@ export interface TxInfo extends TransactionDetail {
   decimal?: number;
   recipientChainName?: string;
   token?: string;
+  poolName?: string;
+  validatorsCount?: number;
 }
 
 export interface Auction {
@@ -392,9 +388,9 @@ export interface MyPoolInfo extends PoolInfo {
   redeemable?: BN;
   rewardClaimable?: BN;
   rewardIdBalance?: DeriveStakingAccount;
-  token: string;
-  decimal: number;
-  date: number;
+  token?: string;
+  decimal?: number;
+  date?: number;
 }
 
 export interface PoolAccounts {
@@ -509,12 +505,26 @@ export interface RewardInfo {
   stash: string
 }
 
-export interface AlertType {
-  text: string;
-  severity: 'error' | 'warning' | 'info' | 'success'
+export interface SubscanClaimedRewardInfo {
+  era: number,
+  pool_id: number,
+  account_display: { address: string },
+  amount: string,
+  block_timestamp: number,
+  event_index: string,
+  module_id: string,
+  event_id: string,
+  extrinsic_index: string
 }
 
-export type ProxyTypes = 'Any' | 'Auction' | 'CancelProxy' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'SudoBalances' | 'Society' | 'NominationPools';
+export interface ClaimedRewardInfo {
+  era: number;
+  amount: BN;
+  date?: string;
+  timeStamp: number;
+}
+
+export type ProxyTypes = 'Any' | 'Auction' | 'CancelProxy' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'Society' | 'NominationPools';
 
 export interface Proxy {
   delay: number;
@@ -609,17 +619,18 @@ export interface SavedIdentities {
 }
 
 export interface BalancesInfo extends DeriveBalancesAll {
+  ED: BN;
   assetId?: number;
   chainName: string;
   currencyId?: unknown;
-  decimal: number;
-  token: string;
   date: number;
+  decimal: number;
+  genesisHash: string;
   pooledBalance?: BN;
   frozenBalance: BN;
   soloTotal?: BN;
-  genesisHash: string;
-  ED: BN;
+  token: string;
+  totalBalance?: number;
 }
 export interface AccountStakingInfo extends DeriveStakingAccount {
   era: number;
@@ -701,19 +712,17 @@ export interface ApiProps extends ApiState {
   isWaitingInjected: boolean;
 }
 
-export interface APIs {
-  [genesisHash: string]: ApiProps;
+interface ApiPropsNew {
+  api?: ApiPromise;
+  endpoint: string;
+  isRequested: boolean;
 }
+
+export type APIs = Record<string, ApiPropsNew[]>;
+
 export interface APIsContext {
-  apis: { [key: string]: { api?: ApiPromise; endpoint?: string; isRequested: boolean; }[] };
-  setIt: (apis: {
-    [key: string]:
-    {
-      api?: ApiPromise;
-      endpoint?: string;
-      isRequested: boolean;
-    }[]
-  }) => void;
+  apis: APIs;
+  setIt: (apis: APIs) => void;
 }
 
 export interface LatestRefs {
@@ -748,11 +757,24 @@ export interface AccountsAssetsContextType {
   setAccountsAssets: (savedAccountAssets: SavedAssets) => void;
 }
 
+export type Severity= 'error' | 'warning' | 'info' | 'success'
+
+export interface AlertType {
+  text: string;
+  severity: Severity
+}
+
+export interface AlertContextType {
+  alerts: AlertType[];
+  setAlerts: React.Dispatch<React.SetStateAction<AlertType[]>>;
+}
+
+// TODO: FixMe, Controller is deprecated
 export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }
 export interface SoloSettings {
-  controllerId: AccountId | string | undefined,
+  controllerId?: AccountId | string | undefined,
   payee: Payee,
-  stashId: AccountId | string | undefined,
+  stashId?: AccountId | string | undefined,
 }
 
 export interface DropdownOption {
@@ -762,12 +784,15 @@ export interface DropdownOption {
 
 export type TransferType = 'All' | 'Max' | 'Normal';
 
-export type CanPayFee = { isAbleToPay: boolean | undefined, statement: number };
+export interface CanPayFee { isAbleToPay: boolean | undefined, statement: number }
 
-export enum CanPayStatements {
-  CANNOTPAY,
-  CANPAY,
-  CANNOTPAYFEE,
-  CANNOTPAYDEPOSIT,
-  PROXYCANPAYFEE,
+export interface ProxiedAccounts {
+  genesisHash: string;
+  proxy: string;
+  proxied: string[];
+}
+
+export interface AccountsOrder {
+  id: number,
+  account: AccountWithChildren
 }

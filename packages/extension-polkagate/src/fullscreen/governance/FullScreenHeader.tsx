@@ -11,36 +11,41 @@ import { logoBlack } from '../../assets/logos';
 import { ActionContext } from '../../components';
 import { useApi, useChain, useGenesisHashOptions } from '../../hooks';
 import { FullScreenChainSwitch, FullScreenRemoteNode } from '../../partials';
-import { EXTENSION_NAME, GOVERNANCE_CHAINS, IDENTITY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
+import { EXTENSION_NAME, GOVERNANCE_CHAINS, IDENTITY_CHAINS, SOCIAL_RECOVERY_CHAINS, STAKING_CHAINS } from '../../util/constants';
+import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import AddressDropdown from './components/AddressDropdown';
 import ThemeChanger from './partials/ThemeChanger';
 import { MAX_WIDTH } from './utils/consts';
 
 interface Props {
-  page?: 'governance' | 'manageIdentity' | 'send' | 'socialRecovery' | 'AccountDetails' | 'proxyManagement';
+  page?: 'governance' | 'manageIdentity' | 'send' | 'stake' | 'socialRecovery' | 'accountDetails' | 'proxyManagement';
   noChainSwitch?: boolean;
   noAccountDropDown?: boolean;
-  _otherComponents?: JSX.Element;
+  _otherComponents?: React.JSX.Element;
+  unableToChangeAccount?: boolean;
 }
 
-export function FullScreenHeader({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page }: Props): React.ReactElement {
+export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
   const allChains = useGenesisHashOptions();
 
   const api = useApi(address);
   const chain = useChain(address);
   const onAction = useContext(ActionContext);
+  const isThisHome = window.location.hash === '#/';
 
   const filteredChains = useMemo(() => {
     switch (page) {
       case 'governance':
         return GOVERNANCE_CHAINS;
+      case 'stake':
+        return STAKING_CHAINS;
       case 'manageIdentity':
         return IDENTITY_CHAINS;
       case 'socialRecovery':
         return SOCIAL_RECOVERY_CHAINS;
-      case 'AccountDetails':
-        return allChains.filter((chain) => chain.value !== '').map((chainOption) => chainOption.value);
+      case 'accountDetails':
+        return allChains.filter((chain) => chain.value !== '').map((chainOption) => chainOption.value as string);
       default:
         return [];
     }
@@ -56,7 +61,7 @@ export function FullScreenHeader({ _otherComponents, noAccountDropDown = false, 
         return onAction(`/manageIdentity/${selectedAddress}`);
       case 'socialRecovery':
         return onAction(`/socialRecovery/${selectedAddress}/false`);
-      case 'AccountDetails':
+      case 'accountDetails':
         return onAction(`/accountfs/${selectedAddress}/0`);
       case 'send':
         return onAction(`/send/${selectedAddress}/`);
@@ -65,7 +70,9 @@ export function FullScreenHeader({ _otherComponents, noAccountDropDown = false, 
     }
   }, [onAction, page, postId, topMenu]);
 
-  const goHome = useCallback(() => onAction('/'), [onAction]);
+  const goHome = useCallback(
+    () => !isThisHome && openOrFocusTab('/', true)
+    , [isThisHome]);
 
   return (
     <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ bgcolor: '#000000', borderBottom: '1px solid', borderBottomColor: 'secondary.light', color: 'text.secondary', fontSize: '42px', fontWeight: 400, height: '70px', minWidth: '810px', px: '40px' }}>
@@ -92,9 +99,9 @@ export function FullScreenHeader({ _otherComponents, noAccountDropDown = false, 
                 <AddressDropdown
                   api={api}
                   chainGenesis={chain?.genesisHash}
-                  height='40px'
                   onSelect={onAccountChange}
                   selectedAddress={address}
+                  unableToChangeAccount={unableToChangeAccount}
                 />
               </Grid>}
             {!noChainSwitch &&
@@ -105,11 +112,12 @@ export function FullScreenHeader({ _otherComponents, noAccountDropDown = false, 
                     chains={filteredChains}
                   />
                 </Grid>
-                <Grid container item justifyContent='flex-end' width='50px'>
+                {chain && <Grid container item justifyContent='flex-end' width='50px'>
                   <FullScreenRemoteNode
                     address={address}
                   />
                 </Grid>
+                }
               </>
             }
             {!!_otherComponents &&

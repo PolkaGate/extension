@@ -1,16 +1,15 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import '@vaadin/icons';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography } from '@mui/material';
 import { keyframes, Theme } from '@mui/material/styles';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { AccountContext, ActionContext, MenuItem, TwoButtons, Warning } from '../components';
+import { AccountContext, ActionContext, MenuItem, TwoButtons, VaadinIcon,Warning } from '../components';
 import { setStorage } from '../components/Loading';
 import { useTranslation } from '../hooks';
 import { tieAccount } from '../messaging';
@@ -32,7 +31,7 @@ const COLLAPSIBLE_MENUS = {
   SETTING: 3
 };
 
-function Menu ({ setShowMenu, theme }: Props): React.ReactElement<Props> {
+function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const [collapsedMenu, setCollapsedMenu] = useState<number>(COLLAPSIBLE_MENUS.SETTING);
@@ -113,46 +112,50 @@ function Menu ({ setShowMenu, theme }: Props): React.ReactElement<Props> {
 
   return (
     <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' sx={[{ animationDuration: '0.2s', animationFillMode: 'forwards', animationName: `${!closeMenu ? slideLeft : slideRight}`, position: 'absolute', right: 0, top: 0, mixBlendMode: 'normal', overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }]} zIndex={10}>
-      <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px 24px' sx={{ height: 'parent.innerHeight', minWidth: '307px', position: 'relative' }} width='86%'>
+      <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px' sx={{ height: 'parent.innerHeight', minWidth: '307px', position: 'relative' }} width='86%'>
         {!showWarning
           ? <>
             <MenuItem
               iconComponent={
-                <vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+                <VaadinIcon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={toggleNewAccountSubMenu}
               showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT}
               text={t('New account')}
+              withHoverEffect
             >
               <NewAccountSubMenu show={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT} />
             </MenuItem>
             <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
             <MenuItem
               iconComponent={
-                <vaadin-icon icon='vaadin:upload-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+                <VaadinIcon icon='vaadin:upload-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={toggleImportSubMenu}
               showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT}
               text={t('Import account')}
+              withHoverEffect
             >
               <ImportAccSubMenu show={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT} toggleSettingSubMenu={toggleSettingSubMenu} />
             </MenuItem>
             <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
             <MenuItem
               iconComponent={
-                <vaadin-icon icon='vaadin:download' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+                <VaadinIcon icon='vaadin:download' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={_goToExportAll}
               text={t('Export all accounts')}
+              withHoverEffect
             />
             <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
             <MenuItem
               iconComponent={
-                <vaadin-icon icon='vaadin:cog' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+                <VaadinIcon icon='vaadin:cog' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={toggleSettingSubMenu}
               showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.SETTING}
               text={t('Settings')}
+              withHoverEffect
             >
               <SettingSubMenu
                 isTestnetEnabledChecked={isTestnetEnableConfirmed}

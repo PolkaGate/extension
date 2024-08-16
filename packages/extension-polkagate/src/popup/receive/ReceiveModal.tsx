@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,8 +10,8 @@ import QRCode from 'qrcode.react';
 import React, { useCallback } from 'react';
 
 import { Identity, PButton } from '../../components';
-import { useApi, useFormatted, useTranslation } from '../../hooks';
 import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
+import { useInfo, useTranslation } from '../../hooks';
 
 interface Props {
   address: string;
@@ -18,10 +19,10 @@ interface Props {
 }
 
 export default function ReceiveModal({ address, setDisplayPopup }: Props): React.ReactElement {
-  const { t } = useTranslation();
-  const formatted = useFormatted(address);
-  const api = useApi(address);
   const theme = useTheme();
+  const { t } = useTranslation();
+
+  const { api, formatted } = useInfo(address);
 
   const backToAccount = useCallback(() => setDisplayPopup(undefined), [setDisplayPopup]);
 
@@ -31,7 +32,7 @@ export default function ReceiveModal({ address, setDisplayPopup }: Props): React
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
-              {t<string>('Receive Fund')}
+              {t('Receive Fund')}
             </Typography>
           </Grid>
           <Grid item>
@@ -39,7 +40,7 @@ export default function ReceiveModal({ address, setDisplayPopup }: Props): React
           </Grid>
         </Grid>
         <Typography fontSize='14px' fontWeight={300} sx={{ m: '20px auto', width: 'fit-content' }}>
-          {t<string>('Scan the QR code with a camera to get the address.')}
+          {t('Scan the QR code with a camera to get the address.')}
         </Typography>
         <Identity
           address={address}
@@ -50,8 +51,10 @@ export default function ReceiveModal({ address, setDisplayPopup }: Props): React
             width: '90%'
           }}
         />
-        <Grid sx={{ bgcolor: '#fff', borderRadius: '5px', height: '328px', m: 'auto', p: '25px', width: '92%' }}>
+        <Grid sx={{ bgcolor: `${theme.palette.background.paper}`, borderRadius: '5px', height: '328px', m: 'auto', p: '25px', width: '92%' }}>
           <QRCode
+            bgColor={`${theme.palette.background.paper}`}
+            fgColor={`${theme.palette.text.primary}`}
             level='H'
             size={275}
             value={formatted}
@@ -65,7 +68,7 @@ export default function ReceiveModal({ address, setDisplayPopup }: Props): React
             _mt='1px'
             _onClick={backToAccount}
             _width={100}
-            text={t<string>('Close')}
+            text={t('Close')}
           />
         </Grid>
       </>

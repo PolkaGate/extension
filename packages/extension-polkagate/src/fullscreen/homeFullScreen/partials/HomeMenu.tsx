@@ -1,23 +1,24 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
-import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, OpenInNewRounded as OpenInNewRoundedIcon } from '@mui/icons-material';
+import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
-import { AccountContext, ActionContext } from '../../../components';
+import { noop } from '@polkadot/util';
+
+import { AccountContext, VaadinIcon } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import VersionSocial from '../../../partials/VersionSocial';
+import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import ExportAllModal from './ExportAllModal';
 import ImportAccSubMenuFullScreen from './ImportAccSubMenuFullScreen';
 import SettingSubMenuFullScreen from './SettingSubMenuFullScreen';
 
 interface TaskButtonProps {
-  icon: JSX.Element;
+  icon: React.JSX.Element;
   text: string;
   onClick: () => void;
   secondaryIconType?: 'popup' | 'page';
@@ -35,7 +36,7 @@ export const TaskButton = ({ children, disabled, extra, hasChildren, icon, isSub
 
   return (
     <>
-      <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? () => null : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minHeight: isSubMenu ? '40px' : '45px', p: '5px 0px 5px 10px', my: '5px' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? noop : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minHeight: isSubMenu ? '40px' : '45px', p: '5px 0px 5px 10px', my: '5px' }}>
         <Grid container item xs={2}>
           {icon}
         </Grid>
@@ -59,22 +60,20 @@ export const TaskButton = ({ children, disabled, extra, hasChildren, icon, isSub
   );
 };
 
-export default function HomeMenu (): React.ReactElement {
+export default function HomeMenu(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const onAction = useContext(ActionContext);
   const { accounts, master } = useContext(AccountContext);
 
   const [showImport, setShowImport] = useState<boolean>(false);
   const [showSetting, setShowSetting] = useState<boolean>(false);
   const [showExportAll, setShowExportAll] = useState<boolean>(false);
 
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const areAllExternalAccounts = useMemo(() => accounts.every(({ isExternal }) => isExternal), [accounts]);
 
-  const onSend = useCallback(() => {
-    onAction('/account/create');
-  }, [onAction]);
+  const onCreate = useCallback(() => {
+    openOrFocusTab('/account/create');
+  }, []);
 
   const onExportAll = useCallback(() => {
     !areAllExternalAccounts && setShowExportAll(true);
@@ -91,60 +90,62 @@ export default function HomeMenu (): React.ReactElement {
   }, [showSetting]);
 
   const onDeriveFromAccounts = useCallback(() => {
-    !areAllExternalAccounts && master && onAction(`/fullscreenDerive/${master.address}`);
-  }, [areAllExternalAccounts, master, onAction]);
+    if (!areAllExternalAccounts && master) {
+      openOrFocusTab(`/derivefs/${master.address}`);
+    }
+  }, [areAllExternalAccounts, master]);
 
   return (
-    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', border: isDarkTheme ? '0.1px solid' : 'none', borderColor: 'secondary.main', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px', width: '430px', position: 'relative' }}>
+    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px', width: '430px', position: 'relative' }}>
       <Grid alignItems='center' container direction='column' display='block' item justifyContent='center' sx={{ pb: '40px' }}>
         <TaskButton
           icon={
-            <vaadin-icon icon='vaadin:plus-circle' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
+            <VaadinIcon icon='vaadin:plus-circle' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
-          onClick={onSend}
+          onClick={onCreate}
           secondaryIconType='page'
-          text={t<string>('Create new account')}
+          text={t('Create new account')}
         />
         <TaskButton
           disabled={areAllExternalAccounts}
           icon={
-            <vaadin-icon icon='vaadin:road-branch' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
+            <VaadinIcon icon='vaadin:road-branch' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
           onClick={onDeriveFromAccounts}
           secondaryIconType='page'
-          text={t<string>('Derive from accounts')}
+          text={t('Derive from accounts')}
         />
         <TaskButton
           hasChildren
           icon={
-            <vaadin-icon icon='vaadin:upload-alt' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
+            <VaadinIcon icon='vaadin:upload-alt' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
           onClick={onImportClick}
           secondaryIconType='page'
           showChildren={showImport}
-          text={t<string>('Import account')}
+          text={t('Import account')}
         >
           <ImportAccSubMenuFullScreen show={showImport} toggleSettingSubMenu={onSettingClick} />
         </TaskButton>
         <TaskButton
           disabled={areAllExternalAccounts}
           icon={
-            <vaadin-icon icon='vaadin:download' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
+            <VaadinIcon icon='vaadin:download' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
           onClick={onExportAll}
           secondaryIconType='popup'
-          text={t<string>('Export all accounts')}
+          text={t('Export all accounts')}
         />
         <TaskButton
           hasChildren
           icon={
-            <vaadin-icon icon='vaadin:cog' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
+            <VaadinIcon icon='vaadin:cog' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
           noBorderButton
           onClick={onSettingClick}
           secondaryIconType='page'
           showChildren={showSetting}
-          text={t<string>('Settings')}
+          text={t('Settings')}
         >
           <SettingSubMenuFullScreen show={showSetting} />
         </TaskButton>

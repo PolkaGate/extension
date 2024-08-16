@@ -1,10 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
+// @ts-ignore
 import type { PalletReferendaTrackInfo } from '@polkadot/types/lookup';
-
-import { AccountId } from '@polkadot/types/interfaces/runtime';
-import { BN } from '@polkadot/util';
+import type { BN } from '@polkadot/util';
 
 export type TopMenu = 'Referenda' | 'Fellowship';
 export type Origins = 'root' | 'whitelisted_caller' | 'staking_admin' | 'treasurer' | 'lease_admin' | 'general_admin' | 'auction_admin' | 'referendum_canceller' | 'small_tipper' | 'big_tipper' | 'small_spender' | 'medium_spender' | 'big_spender';
@@ -44,12 +44,13 @@ export interface CommentType {
 }
 
 export interface ReferendumHistory {
-  timestamp: Date,
+  timestamp?: number | Date,
   status: string,
   block: number
 }
 
 export interface ReferendumPA {
+  assetId?: string;
   bond: any;
   chainName: 'Polkadot' | 'Kusama';
   comments: CommentType[];
@@ -122,12 +123,12 @@ export interface ReferendumPA {
 export interface Timeline {
   block: number;
   status: string;
-  time: number;
-  timestamp?: Date;
-  prophecy: boolean;
-  index: number;
-  extrinsic_index: string;
-  params: null;
+  time?: number ;
+  timestamp?: number | Date;
+  prophecy?: boolean;
+  index?: number;
+  extrinsic_index?: string;
+  params?: null;
 }
 
 export interface ReferendumSb {
@@ -146,7 +147,7 @@ export interface ReferendumSb {
     identity: boolean;
   };
   beneficiary_amount: string;
-  chainName: 'Polkadot' | 'Kusama';
+  chainName: string;
   created_block: number;
   created_block_timestamp: number;
   decision_deposit_account: {
@@ -213,7 +214,10 @@ export type Track = [
   info: PalletReferendaTrackInfo
 ];
 
-export type Referendum = {
+export interface Referendum {
+  assetId?: string;
+  token?: string;
+  decimal?: number;
   ayesAmount?: string | undefined,
   ayesCount?: number | undefined,
   call?: {
@@ -243,7 +247,7 @@ export type Referendum = {
   submissionBlockOC?: number;
   submissionAmount?: string | undefined,
   supportAmount?: string | undefined,
-  title?: string | undefined,
+  title?: string | null,
   timelinePA?: {
     created_at: Date,
     hash: string,
@@ -255,7 +259,7 @@ export type Referendum = {
   trackId?: number | undefined,
   trackName?: string | undefined,
   type?: string | undefined
-};
+}
 
 export interface DelegationInfo {
   track: BN;

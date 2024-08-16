@@ -1,9 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import React from 'react';
 
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -17,7 +18,6 @@ interface Props {
 
 export default function IdentityTable({ identity, style }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   const IdItems = ({ noBorder = false, title, value }: { title: string, value: string | undefined, noBorder?: boolean }) => (
     <>
@@ -41,33 +41,37 @@ export default function IdentityTable({ identity, style }: Props): React.ReactEl
   return (
     <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', height: 'fit-content', ...style }}>
       <IdItems
-        title={t<string>('Display Name')}
+        title={t('Display Name')}
         value={identity.display}
       />
       <IdItems
-        title={t<string>('Legal Name')}
+        title={t('Legal Name')}
         value={identity.legal}
       />
       <IdItems
-        title={t<string>('Email')}
+        title={t('Email')}
         value={identity.email}
       />
       <IdItems
-        title={t<string>('Website')}
+        title={t('Website')}
         value={identity.web}
       />
       <IdItems
-        title={t<string>('Twitter')}
+        title={t('X')}
         value={identity.twitter}
       />
       <IdItems
-        title={t<string>('Element')}
-        value={identity.riot}
+        title={t('Element')}
+        value={identity.matrix || identity.riot}
+      />
+      <IdItems
+        title={t('Github')}
+        value={identity.github}
       />
       <IdItems
         noBorder
-        title={t<string>('Discord')}
-        value={identity.other?.discord}
+        title={t('Discord')}
+        value={identity.discord || identity.other?.discord}
       />
     </Grid>
   );

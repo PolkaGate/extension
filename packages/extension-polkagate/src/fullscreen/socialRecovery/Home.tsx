@@ -1,9 +1,11 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
+import type { InitiateRecoveryConfig, SocialRecoveryModes } from './util/types';
 
 import { faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,14 +13,14 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { MakeRecoverableIcon, PButton, RescueRecoveryIcon, SocialRecoveryIcon, VouchRecoveryIcon, Warning } from '../../components';
 import { useTranslation } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import RecoveryOptionButton from './components/RecoveryOptionButton';
-import { InitiateRecoveryConfig, SocialRecoveryModes } from './util/types';
 import { STEPS } from '.';
 
 interface Props {
@@ -33,7 +35,7 @@ interface Props {
   setLostAccountAddress: React.Dispatch<React.SetStateAction<InitiateRecoveryConfig | undefined>>
 }
 
-export default function Home ({ accountsInfo, activeLost, activeProxy, activeRescue, chain, recoveryInfo, setLostAccountAddress, setMode, setStep }: Props) {
+export default function Home({ accountsInfo, activeLost, activeProxy, activeRescue, chain, recoveryInfo, setLostAccountAddress, setMode, setStep }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDisabled = !!activeLost;
@@ -81,7 +83,7 @@ export default function Home ({ accountsInfo, activeLost, activeProxy, activeRes
   }, [setLostAccount, setMode, setStep]);
 
   return (
-    <Grid container item sx={{ display: 'block', px: '10%' }}>
+    <Grid container item sx={{ display: 'block' }}>
       <Grid container item justifyContent='space-between' pb='20px' pt='35px'>
         <Grid alignItems='center' container item width='fit-content'>
           <SocialRecoveryIcon

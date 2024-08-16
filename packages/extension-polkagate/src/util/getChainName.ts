@@ -10,14 +10,14 @@ import { sanitizeChainName } from './utils';
  * @param _genesisHash
  * @returns sanitized chain name
  */
-export default function getChainName (_genesisHash: string | undefined): string | undefined {
+export default function getChainName(_genesisHash: string | undefined): string | undefined {
   if (!_genesisHash) {
-    console.info('_genesisHash should not be undefined');
+    console.info('genesisHash should not be undefined');
 
     return undefined;
   }
 
   const chain = allChains.find(({ genesisHash }) => genesisHash === _genesisHash)?.chain;
 
-  return toCamelCase(sanitizeChainName(chain) as string);
+  return toCamelCase(sanitizeChainName(chain) || '');
 }

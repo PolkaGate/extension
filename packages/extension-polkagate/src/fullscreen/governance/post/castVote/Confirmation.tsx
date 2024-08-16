@@ -1,15 +1,17 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { TxInfo } from '../../../../util/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 
 import { Motion, PButton, ShortAddress, ShowBalance } from '../../../../components';
 import { useDecimal, useToken, useTranslation } from '../../../../hooks';
-import { ThroughProxy } from '../../../../partials';
-import { TxInfo } from '../../../../util/types';
+import { SubTitle, ThroughProxy } from '../../../../partials';
 import Explorer from '../../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../../popup/history/partials/FailSuccessIcon';
 import { VoteInformation } from '.';
@@ -47,9 +49,10 @@ export default function Confirmation({ address, alterType, handleClose, txInfo, 
 
   return (
     <Motion>
+      <SubTitle label={txInfo.success ? t('Completed') : t('Failed')} style={{ paddingTop: '25px' }} />
       <FailSuccessIcon
         showLabel={false}
-        style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
+        style={{ fontSize: '87px', m: '5px auto', textAlign: 'center', width: 'fit-content' }}
         success={txInfo.success}
       />
       {txInfo?.failureText &&
@@ -74,7 +77,7 @@ export default function Confirmation({ address, alterType, handleClose, txInfo, 
       {/* <AccountHolderWithProxy address={address} chain={txInfo.chain} showDivider selectedProxyAddress={txInfo.throughProxy?.address} /> */}
       <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-          {t<string>('Account holder')}:
+          {t('Account holder')}:
         </Typography>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
           {txInfo.from.name}
@@ -92,26 +95,26 @@ export default function Confirmation({ address, alterType, handleClose, txInfo, 
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
       </Grid>
       {alterType !== 'remove' &&
-        <DisplayInfo caption={t<string>('Vote:')} value={t<string>(voteInformation.voteType)} />
+        <DisplayInfo caption={t('Vote:')} value={t(voteInformation.voteType)} />
       }
       {alterType === 'remove' &&
-        <DisplayInfo caption={t<string>('Referendum:')} value={`#${voteInformation.refIndex}`} />
+        <DisplayInfo caption={t('Referendum:')} value={`#${voteInformation.refIndex}`} />
       }
       <DisplayInfo
-        caption={alterType === 'remove' ? t<string>('Unvote value:') : t<string>('Vote value:')}
-        value={t<string>(`${voteInformation.voteBalance} {{token}}`, { replace: { token } })}
+        caption={alterType === 'remove' ? t('Unvote value:') : t('Vote value:')}
+        value={t(`${voteInformation.voteBalance} {{token}}`, { replace: { token } })}
       />
       {voteInformation.voteLockUpUpPeriod &&
-        <DisplayInfo caption={t<string>('Lock up period:')} value={t<string>(voteInformation.voteLockUpUpPeriod)} />
+        <DisplayInfo caption={t('Lock up period:')} value={t(voteInformation.voteLockUpUpPeriod)} />
       }
       {alterType !== 'remove' &&
-        <DisplayInfo caption={t<string>('Your voting power:')} value={<ShowBalance balance={voteInformation.votePower} decimal={decimal} decimalPoint={4} token={token} />} />
+        <DisplayInfo caption={t('Your voting power:')} value={<ShowBalance balance={voteInformation.votePower} decimal={decimal} decimalPoint={4} token={token} />} />
       }
-      <DisplayInfo caption={t<string>('Fee:')} value={fee?.toHuman() ?? '00.00'} />
+      <DisplayInfo caption={t('Fee:')} value={fee?.toHuman() ?? '00.00'} />
       {txInfo?.txHash &&
         <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
           <Grid container item width='fit-content'>
-            <Typography pr='5px'>{t<string>('Hash')}:</Typography>
+            <Typography pr='5px'>{t('Hash')}:</Typography>
           </Grid>
           <Grid container item width='fit-content'>
             <ShortAddress
@@ -131,10 +134,10 @@ export default function Confirmation({ address, alterType, handleClose, txInfo, 
       }
       <PButton
         _ml={0}
-        _mt='30px'
         _onClick={handleClose}
-        _width={100}
-        text={t<string>('Close')}
+        _width={90}
+        left='5%'
+        text={txInfo.success ? t('Done') : t('Close')}
       />
     </Motion>
   );

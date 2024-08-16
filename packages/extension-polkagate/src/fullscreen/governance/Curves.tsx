@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -197,7 +198,7 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo | 
         },
         y: {
           beginAtZero: true,
-          max: 100,//findMaxValue([...support, ...linearDecreasingLineData]),
+          max: 100, // findMaxValue([...support, ...linearDecreasingLineData]),
           min: 0,
           grid: {
             display: false

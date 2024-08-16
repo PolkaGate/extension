@@ -1,16 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { faExpand } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
-import { TIME_TO_SHAKE_ICON } from '../util/constants';
 import Infotip2 from './Infotip2';
 
 interface Props {
@@ -20,13 +20,6 @@ interface Props {
 export default function FullScreenIcon({ url }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-
-  const [shake, setShake] = useState<boolean>();
-
-  useEffect(() => {
-    setShake(true);
-    setTimeout(() => setShake(false), TIME_TO_SHAKE_ICON);
-  }, []);
 
   const [scale, setScale] = useState<string>('1');
 
@@ -66,7 +59,6 @@ export default function FullScreenIcon({ url }: Props): React.ReactElement {
           <FontAwesomeIcon
             color={iconColor}
             icon={faExpand}
-            shake={shake}
             style={{ height: '25px', transform: `scale(${scale})`, transitionDuration: '150ms' }}
           />
         </IconButton>

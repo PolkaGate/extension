@@ -7,23 +7,22 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getComparator } from '../popup/staking/partial/comparators';
 import { DEFAULT_FILTERS } from '../util/constants';
-import { useChainName, useStakingConsts, useValidators, useValidatorsIdentities } from '.';
+import { useStakingConsts, useValidators, useValidatorsIdentities } from '.';
 
 /**
  * @description
  * This hooks return a list of suggested validators to choose
  */
 
-export default function useValidatorSuggestion (address: string): ValidatorInfo[] | null | undefined {
+export default function useValidatorSuggestion(address: string): ValidatorInfo[] | null | undefined {
   const allValidatorsInfo = useValidators(address);
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
   const stakingConsts = useStakingConsts(address);
-  const chainName = useChainName(address);
 
   const [selected, setSelected] = useState<ValidatorInfo[] | undefined>();
 
-  const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => v.validatorPrefs.blocked === false || v.validatorPrefs.blocked.isFalse), [allValidatorsInfo]);
+  const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => v.validatorPrefs.blocked as unknown as boolean === false || v.validatorPrefs.blocked.isFalse), [allValidatorsInfo]);
 
   const onLimitValidatorsPerOperator = useCallback((validators: ValidatorInfoWithIdentity[] | undefined, limit: number): ValidatorInfoWithIdentity[] => {
     if (!validators?.length) {
@@ -38,7 +37,7 @@ export default function useValidatorSuggestion (address: string): ValidatorInfo[
       v.identity = vId?.identity;
     });
 
-    aDeepCopyOfValidators.sort((v1, v2) => ('' + v1?.identity?.displayParent).localeCompare(v2?.identity?.displayParent));
+    aDeepCopyOfValidators.sort((v1, v2) => ('' + v1?.identity?.displayParent).localeCompare(v2?.identity?.displayParent || ''));
 
     let counter = 1;
     let indicator = aDeepCopyOfValidators[0];
@@ -65,15 +64,19 @@ export default function useValidatorSuggestion (address: string): ValidatorInfo[
       // !v.validatorPrefs.blocked && // filter blocked validators
       Number(v.validatorPrefs.commission) !== 0 && // filter 0 commission validators, to exclude new and chilled validators
       (Number(v.validatorPrefs.commission) / (10 ** 7)) < DEFAULT_FILTERS.maxCommission.value && // filter high commission validators
-      v.exposure.others.length && v.exposure.others.length < stakingConsts?.maxNominatorRewardedPerValidator// filter oversubscribed
+      v.exposure.others?.length && v.exposure.others.length < stakingConsts?.maxNominatorRewardedPerValidator// filter oversubscribed
       // && v.exposure.others.length > stakingConsts?.maxNominatorRewardedPerValidator / 4 // filter validators with very low nominators
     );
     const filtered2 = onLimitValidatorsPerOperator(filtered1, DEFAULT_FILTERS.limitOfValidatorsPerOperator.value);
 
-    const filtered3 = chainName === 'Westend' ? filtered2 : filtered2.filter((v) => v?.identity?.display && v?.identity?.judgements?.length); // filter has no verified identity
+    const filtered3 = allValidatorsIdentities?.length
+      ? filtered2.filter((v) => v?.identity?.display && v?.identity?.judgements?.length) // filter those who has no verified identity
+      : filtered2;
 
-    return filtered3.sort(getComparator('Commissions')).slice(0, stakingConsts?.maxNominations);
-  }, [chainName, onLimitValidatorsPerOperator]);
+    const filtered = filtered3.length ? filtered3 : filtered2;
+
+    return filtered.sort(getComparator('Commissions')).slice(0, stakingConsts?.maxNominations);
+  }, [allValidatorsIdentities?.length, onLimitValidatorsPerOperator]);
 
   useEffect(() => {
     if (!allValidators || !stakingConsts) {

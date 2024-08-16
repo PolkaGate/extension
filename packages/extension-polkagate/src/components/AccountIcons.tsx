@@ -1,18 +1,23 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
+
+/* eslint-disable react/jsx-max-props-per-line */
 
 import type { IconTheme } from '@polkadot/react-identicon/types';
+import type { Proxy } from '../util/types';
 
 import { faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+
 
 import { useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
-import { Proxy } from '../util/types';
+import { PROXY_CHAINS } from '../util/constants';
 import { getSubstrateAddress } from '../util/utils';
 import { ActionContext } from './contexts';
 import Identicon from './Identicon';
@@ -37,7 +42,7 @@ export default function AccountIcons({ chain, formatted, identiconTheme, isSubId
   const address = getSubstrateAddress(formatted);
 
   const openManageProxy = useCallback(() => {
-    address && chain && onAction(`/manageProxies/${address}`);
+    address && chain && PROXY_CHAINS.includes(chain.genesisHash ?? '') && onAction(`/manageProxies/${address}`);
   }, [address, chain, onAction]);
 
   const openSocialRecovery = useCallback(() => {

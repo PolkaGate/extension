@@ -1,52 +1,86 @@
-// Copyright 2019-2024 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { IconProp } from '@fortawesome/fontawesome-svg-core';
+import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
+import type { Balance } from '@polkadot/types/interfaces';
+import type { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
+import type { Inputs } from '.';
 
-import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
-import { Balance } from '@polkadot/types/interfaces';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
 import { BN, BN_ONE, BN_ZERO, isFunction, isNumber } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { ActionContext, AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, ShowBalance, TwoButtons, Warning } from '../../components';
+import { AmountWithOptions, FullscreenChain, Infotip2, InputAccount, ShowBalance, TwoButtons, Warning } from '../../components';
 import { useTranslation } from '../../components/translate';
-import { useApi, useChain, useFormatted, useTeleport } from '../../hooks';
 import { getValue } from '../../popup/account/util';
+import { useInfo, useTeleport } from '../../hooks';
 import { ASSET_HUBS } from '../../util/constants';
-import { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
 import { amountToHuman, amountToMachine } from '../../util/utils';
+import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { toTitleCase } from '../governance/utils/util';
-import { Inputs, STEPS } from '.';
+import { STEPS } from '../stake/pool/stake';
 
 interface Props {
-  address: string
+  address: string;
   balances: BalancesInfo | undefined;
   assetId: number | undefined;
   inputs: Inputs | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  setInputs: React.Dispatch<React.SetStateAction<Inputs>>
+  setInputs: React.Dispatch<React.SetStateAction<Inputs>>;
 }
 
 const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
 const INVALID_PARA_ID = Number.MAX_SAFE_INTEGER;
 
-export const Title = ({ padding = '30px 0px 20px', text }: { text: string, padding?: string }) => {
+interface TitleProps {
+  height?: string;
+  text: string;
+  icon?: IconProp;
+  logo?: unknown;
+  ml?: string;
+  padding?: string;
+  onBackClick?: () => void;
+  spacing?: number;
+}
+
+export const Title = ({ height, icon, logo, ml, onBackClick, padding = '30px 0px 30px', spacing = 1, text }: TitleProps): React.ReactElement => {
   const theme = useTheme();
 
   return (
-    <Grid alignItems='baseline' container item p={padding} spacing={1}>
+    <Grid alignItems={'center'} container height={height || '113px'} item ml={ml} p={padding} spacing={spacing}>
+      {!!onBackClick &&
+        <Grid item width='fit-content'>
+          <ArrowBackIosIcon
+            onClick={onBackClick}
+            sx={{
+              ':hover': { opacity: 1 },
+              color: 'secondary.light',
+              cursor: 'pointer',
+              fontSize: 36,
+              opacity: 0.5,
+              stroke: theme.palette.secondary.light,
+              strokeWidth: 1
+            }}
+          />
+        </Grid>
+      }
       <Grid item>
-        <FontAwesomeIcon
-          color={theme.palette.text.primary}
-          icon={faPaperPlane}
-          size='xl'
-          style={{ paddingBottom: '5px' }}
-        />
+        {icon &&
+          <FontAwesomeIcon
+            color={theme.palette.text.primary}
+            icon={icon}
+            size='2xl'
+            style={{ paddingBottom: '5px' }}
+          />
+        }
+        {logo as any}
       </Grid>
       <Grid item>
         <Typography fontSize='30px' fontWeight={700}>
@@ -59,19 +93,16 @@ export const Title = ({ padding = '30px 0px 20px', text }: { text: string, paddi
 
 const isAssethub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');
 
-export default function InputPage ({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function InputPage({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const api = useApi(address);
-  const formatted = useFormatted(address);
-  const chain = useChain(address);
+  const { api, chain, formatted } = useInfo(address);
   const teleportState = useTeleport(address);
-  const onAction = useContext(ActionContext);
 
   const [amount, setAmount] = useState<string>(inputs?.amount || '0');
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [estimatedCrossChainFee, setEstimatedCrossChainFee] = useState<Balance>();
-  const [recipientAddress, setRecipientAddress] = useState<string>(inputs?.recipientAddress);
+  const [recipientAddress, setRecipientAddress] = useState<string | undefined>(inputs?.recipientAddress);
   const [recipientChainGenesisHash, setRecipientChainGenesisHash] = useState<string | undefined>(inputs?.recipientGenesisHashOrParaId);
   const [recipientParaId, setParaId] = useState(INVALID_PARA_ID);
   const [recipientChainName, setRecipientChainName] = useState<string>();
@@ -80,7 +111,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
 
   const ED = assetId
     ? balances?.ED
-    : api && api.consts.balances.existentialDeposit as unknown as BN;
+    : api && api.consts['balances']['existentialDeposit'] as unknown as BN;
 
   const transferableBalance = useMemo(() => getValue('transferable', balances), [balances]);
 
@@ -91,7 +122,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     [amount, balances]);
 
   const warningMessage = useMemo(() => {
-    if (transferType !== 'All' && amountAsBN && balances && balances.decimal && ED && transferableBalance) {
+    if (transferType !== 'All' && amountAsBN && balances?.decimal && ED && transferableBalance) {
       const totalBalance = balances.freeBalance.add(balances.reservedBalance);
       const toTransferBalance = assetId
         ? amountAsBN
@@ -100,11 +131,11 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
       const remainingBalanceAfterTransfer = totalBalance.sub(toTransferBalance);
 
       if (transferableBalance.isZero() || transferableBalance.lt(toTransferBalance)) {
-        return t<string>('There is no sufficient transferable balance!');
+        return t('There is no sufficient transferable balance!');
       }
 
       if (remainingBalanceAfterTransfer.lt(ED) && remainingBalanceAfterTransfer.gt(BN_ZERO)) {
-        return t<string>('This transaction will drop your balance below the Existential Deposit threshold, risking account reaping.');
+        return t('This transaction will drop your balance below the Existential Deposit threshold, risking account reaping.');
       }
     }
 
@@ -112,10 +143,10 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
   }, [ED, amountAsBN, assetId, balances, transferableBalance, estimatedCrossChainFee, estimatedFee, t, transferType]);
 
   const destinationGenesisHashes = useMemo((): DropdownOption[] => {
-    const currentChainOption = chain ? [{ text: chain.name, value: chain.genesisHash }] : [];
+    const currentChainOption = chain ? [{ text: chain.name, value: chain.genesisHash as string }] : [];
     const mayBeTeleportDestinations =
       assetId === undefined
-        ? teleportState?.destinations?.map(({ genesisHash, info, paraId }) => ({ text: toTitleCase(info), value: paraId || String(genesisHash) }))
+        ? teleportState?.destinations?.map(({ genesisHash, info, paraId }) => ({ text: toTitleCase(info) as string, value: (paraId || String(genesisHash)) as string }))
         : [];
 
     return currentChainOption.concat(mayBeTeleportDestinations);
@@ -131,21 +162,21 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     const module = assetId !== undefined
       ? isAssethub(chain.genesisHash)
         ? 'assets'
-        : api.tx?.currencies
+        : api.tx?.['currencies']
           ? 'currencies'
           : 'tokens'
       : 'balances';
 
     if (['currencies', 'tokens'].includes(module)) {
-      return api.tx[module].transfer;
+      return api.tx[module]['transfer'];
     }
 
     return api.tx?.[module] && (
-      ['Normal', 'Max'].includes(transferType)
-        ? api.tx[module].transferKeepAlive
+      transferType === 'Normal'
+        ? api.tx[module]['transferKeepAlive']
         : assetId !== undefined
-          ? api.tx[module].transfer
-          : api.tx[module].transferAll
+          ? api.tx[module]['transfer']
+          : api.tx[module]['transferAll']
     );
   }, [api, assetId, chain, transferType]);
 
@@ -155,9 +186,9 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     }
 
     if (isCrossChain) {
-      const m = XCM_LOC.filter((x) => api.tx[x] && isFunction(api.tx[x].limitedTeleportAssets))?.[0];
+      const m = XCM_LOC.filter((x) => api.tx[x] && isFunction(api.tx[x]['limitedTeleportAssets']))?.[0];
 
-      return m ? api.tx[m].limitedTeleportAssets : undefined;
+      return m ? api.tx[m]['limitedTeleportAssets'] : undefined;
     }
 
     return onChainCall;
@@ -175,16 +206,16 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     ,
     [address, amount, amountAsBN, inputs?.recipientAddress, inputs?.totalFee, recipientAddress, recipientChainGenesisHash, transferableBalance, warningMessage]);
 
-  const calculateFee = useCallback((amount: Balance | BN, setFeeCall: (value: React.SetStateAction<Balance | undefined>) => void) => {
+  const calculateFee = useCallback((amount: Balance | BN, setFeeCall: React.Dispatch<React.SetStateAction<Balance | undefined>>) => {
     /** to set Maximum fee which will be used to estimate and show max transferable amount */
     if (!api || !balances || !formatted || !onChainCall) {
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
-      const dummyAmount = api?.createType('Balance', BN_ONE);
+    if (!api?.call?.['transactionPaymentApi']) {
+      const dummyAmount = api.createType('Balance', BN_ONE);
 
-      return setFeeCall(dummyAmount);
+      return setFeeCall(dummyAmount as Balance);
     }
 
     const _params = assetId !== undefined
@@ -252,7 +283,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     setInputs({
       amount,
       call,
-      params: isCrossChain
+      params: (isCrossChain
         ? crossChainParams
         : assetId !== undefined
           ? ['currencies', 'tokens'].includes(onChainCall?.section || '')
@@ -260,7 +291,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
             : [assetId, recipientAddress, amountAsBN] // this is for transferring on asset hubs
           : transferType === 'All'
             ? [recipientAddress, false] // transferAll with keepalive = false
-            : [recipientAddress, amountAsBN],
+            : [recipientAddress, amountAsBN]) as unknown[],
       recipientAddress,
       recipientChainName,
       recipientGenesisHashOrParaId: recipientChainGenesisHash,
@@ -307,24 +338,22 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     isCrossChain && call(...crossChainParams).paymentInfo(formatted).then((i) => setEstimatedCrossChainFee(i?.partialFee)).catch(console.error);
   }, [call, formatted, isCrossChain, crossChainParams]);
 
-  const setWholeAmount = useCallback((type: TransferType) => {
-    if (!api || !transferableBalance || !maxFee || !balances) {
+  const setWholeAmount = useCallback(() => {
+    if (!api || !transferableBalance || !maxFee || !balances || !ED) {
       return;
     }
 
-    setTransferType(type);
+    setTransferType('All');
 
     const _isAvailableZero = transferableBalance.isZero();
 
-    const ED = assetId === undefined ? api.consts.balances.existentialDeposit as unknown as BN : balances.ED;
     const _maxFee = assetId === undefined ? maxFee : BN_ZERO;
 
     const _canNotTransfer = _isAvailableZero || _maxFee.gte(transferableBalance);
     const allAmount = _canNotTransfer ? '0' : amountToHuman(transferableBalance.sub(_maxFee).toString(), balances.decimal);
-    const maxAmount = _canNotTransfer ? '0' : amountToHuman(transferableBalance.sub(_maxFee).sub(ED).toString(), balances.decimal);
 
-    setAmount(type === 'All' ? allAmount : maxAmount);
-  }, [api, assetId, balances, maxFee]);
+    setAmount(allAmount);
+  }, [api, assetId, balances, ED, maxFee]);
 
   const _onChangeAmount = useCallback((value: string) => {
     if (!balances) {
@@ -342,49 +371,23 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     setAmount(value);
   }, [balances]);
 
-  const backToDetail = useCallback(
-    () => onAction(`/accountfs/${address}/${assetId || '0'}`)
-    , [address, assetId, onAction]);
+  const onBack = useCallback(
+    () => openOrFocusTab(`/accountfs/${address}/${assetId || '0'}`, true)
+    , [address, assetId]);
 
   return (
-    <Grid container item sx={{ display: 'block', px: '10%' }}>
-      <Title text={t<string>('Send Fund')} />
+    <Grid container item>
       <Typography fontSize='14px' fontWeight={400}>
-        {t<string>('Input transfer amount and destination account. For cross-chain transfers, adjust recipient chain and consider associated fees.')}
+        {t('Input transfer amount and destination account. For cross-chain transfers, adjust recipient chain and consider associated fees.')}
       </Typography>
-      <Grid alignItems='center' borderBottom='1px rgba(99, 54, 77, 0.2) solid' container item justifyContent='space-between' m='auto' pb='15px' pt='25px'>
-        <Grid container item justifyContent='space-between'>
-          <Grid item md={6.9} xs={12}>
-            <Typography fontSize='16px'>
-              {t<string>('Transferable amount')}
-            </Typography>
-            <Grid alignItems='center' container item sx={{ border: 1, borderColor: 'rgba(75, 75, 75, 0.3)', fontSize: '18px', height: '48px', p: '0 5px' }}>
-              <ShowBalance balance={transferableBalance} decimal={balances?.decimal} skeletonWidth={120} token={balances?.token} />
-            </Grid>
-          </Grid>
-          <Grid item md={4.8} xs={12}>
-            <Typography fontSize='16px'>
-              {t<string>('Chain')}
-            </Typography>
-            <Grid alignItems='center' container item sx={{ border: 1, borderColor: 'rgba(75, 75, 75, 0.3)', fontSize: '18px', height: '48px', p: '0 15px' }}>
-              <ChainLogo genesisHash={chain?.genesisHash} size={29} />
-              <Typography fontSize='14px' pl='10px'>
-                {chain?.name}
-              </Typography>
-            </Grid>
-          </Grid>
-        </Grid>
+      <Grid alignItems='center' borderBottom='1px rgba(99, 54, 77, 0.2) solid' container item justifyContent='space-between' m='auto' pb='30px' pt='15px'>
         <AmountWithOptions
           inputWidth={8.4}
-          label={t<string>('Amount')}
+          label={t('How much would you like to send?')}
           labelFontSize='16px'
           onChangeAmount={_onChangeAmount}
-          // eslint-disable-next-line react/jsx-no-bind
-          onPrimary={() => setWholeAmount('All')}
-          // eslint-disable-next-line react/jsx-no-bind
-          onSecondary={() => setWholeAmount('Max')}
-          primaryBtnText={t<string>('All amount')}
-          secondaryBtnText={t<string>('Max amount')}
+          onPrimary={setWholeAmount}
+          primaryBtnText={t('Max amount')}
           style={{
             fontSize: '16px',
             mt: '25px',
@@ -393,21 +396,34 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
           textSpace='15px'
           value={amount || inputs?.amount}
         />
-        <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '38px', width: '57.5%' }}>
-          <Typography fontSize='16px' fontWeight={400}>
-            {t<string>('Network fee')}
+        <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '30px', width: '57.5%' }}>
+          <Typography fontSize='14px' fontWeight={400}>
+            {t('Network fee')}
           </Typography>
           <ShowBalance api={api} balance={estimatedFee} />
         </Grid>
+        <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '25px', width: '57.5%' }}>
+          <Infotip2 showInfoMark text={t('Existential Deposit: {{ED}}', { replace: { ED: api?.createType('Balance', ED)?.toHuman() } })}>
+            <Typography fontSize='14px' fontWeight={400}>
+              {t('Transferable amount')}
+            </Typography>
+          </Infotip2>
+          <ShowBalance
+            balance={transferableBalance}
+            decimal={balances?.decimal}
+            decimalPoint={4}
+            token={balances?.token}
+          />
+        </Grid>
       </Grid>
-      <Typography fontSize='20px' fontWeight={500} pt='15px'>
-        {t<string>('To')}
+      <Typography fontSize='20px' fontWeight={500} pt='30px'>
+        {t('To')}
       </Typography>
       <Grid container item justifyContent='space-between'>
         <Grid item md={6.9} sx={{ pt: '10px' }} xs={12}>
           <InputAccount
             address={recipientAddress || inputs?.recipientAddress}
-            chain={chain}
+            chain={chain as any}
             label={t('Account')}
             labelFontSize='16px'
             setAddress={setRecipientAddress}
@@ -418,7 +434,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
           <FullscreenChain
             address={address}
             defaultValue={chain?.genesisHash || inputs?.recipientGenesisHashOrParaId}
-            label={t<string>('Chain')}
+            label={t('Chain')}
             labelFontSize='16px'
             onChange={setRecipientChainGenesisHash}
             options={destinationGenesisHashes}
@@ -426,8 +442,8 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
           />
           {isCrossChain && Number(amount) !== 0 &&
             <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '38px', width: '100%' }}>
-              <Typography fontSize='16px' fontWeight={400}>
-                {t<string>('Cross-chain fee')}
+              <Typography fontSize='14px' fontWeight={400}>
+                {t('Cross-chain fee')}
               </Typography>
               <ShowBalance api={api} balance={estimatedCrossChainFee} />
             </Grid>
@@ -460,9 +476,9 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
               mt='1px'
               // eslint-disable-next-line react/jsx-no-bind
               onPrimaryClick={() => setStep(STEPS.REVIEW)}
-              onSecondaryClick={backToDetail}
-              primaryBtnText={t<string>('Next')}
-              secondaryBtnText={t<string>('Back')}
+              onSecondaryClick={onBack}
+              primaryBtnText={t('Next')}
+              secondaryBtnText={t('Back')}
             />
           </Grid>
         </Grid>

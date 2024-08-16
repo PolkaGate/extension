@@ -1,9 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import '@vaadin/icons';
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -11,9 +10,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Box, Divider, Grid, Pagination, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
-import { Identity, InputFilter, Progress, ShowBalance } from '../../../../components';
+import { Identity, InputFilter, Progress, ShowBalance, VaadinIcon } from '../../../../components';
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
 import { AbstainVoteType, AllVotesType, FilteredVotes, VoteType } from '../../utils/helpers';
@@ -37,10 +37,6 @@ export const VOTE_TYPE_MAP = {
   // eslint-disable-next-line sort-keys
   ABSTAIN: 3
 };
-
-function noop() {
-  // This function does nothing.
-}
 
 export default function Standards({ address, allVotes, filteredVotes, handleClose, open, page, setFilteredVotes, setPage, setShowDelegators }: Props): React.ReactElement {
   const { t } = useTranslation();
@@ -238,7 +234,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
               </Grid>
               <Grid container item justifyContent='space-around' xs={12} fontSize='16px'>
                 <Grid item>
-                  <vaadin-icon icon='vaadin:sort' onClick={onSortVotes} style={{ height: '25px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
+                  <VaadinIcon icon='vaadin:sort' onClick={onSortVotes} style={{ height: '25px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
                   {t('Value')}
                 </Grid>
                 {voteTypeStr !== 'abstain' &&
@@ -269,7 +265,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
             return (
               <Grid alignItems='center' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400 }}>
                 <Grid container item justifyContent='flex-start' width='45%'>
-                  <Identity api={api} chain={chain} formatted={vote.voter} identiconSize={28} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, maxWidth: '99%', minWidth: '35%', width: 'fit-content' }} />
+                  <Identity api={api} chain={chain as any} formatted={vote.voter} identiconSize={28} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, maxWidth: '99%', minWidth: '35%', width: 'fit-content' }} />
                 </Grid>
                 <Grid alignItems='center' container item justifyContent='space-around' sx={{ borderColor: 'secondary.contrastText', borderLeft: 0.5, borderRight: 0.5, height: '43px' }} width='30%'>
                   <Grid container item justifyContent={vote?.lockPeriod == null ? 'center' : 'flex-end'} xs>

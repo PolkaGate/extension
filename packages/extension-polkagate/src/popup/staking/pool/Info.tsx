@@ -1,7 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+//@ts-nocheck
 
 import type { PoolStakingConsts } from '../../../util/types';
 
@@ -11,13 +14,12 @@ import React, { useCallback } from 'react';
 import { BN } from '@polkadot/util';
 
 import { Popup, ShowValue } from '../../../components';
-import { useDecimal, useToken, useTranslation } from '../../../hooks';
+import { useInfo, useTranslation } from '../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../partials';
 import { amountToHuman } from '../../../util/utils';
 
 interface Props {
   address: string;
-  backPath: string;
   showInfo: boolean;
   info: PoolStakingConsts;
   setShowInfo: React.Dispatch<React.SetStateAction<boolean>>
@@ -26,8 +28,7 @@ interface Props {
 
 export default function Info({ address, info, setShowInfo, showInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const token = useToken(address);
-  const decimal = useDecimal(address);
+  const { decimal, token } = useInfo(address);
 
   const onBackClick = useCallback(() => {
     setShowInfo(false);
@@ -63,7 +64,7 @@ export default function Info({ address, info, setShowInfo, showInfo }: Props): R
           <Grid item sx={{ fontWeight: 300 }}>
             {label}
           </Grid>
-          <Grid item sx={{ fontWeight: 400 }} >
+          <Grid item sx={{ fontWeight: 400 }}>
             {text}
           </Grid>
         </Grid>

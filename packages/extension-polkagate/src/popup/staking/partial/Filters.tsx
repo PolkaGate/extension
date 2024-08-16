@@ -1,23 +1,28 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+//@ts-nocheck
+
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { getComparator } from '@polkadot/extension-polkagate/src/popup/staking/partial/comparators';
+import { DEFAULT_FILTERS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { Checkbox2, Input, Select, SlidePopUp, TwoButtons } from '../../../components';
-import { useTranslation } from '../../../hooks';
-import { DEFAULT_FILTERS } from '../../../util/constants';
-import { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
-import { getComparator } from './comparators';
 
 interface Props {
-  allValidatorsIdentities: DeriveAccountInfo[] | undefined;
+  allValidatorsIdentities: DeriveAccountInfo[] | undefined | null;
   allValidators: ValidatorInfo[] | null | undefined;
+  isFullscreen?: boolean;
   show: boolean;
   setNewSelectedValidators: React.Dispatch<React.SetStateAction<ValidatorInfo[]>>;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,13 +32,13 @@ interface Props {
   filters: Filter;
   setFilters: React.Dispatch<React.SetStateAction<Filter>>;
   setSortValue: React.Dispatch<React.SetStateAction<number | undefined>>;
-  sortValue: number;
+  sortValue: number | undefined;
   apply: boolean;
   setApply: React.Dispatch<React.SetStateAction<boolean>>;
   onLimitValidatorsPerOperator: (validators: ValidatorInfoWithIdentity[] | undefined, limit: number) => ValidatorInfoWithIdentity[];
 }
 
-export default function Filters({ allValidators, allValidatorsIdentities, apply, filters, newSelectedValidators, onLimitValidatorsPerOperator, setApply, setFilteredValidators, setFilters, setNewSelectedValidators, setShow, setSortValue, show, sortValue, stakingConsts }: Props): React.ReactElement<Props> {
+export default function Filters ({ allValidators, allValidatorsIdentities, apply, filters, isFullscreen, newSelectedValidators, onLimitValidatorsPerOperator, setApply, setFilteredValidators, setFilters, setNewSelectedValidators, setShow, setSortValue, show, sortValue, stakingConsts }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -125,7 +130,7 @@ export default function Filters({ allValidators, allValidatorsIdentities, apply,
   }, [setApply]);
 
   const onClear = useCallback(() => {
-    console.log('DEFAULT_FILTERS:', DEFAULT_FILTERS)
+    console.log('DEFAULT_FILTERS:', DEFAULT_FILTERS);
     setFilters(structuredClone(DEFAULT_FILTERS) as Filter);
     setSortValue(0);
     setApply(false);
@@ -147,7 +152,7 @@ export default function Filters({ allValidators, allValidatorsIdentities, apply,
           {t<string>('Filters')}
         </Typography>
       </Grid>
-      <Grid container justifyContent='center' >
+      <Grid container justifyContent='center'>
         <Divider sx={{ bgcolor: 'secondary.main', width: '80%' }} />
         <Checkbox2
           checked={filters?.withIdentity}
@@ -232,6 +237,7 @@ export default function Filters({ allValidators, allValidatorsIdentities, apply,
         </div>
       </Grid>
       <TwoButtons
+        ml={isFullscreen ? '0px' : undefined}
         onPrimaryClick={onApply}
         onSecondaryClick={onClear}
         primaryBtnText={t<string>('Apply')}
@@ -241,16 +247,25 @@ export default function Filters({ allValidators, allValidatorsIdentities, apply,
       <IconButton
         onClick={onCloseFilter}
         sx={{
-          left: '15px',
+          left: isFullscreen ? undefined : '15px',
           p: 0,
           position: 'absolute',
-          top: '65px'
+          right: isFullscreen ? '15px' : undefined,
+          top: isFullscreen ? '15px' : '65px'
         }}
       >
         <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />
       </IconButton>
     </Grid>
   );
+
+  if (isFullscreen) {
+    return (
+      <DraggableModal onClose={onCloseFilter} open={show}>
+        {page}
+      </DraggableModal>
+    );
+  }
 
   return (
     <SlidePopUp show={show}>

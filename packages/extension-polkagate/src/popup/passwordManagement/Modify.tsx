@@ -10,7 +10,7 @@ import { blake2AsHex } from '@polkadot/util-crypto';
 
 import { Password, Switch, TwoButtons } from '../../components';
 import { setStorage } from '../../components/Loading';
-import { useTranslation } from '../../hooks';
+import { useIsExtensionPopup, useTranslation } from '../../hooks';
 import Passwords2 from '../newAccount/createAccountFullScreen/components/Passwords2';
 import { STEPS } from './constants';
 import { isPasswordCorrect } from '.';
@@ -24,9 +24,11 @@ interface Props {
   newPassword: string;
 }
 
-function Modify({ isPasswordError, newPassword, onBackClick, onPassChange, setIsPasswordError, setStep }: Props): React.ReactElement {
+function Modify ({ isPasswordError, newPassword, onBackClick, onPassChange, setIsPasswordError, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isExtensionMode = useIsExtensionPopup();
+
   const [isRemovePasswordChecked, setChecked] = useState<boolean>(false);
   const [currentPassword, setCurrentPassword] = useState<string>('');
 
@@ -95,33 +97,34 @@ function Modify({ isPasswordError, newPassword, onBackClick, onPassChange, setIs
             {t<string>('Password Enabled')}<br />
           </Typography>
           <Switch
-            changeBackground
             fontSize='17px'
             isChecked={!isRemovePasswordChecked}
             onChange={onCheckChange}
             theme={theme}
-          // uncheckedLabel={t<string>('Light')}
           />
         </Grid>
-        <Grid item sx={{ opacity: isRemovePasswordChecked ? 0.5 : 1, mt: '20px' }}>
+        <Grid item sx={{ mt: '20px', opacity: isRemovePasswordChecked ? 0.5 : 1 }}>
           <Passwords2
             disabled={isRemovePasswordChecked}
             firstPassStyle={{ marginBlock: '8px' }}
             label={t<string>('New password')}
             onChange={onPassChange}
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onEnter={onUpdatePassword}
           />
         </Grid>
-        <TwoButtons
-          disabled={!currentPassword || !(newPassword || isRemovePasswordChecked)}
-          ml='0'
-          mt='20px'
-          onPrimaryClick={onSet}
-          onSecondaryClick={onBackClick}
-          primaryBtnText={t<string>('Set')}
-          secondaryBtnText={t<string>('Cancel')}
-          width='100%'
-        />
+        <Grid container justifyContent='center' sx={{ bottom: isExtensionMode ? '15px' : '25px', height: '40px', position: 'absolute', width: isExtensionMode ? '95%' : '83%' }}>
+          <TwoButtons
+            disabled={!currentPassword || !(newPassword || isRemovePasswordChecked)}
+            ml='0'
+            mt='20px'
+            onPrimaryClick={onSet}
+            onSecondaryClick={onBackClick}
+            primaryBtnText={t<string>('Set')}
+            secondaryBtnText={t<string>('Cancel')}
+            width='100%'
+          />
+        </Grid>
       </Grid>
     </>
   );

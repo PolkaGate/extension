@@ -16,7 +16,7 @@ interface Props {
   setStep: (value: React.SetStateAction<number | undefined>) => void;
 }
 
-function AskToSetPassword({ setStep }: Props): React.ReactElement {
+function AskToSetPassword ({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { setExtensionLock } = useExtensionLockContext();
 
@@ -28,8 +28,7 @@ function AskToSetPassword({ setStep }: Props): React.ReactElement {
 
   const onNoPassword = useCallback(() => {
     setExtensionLock(false);
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    setStorage('loginInfo', { status: 'noLogin' });
+    setStorage('loginInfo', { status: 'noLogin' }).catch(console.error);
   }, [setExtensionLock]);
 
   const onYesToSetPassword = useCallback(() => {

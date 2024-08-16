@@ -1,12 +1,12 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, SxProps, Theme } from '@mui/material';
-import React from 'react';
+import type { Chain } from '@polkadot/extension-chains/types';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import { Divider, Grid, type SxProps, type Theme } from '@mui/material';
+import React from 'react';
 
 import ThroughProxy from '../partials/ThroughProxy';
 import { AccountHolder } from '.';
@@ -17,7 +17,7 @@ interface Props {
   style?: SxProps<Theme> | undefined;
   selectedProxyAddress?: string;
   title?: string;
-  chain: Chain | null;
+  chain: Chain | null | undefined;
 }
 
 function AccountHolderWithProxy ({ address, chain, selectedProxyAddress, showDivider = false, style, title }: Props): React.ReactElement {
@@ -31,6 +31,7 @@ function AccountHolderWithProxy ({ address, chain, selectedProxyAddress, showDiv
         <ThroughProxy
           address={selectedProxyAddress}
           chain={chain}
+          showDivider
           style={{ pb: '5px' }}
         />
       }

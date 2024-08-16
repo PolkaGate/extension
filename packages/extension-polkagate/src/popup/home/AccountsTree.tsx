@@ -3,10 +3,9 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { Backdrop, Container, Grid, useTheme } from '@mui/material';
-import { TFunction } from '@polkagate/apps-config/types';
 import React, { useCallback, useEffect } from 'react';
 
 import { PButton } from '../../components';
@@ -14,6 +13,7 @@ import { useActiveRecoveries, useApi, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import getParentNameSuri from '../../util/getParentNameSuri';
+import { AccountLabel } from './AccountLabel';
 import AccountPreview from './AccountPreview';
 
 interface Props extends AccountWithChildren {
@@ -24,29 +24,10 @@ interface Props extends AccountWithChildren {
   setHasActiveRecovery: React.Dispatch<React.SetStateAction<string | null | undefined>>;
 }
 
-export const label = (account: AccountJson | undefined, parentName: string | undefined, t: TFunction): string | undefined => {
-  if (account?.isHardware) {
-    return t('Ledger');
-  }
-
-  if (account?.isQR) {
-    return t('QR-attached');
-  }
-
-  if (account?.isExternal) {
-    return t('Watch-only');
-  }
-
-  if (account?.parentAddress) {
-    return t('Derived from {{parentName}}', { replace: { parentName } });
-  }
-
-  return undefined;
-};
-
 export default function AccountsTree ({ hideNumbers, parentName, quickActionOpen, setHasActiveRecovery, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+
   const api = useApi(SOCIAL_RECOVERY_CHAINS.includes(account?.genesisHash ?? '') ? account.address : undefined);
   const activeRecovery = useActiveRecoveries(api, account.address);
 
@@ -68,17 +49,19 @@ export default function AccountsTree ({ hideNumbers, parentName, quickActionOpen
         disableGutters
         sx={{
           backgroundColor: 'background.paper',
-          borderColor: activeRecovery ? 'warning.main' : 'secondary.main',
+          borderColor: activeRecovery ? 'warning.main' : undefined,
           borderRadius: '5px',
           borderStyle: account?.parentAddress ? 'dashed' : 'solid',
-          borderWidth: activeRecovery ? '2px' : '0.5px',
-          mb: '6px',
+          borderWidth: activeRecovery ? '2px' : 0,
+          boxShadow: theme.palette.mode === 'dark' ? '0px 0px 3px rgba(50, 50, 50, 1)' : '0px 0px 3px 2px rgba(0, 0, 0, 0.1)',
           position: 'relative'
         }}
       >
-        <Grid item sx={{ bgcolor: '#454545', color: 'white', fontSize: '10px', ml: 3, position: 'absolute', px: 1, width: 'fit-content' }}>
-          {label(account, parentNameSuri, t)}
-        </Grid>
+        <AccountLabel
+          account={account}
+          ml='10px'
+          parentName={parentNameSuri}
+        />
         <AccountPreview
           {...account}
           hideNumbers={hideNumbers}

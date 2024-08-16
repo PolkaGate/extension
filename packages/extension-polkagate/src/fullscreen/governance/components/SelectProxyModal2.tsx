@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Proxy, ProxyItem } from '../../../util/types';
+
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -12,7 +14,6 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { PButton, ProxyTable } from '../../../components';
 import { useChain, useTranslation } from '../../../hooks';
-import { Proxy, ProxyItem } from '../../../util/types';
 
 interface Props {
   address: string | undefined;
@@ -24,7 +25,7 @@ interface Props {
   closeSelectProxy: () => void
 }
 
-export default function SelectProxyModal2({ address, closeSelectProxy, height, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props): React.ReactElement<Props> {
+export default function SelectProxyModal2 ({ address, closeSelectProxy, height, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const chain = useChain(address);
   const ref = useRef(selectedProxy);
@@ -54,7 +55,7 @@ export default function SelectProxyModal2({ address, closeSelectProxy, height, p
       </Typography>
       <ProxyTable
         chain={chain}
-        label={t<string>('Proxies')}
+        label={t('Proxies')}
         maxHeight='300px'
         mode='Select'
         onSelect={_setSelectedProxy}
@@ -68,7 +69,7 @@ export default function SelectProxyModal2({ address, closeSelectProxy, height, p
       />
       <Grid container item justifyContent='flex-end' onClick={onDeselect}>
         <Typography fontSize='14px' fontWeight={400} lineHeight='36px' sx={{ cursor: _selectedProxy ? 'pointer' : 'default', textAlign: 'right', textDecoration: 'underline', userSelect: 'none' }}>
-          {t<string>('Clear selection and use the proxied')}
+          {t('Clear selection and use the proxied')}
         </Typography>
       </Grid>
       <PButton

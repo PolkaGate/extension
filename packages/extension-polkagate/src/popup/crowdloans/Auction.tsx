@@ -1,5 +1,6 @@
-// Copyright 2019-2022 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -22,7 +23,7 @@ import { Infotip, Switch, Warning } from '../../components';
 import { useTranslation } from '../../hooks';
 import BouncingSubTitle from '../../partials/BouncingSubTitle';
 import { AUCTION_GRACE_PERIOD } from '../../util/constants';
-import { Auction } from '../../util/types';
+import type { Auction } from '../../util/types';
 import { remainingTime } from '../../util/utils';
 import blockToDate from './partials/blockToDate';
 
@@ -40,13 +41,13 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
 
   const firstLease = auction?.auctionInfo && Number(auction?.auctionInfo[0]);
   const candlePhaseStartBlock = auction?.auctionInfo && Number(auction?.auctionInfo[1]);
-  const lastLease = api && Number(api.consts.auctions.leasePeriodsPerSlot.toString()) - 1;
-  const endingPeriod = api && Number(api.consts.auctions?.endingPeriod.toString());
+  const lastLease = api && Number(api.consts['auctions']['leasePeriodsPerSlot'].toString()) - 1;
+  const endingPeriod = api && Number(api.consts['auctions']?.['endingPeriod'].toString());
   const auctionStartBlock = candlePhaseStartBlock - AUCTION_GRACE_PERIOD;
 
   const end = currentBlockNumber && currentBlockNumber < candlePhaseStartBlock ? candlePhaseStartBlock : endingPeriod && candlePhaseStartBlock + endingPeriod;
 
-  const dateFormat = useMemo(() => ({ day: 'numeric', hour: '2-digit', hourCycle: 'h23', minute: '2-digit', month: 'short' }), []);
+  const dateFormat = useMemo((): Intl.DateTimeFormatOptions => ({ day: 'numeric', hour: '2-digit', hourCycle: 'h23', minute: '2-digit', month: 'short' }), []);
 
   const currentTime = useMemo(() => {
     if (viewType === 'Block') {
@@ -91,7 +92,7 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
         </Typography>
         <Typography fontSize='16px' fontWeight={400} lineHeight='34px' width='fit-content'>
           {viewType === 'Block' && `${candlePhaseStartBlock} - ${endingPeriod && candlePhaseStartBlock + endingPeriod}`}
-          {viewType === 'Date' && `${blockToDate(candlePhaseStartBlock, currentBlockNumber, dateFormat)} - ${blockToDate(candlePhaseStartBlock + endingPeriod, currentBlockNumber, dateFormat)}`}
+          {viewType === 'Date' && `${blockToDate(candlePhaseStartBlock, currentBlockNumber, dateFormat)} - ${blockToDate(candlePhaseStartBlock + (endingPeriod ?? 0), currentBlockNumber, dateFormat)}`}
         </Typography>
       </Grid>
       <Grid container item justifyContent='space-between' mt='20px' px='10px'>
@@ -194,7 +195,7 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
 
   return (
     <>
-      <BouncingSubTitle label={t<string>(`Auction #${auction.auctionCounter}`)} style={{ fontSize: '20px', fontWeight: 400 }} />
+      <BouncingSubTitle label={t<string>(`Auction #${auction.auctionCounter}`)} />
       {auction && !auction.auctionInfo &&
         <Grid container height='15px' item justifyContent='center' mt='30px'>
           <Warning
@@ -205,11 +206,12 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
           </Warning>
         </Grid>
       }
-      {auction && auction.auctionInfo &&
+      {auction?.auctionInfo &&
         <Grid container item m='auto' width='92%'>
           <Grid container item justifyContent='flex-end' mt='15px'>
             <Switch
               checkedLabel={t<string>('Block')}
+              defaultColor
               fontSize='15px'
               isChecked={viewType !== 'Date'}
               onChange={onChangeView}

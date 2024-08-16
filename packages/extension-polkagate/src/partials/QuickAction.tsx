@@ -1,9 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import '@vaadin/icons';
 
 import { faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,10 +11,10 @@ import { Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { HorizontalMenuItem, PoolStakingIcon } from '../components';
-import { useAccount, useApi, useFormatted, useTranslation } from '../hooks';
+import { HorizontalMenuItem, PoolStakingIcon, VaadinIcon } from '../components';
+import { useInfo, useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 
@@ -30,11 +29,8 @@ const ICON_SIZE = 10;
 export default function QuickAction({ address, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const formatted = useFormatted(address);
   const history = useHistory();
-
-  const account = useAccount(address);
-  const api = useApi(address);
+  const { account, api, formatted } = useInfo(address);
 
   const handleOpen = useCallback(() => setQuickActionOpen(String(address)), [address, setQuickActionOpen]);
   const handleClose = useCallback(() => quickActionOpen === address && setQuickActionOpen(undefined), [address, quickActionOpen, setQuickActionOpen]);
@@ -86,7 +82,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
         minWidth: 'calc(100% - 50px)',
         pl: '20px',
         pr: '10px',
-        pt:'5px',
+        pt: '5px',
         width: 'calc(100% - 50px)'
       }}
     >
@@ -158,7 +154,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
         divider
         dividerHeight={20}
         icon={
-          <vaadin-icon icon='vaadin:piggy-bank-coin' style={{ height: '23px', color: `${CROWDLOANS_CHAINS.includes(account?.genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}` }} />
+          <VaadinIcon icon='vaadin:piggy-bank-coin' style={{ height: '23px', color: `${CROWDLOANS_CHAINS.includes(account?.genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}` }} />
         }
         onClick={goToCrowdLoans}
         textDisabled={!CROWDLOANS_CHAINS.includes(account?.genesisHash)}

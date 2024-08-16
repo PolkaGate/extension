@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,15 +10,14 @@ import type { AccountStakingInfo, StakingConsts } from '../../../../util/types';
 
 import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
 import { Grid, Typography, useTheme } from '@mui/material';
-import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { BN, BN_ONE } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { Motion, PButton, Warning } from '../../../../components';
-import { useApi, useBalances, useChain, useDecimal, useFormatted, useIsExposed, useStakingAccount, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
+import { Motion, PButton, Progress, Warning } from '../../../../components';
+import { useBalances, useInfo, useIsExposed, useStakingAccount, useStakingConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman } from '../../../../util/utils';
@@ -37,29 +37,25 @@ export default function Index(): React.ReactElement {
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const history = useHistory();
-  const api = useApi(address, state?.api);
-  const chain = useChain(address);
-  const formatted = useFormatted(address);
-  const token = useToken(address);
+  const { api, chain, decimal, formatted, token } = useInfo(address);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
 
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
   const myBalances = useBalances(address);
-  const mayBeMyStashBalances = useBalances(stakingAccount?.stashId);
+  const mayBeMyStashBalances = useBalances(stakingAccount?.stashId as unknown as string);
 
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
-  const decimal = useDecimal(address);
   const isExposed = useIsExposed(address);
 
-  const fastUnstakeDeposit = api && api.consts.fastUnstake.deposit;
+  const fastUnstakeDeposit = api ? api.consts['fastUnstake']['deposit'] as unknown as BN : undefined;
   const balances = useMemo(() => mayBeMyStashBalances || myBalances, [mayBeMyStashBalances, myBalances]);
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [showFastUnstakeReview, setShowReview] = useState<boolean>(false);
   const hasEnoughDeposit = fastUnstakeDeposit && stakingConsts && myBalances && estimatedFee && getValue('available', myBalances)
-    ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(getValue('available', myBalances))
+    ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(getValue('available', myBalances) || BN_ZERO)
     : undefined;
   const hasUnlockingAndRedeemable = redeemable && stakingAccount
     ? !!(!redeemable.isZero() || stakingAccount.unlocking?.length)
@@ -69,15 +65,15 @@ export default function Index(): React.ReactElement {
     ? !isExposed && !hasUnlockingAndRedeemable && hasEnoughDeposit
     : undefined;
 
-  const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active, [stakingAccount]);
-  const tx = api && api.tx.fastUnstake.registerFastUnstake;
+  const staked = useMemo((): BN | undefined => stakingAccount ? stakingAccount.stakingLedger.active as unknown as BN : undefined, [stakingAccount]);
+  const tx = api && api.tx['fastUnstake']['registerFastUnstake'];
 
   useEffect((): void => {
     if (!api) {
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (!api?.call?.['transactionPaymentApi']) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
@@ -111,7 +107,7 @@ export default function Index(): React.ReactElement {
         shortBorder
         showBackArrow
         showClose
-        text={t<string>('Solo Staking')}
+        text={t('Solo Staking')}
       />
       <SubTitle
         label={t('Fast Unstake')}
@@ -119,36 +115,29 @@ export default function Index(): React.ReactElement {
       />
       <Grid container direction='column' m='20px auto' width='90%'>
         <Typography fontSize='14px' fontWeight={300}>
-          {t<string>('Checking fast unstake eligibility')}:
+          {t('Checking fast unstake eligibility')}:
         </Typography>
         <Grid alignItems='center' container item lineHeight='28px' pl='5px' pt='15px'>
           <NumberPassFail condition={hasEnoughDeposit} no={1} />
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
-            {t<string>('Having {{deposit}} {{token}} available to deposit', { replace: { deposit: fastUnstakeDeposit && decimal ? amountToHuman(fastUnstakeDeposit, decimal) : '...', token } })}
+            {t('Having {{deposit}} {{token}} available to deposit', { replace: { deposit: fastUnstakeDeposit && decimal ? amountToHuman(fastUnstakeDeposit, decimal) : '...', token } })}
           </Typography>
         </Grid>
         <Grid alignItems='center' container item lineHeight='28px' pl='5px'>
-          <NumberPassFail condition={hasUnlockingAndRedeemable === undefined ? undefined : hasUnlockingAndRedeemable === false } no={2} />
+          <NumberPassFail condition={hasUnlockingAndRedeemable === undefined ? undefined : hasUnlockingAndRedeemable === false} no={2} />
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
-            {t<string>('No redeemable or unstaking funds')}
+            {t('No redeemable or unstaking funds')}
           </Typography>
         </Grid>
         <Grid alignItems='center' container item lineHeight='28px' pl='5px'>
           <NumberPassFail condition={isExposed === undefined ? undefined : isExposed === false} no={3} />
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
-            {t<string>('Not being rewarded in the past {{unbondingDuration}} {{day}}', { replace: { unbondingDuration: stakingConsts?.unbondingDuration || '...', day: stakingConsts?.unbondingDuration && stakingConsts.unbondingDuration > 1 ? 'days' : 'day' } })}
+            {t('Not being rewarded in the past {{unbondingDuration}} {{day}}', { replace: { unbondingDuration: stakingConsts?.unbondingDuration || '...', day: stakingConsts?.unbondingDuration && stakingConsts.unbondingDuration > 1 ? 'days' : 'day' } })}
           </Typography>
         </Grid>
       </Grid>
       {isEligible === undefined &&
-        <>
-          <Grid alignItems='center' container justifyContent='center' mt='60px'>
-            <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={115} />
-          </Grid>
-          <Typography fontSize='18px' fontWeight={300} mt='20px' px='20px' width='fit-content' align='center'>
-            {t<string>('Please wait a few seconds and don\'t close the extension.')}
-          </Typography>
-        </>
+        <Progress pt={'60px'} size={115} title={t('Please wait a few seconds and don\'t close the extension.')} type='grid' />
       }
       <Grid bottom='70px' item position='absolute'>
         {isEligible === true &&
@@ -156,7 +145,7 @@ export default function Index(): React.ReactElement {
             fontWeight={300}
             theme={theme}
           >
-            {t<string>('You can proceed to do fast unstake. Note your stake amount will be available within a few minutes after submitting the transaction.')}
+            {t('You can proceed to do fast unstake. Note your stake amount will be available within a few minutes after submitting the transaction.')}
           </Warning>
         }
         {isEligible === false &&
@@ -165,22 +154,22 @@ export default function Index(): React.ReactElement {
             iconDanger
             theme={theme}
           >
-            {t<string>('This account is not eligible for fast unstake, because the requirements (highlighted above) are not met.')}
+            {t('This account is not eligible for fast unstake, because the requirements (highlighted above) are not met.')}
           </Warning>
         }
       </Grid>
       <PButton
         _onClick={goTo}
         disabled={isEligible === undefined}
-        text={isEligible === undefined || isEligible ? t<string>('Next') : t<string>('Back')}
+        text={isEligible === undefined || isEligible ? t('Next') : t('Back')}
       />
       {showFastUnstakeReview && formatted && api && getValue('available', balances) && chain && staked && !staked?.isZero() &&
         <FastUnstakeReview
-          address={address}
-          amount={staked}
+          address={address as string}
+          amount={staked as unknown as BN}
           api={api}
-          available={getValue('available', balances)}
-          chain={chain}
+          available={getValue('available', balances) as BN}
+          chain={chain as any}
           formatted={formatted}
           setShow={setShowReview}
           show={showFastUnstakeReview}
@@ -188,4 +177,3 @@ export default function Index(): React.ReactElement {
     </Motion>
   );
 }
-

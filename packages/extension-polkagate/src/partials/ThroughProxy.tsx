@@ -1,23 +1,24 @@
-// Copyright 2019-2024 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, SxProps, Theme } from '@mui/material';
-import React from 'react';
+import type { Chain } from '@polkadot/extension-chains/types';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import { Divider, Grid, type SxProps, type Theme } from '@mui/material';
+import React from 'react';
 
 import { Identity } from '../components';
 import { useApi, useTranslation } from '../hooks';
 
 interface Props {
   address: string;
-  chain: Chain | null;
+  chain: Chain | null | undefined;
   style?: SxProps<Theme> | undefined;
+  showDivider?: boolean;
 }
 
-function ThroughProxy({ address, chain, style = {} }: Props): React.ReactElement {
+function ThroughProxy({ address, chain, showDivider = true, style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
   const api = useApi(address);
 
@@ -33,12 +34,13 @@ function ThroughProxy({ address, chain, style = {} }: Props): React.ReactElement
         chain={chain}
         identiconSize={28}
         showSocial={false}
-        // subIdOnly
-        style={{ fontSize: '22px', maxWidth: '65%', px: '8px', width: 'fit-content' }}
+        style={{ fontSize: '22px', maxWidth: '65%', padding: '0 8px', width: 'fit-content' }}
         withShortAddress
       />
-      <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '1px', mt: '4px', width: '1px' }} />
-      <Grid item sx={{ fontSize: '12px', fontWeight: 300, textAlign: 'center', ml: '5px' }} >
+      {showDivider &&
+        <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '1px', mt: '4px', width: '1px' }} />
+      }
+      <Grid item sx={{ fontSize: '12px', fontWeight: 300, textAlign: 'center', ml: '5px' }}>
         {t('as proxy')}
       </Grid>
     </Grid>
