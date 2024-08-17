@@ -3,12 +3,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, Popover, useTheme, IconButton, type Theme } from '@mui/material';
-import React, { useCallback, useContext, useState } from 'react';
-import { type TFunction } from '@polkagate/apps-config/types';
 import DoneIcon from '@mui/icons-material/Done';
-import { ActionContext, InputWithLabel, MenuItem, VaadinIcon } from '../../../components';
-import { useInfo, useTranslation, useProfiles, useIsExtensionPopup } from '../../../hooks';
+import { Divider, Grid, IconButton, Popover, useTheme } from '@mui/material';
+import React, { useCallback, useState } from 'react';
+
+import { InputWithLabel, MenuItem, VaadinIcon } from '../../../components';
+import { useInfo, useIsExtensionPopup, useProfiles, useTranslation } from '../../../hooks';
 import { updateMeta } from '../../../messaging';
 
 interface Props {
@@ -20,31 +20,34 @@ interface InputBoxProps {
   editName: (newName: string | null) => void;
   newName: string | undefined;
   addToNewProfile: (profile?: string) => void;
-  t: TFunction;
-  theme: Theme;
 }
 
-const InputBox = ({ addToNewProfile, editName, newName, t, theme }: InputBoxProps) => {
+const InputBox = ({ addToNewProfile, editName, newName }: InputBoxProps) => {
+  const theme = useTheme();
+  const { t } = useTranslation();
+
   return (
-    <Grid container item alignItems='flex-end' justifyContent='space-evenly'>
+    <Grid alignItems='flex-end' container item justifyContent='space-evenly'>
       <Grid container item xs>
         <InputWithLabel
-          isFocused
           fontSize={16}
           fontWeight={400}
           height={35}
+          isFocused
           label={t('Choose a name for the profile')}
           labelFontSize='14px'
           onChange={editName}
-          onEnter={() => newName && addToNewProfile(newName as string)}
+          // eslint-disable-next-line react/jsx-no-bind
+          onEnter={() => newName && addToNewProfile(newName)}
           placeholder={t('Profile Name')}
           value={newName}
         />
       </Grid>
-      <Grid container item height='fit-content' ml='10px' width='fit-content'>
+      <Grid container height='fit-content' item ml='10px' width='fit-content'>
         <IconButton
           disabled={!newName}
-          onClick={() => addToNewProfile(newName as string)}
+          // eslint-disable-next-line react/jsx-no-bind
+          onClick={() => addToNewProfile(newName)}
           sx={{ p: 0 }}
         >
           <DoneIcon sx={{ color: 'secondary.light', fontSize: '32px', stroke: theme.palette.secondary.light, strokeWidth: 1.5 }} />
@@ -52,52 +55,30 @@ const InputBox = ({ addToNewProfile, editName, newName, t, theme }: InputBoxProp
       </Grid>
     </Grid>
   );
-}
-
-enum STATUS {
-  SHOW_ADD,
-  SHOW_REMOVE
 };
 
-function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<Props> {
+interface AddProfileProps {
+  address: string | undefined
+  showName: boolean | undefined;
+  setShowName: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  handleClose: () => void
+}
+
+const AddMenu = ({ address, handleClose, setShowName, showName }: AddProfileProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const isExtensionMode = useIsExtensionPopup();
-
-  const onAction = useContext(ActionContext);
-  const { account, chain } = useInfo(address);
   const { userDefinedProfiles } = useProfiles();
+  const { account } = useInfo(address);
 
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | HTMLDivElement | null>();
-  const [status, setStatus] = useState<STATUS>();
-  const [showName, setShowName] = useState<boolean>();
   const [newName, setNewName] = useState<string | undefined>();
-
-  const profileNames = account?.profile ? account.profile.split(',') : undefined;
 
   const editName = useCallback((newName: string | null) => {
     setNewName(newName ?? '');
   }, []);
 
-  const handleClose = useCallback(() => {
-    setAnchorEl(null);
-    setShowName(false);
-    setUpperAnchorEl && setUpperAnchorEl(null);
-  }, []);
-
-  const onAddClick = useCallback((event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
-    setAnchorEl(event.currentTarget);
-    setStatus(STATUS.SHOW_ADD);
-  }, []);
-
-  const onRemoveClick = useCallback((event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
-    setAnchorEl(event.currentTarget);
-    setStatus(STATUS.SHOW_REMOVE);
-  }, []);
-
   const onNewProfile = useCallback(() => {
     setShowName(true);
-  }, [address, chain, onAction]);
+  }, [setShowName]);
 
   const addToNewProfile = useCallback((profile?: string) => {
     if (!profile || !account) {
@@ -107,10 +88,12 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
     let profiles = profile;
 
     if (account.profile) {
-      const profileArray = account.profile.split(',')
+      const profileArray = account.profile.split(',');
+
       profileArray.push(profile);
       const dedupeProfiles = new Set(profileArray);
-      profiles = [...dedupeProfiles].join(',')
+
+      profiles = [...dedupeProfiles].join(',');
     }
 
     const metaData = JSON.stringify({ profile: profiles });
@@ -119,38 +102,19 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
       .then(() => {
         handleClose();
       }).catch(console.error);
-  }, [address, account]);
+  }, [account, address, handleClose]);
 
-  const onRemove = useCallback((profile: string) => {
-    if (!account?.profile) {
-      return;
-    }
-
-    const profiles = account.profile.split(',');
-    const profileIndex = profiles.findIndex((item) => item === profile);
-    profiles.splice(profileIndex, 1);
-
-    const metaData = JSON.stringify({ profile: profiles?.length ? profiles.join(',') : null });
-
-    updateMeta(String(address), metaData)
-      .then(() => {
-        handleClose();
-      }).catch(console.error);
-  }, [address, account]);
-
-  const AddMenu = () => (
+  return (
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
       {showName
         ? <InputBox
           addToNewProfile={addToNewProfile}
           editName={editName}
           newName={newName}
-          t={t}
-          theme={theme}
         />
         : <MenuItem
           iconComponent={
-            <VaadinIcon icon='vaadin:plus' style={{ height: '20px', color: theme.palette.text.primary }} />
+            <VaadinIcon icon='vaadin:plus' style={{ color: theme.palette.text.primary, height: '20px' }} />
           }
           onClick={onNewProfile}
           text={t('New profile')}
@@ -162,18 +126,19 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
         ? userDefinedProfiles.map((profile) => (
           <MenuItem
             iconComponent={
-              <VaadinIcon icon='vaadin:folder-open-o' style={{ height: '20px', color: theme.palette.text.primary }} />
+              <VaadinIcon icon='vaadin:folder-open-o' style={{ color: theme.palette.text.primary, height: '20px' }} />
             }
             key={profile}
-            onClick={() => addToNewProfile(profile as string)}
-            text={profile as string}
+            // eslint-disable-next-line react/jsx-no-bind
+            onClick={() => addToNewProfile(profile)}
+            text={profile}
             withHoverEffect
           />
         ))
         : <MenuItem
           disabled
           iconComponent={
-            <VaadinIcon icon='vaadin:minus' style={{ height: '20px', color: `${theme.palette.text.disabled}` }} />
+            <VaadinIcon icon='vaadin:minus' style={{ color: `${theme.palette.text.disabled}`, height: '20px' }} />
           }
           text={t('No user profile')}
           withHoverEffect
@@ -181,14 +146,25 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
       }
     </Grid>
   );
+};
 
-  const RemoveMenu = () => (
+interface RemoveProfileProps {
+  profileNames: string[] | undefined;
+  onRemove: (profile: string) => void;
+}
+
+const RemoveMenu = ({ onRemove, profileNames }: RemoveProfileProps) => {
+  const theme = useTheme();
+  const { t } = useTranslation();
+
+  return (
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
-      {profileNames && profileNames.map((profileName) => (
-        <Grid component='button' container item onClick={() => onRemove(profileName)} sx={{ '> div div:last-child p': { maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }, bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
+      {profileNames?.map((profileName) => (
+        // eslint-disable-next-line react/jsx-no-bind
+        <Grid component='button' container item key={profileName} onClick={() => onRemove(profileName)} sx={{ '> div div:last-child p': { maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }, bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
           <MenuItem
             iconComponent={
-              <VaadinIcon icon='vaadin:folder-remove' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+              <VaadinIcon icon='vaadin:folder-remove' style={{ color: theme.palette.text.primary, height: '20px' }} />
             }
             text={t('Remove from {{profileName}}', { replace: { profileName } })}
             withHoverEffect
@@ -197,6 +173,59 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
       ))}
     </Grid>
   );
+};
+
+enum STATUS {
+  SHOW_ADD,
+  SHOW_REMOVE
+}
+
+function ProfileMenu ({ address, setUpperAnchorEl }: Props): React.ReactElement<Props> {
+  const theme = useTheme();
+  const { t } = useTranslation();
+  const isExtensionMode = useIsExtensionPopup();
+
+  const { account } = useInfo(address);
+
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | HTMLDivElement | null>();
+  const [status, setStatus] = useState<STATUS>();
+  const [showName, setShowName] = useState<boolean>();
+
+  const profileNames = account?.profile ? account.profile.split(',') : undefined;
+
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+    setShowName(false);
+    setUpperAnchorEl && setUpperAnchorEl(null);
+  }, [setUpperAnchorEl]);
+
+  const onAddClick = useCallback((event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
+    setAnchorEl(event.currentTarget);
+    setStatus(STATUS.SHOW_ADD);
+  }, []);
+
+  const onRemoveClick = useCallback((event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
+    setAnchorEl(event.currentTarget);
+    setStatus(STATUS.SHOW_REMOVE);
+  }, []);
+
+  const onRemove = useCallback((profile: string) => {
+    if (!account?.profile) {
+      return;
+    }
+
+    const profiles = account.profile.split(',');
+    const profileIndex = profiles.findIndex((item) => item === profile);
+
+    profiles.splice(profileIndex, 1);
+
+    const metaData = JSON.stringify({ profile: profiles?.length ? profiles.join(',') : null });
+
+    updateMeta(String(address), metaData)
+      .then(() => {
+        handleClose();
+      }).catch(console.error);
+  }, [account?.profile, address, handleClose]);
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover 2' : undefined;
@@ -206,20 +235,21 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
       <Grid aria-describedby={id} component='button' container item onClick={onAddClick} sx={{ bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
         <MenuItem
           iconComponent={
-            <VaadinIcon icon='vaadin:folder-add' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:folder-add' style={{ color: `${theme.palette.text.primary}`, height: '20px' }} />
           }
+          showChevron
           text={t('Add to profile')}
           withHoverEffect
-          showChevron
         />
       </Grid>
       {!!profileNames?.length && !isExtensionMode &&
         <>
           {profileNames.map((profileName) => (
-            <Grid component='button' container item onClick={() => onRemove(profileName)} sx={{ '> div div:last-child p': { maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }, bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
+            // eslint-disable-next-line react/jsx-no-bind
+            <Grid component='button' container item key={profileName} onClick={() => onRemove(profileName)} sx={{ '> div div:last-child p': { maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }, bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
               <MenuItem
                 iconComponent={
-                  <VaadinIcon icon='vaadin:folder-remove' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+                  <VaadinIcon icon='vaadin:folder-remove' style={{ color: `${theme.palette.text.primary}`, height: '20px' }} />
                 }
                 text={t('Remove from {{profileName}}', { replace: { profileName } })}
                 withHoverEffect
@@ -233,11 +263,11 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
         <Grid aria-describedby={id} component='button' container item onClick={onRemoveClick} sx={{ bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
           <MenuItem
             iconComponent={
-              <VaadinIcon icon='vaadin:folder-remove' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+              <VaadinIcon icon='vaadin:folder-remove' style={{ color: theme.palette.text.primary, height: '20px' }} />
             }
+            showChevron
             text={t('Remove from profile')}
             withHoverEffect
-            showChevron
           />
         </Grid>
       }
@@ -267,8 +297,19 @@ function ProfileMenu({ address, setUpperAnchorEl }: Props): React.ReactElement<P
           vertical: 45
         }}
       >
-        {status === STATUS.SHOW_ADD && <AddMenu />}
-        {status === STATUS.SHOW_REMOVE && <RemoveMenu />}
+        {status === STATUS.SHOW_ADD &&
+          <AddMenu
+            address={address}
+            handleClose={handleClose}
+            setShowName={setShowName}
+            showName={showName}
+          />}
+        {status === STATUS.SHOW_REMOVE &&
+          <RemoveMenu
+            onRemove={onRemove}
+            profileNames={profileNames}
+          />
+        }
       </Popover>
     </>
   );
