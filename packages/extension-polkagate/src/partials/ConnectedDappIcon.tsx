@@ -8,6 +8,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { ActionContext } from '../components';
 import { getAuthList } from '../messaging';
+import { extractBaseUrl } from '../util/utils';
 
 interface Tab {
   url?: string;
@@ -41,7 +42,7 @@ export default function ConnectedDappIcon (): React.ReactElement {
         return;
       }
 
-      const availableDapp = Object.values(authList).find(({ url }) => tab.url?.startsWith(url));
+      const availableDapp = Object.values(authList).find(({ url }) => extractBaseUrl(tab.url) === extractBaseUrl(url));
 
       setDappId(availableDapp?.id);
       setIsConnected(!!availableDapp);
@@ -80,7 +81,7 @@ export default function ConnectedDappIcon (): React.ReactElement {
   return (
     <Avatar
       onClick={openConnected}
-      src={favIconUrl ?? undefined}
+      src={favIconUrl}
       sx={{
         borderRadius: '50%',
         bottom: 5,
