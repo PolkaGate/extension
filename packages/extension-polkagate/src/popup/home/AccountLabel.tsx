@@ -129,5 +129,5 @@ export function AccountLabel ({ account, ml, parentName }: Props): React.ReactEl
         </Grid>
       )}
     </Grid>
-  )
-};
+  );
+}
