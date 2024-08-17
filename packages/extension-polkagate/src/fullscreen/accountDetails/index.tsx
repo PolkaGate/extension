@@ -32,7 +32,7 @@ import { Title } from '../sendFund/InputPage';
 import { openOrFocusTab } from './components/CommonTasks';
 import ReservedDisplayBalance from './components/ReservedDisplayBalance';
 import LockedInReferenda from './unlock/Review';
-import { AccountInformationForDetails, AccountSetting, AssetSelect, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
+import { AccountInformationForDetails, AccountSetting, AssetSelect, CommonTasks, DisplayBalance, ExternalLinks, LockedInReferendaFS, TotalChart } from './components';
 
 export enum popupNumbers {
   LOCKED_IN_REFERENDA,
@@ -61,7 +61,7 @@ export default function AccountDetails (): React.ReactElement {
   const onAction = useContext(ActionContext);
   const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();
-
+  
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
   const [assetIdOnAssetHub, setAssetIdOnAssetHub] = useState<number>();
   const [selectedAsset, setSelectedAsset] = useState<FetchedBalance>();
@@ -233,7 +233,7 @@ export default function AccountDetails (): React.ReactElement {
                     title={t('Transferable')}
                     token={balancesToShow?.token}
                   />
-                  {isOnAssetHub &&
+                  {(isOnAssetHub || (!supportGov && !supportStaking && balancesToShow?.lockedBalance && !balancesToShow.lockedBalance.isZero())) &&
                     <DisplayBalance
                       amount={balancesToShow?.lockedBalance}
                       decimal={balancesToShow?.decimal}
@@ -262,15 +262,12 @@ export default function AccountDetails (): React.ReactElement {
                       token={balancesToShow?.token}
                     />}
                   {supportGov &&
-                    <LockedBalanceDisplay
+                    <LockedInReferendaFS
                       address={address}
-                      decimal={balancesToShow?.decimal}
                       price={currentPrice}
                       refreshNeeded={refreshNeeded}
                       setDisplayPopup={setDisplayPopup}
                       setUnlockInformation={setUnlockInformation}
-                      title={t('Locked in Referenda')}
-                      token={balancesToShow?.token}
                     />
                   }
                   <ReservedDisplayBalance

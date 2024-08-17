@@ -239,15 +239,14 @@ export default function AccountDetails(): React.ReactElement {
                 }
                 <LabelBalancePrice address={address} balances={balanceToShow} label={'Total'} title={t('Total')} />
                 <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferable'} onClick={goToSend} title={t('Transferable')} />
-                {supportStaking
-                  ? <>
-                    {!balanceToShow?.soloTotal?.isZero() &&
+                {supportStaking &&
+                 <>
+                   {!balanceToShow?.soloTotal?.isZero() &&
                       <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Stake'} onClick={goToSoloStaking} title={t('Solo Stake')} />}
-                    {!balanceToShow?.pooledBalance?.isZero() &&
+                   {!balanceToShow?.pooledBalance?.isZero() &&
                       <LabelBalancePrice address={address} balances={balanceToShow} label={'Pool Stake'} onClick={goToPoolStaking} title={t('Pool Stake')} />
-                    }
-                  </>
-                  : <LabelBalancePrice address={address} balances={balanceToShow} label={'Free'} title={t('Free')} />
+                   }
+                 </>
                 }
                 {GOVERNANCE_CHAINS.includes(genesisHash)
                   ? <LockedInReferenda address={address} refresh={refresh} setRefresh={setRefresh} />
