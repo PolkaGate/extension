@@ -82,8 +82,7 @@ export function AccountLabel ({ account, ml, parentName }: Props): React.ReactEl
     }
 
     return Array.from(profileSet);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [maybeAccountDefaultProfile, selectedProfile]);
+  }, [accountProfiles, maybeAccountDefaultProfile, selectedProfile]);
 
   const handleWheel = (event: WheelEvent) => {
     if (scrollContainerRef.current) {
