@@ -10,7 +10,6 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
@@ -37,8 +36,7 @@ export default function AddAddressOnly (): React.ReactElement {
   const disabledItems = useMemo(() => (['Allow use on any chain']), []);
 
   useEffect(() => {
-    // eslint-disable-next-line no-void
-    void cryptoWaitReady().then(() => {
+    cryptoWaitReady().then(() => {
       keyring.loadAll({ store: new AccountsStore() });
     }).catch(() => null);
   }, []);
@@ -49,17 +47,13 @@ export default function AddAddressOnly (): React.ReactElement {
 
   useEffect(() => {
     realAddress && api?.query['proxy']?.['proxies'](realAddress).then((proxies) => {
-      // @ts-ignore
-      const fetchedProxyItems = (JSON.parse(JSON.stringify(proxies[0])))?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+      const fetchedProxyItems = (JSON.parse(JSON.stringify((proxies as unknown as unknown[])?.[0])) as Proxy[])?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
       setProxies(fetchedProxyItems);
     });
   }, [api, chain, realAddress]);
 
-  const _goHome = useCallback(
-    () => onAction('/'),
-    [onAction]
-  );
+  const goHome = useCallback(() => onAction('/'), [onAction]);
 
   const onNameChange = useCallback((name: string | null) => setName(name), []);
 
@@ -77,21 +71,21 @@ export default function AddAddressOnly (): React.ReactElement {
       createAccountExternal(name, realAddress, chain.genesisHash as HexString)
         .then(() => {
           setStorage('profile', PROFILE_TAGS.WATCH_ONLY).catch(console.error);
-          openOrFocusTab('/', true);
+          goHome();
         })
         .catch((error: Error) => {
           setIsBusy(false);
           console.error(error);
         });
     }
-  }, [chain?.genesisHash, name, realAddress]);
+  }, [chain?.genesisHash, goHome, name, realAddress]);
 
   return (
     <>
       <HeaderBrand
-        onBackClick={_goHome}
+        onBackClick={goHome}
         showBackArrow
-        text={t<string>('Add Watch-Only')}
+        text={t('Add Watch-Only')}
       />
       <Typography
         fontSize='14px'
@@ -105,7 +99,7 @@ export default function AddAddressOnly (): React.ReactElement {
         addWithQr
         address={realAddress}
         chain={chain}
-        label={t<string>('Account ID')}
+        label={t('Account ID')}
         setAddress={setRealAddress}
         style={{ m: '15px auto 0', width: '92%' }}
       />
@@ -117,14 +111,14 @@ export default function AddAddressOnly (): React.ReactElement {
         defaultValue={chain?.genesisHash}
         disabledItems={disabledItems}
         icon={getLogo(chain ?? undefined)}
-        label={t<string>('Select the chain')}
+        label={t('Select the chain')}
         onChange={onChangeGenesis}
         options={genesisOptions}
         style={{ m: '15px auto 0', width: '92%' }}
       />
       <ProxyTable
         chain={realAddress ? chain : undefined}
-        label={t<string>('Proxies')}
+        label={t('Proxies')}
         mode='Availability'
         proxies={proxies}
         style={{
