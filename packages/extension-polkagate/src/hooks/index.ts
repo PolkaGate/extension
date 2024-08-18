@@ -95,6 +95,7 @@ export { default as useStakingRewardDestinationAddress } from './useStakingRewar
 export { default as useStakingRewards } from './useStakingRewards';
 export { default as useStashId } from './useStashId';
 export { default as useTeleport } from './useTeleport';
+export { default as useTimeToUnlock } from './useTimeToUnlock';
 export { default as useToken } from './useToken';
 export { default as useTokenPrice } from './useTokenPrice';
 export { default as useTokens } from './useTokens';

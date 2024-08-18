@@ -63,6 +63,7 @@ export const BN_MEMBERS = [
   'vestedClaimable',
   'vestingTotal',
   'freeBalance',
+  'frozenBalance',
   'frozenFee',
   'frozenMisc',
   'reservedBalance',
@@ -112,7 +113,9 @@ function allHexToBN (balances: object | string | undefined): BalancesDetails | {
   Object.keys(parsedBalances).forEach((item) => {
     const key = item as keyof BalancesDetails;
 
-    _balances[key] = isHexToBn(parsedBalances[key] as unknown as string);
+    if (parsedBalances[key] !== 'undefined') {
+      _balances[key] = isHexToBn(parsedBalances[key] as unknown as string);
+    }
   });
 
   return _balances;

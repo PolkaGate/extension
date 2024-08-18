@@ -5,6 +5,7 @@
 
 import type { Lock } from '../../hooks/useAccountLocks';
 import type { FetchedBalance } from '../../hooks/useAssetsBalances';
+import type { BalancesInfo } from '../../util/types';
 
 import { faFileInvoice } from '@fortawesome/free-solid-svg-icons';
 import { Grid, useTheme } from '@mui/material';
@@ -15,6 +16,7 @@ import { BN } from '@polkadot/util';
 
 import { AccountContext, ActionContext, Warning } from '../../components';
 import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
+import { getValue } from '../../popup/account/util';
 import ExportAccountModal from '../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../popup/forgetAccount/ForgetAccountModal';
 import HistoryModal from '../../popup/history/modal/HistoryModal';
@@ -30,7 +32,7 @@ import { Title } from '../sendFund/InputPage';
 import { openOrFocusTab } from './components/CommonTasks';
 import ReservedDisplayBalance from './components/ReservedDisplayBalance';
 import LockedInReferenda from './unlock/Review';
-import { AccountInformationForDetails, AccountSetting, AssetSelect, CommonTasks, DisplayBalance, ExternalLinks, LockedBalanceDisplay, TotalChart } from './components';
+import { AccountInformationForDetails, AccountSetting, AssetSelect, CommonTasks, DisplayBalance, ExternalLinks, LockedInReferendaFS, TotalChart } from './components';
 
 export enum popupNumbers {
   LOCKED_IN_REFERENDA,
@@ -59,7 +61,7 @@ export default function AccountDetails (): React.ReactElement {
   const onAction = useContext(ActionContext);
   const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();
-
+  
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
   const [assetIdOnAssetHub, setAssetIdOnAssetHub] = useState<number>();
   const [selectedAsset, setSelectedAsset] = useState<FetchedBalance>();
@@ -97,6 +99,7 @@ export default function AccountDetails (): React.ReactElement {
       : { ...(balances || {}), ...(selectedAsset || {}) };
   }, [assetId, balances, chainName, selectedAsset]);
 
+  const transferableBalance = useMemo(() => getValue('transferable', balancesToShow as BalancesInfo), [balancesToShow]);
   const isDualStaking = useMemo(() =>
     balancesToShow?.soloTotal && balancesToShow?.pooledBalance && !balancesToShow.soloTotal.isZero() && !balancesToShow.pooledBalance.isZero()
   , [balancesToShow?.pooledBalance, balancesToShow?.soloTotal]);
@@ -222,15 +225,15 @@ export default function AccountDetails (): React.ReactElement {
                     />
                   }
                   <DisplayBalance
-                    amount={balancesToShow?.availableBalance}
+                    amount={transferableBalance}
                     decimal={balancesToShow?.decimal}
-                    disabled={!balancesToShow?.availableBalance || balancesToShow?.availableBalance.isZero()}
+                    disabled={!transferableBalance || transferableBalance.isZero()}
                     onClick={goToSend}
                     price={currentPrice}
                     title={t('Transferable')}
                     token={balancesToShow?.token}
                   />
-                  {isOnAssetHub &&
+                  {(isOnAssetHub || (!supportGov && !supportStaking && balancesToShow?.lockedBalance && !balancesToShow.lockedBalance.isZero())) &&
                     <DisplayBalance
                       amount={balancesToShow?.lockedBalance}
                       decimal={balancesToShow?.decimal}
@@ -259,15 +262,12 @@ export default function AccountDetails (): React.ReactElement {
                       token={balancesToShow?.token}
                     />}
                   {supportGov &&
-                    <LockedBalanceDisplay
+                    <LockedInReferendaFS
                       address={address}
-                      decimal={balancesToShow?.decimal}
                       price={currentPrice}
                       refreshNeeded={refreshNeeded}
                       setDisplayPopup={setDisplayPopup}
                       setUnlockInformation={setUnlockInformation}
-                      title={t('Locked in Referenda')}
-                      token={balancesToShow?.token}
                     />
                   }
                   <ReservedDisplayBalance

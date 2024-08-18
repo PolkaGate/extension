@@ -10,8 +10,12 @@ import type { BalancesInfo } from '../../util/types';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
+function isEmptyObject (obj: object): boolean {
+  return Object.keys(obj).length === 0;
+}
+
 export const getValue = (type: string, balances: BalancesInfo | null | undefined): BN | undefined => {
-  if (!balances) {
+  if (!balances || isEmptyObject(balances)) {
     return;
   }
 
@@ -29,9 +33,12 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
       return balances?.soloTotal ?? BN_ZERO;
     case ('balance'):
     case ('available'):
-    case ('transferable'):
     case ('available balance'):
       return balances.availableBalance;
+    case ('transferable'):
+      return balances.reservedBalance.gte(balances.frozenBalance || BN_ZERO)
+        ? balances.freeBalance
+        : balances.freeBalance.sub(balances.frozenBalance.sub(balances.reservedBalance));
     case ('reserved'):
       return balances.reservedBalance;
     case ('others'):
@@ -41,10 +48,6 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
       return balances.freeBalance;
     case ('reserved balance'):
       return balances.reservedBalance;
-    // case ('frozen misc'):
-    //   return balances.frozenMisc;
-    // case ('frozen fee'):
-    //   return balances.frozenFee;
     case ('locked'):
     case ('locked balance'):
       return balances.lockedBalance;
