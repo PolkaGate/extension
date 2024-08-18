@@ -3521,6 +3521,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/chance@npm:^1.1.6":
+  version: 1.1.6
+  resolution: "@types/chance@npm:1.1.6"
+  checksum: 10/f4366f1b3144d143af3e6f0fad2ed1db7b9bdfa7d82d40944e9619d57fe7e6b60e8c1452f47a8ededa6b2188932879518628ecd9aac81c40384ded39c26338ba
+  languageName: node
+  linkType: hard
+
 "@types/cheerio@npm:*":
   version: 0.22.35
   resolution: "@types/cheerio@npm:0.22.35"
@@ -6089,16 +6096,18 @@ __metadata:
   linkType: hard
 
 "better-react-spinkit@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "better-react-spinkit@npm:2.0.4"
+  version: 2.0.6
+  resolution: "better-react-spinkit@npm:2.0.6"
   dependencies:
     inline-style-prefixer: "npm:^3.0.3"
+    lodash.memoize: "npm:^4.1.2"
+    lodash.omitby: "npm:^4.6.0"
+    lodash.range: "npm:^3.2.0"
     minify-css-string: "npm:^1.0.0"
   peerDependencies:
-    lodash: ^4.17.4
-    prop-types: ^15.6.0
-    react: ^16.2.0
-  checksum: 10/4d60819230e33bdce05e1dbb99ebab3690e6dae818b6d34ab8cc706090dc3e909081d91a83b903d039e0277fc0d1192da9b38341895be8f24fdccf7f74596daa
+    prop-types: "*"
+    react: "*"
+  checksum: 10/44518b8d0261db4df8f302463e696e98e6c1655a637a619a24b5c1adaf2f6099b19e145f42e043710eb525335e2e15c2689d0b92bfa64a050572eaf8205d1cb2
   languageName: node
   linkType: hard
 
@@ -6646,7 +6655,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chance@npm:^1.1.11":
+"chance@npm:^1.1.12":
   version: 1.1.12
   resolution: "chance@npm:1.1.12"
   checksum: 10/8700d5a66e27b47f4bdcf68f48489e1a490f39cd8bc8e39cac67c089b3f8d04b4bbc6710db0e85e802ad698cf3440d92784861208d2c248820355404b85b3f30
@@ -11863,10 +11872,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.memoize@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "lodash.memoize@npm:4.1.2"
+  checksum: 10/192b2168f310c86f303580b53acf81ab029761b9bd9caa9506a019ffea5f3363ea98d7e39e7e11e6b9917066c9d36a09a11f6fe16f812326390d8f3a54a1a6da
+  languageName: node
+  linkType: hard
+
 "lodash.merge@npm:^4.6.2":
   version: 4.6.2
   resolution: "lodash.merge@npm:4.6.2"
   checksum: 10/d0ea2dd0097e6201be083865d50c3fb54fbfbdb247d9cc5950e086c991f448b7ab0cdab0d57eacccb43473d3f2acd21e134db39f22dac2d6c9ba6bf26978e3d6
+  languageName: node
+  linkType: hard
+
+"lodash.omitby@npm:^4.6.0":
+  version: 4.6.0
+  resolution: "lodash.omitby@npm:4.6.0"
+  checksum: 10/3af4df3d4819c75735abed208a748fc94c8ec9d5165610d6085722a67ad1e507101f59096e23265d3df5617a0b7e89105c73993ac0d9f864fab237a054594690
+  languageName: node
+  linkType: hard
+
+"lodash.range@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "lodash.range@npm:3.2.0"
+  checksum: 10/97e37171424be2cd275aeaca1a9c554503eb60da06677592c07fa8b0f6242a591ee90436a13491de11b81519b293e6598b0870ef1c816ab08e6198b8e8d992c3
   languageName: node
   linkType: hard
 
@@ -15050,13 +15080,14 @@ __metadata:
     "@polkagate/apps-config": "npm:^0.140.3"
     "@substrate/connect": "npm:^0.7.32"
     "@testing-library/react": "npm:latest"
+    "@types/chance": "npm:^1.1.6"
     "@types/jest": "npm:latest"
     "@types/node": "npm:^20.10.5"
     "@types/react-spinkit": "npm:^3.0.10"
     "@vaadin/icons": "npm:^23.2.3"
     babel-plugin-transform-import-meta: "npm:^2.1.1"
     better-react-spinkit: "npm:^2.0.4"
-    chance: "npm:^1.1.11"
+    chance: "npm:^1.1.12"
     chart.js: "npm:^4.2.1"
     country-flag-icons: "npm:^1.5.9"
     css-loader: "npm:^6.7.3"

@@ -7,12 +7,10 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import type { HexString } from '@polkadot/util/types';
 
 import { Typography } from '@mui/material';
-// @ts-ignore
-import Chance from 'chance';
+import { Chance } from 'chance';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 
 import { AccountContext, ActionContext, Label, PButton, SelectChain } from '../../../components';
@@ -29,8 +27,8 @@ function ImportProxied (): React.ReactElement {
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
   const genesisOptions = useGenesisHashOptions();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-  const chance = new Chance();
+
+  const chance = useMemo(() => new Chance(), []);
 
   const selectableChains = useMemo(() => genesisOptions.filter(({ value }) => PROXY_CHAINS.includes(value as string)), [genesisOptions]);
 
@@ -73,24 +71,24 @@ function ImportProxied (): React.ReactElement {
 
     for (let index = 0; index < selectedProxied.length; index++) {
       const address = selectedProxied[index];
-      const randomName = (chance?.name() as string)?.split(' ')?.[0] || `Proxied ${index + 1}`;
+      const randomName = chance.name().split(' ')?.[0] || `Proxied ${index + 1}`;
 
       await createAccountExternal(randomName, address, (chain?.genesisHash ?? WESTEND_GENESIS_HASH) as HexString);
     }
   }, [chain?.genesisHash, chance, selectedProxied]);
+
+  const onBackClick = useCallback(() => {
+    onAction('/');
+  }, [onAction]);
 
   const onImport = useCallback(() => {
     setIsBusy(true);
     createProxids().then(() => {
       setIsBusy(false);
       setStorage('profile', PROFILE_TAGS.WATCH_ONLY).catch(console.error);
-      openOrFocusTab('/', true);
+      onBackClick();
     }).catch(console.error);
-  }, [createProxids]);
-
-  const onBackClick = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
+  }, [createProxids, onBackClick]);
 
   return (
     <>
@@ -111,32 +109,32 @@ function ImportProxied (): React.ReactElement {
           onSelect={onParentChange}
           selectedAddress={selectedAddress}
           selectedGenesis={accountGenesishash as string}
-          selectedName={accountName as string}
+          selectedName={accountName ?? null}
           withoutChainLogo
         />
       </Label>
       {selectedAddress &&
-      <SelectChain
-        address={selectedAddress}
-        fullWidthDropdown
-        icon={getLogo(chain ?? undefined)}
-        label={t('Select the chain')}
-        onChange={onChangeGenesis}
-        options={selectableChains}
-        style={{ m: '15px auto', width: '92%' }}
-      />
+        <SelectChain
+          address={selectedAddress}
+          fullWidthDropdown
+          icon={getLogo(chain ?? undefined)}
+          label={t('Select the chain')}
+          onChange={onChangeGenesis}
+          options={selectableChains}
+          style={{ m: '15px auto', width: '92%' }}
+        />
       }
       {selectedAddress && chain &&
-      <ProxiedTable
-        api={api}
-        chain={chain}
-        label={t('Proxied account(s)')}
-        maxHeight='140px'
-        proxiedAccounts={proxiedAccounts?.proxy === formatted ? proxiedAccounts?.proxied : undefined}
-        selectedProxied={selectedProxied}
-        setSelectedProxied={setSelectedProxied}
-        style={{ m: '0 auto', width: '92%' }}
-      />
+        <ProxiedTable
+          api={api}
+          chain={chain}
+          label={t('Proxied account(s)')}
+          maxHeight='140px'
+          proxiedAccounts={proxiedAccounts?.proxy === formatted ? proxiedAccounts?.proxied : undefined}
+          selectedProxied={selectedProxied}
+          setSelectedProxied={setSelectedProxied}
+          style={{ m: '0 auto', width: '92%' }}
+        />
       }
       <PButton
         _isBusy={isBusy}
