@@ -23,6 +23,7 @@ import DeriveAccountModal from '../../popup/newAccount/deriveAccount/modal/Deriv
 import ReceiveModal from '../../popup/receive/ReceiveModal';
 import RenameModal from '../../popup/rename/RenameModal';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
+import getParentNameSuri from '../../util/getParentNameSuri';
 import { getPriceIdByChainName } from '../../util/utils';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
@@ -40,7 +41,7 @@ export enum popupNumbers {
   DERIVE_ACCOUNT,
   RECEIVE,
   HISTORY
-};
+}
 
 export interface UnlockInformationType {
   classToUnlock: Lock[] | undefined;
@@ -168,6 +169,8 @@ export default function AccountDetails (): React.ReactElement {
     address && genesisHash && STAKING_CHAINS.includes(genesisHash) && openOrFocusTab(`/poolfs/${address}/`);
   }, [genesisHash, address]);
 
+  const parentNameSuri = getParentNameSuri(hasParent?.name, account?.suri);
+
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='accountDetails' />
@@ -189,7 +192,7 @@ export default function AccountDetails (): React.ReactElement {
                   <AccountLabel
                     account={account}
                     ml='0px'
-                    parentName={hasParent?.name || ''}
+                    parentName={parentNameSuri}
                   />
                 }
                 price={currentPrice}

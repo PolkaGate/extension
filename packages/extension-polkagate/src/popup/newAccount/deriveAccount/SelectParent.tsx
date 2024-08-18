@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, useTheme } from '@mui/material';
@@ -94,30 +93,31 @@ export default function SelectParent ({ className, isLocked, onDerivationConfirm
     [onAction]
   );
 
-  const onSubmit = useCallback(
-    async (): Promise<void> => {
-      if ((suriPath || defaultPath) && parentAddress && parentPassword) {
-        setIsBusy(true);
+  const onSubmit = useCallback(async (): Promise<void> => {
+    const _path = suriPath || defaultPath;
 
-        const isUnlockable = await validateAccount(parentAddress, parentPassword);
+    if (_path && parentAddress && parentPassword) {
+      setIsBusy(true);
 
-        if (isUnlockable) {
-          try {
-            const account = await validateDerivationPath(parentAddress, suriPath ?? defaultPath, parentPassword);
+      const isUnlockable = await validateAccount(parentAddress, parentPassword);
 
-            onDerivationConfirmed({ account, parentPassword });
-          } catch (error) {
-            setIsBusy(false);
-            setPathError(t('Invalid derivation path'));
-            console.error(error);
-          }
-        } else {
+      if (isUnlockable) {
+        try {
+          const account = await validateDerivationPath(parentAddress, _path, parentPassword);
+
+          onDerivationConfirmed({ account, parentPassword });
+        } catch (error) {
           setIsBusy(false);
-          setIsProperParentPassword(false);
+          setPathError(t('Invalid derivation path'));
+          console.error(error);
         }
+      } else {
+        setIsBusy(false);
+        setIsProperParentPassword(false);
       }
-    },
-    [suriPath, defaultPath, parentAddress, parentPassword, onDerivationConfirmed, t]
+    }
+  },
+  [suriPath, defaultPath, parentAddress, parentPassword, onDerivationConfirmed, t]
   );
 
   useEffect(() => {
@@ -188,8 +188,6 @@ export default function SelectParent ({ className, isLocked, onDerivationConfirm
             defaultPath={defaultPath}
             isError={!!pathError}
             onChange={onSuriPathChange}
-            parentAddress={parentAddress}
-            parentPassword={parentPassword}
             withSoftPath={allowSoftDerivation}
           />
           {(!!pathError) && (
