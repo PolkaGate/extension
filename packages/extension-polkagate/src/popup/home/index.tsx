@@ -114,7 +114,7 @@ export default function Home (): React.ReactElement {
                 isDanger
                 theme={theme}
               >
-                {t<string>('Suspicious recovery detected on one or more of your accounts.')}
+                {t('Suspicious recovery detected on one or more of your accounts.')}
               </Warning>
             </Grid>
           }
