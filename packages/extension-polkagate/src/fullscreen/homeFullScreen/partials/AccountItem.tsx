@@ -16,6 +16,7 @@ import { AccountContext } from '../../../components';
 import { useAccountAssets, useChain } from '../../../hooks';
 import QuickActionFullScreen from '../../../partials/QuickActionFullScreen';
 import { AccountLabel } from '../../../popup/home/AccountLabel';
+import getParentNameSuri from '../../../util/getParentNameSuri';
 import AccountInformationForHome from './AccountInformationForHome';
 
 interface Props {
@@ -26,7 +27,7 @@ interface Props {
   id?: number;
 }
 
-function AccountItem({ account, hideNumbers, id, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement {
+function AccountItem ({ account, hideNumbers, id, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement {
   const theme = useTheme();
   const chain = useChain(account.address);
   const accountAssets = useAccountAssets(account.address);
@@ -48,6 +49,8 @@ function AccountItem({ account, hideNumbers, id, quickActionOpen, setQuickAction
     return selectedAsset ?? defaultAssetToShow;
   }, [accountAssets, chain?.genesisHash, selectedAsset]);
 
+  const parentNameSuri = getParentNameSuri(hasParent?.name, account?.suri);
+
   return (
     <div ref={id ? setNodeRef : null} style={{ transform: CSS.Transform.toString(transform), transition }}>
       <Grid container {...attributes} item ref={containerRef} sx={{ borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', overflow: 'hidden', position: 'relative' }} width='760px'>
@@ -55,7 +58,7 @@ function AccountItem({ account, hideNumbers, id, quickActionOpen, setQuickAction
         <AccountLabel
           account={account}
           ml='30px'
-          parentName={hasParent?.name ?? ''}
+          parentName={parentNameSuri}
         />
         <AccountInformationForHome
           accountAssets={accountAssets}
