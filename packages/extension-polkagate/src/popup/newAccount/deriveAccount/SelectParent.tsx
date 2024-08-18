@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, useTheme } from '@mui/material';
@@ -28,17 +28,20 @@ interface Props {
 // match any single slash
 const singleSlashRegex = /([^/]|^)\/([^/]|$)/;
 
-export default function SelectParent({ className, isLocked, onDerivationConfirmed, parentAddress, parentGenesis, parentName }: Props): React.ReactElement<Props> {
+export default function SelectParent ({ className, isLocked, onDerivationConfirmed, parentAddress, parentGenesis, parentName }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
   const { accounts, hierarchy } = useContext(AccountContext);
+
   const defaultPath = useMemo(() => nextDerivationPath(accounts, parentAddress), [accounts, parentAddress]);
-  const [suriPath, setSuriPath] = useState<null | string>(defaultPath);
+
+  const [suriPath, setSuriPath] = useState<string | null>();
   const [parentPassword, setParentPassword] = useState<string>('');
   const [isProperParentPassword, setIsProperParentPassword] = useState(false);
   const [pathError, setPathError] = useState('');
   const passwordInputRef = useRef<HTMLDivElement>(null);
+
   const allowSoftDerivation = useMemo(() => {
     const parent = accounts.find(({ address }) => address === parentAddress);
 
@@ -70,7 +73,7 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
     [hierarchy]
   );
 
-  const _onParentPasswordEnter = useCallback(
+  const onParentPasswordEnter = useCallback(
     (parentPassword: string): void => {
       setParentPassword(parentPassword);
       setIsProperParentPassword(!!parentPassword);
@@ -78,7 +81,7 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
     []
   );
 
-  const _onSuriPathChange = useCallback(
+  const onSuriPathChange = useCallback(
     (path: string): void => {
       setSuriPath(path);
       setPathError('');
@@ -86,21 +89,21 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
     []
   );
 
-  const _onParentChange = useCallback(
+  const onParentChange = useCallback(
     (address: string) => onAction(`/derive/${address}`),
     [onAction]
   );
 
-  const _onSubmit = useCallback(
+  const onSubmit = useCallback(
     async (): Promise<void> => {
-      if (suriPath && parentAddress && parentPassword) {
+      if ((suriPath || defaultPath) && parentAddress && parentPassword) {
         setIsBusy(true);
 
         const isUnlockable = await validateAccount(parentAddress, parentPassword);
 
         if (isUnlockable) {
           try {
-            const account = await validateDerivationPath(parentAddress, suriPath, parentPassword);
+            const account = await validateDerivationPath(parentAddress, suriPath ?? defaultPath, parentPassword);
 
             onDerivationConfirmed({ account, parentPassword });
           } catch (error) {
@@ -114,7 +117,7 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
         }
       }
     },
-    [parentAddress, parentPassword, onDerivationConfirmed, suriPath, t]
+    [suriPath, defaultPath, parentAddress, parentPassword, onDerivationConfirmed, t]
   );
 
   useEffect(() => {
@@ -122,7 +125,7 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
     setIsProperParentPassword(false);
 
     passwordInputRef.current?.querySelector('input')?.focus();
-  }, [_onParentPasswordEnter]);
+  }, [onParentPasswordEnter]);
 
   return (
     <>
@@ -147,12 +150,12 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
           )
           : (
             <Label
-              label={t<string>('Choose parent account')}
+              label={t('Choose parent account')}
               style={{ margin: 'auto', paddingBottom: '20px', width: '92%' }}
             >
               <AddressDropdown
                 allAddresses={allAddresses}
-                onSelect={_onParentChange}
+                onSelect={onParentChange}
                 selectedAddress={parentAddress}
                 selectedGenesis={parentGenesis}
                 selectedName={parentName}
@@ -168,8 +171,8 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
             data-input-password
             isError={!!parentPassword && !isProperParentPassword}
             isFocused
-            label={t<string>('Password for the account to derive from')}
-            onChange={_onParentPasswordEnter}
+            label={t('Password for the account to derive from')}
+            onChange={onParentPasswordEnter}
             value={parentPassword}
           />
           {!!parentPassword && !isProperParentPassword && (
@@ -184,7 +187,7 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
           <DerivationPath
             defaultPath={defaultPath}
             isError={!!pathError}
-            onChange={_onSuriPathChange}
+            onChange={onSuriPathChange}
             parentAddress={parentAddress}
             parentPassword={parentPassword}
             withSoftPath={allowSoftDerivation}
@@ -202,9 +205,9 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
       </div>
       <PButton
         _isBusy={isBusy}
-        _onClick={_onSubmit}
+        _onClick={onSubmit}
         disabled={!isProperParentPassword || !!pathError}
-        text={t<string>('Next')}
+        text={t('Next')}
       />
     </>
   );
