@@ -101,7 +101,7 @@ export default function Home (): React.ReactElement {
               showBrand
               showFullScreen
               showMenu
-              style={{ '> div div:nth-child(3)': { minWidth: '23%' }, pr: '10px' }}
+              style={{ '> div div:nth-child(3)': { minWidth: '23%' }, boxShadow: theme.palette.mode === 'light' ? '0px 0px 5px 0px rgba(0, 0, 0, 0.1)' : undefined, pr: '10px' }}
               text={EXTENSION_NAME}
             />
           </Grid>
@@ -114,7 +114,7 @@ export default function Home (): React.ReactElement {
                 isDanger
                 theme={theme}
               >
-                {t<string>('Suspicious recovery detected on one or more of your accounts.')}
+                {t('Suspicious recovery detected on one or more of your accounts.')}
               </Warning>
             </Grid>
           }

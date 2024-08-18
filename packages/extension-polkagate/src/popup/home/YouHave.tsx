@@ -27,6 +27,8 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
   const theme = useTheme();
   const youHave = useYouHave();
 
+  const shadow = theme.palette.mode === 'dark' ? '0px 0px 3px rgba(50, 50, 50, 1)' : '0px 0px 5px 0px rgba(0, 0, 0, 0.1)';
+
   const onHideClick = useCallback(() => {
     setHideNumbers(!hideNumbers);
     window.localStorage.setItem('hide_numbers', hideNumbers ? 'false' : 'true');
@@ -61,7 +63,7 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
             </Typography>
           </Grid>
         }
-        <Grid alignItems='center' direction='column' item onClick={onHideClick} sx={{ backgroundColor: 'background.paper', borderRadius: '5px', cursor: 'pointer', display: 'flex', position: 'absolute', pt: '3px', right: '20px' }}>
+        <Grid alignItems='center' direction='column' item onClick={onHideClick} sx={{ backgroundColor: 'background.paper', borderRadius: '5px', boxShadow: shadow, cursor: 'pointer', display: 'flex', position: 'absolute', pt: '3px', right: '20px' }}>
           {hideNumbers
             ? <ShowIcon />
             : <HideIcon />
