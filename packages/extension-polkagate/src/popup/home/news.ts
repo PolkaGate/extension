@@ -10,6 +10,12 @@ export interface News {
 
 export const news: News[] = [
   {
+    version: '0.7.6',
+    notes: [
+      'New Transferable Formula: The on-chain formula for calculating transferable balance has changed, so some users may notice an increase in their transferable balance.'
+    ]
+  },
+  {
     version: '0.7.5',
     notes: [
       'Alerts now keep you informed: Notifications have been added to update you on tasks running in the background.',

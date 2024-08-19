@@ -8,7 +8,7 @@
 
 import type { BalancesInfo } from '../../util/types';
 
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
 function isEmptyObject (obj: object): boolean {
   return Object.keys(obj).length === 0;
@@ -35,10 +35,19 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
     case ('available'):
     case ('available balance'):
       return balances.availableBalance;
+
     case ('transferable'):
-      return balances.reservedBalance.gte(balances.frozenBalance || BN_ZERO)
-        ? balances.freeBalance
-        : balances.freeBalance.sub(balances.frozenBalance.sub(balances.reservedBalance));
+    {
+      const frozenBalance = balances.frozenBalance || BN_ZERO; // for backward compatibility of PolkaGate extension
+      const noFrozenReserved = frozenBalance.isZero() && balances.reservedBalance.isZero();
+
+      const frozenReserveDiff = frozenBalance.sub(balances.reservedBalance);
+      const maybeED = noFrozenReserved ? BN_ZERO : (balances.ED || BN_ZERO);
+      const untouchable = bnMax(maybeED, frozenReserveDiff);
+
+      return balances.freeBalance.sub(untouchable);
+    }
+
     case ('reserved'):
       return balances.reservedBalance;
     case ('others'):
