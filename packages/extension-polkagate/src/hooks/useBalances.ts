@@ -37,8 +37,8 @@ export default function useBalances(address: string | undefined, refresh?: boole
   const [pooledBalance, setPooledBalance] = useState<{ balance: BN, genesisHash: string } | null>();
   const [overall, setOverall] = useState<BalancesInfo | undefined>();
 
-  const token = api && api.registry.chainTokens[0];
-  const decimal = api && api.registry.chainDecimals[0];
+  const token = api?.registry.chainTokens[0];
+  const decimal = api?.registry.chainDecimals[0];
 
   const getPoolBalances = useCallback(() => {
     if (api && !api.query['nominationPools']) {
@@ -198,13 +198,14 @@ export default function useBalances(address: string | undefined, refresh?: boole
     const savedBalances = JSON.parse(account?.balances ?? '{}') as SavedBalances;
 
     const balances = {
+      ED: overall.ED.toString(),
       assetId: overall.assetId,
       availableBalance: overall.availableBalance.toString(),
       freeBalance: overall.freeBalance.toString(),
       frozenBalance: overall.frozenBalance.toString(),
       genesisHash: overall.genesisHash,
       lockedBalance: overall.lockedBalance.toString(),
-      pooledBalance: overall.pooledBalance && overall.pooledBalance.toString(),
+      pooledBalance: overall.pooledBalance?.toString(),
       reservedBalance: overall.reservedBalance.toString(),
       vestedBalance: overall.vestedBalance.toString(),
       vestedClaimable: overall.vestedClaimable.toString(),
@@ -231,6 +232,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
       const sb = savedBalances[chainName].balances;
 
       const lastBalances = {
+        ED: new BN(sb['ED'] || '0'),
         assetId: sb['assetId'] && parseInt(sb['assetId']),
         availableBalance: new BN(sb['availableBalance']),
         chainName,
