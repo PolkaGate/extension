@@ -38,7 +38,8 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
 
     case ('transferable'):
     {
-      const frozenReserveDiff = balances.frozenBalance.isZero() ? BN_ZERO : balances.frozenBalance.sub(balances.reservedBalance);
+      const frozenBalance = balances.frozenBalance || BN_ZERO; // for backward compatibility of PolkaGate extension
+      const frozenReserveDiff = frozenBalance.sub(balances.reservedBalance);
       const untouchable = bnMax(balances.ED || BN_ZERO, frozenReserveDiff);
 
       return balances.freeBalance.sub(untouchable);
