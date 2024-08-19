@@ -7,12 +7,10 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import type { HexString } from '@polkadot/util/types';
 
 import { Typography } from '@mui/material';
-// @ts-ignore
 import Chance from 'chance';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 
 import { AccountContext, ActionContext, Label, PButton, SelectChain } from '../../../components';
@@ -29,8 +27,8 @@ function ImportProxied (): React.ReactElement {
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
   const genesisOptions = useGenesisHashOptions();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-  const chance = new Chance();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const random = useMemo(() => new Chance(), []);
 
   const selectableChains = useMemo(() => genesisOptions.filter(({ value }) => PROXY_CHAINS.includes(value as string)), [genesisOptions]);
 
@@ -73,24 +71,24 @@ function ImportProxied (): React.ReactElement {
 
     for (let index = 0; index < selectedProxied.length; index++) {
       const address = selectedProxied[index];
-      const randomName = (chance?.name() as string)?.split(' ')?.[0] || `Proxied ${index + 1}`;
+      const randomName = (random?.name() as string)?.split(' ')?.[0] || `Proxied ${index + 1}`;
 
       await createAccountExternal(randomName, address, (chain?.genesisHash ?? WESTEND_GENESIS_HASH) as HexString);
     }
-  }, [chain?.genesisHash, chance, selectedProxied]);
+  }, [chain?.genesisHash, random, selectedProxied]);
+
+  const onBackClick = useCallback(() => {
+    onAction('/');
+  }, [onAction]);
 
   const onImport = useCallback(() => {
     setIsBusy(true);
     createProxids().then(() => {
       setIsBusy(false);
       setStorage('profile', PROFILE_TAGS.WATCH_ONLY).catch(console.error);
-      openOrFocusTab('/', true);
+      onBackClick();
     }).catch(console.error);
-  }, [createProxids]);
-
-  const onBackClick = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
+  }, [createProxids, onBackClick]);
 
   return (
     <>
