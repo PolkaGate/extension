@@ -3521,6 +3521,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/chance@npm:^1.1.6":
+  version: 1.1.6
+  resolution: "@types/chance@npm:1.1.6"
+  checksum: 10/f4366f1b3144d143af3e6f0fad2ed1db7b9bdfa7d82d40944e9619d57fe7e6b60e8c1452f47a8ededa6b2188932879518628ecd9aac81c40384ded39c26338ba
+  languageName: node
+  linkType: hard
+
 "@types/cheerio@npm:*":
   version: 0.22.35
   resolution: "@types/cheerio@npm:0.22.35"
@@ -15050,6 +15057,7 @@ __metadata:
     "@polkagate/apps-config": "npm:^0.140.3"
     "@substrate/connect": "npm:^0.7.32"
     "@testing-library/react": "npm:latest"
+    "@types/chance": "npm:^1.1.6"
     "@types/jest": "npm:latest"
     "@types/node": "npm:^20.10.5"
     "@types/react-spinkit": "npm:^3.0.10"
