@@ -1,19 +1,18 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ApiPromise } from '@polkadot/api';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { BN } from '@polkadot/util';
 import type { ProxyItem } from '../../util/types';
 
 import { AddRounded as AddRoundedIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import type { Chain } from '@polkadot/extension-chains/types';
-
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, ShowBalance, TwoButtons, VaadinIcon } from '../../components';
 import { useTranslation } from '../../hooks';
@@ -42,13 +41,13 @@ interface Props {
   token: string | undefined;
 }
 
-export default function Manage({ api, chain, decimal, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
+export default function Manage ({ api, chain, decimal, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
 
-  const proxyDepositBase = api ? api.consts.proxy.proxyDepositBase as unknown as BN : BN_ZERO;
-  const proxyDepositFactor = api ? api.consts.proxy.proxyDepositFactor as unknown as BN : BN_ZERO;
+  const proxyDepositBase = api ? api.consts['proxy']['proxyDepositBase'] as unknown as BN : BN_ZERO;
+  const proxyDepositFactor = api ? api.consts['proxy']['proxyDepositFactor'] as unknown as BN : BN_ZERO;
   const confirmDisabled = useMemo(() => !proxyItems || proxyItems.length === 0 || proxyItems.every(({ status }) => status === 'current'), [proxyItems]);
 
   useEffect(() => {
@@ -110,9 +109,9 @@ export default function Manage({ api, chain, decimal, depositedValue, isDisabled
       }
 
       return _proxyItem;
-    }).filter(Boolean);
+    }).filter((item) => !!item);
 
-    setProxyItems(updatedProxyItems); // TODO: Check if there are undefined values
+    setProxyItems(updatedProxyItems);
   }, [proxyItems, setProxyItems]);
 
   return (
@@ -132,7 +131,7 @@ export default function Manage({ api, chain, decimal, depositedValue, isDisabled
       />
       <ProxyTableFL
         api={api}
-        chain={chain as any}
+        chain={chain}
         handleDelete={handleDelete}
         proxyItems={proxyItems}
       />

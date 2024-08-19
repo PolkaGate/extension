@@ -1,21 +1,20 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { DropdownOption, ProxyItem } from '../../util/types';
 
 import { AddRounded as AddRoundedIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-
-import type { Chain } from '@polkadot/extension-chains/types';
 
 import { AccountContext, AddressInput, InputWithLabel, Select, TwoButtons, Warning } from '../../components';
 import { useAccountDisplay, useFormatted, useIdentity, useTranslation } from '../../hooks';
 import ShowIdentity from '../../popup/manageProxies/partials/ShowIdentity';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
-import type { DropdownOption, ProxyItem } from '../../util/types';
 import { sanitizeChainName } from '../../util/utils';
 import { STEPS } from '.';
 
@@ -27,7 +26,7 @@ interface Props {
   setProxyItems: React.Dispatch<React.SetStateAction<ProxyItem[] | null | undefined>>;
 }
 
-export default function AddProxy({ chain, proxiedAddress, proxyItems, setProxyItems, setStep }: Props): React.ReactElement {
+export default function AddProxy ({ chain, proxiedAddress, proxyItems, setProxyItems, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
@@ -131,7 +130,7 @@ export default function AddProxy({ chain, proxiedAddress, proxyItems, setProxyIt
         addWithQr
         address={proxyAddress}
         allAddresses={allAddresses}
-        chain={chain as any}
+        chain={chain}
         label={t('Account ID')}
         setAddress={setProxyAddress}
         showIdenticon
