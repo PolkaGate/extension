@@ -157,7 +157,7 @@ export default function AccountDetail ({ address, chain, goToAccount, hideNumber
         {!chain
           ? <NoChainAlert />
           : <Grid alignItems='center' container>
-            <RecentChains address={address} currentChainName={chainName} />
+            <RecentChains address={address} />
             <BalanceRow />
           </Grid>
         }

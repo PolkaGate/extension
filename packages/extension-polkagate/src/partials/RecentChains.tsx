@@ -1,9 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { HexString } from '@polkadot/util/types';
+import type { RecentChainsType } from '../util/types';
 
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,151 +14,181 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { threeItemCurveBackgroundBlack, threeItemCurveBackgroundWhite } from '../assets/icons';
 import { getStorage } from '../components/Loading';
-import { useAccount, useGenesisHashOptions } from '../hooks';
+import { useGenesisHashOptions, useInfo } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CHAINS_WITH_BLACK_LOGO, INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
 import getLogo from '../util/getLogo';
 import { sanitizeChainName } from '../util/utils';
 
+const BACKGROUND_SLIDE_ANIMATION = {
+  DOWN: keyframes`
+  from{
+    transform: scale(1) translateY(-25px);
+  }
+  to{
+    transform: scale(0) translateY(0);
+  }`,
+  UP: keyframes`
+  from{
+    transform: scale(0) translateY(0);
+  }
+  to{
+    transform: scale(1) translateY(-25px);
+  }`
+};
+
+const THREE_ITEM_SLIDE_ANIMATION = {
+  DOWN: [
+    keyframes`
+    from{
+      z-index: 2;
+      transform: scale(1) translate3d(-26px, -18px, 0);
+    }
+    to{
+      z-index: 0;
+      transform: scale(0) translate3d(0,0,0);
+    }
+  `,
+    keyframes`
+    from{
+      z-index: 2;
+      transform: scale(1) translate3d(0, -30px, 0);
+    }
+    to{
+      z-index: 0;
+      transform: scale(0) translate3d(0,0,0);
+    }
+  `,
+    keyframes`
+    from{
+      z-index: 2;
+      transform: scale(1) translate3d(26px, -18px, 0);
+    }
+    to{
+      z-index: 0;
+      transform: scale(0) translate3d(0,0,0);
+    }
+  `],
+  UP: [
+    keyframes`
+    from{
+      z-index: 0;
+      transform: scale(0) translate3d(0,0,0);
+    }
+    to{
+      z-index: 2;
+      transform: scale(1) translate3d(-26px, -18px, 0);
+    }
+  `,
+    keyframes`
+    from{
+      z-index: 0;
+      transform: scale(0) translate3d(0,0,0);
+    }
+    to{
+      z-index: 2;
+      transform: scale(1) translate3d(0, -30px, 0);
+    }
+  `,
+    keyframes`
+    from{
+      z-index: 0;
+      transform: scale(0) translate3d(0,0,0);
+    }
+    to{
+      z-index: 2;
+      transform: scale(1) translate3d(26px, -18px, 0);
+    }
+  `]
+};
+
 interface Props {
   address: string | undefined;
-  currentChainName: string | undefined;
 }
 
-function RecentChains({ address, currentChainName }: Props): React.ReactElement<Props> {
+function RecentChains ({ address }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  const account = useAccount(address);
+  const { chainName, genesisHash } = useInfo(address);
   const genesisHashes = useGenesisHashOptions();
 
   const [showRecentChains, setShowRecentChains] = useState<boolean>(false);
-  const [notFirstTime, setFirstTime] = useState<boolean>(false);
+  // in order to prevent displaying the closing animation
+  const [firstTimeCanceler, setFirstTime] = useState<boolean>(false);
   const [recentChains, setRecentChains] = useState<string[]>();
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
-  const [currentSelectedChain, setCurrentSelectedChain] = useState<string | undefined>(currentChainName);
+  const [currentSelectedChain, setCurrentSelectedChain] = useState<string | undefined>(chainName);
 
   const isTestnetDisabled = useCallback((name: string | undefined) => !isTestnetEnabled && name?.toLowerCase() === 'westend', [isTestnetEnabled]);
 
-  useEffect(() => {
-    currentChainName && setCurrentSelectedChain(currentChainName);
-  }, [currentChainName]);
+  const initiateRecentChains = useCallback(async (addressKey: string, genesisHash: string) => {
+    try {
+      const result = await new Promise<{ RecentChains?: RecentChainsType }>((resolve) =>
+        chrome.storage.local.get('RecentChains', resolve)
+      );
 
-  useEffect(() => {
-    getStorage('testnet_enabled').then((res) => {
-      setIsTestnetEnabled(res as boolean);
-    }).catch(console.error);
-  }, [showRecentChains]);
+      const allRecentChains = result.RecentChains || {};
+      const myRecentChains = allRecentChains[addressKey] || [];
 
-  useEffect(() => {
-    if (!address || !account) {
-      return;
+      if (myRecentChains.length === 4) {
+        setRecentChains(myRecentChains);
+      } else {
+        const suggestedRecent = INITIAL_RECENT_CHAINS_GENESISHASH.filter((chain) => genesisHash !== chain);
+
+        setRecentChains(suggestedRecent);
+
+        // Optionally, save the suggested chains back to storage
+        allRecentChains[addressKey] = suggestedRecent;
+        await new Promise<void>((resolve) =>
+          chrome.storage.local.set({ RecentChains: allRecentChains }, resolve)
+        );
+      }
+    } catch (error) {
+      console.error('Error initializing recent chains:', error);
+      // Optionally, set a default value or handle the error as needed
+      setRecentChains([]);
     }
-
-    chrome.storage.local.get('RecentChains', (res) => {
-      const allRecentChains = res?.RecentChains;
-      const myRecentChains = allRecentChains?.[address] as string[];
-
-      const suggestedRecent = INITIAL_RECENT_CHAINS_GENESISHASH.filter((chain) => account.genesisHash !== chain);
-
-      myRecentChains ? setRecentChains(myRecentChains) : setRecentChains(suggestedRecent);
-    });
-  }, [account, account?.genesisHash, address]);
-
-  const chainNamesToShow = useMemo(() => {
-    if (!(genesisHashes.length) || !(recentChains?.length) || !account) {
-      return undefined;
-    }
-
-    const filteredChains = recentChains.map((r) => genesisHashes.find((g) => g.value === r)).filter((chain) => chain?.value !== account.genesisHash);
-    const chainNames = filteredChains.map((chain) => chain && sanitizeChainName(chain.text));
-
-    return chainNames;
-  }, [account, genesisHashes, recentChains]);
+  }, []);
 
   useEffect(() => {
     showRecentChains && setFirstTime(true);
   }, [showRecentChains]);
 
-  const backgroundSlide = {
-    down: keyframes`
-    from{
-      transform: scale(1) translateY(-25px);
-    }
-    to{
-      transform: scale(0) translateY(0);
-    }`,
-    up: keyframes`
-    from{
-      transform: scale(0) translateY(0);
-    }
-    to{
-      transform: scale(1) translateY(-25px);
-    }`
-  };
+  useEffect(() => {
+    chainName && setCurrentSelectedChain(chainName);
+  }, [chainName]);
 
-  const threeItemSlide = {
-    down: [
-      keyframes`
-      from{
-        z-index: 2;
-        transform: scale(1) translate3d(-26px, -18px, 0);
-      }
-      to{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-    `,
-      keyframes`
-      from{
-        z-index: 2;
-        transform: scale(1) translate3d(0, -30px, 0);
-      }
-      to{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-    `,
-      keyframes`
-      from{
-        z-index: 2;
-        transform: scale(1) translate3d(26px, -18px, 0);
-      }
-      to{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-    `],
-    up: [
-      keyframes`
-      from{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-      to{
-        z-index: 2;
-        transform: scale(1) translate3d(-26px, -18px, 0);
-      }
-    `,
-      keyframes`
-      from{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-      to{
-        z-index: 2;
-        transform: scale(1) translate3d(0, -30px, 0);
-      }
-    `,
-      keyframes`
-      from{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-      to{
-        z-index: 2;
-        transform: scale(1) translate3d(26px, -18px, 0);
-      }
-    `]
-  };
+  useEffect(() => {
+    getStorage('testnet_enabled').then((res) => {
+      setIsTestnetEnabled(res as unknown as boolean);
+    }).catch(console.error);
+  }, [showRecentChains]);
+
+  useEffect(() => {
+    if (!address || !genesisHash) {
+      return;
+    }
+
+    initiateRecentChains(address, genesisHash).catch(console.error);
+  }, [genesisHash, address, initiateRecentChains]);
+
+  const chainNamesToShow = useMemo(() => {
+    if (!genesisHashes.length || !recentChains?.length || !genesisHash) {
+      return undefined;
+    }
+
+    const filteredAndSanitized = recentChains
+      .filter((recentHash): recentHash is string => recentHash !== genesisHash)
+      .map((recentHash) => {
+        const chain = genesisHashes.find(({ value }) => value === recentHash);
+
+        return chain ? sanitizeChainName(chain.text) : null;
+      })
+      .filter((name): name is string => !!name);
+
+    filteredAndSanitized.length > 3 && filteredAndSanitized.shift();
+
+    return filteredAndSanitized.length > 0 ? filteredAndSanitized : undefined;
+  }, [genesisHash, genesisHashes, recentChains]);
 
   const toggleRecentChains = useCallback(() => setShowRecentChains(!showRecentChains), [showRecentChains]);
   const closeRecentChains = useCallback(() => setShowRecentChains(false), [setShowRecentChains]);
@@ -166,15 +198,15 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
       return;
     }
 
-    const selectedGenesisHash = genesisHashes.find((option) => sanitizeChainName(option.text) === newChainName)?.value;
+    const selectedGenesisHash = genesisHashes.find((option) => sanitizeChainName(option.text) === newChainName)?.value as HexString;
 
     setCurrentSelectedChain(newChainName);
     setFirstTime(false);
     address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch((error) => {
-      setCurrentSelectedChain(currentChainName);
+      setCurrentSelectedChain(chainName);
       console.error(error);
     });
-  }, [address, currentChainName, genesisHashes, isTestnetDisabled]);
+  }, [address, chainName, genesisHashes, isTestnetDisabled]);
 
   return (
     <>
@@ -199,13 +231,13 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
           : <Grid item onClick={toggleRecentChains} sx={{ cursor: 'pointer', left: 0, position: 'absolute', top: 0 }}>
             <Avatar
               src={getLogo(currentSelectedChain)}
-              sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(currentSelectedChain) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: '20px', width: '20px' }}
+              sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(currentSelectedChain ?? '') && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: '20px', width: '20px' }}
             />
           </Grid>
         }
         <Box
           component='img'
-          display={notFirstTime ? 'inherit' : 'none'}
+          display={firstTimeCanceler ? 'inherit' : 'none'}
           src={theme.palette.mode === 'dark'
             ? threeItemCurveBackgroundBlack as string
             : threeItemCurveBackgroundWhite as string
@@ -213,29 +245,27 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
           sx={{
             animationDuration: '150ms',
             animationFillMode: 'forwards',
-            animationName: `${showRecentChains ? backgroundSlide.up : backgroundSlide.down}`,
+            animationName: `${showRecentChains ? BACKGROUND_SLIDE_ANIMATION.UP : BACKGROUND_SLIDE_ANIMATION.DOWN}`,
             left: '-41.7px',
             position: 'absolute',
             top: '-18px',
             zIndex: 2
           }}
         />
-        {notFirstTime && chainNamesToShow?.map((name, index) => (
-          <Grid
-            item
-            key={index}
+        {firstTimeCanceler && chainNamesToShow?.map((name, index) => (
+          <Grid item key={index}
             // eslint-disable-next-line react/jsx-no-bind
             onClick={() => selectNetwork(name)}
-            position='absolute'
             sx={{
               animationDuration: '150ms',
               animationFillMode: 'forwards',
               animationName: `${showRecentChains
-                ? threeItemSlide.up[index]
-                : threeItemSlide.down[index]}`,
+                ? THREE_ITEM_SLIDE_ANIMATION.UP[index]
+                : THREE_ITEM_SLIDE_ANIMATION.DOWN[index]}`,
               cursor: isTestnetDisabled(name) ? 'default' : 'pointer',
               left: 0,
               opacity: isTestnetDisabled(name) ? '0.6' : 1,
+              position: 'absolute',
               top: '-5px'
             }}
           >
