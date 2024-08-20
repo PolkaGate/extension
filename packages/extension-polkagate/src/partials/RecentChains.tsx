@@ -104,11 +104,12 @@ const THREE_ITEM_SLIDE_ANIMATION = {
 
 interface Props {
   address: string | undefined;
+  chainName: string | undefined;
 }
 
-function RecentChains ({ address }: Props): React.ReactElement<Props> {
+function RecentChains ({ address, chainName }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  const { chainName, genesisHash } = useInfo(address);
+  const { genesisHash } = useInfo(address);
   const genesisHashes = useGenesisHashOptions();
 
   const [showRecentChains, setShowRecentChains] = useState<boolean>(false);
