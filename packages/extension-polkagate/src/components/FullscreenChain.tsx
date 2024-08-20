@@ -1,21 +1,20 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { DropdownOption } from '../util/types';
 
-import { FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, type SxProps, type Theme, Typography } from '@mui/material';
+import { FormControl, Grid, InputBase, MenuItem, Select, type SelectChangeEvent, type SxProps, type Theme, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useGenesisHashOptions, useIsTestnetEnabled } from '@polkadot/extension-polkagate/src/hooks';
 import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
 import getLogo from '../util/getLogo';
-import { sanitizeChainName } from '../util/utils';
+import { sanitizeChainName, updateRecentChains } from '../util/utils';
 import ChainLogo from './ChainLogo';
 import Label from './Label';
 
@@ -97,44 +96,6 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
     onChange(defaultValue);
   }, [defaultValue, onChange]);
 
-  const updateRecentChains = useCallback((currentGenesisHash: string) => {
-    chrome.storage.local.get('RecentChains', (res) => {
-      if (chrome.runtime.lastError) {
-        console.error(chrome.runtime.lastError);
-
-        return;
-      }
-
-      const accountsAndChains = res?.RecentChains ?? {};
-      const myRecentChains = accountsAndChains[address] as string[];
-
-      if (!myRecentChains) {
-        if (INITIAL_RECENT_CHAINS_GENESISHASH.includes(currentGenesisHash)) {
-          accountsAndChains[address] = INITIAL_RECENT_CHAINS_GENESISHASH;
-        } else {
-          INITIAL_RECENT_CHAINS_GENESISHASH.length = 3;
-          accountsAndChains[address] = [...INITIAL_RECENT_CHAINS_GENESISHASH, currentGenesisHash];
-        }
-
-        chrome.storage.local.set({ RecentChains: accountsAndChains }, () => {
-          if (chrome.runtime.lastError) {
-            console.error(chrome.runtime.lastError);
-          }
-        });
-      } else if (myRecentChains && !(myRecentChains.includes(currentGenesisHash))) {
-        myRecentChains.unshift(currentGenesisHash);
-        myRecentChains.pop();
-        accountsAndChains[address] = myRecentChains;
-
-        chrome.storage.local.set({ RecentChains: accountsAndChains }, () => {
-          if (chrome.runtime.lastError) {
-            console.error(chrome.runtime.lastError);
-          }
-        });
-      }
-    });
-  }, [address]);
-
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     try {
       onChange(newGenesisHash);
@@ -142,12 +103,12 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
       const currentGenesisHash = newGenesisHash?.startsWith && newGenesisHash.startsWith('0x') ? newGenesisHash : undefined;
 
       if (address && currentGenesisHash) {
-        updateRecentChains(currentGenesisHash);
+        updateRecentChains(address, currentGenesisHash).catch(console.error);
       }
     } catch (error) {
       console.error(error);
     }
-  }, [address, onChange, updateRecentChains]);
+  }, [address, onChange]);
 
   useEffect(() => {
     setSelectedValue(defaultValue);
