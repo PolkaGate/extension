@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Asset } from '@polkagate/apps-config/assets/types';
-import type { Option, StorageKey } from '@polkadot/types';
+import type { bool, Bytes, Option, StorageKey, u128, u8 } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
 // @ts-ignore
-import type { FrameSystemAccountInfo, OrmlTokensAccountData, PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
+import type { FrameSystemAccountInfo, OrmlTokensAccountData, PalletAssetsAssetAccount, PalletAssetsAssetDetails, PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
 import type { AnyTuple } from '@polkadot/types/types';
 import type { BalancesInfo, SavedBalances } from '../util/types';
 
@@ -276,25 +276,23 @@ export default function useBalances(address: string | undefined, refresh?: boole
 
     fetchAssetOnAssetHub().catch(console.error);
 
-    async function fetchAssetOnAssetHub() {
+    async function fetchAssetOnAssetHub () {
       if (!api) {
         return;
       }
 
       try {
         const [accountAsset, assetInfo, metadata] = await Promise.all([
-          api.query['assets']['account'](assetId, formatted) as any,
-          api.query['assets']['asset'](assetId) as any,
-          api.query['assets']['metadata'](assetId) as any
+          api.query['assets']['account'](assetId, formatted) as unknown as Option<PalletAssetsAssetAccount>,
+          api.query['assets']['asset'](assetId) as unknown as Option<PalletAssetsAssetDetails>,
+          api.query['assets']['metadata'](assetId) as unknown as {deposit: u128, name: Bytes, symbol: Bytes, decimals: u8, isFrozen: bool}
+
         ]);
 
-        const ED = assetInfo.isNone ? BN_ZERO : assetInfo.unwrap()?.minBalance as BN;
-
+        const ED = assetInfo.isNone ? BN_ZERO : assetInfo.unwrap().minBalance;
         const _AccountAsset = accountAsset.isSome ? accountAsset.unwrap() : null;
-
-        const parsedAccountAsset = JSON.parse(JSON.stringify(_AccountAsset));
-        const isFrozen = parsedAccountAsset?.status === 'Frozen';
-        const balance = (_AccountAsset?.balance || BN_ZERO) as BN;
+        const isFrozen = _AccountAsset?.status?.isFrozen;
+        const balance = _AccountAsset?.balance || BN_ZERO;
 
         const assetBalances = {
           ED,
@@ -302,7 +300,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
           availableBalance: isFrozen ? BN_ZERO : balance,
           chainName,
           date: Date.now(),
-          decimal: metadata.decimals.toNumber() as number,
+          decimal: metadata.decimals.toNumber(),
           freeBalance: !isFrozen ? balance : BN_ZERO,
           genesisHash: api.genesisHash.toHex(),
           isAsset: true,
