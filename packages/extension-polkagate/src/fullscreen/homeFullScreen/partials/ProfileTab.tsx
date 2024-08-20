@@ -60,7 +60,7 @@ export default function ProfileTab ({ index, isHovered, orderedAccounts, selecte
     toHideAll !== undefined && accounts.forEach(({ account: { address } }) => {
       showAccount(address, !toHideAll).catch(console.error);
     });
-    notify(t('All accounts in the {{text}} profile have been {{verb}}.', { replace: { text, verb: toHideAll ? 'hidden' : 'unhidden' } }), 'info');
+    notify(t('Accounts in the {{profileName}} profile are now {{visibility}} websites.', { replace: { profileName: text, visibility: toHideAll ? 'hidden from' : 'visible to' } }), 'info');
   }, [notify, t, text, toHideAll]);
 
   const areAllHidden = areAllProfileAccountsHidden !== undefined ? areAllProfileAccountsHidden : toHideAll;
@@ -71,11 +71,11 @@ export default function ProfileTab ({ index, isHovered, orderedAccounts, selecte
     if (profileAccounts && toHideAll !== undefined) {
       hideAccounts(profileAccounts);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hideAccounts, profileAccounts?.length, toHideAll]);
 
   useEffect(() => {
-    /** set profile text in local storage and watch its change to apply on the UI */
+  /** set profile text in local storage and watch its change to apply on the UI */
     getStorage('profile').then((res) => {
       setSelectedProfile(res as string || t('All'));
     }).catch(console.error);
