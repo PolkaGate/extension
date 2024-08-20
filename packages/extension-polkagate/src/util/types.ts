@@ -796,3 +796,5 @@ export interface AccountsOrder {
   id: number,
   account: AccountWithChildren
 }
+
+export type RecentChainsType = Record<string, string[]>;
