@@ -121,7 +121,7 @@ const AddMenu = ({ address, handleClose, setShowName, showName }: AddProfileProp
           withHoverEffect
         />
       }
-      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
+      <Divider sx={{ bgcolor: 'divider', height: '1px', my: '6px' }} />
       {userDefinedProfiles.length > 0
         ? userDefinedProfiles.map((profile) => (
           <MenuItem
@@ -256,7 +256,7 @@ function ProfileMenu ({ address, setUpperAnchorEl }: Props): React.ReactElement<
               />
             </Grid>
           ))}
-          <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px', width: '100%' }} />
+          <Divider sx={{ bgcolor: 'divider', height: '1px', my: '6px', width: '100%' }} />
         </>
       }
       {isExtensionMode && profileNames && profileNames.length > 0 &&
@@ -271,7 +271,7 @@ function ProfileMenu ({ address, setUpperAnchorEl }: Props): React.ReactElement<
           />
         </Grid>
       }
-      {isExtensionMode && <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px', width: '100%' }} />}
+      {isExtensionMode && <Divider sx={{ bgcolor: 'divider', height: '1px', my: '6px', width: '100%' }} />}
       <Popover
         PaperProps={{
           sx: {

@@ -85,12 +85,14 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
     return !supportedChains.includes(chain.genesisHash ?? '');
   }, [chain]);
 
+  const MenuSeparator = () => <Divider sx={{ bgcolor: 'divider', height: '1px', my: '6px' }} />;
+
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
-      <Grid container item justifyContent='center' my='20px' pl='8px'>
-        <Identity address={address} api={api} chain={chain as any} formatted={formatted} identiconSize={35} showSocial={false} subIdOnly />
+      <Grid container item justifyContent='center' my='12px' pl='8px'>
+        <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={35} showSocial={false} subIdOnly />
       </Grid>
-      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
+      <MenuSeparator />
       <MenuItem
         disabled={isDisabled(IDENTITY_CHAINS)}
         iconComponent={
@@ -129,7 +131,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
         text={t('Social recovery')}
         withHoverEffect
       />
-      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
+      <MenuSeparator />
       <ProfileMenu
         address={address}
       />
@@ -168,7 +170,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
         text={t('Forget account')}
         withHoverEffect
       />
-      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
+      <MenuSeparator />
       <SelectChain
         address={address}
         defaultValue={chain?.genesisHash ?? options[0].text}
