@@ -9,11 +9,11 @@ import type { RecentChainsType } from '../util/types';
 
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, Backdrop, Box, ClickAwayListener, Grid, keyframes, useTheme } from '@mui/material';
+import { Avatar, Backdrop, ClickAwayListener, Grid, keyframes, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { threeItemCurveBackgroundBlack, threeItemCurveBackgroundWhite } from '../assets/icons';
 import { getStorage } from '../components/Loading';
+import ThreeItemCurveBackground from '../components/SVG/ThreeItemCurveBackground';
 import { useGenesisHashOptions, useInfo } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CHAINS_WITH_BLACK_LOGO, INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
@@ -236,13 +236,9 @@ function RecentChains ({ address, chainName }: Props): React.ReactElement<Props>
             />
           </Grid>
         }
-        <Box
-          component='img'
+        <Grid
           display={firstTimeCanceler ? 'inherit' : 'none'}
-          src={theme.palette.mode === 'dark'
-            ? threeItemCurveBackgroundBlack as string
-            : threeItemCurveBackgroundWhite as string
-          }
+          item
           sx={{
             animationDuration: '150ms',
             animationFillMode: 'forwards',
@@ -252,7 +248,9 @@ function RecentChains ({ address, chainName }: Props): React.ReactElement<Props>
             top: '-18px',
             zIndex: 2
           }}
-        />
+        >
+          <ThreeItemCurveBackground mode={theme.palette.mode} />
+        </Grid>
         {firstTimeCanceler && chainNamesToShow?.map((name, index) => (
           <Grid item key={index}
             // eslint-disable-next-line react/jsx-no-bind
