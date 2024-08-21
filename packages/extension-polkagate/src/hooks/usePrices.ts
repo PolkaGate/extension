@@ -1,13 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+
+import type { Prices, PricesInCurrencies } from '../util/types';
 
 import { useEffect, useState } from 'react';
 
 import { getStorage, watchStorage } from '../components/Loading';
-import type { Prices, PricesInCurrencies } from '../util/types';
 import { useCurrency } from '.';
 
 /** If we need to retrieve a price, and that price was fetched within the last PRICE_VALIDITY_PERIOD in seconds,
@@ -15,7 +15,7 @@ import { useCurrency } from '.';
  * */
 export const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000;
 
-export function isPriceUpToDate(lastFetchDate?: number): boolean | undefined {
+export function isPriceUpToDate (lastFetchDate?: number): boolean | undefined {
   return lastFetchDate ? Date.now() - lastFetchDate < PRICE_VALIDITY_PERIOD : undefined;
 }
 
@@ -24,7 +24,7 @@ export function isPriceUpToDate(lastFetchDate?: number): boolean | undefined {
  * get all selected chains assets' prices and save in local storage
  * @returns null: means not savedPrice found, happens when the first account is created
  */
-export default function usePrices(): Prices | undefined | null {
+export default function usePrices (): Prices | undefined | null {
   const currency = useCurrency();
 
   const [savedPrice, setSavedPrice] = useState<Prices | null>();
@@ -47,9 +47,7 @@ export default function usePrices(): Prices | undefined | null {
     currency?.code && getStorage('pricesInCurrencies').then((pricesInCurrencies) => {
       const mayBeSavedPrices = (pricesInCurrencies as PricesInCurrencies)?.[currency.code];
 
-      // if (mayBeSavedPrices && isPriceUpToDate(mayBeSavedPrices?.date)) {
       mayBeSavedPrices && setSavedPrice(mayBeSavedPrices);
-      // }
     }).catch(console.error);
   }, [currency]);
 
