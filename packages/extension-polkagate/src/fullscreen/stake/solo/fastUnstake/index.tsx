@@ -1,10 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { StakingInputs } from '../../type';
 
 import { faBolt } from '@fortawesome/free-solid-svg-icons';
 import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
@@ -14,13 +15,11 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
-import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_MAX_INTEGER, BN_ONE } from '@polkadot/util';
 
 import { PButton, Progress, Warning } from '../../../../components';
 import { useBalances, useInfo, useIsExposed, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
-import type { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { STEPS } from '../../pool/stake';
@@ -34,7 +33,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function FastUnstake({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function FastUnstake ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, decimal, formatted, token } = useInfo(address);
@@ -46,7 +45,7 @@ export default function FastUnstake({ address, setRefresh, setShow, show }: Prop
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [step, setStep] = useState(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [inputs, setInputs] = useState<Inputs>();
+  const [inputs, setInputs] = useState<StakingInputs>();
 
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const fastUnstakeDeposit = api && api.consts['fastUnstake']['deposit'] as unknown as BN;
@@ -63,7 +62,7 @@ export default function FastUnstake({ address, setRefresh, setShow, show }: Prop
     ? !isExposed && !hasUnlockingAndRedeemable && hasEnoughDeposit
     : undefined;
 
-  const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active, [stakingAccount]);
+  const staked = useMemo(() => stakingAccount?.stakingLedger.active as BN | undefined, [stakingAccount]);
 
   useEffect(() => {
     if (!api || !staked || !availableBalance) {
@@ -73,7 +72,7 @@ export default function FastUnstake({ address, setRefresh, setShow, show }: Prop
     const call = api.tx['fastUnstake']['registerFastUnstake'];
     const availableBalanceAfter = availableBalance.add(staked);
 
-    const params = [];
+    const params: never[] = [];
 
     const extraInfo = {
       action: 'Solo Staking',
@@ -95,7 +94,7 @@ export default function FastUnstake({ address, setRefresh, setShow, show }: Prop
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
     }
 
     inputs?.call && address && inputs.call().paymentInfo(address).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);

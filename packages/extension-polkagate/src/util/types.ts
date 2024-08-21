@@ -770,7 +770,8 @@ export interface AlertContextType {
 }
 
 // TODO: FixMe, Controller is deprecated
-export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }
+export interface PayeeAccount { Account: string }
+export type Payee = 'Staked' | 'Controller' | 'Stash' | PayeeAccount;
 export interface SoloSettings {
   controllerId?: AccountId | string | undefined,
   payee: Payee,

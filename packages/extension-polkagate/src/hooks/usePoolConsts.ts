@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import type { PoolStakingConsts } from '../util/types';
 
@@ -11,7 +10,7 @@ import { BN } from '@polkadot/util';
 import { sanitizeChainName } from '../util/utils';
 import { useCurrentEraIndex, useInfo } from '.';
 
-export default function usePoolConsts(address: string, stateConsts?: PoolStakingConsts): PoolStakingConsts | null | undefined {
+export default function usePoolConsts (address: string | undefined, stateConsts?: PoolStakingConsts): PoolStakingConsts | null | undefined {
   const { chain, endpoint, token } = useInfo(address);
   const eraIndex = useCurrentEraIndex(address);
 

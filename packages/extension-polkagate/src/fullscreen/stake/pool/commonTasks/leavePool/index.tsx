@@ -1,15 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
 import type { AnyTuple } from '@polkadot/types/types';
+import type { MyPoolInfo, TxInfo } from '../../../../../util/types';
+import type { StakingInputs } from '../../../type';
 
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { useEstimatedFee, useInfo, useStakingConsts, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
@@ -17,8 +18,6 @@ import { DATE_OPTIONS } from '@polkadot/extension-polkagate/src/util/constants';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
-import type { MyPoolInfo, TxInfo } from '../../../../../util/types';
-import type { Inputs } from '../../../Entry';
 import Review from '../../../partials/Review';
 import { ModalTitle } from '../../../solo/commonTasks/configurePayee';
 import Confirmation from '../../partials/Confirmation';
@@ -32,14 +31,14 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function LeavePool({ address, onClose, pool, setRefresh }: Props): React.ReactElement {
+export default function LeavePool ({ address, onClose, pool, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
   const stakingConsts = useStakingConsts(address);
   const { api, decimal, formatted, token } = useInfo(address);
 
   const [step, setStep] = useState<number>(STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [inputs, setInputs] = useState<Inputs>();
+  const [inputs, setInputs] = useState<StakingInputs>();
   const [spanCount, setSpanCount] = useState<number>();
 
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);

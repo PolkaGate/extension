@@ -1,30 +1,28 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
+import type { SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { Balance } from '@polkadot/types/interfaces';
 import type { AnyTuple } from '@polkadot/types/types';
+import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
+import type { StakingInputs } from '../../../type';
+import type { ChangesProps } from '.';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
-import type { Chain } from '@polkadot/extension-chains/types';
-
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import { PROXY_TYPE } from '@polkadot/extension-polkagate/src/util/constants';
-import type { Balance } from '@polkadot/types/interfaces';
 import { BN_ONE } from '@polkadot/util';
 
 import { AccountHolderWithProxy, Infotip, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../../components';
 import { useProxies, useTranslation } from '../../../../../hooks';
-import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
-import type { Inputs } from '../../../Entry';
 import { STEPS } from '../../stake';
 import ShowPoolRole from './ShowPoolRole';
-import { ChangesProps } from '.';
 
 interface Props {
   address: string;
@@ -39,7 +37,7 @@ interface Props {
   step: number;
 }
 
-export default function Review({ address, api, chain, changes, formatted, pool, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review ({ address, api, chain, changes, formatted, pool, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
 
@@ -47,9 +45,11 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
-  const [inputs, setInputs] = useState<Inputs>();
+  const [inputs, setInputs] = useState<StakingInputs>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
+
+  //@ts-ignore
   const maybeCurrentCommissionPayee = pool?.bondedPool?.commission?.current?.[1]?.toString() as string | undefined;
 
   useEffect((): void => {
@@ -113,11 +113,11 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      return setEstimatedFee(api.createType('Balance', BN_ONE) as Balance);
     }
 
     inputs.call(...inputs.params)?.paymentInfo(formatted).then((i) => {
-      setEstimatedFee(api.createType('Balance', i?.partialFee));
+      setEstimatedFee(api.createType('Balance', i?.partialFee) as Balance);
     }).catch(console.error);
   }, [api, formatted, inputs]);
 
@@ -138,7 +138,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
             }
             <AccountHolderWithProxy
               address={address}
-              chain={chain as any}
+              chain={chain}
               selectedProxyAddress={selectedProxyAddress}
               style={{ mt: 'auto' }}
               title={t('Account holder')}
@@ -162,15 +162,15 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
               </>}
             {changes?.newRoles?.newRoot !== undefined &&
               <ShowPoolRole
-                chain={chain as any}
-                roleAddress={changes?.newRoles?.newRoot}
+                chain={chain}
+                roleAddress={changes?.newRoles?.newRoot as string}
                 roleTitle={t<string>('Root')}
                 showDivider
               />
             }
             {changes?.newRoles?.newNominator !== undefined &&
               <ShowPoolRole
-                chain={chain as any}
+                chain={chain}
                 roleAddress={changes?.newRoles?.newNominator}
                 roleTitle={t<string>('Nominator')}
                 showDivider
@@ -178,7 +178,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
             }
             {changes?.newRoles?.newBouncer !== undefined &&
               <ShowPoolRole
-                chain={chain as any}
+                chain={chain}
                 roleAddress={changes?.newRoles?.newBouncer}
                 roleTitle={t<string>('Bouncer')}
                 showDivider
@@ -199,7 +199,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
             }
             {changes?.commission?.payee !== undefined &&
               <ShowPoolRole
-                chain={chain as any}
+                chain={chain}
                 roleAddress={changes.commission.payee || maybeCurrentCommissionPayee}
                 roleTitle={t<string>('Commission payee')}
                 showDivider

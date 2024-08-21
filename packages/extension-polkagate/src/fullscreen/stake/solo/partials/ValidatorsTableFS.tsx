@@ -23,7 +23,7 @@ interface Props {
   activeValidators?: ValidatorInfo[] | undefined;
   allValidatorsIdentities?: DeriveAccountInfo[] | null | undefined;
   formatted?: AccountId | string;
-  handleCheck?: (checked: boolean, validator: ValidatorInfo) => void;
+  handleCheck?: (checked: React.ChangeEvent<HTMLInputElement>, validator: ValidatorInfo) => void;
   height?: number;
   isSelected?: (v: ValidatorInfo) => boolean;
   maxSelected?: boolean;
@@ -33,10 +33,10 @@ interface Props {
   showCheckbox?: boolean;
   validatorsToList: ValidatorInfo[] | null | undefined;
   address: string;
-  nominatedValidatorsIds?: AccountId[] | null | undefined;
+  nominatedValidatorsIds?: string[]| AccountId[] | null | undefined;
 }
 
-export default function ValidatorsTable({ activeValidators, address, allValidatorsIdentities, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTableFS ({ activeValidators, address, allValidatorsIdentities, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
   const theme = useTheme();
   const ref = useRef();
   const { api, chain, decimal, token } = useInfo(address);
@@ -55,8 +55,8 @@ export default function ValidatorsTable({ activeValidators, address, allValidato
     }
 
     const threshold = stakingConsts.maxNominatorRewardedPerValidator;
-    const sortedNominators = v.exposure.others?.sort((a:any, b:any) => b.value - a.value);
-    const maybeMyIndex = staked ? sortedNominators?.findIndex((n:any) => new BN(isHex(n.value) ? hexToBn(n.value) : String(n.value)).lt(staked)) : -1;
+    const sortedNominators = v.exposure.others?.sort((a: any, b: any) => b.value - a.value);
+    const maybeMyIndex = staked ? sortedNominators?.findIndex((n: any) => new BN(isHex(n.value) ? hexToBn(n.value) : String(n.value)).lt(staked)) : -1;
 
     return {
       notSafe: v.exposure.others?.length > threshold && (maybeMyIndex > threshold || maybeMyIndex === -1),
@@ -85,7 +85,7 @@ export default function ValidatorsTable({ activeValidators, address, allValidato
   return (
     <Grid sx={{ ...style }}>
       <Grid container direction='column' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', minHeight: '59px', scrollBehavior: 'smooth', textAlign: 'center' }}>
-        {validatorsToList?.length !== 0 &&
+        {validatorsToList?.length && validatorsToList?.length !== 0 &&
           <List
             height={height}
             itemCount={validatorsToList?.length}
@@ -93,8 +93,8 @@ export default function ValidatorsTable({ activeValidators, address, allValidato
             ref={ref}
             width={'100%'}
           >
-            {({ index, key, style }: { index: number, key:number, style:any }) => {
-              const v = validatorsToList![index];
+            {({ index, key, style }: { index: number, key: number, style: any[] }) => {
+              const v = validatorsToList[index];
               const isActive = !!activeValidators?.find((av) => v.accountId === av?.accountId);
               const isOversubscribed = overSubscribed(v);
               const accountInfo = allValidatorsIdentities?.find((a) => a.accountId === v?.accountId);
@@ -102,11 +102,11 @@ export default function ValidatorsTable({ activeValidators, address, allValidato
               const isNominated = !!nominatedValidatorsIds?.find((n) => n === v.accountId);
 
               return (
-                <Grid container item key={key} sx={{ backgroundColor: isNominated && alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.4 : 0.2), borderBottom: '1px solid', borderBottomColor: 'secondary.main', overflowY: 'scroll', ...style }}>
+                <Grid container item key={key} sx={{ backgroundColor: isNominated ? alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.4 : 0.2) : undefined, borderBottom: '1px solid', borderBottomColor: 'secondary.main', overflowY: 'scroll', ...style }}>
                   <ShowValidator
                     accountInfo={accountInfo}
                     api={api}
-                    chain={chain as any}
+                    chain={chain}
                     check={check}
                     decimal={decimal}
                     handleCheck={handleCheck}
@@ -129,7 +129,7 @@ export default function ValidatorsTable({ activeValidators, address, allValidato
       {showValidatorInfo && validatorToShowInfo && api && chain &&
         <ValidatorInfoPage
           api={api}
-          chain={chain as any}
+          chain={chain}
           isFullscreen
           setShowValidatorInfo={setShowValidatorInfo}
           showValidatorInfo={showValidatorInfo}

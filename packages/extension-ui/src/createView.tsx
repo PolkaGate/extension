@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import '@polkadot/extension-polkagate/src/i18n/i18n';
 
@@ -10,7 +9,7 @@ import { HashRouter } from 'react-router-dom';
 
 import View from '@polkadot/extension-polkagate/src/components/View';
 
-export default function createView(Entry: React.ComponentType, rootId = 'root'): void {
+export default function createView (Entry: React.ComponentType, rootId = 'root'): void {
   const rootElement = document.getElementById(rootId);
 
   if (!rootElement) {
