@@ -106,7 +106,6 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
   useEffect(() => {
     // @ts-ignore
     if (fetchedApiAndDelay?.fetchedApi && fetchedApiAndDelay.fetchedApi?._options?.provider?.endpoint === endpointUrl) {
-      console.log('fetchedApiAndDelay.fetchedApi',fetchedApiAndDelay.fetchedApi)
       setApi(fetchedApiAndDelay.fetchedApi);
       setCurrentDelay(fetchedApiAndDelay.fetchedDelay);
     }
