@@ -208,7 +208,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
           return (
             // eslint-disable-next-line react/jsx-no-bind
             <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={() => _onChangeEndpoint(endpoint.value)} py='5px' sx={{ ':hover': { bgcolor: 'rgba(186, 40, 130, 0.1)' }, bgcolor: selectedEndpoint ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', my: '3px', px: '15px', width: '100%' }}>
-              <Typography fontSize='16px' fontWeight={selectedEndpoint ? 500 : 400} textAlign='left' width={isLightClient ? '100%' : '55%'}>
+              <Typography fontSize='16px' fontWeight={selectedEndpoint ? 500 : 400} textAlign='left' width={isLightClient ? '100%' : '50%'}>
                 {endpoint.name}
               </Typography>
               {
