@@ -1,19 +1,21 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-import { useEffect, useMemo, useState } from 'react';
+import type { Track } from '../fullscreen/governance/utils/types';
 
-import { Track } from '../fullscreen/governance/utils/types';
-import { useApi, useChain, useChainName } from '.';
+import { useMemo } from 'react';
 
-export default function useTracks(address: string | undefined): { fellowshipTracks: Track[], tracks: Track[] } | undefined {
+import { useApi, useChain } from '.';
+
+interface TracksType { fellowshipTracks: Track[] | undefined, tracks: Track[] | undefined }
+
+export default function useTracks (address: string | undefined): TracksType {
   const api = useApi(address);
   const chain = useChain(address);
-  const chainName = useChainName(address);
-  const [savedTracks, setSavedTracks] = useState<string[]>([]);
+  // const chainName = useChainName(address);
+  // const [savedTracks, setSavedTracks] = useState<string[]>([]);
 
-  const tracks = useMemo(() => {
+  const tracks: TracksType = useMemo(() => {
     if (chain?.genesisHash !== api?.genesisHash?.toString()) {
       return {
         fellowshipTracks: undefined,
@@ -22,8 +24,8 @@ export default function useTracks(address: string | undefined): { fellowshipTrac
     }
 
     return {
-      fellowshipTracks: api?.consts?.fellowshipReferenda?.tracks as unknown as Track[],
-      tracks: api?.consts?.referenda?.tracks as unknown as Track[]
+      fellowshipTracks: api?.consts?.['fellowshipReferenda']?.['tracks'] as unknown as Track[],
+      tracks: api?.consts?.['referenda']?.['tracks'] as unknown as Track[]
     };
   }, [api, chain?.genesisHash]);
 
@@ -51,5 +53,5 @@ export default function useTracks(address: string | undefined): { fellowshipTrac
   //   }
   // }, [chainName, newTracks]);
 
-  return tracks;//|| savedTracks;
+  return tracks;// || savedTracks;
 }
