@@ -70,7 +70,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
       return;
     }
 
-    const mappedEndpoints = endpointOptions.map((endpoint) => ({ delay: null, name: endpoint.text.replace(/^via\s/, ''), value: endpoint.value }));
+    const mappedEndpoints = endpointOptions.map((endpoint) => ({ delay: null, name: endpoint.text.replace(/^via\s/, ''), value: endpoint.value as string }));
 
     setCurrentDelay(undefined);
     setEndpointsDelay(mappedEndpoints);
@@ -104,7 +104,8 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
   }, [address, chainName]);
 
   useEffect(() => {
-    if (fetchedApiAndDelay && fetchedApiAndDelay.fetchedApi && fetchedApiAndDelay.fetchedApi?._options?.provider?.endpoint === endpointUrl) {
+    // @ts-ignore
+    if (fetchedApiAndDelay?.fetchedApi && fetchedApiAndDelay.fetchedApi?._options?.provider?.endpoint === endpointUrl) {
       setApi(fetchedApiAndDelay.fetchedApi);
       setCurrentDelay(fetchedApiAndDelay.fetchedDelay);
     }
@@ -121,6 +122,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
         setFetchedApiAndDelay({ fetchedApi: response.api, fetchedDelay: response.delay });
         setEndpointsDelay((prevEndpoints) => {
           return prevEndpoints?.map((endpoint) => {
+            // @ts-ignore
             if (endpoint.value === response.api?._options?.provider?.endpoint) {
               return { ...endpoint, delay: response.delay };
             }
@@ -129,7 +131,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
           });
         });
 
-        response.api && response.api.disconnect().catch(console.error);
+        response.api?.disconnect().catch(console.error);
       })
       .catch(console.error);
   }, [endpointUrl]);
@@ -208,7 +210,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
           return (
             // eslint-disable-next-line react/jsx-no-bind
             <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={() => _onChangeEndpoint(endpoint.value)} py='5px' sx={{ ':hover': { bgcolor: 'rgba(186, 40, 130, 0.1)' }, bgcolor: selectedEndpoint ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', my: '3px', px: '15px', width: '100%' }}>
-              <Typography fontSize='16px' fontWeight={selectedEndpoint ? 500 : 400} textAlign='left' width={isLightClient ? '100%' : '55%'}>
+              <Typography fontSize='16px' fontWeight={selectedEndpoint ? 500 : 400} textAlign='left' width={isLightClient ? '100%' : '50%'}>
                 {endpoint.name}
               </Typography>
               {
