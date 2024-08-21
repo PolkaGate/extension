@@ -128,7 +128,7 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
                 <Grid item>
                   <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '20px', my: 'auto' }} />
                 </Grid>
-                <FullScreenIcon url='/' />
+                <FullScreenIcon url='/' isSettingSubMenu/>
               </>
             }
           </Grid>
