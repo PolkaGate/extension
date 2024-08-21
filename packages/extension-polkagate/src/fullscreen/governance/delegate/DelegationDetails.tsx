@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,17 +8,16 @@
  * this component opens Modify and Remove Delegate pages
  * */
 
+import type { BN } from '@polkadot/util';
+import type { Lock } from '../../../hooks/useAccountLocks';
 import type { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
 
 import { KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { BN } from '@polkadot/util';
-
 import { Identity, Motion, TwoButtons } from '../../../components';
 import { useInfo, useTracks, useTranslation } from '../../../hooks';
-import type { Lock } from '../../../hooks/useAccountLocks';
 import { amountToHuman } from '../../../util/utils';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
 import ModifyDelegate, { type ModifyModes } from './modify/ModifyDelegate';
@@ -53,7 +51,7 @@ interface ArrowsProps {
   onPrevious: () => void;
 }
 
-export default function DelegationDetails({ accountLocks, address, balances, filteredDelegation, formatted, lockedAmount, mode, selectedProxy, setDelegateInformation, setModalHeight, setMode, setSelectedTracksLength, setStatus, setStep, setTxInfo, status, step }: Props): React.ReactElement<Props> {
+export default function DelegationDetails ({ accountLocks, address, balances, filteredDelegation, formatted, lockedAmount, mode, selectedProxy, setDelegateInformation, setModalHeight, setMode, setSelectedTracksLength, setStatus, setStep, setTxInfo, status, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, chain, decimal, token } = useInfo(address);
   const { tracks } = useTracks(address);
@@ -81,7 +79,7 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
     filteredDelegation && !variousDelegation
       ? amountToHuman(filteredDelegation[delegateeIndex].info[0].delegatedBalance, decimal)
       : undefined
-    , [decimal, delegateeIndex, variousDelegation, filteredDelegation]);
+  , [decimal, delegateeIndex, variousDelegation, filteredDelegation]);
 
   const delegatePower = useCallback((conviction: number, delegateAmountBN: BN) => {
     if (conviction === undefined || delegateAmountBN.isZero()) {
@@ -104,7 +102,7 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
         delegateeAddress: filteredDelegation[delegateeIndex].delegatee
       }
       : undefined
-    , [delegateAmountInHuman, delegatePower, filteredDelegation, variousDelegation, delegateeIndex]);
+  , [delegateAmountInHuman, delegatePower, filteredDelegation, variousDelegation, delegateeIndex]);
 
   const delegatedConviction = useMemo(() =>
     filteredDelegation
@@ -136,7 +134,7 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
           </Typography>
           <Identity
             api={api}
-            chain={chain as any}
+            chain={chain}
             direction='row'
             formatted={filteredDelegation ? filteredDelegation[delegateeIndex].delegatee : ''}
             identiconSize={31}
@@ -181,7 +179,7 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
             <Identity
               address={address}
               api={api}
-              chain={chain as any}
+              chain={chain}
               direction='row'
               identiconSize={31}
               showSocial={false}
@@ -199,7 +197,7 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
                 </Typography>
                 <Identity
                   api={api}
-                  chain={chain as any}
+                  chain={chain}
                   direction='row'
                   formatted={filteredDelegation[0].delegatee}
                   identiconSize={31}
@@ -242,7 +240,7 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
               </DisplayValue>
             </>
           }
-          <Grid container item sx={{ '> div': { marginLeft: 0 }, bottom: '35px', position: 'absolute' }}>
+          <Grid container item sx={{ '> div': { marginLeft: 0, width: '100%' }, pt: '20px' }}>
             <TwoButtons
               mt='1px'
               onPrimaryClick={goModify}

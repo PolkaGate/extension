@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
@@ -100,8 +100,8 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyStep, setProxyStep] = useState<number>();
 
-  const delegate = api && api.tx['convictionVoting']['delegate'];
-  const batch = api && api.tx['utility']['batchAll'];
+  const delegate = api?.tx['convictionVoting']['delegate'];
+  const batch = api?.tx['utility']['batchAll'];
 
   useEffect(() => {
     if (step === STEPS.PROXY) {
@@ -142,7 +142,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   }, []);
 
   useEffect(() => {
-    if (!delegate || !batch || !delegateInformation || !delegateInformation.delegateeAddress) {
+    if (!delegate || !batch || !delegateInformation?.delegateeAddress) {
       return;
     }
 
@@ -230,13 +230,16 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   }, [proxies]);
 
   return (
-    <DraggableModal onClose={handleClose} open={open}>
+    <DraggableModal minHeight={550} onClose={handleClose} open={open}>
       <>
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
               {step === STEPS.ABOUT &&
                 t('Delegate Vote')
+              }
+              {step === STEPS.CHECK_SCREEN &&
+                t('Delegation status')
               }
               {[STEPS.INDEX, STEPS.CHOOSE_DELEGATOR].includes(step) &&
                 t('Delegate Vote ({{ step }}/3)', { replace: { step: step === STEPS.INDEX ? 1 : 2 } })

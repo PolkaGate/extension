@@ -1,28 +1,29 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { Lock } from '../../../../hooks/useAccountLocks';
 import type { BalancesInfo } from '../../../../util/types';
+import type { Track } from '../../utils/types';
+import type { DelegateInformation } from '..';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { Convictions, PButton } from '../../../../components';
 import { useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useFormatted, useToken, useTranslation } from '../../../../hooks';
-import { Lock } from '../../../../hooks/useAccountLocks';
 import { MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import { Track } from '../../utils/types';
 import AmountWithOptionsAndLockAmount from '../partial/AmountWithOptionsAndLockAmount';
 import ReferendaTracks from '../partial/ReferendaTracks';
-import { DelegateInformation, STEPS } from '..';
+import { STEPS } from '..';
 
 interface Props {
   address: string | undefined;
@@ -38,7 +39,43 @@ interface Props {
   accountLocks: Lock[] | null | undefined;
 }
 
-export default function DelegateVote({ accountLocks, address, api, balances, delegateInformation, estimatedFee, lockedAmount, setDelegateInformation, setStatus, setStep, tracks }: Props): React.ReactElement {
+interface EditAdvanceProps {
+  toggleAdvance: () => void;
+  showAdvance: boolean;
+  checked: BN[];
+  setChecked: React.Dispatch<React.SetStateAction<BN[]>>;
+  tracks: Track[] | undefined;
+  accountLocks: Lock[] | null | undefined;
+  currentBlock: number | undefined;
+}
+
+const EditAdvance = ({ accountLocks, checked, currentBlock, setChecked, showAdvance, toggleAdvance, tracks }: EditAdvanceProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <Grid container item>
+      <Grid container item onClick={toggleAdvance} sx={{ cursor: 'pointer' }}>
+        <Typography color='secondary.main' fontSize='16px' fontWeight={400}>
+          {t('Advanced')}
+        </Typography>
+        <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto 8px', stroke: '#BA2882', strokeWidth: '2px', transform: showAdvance ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
+      </Grid>
+      {showAdvance &&
+        <ReferendaTracks
+          filterLockedTracks={{
+            accountLocks,
+            currentBlockNumber: currentBlock
+          }}
+          selectedTracks={checked}
+          setSelectedTracks={setChecked}
+          tracks={tracks}
+        />
+      }
+    </Grid>
+  );
+};
+
+export default function DelegateVote ({ accountLocks, address, api, balances, delegateInformation, lockedAmount, setDelegateInformation, setStatus, setStep, tracks }: Props): React.ReactElement {
   const { t } = useTranslation();
   const [showAdvance, setShowAdvance] = useState<boolean>(false);
   const currentBlock = useCurrentBlockNumber(address);
@@ -53,8 +90,8 @@ export default function DelegateVote({ accountLocks, address, api, balances, del
   const [checked, setChecked] = useState<BN[]>([]);
   const [maxFee, setMaxFee] = useState<Balance>();
 
-  const delegate = api && api.tx['convictionVoting']['delegate'];
-  const batch = api && api.tx['utility']['batchAll'];
+  const delegate = api?.tx['convictionVoting']['delegate'];
+  const batch = api?.tx['utility']['batchAll'];
 
   const delegateAmountBN = useMemo(() => (amountToMachine(delegateAmount, decimal)), [decimal, delegateAmount]);
   const delegatePower = useMemo(() => {
@@ -74,8 +111,7 @@ export default function DelegateVote({ accountLocks, address, api, balances, del
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return setMaxFee(api?.createType('Balance', BN_ONE));
+      return setMaxFee(api.createType('Balance', BN_ONE));
     }
 
     const txList = tracks.map((track) =>
@@ -171,28 +207,6 @@ export default function DelegateVote({ accountLocks, address, api, balances, del
 
   const toggleAdvance = useCallback(() => setShowAdvance(!showAdvance), [showAdvance]);
 
-  const EditAdvance = () => (
-    <Grid container item>
-      <Grid container item onClick={toggleAdvance} sx={{ cursor: 'pointer' }}>
-        <Typography color='secondary.main' fontSize='16px' fontWeight={400}>
-          {t<string>('Advanced')}
-        </Typography>
-        <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto 8px', stroke: '#BA2882', strokeWidth: '2px', transform: showAdvance ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
-      </Grid>
-      {showAdvance &&
-        <ReferendaTracks
-          filterLockedTracks={{
-            accountLocks,
-            currentBlockNumber: currentBlock
-          }}
-          selectedTracks={checked}
-          setSelectedTracks={setChecked}
-          tracks={tracks}
-        />
-      }
-    </Grid>
-  );
-
   return (
     <Grid container>
       <AmountWithOptionsAndLockAmount
@@ -226,7 +240,15 @@ export default function DelegateVote({ accountLocks, address, api, balances, del
           </Grid>
         </Grid>
       </Convictions>
-      <EditAdvance />
+      <EditAdvance
+        accountLocks={accountLocks}
+        checked={checked}
+        currentBlock={currentBlock}
+        setChecked={setChecked}
+        showAdvance={showAdvance}
+        toggleAdvance={toggleAdvance}
+        tracks={tracks}
+      />
       <Grid container justifyContent='flex-end'>
         <PButton
           _ml={0}
@@ -234,7 +256,7 @@ export default function DelegateVote({ accountLocks, address, api, balances, del
           _onClick={handleNext}
           _width={100}
           disabled={nextDisable}
-          text={t<string>('Next')}
+          text={t('Next')}
         />
       </Grid>
     </Grid>
