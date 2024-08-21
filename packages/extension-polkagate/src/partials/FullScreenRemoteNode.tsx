@@ -70,7 +70,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
       return;
     }
 
-    const mappedEndpoints = endpointOptions.map((endpoint) => ({ delay: null, name: endpoint.text.replace(/^via\s/, ''), value: endpoint.value }));
+    const mappedEndpoints = endpointOptions.map((endpoint) => ({ delay: null, name: endpoint.text.replace(/^via\s/, ''), value: endpoint.value as string }));
 
     setCurrentDelay(undefined);
     setEndpointsDelay(mappedEndpoints);
@@ -104,7 +104,9 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
   }, [address, chainName]);
 
   useEffect(() => {
-    if (fetchedApiAndDelay && fetchedApiAndDelay.fetchedApi && fetchedApiAndDelay.fetchedApi?._options?.provider?.endpoint === endpointUrl) {
+    // @ts-ignore
+    if (fetchedApiAndDelay?.fetchedApi && fetchedApiAndDelay.fetchedApi?._options?.provider?.endpoint === endpointUrl) {
+      console.log('fetchedApiAndDelay.fetchedApi',fetchedApiAndDelay.fetchedApi)
       setApi(fetchedApiAndDelay.fetchedApi);
       setCurrentDelay(fetchedApiAndDelay.fetchedDelay);
     }
@@ -121,6 +123,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
         setFetchedApiAndDelay({ fetchedApi: response.api, fetchedDelay: response.delay });
         setEndpointsDelay((prevEndpoints) => {
           return prevEndpoints?.map((endpoint) => {
+            // @ts-ignore
             if (endpoint.value === response.api?._options?.provider?.endpoint) {
               return { ...endpoint, delay: response.delay };
             }
@@ -129,7 +132,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
           });
         });
 
-        response.api && response.api.disconnect().catch(console.error);
+        response.api?.disconnect().catch(console.error);
       })
       .catch(console.error);
   }, [endpointUrl]);
