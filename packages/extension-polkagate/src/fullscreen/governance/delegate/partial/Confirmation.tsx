@@ -1,8 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { TxInfo } from '../../../../util/types';
+import type { DelegateInformation } from '..';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
@@ -12,8 +15,6 @@ import { useToken, useTranslation } from '../../../../hooks';
 import { SubTitle, ThroughProxy } from '../../../../partials';
 import Explorer from '../../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../../popup/history/partials/FailSuccessIcon';
-import type { TxInfo } from '../../../../util/types';
-import { DelegateInformation } from '..';
 
 interface Props {
   address: string | undefined;
@@ -25,7 +26,7 @@ interface Props {
   status: 'Delegate' | 'Remove' | 'Modify';
 }
 
-export default function Confirmation({ address, allCategoriesLength, delegateInformation, handleClose, txInfo, status, removedTracksLength }: Props): React.ReactElement {
+export default function Confirmation ({ address, allCategoriesLength, delegateInformation, handleClose, removedTracksLength, status, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = useToken(address);
 
@@ -137,8 +138,9 @@ export default function Confirmation({ address, allCategoriesLength, delegateInf
       }
       <PButton
         _ml={0}
+        _mt='10px'
         _onClick={handleClose}
-        _width={90}
+        _width={100}
         left='5%'
         text={txInfo.success ? t('Done') : t('Close')}
       />
