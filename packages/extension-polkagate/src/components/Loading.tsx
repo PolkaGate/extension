@@ -3,9 +3,9 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { Theme} from '@mui/material';
+import type { Theme } from '@mui/material';
 
-import { Box, Grid, useTheme } from '@mui/material';
+import { Box, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { blake2AsHex } from '@polkadot/util-crypto';
@@ -21,6 +21,7 @@ import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPasswo
 import ForgotPasswordConfirmation from '../popup/passwordManagement/ForgotPasswordConfirmation';
 import Login from '../popup/passwordManagement/Login';
 import PasswordSettingAlert from '../popup/passwordManagement/PasswordSettingAlert';
+import NeedHelp from '../popup/welcome/NeedHelp';
 import { ALLOWED_URL_ON_RESET_PASSWORD, MAYBE_LATER_PERIOD, NO_PASS_PERIOD } from '../util/constants';
 
 interface Props {
@@ -190,7 +191,7 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
     };
 
     handleInitLoginInfo().catch(console.error);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onPassChange = useCallback((pass: string | null): void => {
@@ -277,8 +278,11 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
                     setStep={setStep}
                   />
                 }
-                <Grid container item justifyContent='center' sx={{ bottom: '10px', fontSize: '10px', opacity: '0.7', position: 'absolute' }}>
-                  {`${('V')}${(manifest?.version || '')}`}
+                <Grid alignItems='flex-end' container item justifyContent='space-between' sx={{ bottom: '5px', position: 'absolute', px: '20px' }}>
+                  <NeedHelp />
+                  <Typography sx={{ fontSize: '10px', opacity: '0.7' }}>
+                    {`${('V')}${(manifest?.version || '')}`}
+                  </Typography>
                 </Grid>
               </>
             }
