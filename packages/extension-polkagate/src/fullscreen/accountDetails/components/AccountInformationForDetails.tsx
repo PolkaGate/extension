@@ -257,7 +257,7 @@ export default function AccountInformationForDetails ({ accountAssets, address, 
           <Divider sx={{ bgcolor: 'divider', height: '1px', my: '15px', width: '100%' }} />
           <AOC
             accountAssets={nonZeroSortedAssets}
-            api={api}
+            address={address}
             mode='Detail'
             onclick={onAssetBoxClicked}
             selectedAsset={selectedAsset}

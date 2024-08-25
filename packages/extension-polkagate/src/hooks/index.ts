@@ -69,6 +69,7 @@ export { default as useMyVote } from './useMyVote';
 export { default as useNativeTokenPrice } from './useNativeTokenPrice';
 export { default as useNeedsPutInFrontOf } from './useNeedsPutInFrontOf';
 export { default as useNeedsRebag } from './useNeedsRebag';
+export { default as useNotifyOnChainChange } from './useNotifyOnChainChange';
 export { default as useOutsideClick } from './useOutsideClick';
 export { default as usePendingRewards } from './usePendingRewards';
 export { default as usePendingRewards2 } from './usePendingRewards2';

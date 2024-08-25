@@ -14,11 +14,11 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 
 import { DisplayLogo, FormatPrice, ShowBalance } from '../../../components';
-import { usePrices, useTranslation } from '../../../hooks';
+import { useApi, useNotifyOnChainChange, usePrices, useTranslation } from '../../../hooks';
 import getLogo2 from '../../../util/getLogo2';
 
 interface Props {
-  api: ApiPromise | undefined;
+  address: string | undefined;
   selectedAsset: FetchedBalance | undefined;
   accountAssets: FetchedBalance[] | null | undefined;
   onclick: (asset: FetchedBalance | undefined) => void;
@@ -114,9 +114,12 @@ const AssetsBoxes = ({ api, asset, hideNumbers, mode, onclick, pricesInCurrencie
   );
 };
 
-function AOC({ accountAssets, api, hideNumbers, mode = 'Detail', onclick, selectedAsset }: Props) {
+function AOC ({ accountAssets, address, hideNumbers, mode = 'Detail', onclick, selectedAsset }: Props) {
   const { t } = useTranslation();
+  const api = useApi(address);
   const pricesInCurrencies = usePrices();
+
+  useNotifyOnChainChange(address);
 
   const [showMore, setShowMore] = useState<boolean>(false);
 

@@ -53,7 +53,6 @@ export enum POPUPS_NUMBER {
 export default function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();
   const { account, api, chain, formatted, genesisHash } = useInfo(address);
@@ -191,7 +190,7 @@ export default function AccountInformationForHome ({ accountAssets, address, hid
             {(assetsToShow === undefined || (assetsToShow && assetsToShow?.length > 0)) &&
               <AOC
                 accountAssets={assetsToShow}
-                api={api}
+                address={address}
                 hideNumbers={hideNumbers}
                 mode='Home'
                 onclick={onAssetBoxClicked}
