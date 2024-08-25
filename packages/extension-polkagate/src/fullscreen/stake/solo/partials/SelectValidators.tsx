@@ -53,7 +53,7 @@ const TableSubInfoWithClear = ({ maxSelectable, onClearSelection, selectedCount 
   );
 };
 
-export default function SelectValidators({ address, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, staked, stakingConsts, stashId, tableHeight }: Props): React.ReactElement {
+export default function SelectValidators ({ address, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, staked, stakingConsts, stashId, tableHeight }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -214,7 +214,7 @@ export default function SelectValidators({ address, newSelectedValidators, nomin
     <>
       {allValidators === undefined || !nominatedValidatorsIds === undefined
         ? <Waiting
-          height={_tableHeight - 90}
+          height={_tableHeight - 250}
         />
         : <>
           <Grid container sx={{ justifyContent: 'flex-start' }}>
