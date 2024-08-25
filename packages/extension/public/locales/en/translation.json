@@ -1379,5 +1379,8 @@
   "The transaction has been finalized!": "",
   "Delegation status": "",
   "Accounts in the {{profileName}} profile are now {{visibility}} websites.": "",
-  "{{accountName}} default chain switched to {{chainName}}.": ""
+  "{{accountName}} default chain switched to {{chainName}}.": "",
+  "Social Media": "",
+  "Need": "",
+  "Help?": ""
 }

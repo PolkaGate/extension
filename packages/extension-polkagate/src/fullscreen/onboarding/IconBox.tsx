@@ -10,6 +10,7 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { pgBoxShadow } from '../../util/utils';
+import { ICON_BOX_WIDTH } from '.';
 
 interface Props {
   icon: IconProp;
@@ -38,7 +39,7 @@ function IconBox ({ icon, label, onClick }: Props): React.ReactElement<Props> {
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      sx={{ bgcolor: hovered ? theme.palette.primary.main : theme.palette.background.paper, borderRadius: '10px', boxShadow: theme.palette.mode === 'light' ? pgBoxShadow(theme) : undefined, cursor: 'pointer', height: '90px', mb: '10px', position: 'relative', px: '15px', width: '300px' }}
+      sx={{ bgcolor: hovered ? theme.palette.primary.main : theme.palette.background.paper, borderRadius: '10px', boxShadow: theme.palette.mode === 'light' ? pgBoxShadow(theme) : undefined, cursor: 'pointer', height: '90px', mb: '10px', position: 'relative', px: '15px', width: ICON_BOX_WIDTH }}
     >
       <FontAwesomeIcon
         fontSize='40px'
