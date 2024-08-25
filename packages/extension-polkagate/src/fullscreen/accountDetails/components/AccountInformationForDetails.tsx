@@ -12,7 +12,7 @@ import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/
 import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, Infotip2, OptionalCopyButton, ShortAddress2, VaadinIcon } from '../../../components';
-import { useIdentity, useInfo, useTranslation } from '../../../hooks';
+import { useIdentity, useInfo, useNotifyOnChainChange, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount } from '../../../messaging';
 import { getValue } from '../../../popup/account/util';
 import { BALANCES_VALIDITY_PERIOD } from '../../../util/constants';
@@ -145,6 +145,8 @@ export const EyeIconFullScreen = ({ isHidden, onClick }: { isHidden: boolean | u
 export default function AccountInformationForDetails ({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const theme = useTheme();
   const { account, api, chain, formatted, genesisHash, token } = useInfo(address);
+
+  useNotifyOnChainChange(address);
 
   const accountInfo = useIdentity(genesisHash, formatted);
 

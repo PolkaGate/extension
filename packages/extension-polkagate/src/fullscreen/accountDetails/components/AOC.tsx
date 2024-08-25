@@ -114,7 +114,7 @@ const AssetsBoxes = ({ api, asset, hideNumbers, mode, onclick, pricesInCurrencie
   );
 };
 
-function AOC({ accountAssets, api, hideNumbers, mode = 'Detail', onclick, selectedAsset }: Props) {
+function AOC ({ accountAssets, api, hideNumbers, mode = 'Detail', onclick, selectedAsset }: Props) {
   const { t } = useTranslation();
   const pricesInCurrencies = usePrices();
 
