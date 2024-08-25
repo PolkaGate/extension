@@ -61,7 +61,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
-  const ED = api?.consts?.['balances']?.['existentialDeposit'] as unknown as BN;
+  const ED = api?.consts?.['balances']?.['existentialDeposit'] as unknown as BN | undefined;
 
   const max = useMemo(() => {
     if (!availableBalance || !ED || !estimatedMaxFee) {

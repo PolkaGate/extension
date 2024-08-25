@@ -62,7 +62,7 @@ export default function FastUnstake ({ address, setRefresh, setShow, show }: Pro
     ? !isExposed && !hasUnlockingAndRedeemable && hasEnoughDeposit
     : undefined;
 
-  const staked = useMemo(() => stakingAccount?.stakingLedger.active as BN | undefined, [stakingAccount]);
+  const staked = useMemo(() => stakingAccount?.stakingLedger?.active as BN | undefined, [stakingAccount]);
 
   useEffect(() => {
     if (!api || !staked || !availableBalance) {

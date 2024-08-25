@@ -1,24 +1,23 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
 
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, PButton, ShowBalance } from '../../../../../components';
 import { useApi, useDecimal, useFormatted, usePoolConsts, usePools, useToken, useTranslation, useUnSupportedNetwork } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
 import { MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME, STAKING_CHAINS } from '../../../../../util/constants';
-import type { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../../util/utils';
 import PoolsTable from './partials/PoolsTable';
 import Review from './Review';
@@ -29,7 +28,7 @@ interface State {
   poolStakingConsts: PoolStakingConsts;
 }
 
-export default function JoinPool(): React.ReactElement {
+export default function JoinPool (): React.ReactElement {
   const { t } = useTranslation();
 
   const { address } = useParams<{ address: string }>();
@@ -128,18 +127,18 @@ export default function JoinPool(): React.ReactElement {
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api.createType('Balance', BN_ONE));
+      return setEstimatedFee(api.createType('Balance', BN_ONE) as Balance);
     }
 
     const mayBeAmount = amountAsBN || poolStakingConsts?.minJoinBond;
 
-    api && mayBeAmount && api.tx['nominationPools']['join'](mayBeAmount.toString(), BN_ONE).paymentInfo(formatted).then((i) => {
-      setEstimatedFee(api.createType('Balance', i?.partialFee));
-    });
+    mayBeAmount && api.tx['nominationPools']['join'](mayBeAmount.toString(), BN_ONE).paymentInfo(formatted).then((i) => {
+      setEstimatedFee(api.createType('Balance', i?.partialFee) as Balance);
+    }).catch(console.error);
 
-    api && api.tx['nominationPools']['join'](String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
-      setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
-    });
+    api.tx['nominationPools']['join'](String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
+      setEstimatedMaxFee(api.createType('Balance', i?.partialFee) as Balance);
+    }).catch(console.error);
   }, [formatted, api, availableBalance, selectedPool, amountAsBN, poolStakingConsts]);
 
   useEffect(() => {
