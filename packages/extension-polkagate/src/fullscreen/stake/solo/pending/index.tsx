@@ -1,15 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { TxInfo } from 'extension-polkagate/src/util/types';
 import type { DeriveSessionProgress } from '@polkadot/api-derive/types';
 import type { Forcing } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
+import type { StakingInputs } from '../../type';
 
 import { faClockFour } from '@fortawesome/free-solid-svg-icons';
 import { Grid, LinearProgress, Skeleton, Typography, useTheme } from '@mui/material';
-import type { TxInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
@@ -17,11 +18,10 @@ import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/
 import blockToDate from '@polkadot/extension-polkagate/src/popup/crowdloans/partials/blockToDate';
 import { LabelBalance } from '@polkadot/extension-polkagate/src/popup/staking/solo/rewards/PendingRewards';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { Checkbox2, Identity, ShowBalance, TwoButtons } from '../../../../components';
 import { useCurrentBlockNumber, useInfo, usePendingRewards2, useTranslation } from '../../../../hooks';
-import type { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { STEPS } from '../../pool/stake';
@@ -42,7 +42,7 @@ export interface ExpandedRewards {
   value: BN;
 }
 
-export default function Pending({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function Pending ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -57,7 +57,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
   const [historyDepth, setHistoryDepth] = useState<BN>();
   const [step, setStep] = useState(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [inputs, setInputs] = useState<Inputs>();
+  const [inputs, setInputs] = useState<StakingInputs>();
   const [percentOfEraFetched, setPercentOfEraFetched] = useState<number>();
 
   useEffect(() => {
@@ -309,7 +309,7 @@ export default function Pending({ address, setRefresh, setShow, show }: Props): 
                               <Grid item xs={6}>
                                 <Identity
                                   api={api}
-                                  chain={chain as any}
+                                  chain={chain}
                                   formatted={validator}
                                   identiconSize={20}
                                   showShortAddress

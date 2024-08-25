@@ -1,10 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
+import type { StakingInputs } from '../../type';
 
 import { faMinus } from '@fortawesome/free-solid-svg-icons';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -14,13 +16,11 @@ import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/gov
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import Asset from '@polkadot/extension-polkagate/src/partials/Asset';
 import { MAX_AMOUNT_LENGTH } from '@polkadot/extension-polkagate/src/util/constants';
-import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util/utils';
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
 import { useInfo, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
-import type { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { STEPS } from '../../pool/stake';
@@ -44,7 +44,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
 
   const [step, setStep] = useState(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [inputs, setInputs] = useState<Inputs>();
+  const [inputs, setInputs] = useState<StakingInputs>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [amount, setAmount] = useState<string>();
   const [alert, setAlert] = useState<string | undefined>();
@@ -122,13 +122,13 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
 
   const getFee = useCallback(async () => {
     if (api && !api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
     }
 
     if (address && inputs?.call && inputs?.params) {
       const partialFee = (await inputs.call(...inputs.params).paymentInfo(address))?.partialFee;
 
-      setEstimatedFee(api?.createType('Balance', partialFee));
+      setEstimatedFee(api?.createType('Balance', partialFee) as Balance);
     }
   }, [address, api, inputs]);
 

@@ -1,26 +1,24 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, Typography } from '@mui/material';
-import React from 'react';
-
 import type { Chain } from '@polkadot/extension-chains/types';
 
+import { Divider, Grid, Typography } from '@mui/material';
+import React from 'react';
 
 import { Identity } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 
 interface Props {
   roleTitle: string;
-  roleAddress: string;
+  roleAddress: string | undefined | null;
   showDivider?: boolean;
-  chain: Chain | undefined;
+  chain: Chain | null | undefined;
 }
 
-export default function ShowPoolRole({ chain, roleAddress, roleTitle, showDivider }: Props) {
+export default function ShowPoolRole ({ chain, roleAddress, roleTitle, showDivider }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -33,7 +31,7 @@ export default function ShowPoolRole({ chain, roleAddress, roleTitle, showDivide
       {roleAddress
         ? <Grid container direction='row' item justifyContent='center'>
           <Identity
-            chain={chain as any}
+            chain={chain}
             direction='row'
             formatted={roleAddress}
             identiconSize={25}

@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 /**
@@ -10,19 +9,19 @@
  * */
 
 import type { AccountId } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
+import type { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../../util/types';
 
 import { FilterAltOutlined as FilterIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Filters from '@polkadot/extension-polkagate/src/popup/staking/partial/Filters';
-import { BN } from '@polkadot/util';
 
 import { Checkbox2, Infotip, InputFilter, Waiting } from '../../../../components';
-import { useInfo, useTranslation, useValidators, useValidatorsIdentities, useValidatorSuggestion } from '../../../../hooks';
+import { useTranslation, useValidators, useValidatorsIdentities, useValidatorSuggestion } from '../../../../hooks';
 import { DEFAULT_FILTERS, SYSTEM_SUGGESTION_TEXT } from '../../../../util/constants';
-import type { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../../util/types';
-import ValidatorsTable from './ValidatorsTable';
+import ValidatorsTableFS from './ValidatorsTableFS';
 
 interface Props {
   address: string;
@@ -57,14 +56,13 @@ const TableSubInfoWithClear = ({ maxSelectable, onClearSelection, selectedCount 
 export default function SelectValidators({ address, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, staked, stakingConsts, stashId, tableHeight }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { token } = useInfo(address);
 
   const allValidatorsInfo = useValidators(address);
   const selectedBestValidators = useValidatorSuggestion(address);
 
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
-  const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => v.validatorPrefs.blocked === false || v.validatorPrefs.blocked?.isFalse), [allValidatorsInfo]);
+  const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => v.validatorPrefs.blocked as unknown as boolean === false || v.validatorPrefs.blocked?.isFalse), [allValidatorsInfo]);
 
   const [systemSuggestion, setSystemSuggestion] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
@@ -97,7 +95,7 @@ export default function SelectValidators({ address, newSelectedValidators, nomin
     if (systemSuggestion && newSelectedValidators?.length) {
       const notSelected = allValidators?.filter((a) => !newSelectedValidators.find((n) => a.accountId === n.accountId));
 
-      setValidatorsToList(newSelectedValidators.concat(notSelected));
+      setValidatorsToList(newSelectedValidators.concat(notSelected || []));
     }
   }, [systemSuggestion, newSelectedValidators, allValidators]);
 
@@ -129,7 +127,7 @@ export default function SelectValidators({ address, newSelectedValidators, nomin
       v.identity = vId?.identity;
     });
 
-    aDeepCopyOfValidators.sort((v1, v2) => ('' + v1?.identity?.displayParent).localeCompare(v2?.identity?.displayParent));
+    aDeepCopyOfValidators.sort((v1, v2) => ('' + v1?.identity?.displayParent).localeCompare(v2?.identity?.displayParent || ''));
 
     let counter = 1;
     let indicator = aDeepCopyOfValidators[0];
@@ -248,7 +246,7 @@ export default function SelectValidators({ address, newSelectedValidators, nomin
             </Grid>
             <Grid item xs={12}>
               {validatorsToList &&
-                <ValidatorsTable
+                <ValidatorsTableFS
                   address={address}
                   allValidatorsIdentities={allValidatorsIdentities}
                   formatted={stashId}
@@ -257,11 +255,9 @@ export default function SelectValidators({ address, newSelectedValidators, nomin
                   isSelected={isSelected}
                   maxSelected={newSelectedValidators.length === stakingConsts?.maxNominations}
                   nominatedValidatorsIds={nominatedValidatorsIds}
-                  setSelectedValidators={setNewSelectedValidators}
                   showCheckbox
                   staked={staked}
                   stakingConsts={stakingConsts}
-                  token={token}
                   validatorsToList={validatorsToList}
                 />
               }

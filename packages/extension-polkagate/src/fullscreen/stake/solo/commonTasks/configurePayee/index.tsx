@@ -6,7 +6,7 @@
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import type { SxProps } from '@mui/material';
 import type { AccountStakingInfo, Payee, SoloSettings, TxInfo } from '@polkadot/extension-polkagate/src/util/types';
-import type { Inputs } from '../../../Entry';
+import type { StakingInputs } from '../../../type';
 
 import { faHandHoldingDollar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -88,7 +88,7 @@ export default function ConfigurePayee ({ address, setRefresh, setShow, show }: 
   const [newPayee, setNewPayee] = useState<Payee>();
   const [step, setStep] = useState(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [inputs, setInputs] = useState<Inputs>();
+  const [inputs, setInputs] = useState<StakingInputs>();
 
   const settings = useMemo(() => {
     if (!stakingAccount) {

@@ -1,22 +1,21 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { ApiPromise } from '@polkadot/api';
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { StakingConsts, ValidatorInfo } from '../../../../util/types';
 
 import { DirectionsRun as DirectionsRunIcon, WarningRounded as WarningRoundedIcon } from '@mui/icons-material/';
 import { Divider, Grid } from '@mui/material';
 import React from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import type { Chain } from '@polkadot/extension-chains/types';
-
 import { BN_ZERO } from '@polkadot/util';
 
 import { Checkbox2, Identity, Infotip, ShowBalance } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
-import type { StakingConsts, ValidatorInfo } from '../../../../util/types';
 import { isHexToBn } from '../../../../util/utils';
 
 interface Props {
@@ -29,8 +28,8 @@ interface Props {
     safe: boolean;
   } | undefined;
   v: ValidatorInfo;
-  handleCheck?: (checked: boolean, validator: ValidatorInfo) => void;
-  chain?: Chain;
+  handleCheck?: (checked: React.ChangeEvent<HTMLInputElement>, validator: ValidatorInfo) => void;
+  chain?: Chain | null;
   decimal?: number;
   stakingConsts: StakingConsts | null | undefined;
   showCheckbox?: boolean;
@@ -38,7 +37,7 @@ interface Props {
   allInOneRow?: boolean
 }
 
-function ShowValidator({ accountInfo, allInOneRow = true, api, chain, check, decimal, handleCheck, isActive, isOversubscribed, showCheckbox, stakingConsts, token, v }: Props): React.ReactElement {
+function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, decimal, handleCheck, isActive, isOversubscribed, showCheckbox, stakingConsts, token, v }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const overSubscriptionAlert1 = t('This validator is oversubscribed but you are within the top {{max}}.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
@@ -53,12 +52,13 @@ function ShowValidator({ accountInfo, allInOneRow = true, api, chain, check, dec
   );
 
   return (
-    <Grid alignItems='center' container item p='3px 5px' rowGap={!allInOneRow ? '5px' : undefined} sx={{ borderRight: allInOneRow && '1px solid', borderRightColor: allInOneRow && 'secondary.main' }} width={allInOneRow ? '94%' : '100%'}>
+    <Grid alignItems='center' container item p='3px 5px' rowGap={!allInOneRow ? '5px' : undefined} sx={{ borderRight: allInOneRow ? '1px solid' : undefined, borderRightColor: allInOneRow ? 'secondary.main' : undefined }} width={allInOneRow ? '94%' : '100%'}>
       {showCheckbox &&
         <Grid item width='5%'>
           <Checkbox2
             checked={check}
-            onChange={(e) => handleCheck(e, v)}
+            // eslint-disable-next-line react/jsx-no-bind
+            onChange={(e) => handleCheck && handleCheck(e, v)}
           />
         </Grid>
       }
@@ -66,7 +66,7 @@ function ShowValidator({ accountInfo, allInOneRow = true, api, chain, check, dec
         <Identity
           accountInfo={accountInfo}
           api={api}
-          chain={chain as any}
+          chain={chain}
           formatted={String(v.accountId)}
           identiconSize={24}
           showShortAddress

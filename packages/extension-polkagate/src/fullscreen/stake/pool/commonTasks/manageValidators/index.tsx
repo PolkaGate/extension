@@ -1,8 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { StakingInputs } from '../../../type';
 
 import { faHand } from '@fortawesome/free-solid-svg-icons';
 import { Grid } from '@mui/material';
@@ -14,19 +17,17 @@ import { FullScreenHeader } from '@polkadot/extension-polkagate/src/fullscreen/g
 import Bread from '@polkadot/extension-polkagate/src/fullscreen/partials/Bread';
 import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
-import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { BN } from '@polkadot/util';
 
 import { useTranslation } from '../../../../../components/translate';
 import { useFullscreen, usePool, useStakingConsts, useValidators, useValidatorsIdentities } from '../../../../../hooks';
 import WaitScreen from '../../../../governance/partials/WaitScreen';
 import Confirmation from '../../../easyMode/Confirmation';
-import type { Inputs } from '../../../Entry';
 import { STEPS } from '../../stake';
 import InputPage from './InputPage';
 import Review from './Review';
 
-export default function ManageValidators(): React.ReactElement {
+export default function ManageValidators (): React.ReactElement {
   useFullscreen();
 
   const { t } = useTranslation();
@@ -40,7 +41,7 @@ export default function ManageValidators(): React.ReactElement {
 
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [step, setStep] = useState<number>(STEPS.INDEX);
-  const [inputs, setInputs] = useState<Inputs>();
+  const [inputs, setInputs] = useState<StakingInputs>();
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
 

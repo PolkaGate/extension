@@ -1,30 +1,30 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { MyPoolInfo, StakingConsts, ValidatorInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { AccountId } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
+import type { StakingInputs } from '../../../type';
 
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
-import { MyPoolInfo, StakingConsts, ValidatorInfo } from '@polkadot/extension-polkagate/src/util/types';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { TwoButtons } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
 import { useInfo } from '../../../../../hooks';
-import type { Inputs } from '../../../Entry';
 import SelectValidators from '../../../solo/partials/SelectValidators';
 import { STEPS } from '../../stake';
 
 interface Props {
   address: string;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
-  inputs: Inputs | undefined;
+  setInputs: React.Dispatch<React.SetStateAction<StakingInputs | undefined>>;
+  inputs: StakingInputs | undefined;
   pool: MyPoolInfo | null | undefined;
   staked: BN | undefined;
   stakingConsts: StakingConsts | null | undefined;
@@ -47,7 +47,7 @@ function arraysAreEqual(arr1: string[], arr2: string[]): boolean {
   return true;
 }
 
-export default function InputPage({ address, inputs, pool, setInputs, setStep, staked, stakingConsts }: Props): React.ReactElement {
+export default function InputPage ({ address, inputs, pool, setInputs, setStep, staked, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { api, formatted } = useInfo(address);
