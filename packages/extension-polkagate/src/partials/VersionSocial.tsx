@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Email as EmailIcon, GitHub as GitHubIcon, Language as LanguageIcon, X as XIcon, YouTube as YouTubeIcon } from '@mui/icons-material';
+import { Email as EmailIcon, GitHub as GitHubIcon, HelpCenter as HelpCenterIcon, Language as LanguageIcon, X as XIcon, YouTube as YouTubeIcon } from '@mui/icons-material';
 import { Box, Grid, Link, useTheme } from '@mui/material';
 import React from 'react';
 
@@ -82,6 +82,17 @@ export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => {
       </Link>
       <Link href='https://github.com/polkagate' pl='5px' rel='noreferrer' target='_blank'>
         <GitHubIcon
+          sx={{
+            '&:hover': {
+              color: isDark ? 'white' : 'black'
+            },
+            color: '#707070',
+            fontSize: iconSize
+          }}
+        />
+      </Link>
+      <Link href='https://docs.polkagate.xyz/' pl='5px' rel='noreferrer' target='_blank'>
+        <HelpCenterIcon
           sx={{
             '&:hover': {
               color: isDark ? 'white' : 'black'
