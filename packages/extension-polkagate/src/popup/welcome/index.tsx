@@ -72,14 +72,14 @@ function Welcome (): React.ReactElement {
         {t('Welcome!')}
       </Typography>
       <Typography sx={{ fontSize: '14px', fontWeight: 400, px: '24px' }}>
-        {t<string>('Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started.')}
+        {t('Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started.')}
       </Typography>
       <PButton
         _mt='20px'
         _onClick={onCreate}
         _variant={'contained'}
-        startIcon={<VaadinIcon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.main}` }} />}
-        text={t<string>('Create a new account')}
+        startIcon={<VaadinIcon icon='vaadin:plus-circle' style={{ height: '18px' }} />}
+        text={t('Create a new account')}
       />
       <Divider sx={{ fontSize: '18px', fontWeight: 300, my: '10px', px: '20px' }}>
         {t('Or')}
@@ -88,37 +88,37 @@ function Welcome (): React.ReactElement {
         _mt='0'
         _onClick={onRestoreFromJson}
         _variant={'outlined'}
-        text={t<string>('Restore from file')}
+        text={t('Restore from file')}
       />
       <PButton
         _mt='10px'
         _onClick={onImport}
         _variant={'outlined'}
-        text={t<string>('Import from recovery phrase')}
+        text={t('Import from recovery phrase')}
       />
       <PButton
         _mt='10px'
         _onClick={onImportRawSeed}
         _variant={'outlined'}
-        text={t<string>('Import from raw seed')}
+        text={t('Import from raw seed')}
       />
       <PButton
         _mt='10px'
         _onClick={onAddWatchOnly}
         _variant={'outlined'}
-        text={t<string>('Add watch-only account')}
+        text={t('Add watch-only account')}
       />
       <PButton
         _mt='10px'
         _onClick={onAttachQR}
         _variant={'outlined'}
-        text={t<string>('Attach QR-signer')}
+        text={t('Attach QR-signer')}
       />
       <PButton
         _mt='10px'
         _onClick={onImportLedger}
         _variant={'outlined'}
-        text={t<string>('Attach ledger device')}
+        text={t('Attach ledger device')}
       />
       <Grid container justifyContent='center'>
         <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ cursor: 'pointer', fontSize: '12px', bottom: 0, position: 'absolute', textAlign: 'center', textDecoration: 'underline' }}>
