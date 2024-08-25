@@ -12,7 +12,7 @@ import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/
 import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, Infotip2, OptionalCopyButton, ShortAddress2, VaadinIcon } from '../../../components';
-import { useIdentity, useInfo, useNotifyOnChainChange, useTranslation } from '../../../hooks';
+import { useIdentity, useInfo, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount } from '../../../messaging';
 import { getValue } from '../../../popup/account/util';
 import { BALANCES_VALIDITY_PERIOD } from '../../../util/constants';
@@ -146,8 +146,6 @@ export default function AccountInformationForDetails ({ accountAssets, address, 
   const theme = useTheme();
   const { account, api, chain, formatted, genesisHash, token } = useInfo(address);
 
-  useNotifyOnChainChange(address);
-
   const accountInfo = useIdentity(genesisHash, formatted);
 
   const calculatePrice = useCallback((amount: BN, decimal: number, _price: number) => {
@@ -259,7 +257,7 @@ export default function AccountInformationForDetails ({ accountAssets, address, 
           <Divider sx={{ bgcolor: 'divider', height: '1px', my: '15px', width: '100%' }} />
           <AOC
             accountAssets={nonZeroSortedAssets}
-            api={api}
+            address={address}
             mode='Detail'
             onclick={onAssetBoxClicked}
             selectedAsset={selectedAsset}

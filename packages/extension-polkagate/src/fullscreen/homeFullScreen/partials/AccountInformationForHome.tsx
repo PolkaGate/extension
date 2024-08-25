@@ -18,7 +18,7 @@ import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { stars6Black, stars6White } from '../../../assets/icons';
 import { ActionContext, Identicon, Identity, OptionalCopyButton, ShortAddress2 } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
-import { useCurrency, useIdentity, useInfo, useNotifyOnChainChange, usePrices, useTranslation } from '../../../hooks';
+import { useCurrency, useIdentity, useInfo, usePrices, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount } from '../../../messaging';
 import ExportAccountModal from '../../../popup/export/ExportAccountModal';
 import ForgetAccountModal from '../../../popup/forgetAccount/ForgetAccountModal';
@@ -57,8 +57,6 @@ export default function AccountInformationForHome ({ accountAssets, address, hid
   const currency = useCurrency();
   const { account, api, chain, formatted, genesisHash } = useInfo(address);
   const onAction = useContext(ActionContext);
-
-  useNotifyOnChainChange(address);
 
   const accountInfo = useIdentity(genesisHash, formatted);
 
@@ -192,7 +190,7 @@ export default function AccountInformationForHome ({ accountAssets, address, hid
             {(assetsToShow === undefined || (assetsToShow && assetsToShow?.length > 0)) &&
               <AOC
                 accountAssets={assetsToShow}
-                api={api}
+                address={address}
                 hideNumbers={hideNumbers}
                 mode='Home'
                 onclick={onAssetBoxClicked}
