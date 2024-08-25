@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -14,7 +13,7 @@ import HeaderBrand from '../../partials/HeaderBrand';
 import { EXTENSION_NAME } from '../../util/constants';
 import Privacy from './Privacy';
 
-function Welcome(): React.ReactElement {
+function Welcome (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
