@@ -1,21 +1,20 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { Prices } from '../../../util/types';
+import type { ApiPromise } from '@polkadot/api';
+import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
+import type { BalancesInfo, Prices } from '../../../util/types';
 
 import { ArrowDropDown as ArrowDropDownIcon, MoreHoriz as MoreHorizIcon } from '@mui/icons-material';
-import { Collapse, Grid, Skeleton, Typography } from '@mui/material';
+import { Collapse, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 
 import { DisplayLogo, FormatPrice, ShowBalance } from '../../../components';
 import { usePrices, useTranslation } from '../../../hooks';
-import { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import getLogo2 from '../../../util/getLogo2';
 
 interface Props {
@@ -44,7 +43,7 @@ interface BalanceRowProps {
 }
 
 const BalanceRow = ({ api, asset, pricesInCurrencies }: BalanceRowProps) => {
-  const total = getValue('total', asset);
+  const total = getValue('total', asset as unknown as BalancesInfo);
 
   return (
     <Grid alignItems='flex-start' container direction='column' item pl='5px' xs>
@@ -69,6 +68,8 @@ const BalanceRow = ({ api, asset, pricesInCurrencies }: BalanceRowProps) => {
 };
 
 const AssetsBoxes = ({ api, asset, hideNumbers, mode, onclick, pricesInCurrencies, selectedAsset }: AssetBoxProps) => {
+  const theme = useTheme();
+
   const isAssetSelected = asset?.genesisHash === selectedAsset?.genesisHash && asset?.token === selectedAsset?.token && asset?.assetId === selectedAsset?.assetId;
   const _assetToShow = isAssetSelected && selectedAsset?.date && asset?.date && selectedAsset.date > asset.date ? selectedAsset : asset;
 
@@ -76,7 +77,24 @@ const AssetsBoxes = ({ api, asset, hideNumbers, mode, onclick, pricesInCurrencie
   const logoInfo = useMemo(() => _assetToShow && getLogo2(_assetToShow.genesisHash, _assetToShow.token), [_assetToShow]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='center' onClick={() => _assetToShow ? onclick(_assetToShow) : null} sx={{ border: _assetToShow ? `${isAssetSelected ? '3px' : '1px'} solid` : 'none', borderColor: 'secondary.light', borderRadius: '8px', boxShadow: isAssetSelected ? '0px 2px 5px 2px #00000040' : 'none', cursor: _assetToShow ? 'pointer' : 'default', height: 'fit-content', p: _assetToShow ? '5px' : 0, width: 'fit-content' }}>
+    <Grid
+      // eslint-disable-next-line react/jsx-no-bind
+      alignItems='center' container item justifyContent='center' onClick={() => _assetToShow ? onclick(_assetToShow) : null}
+      sx={{
+        border: _assetToShow ? `${isAssetSelected ? '3px' : '1px'} solid` : 'none',
+        borderColor: isAssetSelected
+          ? 'secondary.light'
+          : theme.palette.mode === 'dark'
+            ? '#464141'
+            : 'divider',
+        borderRadius: '8px',
+        boxShadow: isAssetSelected ? '0px 2px 5px 2px #00000040' : 'none',
+        cursor: _assetToShow ? 'pointer' : 'default',
+        height: 'fit-content',
+        p: _assetToShow ? '5px' : 0,
+        width: 'fit-content'
+      }}
+    >
       {_assetToShow
         ? <>
           <Grid alignItems='center' container item mr={logoInfo?.subLogo && '2px'} width='fit-content'>
