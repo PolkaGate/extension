@@ -262,7 +262,6 @@ export default class State {
         authorizedAccounts,
         count: 0,
         id: idStr,
-        // isAllowed,
         origin,
         url
       };
