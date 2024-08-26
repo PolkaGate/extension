@@ -11,7 +11,7 @@ import React, { useCallback, useContext, useLayoutEffect, useMemo, useState } fr
 import { AccountContext, AccountsTable, TwoButtons } from '../../components';
 import { useIsExtensionPopup } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
-import { toggleAuthorization, updateAuthorization } from '../../messaging';
+import { updateAuthorization } from '../../messaging';
 import { areArraysEqual } from '../../util/utils';
 
 interface Props {
@@ -28,7 +28,6 @@ export default function ManageAuthorizedAccounts ({ info, onBackClick }: Props):
 
   const allAccounts = useMemo(() => accounts.map(({ address }) => address), [accounts]);
   const noChanges = useMemo(() => areArraysEqual([selectedAccounts, info?.authorizedAccounts ?? allAccounts]), [allAccounts, info?.authorizedAccounts, selectedAccounts]);
-  const needsToggleAuth = useMemo(() => ((info?.authorizedAccounts && info.authorizedAccounts.length === 0) || selectedAccounts.length === 0) && !noChanges, [info.authorizedAccounts, noChanges, selectedAccounts.length]);
   const areAllCheck = useMemo(() => areArraysEqual([allAccounts, selectedAccounts]), [allAccounts, selectedAccounts]);
 
   useLayoutEffect(() => {
@@ -39,15 +38,8 @@ export default function ManageAuthorizedAccounts ({ info, onBackClick }: Props):
     // If there are no authorized accounts, it means the dApp is rejected.
     // To allow access, authorized accounts must be added.
 
-    // When the count of authorized accounts is zero, the dApp is considered rejected.
-    // Therefore, it should be toggled to an allowed or rejected state.
-
-    if (needsToggleAuth) {
-      toggleAuthorization(info.id).catch(console.error);
-    }
-
     updateAuthorization(selectedAccounts, info.id).then(onBackClick).catch(console.error);
-  }, [info.id, needsToggleAuth, onBackClick, selectedAccounts]);
+  }, [info.id, onBackClick, selectedAccounts]);
 
   return (
     <>

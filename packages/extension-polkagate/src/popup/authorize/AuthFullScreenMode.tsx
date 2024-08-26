@@ -14,7 +14,7 @@ import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constan
 import { AccountContext, AccountsTable, ActionContext, TwoButtons, VaadinIcon, Warning } from '../../components';
 import { FullScreenHeader } from '../../fullscreen/governance/FullScreenHeader';
 import { useFavIcon, useFullscreen, useTranslation } from '../../hooks';
-import { approveAuthRequest, rejectAuthRequest } from '../../messaging';
+import { approveAuthRequest, ignoreAuthRequest } from '../../messaging';
 import { areArraysEqual, extractBaseUrl } from '../../util/utils';
 
 interface Props {
@@ -45,7 +45,7 @@ function AuthFullScreenMode ({ onNextAuth, onPreviousAuth, requestIndex, request
   }, [onAction, requestIndex, requests, selectedAccounts]);
 
   const onReject = useCallback((): void => {
-    rejectAuthRequest(requests[requestIndex].id)
+    ignoreAuthRequest(requests[requestIndex].id)
       .then(() => onAction())
       .catch((error: Error) => console.error(error));
   }, [onAction, requestIndex, requests]);

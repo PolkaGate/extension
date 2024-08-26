@@ -63,12 +63,7 @@ export default class Tabs {
       return [];
     }
 
-    const accessAccounts = accounts.filter(({ address }) => auth.authorizedAccounts
-      // we have a list, use it
-      ? auth.authorizedAccounts.includes(address)
-      // if no authorizedAccounts and isAllowed return all - these are old converted urls
-      : auth.isAllowed
-    );
+    const accessAccounts = accounts.filter(({ address }) => auth.authorizedAccounts && auth.authorizedAccounts.includes(address));
 
     return accessAccounts;
   }
