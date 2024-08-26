@@ -233,7 +233,7 @@ export default class Extension {
     return { list: this.#state.authUrls as AuthUrls };
   }
 
-  private deleteAuthRequest (id: string): void {
+  private ignoreAuthorization (id: string): void {
     return this.#state.ignoreAuthRequest(id);
   }
 
@@ -545,7 +545,7 @@ export default class Extension {
         return this.getAuthList();
 
       case 'pri(authorize.ignore)':
-        return this.deleteAuthRequest(request as string);
+        return this.ignoreAuthorization(request as string);
 
       case 'pri(authorize.remove)':
         return this.removeAuthorization(request as string);
