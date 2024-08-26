@@ -7,7 +7,7 @@ import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types'
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 // added for plus to import RequestUpdateMeta
-import type { AccountJson, AllowedPath, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestAuthorizeReject, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestTypes, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
+import type { AccountJson, AllowedPath, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestTypes, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
 import type State from './State';
 
 import { ALLOWED_PATH, PASSWORD_EXPIRY_MS, START_WITH_PATH } from '@polkadot/extension-base/defaults';
@@ -233,17 +233,21 @@ export default class Extension {
     return { list: this.#state.authUrls as AuthUrls };
   }
 
-  private authorizeReject ({ id }: RequestAuthorizeReject): boolean {
-    const queued = this.#state.getAuthRequest(id);
-
-    assert(queued, 'Unable to find request');
-
-    const { reject } = queued;
-
-    reject(new Error('Rejected'));
-
-    return true;
+  private deleteAuthRequest (id: string): void {
+    return this.#state.ignoreAuthRequest(id);
   }
+
+  // private authorizeReject ({ id }: RequestAuthorizeReject): boolean {
+  //   const queued = this.#state.getAuthRequest(id);
+
+  //   assert(queued, 'Unable to find request');
+
+  //   const { reject } = queued;
+
+  //   reject(new Error('Rejected'));
+
+  //   return true;
+  // }
 
   // FIXME This looks very much like what we have in accounts
   private authorizeSubscribe (id: string, port: chrome.runtime.Port): boolean {
@@ -536,11 +540,11 @@ export default class Extension {
     return true;
   }
 
-  private async toggleAuthorization (url: string): Promise<ResponseAuthorizeList> {
-    return { list: await this.#state.toggleAuthorization(url) as AuthUrls };
-  }
+  // private async toggleAuthorization (url: string): Promise<ResponseAuthorizeList> {
+  //   return { list: await this.#state.toggleAuthorization(url) as AuthUrls };
+  // }
 
-  private async removeAuthorization (url: string): Promise<ResponseAuthorizeList> {
+  private async removeAuthorization(url: string): Promise<ResponseAuthorizeList> {
     const remAuth = await this.#state.removeAuthorization(url);
 
     return { list: remAuth };
@@ -548,7 +552,7 @@ export default class Extension {
 
   // Weird thought, the eslint override is not needed in Tabs
   // eslint-disable-next-line @typescript-eslint/require-await
-  public async handle<TMessageType extends MessageTypes> (id: string, type: TMessageType, request: RequestTypes[TMessageType], port: chrome.runtime.Port): Promise<ResponseType<TMessageType>> {
+  public async handle<TMessageType extends MessageTypes>(id: string, type: TMessageType, request: RequestTypes[TMessageType], port: chrome.runtime.Port): Promise<ResponseType<TMessageType>> {
     switch (type) {
       case 'pri(authorize.approve)':
         return this.authorizeApprove(request as RequestAuthorizeApprove);
@@ -556,11 +560,14 @@ export default class Extension {
       case 'pri(authorize.list)':
         return this.getAuthList();
 
-      case 'pri(authorize.reject)':
-        return this.authorizeReject(request as RequestAuthorizeReject);
+      case 'pri(authorize.ignore)':
+        return this.deleteAuthRequest(request as string);
 
-      case 'pri(authorize.toggle)':
-        return this.toggleAuthorization(request as string);
+        // case 'pri(authorize.reject)':
+        //   return this.authorizeReject(request as RequestAuthorizeReject);
+
+        // case 'pri(authorize.toggle)':
+        //   return this.toggleAuthorization(request as string);
 
       case 'pri(authorize.remove)':
         return this.removeAuthorization(request as string);

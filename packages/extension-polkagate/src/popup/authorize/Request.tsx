@@ -10,7 +10,7 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { AccountContext, AccountsTable, ActionContext, ButtonWithCancel, Warning } from '../../components';
 import { useFavIcon, useTranslation } from '../../hooks';
-import { approveAuthRequest, rejectAuthRequest } from '../../messaging';
+import { approveAuthRequest, ignoreAuthRequest } from '../../messaging';
 import { areArraysEqual, extractBaseUrl } from '../../util/utils';
 
 interface Props {
@@ -37,7 +37,7 @@ export default function Request ({ authRequest, hasBanner }: Props): React.React
   }, [authRequest.id, onAction, selectedAccounts]);
 
   const onReject = useCallback((): void => {
-    rejectAuthRequest(authRequest.id)
+    ignoreAuthRequest(authRequest.id)
       .then(() => onAction())
       .catch((error: Error) => console.error(error));
   }, [authRequest.id, onAction]);

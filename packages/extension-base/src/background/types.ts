@@ -18,7 +18,7 @@ export interface AuthUrlInfo {
   count: number;
   id: string;
   // this is from pre-0.44.1
-  isAllowed?: boolean;
+  // isAllowed?: boolean;
   origin: string;
   url: string;
   authorizedAccounts: string[];
@@ -103,6 +103,7 @@ export interface RequestSignatures {
 
   'pri(accounts.updateMeta)': [RequestUpdateMeta, boolean]; // added for polkagate
   'pri(extension.lock)': [null, boolean]; // added for polkagate
+  'pri(authorize.ignore)': [string, void]; // added for polkagate
 
   'pri(accounts.export)': [RequestAccountExport, ResponseAccountExport];
   'pri(accounts.batchExport)': [RequestAccountBatchExport, ResponseAccountsExport]

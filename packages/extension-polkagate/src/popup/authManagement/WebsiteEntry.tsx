@@ -8,9 +8,9 @@ import type { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/
 
 import { RecentActors as RecentActorsIcon, Replay as ReplayIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
-import { AccountContext, RemoveAuth } from '../../components';
+import { RemoveAuth } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 
 interface Props {
@@ -22,12 +22,11 @@ interface Props {
   maxHeight: number;
 }
 
-export default function WebsiteEntry({ authList, filter, maxHeight, setDappInfo, setToRemove, toRemove }: Props): React.ReactElement<Props> {
+export default function WebsiteEntry ({ authList, filter, maxHeight, setDappInfo, setToRemove, toRemove }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { accounts } = useContext(AccountContext);
 
-  const accountsLength = useMemo(() => accounts.length, [accounts.length]);
+  const hasAccess = useCallback((info: AuthUrlInfo) => Boolean(info?.authorizedAccounts?.length), []);
 
   const manageAuthorizedAccount = useCallback((info: AuthUrlInfo) => {
     setDappInfo(info);
@@ -58,9 +57,9 @@ export default function WebsiteEntry({ authList, filter, maxHeight, setDappInfo,
                     {url}
                   </Typography>
                   <Grid alignItems='center' container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light', lineHeight: '30px', width: '25%' }}>
-                    {info.isAllowed && `(${info?.authorizedAccounts?.length ?? accountsLength})`}
-                    {info.isAllowed && <RecentActorsIcon onClick={() => manageAuthorizedAccount(info)} sx={{ color: theme.palette.secondary.light, cursor: 'pointer', fontSize: '25px', ml: '5px' }} />}
-                    {!info.isAllowed &&
+                    {hasAccess(info) && `(${info.authorizedAccounts.length})`}
+                    {hasAccess(info) && <RecentActorsIcon onClick={() => manageAuthorizedAccount(info)} sx={{ color: theme.palette.secondary.light, cursor: 'pointer', fontSize: '25px', ml: '5px' }} />}
+                    {!hasAccess(info) &&
                       <Typography fontSize='14px' onClick={() => manageAuthorizedAccount(info)} sx={{ color: 'secondary.light', cursor: 'pointer', textDecoration: 'underline' }}>
                         {t('No access')}
                       </Typography>
