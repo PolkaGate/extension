@@ -252,7 +252,7 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
             {isFlying && isPopupOpenedByExtension
               ? <FlyingLogo theme={theme} />
               : <>
-                { step !== undefined && [STEPS.ASK_TO_SET_PASSWORD, STEPS.SHOW_LOGIN].includes(step) && (isPopupOpenedByExtension || isExtensionLocked) &&
+                {step !== undefined && ([STEPS.ASK_TO_SET_PASSWORD, STEPS.SHOW_LOGIN].includes(step) || isExtensionLocked) &&
                   <Grid container item justifyContent='center' mt='33px' my='35px'>
                     <StillLogo theme={theme} />
                   </Grid>
@@ -270,7 +270,7 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
                     setStep={setStep}
                   />
                 }
-                {step !== undefined && [STEPS.SHOW_LOGIN].includes(step) &&
+                {step !== undefined && ([STEPS.SHOW_LOGIN].includes(step) || isExtensionLocked) &&
                   <Login
                     isPasswordError={isPasswordError}
                     onPassChange={onPassChange}
