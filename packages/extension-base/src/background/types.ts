@@ -17,8 +17,6 @@ export type AuthUrls = Record<string, AuthUrlInfo>;
 export interface AuthUrlInfo {
   count: number;
   id: string;
-  // this is from pre-0.44.1
-  // isAllowed?: boolean;
   origin: string;
   url: string;
   authorizedAccounts: string[];
@@ -116,9 +114,7 @@ export interface RequestSignatures {
   'pri(authorize.approve)': [RequestAuthorizeApprove, boolean];
   'pri(authorize.update)': [RequestUpdateAuthorizedAccounts, void];
   'pri(authorize.list)': [null, ResponseAuthorizeList];
-  'pri(authorize.reject)': [RequestAuthorizeReject, boolean];
   'pri(authorize.requests)': [RequestAuthorizeSubscribe, boolean, AuthorizeRequest[]];
-  'pri(authorize.toggle)': [string, ResponseAuthorizeList];
   'pri(authorize.remove)': [string, ResponseAuthorizeList];
   'pri(derivation.create)': [RequestDeriveCreate, boolean];
   'pri(derivation.validate)': [RequestDeriveValidate, ResponseDeriveValidate];

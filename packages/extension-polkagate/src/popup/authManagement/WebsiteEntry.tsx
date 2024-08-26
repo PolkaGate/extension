@@ -8,7 +8,7 @@ import type { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/
 
 import { RecentActors as RecentActorsIcon, Replay as ReplayIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 
 import { RemoveAuth } from '../../components';
 import useTranslation from '../../hooks/useTranslation';

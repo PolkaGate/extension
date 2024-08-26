@@ -186,10 +186,6 @@ export async function getMetadata (genesisHash?: string | null, isPartial = fals
   return null;
 }
 
-// export async function rejectAuthRequest (id: string): Promise<boolean> {
-//   return sendMessage('pri(authorize.reject)', { id });
-// }
-
 export async function rejectMetaRequest (id: string): Promise<boolean> {
   return sendMessage('pri(metadata.reject)', { id });
 }
@@ -205,10 +201,6 @@ export async function subscribeAuthorizeRequests (cb: (accounts: AuthorizeReques
 export async function getAuthList (): Promise<ResponseAuthorizeList> {
   return sendMessage('pri(authorize.list)');
 }
-
-// export async function toggleAuthorization (url: string): Promise<ResponseAuthorizeList> {
-//   return sendMessage('pri(authorize.toggle)', url);
-// }
 
 export async function removeAuthorization (id: string): Promise<ResponseAuthorizeList> {
   return sendMessage('pri(authorize.remove)', id);
