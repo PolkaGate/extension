@@ -17,6 +17,7 @@ import { getReferendumVotes } from '../fullscreen/governance/utils/getAllVotes';
 import { getReferendumPA, getReferendumSb, isFinished } from '../fullscreen/governance/utils/helpers';
 import { STATEMINE_GENESIS_HASH, STATEMINT_GENESIS_HASH } from '../util/constants';
 import { useApi, useApiWithChain2, useChainName } from '.';
+import { isHexToBn } from '../util/utils';
 
 type ReferendumData = Record<string, Referendum[]>;
 
@@ -32,7 +33,7 @@ const getAssetHubByChainName = (chainName?: string) => {
   }
 
   return undefined;
-}
+};
 
 export default function useReferendum(address: AccountId | string | undefined, type: TopMenu | undefined, id: number | undefined, refresh?: boolean, getOnChain?: boolean, isConcluded?: boolean, withoutOnChainVoteCounts = false): Referendum | undefined {
   const chainName = useChainName(address);
@@ -52,8 +53,24 @@ export default function useReferendum(address: AccountId | string | undefined, t
   const [statusOC, setStatusOC] = useState<ReferendumHistory[]>();
   const [assetMetadata, setAssetMetadata] = useState<AssetMetadata | null>(null);
 
-  const ayesAmount = useMemo(() => onChainTally?.ayes?.toString() || referendumSb?.ayes_amount || referendumPA?.tally?.ayes, [referendumPA, referendumSb, onChainTally]);
-  const naysAmount = useMemo(() => onChainTally?.nays?.toString() || referendumSb?.nays_amount || referendumPA?.tally?.nays, [referendumPA, referendumSb, onChainTally]);
+  const ayesAmount = useMemo(() => {
+    const maybeAyes = onChainTally?.ayes?.toString() || referendumSb?.ayes_amount || referendumPA?.tally?.ayes;
+
+    if (maybeAyes) {
+      return isHexToBn(maybeAyes).toString();
+    }
+
+    return undefined;
+  }, [referendumPA, referendumSb, onChainTally]);
+  const naysAmount = useMemo(() => {
+    const maybeNays = onChainTally?.nays?.toString() || referendumSb?.nays_amount || referendumPA?.tally?.nays;
+
+    if (maybeNays) {
+      return isHexToBn(maybeNays).toString();
+    }
+
+    return undefined;
+  }, [referendumPA, referendumSb, onChainTally]);
   const ayesCount = onchainVotes?.ayes?.length || referendumSb?.ayes_count;
   const naysCount = onchainVotes?.nays?.length || referendumSb?.nays_count;
 
