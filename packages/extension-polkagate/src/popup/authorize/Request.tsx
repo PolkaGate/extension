@@ -6,11 +6,11 @@
 import type { AuthorizeRequest } from '@polkadot/extension-base/background/types';
 
 import { Avatar, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountContext, AccountsTable, ActionContext, ButtonWithCancel, Warning } from '../../components';
 import { useFavIcon, useTranslation } from '../../hooks';
-import { approveAuthRequest, ignoreAuthRequest } from '../../messaging';
+import { approveAuthRequest, getAuthList, ignoreAuthRequest } from '../../messaging';
 import { areArraysEqual, extractBaseUrl } from '../../util/utils';
 
 interface Props {
@@ -26,6 +26,16 @@ export default function Request ({ authRequest, hasBanner }: Props): React.React
   const faviconUrl = useFavIcon(authRequest.url);
 
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
+
+  useEffect(() => {
+    getAuthList()
+      .then(({ list: authList }) => {
+        if (authRequest.request.origin in authList) {
+          setSelectedAccounts(authList[authRequest.request.origin]?.authorizedAccounts ?? []);
+        }
+      })
+      .catch(console.error);
+  }, [authRequest, authRequest.request.origin]);
 
   const allAccounts = useMemo(() => accounts.map(({ address }) => address), [accounts]);
   const areAllCheck = useMemo(() => areArraysEqual([allAccounts, selectedAccounts]), [allAccounts, selectedAccounts]);
@@ -61,7 +71,7 @@ export default function Request ({ authRequest, hasBanner }: Props): React.React
       </Grid>
       <AccountsTable
         areAllCheck={areAllCheck}
-        maxHeight= { hasBanner ? '150px' : '170px'}
+        maxHeight={hasBanner ? '150px' : '170px'}
         selectedAccounts={selectedAccounts}
         setSelectedAccounts={setSelectedAccounts}
         style={{
