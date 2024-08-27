@@ -20,7 +20,7 @@ import { jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
 import { Address, InputFileWithLabel, Password, TwoButtons, VaadinIcon, Warning, WrongPasswordAlert } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
-import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../../../messaging';
+import { batchRestore, jsonGetAccountInfo, jsonRestore, updateMeta } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { isKeyringPairs$Json } from '../../../util/typeGuards';
 import { pgBoxShadow } from '../../../util/utils';
@@ -126,13 +126,18 @@ export default function RestoreJson (): React.ReactElement {
   const handleKeyringPairsJson = useCallback(async (jsonFile: KeyringPairs$Json) => {
     const selected = selectedAccountsInfo.map(({ address }) => address);
     let encryptFile = jsonFile;
+    let accountToAddTime = accountsInfo.map(({ address }) => address);
 
     if (selected.length !== accountsInfo.length) {
+      accountToAddTime = selected;
       encryptFile = await filterAndEncryptFile(encryptFile, selected);
     }
 
     await batchRestore(encryptFile, password);
-  }, [accountsInfo.length, filterAndEncryptFile, password, selectedAccountsInfo]);
+    const updateMetaList = accountToAddTime.map((address) => updateMeta(address, JSON.stringify({ addedTime: Date.now() })));
+
+    await Promise.all(updateMetaList);
+  }, [accountsInfo, filterAndEncryptFile, password, selectedAccountsInfo]);
 
   const handleRegularJson = useCallback(async (jsonFile: KeyringPair$Json) => {
     await jsonRestore(jsonFile, password);
