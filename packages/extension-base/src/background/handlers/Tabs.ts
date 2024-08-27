@@ -35,7 +35,8 @@ function transformAccounts (accounts: SubjectInfo, anyType = false): InjectedAcc
     .filter(({ json: { meta: { isHidden } } }) => !isHidden)
     .filter(({ type }) => anyType ? true : canDerive(type))
     .sort((a, b) => (a.json.meta.whenCreated || 0) - (b.json.meta.whenCreated || 0))
-    .map(({ json: { address, meta: { genesisHash, name } }, type }): InjectedAccount => ({
+    .map(({ json: { address, meta: { addedTime, genesisHash, name } }, type }): InjectedAccount => ({
+      addedTime: addedTime as number | undefined,
       address,
       genesisHash,
       name,
@@ -52,8 +53,8 @@ export default class Tabs {
     this.#state = state;
   }
 
-  private authorize (url: string, request: RequestAuthorizeTab): Promise<AuthResponse> {
-    return this.#state.authorizeUrl(url, request);
+  private authorize (url: string, request: RequestAuthorizeTab, reauthorize?: boolean): Promise<AuthResponse> {
+    return this.#state.authorizeUrl(url, request, reauthorize);
   }
 
   private filterForAuthorizedAccounts (accounts: InjectedAccount[], url: string): InjectedAccount[] {
@@ -68,10 +69,24 @@ export default class Tabs {
     return accessAccounts;
   }
 
-  private accountsListAuthorized (url: string, { anyType }: RequestAccountList): InjectedAccount[] {
+  private accountsListAuthorized (url: string, { anyType }: RequestAccountList): Promise<AuthResponse | InjectedAccount[]> {
     const transformedAccounts = transformAccounts(accountsObservable.subject.getValue(), anyType);
+    const authorizedAccounts = this.filterForAuthorizedAccounts(transformedAccounts, url);
 
-    return this.filterForAuthorizedAccounts(transformedAccounts, url);
+    const auth = this.#state.authUrls[this.#state.stripUrl(url)];
+
+    // just a check for linting issue, it already checked by "ensureUrlAuthorized"
+    if (!auth) {
+      return Promise.resolve([]);
+    }
+
+    const hasNewerAccountsSinceAuth = transformedAccounts.some(({ addedTime }) => addedTime && addedTime > auth.authorizedTime);
+
+    if (hasNewerAccountsSinceAuth) {
+      return this.authorize(url, { origin: this.#state.stripUrl(url) }, true).then(() => this.accountsListAuthorized(url, { anyType }));
+    } else {
+      return Promise.resolve(authorizedAccounts);
+    }
   }
 
   private accountsSubscribeAuthorized (url: string, id: string, port: chrome.runtime.Port): string {
