@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Asset } from '@polkagate/apps-config/assets/types';
-import type { bool, Bytes, Option, StorageKey, u128, u8 } from '@polkadot/types';
+import type { bool, Bytes, Option, StorageKey, u8, u128 } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
 // @ts-ignore
 import type { FrameSystemAccountInfo, OrmlTokensAccountData, PalletAssetsAssetAccount, PalletAssetsAssetDetails, PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';

@@ -183,10 +183,6 @@ export interface RequestUpdateAuthorizedAccounts {
   authorizedAccounts: string[]
 }
 
-export interface RequestAuthorizeReject {
-  id: string;
-}
-
 export type RequestAuthorizeSubscribe = null;
 
 export interface RequestMetadataApprove {
