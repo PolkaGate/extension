@@ -180,7 +180,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       />
       <RemoteNodeSelector
         address={address}
-        genesisHash={currentGenesisHash}
+        genesisHash={genesisHash ?? currentGenesisHash}
       />
       <IconButton
         onClick={closeMenu}

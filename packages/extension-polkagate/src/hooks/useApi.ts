@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
-import type { ChromeStorageGetResponse } from '../util/types';
 
-import { useCallback, useContext, useEffect, useMemo, useReducer } from 'react';
+import { useCallback, useContext, useEffect, useReducer } from 'react';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
@@ -41,7 +40,7 @@ const apiReducer = (state: ApiState, action: ApiAction): ApiState => {
 };
 
 // Create a singleton EndpointManager
-// const endpointManager = new EndpointManager();
+const endpointManager = new EndpointManager();
 
 export default function useApi(address: AccountId | string | undefined, stateApi?: ApiPromise, _endpoint?: string, _genesisHash?: string): ApiPromise | undefined {
   const { checkForNewOne, endpoint } = useEndpoint(address, _endpoint);
@@ -57,45 +56,25 @@ export default function useApi(address: AccountId | string | undefined, stateApi
 
   // This function is called exclusively in auto mode to update the account's "auto mode" endpoint
   // with the fastest endpoint available.
-  const updateEndpoint = useCallback(async (addressKey: string, chainKey: string, selectedEndpoint: string, cbFunction?: () => void) => {
+  const updateEndpoint = useCallback((addressKey: string | undefined, chainKey: string, selectedEndpoint: string, cbFunction?: () => void) => {
     try {
-      const result = await new Promise<{ endpoints?: ChromeStorageGetResponse }>(
-        (resolve) => chrome.storage.local.get('endpoints', resolve)
-      );
-
       const newEndpoint = {
         checkForNewOne: false,
         endpoint: selectedEndpoint,
         isOnManuel: false,
         timestamp: Date.now()
       };
-      const savedEndpoints: ChromeStorageGetResponse = result.endpoints || {};
+      const savedEndpoints = endpointManager.getEndpoints();
 
-      console.log('before savedEndpoints :::', savedEndpoints);
-
-      for (const address in savedEndpoints) {
-        // console.log('savedEndpoints[address]?.[chainKey] :::', savedEndpoints[address]?.[chainKey], savedEndpoints);
-        if (savedEndpoints[address]?.[chainKey]) {
-          // console.log('address :::', address);
-          savedEndpoints[address][chainKey] = newEndpoint;
+      if (addressKey) {
+        endpointManager.setEndpoint(addressKey, chainKey, newEndpoint);
+      } else {
+        for (const address in savedEndpoints) {
+          if (savedEndpoints[address]?.[chainKey]) {
+            endpointManager.setEndpoint(address, chainKey, newEndpoint);
+          }
         }
       }
-
-      savedEndpoints[addressKey] = savedEndpoints[addressKey] || {};
-      savedEndpoints[addressKey][chainKey] = newEndpoint;
-
-      console.log('after savedEndpoints :::', savedEndpoints);
-
-      await new Promise<void>(
-        (resolve) => chrome.storage.local.set({ endpoints: savedEndpoints }, resolve)
-      );
-
-      // endpointManager.setEndpoint(addressKey, chainKey, {
-      //   checkForNewOne: false,
-      //   endpoint: selectedEndpoint,
-      //   isOnManuel: false,
-      //   timestamp: Date.now()
-      // });
 
       cbFunction?.();
     } catch (error) {
@@ -105,7 +84,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
 
   // Checks if there is an available API connection, then will change the address endpoint to the available API's endpoint
   // Returns false if it was not successful to find an available API and true vice versa
-  const connectToExisted = useCallback(async (address: string, genesisHash: string): Promise<boolean> => {
+  const connectToExisted = useCallback((address: string, genesisHash: string): boolean => {
     const apiList = apisContext.apis[genesisHash];
 
     if (!apiList) {
@@ -119,7 +98,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
     }
 
     dispatch({ payload: availableApi.api, type: 'SET_API' });
-    await updateEndpoint(address, genesisHash, availableApi.endpoint);
+    updateEndpoint(address, genesisHash, availableApi.endpoint);
 
     console.log('Successfully connected to existing API for genesis hash:::', genesisHash);
 
@@ -178,7 +157,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
       return;
     }
 
-    const result = !findNewEndpoint && await connectToExisted(String(address), genesisHash);
+    const result = !findNewEndpoint && connectToExisted(String(address), genesisHash);
 
     if (result) {
       return;
@@ -191,7 +170,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
     // Finds the fastest available endpoint and connects to it
     const { api, selectedEndpoint } = await fastestConnection(withoutLC);
 
-    await updateEndpoint(address, genesisHash, selectedEndpoint, () => handleNewApi(api, selectedEndpoint, true));
+    updateEndpoint(undefined, genesisHash, selectedEndpoint, () => handleNewApi(api, selectedEndpoint, true));
   }, [apisContext.apis, connectToExisted, endpoints, handleNewApi, updateEndpoint]);
 
   // Manages the API connection when the address, endpoint, or genesis hash changes
@@ -253,22 +232,6 @@ export default function useApi(address: AccountId | string | undefined, stateApi
     apisContext.setIt(apisContext.apis);
   }, [address, apisContext, apisContext.apis, chainGenesisHash, checkForNewOne, connectToEndpoint, endpoint, handleAutoMode, handleNewApi, state.api, state.isLoading]);
 
-  // useEffect(() => {
-  //   const handleEndpointChange = (changedAddress: string, changedGenesisHash: string) => {
-  //     if (changedAddress === String(address) && changedGenesisHash === chainGenesisHash) {
-  //       // Trigger a re-render or re-fetch when the endpoint changes
-  //       // You might need to adjust this based on your specific requirements
-  //       dispatch({ payload: true, type: 'SET_LOADING' });
-  //     }
-  //   };
-
-  //   endpointManager.subscribe(handleEndpointChange);
-
-  //   return () => {
-  //     endpointManager.unsubscribe(handleEndpointChange);
-  //   };
-  // }, [address, chainGenesisHash]);
-
   useEffect(() => {
     // Set up a polling interval to check for a connected API every 1 second
     const pollingInterval = setInterval(() => {
@@ -280,7 +243,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
         dispatch({ payload: savedApi.api, type: 'SET_API' });
         clearInterval(pollingInterval);
       }
-    }, 1000);
+    }, 500);
 
     return () => clearInterval(pollingInterval);
   }, [apisContext, apisContext.apis, chainGenesisHash, endpoint]);
