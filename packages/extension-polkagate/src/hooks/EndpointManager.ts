@@ -10,10 +10,12 @@ interface EndpointType {
   isOnManuel: boolean | undefined;
 }
 
+type SavedEndpoints = Record<string, Record<string, EndpointType>>;
+
 type Listener = (address: string, genesisHash: string, endpoint: EndpointType) => void;
 
 export class EndpointManager {
-  private endpoints: Record<string, Record<string, EndpointType>> = {};
+  private endpoints: SavedEndpoints = {};
   private listeners: Listener[] = [];
 
   constructor () {
@@ -53,6 +55,10 @@ export class EndpointManager {
     return this.endpoints[address]?.[genesisHash];
   }
 
+  getEndpoints (): SavedEndpoints | undefined {
+    return this.endpoints;
+  }
+
   setEndpoint (address: string, genesisHash: string, endpoint: EndpointType) {
     if (!this.endpoints[address]) {
       this.endpoints[address] = {};
@@ -72,7 +78,7 @@ export class EndpointManager {
   //   }
 
   shouldBeOnAutoMode (endpoint: EndpointType) {
-    return endpoint.isOnManuel && (Date.now() - (endpoint.timestamp ?? 0) > ENDPOINT_TIMEOUT);
+    return !endpoint.isOnManuel && (Date.now() - (endpoint.timestamp ?? 0) > ENDPOINT_TIMEOUT);
   }
 
   subscribe (listener: Listener) {
