@@ -89,7 +89,7 @@ export default function Request ({ authRequest, hasBanner }: Props): React.React
       <ButtonWithCancel
         _onClick={onApprove}
         _onClickCancel={onReject}
-        cancelText={t('Reject')}
+        cancelText={t('Ignore')}
         disabled={selectedAccounts.length === 0}
         text={t('Allow')}
       />

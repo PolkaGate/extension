@@ -123,7 +123,7 @@ function AuthFullScreenMode ({ onNextAuth, onPreviousAuth, requestIndex, request
                 onPrimaryClick={onApprove}
                 onSecondaryClick={onReject}
                 primaryBtnText={t('Allow')}
-                secondaryBtnText={t('Reject')}
+                secondaryBtnText={t('Ignore')}
               />
             </Grid>
           </Grid>
