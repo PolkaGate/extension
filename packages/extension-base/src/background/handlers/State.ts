@@ -187,13 +187,6 @@ export default class State {
       this.authUrlSubjects[url] = new BehaviorSubject<AuthUrlInfo>(authInfo);
     });
 
-    // set the timestamp to 0 for old authorized requests
-    Object.entries(previousAuth).forEach(([url, _authInfo]) => {
-      if (this.authUrlSubjects[url].getValue().authorizedTime === undefined) {
-        this.authUrlSubjects[url].getValue().authorizedTime = 0;
-      }
-    });
-
     // retrieve previously set default auth accounts
     const storageDefaultAuthAccounts: Record<string, string> = await chrome.storage.local.get(DEFAULT_AUTH_ACCOUNTS);
     const defaultAuthString: string = storageDefaultAuthAccounts?.[DEFAULT_AUTH_ACCOUNTS] || '[]';
