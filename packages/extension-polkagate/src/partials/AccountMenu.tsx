@@ -29,7 +29,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
   const { t } = useTranslation();
   const theme = useTheme();
   const options = useGenesisHashOptions();
-  const { account, api, chain, formatted } = useInfo(address);
+  const { account, api, chain, formatted, genesisHash: currentGenesisHash } = useInfo(address);
 
   const [genesisHash, setGenesis] = useState<string | undefined>();
 
@@ -66,8 +66,8 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
   }, [address, onAction]);
 
   const onManageProxies = useCallback(() => {
-    address && chain && PROXY_CHAINS.includes(chain.genesisHash ?? '') && onAction(`/manageProxies/${address}`);
-  }, [address, chain, onAction]);
+    address && currentGenesisHash && PROXY_CHAINS.includes(currentGenesisHash) && onAction(`/manageProxies/${address}`);
+  }, [address, currentGenesisHash, onAction]);
 
   const onManageId = useCallback(() => {
     address && windowOpen(`/manageIdentity/${address}`).catch(console.error);
@@ -78,17 +78,17 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
   }, [address]);
 
   const isDisabled = useCallback((supportedChains: string[]) => {
-    if (!chain) {
+    if (!currentGenesisHash) {
       return true;
     }
 
-    return !supportedChains.includes(chain.genesisHash ?? '');
-  }, [chain]);
+    return !supportedChains.includes(currentGenesisHash);
+  }, [currentGenesisHash]);
 
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container item justifyContent='center' my='20px' pl='8px'>
-        <Identity address={address} api={api} chain={chain as any} formatted={formatted} identiconSize={35} showSocial={false} subIdOnly />
+        <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={35} showSocial={false} subIdOnly />
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
@@ -171,7 +171,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <SelectChain
         address={address}
-        defaultValue={chain?.genesisHash ?? options[0].text}
+        defaultValue={currentGenesisHash ?? options[0].text}
         icon={getLogo(chain || undefined)}
         label={t('Chain')}
         onChange={onChangeNetwork}
@@ -180,7 +180,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       />
       <RemoteNodeSelector
         address={address}
-        genesisHash={genesisHash}
+        genesisHash={currentGenesisHash}
       />
       <IconButton
         onClick={closeMenu}
