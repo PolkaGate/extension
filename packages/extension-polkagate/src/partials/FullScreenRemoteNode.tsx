@@ -4,7 +4,6 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
-import type { ChromeStorageGetResponse } from '../util/types';
 
 import { SignalCellular0BarOutlined as LightClientEndpointIcon, SignalCellularAlt as SignalCellularAltIcon, SignalCellularAlt1Bar as SignalCellularAlt1BarIcon, SignalCellularAlt2Bar as SignalCellularAlt2BarIcon } from '@mui/icons-material';
 import { Grid, Popover, Skeleton, Typography, useTheme } from '@mui/material';
@@ -12,7 +11,7 @@ import { Grid, Popover, Skeleton, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useEndpoint, useEndpoints, useInfo } from '../hooks';
+import { EndpointManager, useEndpoint, useEndpoints, useInfo } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
 import CalculateNodeDelay from '../util/calculateNodeDelay';
 import { AUTO_MODE } from '../util/constants';
@@ -23,6 +22,8 @@ interface Props {
 }
 
 type EndpointsDelay = { name: string, delay: number | null | undefined, value: string }[];
+
+const endpointManager = new EndpointManager();
 
 function FullScreenRemoteNode ({ address, iconSize = 35 }: Props): React.ReactElement {
   const theme = useTheme();
@@ -80,6 +81,10 @@ function FullScreenRemoteNode ({ address, iconSize = 35 }: Props): React.ReactEl
   }, [endpointOptions]);
 
   const onChangeEndpoint = useCallback((newEndpoint: string): void => {
+    if (!address || !genesisHash) {
+      return;
+    }
+
     setCurrentDelay(undefined);
 
     setEndpointsDelay((prevEndpoints) => {
@@ -92,21 +97,14 @@ function FullScreenRemoteNode ({ address, iconSize = 35 }: Props): React.ReactEl
       });
     });
 
-    genesisHash && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
-      const savedEndpoints: ChromeStorageGetResponse = res?.endpoints || {};
+    const addressKey = String(address);
+    const checkForNewOne = newEndpoint === AUTO_MODE.value && !endpointManager.getEndpoint(addressKey, genesisHash)?.isOnManuel;
 
-      savedEndpoints[address] = savedEndpoints[address] || {};
-      const checkForNewOne = newEndpoint === AUTO_MODE.value && !savedEndpoints[address][genesisHash]?.isOnManuel;
-
-      savedEndpoints[address][genesisHash] = {
-        checkForNewOne,
-        endpoint: newEndpoint,
-        isOnManuel: newEndpoint !== AUTO_MODE.value,
-        timestamp: Date.now()
-      };
-
-      // eslint-disable-next-line no-void
-      void chrome.storage.local.set({ endpoints: savedEndpoints });
+    endpointManager.setEndpoint(addressKey, genesisHash, {
+      checkForNewOne,
+      endpoint: newEndpoint,
+      isOnManuel: newEndpoint !== AUTO_MODE.value,
+      timestamp: Date.now()
     });
   }, [address, genesisHash]);
 
