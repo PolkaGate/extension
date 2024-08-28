@@ -26,9 +26,8 @@ type EndpointsDelay = { name: string, delay: number | null | undefined, value: s
 
 function FullScreenRemoteNode ({ address, iconSize = 35 }: Props): React.ReactElement {
   const theme = useTheme();
-  const { account, chainName } = useInfo(address);
+  const { genesisHash } = useInfo(address);
   const { endpoint: endpointUrl, isOnManuel } = useEndpoint(address);
-  const genesisHash = account?.genesisHash;
   const endpointOptions = useEndpoints(genesisHash);
   const onExtension = useIsExtensionPopup();
 
@@ -93,15 +92,13 @@ function FullScreenRemoteNode ({ address, iconSize = 35 }: Props): React.ReactEl
       });
     });
 
-    chainName && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
-      const i = `${address}`;
-      const j = `${chainName}`;
+    genesisHash && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
       const savedEndpoints: ChromeStorageGetResponse = res?.endpoints || {};
 
-      savedEndpoints[i] = savedEndpoints[i] || {};
-      const checkForNewOne = newEndpoint === AUTO_MODE.value && !savedEndpoints[i][j]?.isOnManuel;
+      savedEndpoints[address] = savedEndpoints[address] || {};
+      const checkForNewOne = newEndpoint === AUTO_MODE.value && !savedEndpoints[address][genesisHash]?.isOnManuel;
 
-      savedEndpoints[i][j] = {
+      savedEndpoints[address][genesisHash] = {
         checkForNewOne,
         endpoint: newEndpoint,
         isOnManuel: newEndpoint !== AUTO_MODE.value,
@@ -111,7 +108,7 @@ function FullScreenRemoteNode ({ address, iconSize = 35 }: Props): React.ReactEl
       // eslint-disable-next-line no-void
       void chrome.storage.local.set({ endpoints: savedEndpoints });
     });
-  }, [address, chainName]);
+  }, [address, genesisHash]);
 
   useEffect(() => {
     // @ts-ignore
