@@ -16,23 +16,22 @@ interface Props {
 
 export default function RemoteNodeSelector ({ address, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const { account, chainName, endpoint } = useInfo(address);
+  const { account, endpoint } = useInfo(address);
   const endpointOptions = useEndpoints(genesisHash || account?.genesisHash);
 
   const onChangeEndpoint = useCallback((newEndpoint?: string | number): void => {
-    if (!newEndpoint || typeof (newEndpoint) === 'number' || !chainName || !address) {
+    if (!newEndpoint || typeof (newEndpoint) === 'number' || !genesisHash || !address) {
       return;
     }
 
-    chainName && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
-      const i = `${address}`;
-      const j = `${chainName}`;
+    genesisHash && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
+      const addressKey = String(address);
       const savedEndpoints: ChromeStorageGetResponse = res?.endpoints || {};
 
-      savedEndpoints[i] = savedEndpoints[i] || {};
-      const checkForNewOne = newEndpoint === AUTO_MODE.value && !savedEndpoints[i][j]?.isOnManuel;
+      savedEndpoints[addressKey] = savedEndpoints[addressKey] || {};
+      const checkForNewOne = newEndpoint === AUTO_MODE.value && !savedEndpoints[addressKey][genesisHash]?.isOnManuel;
 
-      savedEndpoints[i][j] = {
+      savedEndpoints[addressKey][genesisHash] = {
         checkForNewOne,
         endpoint: newEndpoint,
         isOnManuel: newEndpoint !== AUTO_MODE.value,
@@ -42,7 +41,7 @@ export default function RemoteNodeSelector ({ address, genesisHash }: Props): Re
       // eslint-disable-next-line no-void
       void chrome.storage.local.set({ endpoints: savedEndpoints });
     });
-  }, [address, chainName]);
+  }, [address, genesisHash]);
 
   return (
     <>
