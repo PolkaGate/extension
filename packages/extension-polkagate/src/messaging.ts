@@ -206,8 +206,8 @@ export async function removeAuthorization (id: string): Promise<ResponseAuthoriz
   return sendMessage('pri(authorize.remove)', id);
 }
 
-export async function ignoreAuthRequest (url: string): Promise<void> {
-  return sendMessage('pri(authorize.ignore)', url);
+export async function ignoreAuthRequest (id: string): Promise<void> {
+  return sendMessage('pri(authorize.ignore)', id);
 }
 
 export async function subscribeMetadataRequests (cb: (accounts: MetadataRequest[]) => void): Promise<boolean> {
