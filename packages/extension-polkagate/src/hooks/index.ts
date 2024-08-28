@@ -1,6 +1,7 @@
 // Copyright 2017-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+export { EndpointManager } from './EndpointManager';
 export { default as useAccount } from './useAccount';
 export { default as useAccountAssets } from './useAccountAssets';
 export { default as useAccountAssetsOptions } from './useAccountAssetsOptions';
