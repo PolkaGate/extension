@@ -458,6 +458,7 @@ export async function fastestConnection (endpoints: DropdownOption[]) {
 
   const api = await Promise.any(connections.map(({ connection }) => connection));
   // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   const selectedEndpoint = api.registry.knownTypes.provider.endpoint as string;
   const filteredConnections = connections.filter(({ wsProvider }) => wsProvider.endpoint !== selectedEndpoint);
 
