@@ -35,7 +35,7 @@ export default function Request ({ authRequest, hasBanner }: Props): React.React
         }
       })
       .catch(console.error);
-  }, [authRequest, authRequest.request.origin]);
+  }, [authRequest.request.origin]);
 
   const allAccounts = useMemo(() => accounts.map(({ address }) => address), [accounts]);
   const areAllCheck = useMemo(() => areArraysEqual([allAccounts, selectedAccounts]), [allAccounts, selectedAccounts]);

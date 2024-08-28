@@ -80,10 +80,10 @@ export default class Tabs {
       return Promise.resolve([]);
     }
 
-    const hasNewerAccountsSinceAuth = transformedAccounts.some(({ addedTime }) => addedTime && addedTime > auth.authorizedTime);
+    const hasNewerAccountsSinceAuth = !auth.authorizedTime || transformedAccounts.some(({ addedTime }) => addedTime && addedTime > auth.authorizedTime);
 
     if (hasNewerAccountsSinceAuth) {
-      return this.authorize(url, { origin: this.#state.stripUrl(url) }, true).then(() => this.accountsListAuthorized(url, { anyType }));
+      return this.authorize(url, { origin: auth.origin }, true).then(() => this.accountsListAuthorized(url, { anyType }));
     } else {
       return Promise.resolve(authorizedAccounts);
     }
