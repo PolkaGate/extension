@@ -19,7 +19,7 @@ import { useTranslation } from '../../../../components/translate';
 import { useAvailableToSoloStake, useBalances, useInfo, useMinToReceiveRewardsInSolo2, useStakingAccount, useStakingConsts } from '../../../../hooks';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
-import SelectValidators from '../partials/SelectValidators';
+import SelectValidatorsFs from '../partials/SelectValidatorsFs';
 import SetPayee from '../partials/SetPayee';
 
 interface Props {
@@ -46,7 +46,7 @@ const Warn = ({ text }: { text: string }) => {
   );
 };
 
-export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props): React.ReactElement {
+export default function SoloStake({ inputs, onBack, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const { api, decimal, formatted, genesisHash, token } = useInfo(address);
@@ -89,8 +89,8 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
   const buttonDisable = useMemo(() => !!alert || !amount, [alert, amount]);
   const isBusy = useMemo(() =>
     (!inputs?.estimatedFee || !inputs?.extraInfo?.['amount']) && isNextClicked
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  , [inputs?.extraInfo?.['amount'], inputs?.estimatedFee, isNextClicked]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    , [inputs?.extraInfo?.['amount'], inputs?.estimatedFee, isNextClicked]);
 
   useEffect(() => {
     if (!amountAsBN || !amount) {
@@ -292,7 +292,7 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
           <Typography fontSize='16px' fontWeight={500} pb='15px' width='100%'>
             {t('Now, select the validators you want to nominate, considering their properties, such as their commission rates. You can even filter them based on your preferences.')}
           </Typography>
-          <SelectValidators
+          <SelectValidatorsFs
             address={address}
             newSelectedValidators={newSelectedValidators}
             setNewSelectedValidators={setNewSelectedValidators}

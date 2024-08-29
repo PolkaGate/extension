@@ -17,7 +17,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { TwoButtons } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
 import { useInfo } from '../../../../../hooks';
-import SelectValidators from '../../../solo/partials/SelectValidators';
+import SelectValidatorsFs from '../../../solo/partials/SelectValidatorsFs';
 import { STEPS } from '../../stake';
 
 interface Props {
@@ -47,7 +47,7 @@ function arraysAreEqual(arr1: string[], arr2: string[]): boolean {
   return true;
 }
 
-export default function InputPage ({ address, inputs, pool, setInputs, setStep, staked, stakingConsts }: Props): React.ReactElement {
+export default function InputPage({ address, inputs, pool, setInputs, setStep, staked, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { api, formatted } = useInfo(address);
@@ -108,7 +108,7 @@ export default function InputPage ({ address, inputs, pool, setInputs, setStep, 
         {t('Manage your nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.')}
       </Typography>
       <Grid container item justifyContent='flex-start' mt='10px'>
-        <SelectValidators
+        <SelectValidatorsFs
           address={address}
           newSelectedValidators={newSelectedValidators}
           nominatedValidatorsIds={nominatedValidatorsIds}

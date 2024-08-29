@@ -17,7 +17,7 @@ import { TwoButtons } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
 import { useInfo, useStakingAccount, useStakingConsts } from '../../../../../hooks';
 import { STEPS } from '../../../pool/stake';
-import SelectValidators from '../../partials/SelectValidators';
+import SelectValidatorsFs from '../../partials/SelectValidatorsFs';
 
 interface Props {
   address: string;
@@ -43,7 +43,7 @@ function arraysAreEqual(arr1: string[], arr2: string[]): boolean {
   return true;
 }
 
-export default function InputPage ({ address, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function InputPage({ address, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const stakingConsts = useStakingConsts(address);
@@ -56,7 +56,7 @@ export default function InputPage ({ address, inputs, setInputs, setStep }: Prop
     stakingAccount === null || stakingAccount?.nominators?.length === 0
       ? null
       : stakingAccount?.nominators.map((item) => item.toString())
-  , [stakingAccount]);
+    , [stakingAccount]);
 
   const { call, params } = useMemo(() => {
     if (api && newSelectedValidators?.length) {
@@ -101,7 +101,7 @@ export default function InputPage ({ address, inputs, setInputs, setStep }: Prop
         {t('Manage your nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.')}
       </Typography>
       <Grid container item justifyContent='flex-start' mt='10px'>
-        <SelectValidators
+        <SelectValidatorsFs
           address={address}
           newSelectedValidators={newSelectedValidators}
           nominatedValidatorsIds={nominatedValidatorsIds}
