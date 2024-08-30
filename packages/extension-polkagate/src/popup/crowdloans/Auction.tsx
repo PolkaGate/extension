@@ -206,11 +206,12 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
           </Warning>
         </Grid>
       }
-      {auction && auction.auctionInfo &&
+      {auction?.auctionInfo &&
         <Grid container item m='auto' width='92%'>
           <Grid container item justifyContent='flex-end' mt='15px'>
             <Switch
               checkedLabel={t<string>('Block')}
+              defaultColor
               fontSize='15px'
               isChecked={viewType !== 'Date'}
               onChange={onChangeView}

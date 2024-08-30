@@ -1,29 +1,30 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Balance } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
+import type { Proxy, TxInfo } from '../../../../../util/types';
+import type { StakingInputs } from '../../../type';
 
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
 import { PROXY_TYPE } from '@polkadot/extension-polkagate/src/util/constants';
-import type { Balance } from '@polkadot/types/interfaces';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { ShowBalance, SignArea2, WrongPasswordAlert } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
 import { useInfo, useStakingAccount, useStakingConsts, useValidators, useValidatorsIdentities } from '../../../../../hooks';
-import type { Proxy, TxInfo } from '../../../../../util/types';
-import type { Inputs } from '../../../Entry';
 import { STEPS } from '../../../pool/stake';
-import ValidatorsTable from '../../partials/ValidatorsTable';
+import ValidatorsTableFS from '../../partials/ValidatorsTableFS';
 
 interface Props {
   address: string;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  inputs: Inputs;
+  inputs: StakingInputs;
   step: number;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>
 }
@@ -74,7 +75,7 @@ export default function Review({ address, inputs, setStep, setTxInfo, step }: Pr
         <WrongPasswordAlert />
       }
       <Grid item mt='10px' xs={12}>
-        <ValidatorsTable
+        <ValidatorsTableFS
           address={address}
           allValidatorsIdentities={allValidatorsIdentities}
           formatted={formatted}

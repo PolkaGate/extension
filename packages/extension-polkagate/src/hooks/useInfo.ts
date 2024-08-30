@@ -13,6 +13,7 @@ import { useAccount, useApi, useChain, useDecimal, useEndpoint, useFormatted, us
 
 interface AddressInfo {
   account: AccountJson | undefined;
+  accountName: string | undefined;
   api: ApiPromise | undefined;
   chain: Chain | null | undefined;
   chainName: string | undefined;
@@ -34,6 +35,7 @@ export default function useInfo (address: AccountId | string | undefined): Addre
 
   return useMemo(() => ({
     account,
+    accountName: account?.name,
     api,
     chain,
     chainName: sanitizeChainName(chain?.name),

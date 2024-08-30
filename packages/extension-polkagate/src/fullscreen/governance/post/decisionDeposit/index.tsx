@@ -18,6 +18,8 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { Identity, ShowBalance, SignArea2, Warning } from '../../../../components';
 import { useAccountDisplay, useBalances, useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
+import { getValue } from '../../../../popup/account/util';
+import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { PROXY_TYPE } from '../../../../util/constants';
 import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { DraggableModal } from '../../components/DraggableModal';
@@ -44,7 +46,7 @@ const STEPS = {
   SIGN_QR: 200
 };
 
-export default function DecisionDeposit({ address, open, refIndex, setOpen, track }: Props): React.ReactElement {
+export default function DecisionDeposit ({ address, open, refIndex, setOpen, track }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, decimal, formatted, token } = useInfo(address);
   const theme = useTheme();
@@ -54,7 +56,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
 
   const proxyItems = useMemo(() =>
     proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[]
-    , [proxies]);
+  , [proxies]);
 
   const [step, setStep] = useState<number>(STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
@@ -123,7 +125,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
 
   const HEIGHT = 550;
 
-  const notEnoughBalance = useMemo(() => amount && estimatedFee && balances?.availableBalance?.lt(amount.add(estimatedFee)), [amount, balances, estimatedFee]);
+  const notEnoughBalance = useMemo(() => amount && estimatedFee && getValue('transferable', balances)?.lt(amount.add(estimatedFee)), [amount, balances, estimatedFee]);
 
   return (
     <DraggableModal onClose={handleClose} open={open} width={500}>

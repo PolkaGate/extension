@@ -40,7 +40,6 @@ export type AuthUrls = Record<string, AuthUrlInfo>;
 export interface AuthUrlInfo {
   count: number;
   id: string;
-  isAllowed?: boolean;
   origin: string;
   url: string;
   authorizedAccounts: string[];
@@ -259,13 +258,10 @@ export default class State {
 
       const strippedUrl = this.stripUrl(url);
 
-      const isAllowed = !!authorizedAccounts.length;
-
       const authInfo: AuthUrlInfo = {
         authorizedAccounts,
         count: 0,
         id: idStr,
-        isAllowed,
         origin,
         url
       };
@@ -309,6 +305,11 @@ export default class State {
   public async updateDefaultAuthAccounts (newList: string[]) {
     this.defaultAuthAccountSelection = newList;
     await this.saveDefaultAuthAccounts();
+  }
+
+  public ignoreAuthRequest (id: string) {
+    delete this.#authRequests[id];
+    this.updateIconAuth(true);
   }
 
   private metaComplete = (id: string, resolve: (result: boolean) => void, reject: (error: Error) => void): Resolver<boolean> => {
@@ -379,17 +380,6 @@ export default class State {
     await this.saveCurrentAuthList();
   }
 
-  public async toggleAuthorization (url: string): Promise<AuthUrls> {
-    const entry = this.#authUrls[url];
-
-    assert(entry, `The source ${url} is not known`);
-
-    this.#authUrls[url].isAllowed = !entry.isAllowed;
-    await this.saveCurrentAuthList();
-
-    return this.#authUrls;
-  }
-
   public async removeAuthorization (url: string): Promise<AuthUrls> {
     const entry = this.#authUrls[url];
 
@@ -427,7 +417,7 @@ export default class State {
 
     if (this.#authUrls[idStr]) {
       // this url was seen in the past
-      assert(this.#authUrls[idStr].authorizedAccounts || this.#authUrls[idStr].isAllowed, `The source ${url} is not allowed to interact with this extension`);
+      assert(this.#authUrls[idStr].authorizedAccounts, `The source ${url} is not allowed to interact with this extension`);
 
       return {
         authorizedAccounts: [],
@@ -455,7 +445,6 @@ export default class State {
     const entry = this.#authUrls[this.stripUrl(url)];
 
     assert(entry, `The source ${url} has not been enabled yet`);
-    assert(entry.isAllowed, `The source ${url} is not allowed to interact with this extension`);
 
     return true;
   }

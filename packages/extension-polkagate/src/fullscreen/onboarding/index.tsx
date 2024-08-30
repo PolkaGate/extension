@@ -14,13 +14,17 @@ import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constan
 import { AccountContext, ActionContext } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
 import { createAccountExternal, windowOpen } from '../../messaging';
+import FollowUs from '../../popup/welcome/FollowUs';
+import NeedHelp from '../../popup/welcome/NeedHelp';
 import Privacy from '../../popup/welcome/Privacy';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import IconBox from './IconBox';
 
 const demoAccount = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
 
-function Onboarding(): React.ReactElement {
+export const ICON_BOX_WIDTH = '300px';
+
+function Onboarding (): React.ReactElement {
   const { t } = useTranslation();
 
   useFullscreen();
@@ -93,7 +97,7 @@ function Onboarding(): React.ReactElement {
         noChainSwitch
       />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
-        <Grid container item sx={{ display: 'block', px: '10%' }}>
+        <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
               <FontAwesomeIcon
@@ -103,7 +107,7 @@ function Onboarding(): React.ReactElement {
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t('Welcome to {{extensionName}}!', { replace: { extensionName: 'Polkagate' } })}
+                {t('Welcome!', { replace: { extensionName: 'Polkagate' } })}
               </Typography>
             </Grid>
           </Grid>
@@ -154,9 +158,11 @@ function Onboarding(): React.ReactElement {
               label={t('Explore a Demo')}
               onClick={onExploreDemo}
             />
-            <Grid container justifyContent='center'>
+            <Grid alignItems='center' container justifyContent='space-between' sx={{ bottom: 10, position: 'absolute', width: 'inherit' }}>
+              <FollowUs width={ICON_BOX_WIDTH} />
+              <NeedHelp />
               {/* eslint-disable-next-line react/jsx-no-bind */}
-              <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ bottom: 10, cursor: 'pointer', fontSize: '12px', position: 'absolute', textAlign: 'center', textDecoration: 'underline' }}>
+              <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ cursor: 'pointer', fontSize: '14px', textAlign: 'right', textDecoration: 'underline', width: ICON_BOX_WIDTH }}>
                 {t('Privacy and Security')}
               </Typography>
             </Grid>

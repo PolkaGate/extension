@@ -1371,11 +1371,16 @@
   "How much would you like to send?": "",
   "Existential Deposit: {{ED}}": "",
   "Accounts balances updated!": "",
-  "Unlocking information fetched!": "",
   "No accounts found!": "",
   "All accounts in the {{text}} profile have been {{verb}}.": "",
   "Accounts' balances updated!": "",
   "The account has been successfully removed!": "",
   "The account address, formatted for {{chainName}}, has been copied to the clipboard!": "",
-  "The transaction has been finalized!": ""
+  "The transaction has been finalized!": "",
+  "Delegation status": "",
+  "Accounts in the {{profileName}} profile are now {{visibility}} websites.": "",
+  "{{accountName}} default chain switched to {{chainName}}.": "",
+  "Social Media": "",
+  "Need": "",
+  "Help?": ""
 }

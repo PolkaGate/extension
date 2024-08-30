@@ -29,7 +29,7 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function LegacyApps({ setMode }: Props): React.ReactElement {
+export default function LegacyApps ({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

@@ -1,20 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { AnyTuple } from '@polkadot/types/types';
+import type { TxInfo } from '../../util/types';
+import type { StakingInputs } from './type';
 
 import { Grid } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
-import type { Balance } from '@polkadot/types/interfaces';
-
 import { useBalances } from '../../hooks';
-import type { MyPoolInfo, Payee, TxInfo, ValidatorInfo } from '../../util/types';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import WaitScreen from '../governance/partials/WaitScreen';
 import Confirmation from './easyMode/Confirmation';
@@ -25,18 +21,6 @@ import SoloStake from './solo/stake';
 import EasyMode from './easyMode';
 import { STEPS } from '.';
 
-export interface Inputs {
-  amount?: string | undefined; // deprecated, moved to extraInfo
-  call: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
-  mode?: number;
-  payee?: Payee;
-  params: unknown[] | (() => unknown)[];
-  pool?: MyPoolInfo,
-  estimatedFee?: Balance;
-  selectedValidators?: ValidatorInfo[],
-  extraInfo?: Record<string, unknown>
-}
-
 interface Props {
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
@@ -45,12 +29,12 @@ interface Props {
   txInfo: TxInfo | undefined
 }
 
-function Entry({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.ReactElement {
+function Entry ({ onBack, setStep, setTxInfo, step, txInfo }: Props): React.ReactElement {
   const { address } = useParams<{ address: string }>();
 
   const [refresh, setRefresh] = useState<boolean>(false);
   const balances = useBalances(address, refresh, setRefresh);
-  const [inputs, setInputs] = useState<Inputs>();
+  const [inputs, setInputs] = useState<StakingInputs>();
 
   const closeConfirmation = useCallback(() => {
     setRefresh(true);

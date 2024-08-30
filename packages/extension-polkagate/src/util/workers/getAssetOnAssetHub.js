@@ -46,6 +46,8 @@ async function getAssetOnAssetHub(addresses, assetsToBeFetched, chainName) {
         },
         chainName,
         decimal,
+        freeBalance: isFrozen ? 0 : _balance, // JUST to comply with the rule ...
+        frozenBalance: isFrozen ? balance : 0, // JUST to comply with the rule that total=available + reserve
         genesisHash: api.genesisHash.toString(),
         isAsset: true,
         priceId: asset?.priceId,

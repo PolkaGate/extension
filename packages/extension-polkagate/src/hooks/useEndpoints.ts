@@ -36,22 +36,25 @@ export function useEndpoints (genesisHash: string | null | undefined): DropdownO
     const option = genesisOptions?.find((o) => o.value === genesisHash);
     const chainName = sanitizeChainName(option?.text);
 
+    if (!chainName) {
+      return undefined;
+    }
+
     const endpoints = allEndpoints?.filter((e) => e.value &&
       (String(e.info)?.toLowerCase() === chainName?.toLowerCase() ||
         String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase() ?? ''))
     );
 
-    const endpointOptions = chainName
-      ? supportedLC.includes(chainName)
-        ? endpoints?.map((endpoint) => ({ text: endpoint.textBy, value: endpoint.value }))
-        : endpoints?.filter((e) => String(e.value).startsWith('wss')).map((e) => ({ text: e.textBy, value: e.value }))
-      : undefined;
+    if (!endpoints) {
+      return undefined;
+    }
 
-    endpointOptions && endpointOptions?.length > 1 &&
-      endpointOptions?.unshift(AUTO_MODE);
+    const hasLightClientSupport = supportedLC.includes(chainName);
+    const endpointOptions = endpoints.map((endpoint) => ({ text: endpoint.textBy, value: endpoint.value }))
 
-    return endpointOptions;
-    // return endpoints?.filter((e) => String(e.value).startsWith('wss')).map((e) => ({ text: e.textBy, value: e.value }));
+    return hasLightClientSupport
+      ? endpointOptions
+      : endpointOptions.filter((o) => String(o.value).startsWith('wss'))
   }, [allEndpoints, genesisHash, genesisOptions]);
 
   return endpoints ?? [];

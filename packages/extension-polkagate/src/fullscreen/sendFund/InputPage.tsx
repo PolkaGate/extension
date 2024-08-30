@@ -19,6 +19,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AmountWithOptions, FullscreenChain, Infotip2, InputAccount, ShowBalance, TwoButtons, Warning } from '../../components';
 import { useTranslation } from '../../components/translate';
+import { getValue } from '../../popup/account/util';
 import { useInfo, useTeleport } from '../../hooks';
 import { ASSET_HUBS } from '../../util/constants';
 import { amountToHuman, amountToMachine } from '../../util/utils';
@@ -112,6 +113,8 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
     ? balances?.ED
     : api && api.consts['balances']['existentialDeposit'] as unknown as BN;
 
+  const transferableBalance = useMemo(() => getValue('transferable', balances), [balances]);
+
   const amountAsBN = useMemo(
     () =>
       balances?.decimal ? amountToMachine(amount, balances.decimal) : undefined
@@ -119,7 +122,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
     [amount, balances]);
 
   const warningMessage = useMemo(() => {
-    if (transferType !== 'All' && amountAsBN && balances?.decimal && ED) {
+    if (transferType !== 'All' && amountAsBN && balances?.decimal && ED && transferableBalance) {
       const totalBalance = balances.freeBalance.add(balances.reservedBalance);
       const toTransferBalance = assetId
         ? amountAsBN
@@ -127,7 +130,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
 
       const remainingBalanceAfterTransfer = totalBalance.sub(toTransferBalance);
 
-      if (balances.availableBalance.isZero() || balances.availableBalance.lt(toTransferBalance)) {
+      if (transferableBalance.isZero() || transferableBalance.lt(toTransferBalance)) {
         return t('There is no sufficient transferable balance!');
       }
 
@@ -137,7 +140,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
     }
 
     return undefined;
-  }, [ED, amountAsBN, assetId, balances, estimatedCrossChainFee, estimatedFee, t, transferType]);
+  }, [ED, amountAsBN, assetId, balances, transferableBalance, estimatedCrossChainFee, estimatedFee, t, transferType]);
 
   const destinationGenesisHashes = useMemo((): DropdownOption[] => {
     const currentChainOption = chain ? [{ text: chain.name, value: chain.genesisHash as string }] : [];
@@ -197,11 +200,11 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
       !recipientChainGenesisHash ||
       !(recipientAddress && inputs?.recipientAddress) ||
       Number(amount) <= 0 ||
-      amountAsBN?.gt(new BN(balances?.availableBalance || BN_ZERO)) ||
+      amountAsBN?.gt(new BN(transferableBalance || BN_ZERO)) ||
       !inputs?.totalFee ||
       !!warningMessage
     ,
-    [address, amount, amountAsBN, balances?.availableBalance, inputs?.recipientAddress, inputs?.totalFee, recipientAddress, recipientChainGenesisHash, warningMessage]);
+    [address, amount, amountAsBN, inputs?.recipientAddress, inputs?.totalFee, recipientAddress, recipientChainGenesisHash, transferableBalance, warningMessage]);
 
   const calculateFee = useCallback((amount: Balance | BN, setFeeCall: React.Dispatch<React.SetStateAction<Balance | undefined>>) => {
     /** to set Maximum fee which will be used to estimate and show max transferable amount */
@@ -297,12 +300,12 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
   }, [amountAsBN, estimatedFee, estimatedCrossChainFee, setInputs, call, recipientAddress, isCrossChain, crossChainParams, assetId, formatted, amount, recipientChainName, recipientChainGenesisHash, transferType, onChainCall?.section, balances]);
 
   useEffect(() => {
-    if (!api || !balances) {
+    if (!api || !transferableBalance) {
       return;
     }
 
-    calculateFee(balances?.availableBalance, setMaxFee);
-  }, [api, balances, calculateFee]);
+    calculateFee(transferableBalance, setMaxFee);
+  }, [api, calculateFee, transferableBalance]);
 
   useEffect(() => {
     if (!api || amountAsBN === undefined || !balances) {
@@ -336,18 +339,18 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
   }, [call, formatted, isCrossChain, crossChainParams]);
 
   const setWholeAmount = useCallback(() => {
-    if (!api || !balances?.availableBalance || !maxFee || !balances || !ED) {
+    if (!api || !transferableBalance || !maxFee || !balances || !ED) {
       return;
     }
 
     setTransferType('All');
 
-    const _isAvailableZero = balances.availableBalance.isZero();
+    const _isAvailableZero = transferableBalance.isZero();
 
     const _maxFee = assetId === undefined ? maxFee : BN_ZERO;
 
-    const _canNotTransfer = _isAvailableZero || _maxFee.gte(balances.availableBalance);
-    const allAmount = _canNotTransfer ? '0' : amountToHuman(balances.availableBalance.sub(_maxFee).toString(), balances.decimal);
+    const _canNotTransfer = _isAvailableZero || _maxFee.gte(transferableBalance);
+    const allAmount = _canNotTransfer ? '0' : amountToHuman(transferableBalance.sub(_maxFee).toString(), balances.decimal);
 
     setAmount(allAmount);
   }, [api, assetId, balances, ED, maxFee]);
@@ -406,7 +409,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
             </Typography>
           </Infotip2>
           <ShowBalance
-            balance={balances?.availableBalance}
+            balance={transferableBalance}
             decimal={balances?.decimal}
             decimalPoint={4}
             token={balances?.token}

@@ -97,7 +97,6 @@ function Modify ({ isPasswordError, newPassword, onBackClick, onPassChange, setI
             {t<string>('Password Enabled')}<br />
           </Typography>
           <Switch
-            changeBackground
             fontSize='17px'
             isChecked={!isRemovePasswordChecked}
             onChange={onCheckChange}

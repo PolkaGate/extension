@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+import type { HexString } from '@polkadot/util/types';
 import type { DropdownOption } from '../util/types';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -12,7 +12,7 @@ import chains from '../util/chains';
 const RELAY_CHAIN = 'Relay Chain';
 
 export default function (showAnyChain = true): DropdownOption[] {
-  const [metadataChains, setMetadataChains] = useState<DropdownOption[]>([]);
+  const [metadataChains, setMetadataChains] = useState<{ text: string; value: HexString}[]>([]);
 
   useEffect(() => {
     getAllMetadata().then((metadataDefs) => {
@@ -40,15 +40,15 @@ export default function (showAnyChain = true): DropdownOption[] {
           // get any chain present in the metadata and not already part of chains
           ...metadataChains.filter(
             ({ value }) => {
-              return !chains.find(
-                ({ genesisHash }) => genesisHash === value);
+              return !chains.find(({ genesisHash }) => genesisHash === value);
             }
-          ))
+          )
+        )
         // filter testnets if it is not enabled by user
         .sort((a, b) => a.text.localeCompare(b.text))
     ];
 
-    showAnyChain && allChains.unshift({ text: 'Allow use on any chain', value: '' })
+    showAnyChain && allChains.unshift({ text: 'Allow use on any chain', value: '' as HexString });
 
     return allChains;
   }, [metadataChains, showAnyChain]);

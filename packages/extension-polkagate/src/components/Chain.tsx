@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, type SxProps, type Theme } from '@mui/material';
@@ -10,7 +10,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useGenesisHashOptions, useIsTestnetEnabled } from '@polkadot/extension-polkagate/src/hooks';
 import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
+import { updateRecentChains } from '../util/utils';
 import Select2 from './Select2';
 
 interface Props {
@@ -23,7 +23,7 @@ interface Props {
   disabledItems?: string[] | number[];
 }
 
-function Chain({ address, allowAnyChainOption, defaultValue, disabledItems, label, onChange, style }: Props) {
+function Chain ({ address, allowAnyChainOption, defaultValue, disabledItems, label, onChange, style }: Props) {
   let options = useGenesisHashOptions();
   const isTestnetEnabled = useIsTestnetEnabled();
 
@@ -33,7 +33,7 @@ function Chain({ address, allowAnyChainOption, defaultValue, disabledItems, labe
     !isTestnetEnabled
       ? [...(disabledItems || []), ...TEST_NETS]
       : disabledItems
-    , [disabledItems, isTestnetEnabled]);
+  , [disabledItems, isTestnetEnabled]);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     try {
@@ -45,29 +45,7 @@ function Chain({ address, allowAnyChainOption, defaultValue, disabledItems, labe
         return;
       }
 
-      chrome.storage.local.get('RecentChains', (res) => {
-        const accountsAndChains = res?.RecentChains ?? {};
-        let myRecentChains = accountsAndChains[address] as string[];
-
-        if (!myRecentChains) {
-          if (INITIAL_RECENT_CHAINS_GENESISHASH.includes(currentGenesisHash)) {
-            accountsAndChains[address] = INITIAL_RECENT_CHAINS_GENESISHASH;
-          } else {
-            INITIAL_RECENT_CHAINS_GENESISHASH.length = 3;
-            accountsAndChains[address] = [...INITIAL_RECENT_CHAINS_GENESISHASH, currentGenesisHash];
-          }
-
-          // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ RecentChains: accountsAndChains });
-        } else if (myRecentChains && !(myRecentChains.includes(currentGenesisHash))) {
-          myRecentChains.unshift(currentGenesisHash);
-          myRecentChains.pop();
-          accountsAndChains[address] = myRecentChains;
-
-          // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ RecentChains: accountsAndChains });
-        }
-      });
+      updateRecentChains(address, currentGenesisHash).catch(console.error);
     } catch (error) {
       console.error(error);
     }

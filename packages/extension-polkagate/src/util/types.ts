@@ -627,6 +627,7 @@ export interface BalancesInfo extends DeriveBalancesAll {
   decimal: number;
   genesisHash: string;
   pooledBalance?: BN;
+  frozenBalance: BN;
   soloTotal?: BN;
   token: string;
   totalBalance?: number;
@@ -769,7 +770,8 @@ export interface AlertContextType {
 }
 
 // TODO: FixMe, Controller is deprecated
-export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }
+export interface PayeeAccount { Account: string }
+export type Payee = 'Staked' | 'Controller' | 'Stash' | PayeeAccount;
 export interface SoloSettings {
   controllerId?: AccountId | string | undefined,
   payee: Payee,
@@ -804,3 +806,5 @@ export interface SavedEndpoint {
 }
 
 export type ChromeStorageGetResponse = Record<string, Record<string, SavedEndpoint | undefined> | undefined>;
+
+export type RecentChainsType = Record<string, string[]>;

@@ -9,13 +9,13 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
-import type { DropdownOption, SavedMetaData, TransactionDetail } from './types';
+import type { RecentChainsType, SavedMetaData, TransactionDetail } from './types';
 
 import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { EXTRA_PRICE_IDS } from './api/getPrices';
-import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, PROFILE_COLORS, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS } from './constants';
+import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, INITIAL_RECENT_CHAINS_GENESISHASH, PROFILE_COLORS, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS } from './constants';
 
 interface Meta {
   docs: Text[];
@@ -405,7 +405,7 @@ export const getPriceIdByChainName = (chainName?: string) => {
     _chainName?.replace('assethub', '')?.replace('people', '');
 };
 
-export function areArraysEqual<T> (arrays: T[][]): boolean {
+export function areArraysEqual<T>(arrays: T[][]): boolean {
   if (arrays.length < 2) {
     return true; // Single array or empty input is considered equal
   }
@@ -428,7 +428,7 @@ export function areArraysEqual<T> (arrays: T[][]): boolean {
   );
 }
 
-export function extractBaseUrl (url: string | undefined) {
+export function extractBaseUrl(url: string | undefined) {
   try {
     if (!url) {
       return;
@@ -441,6 +441,39 @@ export function extractBaseUrl (url: string | undefined) {
     console.error('Invalid URL:', error);
 
     return null;
+  }
+}
+
+export async function updateRecentChains (addressKey: string, genesisHashKey: string) {
+  try {
+    const result = await new Promise<{ RecentChains?: RecentChainsType }>((resolve) => chrome.storage.local.get('RecentChains', resolve));
+    const accountsAndChains = result.RecentChains ?? {};
+    const myRecentChains = accountsAndChains[addressKey] ?? [];
+
+    if (!myRecentChains.length) {
+      if (INITIAL_RECENT_CHAINS_GENESISHASH.includes(genesisHashKey)) {
+        accountsAndChains[addressKey] = INITIAL_RECENT_CHAINS_GENESISHASH;
+      } else {
+        const initialChains = INITIAL_RECENT_CHAINS_GENESISHASH.slice(0, 3);
+
+        accountsAndChains[addressKey] = [...initialChains, genesisHashKey];
+      }
+
+      await new Promise<void>((resolve) =>
+        chrome.storage.local.set({ RecentChains: accountsAndChains }, resolve)
+      );
+    } else if (!myRecentChains.includes(genesisHashKey)) {
+      myRecentChains.unshift(genesisHashKey);
+      myRecentChains.pop();
+      accountsAndChains[addressKey] = myRecentChains;
+
+      await new Promise<void>((resolve) =>
+        chrome.storage.local.set({ RecentChains: accountsAndChains }, resolve)
+      );
+    }
+  } catch (error) {
+    console.error('Error updating recent chains:', error);
+    throw error;
   }
 }
 

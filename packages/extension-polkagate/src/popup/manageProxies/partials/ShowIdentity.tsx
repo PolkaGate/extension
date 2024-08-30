@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -8,7 +7,7 @@ import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { type SxProps, type Theme, Grid, Typography } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 // @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React, { useEffect, useState } from 'react';
@@ -30,8 +29,9 @@ interface IdentityProps {
   web: string | undefined;
 }
 
-export default function ShowIdentity({ accountIdentity, style }: Props): React.ReactElement {
+export default function ShowIdentity ({ accountIdentity, style }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   const [identity, setIdentity] = useState<IdentityProps | undefined>();
 
@@ -55,10 +55,10 @@ export default function ShowIdentity({ accountIdentity, style }: Props): React.R
   return (
     <Grid sx={{ ...style }}>
       <Label label={t('Identity')}>
-        <Grid container sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', maxHeight: '170px', minHeight: '38px', overflow: 'hidden' }}>
+        <Grid container sx={{ bgcolor: 'background.paper', borderRadius: '5px', maxHeight: '170px', minHeight: '38px', overflow: 'hidden' }}>
           {accountIdentity
             ? <Grid container item>
-              <Grid display='block' item sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light', p: '10px' }} xs={4}>
+              <Grid display='block' item sx={{ borderRight: '1px solid', borderRightColor: theme.palette.divider, p: '10px' }} xs={4}>
                 <Typography fontSize='12px' fontWeight={400}>
                   {t('Display')}:
                 </Typography>

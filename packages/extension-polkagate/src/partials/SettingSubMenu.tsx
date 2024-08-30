@@ -14,7 +14,7 @@ import settings from '@polkadot/ui-settings';
 import { ActionContext, Checkbox2, ColorContext, FullScreenIcon, Infotip2, MenuItem, Select, Switch, VaadinIcon } from '../components';
 import { getStorage, updateStorage } from '../components/Loading';
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
-import { useIsLoginEnabled, useIsPopup, useTranslation } from '../hooks';
+import { useIsExtensionPopup, useIsLoginEnabled, useTranslation } from '../hooks';
 import { lockExtension, setNotification } from '../messaging';
 import { NO_PASS_PERIOD } from '../util/constants';
 import getLanguageOptions from '../util/getLanguageOptions';
@@ -26,10 +26,10 @@ interface Props {
   onChange: () => void;
 }
 
-export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setTestnetEnabledChecked, show }: Props): React.ReactElement {
+export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, setTestnetEnabledChecked, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isPopup = useIsPopup();
+  const isPopup = useIsExtensionPopup();
   const isLoginEnabled = useIsLoginEnabled();
   const onAction = useContext(ActionContext);
   const colorMode = useContext(ColorContext);
@@ -96,6 +96,7 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
             <Grid item>
               <Switch
                 checkedLabel={t('Dark')}
+                defaultColor
                 fontSize='17px'
                 isChecked={theme.palette.mode === 'dark'}
                 onChange={onChangeTheme}
@@ -127,7 +128,7 @@ export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setT
                 <Grid item>
                   <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '20px', my: 'auto' }} />
                 </Grid>
-                <FullScreenIcon url='/' />
+                <FullScreenIcon url='/' isSettingSubMenu/>
               </>
             }
           </Grid>

@@ -12,7 +12,7 @@ import ThroughProxy from '../partials/ThroughProxy';
 import { AccountHolder } from '.';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   showDivider?: boolean;
   style?: SxProps<Theme> | undefined;
   selectedProxyAddress?: string;

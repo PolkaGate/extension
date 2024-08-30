@@ -1,28 +1,29 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography } from '@mui/material';
 import type { ValidatorInfo } from 'extension-polkagate/src/util/types';
+import type { BN } from '@polkadot/util';
+import type { StakingInputs } from '../../../type';
+
+import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { TwoButtons } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
 import { useInfo, useStakingAccount, useStakingConsts } from '../../../../../hooks';
-import type { Inputs } from '../../../Entry';
 import { STEPS } from '../../../pool/stake';
 import SelectValidators from '../../partials/SelectValidators';
 
 interface Props {
   address: string;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
-  inputs: Inputs | undefined;
+  setInputs: React.Dispatch<React.SetStateAction<StakingInputs | undefined>>;
+  inputs: StakingInputs | undefined;
 }
 
 function arraysAreEqual(arr1: string[], arr2: string[]): boolean {
@@ -42,7 +43,7 @@ function arraysAreEqual(arr1: string[], arr2: string[]): boolean {
   return true;
 }
 
-export default function InputPage({ address, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function InputPage ({ address, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const stakingConsts = useStakingConsts(address);
@@ -55,7 +56,7 @@ export default function InputPage({ address, inputs, setInputs, setStep }: Props
     stakingAccount === null || stakingAccount?.nominators?.length === 0
       ? null
       : stakingAccount?.nominators.map((item) => item.toString())
-    , [stakingAccount]);
+  , [stakingAccount]);
 
   const { call, params } = useMemo(() => {
     if (api && newSelectedValidators?.length) {

@@ -1362,5 +1362,12 @@
   "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.": "Contrôlez les comptes visibles auxquels les sites web peuvent accéder. Mettez à jour ou refusez l'accès en ajustant la liste ou en supprimant l'entrée du site. Seuls vos comptes visibles sont accessibles.",
   "Make accounts visible": "Rendre les comptes visibles",
   "How much would you like to send?": "Combien souhaitez-vous envoyer ?",
-  "Existential Deposit: {{ED}}": "Dépôt existentiel : {{ED}}"
+  "Existential Deposit: {{ED}}": "Dépôt existentiel : {{ED}}",
+  "Accounts balances updated!": "Soldes des comptes mis à jour !",
+  "No accounts found!": "Aucun compte trouvé !",
+  "All accounts in the {{text}} profile have been {{verb}}.": "Tous les comptes du profil {{text}} ont été {{verb}}.",
+  "Accounts' balances updated!": "Les soldes des comptes ont été mis à jour !",
+  "The account has been successfully removed!": "Le compte a été supprimé avec succès !",
+  "The account address, formatted for {{chainName}}, has been copied to the clipboard!": "L'adresse du compte, formatée pour {{chainName}}, a été copiée dans le presse-papiers !",
+  "The transaction has been finalized!": "La transaction a été finalisée !"
 }

@@ -1357,5 +1357,12 @@
   "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed.": "Контролируйте, какие видимые аккаунты доступны для сайтов. Обновите или откажите в доступе, изменив список или удалив запись сайта. Доступны только ваши видимые аккаунты.",
   "Make accounts visible": "Сделать аккаунты видимыми",
   "How much would you like to send?": "Сколько вы хотите отправить?",
-  "Existential Deposit: {{ED}}": "Экзистенциальный депозит: {{ED}}"
+  "Existential Deposit: {{ED}}": "Экзистенциальный депозит: {{ED}}",
+  "Accounts balances updated!": "Баланс счетов обновлен!",
+  "No accounts found!": "Счета не найдены!",
+  "All accounts in the {{text}} profile have been {{verb}}.": "Все счета в профиле {{text}} были {{verb}}.",
+  "Accounts' balances updated!": "Баланс счетов обновлен!",
+  "The account has been successfully removed!": "Аккаунт был успешно удален!",
+  "The account address, formatted for {{chainName}}, has been copied to the clipboard!": "Адрес аккаунта, форматированный для {{chainName}}, скопирован в буфер обмена!",
+  "The transaction has been finalized!": "Транзакция завершена!"
 }

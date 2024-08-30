@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -45,7 +44,7 @@ export const MODAL_IDS = {
   STAKE_EXTRA: 6
 };
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   useFullscreen();
 
   const { t } = useTranslation();
@@ -67,19 +66,19 @@ export default function Index(): React.ReactElement {
   const [currentEraIndex, setCurrentEraIndex] = useState<number | undefined>();
 
   useEffect(() => {
-    api && api.derive.session?.progress().then((info) => {
+    api?.derive.session?.progress().then((info) => {
       setSessionInfo({
         currentEra: Number(info.currentEra),
         eraLength: Number(info.eraLength),
         eraProgress: Number(info.eraProgress)
       });
-    });
+    }).catch(console.error);
   }, [api]);
 
   useEffect((): void => {
-    api && api.query.staking && api.query.staking.currentEra().then((ce) => {
+    api?.query['staking']?.['currentEra']().then((ce) => {
       setCurrentEraIndex(Number(ce));
-    });
+    }).catch(console.error);
   }, [api]);
 
   const { redeemable, toBeReleased, unlockingAmount } = useMemo(() => {
@@ -91,7 +90,7 @@ export default function Index(): React.ReactElement {
     let redeemValue = BN_ZERO;
     const toBeReleased = [];
 
-    if (pool !== null && pool.member?.unbondingEras) { // if pool is fetched but account belongs to no pool then pool===null
+    if (pool?.member?.unbondingEras) { // if pool is fetched but account belongs to no pool then pool===null
       for (const [era, unbondingPoint] of Object.entries(pool.member?.unbondingEras)) {
         const remainingEras = Number(era) - currentEraIndex;
 
@@ -116,7 +115,7 @@ export default function Index(): React.ReactElement {
     openOrFocusTab(`/accountfs/${address}/0`, true);
   }, [address]);
 
-  const getTitle = useCallback((step): string => {
+  const getTitle = useCallback((step: number): string => {
     switch (step) {
       case STEPS.JOIN_POOL:
         return t('Join Pool');
@@ -149,7 +148,7 @@ export default function Index(): React.ReactElement {
         />
       }
       {showId === MODAL_IDS.STAKE && // this is not a modal
-        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '6%' }}>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '4%' }}>
           <Bread />
           <Title
             height='85px'

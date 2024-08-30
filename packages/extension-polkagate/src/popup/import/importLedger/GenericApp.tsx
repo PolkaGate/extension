@@ -64,7 +64,7 @@ const AdvanceModeBtn = ({ disabled, isAdvancedMode, label, onClick }: AdvancedMo
         ? <StandardModeIcon sx={{ color: 'primary.main', fontSize: '25px' }} />
         : <AdvancedModeIcon sx={{ color: 'primary.main', fontSize: '25px' }} />
       }
-      <Typography fontSize='16px' fontWeight={400} lineHeight='36px' pl='10px' sx={{ textDecoration: 'underline' }}>
+      <Typography fontSize='16px' fontWeight={400} lineHeight='35px' pl='10px' sx={{ textDecoration: 'underline' }}>
         {label}
       </Typography>
     </Grid>
@@ -132,7 +132,7 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
   }, [savedAccountCount, numberOfSelectedAccounts, onAction]);
 
   const handleCreateAccount = useCallback((address: string, index: number, offset?: number) => {
-    createAccountHardware(address, 'ledger', index, 0, name(index, offset), POLKADOT_GENESIS)
+    createAccountHardware(address, 'ledger', index, offset ?? 0, name(index, offset), POLKADOT_GENESIS)
       .then(() => {
         const metaData = JSON.stringify({ isGeneric: true });
 
@@ -155,7 +155,7 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
       });
   }, [name, isAdvancedMode]);
 
-  const onSave = useCallback(() => {
+  const onImport = useCallback(() => {
     if (isAdvancedMode) {
       setIsBusy(true);
       address && handleCreateAccount(address, accountIndex, addressOffset);
@@ -287,7 +287,7 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
               disabled={ledgerLocked ? false : (!!error || !!ledgerError || importDisabled)}
               isBusy={ledgerLocked ? false : isBusy}
               mt='30px'
-              onPrimaryClick={ledgerLocked ? refresh : onSave}
+              onPrimaryClick={ledgerLocked ? refresh : onImport}
               onSecondaryClick={onBack}
               primaryBtnText={ledgerLocked ? t('Refresh') : t('Import')}
               secondaryBtnText={t('Back')}

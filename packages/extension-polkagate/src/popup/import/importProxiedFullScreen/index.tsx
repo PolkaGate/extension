@@ -7,7 +7,6 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import type { HexString } from '@polkadot/util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-// @ts-ignore
 import Chance from 'chance';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
@@ -32,7 +31,7 @@ function ImportProxiedFS (): React.ReactElement {
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
   const genesisOptions = useGenesisHashOptions();
-  const chance = new Chance();
+  const random = useMemo(() => new Chance(), []);
 
   const selectableChains = useMemo(() => genesisOptions.filter(({ value }) => PROXY_CHAINS.includes(value as string)), [genesisOptions]);
 
@@ -84,7 +83,7 @@ function ImportProxiedFS (): React.ReactElement {
     try {
       for (let index = 0; index < selectedProxied.length; index++) {
         const address = selectedProxied[index];
-        const randomName = (chance?.name() as string)?.split(' ')?.[0] || `Proxied ${index + 1}`;
+        const randomName = random?.name()?.split(' ')?.[0] || `Proxied ${index + 1}`;
 
         await createAccountExternal(randomName, address, (chain?.genesisHash ?? WESTEND_GENESIS_HASH) as HexString);
 
@@ -102,7 +101,7 @@ function ImportProxiedFS (): React.ReactElement {
 
       return false;
     }
-  }, [chain?.genesisHash, chance, selectedProxied, profileName]);
+  }, [chain?.genesisHash, random, selectedProxied, profileName]);
 
   const onImport = useCallback(() => {
     setIsBusy(true);

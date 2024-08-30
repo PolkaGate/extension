@@ -1,8 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-//@ts-nocheck
 import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -16,12 +14,10 @@ interface Props {
   defaultPath: string;
   isError: boolean;
   onChange: (suri: string) => void;
-  parentAddress: string;
-  parentPassword: string;
   withSoftPath: boolean;
 }
 
-function DerivationPath({ className, defaultPath, isError, onChange, withSoftPath }: Props): React.ReactElement<Props> {
+function DerivationPath ({ className, defaultPath, isError, onChange, withSoftPath }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [path, setPath] = useState<string>(defaultPath);
   const [isDisabled, setIsDisabled] = useState(true);
@@ -74,7 +70,7 @@ function DerivationPath({ className, defaultPath, isError, onChange, withSoftPat
   );
 }
 
-export default React.memo(styled(DerivationPath)(({ theme }: Props) => `
+export default React.memo(styled(DerivationPath)(() => `
   margin-top: 22px;
   > .container {
     display: flex;

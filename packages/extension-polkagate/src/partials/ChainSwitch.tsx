@@ -1,22 +1,151 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { HexString } from '@polkadot/util/types';
+
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, Backdrop, Box, ClickAwayListener, Grid, keyframes, useTheme } from '@mui/material';
+import { Avatar, Backdrop, ClickAwayListener, Grid, keyframes, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { twoItemCurveBackgroundBlack, twoItemCurveBackgroundWhite } from '../assets/icons';
+import ThreeItemCurveBackgroundReversed from '../components/SVG/ThreeItemCurveBackgroundReversed';
+import TwoItemCurveBackground from '../components/SVG/TwoItemCurveBackground';
 import { useGenesisHashOptions, useInfo, useIsTestnetEnabled } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CHAINS_WITH_BLACK_LOGO, CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
 import { sanitizeChainName } from '../util/utils';
+
+const BACKGROUND_SLIDE_ANIMATION = {
+  DOWN: keyframes`
+  from{
+    transform: scale(0) translateY(0);
+  }
+  to{
+    transform: scale(1) translateY(28px);
+  }`,
+  UP: keyframes`
+  from{
+    transform: scale(1) translateY(28px);
+  }
+  to{
+    transform: scale(0) translateY(0);
+  }`
+};
+
+const TWO_ITEM_SLIDE_ANIMATION = {
+  DOWN: [
+    keyframes`
+    from{
+      z-index: 0;
+      transform: scale(0) translate3d(0,0,0);
+    }
+    to{
+      z-index: 2;
+      transform: scale(1) translate3d(-22px, 58px, 0);
+    }
+  `,
+    keyframes`
+    from{
+      z-index: 0;
+      transform: scale(0) translate3d(0,0,0);
+    }
+    to{
+      z-index: 2;
+      transform: scale(1) translate3d(22px, 58px, 0);
+    }
+  `],
+  UP: [keyframes`
+    from{
+      z-index: 2;
+      transform: scale(1) translate3d(-22px, 58px, 0);
+    }
+    to{
+      z-index: 0;
+      transform: scale(0) translate3d(0,0,0);
+    }
+  `,
+  keyframes`
+    from{
+      z-index: 2;
+      transform: scale(1) translate3d(22px, 58px, 0);
+    }
+    to{
+      z-index: 0;
+      transform: scale(0) translate3d(0,0,0);
+    }
+  `
+  ]
+};
+
+const THREE_ITEM_SLIDE_ANIMATION = {
+  DOWN: [
+    keyframes`
+    to {
+      z-index: 2;
+      transform: scale(1) translate3d(-38px, 40px, 0);
+    }
+    from {
+      z-index: 0;
+      transform: scale(0) translate3d(0,0,0);
+    }
+  `,
+    keyframes`
+    to {
+      z-index: 2;
+      transform: scale(1) translate3d(0, 55px, 0);
+    }
+    from {
+      z-index: 0;
+      transform: scale(0) translate3d(0,0,0);
+    }
+  `,
+    keyframes`
+    to {
+      z-index: 2;
+      transform: scale(1) translate3d(38px, 40px, 0);
+    }
+    from {
+      z-index: 0;
+      transform: scale(0) translate3d(0,0,0);
+    }
+  `],
+  UP: [
+    keyframes`
+    to {
+      z-index: 0;
+      transform: scale(0) translate3d(0,0,0);
+    }
+    from {
+      z-index: 2;
+      transform: scale(1) translate3d(-38px, 40px, 0);
+    }
+  `,
+    keyframes`
+    to {
+      z-index: 0;
+      transform: scale(0) translate3d(0,0,0);
+    }
+    from {
+      z-index: 2;
+      transform: scale(1) translate3d(0, 55px, 0);
+    }
+  `,
+    keyframes`
+    to {
+      z-index: 0;
+      transform: scale(0) translate3d(0,0,0);
+    }
+    from {
+      z-index: 2;
+      transform: scale(1) translate3d(38px, 40px, 0);
+    }
+  `]
+};
 
 interface Props {
   address: string | undefined;
@@ -28,7 +157,7 @@ interface Props {
 function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { pathname } = useLocation();
-  const { account, chainName: currentChainNameFromAccount } = useInfo(address);
+  const { chainName: currentChainNameFromAccount, genesisHash } = useInfo(address);
   const genesisHashes = useGenesisHashOptions();
   const isTestnetEnabled = useIsTestnetEnabled();
 
@@ -43,112 +172,67 @@ function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Pr
   }, [currentChainNameFromAccount]);
 
   const availableChains = useMemo(() => {
-    if (!pathname || !account?.genesisHash) {
+    if (!pathname || !genesisHash) {
       return undefined;
     }
 
     if (pathname.includes('pool') || pathname.includes('solo')) {
-      return STAKING_CHAINS.filter((chain) => chain !== account.genesisHash);
+      return STAKING_CHAINS.filter((chain) => chain !== genesisHash);
     }
 
     if (pathname.includes('crowdloans')) {
-      return CROWDLOANS_CHAINS.filter((chain) => chain !== account.genesisHash);
+      return CROWDLOANS_CHAINS.filter((chain) => chain !== genesisHash);
     }
 
     if (pathname.includes('governance')) {
-      return GOVERNANCE_CHAINS.filter((chain) => chain !== account.genesisHash);
+      return GOVERNANCE_CHAINS.filter((chain) => chain !== genesisHash);
     }
 
     return undefined;
-  }, [account?.genesisHash, pathname]);
+  }, [genesisHash, pathname]);
 
   const chainNamesToShow = useMemo(() => {
     if (externalChainNamesToShow) {
-      return externalChainNamesToShow;
+      return externalChainNamesToShow.filter((name): name is string => !!name);
     }
 
-    if (!availableChains || !account?.genesisHash) {
+    if (!availableChains || !genesisHash || !genesisHashes) {
       return undefined;
     }
 
-    const filteredChains = availableChains.map((r) => genesisHashes.find((g) => g.value === r)).filter((chain) => chain?.value !== account.genesisHash);
-    const chainNames = filteredChains.map((chain) => chain && sanitizeChainName(chain.text));
+    return availableChains
+      .map((chain) => genesisHashes.find(({ value }) => value === chain))
+      .filter((chain) => chain?.value !== genesisHash)
+      .map((chain) => chain && sanitizeChainName(chain.text))
+      .filter((name): name is string => !!name);
+  }, [genesisHash, availableChains, externalChainNamesToShow, genesisHashes]);
 
-    return chainNames;
-  }, [account?.genesisHash, availableChains, externalChainNamesToShow, genesisHashes]);
+  const isThreeItem = useMemo(() => chainNamesToShow && chainNamesToShow.length > 2, [chainNamesToShow]);
+
+  const itemsAnimation = useCallback((index: number) => {
+    if (!chainNamesToShow) {
+      return undefined;
+    } else if (showOtherChains) {
+      return isThreeItem
+        ? THREE_ITEM_SLIDE_ANIMATION.DOWN[index]
+        : TWO_ITEM_SLIDE_ANIMATION.DOWN[index];
+    } else {
+      return isThreeItem
+        ? THREE_ITEM_SLIDE_ANIMATION.UP[index]
+        : TWO_ITEM_SLIDE_ANIMATION.UP[index];
+    }
+  }, [chainNamesToShow, isThreeItem, showOtherChains]);
 
   useEffect(() => {
     showOtherChains && setFirstTime(true);
   }, [showOtherChains]);
-
-  const backgroundSlide = {
-    down: keyframes`
-    from{
-      transform: scale(0) translateY(0);
-    }
-    to{
-      transform: scale(1) translateY(28px);
-    }`,
-    up: keyframes`
-    from{
-      transform: scale(1) translateY(28px);
-    }
-    to{
-      transform: scale(0) translateY(0);
-    }`
-  };
-
-  const twoItemSlide = {
-    down: [
-      keyframes`
-      from{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-      to{
-        z-index: 2;
-        transform: scale(1) translate3d(-22px, 58px, 0);
-      }
-    `,
-      keyframes`
-      from{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-      to{
-        z-index: 2;
-        transform: scale(1) translate3d(22px, 58px, 0);
-      }
-    `],
-    up: [keyframes`
-      from{
-        z-index: 2;
-        transform: scale(1) translate3d(-22px, 58px, 0);
-      }
-      to{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-    `,
-    keyframes`
-      from{
-        z-index: 2;
-        transform: scale(1) translate3d(22px, 58px, 0);
-      }
-      to{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-    `
-    ]
-  };
 
   const selectNetwork = useCallback((newChainName: string) => {
     if (isTestnetDisabled(newChainName)) {
       return;
     }
 
-    const selectedGenesisHash = genesisHashes.find((option) => sanitizeChainName(option.text) === newChainName)?.value;
+    const selectedGenesisHash = genesisHashes.find((option) => sanitizeChainName(option.text) === newChainName)?.value as HexString;
 
     setCurrentChainName(newChainName);
     setFirstTime(false);
@@ -162,7 +246,8 @@ function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Pr
     chainNamesToShow && (chainNamesToShow.length > 1
       ? setShowOtherChains(!showOtherChains)
       : selectNetwork(chainNamesToShow[0]))
-    , [chainNamesToShow, selectNetwork, showOtherChains]);
+  , [chainNamesToShow, selectNetwork, showOtherChains]);
+
   const closeChainSwitch = useCallback(() => setShowOtherChains(false), [setShowOtherChains]);
 
   return (
@@ -186,7 +271,7 @@ function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Pr
                     color={theme.palette.secondary.light}
                     fontSize='28px'
                     icon={faCircleXmark}
-                    style={{ border: '1px solid', borderColor: theme.palette.secondary.light, padding: '5px', borderRadius: '50%', zIndex: 3 }}
+                    style={{ border: '1px solid', borderColor: theme.palette.secondary.light, borderRadius: '50%', padding: '5px', zIndex: 3 }}
                   />
                 </Grid>
               </ClickAwayListener>
@@ -195,30 +280,30 @@ function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Pr
                   src={getLogo(currentChainName)}
                   sx={{
                     borderRadius: '50%',
-                    filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '',
+                    filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName ?? '') && theme.palette.mode === 'dark') ? 'invert(1)' : '',
                     height: '28px',
                     width: '28px'
                   }}
                 />
               </Grid>
             }
-            <Box
-              component='img'
+            <Grid
               display={notFirstTime ? 'inherit' : 'none'}
-              src={theme.palette.mode === 'dark'
-                ? twoItemCurveBackgroundBlack as string
-                : twoItemCurveBackgroundWhite as string
-              }
+              item
               sx={{
                 animationDuration: '150ms',
                 animationFillMode: 'forwards',
-                animationName: `${showOtherChains ? backgroundSlide.down : backgroundSlide.up}`,
-                left: theme.palette.mode === 'dark' ? '-61.5px' : '-52px',
+                animationName: `${showOtherChains ? BACKGROUND_SLIDE_ANIMATION.DOWN : BACKGROUND_SLIDE_ANIMATION.UP}`,
+                left: '-71px',
                 position: 'absolute',
-                top: theme.palette.mode === 'dark' ? '-8px' : '1px',
+                top: '-18px',
                 zIndex: 2
               }}
-            />
+            >
+              {chainNamesToShow && chainNamesToShow.length > 2
+                ? <ThreeItemCurveBackgroundReversed mode={theme.palette.mode} />
+                : <TwoItemCurveBackground mode={theme.palette.mode} />}
+            </Grid>
             {notFirstTime && chainNamesToShow?.map((name, index) => (
               <Grid
                 item
@@ -229,9 +314,7 @@ function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Pr
                 sx={{
                   animationDuration: '150ms',
                   animationFillMode: 'forwards',
-                  animationName: `${showOtherChains
-                    ? twoItemSlide.down[index]
-                    : twoItemSlide.up[index]}`,
+                  animationName: `${itemsAnimation(index)}`,
                   cursor: isTestnetDisabled(name) ? 'default' : 'pointer',
                   left: 0,
                   opacity: isTestnetDisabled(name) ? '0.6' : 1,

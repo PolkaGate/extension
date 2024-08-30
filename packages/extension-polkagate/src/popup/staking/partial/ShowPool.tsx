@@ -1,8 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { ApiPromise } from '@polkadot/api';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { BN } from '@polkadot/util';
+import type { MyPoolInfo } from '../../../util/types';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
@@ -10,21 +14,15 @@ import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/mater
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import type { Chain } from '@polkadot/extension-chains/types';
-
-
 import { Identity, Infotip, ShowBalance, VaadinIcon } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import getPoolAccounts from '../../../util/getPoolAccounts';
-import type { MyPoolInfo } from '../../../util/types';
 import RewardsDetail from '../solo/rewards/RewardsDetail';
 import PoolMoreInfo from './PoolMoreInfo';
-import type { PalletNominationPoolsBondedPoolInner } from '@polkadot/types/lookup';
 
 interface Props {
   api?: ApiPromise;
-  chain?: Chain;
+  chain?: Chain | null;
   pool: MyPoolInfo;
   label?: string;
   labelPosition?: 'right' | 'left' | 'center';
@@ -33,15 +31,15 @@ interface Props {
   showInfo?: boolean;
 }
 
-export default function ShowPool({ api, chain, label, labelPosition = 'left', mode, pool, showInfo, style }: Props): React.ReactElement {
+export default function ShowPool ({ api, chain, label, labelPosition = 'left', mode, pool, showInfo, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const [isOpenPoolInfo, setOpenPoolInfo] = useState<boolean>(false);
   const [showRewardsChart, setShowRewardsChart] = useState<boolean>(false);
 
-  const rewardDestinationAddress = pool?.accounts?.rewardId as string || (api && getPoolAccounts(api, pool.poolId).rewardId);
-  const token = (pool?.token || (api && api.registry.chainTokens[0])) as string | undefined;
-  const decimal = (pool?.decimal || (api && api.registry.chainDecimals[0])) as number | undefined;
+  const rewardDestinationAddress = pool?.accounts?.rewardId || (api && getPoolAccounts(api, pool.poolId).rewardId);
+  const token = (pool?.token || (api?.registry.chainTokens[0]));
+  const decimal = (pool?.decimal || (api?.registry.chainDecimals[0]));
 
   const openPoolInfo = useCallback(() => setOpenPoolInfo(!isOpenPoolInfo), [isOpenPoolInfo]);
 
@@ -49,13 +47,14 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
   const poolStatus = pool?.bondedPool?.state ? String(pool.bondedPool.state) : undefined;
   const chainName = chain?.name?.replace(' Relay Chain', '');
 
-  const hasCommission = pool && 'commission' in (pool.bondedPool as unknown as PalletNominationPoolsBondedPoolInner);
-  const parsedPool = JSON.parse(JSON.stringify(pool));
-  const mayBeCommission = hasCommission && parsedPool.bondedPool.commission.current ? parsedPool.bondedPool.commission.current[0] : 0
+  const hasCommission = pool && 'commission' in (pool.bondedPool as any);
+  const parsedPool = JSON.parse(JSON.stringify(pool)) as MyPoolInfo;
+  //@ts-ignore
+  const mayBeCommission = hasCommission && parsedPool.bondedPool?.commission?.current ? parsedPool.bondedPool.commission.current[0] as number : 0;
   const commission = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
 
   // hide show more info for a pool while creating a pool
-  const _showInfo = mode === 'Creating' ? false: showInfo;
+  const _showInfo = mode === 'Creating' ? false : showInfo;
 
   const onRewardsChart = useCallback(() => {
     setShowRewardsChart(true);
@@ -74,7 +73,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
                 <Grid fontSize='16px' fontWeight={400} item justifyContent='center' overflow='hidden' textAlign='center' textOverflow='ellipsis' whiteSpace='nowrap' width={_showInfo ? '92%' : '100%'}>
                   <Infotip text={pool?.metadata ?? t('Unknown')}>
                     {pool?.stashIdAccount?.accountId
-                      ? <Identity chain={chain as any} formatted={pool.stashIdAccount.accountId} identiconSize={25} name={pool?.metadata ?? t('Unknown')} style={{ fontSize: '16px', fontWeight: 400 }} />
+                      ? <Identity chain={chain} formatted={pool.stashIdAccount.accountId} identiconSize={25} name={pool?.metadata ?? t('Unknown')} style={{ fontSize: '16px', fontWeight: 400 }} />
                       : <>
                         {pool?.metadata ?? t('Unknown')}
                       </>
@@ -156,8 +155,8 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
       </Grid>
       {isOpenPoolInfo && pool && chain &&
         <PoolMoreInfo
-          api={api as ApiPromise}
-          chain={chain as any}
+          api={api}
+          chain={chain}
           pool={pool}
           poolId={pool.poolId}
           setShowPoolInfo={setOpenPoolInfo}
@@ -167,7 +166,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
       {showRewardsChart && chain && rewardDestinationAddress && token && token && mode !== 'Creating' &&
         <RewardsDetail
           api={api}
-          chain={chain as any}
+          chain={chain}
           chainName={chainName}
           decimal={decimal}
           rewardDestinationAddress={rewardDestinationAddress}

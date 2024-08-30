@@ -18,7 +18,7 @@ function AlertBox (): React.ReactElement {
   useTransactionState();
 
   return (
-    <Grid container display='flex' item justifyContent='flex-end' sx={{ maxWidth: '400px', position: 'absolute', right: '20px', rowGap: '15px', top: '85px', zIndex: 100 }}>
+    <Grid container display='flex' item justifyContent='flex-end' sx={{ maxWidth: '500px', position: 'absolute', right: '20px', rowGap: '15px', top: '85px', zIndex: 100 }}>
       {alerts.map((alert, index) =>
         <Alert
           alert={alert}

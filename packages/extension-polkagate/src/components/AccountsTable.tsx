@@ -24,9 +24,6 @@ interface Props {
   setSelectedAccounts: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-const CHECKED_COLOR = '#46890C';
-const NOT_CHECKED_COLOR = '#838383';
-
 export default function AccountsTable ({ accountTypeFilter, areAllCheck, label, maxHeight = '112px', selectedAccounts, setSelectedAccounts, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -119,7 +116,6 @@ export default function AccountsTable ({ accountTypeFilter, areAllCheck, label, 
                   isChecked={isChecked(address)}
                   // eslint-disable-next-line react/jsx-no-bind
                   onChange={() => onCheck(address)}
-                  switchColor={isChecked(address) ? CHECKED_COLOR : NOT_CHECKED_COLOR}
                   theme={theme}
                 />
               </Grid>

@@ -5,7 +5,7 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
-import type { Inputs } from '../Entry';
+import type { StakingInputs } from '../type';
 
 import { MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
@@ -27,7 +27,7 @@ import { STEPS } from '..';
 interface Props {
   address: string;
   balances: BalancesInfo | undefined;
-  inputs: Inputs | undefined;
+  inputs: StakingInputs | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   step: number;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;

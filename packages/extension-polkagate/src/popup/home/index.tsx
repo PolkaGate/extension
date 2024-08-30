@@ -114,13 +114,13 @@ export default function Home (): React.ReactElement {
                 isDanger
                 theme={theme}
               >
-                {t<string>('Suspicious recovery detected on one or more of your accounts.')}
+                {t('Suspicious recovery detected on one or more of your accounts.')}
               </Warning>
             </Grid>
           }
           <YouHave hideNumbers={hideNumbers} setHideNumbers={setHideNumbers} />
           <ProfileTabs orderedAccounts={accountsOrder} />
-          <Container disableGutters sx={[{ display: 'grid', m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`, overflowY: 'scroll', pb: '5px', px: '5%', rowGap: '10px' }]}>
+          <Container disableGutters sx={[{ display: 'grid', m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`, overflowY: 'scroll', pb: '5px', px: '4%', rowGap: '7px' }]}>
             {initialAccountList.map((json, index): React.ReactNode => (
               <AccountsTree
                 {...json}

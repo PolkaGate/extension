@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { StakingInputs } from '../../type';
+
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
@@ -14,16 +16,15 @@ import { useBalances, useEstimatedFee, useInfo, usePoolConsts, useTranslation, u
 import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
-import type { Inputs } from '../../Entry';
 import UpdateRoles from './UpdateRoles';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
-  inputs: Inputs | undefined;
+  setInputs: React.Dispatch<React.SetStateAction<StakingInputs | undefined>>;
+  inputs: StakingInputs | undefined;
 }
 
-export default function CreatePool({ inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function CreatePool ({ inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();

@@ -26,6 +26,7 @@ import { amountToHuman, amountToMachine } from '../../../util/utils';
 import ParachainInfo from '../partials/ParachainInfo';
 import ShowParachain from '../partials/ShowParachain';
 import Review from './Review';
+import { getValue } from '../../account/util';
 
 interface Props {
   api?: ApiPromise;
@@ -55,6 +56,7 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
   const [contributionAmount, setContributionAmount] = useState<string>();
 
   const amountAsBN = useMemo(() => amountToMachine(contributionAmount, decimal), [contributionAmount, decimal]);
+  const transferableBalance = useMemo(() => getValue('transferable', balances), [balances]);
 
   useEffect(() => {
     if (!formatted || !tx || !minContribution) {
@@ -66,38 +68,39 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
     }
 
     const feeDummyParams = ['2000', amountAsBN ?? new BN(minContribution), null];
-    const maxFeeDummyParams = ['2000', balances?.availableBalance, null];
+    const maxFeeDummyParams = ['2000', transferableBalance, null];
 
     tx(...feeDummyParams).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
 
     tx(...maxFeeDummyParams).paymentInfo(formatted).then((i) => setEstimatedMaxFee(i?.partialFee)).catch(console.error);
-  }, [amountAsBN, api, balances?.availableBalance, contributionAmount, formatted, minContribution, tx]);
+  }, [amountAsBN, api, transferableBalance, contributionAmount, formatted, minContribution, tx]);
 
   const nextBtnDisabled = useMemo(() => {
     if (!contributionAmount || !amountAsBN || !minContribution) {
       return true;
     }
 
-    const isAmountInRange = amountAsBN.gt(balances?.availableBalance?.sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN.gte(new BN(minContribution));
+    const isAmountInRange = amountAsBN.gt(transferableBalance?.sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN.gte(new BN(minContribution));
 
     return (!(contributionAmount !== '0' && !isAmountInRange));
-  }, [amountAsBN, balances?.availableBalance, contributionAmount, estimatedMaxFee, minContribution]);
+  }, [amountAsBN, transferableBalance, contributionAmount, estimatedMaxFee, minContribution]);
 
   const onMinAmount = useCallback(() => {
     minContribution && decimal && setContributionAmount(amountToHuman(minContribution, decimal));
   }, [decimal, minContribution]);
 
   const onMaxAmount = useCallback(() => {
-    if (!api || !balances?.availableBalance || !estimatedMaxFee || !decimal) {
+    if (!api || !transferableBalance || !estimatedMaxFee || !decimal) {
       return;
     }
 
     const ED = api.consts['balances']['existentialDeposit'] as unknown as BN;
-    const max = new BN(balances.availableBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
+    const max = new BN(transferableBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
+
     const maxToHuman = amountToHuman(max.toString(), decimal);
 
     maxToHuman && setContributionAmount(maxToHuman);
-  }, [api, balances?.availableBalance, decimal, estimatedMaxFee]);
+  }, [api, transferableBalance, decimal, estimatedMaxFee]);
 
   const backToActives = useCallback(() => {
     setShowContribute(false);
@@ -148,7 +151,7 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
         <Asset
           address={String(formatted)}
           api={api}
-          balance={balances?.availableBalance}
+          balance={transferableBalance}
           balanceLabel={t<string>('Available balance')}
           fee={estimatedFee}
           style={{ m: '15px auto 0', width: '92%' }}

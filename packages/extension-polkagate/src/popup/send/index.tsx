@@ -30,6 +30,7 @@ import Asset from '../../partials/Asset';
 import { MAX_AMOUNT_LENGTH } from '../../util/constants';
 import { amountToHuman, amountToMachine, isValidAddress } from '../../util/utils';
 import Review from './Review';
+import { getValue } from '../account/util';
 
 export default function Send(): React.ReactElement {
   const { t } = useTranslation();
@@ -51,32 +52,33 @@ export default function Send(): React.ReactElement {
 
   const transfer = api && api.tx?.['balances'] && (['All', 'Max'].includes(transferType as string) ? (api.tx['balances']['transferAll']) : (api.tx['balances']['transferKeepAlive']));
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
+  const transferableBalance = useMemo(() => getValue('transferable', balances), [balances]);
 
   useEffect(() => {
     setRecipientName(recipientInfo?.identity?.display || recipientNameIfIsInExtension || t('Unknown'));
   }, [recipientInfo?.identity?.display, recipientNameIfIsInExtension, t]);
 
   const setWholeAmount = useCallback((type: TransferType) => {
-    if (!api || !balances?.availableBalance || !maxFee || !decimal) {
+    if (!api || !transferableBalance || !maxFee || !decimal) {
       return;
     }
 
     setTransferType(type);
     const ED = type === 'Max' ? api.consts['balances']['existentialDeposit'] as unknown as BN : BN_ZERO;
-    const allMaxAmount = balances.availableBalance.isZero() ? '0' : amountToHuman(balances.availableBalance.sub(maxFee).sub(ED).toString(), decimal);
+    const allMaxAmount = transferableBalance.isZero() ? '0' : amountToHuman(transferableBalance.sub(maxFee).sub(ED).toString(), decimal);
 
     setAmount(allMaxAmount);
-  }, [api, balances?.availableBalance, decimal, maxFee]);
+  }, [api, transferableBalance, decimal, maxFee]);
 
   useEffect(() => {
     if (!decimal) {
       return;
     }
 
-    const isAmountLessThanAllTransferAble = amountAsBN.gt(balances?.availableBalance?.sub(maxFee ?? BN_ZERO) ?? BN_ZERO);
+    const isAmountLessThanAllTransferAble = amountAsBN.gt(transferableBalance?.sub(maxFee ?? BN_ZERO) ?? BN_ZERO);
 
     setButtonDisabled(!isValidAddress(recipientAddress as string) || !amount || (amount === '0') || isAmountLessThanAllTransferAble);
-  }, [amount, amountAsBN, api, balances?.availableBalance, decimal, maxFee, recipientAddress]);
+  }, [amount, amountAsBN, api, transferableBalance, decimal, maxFee, recipientAddress]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
@@ -118,9 +120,9 @@ export default function Send(): React.ReactElement {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
-    transfer && balances && formatted && transfer(formatted, balances.availableBalance).paymentInfo(formatted)
+    transfer && transferableBalance && formatted && transfer(formatted, transferableBalance).paymentInfo(formatted)
       .then((i) => setMaxFee(i?.partialFee)).catch(console.error);
-  }, [api, formatted, transfer, balances]);
+  }, [api, formatted, transfer, transferableBalance]);
 
   useEffect(() => {
     cryptoWaitReady()

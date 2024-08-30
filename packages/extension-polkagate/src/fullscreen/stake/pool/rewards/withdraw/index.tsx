@@ -1,8 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { BalancesInfo, MyPoolInfo, TxInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { StakingInputs } from '../../../type';
 
 import { faArrowCircleDown } from '@fortawesome/free-solid-svg-icons';
 import { Grid } from '@mui/material';
@@ -12,12 +14,10 @@ import { Progress } from '@polkadot/extension-polkagate/src/components';
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
-import { BalancesInfo, MyPoolInfo, TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
 import { useInfo, useTranslation } from '../../../../../hooks';
-import type { Inputs } from '../../../Entry';
 import Confirmation from '../../../partials/Confirmation';
 import Review from '../../../partials/Review';
 import { ModalTitle } from '../../../solo/commonTasks/configurePayee';
@@ -33,7 +33,7 @@ interface Props {
   pool: MyPoolInfo | null | undefined;
 }
 
-export default function WithdrawRewards({ address, balances, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function WithdrawRewards ({ address, balances, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
 
@@ -42,7 +42,7 @@ export default function WithdrawRewards({ address, balances, pool, setRefresh, s
 
   const [step, setStep] = useState(STEPS.PROGRESS);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [inputs, setInputs] = useState<Inputs>();
+  const [inputs, setInputs] = useState<StakingInputs>();
 
   useEffect(() => {
     if (claimable && api && availableBalance) {

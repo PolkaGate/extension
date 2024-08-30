@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable sort-keys */
+
 import type { ThemeOptions, TypeText } from '@mui/material';
 
 import { baseTheme } from './baseTheme';

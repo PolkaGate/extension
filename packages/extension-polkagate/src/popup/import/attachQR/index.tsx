@@ -9,7 +9,6 @@ import { Button, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { QrScanAddress } from '@polkadot/react-qr';
 
@@ -18,6 +17,7 @@ import { useTranslation } from '../../../hooks';
 import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from '../../../messaging';
 import HeaderBrand from '../../../partials/HeaderBrand';
 import Name from '../../../partials/Name';
+import { POLKADOT_GENESIS_HASH } from '../../../util/constants';
 
 export interface ScanType {
   isAddress: boolean;
@@ -43,18 +43,18 @@ export default function AttachQR (): React.ReactElement {
 
     updateMeta(String(address), metaData).then(() => {
       setStorage('profile', PROFILE_TAGS.QR_ATTACHED).catch(console.error);
-      openOrFocusTab('/', true);
+      onAction('/');
     }).catch(console.error);
-  }, [address]);
+  }, [address, onAction]);
 
   const onCreate = useCallback(() => {
     if (account && name) {
       if (account.isAddress) {
-        createAccountExternal(name, account.content, account.genesisHash as HexString)
+        createAccountExternal(name, account.content, account.genesisHash ?? POLKADOT_GENESIS_HASH)
           .then(() => setQrLabelAndGoToHome())
           .catch((error: Error) => console.error(error));
       } else if (password) {
-        createAccountSuri(name, password, account.content, 'sr25519', account.genesisHash as HexString)
+        createAccountSuri(name, password, account.content, 'sr25519', account.genesisHash ?? POLKADOT_GENESIS_HASH)
           .then(() => setQrLabelAndGoToHome())
           .catch((error: Error) => console.error(error));
       }
@@ -78,7 +78,7 @@ export default function AttachQR (): React.ReactElement {
     []
   );
 
-  const _onBackClick = useCallback(() => {
+  const onBackClick = useCallback(() => {
     if (stepOne) {
       onAction('/');
     } else {
@@ -130,7 +130,7 @@ export default function AttachQR (): React.ReactElement {
   return (
     <>
       <HeaderBrand
-        onBackClick={_onBackClick}
+        onBackClick={onBackClick}
         showBackArrow
         text={t('Attach QR-signer')}
         withSteps={{
