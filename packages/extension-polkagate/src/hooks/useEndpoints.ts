@@ -7,9 +7,9 @@ import type { DropdownOption } from '../util/types';
 import { createWsEndpoints } from '@polkagate/apps-config';
 import { useEffect, useMemo, useState } from 'react';
 
+import { AUTO_MODE } from '../util/constants';
 import { sanitizeChainName } from '../util/utils';
 import { useGenesisHashOptions, useTranslation } from './';
-import { AUTO_MODE } from '../util/constants';
 
 const supportedLC = ['Polkadot', 'Kusama', 'Westend']; // chains with supported light client
 
@@ -50,11 +50,16 @@ export function useEndpoints (genesisHash: string | null | undefined): DropdownO
     }
 
     const hasLightClientSupport = supportedLC.includes(chainName);
-    const endpointOptions = endpoints.map((endpoint) => ({ text: endpoint.textBy, value: endpoint.value }))
+    let endpointOptions = endpoints.map((endpoint) => ({ text: endpoint.textBy, value: endpoint.value }));
 
-    return hasLightClientSupport
-      ? endpointOptions
-      : endpointOptions.filter((o) => String(o.value).startsWith('wss'))
+    if (!hasLightClientSupport) {
+      endpointOptions = endpointOptions.filter((o) => String(o.value).startsWith('wss'));
+    }
+
+    endpointOptions.length > 1 &&
+    endpointOptions?.unshift(AUTO_MODE);
+
+    return endpointOptions;
   }, [allEndpoints, genesisHash, genesisOptions]);
 
   return endpoints ?? [];

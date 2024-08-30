@@ -82,8 +82,8 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       return true;
     }
 
-    return !supportedChains.includes(chain.genesisHash ?? '');
-  }, [chain]);
+    return !supportedChains.includes(currentGenesisHash);
+  }, [currentGenesisHash]);
 
   const MenuSeparator = () => <Divider sx={{ bgcolor: 'divider', height: '1px', my: '6px' }} />;
 
