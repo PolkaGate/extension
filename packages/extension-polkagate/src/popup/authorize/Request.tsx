@@ -30,12 +30,16 @@ export default function Request ({ authRequest, hasBanner }: Props): React.React
   useEffect(() => {
     getAuthList()
       .then(({ list: authList }) => {
-        if (authRequest.request.origin in authList) {
-          setSelectedAccounts(authList[authRequest.request.origin]?.authorizedAccounts ?? []);
+        const dappURL = extractBaseUrl(authRequest.url);
+
+        const availableDapp = Object.values(authList).find(({ url }) => dappURL === extractBaseUrl(url));
+
+        if (availableDapp) {
+          setSelectedAccounts(availableDapp.authorizedAccounts ?? []);
         }
       })
       .catch(console.error);
-  }, [authRequest.request.origin]);
+  }, [authRequest.url]);
 
   const allAccounts = useMemo(() => accounts.map(({ address }) => address), [accounts]);
   const areAllCheck = useMemo(() => areArraysEqual([allAccounts, selectedAccounts]), [allAccounts, selectedAccounts]);
