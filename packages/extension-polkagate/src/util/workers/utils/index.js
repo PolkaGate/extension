@@ -9,3 +9,4 @@ export * from './fastestEndpoint.js';
 export * from './getChainEndpoints.js';
 export * from './balancify.js';
 export * from './toGetNativeToken.js';
+export * from './getMetadata.js';

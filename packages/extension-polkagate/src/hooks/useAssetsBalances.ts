@@ -20,6 +20,8 @@ import getChainName from '../util/getChainName';
 import { isHexToBn } from '../util/utils';
 import useSelectedChains from './useSelectedChains';
 import { useIsTestnetEnabled, useTranslation } from '.';
+import { updateMetadata } from '../messaging';
+import type { MetadataDef } from '@polkadot/extension-inject/types';
 
 type WorkerMessage = Record<string, MessageBody[]>;
 type Assets = Record<string, FetchedBalance[]>;
@@ -312,6 +314,14 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       }
 
       const parsedMessage = JSON.parse(message) as WorkerMessage;
+
+      if ('metadata' in parsedMessage) {
+        const metadata = parsedMessage?.['metadata'];
+
+        updateMetadata(metadata as unknown as MetadataDef).catch(console.error);
+
+        return;
+      }
 
       Object.keys(parsedMessage).forEach((address) => {
         /** We use index 0 because we consider each relay chain has only one asset */
