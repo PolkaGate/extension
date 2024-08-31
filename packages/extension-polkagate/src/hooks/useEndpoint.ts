@@ -18,14 +18,16 @@ interface EndpointType {
 // Create a singleton EndpointManager
 const endpointManager = new EndpointManager();
 
+const DEFAULT_ENDPOINT = {
+  checkForNewOne: undefined,
+  endpoint: undefined,
+  isOnManual: undefined,
+  timestamp: undefined
+};
+
 export default function useEndpoint (address: AccountId | string | undefined, _endpoint?: string): EndpointType {
   const genesisHash = useGenesisHash(address);
-  const [endpoint, setEndpoint] = useState<EndpointType>({
-    checkForNewOne: undefined,
-    endpoint: undefined,
-    isOnManual: undefined,
-    timestamp: undefined
-  });
+  const [endpoint, setEndpoint] = useState<EndpointType>(DEFAULT_ENDPOINT);
 
   // Function to fetch or update the endpoint
   const fetchEndpoint = useCallback(() => {
@@ -57,12 +59,9 @@ export default function useEndpoint (address: AccountId | string | undefined, _e
     }
 
     // Update the local state with the current endpoint
-    setEndpoint(endpointManager.getEndpoint(String(address), genesisHash) || {
-      checkForNewOne: undefined,
-      endpoint: undefined,
-      isOnManual: undefined,
-      timestamp: undefined
-    });
+    const maybeExistingEndpoint = endpointManager.getEndpoint(String(address), genesisHash) as EndpointType;
+
+    setEndpoint(maybeExistingEndpoint || DEFAULT_ENDPOINT);
   }, [address, genesisHash, _endpoint]);
 
   useEffect(() => {
