@@ -42,7 +42,7 @@ const apiReducer = (state: ApiState, action: ApiAction): ApiState => {
 // Create a singleton EndpointManager
 const endpointManager = new EndpointManager();
 
-export default function useApi(address: AccountId | string | undefined, stateApi?: ApiPromise, _endpoint?: string, _genesisHash?: string): ApiPromise | undefined {
+export default function useApi (address: AccountId | string | undefined, stateApi?: ApiPromise, _endpoint?: string, _genesisHash?: string): ApiPromise | undefined {
   const { checkForNewOne, endpoint } = useEndpoint(address, _endpoint);
   const apisContext = useContext(APIContext);
   const chainGenesisHash = useGenesisHash(address, _genesisHash);
@@ -53,6 +53,8 @@ export default function useApi(address: AccountId | string | undefined, stateApi
     error: null,
     isLoading: false
   });
+
+  const isAutoMode=(e: string) => e === AUTO_MODE.value;
 
   // This function is called exclusively in auto mode to update the account's "auto mode" endpoint
   // with the fastest endpoint available.
@@ -118,7 +120,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
 
     // If in auto mode, remove any auto mode endpoint
     if (onAutoMode) {
-      toSaveApi = toSaveApi.filter((sApi) => sApi.endpoint !== AUTO_MODE.value);
+      toSaveApi = toSaveApi.filter((sApi) => !isAutoMode(sApi.endpoint));
     }
 
     toSaveApi.push({
@@ -151,7 +153,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
   const handleAutoMode = useCallback(async (address: string, genesisHash: string, findNewEndpoint: boolean) => {
     const apisForGenesis = apisContext.apis[genesisHash] ?? [];
 
-    const autoModeExists = apisForGenesis.some(({ endpoint }) => endpoint === AUTO_MODE.value);
+    const autoModeExists = apisForGenesis.some(({ endpoint }) => isAutoMode(endpoint));
 
     if (autoModeExists) {
       return;
@@ -186,7 +188,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
     }
 
     // Validate the endpoint format (it should start with 'wss', 'light', or be in auto mode)
-    if (!endpoint.startsWith('wss') && !endpoint.startsWith('light') && endpoint !== AUTO_MODE.value) {
+    if (!endpoint.startsWith('wss') && !endpoint.startsWith('light') && !isAutoMode(endpoint)) {
       console.log('📌 📌  Unsupported endpoint detected 📌 📌 ', endpoint);
 
       return;
@@ -209,7 +211,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
     }
 
     // If in auto mode, check existing connections or find a new one
-    if (endpoint === AUTO_MODE.value) {
+    if (isAutoMode(endpoint)) {
       handleAutoMode(String(address), chainGenesisHash, !!checkForNewOne).catch(console.error);
     }
 
