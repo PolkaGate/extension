@@ -28,7 +28,7 @@ export class EndpointManager {
 
   // Load endpoints from chrome storage
   private loadFromStorage () {
-    chrome.storage.local.get('endpoints', (result: { endpoints?: Record<string, Record<string, EndpointType>> }) => {
+    chrome.storage.local.get('endpoints', (result: { endpoints?: SavedEndpoints }) => {
       if (result.endpoints) {
         this.endpoints = result.endpoints;
         this.notifyListeners();
@@ -48,7 +48,7 @@ export class EndpointManager {
   // Handle changes in chrome storage
   private handleStorageChange = (changes: Record<string, chrome.storage.StorageChange>, areaName: string) => {
     if (areaName === 'local' && changes['endpoints']) {
-      this.endpoints = changes['endpoints'].newValue as Record<string, Record<string, EndpointType>>;
+      this.endpoints = changes['endpoints'].newValue as SavedEndpoints;
       this.notifyListeners();
     }
   };
