@@ -194,6 +194,13 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (step === STEPS.IN_NO_LOGIN_PERIOD && isExtensionLocked) {
+    // The extension has been locked by the user through the settings menu.
+      setStep(STEPS.SHOW_LOGIN);
+    }
+  }, [isExtensionLocked, step]);
+
   const onPassChange = useCallback((pass: string | null): void => {
     if (!pass) {
       return setHashedPassword(undefined);
@@ -222,11 +229,13 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
   const showLoginPage = useMemo(() => {
     const extensionUrl = window.location.hash.replace('#', '');
 
+    const condition = isExtensionLocked || !children || isFlying;
+
     return isPopupOpenedByExtension
-      ? isExtensionLocked || !children || isFlying
+      ? condition
       : step === STEPS.SHOW_LOGIN && ALLOWED_URL_ON_RESET_PASSWORD.includes(extensionUrl)
         ? false
-        : isExtensionLocked || !children || isFlying;
+        : condition;
   }, [children, isExtensionLocked, isFlying, isPopupOpenedByExtension, step]);
 
   return (
@@ -252,7 +261,7 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
             {isFlying && isPopupOpenedByExtension
               ? <FlyingLogo theme={theme} />
               : <>
-                {step !== undefined && ([STEPS.ASK_TO_SET_PASSWORD, STEPS.SHOW_LOGIN].includes(step) || isExtensionLocked) &&
+                {step !== undefined && ([STEPS.ASK_TO_SET_PASSWORD, STEPS.SHOW_LOGIN].includes(step)) &&
                   <Grid container item justifyContent='center' mt='33px' my='35px'>
                     <StillLogo theme={theme} />
                   </Grid>
@@ -270,7 +279,7 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
                     setStep={setStep}
                   />
                 }
-                {step !== undefined && ([STEPS.SHOW_LOGIN].includes(step) || isExtensionLocked) &&
+                {step !== undefined && [STEPS.SHOW_LOGIN].includes(step) &&
                   <Login
                     isPasswordError={isPasswordError}
                     onPassChange={onPassChange}
