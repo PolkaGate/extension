@@ -112,11 +112,12 @@ export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false,
                     chains={filteredChains}
                   />
                 </Grid>
-                {chain && <Grid container item justifyContent='flex-end' width='50px'>
-                  <FullScreenRemoteNode
-                    address={address}
-                  />
-                </Grid>
+                {chain &&
+                  <Grid container item justifyContent='flex-end' width='50px'>
+                    <FullScreenRemoteNode
+                      address={address}
+                    />
+                  </Grid>
                 }
               </>
             }

@@ -215,8 +215,11 @@ function FullScreenRemoteNode ({ address, iconSize = 35 }: Props): React.ReactEl
 
           return (
             // eslint-disable-next-line react/jsx-no-bind
-            <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={() => onChangeEndpoint(endpoint.value)} py='5px' sx={{ ':hover': { bgcolor: 'rgba(186, 40, 130, 0.1)' }, bgcolor: selectedEndpoint || isOnAutoMode ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', my: '3px', px: '15px', width: '100%' }}>
-              <Typography fontSize='16px' fontWeight={selectedEndpoint || isOnAutoMode  ? 500 : 400} textAlign='left' width={isLightClient ? '100%' : '50%'}>
+            <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={() => onChangeEndpoint(endpoint.value)} py='5px' sx={{ ':hover': { bgcolor: 'rgba(186, 40, 130, 0.1)' }, bgcolor: (selectedEndpoint && isOnManual) || isOnAutoMode ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', my: '3px', pl: '15px', position: 'relative', pr: '5px', width: '100%' }}>
+              {selectedEndpoint && endpoint.name !== AUTO_MODE.text && !isOnManual &&
+               <span style={{ backgroundColor: '#00FF00', border: `1px solid ${theme.palette.background.default}`, borderRadius: '50%', height: '10px', left: '2px', position: 'absolute', top: '50%px', width: '10px' }} />
+              }
+              <Typography fontSize='16px' fontWeight={selectedEndpoint || isOnAutoMode ? 500 : 400} textAlign='left' width={isLightClient ? '100%' : '53%'}>
                 {endpoint.name}
               </Typography>
               {
