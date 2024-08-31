@@ -19,7 +19,7 @@ import { useTranslation } from '../../../../components/translate';
 import { useAvailableToSoloStake, useBalances, useInfo, useMinToReceiveRewardsInSolo2, useStakingAccount, useStakingConsts } from '../../../../hooks';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
-import SelectValidators from '../partials/SelectValidators';
+import SelectValidatorsFs from '../partials/SelectValidatorsFs';
 import SetPayee from '../partials/SetPayee';
 
 interface Props {
@@ -292,13 +292,13 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
           <Typography fontSize='16px' fontWeight={500} pb='15px' width='100%'>
             {t('Now, select the validators you want to nominate, considering their properties, such as their commission rates. You can even filter them based on your preferences.')}
           </Typography>
-          <SelectValidators
+          <SelectValidatorsFs
             address={address}
             newSelectedValidators={newSelectedValidators}
             setNewSelectedValidators={setNewSelectedValidators}
             staked={stakingAccount?.stakingLedger?.active as unknown as BN ?? BN_ZERO}
             stakingConsts={stakingConsts}
-            stashId={formatted as string}
+            stashId={formatted}
             tableHeight={window.innerHeight - 400}
           />
           <Grid container item sx={{ '> div': { m: 0, width: '64%' }, justifyContent: 'flex-end', mt: '15px' }}>
