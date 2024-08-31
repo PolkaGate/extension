@@ -72,6 +72,10 @@ export interface ValidatorInfo extends DeriveStakingQuery {
     others: Other[]
   };
   accountInfo?: DeriveAccountInfo;
+  isOversubscribed?: {
+    notSafe: boolean;
+    safe: boolean;
+  }
 }
 
 export interface AllValidators {
