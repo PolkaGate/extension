@@ -69,7 +69,7 @@ export default class Tabs {
     return accessAccounts;
   }
 
-  private accountsListAuthorized (url: string, { anyType }: RequestAccountList): Promise<AuthResponse | InjectedAccount[]> {
+  private accountsListAuthorized (url: string, { anyType }: RequestAccountList): InjectedAccount[] {
     const transformedAccounts = transformAccounts(accountsObservable.subject.getValue(), anyType);
     const authorizedAccounts = this.filterForAuthorizedAccounts(transformedAccounts, url);
 
@@ -77,16 +77,16 @@ export default class Tabs {
 
     // just a check for linting issue, it already checked by "ensureUrlAuthorized"
     if (!auth) {
-      return Promise.resolve([]);
+      return [];
     }
 
     const hasNewerAccountsSinceAuth = !auth.authorizedTime || transformedAccounts.some(({ addedTime }) => addedTime && addedTime > auth.authorizedTime);
 
     if (hasNewerAccountsSinceAuth) {
-      return this.authorize(url, { origin: auth.origin }, true).then(() => this.accountsListAuthorized(url, { anyType }));
-    } else {
-      return Promise.resolve(authorizedAccounts);
+      this.authorize(url, { origin: auth.origin }, true).then(() => this.accountsListAuthorized(url, { anyType })).catch(console.error);
     }
+
+    return authorizedAccounts;
   }
 
   private accountsSubscribeAuthorized (url: string, id: string, port: chrome.runtime.Port): string {

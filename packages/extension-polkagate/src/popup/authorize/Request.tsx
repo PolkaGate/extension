@@ -26,6 +26,7 @@ export default function Request ({ authRequest, hasBanner }: Props): React.React
   const faviconUrl = useFavIcon(authRequest.url);
 
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
+  const [alreadySelectedAccounts, setAlreadySelectedAccounts] = useState<string[]>([]);
 
   useEffect(() => {
     getAuthList()
@@ -35,7 +36,10 @@ export default function Request ({ authRequest, hasBanner }: Props): React.React
         const availableDapp = Object.values(authList).find(({ url }) => dappURL === extractBaseUrl(url));
 
         if (availableDapp) {
-          setSelectedAccounts(availableDapp.authorizedAccounts ?? []);
+          const alreadySelectedAccounts = availableDapp.authorizedAccounts ?? [];
+
+          setSelectedAccounts(alreadySelectedAccounts);
+          setAlreadySelectedAccounts(alreadySelectedAccounts);
         }
       })
       .catch(console.error);
@@ -51,10 +55,14 @@ export default function Request ({ authRequest, hasBanner }: Props): React.React
   }, [authRequest.id, onAction, selectedAccounts]);
 
   const onReject = useCallback((): void => {
-    ignoreAuthRequest(authRequest.id)
-      .then(() => onAction())
-      .catch((error: Error) => console.error(error));
-  }, [authRequest.id, onAction]);
+    alreadySelectedAccounts.length
+      ? approveAuthRequest(alreadySelectedAccounts, authRequest.id)
+        .then(() => onAction())
+        .catch((error: Error) => console.error(error))
+      : ignoreAuthRequest(authRequest.id)
+        .then(() => onAction())
+        .catch((error: Error) => console.error(error));
+  }, [alreadySelectedAccounts, authRequest.id, onAction]);
 
   return (
     <Grid container justifyContent='center'>
