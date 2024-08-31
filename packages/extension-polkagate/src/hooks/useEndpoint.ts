@@ -18,7 +18,7 @@ interface EndpointType {
 // Create a singleton EndpointManager
 const endpointManager = new EndpointManager();
 
-export default function useEndpoint(address: AccountId | string | undefined, _endpoint?: string): EndpointType {
+export default function useEndpoint (address: AccountId | string | undefined, _endpoint?: string): EndpointType {
   const genesisHash = useGenesisHash(address);
   const [endpoint, setEndpoint] = useState<EndpointType>({
     checkForNewOne: undefined,
@@ -27,11 +27,13 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
     timestamp: undefined
   });
 
+  // Function to fetch or update the endpoint
   const fetchEndpoint = useCallback(() => {
     if (!address || !genesisHash) {
       return;
     }
 
+    // If an endpoint is provided, set it as manual
     if (_endpoint) {
       endpointManager.setEndpoint(String(address), genesisHash, {
         checkForNewOne: false,
@@ -40,8 +42,10 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
         timestamp: Date.now()
       });
     } else {
+      // Otherwise, check for a saved endpoint or set to auto mode
       const savedEndpoint = endpointManager.getEndpoint(String(address), genesisHash);
 
+      // If an endpoint already saved or it should be on  auto mode, then save the Auto Mode endpoint in the storage
       if (!savedEndpoint || endpointManager.shouldBeOnAutoMode(savedEndpoint)) {
         endpointManager.setEndpoint(String(address), genesisHash, {
           checkForNewOne: false,
@@ -52,6 +56,7 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
       }
     }
 
+    // Update the local state with the current endpoint
     setEndpoint(endpointManager.getEndpoint(String(address), genesisHash) || {
       checkForNewOne: undefined,
       endpoint: undefined,
@@ -63,6 +68,7 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
   useEffect(() => {
     fetchEndpoint();
 
+    // Handler for endpoint changes
     const handleEndpointChange = (changedAddress: string, changedGenesisHash: string, newEndpoint: EndpointType) => {
       if (changedAddress === String(address) && changedGenesisHash === genesisHash) {
         setEndpoint(newEndpoint);

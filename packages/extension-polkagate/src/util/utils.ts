@@ -2,15 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Theme } from '@mui/material';
-import { ApiPromise, WsProvider } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
-import type { RecentChainsType, SavedMetaData, TransactionDetail } from './types';
+import type { DropdownOption, FastestConnectionType, RecentChainsType, SavedMetaData, TransactionDetail } from './types';
 
+import { ApiPromise, WsProvider } from '@polkadot/api';
 import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
@@ -23,7 +23,7 @@ interface Meta {
 
 export const upperCaseFirstChar = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
-export function isValidAddress(_address: string | undefined): boolean {
+export function isValidAddress (_address: string | undefined): boolean {
   try {
     encodeAddress(
       isHex(_address)
@@ -32,7 +32,7 @@ export function isValidAddress(_address: string | undefined): boolean {
     );
 
     return true;
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }
@@ -57,7 +57,7 @@ export function fixFloatingPoint(_number: number | string, decimalDigit = FLOATI
 
 export const toHuman = (api: ApiPromise, value: unknown) => api.createType('Balance', value).toHuman();
 
-export function amountToHuman(_amount: string | number | BN | bigint | Compact<u128> | undefined, _decimals: number | undefined, decimalDigits?: number, commify?: boolean): string {
+export function amountToHuman (_amount: string | number | BN | bigint | Compact<u128> | undefined, _decimals: number | undefined, decimalDigits?: number, commify?: boolean): string {
   if (!_amount || !_decimals) {
     return '';
   }
@@ -69,7 +69,7 @@ export function amountToHuman(_amount: string | number | BN | bigint | Compact<u
   return fixFloatingPoint(Number(_amount) / x, decimalDigits, commify);
 }
 
-export function amountToMachine(amount: string | undefined, decimal: number | undefined): BN {
+export function amountToMachine (amount: string | undefined, decimal: number | undefined): BN {
   if (!amount || !Number(amount) || !decimal) {
     return BN_ZERO;
   }
@@ -92,14 +92,14 @@ export function amountToMachine(amount: string | undefined, decimal: number | un
   return new BN(newAmount).mul(BN_TEN.pow(new BN(decimal)));
 }
 
-export function getFormattedAddress(_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string {
+export function getFormattedAddress (_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string {
   const publicKey = decodeAddress(_address);
   const prefix = _chain ? _chain.ss58Format : (settingsPrefix === -1 ? 42 : settingsPrefix);
 
   return encodeAddress(publicKey, prefix);
 }
 
-export function getSubstrateAddress(address: AccountId | string | null | undefined): string | undefined {
+export function getSubstrateAddress (address: AccountId | string | null | undefined): string | undefined {
   if (!address) {
     return undefined;
   }
@@ -128,7 +128,7 @@ export const accountName = (accounts: AccountJson[], address: string | undefined
   return accounts.find((acc) => acc.address === addr)?.name;
 };
 
-export function prepareMetaData(chain: Chain | null | string, label: string, metaData: any): string {
+export function prepareMetaData (chain: Chain | null | string, label: string, metaData: unknown): string {
   const chainName = sanitizeChainName((chain as Chain)?.name) ?? chain;
 
   if (label === 'balances') {
@@ -155,11 +155,12 @@ export function prepareMetaData(chain: Chain | null | string, label: string, met
   });
 }
 
-export function getTransactionHistoryFromLocalStorage(
+export function getTransactionHistoryFromLocalStorage (
   chain: Chain | null,
   hierarchy: AccountWithChildren[],
   address: string,
-  _chainName?: string): TransactionDetail[] {
+  _chainName?: string
+): TransactionDetail[] {
   const accountSubstrateAddress = getSubstrateAddress(address);
 
   const account = hierarchy.find((h) => h.address === accountSubstrateAddress);
@@ -199,7 +200,7 @@ export const getWebsiteFavicon = (url: string | undefined): string => {
   return 'https://s2.googleusercontent.com/s2/favicons?domain=' + url;
 };
 
-export function remainingTime(blocks: number, noMinutes?: boolean): string {
+export function remainingTime (blocks: number, noMinutes?: boolean): string {
   let mins = Math.floor(blocks * BLOCK_RATE / 60);
 
   if (!mins) {
@@ -242,7 +243,7 @@ export function remainingTime(blocks: number, noMinutes?: boolean): string {
   return time;
 }
 
-export function remainingTimeCountDown(seconds: number | undefined): string {
+export function remainingTimeCountDown (seconds: number | undefined): string {
   if (!seconds || seconds <= 0) {
     return 'finished';
   }
@@ -258,18 +259,18 @@ export function remainingTimeCountDown(seconds: number | undefined): string {
   return d + h + m + s;
 }
 
-function splitSingle(value: string[], sep: string): string[] {
+function splitSingle (value: string[], sep: string): string[] {
   return value.reduce((result: string[], value: string): string[] => {
     return value.split(sep).reduce((result: string[], value: string) => result.concat(value), result);
   }, []);
 }
 
-function splitParts(value: string): string[] {
+function splitParts (value: string): string[] {
   return ['[', ']'].reduce((result: string[], sep) => splitSingle(result, sep), [value]);
 }
 
-export function formatMeta(meta?: Meta): string[] | null {
-  if (!meta || !meta.docs.length) {
+export function formatMeta (meta?: Meta): string[] | null {
+  if (!meta?.docs.length) {
     return null;
   }
 
@@ -285,13 +286,13 @@ export function formatMeta(meta?: Meta): string[] | null {
   return parts;
 }
 
-export function toShortAddress(address: string | AccountId, count = SHORT_ADDRESS_CHARACTERS): string {
+export function toShortAddress (address: string | AccountId, count = SHORT_ADDRESS_CHARACTERS): string {
   address = String(address);
 
   return `${address.slice(0, count)}...${address.slice(-1 * count)}`;
 }
 
-export const isEqual = (a1: any[] | null, a2: any[] | null): boolean => {
+export const isEqual = (a1: unknown[] | null, a2: unknown[] | null): boolean => {
   if (!a1 && !a2) {
     return true;
   }
@@ -306,10 +307,10 @@ export const isEqual = (a1: any[] | null, a2: any[] | null): boolean => {
   return JSON.stringify(a1Sorted) === JSON.stringify(a2Sorted);
 };
 
-export function saveAsHistory(formatted: string, info: TransactionDetail) {
+export function saveAsHistory (formatted: string, info: TransactionDetail) {
   chrome.storage.local.get('history', (res) => {
-    const k = `${formatted}` as any;
-    const last = (res?.['history'] ?? {}) as unknown as { [key: string]: TransactionDetail[] };
+    const k = `${formatted}`;
+    const last = (res?.['history'] ?? {}) as unknown as Record<string, TransactionDetail[]>;
 
     if (last[k]) {
       last[k].push(info);
@@ -322,12 +323,11 @@ export function saveAsHistory(formatted: string, info: TransactionDetail) {
   });
 }
 
-export async function getHistoryFromStorage(formatted: string): Promise<TransactionDetail[] | undefined> {
+export async function getHistoryFromStorage (formatted: string): Promise<TransactionDetail[] | undefined> {
   return new Promise((resolve) => {
     chrome.storage.local.get('history', (res) => {
-      const k = `${formatted}` as any;
-      const last = (res?.['history'] ?? {}) as unknown as { [key: string]: TransactionDetail[] };
-
+      const k = `${formatted}`;
+      const last = (res?.['history'] ?? {}) as unknown as Record<string, TransactionDetail[]>;
 
       resolve(last?.[k]);
     });
@@ -335,7 +335,7 @@ export async function getHistoryFromStorage(formatted: string): Promise<Transact
 }
 
 export const isHexToBn = (i: string): BN => isHex(i) ? hexToBn(i) : new BN(i);
-export const toBN = (i: any): BN => isHexToBn(String(i));
+export const toBN = (i: unknown): BN => isHexToBn(String(i));
 
 export const sanitizeChainName = (chainName: string | undefined) => (chainName?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', '')?.replace(' Finance', '')?.replace(' Testnet', '')?.replace(/\s/g, ''));
 
@@ -399,13 +399,13 @@ export const getPriceIdByChainName = (chainName?: string) => {
     return '';
   }
 
-  const _chainName = (sanitizeChainName(chainName) as string).toLocaleLowerCase();
+  const _chainName = (sanitizeChainName(chainName) as unknown as string).toLocaleLowerCase();
 
   return EXTRA_PRICE_IDS[_chainName] ||
     _chainName?.replace('assethub', '')?.replace('people', '');
 };
 
-export function areArraysEqual<T>(arrays: T[][]): boolean {
+export function areArraysEqual<T> (arrays: T[][]): boolean {
   if (arrays.length < 2) {
     return true; // Single array or empty input is considered equal
   }
@@ -428,7 +428,7 @@ export function areArraysEqual<T>(arrays: T[][]): boolean {
   );
 }
 
-export function extractBaseUrl(url: string | undefined) {
+export function extractBaseUrl (url: string | undefined) {
   try {
     if (!url) {
       return;
@@ -477,30 +477,39 @@ export async function updateRecentChains (addressKey: string, genesisHashKey: st
   }
 }
 
-export async function fastestConnection (endpoints: DropdownOption[]) {
-  const connections = endpoints.map((endpoint) => {
-    const wsProvider = new WsProvider(endpoint.value as string);
+export async function fastestConnection (endpoints: DropdownOption[]): Promise<FastestConnectionType> {
+  try {
+    const connections = endpoints.map((endpoint) => {
+      const wsProvider = new WsProvider(endpoint.value as string);
 
-    const connection = ApiPromise.create({ provider: wsProvider });
+      const connection = ApiPromise.create({ provider: wsProvider });
+
+      return {
+        connection,
+        wsProvider
+      };
+    });
+
+    const api = await Promise.any(connections.map(({ connection }) => connection));
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const selectedEndpoint = api.registry.knownTypes.provider.endpoint as string;
+    const filteredConnections = connections.filter(({ wsProvider }) => wsProvider.endpoint !== selectedEndpoint);
+
+    filteredConnections.forEach(({ wsProvider }) => {
+      wsProvider.disconnect().catch(console.error);
+    });
 
     return {
-      connection,
-      wsProvider
+      api,
+      selectedEndpoint
     };
-  });
+  } catch (error) {
+    console.error('Unable to make an API connection!', error);
 
-  const api = await Promise.any(connections.map(({ connection }) => connection));
-  // @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const selectedEndpoint = api.registry.knownTypes.provider.endpoint as string;
-  const filteredConnections = connections.filter(({ wsProvider }) => wsProvider.endpoint !== selectedEndpoint);
-
-  filteredConnections.forEach(({ wsProvider }) => {
-    wsProvider.disconnect().catch(console.error);
-  });
-
-  return {
-    api,
-    selectedEndpoint
-  };
+    return {
+      api: undefined,
+      selectedEndpoint: undefined
+    };
+  }
 }

@@ -170,6 +170,10 @@ export default function useApi(address: AccountId | string | undefined, stateApi
     // Finds the fastest available endpoint and connects to it
     const { api, selectedEndpoint } = await fastestConnection(withoutLC);
 
+    if (!api || !selectedEndpoint) {
+      return;
+    }
+
     updateEndpoint(undefined, genesisHash, selectedEndpoint, () => handleNewApi(api, selectedEndpoint, true));
   }, [apisContext.apis, connectToExisted, endpoints, handleNewApi, updateEndpoint]);
 

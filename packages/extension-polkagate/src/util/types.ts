@@ -805,6 +805,11 @@ export interface SavedEndpoint {
   checkForNewOne?: boolean;
 }
 
+export interface FastestConnectionType {
+  api: ApiPromise | undefined;
+  selectedEndpoint: string | undefined;
+}
+
 export type ChromeStorageGetResponse = Record<string, Record<string, SavedEndpoint | undefined> | undefined>;
 
 export type RecentChainsType = Record<string, string[]>;
