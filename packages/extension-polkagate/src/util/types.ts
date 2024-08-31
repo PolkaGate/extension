@@ -718,7 +718,7 @@ interface ApiPropsNew {
   isRequested: boolean;
 }
 
-export type APIs = Record<string, ApiPropsNew[]>;
+export type APIs = Record<string, ApiPropsNew[] | undefined>;
 
 export interface APIsContext {
   apis: APIs;

@@ -479,8 +479,8 @@ export async function updateRecentChains (addressKey: string, genesisHashKey: st
 
 export async function fastestConnection (endpoints: DropdownOption[]): Promise<FastestConnectionType> {
   try {
-    const connections = endpoints.map((endpoint) => {
-      const wsProvider = new WsProvider(endpoint.value as string);
+    const connections = endpoints.map(({ value }) => {
+      const wsProvider = new WsProvider(value as string);
 
       const connection = ApiPromise.create({ provider: wsProvider });
 
@@ -494,9 +494,9 @@ export async function fastestConnection (endpoints: DropdownOption[]): Promise<F
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const selectedEndpoint = api.registry.knownTypes.provider.endpoint as string;
-    const filteredConnections = connections.filter(({ wsProvider }) => wsProvider.endpoint !== selectedEndpoint);
+    const connectionsToDisconnect = connections.filter(({ wsProvider }) => wsProvider.endpoint !== selectedEndpoint);
 
-    filteredConnections.forEach(({ wsProvider }) => {
+    connectionsToDisconnect.forEach(({ wsProvider }) => {
       wsProvider.disconnect().catch(console.error);
     });
 

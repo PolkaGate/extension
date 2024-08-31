@@ -10,9 +10,9 @@ import { BN_ZERO } from '@polkadot/util';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints, toGetNativeToken } from './utils';
 
 // @ts-ignore
-async function getAssetOnAssetHub(addresses, assetsToBeFetched, chainName) {
+async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
   const endpoints = getChainEndpoints(chainName);
-  const { api, connections } = await fastestEndpoint(endpoints, false);
+  const { api, connections } = await fastestEndpoint(endpoints);
 
   const results = await toGetNativeToken(addresses, api, chainName);
 

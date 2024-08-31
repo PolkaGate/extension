@@ -34,7 +34,7 @@ function getState (): StateBase {
   };
 }
 
-function retrieveLedger(chainSlip?: number | null, txMetadataChainId?: string): GenericLedger {
+function retrieveLedger (chainSlip?: number | null, txMetadataChainId?: string): GenericLedger {
   const { isLedgerCapable } = getState();
 
   assert(isLedgerCapable, 'Incompatible browser, only Chrome is supported');

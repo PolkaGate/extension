@@ -27,13 +27,15 @@ type ApiAction =
   | { type: 'SET_ERROR'; payload: Error };
 
 const apiReducer = (state: ApiState, action: ApiAction): ApiState => {
-  switch (action.type) {
+  const { payload, type } = action;
+
+  switch (type) {
     case 'SET_API':
-      return { ...state, api: action.payload, error: null, isLoading: false };
+      return { ...state, api: payload, error: null, isLoading: false };
     case 'SET_LOADING':
-      return { ...state, isLoading: action.payload };
+      return { ...state, isLoading: payload };
     case 'SET_ERROR':
-      return { ...state, error: action.payload, isLoading: false };
+      return { ...state, error: payload, isLoading: false };
     default:
       return state;
   }
@@ -151,9 +153,9 @@ export default function useApi (address: AccountId | string | undefined, stateAp
 
   // Handles auto mode by finding the fastest endpoint and connecting to it
   const handleAutoMode = useCallback(async (address: string, genesisHash: string, findNewEndpoint: boolean) => {
-    const apisForGenesis = apisContext.apis[genesisHash] ?? [];
+    const apisForGenesis = apisContext.apis[genesisHash];
 
-    const autoModeExists = apisForGenesis.some(({ endpoint }) => isAutoMode(endpoint));
+    const autoModeExists = apisForGenesis?.some(({ endpoint }) => isAutoMode(endpoint));
 
     if (autoModeExists) {
       return;
@@ -165,12 +167,12 @@ export default function useApi (address: AccountId | string | undefined, stateAp
       return;
     }
 
-    const withoutLC = endpoints.filter(({ value }) => String(value).startsWith('wss'));
+    const wssEndpoints = endpoints.filter(({ value }) => String(value).startsWith('wss')); // to filter possible light client
 
     dispatch({ payload: true, type: 'SET_LOADING' });
 
     // Finds the fastest available endpoint and connects to it
-    const { api, selectedEndpoint } = await fastestConnection(withoutLC);
+    const { api, selectedEndpoint } = await fastestConnection(wssEndpoints);
 
     if (!api || !selectedEndpoint) {
       return;
