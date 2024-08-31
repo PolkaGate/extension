@@ -28,7 +28,7 @@ const endpointManager = new EndpointManager();
 function FullScreenRemoteNode ({ address, iconSize = 35 }: Props): React.ReactElement {
   const theme = useTheme();
   const { genesisHash } = useInfo(address);
-  const { endpoint: endpointUrl, isOnManuel } = useEndpoint(address);
+  const { endpoint: endpointUrl, isOnManual } = useEndpoint(address);
   const endpointOptions = useEndpoints(genesisHash);
   const onExtension = useIsExtensionPopup();
 
@@ -98,12 +98,12 @@ function FullScreenRemoteNode ({ address, iconSize = 35 }: Props): React.ReactEl
     });
 
     const addressKey = String(address);
-    const checkForNewOne = newEndpoint === AUTO_MODE.value && !endpointManager.getEndpoint(addressKey, genesisHash)?.isOnManuel;
+    const checkForNewOne = newEndpoint === AUTO_MODE.value && !endpointManager.getEndpoint(addressKey, genesisHash)?.isOnManual;
 
     endpointManager.setEndpoint(addressKey, genesisHash, {
       checkForNewOne,
       endpoint: newEndpoint,
-      isOnManuel: newEndpoint !== AUTO_MODE.value,
+      isOnManual: newEndpoint !== AUTO_MODE.value,
       timestamp: Date.now()
     });
   }, [address, genesisHash]);
@@ -211,7 +211,7 @@ function FullScreenRemoteNode ({ address, iconSize = 35 }: Props): React.ReactEl
         endpointsDelay.map((endpoint, index) => {
           const selectedEndpoint = endpoint.name === sanitizedCurrentEndpointName;
           const isLightClient = endpoint.name.includes('light client');
-          const isOnAutoMode = endpoint.name === AUTO_MODE.text && !isOnManuel;
+          const isOnAutoMode = endpoint.name === AUTO_MODE.text && !isOnManual;
 
           return (
             // eslint-disable-next-line react/jsx-no-bind

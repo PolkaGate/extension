@@ -801,7 +801,7 @@ export interface AccountsOrder {
 export interface SavedEndpoint {
   endpoint: string;
   timestamp: number;
-  isOnManuel: boolean;
+  isOnManual: boolean;
   checkForNewOne?: boolean;
 }
 

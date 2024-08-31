@@ -7,7 +7,7 @@ interface EndpointType {
   checkForNewOne?: boolean;
   endpoint: string | undefined;
   timestamp: number | undefined;
-  isOnManuel: boolean | undefined;
+  isOnManual: boolean | undefined;
 }
 
 type SavedEndpoints = Record<string, Record<string, EndpointType>>;
@@ -78,7 +78,7 @@ export class EndpointManager {
   //   }
 
   shouldBeOnAutoMode (endpoint: EndpointType) {
-    return !endpoint.isOnManuel && (Date.now() - (endpoint.timestamp ?? 0) > ENDPOINT_TIMEOUT);
+    return !endpoint.isOnManual && (Date.now() - (endpoint.timestamp ?? 0) > ENDPOINT_TIMEOUT);
   }
 
   subscribe (listener: Listener) {

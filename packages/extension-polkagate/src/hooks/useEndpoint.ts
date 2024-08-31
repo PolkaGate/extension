@@ -12,7 +12,7 @@ interface EndpointType {
   checkForNewOne?: boolean;
   endpoint: string | undefined;
   timestamp: number | undefined;
-  isOnManuel: boolean | undefined;
+  isOnManual: boolean | undefined;
 }
 
 // Create a singleton EndpointManager
@@ -23,7 +23,7 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
   const [endpoint, setEndpoint] = useState<EndpointType>({
     checkForNewOne: undefined,
     endpoint: undefined,
-    isOnManuel: undefined,
+    isOnManual: undefined,
     timestamp: undefined
   });
 
@@ -36,7 +36,7 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
       endpointManager.setEndpoint(String(address), genesisHash, {
         checkForNewOne: false,
         endpoint: _endpoint,
-        isOnManuel: true,
+        isOnManual: true,
         timestamp: Date.now()
       });
     } else {
@@ -46,7 +46,7 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
         endpointManager.setEndpoint(String(address), genesisHash, {
           checkForNewOne: false,
           endpoint: AUTO_MODE.value,
-          isOnManuel: false,
+          isOnManual: false,
           timestamp: Date.now()
         });
       }
@@ -55,7 +55,7 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
     setEndpoint(endpointManager.getEndpoint(String(address), genesisHash) || {
       checkForNewOne: undefined,
       endpoint: undefined,
-      isOnManuel: undefined,
+      isOnManual: undefined,
       timestamp: undefined
     });
   }, [address, genesisHash, _endpoint]);

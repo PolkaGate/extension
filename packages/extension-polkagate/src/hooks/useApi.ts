@@ -61,7 +61,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
       const newEndpoint = {
         checkForNewOne: false,
         endpoint: selectedEndpoint,
-        isOnManuel: false,
+        isOnManual: false,
         timestamp: Date.now()
       };
       const savedEndpoints = endpointManager.getEndpoints();
