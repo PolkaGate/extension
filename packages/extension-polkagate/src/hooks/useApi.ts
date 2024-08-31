@@ -54,7 +54,7 @@ export default function useApi (address: AccountId | string | undefined, stateAp
     isLoading: false
   });
 
-  const isAutoMode=(e: string) => e === AUTO_MODE.value;
+  const isAutoMode = (e: string) => e === AUTO_MODE.value;
 
   // This function is called exclusively in auto mode to update the account's "auto mode" endpoint
   // with the fastest endpoint available.
