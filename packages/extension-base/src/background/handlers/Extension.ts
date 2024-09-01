@@ -58,6 +58,8 @@ export default class Extension {
   }
 
   private applyAddedTime ({ pair }: ApplyAddedTime): void {
+    assert(pair, 'Unable to find pair');
+
     const addedTime = Date.now();
 
     keyring.saveAccountMeta(pair, { ...pair.meta, addedTime });
