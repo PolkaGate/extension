@@ -537,7 +537,9 @@ export default class Extension {
       suri
     });
 
-    keyring.addPair(childPair, password);
+    const { pair } = keyring.addPair(childPair, password);
+
+    this.applyAddedTime({ pair });
 
     return true;
   }
