@@ -81,7 +81,7 @@ export default function AccountPreview ({ address, hideNumbers, isHidden, name, 
   }, [address, chain?.genesisHash, onAction, onExtension]);
 
   return (
-    <Grid alignItems='center' container position='relative' p='15px 0 13px'>
+    <Grid alignItems='center' container overflow='hidden' p='15px 0 13px' position='relative'>
       <AccountIcons
         chain={chain}
         formatted={formatted || address}
