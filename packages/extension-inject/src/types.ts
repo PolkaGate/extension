@@ -18,6 +18,7 @@ export interface InjectedAccount {
   genesisHash?: string | null;
   name?: string;
   type?: KeypairType;
+  whenCreated?: number;
 }
 
 export interface InjectedAccountWithMeta {

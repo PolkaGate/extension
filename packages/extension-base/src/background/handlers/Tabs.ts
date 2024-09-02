@@ -35,12 +35,13 @@ function transformAccounts (accounts: SubjectInfo, anyType = false): InjectedAcc
     .filter(({ json: { meta: { isHidden } } }) => !isHidden)
     .filter(({ type }) => anyType ? true : canDerive(type))
     .sort((a, b) => (a.json.meta.whenCreated || 0) - (b.json.meta.whenCreated || 0))
-    .map(({ json: { address, meta: { addedTime, genesisHash, name } }, type }): InjectedAccount => ({
+    .map(({ json: { address, meta: { addedTime, genesisHash, name, whenCreated } }, type }): InjectedAccount => ({
       addedTime: addedTime as number | undefined,
       address,
       genesisHash,
       name,
-      type
+      type,
+      whenCreated
     }));
 }
 
@@ -53,8 +54,15 @@ export default class Tabs {
     this.#state = state;
   }
 
-  private authorize (url: string, request: RequestAuthorizeTab, reauthorize?: boolean): Promise<AuthResponse> {
-    return this.#state.authorizeUrl(url, request, reauthorize);
+  private needReAuthorize (url: string): boolean {
+    const transformedAccounts = transformAccounts(accountsObservable.subject.getValue(), true);
+    const auth = this.#state.authUrls[this.#state.stripUrl(url)];
+
+    return !auth?.authorizedTime || transformedAccounts.some(({ addedTime, whenCreated }) => (addedTime && addedTime > auth.authorizedTime) || (whenCreated && whenCreated > auth.authorizedTime));
+  }
+
+  private authorize (url: string, request: RequestAuthorizeTab): Promise<AuthResponse> {
+    return this.#state.authorizeUrl(url, request, this.needReAuthorize(url));
   }
 
   private filterForAuthorizedAccounts (accounts: InjectedAccount[], url: string): InjectedAccount[] {
@@ -73,17 +81,9 @@ export default class Tabs {
     const transformedAccounts = transformAccounts(accountsObservable.subject.getValue(), anyType);
     const authorizedAccounts = this.filterForAuthorizedAccounts(transformedAccounts, url);
 
-    const auth = this.#state.authUrls[this.#state.stripUrl(url)];
-
-    // just a check for linting issue, it already checked by "ensureUrlAuthorized"
-    if (!auth) {
+    if (this.needReAuthorize(url)) {
+      // since new authorization is underway hence we do not send may be previously authorized accounts to the dapp
       return [];
-    }
-
-    const hasNewerAccountsSinceAuth = !auth.authorizedTime || transformedAccounts.some(({ addedTime }) => addedTime && addedTime > auth.authorizedTime);
-
-    if (hasNewerAccountsSinceAuth) {
-      this.authorize(url, { origin: auth.origin }, true).then(() => this.accountsListAuthorized(url, { anyType })).catch(console.error);
     }
 
     return authorizedAccounts;
