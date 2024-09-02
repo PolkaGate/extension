@@ -1,21 +1,21 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { SxProps} from '@mui/material';
 import type { ApiPromise } from '@polkadot/api';
+import type { DeriveStakingQuery } from '@polkadot/api-derive/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { MyPoolInfo, PoolStakingConsts, StakingConsts, ValidatorInfo } from '../../../../util/types';
 
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Divider, Grid, SxProps, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { BN } from '@polkadot/util';
 
 import { Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
@@ -35,7 +35,7 @@ interface State {
   pool: MyPoolInfo | undefined;
 }
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -61,12 +61,13 @@ export default function Index(): React.ReactElement {
   const [showReview, setShowReview] = useState<boolean>(false);
 
   const canNominate = useMemo(() => pool && formatted && ([String(pool.bondedPool?.roles.root), String(pool.bondedPool?.roles.nominator)].includes(String(formatted))), [formatted, pool]);
+  const staked = useMemo(() => new BN(pool?.stashIdAccount?.stakingLedger?.active as unknown as BN|undefined ?? 0), [pool?.stashIdAccount?.stakingLedger?.active]);
 
   const selectedValidatorsInfo = useMemo(() =>
     allValidatorsInfo && nominatedValidatorsIds && allValidatorsInfo.current
       .concat(allValidatorsInfo.waiting)
       .filter((v: DeriveStakingQuery) => nominatedValidatorsIds.includes(v.accountId))
-    , [allValidatorsInfo, nominatedValidatorsIds]);
+  , [allValidatorsInfo, nominatedValidatorsIds]);
 
   const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv.exposure.others.find(({ who }) => who.toString() === pool?.accounts?.stashId)), [pool?.accounts?.stashId, selectedValidatorsInfo]);
 
@@ -99,7 +100,7 @@ export default function Index(): React.ReactElement {
     goToSelectValidator();
   }, [goToSelectValidator]);
 
-  const Warn = ({ text, style = {} }: { text: string, style?: SxProps }) => (
+  const Warn = ({ style = {}, text }: { text: string, style?: SxProps }) => (
     <Grid container justifyContent='center' sx={style}>
       <Warning
         fontWeight={400}
@@ -174,11 +175,11 @@ export default function Index(): React.ReactElement {
               activeValidators={activeValidators}
               allValidatorsIdentities={allValidatorsIdentities}
               api={api}
-              chain={chain as any}
+              chain={chain}
               decimal={pool?.decimal}
               formatted={pool?.stashIdAccount?.accountId?.toString()}
               height={window.innerHeight - (canNominate ? 190 : 150)}
-              staked={new BN(pool?.stashIdAccount?.stakingLedger?.active ?? 0)}
+              staked={staked}
               stakingConsts={stakingConsts}
               token={pool?.token}
               validatorsToList={selectedValidatorsInfo}
@@ -206,7 +207,7 @@ export default function Index(): React.ReactElement {
         <RemoveValidators
           address={address}
           api={api}
-          chain={chain as any}
+          chain={chain}
           formatted={formatted}
           poolId={pool?.poolId}
           setShow={setShowRemoveValidator}
@@ -218,15 +219,13 @@ export default function Index(): React.ReactElement {
         <SelectValidators
           address={address}
           api={api}
-          chain={chain as any}
           newSelectedValidators={newSelectedValidators}
           nominatedValidatorsIds={nominatedValidatorsIds}
-          poolId={pool.poolId}
           setNewSelectedValidators={setNewSelectedValidators}
           setShow={setShowSelectValidator}
           setShowReview={setShowReview}
           show={showSelectValidator}
-          staked={new BN(pool?.stashIdAccount?.stakingLedger?.active ?? 0)}
+          staked={staked}
           stakingConsts={stakingConsts}
           stashId={formatted}
           title={t('Select Validators')}
@@ -237,14 +236,13 @@ export default function Index(): React.ReactElement {
       {showReview && newSelectedValidators &&
         <Review
           address={address}
-          allValidators={allValidatorsInfo}
           allValidatorsIdentities={allValidatorsIdentities}
           api={api}
           newSelectedValidators={newSelectedValidators}
           poolId={pool?.poolId}
           setShow={setShowReview}
           show={showReview}
-          staked={new BN(pool?.stashIdAccount?.stakingLedger?.active ?? 0)}
+          staked={staked}
           stakingConsts={stakingConsts}
         />
       }

@@ -17,7 +17,7 @@ import { TwoButtons } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
 import { useInfo, useStakingAccount, useStakingConsts } from '../../../../../hooks';
 import { STEPS } from '../../../pool/stake';
-import SelectValidators from '../../partials/SelectValidators';
+import SelectValidatorsFs from '../../partials/SelectValidatorsFs';
 
 interface Props {
   address: string;
@@ -26,7 +26,7 @@ interface Props {
   inputs: StakingInputs | undefined;
 }
 
-function arraysAreEqual(arr1: string[], arr2: string[]): boolean {
+function arraysAreEqual (arr1: string[], arr2: string[]): boolean {
   if (arr1.length !== arr2.length) {
     return false;
   }
@@ -101,14 +101,14 @@ export default function InputPage ({ address, inputs, setInputs, setStep }: Prop
         {t('Manage your nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.')}
       </Typography>
       <Grid container item justifyContent='flex-start' mt='10px'>
-        <SelectValidators
+        <SelectValidatorsFs
           address={address}
           newSelectedValidators={newSelectedValidators}
           nominatedValidatorsIds={nominatedValidatorsIds}
           setNewSelectedValidators={setNewSelectedValidators}
           staked={(stakingAccount?.stakingLedger?.active as unknown as BN) ?? BN_ZERO}
           stakingConsts={stakingConsts}
-          stashId={formatted as string}
+          stashId={formatted}
           tableHeight={window.innerHeight - 400}
         />
         <Grid container item sx={{ '> div': { m: 0, width: '64%' }, justifyContent: 'flex-end', mt: '5px' }}>
