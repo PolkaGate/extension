@@ -1058,7 +1058,6 @@
   "Assets": "",
   "Validators usually pay rewards regularly. If not received within the set period, rewards expire. You can manually initiate the payout if desired.": "",
   "Would you like to create a password now?": "",
-  "Maybe later": "",
   "Please enter your password to proceed.": "",
   "Unlock": "",
   "Forgot password?": "",
@@ -1383,5 +1382,7 @@
   "Social Media": "",
   "Need": "",
   "Help?": "",
-  "Ignore": ""
+  "Ignore": "",
+  "Rewards Destination": "",
+  "{{accountName}} has been successfully removed!": ""
 }

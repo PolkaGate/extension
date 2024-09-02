@@ -97,8 +97,6 @@ export default function EasyMode ({ address, balances, inputs, setInputs, setSte
         params,
         pool
       });
-    } else {
-      console.log('waiting for pool:', pool);
     }
   }, [amount, amountAsBN, api, pool, poolConsts, setInputs]);
 

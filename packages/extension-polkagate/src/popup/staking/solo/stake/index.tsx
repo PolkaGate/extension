@@ -1,11 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
 import type { AccountStakingInfo, SoloSettings, StakingConsts, ValidatorInfo } from '../../../../util/types';
 
 import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Typography, useTheme } from '@mui/material';
@@ -13,7 +13,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
 import { useAvailableToSoloStake, useBalances, useInfo, useStakingAccount, useStakingConsts, useTranslation, useUnSupportedNetwork, useValidatorSuggestion } from '../../../../hooks';
@@ -32,7 +32,7 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -85,10 +85,10 @@ export default function Index(): React.ReactElement {
     return { max, min };
   }, [availableToSoloStake, balances, decimal, stakingAccount, stakingConsts]);
 
-  const bond = api && api.tx['staking']['bond'];// (controller: MultiAddress, value: Compact<u128>, payee: PalletStakingRewardDestination)
-  const bondExtra = api && api.tx['staking']['bondExtra'];// (max_additional: Compact<u128>)
-  const batchAll = api && api.tx['utility']['batchAll'];
-  const nominated = api && api.tx['staking']['nominate'];
+  const bond = api?.tx['staking']['bond'];// (controller: MultiAddress, value: Compact<u128>, payee: PalletStakingRewardDestination)
+  const bondExtra = api?.tx['staking']['bondExtra'];// (max_additional: Compact<u128>)
+  const batchAll = api?.tx['utility']['batchAll'];
+  const nominated = api?.tx['staking']['nominate'];
   const isControllerDeprecated = bond ? bond.meta.args.length === 2 : undefined;
 
   const tx = isFirstTimeStaking ? bond : bondExtra;
@@ -98,7 +98,7 @@ export default function Index(): React.ReactElement {
       ? [amountAsBN, settings.payee]
       : [settings.stashId, amountAsBN, settings.payee]
     : [amountAsBN]
-    , [amountAsBN, settings.payee, settings.stashId, stakingAccount?.stakingLedger?.total, isControllerDeprecated]);
+  , [amountAsBN, settings.payee, settings.stashId, stakingAccount?.stakingLedger?.total, isControllerDeprecated]);
 
   /** Staking is the default payee,can be changed in the advanced section **/
   /** payee:
@@ -114,7 +114,7 @@ export default function Index(): React.ReactElement {
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      setEstimatedFee(api.createType('Balance', BN_ONE));
+      setEstimatedFee(api.createType('Balance', BN_ONE) as Balance);
 
       return;
     }
@@ -192,7 +192,7 @@ export default function Index(): React.ReactElement {
   }, [validatorSelectionMethod]);
 
   const onSelectionMethodChange = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
-    setValidatorSelectionMethod(event.target.value as "auto" | "manual");
+    setValidatorSelectionMethod(event.target.value as 'auto' | 'manual');
   }, []);
 
   const Warn = ({ text }: { text: string }) => (
@@ -234,7 +234,9 @@ export default function Index(): React.ReactElement {
           <AmountWithOptions
             label={t('Amount ({{token}})', { replace: { token } })}
             onChangeAmount={onChangeAmount}
+            // eslint-disable-next-line react/jsx-no-bind
             onPrimary={() => onThresholdAmount('max')}
+            // eslint-disable-next-line react/jsx-no-bind
             onSecondary={() => onThresholdAmount('min')}
             primaryBtnText={t('Max amount')}
             secondaryBtnText={isFirstTimeStaking ? t('Min amount') : undefined}
@@ -256,7 +258,7 @@ export default function Index(): React.ReactElement {
               </RadioGroup>
             </FormControl>
             <Grid item onClick={() => setShowAdvanceSettings(true)} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline', mt: '20px' }} xs={12}>
-              {t('Advanced settings')}
+              {t('Rewards Destination')}
             </Grid>
           </Grid>
         }
@@ -283,7 +285,7 @@ export default function Index(): React.ReactElement {
           address={address}
           amount={amount}
           api={api}
-          chain={chain as any}
+          chain={chain}
           estimatedFee={estimatedFee}
           isFirstTimeStaking={isFirstTimeStaking}
           params={params}
@@ -310,7 +312,7 @@ export default function Index(): React.ReactElement {
       {validatorSelectionMethod === 'manual' && showSelectValidator && formatted &&
         <SelectValidators
           address={address}
-          api={api as ApiPromise}
+          api={api}
           newSelectedValidators={manualSelectedValidators}
           setNewSelectedValidators={setManualSelectedValidators}
           setShow={setShowSelectValidator}

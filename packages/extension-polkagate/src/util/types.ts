@@ -61,9 +61,21 @@ export interface NominatorInfo {
   eraIndex: number;
 }
 
+export interface Other {
+  who: string;
+  value: BN;
+}
 export interface ValidatorInfo extends DeriveStakingQuery {
-  exposure: any;
+  exposure: {
+    own: BN,
+    total: BN,
+    others: Other[]
+  };
   accountInfo?: DeriveAccountInfo;
+  isOversubscribed?: {
+    notSafe: boolean;
+    safe: boolean;
+  }
 }
 
 export interface AllValidators {

@@ -21,7 +21,7 @@ interface Props {
 
 type EndpointsDelay = { name: string, delay: number | null | undefined, value: string }[];
 
-function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactElement {
+function FullScreenRemoteNode ({ address, iconSize = 35 }: Props): React.ReactElement {
   const theme = useTheme();
   const { account, chainName, endpoint: endpointUrl } = useInfo(address);
   const genesisHash = account?.genesisHash;
@@ -220,7 +220,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
             </Grid>
           );
         })}
-    </Grid >
+    </Grid>
   );
 
   const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {

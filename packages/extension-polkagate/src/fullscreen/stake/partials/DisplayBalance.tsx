@@ -1,11 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
@@ -16,7 +16,6 @@ import { useTranslation } from '@polkadot/extension-polkagate/src/components/tra
 import { useInfo, useNativeTokenPrice } from '@polkadot/extension-polkagate/src/hooks';
 import { DATE_OPTIONS } from '@polkadot/extension-polkagate/src/util/constants';
 import { noop } from '@polkadot/extension-polkagate/src/util/utils';
-import { BN } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance } from '../../../components';
 
@@ -64,7 +63,7 @@ const ToBeReleased = ({ decimal, showUnstaking, text, toBeReleased, token }: ToB
   </Collapse>
 );
 
-export default function DisplayBalance({ actions, address, amount, icons, isUnstaking, marginTop = '10px', onClicks, title, toBeReleased }: DisplayBalanceProps): React.ReactElement {
+export default function DisplayBalance ({ actions, address, amount, icons, isUnstaking, marginTop = '10px', onClicks, title, toBeReleased }: DisplayBalanceProps): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const price = useNativeTokenPrice(address);
