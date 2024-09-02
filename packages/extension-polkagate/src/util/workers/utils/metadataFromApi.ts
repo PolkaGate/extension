@@ -32,6 +32,11 @@ export function metadataFromApi (api: ApiPromise): {metadata: MetadataDef} {
       : DEFAULT_SS58.toNumber(),
     tokenDecimals: (api.registry.chainDecimals || [DEFAULT_DECIMALS.toNumber()])[0],
     tokenSymbol: (api.registry.chainTokens || formatBalance.getDefaults().unit)[0],
+    // @AMIRKHANEF
+    // tokenSymbol: (api.registry.chainTokens || [formatBalance.getDefaults().unit])[0],
+    // or
+    // tokenDecimals: api.registry.chainDecimals[0] || formatBalance.getDefaults().decimals,
+    // tokenSymbol: api.registry.chainTokens[0] || formatBalance.getDefaults().unit,
     types: getSpecTypes(api.registry, chainName, api.runtimeVersion.specName, api.runtimeVersion.specVersion) as Record<string, string | Record<string, string>>
   };
 
