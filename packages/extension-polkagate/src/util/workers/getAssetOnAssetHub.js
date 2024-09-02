@@ -7,14 +7,14 @@
 import { BN_ZERO } from '@polkadot/util';
 
 // eslint-disable-next-line import/extensions
-import { closeWebsockets, fastestEndpoint, getChainEndpoints, getMetadata, toGetNativeToken } from './utils';
+import { closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from './utils';
 
 // @ts-ignore
-async function getAssetOnAssetHub(addresses, assetsToBeFetched, chainName) {
+async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
   const endpoints = getChainEndpoints(chainName);
   const { api, connections } = await fastestEndpoint(endpoints, false);
 
-  const result = getMetadata(api);
+  const result = metadataFromApi(api);
 
   postMessage(JSON.stringify(result));
 

@@ -5,6 +5,7 @@
 
 import type { Asset } from '@polkagate/apps-config/assets/types';
 import type { AccountJson } from '@polkadot/extension-base/background/types';
+import type { MetadataDef } from '@polkadot/extension-inject/types';
 import type { AlertType } from '../util/types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
@@ -14,14 +15,13 @@ import { BN, isObject } from '@polkadot/util';
 
 import { getStorage, setStorage, watchStorage } from '../components/Loading';
 import { toCamelCase } from '../fullscreen/governance/utils/util';
+import { updateMetadata } from '../messaging';
 import allChains from '../util/chains';
 import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
 import { isHexToBn } from '../util/utils';
 import useSelectedChains from './useSelectedChains';
 import { useIsTestnetEnabled, useTranslation } from '.';
-import { updateMetadata } from '../messaging';
-import type { MetadataDef } from '@polkadot/extension-inject/types';
 
 type WorkerMessage = Record<string, MessageBody[]>;
 type Assets = Record<string, FetchedBalance[]>;
@@ -368,6 +368,14 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
 
       const parsedMessage = JSON.parse(message) as WorkerMessage;
 
+      if ('metadata' in parsedMessage) {
+        const metadata = parsedMessage?.['metadata'];
+
+        updateMetadata(metadata as unknown as MetadataDef).catch(console.error);
+
+        return;
+      }
+
       Object.keys(parsedMessage).forEach((address) => {
         _assets[address] = parsedMessage[address]
           .map((message) => {
@@ -412,6 +420,15 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       }
 
       const parsedMessage = JSON.parse(message) as WorkerMessage;
+
+      if ('metadata' in parsedMessage) {
+        const metadata = parsedMessage?.['metadata'];
+
+        updateMetadata(metadata as unknown as MetadataDef).catch(console.error);
+
+        return;
+      }
+
       const _assets: Assets = {};
 
       Object.keys(parsedMessage).forEach((address) => {

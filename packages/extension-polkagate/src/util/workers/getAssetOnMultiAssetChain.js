@@ -7,13 +7,13 @@ import { createAssets } from '@polkagate/apps-config/assets';
 
 import { getSubstrateAddress } from '../utils';
 // eslint-disable-next-line import/extensions
-import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, getMetadata, toGetNativeToken } from './utils';
+import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from './utils';
 
 async function getAssets (addresses, assetsToBeFetched, chainName) {
   const endpoints = getChainEndpoints(chainName);
   const { api, connections } = await fastestEndpoint(endpoints, false);
 
-  const result = getMetadata(api);
+  const result = metadataFromApi(api);
 
   postMessage(JSON.stringify(result));
 
