@@ -1372,5 +1372,13 @@
   "Accounts' balances updated!": "账户余额已更新！",
   "The account has been successfully removed!": "账户已成功移除！",
   "The account address, formatted for {{chainName}}, has been copied to the clipboard!": "账户地址已根据{{chainName}}格式化并复制到剪贴板！",
-  "The transaction has been finalized!": "交易已完成！"
+  "The transaction has been finalized!": "交易已完成！",
+  "Delegation status": "委托状态",
+  "Accounts in the {{profileName}} profile are now {{visibility}} websites.": "{{profileName}} 档案中的账户现在是 {{visibility}} 网站。",
+  "{{accountName}} default chain switched to {{chainName}}.": "{{accountName}} 的默认链已切换到 {{chainName}}。",
+  "Social Media": "社交媒体",
+  "Need": "需要",
+  "Help?": "需要帮助吗？",
+  "Rewards Destination": "奖励目的地",
+  "{{accountName}} has been successfully removed!": "{{accountName}} 已成功移除！"
 }

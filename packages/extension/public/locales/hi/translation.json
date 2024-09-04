@@ -1365,5 +1365,13 @@
   "Accounts' balances updated!": "खातों का बैलेंस अपडेट किया गया!",
   "The account has been successfully removed!": "खाता सफलतापूर्वक हटा दिया गया है!",
   "The account address, formatted for {{chainName}}, has been copied to the clipboard!": "खाते का पता, {{chainName}} के लिए स्वरूपित किया गया, क्लिपबोर्ड पर कॉपी कर लिया गया है!",
-  "The transaction has been finalized!": "लेनदेन को अंतिम रूप दे दिया गया है!"
+  "The transaction has been finalized!": "लेनदेन को अंतिम रूप दे दिया गया है!",
+  "Delegation status": "प्रतिनिधित्व की स्थिति",
+  "Accounts in the {{profileName}} profile are now {{visibility}} websites.": "{{profileName}} प्रोफ़ाइल में खाते अब {{visibility}} वेबसाइट्स हैं।",
+  "{{accountName}} default chain switched to {{chainName}}.": "{{accountName}} की डिफ़ॉल्ट चेन {{chainName}} में बदल दी गई है।",
+  "Social Media": "सोशल मीडिया",
+  "Need": "आवश्यकता",
+  "Help?": "मदद चाहिए?",
+  "Rewards Destination": "इनाम की मंज़िल",
+  "{{accountName}} has been successfully removed!": "{{accountName}} को सफलतापूर्वक हटा दिया गया है!"
 }
