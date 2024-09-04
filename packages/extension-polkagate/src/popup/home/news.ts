@@ -10,10 +10,10 @@ export interface News {
 
 export const news: News[] = [
   {
-    version: '0.7.71',
+    version: '0.7.72',
     notes: [
-      'New Transferable Formula: The on-chain formula for calculating transferable balance has been updated, leading to potential increases in users\' transferable balances.',
-      'Social Icons Update: PolkaGate\'s GitHub link has been added.',
+      'New Transferable Formula: The on-chain formula for calculating transferable balances has been updated, potentially increasing users’ transferable balances for those with staked solo and reserved balances.',
+      'Social Icons Update: PolkaGate\'s GitHub, and docs link have been added.',
       'Known Issues Resolved: Fixes include chain switching on staking pages, track selection in delegate votes, unexpected closures on import account pages, missing connected dApp icons, and profile menu issues—all within extension mode.'
     ]
   },
