@@ -20,6 +20,7 @@ export interface AuthUrlInfo {
   origin: string;
   url: string;
   authorizedAccounts: string[];
+  authorizedTime: number;
 }
 
 type KeysWithDefinedValues<T> = {
@@ -56,6 +57,7 @@ export interface AccountJson extends KeyringPair$Meta {
   isQR?: boolean;
   profile?: string;
   stakingAccount?: string;
+  addedTime?: number; // for DApp authorization check
 }
 
 export type AccountWithChildren = AccountJson & {
@@ -437,4 +439,8 @@ export interface ResponseJsonGetAccountInfo {
 
 export interface ResponseAuthorizeList {
   list: AuthUrls;
+}
+
+export interface ApplyAddedTime {
+  pair: KeyringPair;
 }

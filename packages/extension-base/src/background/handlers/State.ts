@@ -43,6 +43,7 @@ export interface AuthUrlInfo {
   origin: string;
   url: string;
   authorizedAccounts: string[];
+  authorizedTime: number;
 }
 
 interface MetaRequest extends Resolver<boolean> {
@@ -257,9 +258,11 @@ export default class State {
       const { idStr, request: { origin }, url } = this.#authRequests[id];
 
       const strippedUrl = this.stripUrl(url);
+      const authorizedTime = authorizedAccounts.length > 0 ? Date.now() : 0;
 
       const authInfo: AuthUrlInfo = {
         authorizedAccounts,
+        authorizedTime,
         count: 0,
         id: idStr,
         origin,
@@ -377,6 +380,7 @@ export default class State {
 
   public async updateAuthorizedAccounts ({ authorizedAccounts, url }: UpdateAuthorizedAccounts): Promise<void> {
     this.#authUrls[url].authorizedAccounts = authorizedAccounts;
+    this.#authUrls[url].authorizedTime = Date.now(); // updates the authorizedTime when the authorizedAccounts list updates
     await this.saveCurrentAuthList();
   }
 
@@ -406,7 +410,7 @@ export default class State {
     this.updateIcon(shouldClose);
   }
 
-  public async authorizeUrl (url: string, request: RequestAuthorizeTab): Promise<AuthResponse> {
+  public async authorizeUrl (url: string, request: RequestAuthorizeTab, reauthorize?: boolean): Promise<AuthResponse> {
     const idStr = this.stripUrl(url);
 
     // Do not enqueue duplicate authorization requests.
@@ -415,7 +419,7 @@ export default class State {
 
     assert(!isDuplicate, `The source ${url} has a pending authorization request`);
 
-    if (this.#authUrls[idStr]) {
+    if (this.#authUrls[idStr] && !reauthorize) {
       // this url was seen in the past
       assert(this.#authUrls[idStr].authorizedAccounts, `The source ${url} is not allowed to interact with this extension`);
 
