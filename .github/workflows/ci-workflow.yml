@@ -27,7 +27,7 @@ jobs:
               core.setFailed(`PR title does not follow the correct format. Example: feat: Add new feature.`);
             }
 
-  pr:
+  build:
     strategy:
       matrix:
         step: ['build']
@@ -57,7 +57,7 @@ jobs:
 
   release:
     name: Release
-    needs: [check-title, pr]
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
