@@ -1,5 +1,6 @@
 {
   "branches": ["main"],
+  "repositoryUrl": "https://github.com/polkagate/extension.git",
   "plugins": [
     "@semantic-release/changelog",
     "@semantic-release/git",
