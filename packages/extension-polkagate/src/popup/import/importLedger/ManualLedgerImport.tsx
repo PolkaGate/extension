@@ -61,7 +61,7 @@ export default function ManualLedgerImport ({ accountIndex, address, addressOffs
           />
         </Grid>
       </Grid>
-      <Grid container ref={ref} sx={{ minHeight: '50px', maxHeight: '500px', overflowY: 'scroll', scrollbarWidth: 'thin', scrollBehavior: 'auto' }}>
+      <Grid container ref={ref} sx={{ maxHeight: '500px', minHeight: '50px', overflowY: 'scroll', scrollBehavior: 'auto', scrollbarWidth: 'thin' }}>
         <Grid container display={address ? 'inherit' : 'none'} item overflow='hidden' sx={{ animationDuration: address ? '300ms' : '150ms', animationFillMode: 'forwards', animationName: `${address ? showAddressAnimation : hideAddressAnimation}`, animationTimingFunction: 'linear', mt: '15px' }}>
           <Address
             address={address}
@@ -74,5 +74,5 @@ export default function ManualLedgerImport ({ accountIndex, address, addressOffs
         </Grid>
       </Grid>
     </>
-  )
+  );
 }
