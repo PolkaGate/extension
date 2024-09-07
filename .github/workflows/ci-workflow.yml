@@ -4,18 +4,24 @@ on:
   push:
     branches: [main]
   pull_request:
-    types: [opened, edited]
+    types: [opened, edited, synchronize]
 
 jobs:
   check-title:
     name: Check PR Title
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Check PR Title
         uses: actions/github-script@v6
         with:
           script: |
-            const title = context.payload.pull_request.title;
+            const pr = context.payload.pull_request;
+            if (!pr) {
+              core.setFailed('No pull request context available.');
+              return;
+            }
+            const title = pr.title;
             const prefixPattern = /^(feat|fix|chore|docs|style|refactor|perf|test):\s.+/;
             if (!prefixPattern.test(title)) {
               core.setFailed(`PR title does not follow the correct format. Example: feat: Add new feature.`);
@@ -51,6 +57,7 @@ jobs:
 
   release:
     name: Release
+    needs: [check-title, pr]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
