@@ -1,24 +1,24 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import { saveAs } from 'file-saver';
 import React, { useCallback, useState } from 'react';
 
 import { ButtonWithCancel, NewAddress, Password, Warning, WrongPasswordAlert } from '../../components';
+import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
 import useTranslation from '../../hooks/useTranslation';
 import { exportAccount } from '../../messaging';
-import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
 
 interface Props {
   address: string;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function ExportAccountModal({ address, setDisplayPopup }: Props): React.ReactElement {
+export default function ExportAccountModal ({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const [isBusy, setIsBusy] = useState<boolean>(false);
