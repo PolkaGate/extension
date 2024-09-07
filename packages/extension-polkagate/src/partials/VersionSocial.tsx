@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import { faDiscord } from '@fortawesome/free-brands-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Email as EmailIcon, GitHub as GitHubIcon, HelpCenter as HelpCenterIcon, Language as LanguageIcon, X as XIcon, YouTube as YouTubeIcon } from '@mui/icons-material';
 import { Box, Grid, Link, useTheme } from '@mui/material';
 import React from 'react';
@@ -14,6 +16,8 @@ interface Props {
   fontSize: string;
   iconSize?: number;
 }
+
+const GRAY_COLOR = '#707070';
 
 export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => {
   const theme = useTheme();
@@ -27,7 +31,7 @@ export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => {
             '&:hover': {
               color: '#007CC4'
             },
-            color: '#707070',
+            color: GRAY_COLOR,
             fontSize: iconSize
           }}
         />
@@ -38,7 +42,7 @@ export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => {
             '&:hover': {
               color: theme.palette.success.main
             },
-            color: '#707070',
+            color: GRAY_COLOR,
             fontSize: iconSize
           }}
         />
@@ -49,7 +53,7 @@ export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => {
             '&:hover': {
               color: 'red'
             },
-            color: '#707070',
+            color: GRAY_COLOR,
             fontSize: iconSize + 1
           }}
         />
@@ -60,8 +64,19 @@ export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => {
             '&:hover': {
               color: isDark ? 'white' : 'black'
             },
-            color: '#707070',
+            color: GRAY_COLOR,
             fontSize: iconSize - 2.5
+          }}
+        />
+      </Link>
+      <Link href='https://discord.gg/kf8msNm3' pl='5px' rel='noreferrer' sx={{ '&:hover': { '>svg': { color: '#5865F2' } }, '>svg': { color: '#' } }} target='_blank'>
+        <FontAwesomeIcon
+          color= {GRAY_COLOR}
+          icon={faDiscord}
+          style={{
+            height: iconSize === 15 ? '14px' : '17px',
+            paddingBottom: '2px',
+            width: iconSize === 15 ? '17px' : '20px'
           }}
         />
       </Link>
@@ -86,7 +101,7 @@ export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => {
             '&:hover': {
               color: isDark ? 'white' : 'black'
             },
-            color: '#707070',
+            color: GRAY_COLOR,
             fontSize: iconSize
           }}
         />
@@ -97,7 +112,7 @@ export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => {
             '&:hover': {
               color: isDark ? 'white' : 'black'
             },
-            color: '#707070',
+            color: GRAY_COLOR,
             fontSize: iconSize
           }}
         />
