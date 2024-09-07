@@ -1,15 +1,15 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { NameAddress, TransactionDetail } from '../../../util/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useMemo } from 'react';
 
 import { AccountContext, PButton } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { NameAddress, TransactionDetail } from '../../../util/types';
 import { accountName, amountToMachine, toShortAddress, upperCaseFirstChar } from '../../../util/utils';
 import Explorer from '../Explorer';
 import Amount from '../partials/Amount';
@@ -25,10 +25,10 @@ interface Props {
   setShowDetail: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function HistoryDetailModal({ chainName, decimal, info, setShowDetail, token }: Props): React.ReactElement {
+export default function HistoryDetailModal ({ chainName, decimal, info, setShowDetail, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
-  const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+  const options = { day: 'numeric', hour: 'numeric', minute: 'numeric', month: 'short', second: 'numeric', weekday: 'short', year: 'numeric' } as Intl.DateTimeFormatOptions;
 
   const _onBack = useCallback(() => {
     setShowDetail(false);
@@ -66,7 +66,7 @@ export default function HistoryDetailModal({ chainName, decimal, info, setShowDe
         </Typography>
         <Divider sx={{ bgcolor: 'secondary.light', height: '2px', m: '3px auto', width: '35%' }} />
         <FailSuccessIcon success={info.success} />
-        <Item item={info?.date && new Date(info.date).toLocaleDateString(undefined, options)} mt={15} />
+        <Item item={info?.date ? new Date(info.date).toLocaleDateString(undefined, options) : undefined} mt={15} />
         {info?.from &&
           <ToFrom item={<ShowNameAddress nameAddress={info.from} title={t('From')} />} toCopy={info?.from?.address} />
         }

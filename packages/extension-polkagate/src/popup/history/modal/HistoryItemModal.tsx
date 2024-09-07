@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { TransactionDetail } from '../../../util/types';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Container, Grid, IconButton, Typography } from '@mui/material';
@@ -10,7 +11,6 @@ import React, { useCallback, useMemo } from 'react';
 
 import { FormatBalance2 } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { TransactionDetail } from '../../../util/types';
 import { amountToMachine, toShortAddress, upperCaseFirstChar } from '../../../util/utils';
 
 interface Props {
@@ -25,7 +25,7 @@ interface Props {
   setDetailInfo: React.Dispatch<React.SetStateAction<TransactionDetail | undefined>>;
 }
 
-export default function HistoryItemModal({ anotherDay, date, decimal, formatted, info, setDetailInfo, setShowDetail, token }: Props): React.ReactElement {
+export default function HistoryItemModal ({ anotherDay, date, decimal, formatted, info, setDetailInfo, setShowDetail, token }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const _goToDetail = useCallback(() => {
@@ -47,6 +47,8 @@ export default function HistoryItemModal({ anotherDay, date, decimal, formatted,
     if (info?.to?.address === formatted) {
       return `${t('From')}: ${info?.from?.name || toShortAddress(info?.from?.address)}`;
     }
+
+    return undefined;
   }, [formatted, info?.from?.address, info?.from?.name, info.subAction, info?.to, t]);
 
   return (

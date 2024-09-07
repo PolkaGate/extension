@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,7 +12,7 @@ import useTranslation from '../../hooks/useTranslation';
 import { exportAccounts } from '../../messaging';
 import { HeaderBrand, Passwords } from '../../partials';
 
-export default function ExportAll(): React.ReactElement {
+export default function ExportAll (): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
