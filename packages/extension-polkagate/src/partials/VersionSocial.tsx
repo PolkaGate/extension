@@ -69,14 +69,14 @@ export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => {
           }}
         />
       </Link>
-      <Link href='https://discord.gg/kf8msNm3' pl='5px' rel='noreferrer' sx={{ '&:hover': { '>svg': { color: '#1E5AEF' } }, '>svg': { color: '#' } }} target='_blank'>
+      <Link href='https://discord.gg/kf8msNm3' pl='5px' rel='noreferrer' sx={{ '&:hover': { '>svg': { color: '#5865F2' } }, '>svg': { color: '#' } }} target='_blank'>
         <FontAwesomeIcon
-          fontSize='30px'
+          color= {GRAY_COLOR}
           icon={faDiscord}
           style={{
-            height: iconSize === 15 ? '13px' : '17px',
+            height: iconSize === 15 ? '14px' : '17px',
             paddingBottom: '2px',
-            width: iconSize === 15 ? '15px' : '20px'
+            width: iconSize === 15 ? '17px' : '20px'
           }}
         />
       </Link>
