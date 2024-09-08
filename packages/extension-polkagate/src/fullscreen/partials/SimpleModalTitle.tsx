@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { VaadinIcon } from '../../components';
@@ -27,7 +27,9 @@ export default function SimpleModalTitle ({ onClose, title, vaadinIcon }: Props)
         </Typography>
       </Grid>
       <Grid item>
-        <CloseIcon onClick={onClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
+        <IconButton onClick={onClose}>
+          <CloseIcon sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
+        </IconButton>
       </Grid>
       <Divider sx={{ mt: '5px', width: '100%' }} />
     </Grid>
