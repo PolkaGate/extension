@@ -135,6 +135,7 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
       <MenuSeparator />
       <ProfileMenu
         address={address}
+        closeParentMenu={closeMenu}
       />
       {hasPrivateKey &&
         <MenuItem
