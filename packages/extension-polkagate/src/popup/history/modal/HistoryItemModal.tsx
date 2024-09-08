@@ -53,11 +53,12 @@ export default function HistoryItemModal ({ anotherDay, date, decimal, formatted
 
   return (
     <Container disableGutters sx={{ marginTop: `${anotherDay ? 20 : -0.8}px` }}>
-      {anotherDay && <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
+      {anotherDay &&
+      <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
         {date}
       </Grid>
       }
-      <Grid alignItems='center' container direction='column' item justifyContent='space-between' sx={{ '> .historyItems:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px' }}>
+      <Grid alignItems='center' container direction='column' item justifyContent='space-between' sx={{ '> .historyItems:last-child': { border: 'none' }, bgcolor: 'background.paper', borderRadius: '5px' }}>
         <Grid className='historyItems' container item py='5px' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
           <Grid container item sx={{ fontSize: '22px', fontWeight: 300 }} px='10px' xs={11}>
             <Grid container item justifyContent='space-between'>
@@ -86,7 +87,7 @@ export default function HistoryItemModal ({ anotherDay, date, decimal, formatted
               </Grid>
             </Grid>
           </Grid>
-          <Grid alignItems='center' container item sx={{ borderLeft: '1px solid', borderLeftColor: 'secondary.light' }} xs={1}>
+          <Grid alignItems='center' container item sx={{ borderLeft: '1px solid', borderLeftColor: 'divider' }} xs={1}>
             <IconButton
               onClick={_goToDetail}
               sx={{ p: 0 }}
