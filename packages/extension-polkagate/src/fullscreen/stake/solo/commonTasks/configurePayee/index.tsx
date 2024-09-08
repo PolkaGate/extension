@@ -80,7 +80,7 @@ export default function ConfigurePayee ({ address, setRefresh, setShow, show }: 
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);
 
-  const stakingConsts = useStakingConsts(address as string);
+  const stakingConsts = useStakingConsts(address);
   const stakingAccount = useStakingAccount(address, undefined, undefined, undefined, true);
 
   const [rewardDestinationValue, setRewardDestinationValue] = useState<string>();

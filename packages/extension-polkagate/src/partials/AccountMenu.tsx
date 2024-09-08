@@ -41,7 +41,7 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
     onAction(`/forget/${address}/${account?.isExternal}`);
   }, [address, account, onAction]);
 
-  const goToDeriveAcc = useCallback(() => {
+  const onDeriveAccount = useCallback(() => {
     address && onAction(`/derive/${address}/locked`);
   }, [address, onAction]);
 
@@ -151,7 +151,7 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
           iconComponent={
             <VaadinIcon icon='vaadin:road-branch' style={vaadinIconStyle} />
           }
-          onClick={goToDeriveAcc}
+          onClick={onDeriveAccount}
           text={t('Derive new account')}
           withHoverEffect
         />
