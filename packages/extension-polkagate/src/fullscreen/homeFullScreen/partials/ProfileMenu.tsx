@@ -5,10 +5,12 @@
 
 import DoneIcon from '@mui/icons-material/Done';
 import { Divider, Grid, IconButton, Popover, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { InputWithLabel, MenuItem, VaadinIcon } from '../../../components';
+import { AccountContext, InputWithLabel, MenuItem, VaadinIcon } from '../../../components';
+import { getStorage, setStorage } from '../../../components/Loading';
 import { useInfo, useIsExtensionPopup, useProfiles, useTranslation } from '../../../hooks';
+import { PROFILE_TAGS } from '../../../hooks/useProfileAccounts';
 import { updateMeta } from '../../../messaging';
 
 interface Props {
@@ -186,12 +188,20 @@ function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<P
   const isExtensionMode = useIsExtensionPopup();
 
   const { account } = useInfo(address);
+  const { accounts } = useContext(AccountContext);
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | HTMLDivElement | null>();
   const [status, setStatus] = useState<STATUS>();
   const [showName, setShowName] = useState<boolean>();
+  const [currentProfile, setCurrentProfile] = useState<string>();
 
   const profileNames = account?.profile ? account.profile.split(',') : undefined;
+
+  useEffect(() => {
+    getStorage('profile').then((res) => {
+      setCurrentProfile(res as string);
+    }).catch(console.error);
+  }, []);
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);
@@ -210,22 +220,26 @@ function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<P
   }, []);
 
   const onRemove = useCallback((profileToBeRemoved: string) => {
-    if (!account?.profile) {
+    if (!profileNames || !accounts) {
       return;
     }
 
-    const accountProfiles = account.profile.split(',');
-    const indexToBeRemoved = accountProfiles.findIndex((item) => item === profileToBeRemoved);
+    const accountsInAProfileTag = accounts.filter(({ profile }) => profile && profile === currentProfile);
 
-    accountProfiles.splice(indexToBeRemoved, 1);
+    const newProfiles = profileNames.filter((item) => item !== profileToBeRemoved);
 
-    const metaData = JSON.stringify({ profile: accountProfiles?.length ? accountProfiles.join(',') : null });
+    const metaData = JSON.stringify({ profile: newProfiles?.length ? newProfiles.join(',') : null });
 
     updateMeta(String(address), metaData)
       .then(() => {
-        handleClose();
+        if (accountsInAProfileTag.length === 1 && currentProfile === profileToBeRemoved) {
+          // set profile tab to ALL, since this account was the last account with such a tag and the current profile is the same as account's profile
+          setStorage('profile', PROFILE_TAGS.ALL).then(handleClose).catch(console.error);
+        } else {
+          handleClose();
+        }
       }).catch(console.error);
-  }, [account?.profile, address, handleClose]);
+  }, [accounts, address, currentProfile, handleClose, profileNames]);
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover 2' : undefined;
