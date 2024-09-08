@@ -5,10 +5,12 @@
 
 import DoneIcon from '@mui/icons-material/Done';
 import { Divider, Grid, IconButton, Popover, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { InputWithLabel, MenuItem, VaadinIcon } from '../../../components';
-import { useInfo, useIsExtensionPopup, useProfiles, useTranslation } from '../../../hooks';
+import { getStorage, setStorage } from '../../../components/Loading';
+import { useAccountsOrder, useInfo, useIsExtensionPopup, useProfiles, useTranslation } from '../../../hooks';
+import { PROFILE_TAGS } from '../../../hooks/useProfileAccounts';
 import { updateMeta } from '../../../messaging';
 
 interface Props {
@@ -183,15 +185,23 @@ enum STATUS {
 function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
-  const isExtensionMode = useIsExtensionPopup();
 
+  const isExtensionMode = useIsExtensionPopup();
   const { account } = useInfo(address);
+  const initialAccountList = useAccountsOrder(true);
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | HTMLDivElement | null>();
   const [status, setStatus] = useState<STATUS>();
   const [showName, setShowName] = useState<boolean>();
+  const [currentProfile, setCurrentProfile] = useState<string>();
 
   const profileNames = account?.profile ? account.profile.split(',') : undefined;
+
+  useEffect(() => {
+    getStorage('profile').then((res) => {
+      setCurrentProfile(res as string);
+    }).catch(console.error);
+  }, []);
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);
@@ -210,11 +220,15 @@ function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<P
   }, []);
 
   const onRemove = useCallback((profileToBeRemoved: string) => {
-    if (!account?.profile) {
+    const maybeAccountProfile = account?.profile; // could be a list of joined profile tags as a string
+
+    if (!maybeAccountProfile || !initialAccountList) {
       return;
     }
 
-    const accountProfiles = account.profile.split(',');
+    const accountsWithTheSameProfileTag = initialAccountList.filter(({ account: acc }) => acc?.profile && acc.profile.split(',').includes(profileToBeRemoved));
+
+    const accountProfiles = maybeAccountProfile.split(',');
     const indexToBeRemoved = accountProfiles.findIndex((item) => item === profileToBeRemoved);
 
     accountProfiles.splice(indexToBeRemoved, 1);
@@ -223,9 +237,14 @@ function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<P
 
     updateMeta(String(address), metaData)
       .then(() => {
-        handleClose();
+        if (accountsWithTheSameProfileTag.length === 1 && currentProfile === profileToBeRemoved) {
+          // set profile tab to ALL, since this account was the last account with such a tag and the current profile is the same as account's profile
+          setStorage('profile', PROFILE_TAGS.ALL).then(handleClose).catch(console.error);
+        } else {
+          handleClose();
+        }
       }).catch(console.error);
-  }, [account?.profile, address, handleClose]);
+  }, [account?.profile, address, handleClose, initialAccountList, currentProfile]);
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover 2' : undefined;
