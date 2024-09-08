@@ -5,8 +5,7 @@
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
@@ -14,9 +13,10 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { ActionContext, ButtonWithCancel, Checkbox2 as Checkbox, NewAddress, Password, Warning, WrongPasswordAlert } from '../../components';
-import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
 import { useAlerts, useTranslation } from '../../hooks';
 import { forgetAccount, getAuthList, removeAuthorization, updateAuthorization } from '../../messaging';
+import { DraggableModal } from '../governance/components/DraggableModal';
+import SimpleModalTitle from './SimpleModalTitle';
 
 interface Props {
   account: AccountJson;
@@ -103,16 +103,11 @@ export default function ForgetAccountModal ({ account, setDisplayPopup }: Props)
   return (
     <DraggableModal onClose={backToAccount} open>
       <>
-        <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
-          <Grid item>
-            <Typography fontSize='22px' fontWeight={700}>
-              {t('Forget Account')}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <CloseIcon onClick={backToAccount} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-          </Grid>
-        </Grid>
+        <SimpleModalTitle
+          onClose={backToAccount}
+          title={t('Forget Account')}
+          vaadinIcon='file-remove'
+        />
         {isPasswordError &&
           <WrongPasswordAlert />
         }

@@ -3,15 +3,15 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import { saveAs } from 'file-saver';
 import React, { useCallback, useState } from 'react';
 
 import { ButtonWithCancel, NewAddress, Password, Warning, WrongPasswordAlert } from '../../components';
-import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
 import useTranslation from '../../hooks/useTranslation';
 import { exportAccount } from '../../messaging';
+import { DraggableModal } from '../governance/components/DraggableModal';
+import SimpleModalTitle from './SimpleModalTitle';
 
 interface Props {
   address: string;
@@ -53,16 +53,11 @@ export default function ExportAccountModal ({ address, setDisplayPopup }: Props)
   return (
     <DraggableModal onClose={backToAccount} open>
       <>
-        <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
-          <Grid item>
-            <Typography fontSize='22px' fontWeight={700}>
-              {t<string>('Export Account')}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <CloseIcon onClick={backToAccount} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-          </Grid>
-        </Grid>
+        <SimpleModalTitle
+          onClose={backToAccount}
+          title={t('Export Account')}
+          vaadinIcon='download-alt'
+        />
         {isPasswordError &&
           <WrongPasswordAlert />
         }
@@ -82,7 +77,7 @@ export default function ExportAccountModal ({ address, setDisplayPopup }: Props)
         <Grid container item sx={{ '> div': { width: '87.5%' }, bottom: '75px', position: 'absolute' }}>
           <Password
             isError={isPasswordError}
-            label={t<string>('Password for this account')}
+            label={t('Password for this account')}
             onChange={onPassChange}
             onEnter={_onExportButtonClick}
           />
@@ -93,7 +88,7 @@ export default function ExportAccountModal ({ address, setDisplayPopup }: Props)
             _onClick={_onExportButtonClick}
             _onClickCancel={backToAccount}
             disabled={pass.length === 0 || !!isPasswordError}
-            text={t<string>('Export')}
+            text={t('Export')}
           />
         </Grid>
       </>
