@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,9 +9,14 @@ import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
 import { getStorage } from '../../../components/Loading';
 import CurrencySwitch from '../components/CurrencySwitch';
 
-export interface CurrencyItemType { code: string; country: string; currency: string; sign: string; }
+export interface CurrencyItemType {
+  code: string;
+  country: string;
+  currency: string;
+  sign: string;
+}
 
-export default function Currency(): React.ReactElement {
+export default function Currency (): React.ReactElement {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [currencyToShow, setCurrencyToShow] = useState<string | undefined>();
