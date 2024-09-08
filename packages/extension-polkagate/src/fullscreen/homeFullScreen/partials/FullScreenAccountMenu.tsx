@@ -20,13 +20,12 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
-  : {
-    address: string | undefined,
-    handleClose: () => void,
-    setAnchorEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>,
-    setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>,
-  }) => {
+const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }: {
+  address: string | undefined,
+  handleClose: () => void,
+  setAnchorEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>,
+  setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>,
+}) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -74,6 +73,8 @@ const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
     }
   }, [chain]);
 
+  const vaadinIconStyle = { color: `${theme.palette.text.primary}`, height: '20px' };
+
   return (
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
       <MenuItem
@@ -92,7 +93,7 @@ const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
       <MenuItem
         disabled={isDisable(PROXY_CHAINS)}
         iconComponent={
-          <VaadinIcon icon='vaadin:sitemap' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:sitemap' style={{ color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}`, height: '20px' }} />
         }
         onClick={onManageProxies}
         text={t<string>('Manage proxies')}
@@ -122,7 +123,7 @@ const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
-            <VaadinIcon icon='vaadin:download-alt' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:download-alt' style={vaadinIconStyle} />
           }
           onClick={onExportAccount}
           text={t('Export account')}
@@ -132,7 +133,7 @@ const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
-            <VaadinIcon icon='vaadin:road-branch' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:road-branch' style={vaadinIconStyle} />
           }
           onClick={goToDeriveAcc}
           text={t('Derive new account')}
@@ -141,7 +142,7 @@ const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
       }
       <MenuItem
         iconComponent={
-          <VaadinIcon icon='vaadin:edit' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:edit' style={vaadinIconStyle} />
         }
         onClick={onRenameAccount}
         text={t('Rename')}
@@ -149,17 +150,17 @@ const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
       />
       <MenuItem
         iconComponent={
-          <VaadinIcon icon='vaadin:file-remove' style={{ color: `${theme.palette.text.primary}`, height: '20px' }} />
+          <VaadinIcon icon='vaadin:file-remove' style={ vaadinIconStyle } />
         }
         onClick={onForgetAccount}
         text={t('Forget account')}
         withHoverEffect
       />
     </Grid>
-  )
+  );
 };
 
-function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props): React.ReactElement<Props> {
+function FullScreenAccountMenu ({ address, baseButton, setDisplayPopup }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
@@ -200,9 +201,9 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
       >
         <Menus
           address={address}
-          setDisplayPopup={setDisplayPopup}
           handleClose={handleClose}
           setAnchorEl={setAnchorEl}
+          setDisplayPopup={setDisplayPopup}
         />
       </Popover>
     </>

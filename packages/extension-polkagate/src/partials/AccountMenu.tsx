@@ -25,7 +25,7 @@ interface Props {
   noMargin?: boolean;
 }
 
-function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): React.ReactElement<Props> {
+function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const options = useGenesisHashOptions();
@@ -45,10 +45,9 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
     address && onAction(`/derive/${address}/locked`);
   }, [address, onAction]);
 
-  const closeMenu = useCallback(
-    () => setShowMenu((isMenuOpen) => !isMenuOpen),
-    [setShowMenu]
-  );
+  const closeMenu = useCallback(() =>
+    setShowMenu((isMenuOpen) => !isMenuOpen)
+  , [setShowMenu]);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     const availableGenesisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;
@@ -87,6 +86,8 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
 
   const MenuSeparator = () => <Divider sx={{ bgcolor: 'divider', height: '1px', my: '6px' }} />;
 
+  const vaadinIconStyle = { color: `${theme.palette.text.primary}`, height: '18px' };
+
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container item justifyContent='center' my='12px' pl='8px'>
@@ -109,7 +110,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       <MenuItem
         disabled={isDisabled(PROXY_CHAINS)}
         iconComponent={
-          <VaadinIcon icon='vaadin:sitemap' style={{ height: '18px', color: `${isDisabled(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:sitemap' style={{ color: `${isDisabled(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}`, height: '18px' }} />
         }
         onClick={onManageProxies}
         text={t('Manage proxies')}
@@ -138,7 +139,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
-            <VaadinIcon icon='vaadin:download-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:download-alt' style={vaadinIconStyle} />
           }
           onClick={onExportAccount}
           text={t('Export account')}
@@ -147,7 +148,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
-            <VaadinIcon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:road-branch' style={vaadinIconStyle} />
           }
           onClick={goToDeriveAcc}
           text={t('Derive new account')}
@@ -156,7 +157,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       }
       <MenuItem
         iconComponent={
-          <VaadinIcon icon='vaadin:edit' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:edit' style={vaadinIconStyle} />
         }
         onClick={onRenameAccount}
         text={t('Rename')}
@@ -164,7 +165,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       />
       <MenuItem
         iconComponent={
-          <VaadinIcon icon='vaadin:file-remove' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:file-remove' style={vaadinIconStyle} />
         }
         onClick={onForgetAccount}
         text={t('Forget account')}
