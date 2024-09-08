@@ -204,22 +204,22 @@ function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<P
     setStatus(STATUS.SHOW_ADD);
   }, []);
 
-  const onRemoveClick = useCallback((event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
+  const onRemoveMenuClick = useCallback((event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
     setStatus(STATUS.SHOW_REMOVE);
   }, []);
 
-  const onRemove = useCallback((profile: string) => {
+  const onRemove = useCallback((profileToBeRemoved: string) => {
     if (!account?.profile) {
       return;
     }
 
-    const profiles = account.profile.split(',');
-    const profileIndex = profiles.findIndex((item) => item === profile);
+    const accountProfiles = account.profile.split(',');
+    const indexToBeRemoved = accountProfiles.findIndex((item) => item === profileToBeRemoved);
 
-    profiles.splice(profileIndex, 1);
+    accountProfiles.splice(indexToBeRemoved, 1);
 
-    const metaData = JSON.stringify({ profile: profiles?.length ? profiles.join(',') : null });
+    const metaData = JSON.stringify({ profile: accountProfiles?.length ? accountProfiles.join(',') : null });
 
     updateMeta(String(address), metaData)
       .then(() => {
@@ -260,7 +260,7 @@ function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<P
         </>
       }
       {isExtensionMode && profileNames && profileNames.length > 0 &&
-        <Grid aria-describedby={id} component='button' container item onClick={onRemoveClick} sx={{ bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
+        <Grid aria-describedby={id} component='button' container item onClick={onRemoveMenuClick} sx={{ bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
           <MenuItem
             iconComponent={
               <VaadinIcon icon='vaadin:folder-remove' style={{ color: theme.palette.text.primary, height: '20px' }} />
