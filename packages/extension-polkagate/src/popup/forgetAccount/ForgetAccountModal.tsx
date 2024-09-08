@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -15,23 +14,25 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { ActionContext, ButtonWithCancel, Checkbox2 as Checkbox, NewAddress, Password, Warning, WrongPasswordAlert } from '../../components';
-import { useTranslation } from '../../hooks';
-import { forgetAccount } from '../../messaging';
 import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
+import { useAlerts, useTranslation } from '../../hooks';
+import { forgetAccount, getAuthList, removeAuthorization, updateAuthorization } from '../../messaging';
 
 interface Props {
   account: AccountJson;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function ForgetAccountModal({ account, setDisplayPopup }: Props): React.ReactElement<Props> {
+export default function ForgetAccountModal ({ account, setDisplayPopup }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
   const onAction = useContext(ActionContext);
+  const { notify } = useAlerts();
+
   const [isBusy, setIsBusy] = useState(false);
   const [password, setPassword] = useState<string>('');
   const [checkConfirmed, setCheckConfirmed] = useState<boolean>(false);
   const [isPasswordError, setIsPasswordError] = useState(false);
-  const theme = useTheme();
   const needsPasswordConfirmation = !account.isExternal;
 
   useEffect(() => {
@@ -39,6 +40,28 @@ export default function ForgetAccountModal({ account, setDisplayPopup }: Props):
   }, []);
 
   const backToAccount = useCallback(() => setDisplayPopup(undefined), [setDisplayPopup]);
+
+  const updateAuthAccountsList = useCallback(async (_address: string) => {
+    try {
+      const { list } = await getAuthList();
+
+      const updatePromises = Object.entries(list)
+        .filter(([, { authorizedAccounts }]) => authorizedAccounts.includes(_address))
+        .map(([url, { authorizedAccounts }]) => {
+          const newAuthAddressList = authorizedAccounts.filter((authAddress) => authAddress !== _address);
+
+          if (newAuthAddressList.length === 0) {
+            return Promise.all([updateAuthorization(newAuthAddressList, url), removeAuthorization(url)]);
+          }
+
+          return updateAuthorization(newAuthAddressList, url);
+        });
+
+      await Promise.all(updatePromises);
+    } catch (error) {
+      console.error('Error updating auth accounts list:', error);
+    }
+  }, []);
 
   const onForget = useCallback((): void => {
     try {
@@ -51,8 +74,11 @@ export default function ForgetAccountModal({ account, setDisplayPopup }: Props):
       }
 
       forgetAccount(account.address)
-        .then(() => {
+        .then(async () => {
+          await updateAuthAccountsList(account.address);
           setIsBusy(false);
+          notify(t('{{accountName}} has been successfully removed!', { replace: { accountName: account?.name || 'Unknown' } }), 'success');
+
           backToAccount();
           onAction('/');
         })
@@ -60,11 +86,12 @@ export default function ForgetAccountModal({ account, setDisplayPopup }: Props):
           setIsBusy(false);
           console.error(error);
         });
-    } catch (e) {
+    } catch (error) {
       setIsPasswordError(true);
       setIsBusy(false);
+      console.error('Error forgetting the account:', error);
     }
-  }, [account.address, backToAccount, needsPasswordConfirmation, onAction, password]);
+  }, [account, backToAccount, needsPasswordConfirmation, notify, onAction, password, t, updateAuthAccountsList]);
 
   const onChangePass = useCallback((pass: string): void => {
     setPassword(pass);
@@ -79,7 +106,7 @@ export default function ForgetAccountModal({ account, setDisplayPopup }: Props):
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
-              {t<string>('Forget Account')}
+              {t('Forget Account')}
             </Typography>
           </Grid>
           <Grid item>
@@ -108,7 +135,7 @@ export default function ForgetAccountModal({ account, setDisplayPopup }: Props):
               <Password
                 isError={isPasswordError}
                 isFocused
-                label={t<string>('Password for this account')}
+                label={t('Password for this account')}
                 onChange={onChangePass}
                 onEnter={onForget}
                 style={{ width: '87.5%' }}
@@ -118,7 +145,7 @@ export default function ForgetAccountModal({ account, setDisplayPopup }: Props):
               <Checkbox
                 checked={checkConfirmed}
                 iconStyle={{ transform: 'scale:(1.13)' }}
-                label={t<string>('I want to forget this account.')}
+                label={t('I want to forget this account.')}
                 labelStyle={{ fontSize: '16px', marginLeft: '7px' }}
                 onChange={toggleConfirm}
                 style={{ ml: '5px' }}
@@ -131,7 +158,7 @@ export default function ForgetAccountModal({ account, setDisplayPopup }: Props):
             _onClick={onForget}
             _onClickCancel={backToAccount}
             disabled={!checkConfirmed && !password?.length}
-            text={t<string>('Forget')}
+            text={t('Forget')}
           />
         </Grid>
       </>

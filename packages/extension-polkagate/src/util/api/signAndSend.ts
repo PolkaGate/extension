@@ -1,23 +1,22 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountId } from '@polkadot/types/interfaces';
-import type { HexString } from '@polkadot/util/types';
-
-import { ApiPromise } from '@polkadot/api';
+import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { KeyringPair } from '@polkadot/keyring/types';
+import type { AccountId } from '@polkadot/types/interfaces';
 import type { ExtrinsicPayloadValue, ISubmittableResult } from '@polkadot/types/types';
-
+import type { HexString } from '@polkadot/util/types';
 import type { TxResult } from '../types';
 
-export async function signAndSend(
+export async function signAndSend (
   api: ApiPromise,
   submittable: SubmittableExtrinsic<'promise', ISubmittableResult>,
   _signer: KeyringPair,
+  sender: string
 ): Promise<TxResult> {
   return new Promise((resolve) => {
-    console.log('signing and sending a tx ...');
+    console.log('signing and sending a tx ...', sender);
 
     // eslint-disable-next-line no-void
     void submittable.signAndSend(_signer, async (result) => {
@@ -47,9 +46,11 @@ export async function signAndSend(
         }
       } catch (error) {
         success = false;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const mayBeErrorText = result?.dispatchError?.toString() || 'unknown error';
 
         failureText = `${mayBeErrorText}`;
+        console.log(error);
       }
 
       try {
@@ -87,11 +88,11 @@ export async function signAndSend(
   });
 }
 
-export async function send(
+export async function send (
   from: string | AccountId,
   api: ApiPromise,
   ptx: SubmittableExtrinsic<'promise', ISubmittableResult>,
-  payload:  Uint8Array | ExtrinsicPayloadValue | HexString,
+  payload: Uint8Array | ExtrinsicPayloadValue | HexString,
   signature: HexString
 ): Promise<TxResult> {
   return new Promise((resolve) => {

@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,41 +8,45 @@
  * this component opens review page
  * */
 
-import { Container, Divider, Grid, Typography } from '@mui/material';
+import type { BN } from '@polkadot/util';
+import type { MyPoolInfo, Payee, Proxy, ProxyItem, TxInfo } from '../../../util/types';
+import type { StakingInputs } from '../type';
+
+import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { AccountHolderWithProxy, Identity, ShortAddress, ShowBalance, ShowValue, SignArea2, WrongPasswordAlert } from '../../../components';
 import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../hooks';
 import { SubTitle } from '../../../partials';
 import { PROXY_TYPE } from '../../../util/constants';
-import type { MyPoolInfo, Payee, Proxy, ProxyItem, TxInfo } from '../../../util/types';
-import type { Inputs } from '../Entry';
 import { STEPS } from '../pool/stake';
 
 interface Props {
   address: string | undefined;
   step: number;
-  inputs: Inputs | undefined;
+  inputs: StakingInputs | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   onClose?: () => void
 }
 
-function RewardsDestination({ address, payee }: { address: string | undefined, payee: Payee }) {
+function RewardsDestination ({ address, payee }: { address: string | undefined, payee: Payee }) {
   const { t } = useTranslation();
   const { chain, formatted } = useInfo(address);
 
   const destinationAddress = useMemo(() =>
     payee === 'Stash'
       ? formatted
-      : payee.Account as string
-    , [formatted, payee]);
+      : typeof payee === 'object' && 'Account' in payee
+        ? payee.Account
+        : undefined
+  , [formatted, payee]);
 
   return (
     <Grid container item justifyContent='center' sx={{ alignSelf: 'center', my: '5px' }}>
@@ -66,7 +69,7 @@ function RewardsDestination({ address, payee }: { address: string | undefined, p
   );
 }
 
-export default function Review({ address, inputs, onClose, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review ({ address, inputs, onClose, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, formatted, token } = useInfo(address);
   const proxies = useProxies(api, formatted);
@@ -89,13 +92,15 @@ export default function Review({ address, inputs, onClose, setRefresh, setStep, 
       return {
         fee: String(estimatedFee || 0),
         ...inputs.extraInfo
-      };
+      } as Record<string, unknown>;
     }
+
+    return undefined;
   }, [estimatedFee, inputs]);
 
   const proxyTypeFilter = useMemo(
     () =>
-      inputs?.extraInfo?.pool
+      inputs?.extraInfo?.['pool']
         ? PROXY_TYPE.NOMINATION_POOLS
         : PROXY_TYPE.STAKING
     , [inputs]);
@@ -116,86 +121,89 @@ export default function Review({ address, inputs, onClose, setRefresh, setStep, 
       {[STEPS.REVIEW, STEPS.SIGN_QR].includes(step) &&
         <>
           <SubTitle label={t('Review')} style={{ paddingTop: isPasswordError ? '10px' : '25px' }} />
-          <Container disableGutters sx={{ px: '30px' }}>
+          <Grid container item sx={{ px: '30px' }}>
             <AccountHolderWithProxy
               address={address}
-              chain={chain as any}
+              chain={chain}
               selectedProxyAddress={selectedProxyAddress}
               style={{ mt: 'auto' }}
               title={t('Account holder')}
             />
-            {inputs?.extraInfo?.payee &&
+            <>
+              {inputs?.extraInfo?.['payee'] &&
               <RewardsDestination
                 address={address}
-                payee={inputs.extraInfo.payee}
+                payee={inputs.extraInfo['payee'] as Payee}
               />
-            }
-            {inputs?.extraInfo?.redeemText && inputs?.extraInfo?.helperText &&
+              }
+              {inputs?.extraInfo?.['redeemText'] && inputs?.extraInfo?.['helperText'] &&
               <Grid container item justifyContent='center' sx={{ fontSize: '14px', fontWeight: 400, pt: '15px', textAlign: 'center' }}>
                 <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mx: 'auto', my: '5px', width: '170px' }} />
-                {inputs?.extraInfo?.helperText}
+                {inputs?.extraInfo?.['helperText'] as string}
               </Grid>
-            }
-            {inputs?.extraInfo?.amount &&
+              }
+              {inputs?.extraInfo?.['amount'] &&
               <DisplayValue dividerHeight='1px' title={t('Amount')}>
                 <Grid alignItems='center' container item justifyContent='center' sx={{ height: '42px' }}>
                   <ShowValue
                     unit={token}
-                    value={inputs.extraInfo.amount}
+                    value={inputs.extraInfo['amount'] as string}
                   />
                 </Grid>
               </DisplayValue>
-            }
-            {inputs?.extraInfo?.redeemText &&
+              }
+              {inputs?.extraInfo?.['redeemText'] &&
               <Grid container item justifyContent='center' sx={{ fontSize: '14px', pt: '10px', textAlign: 'center' }}>
-                {inputs?.extraInfo?.redeemText}
+                {inputs?.extraInfo?.['redeemText'] as string}
               </Grid>
-            }
-            {inputs?.extraInfo?.helperText && inputs?.extraInfo?.pool &&
+              }
+              {inputs?.extraInfo?.['helperText'] && inputs?.extraInfo?.['pool'] &&
               <>
                 <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mx: 'auto', my: '5px', width: '170px' }} />
                 <Typography fontSize='14px' fontWeight={400} m='20px auto' textAlign='left' width='100%'>
-                  {inputs.extraInfo.helperText}
+                  {inputs.extraInfo['helperText'] as string}
                 </Typography>
                 <ShowPool
                   api={api}
-                  chain={chain as any}
+                  chain={chain}
                   mode='Default'
-                  pool={inputs.extraInfo.pool as MyPoolInfo}
+                  pool={inputs.extraInfo['pool'] as MyPoolInfo}
                   showInfo
                   style={{ m: '20px auto' }}
                 />
               </>
-            }
-            <DisplayValue dividerHeight='1px' title={t('Fee')}>
-              <Grid alignItems='center' container item sx={{ fontSize: 'large', height: '42px' }}>
-                <ShowValue height={16} value={estimatedFee?.toHuman()} width='150px' />
-              </Grid>
-            </DisplayValue>
-            {inputs?.extraInfo?.availableBalanceAfter &&
+              }
+              <DisplayValue dividerHeight='1px' title={t('Fee')}>
+                <Grid alignItems='center' container item sx={{ fontSize: 'large', height: '42px' }}>
+                  <ShowValue height={16} value={estimatedFee?.toHuman()} width='150px' />
+                </Grid>
+              </DisplayValue>
+              {inputs?.extraInfo?.['availableBalanceAfter'] &&
               <DisplayValue dividerHeight='1px' title={t('Available Balance After')}>
                 <Grid alignItems='center' container item sx={{ height: '42px' }}>
                   <ShowBalance
                     api={api}
-                    balance={(inputs.extraInfo.availableBalanceAfter as BN).sub(estimatedFee || BN_ZERO)}
+                    balance={(inputs.extraInfo['availableBalanceAfter'] as BN).sub(estimatedFee || BN_ZERO)}
                     decimalPoint={4}
                   />
                 </Grid>
               </DisplayValue>
-            }
-            {inputs?.extraInfo?.totalStakeAfter &&
+              }
+              {inputs?.extraInfo?.['totalStakeAfter'] &&
               <DisplayValue dividerHeight='1px' title={t('Total Stake After')}>
                 <Grid alignItems='center' container item sx={{ height: '42px' }}>
                   <ShowBalance
                     api={api}
-                    balance={inputs.extraInfo.totalStakeAfter as BN}
+                    balance={inputs.extraInfo['totalStakeAfter'] as BN}
                     decimalPoint={4}
                   />
                 </Grid>
               </DisplayValue>
-            }
-          </Container>
+              }
+            </>
+          </Grid>
           <Grid container item sx={{ bottom: '10px', left: '4%', position: 'absolute', width: '92%' }}>
+            {address &&
             <SignArea2
               address={address}
               call={inputs?.call}
@@ -213,7 +221,7 @@ export default function Review({ address, inputs, onClose, setRefresh, setStep, 
               setTxInfo={setTxInfo}
               step={step}
               steps={STEPS}
-            />
+            />}
           </Grid>
         </>
       }

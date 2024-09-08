@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ProxyTypes } from "./types";
+
 /* eslint-disable header/header */
 
 export const EXTENSION_NAME = 'Polkagate';
@@ -12,11 +14,11 @@ export const POLKADOT_SLIP44 = 354;
 // fix me, since we have asset ID 0 on asset hub, it can be -1 instead!
 export const NATIVE_TOKEN_ASSET_ID = 0; // zero is the native token's assetId on apps-config
 
-export const POLKAGATE_POOL_IDS: { [key: string]: number } = {
+export const POLKAGATE_POOL_IDS: Record<string, number> = {
   Kusama: 18,
+  Paseo: 3,
   Polkadot: 8,
-  Westend: 6,
-  Paseo: 3
+  Westend: 6
 };
 
 // export const EXTENSION_FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf2WHD0oVR0NS7tW6C1U025H1XBEZXqwxvFvPhcoFa18eHQiA/viewform';
@@ -28,6 +30,7 @@ export const FLOATING_POINT_DIGIT = 4;
 export const BLOCK_RATE = 6; // sec
 export const DEFAULT_TOKEN_DECIMALS = 12;
 
+export const DEFAULT_COLOR = 'green';
 export const SHORT_ADDRESS_CHARACTERS = 4;
 export const MAX_REWARDS_TO_SHOW = 100;
 export const MAX_HISTORY_RECORD_TO_SHOW = 40;
@@ -37,7 +40,7 @@ export const TIME_TO_SHAKE_ICON = 5000;// msec
 export const CHAINS_WITH_BLACK_LOGO = ['statescan', 'Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'Pendulum', 'Pendulum chain', 'Zeitgeist', 'Westend Collectives'];
 export const TOKENS_WITH_BLACK_LOGO = ['KSM', 'PEN', 'ZTG'];
 export const CHAINS_ON_POLKAHOLIC = ['Pendulum', 'Pendulum chain', 'Amplitude', 'Amplitude chain'];
-export const DISABLED_NETWORKS = ['3DP network', 'xx network', 'Polkadex Mainnet', 'Stafi'];
+export const DISABLED_NETWORKS = ['3DP network', 'xx network', 'Polkadex Mainnet', 'Stafi', 'Peaq Network', 'Genshiro Network'];
 
 export const ACALA_GENESIS_HASH = '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c';
 
@@ -46,9 +49,9 @@ export const STATEMINE_GENESIS_HASH = '0x48239ef607d7928874027a43a67689209727dfb
 export const STATEMINT_GENESIS_HASH = '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f';
 export const PASEO_ASSET_HUB_GENESIS_HASH = '0x862ce2fa5abfdc3d29ead85a9472071efc69433b0128db1d6f009967fae87952';
 
-export const WESTEND_PEOPLE_GENESIS_HASH = '0x1eb6fb0ba5187434de017a70cb84d4f47142df1d571d0ef9e7e1407f2b80b93c';
+export const POLKADOT_PEOPLE_GENESIS_HASH = '0x67fa177a097bfa18f77ea95ab56e9bcdfeb0e5b8a40e46298bb93e16b6fc5008';
 export const KUSAMA_PEOPLE_GENESIS_HASH = '0xc1af4cb4eb3918e5db15086c0cc5ec17fb334f728b7c65dd44bfe1e174ff8b3f';
-export const POLKADOT_PEOPLE_GENESIS_HASH = '';
+export const WESTEND_PEOPLE_GENESIS_HASH = '0x1eb6fb0ba5187434de017a70cb84d4f47142df1d571d0ef9e7e1407f2b80b93c';
 
 
 /** relay chains info */
@@ -113,9 +116,10 @@ export const STAKING_CHAINS = [
   PASEO_GENESIS_HASH
 ];
 
-export const PEOPLE_CHAINS = ['Kusama', 'Westend', 'KusamaPeople', 'WestendPeople'];
+export const PEOPLE_CHAINS = ['Polkadot', 'Kusama', 'Westend', 'PolkadotPeople', 'KusamaPeople', 'WestendPeople'];
 
 export const PEOPLE_CHAINS_GENESIS_HASHES = [
+  POLKADOT_PEOPLE_GENESIS_HASH,
   WESTEND_PEOPLE_GENESIS_HASH,
   KUSAMA_PEOPLE_GENESIS_HASH
 ];
@@ -226,11 +230,24 @@ export const USD_CURRENCY = {
 export const FULLSCREEN_WIDTH = '900px';
 export const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed', '/account/import-raw-seed', '/forgot-password', '/reset-wallet'];
 
-export const PROXY_TYPE = {
-  STAKING: ['Any', 'NonTransfer', 'Staking'],
-  NOMINATION_POOLS: ['Any', 'NonTransfer', 'Staking', 'NominationPools'],
-  GOVERNANCE: ['Any', 'NonTransfer', 'Governance'],
-  SEND_FUND: ['Any'],
+type ProxyTypeIndex = 'CROWDLOAN' | 'GENERAL' | 'GOVERNANCE'| 'NOMINATION_POOLS' | 'SEND_FUND'| 'STAKING';
+
+export const PROXY_TYPE: Record<ProxyTypeIndex, ProxyTypes[]> = {
+  CROWDLOAN: ['Any', 'NonTransfer', 'Auction'],
   GENERAL: ['Any', 'NonTransfer'],
-  CROWDLOAN: ['Any', 'NonTransfer', 'Auction']
+  GOVERNANCE: ['Any', 'NonTransfer', 'Governance'],
+  NOMINATION_POOLS: ['Any', 'NonTransfer', 'Staking', 'NominationPools'],
+  SEND_FUND: ['Any'],
+  STAKING: ['Any', 'NonTransfer', 'Staking']
 };
+
+export const PROFILE_COLORS = [
+  { light: '#D1C4E9', dark: '#99004F' },
+  { light: '#C8E6C9', dark: '#468189' },
+  { light: '#B3E5FC', dark: '#846C5B' },
+  { light: '#F8BBD0', dark: '#A63C06' },
+  { light: '#ACE894', dark: '#D81B60' },
+  { light: '#F5D5ED', dark: '#2B4162' },
+  { light: '#EBCFB2', dark: '#9D8189' },
+  { light: '#FCF0CC', dark: '#5F4842' },
+];

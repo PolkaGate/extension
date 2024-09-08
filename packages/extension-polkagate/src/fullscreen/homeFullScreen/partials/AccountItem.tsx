@@ -3,20 +3,21 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
+
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { Backdrop, Grid, useTheme } from '@mui/material';
 import React, { useContext, useMemo, useState } from 'react';
 
-import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
-
 import { AccountContext } from '../../../components';
 import { useAccountAssets, useChain } from '../../../hooks';
-import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import QuickActionFullScreen from '../../../partials/QuickActionFullScreen';
-import AccountInformationForHome from './AccountInformationForHome';
 import { AccountLabel } from '../../../popup/home/AccountLabel';
+import getParentNameSuri from '../../../util/getParentNameSuri';
+import AccountInformationForHome from './AccountInformationForHome';
 
 interface Props {
   account: AccountWithChildren;
@@ -26,7 +27,7 @@ interface Props {
   id?: number;
 }
 
-function AccountItem({ account, hideNumbers, id, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement {
+function AccountItem ({ account, hideNumbers, id, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement {
   const theme = useTheme();
   const chain = useChain(account.address);
   const accountAssets = useAccountAssets(account.address);
@@ -48,14 +49,16 @@ function AccountItem({ account, hideNumbers, id, quickActionOpen, setQuickAction
     return selectedAsset ?? defaultAssetToShow;
   }, [accountAssets, chain?.genesisHash, selectedAsset]);
 
+  const parentNameSuri = getParentNameSuri(hasParent?.name, account?.suri);
+
   return (
     <div ref={id ? setNodeRef : null} style={{ transform: CSS.Transform.toString(transform), transition }}>
       <Grid container {...attributes} item ref={containerRef} sx={{ borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', overflow: 'hidden', position: 'relative' }} width='760px'>
         <DragIndicatorIcon {...listeners} sx={{ ':active': { cursor: 'grabbing' }, color: 'secondary.contrastText', cursor: 'grab', fontSize: '25px', position: 'absolute', right: '5px', top: '5px' }} />
         <AccountLabel
           account={account}
-          parentName={hasParent?.name ?? ''}
           ml='30px'
+          parentName={parentNameSuri}
         />
         <AccountInformationForHome
           accountAssets={accountAssets}

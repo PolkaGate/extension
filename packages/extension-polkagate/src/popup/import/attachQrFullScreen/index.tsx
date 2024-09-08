@@ -3,25 +3,29 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Button, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useState } from 'react';
+import type { HexString } from '@polkadot/util/types';
+import type { ScanType } from '../attachQR';
 
+import { Button, Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useState } from 'react';
+
+import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { QrScanAddress } from '@polkadot/react-qr';
 
-import { AccountNamePasswordCreation, ActionContext, Address, PButton, TwoButtons, VaadinIcon, Warning } from '../../../components';
+import { AccountNamePasswordCreation, Address, PButton, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from '../../../messaging';
 import { Name } from '../../../partials';
-import type { ScanType } from '../attachQR';
 
-export default function AttachQrFullScreen(): React.ReactElement {
+export default function AttachQrFullScreen (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const onAction = useContext(ActionContext);
   const [account, setAccount] = useState<ScanType | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
@@ -31,17 +35,20 @@ export default function AttachQrFullScreen(): React.ReactElement {
   const setQrLabelAndGoToHome = useCallback(() => {
     const metaData = JSON.stringify({ isQR: true });
 
-    updateMeta(String(address), metaData).then(() => onAction('/')).catch(console.error);
-  }, [address, onAction]);
+    updateMeta(String(address), metaData).then(() => {
+      setStorage('profile', PROFILE_TAGS.QR_ATTACHED).catch(console.error);
+      openOrFocusTab('/', true);
+    }).catch(console.error);
+  }, [address]);
 
   const onAttach = useCallback(() => {
     if (account && name) {
       if (account.isAddress) {
-        createAccountExternal(name, account.content, account.genesisHash as string)
+        createAccountExternal(name, account.content, account.genesisHash as HexString)
           .then(() => setQrLabelAndGoToHome())
           .catch((error: Error) => console.error(error));
       } else if (password) {
-        createAccountSuri(name, password, account.content, 'sr25519', account.genesisHash as string)
+        createAccountSuri(name, password, account.content, 'sr25519', account.genesisHash as HexString)
           .then(() => setQrLabelAndGoToHome())
           .catch((error: Error) => console.error(error));
       }
@@ -116,7 +123,7 @@ export default function AttachQrFullScreen(): React.ReactElement {
         <Grid container item sx={{ display: 'block', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
-              <VaadinIcon icon='vaadin:qrcode' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
+              <VaadinIcon icon='vaadin:qrcode' style={{ color: `${theme.palette.text.primary}`, height: '40px', width: '40px' }} />
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>

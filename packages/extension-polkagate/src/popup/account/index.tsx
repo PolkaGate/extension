@@ -9,6 +9,9 @@
  * this component shows an account information in detail
  * */
 
+import type { HexString } from '@polkadot/util/types';
+import type { BalancesInfo, FormattedAddressState } from '../../util/types';
+
 import { faCoins, faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
@@ -20,12 +23,11 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { isOnRelayChain } from '@polkadot/extension-polkagate/src/util/utils';
 
 import { stakingClose } from '../../assets/icons';
-import { ActionContext, Assets, Chain, HorizontalMenuItem, Identity, Motion } from '../../components';
+import { ActionContext, Assets, Chain, HorizontalMenuItem, Identity, Motion, Warning } from '../../components';
 import { useBalances, useGenesisHashOptions, useInfo, useMyAccountIdentity, useTranslation } from '../../hooks';
 import { tieAccount, windowOpen } from '../../messaging';
 import { FullScreenRemoteNode, HeaderBrand } from '../../partials';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
-import type { BalancesInfo, FormattedAddressState } from '../../util/types';
 import StakingOption from '../staking/Options';
 import LockedInReferenda from './unlock/LockedInReferenda';
 import AccountBrief from './AccountBrief';
@@ -52,12 +54,11 @@ export default function AccountDetails(): React.ReactElement {
   const [showReservedReasons, setShowReservedReasons] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
 
-  const notOnNativeAsset = useMemo(() => {
-    const assetIdNumber = Number(assetId);
-
-    return assetIdNumber > 0;
-  }, [assetId]);
-  const showReservedChevron = useMemo(() => balances && !balances?.reservedBalance.isZero() && (isOnRelayChain(genesisHash) || !notOnNativeAsset), [balances, genesisHash, notOnNativeAsset]);
+  const showReservedChevron = useMemo(() => balances && !balances?.reservedBalance.isZero() && isOnRelayChain(genesisHash), [balances, genesisHash]);
+  const supportStaking = useMemo(() => STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
+  const isDualStaking = useMemo(() =>
+    balanceToShow?.soloTotal && balanceToShow?.pooledBalance && !balanceToShow.soloTotal.isZero() && !balanceToShow.pooledBalance.isZero()
+    , [balanceToShow?.pooledBalance, balanceToShow?.soloTotal]);
 
   const gotToHome = useCallback(() => {
     if (showStakingOptions) {
@@ -88,8 +89,8 @@ export default function AccountDetails(): React.ReactElement {
   }, [address, assetId]);
 
   const goToStaking = useCallback(() => {
-    STAKING_CHAINS.includes(genesisHash) && setShowStakingOptions(!showStakingOptions);
-  }, [genesisHash, showStakingOptions]);
+    supportStaking && setShowStakingOptions(!showStakingOptions);
+  }, [showStakingOptions, supportStaking]);
 
   const goToHistory = useCallback(() => {
     chainName && formatted &&
@@ -125,12 +126,12 @@ export default function AccountDetails(): React.ReactElement {
   }, [address, api, history, pathname]);
 
   const stakingIconColor = useMemo(() =>
-    !STAKING_CHAINS.includes(genesisHash)
+    !supportStaking
       ? theme.palette.action.disabledBackground
       : showStakingOptions
         ? theme.palette.secondary.main
         : theme.palette.text.primary
-    , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
+    , [supportStaking, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
 
   const goToOthers = useCallback(() => {
     setShowOthers(true);
@@ -143,7 +144,7 @@ export default function AccountDetails(): React.ReactElement {
   const _onChangeNetwork = useCallback((newGenesisHash: string) => {
     const availableGenesisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;
 
-    address && tieAccount(address, availableGenesisHash).catch(console.error);
+    address && tieAccount(address, availableGenesisHash as HexString).catch(console.error);
   }, [address]);
 
   const _onChangeAsset = useCallback((id: number) => {
@@ -174,7 +175,7 @@ export default function AccountDetails(): React.ReactElement {
     <Motion>
       <HeaderBrand
         _centerItem={
-          <Identity address={address} api={api} chain={chain as any} formatted={formatted} identiconSize={40} showSocial={false} style={{ fontSize: '32px', height: '40px', lineHeight: 'initial', maxWidth: '65%' }} subIdOnly />
+          <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={40} showSocial={false} style={{ fontSize: '32px', height: '40px', lineHeight: 'initial', maxWidth: '65%' }} subIdOnly />
         }
         address={address}
         fullScreenURL={`/accountfs/${address}/0`}
@@ -199,7 +200,7 @@ export default function AccountDetails(): React.ReactElement {
             address={address}
             assetId={assetId}
             label={t<string>('Asset')}
-            onChange={_onChangeAsset as any}
+            onChange={_onChangeAsset}
             setAssetId={setAssetId}
             style={{ width: '27%' }}
           />
@@ -224,14 +225,28 @@ export default function AccountDetails(): React.ReactElement {
                 }
               </>
               : <>
+                {isDualStaking &&
+                  <Grid container sx={{ '> div': { pl: '3px' }, borderBottom: 1, borderColor: 'secondary.light', mb: '5px', pb: '5px' }}>
+                    <Warning
+                      iconDanger
+                      marginRight={1}
+                      marginTop={0}
+                      theme={theme}
+                    >
+                      {t('Nomination Pools are evolving! Unstake your solo staked funds soon to benefit from automatic pool migration, which allows participation in both a pool and governance, and avoid manual changes.')}
+                    </Warning>
+                  </Grid>
+                }
                 <LabelBalancePrice address={address} balances={balanceToShow} label={'Total'} title={t('Total')} />
                 <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferable'} onClick={goToSend} title={t('Transferable')} />
-                {STAKING_CHAINS.includes(genesisHash)
-                  ? <>
-                    <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Stake'} onClick={goToSoloStaking} title={t('Solo Stake')} />
-                    <LabelBalancePrice address={address} balances={balanceToShow} label={'Pool Stake'} onClick={goToPoolStaking} title={t('Pool Stake')} />
-                  </>
-                  : <LabelBalancePrice address={address} balances={balanceToShow} label={'Free'} title={t('Free')} />
+                {supportStaking &&
+                 <>
+                   {!balanceToShow?.soloTotal?.isZero() &&
+                      <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Stake'} onClick={goToSoloStaking} title={t('Solo Stake')} />}
+                   {!balanceToShow?.pooledBalance?.isZero() &&
+                      <LabelBalancePrice address={address} balances={balanceToShow} label={'Pool Stake'} onClick={goToPoolStaking} title={t('Pool Stake')} />
+                   }
+                 </>
                 }
                 {GOVERNANCE_CHAINS.includes(genesisHash)
                   ? <LockedInReferenda address={address} refresh={refresh} setRefresh={setRefresh} />
@@ -242,7 +257,7 @@ export default function AccountDetails(): React.ReactElement {
               </>
             }
           </Grid>
-          : <StakingOption setShowStakingOptions={setShowStakingOptions} showStakingOptions={showStakingOptions} />
+          : <StakingOption balance={balanceToShow} setShowStakingOptions={setShowStakingOptions} showStakingOptions={showStakingOptions} />
         }
         <Grid container justifyContent='space-around' sx={{ bgcolor: 'background.default', borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, height: '62px', left: '4%', position: 'absolute', pt: '7px', pb: '5px', width: '92%' }}>
           <HorizontalMenuItem
@@ -274,14 +289,14 @@ export default function AccountDetails(): React.ReactElement {
             divider
             icon={
               showStakingOptions
-                ? <Box component='img' src={stakingClose} width='30px' />
+                ? <Box component='img' src={stakingClose as string} width='30px' />
                 : <FontAwesomeIcon
                   color={stakingIconColor}
                   icon={faCoins}
                   size='lg'
                 />
             } onClick={goToStaking}
-            textDisabled={!STAKING_CHAINS.includes(genesisHash)}
+            textDisabled={!supportStaking}
             title={t<string>('Stake')}
           />
           <HorizontalMenuItem
@@ -314,7 +329,7 @@ export default function AccountDetails(): React.ReactElement {
         <Others
           address={address}
           balances={balances}
-          chain={chain as any}
+          chain={chain}
           identity={identity}
           setShow={setShowOthers}
           show={showOthers}

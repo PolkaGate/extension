@@ -1,5 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 /* eslint-disable import-newlines/enforce */
@@ -7,14 +8,14 @@
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { TEST_NETS, NATIVE_TOKEN_ASSET_ID } from '../constants';
+import { NATIVE_TOKEN_ASSET_ID,TEST_NETS } from '../constants';
 import getPoolAccounts from '../getPoolAccounts';
-import { balancify, closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
 import { getPriceIdByChainName } from '../utils';
+import { balancify, closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
 
-async function getPooledBalance(api, address) {
+async function getPooledBalance (api, address) {
   const response = await api.query['nominationPools']['poolMembers'](address);
-  const member = response && response.unwrapOr(undefined);
+  const member = response?.unwrapOr(undefined);
 
   if (!member) {
     return BN_ZERO;
@@ -47,7 +48,7 @@ async function getPooledBalance(api, address) {
   return active.add(rewards).add(unlockingValue);
 }
 
-async function getBalances(chainName, addresses) {
+async function getBalances (chainName, addresses) {
   const chainEndpoints = getChainEndpoints(chainName);
 
   const { api, connections } = await fastestEndpoint(chainEndpoints, false);
@@ -55,6 +56,10 @@ async function getBalances(chainName, addresses) {
   if (api.isConnected && api.derive.balances) {
     const requests = addresses.map(async (address) => {
       const balances = await api.derive.balances.all(address);
+      const systemBalance = await api.query.system.account(address);
+
+      balances.frozenBalance = systemBalance.frozen;
+
       let soloTotal = BN_ZERO;
       let pooledBalance = BN_ZERO;
 
@@ -77,7 +82,7 @@ async function getBalances(chainName, addresses) {
   }
 }
 
-async function getAssetOnRelayChain(addresses, chainName) {
+async function getAssetOnRelayChain (addresses, chainName) {
   const results = {};
 
   await getBalances(chainName, addresses)

@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Referendum, Track } from '../utils/types';
 
 import { Button, Grid, LinearProgress, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -12,7 +13,7 @@ import { BN } from '@polkadot/util';
 import { ShowBalance, ShowValue } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useToken, useTranslation } from '../../../hooks';
-import { Referendum, Track } from '../utils/types';
+import { pgBoxShadow } from '../../../util/utils';
 import AllVotes from './allVote';
 import VoteChart from './VoteChart';
 
@@ -29,7 +30,7 @@ export const submittedBlock = (referendum: Referendum | undefined) => {
   return referendum?.submissionBlockOC || submittedBlockPA || referendum?.timelineSb?.find(({ status }) => status === 'Submitted')?.block;
 };
 
-export default function Voting({ address, referendum, track }: Props): React.ReactElement<Props> {
+export default function Voting ({ address, referendum, track }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const decimal = useDecimal(address);
@@ -52,6 +53,8 @@ export default function Voting({ address, referendum, track }: Props): React.Rea
 
       return threshold;
     }
+
+    return undefined;
   }, [blockSubmitted, currentBlock, threshold, track]);
 
   const totalVoteAmount = (referendum?.ayesAmount !== undefined && referendum?.naysAmount !== undefined)
@@ -69,7 +72,7 @@ export default function Voting({ address, referendum, track }: Props): React.Rea
       ? Number(referendum.naysAmount) / totalVoteAmount * 100
       : 0
     : 0
-    , [referendum, totalVoteAmount]);
+  , [referendum, totalVoteAmount]);
 
   const handleOpenAllVotes = useCallback(() => {
     setOpenAllVotes(true);
@@ -103,7 +106,7 @@ export default function Voting({ address, referendum, track }: Props): React.Rea
   );
 
   return (
-    <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', pb: '20px', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main' }}>
+    <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: theme.palette.mode === 'light' ? pgBoxShadow(theme) : undefined, pb: '20px' }}>
       <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mx: '25px', my: '15px' }} xs={12}>
         <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
           {t('Voting')}

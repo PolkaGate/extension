@@ -1,21 +1,20 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-no-bind */
+
+import type { Chain } from '@polkadot/extension-chains/types';
 
 import { faPaste, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Autocomplete, Grid, IconButton, InputAdornment, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { Chain } from '@polkadot/extension-chains/types';
-
 import settings from '@polkadot/ui-settings';
 
-import { useTranslation } from '../hooks';
 import { VaadinIcon } from '../components';
+import { useTranslation } from '../hooks';
 import QrScanner from '../popup/import/addWatchOnly/QrScanner';
 import isValidAddress from '../util/validateAddress';
 import Identicon from './Identicon';
@@ -27,8 +26,8 @@ interface Props {
   allAddresses?: [string, string | null, string | undefined][];
   label: string;
   style?: SxProps<Theme>;
-  chain?: Chain;
-  address: string | undefined;
+  chain?: Chain | null;
+  address: string | null | undefined;
   setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>>;
   showIdenticon?: boolean;
   helperText?: string;
@@ -37,7 +36,7 @@ interface Props {
   addWithQr?: boolean;
 }
 
-export default function AddressInput({ addWithQr = false, allAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
+export default function AddressInput ({ addWithQr = false, address, allAddresses = [], chain = undefined, disabled = false, helperText = '', label, placeHolder = '', setAddress, showIdenticon = true, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [isPopperOpen, setTogglePopper] = useState<boolean>(false);
   const [focus, setFocus] = useState<boolean>(false);

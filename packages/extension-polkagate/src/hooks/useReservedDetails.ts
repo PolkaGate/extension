@@ -1,15 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
+import type { Option } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { PalletMultisigMultisig, PalletPreimageRequestStatus, PalletRecoveryRecoveryConfig, PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaReferendumStatusRankedCollectiveTally, PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Option } from '@polkadot/types';
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { ASSET_HUBS, PROXY_CHAINS } from '../util/constants';
 import useActiveRecoveries from './useActiveRecoveries';
@@ -30,7 +32,7 @@ export default function useReservedDetails(address: string | undefined): Reserve
       : activeRecoveries === null
         ? null
         : undefined
-    , [activeRecoveries, formatted]);
+  , [activeRecoveries, formatted]);
 
   const toBalance = useCallback((value: BN) => {
     if (!api) {
@@ -56,6 +58,7 @@ export default function useReservedDetails(address: string | undefined): Reserve
     if (!api || !genesisHash) {
       return;
     }
+
 
     try {
       // TODO: needs to incorporate people chain?
@@ -122,7 +125,7 @@ export default function useReservedDetails(address: string | undefined): Reserve
 
         let referendaDepositSum = BN_ZERO;
 
-        api.query.referenda.referendumInfoFor.entries().then((referenda) => {
+        api.query['referenda']['referendumInfoFor'].entries().then((referenda) => {
           referenda.forEach(([_, value]) => {
             if (value.isSome) {
               const ref = (value.unwrap()) as PalletReferendaReferendumInfoRankedCollectiveTally | undefined;
@@ -168,7 +171,7 @@ export default function useReservedDetails(address: string | undefined): Reserve
 
         let sum = BN_ZERO;
 
-        api.query.bounties.bounties.entries().then((bounties) => {
+        api.query['bounties']['bounties'].entries().then((bounties) => {
           bounties.forEach(([_, value]) => {
             if (value.isSome) {
               const bounty = (value.unwrap());
@@ -194,7 +197,7 @@ export default function useReservedDetails(address: string | undefined): Reserve
 
         let sum = BN_ZERO;
 
-        api.query.indices.accounts.entries().then((indices) => {
+        api.query['indices']['accounts'].entries().then((indices) => {
           indices.forEach(([_, value]) => {
             if (value.isSome) {
               const [address, deposit, _status] = value.unwrap() as [AccountId, BN, boolean];
@@ -220,7 +223,7 @@ export default function useReservedDetails(address: string | undefined): Reserve
 
         let sum = BN_ZERO;
 
-        api.query.multisig.multisigs.entries().then((multisigs) => {
+        api.query['multisig']['multisigs'].entries().then((multisigs) => {
           multisigs.forEach(([_, value]) => {
             if (value.isSome) {
               const { deposit, depositor } = value.unwrap() as PalletMultisigMultisig;
@@ -246,7 +249,7 @@ export default function useReservedDetails(address: string | undefined): Reserve
 
         let sum = BN_ZERO;
 
-        api.query.preimage.requestStatusFor.entries().then((preimages) => {
+        api.query['preimage']['requestStatusFor'].entries().then((preimages) => {
           preimages.forEach(([_, value]) => {
             if (value.isSome) {
               const status = value.unwrap() as PalletPreimageRequestStatus;
@@ -278,8 +281,8 @@ export default function useReservedDetails(address: string | undefined): Reserve
 
         let sum = BN_ZERO;
 
-        api.query.society.bids().then(async (bids) => {
-          (bids as unknown as PalletSocietyBid[]).forEach(({ _value, kind, who }) => {
+        api.query['society']['bids']().then(async (bids) => {
+          (bids as unknown as PalletSocietyBid[]).forEach(({ kind, who }) => {
             if (who.toString() === formatted) {
               const deposit = kind.isDeposit ? kind.asDeposit : BN_ZERO;
 
@@ -287,7 +290,7 @@ export default function useReservedDetails(address: string | undefined): Reserve
             }
           });
 
-          const candidates = await api.query.society.candidates(formatted) as Option<PalletSocietyCandidacy>;
+          const candidates = await api.query['society']['candidates'](formatted) as Option<PalletSocietyCandidacy>;
 
           if (candidates.isSome) {
             const { kind } = candidates.unwrap();

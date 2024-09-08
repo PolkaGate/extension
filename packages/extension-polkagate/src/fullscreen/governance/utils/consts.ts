@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import { BN } from '@polkadot/util';
 
@@ -24,7 +23,7 @@ export const REFERENDA_STATUS = [
   ['TimedOut']
 ];
 
-export const STATUS_COLOR = {
+export const STATUS_COLOR: Record<string, string> = {
   Awarded: '#32CD32',
   Cancelled: '#737373',
   ConfirmAborted: '#FF9999',

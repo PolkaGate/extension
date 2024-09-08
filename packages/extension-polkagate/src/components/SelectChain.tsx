@@ -1,20 +1,20 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { DropdownOption } from '../util/types';
 
 import { faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { type SxProps, type Theme, Avatar, Grid, useTheme } from '@mui/material';
+import { Avatar, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
 import { useChainName, useIsTestnetEnabled } from '@polkadot/extension-polkagate/src/hooks';
 import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
+import { updateRecentChains } from '../util/utils';
 import Select from './Select';
 
 interface Props {
@@ -30,7 +30,7 @@ interface Props {
   fullWidthDropdown?: boolean;
 }
 
-function SelectChain({ address, defaultValue, disabledItems, fullWidthDropdown, icon = undefined, isDisabled, label, onChange, options, style }: Props) {
+function SelectChain ({ address, defaultValue, disabledItems, fullWidthDropdown, icon = undefined, isDisabled, label, onChange, options, style }: Props) {
   const currentChainName = useChainName(address !== 'dummy' ? address : undefined);
   const theme = useTheme();
   const isTestnetEnabled = useIsTestnetEnabled();
@@ -39,7 +39,7 @@ function SelectChain({ address, defaultValue, disabledItems, fullWidthDropdown, 
     !isTestnetEnabled
       ? [...(disabledItems || []), ...TEST_NETS]
       : disabledItems
-    , [disabledItems, isTestnetEnabled]);
+  , [disabledItems, isTestnetEnabled]);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     try {
@@ -51,29 +51,7 @@ function SelectChain({ address, defaultValue, disabledItems, fullWidthDropdown, 
         return;
       }
 
-      chrome.storage.local.get('RecentChains', (res) => {
-        const accountsAndChains = res?.RecentChains ?? {};
-        let myRecentChains = accountsAndChains[address] as string[];
-
-        if (!myRecentChains) {
-          if (INITIAL_RECENT_CHAINS_GENESISHASH.includes(currentGenesisHash)) {
-            accountsAndChains[address] = INITIAL_RECENT_CHAINS_GENESISHASH;
-          } else {
-            INITIAL_RECENT_CHAINS_GENESISHASH.length = 3;
-            accountsAndChains[address] = [...INITIAL_RECENT_CHAINS_GENESISHASH, currentGenesisHash];
-          }
-
-          // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ RecentChains: accountsAndChains });
-        } else if (myRecentChains && !(myRecentChains.includes(currentGenesisHash))) {
-          myRecentChains.unshift(currentGenesisHash);
-          myRecentChains.pop();
-          accountsAndChains[address] = myRecentChains;
-
-          // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ RecentChains: accountsAndChains });
-        }
-      });
+      updateRecentChains(address, currentGenesisHash).catch(console.error);
     } catch (error) {
       console.error(error);
     }

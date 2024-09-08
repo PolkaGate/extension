@@ -1,10 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { StakingInputs } from '../../type';
 
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -15,13 +16,11 @@ import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/
 import Asset from '@polkadot/extension-polkagate/src/partials/Asset';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
 import { MAX_AMOUNT_LENGTH } from '@polkadot/extension-polkagate/src/util/constants';
-import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
 import { useBalances, useInfo, usePool, useTranslation } from '../../../../hooks';
-import type { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { ModalTitle } from '../../solo/commonTasks/configurePayee';
@@ -44,7 +43,7 @@ export const STEPS = {
   SIGN_QR: 200
 };
 
-export default function StakeExtra({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function StakeExtra ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);
@@ -53,7 +52,7 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
 
   const [step, setStep] = useState(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [inputs, setInputs] = useState<Inputs>();
+  const [inputs, setInputs] = useState<StakingInputs>();
 
   const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
   const [amount, setAmount] = useState<string | undefined>();
@@ -62,7 +61,7 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
-  const ED = api?.consts?.balances?.existentialDeposit as unknown as BN;
+  const ED = api?.consts?.['balances']?.['existentialDeposit'] as unknown as BN | undefined;
 
   const max = useMemo(() => {
     if (!availableBalance || !ED || !estimatedMaxFee) {
@@ -132,16 +131,16 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api.createType('Balance', BN_ONE));
+      return setEstimatedFee(api.createType('Balance', BN_ONE) as Balance);
     }
 
     amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: amountAsBN.toString() }).paymentInfo(formatted).then((i) => {
-      setEstimatedFee(api.createType('Balance', i?.partialFee));
-    });
+      setEstimatedFee(api.createType('Balance', i?.partialFee) as Balance);
+    }).catch(console.error);
 
     amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
-      setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
-    });
+      setEstimatedMaxFee(api.createType('Balance', i?.partialFee) as Balance);
+    }).catch(console.error);
   }, [formatted, api, availableBalance, amount, decimal, amountAsBN]);
 
   const nextBtnDisabled = useMemo(() => {
@@ -151,7 +150,7 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
 
     const amountNotInRange = amountAsBN.gt(max);
 
-    return amountAsBN.isZero() || amountNotInRange || !pool || pool?.bondedPool?.state !== 'Open';
+    return amountAsBN.isZero() || amountNotInRange || !pool || pool?.bondedPool?.state as unknown as string !== 'Open';
   }, [amountAsBN, max, inputs, pool]);
 
   const Warn = ({ iconDanger, isDanger, text }: { text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
@@ -190,7 +189,7 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
         }
         {step === STEPS.INDEX &&
           <>
-            {pool?.member?.points === '0' &&
+            {pool?.member?.points as unknown as string === '0' &&
               <Warn isDanger text={t('The account is fully unstaked, so can\'t stake until you withdraw entire unstaked/redeemable amount.')} />
             }
             <Asset

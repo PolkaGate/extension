@@ -1,23 +1,81 @@
-name: ci
+name: CI Workflow
 
 on:
   push:
     branches: [main]
   pull_request:
-  
+    types: [opened, edited, synchronize]
+
 jobs:
-  pr:
+  check-title:
+    name: Check PR Title
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR Title
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            if (!pr) {
+              core.setFailed('No pull request context available.');
+              return;
+            }
+            const title = pr.title;
+            const prefixPattern = /^(feat|fix|chore|docs|style|refactor|perf|test):\s.+/;
+            if (!prefixPattern.test(title)) {
+              core.setFailed(`PR title does not follow the correct format. Example: feat: Add new feature.`);
+            }
+
+  build:
     strategy:
       matrix:
         step: ['build']
     name: ${{ matrix.step }}
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 'lts/*'
-    - name: ${{ matrix.step }}
-      run: |
-        yarn install --immutable | grep -v 'YN0013'
-        yarn ${{ matrix.step }}
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Set up correct Yarn version
+        run: corepack prepare yarn@4.1.1 --activate
+
+      - name: Install dependencies without immutable
+        run: yarn install
+
+      - name: Verify dependencies with immutable
+        run: yarn install --immutable | grep -v 'YN0013'
+
+      - name: ${{ matrix.step }}
+        run: yarn ${{ matrix.step }}
+
+  release:
+    name: Release
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Set up correct Yarn version
+        run: corepack prepare yarn@4.1.1 --activate
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Run Semantic Release
+        env:
+          GH_TOKEN: ${{ secrets.SR_TOKEN }}
+        run: npx semantic-release

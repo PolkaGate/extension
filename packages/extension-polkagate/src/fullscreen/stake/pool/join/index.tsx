@@ -1,10 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { PoolInfo } from '../../../../util/types';
+import type { StakingInputs } from '../../type';
 
 import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -15,19 +16,17 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { AmountWithOptions, ShowBalance, TwoButtons } from '../../../../components';
 import { useEstimatedFee, useInfo, usePoolConsts, usePools, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME, STAKING_CHAINS } from '../../../../util/constants';
-import type { PoolInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
-import type { Inputs } from '../../Entry';
 import PoolsTable from '../partials/PoolsTable';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
-  inputs: Inputs | undefined;
+  setInputs: React.Dispatch<React.SetStateAction<StakingInputs | undefined>>;
+  inputs: StakingInputs | undefined;
 }
 
-export default function JoinPool({ inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
@@ -121,9 +120,9 @@ export default function JoinPool({ inputs, setInputs, setStep }: Props): React.R
       return;
     }
 
-    api && api.tx['nominationPools']['join'](String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
-      setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
-    });
+    api.tx['nominationPools']['join'](String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
+      setEstimatedMaxFee(api.createType('Balance', i?.partialFee) as Balance);
+    }).catch(console.error);
   }, [formatted, api, availableBalance, selectedPool, amountAsBN, poolStakingConsts]);
 
   useEffect(() => {

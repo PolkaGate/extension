@@ -7,8 +7,8 @@ import '@polkadot/extension-inject/crossenv';
 
 import type { RequestSignatures, TransportRequestMessage } from '@polkadot/extension-base/background/types';
 
-import handlers from '@polkadot/extension-base/background/handlers';
 import { withErrorLog } from '@polkadot/extension-base/background/handlers/helpers';
+import handlers from '@polkadot/extension-base/background/handlers/index';
 import { PORT_CONTENT, PORT_EXTENSION } from '@polkadot/extension-base/defaults';
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';

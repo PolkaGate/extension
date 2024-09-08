@@ -3,6 +3,9 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { HexString } from '@polkadot/util/types';
+import type { DropdownOption } from '../util/types';
+
 import { Avatar, Grid, Popover, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -10,7 +13,6 @@ import { useGenesisHashOptions, useInfo, useIsTestnetEnabled } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '../util/constants';
 import getLogo from '../util/getLogo';
-import type { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
 
 interface Props {
@@ -25,7 +27,7 @@ interface NetworkListProps {
   setSelectedChainName: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-const NetworkList = ({ address, chains, setAnchorEl, setSelectedChainName, selectedChainName }: NetworkListProps) => {
+const NetworkList = ({ address, chains, selectedChainName, setAnchorEl, setSelectedChainName }: NetworkListProps) => {
   const theme = useTheme();
   const options = useGenesisHashOptions();
   const isTestnetEnabled = useIsTestnetEnabled();
@@ -33,8 +35,8 @@ const NetworkList = ({ address, chains, setAnchorEl, setSelectedChainName, selec
   const selectableNetworks = useMemo(() =>
     !chains.length
       ? options.filter(({ text }) => text !== 'Allow use on any chain')
-      : options.filter((o) => chains.includes(o.value as any))
-    , [chains, options]);
+      : options.filter((o) => chains.includes(o.value as string))
+  , [chains, options]);
 
   const sanitizedLowercase = useCallback((text: string) => sanitizeChainName(text)?.toLowerCase(), []);
 
@@ -51,10 +53,9 @@ const NetworkList = ({ address, chains, setAnchorEl, setSelectedChainName, selec
       return;
     }
 
-    tieAccount(address, net.value as string).catch(console.error);
+    tieAccount(address, net.value as HexString).catch(console.error);
     setSelectedChainName(net.text);
-  }, [address, isTestnetDisabled]);
-
+  }, [address, isTestnetDisabled, setAnchorEl, setSelectedChainName]);
 
   return (
     <Grid container item sx={{ maxHeight: '550px', overflow: 'hidden', overflowY: 'scroll', width: '250px' }}>
@@ -63,6 +64,7 @@ const NetworkList = ({ address, chains, setAnchorEl, setSelectedChainName, selec
           const selectedNetwork = sanitizedLowercase(network.text) === selectedChainName?.toLocaleLowerCase();
 
           return (
+            // eslint-disable-next-line react/jsx-no-bind
             <Grid container justifyContent='space-between' key={index} onClick={() => selectNetwork(network)} sx={{ ':hover': { bgcolor: theme.palette.mode === 'light' ? 'rgba(24, 7, 16, 0.1)' : 'rgba(255, 255, 255, 0.1)' }, bgcolor: selectedNetwork ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: isTestnetDisabled(network.value as string) ? 'not-allowed' : 'pointer', height: '45px', opacity: isTestnetDisabled(network.value as string) ? 0.3 : 1, px: '15px' }}>
               <Grid alignItems='center' container item width='fit-content'>
                 <Typography fontSize='16px' fontWeight={selectedNetwork ? 500 : 400}>
@@ -82,10 +84,10 @@ const NetworkList = ({ address, chains, setAnchorEl, setSelectedChainName, selec
           );
         })}
     </Grid>
-  )
-}
+  );
+};
 
-function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<Props> {
+function FullScreenChainSwitch ({ address, chains }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { chainName: chainNameFromAccount } = useInfo(address);
 
@@ -101,7 +103,6 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
     setFlip(true);
     setTimeout(() => setFlip(false), 1000);
   }, [selectedChainName]);
-
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);
@@ -150,11 +151,11 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
         }}
       >
         <NetworkList
-          selectedChainName={selectedChainName}
-          setSelectedChainName={setSelectedChainName}
-          setAnchorEl={setAnchorEl}
           address={address}
           chains={chains}
+          selectedChainName={selectedChainName}
+          setAnchorEl={setAnchorEl}
+          setSelectedChainName={setSelectedChainName}
         />
       </Popover>
     </Grid>

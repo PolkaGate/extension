@@ -61,6 +61,7 @@ export default function StakeInitialChoice({ address, api, balances, consts }: P
       return;
     }
 
+    // TODO: consider that frozen amount can be staked as well!
     setAvailableBalance(balances.availableBalance);
   }, [balances]);
 

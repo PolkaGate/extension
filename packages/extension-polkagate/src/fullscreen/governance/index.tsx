@@ -1,8 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { LatestReferenda } from './utils/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { CubeGrid } from 'better-react-spinkit';
@@ -17,7 +20,6 @@ import HorizontalWaiting from './components/HorizontalWaiting';
 import { getAllVotes } from './post/myVote/util';
 import { LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST } from './utils/consts';
 import { getLatestReferendums, getReferendumsListSb, getTrackOrFellowshipReferendumsPA } from './utils/helpers';
-import { LatestReferenda } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
 import Bread from './Bread';
 import FellowshipsList from './FellowshipsList';
@@ -29,7 +31,7 @@ import { TrackStats } from './TrackStats';
 
 export type Fellowship = [string, number];
 
-export default function Governance(): React.ReactElement {
+export default function Governance (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const { state } = useLocation();
@@ -209,7 +211,7 @@ export default function Governance(): React.ReactElement {
     fetchRef(_key).then(() => setIsFetching(false)).catch(console.error);
     setReferenda(refsContext.refs?.[_key]);
 
-    async function fetchRef(key: string) {
+    async function fetchRef (key: string) {
       if (!chainName) {
         return;
       }
@@ -342,7 +344,7 @@ export default function Governance(): React.ReactElement {
               subMenu={selectedSubMenu}
               topMenu={topMenu}
             />
-            <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', top: 160 }}>
+            <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', px: '10px' }}>
               {selectedSubMenu === 'All'
                 ? <AllReferendaStats
                   address={address}

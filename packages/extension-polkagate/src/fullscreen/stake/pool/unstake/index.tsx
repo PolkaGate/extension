@@ -1,10 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { StakingInputs } from '../../type';
 
 import { faMinus } from '@fortawesome/free-solid-svg-icons';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -15,13 +16,11 @@ import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/
 import Asset from '@polkadot/extension-polkagate/src/partials/Asset';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
 import { MAX_AMOUNT_LENGTH } from '@polkadot/extension-polkagate/src/util/constants';
-import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
 import { useInfo, usePool, usePoolConsts, useTranslation } from '../../../../hooks';
-import type { Inputs } from '../../Entry';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { ModalTitle } from '../../solo/commonTasks/configurePayee';
@@ -35,7 +34,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function Unstake({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function Unstake ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);
@@ -44,7 +43,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
 
   const [step, setStep] = useState(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [inputs, setInputs] = useState<Inputs>();
+  const [inputs, setInputs] = useState<StakingInputs>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [amountAsBN, setAmountAsBN] = useState<BN>();
   const [amount, setAmount] = useState<string | undefined>();
@@ -53,7 +52,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
   const [unstakeMaxAmount, setUnstakeMaxAmount] = useState<boolean>(false);
 
   const staked = useMemo(() => {
-    if (myPool && myPool.member?.points && myPool.stashIdAccount && myPool.bondedPool) {
+    if (myPool?.member?.points && myPool.stashIdAccount && myPool.bondedPool) {
       const myPoints = new BN(myPool.member.points);
       const poolActive = new BN(String(myPool.stashIdAccount.stakingLedger.active));
       const poolPoints = new BN(myPool.bondedPool.points);
@@ -85,8 +84,8 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
   const poolState = useMemo(() => String(myPool?.bondedPool?.state), [myPool?.bondedPool?.state]);
   const poolMemberCounter = useMemo(() => Number(myPool?.bondedPool?.memberCounter), [myPool?.bondedPool?.memberCounter]);
 
-  const unbonded = api && api.tx['nominationPools']['unbond'];
-  const poolWithdrawUnbonded = api && api.tx['nominationPools']['poolWithdrawUnbonded'];
+  const unbonded = api?.tx['nominationPools']['unbond'];
+  const poolWithdrawUnbonded = api?.tx['nominationPools']['poolWithdrawUnbonded'];
 
   const helperText = useMemo(() => {
     if (!myPool || !formatted || !amountAsBN || !staked) {
@@ -139,7 +138,7 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
     const params = [formatted, amountAsBN];
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
     }
 
     // eslint-disable-next-line no-void
@@ -151,8 +150,12 @@ export default function Unstake({ address, setRefresh, setShow, show }: Props): 
       } else {
         const dummyParams = [1, 1];
 
-        // eslint-disable-next-line no-void
-        void poolWithdrawUnbonded(...dummyParams).paymentInfo(formatted).then((j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee))));
+        poolWithdrawUnbonded(...dummyParams)
+          .paymentInfo(formatted)
+          .then(
+            (j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee || BN_ZERO)) as Balance)
+          )
+          .catch(console.error);
       }
     }).catch(console.error);
   }, [amountAsBN, api, decimal, formatted, maxUnlockingChunks, poolWithdrawUnbonded, unbonded, unlockingLen]);

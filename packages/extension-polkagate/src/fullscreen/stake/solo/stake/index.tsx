@@ -1,30 +1,31 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Payee, ValidatorInfo } from 'extension-polkagate/src/util/types';
+import type { Balance } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
+import type { StakingInputs } from '../../type';
+
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import { Payee, ValidatorInfo } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import type { Balance } from '@polkadot/types/interfaces';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Infotip2, ShowBalance, TwoButtons, Warning } from '../../../../components';
 import { useTranslation } from '../../../../components/translate';
 import { useAvailableToSoloStake, useBalances, useInfo, useMinToReceiveRewardsInSolo2, useStakingAccount, useStakingConsts } from '../../../../hooks';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
-import type { Inputs } from '../../Entry';
-import SelectValidators from '../partials/SelectValidators';
+import SelectValidatorsFs from '../partials/SelectValidatorsFs';
 import SetPayee from '../partials/SetPayee';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
-  inputs: Inputs | undefined;
+  setInputs: React.Dispatch<React.SetStateAction<StakingInputs | undefined>>;
+  inputs: StakingInputs | undefined;
   onBack?: (() => void) | undefined
 }
 
@@ -45,7 +46,7 @@ const Warn = ({ text }: { text: string }) => {
   );
 };
 
-export default function SoloStake({ inputs, onBack, setInputs, setStep }: Props): React.ReactElement {
+export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const { api, decimal, formatted, genesisHash, token } = useInfo(address);
@@ -59,7 +60,7 @@ export default function SoloStake({ inputs, onBack, setInputs, setStep }: Props)
   const balances = useBalances(address, refresh, setRefresh);
   const availableToSoloStake = useAvailableToSoloStake(address, refresh);
 
-  const [amount, setAmount] = useState<string | undefined>(inputs?.extraInfo?.amount);
+  const [amount, setAmount] = useState<string | undefined>(inputs?.extraInfo?.['amount'] as string);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [isNextClicked, setNextIsClicked] = useState<boolean>();
   const [alert, setAlert] = useState<string | undefined>();
@@ -86,7 +87,10 @@ export default function SoloStake({ inputs, onBack, setInputs, setStep }: Props)
   }, [amountAsBN, api, newSelectedValidators, payee]);
 
   const buttonDisable = useMemo(() => !!alert || !amount, [alert, amount]);
-  const isBusy = useMemo(() => (!inputs?.estimatedFee || !inputs?.extraInfo?.amount) && isNextClicked, [inputs?.extraInfo?.amount, inputs?.estimatedFee, isNextClicked]);
+  const isBusy = useMemo(() =>
+    (!inputs?.estimatedFee || !inputs?.extraInfo?.['amount']) && isNextClicked
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  , [inputs?.extraInfo?.['amount'], inputs?.estimatedFee, isNextClicked]);
 
   useEffect(() => {
     if (!amountAsBN || !amount) {
@@ -288,11 +292,11 @@ export default function SoloStake({ inputs, onBack, setInputs, setStep }: Props)
           <Typography fontSize='16px' fontWeight={500} pb='15px' width='100%'>
             {t('Now, select the validators you want to nominate, considering their properties, such as their commission rates. You can even filter them based on your preferences.')}
           </Typography>
-          <SelectValidators
+          <SelectValidatorsFs
             address={address}
             newSelectedValidators={newSelectedValidators}
             setNewSelectedValidators={setNewSelectedValidators}
-            staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
+            staked={stakingAccount?.stakingLedger?.active as unknown as BN ?? BN_ZERO}
             stakingConsts={stakingConsts}
             stashId={formatted}
             tableHeight={window.innerHeight - 400}

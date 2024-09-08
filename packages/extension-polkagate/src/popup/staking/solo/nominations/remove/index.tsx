@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,13 +8,14 @@
  * this component opens unstake review page
  * */
 
+import type { ApiPromise } from '@polkadot/api';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { Balance } from '@polkadot/types/interfaces';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
+
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import type { Chain } from '@polkadot/extension-chains/types';
-
-import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
 
@@ -25,21 +25,20 @@ import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import Confirmation from '../../../../../partials/Confirmation';
 import broadcast from '../../../../../util/api/broadcast';
 import { PROXY_TYPE } from '../../../../../util/constants';
-import type { Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import TxDetail from '../../../partial/TxDetail';
 
 interface Props {
   address: string;
   api: ApiPromise | undefined;
-  chain: Chain | null;
+  chain: Chain | null | undefined;
   formatted: string;
   title: string;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
 }
 
-export default function RemoveValidators({ address, api, chain, formatted, setShow, show, title }: Props): React.ReactElement {
+export default function RemoveValidators ({ address, api, chain, formatted, setShow, show, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
@@ -54,7 +53,7 @@ export default function RemoveValidators({ address, api, chain, formatted, setSh
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
-  const chilled = api && api.tx['staking']['chill'];
+  const chilled = api?.tx['staking']['chill'];
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
@@ -83,10 +82,10 @@ export default function RemoveValidators({ address, api, chain, formatted, setSh
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
     }
 
-    chilled && chilled().paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+    chilled?.().paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
   }, [api, chilled, formatted]);
 
   const remove = useCallback(async () => {
@@ -150,7 +149,7 @@ export default function RemoveValidators({ address, api, chain, formatted, setSh
         <Grid container justifyContent='center' sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain as any}
+            chain={chain}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />

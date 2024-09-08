@@ -1,6 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+/* eslint-disable react/jsx-max-props-per-line */
 
 import type { MetadataDef } from '@polkadot/extension-inject/types';
 
@@ -17,11 +18,12 @@ interface Props {
   url: string;
 }
 
-export default function Request({ metaId, request, url }: Props): React.ReactElement<Props> {
+export default function Request ({ metaId, request, url }: Props): React.ReactElement<Props> {
+  const theme = useTheme();
   const { t } = useTranslation();
+
   const chain = useMetadata(request.genesisHash, true);
   const onAction = useContext(ActionContext);
-  const theme = useTheme();
 
   const _onApprove = useCallback(
     (): void => {
@@ -48,127 +50,71 @@ export default function Request({ metaId, request, url }: Props): React.ReactEle
 
   return (
     <>
-      <Grid
-        container
-        fontSize='16px'
-        sx={{ '> div:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', m: '15px auto', width: '92%' }}
-      >
-        <Grid
-          alignItems='center'
-          container
-          item
-          sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}
-        >
-          <Typography
-            fontWeight={300}
-            width='35%'
-          >{t<string>('from')}</Typography>
-          <Typography
-            fontWeight={400}
-            textAlign='right'
-            width='65%'
-          >{final}</Typography>
+      <Grid container fontSize='16px' sx={{ '> div:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', m: '15px auto', width: '92%' }}>
+        <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
+          <Typography fontWeight={300} width='35%'>
+            {t('from')}
+          </Typography>
+          <Typography fontWeight={400} textAlign='right' width='65%'>
+            {final}
+          </Typography>
         </Grid>
-        <Grid
-          alignItems='center'
-          container
-          item
-          sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}
-        >
-          <Typography
-            fontWeight={300}
-            width='35%'
-          >{t<string>('chain')}</Typography>
-          <Typography
-            fontWeight={400}
-            textAlign='right'
-            width='65%'
-          >{request.chain}</Typography>
+        <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
+          <Typography fontWeight={300} width='35%'>
+            {t('chain')}
+          </Typography>
+          <Typography fontWeight={400} textAlign='right' width='65%'>
+            {request.chain}
+          </Typography>
         </Grid>
-        <Grid
-          alignItems='center'
-          container
-          item
-          sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}
-        >
-          <Typography
-            fontWeight={300}
-            width='35%'
-          >{t<string>('icon')}</Typography>
-          <Typography
-            fontWeight={400}
-            textAlign='right'
-            width='65%'
-          >{request.icon}</Typography>
+        <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
+          <Typography fontWeight={300} width='35%'>
+            {t('icon')}
+          </Typography>
+          <Typography fontWeight={400} textAlign='right' width='65%'>
+            {request.icon}
+          </Typography>
         </Grid>
-        <Grid
-          alignItems='center'
-          container
-          item
-          sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}
-        >
-          <Typography
-            fontWeight={300}
-            width='35%'
-          >{t<string>('decimals')}</Typography>
-          <Typography
-            fontWeight={400}
-            textAlign='right'
-            width='65%'
-          >{request.tokenDecimals}</Typography>
+        <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
+          <Typography fontWeight={300} width='35%'>
+            {t('decimals')}
+          </Typography>
+          <Typography fontWeight={400} textAlign='right' width='65%'>
+            {request.tokenDecimals}
+          </Typography>
         </Grid>
-        <Grid
-          alignItems='center'
-          container
-          item
-          sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}
-        >
-          <Typography
-            fontWeight={300}
-            width='35%'
-          >{t<string>('symbol')}</Typography>
-          <Typography
-            fontWeight={400}
-            textAlign='right'
-            width='65%'
-          >{request.tokenSymbol}</Typography>
+        <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
+          <Typography fontWeight={300} width='35%'>
+            {t('symbol')}
+          </Typography>
+          <Typography fontWeight={400} textAlign='right' width='65%'>
+            {request.tokenSymbol}
+          </Typography>
         </Grid>
-        <Grid
-          alignItems='center'
-          container
-          item
-          sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}
-        >
-          <Typography
-            fontWeight={300}
-            width='35%'
-          >{t<string>('upgrade')}</Typography>
-          <Typography
-            fontWeight={400}
-            textAlign='right'
-            width='65%'
-          >{chain ? chain.specVersion : t('<unknown>')} -&gt; {request.specVersion}</Typography>
+        <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
+          <Typography fontWeight={300} width='35%'>
+            {t('upgrade')}
+          </Typography>
+          <Typography fontWeight={400} textAlign='right' width='65%'>
+            {chain ? chain.specVersion : t('<unknown>')} -&gt; {request.specVersion}
+          </Typography>
         </Grid>
       </Grid>
-      <Grid
-        height='80px'
-        m='auto'
-        width='96%'
-      >
+      <Grid height='80px' m='auto' width='96%'>
         <Warning
           fontWeight={400}
           iconDanger
           isBelowInput
           theme={theme}
         >
-          {t<string>('This approval will add the metadata to your extension instance, allowing future requests to be decoded using this metadata.')}
+          {t('This approval will add the metadata to your extension instance, allowing future requests to be decoded using this metadata.')}
         </Warning>
       </Grid>
       <TwoButtons
         onPrimaryClick={_onApprove}
         onSecondaryClick={_onReject}
-        primaryBtnText={t<string>('Approve')}
-        secondaryBtnText={t<string>('Reject')}
+        primaryBtnText={t('Approve')}
+        secondaryBtnText={t('Reject')}
         variant='text'
       />
     </>

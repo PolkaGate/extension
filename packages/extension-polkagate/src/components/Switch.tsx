@@ -1,9 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+/* eslint-disable react/jsx-max-props-per-line */
+
+import type { Theme } from '@mui/material/styles';
 
 import { Grid, Typography } from '@mui/material';
-import { Theme } from '@mui/material/styles';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -16,10 +18,13 @@ interface Props {
   fontSize?: string;
   fontWeight?: number;
   isChecked?: boolean;
-  changeBackground?: boolean;
+  defaultColor?: boolean;
 }
 
-function Switch({ changeBackground = false, checkedLabel, className, fontSize = '18px', fontWeight = 300, isChecked = false, onChange, theme, uncheckedLabel }: Props): React.ReactElement<Props> {
+export const CHECKED_COLOR = '#46890C';
+export const UNCHECKED_COLOR = '#838383';
+
+function Switch ({ checkedLabel, className, fontSize = '18px', fontWeight = 300, isChecked = false, onChange, uncheckedLabel }: Props): React.ReactElement<Props> {
   return (
     <Grid alignItems='center' className={className} container item width='fit-content'>
       <Typography display='inline' fontSize={fontSize} fontWeight={fontWeight}>
@@ -34,7 +39,8 @@ function Switch({ changeBackground = false, checkedLabel, className, fontSize = 
         />
         <span
           className='slider'
-          style={{ backgroundColor: isChecked && changeBackground ? 'rgb(255 239 18) ' : 'transparent' }} />
+          style={{ backgroundColor: 'transparent' }}
+        />
       </label>
       <Typography
         display='inline'
@@ -47,7 +53,7 @@ function Switch({ changeBackground = false, checkedLabel, className, fontSize = 
   );
 }
 
-export default styled(Switch)(({ theme }: Props) => `
+export default styled(Switch)(({ defaultColor, isChecked, theme }: Props) => `
   label {
     position: relative;
     display: inline-block;
@@ -76,7 +82,11 @@ export default styled(Switch)(({ theme }: Props) => `
     background-color: '${theme.palette.background.default}';
     transition: 0.2s;
     border-radius: 100px;
-    border: 1px solid ${theme.palette.secondary.light};
+    border: 1px solid ${defaultColor
+    ? theme.palette.secondary.light
+    : isChecked
+      ? CHECKED_COLOR
+      : UNCHECKED_COLOR};
 
     &:before {
       position: absolute;
@@ -85,7 +95,11 @@ export default styled(Switch)(({ theme }: Props) => `
       width: 16.2px;
       left: 0.7px;
       bottom: 0.75px;
-      background-color: ${theme.palette.secondary.light};
+      background-color: ${defaultColor
+    ? theme.palette.secondary.light
+    : isChecked
+      ? CHECKED_COLOR
+      : UNCHECKED_COLOR};
       transition: 0.4s;
       border-radius: 50%;
     }

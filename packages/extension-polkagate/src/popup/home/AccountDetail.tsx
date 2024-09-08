@@ -1,24 +1,21 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { BalancesInfo } from '../../util/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Box, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
-
-import type { Chain } from '@polkadot/extension-chains/types';
-
 
 import { stars5Black, stars5White } from '../../assets/icons';
 import { FormatBalance2, FormatPrice, Infotip, OptionalCopyButton, VaadinIcon } from '../../components';
 import { useBalances, useChainName, useTokenPrice, useTranslation } from '../../hooks/';
 import RecentChains from '../../partials/RecentChains';
 import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
-import { BalancesInfo } from '../../util/types';
 import { getValue } from '../account/util';
 
 interface Props {
@@ -44,7 +41,7 @@ const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
   const theme = useTheme();
 
   return (
-    <Infotip text={isHidden ? t('This account is hidden from websites'):  t('This account is visible to websites')}>
+    <Infotip text={isHidden ? t('This account is hidden from websites') : t('This account is visible to websites')}>
       <IconButton onClick={toggleVisibility} sx={{ height: '15px', ml: '7px', mt: '13px', p: 0, width: '24px' }}>
         <VaadinIcon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
       </IconButton>
@@ -52,12 +49,13 @@ const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
   );
 };
 
-export default function AccountDetail({ address, chain, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail ({ address, chain, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const balances = useBalances(address);
   const chainName = useChainName(address);
   const { price, priceChainName, priceDate } = useTokenPrice(address);
+
   const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
   const isPriceOutdated = useMemo(() => priceDate !== undefined && Date.now() - priceDate > BALANCES_VALIDITY_PERIOD, [priceDate]);
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
@@ -142,7 +140,7 @@ export default function AccountDetail({ address, chain, goToAccount, hideNumbers
       <Grid container direction='row' item sx={{ lineHeight: '20px' }}>
         <Grid item maxWidth='70%' onClick={goToAccount} sx={{ cursor: 'pointer' }}>
           <Typography fontSize='28px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
-            {identity?.display || name}
+            {identity?.display || name || t('Unknown')}
           </Typography>
         </Grid>
         <Grid item>
@@ -159,7 +157,7 @@ export default function AccountDetail({ address, chain, goToAccount, hideNumbers
         {!chain
           ? <NoChainAlert />
           : <Grid alignItems='center' container>
-            <RecentChains address={address} currentChainName={chainName} />
+            <RecentChains address={address} chainName={chainName} />
             <BalanceRow />
           </Grid>
         }

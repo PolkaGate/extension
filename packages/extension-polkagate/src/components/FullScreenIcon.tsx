@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -15,23 +14,28 @@ import Infotip2 from './Infotip2';
 
 interface Props {
   url: string;
+  isSettingSubMenu?: boolean;
 }
 
-export default function FullScreenIcon({ url }: Props): React.ReactElement {
+export default function FullScreenIcon ({ isSettingSubMenu, url }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
   const [scale, setScale] = useState<string>('1');
 
   const iconColor = useMemo(() => {
-    if (url === '/') {
-      return theme.palette.mode === 'dark'
-        ? theme.palette.text.primary
-        : theme.palette.secondary.light;
-    } else {
+    if (isSettingSubMenu) {
       return theme.palette.secondary.light;
     }
-  }, [theme.palette.mode, theme.palette.secondary.light, theme.palette.text.primary, url]);
+
+    const isOnHomePage = url === '/';
+
+    if (isOnHomePage && theme.palette.mode === 'dark') {
+      return theme.palette.text.primary;
+    }
+
+    return theme.palette.secondary.light;
+  }, [isSettingSubMenu, theme, url]);
 
   const onWindowOpen = useCallback(() => {
     windowOpen(url).catch(console.error);

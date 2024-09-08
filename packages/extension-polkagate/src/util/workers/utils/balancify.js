@@ -1,13 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 // @ts-nocheck
 
-export function balancify(balances) {
+export function balancify (balances) {
   const base = {
     availableBalance: String(balances.availableBalance),
     freeBalance: String(balances.freeBalance),
+    frozenBalance: String(balances.frozen),
     lockedBalance: String(balances.lockedBalance),
     reservedBalance: String(balances.reservedBalance),
     vestedBalance: String(balances.vestedBalance),
@@ -28,9 +28,10 @@ export function balancify(balances) {
   return JSON.stringify(base);
 }
 
-export function balancifyAsset(balances) {
+export function balancifyAsset (balances) {
   return JSON.stringify({
     availableBalance: String(balances.free),
+    freeBalance: String(balances.free),
     frozenBalance: String(balances.frozen),
     reservedBalance: String(balances.reserved)
   });

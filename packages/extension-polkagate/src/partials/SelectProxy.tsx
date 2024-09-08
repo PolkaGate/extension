@@ -1,6 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+/* eslint-disable react/jsx-max-props-per-line */
+
+import type { Proxy, ProxyItem } from '../util/types';
 
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -13,12 +16,10 @@ import { PButton, ProxyTable } from '../components';
 import Popup from '../components/Popup';
 import { useMetadata, useTranslation } from '../hooks';
 import { HeaderBrand } from '../partials';
-import type { Proxy, ProxyItem } from '../util/types';
 
 interface Props {
   show: boolean;
-  proxiedAddress: string;
-  genesisHash: string;
+  genesisHash: string | undefined;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   selectedProxy: Proxy | undefined
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>
@@ -26,7 +27,7 @@ interface Props {
   proxies: ProxyItem[] | undefined;
 }
 
-export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy, setShow, show }: Props): React.ReactElement<Props> {
+export default function SelectProxy ({ genesisHash, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const chain = useMetadata(genesisHash, true);
   const [proxiesToSelect, setProxiesToSelect] = useState<ProxyItem[] | undefined>();
@@ -67,14 +68,14 @@ export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, sel
       <HeaderBrand
         onBackClick={_goBack}
         showBackArrow
-        text={t<string>('Select Proxy')}
+        text={t('Select Proxy')}
       />
       <Typography fontSize='14px' fontWeight={300} m='18px auto 0' width='90%'>
         {t('Choose a suitable proxy for the account to conduct the transaction on its behalf.')}
       </Typography>
       <ProxyTable
-        chain={chain as any}
-        label={t<string>('Proxies')}
+        chain={chain}
+        label={t('Proxies')}
         maxHeight='50%'
         mode='Select'
         onSelect={onSelect}
@@ -88,7 +89,7 @@ export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, sel
       />
       <Grid m='auto' onClick={onDeselect} width='92%'>
         <Typography fontSize='14px' fontWeight={400} lineHeight='36px' sx={{ cursor: selectedProxy ? 'pointer' : 'default', textAlign: 'right', textDecoration: 'underline' }}>
-          {t<string>('Clear selection and use the proxied')}
+          {t('Clear selection and use the proxied')}
         </Typography>
       </Grid>
       <PButton

@@ -4,34 +4,35 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
+import type { BalancesInfo } from '../../../util/types';
+import type { StakingInputs } from '../type';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Infotip2, ShowBalance, ShowBalance3, TwoButtons, Warning } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 import { useInfo, usePool, usePoolConsts, useStakingConsts } from '../../../hooks';
-import type { BalancesInfo } from '../../../util/types';
-import { amountToHuman, amountToMachine } from '../../../util/utils';
-import type { Inputs } from '../Entry';
-import { STEPS } from '..';
 import { POLKAGATE_POOL_IDS } from '../../../util/constants';
+import { amountToHuman, amountToMachine } from '../../../util/utils';
+import { STEPS } from '..';
 
 interface Props {
   address: string
   balances: BalancesInfo | undefined;
-  inputs: Inputs | undefined;
+  inputs: StakingInputs | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>
+  setInputs: React.Dispatch<React.SetStateAction<StakingInputs | undefined>>
 }
 
-export default function EasyMode({ address, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function EasyMode ({ address, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chainName, decimal, formatted } = useInfo(address);
-  const pool = usePool(address, POLKAGATE_POOL_IDS[chainName as string] as number);
+  const pool = usePool(address, POLKAGATE_POOL_IDS[chainName as string]);
 
   const poolConsts = usePoolConsts(address);
   const stakingConsts = useStakingConsts(address);
@@ -74,7 +75,7 @@ export default function EasyMode({ address, balances, inputs, setInputs, setStep
 
     amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee) as Balance);
-    });
+    }).catch(console.error);
   }, [formatted, api, availableBalance, amount, decimal, amountAsBN]);
 
   useEffect(() => {
@@ -96,8 +97,6 @@ export default function EasyMode({ address, balances, inputs, setInputs, setStep
         params,
         pool
       });
-    } else {
-      console.log('waiting for pool:', pool);
     }
   }, [amount, amountAsBN, api, pool, poolConsts, setInputs]);
 

@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -25,7 +24,7 @@ interface Props {
   newPassword: string;
 }
 
-function Modify({ isPasswordError, newPassword, onBackClick, onPassChange, setIsPasswordError, setStep }: Props): React.ReactElement {
+function Modify ({ isPasswordError, newPassword, onBackClick, onPassChange, setIsPasswordError, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isExtensionMode = useIsExtensionPopup();
@@ -98,12 +97,10 @@ function Modify({ isPasswordError, newPassword, onBackClick, onPassChange, setIs
             {t<string>('Password Enabled')}<br />
           </Typography>
           <Switch
-            changeBackground
             fontSize='17px'
             isChecked={!isRemovePasswordChecked}
             onChange={onCheckChange}
             theme={theme}
-          // uncheckedLabel={t<string>('Light')}
           />
         </Grid>
         <Grid item sx={{ mt: '20px', opacity: isRemovePasswordChecked ? 0.5 : 1 }}>
@@ -112,6 +109,7 @@ function Modify({ isPasswordError, newPassword, onBackClick, onPassChange, setIs
             firstPassStyle={{ marginBlock: '8px' }}
             label={t<string>('New password')}
             onChange={onPassChange}
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onEnter={onUpdatePassword}
           />
         </Grid>

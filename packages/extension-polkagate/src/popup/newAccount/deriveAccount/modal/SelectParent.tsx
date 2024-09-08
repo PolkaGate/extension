@@ -1,13 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import { AccountJson } from '@polkadot/extension-base/background/types';
 import { canDerive } from '@polkadot/extension-base/utils';
 
 import { AccountContext, Address, ButtonWithCancel, ChainLogo, Label, Password, Warning } from '../../../../components';
@@ -36,7 +36,7 @@ export default function SelectParent({ isLocked, onClose, onDerivationConfirmed,
   const theme = useTheme();
 
   const defaultPath = useMemo(() => {
-    if (!parentAccount || !parentAccount.address) {
+    if (!parentAccount?.address) {
       return undefined;
     } else {
       return nextDerivationPath(accounts, parentAccount.address);
@@ -86,14 +86,16 @@ export default function SelectParent({ isLocked, onClose, onDerivationConfirmed,
   const onParentChange = useCallback((selectedParentAddress: string) => setSelectedParentAddress(selectedParentAddress), [setSelectedParentAddress]);
 
   const _onSubmit = useCallback(async (): Promise<void> => {
-    if ((suriPath || defaultPath) && parentAccount?.address && parentPassword) {
+    const _path = suriPath || defaultPath;
+
+    if (_path && parentAccount?.address && parentPassword) {
       setIsBusy(true);
 
       const isUnlockable = await validateAccount(parentAccount.address, parentPassword);
 
       if (isUnlockable) {
         try {
-          const account = await validateDerivationPath(parentAccount.address, suriPath ?? defaultPath ?? '', parentPassword);
+          const account = await validateDerivationPath(parentAccount.address, _path, parentPassword);
 
           onDerivationConfirmed({ account, parentPassword });
         } catch (error) {
@@ -130,7 +132,7 @@ export default function SelectParent({ isLocked, onClose, onDerivationConfirmed,
                 />
               </Grid>
               <Grid container item xs={1}>
-                <ChainLogo genesisHash={parentAccount?.genesisHash} />
+                <ChainLogo genesisHash={parentAccount?.genesisHash as string} />
               </Grid>
             </Grid>
           )
@@ -142,9 +144,9 @@ export default function SelectParent({ isLocked, onClose, onDerivationConfirmed,
               <AddressDropdown
                 allAddresses={allAddresses}
                 onSelect={onParentChange}
-                selectedAddress={parentAccount?.address}
-                selectedGenesis={parentAccount?.genesisHash}
-                selectedName={parentAccount?.name}
+                selectedAddress={parentAccount?.address as string}
+                selectedGenesis={parentAccount?.genesisHash as string}
+                selectedName={parentAccount?.name as string | null}
               />
             </Label>
           )
@@ -156,6 +158,7 @@ export default function SelectParent({ isLocked, onClose, onDerivationConfirmed,
             isFocused
             label={t<string>('Password for the account to derive from')}
             onChange={onParentPasswordChange}
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onEnter={_onSubmit}
             style={{ marginBottom: '15px', width: '100%' }}
             value={parentPassword}
@@ -176,8 +179,6 @@ export default function SelectParent({ isLocked, onClose, onDerivationConfirmed,
             defaultPath={defaultPath}
             isError={!!pathError}
             onChange={_onSuriPathChange}
-            parentAddress={parentAccount?.address}
-            parentPassword={parentPassword}
             withSoftPath={allowSoftDerivation}
           />
           {(!!pathError) && (

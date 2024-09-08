@@ -1,14 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import React, { useEffect, useState } from 'react';
 
-import useIsExtensionPopup from '../../hooks/useIsExtensionPopup';
 import HomePageFullScreen from '../../fullscreen/homeFullScreen';
+import useIsExtensionPopup from '../../hooks/useIsExtensionPopup';
 import Home from '.';
 
-export default function ManageHome(): React.ReactElement {
+export default function ManageHome (): React.ReactElement {
   const onExtension = useIsExtensionPopup();
   const [home, setHome] = useState<React.ReactElement>(<></>);
 

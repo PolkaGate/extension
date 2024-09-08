@@ -1,15 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { MemberPoints, MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
+import type { StakingInputs } from '../../../type';
+import type { Mode } from '.';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-
-import type { Chain } from '@polkadot/extension-chains/types';
 
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
@@ -19,10 +20,7 @@ import { BN } from '@polkadot/util';
 
 import { AccountHolderWithProxy, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../../components';
 import { useEstimatedFee, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
-import type { MemberPoints, MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
-import type { Inputs } from '../../../Entry';
 import { STEPS } from '../../stake';
-import { Mode } from '.';
 
 interface Props {
   address: string;
@@ -38,7 +36,7 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<Mode | undefined>>;
 }
 
-export default function Review({ address, api, chain, mode, pool, poolMembers, setMode, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review ({ address, api, chain, mode, pool, poolMembers, setMode, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
@@ -48,7 +46,7 @@ export default function Review({ address, api, chain, mode, pool, poolMembers, s
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [membersToUnbond, setMembersToUnbond] = useState<MemberPoints[] | undefined>();
   const [membersToRemove, setMembersToRemove] = useState<MemberPoints[] | undefined>();
-  const [inputs, setInputs] = useState<Inputs | undefined>();
+  const [inputs, setInputs] = useState<StakingInputs | undefined>();
 
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;

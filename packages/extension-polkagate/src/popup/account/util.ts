@@ -1,20 +1,21 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
-/* eslint-disable header/header */
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
  * this component shows an account information in detail
  * */
 
-import { BN, BN_ZERO } from '@polkadot/util';
-
 import type { BalancesInfo } from '../../util/types';
 
+import { BN, BN_ZERO, bnMax } from '@polkadot/util';
+
+function isEmptyObject (obj: object): boolean {
+  return Object.keys(obj).length === 0;
+}
+
 export const getValue = (type: string, balances: BalancesInfo | null | undefined): BN | undefined => {
-  if (!balances) {
+  if (!balances || isEmptyObject(balances)) {
     return;
   }
 
@@ -32,9 +33,21 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
       return balances?.soloTotal ?? BN_ZERO;
     case ('balance'):
     case ('available'):
-    case ('transferable'):
     case ('available balance'):
       return balances.availableBalance;
+
+    case ('transferable'):
+    {
+      const frozenBalance = balances.frozenBalance || BN_ZERO; // for backward compatibility of PolkaGate extension
+      const noFrozenReserved = frozenBalance.isZero() && balances.reservedBalance.isZero();
+
+      const frozenReserveDiff = frozenBalance.sub(balances.reservedBalance);
+      const maybeED = noFrozenReserved ? BN_ZERO : (balances.ED || BN_ZERO);
+      const untouchable = bnMax(maybeED, frozenReserveDiff);
+
+      return balances.freeBalance.sub(untouchable);
+    }
+
     case ('reserved'):
       return balances.reservedBalance;
     case ('others'):
@@ -44,10 +57,6 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
       return balances.freeBalance;
     case ('reserved balance'):
       return balances.reservedBalance;
-    // case ('frozen misc'):
-    //   return balances.frozenMisc;
-    // case ('frozen fee'):
-    //   return balances.frozenFee;
     case ('locked'):
     case ('locked balance'):
       return balances.lockedBalance;

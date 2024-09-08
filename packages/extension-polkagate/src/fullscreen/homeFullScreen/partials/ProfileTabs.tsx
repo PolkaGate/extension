@@ -1,12 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-first-prop-new-line */
+/* eslint-disable react/jsx-max-props-per-line */
+
+import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
+
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import type { AccountsOrder } from '..';
 import { Grid } from '@mui/material';
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import ProfileTab from './ProfileTab';
+import React, { useCallback, useEffect, useMemo, useRef,useState } from 'react';
+
 import { useProfiles } from '../../../hooks';
+import ProfileTab from './ProfileTab';
 
 interface Props {
   orderedAccounts: AccountsOrder[] | undefined;
@@ -14,7 +19,7 @@ interface Props {
 
 export const HIDDEN_PERCENT = '50%';
 
-export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
+export default function ProfileTabs ({ orderedAccounts }: Props): React.ReactElement {
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
 
   const [selectedProfile, setSelectedProfile] = useState<string>();
@@ -30,6 +35,7 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
     }
 
     return defaultProfiles.concat(userDefinedProfiles);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultProfiles.length, userDefinedProfiles.length]);
 
   const onMouseEnter = useCallback(() => setIsHovered(true), []);
@@ -37,7 +43,7 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
 
   const handleScroll = () => {
     if (scrollContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      const { clientWidth, scrollLeft, scrollWidth } = scrollContainerRef.current;
 
       const isScrollable = scrollWidth > clientWidth;
       const tolerance = 10;
@@ -47,56 +53,59 @@ export default function ProfileTabs({ orderedAccounts }: Props): React.ReactElem
     }
   };
 
-  const handleWheel = (event: WheelEvent) => {
+  const handleWheel = useCallback((event: WheelEvent) => {
     if (scrollContainerRef.current) {
       event.preventDefault();
       scrollContainerRef.current.scrollLeft += (event.deltaY || event.deltaX);
       handleScroll();
     }
-  };
+  }, []);
 
   useEffect(() => {
     handleScroll(); // Set initial shadow states on mount
     const ref = scrollContainerRef.current;
+
     if (ref) {
       ref.addEventListener('scroll', handleScroll);
       ref.addEventListener('wheel', handleWheel, { passive: false });
+
       return () => {
         ref.removeEventListener('scroll', handleScroll);
         ref.removeEventListener('wheel', handleWheel);
       };
     }
+
     return undefined;
-  }, [profilesToShow.length, scrollContainerRef.current]);
+  }, [handleWheel, profilesToShow.length]);
 
   return (
-    <Grid container sx={{ display: 'flex', position: 'relative', height: '30px', mb: '10px' }}>
+    <Grid container sx={{ display: 'flex', height: '30px', mb: '10px', position: 'relative' }}>
       {showLeftMore && <ArrowForwardIosRoundedIcon sx={{ color: 'text.disabled', fontSize: '20px', transform: 'rotate(-180deg)', width: 'fit-content', zIndex: 1 }} />}
-      <Grid container item justifyContent='left'
+      <Grid columnGap='5px' container item
+        justifyContent='left'
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
-        columnGap='5px'
+        ref={scrollContainerRef}
         sx={{
           bgcolor: 'backgroundFL.secondary',
-          px: '25px',
-          pb: '5px',
           flexFlow: 'nowrap',
           overflowX: 'scroll',
+          pb: '5px',
+          px: '25px',
           whiteSpace: 'nowrap'
         }}
-        ref={scrollContainerRef}
         xs
       >
         {
           profilesToShow.map((profile, index) => (
             <ProfileTab
-              selectedProfile={selectedProfile}
-              setSelectedProfile={setSelectedProfile}
-              key={index}
               index={index}
               isHovered={isHovered}
-              text={profile as string}
+              key={index}
               orderedAccounts={orderedAccounts}
+              selectedProfile={selectedProfile}
+              setSelectedProfile={setSelectedProfile}
+              text={profile}
             />
           ))
         }

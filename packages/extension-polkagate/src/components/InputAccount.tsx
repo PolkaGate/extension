@@ -21,7 +21,7 @@ interface Props {
   label: string;
   labelFontSize?: string;
   style?: SxProps<Theme>;
-  setAddress: React.Dispatch<React.SetStateAction<string | null | undefined>>;
+  setAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
   ignoreAddress?: string
   name?: string;
   helperText?: string;

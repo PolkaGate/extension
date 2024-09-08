@@ -17,7 +17,7 @@ import getPayee from './util';
 
 interface Props {
   address: string | undefined;
-  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   set: React.Dispatch<React.SetStateAction<SoloSettings>>; // This is actually setNewSettings
   stakingConsts: StakingConsts | null | undefined;
   buttonLabel?: string;

@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,7 +12,7 @@ import { useTranslation } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
 import { windowOpen } from '../messaging';
 
-export default function AddNewAccountButton(): React.ReactElement {
+export default function AddNewAccountButton (): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const isExtensionMode = useIsExtensionPopup();
@@ -26,7 +25,7 @@ export default function AddNewAccountButton(): React.ReactElement {
   }, [isExtensionMode, onAction]);
 
   return (
-    <Grid alignItems='center' container justifyContent='space-between' onClick={onCreate} sx={{ '&:hover': { opacity: 1 }, backgroundColor: 'background.paper', borderColor: 'secondary.main', borderRadius: '10px', borderStyle: 'solid', borderWidth: '0.5px', bottom: '20px', cursor: 'pointer', my: isExtensionMode ? '10px' : '20px', opacity: '0.7', padding: 'min(3%, 20px) min(5%, 40px)', position: isExtensionMode ? 'absolute' : 'relative', transition: 'opacity 0.3s ease', width: 'inherit', zIndex: 1 }}>
+    <Grid alignItems='center' container justifyContent='space-between' onClick={onCreate} sx={{ '&:hover': { opacity: 1 }, backgroundColor: 'background.paper', borderRadius: '10px', bottom: '20px', cursor: 'pointer', my: isExtensionMode ? '10px' : '20px', opacity: '0.7', padding: 'min(3%, 20px) min(5%, 40px)', position: isExtensionMode ? 'absolute' : 'relative', transition: 'opacity 0.3s ease', width: isExtensionMode ? '92%' : 'inherit', zIndex: 1 }}>
       <Grid container item width='fit-content'>
         <Grid item width='fit-content'>
           <VaadinIcon icon='vaadin:plus-circle' style={{ height: '36px', color: `${theme.palette.secondary.light}`, width: '36px' }} />

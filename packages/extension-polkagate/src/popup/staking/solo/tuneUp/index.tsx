@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,6 +8,7 @@
  * this component opens withdraw rewards review page
  * */
 
+import type { Balance } from '@polkadot/types/interfaces';
 import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 
 import { Divider, Grid, Link } from '@mui/material';
@@ -16,7 +16,6 @@ import Typography from '@mui/material/Typography';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
-import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
 
@@ -30,14 +29,14 @@ import getLogo from '../../../../util/getLogo';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './TxDetail';
 
-export default function TuneUp(): React.ReactElement {
+export default function TuneUp (): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const { api, chain, chainName, formatted } = useInfo(address);
   const onAction = useContext(ActionContext);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
-  const subscanLink = (address: string) => `https://${chainName}.subscan.io/account/${String(address)}?tab=reward`;
+  const subscanLink = (address?: string) => `https://${chainName}.subscan.io/account/${String(address)}?tab=reward`;
 
   const putInFrontInfo = useNeedsPutInFrontOf(address);
   const rebagInfo = useNeedsRebag(address);
@@ -56,8 +55,8 @@ export default function TuneUp(): React.ReactElement {
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
-  const rebaged = api && api.tx['voterList']['rebag'];
-  const putInFrontOf = api && api.tx['voterList']['putInFrontOf'];
+  const rebaged = api?.tx['voterList']['rebag'];
+  const putInFrontOf = api?.tx['voterList']['putInFrontOf'];
 
   const goToStakingHome = useCallback(() => {
     onAction(`/solo/${address}`);
@@ -75,7 +74,11 @@ export default function TuneUp(): React.ReactElement {
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      const dummyFee: Balance = api.createType('Balance', BN_ONE);
+
+      setEstimatedFee(dummyFee);
+
+      return;
     }
 
     if (rebagInfo?.shouldRebag) {
@@ -91,7 +94,7 @@ export default function TuneUp(): React.ReactElement {
 
   const submit = useCallback(async () => {
     try {
-      if (!formatted || !api || !rebaged || !putInFrontOf) {
+      if (!formatted || !api || !rebaged || !putInFrontOf || !chain) {
         return;
       }
 
@@ -119,7 +122,7 @@ export default function TuneUp(): React.ReactElement {
         txHash
       };
 
-      setTxInfo({ ...info, api, chain: chain as any });
+      setTxInfo({ ...info, api, chain });
 
       saveAsHistory(from, info);
 
@@ -141,7 +144,7 @@ export default function TuneUp(): React.ReactElement {
     onAction('/');
   }, [onAction]);
 
-  const LabelValue = ({ label, mt = '30px', noDivider, value }: { label: string, value: string | React.JSX.Element, mt?: string, noDivider?: boolean }) => (
+  const LabelValue = ({ label, mt = '30px', noDivider, value }: { label: string, value: string | undefined | React.JSX.Element, mt?: string, noDivider?: boolean }) => (
     <>
       <Grid item mt={mt} textAlign='center' xs={12}>
         <Typography fontSize='14px' fontWeight={300}>
@@ -179,8 +182,8 @@ export default function TuneUp(): React.ReactElement {
             <Typography fontSize='14px' fontWeight={300}>
               {t('Changing your account\'s position to be a better one.')}
             </Typography>
-            <LabelValue label={t('Current bag upper')} value={rebagInfo?.currentUpper as string} />
-            <LabelValue label={t('My staked amount')} mt='5px' value={rebagInfo?.currentWeight as string} />
+            <LabelValue label={t('Current bag upper')} value={rebagInfo?.currentUpper } />
+            <LabelValue label={t('My staked amount')} mt='5px' value={rebagInfo?.currentWeight} />
             {!putInFrontInfo?.shouldPutInFront
               ? <Grid item mt='10px' textAlign='center' xs={12}>
                 <Typography fontSize='15px' fontWeight={400}>
@@ -195,7 +198,7 @@ export default function TuneUp(): React.ReactElement {
                   <>
                     <ShortAddress address={putInFrontInfo?.lighter} />
                     <Grid item sx={{ mt: '12px' }}>
-                      <Link href={`${subscanLink(putInFrontInfo?.lighter as string)}`} rel='noreferrer' target='_blank' underline='none'>
+                      <Link href={`${subscanLink(putInFrontInfo?.lighter)}`} rel='noreferrer' target='_blank' underline='none'>
                         <Grid alt={'subscan'} component='img' src={getLogo('subscan')} sx={{ height: 40, width: 40 }} />
                       </Link>
                     </Grid>
@@ -216,7 +219,7 @@ export default function TuneUp(): React.ReactElement {
           onConfirmClick={submit}
           proxiedAddress={selectedProxyAddress}
           proxies={proxyItems}
-          proxyTypeFilter={PROXY_TYPE.STAKING}
+          proxyTypeFilter={PROXY_TYPE['STAKING']}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

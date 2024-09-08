@@ -1,8 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Referendum, Track } from '../utils/types';
 
 import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -11,7 +13,7 @@ import { BN } from '@polkadot/util';
 
 import { Infotip2, ShowBalance, ShowValue } from '../../../components';
 import { useApi, useCurrentBlockNumber, useCurrentSupportThreshold, useDecimal, useToken, useTranslation } from '../../../hooks';
-import { Referendum, Track } from '../utils/types';
+import { pgBoxShadow } from '../../../util/utils';
 import { submittedBlock } from './Voting';
 
 interface Props {
@@ -20,7 +22,7 @@ interface Props {
   track: Track | undefined;
 }
 
-export default function Support({ address, referendum, track }: Props): React.ReactElement<Props> {
+export default function Support ({ address, referendum, track }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const decimal = useDecimal(address);
@@ -44,6 +46,8 @@ export default function Support({ address, referendum, track }: Props): React.Re
 
       return threshold;
     }
+
+    return undefined;
   }, [blockSubmitted, currentBlock, threshold, track]);
 
   const supportPercent = useMemo(() => {
@@ -54,6 +58,8 @@ export default function Support({ address, referendum, track }: Props): React.Re
 
       return (Number(referendum.supportAmount) * 100 / Number(totalIssuance.sub(inactiveIssuance)));
     }
+
+    return undefined;
   }, [fellowshipCount, inactiveIssuance, isFellowship, referendum, totalIssuance]);
 
   useEffect(() => {
@@ -61,9 +67,9 @@ export default function Support({ address, referendum, track }: Props): React.Re
       return;
     }
 
-    api.query.balances.totalIssuance().then(setTotalIssuance).catch(console.error);
-    api.query.balances.inactiveIssuance().then(setInactiveIssuance).catch(console.error);
-    api.query.fellowshipCollective && api.query.fellowshipCollective.members.entries().then((keys) => setFellowshipCount(keys?.length));
+    api.query['balances']['totalIssuance']().then(setTotalIssuance).catch(console.error);
+    api.query['balances']['inactiveIssuance']().then(setInactiveIssuance).catch(console.error);
+    api.query['fellowshipCollective']?.['members'].entries().then((keys) => setFellowshipCount(keys?.length)).catch(console.error);
   }, [api]);
 
   const Tally = ({ amount, color, percent, text, total }: { amount: string | number | undefined, text: string, percent: number | undefined, color: string, total: BN | undefined }) => (
@@ -114,7 +120,7 @@ export default function Support({ address, referendum, track }: Props): React.Re
   );
 
   return (
-    <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', mt: '10px', pb: '45px', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main' }}>
+    <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: theme.palette.mode === 'light' ? pgBoxShadow(theme) : undefined, mt: '10px', pb: '45px' }}>
       <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mt: '15px', mx: '25px' }} xs={12}>
         <Infotip2 showQuestionMark text={t('Support is determined by the proportion of tokens contributed in voting out of the total token supply.')}>
           <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>

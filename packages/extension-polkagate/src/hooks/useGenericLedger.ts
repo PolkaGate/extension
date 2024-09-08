@@ -1,12 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import uiSettings from '@polkadot/ui-settings';
 import { assert } from '@polkadot/util';
-import useTranslation from './useTranslation';
-import { GenericLedger } from '../util/ledger/genericLedger';
+
 import { POLKADOT_SLIP44 } from '../util/constants';
+import { GenericLedger } from '../util/ledger/genericLedger';
+import useTranslation from './useTranslation';
 
 interface StateBase {
   isLedgerCapable: boolean;
@@ -23,8 +25,8 @@ interface State extends StateBase {
   warning: string | null;
 }
 
-function getState(): StateBase {
-  const isLedgerCapable = 'USB' in window
+function getState (): StateBase {
+  const isLedgerCapable = 'USB' in window;
 
   return {
     isLedgerCapable,
@@ -32,7 +34,7 @@ function getState(): StateBase {
   };
 }
 
-function retrieveLedger(chainSlip?: number | null, txMetadataChainId?: string): GenericLedger {
+function retrieveLedger (chainSlip?: number | null, txMetadataChainId?: string): GenericLedger {
   const { isLedgerCapable } = getState();
 
   assert(isLedgerCapable, 'Incompatible browser, only Chrome is supported');
@@ -40,8 +42,9 @@ function retrieveLedger(chainSlip?: number | null, txMetadataChainId?: string): 
   return new GenericLedger('webusb', chainSlip || POLKADOT_SLIP44, txMetadataChainId);
 }
 
-export function useGenericLedger(accountIndex = 0, addressOffset = 0, chainSlip?: number | null, txMetadataChainId?: string): State {
+export function useGenericLedger (accountIndex = 0, addressOffset = 0, chainSlip?: number | null, txMetadataChainId?: string): State {
   const { t } = useTranslation();
+  const isFetching = useRef(false);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
@@ -62,6 +65,7 @@ export function useGenericLedger(accountIndex = 0, addressOffset = 0, chainSlip?
     }
 
     return null;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshLock, chainSlip, txMetadataChainId]);
 
   useEffect(() => {
@@ -74,6 +78,12 @@ export function useGenericLedger(accountIndex = 0, addressOffset = 0, chainSlip?
     setIsLoading(true);
     setError(null);
     setWarning(null);
+
+    if (isFetching.current) {
+      return;
+    }
+
+    isFetching.current = true;
 
     ledger.getAddress(false, accountIndex, addressOffset)
       .then((res) => {
@@ -98,6 +108,8 @@ export function useGenericLedger(accountIndex = 0, addressOffset = 0, chainSlip?
         ));
         console.error(e);
         setAddress(null);
+      }).finally(() => {
+        isFetching.current = false;
       });
     // If the dependency array is exhaustive, with t, the translation function, it
     // triggers a useless re-render when ledger device is connected.

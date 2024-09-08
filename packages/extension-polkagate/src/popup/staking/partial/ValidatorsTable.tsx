@@ -1,23 +1,25 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+//@ts-nocheck
+
+import type { ApiPromise } from '@polkadot/api';
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 import type { AccountId } from '@polkadot/types/interfaces';
+import type { StakingConsts, ValidatorInfo } from '../../../util/types';
 
 import { alpha, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+//@ts-ignore
 import { FixedSizeList as List } from 'react-window';
 
-import { ApiPromise } from '@polkadot/api';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import type { Chain } from '@polkadot/extension-chains/types';
 import { VaadinIcon } from '@polkadot/extension-polkagate/src/components';
 import { useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
 import { BN, hexToBn, isHex } from '@polkadot/util';
 
-import type { StakingConsts, ValidatorInfo } from '../../../util/types';
 import ShowValidator from './ShowValidator';
 import ValidatorInfoPage from './ValidatorInfo';
 
@@ -25,10 +27,10 @@ interface Props {
   api?: ApiPromise;
   activeValidators?: ValidatorInfo[] | undefined;
   allValidatorsIdentities?: DeriveAccountInfo[] | null | undefined;
-  chain?: Chain;
+  chain?: Chain | null;
   decimal?: number;
   formatted?: AccountId | string;
-  handleCheck?: (checked: boolean, validator: ValidatorInfo) => void;
+  handleCheck?: (checked: React.ChangeEvent<HTMLInputElement>, validator: ValidatorInfo) => void;
   height?: number;
   isSelected?: (v: ValidatorInfo) => boolean;
   maxSelected?: boolean;
@@ -38,10 +40,10 @@ interface Props {
   showCheckbox?: boolean;
   validatorsToList: ValidatorInfo[] | null | undefined;
   token?: string;
-  nominatedValidatorsIds?: AccountId[] | null | undefined;
+  nominatedValidatorsIds?: AccountId[] | string[] | null | undefined;
 }
 
-export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTable ({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
   const theme = useTheme();
   const ref = useRef();
   const isExtensionMode = useIsExtensionPopup();
@@ -111,7 +113,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
                   <ShowValidator
                     accountInfo={accountInfo}
                     api={api}
-                    chain={chain as any}
+                    chain={chain}
                     check={check}
                     decimal={decimal}
                     handleCheck={handleCheck}
@@ -135,7 +137,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
         <Grid ml='-15px'>
           <ValidatorInfoPage
             api={api}
-            chain={chain as any}
+            chain={chain}
             isFullscreen={!isExtensionMode}
             setShowValidatorInfo={setShowValidatorInfo}
             showValidatorInfo={showValidatorInfo}

@@ -2,20 +2,20 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Theme } from '@mui/material';
+import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
-import type { SavedMetaData, TransactionDetail } from './types';
+import type { RecentChainsType, SavedMetaData, TransactionDetail } from './types';
 
-import { ApiPromise } from '@polkadot/api';
 import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS } from './constants';
 import { EXTRA_PRICE_IDS } from './api/getPrices';
+import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, INITIAL_RECENT_CHAINS_GENESISHASH, PROFILE_COLORS, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS } from './constants';
 
 interface Meta {
   docs: Text[];
@@ -23,7 +23,7 @@ interface Meta {
 
 export const upperCaseFirstChar = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
-export function isValidAddress(_address: string | undefined): boolean {
+export function isValidAddress (_address: string | undefined): boolean {
   try {
     encodeAddress(
       isHex(_address)
@@ -37,7 +37,7 @@ export function isValidAddress(_address: string | undefined): boolean {
   }
 }
 
-export function fixFloatingPoint(_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean): string {
+export function fixFloatingPoint (_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean): string {
   // make number positive if it is negative
   const sNumber = Number(_number) < 0 ? String(-Number(_number)) : String(_number);
 
@@ -57,7 +57,7 @@ export function fixFloatingPoint(_number: number | string, decimalDigit = FLOATI
 
 export const toHuman = (api: ApiPromise, value: unknown) => api.createType('Balance', value).toHuman();
 
-export function amountToHuman(_amount: string | number | BN | bigint | Compact<u128> | undefined, _decimals: number | undefined, decimalDigits?: number, commify?: boolean): string {
+export function amountToHuman (_amount: string | number | BN | bigint | Compact<u128> | undefined, _decimals: number | undefined, decimalDigits?: number, commify?: boolean): string {
   if (!_amount || !_decimals) {
     return '';
   }
@@ -69,7 +69,7 @@ export function amountToHuman(_amount: string | number | BN | bigint | Compact<u
   return fixFloatingPoint(Number(_amount) / x, decimalDigits, commify);
 }
 
-export function amountToMachine(amount: string | undefined, decimal: number | undefined): BN {
+export function amountToMachine (amount: string | undefined, decimal: number | undefined): BN {
   if (!amount || !Number(amount) || !decimal) {
     return BN_ZERO;
   }
@@ -92,14 +92,14 @@ export function amountToMachine(amount: string | undefined, decimal: number | un
   return new BN(newAmount).mul(BN_TEN.pow(new BN(decimal)));
 }
 
-export function getFormattedAddress(_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string {
+export function getFormattedAddress (_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string {
   const publicKey = decodeAddress(_address);
   const prefix = _chain ? _chain.ss58Format : (settingsPrefix === -1 ? 42 : settingsPrefix);
 
   return encodeAddress(publicKey, prefix);
 }
 
-export function getSubstrateAddress(address: AccountId | string | null | undefined): string | undefined {
+export function getSubstrateAddress (address: AccountId | string | null | undefined): string | undefined {
   if (!address) {
     return undefined;
   }
@@ -128,7 +128,7 @@ export const accountName = (accounts: AccountJson[], address: string | undefined
   return accounts.find((acc) => acc.address === addr)?.name;
 };
 
-export function prepareMetaData(chain: Chain | null | string, label: string, metaData: any): string {
+export function prepareMetaData (chain: Chain | null | string, label: string, metaData: any): string {
   const chainName = sanitizeChainName((chain as Chain)?.name) ?? chain;
 
   if (label === 'balances') {
@@ -155,7 +155,7 @@ export function prepareMetaData(chain: Chain | null | string, label: string, met
   });
 }
 
-export function getTransactionHistoryFromLocalStorage(
+export function getTransactionHistoryFromLocalStorage (
   chain: Chain | null,
   hierarchy: AccountWithChildren[],
   address: string,
@@ -174,12 +174,12 @@ export function getTransactionHistoryFromLocalStorage(
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let transactionHistoryFromLocalStorage: SavedMetaData | null = null;
+
   try {
     transactionHistoryFromLocalStorage = account?.['history'] ? JSON.parse(String(account['history'])) : null;
   } catch (error) {
     console.error('Failed to parse transaction history:', error);
   }
-
 
   if (transactionHistoryFromLocalStorage) {
     if (transactionHistoryFromLocalStorage.chainName === chainName) {
@@ -199,7 +199,7 @@ export const getWebsiteFavicon = (url: string | undefined): string => {
   return 'https://s2.googleusercontent.com/s2/favicons?domain=' + url;
 };
 
-export function remainingTime(blocks: number, noMinutes?: boolean): string {
+export function remainingTime (blocks: number, noMinutes?: boolean): string {
   let mins = Math.floor(blocks * BLOCK_RATE / 60);
 
   if (!mins) {
@@ -242,7 +242,7 @@ export function remainingTime(blocks: number, noMinutes?: boolean): string {
   return time;
 }
 
-export function remainingTimeCountDown(seconds: number | undefined): string {
+export function remainingTimeCountDown (seconds: number | undefined): string {
   if (!seconds || seconds <= 0) {
     return 'finished';
   }
@@ -258,17 +258,17 @@ export function remainingTimeCountDown(seconds: number | undefined): string {
   return d + h + m + s;
 }
 
-function splitSingle(value: string[], sep: string): string[] {
+function splitSingle (value: string[], sep: string): string[] {
   return value.reduce((result: string[], value: string): string[] => {
     return value.split(sep).reduce((result: string[], value: string) => result.concat(value), result);
   }, []);
 }
 
-function splitParts(value: string): string[] {
+function splitParts (value: string): string[] {
   return ['[', ']'].reduce((result: string[], sep) => splitSingle(result, sep), [value]);
 }
 
-export function formatMeta(meta?: Meta): string[] | null {
+export function formatMeta (meta?: Meta): string[] | null {
   if (!meta || !meta.docs.length) {
     return null;
   }
@@ -285,7 +285,7 @@ export function formatMeta(meta?: Meta): string[] | null {
   return parts;
 }
 
-export function toShortAddress(address: string | AccountId, count = SHORT_ADDRESS_CHARACTERS): string {
+export function toShortAddress (address?: string | AccountId, count = SHORT_ADDRESS_CHARACTERS): string {
   address = String(address);
 
   return `${address.slice(0, count)}...${address.slice(-1 * count)}`;
@@ -306,7 +306,7 @@ export const isEqual = (a1: any[] | null, a2: any[] | null): boolean => {
   return JSON.stringify(a1Sorted) === JSON.stringify(a2Sorted);
 };
 
-export function saveAsHistory(formatted: string, info: TransactionDetail) {
+export function saveAsHistory (formatted: string, info: TransactionDetail) {
   chrome.storage.local.get('history', (res) => {
     const k = `${formatted}` as any;
     const last = (res?.['history'] ?? {}) as unknown as { [key: string]: TransactionDetail[] };
@@ -322,7 +322,7 @@ export function saveAsHistory(formatted: string, info: TransactionDetail) {
   });
 }
 
-export async function getHistoryFromStorage(formatted: string): Promise<TransactionDetail[] | undefined> {
+export async function getHistoryFromStorage (formatted: string): Promise<TransactionDetail[] | undefined> {
   return new Promise((resolve) => {
     chrome.storage.local.get('history', (res) => {
       const k = `${formatted}` as any;
@@ -384,14 +384,95 @@ export const isOnRelayChain = (genesisHash?: string) => RELAY_CHAINS_GENESISHASH
 
 export const isOnAssetHub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');
 
-export const getPriceIdByChainName = (chainName?: string) => {
-  if (!chainName) {
-    return ''
+export const getProfileColor = (index: number, theme: Theme): string => {
+  if (index >= 0) {
+    const _index = index % PROFILE_COLORS.length; // to return colors recursively
+
+    return PROFILE_COLORS[_index][theme.palette.mode];
   }
 
-  const _chainName = (sanitizeChainName(chainName) as string).toLocaleLowerCase()
-
-  return EXTRA_PRICE_IDS[_chainName]
-    ||
-    _chainName?.replace('assethub', '')?.replace('people', '')
+  return PROFILE_COLORS[0][theme.palette.mode];
 };
+
+export const getPriceIdByChainName = (chainName?: string) => {
+  if (!chainName) {
+    return '';
+  }
+
+  const _chainName = (sanitizeChainName(chainName) as string).toLocaleLowerCase();
+
+  return EXTRA_PRICE_IDS[_chainName] ||
+    _chainName?.replace('assethub', '')?.replace('people', '');
+};
+
+export function areArraysEqual<T> (arrays: T[][]): boolean {
+  if (arrays.length < 2) {
+    return true; // Single array or empty input is considered equal
+  }
+
+  const referenceArrayLength = arrays[0].length;
+
+  // Check if all inputs are arrays of the same length
+  const allValidArrays = arrays.every((array) => Array.isArray(array) && array.length === referenceArrayLength);
+
+  if (!allValidArrays) {
+    return false;
+  }
+
+  // Create sorted copies of the arrays
+  const sortedArrays = arrays.map((array) => array.sort());
+
+  // Compare each sorted array with the first sorted array
+  return sortedArrays.every((sortedArray) =>
+    sortedArray.every((element, index) => element === sortedArrays[0][index])
+  );
+}
+
+export function extractBaseUrl (url: string | undefined) {
+  try {
+    if (!url) {
+      return;
+    }
+
+    const urlObj = new URL(url);
+
+    return `${urlObj.protocol}//${urlObj.hostname}`;
+  } catch (error) {
+    console.error('Invalid URL:', error);
+
+    return null;
+  }
+}
+
+export async function updateRecentChains (addressKey: string, genesisHashKey: string) {
+  try {
+    const result = await new Promise<{ RecentChains?: RecentChainsType }>((resolve) => chrome.storage.local.get('RecentChains', resolve));
+    const accountsAndChains = result.RecentChains ?? {};
+    const myRecentChains = accountsAndChains[addressKey] ?? [];
+
+    if (!myRecentChains.length) {
+      if (INITIAL_RECENT_CHAINS_GENESISHASH.includes(genesisHashKey)) {
+        accountsAndChains[addressKey] = INITIAL_RECENT_CHAINS_GENESISHASH;
+      } else {
+        const initialChains = INITIAL_RECENT_CHAINS_GENESISHASH.slice(0, 3);
+
+        accountsAndChains[addressKey] = [...initialChains, genesisHashKey];
+      }
+
+      await new Promise<void>((resolve) =>
+        chrome.storage.local.set({ RecentChains: accountsAndChains }, resolve)
+      );
+    } else if (!myRecentChains.includes(genesisHashKey)) {
+      myRecentChains.unshift(genesisHashKey);
+      myRecentChains.pop();
+      accountsAndChains[addressKey] = myRecentChains;
+
+      await new Promise<void>((resolve) =>
+        chrome.storage.local.set({ RecentChains: accountsAndChains }, resolve)
+      );
+    }
+  } catch (error) {
+    console.error('Error updating recent chains:', error);
+    throw error;
+  }
+}

@@ -1,16 +1,15 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { ApiPromise } from '@polkadot/api';
+import type { ChromeStorageGetResponse } from '../components/RemoteNodeSelector';
 
 import { SignalCellular0BarOutlined as LightClientEndpointIcon, SignalCellularAlt as SignalCellularAltIcon, SignalCellularAlt1Bar as SignalCellularAlt1BarIcon, SignalCellularAlt2Bar as SignalCellularAlt2BarIcon } from '@mui/icons-material';
 import { Grid, Popover, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-
-import { ChromeStorageGetResponse } from '../components/RemoteNodeSelector';
 import { useEndpoints, useInfo } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
 import CalculateNodeDelay from '../util/calculateNodeDelay';
@@ -22,7 +21,7 @@ interface Props {
 
 type EndpointsDelay = { name: string, delay: number | null | undefined, value: string }[];
 
-function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactElement {
+function FullScreenRemoteNode ({ address, iconSize = 35 }: Props): React.ReactElement {
   const theme = useTheme();
   const { account, chainName, endpoint: endpointUrl } = useInfo(address);
   const genesisHash = account?.genesisHash;
@@ -71,7 +70,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
       return;
     }
 
-    const mappedEndpoints = endpointOptions.map((endpoint) => ({ delay: null, name: endpoint.text.replace(/^via\s/, ''), value: endpoint.value }));
+    const mappedEndpoints = endpointOptions.map((endpoint) => ({ delay: null, name: endpoint.text.replace(/^via\s/, ''), value: endpoint.value as string }));
 
     setCurrentDelay(undefined);
     setEndpointsDelay(mappedEndpoints);
@@ -105,7 +104,8 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
   }, [address, chainName]);
 
   useEffect(() => {
-    if (fetchedApiAndDelay && fetchedApiAndDelay.fetchedApi && fetchedApiAndDelay.fetchedApi?._options?.provider?.endpoint === endpointUrl) {
+    // @ts-ignore
+    if (fetchedApiAndDelay?.fetchedApi && fetchedApiAndDelay.fetchedApi?._options?.provider?.endpoint === endpointUrl) {
       setApi(fetchedApiAndDelay.fetchedApi);
       setCurrentDelay(fetchedApiAndDelay.fetchedDelay);
     }
@@ -122,6 +122,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
         setFetchedApiAndDelay({ fetchedApi: response.api, fetchedDelay: response.delay });
         setEndpointsDelay((prevEndpoints) => {
           return prevEndpoints?.map((endpoint) => {
+            // @ts-ignore
             if (endpoint.value === response.api?._options?.provider?.endpoint) {
               return { ...endpoint, delay: response.delay };
             }
@@ -130,7 +131,7 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
           });
         });
 
-        response.api && response.api.disconnect().catch(console.error);
+        response.api?.disconnect().catch(console.error);
       })
       .catch(console.error);
   }, [endpointUrl]);
@@ -204,14 +205,16 @@ function FullScreenRemoteNode({ address, iconSize = 35 }: Props): React.ReactEle
       {endpointsDelay && endpointsDelay.length > 0 &&
         endpointsDelay.map((endpoint, index) => {
           const selectedEndpoint = endpoint.name === sanitizedCurrentEndpointName;
+          const isLightClient = endpoint.name.includes('light client');
 
           return (
             // eslint-disable-next-line react/jsx-no-bind
             <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={() => _onChangeEndpoint(endpoint.value)} py='5px' sx={{ ':hover': { bgcolor: 'rgba(186, 40, 130, 0.1)' }, bgcolor: selectedEndpoint ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', my: '3px', px: '15px', width: '100%' }}>
-              <Typography fontSize='16px' fontWeight={selectedEndpoint ? 500 : 400} pr='10px'>
+              <Typography fontSize='16px' fontWeight={selectedEndpoint ? 500 : 400} textAlign='left' width={isLightClient ? '100%' : '50%'}>
                 {endpoint.name}
               </Typography>
-              {!endpoint.name.includes('light client') &&
+              {
+                !isLightClient &&
                 <NodeStatusAndDelay endpointDelay={endpoint.delay} isSelected={selectedEndpoint} />
               }
             </Grid>

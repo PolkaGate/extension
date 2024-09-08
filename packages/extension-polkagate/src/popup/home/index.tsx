@@ -1,20 +1,22 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
-
-import { Container, Grid, useTheme } from '@mui/material';
-import React, { useContext, useEffect, useState } from 'react';
+/* eslint-disable react/jsx-max-props-per-line */
 
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
+
+import { Container, Grid, useTheme } from '@mui/material';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import semver from 'semver';
+
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Warning } from '../../components';
 import { getStorage, type LoginInfo } from '../../components/Loading';
-import { useAccountsOrder, useMerkleScience, useTranslation, useManifest } from '../../hooks';
+import { useAccountsOrder, useManifest, useMerkleScience, useProfileAccounts, useTranslation } from '../../hooks';
 import { AddNewAccountButton } from '../../partials';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { EXTENSION_NAME } from '../../util/constants';
@@ -22,16 +24,17 @@ import Reset from '../passwordManagement/Reset';
 import Welcome from '../welcome';
 import AccountsTree from './AccountsTree';
 import AiBackgroundImage from './AiBackgroundImage';
-import YouHave from './YouHave';
-import semver from 'semver';
+import ProfileTabs from './ProfileTabs';
 import WhatsNew from './WhatsNew';
+import YouHave from './YouHave';
 
-export default function Home(): React.ReactElement {
-  const initialAccountList = useAccountsOrder() as AccountWithChildren[];
+export default function Home (): React.ReactElement {
   const { t } = useTranslation();
-  const { accounts, hierarchy } = useContext(AccountContext);
   const theme = useTheme();
   const manifest = useManifest();
+  const accountsOrder = useAccountsOrder(true);
+  const profileAccounts = useProfileAccounts(accountsOrder);
+  const { hierarchy } = useContext(AccountContext);
 
   useMerkleScience(undefined, undefined, true); // to download the data file
 
@@ -42,10 +45,14 @@ export default function Home(): React.ReactElement {
   const [loginInfo, setLoginInfo] = useState<LoginInfo>();
   const [bgImage, setBgImage] = useState<string | undefined>();
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  const initialAccountList = useMemo((): AccountWithChildren[] => profileAccounts?.map(({ account }) => account) || [], [profileAccounts]);
+
   useEffect(() => {
     if (!manifest?.version) {
       return;
     }
+
     try {
       const usingVersion = window.localStorage.getItem('using_version');
 
@@ -56,7 +63,7 @@ export default function Home(): React.ReactElement {
         setShowAlert(true);
       }
     } catch (error) {
-      console.error('Error while checking version:', error)
+      console.error('Error while checking version:', error);
     }
   }, [manifest?.version]);
 
@@ -84,11 +91,13 @@ export default function Home(): React.ReactElement {
               ? `linear-gradient(180deg, #171717 10.79%, rgba(23, 23, 23, 0.70) 100%), url(${bgImage ?? ''})`
               : `linear-gradient(180deg, #F1F1F1 10.79%, rgba(241, 241, 241, 0.70) 100%), url(${bgImage ?? ''})`),
           backgroundSize: '100% 100%',
-          height: window.innerHeight
+          height: window.innerHeight,
+          position: 'relative'
         }}
         >
           <Grid padding='0px' textAlign='center' xs={12}>
             <HeaderBrand
+              noBorder={theme.palette.mode === 'light'}
               showBrand
               showFullScreen
               showMenu
@@ -105,23 +114,25 @@ export default function Home(): React.ReactElement {
                 isDanger
                 theme={theme}
               >
-                {t<string>('Suspicious recovery detected on one or more of your accounts.')}
+                {t('Suspicious recovery detected on one or more of your accounts.')}
               </Warning>
             </Grid>
           }
           <YouHave hideNumbers={hideNumbers} setHideNumbers={setHideNumbers} />
-          <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`, mt: '10px', overflowY: 'scroll', p: 0, width: '92%' }]}>
-            {initialAccountList?.map((json, index): React.ReactNode => (
+          <ProfileTabs orderedAccounts={accountsOrder} />
+          <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`, overflowY: 'scroll', pb: '10px', px: '4%' }]}>
+            {initialAccountList.map((json, index): React.ReactNode => (
               <AccountsTree
                 {...json}
+                address={json.address}
                 hideNumbers={hideNumbers}
-                key={`${index}:${json.address}`}
+                key={index}
                 quickActionOpen={quickActionOpen}
                 setHasActiveRecovery={setHasActiveRecovery}
                 setQuickActionOpen={setQuickActionOpen}
               />
             ))}
-            {accounts?.length < 4 &&
+            {initialAccountList?.length < 4 &&
               <AddNewAccountButton />
             }
           </Container>

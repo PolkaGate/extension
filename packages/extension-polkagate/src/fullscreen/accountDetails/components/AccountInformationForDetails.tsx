@@ -3,19 +3,20 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { BN } from '@polkadot/util';
+import type { HexString } from '@polkadot/util/types';
+import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
+import type { BalancesInfo, Prices } from '../../../util/types';
+
 import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { BN } from '@polkadot/util';
-
 import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, Infotip2, OptionalCopyButton, ShortAddress2, VaadinIcon } from '../../../components';
 import { useIdentity, useInfo, useTranslation } from '../../../hooks';
-import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { showAccount, tieAccount } from '../../../messaging';
 import { getValue } from '../../../popup/account/util';
 import { BALANCES_VALIDITY_PERIOD } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
-import type { BalancesInfo, Prices } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import AccountIconsFs from './AccountIconsFs';
 import AOC from './AOC';
@@ -101,7 +102,7 @@ const SelectedAssetBox = ({ balanceToShow, genesisHash, isBalanceOutdated, isPri
       {genesisHash
         ? <>
           <Grid item pl='7px'>
-            <DisplayLogo assetSize='42px' baseTokenSize='20px' genesisHash={balanceToShow?.genesisHash} logo={logoInfo?.logo as string} subLogo={logoInfo?.subLogo as string} />
+            <DisplayLogo assetSize='42px' baseTokenSize='20px' genesisHash={balanceToShow?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
           </Grid>
           <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
             <BalanceRow balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} isPriceOutdated={isPriceOutdated} price={price} />
@@ -138,10 +139,10 @@ export const EyeIconFullScreen = ({ isHidden, onClick }: { isHidden: boolean | u
         <VaadinIcon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
       </IconButton>
     </Infotip>
-  )
-}
+  );
+};
 
-export default function AccountInformationForDetails({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+export default function AccountInformationForDetails ({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const theme = useTheme();
   const { account, api, chain, formatted, genesisHash, token } = useInfo(address);
 
@@ -185,7 +186,7 @@ export default function AccountInformationForDetails({ accountAssets, address, l
   }, [account?.genesisHash, accountAssets, setSelectedAsset]);
 
   const onAssetBoxClicked = useCallback((asset: FetchedBalance | undefined) => {
-    address && asset && tieAccount(address, asset.genesisHash).finally(() => {
+    address && asset && tieAccount(address, asset.genesisHash as HexString).finally(() => {
       setAssetIdOnAssetHub(undefined);
       setSelectedAsset(asset);
     }).catch(console.error);
@@ -220,7 +221,7 @@ export default function AccountInformationForDetails({ accountAssets, address, l
                 accountInfo={accountInfo}
                 address={address}
                 api={api}
-                chain={chain as any}
+                chain={chain}
                 noIdenticon
                 style={{ width: 'calc(100% - 40px)' }}
               // subIdOnly
@@ -256,7 +257,7 @@ export default function AccountInformationForDetails({ accountAssets, address, l
           <Divider sx={{ bgcolor: 'divider', height: '1px', my: '15px', width: '100%' }} />
           <AOC
             accountAssets={nonZeroSortedAssets}
-            api={api}
+            address={address}
             mode='Detail'
             onclick={onAssetBoxClicked}
             selectedAsset={selectedAsset}

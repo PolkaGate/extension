@@ -6,6 +6,7 @@
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
+
 import { Infotip, Warning } from '../../../components';
 import { pgBoxShadow } from '../../../util/utils';
 
@@ -21,14 +22,14 @@ interface OptionProps {
   noToolTip?: boolean;
   showQuestionMark?: boolean;
   logo?: unknown;
-  rotations?: any;
+  rotations?: SxProps<Theme>;
 }
 
-export default function LedgerOption({ subTitle, helperText, logo, noToolTip, onClick, rotations, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
+export default function LedgerOption ({ helperText, logo, noToolTip, onClick, rotations, showQuestionMark, style, subTitle, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
   const theme = useTheme();
 
   return (
-    <Grid alignItems='center' container justifyContent='center' onClick={onClick} sx={{ backgroundColor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', boxShadow: pgBoxShadow(theme), cursor: 'pointer', p: '10px 14px', pl: 0, ...style }}>
+    <Grid alignItems='center' container justifyContent='center' onClick={onClick} sx={{ backgroundColor: 'background.paper', borderRadius: '5px', boxShadow: pgBoxShadow(theme), cursor: 'pointer', p: '10px 14px', pl: 0, ...style }}>
       <Grid alignItems='center' container item justifyContent='center' mr='7px' xs={2}>
         {logo as any}
       </Grid>

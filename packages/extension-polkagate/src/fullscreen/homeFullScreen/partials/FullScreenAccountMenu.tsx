@@ -114,7 +114,7 @@ const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
         text={t('Social recovery')}
         withHoverEffect
       />
-      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
+      <Divider sx={{ bgcolor: 'divider', height: '1px', my: '6px' }} />
       <ProfileMenu
         address={address}
         setUpperAnchorEl={setAnchorEl}

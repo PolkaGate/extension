@@ -1,21 +1,20 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
 /* eslint-disable header/header */
 
+import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { KeyringPair } from '@polkadot/keyring/types';
 import type { AccountId } from '@polkadot/types/interfaces';
+import type { Proxy, TxResult } from '../types';
 
-import { ApiPromise } from '@polkadot/api';
-import { KeyringPair } from '@polkadot/keyring/types';
-
-import { Proxy, TxResult } from '../types';
 import { signAndSend } from './signAndSend';
 
-export default async function broadcast(
+export default async function broadcast (
   api: ApiPromise,
   extrinsic: ((...args: any[]) => SubmittableExtrinsic<'promise'>),
-  params: unknown[] | (() => unknown[]),
+  params: unknown[],
   signer: KeyringPair,
   senderAddress: string | AccountId,
   proxy?: Proxy
@@ -25,7 +24,7 @@ export default async function broadcast(
 
     const tx = proxy ? api.tx['proxy']['proxy'](senderAddress, proxy.proxyType, extrinsic(...params)) : extrinsic(...params);
 
-    return signAndSend(api, tx, signer, proxy?.delegate ?? senderAddress);
+    return signAndSend(api, tx, signer, proxy?.delegate ?? senderAddress as string);
   } catch (e) {
     console.log('something went wrong while broadcasting', e);
 

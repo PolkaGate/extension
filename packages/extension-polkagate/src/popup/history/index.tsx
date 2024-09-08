@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { TransactionDetail, Transfers } from '../../util/types';
 
 import { Box, Divider, Grid, Tab, Tabs } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
@@ -14,15 +15,14 @@ import { useChain, useChainName, useDecimal, useFormatted, useToken, useTranslat
 import { HeaderBrand } from '../../partials';
 import { getTxTransfers } from '../../util/api/getTransfers';
 import { STAKING_ACTIONS, STAKING_CHAINS } from '../../util/constants';
-import type { TransactionDetail, Transfers } from '../../util/types';
 import { getHistoryFromStorage } from '../../util/utils';
 import HistoryItem from './partials/HistoryItem';
 
-const TAB_MAP = {
-  ALL: 1,
-  TRANSFERS: 2,
-  STAKING: 3
-};
+enum TAB_MAP {
+  ALL,
+  TRANSFERS,
+  STAKING
+}
 
 interface RecordTabStatus {
   pageNum: number,
@@ -41,7 +41,7 @@ const INITIAL_STATE = {
   transactions: []
 };
 
-export default function TransactionHistory(): React.ReactElement<''> {
+export default function TransactionHistory (): React.ReactElement<''> {
   const { t } = useTranslation();
   const history = useHistory();
   const { state } = useLocation<{ tabIndex: number; pathname?: string }>();
@@ -52,12 +52,12 @@ export default function TransactionHistory(): React.ReactElement<''> {
   const decimal = useDecimal(formatted);
   const token = useToken(formatted);
 
-  const [tabIndex, setTabIndex] = useState<number>(state?.tabIndex ?? 1);
+  const [tabIndex, setTabIndex] = useState<TAB_MAP>(state?.tabIndex ?? 1);
   const [fetchedHistoriesFromSubscan, setFetchedHistoriesFromSubscan] = React.useState<TransactionDetail[] | []>([]);
   const [tabHistory, setTabHistory] = useState<TransactionDetail[] | null>([]);
   const [localHistories, setLocalHistories] = useState<TransactionDetail[]>([]);
 
-  function stateReducer(state: object, action: RecordTabStatus) {
+  function stateReducer (state: object, action: RecordTabStatus) {
     return Object.assign({}, state, action);
   }
 
@@ -76,7 +76,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
       return null;
     }
 
-    const temp = {} as any;
+    const temp = {} as Record<string, TransactionDetail[]>;
     const options = { day: 'numeric', month: 'short', year: 'numeric' } as Intl.DateTimeFormatOptions;
 
     tabHistory.forEach((h) => {

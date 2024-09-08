@@ -1,10 +1,10 @@
 // Copyright 2017-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+import type { Theme } from '@mui/material';
 
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Theme } from '@mui/material';
 import React, { useCallback, useRef } from 'react';
 
 import Label from './Label';
@@ -15,12 +15,12 @@ interface Props {
   onChange: (filter: string) => void;
   label?: string;
   placeholder: string;
-  value: string;
+  value?: string;
   withReset?: boolean;
   theme: Theme;
 }
 
-export default function InputFilter({ autoFocus = true, label, onChange, placeholder, theme, value, withReset = false }: Props) {
+export default function InputFilter ({ autoFocus = true, label, onChange, placeholder, theme, value, withReset = false }: Props) {
   const inputRef: React.RefObject<HTMLInputElement> | null = useRef(null);
 
   const onChangeFilter = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +35,7 @@ export default function InputFilter({ autoFocus = true, label, onChange, placeho
   return (
     <div style={{ position: 'relative' }}>
       <Label
-        label={label}
+        label={label ?? ''}
       >
         <Input
           autoCapitalize='off'

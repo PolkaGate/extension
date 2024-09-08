@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -22,11 +21,11 @@ interface Props {
   page?: 'governance' | 'manageIdentity' | 'send' | 'stake' | 'socialRecovery' | 'accountDetails' | 'proxyManagement';
   noChainSwitch?: boolean;
   noAccountDropDown?: boolean;
-  _otherComponents?: JSX.Element;
+  _otherComponents?: React.JSX.Element;
   unableToChangeAccount?: boolean;
 }
 
-export function FullScreenHeader({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
+export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
   const allChains = useGenesisHashOptions();
 
@@ -46,7 +45,7 @@ export function FullScreenHeader({ _otherComponents, noAccountDropDown = false, 
       case 'socialRecovery':
         return SOCIAL_RECOVERY_CHAINS;
       case 'accountDetails':
-        return allChains.filter((chain) => chain.value !== '').map((chainOption) => chainOption.value);
+        return allChains.filter((chain) => chain.value !== '').map((chainOption) => chainOption.value as string);
       default:
         return [];
     }

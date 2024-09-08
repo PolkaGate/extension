@@ -3,19 +3,24 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AddRounded as AddRoundedIcon, Engineering as AdvancedModeIcon, Layers as StandardModeIcon } from '@mui/icons-material';
+import { Grid, Typography, useTheme } from '@mui/material';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+
+import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { FULLSCREEN_WIDTH, POLKADOT_SLIP44 } from '@polkadot/extension-polkagate/src/util/constants';
 import settings from '@polkadot/ui-settings';
+import { noop } from '@polkadot/util';
+
 import { ActionContext, Address, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import { useGenericLedger, useTranslation } from '../../../hooks';
 import { createAccountHardware, updateMeta } from '../../../messaging';
-import { POLKADOT_GENESIS } from '@polkagate/apps-config';
-import { MODE } from '.';
-import { noop } from '@polkadot/util';
-import { hideAddressAnimation, showAddressAnimation } from './partials';
 import ManualLedgerImport from './ManualLedgerImport';
+import { hideAddressAnimation, showAddressAnimation } from './partials';
+import { MODE } from '.';
 
 interface AddressOptions {
   index: number;
@@ -43,7 +48,7 @@ interface AdvancedModeBtnProps {
 
 export const AddItem = ({ disabled, label, onClick }: AddItemProps) => (
   <Grid container item sx={{ my: '20px', opacity: disabled ? 0.5 : 1, width: 'fit-content' }}>
-    <Grid display='inline-flex' alignItems='center' item onClick={disabled ? noop : onClick} sx={{ cursor: disabled ? 'context-menu' : 'pointer' }}>
+    <Grid alignItems='center' display='inline-flex' item onClick={disabled ? noop : onClick} sx={{ cursor: disabled ? 'context-menu' : 'pointer' }}>
       <AddRoundedIcon sx={{ bgcolor: 'primary.main', borderRadius: '50px', color: '#fff', fontSize: '30px' }} />
       <Typography fontSize='16px' fontWeight={400} lineHeight='36px' pl='10px' sx={{ textDecoration: 'underline' }}>
         {label}
@@ -52,21 +57,21 @@ export const AddItem = ({ disabled, label, onClick }: AddItemProps) => (
   </Grid>
 );
 
-const AdvanceModeBtn = ({ disabled, label, onClick, isAdvancedMode }: AdvancedModeBtnProps) => (
+const AdvanceModeBtn = ({ disabled, isAdvancedMode, label, onClick }: AdvancedModeBtnProps) => (
   <Grid container justifyContent='flex-end' sx={{ mb: '10px', userSelect: 'none' }}>
-    <Grid display='inline-flex' alignItems='center' item onClick={disabled ? noop : onClick} sx={{ cursor: disabled ? 'context-menu' : 'pointer', opacity: disabled ? 0.5 : 1 }}>
+    <Grid alignItems='center' display='inline-flex' item onClick={disabled ? noop : onClick} sx={{ cursor: disabled ? 'context-menu' : 'pointer', opacity: disabled ? 0.5 : 1 }}>
       {isAdvancedMode
         ? <StandardModeIcon sx={{ color: 'primary.main', fontSize: '25px' }} />
         : <AdvancedModeIcon sx={{ color: 'primary.main', fontSize: '25px' }} />
       }
-      <Typography fontSize='16px' fontWeight={400} lineHeight='36px' pl='10px' sx={{ textDecoration: 'underline' }}>
+      <Typography fontSize='16px' fontWeight={400} lineHeight='35px' pl='10px' sx={{ textDecoration: 'underline' }}>
         {label}
       </Typography>
     </Grid>
   </Grid>
 );
 
-export default function GenericApp({ setMode }: Props): React.ReactElement {
+export default function GenericApp ({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const ref = useRef(null);
@@ -86,7 +91,7 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
     isAdvancedMode
       ? !address
       : !Object.entries(addressList).find(([_, { selected }]) => selected)
-    , [address, addressList, isAdvancedMode]);
+  , [address, addressList, isAdvancedMode]);
 
   useEffect(() => {
     if (!address) {
@@ -96,47 +101,51 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
     settings.set({ ledgerConn: 'webusb' });
 
     setAddressList((prev) => {
-      prev[address] = {
-        index: accountIndex,
-        selected: false
+      if (!prev[address]) { // do not change previous address since we have two useEffect dependencies
+        prev[address] = {
+          index: accountIndex,
+          selected: false
+        };
       }
 
       return prev;
-    })
+    });
 
     if (ref.current) {
       //@ts-ignore
       ref.current.scrollTop = ref.current.scrollHeight - ref.current.offsetHeight;
     }
-  }, [address]);
+  }, [accountIndex, address]);
 
   const name = useCallback((index: number, offset?: number) => offset ? `Ledger ${index}-${offset}` : `Ledger ${index}`, []);
 
   const numberOfSelectedAccounts = useMemo(() =>
     Object.entries(addressList).filter(([_, options]) => options.selected).length
-    , [addressList]);
+  , [addressList]);
 
   useEffect(() => {
     if (savedAccountCount && savedAccountCount === numberOfSelectedAccounts) {
       // return to home if all selected accounts are saved
-      onAction('/');
+      setStorage('profile', PROFILE_TAGS.LEDGER).catch(console.error);
+      openOrFocusTab('/', true);
     }
   }, [savedAccountCount, numberOfSelectedAccounts, onAction]);
 
   const handleCreateAccount = useCallback((address: string, index: number, offset?: number) => {
-    createAccountHardware(address, 'ledger', index, 0, name(index, offset), POLKADOT_GENESIS)
+    createAccountHardware(address, 'ledger', index, offset ?? 0, name(index, offset), POLKADOT_GENESIS)
       .then(() => {
         const metaData = JSON.stringify({ isGeneric: true });
 
         updateMeta(String(address), metaData)
           .then(() => {
             if (isAdvancedMode) {
-              onAction('/')
+              setStorage('profile', PROFILE_TAGS.LEDGER).catch(console.error);
+              openOrFocusTab('/', true);
             } else {
-              setSavedAccountCount((pre) => pre + 1)
+              setSavedAccountCount((pre) => pre + 1);
             }
           }
-          )
+          ).catch(console.error);
       })
       .catch((error: Error) => {
         console.error(error);
@@ -144,9 +153,9 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
         setIsBusy(false);
         setError(error.message);
       });
-  }, [onAction, isAdvancedMode]);
+  }, [name, isAdvancedMode]);
 
-  const onSave = useCallback(() => {
+  const onImport = useCallback(() => {
     if (isAdvancedMode) {
       setIsBusy(true);
       address && handleCreateAccount(address, accountIndex, addressOffset);
@@ -158,22 +167,23 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
         if (options.selected) {
           handleCreateAccount(_address, options.index);
         }
-      })
+      });
     }
   }, [accountIndex, address, addressOffset, addressList, isAdvancedMode, handleCreateAccount]);
 
-  const onBack = useCallback(() => setMode(MODE.INDEX), []);
+  const onBack = useCallback(() => setMode(MODE.INDEX), [setMode]);
 
   const onNewAccount = useCallback(() => setAccountIndex((prev) => prev + 1), []);
 
   const onAdvancedMode = useCallback(() => {
-    setAdvancedMode(prevMode => !prevMode);
+    setAdvancedMode((prevMode) => !prevMode);
     setAccountIndex(0);
     setAddressOffset(0);
     const firstAddressEntry = Object.entries(addressList)[0];
 
     if (firstAddressEntry) {
       const [firstKey, firstValue] = firstAddressEntry;
+
       setAddressList({ [firstKey]: firstValue });
     }
   }, [addressList]);
@@ -182,6 +192,7 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
     const checked = e.target.checked;
 
     const _addressList = { ...addressList };
+
     _addressList[address].selected = checked;
 
     setAddressList({ ..._addressList });
@@ -206,29 +217,29 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
           <b>3</b>. {t('Select accounts to import, click "Add New Account" to create one, or use "Advanced Mode" for index and offset-based import.')}<br />
         </Typography>
         <AdvanceModeBtn
-          label={isAdvancedMode ? t('Standard Mode') : t('Advanced Mode')}
-          onClick={onAdvancedMode}
           disabled={ledgerLoading || !!ledgerWarning || !!error || !!ledgerError}
           isAdvancedMode={isAdvancedMode}
+          label={isAdvancedMode ? t('Standard Mode') : t('Advanced Mode')}
+          onClick={onAdvancedMode}
         />
         <Grid container sx={{ minHeight: '60px' }}>
           {address && !ledgerWarning && !error && !ledgerError &&
             <Grid container sx={{ minHeight: '200px' }}>
               {!isAdvancedMode
                 ? <>
-                  <Grid container ref={ref} sx={{ minHeight: '50px', maxHeight: `${window.innerHeight-475}px`, overflowY: 'scroll', pt: '10px', scrollbarWidth: 'thin', scrollBehavior: 'auto' }}>
+                  <Grid container ref={ref} sx={{ maxHeight: `${window.innerHeight - 475}px`, minHeight: '50px', overflowY: 'scroll', pt: '10px', scrollBehavior: 'auto', scrollbarWidth: 'thin' }}>
                     {!!Object.entries(addressList).length &&
                       <>
                         {Object.entries(addressList).map(([address, options]) => (
-                          <Grid container key={address} display={address ? 'inherit' : 'none'} item overflow='hidden' sx={{ animationDuration: address ? '300ms' : '150ms', animationFillMode: 'forwards', animationName: `${address ? showAddressAnimation : hideAddressAnimation}`, animationTimingFunction: 'linear', mt: '15px' }}>
+                          <Grid container display={address ? 'inherit' : 'none'} item key={address} overflow='hidden' sx={{ animationDuration: address ? '300ms' : '150ms', animationFillMode: 'forwards', animationName: `${address ? showAddressAnimation : hideAddressAnimation}`, animationTimingFunction: 'linear', mt: '15px' }}>
                             <Address
-                              showCheckbox
-                              handleCheck={handleCheck}
-                              check={addressList[address].selected}
                               address={address}
                               backgroundColor='background.main'
+                              check={addressList[address].selected}
+                              handleCheck={handleCheck}
                               margin='0px'
                               name={name(options.index)}
+                              showCheckbox
                               style={{ width: '100%' }}
                             />
                           </Grid>
@@ -237,9 +248,9 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
                     }
                   </Grid>
                   <AddItem
+                    disabled={!address || ledgerLoading}
                     label={t('Add New Account')}
                     onClick={onNewAccount}
-                    disabled={!address || ledgerLoading}
                   />
                 </>
                 : <ManualLedgerImport
@@ -276,7 +287,7 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
               disabled={ledgerLocked ? false : (!!error || !!ledgerError || importDisabled)}
               isBusy={ledgerLocked ? false : isBusy}
               mt='30px'
-              onPrimaryClick={ledgerLocked ? refresh : onSave}
+              onPrimaryClick={ledgerLocked ? refresh : onImport}
               onSecondaryClick={onBack}
               primaryBtnText={ledgerLocked ? t('Refresh') : t('Import')}
               secondaryBtnText={t('Back')}

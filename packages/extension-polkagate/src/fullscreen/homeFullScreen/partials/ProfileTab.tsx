@@ -1,12 +1,18 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountsOrder } from '..';
-import { Grid, Typography, useTheme, type Theme } from '@mui/material';
-import React, { useCallback, useMemo, useEffect, useState } from 'react';
-import { useProfileAccounts, useTranslation } from '../../../hooks';
-import { getStorage, setStorage, watchStorage } from '../../../components/Loading';
+/* eslint-disable react/jsx-max-props-per-line */
+
+import type { AccountsOrder } from '@polkadot/extension-polkagate/src/util/types';
+
+import { Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { getProfileColor } from '@polkadot/extension-polkagate/src/util/utils';
+
 import { VaadinIcon } from '../../../components/index';
+import { getStorage, setStorage, watchStorage } from '../../../components/Loading';
+import { useAlerts, useProfileAccounts, useTranslation } from '../../../hooks';
 import { showAccount } from '../../../messaging';
 import { HIDDEN_PERCENT } from './ProfileTabs';
 
@@ -19,30 +25,10 @@ interface Props {
   index: number;
 }
 
-export const PROFILE_COLORS = [
-  { light: '#D1C4E9', dark: '#99004F' },
-  { light: '#C8E6C9', dark: '#468189' },
-  { light: '#B3E5FC', dark: '#846C5B' },
-  { light: '#F8BBD0', dark: '#A63C06' },
-  { light: '#ACE894', dark: '#D81B60' },
-  { light: '#F5D5ED', dark: '#2B4162' },
-  { light: '#EBCFB2', dark: '#9D8189' },
-  { light: '#FCF0CC', dark: '#5F4842' },
-];
-
-export const getProfileColor = (index: number, theme: Theme) => {
-  if (index >= 0) {
-    const _index = index % PROFILE_COLORS.length; // to return colors recursively
-    return PROFILE_COLORS[_index][theme.palette.mode]
-  }
-
-  return PROFILE_COLORS[0][theme.palette.mode]
-};
-
-export default function ProfileTab({ isHovered, text, selectedProfile, setSelectedProfile, orderedAccounts, index }: Props): React.ReactElement {
+export default function ProfileTab ({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-
+  const { notify } = useAlerts();
   const profileAccounts = useProfileAccounts(orderedAccounts, text);
 
   /** set by user click on a profile tab */
@@ -57,9 +43,9 @@ export default function ProfileTab({ isHovered, text, selectedProfile, setSelect
 
   /** Save the current selected tab in local storage on tab click */
   const onClick = useCallback(() => {
-    setStorage('profile', text);
+    setStorage('profile', text).catch(console.error);
     isSelected && setToHideAll(!toHideAll);
-  }, [selectedProfile, toHideAll, text, isSelected]);
+  }, [toHideAll, text, isSelected]);
 
   /** check to see if all accounts in a profile is hidden */
   const areAllProfileAccountsHidden = useMemo(() => {
@@ -73,62 +59,80 @@ export default function ProfileTab({ isHovered, text, selectedProfile, setSelect
   const hideAccounts = useCallback((accounts: AccountsOrder[]) => {
     toHideAll !== undefined && accounts.forEach(({ account: { address } }) => {
       showAccount(address, !toHideAll).catch(console.error);
-    })
-  }, [toHideAll]);
+    });
+    notify(t('Accounts in the {{profileName}} profile are now {{visibility}} websites.', { replace: { profileName: text, visibility: toHideAll ? 'hidden from' : 'visible to' } }), 'info');
+  }, [notify, t, text, toHideAll]);
 
   const areAllHidden = areAllProfileAccountsHidden !== undefined ? areAllProfileAccountsHidden : toHideAll;
 
-  const hideCard = useMemo(() => !Boolean(isSelected || isHovered || visibleContent), [isSelected, isHovered, visibleContent]);
+  const hideCard = useMemo(() => !(isSelected || isHovered || visibleContent), [isSelected, isHovered, visibleContent]);
 
   useEffect(() => {
     if (profileAccounts && toHideAll !== undefined) {
       hideAccounts(profileAccounts);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hideAccounts, profileAccounts?.length, toHideAll]);
 
   useEffect(() => {
-    /** set profile text in local storage and watch its change to apply on the UI */
+  /** set profile text in local storage and watch its change to apply on the UI */
     getStorage('profile').then((res) => {
       setSelectedProfile(res as string || t('All'));
     }).catch(console.error);
 
     watchStorage('profile', setSelectedProfile).catch(console.error);
-  }, [t]);
+  }, [setSelectedProfile, t]);
 
   return (
-    <Grid item container onClick={onClick}
-      justifyContent='center'
+    <Grid
       alignItems='center'
       columnGap='5px'
+      container
+      item
+      justifyContent='center'
+      onClick={onClick}
       px='8px'
       sx={{
-        cursor: 'pointer',
-        flexShrink: 0,
+        '&:hover': {
+          boxShadow: shadowOnHover
+        },
         bgcolor: getProfileColor(index, theme) || 'background.paper',
         borderRadius: '0 0 12px 12px',
-        minWidth: '100px',
-        transition: 'transform 0.2s, box-shadow 0.2s',
         boxShadow: shadow,
-        '&:hover': {
-          boxShadow: shadowOnHover,
-        },
+        cursor: 'pointer',
+        flexShrink: 0,
+        minWidth: '100px',
         position: 'relative',
-        transformOrigin: 'top',
         transform: hideCard ? `translateY(-${HIDDEN_PERCENT})` : undefined,
+        transformOrigin: 'top',
+        transition: 'transform 0.2s, box-shadow 0.2s',
         userSelect: 'none',
         width: 'fit-content'
-      }}>
+      }}
+    >
       <VaadinIcon icon={'vaadin:check'} style={{ height: '13px', visibility: isSelected ? 'visible' : 'hidden', width: '15px' }} />
-      <Typography color={'text.primary'} display='block' fontSize='16px' fontWeight={isSelected ? 500 : 400} textAlign='center' sx={{ visibility: visibleContent ? 'visible' : 'hidden', transition: isSelected ? 'none' : 'visibility 0.1s ease-in-out', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <Typography
+        color={'text.primary'} display='block' fontSize='16px' fontWeight={isSelected ? 500 : 400}
+        sx={{
+          maxWidth: '100px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          transition: isSelected ? 'none' : 'visibility 0.1s ease-in-out',
+          visibility: visibleContent ? 'visible' : 'hidden',
+          whiteSpace: 'nowrap'
+        }} textAlign='center'
+      >
         {t(text)}
       </Typography>
-      <VaadinIcon icon={areAllHidden ? 'vaadin:eye-slash' : ''}
+      <VaadinIcon
+        icon={areAllHidden ? 'vaadin:eye-slash' : ''}
         style={{
           height: '13px',
-          visibility: visibleContent ? 'visible' : 'hidden',
           transition: isSelected ? 'none' : 'visibility 0.1s ease-in-out',
+          visibility: visibleContent ? 'visible' : 'hidden',
           width: '15px'
-        }} />
+        }}
+      />
     </Grid>
   );
 }

@@ -1,10 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
+import type { DeriveStakingQuery } from '@polkadot/api-derive/types';
+import type { BN } from '@polkadot/util';
 import type { AccountStakingInfo, StakingConsts, ValidatorInfo } from '../../../../util/types';
 
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
@@ -14,8 +15,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import type { DeriveStakingQuery } from '@polkadot/api-derive/types';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
 import { useInfo, useStakingAccount, useStakingConsts, useTranslation, useUnSupportedNetwork, useValidators, useValidatorsIdentities } from '../../../../hooks';
@@ -33,7 +33,7 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -62,10 +62,11 @@ export default function Index(): React.ReactElement {
       .concat(allValidatorsInfo.waiting)
       .filter((v: DeriveStakingQuery) => {
         const id = v.accountId as unknown as string;
+
         return nominatedValidatorsIds.includes(id)
       }
       )
-    , [allValidatorsInfo, nominatedValidatorsIds]);
+  , [allValidatorsInfo, nominatedValidatorsIds]);
 
   const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv?.exposure?.others?.find(({ who }: { who: any }) => who?.toString() === stakingAccount?.accountId?.toString())), [selectedValidatorsInfo, stakingAccount?.accountId]);
 
@@ -187,7 +188,7 @@ export default function Index(): React.ReactElement {
               activeValidators={activeValidators}
               allValidatorsIdentities={allValidatorsIdentities}
               api={api}
-              chain={chain as any}
+              chain={chain}
               decimal={stakingAccount?.decimal}
               formatted={formatted}
               height={window.innerHeight - 190}
@@ -210,7 +211,7 @@ export default function Index(): React.ReactElement {
         <RemoveValidators
           address={address}
           api={api}
-          chain={chain as any}
+          chain={chain}
           formatted={formatted}
           setShow={setShowRemoveValidator}
           show={showRemoveValidator}
@@ -220,7 +221,7 @@ export default function Index(): React.ReactElement {
       {showSelectValidator && allValidatorsInfo && formatted &&
         <SelectValidators
           address={address}
-          api={api as ApiPromise}
+          api={api}
           newSelectedValidators={newSelectedValidators}
           nominatedValidatorsIds={nominatedValidatorsIds}
           setNewSelectedValidators={setNewSelectedValidators}
@@ -244,7 +245,7 @@ export default function Index(): React.ReactElement {
           setShow={setShowReview}
           show={showReview}
           staked={stakingAccount?.stakingLedger?.active as unknown as BN ?? BN_ZERO}
-          stakingConsts={stakingConsts as StakingConsts}
+          stakingConsts={stakingConsts}
         />
       }
     </Motion>

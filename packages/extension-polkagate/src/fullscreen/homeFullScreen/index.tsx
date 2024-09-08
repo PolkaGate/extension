@@ -3,43 +3,40 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
-
 import { Grid } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 
 import { AccountContext, ActionContext } from '../../components';
-import { useAccountsOrder, useFullscreen, useProfileAccounts } from '../../hooks';
+import { useAccountsOrder, useAlerts, useFullscreen, useProfileAccounts, useTranslation } from '../../hooks';
 import { AddNewAccountButton } from '../../partials';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import HeaderComponents from './components/HeaderComponents';
 import DraggableAccountsList from './partials/DraggableAccountList';
 import HomeMenu from './partials/HomeMenu';
-import TotalBalancePieChart from './partials/TotalBalancePieChart';
-import WatchList, { type AssetsWithUiAndPrice } from './partials/WatchList';
 import ProfileTabs from './partials/ProfileTabs';
+import TotalBalancePieChart, { type AssetsWithUiAndPrice } from './partials/TotalBalancePieChart';
+import WatchList from './partials/WatchList';
 
-export interface AccountsOrder {
-  id: number,
-  account: AccountWithChildren
-}
-
-export default function HomePageFullScreen(): React.ReactElement {
+export default function HomePageFullScreen (): React.ReactElement {
   useFullscreen();
-  const initialAccountList = useAccountsOrder(true) as AccountsOrder[] | undefined;
+  const { t } = useTranslation();
   const onAction = useContext(ActionContext);
+  const { notify } = useAlerts();
+  const initialAccountList = useAccountsOrder(true);
   const { accounts: accountsInExtension } = useContext(AccountContext);
 
   const [hideNumbers, setHideNumbers] = useState<boolean>();
   const [groupedAssets, setGroupedAssets] = useState<AssetsWithUiAndPrice[] | undefined>();
 
-  const profileAccounts = useProfileAccounts(initialAccountList) as AccountsOrder[] | undefined;
+  const profileAccounts = useProfileAccounts(initialAccountList);
 
   useEffect(() => {
     if (accountsInExtension && accountsInExtension?.length === 0) {
+      notify(t('No accounts found!'), 'info');
+
       onAction('/onboarding');
     }
-  }, [accountsInExtension, onAction]);
+  }, [accountsInExtension, notify, onAction, t]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
@@ -54,7 +51,7 @@ export default function HomePageFullScreen(): React.ReactElement {
         noChainSwitch
       />
       <Grid container item sx={{ bgcolor: 'backgroundFL.secondary', maxWidth: '1282px' }}>
-        <Grid container item display='block' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', pb: '40px' }}>
+        <Grid container display='block' item sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', pb: '40px' }}>
           <ProfileTabs
             orderedAccounts={initialAccountList}
           />
@@ -66,7 +63,7 @@ export default function HomePageFullScreen(): React.ReactElement {
                   initialAccountList={profileAccounts}
                 />
               }
-              {initialAccountList && initialAccountList?.length <= 2 &&
+              {profileAccounts && profileAccounts?.length <= 2 &&
                 <AddNewAccountButton />
               }
             </Grid>

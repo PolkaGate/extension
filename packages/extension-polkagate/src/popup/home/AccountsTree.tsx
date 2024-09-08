@@ -13,8 +13,8 @@ import { useActiveRecoveries, useApi, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import getParentNameSuri from '../../util/getParentNameSuri';
-import AccountPreview from './AccountPreview';
 import { AccountLabel } from './AccountLabel';
+import AccountPreview from './AccountPreview';
 
 interface Props extends AccountWithChildren {
   parentName?: string;
@@ -24,7 +24,7 @@ interface Props extends AccountWithChildren {
   setHasActiveRecovery: React.Dispatch<React.SetStateAction<string | null | undefined>>;
 }
 
-export default function AccountsTree({ hideNumbers, parentName, quickActionOpen, setHasActiveRecovery, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
+export default function AccountsTree ({ hideNumbers, parentName, quickActionOpen, setHasActiveRecovery, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -49,18 +49,19 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
         disableGutters
         sx={{
           backgroundColor: 'background.paper',
-          borderColor: activeRecovery ? 'warning.main' : 'secondary.main',
+          borderColor: activeRecovery ? 'warning.main' : undefined,
           borderRadius: '5px',
           borderStyle: account?.parentAddress ? 'dashed' : 'solid',
-          borderWidth: activeRecovery ? '2px' : '0.5px',
-          mb: '6px',
+          borderWidth: activeRecovery ? '2px' : 0,
+          boxShadow: theme.palette.mode === 'dark' ? '0px 0px 3px rgba(50, 50, 50, 1)' : '0px 0px 3px 2px rgba(0, 0, 0, 0.1)',
+          mb: '7px',
           position: 'relative'
         }}
       >
         <AccountLabel
           account={account}
-          parentName={parentNameSuri}
           ml='10px'
+          parentName={parentNameSuri}
         />
         <AccountPreview
           {...account}

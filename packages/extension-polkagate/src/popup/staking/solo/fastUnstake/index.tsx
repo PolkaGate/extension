@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -31,7 +30,7 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -51,6 +50,7 @@ export default function Index(): React.ReactElement {
   const fastUnstakeDeposit = api ? api.consts['fastUnstake']['deposit'] as unknown as BN : undefined;
   const balances = useMemo(() => mayBeMyStashBalances || myBalances, [mayBeMyStashBalances, myBalances]);
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
+  const availableBalance = useMemo(() => getValue('available', balances), [balances]);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [showFastUnstakeReview, setShowReview] = useState<boolean>(false);
@@ -66,7 +66,7 @@ export default function Index(): React.ReactElement {
     : undefined;
 
   const staked = useMemo((): BN | undefined => stakingAccount ? stakingAccount.stakingLedger.active as unknown as BN : undefined, [stakingAccount]);
-  const tx = api && api.tx['fastUnstake']['registerFastUnstake'];
+  const tx = api?.tx['fastUnstake']['registerFastUnstake'];
 
   useEffect((): void => {
     if (!api) {
@@ -74,7 +74,7 @@ export default function Index(): React.ReactElement {
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
     }
 
     tx && formatted && tx().paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
@@ -163,13 +163,13 @@ export default function Index(): React.ReactElement {
         disabled={isEligible === undefined}
         text={isEligible === undefined || isEligible ? t('Next') : t('Back')}
       />
-      {showFastUnstakeReview && formatted && api && getValue('available', balances) && chain && staked && !staked?.isZero() &&
+      {showFastUnstakeReview && formatted && api && availableBalance && chain && staked && !staked?.isZero() &&
         <FastUnstakeReview
-          address={address as string}
+          address={address}
           amount={staked as unknown as BN}
           api={api}
-          available={getValue('available', balances) as BN}
-          chain={chain as any}
+          available={availableBalance}
+          chain={chain}
           formatted={formatted}
           setShow={setShowReview}
           show={showFastUnstakeReview}

@@ -1,15 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { SavedIdentities } from '../util/types';
 
 import { useEffect, useState } from 'react';
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
-
 import { updateMeta } from '../messaging';
-import type { SavedIdentities } from '../util/types';
 import { useAccount, useIdentity, useInfo } from '.';
 
 /**
@@ -40,7 +38,7 @@ export default function useMyAccountIdentity(address: AccountId | string | undef
 
     const metaData = JSON.stringify({ identities: JSON.stringify(savedIdentities) });
 
-    updateMeta(address, metaData).catch(console.error);
+    updateMeta(String(address), metaData).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(account ?? {})?.length, address, chainName, info, formatted]);
 
@@ -53,6 +51,8 @@ export default function useMyAccountIdentity(address: AccountId | string | undef
 
     if (savedIdentities[chainName]) {
       setOldIdentity(savedIdentities[chainName]);
+    } else {
+      setOldIdentity(undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(account ?? {})?.length, chainName]);

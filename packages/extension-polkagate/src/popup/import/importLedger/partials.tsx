@@ -1,10 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import ledgerChains from '../../../util/legerChains';
-import { t } from 'i18next';
 import { keyframes } from '@mui/material';
+import { t } from 'i18next';
+
 import { DISABLED_NETWORKS } from '../../../util/constants';
+import ledgerChains from '../../../util/legerChains';
 
 export interface NetworkOption {
   text: string;
@@ -28,14 +29,14 @@ export const addOps = AVAIL.map((value): AccOption => ({
   value
 }));
 
-export const networkOps =   [{
-    text: t('No chain selected'),
-    value: ''
-  },
-  ...ledgerChains.filter(({displayName})=>!DISABLED_NETWORKS.includes(displayName)).map(({ displayName, genesisHash }): NetworkOption => ({
-    text: displayName,
-    value: genesisHash[0]
-  }))];
+export const networkOps = [{
+  text: t('No chain selected'),
+  value: ''
+},
+...ledgerChains.filter(({ displayName }) => !DISABLED_NETWORKS.includes(displayName)).map(({ displayName, genesisHash }): NetworkOption => ({
+  text: displayName,
+  value: genesisHash[0]
+}))];
 
 export const showAddressAnimation = keyframes`
   0% {

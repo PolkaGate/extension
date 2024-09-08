@@ -3,29 +3,35 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
+import type { HexString } from '@polkadot/util/types';
+
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import type { Chain } from '@polkadot/extension-chains/types';
+import React, { useCallback, useEffect, useState } from 'react';
+
+import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import settings from '@polkadot/ui-settings';
-import { ActionContext, Address, Select, SelectChain, TwoButtons, VaadinIcon, Warning } from '../../../components';
+
+import { Address, Select, SelectChain, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import { useLedger, useTranslation } from '../../../hooks';
 import { createAccountHardware, getMetadata } from '../../../messaging';
 import { Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
-import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
-import { MODE } from '.';
 import { accOps, addOps, hideAddressAnimation, networkOps, showAddressAnimation } from './partials';
+import { MODE } from '.';
 
 interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function LegacyApps({ setMode }: Props): React.ReactElement {
+export default function LegacyApps ({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const onAction = useContext(ActionContext);
 
   const [isBusy, setIsBusy] = useState(false);
   const [name, setName] = useState<string | null>(null);
@@ -54,8 +60,11 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
     if (address && genesis && name) {
       setIsBusy(true);
 
-      createAccountHardware(address, 'ledger', accountIndex, addressOffset, name, genesis)
-        .then(() => onAction('/'))
+      createAccountHardware(address, 'ledger', accountIndex, addressOffset, name, genesis as HexString)
+        .then(() => {
+          setStorage('profile', PROFILE_TAGS.LEDGER).catch(console.error);
+          openOrFocusTab('/', true);
+        })
         .catch((error: Error) => {
           console.error(error);
 
@@ -63,29 +72,30 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
           setError(error.message);
         });
     }
-  }, [accountIndex, address, addressOffset, genesis, name, onAction]);
+  }, [accountIndex, address, addressOffset, genesis, name]);
 
   // select element is returning a string
   const _onSetAccountIndex = useCallback((_value: number | string) => {
     const index = accOps.find(({ text, value }) => text === _value || value === _value)?.value || 0;
 
     setAccountIndex(Number(index));
-  }, [accOps]);
+  }, []);
 
   const _onSetAddressOffset = useCallback((_value: number | string) => {
     const index = addOps.find(({ text, value }) => text === _value || value === _value)?.value || 0;
 
     setAddressOffset(Number(index));
-  }, [addOps]);
+  }, []);
 
   const onBack = useCallback(() => setMode(MODE.INDEX), [setMode]);
+  const onShowMore = useCallback(() => setShowMore(!showMore), [showMore]);
 
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
       <Grid container item sx={{ display: 'block', px: '10%' }}>
         <Grid alignContent='center' alignItems='center' container item>
           <Grid item sx={{ mr: '20px' }}>
-            <VaadinIcon icon='vaadin:wallet' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
+            <VaadinIcon icon='vaadin:wallet' style={{ color: `${theme.palette.text.primary}`, height: '40px', width: '40px' }} />
           </Grid>
           <Grid item>
             <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
@@ -109,7 +119,6 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
             style={{ mt: 3, width: '100%' }}
           />
         </Grid>
-        {/* <Grid container item overflow='hidden' sx={{ mt: '45px' }}> */}
         <Grid container display={address ? 'inherit' : 'none'} item overflow='hidden' sx={{ animationDuration: address ? '300ms' : '150ms', animationFillMode: 'forwards', animationName: `${address ? showAddressAnimation : hideAddressAnimation}`, animationTimingFunction: 'linear', mt: '15px' }}>
           <Address
             address={address}
@@ -129,7 +138,7 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
         )}
         {!!name && (
           <>
-            <Grid alignItems='flex-end' container item justifyContent='flex-start' onClick={() => setShowMore(!showMore)}>
+            <Grid alignItems='flex-end' container item justifyContent='flex-start' onClick={onShowMore}>
               <Typography pt='20px' sx={{ color: 'secondary.light', cursor: 'pointer', textDecoration: 'underline', userSelect: 'none' }}>
                 {t('More ...')}
               </Typography>
