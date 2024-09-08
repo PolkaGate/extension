@@ -20,6 +20,7 @@ import WatchList from './partials/WatchList';
 export default function HomePageFullScreen (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
+
   const onAction = useContext(ActionContext);
   const { notify } = useAlerts();
   const initialAccountList = useAccountsOrder(true);
