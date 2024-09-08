@@ -20,10 +20,9 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }: {
+const Menus = ({ address, handleClose, setDisplayPopup }: {
   address: string | undefined,
   handleClose: () => void,
-  setAnchorEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>,
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>,
 }) => {
   const { t } = useTranslation();
@@ -118,7 +117,7 @@ const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }: {
       <Divider sx={{ bgcolor: 'divider', height: '1px', my: '6px' }} />
       <ProfileMenu
         address={address}
-        setUpperAnchorEl={setAnchorEl}
+        closeParentMenu={handleClose}
       />
       {hasPrivateKey &&
         <MenuItem
@@ -202,7 +201,6 @@ function FullScreenAccountMenu ({ address, baseButton, setDisplayPopup }: Props)
         <Menus
           address={address}
           handleClose={handleClose}
-          setAnchorEl={setAnchorEl}
           setDisplayPopup={setDisplayPopup}
         />
       </Popover>

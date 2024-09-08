@@ -13,7 +13,7 @@ import { updateMeta } from '../../../messaging';
 
 interface Props {
   address: string | undefined;
-  setUpperAnchorEl?: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
+  closeParentMenu: () => void;
 }
 
 interface InputBoxProps {
@@ -180,7 +180,7 @@ enum STATUS {
   SHOW_REMOVE
 }
 
-function ProfileMenu ({ address, setUpperAnchorEl }: Props): React.ReactElement<Props> {
+function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const isExtensionMode = useIsExtensionPopup();
@@ -196,8 +196,8 @@ function ProfileMenu ({ address, setUpperAnchorEl }: Props): React.ReactElement<
   const handleClose = useCallback(() => {
     setAnchorEl(null);
     setShowName(false);
-    setUpperAnchorEl && setUpperAnchorEl(null);
-  }, [setUpperAnchorEl]);
+    closeParentMenu();
+  }, [closeParentMenu]);
 
   const onAddClick = useCallback((event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
