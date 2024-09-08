@@ -20,15 +20,15 @@ import { ActionContext, Identicon, Identity, OptionalCopyButton, ShortAddress2 }
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, useIdentity, useInfo, usePrices, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount } from '../../../messaging';
-import ExportAccountModal from '../../../popup/export/ExportAccountModal';
-import ForgetAccountModal from '../../../popup/forgetAccount/ForgetAccountModal';
-import DeriveAccountModal from '../../../popup/newAccount/deriveAccount/modal/DeriveAccountModal';
-import RenameModal from '../../../popup/rename/RenameModal';
 import { amountToHuman } from '../../../util/utils';
 import AccountIconsFs from '../../accountDetails/components/AccountIconsFs';
 import { EyeIconFullScreen } from '../../accountDetails/components/AccountInformationForDetails';
 import AOC from '../../accountDetails/components/AOC';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
+import DeriveAccountModal from '../../partials/DeriveAccountModal';
+import ExportAccountModal from '../../partials/ExportAccountModal';
+import ForgetAccountModal from '../../partials/ForgetAccountModal';
+import RenameModal from '../../partials/RenameAccountModal';
 import FullScreenAccountMenu from './FullScreenAccountMenu';
 
 interface AddressDetailsProps {
@@ -65,7 +65,7 @@ const AccountButton = ({ icon, onClick, text }: AccountButtonType) => {
   );
 };
 
-const AccountTotal = ({ currencySign, hideNumbers, totalBalance }: {currencySign: string | undefined, hideNumbers: boolean|undefined, totalBalance: number | undefined}) => {
+const AccountTotal = ({ currencySign, hideNumbers, totalBalance }: { currencySign: string | undefined, hideNumbers: boolean | undefined, totalBalance: number | undefined }) => {
   const theme = useTheme();
   const { t } = useTranslation();
 

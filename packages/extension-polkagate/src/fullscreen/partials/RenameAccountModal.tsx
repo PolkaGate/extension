@@ -1,27 +1,25 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { ButtonWithCancel, NewAddress } from '../../components';
 import { useAccountName, useTranslation } from '../../hooks';
 import { editAccount } from '../../messaging';
 import { Name } from '../../partials';
-import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '../governance/components/DraggableModal';
+import SimpleModalTitle from './SimpleModalTitle';
 
 interface Props {
   address: string;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function RenameModal({ address, setDisplayPopup }: Props): React.ReactElement {
+export default function RenameModal ({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const accountName = useAccountName(address);
 
   const [newName, setNewName] = useState<string | undefined>();
@@ -50,16 +48,11 @@ export default function RenameModal({ address, setDisplayPopup }: Props): React.
   return (
     <DraggableModal onClose={backToAccount} open>
       <>
-        <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
-          <Grid item>
-            <Typography fontSize='22px' fontWeight={700}>
-              {t<string>('Rename Account')}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <CloseIcon onClick={backToAccount} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-          </Grid>
-        </Grid>
+        <SimpleModalTitle
+          onClose={backToAccount}
+          title={t('Rename Account')}
+          vaadinIcon='edit'
+        />
         <NewAddress
           address={address}
           name={changedName}
