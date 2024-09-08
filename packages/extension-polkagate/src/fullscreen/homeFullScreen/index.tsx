@@ -13,7 +13,7 @@ import { FullScreenHeader } from '../governance/FullScreenHeader';
 import HeaderComponents from './components/HeaderComponents';
 import DraggableAccountsList from './partials/DraggableAccountList';
 import HomeMenu from './partials/HomeMenu';
-import ProfileTabs from './partials/ProfileTabs';
+import ProfileTabsFullScreen from './partials/ProfileTabsFullScreen';
 import TotalBalancePieChart, { type AssetsWithUiAndPrice } from './partials/TotalBalancePieChart';
 import WatchList from './partials/WatchList';
 
@@ -52,7 +52,7 @@ export default function HomePageFullScreen (): React.ReactElement {
       />
       <Grid container item sx={{ bgcolor: 'backgroundFL.secondary', maxWidth: '1282px' }}>
         <Grid container display='block' item sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', pb: '40px' }}>
-          <ProfileTabs
+          <ProfileTabsFullScreen
             orderedAccounts={initialAccountList}
           />
           <Grid container justifyContent='space-around'>
