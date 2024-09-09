@@ -122,7 +122,7 @@ export default function SelectParent ({ isLocked, onClose, onDerivationConfirmed
       <>
         {isLocked
           ? (
-            <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', borderBottom: '1px solid', borderBottomColor: theme.palette.mode === 'dark' ? 'secondary.light' : 'divider', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', cursor: 'pointer', mb: '20px', px: '10px' }}>
+            <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mb: '20px', px: '10px' }}>
               <Grid container item xs>
                 <NewAddress
                   address={parentAccount?.address}
