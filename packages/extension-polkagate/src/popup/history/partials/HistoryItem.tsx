@@ -58,7 +58,7 @@ export default function HistoryItem ({ anotherDay, chainName, date, decimal, for
          {date}
        </Grid>
       }
-      <Grid alignItems='center' container direction='column' item justifyContent='space-between' sx={{ '> .historyItems:last-child': { border: 'none' }, bgcolor: 'background.paper', borderRadius: '5px' }}>
+      <Grid alignItems='center' container direction='column' item justifyContent='space-between' sx={{ '> .historyItems:last-child': { border: 'none' }, bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '0px 0px 3px 2px rgba(0, 0, 0, 0.1)', mx: '3px', width: 'calc(100% - 6px)' }}>
         <Grid className='historyItems' container item py='5px' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
           <Grid container item px='10px' sx={{ fontSize: '22px', fontWeight: 300 }} xs={11}>
             <Grid container item justifyContent='space-between'>
