@@ -5,11 +5,11 @@
 
 import DoneIcon from '@mui/icons-material/Done';
 import { Divider, Grid, IconButton, Popover, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { InputWithLabel, MenuItem, VaadinIcon } from '../../../components';
+import { AccountContext, InputWithLabel, MenuItem, VaadinIcon } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
-import { useAccountsOrder, useInfo, useIsExtensionPopup, useProfiles, useTranslation } from '../../../hooks';
+import { useInfo, useIsExtensionPopup, useProfiles, useTranslation } from '../../../hooks';
 import { PROFILE_TAGS } from '../../../hooks/useProfileAccounts';
 import { updateMeta } from '../../../messaging';
 
@@ -188,7 +188,7 @@ function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<P
 
   const isExtensionMode = useIsExtensionPopup();
   const { account } = useInfo(address);
-  const initialAccountList = useAccountsOrder(true);
+  const { accounts } = useContext(AccountContext);
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | HTMLDivElement | null>();
   const [status, setStatus] = useState<STATUS>();
@@ -220,31 +220,34 @@ function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<P
   }, []);
 
   const onRemove = useCallback((profileToBeRemoved: string) => {
-    const maybeAccountProfile = account?.profile; // could be a list of joined profile tags as a string
-
-    if (!maybeAccountProfile || !initialAccountList) {
+    if (!(address && profileNames && accounts)) {
       return;
     }
 
-    const accountsWithTheSameProfileTag = initialAccountList.filter(({ account: acc }) => acc?.profile && acc.profile.split(',').includes(profileToBeRemoved));
+    const accountsWithTheSameProfile = accounts.filter(({ profile }) =>
+      profile?.split(',').includes(profileToBeRemoved)
+    );
 
-    const accountProfiles = maybeAccountProfile.split(',');
-    const indexToBeRemoved = accountProfiles.findIndex((item) => item === profileToBeRemoved);
+    const maybeRemainingProfiles = profileNames.filter((profile) => profile !== profileToBeRemoved);
 
-    accountProfiles.splice(indexToBeRemoved, 1);
+    const metaData = JSON.stringify({
+      profile: maybeRemainingProfiles?.length ? maybeRemainingProfiles.join(',') : null
+    });
 
-    const metaData = JSON.stringify({ profile: accountProfiles?.length ? accountProfiles.join(',') : null });
-
-    updateMeta(String(address), metaData)
+    updateMeta(address, metaData)
       .then(() => {
-        if (accountsWithTheSameProfileTag.length === 1 && currentProfile === profileToBeRemoved) {
-          // set profile tab to ALL, since this account was the last account with such a tag and the current profile is the same as account's profile
-          setStorage('profile', PROFILE_TAGS.ALL).then(handleClose).catch(console.error);
+        const isLastAccountWithTheProfile = accountsWithTheSameProfile.length === 1;
+
+        if (isLastAccountWithTheProfile && currentProfile === profileToBeRemoved) {
+          setStorage('profile', PROFILE_TAGS.ALL)
+            .then(handleClose)
+            .catch(console.error);
         } else {
           handleClose();
         }
-      }).catch(console.error);
-  }, [account?.profile, address, handleClose, initialAccountList, currentProfile]);
+      })
+      .catch(console.error);
+  }, [profileNames, accounts, address, currentProfile, handleClose]);
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover 2' : undefined;
