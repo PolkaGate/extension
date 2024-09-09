@@ -54,9 +54,9 @@ export default function ExportAccountModal ({ address, setDisplayPopup }: Props)
     <DraggableModal onClose={backToAccount} open>
       <>
         <SimpleModalTitle
+          icon='vaadin:download-alt'
           onClose={backToAccount}
           title={t('Export Account')}
-          vaadinIcon='download-alt'
         />
         {isPasswordError &&
           <WrongPasswordAlert />
