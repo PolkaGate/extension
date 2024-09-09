@@ -14,7 +14,12 @@ import useStyles from '../styles/styles';
 import CommentView from './Comment';
 import Replies from './Replies';
 
-export default function Comments ({ address, referendum }: { address: string | undefined, referendum: Referendum | undefined }): React.ReactElement {
+interface CommentsProps {
+  address: string | undefined;
+  referendum: Referendum | undefined;
+}
+
+export default function Comments ({ address, referendum }: CommentsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const ChainName = useChainName(address);

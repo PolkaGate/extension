@@ -13,6 +13,7 @@ import rehypeRaw from 'rehype-raw';
 
 import { Identity, Infotip2 } from '../../../components';
 import { useApi, useChain, useTranslation } from '../../../hooks';
+import { isValidAddress } from '../../../util/utils';
 import { formatRelativeTime } from '../utils/util';
 
 interface CommentProps {
@@ -40,6 +41,7 @@ export default function Comment ({ address, comment, noSource }: CommentProps): 
   }, []);
 
   const hasReactions = useMemo(() => 'comment_reactions' in comment || 'reply_reactions' in comment, [comment]);
+  const commenterAddress = useMemo(() => comment.proposer && isValidAddress(comment.proposer) ? comment.proposer : undefined, [comment.proposer]);
 
   const Likes = () => {
     const infoTextAye =
@@ -123,7 +125,7 @@ export default function Comment ({ address, comment, noSource }: CommentProps): 
   return (
     <Grid alignItems='center' container item sx={{ mb: '10px' }}>
       <Grid item maxWidth='50%' width='fit-content'>
-        <Identity address={comment.proposer} api={api} chain={chain} identiconSize={25} name={comment?.username ?? undefined} noIdenticon={!comment.proposer} showShortAddress showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+        <Identity address={commenterAddress} api={api} chain={chain} identiconSize={25} name={comment?.username ?? undefined} noIdenticon={!commenterAddress} showShortAddress showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
       </Grid>
       <Grid item width='fit-content'>
         <VoteType />
