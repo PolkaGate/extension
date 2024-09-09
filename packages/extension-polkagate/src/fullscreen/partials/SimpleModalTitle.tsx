@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { IconProp } from '@fortawesome/fontawesome-svg-core';
+import type { IconDefinition, IconProp } from '@fortawesome/fontawesome-svg-core';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
@@ -15,14 +15,14 @@ import { VaadinIcon } from '../../components';
 interface Props {
   onClose: () => void;
   title: string;
-  icon?: string;
+  icon?: string | IconDefinition;
 }
 
 export default function SimpleModalTitle ({ icon, onClose, title }: Props): React.ReactElement {
   const theme = useTheme();
 
-  const isIconVaadin = icon?.startsWith('vaadin');
-  const isIconFontAwesome = icon?.startsWith('fa');
+  const isIconVaadin = typeof icon === 'string' && icon?.startsWith('vaadin');
+  const isIconFontAwesome = !!icon;
 
   return (
     <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
@@ -34,7 +34,7 @@ export default function SimpleModalTitle ({ icon, onClose, title }: Props): Reac
               : isIconFontAwesome
                 ? <FontAwesomeIcon
                   color={`${theme.palette.text.primary}`}
-                  fontSize='25px'
+                  fontSize='22px'
                   icon={icon as IconProp}
                   style={{ marginRight: '10px' }}
                 />
