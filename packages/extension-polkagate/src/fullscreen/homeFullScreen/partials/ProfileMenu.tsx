@@ -224,7 +224,7 @@ function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<P
       return;
     }
 
-    const accountsInAProfileTag = accounts.filter(({ profile }) => profile && profile === currentProfile);
+    const accountsInAProfileTag = accounts.filter(({ profile }) => profile?.split(',').find((accountProfile) => accountProfile === currentProfile));
 
     const newProfiles = profileNames.filter((item) => item !== profileToBeRemoved);
 
