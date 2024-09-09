@@ -28,7 +28,7 @@ interface Props {
 export default function HistoryItemModal ({ anotherDay, date, decimal, formatted, info, setDetailInfo, setShowDetail, token }: Props): React.ReactElement {
   const { t } = useTranslation();
 
-  const _goToDetail = useCallback(() => {
+  const goToDetail = useCallback(() => {
     setDetailInfo(info);
     setShowDetail(true);
   }, [info, setDetailInfo, setShowDetail]);
@@ -58,9 +58,9 @@ export default function HistoryItemModal ({ anotherDay, date, decimal, formatted
         {date}
       </Grid>
       }
-      <Grid alignItems='center' container direction='column' item justifyContent='space-between' sx={{ '> .historyItems:last-child': { border: 'none' }, bgcolor: 'background.paper', borderRadius: '5px' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' sx={{ '> .historyItems:last-child': { border: 'none' }, bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '0px 0px 3px 2px rgba(0, 0, 0, 0.1)', mx: '3px', width: 'calc(100% - 6px)' }}>
         <Grid className='historyItems' container item py='5px' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
-          <Grid container item sx={{ fontSize: '22px', fontWeight: 300 }} px='10px' xs={11}>
+          <Grid container item px='10px' sx={{ fontSize: '22px', fontWeight: 300 }} xs={11}>
             <Grid container item justifyContent='space-between'>
               <Grid item>
                 {action}
@@ -82,14 +82,14 @@ export default function HistoryItemModal ({ anotherDay, date, decimal, formatted
               </Grid>
               <Grid item>
                 <Typography color={info.success ? 'green' : 'red'} fontSize='16px' fontWeight={400}>
-                  {info.success ? t<string>('Completed') : t<string>('Failed')}
+                  {info.success ? t('Completed') : t('Failed')}
                 </Typography>
               </Grid>
             </Grid>
           </Grid>
-          <Grid alignItems='center' container item sx={{ borderLeft: '1px solid', borderLeftColor: 'divider' }} xs={1}>
+          <Grid alignItems='center' container item justifyContent='center' sx={{ borderLeft: '1px solid', borderLeftColor: 'divider' }} xs={1}>
             <IconButton
-              onClick={_goToDetail}
+              onClick={goToDetail}
               sx={{ p: 0 }}
             >
               <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: '#BA2882', strokeWidth: 2 }} />
