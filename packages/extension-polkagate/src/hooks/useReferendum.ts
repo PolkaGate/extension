@@ -16,8 +16,8 @@ import { REFERENDA_LIMIT_SAVED_LOCAL } from '../fullscreen/governance/utils/cons
 import { getReferendumVotes } from '../fullscreen/governance/utils/getAllVotes';
 import { getReferendumPA, getReferendumSb, isFinished } from '../fullscreen/governance/utils/helpers';
 import { STATEMINE_GENESIS_HASH, STATEMINT_GENESIS_HASH } from '../util/constants';
-import { useApi, useApiWithChain2, useChainName } from '.';
 import { isHexToBn } from '../util/utils';
+import { useApi, useApiWithChain2, useChainName } from '.';
 
 type ReferendumData = Record<string, Referendum[]>;
 
@@ -35,7 +35,7 @@ const getAssetHubByChainName = (chainName?: string) => {
   return undefined;
 };
 
-export default function useReferendum(address: AccountId | string | undefined, type: TopMenu | undefined, id: number | undefined, refresh?: boolean, getOnChain?: boolean, isConcluded?: boolean, withoutOnChainVoteCounts = false): Referendum | undefined {
+export default function useReferendum (address: AccountId | string | undefined, type: TopMenu | undefined, id: number | undefined, refresh?: boolean, getOnChain?: boolean, isConcluded?: boolean, withoutOnChainVoteCounts = false): Referendum | undefined {
   const chainName = useChainName(address);
   const api = useApi(address);
   const assetHubApi = useApiWithChain2(getAssetHubByChainName(chainName) as Chain);

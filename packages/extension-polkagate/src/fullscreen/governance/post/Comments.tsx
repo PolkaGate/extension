@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Referendum } from '../utils/types';
@@ -15,7 +14,12 @@ import useStyles from '../styles/styles';
 import CommentView from './Comment';
 import Replies from './Replies';
 
-export default function Comments ({ address, referendum }: { address: string | undefined, referendum: Referendum | undefined }): React.ReactElement {
+interface CommentsProps {
+  address: string | undefined;
+  referendum: Referendum | undefined;
+}
+
+export default function Comments ({ address, referendum }: CommentsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const ChainName = useChainName(address);
@@ -29,7 +33,7 @@ export default function Comments ({ address, referendum }: { address: string | u
     setExpanded(isExpanded);
   }, []);
 
-  const sortedComments = useMemo(() => referendum?.comments?.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)), [referendum]);
+  const sortedComments = useMemo(() => referendum?.comments?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()), [referendum]);
 
   const openPolkassembly = useCallback(() => {
     window.open(`https://${ChainName}.polkassembly.io/referenda/${referendum?.index}`, '_blank');
@@ -54,7 +58,7 @@ export default function Comments ({ address, referendum }: { address: string | u
         <Grid container item xs={12}>
           {sortedComments?.map((comment, index) => (
             <Grid container key={index} sx={{ borderBottom: index !== sortedComments.length - 1 ? `0.01px solid ${theme.palette.text.disabled}` : undefined }}>
-              <CommentView address={address} comment={comment} />
+              <CommentView address={address ?? ''} comment={comment} />
               {!!comment?.replies?.length &&
                 <Replies address={address} replies={comment?.replies} />
               }

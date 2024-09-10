@@ -1384,5 +1384,8 @@
   "Help?": "",
   "Ignore": "",
   "Rewards Destination": "",
-  "{{accountName}} has been successfully removed!": ""
+  "{{accountName}} has been successfully removed!": "",
+  "Voted Aye": "",
+  "Voted Nay": "",
+  "Voted Abstain": ""
 }
