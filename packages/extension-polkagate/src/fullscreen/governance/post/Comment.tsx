@@ -134,7 +134,7 @@ const EditedTag = ({ comment }: {comment: CommentType | Reply;}) => {
   if (isEdited) {
     return (
       <Grid item ml='10px'>
-        <Typography sx={{ fontSize: '14px', fontWeight: 400, p: '0 10px', textAlign: 'center', textDecoration: 'underline' }}>
+        <Typography sx={{ color: 'text.disabled', fontSize: '14px', fontWeight: 400, p: '0 10px', textAlign: 'center' }}>
           {t('Edited')}
         </Typography>
       </Grid>
