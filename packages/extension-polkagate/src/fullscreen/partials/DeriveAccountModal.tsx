@@ -95,9 +95,9 @@ function DeriveModal ({ parentAddress, setDisplayPopup }: Props): React.ReactEle
     <DraggableModal onClose={onClose} open>
       <>
         <SimpleModalTitle
+          icon='vaadin:road-branch'
           onClose={onClose}
           title={t('Derive Account')}
-          vaadinIcon='road-branch'
         />
         <Typography fontSize='14px' fontWeight={300} m='25px auto' textAlign='left'>
           {t<string>('A derived account inherits the recovery phrase from its parent, but has a unique derivation path.')}
@@ -116,7 +116,6 @@ function DeriveModal ({ parentAddress, setDisplayPopup }: Props): React.ReactEle
           <CreateNewDerivedAccount
             address={account.address}
             derivedAccountName={name}
-            genesisHash={parentAccount?.genesisHash}
             isBusy={isBusy}
             onBackClick={onBackClick}
             onCreate={onCreate}

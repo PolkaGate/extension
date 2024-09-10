@@ -33,6 +33,8 @@ export function isValidAddress (_address: string | undefined): boolean {
 
     return true;
   } catch (error) {
+    console.log(error);
+
     return false;
   }
 }
@@ -104,18 +106,20 @@ export function getSubstrateAddress (address: AccountId | string | null | undefi
     return undefined;
   }
 
-  let publicKey;
+  let substrateAddress;
 
   // eslint-disable-next-line no-useless-catch
   try {
-    publicKey = decodeAddress(address, true);
+    const publicKey = decodeAddress(address, true);
+
+    substrateAddress = encodeAddress(publicKey, 42);
   } catch (e) {
     console.log(e);
 
     return undefined;
   }
 
-  return encodeAddress(publicKey, 42);
+  return substrateAddress;
 }
 
 export const accountName = (accounts: AccountJson[], address: string | undefined): string | undefined => {

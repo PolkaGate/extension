@@ -5,10 +5,12 @@
 
 import DoneIcon from '@mui/icons-material/Done';
 import { Divider, Grid, IconButton, Popover, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { InputWithLabel, MenuItem, VaadinIcon } from '../../../components';
+import { AccountContext, InputWithLabel, MenuItem, VaadinIcon } from '../../../components';
+import { getStorage, setStorage } from '../../../components/Loading';
 import { useInfo, useIsExtensionPopup, useProfiles, useTranslation } from '../../../hooks';
+import { PROFILE_TAGS } from '../../../hooks/useProfileAccounts';
 import { updateMeta } from '../../../messaging';
 
 interface Props {
@@ -183,15 +185,23 @@ enum STATUS {
 function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
-  const isExtensionMode = useIsExtensionPopup();
 
+  const isExtensionMode = useIsExtensionPopup();
   const { account } = useInfo(address);
+  const { accounts } = useContext(AccountContext);
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | HTMLDivElement | null>();
   const [status, setStatus] = useState<STATUS>();
   const [showName, setShowName] = useState<boolean>();
+  const [currentProfile, setCurrentProfile] = useState<string>();
 
   const profileNames = account?.profile ? account.profile.split(',') : undefined;
+
+  useEffect(() => {
+    getStorage('profile').then((res) => {
+      setCurrentProfile(res as string);
+    }).catch(console.error);
+  }, []);
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);
@@ -210,22 +220,34 @@ function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<P
   }, []);
 
   const onRemove = useCallback((profileToBeRemoved: string) => {
-    if (!account?.profile) {
+    if (!(address && profileNames && accounts)) {
       return;
     }
 
-    const accountProfiles = account.profile.split(',');
-    const indexToBeRemoved = accountProfiles.findIndex((item) => item === profileToBeRemoved);
+    const accountsWithTheSameProfile = accounts.filter(({ profile }) =>
+      profile?.split(',').includes(profileToBeRemoved)
+    );
 
-    accountProfiles.splice(indexToBeRemoved, 1);
+    const maybeRemainingProfiles = profileNames.filter((profile) => profile !== profileToBeRemoved);
 
-    const metaData = JSON.stringify({ profile: accountProfiles?.length ? accountProfiles.join(',') : null });
+    const metaData = JSON.stringify({
+      profile: maybeRemainingProfiles?.length ? maybeRemainingProfiles.join(',') : null
+    });
 
-    updateMeta(String(address), metaData)
+    updateMeta(address, metaData)
       .then(() => {
-        handleClose();
-      }).catch(console.error);
-  }, [account?.profile, address, handleClose]);
+        const isLastAccountWithTheProfile = accountsWithTheSameProfile.length === 1;
+
+        if (isLastAccountWithTheProfile && currentProfile === profileToBeRemoved) {
+          setStorage('profile', PROFILE_TAGS.ALL)
+            .then(handleClose)
+            .catch(console.error);
+        } else {
+          handleClose();
+        }
+      })
+      .catch(console.error);
+  }, [profileNames, accounts, address, currentProfile, handleClose]);
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover 2' : undefined;

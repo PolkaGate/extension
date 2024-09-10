@@ -49,9 +49,9 @@ export default function RenameModal ({ address, setDisplayPopup }: Props): React
     <DraggableModal onClose={backToAccount} open>
       <>
         <SimpleModalTitle
+          icon='vaadin:edit'
           onClose={backToAccount}
           title={t('Rename Account')}
-          vaadinIcon='edit'
         />
         <NewAddress
           address={address}

@@ -5,12 +5,13 @@
 
 import type { TransactionDetail } from '../../../util/types';
 
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Box, Grid, Typography, useTheme } from '@mui/material';
+import { faHistory, faReceipt } from '@fortawesome/free-solid-svg-icons';
+import { Box, Grid } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { Progress } from '../../../components';
 import { DraggableModal } from '../../../fullscreen/governance/components/DraggableModal';
+import SimpleModalTitle from '../../../fullscreen/partials/SimpleModalTitle';
 import { useInfo, useTranslation } from '../../../hooks';
 import HistoryTabs, { TAB_MAP } from '../HistoryTabs';
 import useTransactionHistory from '../useTransactionHistory';
@@ -24,7 +25,6 @@ interface Props {
 
 export default function HistoryModal ({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   const { chainName, decimal, formatted, token } = useInfo(address);
 
@@ -39,18 +39,11 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
   return (
     <DraggableModal onClose={backToAccount} open>
       <Grid alignItems='center' container justifyContent='center' maxHeight='650px' overflow='hidden'>
-        <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
-          <Grid item>
-            <Typography fontSize='22px' fontWeight={700}>
-              {showDetail
-                ? t('Transaction Detail')
-                : t('History')}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <CloseIcon onClick={backToAccount} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-          </Grid>
-        </Grid>
+        <SimpleModalTitle
+          icon={showDetail ? faReceipt : faHistory}
+          onClose={backToAccount}
+          title= {showDetail ? t('Transaction Detail') : t('History')}
+        />
         {!showDetail &&
           <>
             <HistoryTabs

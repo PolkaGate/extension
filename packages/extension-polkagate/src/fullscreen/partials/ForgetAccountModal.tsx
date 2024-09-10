@@ -104,9 +104,9 @@ export default function ForgetAccountModal ({ account, setDisplayPopup }: Props)
     <DraggableModal onClose={backToAccount} open>
       <>
         <SimpleModalTitle
+          icon='vaadin:file-remove'
           onClose={backToAccount}
           title={t('Forget Account')}
-          vaadinIcon='file-remove'
         />
         {isPasswordError &&
           <WrongPasswordAlert />
