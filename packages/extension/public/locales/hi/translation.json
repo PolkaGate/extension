@@ -1373,5 +1373,8 @@
   "Need": "आवश्यकता",
   "Help?": "मदद चाहिए?",
   "Rewards Destination": "इनाम की मंज़िल",
-  "{{accountName}} has been successfully removed!": "{{accountName}} को सफलतापूर्वक हटा दिया गया है!"
+  "{{accountName}} has been successfully removed!": "{{accountName}} को सफलतापूर्वक हटा दिया गया है!",
+  "Voted Aye": "हाँ में मतदान किया",
+  "Voted Nay": "न में मतदान किया",
+  "Voted Abstain": "मतदान से विरत"
 }

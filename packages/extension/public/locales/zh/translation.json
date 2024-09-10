@@ -1380,5 +1380,8 @@
   "Need": "需要",
   "Help?": "需要帮助吗？",
   "Rewards Destination": "奖励目的地",
-  "{{accountName}} has been successfully removed!": "{{accountName}} 已成功移除！"
+  "{{accountName}} has been successfully removed!": "{{accountName}} 已成功移除！",
+  "Voted Aye": "投票赞成",
+  "Voted Nay": "投票反对",
+  "Voted Abstain": "投票弃权"
 }

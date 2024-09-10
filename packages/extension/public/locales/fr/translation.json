@@ -1376,5 +1376,8 @@
   "Need": "Besoin",
   "Help?": "Besoin d'aide?",
   "Rewards Destination": "Destination des récompenses",
-  "{{accountName}} has been successfully removed!": "{{accountName}} a été supprimé avec succès !"
+  "{{accountName}} has been successfully removed!": "{{accountName}} a été supprimé avec succès !",
+  "Voted Aye": "A voté Oui",
+  "Voted Nay": "A voté Non",
+  "Voted Abstain": "S'est abstenu"
 }
