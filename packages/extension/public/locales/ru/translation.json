@@ -1371,5 +1371,8 @@
   "Need": "Необходимость",
   "Help?": "Нужна помощь?",
   "Rewards Destination": "Место назначения наград",
-  "{{accountName}} has been successfully removed!": "{{accountName}} успешно удален!"
+  "{{accountName}} has been successfully removed!": "{{accountName}} успешно удален!",
+  "Voted Aye": "Проголосовал За",
+  "Voted Nay": "Проголосовал Против",
+  "Voted Abstain": "Воздержался"
 }
