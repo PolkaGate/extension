@@ -127,6 +127,23 @@ const VoteType = ({ comment }: {comment: CommentType | Reply;}) => {
   );
 };
 
+const EditedTag = ({ comment }: {comment: CommentType | Reply;}) => {
+  const { t } = useTranslation();
+  const isEdited = comment.created_at && comment.updated_at && new Date(comment.created_at).getTime() !== new Date(comment.updated_at).getTime();
+
+  if (isEdited) {
+    return (
+      <Grid item ml='10px'>
+        <Typography sx={{ fontSize: '14px', fontWeight: 400, p: '0 10px', textAlign: 'center', textDecoration: 'underline' }}>
+          {t('Edited')}
+        </Typography>
+      </Grid>
+    );
+  } else {
+    return <></>;
+  }
+};
+
 export default function Comment ({ address, comment, noSource }: CommentProps): React.ReactElement {
   const theme = useTheme();
   const { api, chain } = useInfo(address);
