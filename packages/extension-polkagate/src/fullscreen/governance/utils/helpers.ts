@@ -3,7 +3,7 @@
 
 import type { AccountId32 } from '@polkadot/types/interfaces/runtime';
 import type { BN } from '@polkadot/util';
-import type { LatestReferenda, Origins, Referendum, ReferendumPA, ReferendumSb, TopMenu } from './types';
+import type { CommentType, LatestReferenda, Origins, Referendum, ReferendumPA, ReferendumSb, Reply, TopMenu } from './types';
 
 import { postData } from '../../../util/api';
 import { FINISHED_REFERENDUM_STATUSES, TRACK_LIMIT_TO_LOAD_PER_REQUEST } from './consts';
@@ -23,6 +23,85 @@ export interface Statistics {
     'Count': number
   }[],
   'OriginsCount': number
+}
+
+
+interface DataSS {
+  items: CommentItemSS[];
+  page: number;
+  pageSize: number;
+  total: number;
+}
+
+interface VoteSS {
+  account: string;
+  aye: boolean;
+  balance: string;
+  conviction: number;
+  delegations: {
+    votes: string;
+    capital: string;
+  };
+  isDelegating: boolean;
+  isSplit: boolean;
+  isSplitAbstain: boolean;
+  isStandard: boolean;
+  queryAt: number;
+  referendumIndex: number;
+  votes: string;
+}
+
+interface CommentItemSS {
+  author: {
+    username: string;
+    cid: string;
+  };
+  content: string;
+  contentType: string;
+  contentVersion: string;
+  createdAt: string;
+  dataSource: string;
+  height: number;
+  proposer: string;
+  reactions: ReactionSS[];
+  referendaReferendum: string;
+  replies: ReplySS[];
+  updatedAt: string;
+  _id: string;
+}
+
+interface ReplySS {
+  _id: string;
+  referendaReferendum: string;
+  replyToComment: string;
+  content: string;
+  contentType: string;
+  contentVersion: string;
+  author: {
+    username: string;
+    publicKey: string;
+    address: string;
+  };
+  height: number;
+  createdAt: string;
+  updatedAt: string;
+  dataSource: string;
+  cid: string;
+  proposer: string;
+  reactions: ReactionSS[];
+}
+
+interface ReactionSS {
+  _id: string,
+  comment: string,
+  dataSource: string,
+  proposer: string,
+  cid: string,
+  createdAt: string,
+  parentCid: string,
+  reaction: number,
+  updatedAt: string,
+  user: null
 }
 
 export interface VoteType {
@@ -341,4 +420,79 @@ export async function getReferendumsListSb(chainName: string, type: TopMenu, lis
       resolve(null);
     }
   });
+}
+
+/**
+ * Fetches and formats comments for a specific referendum from SubSquare.
+ * @param chainName The name of the blockchain.
+ * @param refId The ID of the referendum.
+ * @returns A promise that resolves to an array of formatted comments or null if an error occurs.
+ */
+export async function getReferendumCommentsSS(chainName: string, refId: string | number): Promise<CommentType[] | null> {
+  // console.log(`Getting comments of ref ${refId} from SS ...`);
+
+  try {
+    // Fetch both comments and votes concurrently
+    const [commentsResponse, votesResponse] = await Promise.all([
+      fetch(`https://${chainName}.subsquare.io/api/gov2/referendums/${refId}/comments`),
+      fetch(`https://${chainName}.subsquare.io/api/gov2/referenda/${refId}/votes`)
+    ]);
+
+    const comments = await commentsResponse.json() as DataSS;
+    const votes = await votesResponse.json() as VoteSS[];
+
+    // Helper function to determine the vote decision
+    const voteInformation = (address: string): string => {
+      const vote = votes.find(({ account }) => account === address);
+
+      if (vote?.aye) {
+        return 'Aye';
+      }
+
+      if (!vote?.aye && (vote?.isSplit || vote?.isSplitAbstain)) {
+        return 'Abstain';
+      }
+
+      return 'Nay';
+    };
+
+    // Format the comments
+    const formattedComments = comments.items.map(({ _id, author, content, createdAt, proposer, reactions, replies, updatedAt }) => ({
+      commentSource: 'SS',
+      comment_reactions: {
+        '👍': { count: reactions.length, usernames: reactions[0]?.user },
+        '👎': { count: 0, usernames: undefined } // SubSquare does not display dislikes
+      },
+      content,
+      created_at: createdAt,
+      id: _id,
+      proposer,
+      // Format replies
+      replies: replies.map(({ _id, author, cid, content, createdAt, proposer, reactions, updatedAt }) => ({
+        commentSource: 'SS',
+        content,
+        created_at: createdAt,
+        id: _id,
+        proposer,
+        reply_reactions: {
+          '👍': { count: reactions.length, usernames: reactions[0]?.user },
+          '👎': { count: 0, usernames: undefined } // SubSquare does not display dislikes
+        },
+        updated_at: updatedAt,
+        user_id: cid,
+        username: author.username
+      } as unknown as Reply)),
+      sentiment: 0,
+      updated_at: updatedAt,
+      user_id: author.cid,
+      username: author.username,
+      votes: [{ decision: voteInformation(proposer) }]
+    } as unknown as CommentType));
+
+    return formattedComments;
+  } catch (error) {
+    console.error('Error in getReferendumCommentsSS:', error);
+
+    return null;
+  }
 }

@@ -127,6 +127,23 @@ const VoteType = ({ comment }: {comment: CommentType | Reply;}) => {
   );
 };
 
+const EditedTag = ({ comment }: {comment: CommentType | Reply;}) => {
+  const { t } = useTranslation();
+  const isEdited = comment.created_at && comment.updated_at && new Date(comment.created_at).getTime() !== new Date(comment.updated_at).getTime();
+
+  if (isEdited) {
+    return (
+      <Grid item ml='10px'>
+        <Typography sx={{ fontSize: '14px', fontWeight: 400, p: '0 10px', textAlign: 'center', textDecoration: 'underline' }}>
+          {t('Edited')}
+        </Typography>
+      </Grid>
+    );
+  } else {
+    return <></>;
+  }
+};
+
 export default function Comment ({ address, comment, noSource }: CommentProps): React.ReactElement {
   const theme = useTheme();
   const { api, chain } = useInfo(address);
@@ -147,13 +164,15 @@ export default function Comment ({ address, comment, noSource }: CommentProps): 
       <Grid item sx={{ color: 'text.disabled', fontSize: '16px', px: '15px' }}>
         {formatRelativeTime(comment.created_at)}
       </Grid>
-      {!noSource &&
+      {
         <Grid item>
           <Typography sx={{ border: `0.01px solid ${theme.palette.text.disabled}`, borderRadius: '30px', fontSize: '14px', fontWeight: 400, p: '0 10px', textAlign: 'center' }}>
-            {'Polkassembly'}
+            {noSource && 'Polkassembly'}
+            {!noSource && 'SubSquare'}
           </Typography>
         </Grid>
       }
+      <EditedTag comment={comment} />
       <Grid item sx={{ pl: '25px' }} xs={12}>
         {comment?.content &&
           <ReactMarkdown
