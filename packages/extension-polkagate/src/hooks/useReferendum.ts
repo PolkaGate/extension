@@ -5,6 +5,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import type { Option, u32, u64 } from '@polkadot/types';
 import type { AssetMetadata } from '@polkadot/types/interfaces';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
+// @ts-ignore
 import type { PalletConvictionVotingTally, PalletReferendaReferendumInfoConvictionVotingTally } from '@polkadot/types/lookup';
 import type { OnchainVotes } from '../fullscreen/governance/utils/getAllVotes';
 import type { Referendum, ReferendumHistory, ReferendumPA, ReferendumSb, TopMenu } from '../fullscreen/governance/utils/types';
