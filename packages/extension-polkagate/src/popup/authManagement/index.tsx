@@ -5,13 +5,13 @@
 
 import type { AuthUrlInfo } from '@polkadot/extension-base/background/types';
 
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { ActionContext, VaadinIcon } from '../../components';
+import { ActionContext } from '../../components';
 import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
+import SimpleModalTitle from '../../fullscreen/partials/SimpleModalTitle';
 import { useIsExtensionPopup, useTranslation } from '../../hooks';
 import { getAuthList } from '../../messaging';
 import { HeaderBrand } from '../../partials';
@@ -57,26 +57,15 @@ const ExtensionMode = ({ dappInfo, onBackClick, setDappInfo }: ExtensionModeType
 
 const FSMode = ({ backToAccountFS, dappInfo, onBackClick, open, setDappInfo }: FSModeType) => {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   return (
     <DraggableModal onClose={backToAccountFS} open={!!open}>
       <Grid container item>
-        <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
-          <Grid alignItems='flex-start' container justifyContent='flex-start' sx={{ width: 'fit-content' }}>
-            <Grid item>
-              <VaadinIcon icon='vaadin:lines-list' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
-            </Grid>
-            <Grid item sx={{ pl: '10px' }}>
-              <Typography fontSize='22px' fontWeight={700}>
-                {t('Manage Website Access')}
-              </Typography>
-            </Grid>
-          </Grid>
-          <Grid item>
-            <CloseIcon onClick={backToAccountFS} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-          </Grid>
-        </Grid>
+        <SimpleModalTitle
+          icon='vaadin:lines-list'
+          onClose={backToAccountFS}
+          title= {t('Manage Website Access')}
+        />
         {dappInfo
           ? <ManageAuthorizedAccounts info={dappInfo} onBackClick={onBackClick} />
           : <ManageAuthorizedDapps backToAccountFS={backToAccountFS} setDappInfo={setDappInfo} />
