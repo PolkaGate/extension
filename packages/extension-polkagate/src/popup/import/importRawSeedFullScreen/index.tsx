@@ -32,7 +32,7 @@ export interface AccountInfo {
   suri: string;
 }
 
-export default function ImportRawSeed(): React.ReactElement {
+export default function ImportRawSeed (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -50,7 +50,7 @@ export default function ImportRawSeed(): React.ReactElement {
 
   const chain = useMetadata(account?.genesis, true);
 
-  const showAddress = useMemo(() => !!(account && account.address), [account]);
+  const showAddress = useMemo(() => !!account?.address, [account]);
 
   useEffect((): void => {
     setGenesis(genesisOptions[1].value as string); // to set the polkadot as the default selected chain
