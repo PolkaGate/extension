@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
+
+const WORST_CASE_DELAY = 10000;
 
 const sleep = (time: number) => {
   return new Promise((resolve) => {
@@ -16,18 +17,17 @@ const timeout = async (ms: number) => {
   return ms;
 };
 
-const fetchApiTime = async (api: ApiPromise | undefined) => {
+const fetchApiTime = async (api: ApiPromise, endpoint:string) => {
   const startTime = Date.now();
 
-  // eslint-disable-next-line no-unmodified-loop-condition
-  while (!api) {
-    await new Promise((resolve) => setTimeout(resolve, 100));
-  }
-
   try {
-    await api.rpc.system.chain();
-  } catch (e) {
-    return 10000;
+    const health = await api.rpc.system.health();
+
+    console.info(`${endpoint} health check:`, health.toHuman());
+  } catch (error) {
+    console.error('Failed to fetch api:', error);
+
+    return WORST_CASE_DELAY;
   }
 
   const endTime = Date.now();
@@ -35,9 +35,7 @@ const fetchApiTime = async (api: ApiPromise | undefined) => {
   return endTime - startTime;
 };
 
-async function CalculateNodeDelay(endpoint: string | undefined) {
-  const TIMEOUT = 10000;
-
+async function CalculateNodeDelay (endpoint: string | undefined) {
   if (!endpoint?.startsWith('wss')) {
     return;
   }
@@ -45,7 +43,7 @@ async function CalculateNodeDelay(endpoint: string | undefined) {
   const wsProvider = new WsProvider(endpoint);
 
   const api = await ApiPromise.create({ provider: wsProvider });
-  const delay = await Promise.any([fetchApiTime(api), timeout(TIMEOUT)]);
+  const delay = await Promise.any([fetchApiTime(api, endpoint), timeout(WORST_CASE_DELAY)]);
 
   return { api, delay };
 }
