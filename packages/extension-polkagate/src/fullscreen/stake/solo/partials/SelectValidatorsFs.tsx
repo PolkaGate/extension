@@ -26,7 +26,7 @@ import ValidatorsTableFS from './ValidatorsTableFS';
 interface Props {
   address: string;
   nominatedValidatorsIds?: string[] | null | undefined;
-  stashId: AccountId | string;
+  stashId: AccountId | string | undefined;
   stakingConsts: StakingConsts | null | undefined;
   staked: BN;
   tableHeight?: number;

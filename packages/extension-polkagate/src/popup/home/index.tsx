@@ -120,7 +120,7 @@ export default function Home (): React.ReactElement {
           }
           <YouHave hideNumbers={hideNumbers} setHideNumbers={setHideNumbers} />
           <ProfileTabs orderedAccounts={accountsOrder} />
-          <Container disableGutters sx={[{ display: 'grid', m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`, overflowY: 'scroll', pb: '5px', px: '4%', rowGap: '7px' }]}>
+          <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`, overflowY: 'scroll', pb: '10px', px: '4%' }]}>
             {initialAccountList.map((json, index): React.ReactNode => (
               <AccountsTree
                 {...json}

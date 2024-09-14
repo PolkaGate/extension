@@ -37,9 +37,9 @@ Currently, the following features are available:
 
 ### Add-on
 
-**FireFox**: The extension for firefox can be downloaded from Firefox add-ons page [here](https://addons.mozilla.org/en-US/firefox/addon/polkagate/)
+<!-- **FireFox**: The extension for firefox can be downloaded from Firefox add-ons page [here](https://addons.mozilla.org/en-US/firefox/addon/polkagate/) -->
 
-**Chrome** and **Microsoft Edge**: The extension for these browsers can be downloaded from [here]( https://chrome.google.com/webstore/detail/polkagate-the-gateway-to/ginchbkmljhldofnbjabmeophlhdldgp)
+**Chrome**, **Microsoft Edge**,  **Brave**, and **Yandex**: The extension for these browsers can be downloaded from [here]( https://chrome.google.com/webstore/detail/polkagate-the-gateway-to/ginchbkmljhldofnbjabmeophlhdldgp)
 
 
 ### Development version

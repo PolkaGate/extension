@@ -97,7 +97,8 @@ export default function LockedInReferendaFS ({ address, price, refreshNeeded, se
               ? `${api.createType('Balance', unlockableAmount).toHuman()} can be unlocked`
               : delegatedBalance && !delegatedBalance.isZero()
                 ? t('Locked as delegated')
-                : timeToUnlock === null ? '' : timeToUnlock}
+                : timeToUnlock === null ? '' : timeToUnlock
+            }
           </Typography>
         </Grid>
         <Grid item m='auto' pl='8px'>

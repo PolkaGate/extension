@@ -1055,7 +1055,6 @@
   "Validators usually pay rewards regularly. If not received within the set period, rewards expire. You can manually initiate the payout if desired.": "आमतौर पर, वैधक नियमित अंतराल पर पुरस्कार भुगतान करते हैं। यदि निर्धारित अवधि के भीतर प्राप्त नहीं किया गया हो, तो पुरस्कार समाप्त हो जाते हैं। आप चाहें तो इच्छित होने पर भुगतान को मैन्युअल रूप से प्रारंभ कर सकते हैं।",
   "Getting pending rewards, please wait ...": "लंबित पुरस्कार प्राप्त किए जा रहे हैं, कृपया प्रतीक्षा करें ...",
   "Would you like to create a password now?": "क्या आप अब पासवर्ड बनाना चाहेंगे?",
-  "Maybe later": "शायद बाद में",
   "Please enter your password to proceed.": "आगे बढ़ने के लिए कृपया अपना पासवर्ड दर्ज करें।",
   "Unlock": "अनलॉक",
   "Forgot password?": "पासवर्ड भूल गए?",
@@ -1366,5 +1365,16 @@
   "Accounts' balances updated!": "खातों का बैलेंस अपडेट किया गया!",
   "The account has been successfully removed!": "खाता सफलतापूर्वक हटा दिया गया है!",
   "The account address, formatted for {{chainName}}, has been copied to the clipboard!": "खाते का पता, {{chainName}} के लिए स्वरूपित किया गया, क्लिपबोर्ड पर कॉपी कर लिया गया है!",
-  "The transaction has been finalized!": "लेनदेन को अंतिम रूप दे दिया गया है!"
+  "The transaction has been finalized!": "लेनदेन को अंतिम रूप दे दिया गया है!",
+  "Delegation status": "प्रतिनिधित्व की स्थिति",
+  "Accounts in the {{profileName}} profile are now {{visibility}} websites.": "{{profileName}} प्रोफ़ाइल में खाते अब {{visibility}} वेबसाइट्स हैं।",
+  "{{accountName}} default chain switched to {{chainName}}.": "{{accountName}} की डिफ़ॉल्ट चेन {{chainName}} में बदल दी गई है।",
+  "Social Media": "सोशल मीडिया",
+  "Need": "आवश्यकता",
+  "Help?": "मदद चाहिए?",
+  "Rewards Destination": "इनाम की मंज़िल",
+  "{{accountName}} has been successfully removed!": "{{accountName}} को सफलतापूर्वक हटा दिया गया है!",
+  "Voted Aye": "हाँ में मतदान किया",
+  "Voted Nay": "न में मतदान किया",
+  "Voted Abstain": "मतदान से विरत"
 }

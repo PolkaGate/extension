@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -21,14 +20,14 @@ interface Props {
   address?: string;
 }
 
-export default function ActiveValidators({ address }: Props): React.ReactElement {
+export default function ActiveValidators ({ address }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);
-  const isValidator = useIsValidator(address as string);
+  const isValidator = useIsValidator(address);
 
-  const { activeValidators, nonActiveValidators } = useActiveValidators(address as string);
-  const stakingConsts = useStakingConsts(address as string);
+  const { activeValidators, nonActiveValidators } = useActiveValidators(address);
+  const stakingConsts = useStakingConsts(address);
   const [showDetails, setShowDetails] = useState<boolean>();
 
   const SKELETON_COUNT = 4;
@@ -43,7 +42,7 @@ export default function ActiveValidators({ address }: Props): React.ReactElement
         <FontAwesomeIcon
           color={`${theme.palette.text.primary}`}
           icon={faRunning}
-          style={{ height: '20px', width: '20px', marginRight: '10px' }}
+          style={{ height: '20px', marginRight: '10px', width: '20px' }}
         />
         <Typography color={'text.primary'} fontSize='18px' fontWeight={500}>
           {activeValidators?.length && activeValidators.length > 1 ? t('Active validators') : t('Active validator')}
@@ -58,10 +57,10 @@ export default function ActiveValidators({ address }: Props): React.ReactElement
                   accountInfo={v.accountInfo}
                   allInOneRow={false}
                   api={api}
-                  chain={chain as any}
+                  chain={chain}
                   decimal={decimal}
                   isActive={true}
-                  isOversubscribed={(v as any).isOversubscribed}
+                  isOversubscribed={v.isOversubscribed}
                   stakingConsts={stakingConsts}
                   token={token}
                   v={v}
@@ -78,10 +77,10 @@ export default function ActiveValidators({ address }: Props): React.ReactElement
                         accountInfo={v.accountInfo}
                         allInOneRow={false}
                         api={api}
-                        chain={chain as any}
+                        chain={chain}
                         decimal={decimal}
                         isActive={true}
-                        isOversubscribed={(v as any).isOversubscribed}
+                        isOversubscribed={v.isOversubscribed}
                         stakingConsts={stakingConsts}
                         token={token}
                         v={v}

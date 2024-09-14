@@ -8,10 +8,10 @@ import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Grid } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useRef,useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useProfiles } from '../../../hooks';
-import ProfileTab from './ProfileTab';
+import ProfileTabFullScreen from './ProfileTabFullScreen';
 
 interface Props {
   orderedAccounts: AccountsOrder[] | undefined;
@@ -19,7 +19,7 @@ interface Props {
 
 export const HIDDEN_PERCENT = '50%';
 
-export default function ProfileTabs ({ orderedAccounts }: Props): React.ReactElement {
+export default function ProfileTabsFullScreen ({ orderedAccounts }: Props): React.ReactElement {
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
 
   const [selectedProfile, setSelectedProfile] = useState<string>();
@@ -35,7 +35,7 @@ export default function ProfileTabs ({ orderedAccounts }: Props): React.ReactEle
     }
 
     return defaultProfiles.concat(userDefinedProfiles);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultProfiles.length, userDefinedProfiles.length]);
 
   const onMouseEnter = useCallback(() => setIsHovered(true), []);
@@ -98,7 +98,7 @@ export default function ProfileTabs ({ orderedAccounts }: Props): React.ReactEle
       >
         {
           profilesToShow.map((profile, index) => (
-            <ProfileTab
+            <ProfileTabFullScreen
               index={index}
               isHovered={isHovered}
               key={index}

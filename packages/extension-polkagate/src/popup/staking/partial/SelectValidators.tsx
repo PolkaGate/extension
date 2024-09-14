@@ -19,7 +19,7 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Checkbox2, Infotip, InputFilter, Motion, PButton, Popup, Progress } from '../../../components';
-import { useChain, useDecimal, useToken, useTranslation, useValidators, useValidatorsIdentities } from '../../../hooks';
+import { useInfo, useTranslation, useValidators, useValidatorsIdentities } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import { DEFAULT_FILTERS, SYSTEM_SUGGESTION_TEXT } from '../../../util/constants';
 import { getComparator } from '../partial/comparators';
@@ -30,7 +30,7 @@ interface Props {
   address: string;
   validatorsIdentities?: DeriveAccountInfo[] | null | undefined;
   validatorsInfo?: AllValidators;
-  api: ApiPromise;
+  api: ApiPromise | undefined;
   nominatedValidatorsIds?: string[] | AccountId[] | null | undefined;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
@@ -43,12 +43,10 @@ interface Props {
   setShowReview: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function SelectValidators({ address, api, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, setShow, setShowReview, show, staked, stakingConsts, stashId, title, validatorsIdentities, validatorsInfo }: Props): React.ReactElement {
+export default function SelectValidators ({ address, api, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, setShow, setShowReview, show, staked, stakingConsts, stashId, title, validatorsIdentities, validatorsInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const token = useToken(address);
-  const decimal = useDecimal(address);
-  const chain = useChain(address);
+  const { chain, decimal, token } = useInfo(address);
 
   const allValidatorsInfo = useValidators(address, validatorsInfo);
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
@@ -253,6 +251,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
               pt='125px'
               size={125}
               title={t('Loading the validators\' list ...')}
+              type='grid'
             />
             : <>
               <Grid container sx={{ justifyContent: 'flex-start', px: '15px' }}>
@@ -328,6 +327,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
                 }
               </Grid>
               <PButton
+                // eslint-disable-next-line react/jsx-no-bind
                 _onClick={() => setShowReview(true)}
                 disabled={!newSelectedValidators?.length}
                 text={t<string>('Next')}

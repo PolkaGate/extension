@@ -1063,7 +1063,6 @@
   "Validators usually pay rewards regularly. If not received within the set period, rewards expire. You can manually initiate the payout if desired.": "验证器通常会定期支付奖励。如果在设定的期限内未收到，奖励将过期。如果需要，您可以手动发起支付。",
   "Getting pending rewards, please wait ...": "获取待处理奖励，请稍候...",
   "Would you like to create a password now?": "您是否想现在设置密码？",
-  "Maybe later": "以后再说",
   "Please enter your password to proceed.": "请输入密码以继续。",
   "Unlock": "解锁",
   "Forgot password?": "忘记密码？",
@@ -1373,5 +1372,16 @@
   "Accounts' balances updated!": "账户余额已更新！",
   "The account has been successfully removed!": "账户已成功移除！",
   "The account address, formatted for {{chainName}}, has been copied to the clipboard!": "账户地址已根据{{chainName}}格式化并复制到剪贴板！",
-  "The transaction has been finalized!": "交易已完成！"
+  "The transaction has been finalized!": "交易已完成！",
+  "Delegation status": "委托状态",
+  "Accounts in the {{profileName}} profile are now {{visibility}} websites.": "{{profileName}} 档案中的账户现在是 {{visibility}} 网站。",
+  "{{accountName}} default chain switched to {{chainName}}.": "{{accountName}} 的默认链已切换到 {{chainName}}。",
+  "Social Media": "社交媒体",
+  "Need": "需要",
+  "Help?": "需要帮助吗？",
+  "Rewards Destination": "奖励目的地",
+  "{{accountName}} has been successfully removed!": "{{accountName}} 已成功移除！",
+  "Voted Aye": "投票赞成",
+  "Voted Nay": "投票反对",
+  "Voted Abstain": "投票弃权"
 }

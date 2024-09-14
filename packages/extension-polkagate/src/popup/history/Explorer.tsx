@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -12,11 +11,11 @@ import getLogo from '../../util/getLogo';
 
 interface Props {
   chainName: string;
-  txHash: string;
+  txHash?: string;
   formatted?: string;
 }
 
-function getLink(chainName: string, explorer: 'subscan' | 'polkaholic' | 'statscan', type: 'account' | 'extrinsic', data: string): string {
+function getLink (chainName: string, explorer: 'subscan' | 'polkaholic' | 'statscan', type: 'account' | 'extrinsic', data: string): string {
   if (type === 'extrinsic') {
     const mayBeTheFirstPartOfChain = chainName?.split(' ')?.[0];
     const chainNameWithoutSpace = chainName?.replace(/\s/g, '');
@@ -28,15 +27,19 @@ function getLink(chainName: string, explorer: 'subscan' | 'polkaholic' | 'statsc
         }
 
         return 'https://' + mayBeTheFirstPartOfChain + '.subscan.io/extrinsic/' + String(data); // data here is txHash
+
       case 'polkaholic':
         return 'https://' + mayBeTheFirstPartOfChain + '.polkaholic.io/tx/' + String(data);
+
       case 'statscan':
         return 'https://westmint.statescan.io/#/accounts/' + String(data); // NOTE, data here is formatted address
     }
   }
+
+  return '';
 }
 
-export default function Explorer({ chainName, formatted, txHash }: Props): React.ReactElement {
+export default function Explorer ({ chainName, formatted, txHash }: Props): React.ReactElement {
   const theme = useTheme();
   const [explorer, setExplorer] = useState<{ name: string, link: string }>();
 
@@ -56,7 +59,7 @@ export default function Explorer({ chainName, formatted, txHash }: Props): React
 
   return (
     <Link href={`${explorer?.link}`} rel='noreferrer' target='_blank' underline='none'>
-      <Avatar src={getLogo(explorer?.name)} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(explorer?.name) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 40, width: 40 }} variant='square' />
+      <Avatar src={getLogo(explorer?.name)} sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(explorer?.name || '') && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 40, width: 40 }} variant='square' />
     </Link>
 
   );

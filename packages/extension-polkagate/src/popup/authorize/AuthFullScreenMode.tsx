@@ -7,14 +7,14 @@ import type { AuthorizeRequest } from '@polkadot/extension-base/background/types
 
 import { KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon } from '@mui/icons-material';
 import { Avatar, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { AccountContext, AccountsTable, ActionContext, TwoButtons, VaadinIcon, Warning } from '../../components';
 import { FullScreenHeader } from '../../fullscreen/governance/FullScreenHeader';
 import { useFavIcon, useFullscreen, useTranslation } from '../../hooks';
-import { approveAuthRequest, ignoreAuthRequest } from '../../messaging';
+import { approveAuthRequest, getAuthList, ignoreAuthRequest } from '../../messaging';
 import { areArraysEqual, extractBaseUrl } from '../../util/utils';
 
 interface Props {
@@ -28,15 +28,36 @@ function AuthFullScreenMode ({ onNextAuth, onPreviousAuth, requestIndex, request
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-  const { accounts } = useContext(AccountContext);
+
   const onAction = useContext(ActionContext);
+  const { accounts } = useContext(AccountContext);
+
+  const url = requests[requestIndex].url;
+  const faviconUrl = useFavIcon(url);
 
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
+  const [alreadySelectedAccounts, setAlreadySelectedAccounts] = useState<string[]>([]);
 
-  const faviconUrl = useFavIcon(requests[requestIndex].url);
 
   const allAccounts = useMemo(() => accounts.map(({ address }) => address), [accounts]);
   const areAllCheck = useMemo(() => areArraysEqual([allAccounts, selectedAccounts]), [allAccounts, selectedAccounts]);
+
+  useEffect(() => {
+    getAuthList()
+      .then(({ list: authList }) => {
+        const dappURL = extractBaseUrl(url);
+
+        const availableDapp = Object.values(authList).find(({ url }) => dappURL === extractBaseUrl(url));
+
+        if (availableDapp) {
+          const alreadySelectedAccounts = availableDapp.authorizedAccounts ?? [];
+
+          setSelectedAccounts(alreadySelectedAccounts);
+          setAlreadySelectedAccounts(alreadySelectedAccounts);
+        }
+      })
+      .catch(console.error);
+  }, [url]);
 
   const onApprove = useCallback((): void => {
     approveAuthRequest(selectedAccounts, requests[requestIndex].id)
@@ -44,11 +65,15 @@ function AuthFullScreenMode ({ onNextAuth, onPreviousAuth, requestIndex, request
       .catch((error: Error) => console.error(error));
   }, [onAction, requestIndex, requests, selectedAccounts]);
 
-  const onReject = useCallback((): void => {
-    ignoreAuthRequest(requests[requestIndex].id)
-      .then(() => onAction())
+  const onIgnore = useCallback((): void => {
+    const id = requests[requestIndex].id;
+
+    (alreadySelectedAccounts.length
+      ? approveAuthRequest(alreadySelectedAccounts, id)
+      : ignoreAuthRequest(id)
+    ).then(() => onAction())
       .catch((error: Error) => console.error(error));
-  }, [onAction, requestIndex, requests]);
+  }, [alreadySelectedAccounts, onAction, requestIndex, requests]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
@@ -93,7 +118,7 @@ function AuthFullScreenMode ({ onNextAuth, onPreviousAuth, requestIndex, request
               variant='circular'
             />
             <span style={{ fontSize: '15px', fontWeight: 400, overflowWrap: 'anywhere' }}>
-              {extractBaseUrl(requests[requestIndex].url)}
+              {extractBaseUrl(url)}
             </span>
           </Grid>
           <Grid container item sx={{ marginBottom: '15px', marginTop: '10px' }}>
@@ -121,9 +146,9 @@ function AuthFullScreenMode ({ onNextAuth, onPreviousAuth, requestIndex, request
                 disabled={selectedAccounts.length === 0}
                 mt='15px'
                 onPrimaryClick={onApprove}
-                onSecondaryClick={onReject}
+                onSecondaryClick={onIgnore}
                 primaryBtnText={t('Allow')}
-                secondaryBtnText={t('Reject')}
+                secondaryBtnText={t('Ignore')}
               />
             </Grid>
           </Grid>

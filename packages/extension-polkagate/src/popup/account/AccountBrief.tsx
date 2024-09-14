@@ -1,6 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -27,7 +27,7 @@ interface Props {
   showDivider?: boolean;
 }
 
-function AccountBrief({ address, identity, showDivider = true, showName = true }: Props): React.ReactElement<Props> {
+function AccountBrief ({ address, identity, showDivider = true, showName = true }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { account, chainName, formatted } = useInfo(address);
   const history = useHistory();
@@ -40,7 +40,7 @@ function AccountBrief({ address, identity, showDivider = true, showName = true }
     });
   }, [history, address, pathname]);
 
-  const subscanLink = useCallback((address: string) => {
+  const subscanLink = useCallback((address?: string) => {
     if (chainName === 'WestendAssetHub') {
       return `https://westmint.statescan.io/#/accounts/${String(address)}`;
     }
@@ -72,16 +72,16 @@ function AccountBrief({ address, identity, showDivider = true, showName = true }
         </Grid>
         <Grid alignItems='center' container item justifyContent='space-around' width='16%'>
           <Infotip placement='top' text={t('Receive')}>
-            <QrCode2 onClick={goToReceive} sx={{ color: 'secondary.light', mt: '9px', mr: '4px', cursor: 'pointer' }} />
+            <QrCode2 onClick={goToReceive} sx={{ color: 'secondary.light', cursor: 'pointer', mr: '4px', mt: '9px' }} />
           </Infotip>
           <Infotip placement='top' text={t('Subscan')}>
             <Link
-              href={`${subscanLink(formatted as string)}`}
+              href={`${subscanLink(formatted)}`}
               rel='noreferrer'
               target='_blank'
               underline='none'
             >
-              <Box alt={'subscan'} component='img' height='20px' mt='9px' src={subscan} width='20px' />
+              <Box alt={'subscan'} component='img' height='20px' mt='9px' src={subscan as string} width='20px' />
             </Link>
           </Infotip>
         </Grid>

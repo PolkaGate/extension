@@ -35,10 +35,10 @@ interface Props {
   allValidatorsIdentities: DeriveAccountInfo[] | null | undefined
   api: ApiPromise | undefined;
   newSelectedValidators: ValidatorInfo[]
-  poolId?: BN;
+  poolId?: BN | number;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
-  stakingConsts: StakingConsts | undefined;
+  stakingConsts: StakingConsts | null | undefined;
   staked: BN;
 }
 

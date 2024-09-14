@@ -1,24 +1,25 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Reply } from '../utils/types';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { useTranslation } from '../../../hooks';
-import { Reply } from '../utils/types';
 import CommentView from './Comment';
 
-export default function Replies({ address, replies }: { address: string | undefined, replies: Reply[] }): React.ReactElement {
+export default function Replies ({ address, replies }: { address: string | undefined, replies: Reply[] }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const [expanded, setExpanded] = React.useState(false);
 
   return (
     <Grid container sx={{ borderLeft: `2px solid ${theme.palette.text.disabled}`, mb: '20px', ml: '25px' }}>
+      {/* eslint-disable-next-line react/jsx-no-bind */}
       <Grid alignItems='center' container height='35px' justifyContent='flex-start' onClick={() => setExpanded(!expanded)}>
         <Grid item sx={{ px: '8px', width: 'fit-content' }}>
           <Typography>

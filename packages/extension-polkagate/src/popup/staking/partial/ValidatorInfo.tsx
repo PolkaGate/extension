@@ -1,19 +1,20 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { ApiPromise } from '@polkadot/api';
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { ValidatorInfo } from '@polkadot/extension-polkagate/util/types';
+import type { Balance } from '@polkadot/types/interfaces';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Avatar, Grid, IconButton, Link, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
-import type { Chain } from '@polkadot/extension-chains/types';
-
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
-import { BN } from '@polkadot/util';
+import { BN, hexToBn, isHex } from '@polkadot/util';
 
 import { Identity, Label, ShowBalance, SlidePopUp } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -27,22 +28,23 @@ interface Props {
   isFullscreen?: boolean;
   staked: BN | undefined;
   showValidatorInfo: boolean;
-  validatorInfo?: DeriveStakingQuery;
+  validatorInfo?: ValidatorInfo;
   validatorsIdentities?: DeriveAccountInfo[] | null;
   setShowValidatorInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ValidatorInfoPage({ api, chain, isFullscreen, setShowValidatorInfo, showValidatorInfo, staked, stakerAddress, validatorInfo, validatorsIdentities }: Props): React.ReactElement<Props> {
+export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowValidatorInfo, showValidatorInfo, staked, stakerAddress, validatorInfo, validatorsIdentities }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [accountInfo, setAccountInfo] = useState<DeriveAccountInfo | undefined>();
 
   const chainName = sanitizeChainName(chain?.name);
 
-  const sortedNominators = validatorInfo?.exposure?.others?.sort((a, b) => b.value - a.value);
+  const _hexToBn = (value: BN) => new BN(isHex(value) ? hexToBn(value) : String(value));
+  const sortedNominators = validatorInfo?.exposure?.others?.sort((a, b) => _hexToBn(b.value).sub(_hexToBn(a.value)).isNeg() ? -1 : 1);
   const own = api.createType('Balance', validatorInfo?.exposure?.own || validatorInfo?.stakingLedger?.active);
-  const total = api.createType('Balance', validatorInfo?.exposure?.total || 1);
+  const total = api.createType('Balance', validatorInfo?.exposure?.total || 1) as Balance;
   const commission = Number(validatorInfo?.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo?.validatorPrefs.commission) / (10 ** 7);
-  const myIndex = sortedNominators?.findIndex((n) => n.who.toString() === stakerAddress);
+  const myIndex = sortedNominators?.findIndex((n) => n.who.toString() === stakerAddress) ?? -1;
   const myPossibleIndex = useMemo(() => {
     if (staked && myIndex === -1 && sortedNominators) {
       const index = sortedNominators.findIndex((n) => isHexToBn(String(n.value)).lt(staked));
@@ -74,7 +76,7 @@ export default function ValidatorInfoPage({ api, chain, isFullscreen, setShowVal
     <Grid container direction='column' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', m: '20px auto', p: '10px', pb: '5px', width: '92%' }}>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderColor: 'secondary.main', mb: '5px', pb: '2px' }}>
         <Grid item lineHeight={1} maxWidth='85%' width='fit-content'>
-          <Identity accountInfo={accountInfo} address={validatorInfo?.accountId} api={api} chain={chain as any} formatted={validatorInfo?.accountId?.toString()} identiconSize={25} style={{ fontSize: '16px' }} withShortAddress />
+          <Identity accountInfo={accountInfo} address={validatorInfo?.accountId} api={api} chain={chain} formatted={validatorInfo?.accountId?.toString()} identiconSize={25} style={{ fontSize: '16px' }} withShortAddress />
         </Grid>
         <Grid item width='15%'>
           <Link
@@ -101,7 +103,7 @@ export default function ValidatorInfoPage({ api, chain, isFullscreen, setShowVal
             </Typography>
             <ShowBalance
               api={api}
-              balance={own}
+              balance={own as Balance}
               decimalPoint={4}
               height={22}
             />
@@ -149,7 +151,7 @@ export default function ValidatorInfoPage({ api, chain, isFullscreen, setShowVal
   const stakedValue = (value: string) => {
     const valueToShow = api.createType('Balance', value);
 
-    return valueToShow;
+    return valueToShow as Balance;
   };
 
   const percent = (value: string) => {
@@ -169,7 +171,7 @@ export default function ValidatorInfoPage({ api, chain, isFullscreen, setShowVal
     >
       <Grid container direction='column' display='block' item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: parent.innerHeight * 1 / 2, overflowY: 'scroll' }}>
         {sortedNominators?.length
-          ? (<>
+          ? <>
             <Grid container item sx={{ '> :last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
               <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='50%'>
                 <Typography fontSize='12px' fontWeight={300} lineHeight='30px'>
@@ -190,7 +192,7 @@ export default function ValidatorInfoPage({ api, chain, isFullscreen, setShowVal
             {sortedNominators?.map(({ value, who }, index) => (
               <Grid container item key={index} sx={{ '> :last-child': { border: 'none' }, bgcolor: index === myIndex ? 'rgba(153, 0, 79, 0.4)' : 'transparent', borderBottom: '1px solid', borderBottomColor: 'secondary.main', lineHeight: '40px' }}>
                 <Grid container item justifyContent='flex-start' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main', pl: '10px' }} width='50%'>
-                  <Identity api={api} chain={chain as any} formatted={who.toString()} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: '16px' }} />
+                  <Identity api={api} chain={chain} formatted={who.toString()} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: '16px' }} />
                 </Grid>
                 <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='30%'>
                   <ShowBalance
@@ -206,10 +208,9 @@ export default function ValidatorInfoPage({ api, chain, isFullscreen, setShowVal
               </Grid>
             ))}
           </>
-          )
-          : (<Typography fontSize='16px' fontWeight={400} m='auto' py='20px' textAlign='center' width='92%'>
+          : <Typography fontSize='16px' fontWeight={400} m='auto' py='20px' textAlign='center' width='92%'>
             {t('The list of nominators is not available to be displayed as this validator is in the waiting status.')}
-          </Typography>)
+          </Typography>
         }
       </Grid>
     </Label>
@@ -228,9 +229,9 @@ export default function ValidatorInfoPage({ api, chain, isFullscreen, setShowVal
         onClick={onClose}
         sx={{
           left: isFullscreen ? undefined : '15px',
-          right: isFullscreen ? '35px' : undefined,
           p: 0,
           position: 'absolute',
+          right: isFullscreen ? '35px' : undefined,
           top: isFullscreen ? '35px' : '65px'
         }}
       >

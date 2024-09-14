@@ -32,12 +32,14 @@ export function isValidAddress (_address: string | undefined): boolean {
     );
 
     return true;
-  } catch (_error) {
+  } catch (error) {
+    console.log(error);
+
     return false;
   }
 }
 
-export function fixFloatingPoint(_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean): string {
+export function fixFloatingPoint (_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean): string {
   // make number positive if it is negative
   const sNumber = Number(_number) < 0 ? String(-Number(_number)) : String(_number);
 
@@ -104,18 +106,20 @@ export function getSubstrateAddress (address: AccountId | string | null | undefi
     return undefined;
   }
 
-  let publicKey;
+  let substrateAddress;
 
   // eslint-disable-next-line no-useless-catch
   try {
-    publicKey = decodeAddress(address, true);
+    const publicKey = decodeAddress(address, true);
+
+    substrateAddress = encodeAddress(publicKey, 42);
   } catch (e) {
     console.log(e);
 
     return undefined;
   }
 
-  return encodeAddress(publicKey, 42);
+  return substrateAddress;
 }
 
 export const accountName = (accounts: AccountJson[], address: string | undefined): string | undefined => {
@@ -286,7 +290,7 @@ export function formatMeta (meta?: Meta): string[] | null {
   return parts;
 }
 
-export function toShortAddress (address: string | AccountId, count = SHORT_ADDRESS_CHARACTERS): string {
+export function toShortAddress (address?: string | AccountId, count = SHORT_ADDRESS_CHARACTERS): string {
   address = String(address);
 
   return `${address.slice(0, count)}...${address.slice(-1 * count)}`;
