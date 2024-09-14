@@ -42,7 +42,6 @@ const apiReducer = (state: ApiState, action: ApiAction): ApiState => {
   }
 };
 
-// Create a singleton EndpointManager
 const endpointManager = new EndpointManager();
 
 export default function useApi (address: AccountId | string | undefined, stateApi?: ApiPromise, _endpoint?: string, _genesisHash?: string): ApiPromise | undefined {
@@ -133,7 +132,7 @@ export default function useApi (address: AccountId | string | undefined, stateAp
     });
 
     apisContext.apis[genesisHash] = toSaveApi;
-    apisContext.setIt(apisContext.apis);
+    apisContext.setIt({ ...apisContext.apis });
   }, [apisContext]);
 
   // Connects to a specific WebSocket endpoint and creates a new API instance
@@ -238,24 +237,20 @@ export default function useApi (address: AccountId | string | undefined, stateAp
     toSaveApi.push({ endpoint, isRequested: true });
 
     apisContext.apis[chainGenesisHash] = toSaveApi;
-    apisContext.setIt(apisContext.apis);
+    apisContext.setIt({ ...apisContext.apis });
   }, [address, apisContext, apisContext.apis, chainGenesisHash, checkForNewOne, connectToEndpoint, endpoint, handleAutoMode, handleNewApi, state.api, state.isLoading]);
 
   useEffect(() => {
-    // Set up a polling interval to check for a connected API every 1 second
-    const pollingInterval = setInterval(() => {
-      // Find the saved API for the current chain and endpoint
-      const savedApi = apisContext?.apis[chainGenesisHash ?? '']?.find((sApi) => sApi.endpoint === endpoint);
+    if (!chainGenesisHash || !apisContext?.apis[chainGenesisHash]) {
+      return;
+    }
 
-      // If the saved API is connected, update the state and clear the polling interval
-      if (savedApi?.api?.isConnected) {
-        dispatch({ payload: savedApi.api, type: 'SET_API' });
-        clearInterval(pollingInterval);
-      }
-    }, 500);
+    const savedApi = apisContext.apis[chainGenesisHash].find((sApi) => sApi.endpoint === endpoint);
 
-    return () => clearInterval(pollingInterval);
-  }, [apisContext, apisContext.apis, chainGenesisHash, endpoint]);
+    if (savedApi?.api?.isConnected) {
+      dispatch({ payload: savedApi.api, type: 'SET_API' });
+    }
+  }, [apisContext.apis, chainGenesisHash, endpoint]);
 
   return state.api;
 }
