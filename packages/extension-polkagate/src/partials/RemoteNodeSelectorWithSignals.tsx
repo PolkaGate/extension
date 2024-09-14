@@ -22,17 +22,21 @@ interface Props {
   iconSize?: number;
 }
 
-interface ApiDelay { fetchedApi: ApiPromise | null | undefined, fetchedDelay: number | undefined }
+interface ApiDelay {
+  api: ApiPromise | null | undefined;
+  delay: number | undefined;
+}
 
 type EndpointsDelay = { name: string, delay: number | null | undefined, value: string }[];
 
-const endpointManager = new EndpointManager();
-
+const DELAY_CHECK_INTERVAL = 30000;
 const SIGNAL_COLORS = {
   green: '#1F7720',
   orange: '#FF5722',
   red: '#C70000'
 };
+
+const endpointManager = new EndpointManager();
 
 const NodeStatusIcon = ({ defaultColor, iconSize = 35, ms, position }: { defaultColor: string, ms: number | null | undefined, iconSize?: number, position?: 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky' | 'unset'}) => {
   return (
@@ -94,13 +98,14 @@ interface NodesListProps {
   endpointsDelay: EndpointsDelay | undefined, setCurrentDelay: React.Dispatch<React.SetStateAction<number | undefined>>;
   currentDelay: number | undefined;
   address?: string, calculateAndSetDelay: () => void;
-  fetchedApiAndDelay: ApiDelay | undefined;
+  fetchedApiDelay: ApiDelay | undefined;
 }
 
-const NodesList = ({ address, calculateAndSetDelay, currentDelay, defaultColor, endpointsDelay, fetchedApiAndDelay, setCurrentDelay, setEndpointsDelay }: NodesListProps) => {
+const NodesList = ({ address, calculateAndSetDelay, currentDelay, defaultColor, endpointsDelay, fetchedApiDelay, setCurrentDelay, setEndpointsDelay }: NodesListProps) => {
   const theme = useTheme();
 
   const { genesisHash } = useInfo(address);
+  const endpointOptions = useEndpoints(genesisHash);
   const { endpoint: endpointUrl, isOnManual } = useEndpoint(address);
 
   const [api, setApi] = useState<ApiPromise | null | undefined>(null);
@@ -114,23 +119,20 @@ const NodesList = ({ address, calculateAndSetDelay, currentDelay, defaultColor, 
 
   // Set up the interval when the component mounts
   useEffect(() => {
-    const intervalId = setInterval(calculateAndSetDelay, 60000);
+    const intervalId = setInterval(calculateAndSetDelay, DELAY_CHECK_INTERVAL);
 
-    // Clean up the interval when the component unmounts
     return () => {
       clearInterval(intervalId);
     };
-  }, [api, calculateAndSetDelay]);
+  }, [calculateAndSetDelay]);
 
   useEffect(() => {
     // @ts-ignore
-    if (fetchedApiAndDelay?.fetchedApi && fetchedApiAndDelay.fetchedApi?._options?.provider?.endpoint === endpointUrl) {
-      setApi(fetchedApiAndDelay.fetchedApi);
-      setCurrentDelay(fetchedApiAndDelay.fetchedDelay);
+    if (fetchedApiDelay?.api && fetchedApiDelay.api?._options?.provider?.endpoint === endpointUrl) {
+      setApi(fetchedApiDelay.api);
+      setCurrentDelay(fetchedApiDelay.delay);
     }
-  }, [endpointUrl, fetchedApiAndDelay, setCurrentDelay]);
-
-  const endpointOptions = useEndpoints(genesisHash);
+  }, [endpointUrl, fetchedApiDelay, setCurrentDelay]);
 
   const sanitizedCurrentEndpointName = useMemo(() => {
     const currentEndpointName = endpointOptions.find((endpoint) => endpoint.value === endpointUrl)?.text;
@@ -255,39 +257,39 @@ const ListIndicator = ({ currentDelay, defaultColor, endpointUrl, iconSize, id, 
 
 function RemoteNodeSelectorWithSignals ({ address, iconSize = 35 }: Props): React.ReactElement {
   const theme = useTheme();
-  const { endpoint: endpointUrl } = useEndpoint(address);
+  const { endpoint } = useEndpoint(address);
 
   const [currentDelay, setCurrentDelay] = useState<number | undefined>();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const [endpointsDelay, setEndpointsDelay] = useState<EndpointsDelay>();
-  const [fetchedApiAndDelay, setFetchedApiAndDelay] = useState<ApiDelay>();
+  const [fetchedApiDelay, setFetchedApiDelay] = useState<ApiDelay>();
 
   const isDark = theme.palette.mode === 'dark';
   const DEFAULT_GREY = isDark ? '#747474' : '#E8E0E5';
 
   const calculateAndSetDelay = useCallback(() => {
-    endpointUrl && CalculateNodeDelay(endpointUrl)
+    endpoint && CalculateNodeDelay(endpoint)
       .then((response) => {
         if (!response) {
           return;
         }
 
-        setFetchedApiAndDelay({ fetchedApi: response.api, fetchedDelay: response.delay });
+        setFetchedApiDelay({ ...response });
         setEndpointsDelay((prevEndpoints) => {
-          return prevEndpoints?.map((endpoint) => {
+          return prevEndpoints?.map((e) => {
             // @ts-ignore
-            if (endpoint.value === response.api?._options?.provider?.endpoint) {
-              return { ...endpoint, delay: response.delay };
+            if (e.value === response.api?._options?.provider?.endpoint) {
+              return { ...e, delay: response.delay };
             }
 
-            return endpoint;
+            return e;
           });
         });
 
         response.api?.disconnect().catch(console.error);
       })
       .catch(console.error);
-  }, [endpointUrl]);
+  }, [endpoint]);
 
   const onClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     calculateAndSetDelay();
@@ -306,7 +308,7 @@ function RemoteNodeSelectorWithSignals ({ address, iconSize = 35 }: Props): Reac
       <ListIndicator
         currentDelay={currentDelay}
         defaultColor={DEFAULT_GREY}
-        endpointUrl={endpointUrl}
+        endpointUrl={endpoint}
         iconSize={ iconSize}
         id={id}
         onClick={onClick}
@@ -336,7 +338,7 @@ function RemoteNodeSelectorWithSignals ({ address, iconSize = 35 }: Props): Reac
           currentDelay={currentDelay}
           defaultColor={DEFAULT_GREY}
           endpointsDelay={endpointsDelay}
-          fetchedApiAndDelay={fetchedApiAndDelay}
+          fetchedApiDelay={fetchedApiDelay}
           setCurrentDelay={setCurrentDelay}
           setEndpointsDelay={setEndpointsDelay}
         />
