@@ -13,8 +13,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { useCurrentEraIndex, useInfo } from '.';
 import { AUTO_MODE } from '../util/constants';
+import { useCurrentEraIndex, useInfo } from '.';
 
 export interface ExposureOverview {
   total: BN;
