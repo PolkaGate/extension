@@ -15,7 +15,7 @@ interface EndpointType {
 type SavedEndpoints = Record<string, Record<string, EndpointType>>;
 type Listener = (address: string, genesisHash: string, endpoint: EndpointType) => void;
 
-export class EndpointManager {
+export default class EndpointManager {
   // Store endpoints and listeners
   private endpoints: SavedEndpoints = {};
   private listeners: Listener[] = [];

@@ -5,8 +5,9 @@ import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useCallback, useEffect, useState } from 'react';
 
+import EndpointManager from '../class/endpointManager';
 import { AUTO_MODE } from '../util/constants';
-import { EndpointManager, useGenesisHash } from '.';
+import { useGenesisHash } from '.';
 
 interface EndpointType {
   checkForNewOne?: boolean;

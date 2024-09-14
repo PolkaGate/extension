@@ -3,7 +3,8 @@
 
 import React, { useCallback } from 'react';
 
-import { EndpointManager, useEndpoints, useInfo, useTranslation } from '../hooks';
+import EndpointManager from '../class/endpointManager';
+import { useEndpoints, useInfo, useTranslation } from '../hooks';
 import { AUTO_MODE } from '../util/constants';
 import { Select } from '.';
 

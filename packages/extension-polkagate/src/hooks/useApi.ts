@@ -7,11 +7,12 @@ import { useCallback, useContext, useEffect, useReducer } from 'react';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
+import EndpointManager from '../class/endpointManager';
 import { APIContext } from '../components';
 import LCConnector from '../util/api/lightClient-connect';
 import { AUTO_MODE } from '../util/constants';
 import { fastestConnection } from '../util/utils';
-import { EndpointManager, useEndpoint, useEndpoints, useGenesisHash } from '.';
+import { useEndpoint, useEndpoints, useGenesisHash } from '.';
 
 // Define types for API state and actions
 interface ApiState {
