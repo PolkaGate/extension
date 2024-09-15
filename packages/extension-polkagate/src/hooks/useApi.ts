@@ -178,7 +178,12 @@ export default function useApi (address: AccountId | string | undefined, stateAp
       return;
     }
 
-    updateEndpoint(undefined, genesisHash, selectedEndpoint, () => handleNewApi(api, selectedEndpoint, true));
+    const accountAddress =
+      findNewEndpoint
+        ? address
+        : undefined;
+
+    updateEndpoint(accountAddress, genesisHash, selectedEndpoint, () => handleNewApi(api, selectedEndpoint, true));
   }, [apisContext.apis, connectToExisted, endpoints, handleNewApi, updateEndpoint]);
 
   // Manages the API connection when the address, endpoint, or genesis hash changes
