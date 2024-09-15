@@ -62,13 +62,16 @@ const NodeStatusIcon = ({ defaultColor, iconSize = 35, ms, position }: { default
 };
 
 const NodeStatusAndDelay = ({ defaultColor, endpointDelay, isSelected = false }: { defaultColor: string, endpointDelay: number | null | undefined, isSelected?: boolean }) => {
-  const statusColor = useCallback((ms: number) => (
-    ms <= 100
-      ? SIGNAL_COLORS.green
-      : ms <= 300
-        ? SIGNAL_COLORS.orange
-        : SIGNAL_COLORS.red
-  ), []);
+  const statusColor = useCallback((ms: number) => {
+    switch (true) {
+      case ms <= 100:
+        return SIGNAL_COLORS.green;
+      case ms <= 300:
+        return SIGNAL_COLORS.orange;
+      default:
+        return SIGNAL_COLORS.red;
+    }
+  }, []);
 
   return (
     <Grid alignItems='center' container item sx={{ width: 'fit-content' }}>
