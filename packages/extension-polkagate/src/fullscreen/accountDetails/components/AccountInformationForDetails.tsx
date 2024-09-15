@@ -85,7 +85,7 @@ const BalanceRow = ({ balanceToShow, isBalanceOutdated, isPriceOutdated, price }
 
 interface SelectedAssetBoxJSXType {
   token: string | undefined;
-  genesisHash: string | undefined;
+  genesisHash: string | undefined | null;
   balanceToShow: BalancesInfo | undefined;
   isBalanceOutdated: boolean | undefined;
   isPriceOutdated: boolean;
@@ -108,11 +108,28 @@ const SelectedAssetBox = ({ balanceToShow, genesisHash, isBalanceOutdated, isPri
             <BalanceRow balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} isPriceOutdated={isPriceOutdated} price={price} />
           </Grid>
         </>
-        : <Infotip iconTop={7} placement='right' showInfoMark text={t('Switch chain from top right, or click on an asset if any.')}>
-          <Typography fontSize='18px' fontWeight={500} sx={{ pl: '10px' }}>
-            {t('Account is in Any Chain mode')}
-          </Typography>
-        </Infotip>
+        : genesisHash === null
+          ? <Infotip iconTop={7} placement='right' showInfoMark text={t('Switch chain from top right, or click on an asset if any.')}>
+            <Typography fontSize='18px' fontWeight={500} sx={{ pl: '10px' }}>
+              {t('Account is in Any Chain mode')}
+            </Typography>
+          </Infotip>
+          : <>
+            <Skeleton
+              animation='wave'
+              height='42px'
+              sx={{ ml: 1 }}
+              variant='circular'
+              width='42px'
+            />
+            <Skeleton
+              animation='wave'
+              height='30px'
+              sx={{ ml: 1 }}
+              variant='rounded'
+              width='200px'
+            />
+          </>
       }
     </Grid>
   );
@@ -244,7 +261,7 @@ export default function AccountInformationForDetails ({ accountAssets, address, 
           </Grid>
           <SelectedAssetBox
             balanceToShow={selectedAsset as unknown as BalancesInfo}
-            genesisHash={genesisHash}
+            genesisHash={chain === null ? null : genesisHash}
             isBalanceOutdated={isBalanceOutdated}
             isPriceOutdated={!!isPriceOutdated}
             price={price}
