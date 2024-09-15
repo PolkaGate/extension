@@ -2,7 +2,12 @@
   "branches": ["main"],
   "repositoryUrl": "https://github.com/polkagate/extension.git",
   "plugins": [
-    "@semantic-release/changelog",
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    ["@semantic-release/changelog", {
+      "changelogFile": "CHANGELOG.md",
+      "changelogTitle": "# Change Log"
+    }],
     "@semantic-release/git",
     "@semantic-release/github"
   ]

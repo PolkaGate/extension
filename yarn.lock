@@ -3812,7 +3812,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@semantic-release/commit-analyzer@npm:^13.0.0-beta.1":
+"@semantic-release/commit-analyzer@npm:^13.0.0, @semantic-release/commit-analyzer@npm:^13.0.0-beta.1":
   version: 13.0.0
   resolution: "@semantic-release/commit-analyzer@npm:13.0.0"
   dependencies:
@@ -3911,7 +3911,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@semantic-release/release-notes-generator@npm:^14.0.0-beta.1":
+"@semantic-release/release-notes-generator@npm:^14.0.0-beta.1, @semantic-release/release-notes-generator@npm:^14.0.1":
   version: 14.0.1
   resolution: "@semantic-release/release-notes-generator@npm:14.0.1"
   dependencies:
@@ -17567,7 +17567,9 @@ __metadata:
     "@polkadot/util-crypto": "npm:^12.6.2"
     "@polkagate/apps-config": "npm:^0.140.3"
     "@semantic-release/changelog": "npm:^6.0.3"
+    "@semantic-release/commit-analyzer": "npm:^13.0.0"
     "@semantic-release/git": "npm:^10.0.1"
+    "@semantic-release/release-notes-generator": "npm:^14.0.1"
     "@substrate/connect": "npm:^0.7.32"
     "@testing-library/react": "npm:latest"
     "@types/chance": "npm:^1.1.6"
