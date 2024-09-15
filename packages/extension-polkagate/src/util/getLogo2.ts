@@ -1,10 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Chain } from '../../../extension-chains/src/types';
+
 import { createWsEndpoints, externalLinks } from '@polkagate/apps-config';
 import { createAssets } from '@polkagate/apps-config/assets';
 
-import type { Chain } from '../../../extension-chains/src/types';
 import { toCamelCase } from '../fullscreen/governance/utils/util';
 import getNetworkMap from './getNetworkMap';
 import { sanitizeChainName } from './utils';
@@ -17,7 +18,7 @@ export interface LogoInfo {
   subLogo?: string;
 }
 
-export default function getLogo2(info: string | undefined | Chain, token?: string): LogoInfo | undefined {
+export default function getLogo2 (info: string | undefined | null | Chain, token?: string): LogoInfo | undefined {
   let chainNameFromGenesisHash;
 
   if (token) {
