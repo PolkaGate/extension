@@ -62,10 +62,18 @@ export default function Signing (): React.ReactElement {
   return request
     ? (
       <>
-        <Header onClose={_onCancel} text={isTransaction ? t<string>('Transaction') : t<string>('Sign message')} />
+        <Header
+          onClose={_onCancel}
+          text={isTransaction ? t('Transaction') : t('Sign message')}
+        />
         {error &&
           <Grid container>
-            <Warning fontWeight={400} isDanger marginTop={15} theme={theme}>
+            <Warning
+              fontWeight={400}
+              isDanger
+              marginTop={15}
+              theme={theme}
+            >
               {error}
             </Warning>
           </Grid>
