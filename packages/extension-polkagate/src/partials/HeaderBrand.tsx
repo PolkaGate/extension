@@ -19,27 +19,27 @@ import Menu from './Menu';
 import { AccountMenu } from '.';
 
 interface Props {
+  _centerItem?: React.JSX.Element;
   address?: string;
+  backgroundDefault?: boolean;
+  fullScreenURL?: string;
+  isRefreshing?: boolean;
+  noBorder?: boolean;
+  onBackClick?: () => void;
+  onClose?: () => void;
+  onRefresh?: () => void;
+  paddingBottom?: number;
+  showAccountMenu?: boolean;
   showBackArrow?: boolean;
   showBrand?: boolean;
-  showMenu?: boolean;
-  showAccountMenu?: boolean;
-  withSteps?: Step | null;
-  text?: React.ReactNode;
-  onBackClick?: () => void;
-  onRefresh?: () => void;
   showClose?: boolean;
   showCloseX?: boolean;
-  isRefreshing?: boolean;
-  _centerItem?: React.JSX.Element;
-  noBorder?: boolean;
+  showMenu?: boolean;
   shortBorder?: boolean;
-  paddingBottom?: number;
-  onClose?: () => void;
-  backgroundDefault?: boolean;
   showFullScreen?: boolean;
-  fullScreenURL?: string;
   style?: SxProps<Theme> | undefined;
+  text?: React.ReactNode;
+  withSteps?: Step | null;
 }
 
 const LeftIcon = ({ onBackClick, showBackArrow, showBrand }: {
@@ -77,6 +77,67 @@ const LeftIcon = ({ onBackClick, showBackArrow, showBrand }: {
   );
 };
 
+const CenterItem = ({ showBrand, text, withSteps }: { showBrand?: boolean, text?: React.ReactNode, withSteps?: Step | null}) => (
+  <Grid display='inline-flex' item>
+    <Typography color='text.primary' fontFamily={showBrand ? 'Eras' : 'inherit'} fontWeight={400} sx={{ fontSize: showBrand ? '29px' : '20px', lineHeight: showBrand ? 'inherit' : 1.9 }}>
+      {text}
+    </Typography>
+    {
+      withSteps &&
+      <Steps
+        current={withSteps.current}
+        total={withSteps.total}
+      />
+    }
+  </Grid>
+);
+
+const RightItem = ({ _handleMenuClick, _onClose, fullScreenURL, isRefreshing, onClose, onRefresh, showAccountMenu, showBrand, showClose, showCloseX, showFullScreen, showMenu }: { _onClose: () => void, showCloseX?: boolean, isRefreshing?: boolean, showBrand?: boolean, _handleMenuClick: () => void, fullScreenURL?: string, showFullScreen?: boolean, showAccountMenu?: boolean, onRefresh?: () => void, showClose?: boolean, showMenu?: boolean, onClose?: () => void}) => {
+  const theme = useTheme();
+
+  return (
+    <Grid item textAlign='right' xs={showFullScreen && showAccountMenu ? 2.7 : 1.4}>
+      {!onRefresh && !showClose &&
+      <Grid container direction='row' item width='fit-content'>
+        {showFullScreen && fullScreenURL &&
+          <FullScreenIcon url={fullScreenURL} />
+        }
+        <IconButton aria-label='menu' color='inherit' edge='start' onClick={_handleMenuClick} size='small' sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}>
+          {showMenu &&
+            <MenuIcon
+              sx={{ color: showBrand ? theme.palette.mode === 'dark' ? 'text.primary' : 'secondary.light' : 'secondary.light', fontSize: 39 }}
+            />
+          }
+          {showAccountMenu &&
+            <MoreVertIcon
+              sx={{ color: 'secondary.light', fontSize: '33px' }}
+            />
+          }
+        </IconButton>
+      </Grid>
+      }
+      {!!onRefresh &&
+      <IconButton aria-label='menu' color='inherit' edge='start' onClick={onRefresh} size='small' sx={{ p: 0 }}>
+        <FontAwesomeIcon
+          color={theme.palette.secondary.light}
+          icon={faRefresh}
+          size='lg'
+          spin={isRefreshing}
+        />
+      </IconButton>
+      }
+      {showClose &&
+      <IconButton aria-label='menu' color='inherit' edge='start' onClick={onClose || _onClose} size='small' sx={{ p: 0 }}>
+        {showCloseX
+          ? <CloseIcon sx={{ fontSize: 40 }} />
+          : <VaadinIcon icon={`vaadin:home${theme.palette.mode === 'light' ? '-o' : ''}`} style={{ color: `${theme.palette.secondary.light}`, height: '22px', width: '22px' }} />
+        }
+      </IconButton>
+      }
+    </Grid>
+  );
+};
+
 function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreenURL = '/', isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showFullScreen = false, showMenu, style, text, withSteps = null }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -102,63 +163,6 @@ function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreenURL =
     onAction('/');
   }, [onAction]);
 
-  const CenterItem = () => (
-    <Grid display='inline-flex' item>
-      <Typography color='text.primary' fontFamily={showBrand ? 'Eras' : 'inherit'} fontWeight={400} sx={{ fontSize: showBrand ? '30px' : '20px', lineHeight: showBrand ? 'inherit' : 1.9 }}>
-        {text}
-      </Typography>
-      {
-        withSteps &&
-        <Steps
-          current={withSteps.current}
-          total={withSteps.total}
-        />
-      }
-    </Grid>
-  );
-
-  const RightItem = () => (
-    <Grid item textAlign='right' xs={showFullScreen && showAccountMenu ? 2.7 : 1.4}>
-      {!onRefresh && !showClose &&
-        <Grid container direction='row' item width='fit-content'>
-          {showFullScreen &&
-            <FullScreenIcon url={fullScreenURL} />
-          }
-          <IconButton aria-label='menu' color='inherit' edge='start' onClick={_handleMenuClick} size='small' sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}>
-            {showMenu &&
-              <MenuIcon
-                sx={{ color: showBrand ? theme.palette.mode === 'dark' ? 'text.primary' : 'secondary.light' : 'secondary.light', fontSize: 39 }}
-              />
-            }
-            {showAccountMenu &&
-              <MoreVertIcon
-                sx={{ color: 'secondary.light', fontSize: '33px' }}
-              />
-            }
-          </IconButton>
-        </Grid>
-      }
-      {!!onRefresh &&
-        <IconButton aria-label='menu' color='inherit' edge='start' onClick={onRefresh} size='small' sx={{ p: 0 }}>
-          <FontAwesomeIcon
-            color={theme.palette.secondary.light}
-            icon={faRefresh}
-            size='lg'
-            spin={isRefreshing}
-          />
-        </IconButton>
-      }
-      {showClose &&
-        <IconButton aria-label='menu' color='inherit' edge='start' onClick={onClose || _onClose} size='small' sx={{ p: 0 }}>
-          {showCloseX
-            ? <CloseIcon sx={{ fontSize: 40 }} />
-            : <VaadinIcon icon={`vaadin:home${theme.palette.mode === 'light' ? '-o' : ''}`} style={{ color: `${theme.palette.secondary.light}`, height: '22px', width: '22px' }} />
-          }
-        </IconButton>
-      }
-    </Grid>
-  );
-
   return (
     <>
       <Container
@@ -178,8 +182,27 @@ function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreenURL =
             showBackArrow={showBackArrow}
             showBrand={showBrand}
           />
-          {_centerItem ?? <CenterItem />}
-          <RightItem />
+          {_centerItem ??
+           <CenterItem
+             showBrand={showBrand}
+             text={text}
+             withSteps={withSteps}
+           />
+          }
+          <RightItem
+            _handleMenuClick={_handleMenuClick}
+            _onClose={_onClose}
+            fullScreenURL={fullScreenURL}
+            isRefreshing={isRefreshing}
+            onClose={onClose}
+            onRefresh={onRefresh}
+            showAccountMenu={showAccountMenu}
+            showBrand={showBrand}
+            showClose={showClose}
+            showCloseX={showCloseX}
+            showFullScreen={showFullScreen}
+            showMenu={showMenu}
+          />
         </Grid>
         {shortBorder &&
           <Divider sx={{ bgcolor: 'secondary.main', height: '3px', margin: '5px auto', width: '138px' }} />
