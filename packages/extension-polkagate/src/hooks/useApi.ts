@@ -43,6 +43,7 @@ const apiReducer = (state: ApiState, action: ApiAction): ApiState => {
 };
 
 const endpointManager = new EndpointManager();
+const isAutoMode = (e: string) => e === AUTO_MODE.value;
 
 export default function useApi (address: AccountId | string | undefined, stateApi?: ApiPromise, _endpoint?: string, _genesisHash?: string): ApiPromise | undefined {
   const { checkForNewOne, endpoint } = useEndpoint(address, _endpoint);
@@ -56,8 +57,6 @@ export default function useApi (address: AccountId | string | undefined, stateAp
     isLoading: false
   });
 
-  const isAutoMode = (e: string) => e === AUTO_MODE.value;
-
   // This function is called exclusively in auto mode to update the account's "auto mode" endpoint
   // with the fastest endpoint available.
   const updateEndpoint = useCallback((addressKey: string | undefined, chainKey: string, selectedEndpoint: string, cbFunction?: () => void) => {
@@ -65,17 +64,17 @@ export default function useApi (address: AccountId | string | undefined, stateAp
       const newEndpoint = {
         checkForNewOne: false,
         endpoint: selectedEndpoint,
-        isOnManual: false,
+        isAuto: true,
         timestamp: Date.now()
       };
       const savedEndpoints = endpointManager.getEndpoints();
 
       if (addressKey) {
-        endpointManager.setEndpoint(addressKey, chainKey, newEndpoint);
+        endpointManager.set(addressKey, chainKey, newEndpoint);
       } else {
         for (const address in savedEndpoints) {
           if (savedEndpoints[address]?.[chainKey]) {
-            endpointManager.setEndpoint(address, chainKey, newEndpoint);
+            endpointManager.set(address, chainKey, newEndpoint);
           }
         }
       }
@@ -188,9 +187,8 @@ export default function useApi (address: AccountId | string | undefined, stateAp
 
   // Manages the API connection when the address, endpoint, or genesis hash changes
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    if (!address || !chainGenesisHash || !endpoint || state.isLoading === true || (state.api && state.api._options.provider?.endpoint === endpoint)) {
+    // @ts-expect-error to bypass access to private prop
+    if (!address || !chainGenesisHash || !endpoint || state.isLoading || state?.api?._options?.provider?.endpoint === endpoint) {
       return;
     }
 
@@ -205,7 +203,7 @@ export default function useApi (address: AccountId | string | undefined, stateAp
     const savedApi = apisContext?.apis[chainGenesisHash]?.find((sApi) => sApi.endpoint === endpoint);
 
     if (savedApi?.api && savedApi.api.isConnected) {
-      // console.log(`♻ Using the saved API for ${chainGenesisHash} through this endpoint ${savedApi.api._options.provider.endpoint as string ?? ''}`);
+      // console.log(`♻ Using the saved API for ${chainGenesisHash} through this endpoint ${savedApi.endpoint ?? ''}`);
       dispatch({ payload: savedApi.api, type: 'SET_API' });
 
       return;
@@ -213,7 +211,7 @@ export default function useApi (address: AccountId | string | undefined, stateAp
 
     // If the API is already being requested, skip the connection process
     // It can be either Auto Mode or a specific endpoint
-    if (savedApi?.isRequested === true) {
+    if (savedApi?.isRequested) {
       return;
     }
 
@@ -243,7 +241,10 @@ export default function useApi (address: AccountId | string | undefined, stateAp
 
     apisContext.apis[chainGenesisHash] = toSaveApi;
     apisContext.setIt({ ...apisContext.apis });
-  }, [address, apisContext, apisContext.apis, chainGenesisHash, checkForNewOne, connectToEndpoint, endpoint, handleAutoMode, handleNewApi, state.api, state.isLoading]);
+
+  // @ts-expect-error to bypass access to private prop
+  // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/no-unsafe-member-access
+  }, [address, apisContext?.apis?.[chainGenesisHash]?.length, chainGenesisHash, checkForNewOne, connectToEndpoint, endpoint, handleAutoMode, handleNewApi, state?.api?._options?.provider?.endpoint, state.isLoading]);
 
   useEffect(() => {
     if (!chainGenesisHash || !apisContext?.apis[chainGenesisHash]) {

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { EndpointType } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
@@ -9,20 +10,13 @@ import EndpointManager from '../class/endpointManager';
 import { AUTO_MODE } from '../util/constants';
 import { useGenesisHash } from '.';
 
-interface EndpointType {
-  checkForNewOne?: boolean;
-  endpoint: string | undefined;
-  timestamp: number | undefined;
-  isOnManual: boolean | undefined;
-}
-
 // Create a singleton EndpointManager
 const endpointManager = new EndpointManager();
 
 const DEFAULT_ENDPOINT = {
   checkForNewOne: undefined,
   endpoint: undefined,
-  isOnManual: undefined,
+  isAuto: undefined,
   timestamp: undefined
 };
 
@@ -38,29 +32,29 @@ export default function useEndpoint (address: AccountId | string | undefined, _e
 
     // If an endpoint is provided, set it as manual
     if (_endpoint) {
-      endpointManager.setEndpoint(String(address), genesisHash, {
+      endpointManager.set(String(address), genesisHash, {
         checkForNewOne: false,
         endpoint: _endpoint,
-        isOnManual: true,
+        isAuto: false,
         timestamp: Date.now()
       });
     } else {
       // Otherwise, check for a saved endpoint or set to auto mode
-      const savedEndpoint = endpointManager.getEndpoint(String(address), genesisHash);
+      const savedEndpoint = endpointManager.get(String(address), genesisHash);
 
-      // If an endpoint already saved or it should be on  auto mode, then save the Auto Mode endpoint in the storage
+      // If an endpoint already saved or it should be on auto mode, then save the Auto Mode endpoint in the storage
       if (!savedEndpoint || endpointManager.shouldBeOnAutoMode(savedEndpoint)) {
-        endpointManager.setEndpoint(String(address), genesisHash, {
+        endpointManager.set(String(address), genesisHash, {
           checkForNewOne: false,
           endpoint: AUTO_MODE.value,
-          isOnManual: false,
+          isAuto: true,
           timestamp: Date.now()
         });
       }
     }
 
     // Update the local state with the current endpoint
-    const maybeExistingEndpoint = endpointManager.getEndpoint(String(address), genesisHash) as EndpointType;
+    const maybeExistingEndpoint = endpointManager.get(String(address), genesisHash);
 
     setEndpoint(maybeExistingEndpoint || DEFAULT_ENDPOINT);
   }, [address, genesisHash, _endpoint]);

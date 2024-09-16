@@ -45,7 +45,7 @@ async function CalculateNodeDelay (endpoint: string | undefined) {
   const api = await ApiPromise.create({ provider: wsProvider });
   const delay = await Promise.any([fetchApiTime(api, endpoint), timeout(WORST_CASE_DELAY)]);
 
-  return { api, delay };
+  return { api, delay, endpoint };
 }
 
 export default CalculateNodeDelay;

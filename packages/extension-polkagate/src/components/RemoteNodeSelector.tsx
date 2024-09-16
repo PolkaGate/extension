@@ -26,12 +26,12 @@ export default function RemoteNodeSelector ({ address, genesisHash }: Props): Re
     }
 
     const addressKey = String(address);
-    const checkForNewOne = newEndpoint === AUTO_MODE.value && !endpointManager.getEndpoint(addressKey, genesisHash)?.isOnManual;
+    const checkForNewOne = newEndpoint === AUTO_MODE.value && endpointManager.get(addressKey, genesisHash)?.isAuto;
 
-    endpointManager.setEndpoint(addressKey, genesisHash, {
+    endpointManager.set(addressKey, genesisHash, {
       checkForNewOne,
       endpoint: newEndpoint,
-      isOnManual: newEndpoint !== AUTO_MODE.value,
+      isAuto: newEndpoint === AUTO_MODE.value,
       timestamp: Date.now()
     });
   }, [address, genesisHash]);

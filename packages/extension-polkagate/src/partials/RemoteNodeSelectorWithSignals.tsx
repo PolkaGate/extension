@@ -3,16 +3,17 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { ApiPromise } from '@polkadot/api';
-
-import { SignalCellular0BarOutlined as LightClientEndpointIcon, SignalCellularAlt as SignalCellularIcon, SignalCellularAlt1Bar as SignalCellularAlt1BarIcon, SignalCellularAlt2Bar as SignalCellularAlt2BarIcon } from '@mui/icons-material';
-import { Grid, Popover, Skeleton, Typography, useTheme } from '@mui/material';
+import { SignalCellular0BarOutlined as LightClientEndpointIcon, SignalCellularAlt as Signal3BarIcon, SignalCellularAlt1Bar as Signal1BarIcon, SignalCellularAlt2Bar as Signal2BarIcon } from '@mui/icons-material';
+import { Divider, Grid, Popover, Skeleton, Typography, useTheme } from '@mui/material';
 // @ts-ignore
 import { Circle } from 'better-react-spinkit';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import { noop } from '@polkadot/util';
 
 import EndpointManager from '../class/endpointManager';
-import { useEndpoint, useEndpoints, useInfo } from '../hooks';
+import { Switch } from '../components';
+import { useEndpoint, useEndpoints, useGenesisHash, useInfo } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
 import CalculateNodeDelay from '../util/calculateNodeDelay';
 import { AUTO_MODE } from '../util/constants';
@@ -22,14 +23,25 @@ interface Props {
   iconSize?: number;
 }
 
-interface ApiDelay {
-  api: ApiPromise | null | undefined;
-  delay: number | undefined;
-}
-
 type EndpointsDelay = { name: string, delay: number | null | undefined, value: string }[];
 
-const DELAY_CHECK_INTERVAL = 30000;
+interface NodesListProps {
+  address?: string,
+  defaultColor: string;
+  endpointsDelay: EndpointsDelay | undefined,
+  setCurrentDelay: React.Dispatch<React.SetStateAction<number | undefined>>;
+  setEndpointsDelay: React.Dispatch<React.SetStateAction<EndpointsDelay | undefined>>;
+}
+
+interface ListIndicatorProps {
+  currentDelay: number | undefined;
+  iconSize: number;
+  id: 'simple-popover' | undefined;
+  endpointUrl: string | undefined;
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  defaultColor: string;
+}
+
 const SIGNAL_COLORS = {
   green: '#1F7720',
   orange: '#FF5722',
@@ -38,25 +50,32 @@ const SIGNAL_COLORS = {
 
 const endpointManager = new EndpointManager();
 
-const NodeStatusIcon = ({ defaultColor, iconSize = 35, ms, position }: { defaultColor: string, ms: number | null | undefined, iconSize?: number, position?: 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky' | 'unset'}) => {
+const NodeStatusIcon = ({ defaultColor, iconSize = 35, ms, position }: { defaultColor: string, ms: number | null | undefined, iconSize?: number, position?: 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky' | 'unset' }) => {
+  const iconStyle = {
+    bottom: '2px',
+    fontSize: `${iconSize}px`,
+    left: '2px',
+    position: 'absolute'
+  };
+
+  const getSignalIcon = () => {
+    if (ms === null || ms === undefined) {
+      return null;
+    }
+
+    if (ms <= 100) {
+      return <Signal3BarIcon sx={{ ...iconStyle, color: SIGNAL_COLORS.green }} />;
+    } else if (ms <= 300) {
+      return <Signal2BarIcon sx={{ ...iconStyle, color: SIGNAL_COLORS.orange }} />;
+    }
+
+    return <Signal1BarIcon sx={{ ...iconStyle, color: SIGNAL_COLORS.red }} />;
+  };
+
   return (
-    <Grid container height='35px' item position= {position || 'relative'} width='40px'>
-      {ms === undefined || ms === null
-        ? <SignalCellularIcon
-          sx={{ bottom: '2px', color: defaultColor, fontSize: `${iconSize}px`, left: '2px', position: 'absolute' }}
-        />
-        : ms <= 100
-          ? <SignalCellularIcon
-            sx={{ bottom: '2px', color: SIGNAL_COLORS.green, fontSize: `${iconSize}px`, left: '2px', position: 'absolute' }}
-          />
-          : ms <= 300
-            ? <SignalCellularAlt2BarIcon
-              sx={{ bottom: '2px', color: SIGNAL_COLORS.orange, fontSize: `${iconSize}px`, left: '2px', position: 'absolute' }}
-            />
-            : <SignalCellularAlt1BarIcon
-              sx={{ bottom: '2px', color: SIGNAL_COLORS.red, fontSize: `${iconSize}px`, left: '2px', position: 'absolute' }}
-            />
-      }
+    <Grid container height='35px' item position={position || 'relative'} width='40px'>
+      <Signal3BarIcon sx={{ ...iconStyle, color: defaultColor }} />
+      {getSignalIcon()}
     </Grid>
   );
 };
@@ -95,47 +114,21 @@ const NodeStatusAndDelay = ({ defaultColor, endpointDelay, isSelected = false }:
   );
 };
 
-interface NodesListProps {
-  defaultColor: string;
-  setEndpointsDelay: React.Dispatch<React.SetStateAction<EndpointsDelay | undefined>>;
-  endpointsDelay: EndpointsDelay | undefined, setCurrentDelay: React.Dispatch<React.SetStateAction<number | undefined>>;
-  currentDelay: number | undefined;
-  address?: string, calculateAndSetDelay: () => void;
-  fetchedApiDelay: ApiDelay | undefined;
-}
-
-const NodesList = ({ address, calculateAndSetDelay, currentDelay, defaultColor, endpointsDelay, fetchedApiDelay, setCurrentDelay, setEndpointsDelay }: NodesListProps) => {
+const NodesList = ({ address, defaultColor, endpointsDelay, setCurrentDelay, setEndpointsDelay }: NodesListProps) => {
   const theme = useTheme();
 
   const { genesisHash } = useInfo(address);
   const endpointOptions = useEndpoints(genesisHash);
-  const { endpoint: endpointUrl, isOnManual } = useEndpoint(address);
+  const { endpoint: endpointUrl, isAuto: isAlreadyAuto } = useEndpoint(address);
+  const [isAutoSwitchOn, setAutoSwitch] = useState<boolean>();
 
-  const [api, setApi] = useState<ApiPromise | null | undefined>(null);
-
-  // Calculate initial delay when the component mounts
   useEffect(() => {
-    if ((api && currentDelay === undefined) || api === null) {
-      calculateAndSetDelay();
+    if (isAlreadyAuto === undefined) {
+      return;
     }
-  }, [api, calculateAndSetDelay, currentDelay]);
 
-  // Set up the interval when the component mounts
-  useEffect(() => {
-    const intervalId = setInterval(calculateAndSetDelay, DELAY_CHECK_INTERVAL);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [calculateAndSetDelay]);
-
-  useEffect(() => {
-    // @ts-ignore
-    if (fetchedApiDelay?.api && fetchedApiDelay.api?._options?.provider?.endpoint === endpointUrl) {
-      setApi(fetchedApiDelay.api);
-      setCurrentDelay(fetchedApiDelay.delay);
-    }
-  }, [endpointUrl, fetchedApiDelay, setCurrentDelay]);
+    setAutoSwitch(isAlreadyAuto);
+  }, [isAlreadyAuto]);
 
   const sanitizedCurrentEndpointName = useMemo(() => {
     const currentEndpointName = endpointOptions.find((endpoint) => endpoint.value === endpointUrl)?.text;
@@ -143,26 +136,18 @@ const NodesList = ({ address, calculateAndSetDelay, currentDelay, defaultColor, 
     return currentEndpointName?.replace(/^via\s/, '');
   }, [endpointOptions, endpointUrl]);
 
-  useEffect(() => {
-    if (!endpointOptions || endpointOptions.length === 0) {
-      return;
-    }
-
-    const mappedEndpoints = endpointOptions.map((endpoint) => ({ delay: null, name: endpoint.text.replace(/^via\s/, ''), value: endpoint.value as string }));
-
-    setCurrentDelay(undefined);
-    setEndpointsDelay(mappedEndpoints as EndpointsDelay);
-  }, [endpointOptions, setCurrentDelay, setEndpointsDelay]);
-
   const onChangeEndpoint = useCallback((newEndpoint: string): void => {
     if (!address || !genesisHash) {
       return;
     }
 
+    const isNewEndpointAuto = newEndpoint === AUTO_MODE.value;
+
     setCurrentDelay(undefined);
 
     setEndpointsDelay((prevEndpoints) => {
       return prevEndpoints?.map((endpoint) => {
+        // set the new endpoint delay to undefined
         if (endpoint.value === newEndpoint && !endpoint.delay) {
           return { ...endpoint, delay: undefined };
         }
@@ -172,64 +157,79 @@ const NodesList = ({ address, calculateAndSetDelay, currentDelay, defaultColor, 
     });
 
     const addressKey = String(address);
-    const checkForNewOne = newEndpoint === AUTO_MODE.value && !endpointManager.getEndpoint(addressKey, genesisHash)?.isOnManual;
+    const shouldDisableAutoMode = isNewEndpointAuto && isAlreadyAuto; // auto mode was On and user have clicked on it again, which will change the switch Off
 
-    endpointManager.setEndpoint(addressKey, genesisHash, {
-      checkForNewOne,
+    if (shouldDisableAutoMode) {
+      setAutoSwitch(false);
+
+      endpointManager.set(addressKey, genesisHash, {
+        checkForNewOne: false,
+        endpoint: endpointUrl,
+        isAuto: false,
+        timestamp: Date.now()
+      });
+
+      return;
+    }
+
+    if (isNewEndpointAuto) {
+      setAutoSwitch(true);
+    } else {
+      setAutoSwitch(false);
+    }
+
+    endpointManager.set(addressKey, genesisHash, {
+      checkForNewOne: isNewEndpointAuto,
       endpoint: newEndpoint,
-      isOnManual: newEndpoint !== AUTO_MODE.value,
+      isAuto: isNewEndpointAuto,
       timestamp: Date.now()
     });
-  }, [address, genesisHash, setCurrentDelay, setEndpointsDelay]);
+  }, [address, endpointUrl, genesisHash, isAlreadyAuto, setCurrentDelay, setEndpointsDelay]);
 
   return (
     <Grid container direction='column' item sx={{ display: 'block', minWidth: '275px', py: '6px', width: 'fit-content' }}>
       {endpointsDelay && endpointsDelay.length > 0 &&
-      endpointsDelay.map((endpoint, index) => {
-        const selectedEndpoint = endpoint.name === sanitizedCurrentEndpointName;
-        const isLightClient = endpoint.name.includes('light client');
-        const isOnAutoMode = endpoint.name === AUTO_MODE.text && !isOnManual;
+        endpointsDelay.map(({ delay, name, value }, index) => {
+          const isLightClient = name.includes('light client');
 
-        return (
-          // eslint-disable-next-line react/jsx-no-bind
-          <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={() => onChangeEndpoint(endpoint.value)} py='5px' sx={{ ':hover': { bgcolor: 'rgba(186, 40, 130, 0.1)' }, bgcolor: (selectedEndpoint && isOnManual) || isOnAutoMode ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', my: '3px', pl: '15px', position: 'relative', pr: '5px', width: '100%' }}>
-            {selectedEndpoint && endpoint.name !== AUTO_MODE.text && !isOnManual &&
-             <span style={{ backgroundColor: '#00FF00', border: `1px solid ${theme.palette.background.default}`, borderRadius: '50%', height: '10px', left: '2px', position: 'absolute', top: '50%px', width: '10px' }} />
-            }
-            <Typography fontSize='16px' fontWeight={selectedEndpoint || isOnAutoMode ? 500 : 400} textAlign='left' width={isLightClient ? '100%' : '53%'}>
-              {endpoint.name}
-            </Typography>
-            {
-              !isLightClient && endpoint.name !== AUTO_MODE.text &&
-              <NodeStatusAndDelay
-                defaultColor = {defaultColor}
-                endpointDelay={endpoint.delay}
-                isSelected={selectedEndpoint}
-              />
-            }
-            {isOnAutoMode && selectedEndpoint &&
-              <Circle
-                color={theme.palette.primary.main}
-                scaleEnd={0.7}
-                scaleStart={0.4}
-                size={22}
-              />
-            }
-          </Grid>
-        );
-      })}
+          const isSelected = name === sanitizedCurrentEndpointName;
+          const hasAutoName = name === AUTO_MODE.text;
+          const isAutoSelected = hasAutoName && isAlreadyAuto;
+
+          return (
+            <>
+              <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={() => onChangeEndpoint(value)} py='5px' sx={{ ':hover': { bgcolor: 'rgba(186, 40, 130, 0.1)' }, bgcolor: (isSelected && !isAlreadyAuto) || isAutoSelected ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', mb: '1px', pl: '15px', position: 'relative', pr: '5px', width: '100%' }}>
+                {isSelected && !hasAutoName && isAlreadyAuto && // to put green dot on the chosen endpoint while in auto mode
+                  <span style={{ backgroundColor: '#00FF00', border: `1px solid ${theme.palette.background.default}`, borderRadius: '50%', height: '9px', left: '2px', position: 'absolute', top: '50%px', width: '9px' }} />
+                }
+                <Typography color={(hasAutoName && !isAlreadyAuto) || (!hasAutoName && isAlreadyAuto) ? 'text.disabled' : 'text.main'} fontSize='16px' fontWeight={isSelected || isAutoSelected ? 500 : 400} textAlign='left' width={isLightClient ? '100%' : '53%'}>
+                  {name}
+                </Typography>
+                {!isLightClient && !hasAutoName &&
+                  <NodeStatusAndDelay
+                    defaultColor={defaultColor}
+                    endpointDelay={delay}
+                    isSelected={isSelected}
+                  />
+                }
+                {hasAutoName &&
+                  <Switch
+                    fontSize='17px'
+                    isChecked={isAutoSwitchOn}
+                    onChange={noop}
+                    theme={theme}
+                  />
+                }
+              </Grid>
+              {hasAutoName &&
+                <Divider sx={{ bgcolor: 'divider', height: '1px' }} />
+              }
+            </>
+          );
+        })}
     </Grid>
   );
 };
-
-interface ListIndicatorProps {
-  currentDelay: number | undefined;
-  iconSize: number;
-  id: 'simple-popover' | undefined;
-  endpointUrl: string | undefined;
-  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  defaultColor: string;
-}
 
 const ListIndicator = ({ currentDelay, defaultColor, endpointUrl, iconSize, id, onClick }: ListIndicatorProps) => {
   const isLightClient = endpointUrl?.startsWith('light');
@@ -261,27 +261,40 @@ const ListIndicator = ({ currentDelay, defaultColor, endpointUrl, iconSize, id, 
 function RemoteNodeSelectorWithSignals ({ address, iconSize = 35 }: Props): React.ReactElement {
   const theme = useTheme();
   const { endpoint } = useEndpoint(address);
+  const genesisHash = useGenesisHash(address);
+  const endpointOptions = useEndpoints(genesisHash);
+  const isFetching = useRef<Record<string, boolean>>({});
 
   const [currentDelay, setCurrentDelay] = useState<number | undefined>();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const [endpointsDelay, setEndpointsDelay] = useState<EndpointsDelay>();
-  const [fetchedApiDelay, setFetchedApiDelay] = useState<ApiDelay>();
 
   const isDark = theme.palette.mode === 'dark';
   const DEFAULT_GREY = isDark ? '#747474' : '#E8E0E5';
 
-  const calculateAndSetDelay = useCallback(() => {
+  useEffect(() => {
+    // initialize endpointsDelay by setting all delays to null
+    if (!endpointOptions.length) {
+      return;
+    }
+
+    const mappedEndpoints = endpointOptions.map(({ text, value }) => ({ delay: null, name: text.replace(/^via\s/, ''), value }));
+
+    setEndpointsDelay(mappedEndpoints as EndpointsDelay);
+  }, [endpointOptions]);
+
+  const calculateAndSetDelay = useCallback((endpoint: string) => {
     endpoint && CalculateNodeDelay(endpoint)
       .then((response) => {
         if (!response) {
           return;
         }
 
-        setFetchedApiDelay({ ...response });
+        isFetching.current[endpoint] = false;
+        setCurrentDelay(response.delay);
         setEndpointsDelay((prevEndpoints) => {
           return prevEndpoints?.map((e) => {
-            // @ts-ignore
-            if (e.value === response.api?._options?.provider?.endpoint) {
+            if (e.value === response.endpoint) {
               return { ...e, delay: response.delay };
             }
 
@@ -289,15 +302,21 @@ function RemoteNodeSelectorWithSignals ({ address, iconSize = 35 }: Props): Reac
           });
         });
 
-        response.api?.disconnect().catch(console.error);
+        response.api?.disconnect().catch(console.error); // if we don't need it to be used in the extension we can disconnect it in the function instead
       })
       .catch(console.error);
-  }, [endpoint]);
+  }, []);
+
+  useEffect(() => {
+    if (endpoint && endpoint !== AUTO_MODE.value && !isFetching.current?.[endpoint]) {
+      isFetching.current[endpoint] = true;
+      calculateAndSetDelay(endpoint);
+    }
+  }, [calculateAndSetDelay, endpoint]);
 
   const onClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    calculateAndSetDelay();
     setAnchorEl(event.currentTarget);
-  }, [calculateAndSetDelay]);
+  }, []);
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);
@@ -312,10 +331,9 @@ function RemoteNodeSelectorWithSignals ({ address, iconSize = 35 }: Props): Reac
         currentDelay={currentDelay}
         defaultColor={DEFAULT_GREY}
         endpointUrl={endpoint}
-        iconSize={ iconSize}
+        iconSize={iconSize}
         id={id}
         onClick={onClick}
-
       />
       <Popover
         PaperProps={{
@@ -337,11 +355,8 @@ function RemoteNodeSelectorWithSignals ({ address, iconSize = 35 }: Props): Reac
       >
         <NodesList
           address={address}
-          calculateAndSetDelay={calculateAndSetDelay}
-          currentDelay={currentDelay}
           defaultColor={DEFAULT_GREY}
           endpointsDelay={endpointsDelay}
-          fetchedApiDelay={fetchedApiDelay}
           setCurrentDelay={setCurrentDelay}
           setEndpointsDelay={setEndpointsDelay}
         />

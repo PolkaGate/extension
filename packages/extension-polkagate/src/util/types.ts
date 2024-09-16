@@ -724,7 +724,7 @@ export interface ApiProps extends ApiState {
   isWaitingInjected: boolean;
 }
 
-interface ApiPropsNew {
+export interface ApiPropsNew {
   api?: ApiPromise;
   endpoint: string;
   isRequested: boolean;
@@ -810,18 +810,16 @@ export interface AccountsOrder {
   account: AccountWithChildren
 }
 
-export interface SavedEndpoint {
-  endpoint: string;
-  timestamp: number;
-  isOnManual: boolean;
+export interface EndpointType {
   checkForNewOne?: boolean;
+  endpoint: string | undefined;
+  timestamp: number | undefined;
+  isAuto: boolean | undefined;
 }
 
 export interface FastestConnectionType {
   api: ApiPromise | undefined;
   selectedEndpoint: string | undefined;
 }
-
-export type ChromeStorageGetResponse = Record<string, Record<string, SavedEndpoint | undefined> | undefined>;
 
 export type RecentChainsType = Record<string, string[]>;
