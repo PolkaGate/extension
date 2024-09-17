@@ -143,8 +143,6 @@ const NodesList = ({ address, defaultColor, endpointsDelay, setCurrentDelay, set
 
     const isNewEndpointAuto = newEndpoint === AUTO_MODE.value;
 
-    setCurrentDelay(undefined);
-
     setEndpointsDelay((prevEndpoints) => {
       return prevEndpoints?.map((endpoint) => {
         // set the new endpoint delay to undefined
@@ -171,6 +169,8 @@ const NodesList = ({ address, defaultColor, endpointsDelay, setCurrentDelay, set
 
       return;
     }
+
+    setCurrentDelay(undefined);
 
     if (isNewEndpointAuto) {
       setAutoSwitch(true);
