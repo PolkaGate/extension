@@ -103,8 +103,6 @@ export default function useApi (address: AccountId | string | undefined, stateAp
     dispatch({ payload: availableApi.api, type: 'SET_API' });
     updateEndpoint(address, genesisHash, availableApi.endpoint);
 
-    console.log('Successfully connected to existing API for genesis hash:::', genesisHash);
-
     return true;
   }, [apisContext.apis, updateEndpoint]);
 
@@ -152,14 +150,6 @@ export default function useApi (address: AccountId | string | undefined, stateAp
 
   // Handles auto mode by finding the fastest endpoint and connecting to it
   const handleAutoMode = useCallback(async (address: string, genesisHash: string, findNewEndpoint: boolean) => {
-    const apisForGenesis = apisContext.apis[genesisHash];
-
-    const autoModeExists = apisForGenesis?.some(({ endpoint }) => isAutoMode(endpoint));
-
-    if (autoModeExists) {
-      return;
-    }
-
     const result = !findNewEndpoint && connectToExisted(String(address), genesisHash);
 
     if (result) {
@@ -177,56 +167,51 @@ export default function useApi (address: AccountId | string | undefined, stateAp
       return;
     }
 
-    const accountAddress =
-      findNewEndpoint
-        ? address
-        : undefined;
+    updateEndpoint(undefined, genesisHash, selectedEndpoint, () => handleNewApi(api, selectedEndpoint, true));
+  }, [connectToExisted, endpoints, handleNewApi, updateEndpoint]);
 
-    updateEndpoint(accountAddress, genesisHash, selectedEndpoint, () => handleNewApi(api, selectedEndpoint, true));
-  }, [apisContext.apis, connectToExisted, endpoints, handleNewApi, updateEndpoint]);
+  const setApiRequested = useCallback((genesisHash: string, endpointToRequest: string) => {
+    const toSaveApi = apisContext.apis[genesisHash] ?? [];
 
-  // Manages the API connection when the address, endpoint, or genesis hash changes
-  useEffect(() => {
+    toSaveApi.push({ endpoint: endpointToRequest, isRequested: true });
+
+    apisContext.apis[genesisHash] = toSaveApi;
+    apisContext.setIt({ ...apisContext.apis });
+  }, [apisContext]);
+
+  const isApiRequested = useCallback((genesisHash: string, requestedEndpoint: string) => {
+    const savedApi = apisContext?.apis[genesisHash]?.find((sApi) => sApi.endpoint === requestedEndpoint);
+
+    return Boolean(savedApi?.isRequested);
+  }, [apisContext?.apis]);
+
+  const isAlreadyConnected = useCallback((genesisHash: string, endpointToCheck: string) => {
+    const savedApi = apisContext?.apis[genesisHash]?.find((sApi) => sApi.endpoint === endpointToCheck);
+
     // @ts-expect-error to bypass access to private prop
-    if (!address || !chainGenesisHash || !endpoint || state.isLoading || state?.api?._options?.provider?.endpoint === endpoint) {
-      return;
-    }
+    return savedApi?.api?._options?.provider?.endpoint === endpointToCheck;
+  }, [apisContext?.apis]);
 
-    // Validate the endpoint format (it should start with 'wss', 'light', or be in auto mode)
-    if (!endpoint.startsWith('wss') && !endpoint.startsWith('light') && !isAutoMode(endpoint)) {
-      console.log('📌 📌  Unsupported endpoint detected 📌 📌 ', endpoint);
-
-      return;
-    }
-
-    // Check if there is a saved API that is already connected
-    const savedApi = apisContext?.apis[chainGenesisHash]?.find((sApi) => sApi.endpoint === endpoint);
-
-    if (savedApi?.api && savedApi.api.isConnected) {
-      // console.log(`♻ Using the saved API for ${chainGenesisHash} through this endpoint ${savedApi.endpoint ?? ''}`);
-      dispatch({ payload: savedApi.api, type: 'SET_API' });
-
-      return;
-    }
-
-    // If the API is already being requested, skip the connection process
-    // It can be either Auto Mode or a specific endpoint
-    if (savedApi?.isRequested) {
-      return;
-    }
-
-    // If in auto mode, check existing connections or find a new one
-    if (isAutoMode(endpoint)) {
+  // check if the endpoint is on auto mode and if no auto mode requested then handles a new auto mode connection
+  useEffect(() => {
+    if (endpoint && isAutoMode(endpoint) && chainGenesisHash && address && !isApiRequested(chainGenesisHash, AUTO_MODE.value)) {
+      setApiRequested(chainGenesisHash, AUTO_MODE.value);
       handleAutoMode(String(address), chainGenesisHash, !!checkForNewOne).catch(console.error);
     }
+  }, [address, chainGenesisHash, checkForNewOne, endpoint, handleAutoMode, isApiRequested, setApiRequested]);
 
-    // Connect to a WebSocket endpoint if provided
-    if (endpoint.startsWith('wss')) {
+  // checks if the endpoint is not on auto mode and handles the manual connection
+  useEffect(() => {
+    if (endpoint && !isAutoMode(endpoint) && chainGenesisHash && address && !isApiRequested(chainGenesisHash, endpoint) && !isAlreadyConnected(chainGenesisHash, endpoint)) {
+      setApiRequested(chainGenesisHash, endpoint);
       connectToEndpoint(endpoint).catch(console.error);
     }
+  }, [address, chainGenesisHash, connectToEndpoint, endpoint, isAlreadyConnected, isApiRequested, setApiRequested]);
 
-    // Connect to a light client endpoint if provided
-    if (endpoint.startsWith('light')) {
+  // checks if the endpoint is on light-client and handles the light-client connection
+  useEffect(() => {
+    if (endpoint?.startsWith('light') && chainGenesisHash && address && !isApiRequested(chainGenesisHash, endpoint)) {
+      setApiRequested(chainGenesisHash, endpoint);
       LCConnector(endpoint).then((LCapi) => {
         handleNewApi(LCapi, endpoint);
         console.log('🖌️ light client connected', String(LCapi.genesisHash.toHex()));
@@ -234,17 +219,7 @@ export default function useApi (address: AccountId | string | undefined, stateAp
         console.error('📌 light client failed:', err);
       });
     }
-
-    const toSaveApi = apisContext.apis[chainGenesisHash] ?? [];
-
-    toSaveApi.push({ endpoint, isRequested: true });
-
-    apisContext.apis[chainGenesisHash] = toSaveApi;
-    apisContext.setIt({ ...apisContext.apis });
-
-  // @ts-expect-error to bypass access to private prop
-  // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/no-unsafe-member-access
-  }, [address, apisContext?.apis?.[chainGenesisHash]?.length, chainGenesisHash, checkForNewOne, connectToEndpoint, endpoint, handleAutoMode, handleNewApi, state?.api?._options?.provider?.endpoint, state.isLoading]);
+  }, [address, chainGenesisHash, endpoint, handleNewApi, isApiRequested, setApiRequested]);
 
   useEffect(() => {
     if (!chainGenesisHash || !apisContext?.apis[chainGenesisHash]) {
