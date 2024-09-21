@@ -35,11 +35,12 @@ interface NodesListProps {
 
 interface ListIndicatorProps {
   currentDelay: number | undefined;
+  defaultColor: string;
+  endpointUrl: string | undefined;
   iconSize: number;
   id: 'simple-popover' | undefined;
-  endpointUrl: string | undefined;
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  defaultColor: string;
+  setCurrentDelay: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
 const SIGNAL_COLORS = {
@@ -231,9 +232,14 @@ const NodesList = ({ address, defaultColor, endpointsDelay, setCurrentDelay, set
   );
 };
 
-const ListIndicator = ({ currentDelay, defaultColor, endpointUrl, iconSize, id, onClick }: ListIndicatorProps) => {
+const ListIndicator = ({ currentDelay, defaultColor, endpointUrl, iconSize, id, onClick, setCurrentDelay }: ListIndicatorProps) => {
   const isLightClient = endpointUrl?.startsWith('light');
   const onExtension = useIsExtensionPopup();
+
+  useEffect(() => {
+    // to reset signal bar on chain change
+    setCurrentDelay(undefined);
+  }, [endpointUrl, setCurrentDelay]);
 
   const bgcolorOnAccountDetail: string = useMemo(() => {
     if (onExtension) {
@@ -334,6 +340,7 @@ function RemoteNodeSelectorWithSignals ({ address, iconSize = 35 }: Props): Reac
         iconSize={iconSize}
         id={id}
         onClick={onClick}
+        setCurrentDelay={setCurrentDelay}
       />
       <Popover
         PaperProps={{
