@@ -12,7 +12,7 @@ import { closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, t
 // @ts-ignore
 async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
   const endpoints = getChainEndpoints(chainName);
-  const { api, connections } = await fastestEndpoint(endpoints, false);
+  const { api, connections } = await fastestEndpoint(endpoints);
 
   const result = metadataFromApi(api);
 

@@ -8,6 +8,7 @@ import type { SavedValidatorsIdentities, ValidatorsIdentities } from '../util/ty
 import { useCallback, useEffect, useState } from 'react';
 
 import { useCurrentEraIndex, useInfo, usePeopleChain } from '.';
+import { AUTO_MODE } from '../util/constants';
 
 export default function useValidatorsIdentities (address: string | undefined, allValidatorsIds: AccountId[] | null | undefined, identities?: DeriveAccountInfo[] | null): DeriveAccountInfo[] | null | undefined {
   const { chainName } = useInfo(address);
@@ -64,7 +65,7 @@ export default function useValidatorsIdentities (address: string | undefined, al
     }
 
     /** get validators info, including current and waiting, should be called after savedValidators gets value */
-    endpoint && allValidatorsIds && !newValidatorsIdentities && currentEraIndex && currentEraIndex !== savedEraIndex && getValidatorsIdentities(endpoint, allValidatorsIds);
+    endpoint && endpoint !== AUTO_MODE.value && allValidatorsIds && !newValidatorsIdentities && currentEraIndex && currentEraIndex !== savedEraIndex && getValidatorsIdentities(endpoint, allValidatorsIds);
   }, [endpoint, getValidatorsIdentities, allValidatorsIds, newValidatorsIdentities, currentEraIndex, savedEraIndex, identities]);
 
   useEffect(() => {

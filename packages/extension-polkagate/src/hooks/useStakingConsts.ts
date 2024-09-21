@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
+import { AUTO_MODE } from '../util/constants';
 import { useCurrentEraIndex, useInfo } from '.';
 
 export default function useStakingConsts (address: string | undefined, stateConsts?: StakingConsts): StakingConsts | null | undefined {
@@ -25,9 +26,9 @@ export default function useStakingConsts (address: string | undefined, stateCons
       console.log(err);
     };
 
-    getStakingConstsWorker.onmessage = (e: MessageEvent<any>) => {
+    getStakingConstsWorker.onmessage = (e: MessageEvent<unknown>) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const c: StakingConsts = e.data;
+      const c = e.data as StakingConsts;
 
       if (c) {
         window.localStorage.setItem(`${chainName}_stakingConsts`, JSON.stringify(c));
@@ -67,7 +68,7 @@ export default function useStakingConsts (address: string | undefined, stateCons
 
     const isSavedVersionOutOfDate = eraIndex !== savedConsts?.eraIndex;
 
-    endpoint && chainName && eraIndex && isSavedVersionOutOfDate && getStakingConsts(chainName, endpoint);
+    endpoint && endpoint !== AUTO_MODE.value && chainName && eraIndex && isSavedVersionOutOfDate && getStakingConsts(chainName, endpoint);
   }, [endpoint, chainName, getStakingConsts, stateConsts, eraIndex, savedConsts]);
 
   return (newConsts && newConsts.token === token)

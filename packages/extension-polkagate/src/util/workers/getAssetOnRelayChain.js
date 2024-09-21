@@ -51,7 +51,7 @@ async function getPooledBalance (api, address) {
 async function getBalances (chainName, addresses) {
   const chainEndpoints = getChainEndpoints(chainName);
 
-  const { api, connections } = await fastestEndpoint(chainEndpoints, false);
+  const { api, connections } = await fastestEndpoint(chainEndpoints);
 
   if (api.isConnected && api.derive.balances) {
     const result = metadataFromApi(api);

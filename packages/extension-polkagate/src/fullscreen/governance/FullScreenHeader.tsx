@@ -10,7 +10,7 @@ import { useParams } from 'react-router';
 import { logoBlack } from '../../assets/logos';
 import { ActionContext } from '../../components';
 import { useApi, useChain, useGenesisHashOptions } from '../../hooks';
-import { FullScreenChainSwitch, FullScreenRemoteNode } from '../../partials';
+import { FullScreenChainSwitch, RemoteNodeSelectorWithSignals } from '../../partials';
 import { EXTENSION_NAME, GOVERNANCE_CHAINS, IDENTITY_CHAINS, SOCIAL_RECOVERY_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import AddressDropdown from './components/AddressDropdown';
@@ -112,11 +112,12 @@ export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false,
                     chains={filteredChains}
                   />
                 </Grid>
-                {chain && <Grid container item justifyContent='flex-end' width='50px'>
-                  <FullScreenRemoteNode
-                    address={address}
-                  />
-                </Grid>
+                {chain &&
+                  <Grid container item justifyContent='flex-end' width='50px'>
+                    <RemoteNodeSelectorWithSignals
+                      address={address}
+                    />
+                  </Grid>
                 }
               </>
             }

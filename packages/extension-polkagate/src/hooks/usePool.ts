@@ -11,6 +11,7 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { FetchingContext } from '../components';
 import { isHexToBn } from '../util/utils';
 import { useInfo } from '.';
+import { AUTO_MODE } from '../util/constants';
 
 export default function usePool (address?: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
   const { decimal: currentDecimal, endpoint, formatted, token: currentToken } = useInfo(address);
@@ -97,7 +98,7 @@ export default function usePool (address?: AccountId | string, id?: number, refr
       setSavedPool(pool);
     }
 
-    if (!endpoint || !formatted) {
+    if (!endpoint || endpoint === AUTO_MODE.value || !formatted) {
       return;
     }
 
@@ -125,7 +126,7 @@ export default function usePool (address?: AccountId | string, id?: number, refr
 
   useEffect(() => {
     refresh && console.log('refreshing ...');
-    endpoint && refresh && formatted && getPoolInfo(endpoint, formatted, id);
+    endpoint && endpoint !== AUTO_MODE.value && refresh && formatted && getPoolInfo(endpoint, formatted, id);
   }, [endpoint, formatted, getPoolInfo, id, refresh]);
 
   useEffect(() => {

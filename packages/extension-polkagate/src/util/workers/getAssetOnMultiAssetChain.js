@@ -11,7 +11,7 @@ import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, me
 
 async function getAssets (addresses, assetsToBeFetched, chainName) {
   const endpoints = getChainEndpoints(chainName);
-  const { api, connections } = await fastestEndpoint(endpoints, false);
+  const { api, connections } = await fastestEndpoint(endpoints);
 
   const result = metadataFromApi(api);
 

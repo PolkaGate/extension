@@ -13,6 +13,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
+import { AUTO_MODE } from '../util/constants';
 import { useCurrentEraIndex, useInfo } from '.';
 
 export interface ExposureOverview {
@@ -188,7 +189,7 @@ export default function useValidators (address: string | undefined, validators?:
 
     if (api && currentEraIndex && api.query['staking']['erasStakersOverview']) {
       getValidatorsPaged(currentEraIndex).catch(console.error); // TODO: can save paged validators info in local storage
-    } else if (endpoint && chain && currentEraIndex && currentEraIndex !== info?.eraIndex) {
+    } else if (endpoint && endpoint !== AUTO_MODE.value && chain && currentEraIndex && currentEraIndex !== info?.eraIndex) {
       /** get validators info, including current and waiting, should be called after savedValidators gets value */
       getValidatorsInfo(endpoint, info);
     }

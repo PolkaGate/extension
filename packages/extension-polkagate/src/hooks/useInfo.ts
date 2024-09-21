@@ -29,7 +29,7 @@ export default function useInfo (address: AccountId | string | undefined): Addre
   const api = useApi(address);
   const chain = useChain(address);
   const decimal = useDecimal(address);
-  const endpoint = useEndpoint(address);
+  const { endpoint } = useEndpoint(address);
   const formatted = useFormatted(address);
   const token = useToken(address);
 
