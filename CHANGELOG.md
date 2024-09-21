@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.11.0](https://github.com/polkagate/extension/compare/v0.10.2...v0.11.0) (2024-09-21)
+
+
+### Features
+
+* Auto update metadata while fetching accounts balances ([#1517](https://github.com/polkagate/extension/issues/1517)) ([17367eb](https://github.com/polkagate/extension/commit/17367eb1ad01198d7d02a994bce1d5d7e3f48a9c))
+
 ## [0.10.2](https://github.com/polkagate/extension/compare/v0.10.1...v0.10.2) (2024-09-15)
 
 

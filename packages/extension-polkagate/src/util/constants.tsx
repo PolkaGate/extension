@@ -1,11 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ProxyTypes } from "./types";
+import type { ProxyTypes } from './types';
 
 /* eslint-disable header/header */
 
-export const EXTENSION_NAME = 'Polkagate';
+export const EXTENSION_NAME = 'PolkaGate';
 export const NEW_VERSION_ALERT = 'alert_v0.6.1';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 

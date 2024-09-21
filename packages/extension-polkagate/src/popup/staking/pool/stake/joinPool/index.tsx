@@ -111,7 +111,7 @@ export default function JoinPool (): React.ReactElement {
     }
 
     if (selectedPool === undefined) {
-      const POLKAGATE_POOL = incrementalPools?.find((pool) => pool.metadata?.toLowerCase().includes(PREFERRED_POOL_NAME?.toLocaleLowerCase()));
+      const POLKAGATE_POOL = incrementalPools?.find((pool) => pool.metadata?.toLowerCase().includes(PREFERRED_POOL_NAME?.toLowerCase()));
 
       setSelectedPool(POLKAGATE_POOL);
     } else {
