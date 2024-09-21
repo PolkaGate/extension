@@ -16,14 +16,14 @@ export function metadataFromApi (api: ApiPromise): {metadata: MetadataDef} {
   const DEFAULT_DECIMALS = api.registry.createType('u32', 12);
   const DEFAULT_SS58 = api.registry.createType('u32', 42);
   const chainName = api.runtimeChain.toHuman();
-  const chainGenesisHash = api.genesisHash.toHex();
-  const color = endpoints.find(({ genesisHash, ui }) => genesisHash === chainGenesisHash && ui.color)?.ui?.color;
+  const apiGenesisHash = api.genesisHash.toHex();
+  const color = endpoints.find(({ genesisHash }) => genesisHash === apiGenesisHash)?.ui?.color;
 
   const metadata = {
     chain: chainName,
     chainType: 'substrate' as 'ethereum' | 'substrate',
     color,
-    genesisHash: chainGenesisHash,
+    genesisHash: apiGenesisHash,
     icon: 'substrate',
     metaCalls: base64Encode(api.runtimeMetadata.asCallsOnly.toU8a()),
     specVersion: api.runtimeVersion.specVersion.toNumber(),
