@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.12.0](https://github.com/polkagate/extension/compare/v0.11.0...v0.12.0) (2024-09-21)
+
+
+### Features
+
+* auto mode endpoint selection mode ([#1467](https://github.com/polkagate/extension/issues/1467)) ([bf248db](https://github.com/polkagate/extension/commit/bf248db364ca402b81681b0610a72877e3ebb198))
+
 # [0.11.0](https://github.com/polkagate/extension/compare/v0.10.2...v0.11.0) (2024-09-21)
 
 
