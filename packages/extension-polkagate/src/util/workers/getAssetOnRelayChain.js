@@ -8,10 +8,10 @@
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { NATIVE_TOKEN_ASSET_ID,TEST_NETS } from '../constants';
+import { NATIVE_TOKEN_ASSET_ID, TEST_NETS } from '../constants';
 import getPoolAccounts from '../getPoolAccounts';
 import { getPriceIdByChainName } from '../utils';
-import { balancify, closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
+import { balancify, closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi } from './utils';
 
 async function getPooledBalance (api, address) {
   const response = await api.query['nominationPools']['poolMembers'](address);
@@ -54,6 +54,10 @@ async function getBalances (chainName, addresses) {
   const { api, connections } = await fastestEndpoint(chainEndpoints, false);
 
   if (api.isConnected && api.derive.balances) {
+    const result = metadataFromApi(api);
+
+    postMessage(JSON.stringify(result));
+
     const requests = addresses.map(async (address) => {
       const balances = await api.derive.balances.all(address);
       const systemBalance = await api.query.system.account(address);

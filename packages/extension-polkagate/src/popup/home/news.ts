@@ -10,6 +10,12 @@ export interface News {
 
 export const news: News[] = [
   {
+    version: '0.10.1',
+    notes: [
+      'Auto Metadata Update: Metadata will be automatically updated in the background on supported chains, so manual updates are no longer necessary.'
+    ]
+  },
+  {
     version: '0.10.0',
     notes: [
       'Updated Transferable Balance Formula: The on-chain formula for calculating transferable balances has been updated, potentially increasing transferable balances for users with staked solo and reserved funds.',
