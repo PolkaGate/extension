@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.12.1](https://github.com/polkagate/extension/compare/v0.12.0...v0.12.1) (2024-09-21)
+
+
+### Bug Fixes
+
+* reset remote node indicator signal bars on chain switch ([35e7899](https://github.com/polkagate/extension/commit/35e78999896c2b3c4ed93299577b177f2d8513e3))
+
 # [0.12.0](https://github.com/polkagate/extension/compare/v0.11.0...v0.12.0) (2024-09-21)
 
 
