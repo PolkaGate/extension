@@ -199,6 +199,24 @@ export default function useApi (address: AccountId | string | undefined, stateAp
       return;
     }
 
+    // To address the delay issue when setting the endpoint in this hook,
+    // we manually compare the endpoint obtained from `useEndpoint` (local state)
+    // and the endpoint stored in `EndpointManager`.
+    // If they are not equal, it means the state has not been updated yet, 
+    // so we log a message and return early to prevent further processing.
+    const endpointFromUseEndpoint = endpoint; // Endpoint from local hook state
+    const endpointFromTheManager = endpointManager.get(String(address), chainGenesisHash); // Endpoint stored in the manager
+
+    // Check if the two endpoints are not synchronized
+    if (endpointFromUseEndpoint !== endpointFromTheManager?.endpoint) {
+      // Log a message to indicate that the endpoint has not been updated yet
+      console.log('📌 📌 Not updated yet! The endpoint in the manager is still different from the local one.');
+
+      // Exit early to avoid further execution until the endpoints are in sync
+      return;
+    }
+    // If we reach this point, the endpoints match and we can proceed with the update
+
     // Check if there is a saved API that is already connected
     const savedApi = apisContext?.apis[chainGenesisHash]?.find((sApi) => sApi.endpoint === endpoint);
 
@@ -242,8 +260,8 @@ export default function useApi (address: AccountId | string | undefined, stateAp
     apisContext.apis[chainGenesisHash] = toSaveApi;
     apisContext.setIt({ ...apisContext.apis });
 
-  // @ts-expect-error to bypass access to private prop
-  // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/no-unsafe-member-access
+    // @ts-expect-error to bypass access to private prop
+    // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/no-unsafe-member-access
   }, [address, apisContext?.apis?.[chainGenesisHash]?.length, chainGenesisHash, checkForNewOne, connectToEndpoint, endpoint, handleAutoMode, handleNewApi, state?.api?._options?.provider?.endpoint, state.isLoading]);
 
   useEffect(() => {
