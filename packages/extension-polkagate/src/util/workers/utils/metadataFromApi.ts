@@ -17,7 +17,7 @@ export function metadataFromApi (api: ApiPromise): {metadata: MetadataDef} {
   const DEFAULT_SS58 = api.registry.createType('u32', 42);
   const chainName = api.runtimeChain.toHuman();
   const apiGenesisHash = api.genesisHash.toHex();
-  const color = endpoints.find(({ genesisHash }) => genesisHash === apiGenesisHash)?.ui?.color;
+  const color = endpoints.find(({ genesisHash, ui }) => genesisHash === apiGenesisHash && ui.color)?.ui?.color;
 
   const metadata = {
     chain: chainName,
