@@ -202,13 +202,12 @@ export default function useApi (address: AccountId | string | undefined, stateAp
     // To address the delay issue when setting the endpoint in this hook,
     // we manually compare the endpoint obtained from `useEndpoint` (local state)
     // and the endpoint stored in `EndpointManager`.
-    // If they are not equal, it means the state has not been updated yet, 
+    // If they are not equal, it means the state has not been updated yet,
     // so we log a message and return early to prevent further processing.
-    const endpointFromUseEndpoint = endpoint; // Endpoint from local hook state
-    const endpointFromTheManager = endpointManager.get(String(address), chainGenesisHash); // Endpoint stored in the manager
+    const endpointFromTheManager = endpointManager.get(String(address), chainGenesisHash)?.endpoint; // Endpoint stored in the manager
 
     // Check if the two endpoints are not synchronized
-    if (endpointFromUseEndpoint !== endpointFromTheManager?.endpoint) {
+    if (endpoint !== endpointFromTheManager) {
       // Log a message to indicate that the endpoint has not been updated yet
       console.log('📌 📌 Not updated yet! The endpoint in the manager is still different from the local one.');
 
