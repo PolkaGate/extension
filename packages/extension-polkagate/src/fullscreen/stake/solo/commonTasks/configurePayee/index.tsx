@@ -11,7 +11,7 @@ import type { StakingInputs } from '../../../type';
 import { faHandHoldingDollar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
-import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Skeleton, Typography, useTheme } from '@mui/material';
+import { Divider, FormControl, FormControlLabel, FormLabel, Grid, IconButton, Radio, RadioGroup, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
@@ -60,7 +60,7 @@ export const ModalTitle = ({ icon, onCancel, setStep, step, text }: { text: stri
         </Grid>
       </Grid>
       <Grid item>
-        <CloseIcon
+        <IconButton
           onClick={
             step === STEPS.INDEX
               ? onCancel
@@ -68,9 +68,11 @@ export const ModalTitle = ({ icon, onCancel, setStep, step, text }: { text: stri
                 ? closeProxy
                 : onClose
           }
-          sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }}
-        />
+        >
+          <CloseIcon sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
+        </IconButton>
       </Grid>
+      <Divider sx={{ mt: '5px', width: '100%' }} />
     </Grid>
   );
 };
@@ -80,7 +82,7 @@ export default function ConfigurePayee ({ address, setRefresh, setShow, show }: 
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);
 
-  const stakingConsts = useStakingConsts(address as string);
+  const stakingConsts = useStakingConsts(address);
   const stakingAccount = useStakingAccount(address, undefined, undefined, undefined, true);
 
   const [rewardDestinationValue, setRewardDestinationValue] = useState<string>();
@@ -108,7 +110,7 @@ export default function ConfigurePayee ({ address, setRefresh, setShow, show }: 
     let payee: Payee;
 
     if (destinationType === 'account') {
-      //@ts-ignore
+      // @ts-ignore
       const rewardDestinationAccount = parsedStakingAccount.rewardDestination.account as string;
 
       payee = {
@@ -262,7 +264,7 @@ export default function ConfigurePayee ({ address, setRefresh, setShow, show }: 
                     address={rewardDestinationAccount}
                     chain={chain}
                     label={t('Specific account')}
-                    //@ts-ignore
+                    // @ts-ignore
                     setAddress={setRewardDestinationAccount}
                     style={{ pt: '25px', px: '15px' }}
                   />

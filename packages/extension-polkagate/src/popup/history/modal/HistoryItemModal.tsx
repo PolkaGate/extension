@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { TransactionDetail } from '../../../util/types';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Container, Grid, IconButton, Typography } from '@mui/material';
@@ -10,7 +11,6 @@ import React, { useCallback, useMemo } from 'react';
 
 import { FormatBalance2 } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { TransactionDetail } from '../../../util/types';
 import { amountToMachine, toShortAddress, upperCaseFirstChar } from '../../../util/utils';
 
 interface Props {
@@ -25,10 +25,10 @@ interface Props {
   setDetailInfo: React.Dispatch<React.SetStateAction<TransactionDetail | undefined>>;
 }
 
-export default function HistoryItemModal({ anotherDay, date, decimal, formatted, info, setDetailInfo, setShowDetail, token }: Props): React.ReactElement {
+export default function HistoryItemModal ({ anotherDay, date, decimal, formatted, info, setDetailInfo, setShowDetail, token }: Props): React.ReactElement {
   const { t } = useTranslation();
 
-  const _goToDetail = useCallback(() => {
+  const goToDetail = useCallback(() => {
     setDetailInfo(info);
     setShowDetail(true);
   }, [info, setDetailInfo, setShowDetail]);
@@ -47,17 +47,20 @@ export default function HistoryItemModal({ anotherDay, date, decimal, formatted,
     if (info?.to?.address === formatted) {
       return `${t('From')}: ${info?.from?.name || toShortAddress(info?.from?.address)}`;
     }
+
+    return undefined;
   }, [formatted, info?.from?.address, info?.from?.name, info.subAction, info?.to, t]);
 
   return (
     <Container disableGutters sx={{ marginTop: `${anotherDay ? 20 : -0.8}px` }}>
-      {anotherDay && <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
+      {anotherDay &&
+      <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
         {date}
       </Grid>
       }
-      <Grid alignItems='center' container direction='column' item justifyContent='space-between' sx={{ '> .historyItems:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' sx={{ '> .historyItems:last-child': { border: 'none' }, bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '0px 0px 3px 2px rgba(0, 0, 0, 0.1)', mx: '3px', width: 'calc(100% - 6px)' }}>
         <Grid className='historyItems' container item py='5px' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
-          <Grid container item sx={{ fontSize: '22px', fontWeight: 300 }} px='10px' xs={11}>
+          <Grid container item px='10px' sx={{ fontSize: '22px', fontWeight: 300 }} xs={11}>
             <Grid container item justifyContent='space-between'>
               <Grid item>
                 {action}
@@ -79,14 +82,14 @@ export default function HistoryItemModal({ anotherDay, date, decimal, formatted,
               </Grid>
               <Grid item>
                 <Typography color={info.success ? 'green' : 'red'} fontSize='16px' fontWeight={400}>
-                  {info.success ? t<string>('Completed') : t<string>('Failed')}
+                  {info.success ? t('Completed') : t('Failed')}
                 </Typography>
               </Grid>
             </Grid>
           </Grid>
-          <Grid alignItems='center' container item sx={{ borderLeft: '1px solid', borderLeftColor: 'secondary.light' }} xs={1}>
+          <Grid alignItems='center' container item justifyContent='center' sx={{ borderLeft: '1px solid', borderLeftColor: 'divider' }} xs={1}>
             <IconButton
-              onClick={_goToDetail}
+              onClick={goToDetail}
               sx={{ p: 0 }}
             >
               <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: '#BA2882', strokeWidth: 2 }} />

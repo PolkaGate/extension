@@ -1,19 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { Address, ButtonWithCancel, InputWithLabel, Label } from '../../../../components';
+import { ButtonWithCancel, InputWithLabel, Label, NewAddress } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
 import Passwords2 from '../../createAccountFullScreen/components/Passwords2';
 
 interface Props {
   address: string;
-  genesisHash: string | null | undefined;
   derivedAccountName: string | null;
   onNameChange: ((value: string) => void) | undefined;
   onPasswordChange: (password: string | null) => void;
@@ -23,7 +21,7 @@ interface Props {
   isBusy: boolean;
 }
 
-export default function CreateNewDerivedAccount({ address, derivedAccountName, genesisHash, isBusy, onBackClick, onCreate, onNameChange, onPasswordChange, password }: Props): React.ReactElement<Props> {
+export default function CreateNewDerivedAccount ({ address, derivedAccountName, isBusy, onBackClick, onCreate, onNameChange, onPasswordChange, password }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const nullF = useCallback(() => null, []);
@@ -31,26 +29,26 @@ export default function CreateNewDerivedAccount({ address, derivedAccountName, g
   return (
     <>
       <Label
-        label={t<string>('New derived account')}
+        label={t('New derived account')}
         style={{ margin: 'auto', marginBottom: '15px' }}
       >
-        <Address
+        <NewAddress
           address={address}
-          genesisHash={genesisHash}
           name={derivedAccountName}
+          showCopy
           style={{ m: 0, width: '100%' }}
         />
       </Label>
       <InputWithLabel
         isError={derivedAccountName === null || derivedAccountName?.length === 0}
         isFocused
-        label={t<string>('Choose a name for this account')}
+        label={t('Choose a name for this account')}
         onChange={onNameChange}
         value={derivedAccountName ?? ''}
       />
       <Passwords2
         firstPassStyle={{ marginBlock: '10px' }}
-        label={t<string>('Password for this account (more than 5 characters)')}
+        label={t('Password for this account (more than 5 characters)')}
         onChange={onPasswordChange}
         onEnter={derivedAccountName && password ? onCreate : nullF}
       />
@@ -59,9 +57,9 @@ export default function CreateNewDerivedAccount({ address, derivedAccountName, g
           _isBusy={isBusy}
           _onClick={onCreate}
           _onClickCancel={onBackClick}
-          cancelText={t<string>('Back')}
+          cancelText={t('Back')}
           disabled={!password || !derivedAccountName}
-          text={t<string>('Create')}
+          text={t('Create')}
         />
       </Grid>
     </>

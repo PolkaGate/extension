@@ -17,18 +17,18 @@ import { BN } from '@polkadot/util';
 import { AccountContext, ActionContext, Warning } from '../../components';
 import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
 import { getValue } from '../../popup/account/util';
-import ExportAccountModal from '../../popup/export/ExportAccountModal';
-import ForgetAccountModal from '../../popup/forgetAccount/ForgetAccountModal';
 import HistoryModal from '../../popup/history/modal/HistoryModal';
 import { AccountLabel } from '../../popup/home/AccountLabel';
-import DeriveAccountModal from '../../popup/newAccount/deriveAccount/modal/DeriveAccountModal';
 import ReceiveModal from '../../popup/receive/ReceiveModal';
-import RenameModal from '../../popup/rename/RenameModal';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import getParentNameSuri from '../../util/getParentNameSuri';
 import { getPriceIdByChainName } from '../../util/utils';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
+import DeriveAccountModal from '../partials/DeriveAccountModal';
+import ExportAccountModal from '../partials/ExportAccountModal';
+import ForgetAccountModal from '../partials/ForgetAccountModal';
+import RenameModal from '../partials/RenameAccountModal';
 import { Title } from '../sendFund/InputPage';
 import { openOrFocusTab } from './components/CommonTasks';
 import ReservedDisplayBalance from './components/ReservedDisplayBalance';
@@ -62,7 +62,7 @@ export default function AccountDetails (): React.ReactElement {
   const onAction = useContext(ActionContext);
   const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();
-  
+
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
   const [assetIdOnAssetHub, setAssetIdOnAssetHub] = useState<number>();
   const [selectedAsset, setSelectedAsset] = useState<FetchedBalance>();

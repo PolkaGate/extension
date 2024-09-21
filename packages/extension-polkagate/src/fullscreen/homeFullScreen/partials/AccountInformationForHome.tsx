@@ -20,15 +20,15 @@ import { ActionContext, Identicon, Identity, OptionalCopyButton, ShortAddress2 }
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, useIdentity, useInfo, usePrices, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount } from '../../../messaging';
-import ExportAccountModal from '../../../popup/export/ExportAccountModal';
-import ForgetAccountModal from '../../../popup/forgetAccount/ForgetAccountModal';
-import DeriveAccountModal from '../../../popup/newAccount/deriveAccount/modal/DeriveAccountModal';
-import RenameModal from '../../../popup/rename/RenameModal';
 import { amountToHuman } from '../../../util/utils';
 import AccountIconsFs from '../../accountDetails/components/AccountIconsFs';
 import { EyeIconFullScreen } from '../../accountDetails/components/AccountInformationForDetails';
 import AOC from '../../accountDetails/components/AOC';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
+import DeriveAccountModal from '../../partials/DeriveAccountModal';
+import ExportAccountModal from '../../partials/ExportAccountModal';
+import ForgetAccountModal from '../../partials/ForgetAccountModal';
+import RenameModal from '../../partials/RenameAccountModal';
 import FullScreenAccountMenu from './FullScreenAccountMenu';
 
 interface AddressDetailsProps {
@@ -48,6 +48,45 @@ export enum POPUPS_NUMBER {
   FORGET_ACCOUNT,
   RENAME,
   MANAGE_PROFILE
+}
+
+const AccountButton = ({ icon, onClick, text }: AccountButtonType) => {
+  const theme = useTheme();
+
+  return (
+    <Button
+      endIcon={icon}
+      onClick={onClick}
+      sx={{ '&:hover': { bgcolor: 'divider' }, color: theme.palette.secondary.light, fontSize: '16px', fontWeight: 400, height: '53px', textTransform: 'none', width: 'fit-content' }}
+      variant='text'
+    >
+      {text}
+    </Button>
+  );
+};
+
+const AccountTotal = ({ currencySign, hideNumbers, totalBalance }: { currencySign: string | undefined, hideNumbers: boolean | undefined, totalBalance: number | undefined }) => {
+  const theme = useTheme();
+  const { t } = useTranslation();
+
+  return (
+    <Grid alignItems='center' container item xs>
+      <Grid alignItems='center' container gap='15px' item justifyContent='center' width='fit-content'>
+        <Typography fontSize='16px' fontWeight={400} pl='15px'>
+          {t('Total')}:
+        </Typography>
+        {
+          hideNumbers || hideNumbers === undefined
+            ? <Box component='img' src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string} sx={{ height: '36px', width: '154px' }} />
+            : totalBalance !== undefined
+              ? <Typography fontSize='32px' fontWeight={700}>
+                {`${currencySign ?? ''}${nFormatter(totalBalance ?? 0, 2)}`}
+              </Typography>
+              : <Skeleton animation='wave' height={28} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={180} />
+        }
+      </Grid>
+    </Grid>
+  );
 };
 
 export default function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
@@ -87,36 +126,6 @@ export default function AccountInformationForHome ({ accountAssets, address, hid
     /** we need currency as a dependency to update balance by changing currency*/
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountAssets, calculatePrice, currency, pricesInCurrencies]);
-
-  const AccountTotal = () => (
-    <Grid alignItems='center' container item xs>
-      <Grid alignItems='center' container gap='15px' item justifyContent='center' width='fit-content'>
-        <Typography fontSize='16px' fontWeight={400} pl='15px'>
-          {t('Total')}:
-        </Typography>
-        {
-          hideNumbers || hideNumbers === undefined
-            ? <Box component='img' src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string} sx={{ height: '36px', width: '154px' }} />
-            : totalBalance !== undefined
-              ? <Typography fontSize='32px' fontWeight={700}>
-                {`${currency?.sign ?? ''}${nFormatter(totalBalance ?? 0, 2)}`}
-              </Typography>
-              : <Skeleton animation='wave' height={28} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={180} />
-        }
-      </Grid>
-    </Grid>
-  );
-
-  const AccountButton = ({ icon, onClick, text }: AccountButtonType) => (
-    <Button
-      endIcon={icon}
-      onClick={onClick}
-      sx={{ '&:hover': { bgcolor: 'divider' }, color: theme.palette.secondary.light, fontSize: '16px', fontWeight: 400, height: '53px', textTransform: 'none', width: 'fit-content' }}
-      variant='text'
-    >
-      {text}
-    </Button>
-  );
 
   const onAssetBoxClicked = useCallback((asset: FetchedBalance | undefined) => {
     address && asset && tieAccount(address, asset.genesisHash as HexString).finally(() => {
@@ -182,7 +191,11 @@ export default function AccountInformationForHome ({ accountAssets, address, hid
               </Grid>
             </Grid>
           </Grid>
-          <AccountTotal />
+          <AccountTotal
+            currencySign={currency?.sign}
+            hideNumbers={hideNumbers}
+            totalBalance={totalBalance}
+          />
         </Grid>
         <Grid container item justifyContent='flex-end' minHeight='50px'>
           <Divider sx={{ bgcolor: 'divider', height: '1px', mr: '5px', my: '15px', width: '100%' }} />

@@ -85,7 +85,7 @@ export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false,
                 src={logoBlack as string}
                 sx={{ height: 50, mr: '2%', width: 50 }}
               />
-              <Typography color='white' fontFamily='Eras' fontSize='42px'>
+              <Typography color='white' fontFamily='Eras' fontSize='40px'>
                 {EXTENSION_NAME}
               </Typography>
             </Grid>

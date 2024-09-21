@@ -1,19 +1,18 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { ActionContext } from '../../../../components';
-import { useAccount, useTranslation } from '../../../../hooks';
-import { deriveAccount } from '../../../../messaging';
-import { DraggableModal } from '../../../../fullscreen/governance/components/DraggableModal';
-import CreateNewDerivedAccount from './CreateNewDerivedAccount';
-import SelectParent from './SelectParent';
+import { ActionContext } from '../../components';
+import { useAccount, useTranslation } from '../../hooks';
+import { deriveAccount } from '../../messaging';
+import CreateNewDerivedAccount from '../../popup/newAccount/deriveAccount/modal/CreateNewDerivedAccount';
+import SelectParent from '../../popup/newAccount/deriveAccount/modal/SelectParent';
+import { DraggableModal } from '../governance/components/DraggableModal';
+import SimpleModalTitle from './SimpleModalTitle';
 
 interface Props {
   parentAddress?: string | undefined;
@@ -33,10 +32,9 @@ interface ConfirmState {
   parentPassword: string;
 }
 
-function DeriveModal({ parentAddress, setDisplayPopup }: Props): React.ReactElement<Props> {
+function DeriveModal ({ parentAddress, setDisplayPopup }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
-  const theme = useTheme();
 
   const [isBusy, setIsBusy] = useState(false);
   const [account, setAccount] = useState<null | PathState>(null);
@@ -96,16 +94,11 @@ function DeriveModal({ parentAddress, setDisplayPopup }: Props): React.ReactElem
   return (
     <DraggableModal onClose={onClose} open>
       <>
-        <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
-          <Grid item>
-            <Typography fontSize='22px' fontWeight={700}>
-              {t<string>('Derive Account')}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <CloseIcon onClick={onClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-          </Grid>
-        </Grid>
+        <SimpleModalTitle
+          icon='vaadin:road-branch'
+          onClose={onClose}
+          title={t('Derive Account')}
+        />
         <Typography fontSize='14px' fontWeight={300} m='25px auto' textAlign='left'>
           {t<string>('A derived account inherits the recovery phrase from its parent, but has a unique derivation path.')}
         </Typography>
@@ -123,7 +116,6 @@ function DeriveModal({ parentAddress, setDisplayPopup }: Props): React.ReactElem
           <CreateNewDerivedAccount
             address={account.address}
             derivedAccountName={name}
-            genesisHash={parentAccount?.genesisHash}
             isBusy={isBusy}
             onBackClick={onBackClick}
             onCreate={onCreate}

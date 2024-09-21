@@ -14,7 +14,7 @@ import { VaadinIcon } from '../../../components/index';
 import { getStorage, setStorage, watchStorage } from '../../../components/Loading';
 import { useAlerts, useProfileAccounts, useTranslation } from '../../../hooks';
 import { showAccount } from '../../../messaging';
-import { HIDDEN_PERCENT } from './ProfileTabs';
+import { HIDDEN_PERCENT } from './ProfileTabsFullScreen';
 
 interface Props {
   orderedAccounts: AccountsOrder[] | undefined
@@ -25,7 +25,7 @@ interface Props {
   index: number;
 }
 
-export default function ProfileTab ({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
+export default function ProfileTabFullScreen ({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { notify } = useAlerts();
@@ -71,11 +71,11 @@ export default function ProfileTab ({ index, isHovered, orderedAccounts, selecte
     if (profileAccounts && toHideAll !== undefined) {
       hideAccounts(profileAccounts);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hideAccounts, profileAccounts?.length, toHideAll]);
 
   useEffect(() => {
-  /** set profile text in local storage and watch its change to apply on the UI */
+    /** set profile text in local storage and watch its change to apply on the UI */
     getStorage('profile').then((res) => {
       setSelectedProfile(res as string || t('All'));
     }).catch(console.error);

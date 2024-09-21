@@ -7,7 +7,7 @@ import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types'
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 // added for plus to import RequestUpdateMeta
-import type { AccountJson, AllowedPath, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestTypes, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
+import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestTypes, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
 import type State from './State';
 
 import { ALLOWED_PATH, PASSWORD_EXPIRY_MS, START_WITH_PATH } from '@polkadot/extension-base/defaults';
@@ -57,20 +57,34 @@ export default class Extension {
     this.#state = state;
   }
 
+  private applyAddedTime ({ pair }: ApplyAddedTime): void {
+    assert(pair, 'Unable to find pair');
+
+    const addedTime = Date.now();
+
+    keyring.saveAccountMeta(pair, { ...pair.meta, addedTime });
+  }
+
   private accountsCreateExternal ({ address, genesisHash, name }: RequestAccountCreateExternal): boolean {
-    keyring.addExternal(address, { genesisHash, name });
+    const { pair } = keyring.addExternal(address, { genesisHash, name });
+
+    this.applyAddedTime({ pair });
 
     return true;
   }
 
   private accountsCreateHardware ({ accountIndex, address, addressOffset, genesisHash, hardwareType, name }: RequestAccountCreateHardware): boolean {
-    keyring.addHardware(address, hardwareType, { accountIndex, addressOffset, genesisHash, name });
+    const { pair } = keyring.addHardware(address, hardwareType, { accountIndex, addressOffset, genesisHash, name });
+
+    this.applyAddedTime({ pair });
 
     return true;
   }
 
   private accountsCreateSuri ({ genesisHash, name, password, suri, type }: RequestAccountCreateSuri): boolean {
-    keyring.addUri(getSuri(suri, type), password, { genesisHash, name }, type);
+    const { pair } = keyring.addUri(getSuri(suri, type), password, { genesisHash, name }, type);
+
+    this.applyAddedTime({ pair });
 
     return true;
   }
@@ -311,7 +325,9 @@ export default class Extension {
 
   private jsonRestore ({ file, password }: RequestJsonRestore): void {
     try {
-      keyring.restoreAccount(file, password);
+      const pair = keyring.restoreAccount(file, password);
+
+      this.applyAddedTime({ pair });
     } catch (error) {
       throw new Error((error as Error).message);
     }
@@ -532,7 +548,9 @@ export default class Extension {
       suri
     });
 
-    keyring.addPair(childPair, password);
+    const { pair } = keyring.addPair(childPair, password);
+
+    this.applyAddedTime({ pair });
 
     return true;
   }

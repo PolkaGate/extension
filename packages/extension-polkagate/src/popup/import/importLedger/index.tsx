@@ -5,11 +5,12 @@
 
 import { Grid } from '@mui/material';
 import React, { useState } from 'react';
+
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen } from '../../../hooks';
+import GenericApp from './GenericApp';
 import LedgerOptions from './LedgerOptions';
 import LegacyApps from './LegacyApps';
-import GenericApp from './GenericApp';
 import MigrationApp from './MigrationApp';
 
 export enum MODE {
@@ -19,10 +20,10 @@ export enum MODE {
   MIGRATION
 }
 
-export default function ImportLedger(): React.ReactElement {
+export default function ImportLedger (): React.ReactElement {
   useFullscreen();
 
-  const [mode, setMode] = useState<number>(MODE.INDEX);
+  const [mode, setMode] = useState<MODE>(MODE.INDEX);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>

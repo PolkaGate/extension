@@ -54,6 +54,7 @@ export default function AccountsTree ({ hideNumbers, parentName, quickActionOpen
           borderStyle: account?.parentAddress ? 'dashed' : 'solid',
           borderWidth: activeRecovery ? '2px' : 0,
           boxShadow: theme.palette.mode === 'dark' ? '0px 0px 3px rgba(50, 50, 50, 1)' : '0px 0px 3px 2px rgba(0, 0, 0, 0.1)',
+          mb: '7px',
           position: 'relative'
         }}
       >

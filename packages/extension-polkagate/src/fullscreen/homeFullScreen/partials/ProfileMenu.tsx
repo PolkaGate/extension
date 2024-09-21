@@ -5,15 +5,17 @@
 
 import DoneIcon from '@mui/icons-material/Done';
 import { Divider, Grid, IconButton, Popover, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { InputWithLabel, MenuItem, VaadinIcon } from '../../../components';
+import { AccountContext, InputWithLabel, MenuItem, VaadinIcon } from '../../../components';
+import { getStorage, setStorage } from '../../../components/Loading';
 import { useInfo, useIsExtensionPopup, useProfiles, useTranslation } from '../../../hooks';
+import { PROFILE_TAGS } from '../../../hooks/useProfileAccounts';
 import { updateMeta } from '../../../messaging';
 
 interface Props {
   address: string | undefined;
-  setUpperAnchorEl?: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
+  closeParentMenu: () => void;
 }
 
 interface InputBoxProps {
@@ -180,52 +182,72 @@ enum STATUS {
   SHOW_REMOVE
 }
 
-function ProfileMenu ({ address, setUpperAnchorEl }: Props): React.ReactElement<Props> {
+function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
-  const isExtensionMode = useIsExtensionPopup();
 
+  const isExtensionMode = useIsExtensionPopup();
   const { account } = useInfo(address);
+  const { accounts } = useContext(AccountContext);
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | HTMLDivElement | null>();
   const [status, setStatus] = useState<STATUS>();
   const [showName, setShowName] = useState<boolean>();
+  const [currentProfile, setCurrentProfile] = useState<string>();
 
   const profileNames = account?.profile ? account.profile.split(',') : undefined;
+
+  useEffect(() => {
+    getStorage('profile').then((res) => {
+      setCurrentProfile(res as string);
+    }).catch(console.error);
+  }, []);
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);
     setShowName(false);
-    setUpperAnchorEl && setUpperAnchorEl(null);
-  }, [setUpperAnchorEl]);
+    closeParentMenu();
+  }, [closeParentMenu]);
 
   const onAddClick = useCallback((event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
     setStatus(STATUS.SHOW_ADD);
   }, []);
 
-  const onRemoveClick = useCallback((event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
+  const onRemoveMenuClick = useCallback((event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
     setStatus(STATUS.SHOW_REMOVE);
   }, []);
 
-  const onRemove = useCallback((profile: string) => {
-    if (!account?.profile) {
+  const onRemove = useCallback((profileToBeRemoved: string) => {
+    if (!(address && profileNames && accounts)) {
       return;
     }
 
-    const profiles = account.profile.split(',');
-    const profileIndex = profiles.findIndex((item) => item === profile);
+    const accountsWithTheSameProfile = accounts.filter(({ profile }) =>
+      profile?.split(',').includes(profileToBeRemoved)
+    );
 
-    profiles.splice(profileIndex, 1);
+    const maybeRemainingProfiles = profileNames.filter((profile) => profile !== profileToBeRemoved);
 
-    const metaData = JSON.stringify({ profile: profiles?.length ? profiles.join(',') : null });
+    const metaData = JSON.stringify({
+      profile: maybeRemainingProfiles?.length ? maybeRemainingProfiles.join(',') : null
+    });
 
-    updateMeta(String(address), metaData)
+    updateMeta(address, metaData)
       .then(() => {
-        handleClose();
-      }).catch(console.error);
-  }, [account?.profile, address, handleClose]);
+        const isLastAccountWithTheProfile = accountsWithTheSameProfile.length === 1;
+
+        if (isLastAccountWithTheProfile && currentProfile === profileToBeRemoved) {
+          setStorage('profile', PROFILE_TAGS.ALL)
+            .then(handleClose)
+            .catch(console.error);
+        } else {
+          handleClose();
+        }
+      })
+      .catch(console.error);
+  }, [profileNames, accounts, address, currentProfile, handleClose]);
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover 2' : undefined;
@@ -260,7 +282,7 @@ function ProfileMenu ({ address, setUpperAnchorEl }: Props): React.ReactElement<
         </>
       }
       {isExtensionMode && profileNames && profileNames.length > 0 &&
-        <Grid aria-describedby={id} component='button' container item onClick={onRemoveClick} sx={{ bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
+        <Grid aria-describedby={id} component='button' container item onClick={onRemoveMenuClick} sx={{ bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
           <MenuItem
             iconComponent={
               <VaadinIcon icon='vaadin:folder-remove' style={{ color: theme.palette.text.primary, height: '20px' }} />

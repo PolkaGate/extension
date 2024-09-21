@@ -1368,5 +1368,16 @@
   "Accounts' balances updated!": "Les soldes des comptes ont été mis à jour !",
   "The account has been successfully removed!": "Le compte a été supprimé avec succès !",
   "The account address, formatted for {{chainName}}, has been copied to the clipboard!": "L'adresse du compte, formatée pour {{chainName}}, a été copiée dans le presse-papiers !",
-  "The transaction has been finalized!": "La transaction a été finalisée !"
+  "The transaction has been finalized!": "La transaction a été finalisée !",
+  "Delegation status": "Statut de délégation",
+  "Accounts in the {{profileName}} profile are now {{visibility}} websites.": "Les comptes dans le profil {{profileName}} sont maintenant des sites Web {{visibility}}.",
+  "{{accountName}} default chain switched to {{chainName}}.": "La chaîne par défaut de {{accountName}} a été changée en {{chainName}}.",
+  "Social Media": "Réseaux sociaux",
+  "Need": "Besoin",
+  "Help?": "Besoin d'aide?",
+  "Rewards Destination": "Destination des récompenses",
+  "{{accountName}} has been successfully removed!": "{{accountName}} a été supprimé avec succès !",
+  "Voted Aye": "A voté Oui",
+  "Voted Nay": "A voté Non",
+  "Voted Abstain": "S'est abstenu"
 }

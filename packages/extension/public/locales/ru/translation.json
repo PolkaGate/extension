@@ -1363,5 +1363,16 @@
   "Accounts' balances updated!": "Баланс счетов обновлен!",
   "The account has been successfully removed!": "Аккаунт был успешно удален!",
   "The account address, formatted for {{chainName}}, has been copied to the clipboard!": "Адрес аккаунта, форматированный для {{chainName}}, скопирован в буфер обмена!",
-  "The transaction has been finalized!": "Транзакция завершена!"
+  "The transaction has been finalized!": "Транзакция завершена!",
+  "Delegation status": "Статус делегирования",
+  "Accounts in the {{profileName}} profile are now {{visibility}} websites.": "Аккаунты в профиле {{profileName}} теперь являются {{visibility}} сайтами.",
+  "{{accountName}} default chain switched to {{chainName}}.": "Цепочка по умолчанию для {{accountName}} переключена на {{chainName}}.",
+  "Social Media": "Социальные сети",
+  "Need": "Необходимость",
+  "Help?": "Нужна помощь?",
+  "Rewards Destination": "Место назначения наград",
+  "{{accountName}} has been successfully removed!": "{{accountName}} успешно удален!",
+  "Voted Aye": "Проголосовал За",
+  "Voted Nay": "Проголосовал Против",
+  "Voted Abstain": "Воздержался"
 }

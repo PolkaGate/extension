@@ -1,19 +1,22 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+/* eslint-disable @typescript-eslint/prefer-for-of */
 
 import type { ApiPromise } from '@polkadot/api';
-import type { PalletConvictionVotingVoteCasting, PalletConvictionVotingVoteVoting, PalletReferendaReferendumInfoConvictionVotingTally, PalletReferendaReferendumInfoRankedCollectiveTally } from '@polkadot/types/lookup';
+import type { Option, u32 } from '@polkadot/types';
+// @ts-ignore
+import type { PalletConvictionVotingVoteAccountVote, PalletConvictionVotingVoteCasting, PalletConvictionVotingVoteVoting, PalletReferendaReferendumInfoConvictionVotingTally } from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
+import { BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import { CONVICTIONS } from '../fullscreen/governance/utils/consts';
-import useApi from './useApi';
 import useCurrentBlockNumber from './useCurrentBlockNumber';
-import useFormatted from './useFormatted';
-import { useChain } from '.';
+import { useInfo } from '.';
+import type { ITuple } from '@polkadot/types-codec/types';
 
 export interface Lock {
   classId: BN;
@@ -26,8 +29,8 @@ export interface Lock {
 export type PalletReferenda = 'referenda' | 'rankedPolls' | 'fellowshipReferenda';
 export type PalletVote = 'convictionVoting' | 'rankedCollective' | 'fellowshipCollective';
 
-function getLocks(api: ApiPromise, palletVote: PalletVote, votes: [classId: BN, refIds: BN[], casting: PalletConvictionVotingVoteCasting][], referenda: [BN, PalletReferendaReferendumInfoConvictionVotingTally][]): Lock[] {
-  const lockPeriod = api.consts[palletVote]?.voteLockingPeriod as unknown as BN;
+function getLocks (api: ApiPromise, palletVote: PalletVote, votes: [classId: BN, refIds: BN[], casting: PalletConvictionVotingVoteCasting][], referenda: [BN, PalletReferendaReferendumInfoConvictionVotingTally][]): Lock[] {
+  const lockPeriod = api.consts[palletVote]?.['voteLockingPeriod'] as unknown as BN;
   const locks: Lock[] = [];
 
   for (let i = 0; i < votes.length; i++) {
@@ -95,16 +98,14 @@ function getLocks(api: ApiPromise, palletVote: PalletVote, votes: [classId: BN, 
   return locks;
 }
 
-type Info = {
+interface Info {
   referenda: [BN, PalletReferendaReferendumInfoConvictionVotingTally][] | null,
   votes: [BN, BN[], PalletConvictionVotingVoteCasting][],
   priors: Lock[]
 }
 
-export default function useAccountLocks(address: string | undefined, palletReferenda: PalletReferenda, palletVote: PalletVote, notExpired?: boolean, refresh?: boolean): Lock[] | undefined | null {
-  const api = useApi(address);
-  const formatted = useFormatted(address);
-  const chain = useChain(address);
+export default function useAccountLocks (address: string | undefined, palletReferenda: PalletReferenda, palletVote: PalletVote, notExpired?: boolean, refresh?: boolean): Lock[] | undefined | null {
+  const { api, chain, formatted } = useInfo(address);
   const currentBlock = useCurrentBlockNumber(address);
 
   const [info, setInfo] = useState<Info | null>();
@@ -118,12 +119,12 @@ export default function useAccountLocks(address: string | undefined, palletRefer
       setInfo(undefined);
     }
 
-    async function getLockClass() {
+    async function getLockClass () {
       if (!api || !palletVote || !formatted) {
         return undefined;
       }
 
-      const locks = await api.query[palletVote]?.classLocksFor(formatted) as unknown as [BN, BN][];
+      const locks = await api.query[palletVote]?.['classLocksFor'](formatted) as unknown as [BN, BN][];
       const lockClasses = locks?.length
         ? locks.map((l) => l[0])
         : null;
@@ -134,7 +135,7 @@ export default function useAccountLocks(address: string | undefined, palletRefer
 
       const params: [string, BN][] = lockClasses.map((classId) => [String(formatted), classId]);
 
-      const maybeVotingFor = await api.query[palletVote]?.votingFor.multi(params) as unknown as PalletConvictionVotingVoteVoting[];
+      const maybeVotingFor = await api.query[palletVote]?.['votingFor'].multi(params) as unknown as PalletConvictionVotingVoteVoting[];
 
       if (!maybeVotingFor) {
         return; // has not voted!! or any issue
@@ -162,14 +163,14 @@ export default function useAccountLocks(address: string | undefined, palletRefer
 
         return [
           classId,
-          casting.votes.map(([refId]) => refId),
+          casting.votes.map(([refId]: ITuple<[u32, PalletConvictionVotingVoteAccountVote]>) => refId),
           casting
         ];
       }).filter((v): v is [BN, BN[], PalletConvictionVotingVoteCasting] => !!v);
 
       let refIds: BN[] = [];
 
-      if (maybeVotes && maybeVotes.length) {
+      if (maybeVotes?.length) {
         const ids = maybeVotes.reduce<BN[]>((all, [, ids]) => all.concat(ids), []);
 
         if (ids.length) {
@@ -185,14 +186,14 @@ export default function useAccountLocks(address: string | undefined, palletRefer
         });
       }
 
-      const optTallies = await api.query[palletReferenda]?.referendumInfoFor.multi(refIds) as unknown as PalletReferendaReferendumInfoRankedCollectiveTally[] | undefined;
+      const optTallies = await api.query[palletReferenda]?.['referendumInfoFor'].multi(refIds) as unknown as Option<PalletReferendaReferendumInfoConvictionVotingTally>[] | undefined;
 
       const maybeReferenda = optTallies
         ? optTallies.map((v, index) =>
           v.isSome
-            ? [refIds[index], v.unwrap() as PalletReferendaReferendumInfoConvictionVotingTally]
+            ? [refIds[index], v.unwrap()] as [BN, PalletReferendaReferendumInfoConvictionVotingTally ]
             : null
-        ).filter((v): v is [BN, PalletReferendaReferendumInfoConvictionVotingTally] => !!v)
+        ).filter((v) => !!v)
         : null;
 
       setInfo({

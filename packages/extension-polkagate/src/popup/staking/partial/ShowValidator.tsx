@@ -1,21 +1,21 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { ApiPromise } from '@polkadot/api';
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { StakingConsts, ValidatorInfo } from '../../../util/types';
 
 import { DirectionsRun as DirectionsRunIcon, WarningRounded as WarningRoundedIcon } from '@mui/icons-material/';
 import { Divider, Grid } from '@mui/material';
 import React from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import type { Chain } from '@polkadot/extension-chains/types';
 import { BN_ZERO } from '@polkadot/util';
 
 import { Checkbox2, Identity, Infotip, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import type { StakingConsts, ValidatorInfo } from '../../../util/types';
 import { isHexToBn } from '../../../util/utils';
 
 interface Props {
@@ -28,7 +28,7 @@ interface Props {
     safe: boolean;
   } | undefined;
   v: ValidatorInfo;
-  handleCheck: (checked: boolean, validator: ValidatorInfo) => void;
+  handleCheck: (checked: React.ChangeEvent<HTMLInputElement>, validator: ValidatorInfo) => void;
   chain?: Chain;
   decimal?: number;
   stakingConsts: StakingConsts | null | undefined;
@@ -36,17 +36,17 @@ interface Props {
   token?: string;
 }
 
-function ShowValidator({ accountInfo, api, chain, check, decimal, handleCheck, isActive, isOversubscribed, showCheckbox, stakingConsts, token, v }: Props): React.ReactElement {
+const Div = () => (
+  <Grid alignItems='center' item justifyContent='center'>
+    <Divider orientation='vertical' sx={{ bgcolor: 'secondary.light', height: '15px', m: '3px 5px', width: '1px' }} />
+  </Grid>
+);
+
+function ShowValidator ({ accountInfo, api, chain, check, decimal, handleCheck, isActive, isOversubscribed, showCheckbox, stakingConsts, token, v }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const overSubscriptionAlert1 = t('This validator is oversubscribed but you are within the top {{max}}.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
   const overSubscriptionAlert2 = t('This validator is oversubscribed and you are not within the top {{max}} and won\'t get rewards.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
-
-  const Div = () => (
-    <Grid alignItems='center' item justifyContent='center'>
-      <Divider orientation='vertical' sx={{ bgcolor: 'secondary.light', height: '15px', m: '3px 5px', width: '1px' }} />
-    </Grid>
-  );
 
   return (
     <Grid container direction='column' item p='3px 5px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='94%'>
@@ -55,6 +55,7 @@ function ShowValidator({ accountInfo, api, chain, check, decimal, handleCheck, i
           <Grid item width='10%'>
             <Checkbox2
               checked={check}
+              // eslint-disable-next-line react/jsx-no-bind
               onChange={(e) => handleCheck(e, v)}
             />
           </Grid>
@@ -63,7 +64,7 @@ function ShowValidator({ accountInfo, api, chain, check, decimal, handleCheck, i
           <Identity
             accountInfo={accountInfo}
             api={api}
-            chain={chain as any}
+            chain={chain}
             formatted={String(v.accountId)}
             identiconSize={24}
             showShortAddress
@@ -73,7 +74,7 @@ function ShowValidator({ accountInfo, api, chain, check, decimal, handleCheck, i
       </Grid>
       <Grid alignItems='center' container item>
         <Grid alignItems='center' container item maxWidth='50%' sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '23px' }} width='fit-content'>
-          {t<string>('Staked:')}
+          {t('Staked:')}
           <Grid fontSize='12px' fontWeight={400} item pl='3px'>
             {isHexToBn(v.exposure.total.toString()).gt(BN_ZERO)
               ? <ShowBalance
@@ -91,14 +92,14 @@ function ShowValidator({ accountInfo, api, chain, check, decimal, handleCheck, i
         </Grid>
         <Div />
         <Grid alignItems='center' container item sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '23px' }} width='fit-content'>
-          {t<string>('Com.')}
+          {t('Com.')}
           <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='3px'>
             {Number(v.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(v.validatorPrefs.commission) / (10 ** 7)}%
           </Grid>
         </Grid>
         <Div />
         <Grid alignItems='end' container item sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '23px' }} width='fit-content'>
-          {t<string>('Nominators:')}
+          {t('Nominators:')}
           <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='3px'>
             {v.exposure.others?.length || t('N/A')}
           </Grid>
