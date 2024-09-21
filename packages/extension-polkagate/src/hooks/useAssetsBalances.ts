@@ -316,7 +316,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       const parsedMessage = JSON.parse(message) as WorkerMessage;
 
       if ('metadata' in parsedMessage) {
-        const metadata = parsedMessage?.['metadata'];
+        const metadata = parsedMessage['metadata'];
 
         updateMetadata(metadata as unknown as MetadataDef).catch(console.error);
 
@@ -369,7 +369,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       const parsedMessage = JSON.parse(message) as WorkerMessage;
 
       if ('metadata' in parsedMessage) {
-        const metadata = parsedMessage?.['metadata'];
+        const metadata = parsedMessage['metadata'];
 
         updateMetadata(metadata as unknown as MetadataDef).catch(console.error);
 
@@ -422,7 +422,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       const parsedMessage = JSON.parse(message) as WorkerMessage;
 
       if ('metadata' in parsedMessage) {
-        const metadata = parsedMessage?.['metadata'];
+        const metadata = parsedMessage['metadata'];
 
         updateMetadata(metadata as unknown as MetadataDef).catch(console.error);
 
