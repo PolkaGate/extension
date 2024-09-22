@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { TxInfo } from '../util/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
@@ -11,7 +12,6 @@ import { ActionContext, Motion, Popup, ShortAddress, TwoButtons } from '../compo
 import { useTranslation } from '../hooks';
 import Explorer from '../popup/history/Explorer';
 import FailSuccessIcon from '../popup/history/partials/FailSuccessIcon';
-import type { TxInfo } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
 import { HeaderBrand, SubTitle } from '.';
 
@@ -27,7 +27,7 @@ interface Props {
   txInfo: TxInfo;
 }
 
-export default function Confirmation({ children, headerTitle, onPrimaryBtnClick, onSecondaryBtnClick, primaryBtnText, secondaryBtnText, showConfirmation, subtitle, txInfo }: Props): React.ReactElement {
+export default function Confirmation ({ children, headerTitle, onPrimaryBtnClick, onSecondaryBtnClick, primaryBtnText, secondaryBtnText, showConfirmation, subtitle, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 
@@ -46,7 +46,7 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
           shortBorder
           text={headerTitle}
         />
-        <SubTitle label={txInfo.success ? subtitle || t<string>('Completed') : t<string>('Failed')} />
+        <SubTitle label={txInfo.success ? subtitle || t('Completed') : t('Failed')} />
         <FailSuccessIcon
           showLabel={false}
           style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
@@ -74,17 +74,17 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
         {children}
         <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '75%' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t<string>('Fee:')}
+            {t('Fee:')}
           </Typography>
           <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-            {fee?.toHuman() ?? '00.00'}
+            {fee?.toHuman() as string ?? '00.00'}
           </Grid>
         </Grid>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '70%' }} />
         {!!txInfo?.block &&
           <Grid alignItems='end' container justifyContent='center'>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>('Block:')}
+              {t('Block:')}
             </Typography>
             <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
               #{txInfo.block}
@@ -94,7 +94,7 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
         {txInfo?.txHash &&
           <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '75%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>('Hash:')}
+              {t('Hash:')}
             </Typography>
             <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
               <ShortAddress
@@ -115,7 +115,7 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
           onPrimaryClick={onPrimaryBtnClick}
           onSecondaryClick={onSecondaryBtnClick || goToHistory}
           primaryBtnText={primaryBtnText}
-          secondaryBtnText={secondaryBtnText || t<string>('History')}
+          secondaryBtnText={secondaryBtnText || t('History')}
         />
       </Popup>
     </Motion>
