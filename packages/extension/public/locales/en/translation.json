@@ -1402,5 +1402,7 @@
   "Chain token price Id": "",
   "Check": "",
   "Add a new chain": "",
-  "Reset to default": ""
+  "Reset to default": "",
+  "If your chain is not listed in the PolkaGate chain list, you can provide an RPC endpoint, and we’ll automatically fetch the chain information to add it to the extension’s chain list.": "",
+  "How?": ""
 }
