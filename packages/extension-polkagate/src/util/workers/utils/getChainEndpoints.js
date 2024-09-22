@@ -5,8 +5,6 @@ import { createWsEndpoints } from '@polkagate/apps-config';
 
 import { sanitizeChainName } from '../../utils';
 
-// import { getStorage } from '../../../components/Loading';
-
 /**
  * to get all available chain endpoints of a chain except light client
  * @param {string} chainName
