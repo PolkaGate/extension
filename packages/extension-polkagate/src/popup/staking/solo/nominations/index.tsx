@@ -179,6 +179,7 @@ export default function Index (): React.ReactElement {
           pt='125px'
           size={125}
           title={t('Loading the validators\' list ...')}
+          type='grid'
         />
       }
       <Grid item sx={{ m: '20px 15px' }} xs={12}>

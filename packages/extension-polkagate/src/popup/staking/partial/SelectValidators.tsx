@@ -251,6 +251,7 @@ export default function SelectValidators ({ address, api, newSelectedValidators,
               pt='125px'
               size={125}
               title={t('Loading the validators\' list ...')}
+              type='grid'
             />
             : <>
               <Grid container sx={{ justifyContent: 'flex-start', px: '15px' }}>

@@ -10,6 +10,13 @@ export interface News {
 
 export const news: News[] = [
   {
+    version: '0.11.0',
+    notes: [
+      'Auto Mode Remote Node: RPCs can now be automatically selected based on the user’s geographic location and latency for optimal performance.',
+      'Auto Metadata Update: Metadata will be automatically updated in the background on supported chains, so manual updates are no longer necessary.'
+    ]
+  },
+  {
     version: '0.10.0',
     notes: [
       'Updated Transferable Balance Formula: The on-chain formula for calculating transferable balances has been updated, potentially increasing transferable balances for users with staked solo and reserved funds.',

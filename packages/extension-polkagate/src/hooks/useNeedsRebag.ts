@@ -1,17 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { RebagInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
-
+import { AUTO_MODE } from '../util/constants';
 import { useEndpoint, useStashId } from '.';
 
-export default function useNeedsRebag(address: string): RebagInfo | undefined {
-  const endpoint = useEndpoint(address);
+export default function useNeedsRebag (address: string): RebagInfo | undefined {
+  const { endpoint } = useEndpoint(address);
   const stashId = useStashId(address);
 
   const [info, setRebagInfo] = useState<RebagInfo | undefined>();
@@ -25,9 +24,9 @@ export default function useNeedsRebag(address: string): RebagInfo | undefined {
       console.log(err);
     };
 
-    worker.onmessage = (e: MessageEvent<any>) => {
+    worker.onmessage = (e: MessageEvent<unknown>) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const info: RebagInfo | undefined = e.data;
+      const info = e.data as RebagInfo | undefined;
 
       setRebagInfo(info);
 
@@ -36,7 +35,7 @@ export default function useNeedsRebag(address: string): RebagInfo | undefined {
   }, []);
 
   useEffect(() => {
-    stashId && endpoint && checkNeedsRebag(endpoint, stashId);
+    stashId && endpoint && endpoint !== AUTO_MODE.value && checkNeedsRebag(endpoint, stashId);
   }, [stashId, endpoint, checkNeedsRebag]);
 
   return info;

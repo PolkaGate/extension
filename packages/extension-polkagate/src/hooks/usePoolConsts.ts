@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
+import { AUTO_MODE } from '../util/constants';
 import { sanitizeChainName } from '../util/utils';
 import { useCurrentEraIndex, useInfo } from '.';
 
@@ -28,9 +29,9 @@ export default function usePoolConsts (address: string | undefined, stateConsts?
       console.log(err);
     };
 
-    getPoolStakingConstsWorker.onmessage = (e: MessageEvent<any>) => {
+    getPoolStakingConstsWorker.onmessage = (e: MessageEvent<unknown>) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const c: PoolStakingConsts = e.data;
+      const c = e.data as PoolStakingConsts;
 
       if (c) {
         window.localStorage.setItem(`${chainName}_poolConsts`, JSON.stringify(c));
@@ -75,7 +76,7 @@ export default function usePoolConsts (address: string | undefined, stateConsts?
       return setConsts(stateConsts);
     }
 
-    endpoint && chain && eraIndex && eraIndex !== consts?.eraIndex && getPoolStakingConsts(endpoint);
+    endpoint && endpoint !== AUTO_MODE.value && chain && eraIndex && eraIndex !== consts?.eraIndex && getPoolStakingConsts(endpoint);
   }, [endpoint, chain, getPoolStakingConsts, stateConsts, eraIndex, consts?.eraIndex]);
 
   return (newConsts && newConsts.token === token)

@@ -2,15 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Theme } from '@mui/material';
-import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
-import type { RecentChainsType, SavedMetaData, TransactionDetail } from './types';
+import type { DropdownOption, FastestConnectionType, RecentChainsType, SavedMetaData, TransactionDetail } from './types';
 
+import { ApiPromise, WsProvider } from '@polkadot/api';
 import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
@@ -132,7 +132,7 @@ export const accountName = (accounts: AccountJson[], address: string | undefined
   return accounts.find((acc) => acc.address === addr)?.name;
 };
 
-export function prepareMetaData (chain: Chain | null | string, label: string, metaData: any): string {
+export function prepareMetaData (chain: Chain | null | string, label: string, metaData: unknown): string {
   const chainName = sanitizeChainName((chain as Chain)?.name) ?? chain;
 
   if (label === 'balances') {
@@ -163,7 +163,8 @@ export function getTransactionHistoryFromLocalStorage (
   chain: Chain | null,
   hierarchy: AccountWithChildren[],
   address: string,
-  _chainName?: string): TransactionDetail[] {
+  _chainName?: string
+): TransactionDetail[] {
   const accountSubstrateAddress = getSubstrateAddress(address);
 
   const account = hierarchy.find((h) => h.address === accountSubstrateAddress);
@@ -273,7 +274,7 @@ function splitParts (value: string): string[] {
 }
 
 export function formatMeta (meta?: Meta): string[] | null {
-  if (!meta || !meta.docs.length) {
+  if (!meta?.docs.length) {
     return null;
   }
 
@@ -295,7 +296,7 @@ export function toShortAddress (address?: string | AccountId, count = SHORT_ADDR
   return `${address.slice(0, count)}...${address.slice(-1 * count)}`;
 }
 
-export const isEqual = (a1: any[] | null, a2: any[] | null): boolean => {
+export const isEqual = (a1: unknown[] | null, a2: unknown[] | null): boolean => {
   if (!a1 && !a2) {
     return true;
   }
@@ -312,8 +313,8 @@ export const isEqual = (a1: any[] | null, a2: any[] | null): boolean => {
 
 export function saveAsHistory (formatted: string, info: TransactionDetail) {
   chrome.storage.local.get('history', (res) => {
-    const k = `${formatted}` as any;
-    const last = (res?.['history'] ?? {}) as unknown as { [key: string]: TransactionDetail[] };
+    const k = `${formatted}`;
+    const last = (res?.['history'] ?? {}) as unknown as Record<string, TransactionDetail[]>;
 
     if (last[k]) {
       last[k].push(info);
@@ -329,9 +330,8 @@ export function saveAsHistory (formatted: string, info: TransactionDetail) {
 export async function getHistoryFromStorage (formatted: string): Promise<TransactionDetail[] | undefined> {
   return new Promise((resolve) => {
     chrome.storage.local.get('history', (res) => {
-      const k = `${formatted}` as any;
-      const last = (res?.['history'] ?? {}) as unknown as { [key: string]: TransactionDetail[] };
-
+      const k = `${formatted}`;
+      const last = (res?.['history'] ?? {}) as unknown as Record<string, TransactionDetail[]>;
 
       resolve(last?.[k]);
     });
@@ -339,7 +339,7 @@ export async function getHistoryFromStorage (formatted: string): Promise<Transac
 }
 
 export const isHexToBn = (i: string): BN => isHex(i) ? hexToBn(i) : new BN(i);
-export const toBN = (i: any): BN => isHexToBn(String(i));
+export const toBN = (i: unknown): BN => isHexToBn(String(i));
 
 export const sanitizeChainName = (chainName: string | undefined) => (chainName?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', '')?.replace(' Finance', '')?.replace(' Testnet', '')?.replace(/\s/g, ''));
 
@@ -403,7 +403,7 @@ export const getPriceIdByChainName = (chainName?: string) => {
     return '';
   }
 
-  const _chainName = (sanitizeChainName(chainName) as string).toLocaleLowerCase();
+  const _chainName = (sanitizeChainName(chainName) as unknown as string).toLocaleLowerCase();
 
   return EXTRA_PRICE_IDS[_chainName] ||
     _chainName?.replace('assethub', '')?.replace('people', '');
@@ -478,5 +478,42 @@ export async function updateRecentChains (addressKey: string, genesisHashKey: st
   } catch (error) {
     console.error('Error updating recent chains:', error);
     throw error;
+  }
+}
+
+export async function fastestConnection (endpoints: DropdownOption[]): Promise<FastestConnectionType> {
+  try {
+    const connections = endpoints.map(({ value }) => {
+      const wsProvider = new WsProvider(value as string);
+
+      const connection = ApiPromise.create({ provider: wsProvider });
+
+      return {
+        connection,
+        wsProvider
+      };
+    });
+
+    const api = await Promise.any(connections.map(({ connection }) => connection));
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const selectedEndpoint = api.registry.knownTypes.provider.endpoint as string;
+    const connectionsToDisconnect = connections.filter(({ wsProvider }) => wsProvider.endpoint !== selectedEndpoint);
+
+    connectionsToDisconnect.forEach(({ wsProvider }) => {
+      wsProvider.disconnect().catch(console.error);
+    });
+
+    return {
+      api,
+      selectedEndpoint
+    };
+  } catch (error) {
+    console.error('Unable to make an API connection!', error);
+
+    return {
+      api: undefined,
+      selectedEndpoint: undefined
+    };
   }
 }

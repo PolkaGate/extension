@@ -98,7 +98,8 @@ export default function useTimeToUnlock (address: string | undefined, referendaL
     }
 
     if (indexOfBiggestNotLockable === 0 || biggestVote.eq(referendaLocks[indexOfBiggestNotLockable].total)) { // nothing is unlockable
-      const dateString = blockToDate(Number(referendaLocks[indexOfBiggestNotLockable].endBlock), currentBlock);
+      const dateOptions = { day: 'numeric', hour: 'numeric', month: 'short', year: 'numeric' } as Intl.DateTimeFormatOptions;
+      const dateString = blockToDate(Number(referendaLocks[indexOfBiggestNotLockable].endBlock), currentBlock, dateOptions);
 
       setUnlockableAmount(BN_ZERO);
 

@@ -1,30 +1,30 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Grid, Typography, useTheme } from '@mui/material';
+import type { LoginInfo } from '../../../components/Loading';
+
+import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { VaadinIcon, WrongPasswordAlert } from '../../../components';
-import { getStorage, LoginInfo } from '../../../components/Loading';
+import { WrongPasswordAlert } from '../../../components';
+import { getStorage } from '../../../components/Loading';
 import { useTranslation } from '../../../hooks';
 import Confirmation from '../../../popup/passwordManagement/Confirmation';
 import { STEPS } from '../../../popup/passwordManagement/constants';
 import Modify from '../../../popup/passwordManagement/Modify';
 import SetPassword from '../../../popup/passwordManagement/SetPassword';
 import { DraggableModal } from '../../governance/components/DraggableModal';
+import SimpleModalTitle from '../../partials/SimpleModalTitle';
 
 interface Props {
   open: boolean;
   setDisplayPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ManageLoginPassword({ open, setDisplayPopup }: Props): React.ReactElement {
+export default function ManageLoginPassword ({ open, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   const [step, setStep] = useState<number>();
   const [newPassword, setNewPassword] = useState<string>('');
@@ -53,21 +53,11 @@ export default function ManageLoginPassword({ open, setDisplayPopup }: Props): R
   return (
     <DraggableModal onClose={backToAccount} open={open}>
       <>
-        <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
-          <Grid alignItems='flex-start' container justifyContent='flex-start' sx={{ width: 'fit-content' }}>
-            <Grid item>
-              <VaadinIcon icon='vaadin:key' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
-            </Grid>
-            <Grid item sx={{ pl: '10px' }}>
-              <Typography fontSize='22px' fontWeight={700}>
-                {t('Manage Login Password')}
-              </Typography>
-            </Grid>
-          </Grid>
-          <Grid item>
-            <CloseIcon onClick={backToAccount} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-          </Grid>
-        </Grid>
+        <SimpleModalTitle
+          icon='vaadin:key'
+          onClose={backToAccount}
+          title= {t('Manage Login Password')}
+        />
         {isPasswordError &&
           <Grid alignItems='center' container sx={{ height: '120px', top: '30px' }}>
             <WrongPasswordAlert />

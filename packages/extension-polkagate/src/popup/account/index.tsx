@@ -26,7 +26,7 @@ import { stakingClose } from '../../assets/icons';
 import { ActionContext, Assets, Chain, HorizontalMenuItem, Identity, Motion, Warning } from '../../components';
 import { useBalances, useGenesisHashOptions, useInfo, useMyAccountIdentity, useTranslation } from '../../hooks';
 import { tieAccount, windowOpen } from '../../messaging';
-import { FullScreenRemoteNode, HeaderBrand } from '../../partials';
+import { HeaderBrand, RemoteNodeSelectorWithSignals } from '../../partials';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import StakingOption from '../staking/Options';
 import LockedInReferenda from './unlock/LockedInReferenda';
@@ -35,7 +35,7 @@ import LabelBalancePrice from './LabelBalancePrice';
 import Others from './Others';
 import ReservedReasons from './ReservedReasons';
 
-export default function AccountDetails(): React.ReactElement {
+export default function AccountDetails (): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const history = useHistory();
@@ -205,7 +205,7 @@ export default function AccountDetails(): React.ReactElement {
             style={{ width: '27%' }}
           />
           <Grid alignContent='flex-end' container item justifyContent='center' width='15%' zIndex={1}>
-            <FullScreenRemoteNode
+            <RemoteNodeSelectorWithSignals
               address={address}
               iconSize={25}
             />

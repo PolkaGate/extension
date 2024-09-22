@@ -1,10 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import React, { useCallback } from 'react';
 
+import EndpointManager from '../class/endpointManager';
 import { useEndpoints, useInfo, useTranslation } from '../hooks';
+import { AUTO_MODE } from '../util/constants';
 import { Select } from '.';
 
 interface Props {
@@ -12,39 +13,37 @@ interface Props {
   genesisHash: string | undefined;
 }
 
-export type ChromeStorageGetResponse = {
-  [key: string]: {
-    [key: string]: string | undefined;
-  } | undefined;
-};
+const endpointManager = new EndpointManager();
 
-export default function RemoteNodeSelector({ address, genesisHash }: Props): React.ReactElement {
+export default function RemoteNodeSelector ({ address, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const { account, chainName, endpoint } = useInfo(address);
+  const { account, endpoint } = useInfo(address);
   const endpointOptions = useEndpoints(genesisHash || account?.genesisHash);
 
-  const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
-    chainName && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
-      const i = `${address}`;
-      const j = `${chainName}`;
-      const savedEndpoints: ChromeStorageGetResponse = res?.endpoints || {};
+  const onChangeEndpoint = useCallback((newEndpoint?: string | number): void => {
+    if (!newEndpoint || typeof (newEndpoint) === 'number' || !genesisHash || !address) {
+      return;
+    }
 
-      savedEndpoints[i] = savedEndpoints[i] || {};
+    const addressKey = String(address);
+    const checkForNewOne = newEndpoint === AUTO_MODE.value && endpointManager.get(addressKey, genesisHash)?.isAuto;
 
-      savedEndpoints[i][j] = newEndpoint;
-
-      // eslint-disable-next-line no-void
-      void chrome.storage.local.set({ endpoints: savedEndpoints });
+    endpointManager.set(addressKey, genesisHash, {
+      checkForNewOne,
+      endpoint: newEndpoint,
+      isAuto: newEndpoint === AUTO_MODE.value,
+      timestamp: Date.now()
     });
-  }, [address, chainName]);
+  }, [address, genesisHash]);
 
   return (
     <>
       {endpoint &&
         <Select
           _mt='10px'
-          label={t<string>('Remote node')}
-          onChange={_onChangeEndpoint}
+          defaultValue={undefined}
+          label={t('Remote node')}
+          onChange={onChangeEndpoint}
           options={endpointOptions}
           value={endpoint}
         />}

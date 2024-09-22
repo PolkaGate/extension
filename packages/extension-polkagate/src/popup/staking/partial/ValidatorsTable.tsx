@@ -100,7 +100,7 @@ export default function ValidatorsTable ({ activeValidators, allValidatorsIdenti
             ref={ref}
             width={'100%'}
           >
-            {({ index, key, style }) => {
+            {({ index, key, style }: { index: number, key: number, style: SxProps }) => {
               const v = validatorsToList[index];
               const isActive = !!activeValidators?.find((av) => v.accountId === av?.accountId);
               const isOversubscribed = overSubscribed(v);

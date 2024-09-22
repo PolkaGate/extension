@@ -107,7 +107,7 @@ function Onboarding (): React.ReactElement {
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t('Welcome!', { replace: { extensionName: 'Polkagate' } })}
+                {t('Welcome!')}
               </Typography>
             </Grid>
           </Grid>

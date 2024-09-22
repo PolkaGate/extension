@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { TxInfo } from '../../../util/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useMemo } from 'react';
@@ -12,14 +13,13 @@ import { useAccountName, useInfo, useTranslation } from '../../../hooks';
 import { SubTitle, ThroughProxy } from '../../../partials';
 import Explorer from '../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../popup/history/partials/FailSuccessIcon';
-import type { TxInfo } from '../../../util/types';
 
 interface Props {
   txInfo: TxInfo;
   handleDone: () => void;
 }
 
-export default function Confirmation({ handleDone, txInfo }: Props): React.ReactElement {
+export default function Confirmation ({ handleDone, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { chainName, formatted, token } = useInfo(txInfo.from.address);
 
@@ -33,6 +33,7 @@ export default function Confirmation({ handleDone, txInfo }: Props): React.React
       return formatted;
     }
 
+    // @ts-ignore
     return txInfo.payee?.Account ? String(txInfo.payee.Account) : undefined;
   }, [formatted, txInfo.payee]);
 
@@ -95,7 +96,7 @@ export default function Confirmation({ handleDone, txInfo }: Props): React.React
         <>
           <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>('Rewards destination')}:
+              {t('Rewards destination')}:
             </Typography>
             {maybePayeeAddress &&
               <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='34%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
@@ -122,10 +123,10 @@ export default function Confirmation({ handleDone, txInfo }: Props): React.React
       }
       <DisplayInfo
         caption={t('Fee:')}
-        value={fee?.toHuman() ?? '00.00'}
+        value={fee?.toHuman() as string ?? '00.00'}
       />
       <DisplayInfo
-        caption={t('block:')}
+        caption={t('Block:')}
         showDivider={false}
         value={`#${txInfo.block}`}
       />

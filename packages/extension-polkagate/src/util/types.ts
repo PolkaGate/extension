@@ -167,6 +167,7 @@ export interface TxInfo extends TransactionDetail {
   token?: string;
   poolName?: string;
   validatorsCount?: number;
+  payee?: Payee,
 }
 
 export interface Auction {
@@ -724,13 +725,13 @@ export interface ApiProps extends ApiState {
   isWaitingInjected: boolean;
 }
 
-interface ApiPropsNew {
+export interface ApiPropsNew {
   api?: ApiPromise;
   endpoint: string;
   isRequested: boolean;
 }
 
-export type APIs = Record<string, ApiPropsNew[]>;
+export type APIs = Record<string, ApiPropsNew[] | undefined>;
 
 export interface APIsContext {
   apis: APIs;
@@ -808,6 +809,18 @@ export interface ProxiedAccounts {
 export interface AccountsOrder {
   id: number,
   account: AccountWithChildren
+}
+
+export interface EndpointType {
+  checkForNewOne?: boolean;
+  endpoint: string | undefined;
+  timestamp: number | undefined;
+  isAuto: boolean | undefined;
+}
+
+export interface FastestConnectionType {
+  api: ApiPromise | undefined;
+  selectedEndpoint: string | undefined;
 }
 
 export type RecentChainsType = Record<string, string[]>;
