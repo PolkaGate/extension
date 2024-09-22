@@ -48,9 +48,8 @@ async function getPooledBalance (api, address) {
   return active.add(rewards).add(unlockingValue);
 }
 
-async function getBalances (chainName, addresses) {
-  const chainEndpoints = getChainEndpoints(chainName);
-
+async function getBalances (chainName, addresses, userAddedEndpoints) {
+  const chainEndpoints = getChainEndpoints(chainName, userAddedEndpoints);
   const { api, connections } = await fastestEndpoint(chainEndpoints);
 
   if (api.isConnected && api.derive.balances) {
@@ -86,10 +85,10 @@ async function getBalances (chainName, addresses) {
   }
 }
 
-async function getAssetOnRelayChain (addresses, chainName) {
+async function getAssetOnRelayChain (addresses, chainName, userAddedEndpoints) {
   const results = {};
 
-  await getBalances(chainName, addresses)
+  await getBalances(chainName, addresses, userAddedEndpoints)
     .then(({ api, balanceInfo, connectionsToBeClosed }) => {
       balanceInfo.forEach(({ address, balances, pooledBalance, soloTotal }) => {
         const totalBalance = balances.freeBalance.add(balances.reservedBalance).add(pooledBalance);
@@ -120,7 +119,7 @@ async function getAssetOnRelayChain (addresses, chainName) {
 }
 
 onmessage = async (e) => {
-  const { addresses, chainName } = e.data;
+  const { addresses, chainName, userAddedEndpoints } = e.data;
 
   let tryCount = 1;
 
@@ -128,7 +127,7 @@ onmessage = async (e) => {
 
   while (tryCount >= 1 && tryCount <= 5) {
     try {
-      await getAssetOnRelayChain(addresses, chainName);
+      await getAssetOnRelayChain(addresses, chainName, userAddedEndpoints);
 
       tryCount = 0;
 

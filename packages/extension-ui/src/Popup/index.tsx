@@ -17,6 +17,7 @@ import { AccountContext, AccountsAssetsContext, ActionContext, AlertContext, API
 import { getStorage, type LoginInfo, setStorage, updateStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { ExtensionLockProvider } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
 import AccountFS from '@polkadot/extension-polkagate/src/fullscreen/accountDetails';
+import AddNewChain from '@polkadot/extension-polkagate/src/fullscreen/addNewChain';
 import Governance from '@polkadot/extension-polkagate/src/fullscreen/governance';
 import ReferendumPost from '@polkadot/extension-polkagate/src/fullscreen/governance/post';
 import ManageIdentity from '@polkadot/extension-polkagate/src/fullscreen/manageIdentity';
@@ -298,6 +299,7 @@ export default function Popup (): React.ReactElement {
                                   <MetadataReqContext.Provider value={metaRequests}>
                                     <SigningReqContext.Provider value={signRequests}>
                                       <Switch>
+                                        <Route path='/addNewChain/'>{wrapWithErrorBoundary(<AddNewChain />, 'add-new-chain')}</Route>
                                         <Route path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<AccountEx />, 'account')}</Route>
                                         <Route path='/account/create'>{wrapWithErrorBoundary(<CreateAccount />, 'account-creation')}</Route>
                                         <Route path='/account/export-all'>{wrapWithErrorBoundary(<ExportAll />, 'export-all-address')}</Route>

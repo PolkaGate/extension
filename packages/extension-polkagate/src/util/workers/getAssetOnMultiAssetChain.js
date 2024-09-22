@@ -9,8 +9,8 @@ import { getSubstrateAddress } from '../utils';
 // eslint-disable-next-line import/extensions
 import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from './utils';
 
-async function getAssets (addresses, assetsToBeFetched, chainName) {
-  const endpoints = getChainEndpoints(chainName);
+async function getAssets (addresses, assetsToBeFetched, chainName, userAddedEndpoints) {
+  const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
   const { api, connections } = await fastestEndpoint(endpoints);
 
   const result = metadataFromApi(api);
@@ -65,7 +65,7 @@ async function getAssets (addresses, assetsToBeFetched, chainName) {
 }
 
 onmessage = async (e) => {
-  const { addresses, chainName } = e.data;
+  const { addresses, chainName, userAddedEndpoints } = e.data;
 
   const assetsChains = createAssets();
   const assetsToBeFetched = assetsChains[chainName];
@@ -83,7 +83,7 @@ onmessage = async (e) => {
 
   while (tryCount >= 1 && tryCount <= 5) {
     try {
-      await getAssets(addresses, assetsToBeFetched, chainName);
+      await getAssets(addresses, assetsToBeFetched, chainName, userAddedEndpoints);
 
       tryCount = 0;
 

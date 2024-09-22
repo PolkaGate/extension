@@ -1,17 +1,15 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import { useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { isEmail, isUrl } from '../util/utils';
+import { isEmail, isUrl, isWss } from '../util/utils';
 import Label from './Label';
 import { Input } from './TextInputs';
 
 interface Props {
-  className?: string;
   defaultValue?: string | null;
   disabled?: boolean;
   isError?: boolean;
@@ -23,7 +21,6 @@ interface Props {
   onEnter?: () => void;
   placeholder?: string;
   value?: string;
-  withoutMargin?: boolean;
   height?: number;
   fontSize?: number;
   fontWeight?: number;
@@ -31,7 +28,7 @@ interface Props {
   type?: string;
 }
 
-function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, fontWeight = 300, height = 31, helperText, isError, isFocused, isReadOnly, label = '', labelFontSize = '14px', onChange, onEnter, placeholder, type = 'text', value, withoutMargin }: Props): React.ReactElement<Props> {
+function InputWithLabel ({ defaultValue, disabled, fontSize = 18, fontWeight = 300, height = 31, helperText, isError, isFocused, isReadOnly, label = '', labelFontSize = '14px', onChange, onEnter, placeholder, type = 'text', value }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
   const theme = useTheme();
 
@@ -46,6 +43,10 @@ function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, font
 
     if (type === 'url') {
       return !isUrl(value);
+    }
+
+    if (type === 'wss') {
+      return !isWss(value);
     }
 
     return false;
@@ -71,7 +72,6 @@ function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, font
 
   return (
     <Label
-      className={`${className || ''} ${withoutMargin ? 'withoutMargin' : ''}`}
       helperText={helperText}
       label={label}
       style={{ fontSize: labelFontSize, position: 'relative', letterSpacing: '-0.015em', width: '100%' }}
@@ -92,6 +92,7 @@ function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, font
           borderColor: (isError || badInput) ? theme.palette.warning.main : theme.palette.secondary.light,
           borderWidth: (isError || badInput) ? '3px' : '1px',
           fontSize: `${fontSize}px`,
+          //@ts-ignore
           fontWeight: { fontWeight },
           height: `${height}px`,
           padding: 0,

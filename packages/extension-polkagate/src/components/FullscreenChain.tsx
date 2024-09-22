@@ -52,15 +52,12 @@ const BootstrapInput = styled(InputBase)<{ address?: string | null }>(({ address
   }
 }));
 
-const Item: React.FC<{ height?: string, logoSize?: number, text: string }> = ({ height = '20px', logoSize = 19.8, text }) => {
-  const chainName = useCallback((text: string) => sanitizeChainName(text)?.toLowerCase(), []);
-  const logo = getLogo(chainName(text));
-
+const Item: React.FC<{ height?: string, logoSize?: number, text: string, genesisHash: string }> = ({ height = '20px', logoSize = 19.8, text, genesisHash }) => {
   return (
     <Grid container height={height} justifyContent='flex-start'>
-      {text !== 'Allow use on any chain' && logo &&
+      {text !== 'Allow use on any chain' &&
         <Grid alignItems='center' container item pr='10px' width='fit-content'>
-          <ChainLogo chainName={text} size={logoSize} />
+          <ChainLogo chainName={text} genesisHash={genesisHash} size={logoSize} />
         </Grid>
       }
       <Grid alignItems='center' container item justifyContent='flex-start' width='fit-content'>
@@ -72,7 +69,7 @@ const Item: React.FC<{ height?: string, logoSize?: number, text: string }> = ({ 
   );
 };
 
-function FullscreenChain({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style }: Props) {
+function FullscreenChain ({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style }: Props) {
   const theme = useTheme();
   const _allOptions = useGenesisHashOptions();
   const isTestnetEnabled = useIsTestnetEnabled();
@@ -90,7 +87,7 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
     !isTestnetEnabled
       ? [...(disabledItems || []), ...TEST_NETS]
       : disabledItems
-    , [disabledItems, isTestnetEnabled]);
+  , [disabledItems, isTestnetEnabled]);
 
   useEffect(() => {
     onChange(defaultValue);
@@ -167,7 +164,7 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
                 const text = _options.find((option) => value === option.value || value === option.text)?.text?.split(/\s*\(/)[0];
 
                 return (
-                  <Item height='50px' logoSize={29} text={text} />
+                  <Item genesisHash={selectedValue} height='50px' logoSize={29} text={text} />
                 );
               }}
               sx={{

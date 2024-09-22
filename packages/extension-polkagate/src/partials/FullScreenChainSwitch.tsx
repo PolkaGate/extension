@@ -6,13 +6,13 @@
 import type { HexString } from '@polkadot/util/types';
 import type { DropdownOption } from '../util/types';
 
-import { Avatar, Grid, Popover, Typography, useTheme } from '@mui/material';
+import { Box, Grid, Popover, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { ChainLogo } from '../components';
 import { useGenesisHashOptions, useInfo, useIsTestnetEnabled } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '../util/constants';
-import getLogo from '../util/getLogo';
 import { sanitizeChainName } from '../util/utils';
 
 interface Props {
@@ -66,18 +66,25 @@ const NetworkList = ({ address, chains, selectedChainName, setAnchorEl, setSelec
           return (
             // eslint-disable-next-line react/jsx-no-bind
             <Grid container justifyContent='space-between' key={index} onClick={() => selectNetwork(network)} sx={{ ':hover': { bgcolor: theme.palette.mode === 'light' ? 'rgba(24, 7, 16, 0.1)' : 'rgba(255, 255, 255, 0.1)' }, bgcolor: selectedNetwork ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: isTestnetDisabled(network.value as string) ? 'not-allowed' : 'pointer', height: '45px', opacity: isTestnetDisabled(network.value as string) ? 0.3 : 1, px: '15px' }}>
-              <Grid alignItems='center' container item width='fit-content'>
+              <Grid
+                alignItems='center' container item sx={{
+                  display: 'flex',
+                  flexGrow: 1,
+                  minWidth: 0,
+                  mr: '10px',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap'
+                }}
+                xs
+              >
                 <Typography fontSize='16px' fontWeight={selectedNetwork ? 500 : 400}>
                   {network.text}
                 </Typography>
               </Grid>
               {network.text !== 'Allow use on any chain' &&
                 <Grid alignItems='center' container item pl='15px' width='fit-content'>
-                  <Avatar
-                    src={getLogo(sanitizedLowercase(network.text))}
-                    sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(network.text) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 29, width: 29 }}
-                    variant='square'
-                  />
+                  <ChainLogo chainName={network.text} genesisHash={network.value as string} size={29} />
                 </Grid>
               }
             </Grid>
@@ -89,7 +96,7 @@ const NetworkList = ({ address, chains, selectedChainName, setAnchorEl, setSelec
 
 function FullScreenChainSwitch ({ address, chains }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  const { chainName: chainNameFromAccount } = useInfo(address);
+  const { chainName: chainNameFromAccount, genesisHash } = useInfo(address);
 
   const [selectedChainName, setSelectedChainName] = useState<string>();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -118,8 +125,7 @@ function FullScreenChainSwitch ({ address, chains }: Props): React.ReactElement<
   return (
     <Grid container item>
       <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.main', borderRadius: '50%', cursor: 'pointer', height: '40px', p: 0, width: '40px' }}>
-        <Avatar
-          src={getLogo(selectedChainName)}
+        <Box
           sx={{
             bgcolor: 'transparent',
             borderRadius: '50%',
@@ -130,7 +136,9 @@ function FullScreenChainSwitch ({ address, chains }: Props): React.ReactElement<
             transition: 'transform 1s',
             width: '34px'
           }}
-        />
+        >
+          <ChainLogo chainName={selectedChainName} genesisHash={genesisHash} size={34} />
+        </Box>
       </Grid>
       <Popover
         PaperProps={{

@@ -7,6 +7,7 @@ import type { DropdownOption } from '../util/types';
 import { createWsEndpoints } from '@polkagate/apps-config';
 import { useEffect, useMemo, useState } from 'react';
 
+import { UseUserAddedEndpoint } from '../fullscreen/addNewChain/utils';
 import { AUTO_MODE } from '../util/constants';
 import { sanitizeChainName } from '../util/utils';
 import { useGenesisHashOptions, useTranslation } from './';
@@ -20,6 +21,7 @@ const supportedLC = ['Polkadot', 'Kusama', 'Westend']; // chains with supported 
 export function useEndpoints (genesisHash: string | null | undefined): DropdownOption[] {
   const { t } = useTranslation();
   const genesisOptions = useGenesisHashOptions();
+  const userAddedEndpoint = UseUserAddedEndpoint(genesisHash);
   const [allEndpoints, setAllEndpoints] = useState<LinkOption[] | undefined>();
 
   useEffect(() => {
@@ -59,8 +61,12 @@ export function useEndpoints (genesisHash: string | null | undefined): DropdownO
     endpointOptions.length > 1 &&
     endpointOptions?.unshift(AUTO_MODE);
 
+    if (!endpointOptions?.length && userAddedEndpoint) {
+      return userAddedEndpoint;
+    }
+
     return endpointOptions;
-  }, [allEndpoints, genesisHash, genesisOptions]);
+  }, [allEndpoints, genesisHash, genesisOptions, userAddedEndpoint]);
 
   return endpoints ?? [];
 }

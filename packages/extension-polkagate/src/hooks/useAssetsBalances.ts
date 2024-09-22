@@ -14,19 +14,19 @@ import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, us
 import { BN, isObject } from '@polkadot/util';
 
 import { getStorage, setStorage, watchStorage } from '../components/Loading';
+import { UseUserAddedEndpoints } from '../fullscreen/addNewChain/utils';
 import { toCamelCase } from '../fullscreen/governance/utils/util';
 import { updateMetadata } from '../messaging';
-import allChains from '../util/chains';
 import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
 import { isHexToBn } from '../util/utils';
 import useSelectedChains from './useSelectedChains';
-import { useIsTestnetEnabled, useTranslation } from '.';
+import { useGenesisHashOptions, useIsTestnetEnabled, useTranslation } from '.';
 
 type WorkerMessage = Record<string, MessageBody[]>;
 type Assets = Record<string, FetchedBalance[]>;
-interface AssetsBalancesPerChain { [genesisHash: string]: FetchedBalance[] }
-interface AssetsBalancesPerAddress { [address: string]: AssetsBalancesPerChain }
+type AssetsBalancesPerChain = Record<string, FetchedBalance[]>;
+type AssetsBalancesPerAddress = Record<string, AssetsBalancesPerChain>;
 export interface SavedAssets { balances: AssetsBalancesPerAddress, timeStamp: number }
 
 interface BalancesDetails {
@@ -133,6 +133,9 @@ const assetsChains = createAssets();
 export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>): SavedAssets | undefined | null {
   const isTestnetEnabled = useIsTestnetEnabled();
   const selectedChains = useSelectedChains();
+  const genesisOptions = useGenesisHashOptions();
+  const userAddedEndpoints = UseUserAddedEndpoints();
+
   const { t } = useTranslation();
 
   /** to limit calling of this heavy call on just home and account details */
@@ -296,7 +299,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
 
     handleSetWorkersCall(worker);
 
-    worker.postMessage({ addresses: _addresses, chainName });
+    worker.postMessage({ addresses: _addresses, chainName, userAddedEndpoints });
 
     worker.onerror = (err) => {
       console.log(err);
@@ -342,14 +345,14 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       combineAndSetAssets(_assets);
       handleSetWorkersCall(worker, 'terminate');
     };
-  }, [combineAndSetAssets, handleSetWorkersCall]);
+  }, [combineAndSetAssets, handleSetWorkersCall, userAddedEndpoints]);
 
   const fetchAssetOnAssetHubs = useCallback((_addresses: string[], chainName: string, assetsToBeFetched?: Asset[]) => {
     const worker: Worker = new Worker(new URL('../util/workers/getAssetOnAssetHub.js', import.meta.url));
     const _assets: Assets = {};
 
     handleSetWorkersCall(worker);
-    worker.postMessage({ addresses: _addresses, assetsToBeFetched, chainName });
+    worker.postMessage({ addresses: _addresses, assetsToBeFetched, chainName, userAddedEndpoints });
 
     worker.onerror = (err) => {
       console.log(err);
@@ -396,13 +399,13 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       combineAndSetAssets(_assets);
       handleSetWorkersCall(worker, 'terminate');
     };
-  }, [combineAndSetAssets, handleSetWorkersCall]);
+  }, [combineAndSetAssets, handleSetWorkersCall, userAddedEndpoints]);
 
   const fetchAssetOnMultiAssetChain = useCallback((addresses: string[], chainName: string) => {
     const worker: Worker = new Worker(new URL('../util/workers/getAssetOnMultiAssetChain.js', import.meta.url));
 
     handleSetWorkersCall(worker);
-    worker.postMessage({ addresses, chainName });
+    worker.postMessage({ addresses, chainName, userAddedEndpoints });
 
     worker.onerror = (err) => {
       console.log(err);
@@ -461,10 +464,10 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     /** Checking assets balances on Relay chains */
     /** and also checking assets on chains with just one native token */
     if (RELAY_CHAINS_GENESISHASH.includes(genesisHash) || isSingleTokenChain) {
-      const chainName = getChainName(genesisHash);
+      const chainName = getChainName(genesisHash, genesisOptions);
 
       if (!chainName) {
-        console.error('can not find chain name by genesis hash!');
+        console.error('can not find chain name by genesis hash!', genesisHash);
 
         return;
       }
@@ -500,21 +503,21 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     const _selectedChains = isTestnetEnabled ? selectedChains : selectedChains.filter((genesisHash) => !TEST_NETS.includes(genesisHash));
     const multipleAssetsChainsNames = Object.keys(assetsChains);
 
-    const singleAssetChains = allChains.filter(({ chain, genesisHash }) =>
-      _selectedChains.includes(genesisHash) &&
-      !ASSET_HUBS.includes(genesisHash) &&
-      !RELAY_CHAINS_GENESISHASH.includes(genesisHash) &&
-      !multipleAssetsChainsNames.includes(toCamelCase(chain) || '')
+    const singleAssetChains = genesisOptions.filter(({ text, value }) =>
+      _selectedChains.includes(value as string) &&
+      !ASSET_HUBS.includes(value as string) &&
+      !RELAY_CHAINS_GENESISHASH.includes(value as string) &&
+      !multipleAssetsChainsNames.includes(toCamelCase(text) || '')
     );
 
     /** Fetch assets for all the selected chains by default */
     _selectedChains?.forEach((genesisHash) => {
-      const isSingleTokenChain = !!singleAssetChains.find((o) => o.genesisHash === genesisHash);
+      const isSingleTokenChain = !!singleAssetChains.find(({ value }) => value === genesisHash);
       const maybeMultiAssetChainName = multipleAssetsChainsNames.find((chainName) => chainName === getChainName(genesisHash));
 
       fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);
     });
-  }, [SHOULD_FETCH_ASSETS, addresses, fetchAssets, isTestnetEnabled, isUpdate, isWorking, selectedChains]);
+  }, [SHOULD_FETCH_ASSETS, addresses, fetchAssets, isTestnetEnabled, isUpdate, isWorking, selectedChains, genesisOptions]);
 
   return fetchedAssets;
 }

@@ -89,7 +89,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
           </DisplayValue>
           <DisplayValue dividerHeight='1px' title={t('Chain')}>
             <Grid alignItems='center' container item sx={{ height: '42px' }}>
-              <ChainLogo chainName={chain?.name} size={31} />
+              <ChainLogo chainName={chain?.name} genesisHash={chain?.genesisHash} size={31} />
               <Typography fontSize='26px' pl='10px'>
                 {chain?.name}
               </Typography>
@@ -112,7 +112,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
           </DisplayValue>
           <DisplayValue dividerHeight='1px' title={t('Chain')}>
             <Grid alignItems='center' container item sx={{ height: '42px' }}>
-              <ChainLogo chainName={inputs?.recipientChainName} size={31} />
+              <ChainLogo chainName={inputs?.recipientChainName} genesisHash={chain?.genesisHash} size={31} />
               <Typography fontSize='26px' pl='10px'>
                 {inputs?.recipientChainName}
               </Typography>
