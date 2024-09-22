@@ -62,6 +62,7 @@ function ChainLogo ({ chainName, genesisHash, logo, size = 25 }: Props): React.R
           sx={{
             bgcolor: mayBeUserAddedChainColor,
             borderRadius: '50%',
+            fontSize: size * 0.7,
             height: size,
             width: size
           }}
