@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.12.2](https://github.com/polkagate/extension/compare/v0.12.1...v0.12.2) (2024-09-22)
+
+
+### Bug Fixes
+
+* identicon type issue after auto metadsata update ([54889d9](https://github.com/polkagate/extension/commit/54889d928650b6ea67349d60f554309d512e3f59))
+
 ## [0.12.1](https://github.com/polkagate/extension/compare/v0.12.0...v0.12.1) (2024-09-21)
 
 
