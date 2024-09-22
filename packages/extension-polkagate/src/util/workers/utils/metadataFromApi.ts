@@ -4,7 +4,7 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { MetadataDef } from '@polkadot/extension-inject/types';
 
-import { createWsEndpoints } from '@polkagate/apps-config';
+import { createWsEndpoints, getSystemIcon } from '@polkagate/apps-config';
 
 import { getSpecTypes } from '@polkadot/types-known';
 import { formatBalance, isNumber } from '@polkadot/util';
@@ -24,7 +24,7 @@ export function metadataFromApi (api: ApiPromise): {metadata: MetadataDef} {
     chainType: 'substrate' as 'ethereum' | 'substrate',
     color,
     genesisHash: apiGenesisHash,
-    icon: 'substrate',
+    icon: getSystemIcon(chainName, api.runtimeVersion.specName.toString()),
     metaCalls: base64Encode(api.runtimeMetadata.asCallsOnly.toU8a()),
     specVersion: api.runtimeVersion.specVersion.toNumber(),
     ss58Format: isNumber(api.registry.chainSS58)
