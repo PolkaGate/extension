@@ -167,6 +167,7 @@ export interface TxInfo extends TransactionDetail {
   token?: string;
   poolName?: string;
   validatorsCount?: number;
+  payee?: Payee,
 }
 
 export interface Auction {
