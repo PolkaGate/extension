@@ -58,7 +58,7 @@ export default function AccountDetails (): React.ReactElement {
   const supportStaking = useMemo(() => STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const isDualStaking = useMemo(() =>
     balanceToShow?.soloTotal && balanceToShow?.pooledBalance && !balanceToShow.soloTotal.isZero() && !balanceToShow.pooledBalance.isZero()
-    , [balanceToShow?.pooledBalance, balanceToShow?.soloTotal]);
+  , [balanceToShow?.pooledBalance, balanceToShow?.soloTotal]);
 
   const gotToHome = useCallback(() => {
     if (showStakingOptions) {
@@ -131,7 +131,7 @@ export default function AccountDetails (): React.ReactElement {
       : showStakingOptions
         ? theme.palette.secondary.main
         : theme.palette.text.primary
-    , [supportStaking, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
+  , [supportStaking, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
 
   const goToOthers = useCallback(() => {
     setShowOthers(true);
@@ -192,14 +192,14 @@ export default function AccountDetails (): React.ReactElement {
           <Chain
             address={address}
             defaultValue={chain?.genesisHash ?? genesisOptions[0].text}
-            label={t<string>('Chain')}
+            label={t('Chain')}
             onChange={_onChangeNetwork}
             style={{ width: '56%' }}
           />
           <Assets
             address={address}
             assetId={assetId}
-            label={t<string>('Asset')}
+            label={t('Asset')}
             onChange={_onChangeAsset}
             setAssetId={setAssetId}
             style={{ width: '27%' }}
@@ -270,7 +270,7 @@ export default function AccountDetails (): React.ReactElement {
               />
             }
             onClick={goToSend}
-            title={t<string>('Send')}
+            title={t('Send')}
           />
           <HorizontalMenuItem
             divider
@@ -283,7 +283,7 @@ export default function AccountDetails (): React.ReactElement {
             }
             onClick={goToGovernance}
             textDisabled={!GOVERNANCE_CHAINS.includes(genesisHash)}
-            title={t<string>('Governance')}
+            title={t('Governance')}
           />
           <HorizontalMenuItem
             divider
@@ -297,7 +297,7 @@ export default function AccountDetails (): React.ReactElement {
                 />
             } onClick={goToStaking}
             textDisabled={!supportStaking}
-            title={t<string>('Stake')}
+            title={t('Stake')}
           />
           <HorizontalMenuItem
             divider
@@ -311,7 +311,7 @@ export default function AccountDetails (): React.ReactElement {
             }
             onClick={goToCrowdLoans}
             textDisabled={!CROWDLOANS_CHAINS.includes(genesisHash)}
-            title={t<string>('Crowdloan')}
+            title={t('Crowdloan')}
           />
           <HorizontalMenuItem
             icon={
@@ -321,7 +321,7 @@ export default function AccountDetails (): React.ReactElement {
                 size='lg'
               />}
             onClick={goToHistory}
-            title={t<string>('History')}
+            title={t('History')}
           />
         </Grid>
       </Container>

@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Backdrop, ClickAwayListener, Grid, keyframes, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { ChainLogo } from '../components';
 import { getStorage } from '../components/Loading';
 import ThreeItemCurveBackground from '../components/SVG/ThreeItemCurveBackground';
 import { useGenesisHashOptions, useInfo } from '../hooks';
@@ -230,10 +231,7 @@ function RecentChains ({ address, chainName }: Props): React.ReactElement<Props>
             </Grid>
           </ClickAwayListener>
           : <Grid item onClick={toggleRecentChains} sx={{ cursor: 'pointer', left: 0, position: 'absolute', top: 0 }}>
-            <Avatar
-              src={getLogo(currentSelectedChain)}
-              sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(currentSelectedChain ?? '') && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: '20px', width: '20px' }}
-            />
+            <ChainLogo chainName={currentSelectedChain} genesisHash={genesisHash} size={20} />
           </Grid>
         }
         <Grid
