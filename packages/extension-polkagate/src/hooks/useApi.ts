@@ -103,7 +103,7 @@ export default function useApi (address: AccountId | string | undefined, stateAp
     dispatch({ payload: availableApi.api, type: 'SET_API' });
     updateEndpoint(address, genesisHash, availableApi.endpoint);
 
-    console.log('Successfully connected to existing API for genesis hash:::', genesisHash);
+    // console.log('Successfully connected to existing API for genesis hash:', genesisHash);
 
     return true;
   }, [apisContext.apis, updateEndpoint]);
@@ -124,6 +124,7 @@ export default function useApi (address: AccountId | string | undefined, stateAp
       toSaveApi = toSaveApi.filter((sApi) => !isAutoMode(sApi.endpoint));
     }
 
+    // Add the new API entry
     toSaveApi.push({
       api,
       endpoint,
@@ -204,7 +205,7 @@ export default function useApi (address: AccountId | string | undefined, stateAp
       return;
     }
 
-    if (savedApi?.api && savedApi.api.isConnected) {
+    if (savedApi?.api?.isConnected) {
       dispatch({ payload: savedApi.api, type: 'SET_API' });
 
       return;
@@ -245,8 +246,7 @@ export default function useApi (address: AccountId | string | undefined, stateAp
 
     // Check if the two endpoints are not synchronized
     if (endpoint !== endpointFromTheManager) {
-      // Log a message to indicate that the endpoint has not been updated yet
-      console.log('📌 📌 Not updated yet! The endpoint in the manager is still different from the local one.');
+      // console.log('📌 📌 Not updated yet! The endpoint in the manager is still different from the local one.');
 
       // Exit early to avoid further execution until the endpoints are in sync
       return;
