@@ -216,15 +216,15 @@ export default function useApi (address: AccountId | string | undefined, stateAp
     connectToEndpoint(manualEndpoint).catch(console.error);
   }, [addApiRequest, apisContext?.apis, connectToEndpoint]);
 
-  // Manages the API connection when the address, endpoint, or genesis hash changes
   useEffect(() => {
     // if _endpoint & _genesisHash are available means useApiWithChain2 is trying to create a new connection!
     if (_endpoint && _genesisHash) {
       handleApiWithChain(_endpoint, _genesisHash);
-
-      return;
     }
+  }, [_endpoint, _genesisHash, handleApiWithChain]);
 
+  // Manages the API connection when the address, endpoint, or genesis hash changes
+  useEffect(() => {
     // @ts-expect-error to bypass access to private prop
     if (!address || !chainGenesisHash || !endpoint || state.isLoading || state?.api?._options?.provider?.endpoint === endpoint) {
       return;
@@ -293,7 +293,7 @@ export default function useApi (address: AccountId | string | undefined, stateAp
 
     // @ts-expect-error to bypass access to private prop
     // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/no-unsafe-member-access
-  }, [address, apisContext?.apis?.[chainGenesisHash]?.length, _endpoint, _genesisHash, addApiRequest, chainGenesisHash, checkForNewOne, connectToEndpoint, endpoint, handleAutoMode, handleApiWithChain, handleNewApi, state?.api?._options?.provider?.endpoint, state.isLoading]);
+  }, [address, apisContext?.apis?.[chainGenesisHash]?.length, addApiRequest, chainGenesisHash, checkForNewOne, connectToEndpoint, endpoint, handleAutoMode, handleNewApi, state?.api?._options?.provider?.endpoint, state.isLoading]);
 
   return state.api;
 }
