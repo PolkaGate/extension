@@ -185,8 +185,45 @@ export default function useApi (address: AccountId | string | undefined, stateAp
     updateEndpoint(accountAddress, genesisHash, selectedEndpoint, () => handleNewApi(api, selectedEndpoint, true));
   }, [apisContext.apis, connectToExisted, endpoints, handleNewApi, updateEndpoint]);
 
+  const addApiRequest = useCallback((endpointToRequest: string, genesisHash: string) => {
+    const toSaveApi = apisContext.apis[genesisHash] ?? [];
+
+    toSaveApi.push({ endpoint: endpointToRequest, isRequested: true });
+
+    apisContext.apis[genesisHash] = toSaveApi;
+    apisContext.setIt({ ...apisContext.apis });
+  }, [apisContext]);
+
+  // Handles connection request to manual endpoint
+  const handleManualApiRequest = useCallback((manualEndpoint: string, genesisHash: string) => {
+    // Check if there is a saved API that is already connected
+    const savedApi = apisContext?.apis[genesisHash]?.find((sApi) => sApi.endpoint === manualEndpoint);
+
+    // If the API is already being requested, skip the connection process
+    if (savedApi?.isRequested) {
+      return;
+    }
+
+    if (savedApi?.api && savedApi.api.isConnected) {
+      dispatch({ payload: savedApi.api, type: 'SET_API' });
+
+      return;
+    }
+
+    addApiRequest(manualEndpoint, genesisHash);
+
+    connectToEndpoint(manualEndpoint).catch(console.error);
+  }, [addApiRequest, apisContext?.apis, connectToEndpoint]);
+
   // Manages the API connection when the address, endpoint, or genesis hash changes
   useEffect(() => {
+    // if _endpoint & _genesisHash are available means useApiWithChain2 is trying to create a new connection!
+    if (_endpoint && _genesisHash) {
+      handleManualApiRequest(_endpoint, _genesisHash);
+
+      return;
+    }
+
     // @ts-expect-error to bypass access to private prop
     if (!address || !chainGenesisHash || !endpoint || state.isLoading || state?.api?._options?.provider?.endpoint === endpoint) {
       return;
@@ -252,28 +289,11 @@ export default function useApi (address: AccountId | string | undefined, stateAp
       });
     }
 
-    const toSaveApi = apisContext.apis[chainGenesisHash] ?? [];
-
-    toSaveApi.push({ endpoint, isRequested: true });
-
-    apisContext.apis[chainGenesisHash] = toSaveApi;
-    apisContext.setIt({ ...apisContext.apis });
+    addApiRequest(endpoint, chainGenesisHash);
 
     // @ts-expect-error to bypass access to private prop
     // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/no-unsafe-member-access
-  }, [address, apisContext?.apis?.[chainGenesisHash]?.length, chainGenesisHash, checkForNewOne, connectToEndpoint, endpoint, handleAutoMode, handleNewApi, state?.api?._options?.provider?.endpoint, state.isLoading]);
-
-  useEffect(() => {
-    if (!chainGenesisHash || !apisContext?.apis[chainGenesisHash]) {
-      return;
-    }
-
-    const savedApi = apisContext.apis[chainGenesisHash].find((sApi) => sApi.endpoint === endpoint);
-
-    if (savedApi?.api?.isConnected) {
-      dispatch({ payload: savedApi.api, type: 'SET_API' });
-    }
-  }, [apisContext.apis, chainGenesisHash, endpoint]);
+  }, [address, apisContext?.apis?.[chainGenesisHash]?.length, _endpoint, _genesisHash, addApiRequest, chainGenesisHash, checkForNewOne, connectToEndpoint, endpoint, handleAutoMode, handleManualApiRequest, handleNewApi, state?.api?._options?.provider?.endpoint, state.isLoading]);
 
   return state.api;
 }
