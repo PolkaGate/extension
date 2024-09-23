@@ -125,20 +125,21 @@ function FullScreenChainSwitch ({ address, chains }: Props): React.ReactElement<
   return (
     <Grid container item>
       <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.main', borderRadius: '50%', cursor: 'pointer', height: '40px', p: 0, width: '40px' }}>
-        <Box
-          sx={{
-            bgcolor: 'transparent',
-            borderRadius: '50%',
-            filter: CHAINS_WITH_BLACK_LOGO.includes(selectedChainName ?? '') ? 'invert(1)' : '',
-            height: '34px',
-            m: 'auto',
-            transform: flip ? 'rotateY(180deg)' : 'rotateY(0deg)',
-            transition: 'transform 1s',
-            width: '34px'
-          }}
-        >
-          <ChainLogo chainName={selectedChainName} genesisHash={genesisHash} size={34} />
-        </Box>
+        {selectedChainName &&
+         <Box
+           sx={{
+             bgcolor: 'transparent',
+             borderRadius: '50%',
+             filter: CHAINS_WITH_BLACK_LOGO.includes(selectedChainName ?? '') ? 'invert(1)' : '',
+             height: '34px',
+             m: 'auto',
+             transform: flip ? 'rotateY(180deg)' : 'rotateY(0deg)',
+             transition: 'transform 1s',
+             width: '34px'
+           }}
+         >
+           <ChainLogo chainName={selectedChainName} genesisHash={genesisHash} size={34} />
+         </Box>}
       </Grid>
       <Popover
         PaperProps={{
