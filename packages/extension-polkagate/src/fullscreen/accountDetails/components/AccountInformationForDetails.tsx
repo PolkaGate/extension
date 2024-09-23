@@ -159,7 +159,7 @@ export const EyeIconFullScreen = ({ isHidden, onClick }: { isHidden: boolean | u
   );
 };
 
-export default function AccountInformationForDetails ({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+function AccountInformationForDetails ({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const theme = useTheme();
   const { account, api, chain, formatted, genesisHash, token } = useInfo(address);
 
@@ -284,3 +284,5 @@ export default function AccountInformationForDetails ({ accountAssets, address, 
     </Grid>
   );
 }
+
+export default React.memo(AccountInformationForDetails);
