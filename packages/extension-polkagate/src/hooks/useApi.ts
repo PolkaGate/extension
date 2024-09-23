@@ -195,26 +195,35 @@ export default function useApi (address: AccountId | string | undefined, stateAp
     apisContext.setIt({ ...apisContext.apis });
   }, [apisContext]);
 
-  // Handles connection request to a manual endpoint
-  const handleApiWithChain = useCallback((manualEndpoint: string, genesisHash: string) => {
+  // check api in the context
+  const isInContext = useCallback((endpoint: string, genesisHash: string) => {
     // Check if there is a saved API that is already connected
-    const savedApi = apisContext?.apis[genesisHash]?.find((sApi) => sApi.endpoint === manualEndpoint);
+    const savedApi = apisContext?.apis[genesisHash]?.find((sApi) => sApi.endpoint === endpoint);
 
     // If the API is already being requested, skip the connection process
     if (savedApi?.isRequested) {
-      return;
+      return true;
     }
 
     if (savedApi?.api?.isConnected) {
       dispatch({ payload: savedApi.api, type: 'SET_API' });
 
+      return true;
+    }
+
+    return false;
+  }, [apisContext?.apis]);
+
+  // Handles connection request to a manual endpoint
+  const handleApiWithChain = useCallback((manualEndpoint: string, genesisHash: string) => {
+    if (isInContext(manualEndpoint, genesisHash)) {
       return;
     }
 
     addApiRequest(manualEndpoint, genesisHash);
 
     connectToEndpoint(manualEndpoint).catch(console.error);
-  }, [addApiRequest, apisContext?.apis, connectToEndpoint]);
+  }, [addApiRequest, connectToEndpoint, isInContext]);
 
   useEffect(() => {
     // if _endpoint & _genesisHash are available means useApiWithChain2 is trying to create a new connection!
@@ -251,21 +260,9 @@ export default function useApi (address: AccountId | string | undefined, stateAp
       // Exit early to avoid further execution until the endpoints are in sync
       return;
     }
-    // If we reach this point, the endpoints match and we can proceed with the update
 
-    // Check if there is a saved API that is already connected
-    const savedApi = apisContext?.apis[chainGenesisHash]?.find((sApi) => sApi.endpoint === endpoint);
-
-    if (savedApi?.api && savedApi.api.isConnected) {
-      // console.log(`♻ Using the saved API for ${chainGenesisHash} through this endpoint ${savedApi.endpoint ?? ''}`);
-      dispatch({ payload: savedApi.api, type: 'SET_API' });
-
-      return;
-    }
-
-    // If the API is already being requested, skip the connection process
-    // It can be either Auto Mode or a specific endpoint
-    if (savedApi?.isRequested) {
+    // To provide api from context
+    if (isInContext(endpoint, chainGenesisHash)) {
       return;
     }
 
@@ -290,10 +287,8 @@ export default function useApi (address: AccountId | string | undefined, stateAp
     }
 
     addApiRequest(endpoint, chainGenesisHash);
-
     // @ts-expect-error to bypass access to private prop
-    // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/no-unsafe-member-access
-  }, [address, apisContext?.apis?.[chainGenesisHash]?.length, addApiRequest, chainGenesisHash, checkForNewOne, connectToEndpoint, endpoint, handleAutoMode, handleNewApi, state?.api?._options?.provider?.endpoint, state.isLoading]);
+  }, [address, addApiRequest, chainGenesisHash, checkForNewOne, connectToEndpoint, endpoint, handleAutoMode, handleNewApi, isInContext, state?.api?._options?.provider?.endpoint, state.isLoading]);
 
   return state.api;
 }
