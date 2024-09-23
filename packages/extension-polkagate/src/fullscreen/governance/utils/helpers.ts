@@ -446,14 +446,14 @@ export async function getReferendumCommentsSS(chainName: string, refId: string |
       const vote = votes.find(({ account }) => account === address);
 
       if (vote?.aye) {
-        return 'Aye';
+        return 'yes';
       }
 
       if (!vote?.aye && (vote?.isSplit || vote?.isSplitAbstain)) {
         return 'Abstain';
       }
 
-      return 'Nay';
+      return 'no';
     };
 
     // Format the comments
@@ -468,7 +468,7 @@ export async function getReferendumCommentsSS(chainName: string, refId: string |
       id: _id,
       proposer,
       // Format replies
-      replies: replies.map(({ _id, author, cid, content, createdAt, proposer, reactions, updatedAt }) => ({
+      replies: replies.map(({ _id, cid, content, createdAt, proposer, reactions, updatedAt }) => ({
         commentSource: 'SS',
         content,
         created_at: createdAt,
@@ -480,12 +480,12 @@ export async function getReferendumCommentsSS(chainName: string, refId: string |
         },
         updated_at: updatedAt,
         user_id: cid,
-        username: author.username
+        username: ''
       } as unknown as Reply)),
       sentiment: 0,
       updated_at: updatedAt,
       user_id: author.cid,
-      username: author.username,
+      username: '',
       votes: [{ decision: voteInformation(proposer) }]
     } as unknown as CommentType));
 

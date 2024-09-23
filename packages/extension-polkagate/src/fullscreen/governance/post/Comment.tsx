@@ -39,9 +39,9 @@ const Reactions = ({ comment }: {comment: CommentType | Reply;}) => {
 
   const backers =
       'comment_reactions' in comment && comment.comment_reactions['👍'].count
-        ? displayUsernames(comment.comment_reactions['👍'].usernames)
+        ? displayUsernames(comment.comment_reactions['👍'].usernames ?? [])
         : 'reply_reactions' in comment && comment.reply_reactions['👍'].count
-          ? displayUsernames(comment.reply_reactions['👍'].usernames)
+          ? displayUsernames(comment.reply_reactions['👍'].usernames ?? [])
           : '';
 
   const backersCount =
@@ -53,9 +53,9 @@ const Reactions = ({ comment }: {comment: CommentType | Reply;}) => {
 
   const opposers =
       'comment_reactions' in comment && comment.comment_reactions['👎'].count
-        ? displayUsernames(comment.comment_reactions['👎'].usernames)
+        ? displayUsernames(comment.comment_reactions['👎'].usernames ?? [])
         : 'reply_reactions' in comment && comment.reply_reactions['👎'].count
-          ? displayUsernames(comment.reply_reactions['👎'].usernames)
+          ? displayUsernames(comment.reply_reactions['👎'].usernames ?? [])
           : '';
 
   const opposersCount =
@@ -149,16 +149,24 @@ export default function Comment ({ address, comment, noSource }: CommentProps): 
   const { api, chain } = useInfo(address);
 
   const hasReactions = useMemo(() => 'comment_reactions' in comment || 'reply_reactions' in comment, [comment]);
-  const commenterAddress = useMemo(() => comment.proposer && isValidAddress(comment.proposer) ? comment.proposer : undefined, [comment.proposer]);
+  const { commenterAddress, commenterFormattedAddress } = useMemo(() => {
+    if (!comment.proposer || !isValidAddress(comment.proposer)) {
+      return { commenterAddress: undefined, commenterFormattedAddress: undefined };
+    }
+
+    return noSource
+      ? { commenterAddress: comment.proposer, commenterFormattedAddress: undefined } // noSource means it is from PA (Polkassembly) and it returns address as substrate format
+      : { commenterAddress: undefined, commenterFormattedAddress: comment.proposer }; // means it is from SS (SubSquare) and it returns address as Polkadot/Kusama format
+  }, [comment.proposer, noSource]);
 
   return (
     <Grid alignItems='center' container item sx={{ mb: '10px' }}>
       <Grid item maxWidth='50%' width='fit-content'>
-        <Identity address={commenterAddress} api={api} chain={chain} identiconSize={25} name={comment?.username ?? undefined} noIdenticon={!commenterAddress} showShortAddress showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+        <Identity address={commenterAddress} api={api} chain={chain} formatted={commenterFormattedAddress} identiconSize={25} name={comment?.username ?? undefined} noIdenticon={!commenterAddress} showShortAddress showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
       </Grid>
       <Grid item width='fit-content'>
         <VoteType
-          comment ={comment}
+          comment={comment}
         />
       </Grid>
       <Grid item sx={{ color: 'text.disabled', fontSize: '16px', px: '15px' }}>
