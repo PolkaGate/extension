@@ -125,7 +125,7 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
   }, [allChains]);
 
   const onAddNewChain = useCallback(() => {
-    openOrFocusTab('/addNewChain');
+    openOrFocusTab('/addNewChain', true);
   }, []);
 
   const onReset = useCallback(() => {
@@ -145,7 +145,7 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
         <Button
           onClick={onAddNewChain}
           startIcon={<AddIcon />}
-          sx={{ '&:hover': { bgcolor: 'divider' }, color: theme.palette.secondary.main, fontSize: '12px', fontWeight: 300, p: 0, textTransform: 'none', width: 'fit-content' }}
+          sx={{ '&:hover': { bgcolor: 'divider' }, color: theme.palette.secondary.main, fontSize: '12px', fontWeight: 300, p: 0, ml: '10px', textTransform: 'none', width: 'fit-content' }}
           variant='text'
         >
           {t('Add a new chain')}
