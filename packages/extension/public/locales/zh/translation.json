@@ -1383,5 +1383,18 @@
   "{{accountName}} has been successfully removed!": "{{accountName}} 已成功移除！",
   "Voted Aye": "投票赞成",
   "Voted Nay": "投票反对",
-  "Voted Abstain": "投票弃权"
+  "Voted Abstain": "投票弃权",
+  "Add New Chain": "添加新链",
+  "If your chain is not listed in the PolkaGate chain list, you can provide an RPC endpoint, and we’ll automatically fetch the chain information to add it to the extension’s chain list.": "如果您的链不在 PolkaGate 链列表中，您可以提供一个 RPC 端点，我们将自动获取链信息并将其添加到扩展的链列表中。",
+  "How?": "如何？",
+  "Find the chain endpoint in the Polkadot.js/org/apps. After selecting your chain and endpoint, copy the URL segment starting with wss and ending before the first #. For example: wss://rpc.dotters.network/polkadot": "在 Polkadot.js/org/apps 中找到链的端点。选择您的链和端点后，复制以 wss 开头并在第一个 # 之前结束的 URL 段。例如：wss://rpc.dotters.network/polkadot",
+  "RPC endpoint for your desired chain:": "您所需链的 RPC 端点：",
+  "Loading chain information, please wait ...": "正在加载链信息，请稍候...",
+  "We couldn’t find the token price ID on-chain. To view your balance in fiat, please get it from CoinGecko and enter it below. This step is optional if you only need the crypto balance.": "我们在链上找不到代币价格 ID。要查看您的法币余额，请从 CoinGecko 获取并输入下面。如果您只需要加密余额，则此步骤为可选。",
+  "Find your token on CoinGecko. The price ID is available at: https://www.coingecko.com/en/coins/[price-id]": "在 CoinGecko 上找到您的代币。价格 ID 可在此处查看: https://www.coingecko.com/en/coins/[price-id]",
+  "Chain token price Id": "链代币价格 ID",
+  "Check": "检查",
+  "Chain Information": "链信息",
+  "No information found from this RPC node!": "未从此 RPC 节点找到信息！",
+  "Add a new chain": "添加新链"
 }

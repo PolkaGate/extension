@@ -1374,5 +1374,18 @@
   "{{accountName}} has been successfully removed!": "{{accountName}} успешно удален!",
   "Voted Aye": "Проголосовал За",
   "Voted Nay": "Проголосовал Против",
-  "Voted Abstain": "Воздержался"
+  "Voted Abstain": "Воздержался",
+  "Add New Chain": "Добавить новую сеть",
+  "If your chain is not listed in the PolkaGate chain list, you can provide an RPC endpoint, and we’ll automatically fetch the chain information to add it to the extension’s chain list.": "Если вашей сети нет в списке сетей PolkaGate, вы можете предоставить RPC-эндпоинт, и мы автоматически получим информацию о сети, чтобы добавить ее в список расширения.",
+  "How?": "Как?",
+  "Find the chain endpoint in the Polkadot.js/org/apps. After selecting your chain and endpoint, copy the URL segment starting with wss and ending before the first #. For example: wss://rpc.dotters.network/polkadot": "Найдите эндпоинт сети на Polkadot.js/org/apps. После выбора вашей сети и эндпоинта скопируйте сегмент URL, начинающийся с wss и заканчивающийся перед первым #. Например: wss://rpc.dotters.network/polkadot",
+  "RPC endpoint for your desired chain:": "RPC-эндпоинт для вашей сети:",
+  "Loading chain information, please wait ...": "Загрузка информации о сети, пожалуйста, подождите...",
+  "We couldn’t find the token price ID on-chain. To view your balance in fiat, please get it from CoinGecko and enter it below. This step is optional if you only need the crypto balance.": "Мы не смогли найти ID цены токена в сети. Чтобы увидеть ваш баланс в фиатной валюте, получите его на CoinGecko и введите ниже. Этот шаг необязателен, если вам нужен только криптовалютный баланс.",
+  "Find your token on CoinGecko. The price ID is available at: https://www.coingecko.com/en/coins/[price-id]": "Найдите свой токен на CoinGecko. ID цены доступен по адресу: https://www.coingecko.com/en/coins/[price-id]",
+  "Chain token price Id": "ID цены токена сети",
+  "Check": "Проверить",
+  "Chain Information": "Информация о сети",
+  "No information found from this RPC node!": "Информация с этого узла RPC не найдена!",
+  "Add a new chain": "Добавить новую сеть"
 }

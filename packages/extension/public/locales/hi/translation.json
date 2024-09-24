@@ -1376,5 +1376,18 @@
   "{{accountName}} has been successfully removed!": "{{accountName}} को सफलतापूर्वक हटा दिया गया है!",
   "Voted Aye": "हाँ में मतदान किया",
   "Voted Nay": "न में मतदान किया",
-  "Voted Abstain": "मतदान से विरत"
+  "Voted Abstain": "मतदान से विरत",
+  "Add New Chain": "नई चेन जोड़ें",
+  "If your chain is not listed in the PolkaGate chain list, you can provide an RPC endpoint, and we’ll automatically fetch the chain information to add it to the extension’s chain list.": "यदि आपकी चेन PolkaGate चेन सूची में नहीं है, तो आप एक RPC एंडपॉइंट प्रदान कर सकते हैं, और हम स्वचालित रूप से चेन की जानकारी प्राप्त करके इसे एक्सटेंशन की चेन सूची में जोड़ देंगे।",
+  "How?": "कैसे?",
+  "Find the chain endpoint in the Polkadot.js/org/apps. After selecting your chain and endpoint, copy the URL segment starting with wss and ending before the first #. For example: wss://rpc.dotters.network/polkadot": "Polkadot.js/org/apps में चेन एंडपॉइंट ढूंढें। अपनी चेन और एंडपॉइंट चुनने के बाद, URL सेगमेंट को कॉपी करें जो wss से शुरू होता है और पहले # से पहले समाप्त होता है। उदाहरण: wss://rpc.dotters.network/polkadot",
+  "RPC endpoint for your desired chain:": "आपकी इच्छित चेन के लिए RPC एंडपॉइंट:",
+  "Loading chain information, please wait ...": "चेन की जानकारी लोड हो रही है, कृपया प्रतीक्षा करें...",
+  "We couldn’t find the token price ID on-chain. To view your balance in fiat, please get it from CoinGecko and enter it below. This step is optional if you only need the crypto balance.": "हमें टोकन प्राइस आईडी ऑन-चेन नहीं मिली। अपने बैलेंस को फिएट में देखने के लिए इसे CoinGecko से प्राप्त करें और नीचे दर्ज करें। यदि आपको केवल क्रिप्टो बैलेंस की आवश्यकता है तो यह कदम वैकल्पिक है।",
+  "Find your token on CoinGecko. The price ID is available at: https://www.coingecko.com/en/coins/[price-id]": "CoinGecko पर अपना टोकन ढूंढें। प्राइस आईडी यहाँ उपलब्ध है: https://www.coingecko.com/en/coins/[price-id]",
+  "Chain token price Id": "चेन टोकन प्राइस आईडी",
+  "Check": "जांचें",
+  "Chain Information": "चेन की जानकारी",
+  "No information found from this RPC node!": "इस RPC नोड से कोई जानकारी नहीं मिली!",
+  "Add a new chain": "नई चेन जोड़ें"
 }
