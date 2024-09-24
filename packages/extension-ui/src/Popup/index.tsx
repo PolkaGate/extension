@@ -21,6 +21,7 @@ import Governance from '@polkadot/extension-polkagate/src/fullscreen/governance'
 import ReferendumPost from '@polkadot/extension-polkagate/src/fullscreen/governance/post';
 import ManageIdentity from '@polkadot/extension-polkagate/src/fullscreen/manageIdentity';
 import FullScreenManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxies';
+import NFTAlbum from '@polkadot/extension-polkagate/src/fullscreen/nft';
 import Onboarding from '@polkadot/extension-polkagate/src/fullscreen/onboarding';
 import Send from '@polkadot/extension-polkagate/src/fullscreen/sendFund';
 import SocialRecovery from '@polkadot/extension-polkagate/src/fullscreen/socialRecovery';
@@ -328,6 +329,7 @@ export default function Popup (): React.ReactElement {
                                         <Route path='/login-password'>{wrapWithErrorBoundary(<LoginPassword />, 'manage-login-password')}</Route>
                                         <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
                                         <Route path='/manageIdentity/:address'>{wrapWithErrorBoundary(<ManageIdentity />, 'manage-identity')}</Route>
+                                        <Route path='/nft/:address'>{wrapWithErrorBoundary(<NFTAlbum />, 'nft-album')}</Route>
                                         <Route path='/onboarding'>{wrapWithErrorBoundary(<Onboarding />, 'onboarding')}</Route>
                                         <Route path='/pool/create/:address'>{wrapWithErrorBoundary(<CreatePool />, 'pool-create')}</Route>
                                         <Route path='/pool/join/:address'>{wrapWithErrorBoundary(<JoinPool />, 'pool-join')}</Route>
