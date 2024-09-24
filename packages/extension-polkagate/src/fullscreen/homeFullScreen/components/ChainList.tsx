@@ -6,7 +6,7 @@
 import type { SavedAssets } from '../../../hooks/useAssetsBalances';
 import type { DropdownOption } from '../../../util/types';
 
-import { AddCircle as AddIcon, ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
+import { AddCircle as AddIcon, ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, RestartAlt as ResetIcon } from '@mui/icons-material';
 import { Button, Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -145,16 +145,21 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
         <Button
           onClick={onAddNewChain}
           startIcon={<AddIcon />}
-          sx={{ '&:hover': { bgcolor: 'divider' }, color: theme.palette.secondary.main, fontSize: '12px', fontWeight: 300, p: 0, ml: '10px', textTransform: 'none', width: 'fit-content' }}
+          sx={{ '&:hover': { bgcolor: 'divider' }, '.MuiButton-startIcon': { marginRight: '2px' }, color: theme.palette.secondary.main, fontSize: '12px', fontWeight: 300, p: 0, ml: '10px', textTransform: 'none', width: 'fit-content' }}
           variant='text'
         >
           {t('Add a new chain')}
         </Button>
-        <Button onClick={onReset} sx={{ '&:hover': { bgcolor: 'divider' }, color: theme.palette.secondary.main, fontSize: '12px', fontWeight: 300, p: 0, textTransform: 'none', width: 'fit-content' }} variant='text'>
-          {t('Reset to default')}
+        <Button
+          onClick={onReset}
+          startIcon={<ResetIcon />}
+          sx={{ '&:hover': { bgcolor: 'divider' }, '.MuiButton-startIcon': { marginRight: '2px' }, color: theme.palette.secondary.main, fontSize: '12px', fontWeight: 300, p: 0, textTransform: 'none', width: 'fit-content' }}
+          variant='text'
+        >
+          {t('Reset')}
         </Button>
       </Grid>
-      <Divider sx={{ bgcolor: 'divider', height: '2px', my: '5px', width: '100%' }} />
+      <Divider sx={{ bgcolor: 'divider', height: '2px', mb: '5px', width: '100%' }} />
       {[...sortedChainsToShow.slice(0, DEFAULT_SELECTED_CHAINS_COUNT)].map((item, index) => (
         <ChainItem
           chain={item}
