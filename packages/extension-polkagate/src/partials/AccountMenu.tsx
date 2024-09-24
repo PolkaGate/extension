@@ -11,11 +11,11 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain, SocialRecoveryIcon, VaadinIcon } from '../components';
+import { ActionContext, Identity, MenuItem, NFTIcon, RemoteNodeSelector, SelectChain, SocialRecoveryIcon, VaadinIcon } from '../components';
 import ProfileMenu from '../fullscreen/homeFullScreen/partials/ProfileMenu';
 import { useGenesisHashOptions, useInfo, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
-import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../util/constants';
+import { IDENTITY_CHAINS, NFT_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
 
 interface Props {
@@ -76,6 +76,10 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
     address && windowOpen(`/socialRecovery/${address}/false`).catch(console.error);
   }, [address]);
 
+  const onNFTAlbum = useCallback(() => {
+    address && windowOpen(`/nft/${address}`).catch(console.error);
+  }, [address]);
+
   const isDisabled = useCallback((supportedChains: string[]) => {
     if (!currentGenesisHash) {
       return true;
@@ -130,6 +134,22 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
         }
         onClick={onSocialRecovery}
         text={t('Social recovery')}
+        withHoverEffect
+      />
+      <MenuItem
+        disabled={isDisabled(NFT_CHAINS)}
+        iconComponent={
+          <NFTIcon
+            color={
+              isDisabled(NFT_CHAINS)
+                ? theme.palette.text.disabled
+                : theme.palette.text.primary}
+            height={24}
+            width={24}
+          />
+        }
+        onClick={onNFTAlbum}
+        text={t('NFT Album')}
         withHoverEffect
       />
       <MenuSeparator />

@@ -8,9 +8,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Popover, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
-import { ActionContext, MenuItem, SocialRecoveryIcon, VaadinIcon } from '../../../components';
+import { ActionContext, MenuItem, NFTIcon, SocialRecoveryIcon, VaadinIcon } from '../../../components';
 import { useInfo, useTranslation } from '../../../hooks';
-import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
+import { IDENTITY_CHAINS, NFT_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 import { POPUPS_NUMBER } from './AccountInformationForHome';
 import ProfileMenu from './ProfileMenu';
 
@@ -64,6 +64,10 @@ const Menus = ({ address, handleClose, setDisplayPopup }: {
     address && onAction(`/socialRecovery/${address}/false`);
   }, [address, onAction]);
 
+  const onNFTAlbum = useCallback(() => {
+    address && onAction(`/nft/${address}`);
+  }, [address, onAction]);
+
   const isDisable = useCallback((supportedChains: string[]) => {
     if (!chain) {
       return true;
@@ -95,7 +99,7 @@ const Menus = ({ address, handleClose, setDisplayPopup }: {
           <VaadinIcon icon='vaadin:sitemap' style={{ color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}`, height: '20px' }} />
         }
         onClick={onManageProxies}
-        text={t<string>('Manage proxies')}
+        text={t('Manage proxies')}
         withHoverEffect
       />
       <MenuItem
@@ -112,6 +116,22 @@ const Menus = ({ address, handleClose, setDisplayPopup }: {
         }
         onClick={onSocialRecovery}
         text={t('Social recovery')}
+        withHoverEffect
+      />
+      <MenuItem
+        disabled={isDisable(NFT_CHAINS)}
+        iconComponent={
+          <NFTIcon
+            color={
+              isDisable(NFT_CHAINS)
+                ? theme.palette.text.disabled
+                : theme.palette.text.primary}
+            height={24}
+            width={24}
+          />
+        }
+        onClick={onNFTAlbum}
+        text={t('NFT Album')}
         withHoverEffect
       />
       <Divider sx={{ bgcolor: 'divider', height: '1px', my: '6px' }} />
