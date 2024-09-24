@@ -10,7 +10,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getStorage } from '../../components/Loading';
 
 export function useUserAddedEndpoints (): Record<HexString, UserAddedEndpoint> | undefined {
-  const [chains, setChains] = useState<Record<HexString, UserAddedEndpoint>>();
+  const [userEndpoints, setEndpoints] = useState<Record<HexString, UserAddedEndpoint>>();
 
   useEffect(() => {
     getStorage('userAddedEndpoint').then((info) => {
@@ -18,11 +18,11 @@ export function useUserAddedEndpoints (): Record<HexString, UserAddedEndpoint> |
         return;
       }
 
-      setChains(info as Record<HexString, UserAddedEndpoint>);
+      setEndpoints(info as Record<HexString, UserAddedEndpoint>);
     }).catch(console.error);
   }, []);
 
-  return chains;
+  return userEndpoints;
 }
 
 export function UseUserAddedEndpoint (genesis: string | null | undefined): DropdownOption []| undefined {
