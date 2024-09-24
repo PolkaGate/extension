@@ -131,12 +131,13 @@ const assetsChains = createAssets();
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
 export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>): SavedAssets | undefined | null {
+  const { t } = useTranslation();
+
   const isTestnetEnabled = useIsTestnetEnabled();
   const selectedChains = useSelectedChains();
   const genesisOptions = useGenesisHashOptions();
   const userAddedEndpoints = UseUserAddedEndpoints();
 
-  const { t } = useTranslation();
 
   /** to limit calling of this heavy call on just home and account details */
   const SHOULD_FETCH_ASSETS = window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs');
@@ -212,7 +213,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       handleAccountsSaving();
       setAlerts((perv) => [...perv, { severity: 'success', text: t('Accounts\' balances updated!') }]);
     }
-  }, [accounts, addresses, handleAccountsSaving, setAlerts, t, workersCalled?.length]);
+  }, [addresses, handleAccountsSaving, setAlerts, t, workersCalled?.length]);
 
   useEffect(() => {
     /** chain list may have changed */
@@ -454,7 +455,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       combineAndSetAssets(_assets);
       handleSetWorkersCall(worker, 'terminate');
     };
-  }, [combineAndSetAssets, handleSetWorkersCall]);
+  }, [combineAndSetAssets, handleSetWorkersCall, userAddedEndpoints]);
 
   const fetchMultiAssetChainAssets = useCallback((chainName: string) => {
     return addresses && fetchAssetOnMultiAssetChain(addresses, chainName);
@@ -493,7 +494,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     if (maybeMultiAssetChainName) {
       fetchMultiAssetChainAssets(maybeMultiAssetChainName);
     }
-  }, [addresses, fetchAssetOnAssetHubs, fetchAssetOnRelayChain, fetchMultiAssetChainAssets]);
+  }, [addresses, fetchAssetOnAssetHubs, fetchAssetOnRelayChain, fetchMultiAssetChainAssets, genesisOptions]);
 
   useEffect(() => {
     if (!SHOULD_FETCH_ASSETS || !addresses || addresses.length === 0 || isWorking || isUpdate || !selectedChains || isTestnetEnabled === undefined) {
