@@ -108,6 +108,11 @@ export const SOCIAL_RECOVERY_CHAINS = [
   KUSAMA_GENESIS_HASH
 ];
 
+export const NFT_CHAINS = [
+  STATEMINE_GENESIS_HASH,
+  STATEMINT_GENESIS_HASH
+];
+
 // used to enable/disable staking icon in account page
 export const STAKING_CHAINS = [
   POLKADOT_GENESIS_HASH,
