@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { getStorage } from '../../components/Loading';
 
-export function UseUserAddedEndpoints (): Record<HexString, UserAddedEndpoint> | undefined {
+export function useUserAddedEndpoints (): Record<HexString, UserAddedEndpoint> | undefined {
   const [chains, setChains] = useState<Record<HexString, UserAddedEndpoint>>();
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export function UseUserAddedEndpoints (): Record<HexString, UserAddedEndpoint> |
 }
 
 export function UseUserAddedEndpoint (genesis: string | null | undefined): DropdownOption []| undefined {
-  const endpoints = UseUserAddedEndpoints();
+  const endpoints = useUserAddedEndpoints();
 
   return useMemo(() => {
     if (!endpoints) {
@@ -41,7 +41,7 @@ export function UseUserAddedEndpoint (genesis: string | null | undefined): Dropd
 
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 export function UseUserAddedChainColor (_genesisHash: HexString | string | undefined): string | undefined {
-  const endpoints = UseUserAddedEndpoints();
+  const endpoints = useUserAddedEndpoints();
 
   return useMemo(() => {
     if (!endpoints) {

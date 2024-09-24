@@ -14,7 +14,7 @@ import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, us
 import { BN, isObject } from '@polkadot/util';
 
 import { getStorage, setStorage, watchStorage } from '../components/Loading';
-import { UseUserAddedEndpoints } from '../fullscreen/addNewChain/utils';
+import { useUserAddedEndpoints } from '../fullscreen/addNewChain/utils';
 import { toCamelCase } from '../fullscreen/governance/utils/util';
 import { updateMetadata } from '../messaging';
 import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
@@ -136,8 +136,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
   const isTestnetEnabled = useIsTestnetEnabled();
   const selectedChains = useSelectedChains();
   const genesisOptions = useGenesisHashOptions();
-  const userAddedEndpoints = UseUserAddedEndpoints();
-
+  const userAddedEndpoints = useUserAddedEndpoints();
 
   /** to limit calling of this heavy call on just home and account details */
   const SHOULD_FETCH_ASSETS = window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs');
