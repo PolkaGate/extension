@@ -5,18 +5,18 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { BalancesInfo } from '@polkadot/extension-polkagate/util/types';
-import type { BN } from '@polkadot/util';
 import type { HexString } from '@polkadot/util/types';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
 import { ArrowForwardIos as ArrowForwardIosIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Box, Button, Divider, Grid, Skeleton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
+import { type BN, noop } from '@polkadot/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
-import { ActionContext, Identicon, Identity, OptionalCopyButton, ShortAddress2 } from '../../../components';
+import { Identicon, Identity, OptionalCopyButton, ShortAddress2 } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, useIdentity, useInfo, usePrices, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount } from '../../../messaging';
@@ -95,7 +95,6 @@ export default function AccountInformationForHome ({ accountAssets, address, hid
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();
   const { account, api, chain, formatted, genesisHash } = useInfo(address);
-  const onAction = useContext(ActionContext);
 
   const accountInfo = useIdentity(genesisHash, formatted);
 
@@ -136,10 +135,6 @@ export default function AccountInformationForHome ({ accountAssets, address, hid
   const toggleVisibility = useCallback((): void => {
     address && showAccount(address, account?.isHidden || false).catch(console.error);
   }, [account?.isHidden, address]);
-
-  const openSettings = useCallback((): void => {
-    address && onAction();
-  }, [onAction, address]);
 
   const goToDetails = useCallback((): void => {
     address && openOrFocusTab(`/accountfs/${address}/${selectedAsset?.assetId || '0'}`, true);
@@ -218,7 +213,7 @@ export default function AccountInformationForHome ({ accountAssets, address, hid
               baseButton={
                 <AccountButton
                   icon={<MoreVertIcon style={{ color: theme.palette.secondary.light, fontSize: '32px' }} />}
-                  onClick={openSettings}
+                  onClick={noop}
                   text={t('Settings')}
                 />
               }
