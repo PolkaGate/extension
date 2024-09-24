@@ -10,7 +10,7 @@ import { toCamelCase } from '../fullscreen/governance/utils/util';
 import getNetworkMap from './getNetworkMap';
 import { sanitizeChainName } from './utils';
 
-const endpoints = createWsEndpoints(() => '');
+const endpoints = createWsEndpoints();
 
 export default function getLogo (info: string | undefined | Chain, token?: string): string | undefined {
   let chainNameFromGenesisHash;
