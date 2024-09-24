@@ -15,7 +15,7 @@ declare module '@mui/material/styles' {
     label: Palette['primary'];
     approval: Palette['primary'];
     support: Palette['primary'];
-    backgroundFL?: Palette['primary'];
+    backgroundFL: TypeText;
   }
   interface PaletteOptions {
     approval?: PaletteOptions['primary'];
