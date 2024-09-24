@@ -12,8 +12,8 @@ import { NFTIcon, Progress } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { ALT_NFT_BGCOLOR_DARK, ALT_NFT_BGCOLOR_LIGHT } from './constants';
 import { useNftInfo } from './useNftInfo';
-import NftDetails, { Detail } from './nftDetails';
-import NftAvatar from './nftAvatar';
+import NftDetails, { Detail } from './NftDetails';
+import NftAvatar from './NftAvatar';
 
 interface Props {
   nftInformation: NFTInformation | undefined;

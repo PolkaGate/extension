@@ -20,7 +20,7 @@ import { NFT_CHAINS } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
-import NFTItem from './NFTItem';
+import NFTItem from './NftItem';
 
 enum STEPS {
   CHECK_SCREEN,

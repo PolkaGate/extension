@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { NFTMetadata } from './NFTItem';
+import type { NFTMetadata } from './NftItem';
 import { OpenInFull as OpenInFullIcon } from '@mui/icons-material';
 
 import { Close as CloseIcon } from '@mui/icons-material';
@@ -12,9 +12,9 @@ import React, { useCallback, useState } from 'react';
 
 import { useTranslation } from '../../components/translate';
 import { DraggableModal } from '../governance/components/DraggableModal';
-import NftAvatar from './nftAvatar';
+import NftAvatar from './NftAvatar';
 import type { NFTInformation } from '.';
-import FullscreenNftModal from './nftFullScreenModal';
+import FullscreenNftModal from './NftFullScreenModal';
 
 interface NftDetailsProp {
   details: NFTMetadata;
