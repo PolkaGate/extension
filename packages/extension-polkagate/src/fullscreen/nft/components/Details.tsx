@@ -3,31 +3,17 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { ItemInformation } from '.';
-import type { ItemMetadata } from './Item';
+import type { DetailProp, DetailsProp } from '../utils/types';
 
 import { Close as CloseIcon, OpenInFull as OpenInFullIcon } from '@mui/icons-material';
 import { Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 
-import { useTranslation } from '../../components/translate';
-import { DraggableModal } from '../governance/components/DraggableModal';
+import { useTranslation } from '../../../components/translate';
+import { DraggableModal } from '../../governance/components/DraggableModal';
 import NftAvatar from './ItemAvatar';
 import ItemFullscreenModal from './ItemFullScreenModal';
-
-interface NftDetailsProp {
-  details: ItemMetadata;
-  itemInformation: ItemInformation;
-  show: boolean;
-  setShowDetail: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-interface DetailProp {
-  title: string;
-  text: string;
-  inline?: boolean;
-}
 
 export const Detail = ({ inline = true, text, title }: DetailProp) => (
   <Grid container item>
@@ -42,7 +28,7 @@ export const Detail = ({ inline = true, text, title }: DetailProp) => (
   </Grid>
 );
 
-export default function Details ({ details: { description, image, name }, itemInformation: { collectionId, isNft, itemId }, setShowDetail, show }: NftDetailsProp): React.ReactElement {
+export default function Details ({ details: { description, image, name }, itemInformation: { collectionId, isNft, itemId }, setShowDetail, show }: DetailsProp): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

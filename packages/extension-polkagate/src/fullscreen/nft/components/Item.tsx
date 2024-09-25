@@ -3,33 +3,18 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { ItemInformation } from '.';
+import type { ItemMetadata, ItemProps } from '../utils/types';
 
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Progress } from '../../components';
-import { useTranslation } from '../../components/translate';
+import { Progress } from '../../../components';
+import { useTranslation } from '../../../components/translate';
 import Details, { Detail } from './Details';
 import ItemAvatar from './ItemAvatar';
-import { useNftInfo } from './useNftInfo';
+import { useNftInfo } from '../utils/useNftInfo';
 
-interface Props {
-  itemInformation: ItemInformation | undefined;
-}
-
-interface Attribute { label: string; value: string }
-
-export interface ItemMetadata {
-  animation_url?: string;
-  name?: string | undefined;
-  description?: string | undefined;
-  image?: string | null | undefined;
-  attributes: Attribute[] | undefined;
-  tags: string[] | undefined;
-}
-
-export default function Item ({ itemInformation }: Props): React.ReactElement {
+export default function Item ({ itemInformation }: ItemProps): React.ReactElement {
   const { t } = useTranslation();
   const { fetchData } = useNftInfo();
 
@@ -48,8 +33,13 @@ export default function Item ({ itemInformation }: Props): React.ReactElement {
         return;
       }
 
-      // in order to equal the unique metadata type and nft metadata type
-      // in unique metadata there's "mediaUri" instead of "image"
+      /**
+       * Handles the difference between NFT and Unique metadata formats:
+       * In Unique metadata, the image URL is stored in the 'mediaUri' property.
+       * In standard NFT metadata, the image URL is stored in the 'image' property.
+       * Then it converts 'mediaUri' to 'image' if present, ensuring a consistent
+       * interface for the rest of the application to work with.
+       */
       if ('mediaUri' in itemMetadata) {
         itemMetadata.image = itemMetadata.mediaUri as string;
         delete itemMetadata.mediaUri;

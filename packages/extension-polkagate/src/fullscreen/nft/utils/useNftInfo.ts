@@ -3,11 +3,8 @@
 
 import { useCallback } from 'react';
 
-import { IPFS_GATEWAYS } from './constants';
-
-const MAX_RETRY_ATTEMPTS = IPFS_GATEWAYS.length;
-const INITIAL_BACKOFF_TIME = 1000; // 1 second
-const MAX_BACKOFF_TIME = 10000; // 10 seconds
+import { INITIAL_BACKOFF_TIME, IPFS_GATEWAYS, MAX_BACKOFF_TIME, MAX_RETRY_ATTEMPTS } from './constants';
+import { getContentUrl } from './util';
 
 export const useNftInfo = () => {
   const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -35,22 +32,6 @@ export const useNftInfo = () => {
     }
   }, []);
 
-  const getContentUrl = useCallback((url: string | undefined) => {
-    if (!url) {
-      return { isIPFS: false, sanitizedUrl: undefined };
-    }
-
-    if (url.startsWith('https')) {
-      return { isIPFS: false, sanitizedUrl: url };
-    }
-
-    let cid = url.replace(/^ipfs:\/\/ipfs\/|^ipfs:\/\/|^ipfs\//, '');
-
-    cid = cid.replace(/^\/+/, '');
-
-    return { isIPFS: !cid.startsWith('http'), sanitizedUrl: cid };
-  }, []);
-
   const fetchData = useCallback(async <T>(contentUrl: string | undefined, image = false): Promise<T | null> => {
     if (!contentUrl) {
       return null;
@@ -62,39 +43,32 @@ export const useNftInfo = () => {
       return null;
     }
 
-    if (!isIPFS) {
-      const response = await fetch(sanitizedUrl);
+    const fetchAndProcess = async (url: string) => {
+      const response = await fetchWithRetry(url);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       return image ? response.url as T : await response.json() as T;
+    };
+
+    if (!isIPFS) {
+      return fetchAndProcess(sanitizedUrl);
     }
 
-    for (let i = 0; i < MAX_RETRY_ATTEMPTS; i++) {
+    for (const gateway of IPFS_GATEWAYS) {
       try {
-        const url = IPFS_GATEWAYS[i] + sanitizedUrl;
-        const response = await fetchWithRetry(url, i);
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return image ? response.url as T : await response.json() as T;
+        return await fetchAndProcess(gateway + sanitizedUrl);
       } catch (error) {
-        console.error(`Attempt ${i + 1} failed:`, error);
-
-        if (i === MAX_RETRY_ATTEMPTS - 1) {
-          console.error('Failed to fetch NFT data from all gateways');
-
-          return null;
-        }
+        console.error(`Failed to fetch from ${gateway}:`, error);
       }
     }
 
+    console.error('Failed to fetch NFT/Unique data from all gateways');
+
     return null;
-  }, [fetchWithRetry, getContentUrl]);
+  }, [fetchWithRetry]);
 
   return { fetchData };
 };

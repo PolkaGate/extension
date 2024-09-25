@@ -3,15 +3,11 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { FullscreenNftModalProps } from '../utils/types';
+
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Box, IconButton, Modal } from '@mui/material';
 import React from 'react';
-
-interface FullscreenNftModalProps {
-  image: string | null | undefined;
-  onClose: () => void;
-  open: boolean;
-}
 
 export default function ItemFullscreenModal ({ image, onClose, open }: FullscreenNftModalProps): React.ReactElement {
   return (

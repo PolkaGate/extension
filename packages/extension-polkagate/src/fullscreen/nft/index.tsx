@@ -3,24 +3,22 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { ApiPromise } from '@polkadot/api';
-// @ts-ignore
-import type { PalletNftsItemDetails, PalletNftsItemMetadata, PalletUniquesItemDetails, PalletUniquesItemMetadata } from '@polkadot/types/lookup';
+import type { ItemInformation } from './utils/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { noop } from '@polkadot/util';
-
-import { ActionContext, Checkbox2, InputFilter, PButton, Progress, Warning } from '../../components';
+import { ActionContext, PButton, Warning } from '../../components';
 import NFTIcon from '../../components/SVG/NFT';
 import { useFullscreen, useInfo, useTranslation } from '../../hooks';
 import { NFT_CHAINS } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
-import Item from './Item';
+import FilterSection from './components/FilterItems';
+import ItemsList from './components/ItemsList';
+import { fetchNFTs, fetchUniques } from './utils/util';
 
 enum STEPS {
   CHECK_SCREEN,
@@ -28,97 +26,7 @@ enum STEPS {
   UNSUPPORTED
 }
 
-export interface ItemInformation {
-  collectionId?: string;
-  itemId?: string;
-  data?: string;
-  isNft: boolean;
-}
-
-interface CheckboxButtonProps {
-  title: string;
-  checked: boolean;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
-}
-
-const CheckboxButton = ({ checked, onChange, title }: CheckboxButtonProps) => {
-  const theme = useTheme();
-
-  return (
-    <Grid alignItems='center' container item justifyContent='flex-start' sx={{ color: theme.palette.mode === 'light' ? 'secondary.main' : 'text.primary', cursor: 'pointer', textDecorationLine: 'underline', width: 'fit-content' }}>
-      <Checkbox2
-        checked={checked}
-        label={title}
-        labelStyle={{ fontSize: '16px', fontWeight: 400 }}
-        onChange={onChange}
-      />
-    </Grid>
-  );
-};
-
-interface FilterSectionProps {
-  onSearch: (filter: string) => void;
-  onCreated: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
-  onOwn: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
-  onMyCollection: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
-}
-
-const FilterSection = ({ onCreated, onMyCollection, onOwn, onSearch }: FilterSectionProps) => {
-  const { t } = useTranslation();
-  const theme = useTheme();
-
-  return (
-    <Grid alignItems='flex-end' container item justifyContent='space-around' sx={{ borderBottom: '2px solid', borderBottomColor: 'divider', mt: '20px', py: '5px' }}>
-      <CheckboxButton checked onChange={onCreated} title={t('Created')} />
-      <CheckboxButton checked onChange={onOwn} title={t('Own')} />
-      <CheckboxButton checked onChange={onMyCollection} title={t('My collection')} />
-      <Grid container item justifyContent='flex-start' width='30%'>
-        <InputFilter
-          autoFocus={false}
-          onChange={onSearch}
-          placeholder={t('🔍 Search in nfts ')}
-          theme={theme}
-        // value={searchKeyword ?? ''}
-        />
-      </Grid>
-    </Grid>
-  );
-};
-
-interface ItemsListProps {
-  items: ItemInformation[] | null | undefined;
-}
-
-const ItemsList = ({ items }: ItemsListProps) => {
-  const { t } = useTranslation();
-
-  return (
-    <Grid container item sx={{ bgcolor: 'background.paper', gap: '30px', height: '450px', maxHeight: '550px', overflowY: 'scroll', p: '20px 40px' }}>
-      {items === undefined &&
-        <Grid alignItems='center' container item justifyContent='center'>
-          <Progress
-            gridSize={120}
-            title={t('Looking for NFTs/Uniques!')}
-            type='grid'
-          />
-        </Grid>
-      }
-      {items?.map((nftInfo) => (
-        <Item itemInformation={nftInfo} key={nftInfo.itemId} />
-      ))
-      }
-      {items?.length === 0 &&
-        <Grid alignItems='center' container item justifyContent='center'>
-          <Typography fontSize='16px' fontWeight={400}>
-            {t('You do not own any NFTs/Uniques')}!
-          </Typography>
-        </Grid>
-      }
-    </Grid>
-  );
-};
-
-export default function NFT(): React.ReactElement {
+export default function NFT (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -129,106 +37,14 @@ export default function NFT(): React.ReactElement {
   const [step, setStep] = useState<STEPS>(STEPS.CHECK_SCREEN);
   const [myNFTsDetails, setMyNFTs] = useState<ItemInformation[] | undefined>(undefined);
   const [myUniquesDetails, setMyUniques] = useState<ItemInformation[] | undefined>(undefined);
+  const [itemsToShow, setItemsToShow] = useState<ItemInformation[] | undefined>(undefined);
 
   const unsupportedChain = useMemo(() => !!(genesisHash && !(NFT_CHAINS.includes(genesisHash))), [genesisHash]);
-  const itemsToShow = useMemo(() => {
-    if (!myNFTsDetails && !myUniquesDetails) {
-      return undefined;
-    } else if (myNFTsDetails && myNFTsDetails.length > 0 && !myUniquesDetails) {
-      return myNFTsDetails;
-    } else if (!myNFTsDetails && myUniquesDetails && myUniquesDetails.length > 0) {
-      return myUniquesDetails;
-    } else if (myNFTsDetails && myNFTsDetails.length >= 0 && myUniquesDetails && myUniquesDetails.length >= 0) {
-      return myNFTsDetails.concat(myUniquesDetails);
-    } else {
-      return [];
-    }
-  }, [myNFTsDetails, myUniquesDetails]);
 
   const reset = useCallback(() => {
     setMyNFTs(undefined);
+    setMyUniques(undefined);
     setStep(STEPS.CHECK_SCREEN);
-  }, []);
-
-  const fetchNFTs = useCallback(async (api: ApiPromise, formatted: string) => {
-    try {
-      const nftEntries = await api.query['nfts']['item'].entries();
-
-      const myNFTs = nftEntries
-        .filter(([_ntfId, nftInfo]) => {
-          const info = nftInfo.toPrimitive() as unknown as PalletNftsItemDetails;
-
-          return [String(info.deposit.account), String(info.owner)].includes(formatted);
-        })
-        .map(([ntfId, nftInfo]) => {
-          const sanitizedId = (ntfId?.toHuman() as string[]).map((id) => id.replaceAll(',', ''));
-
-          return {
-            ids: {
-              collectionId: sanitizedId[0],
-              nftId: sanitizedId[1]
-            },
-            nftInfo: nftInfo.toPrimitive() as unknown as PalletNftsItemDetails
-          };
-        });
-
-      const nftMetadataPromises = myNFTs.map(({ ids }) =>
-        api.query['nfts']['itemMetadataOf'](ids.collectionId, ids.nftId)
-      );
-      const nftsMetadataRequests = await Promise.all(nftMetadataPromises);
-      const nftsMetadata = nftsMetadataRequests.map((metadata) => (metadata.toPrimitive() as unknown as PalletNftsItemMetadata)?.data.toString());
-
-      const nftInfos = myNFTs.map(({ ids: { collectionId, nftId } }, index) => ({
-        collectionId,
-        data: nftsMetadata[index],
-        isNft: true,
-        itemId: nftId
-      }));
-
-      setMyNFTs(nftInfos);
-    } catch (error) {
-      console.error('Error fetching NFTs:', error);
-    }
-  }, []);
-
-  const fetchUniques = useCallback(async (api: ApiPromise, formatted: string) => {
-    try {
-      const uniqueEntries = await api.query['uniques']['asset'].entries();
-      const myUniques = uniqueEntries
-        .filter(([_uniquesId, uniquesInfo]) => {
-          const info = uniquesInfo?.toPrimitive() as unknown as PalletUniquesItemDetails;
-
-          return info?.owner?.toString() === formatted;
-        })
-        .map(([uniquesId, uniquesInfo]) => {
-          const sanitizedId = (uniquesId?.toHuman() as string[]).map((id) => id.replaceAll(',', ''));
-
-          return {
-            ids: {
-              collectionId: sanitizedId[0],
-              uniqueId: sanitizedId[1]
-            },
-            uniqueInfo: uniquesInfo.toPrimitive() as unknown as PalletUniquesItemDetails
-          };
-        });
-
-      const uniqueMetadataPromises = myUniques.map(({ ids }) =>
-        api.query['uniques']['instanceMetadataOf'](ids.collectionId, ids.uniqueId)
-      );
-      const uniquesMetadataRequests = await Promise.all(uniqueMetadataPromises);
-      const uniquesMetadata = uniquesMetadataRequests.map((metadata) => (metadata.toPrimitive() as unknown as PalletUniquesItemMetadata)?.data.toString());
-
-      const myUniquesInfos = myUniques.map(({ ids: { collectionId, uniqueId } }, index) => ({
-        collectionId,
-        data: uniquesMetadata[index],
-        isNft: false,
-        itemId: uniqueId
-      }));
-
-      setMyUniques(myUniquesInfos);
-    } catch (error) {
-      console.error('Error fetching uniques:', error);
-    }
   }, []);
 
   useEffect(() => {
@@ -249,9 +65,9 @@ export default function NFT(): React.ReactElement {
     }
 
     setStep(STEPS.CHECK_SCREEN);
-    fetchNFTs(api, formatted).catch(console.error);
-    fetchUniques(api, formatted).catch(console.error);
-  }, [api, fetchUniques, fetchNFTs, formatted, genesisHash, myNFTsDetails, unsupportedChain, myUniquesDetails]);
+    fetchNFTs(api, formatted, setMyNFTs).catch(console.error);
+    fetchUniques(api, formatted, setMyUniques).catch(console.error);
+  }, [api, formatted, genesisHash, myNFTsDetails, unsupportedChain, myUniquesDetails]);
 
   const backHome = useCallback(() => onAction('/'), [onAction]);
 
@@ -276,7 +92,7 @@ export default function NFT(): React.ReactElement {
                   isBelowInput
                   theme={theme}
                 >
-                  {t('The chosen blockchain does not support NFTs.')}
+                  {t('The chosen blockchain does not support NFTs/Uniques.')}
                 </Warning>
               </Grid>
             </Grid>
@@ -287,10 +103,9 @@ export default function NFT(): React.ReactElement {
                 {t('On NFT / Unique Album page you can watch all of your created or owned NFTs/uniques.')}
               </Typography>
               <FilterSection
-                onCreated={noop}
-                onMyCollection={noop}
-                onOwn={noop}
-                onSearch={noop}
+                myNFTsDetails={myNFTsDetails}
+                myUniquesDetails={myUniquesDetails}
+                setItemsToShow={setItemsToShow}
               />
               <ItemsList
                 items={itemsToShow}

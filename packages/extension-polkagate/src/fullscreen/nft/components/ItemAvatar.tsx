@@ -3,19 +3,14 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ItemAvatarProp } from '../utils/types';
+
 import { OpenInFull as OpenInFullIcon } from '@mui/icons-material';
 import { Avatar, Grid, IconButton, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
-import { NFTIcon } from '../../components';
-import { ALT_NFT_BGCOLOR_DARK, ALT_NFT_BGCOLOR_LIGHT } from './constants';
-
-interface ItemAvatarProp {
-  image: string | null | undefined;
-  height?: string;
-  width?: string;
-  onFullscreen?: () => void;
-}
+import { NFTIcon } from '../../../components';
+import { ALT_NFT_BGCOLOR_DARK, ALT_NFT_BGCOLOR_LIGHT } from '../utils/constants';
 
 export default function ItemAvatar ({ height = '220px', image, onFullscreen, width = '190px' }: ItemAvatarProp): React.ReactElement {
   const theme = useTheme();
