@@ -5,8 +5,6 @@ import { createWsEndpoints } from '@polkagate/apps-config';
 
 import { sanitizeChainName } from '../../utils';
 
-const allEndpoints = createWsEndpoints();
-
 /**
  * to get all available chain endpoints of a chain except light client
  * @param {string} chainName
@@ -14,6 +12,8 @@ const allEndpoints = createWsEndpoints();
  */
 
 export function getChainEndpoints (chainName, userAddedEndpoints) {
+  const allEndpoints = createWsEndpoints();
+
   let endpoints = allEndpoints
     .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === chainName.toLowerCase() && !endpoint.isDisabled && !endpoint?.isLightClient);
 
