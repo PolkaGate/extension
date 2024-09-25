@@ -13,7 +13,7 @@ interface FullscreenNftModalProps {
   open: boolean;
 }
 
-export default function FullscreenNftModal ({ image, onClose, open }: FullscreenNftModalProps): React.ReactElement {
+export default function ItemFullscreenModal ({ image, onClose, open }: FullscreenNftModalProps): React.ReactElement {
   return (
     <Modal onClose={onClose} open={open} sx={{ alignItems: 'center', display: 'flex', justifyContent: 'center' }}>
       <Box sx={{ maxHeight: '90vh', maxWidth: '90vw', position: 'relative' }}>

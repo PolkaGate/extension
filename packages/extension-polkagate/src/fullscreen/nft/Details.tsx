@@ -3,22 +3,22 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { NFTMetadata } from './NftItem';
-import { OpenInFull as OpenInFullIcon } from '@mui/icons-material';
+import type { ItemInformation } from '.';
+import type { ItemMetadata } from './Item';
 
-import { Close as CloseIcon } from '@mui/icons-material';
+import { Close as CloseIcon, OpenInFull as OpenInFullIcon } from '@mui/icons-material';
 import { Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 import { useTranslation } from '../../components/translate';
 import { DraggableModal } from '../governance/components/DraggableModal';
-import NftAvatar from './NftAvatar';
-import type { NFTInformation } from '.';
-import FullscreenNftModal from './NftFullScreenModal';
+import NftAvatar from './ItemAvatar';
+import ItemFullscreenModal from './ItemFullScreenModal';
 
 interface NftDetailsProp {
-  details: NFTMetadata;
-  nftInformation: NFTInformation;
+  details: ItemMetadata;
+  itemInformation: ItemInformation;
   show: boolean;
   setShowDetail: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -34,13 +34,15 @@ export const Detail = ({ inline = true, text, title }: DetailProp) => (
     <Typography fontSize='16px' fontWeight={500} sx={inline ? { pr: '10px', width: 'fit-content' } : {}}>
       {title}:
     </Typography>
-    <Typography fontSize='16px' fontWeight={400} textAlign='left'>
-      {text}
+    <Typography fontSize='16px' fontWeight={400} sx={{ '> p': { m: 0 } }} textAlign='left'>
+      <ReactMarkdown
+        linkTarget='_blank'
+      >{text}</ReactMarkdown>
     </Typography>
   </Grid>
 );
 
-export default function NftDetails({ details: { attributes, description, image, name, tags }, nftInformation: { collectionId, nftId }, setShowDetail, show }: NftDetailsProp): React.ReactElement {
+export default function Details ({ details: { description, image, name }, itemInformation: { collectionId, isNft, itemId }, setShowDetail, show }: NftDetailsProp): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -54,9 +56,9 @@ export default function NftDetails({ details: { attributes, description, image, 
     <>
       <DraggableModal onClose={closeDetail} open={show}>
         <Grid container item justifyContent='center'>
-          <Grid alignItems='center' container item justifyContent='space-between' mb='20px'>
+          <Grid alignItems='center' container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderBottomColor: 'divider', mb: '20px' }}>
             <Typography fontSize='22px' fontWeight={700}>
-              {t('NFT Detail')}
+              {isNft ? t('NFT Detail') : t('Unique Detail')}
             </Typography>
             <Grid item>
               <IconButton onClick={openFullscreen} sx={{ mr: 1 }}>
@@ -72,9 +74,9 @@ export default function NftDetails({ details: { attributes, description, image, 
             image={image}
             width='320px'
           />
-          <Grid container item sx={{ p: '20px', rowGap: '10px' }}>
+          <Grid container item sx={{ m: '20px', maxHeight: '230px', overflowY: 'scroll', rowGap: '10px' }}>
             {name &&
-              <Typography fontSize='14px' fontWeight={400} sx={{ maxWidth: '100%', textAlign: 'center', textOverflow: 'ellipsis', width: '100%' }}>
+              <Typography fontSize='14px' fontWeight={400} sx={{ maxWidth: '380px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>
                 {name}
               </Typography>
             }
@@ -91,16 +93,16 @@ export default function NftDetails({ details: { attributes, description, image, 
                 title={t('Collection ID')}
               />
             }
-            {nftId !== undefined &&
+            {itemId !== undefined &&
               <Detail
-                text={nftId}
-                title={t('NFT ID')}
+                text={itemId}
+                title={isNft ? t('NFT ID') : t('Unique ID')}
               />
             }
           </Grid>
         </Grid>
       </DraggableModal>
-      <FullscreenNftModal
+      <ItemFullscreenModal
         image={image}
         onClose={closeFullscreen}
         open={showFullscreen}

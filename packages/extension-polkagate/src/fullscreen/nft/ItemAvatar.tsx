@@ -10,14 +10,14 @@ import React, { useMemo } from 'react';
 import { NFTIcon } from '../../components';
 import { ALT_NFT_BGCOLOR_DARK, ALT_NFT_BGCOLOR_LIGHT } from './constants';
 
-interface NftAvatarProp {
+interface ItemAvatarProp {
   image: string | null | undefined;
   height?: string;
   width?: string;
   onFullscreen?: () => void;
 }
 
-export default function NftAvatar({ height = '220px', image, onFullscreen, width = '190px' }: NftAvatarProp): React.ReactElement {
+export default function ItemAvatar ({ height = '220px', image, onFullscreen, width = '190px' }: ItemAvatarProp): React.ReactElement {
   const theme = useTheme();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);

@@ -5,7 +5,7 @@
 
 import type { ApiPromise } from '@polkadot/api';
 // @ts-ignore
-import type { PalletNftsItemDetails, PalletNftsItemMetadata } from '@polkadot/types/lookup';
+import type { PalletNftsItemDetails, PalletNftsItemMetadata, PalletUniquesItemDetails, PalletUniquesItemMetadata } from '@polkadot/types/lookup';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -20,7 +20,7 @@ import { NFT_CHAINS } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
-import NFTItem from './NftItem';
+import Item from './Item';
 
 enum STEPS {
   CHECK_SCREEN,
@@ -28,10 +28,11 @@ enum STEPS {
   UNSUPPORTED
 }
 
-export interface NFTInformation {
+export interface ItemInformation {
   collectionId?: string;
-  nftId?: string;
+  itemId?: string;
   data?: string;
+  isNft: boolean;
 }
 
 interface CheckboxButtonProps {
@@ -44,7 +45,7 @@ const CheckboxButton = ({ checked, onChange, title }: CheckboxButtonProps) => {
   const theme = useTheme();
 
   return (
-    <Grid alignItems='center' container item justifyContent='flex-start' sx={{ color: theme.palette.mode === 'light' ? 'secondary.main' : 'text.primary', cursor: 'pointer', textDecorationLine: 'underline', width: 'fit-content' }} >
+    <Grid alignItems='center' container item justifyContent='flex-start' sx={{ color: theme.palette.mode === 'light' ? 'secondary.main' : 'text.primary', cursor: 'pointer', textDecorationLine: 'underline', width: 'fit-content' }}>
       <Checkbox2
         checked={checked}
         label={title}
@@ -84,32 +85,32 @@ const FilterSection = ({ onCreated, onMyCollection, onOwn, onSearch }: FilterSec
   );
 };
 
-interface NFTItemListProps {
-  nftItems: NFTInformation[] | null | undefined;
+interface ItemsListProps {
+  items: ItemInformation[] | null | undefined;
 }
 
-const NFTItemList = ({ nftItems }: NFTItemListProps) => {
+const ItemsList = ({ items }: ItemsListProps) => {
   const { t } = useTranslation();
 
   return (
     <Grid container item sx={{ bgcolor: 'background.paper', gap: '30px', height: '450px', maxHeight: '550px', overflowY: 'scroll', p: '20px 40px' }}>
-      {nftItems === undefined &&
+      {items === undefined &&
         <Grid alignItems='center' container item justifyContent='center'>
           <Progress
             gridSize={120}
-            title={t('Looking for NFTs!')}
+            title={t('Looking for NFTs/Uniques!')}
             type='grid'
           />
         </Grid>
       }
-      {nftItems?.map((nftInfo) => (
-        <NFTItem key={nftInfo.nftId} nftInformation={nftInfo} />
+      {items?.map((nftInfo) => (
+        <Item itemInformation={nftInfo} key={nftInfo.itemId} />
       ))
       }
-      {nftItems?.length === 0 &&
+      {items?.length === 0 &&
         <Grid alignItems='center' container item justifyContent='center'>
           <Typography fontSize='16px' fontWeight={400}>
-            {t('You do not have any NFTs on your account')}!
+            {t('You do not own any NFTs/Uniques')}!
           </Typography>
         </Grid>
       }
@@ -117,7 +118,7 @@ const NFTItemList = ({ nftItems }: NFTItemListProps) => {
   );
 };
 
-export default function NFT (): React.ReactElement {
+export default function NFT(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -126,9 +127,23 @@ export default function NFT (): React.ReactElement {
   const { api, formatted, genesisHash } = useInfo(address);
 
   const [step, setStep] = useState<STEPS>(STEPS.CHECK_SCREEN);
-  const [myNFTsDetails, setMyNFTs] = useState<NFTInformation[] | undefined>(undefined);
+  const [myNFTsDetails, setMyNFTs] = useState<ItemInformation[] | undefined>(undefined);
+  const [myUniquesDetails, setMyUniques] = useState<ItemInformation[] | undefined>(undefined);
 
   const unsupportedChain = useMemo(() => !!(genesisHash && !(NFT_CHAINS.includes(genesisHash))), [genesisHash]);
+  const itemsToShow = useMemo(() => {
+    if (!myNFTsDetails && !myUniquesDetails) {
+      return undefined;
+    } else if (myNFTsDetails && myNFTsDetails.length > 0 && !myUniquesDetails) {
+      return myNFTsDetails;
+    } else if (!myNFTsDetails && myUniquesDetails && myUniquesDetails.length > 0) {
+      return myUniquesDetails;
+    } else if (myNFTsDetails && myNFTsDetails.length >= 0 && myUniquesDetails && myUniquesDetails.length >= 0) {
+      return myNFTsDetails.concat(myUniquesDetails);
+    } else {
+      return [];
+    }
+  }, [myNFTsDetails, myUniquesDetails]);
 
   const reset = useCallback(() => {
     setMyNFTs(undefined);
@@ -163,16 +178,56 @@ export default function NFT (): React.ReactElement {
       const nftsMetadataRequests = await Promise.all(nftMetadataPromises);
       const nftsMetadata = nftsMetadataRequests.map((metadata) => (metadata.toPrimitive() as unknown as PalletNftsItemMetadata)?.data.toString());
 
-      const nftInfos = myNFTs.map(({ ids }, index) => ({
-        collectionId: ids.collectionId,
+      const nftInfos = myNFTs.map(({ ids: { collectionId, nftId } }, index) => ({
+        collectionId,
         data: nftsMetadata[index],
-        nftId: ids.nftId
+        isNft: true,
+        itemId: nftId
       }));
 
       setMyNFTs(nftInfos);
-      setStep(STEPS.INDEX);
     } catch (error) {
       console.error('Error fetching NFTs:', error);
+    }
+  }, []);
+
+  const fetchUniques = useCallback(async (api: ApiPromise, formatted: string) => {
+    try {
+      const uniqueEntries = await api.query['uniques']['asset'].entries();
+      const myUniques = uniqueEntries
+        .filter(([_uniquesId, uniquesInfo]) => {
+          const info = uniquesInfo?.toPrimitive() as unknown as PalletUniquesItemDetails;
+
+          return info?.owner?.toString() === formatted;
+        })
+        .map(([uniquesId, uniquesInfo]) => {
+          const sanitizedId = (uniquesId?.toHuman() as string[]).map((id) => id.replaceAll(',', ''));
+
+          return {
+            ids: {
+              collectionId: sanitizedId[0],
+              uniqueId: sanitizedId[1]
+            },
+            uniqueInfo: uniquesInfo.toPrimitive() as unknown as PalletUniquesItemDetails
+          };
+        });
+
+      const uniqueMetadataPromises = myUniques.map(({ ids }) =>
+        api.query['uniques']['instanceMetadataOf'](ids.collectionId, ids.uniqueId)
+      );
+      const uniquesMetadataRequests = await Promise.all(uniqueMetadataPromises);
+      const uniquesMetadata = uniquesMetadataRequests.map((metadata) => (metadata.toPrimitive() as unknown as PalletUniquesItemMetadata)?.data.toString());
+
+      const myUniquesInfos = myUniques.map(({ ids: { collectionId, uniqueId } }, index) => ({
+        collectionId,
+        data: uniquesMetadata[index],
+        isNft: false,
+        itemId: uniqueId
+      }));
+
+      setMyUniques(myUniquesInfos);
+    } catch (error) {
+      console.error('Error fetching uniques:', error);
     }
   }, []);
 
@@ -185,15 +240,18 @@ export default function NFT (): React.ReactElement {
       return setStep(STEPS.UNSUPPORTED);
     } else if (!api || !formatted) {
       return setStep(STEPS.CHECK_SCREEN);
-    } else if (!api.query['nfts']?.['item']) {
+    } else if (!api.query['nfts']?.['item'] || !api.query['uniques']?.['asset']) {
       return setStep(STEPS.UNSUPPORTED);
-    } else if (myNFTsDetails) {
+    } else if (myNFTsDetails || myUniquesDetails) {
+      setStep(STEPS.INDEX);
+
       return;
     }
 
     setStep(STEPS.CHECK_SCREEN);
     fetchNFTs(api, formatted).catch(console.error);
-  }, [api, fetchNFTs, formatted, genesisHash, myNFTsDetails, unsupportedChain]);
+    fetchUniques(api, formatted).catch(console.error);
+  }, [api, fetchUniques, fetchNFTs, formatted, genesisHash, myNFTsDetails, unsupportedChain, myUniquesDetails]);
 
   const backHome = useCallback(() => onAction('/'), [onAction]);
 
@@ -207,7 +265,7 @@ export default function NFT (): React.ReactElement {
             height='100px'
             logo={<NFTIcon color={theme.palette.text.primary} height={50} width={50} />}
             padding='0px'
-            text={t('NFT Album')}
+            text={t('NFT / Unique Album')}
           />
           {step === STEPS.UNSUPPORTED &&
             <Grid alignItems='center' container direction='column' display='block' item>
@@ -226,7 +284,7 @@ export default function NFT (): React.ReactElement {
           {[STEPS.INDEX, STEPS.CHECK_SCREEN].includes(step) &&
             <>
               <Typography fontSize='14px' fontWeight={400}>
-                {t('In NFT Album page you view all your created and owned NFTs.')}
+                {t('On NFT / Unique Album page you can watch all of your created or owned NFTs/uniques.')}
               </Typography>
               <FilterSection
                 onCreated={noop}
@@ -234,8 +292,8 @@ export default function NFT (): React.ReactElement {
                 onOwn={noop}
                 onSearch={noop}
               />
-              <NFTItemList
-                nftItems={myNFTsDetails}
+              <ItemsList
+                items={itemsToShow}
               />
               <Grid container item justifyContent='flex-end' sx={{ '> button': { width: '280px' }, '> div': { width: '280px' }, pt: '20px' }}>
                 <PButton

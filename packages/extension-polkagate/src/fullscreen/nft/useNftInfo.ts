@@ -51,7 +51,7 @@ export const useNftInfo = () => {
     return { isIPFS: !cid.startsWith('http'), sanitizedUrl: cid };
   }, []);
 
-  const fetchNftData = useCallback(async <T>(contentUrl: string | undefined, image = false): Promise<T | null> => {
+  const fetchData = useCallback(async <T>(contentUrl: string | undefined, image = false): Promise<T | null> => {
     if (!contentUrl) {
       return null;
     }
@@ -96,5 +96,5 @@ export const useNftInfo = () => {
     return null;
   }, [fetchWithRetry, getContentUrl]);
 
-  return { fetchNftData };
+  return { fetchData };
 };
