@@ -48,10 +48,10 @@ export default function Details ({ details: { description, image, name }, itemIn
             </Typography>
             <Grid item>
               <IconButton onClick={openFullscreen} sx={{ mr: 1 }}>
-                <OpenInFullIcon />
+                <OpenInFullIcon sx={{ color: 'primary.main' }} />
               </IconButton>
               <IconButton onClick={closeDetail}>
-                <CloseIcon onClick={closeDetail} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
+                <CloseIcon onClick={closeDetail} sx={{ color: 'primary.main', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
               </IconButton>
             </Grid>
           </Grid>

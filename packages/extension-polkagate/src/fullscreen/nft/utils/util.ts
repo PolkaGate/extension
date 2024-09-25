@@ -4,7 +4,7 @@
 import type React from 'react';
 import type { ApiPromise } from '@polkadot/api';
 // @ts-ignore
-import type { PalletNftsItemDetails, PalletNftsItemMetadata, PalletUniquesItemDetails, PalletUniquesItemMetadata } from '@polkadot/types/lookup';
+import type { PalletNftsItemDetails, PalletNftsItemMetadata, PalletUniquesCollectionDetails, PalletUniquesItemDetails, PalletUniquesItemMetadata } from '@polkadot/types/lookup';
 import type { ItemInformation } from './types';
 
 export const fetchNFTs = async (api: ApiPromise, formatted: string, setMyNFTs: React.Dispatch<React.SetStateAction<ItemInformation[] | undefined>>) => {
@@ -35,15 +35,18 @@ export const fetchNFTs = async (api: ApiPromise, formatted: string, setMyNFTs: R
     const nftsMetadataRequests = await Promise.all(nftMetadataPromises);
     const nftsMetadata = nftsMetadataRequests.map((metadata) => (metadata.toPrimitive() as unknown as PalletNftsItemMetadata)?.data.toString());
 
-    const nftInfos = myNFTs.map(({ ids: { collectionId, nftId } }, index) => ({
+    const nftInfos = myNFTs.map(({ ids: { collectionId, nftId }, nftInfo: { deposit: { account }, owner } }, index) => ({
       collectionId,
       data: nftsMetadata[index],
+      isCreator: String(account) === formatted,
       isNft: true,
+      isOwner: String(owner) === formatted,
       itemId: nftId
     }));
 
     setMyNFTs(nftInfos);
   } catch (error) {
+    setMyNFTs([]);
     console.error('Error fetching NFTs:', error);
   }
 };
@@ -75,15 +78,29 @@ export const fetchUniques = async (api: ApiPromise, formatted: string, setMyUniq
     const uniquesMetadataRequests = await Promise.all(uniqueMetadataPromises);
     const uniquesMetadata = uniquesMetadataRequests.map((metadata) => (metadata.toPrimitive() as unknown as PalletUniquesItemMetadata)?.data.toString());
 
-    const myUniquesInfos = myUniques.map(({ ids: { collectionId, uniqueId } }, index) => ({
-      collectionId,
-      data: uniquesMetadata[index],
-      isNft: false,
-      itemId: uniqueId
-    }));
+    const collectionIds = myUniques.map(({ ids: { collectionId } }) => collectionId);
+    const setOfCollectionIds = [...new Set(collectionIds)];
+    const collectionsMetadata = setOfCollectionIds.map((id) => api.query['uniques']['class'](id));
+    const collectionMetadataRequests = await Promise.all(collectionsMetadata);
+    const collectionMetadata = collectionMetadataRequests.map((metadata) => (metadata.toPrimitive() as unknown as PalletUniquesCollectionDetails)?.owner.toString());
+    const collectionOwners = setOfCollectionIds.map((id, index) => ({ creator: collectionMetadata[index], id }));
+
+    const myUniquesInfos = myUniques.map(({ ids: { collectionId, uniqueId } }, index) => {
+      const creator = collectionOwners.find(({ id }) => id === collectionId)?.creator;
+
+      return ({
+        collectionId,
+        data: uniquesMetadata[index],
+        isCreator: creator === formatted,
+        isNft: false,
+        isOwner: true,
+        itemId: uniqueId
+      });
+    });
 
     setMyUniques(myUniquesInfos);
   } catch (error) {
+    setMyUniques([]);
     console.error('Error fetching uniques:', error);
   }
 };

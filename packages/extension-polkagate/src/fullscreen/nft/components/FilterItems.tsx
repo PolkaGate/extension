@@ -12,13 +12,14 @@ import { useTranslation } from 'react-i18next';
 import Checkbox2 from '../../../components/Checkbox2';
 import InputFilter from '../../../components/InputFilter';
 
-const CheckboxButton = ({ checked, onChange, title }: CheckboxButtonProps) => {
+const CheckboxButton = ({ checked, disabled, onChange, title }: CheckboxButtonProps) => {
   const theme = useTheme();
 
   return (
     <Grid alignItems='center' container item justifyContent='flex-start' sx={{ color: theme.palette.mode === 'light' ? 'secondary.main' : 'text.primary', cursor: 'pointer', textDecorationLine: 'underline', width: 'fit-content' }}>
       <Checkbox2
         checked={checked}
+        disabled={disabled}
         label={title}
         labelStyle={{ fontSize: '16px', fontWeight: 400 }}
         onChange={onChange}
@@ -27,7 +28,7 @@ const CheckboxButton = ({ checked, onChange, title }: CheckboxButtonProps) => {
   );
 };
 
-export default function FilterSection({ myNFTsDetails, myUniquesDetails, setItemsToShow }: FilterSectionProps): React.ReactElement {
+export default function FilterSection ({ myNFTsDetails, myUniquesDetails, setItemsToShow }: FilterSectionProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -52,20 +53,24 @@ export default function FilterSection({ myNFTsDetails, myUniquesDetails, setItem
       return undefined;
     }
 
+    if (myNFTsDetails?.length === 0 && myUniquesDetails?.length === 0) {
+      return null;
+    }
+
     return [...(myNFTsDetails || []), ...(myUniquesDetails || [])];
   }, [myNFTsDetails, myUniquesDetails]);
 
   const filteredItems = useMemo(() => {
-    if (!allItems) {
+    if (allItems === undefined || allItems?.length === 0) {
       return undefined;
     }
 
-    if (allItems.length === 0) {
-      return [];
+    if (allItems === null) {
+      return null;
     }
 
     return allItems.filter((item) => {
-      const { collectionId, iCreated, iOwn, isNft, itemId } = item;
+      const { collectionId, isCreator, isNft, isOwner, itemId } = item;
       const { search, showMyCreated, showMyNFTs, showMyUniques, showOwn } = filters;
 
       const matchesSearch = search
@@ -76,8 +81,8 @@ export default function FilterSection({ myNFTsDetails, myUniquesDetails, setItem
         matchesSearch &&
         ((isNft && showMyNFTs) ||
           (!isNft && showMyUniques) ||
-          (iCreated && showMyCreated) ||
-          (iOwn && showOwn))
+          (isCreator && showMyCreated) ||
+          (isOwner && showOwn))
       );
     });
   }, [allItems, filters]);
@@ -88,13 +93,14 @@ export default function FilterSection({ myNFTsDetails, myUniquesDetails, setItem
 
   return (
     <Grid alignItems='flex-end' container item justifyContent='space-around' sx={{ borderBottom: '2px solid', borderBottomColor: 'divider', mt: '20px', py: '5px' }}>
-      <CheckboxButton checked={filters.showMyCreated} onChange={updateFilter('showMyCreated')} title={t('Created')} />
-      <CheckboxButton checked={filters.showOwn} onChange={updateFilter('showOwn')} title={t('Own')} />
-      <CheckboxButton checked={filters.showMyUniques} onChange={updateFilter('showMyUniques')} title={t('Uniques')} />
-      <CheckboxButton checked={filters.showMyNFTs} onChange={updateFilter('showMyNFTs')} title={t('NFTs')} />
+      <CheckboxButton checked={filters.showMyCreated} disabled={!allItems} onChange={updateFilter('showMyCreated')} title={t('Created')} />
+      <CheckboxButton checked={filters.showOwn} disabled={!allItems} onChange={updateFilter('showOwn')} title={t('Own')} />
+      <CheckboxButton checked={filters.showMyUniques} disabled={!allItems} onChange={updateFilter('showMyUniques')} title={t('Uniques')} />
+      <CheckboxButton checked={filters.showMyNFTs} disabled={!allItems} onChange={updateFilter('showMyNFTs')} title={t('NFTs')} />
       <Grid container item justifyContent='flex-start' width='30%'>
         <InputFilter
           autoFocus={false}
+          disabled={!allItems}
           onChange={onSearch}
           placeholder={t('🔍 Search in nfts ')}
           theme={theme}

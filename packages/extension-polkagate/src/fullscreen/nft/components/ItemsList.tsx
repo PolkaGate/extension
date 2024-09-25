@@ -22,18 +22,13 @@ export default function ItemsList ({ items }: ItemsListProps): React.ReactElemen
   return (
     <Grid container item sx={{ bgcolor: 'background.paper', gap: '30px', height: '450px', maxHeight: '550px', overflowY: 'scroll', p: '20px 40px' }}>
       {items === undefined &&
-                <Grid
-                  alignItems='center'
-                  container
-                  item
-                  justifyContent='center'
-                >
-                  <Progress
-                    gridSize={120}
-                    title={t('Looking for NFTs/Uniques!')}
-                    type='grid'
-                  />
-                </Grid>
+        <Grid alignItems='center' container item justifyContent='center'>
+          <Progress
+            gridSize={120}
+            title={t('Looking for NFTs/Uniques!')}
+            type='grid'
+          />
+        </Grid>
       }
       {items?.map((nftInfo) => (
         <Item
@@ -42,21 +37,13 @@ export default function ItemsList ({ items }: ItemsListProps): React.ReactElemen
         />
       ))
       }
-      {items?.length === 0 &&
-                <Grid
-                  alignItems='center'
-                  container
-                  item
-                  justifyContent='center'
-                >
-                  <Typography
-                    fontSize='16px'
-                    fontWeight={400}
-                  >
-                    {t('You do not own any NFTs/Uniques')}!
-                  </Typography>
-                </Grid>
+      {items === null &&
+        <Grid alignItems='center' container item justifyContent='center'>
+          <Typography fontSize='16px' fontWeight={400}>
+            {t('You do not own any NFTs/Uniques')}!
+          </Typography>
+        </Grid>
       }
     </Grid>
   );
-};
+}

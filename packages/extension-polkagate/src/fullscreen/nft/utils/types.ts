@@ -8,19 +8,20 @@ export interface ItemInformation {
   itemId?: string;
   data?: string;
   isNft: boolean;
-  iCreated: boolean;
-  iOwn: boolean;
+  isCreator: boolean;
+  isOwner: boolean;
 }
 
 export interface FilterSectionProps {
   myUniquesDetails: ItemInformation[] | undefined;
   myNFTsDetails: ItemInformation[] | undefined;
-  setItemsToShow: React.Dispatch<React.SetStateAction<ItemInformation[] | undefined>>;
+  setItemsToShow: React.Dispatch<React.SetStateAction<ItemInformation[] | null | undefined>>;
 }
 
 export interface CheckboxButtonProps {
   title: string;
   checked: boolean;
+  disabled: boolean;
   onChange: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
 }
 

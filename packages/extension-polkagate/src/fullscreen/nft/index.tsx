@@ -37,7 +37,7 @@ export default function NFT (): React.ReactElement {
   const [step, setStep] = useState<STEPS>(STEPS.CHECK_SCREEN);
   const [myNFTsDetails, setMyNFTs] = useState<ItemInformation[] | undefined>(undefined);
   const [myUniquesDetails, setMyUniques] = useState<ItemInformation[] | undefined>(undefined);
-  const [itemsToShow, setItemsToShow] = useState<ItemInformation[] | undefined>(undefined);
+  const [itemsToShow, setItemsToShow] = useState<ItemInformation[] | null | undefined>(undefined);
 
   const unsupportedChain = useMemo(() => !!(genesisHash && !(NFT_CHAINS.includes(genesisHash))), [genesisHash]);
 
@@ -100,7 +100,7 @@ export default function NFT (): React.ReactElement {
           {[STEPS.INDEX, STEPS.CHECK_SCREEN].includes(step) &&
             <>
               <Typography fontSize='14px' fontWeight={400}>
-                {t('On NFT / Unique Album page you can watch all of your created or owned NFTs/uniques.')}
+                {t('On NFT / Unique Album page you can watch all of your created or owned NFT/unique items.')}
               </Typography>
               <FilterSection
                 myNFTsDetails={myNFTsDetails}
