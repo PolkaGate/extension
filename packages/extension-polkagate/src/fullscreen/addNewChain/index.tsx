@@ -14,7 +14,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
 import { endpointUrlPng } from '../../assets/img';
-import { ActionContext, InputWithLabel, Progress, TwoButtons, VaadinIcon } from '../../components';
+import { ActionContext, InputWithLabel, Progress, TwoButtons, VaadinIcon, Warning } from '../../components';
 import { nFormatter } from '../../components/FormatPrice';
 import { updateStorage } from '../../components/Loading';
 import { useCurrency, useFullscreen, useTranslation } from '../../hooks';
@@ -46,6 +46,7 @@ export default function AddNewChain (): React.ReactElement {
   const currency = useCurrency();
 
   const [endpoint, setEndpoint] = useState<string>();
+  const [isError, setError] = useState<boolean>(false);
   const [showHow, setShowHow] = useState<boolean>();
   const [isPriceIdAsChainName, setPriceIdAsChainName] = useState<boolean>();
   const [priceId, setPriceId] = useState<string>();
@@ -62,6 +63,7 @@ export default function AddNewChain (): React.ReactElement {
     setVerifiedEndpoint(undefined);
     setLoading(false);
     setCheckingPriceId(false);
+    setError(false);
   }, []);
 
   const onEndpointChange = useCallback((input: string) => {
@@ -134,8 +136,9 @@ export default function AddNewChain (): React.ReactElement {
       setLoading(true);
       // setVerifiedEndpoint((prev) => ([...prev, endpoint]));
       setVerifiedEndpoint(endpoint);
+      setError(false);
     } else {
-      // show a suitable error
+      setError(true);
     }
   }, [endpoint]);
 
@@ -202,6 +205,16 @@ export default function AddNewChain (): React.ReactElement {
           type='wss'
           value={endpoint}
         />
+        {isError &&
+          <Warning
+            iconDanger
+            isBelowInput
+            marginTop={0}
+            theme={theme}
+          >
+            {t('Invalid endpoint format!')}
+          </Warning>
+        }
         {!isLoading && !metadata &&
           <Collapse in={showHow} orientation='vertical' sx={{ width: '100%' }}>
             <Box
