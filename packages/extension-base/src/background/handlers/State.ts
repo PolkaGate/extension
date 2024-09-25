@@ -169,7 +169,12 @@ export default class State {
 
     // retrieve previously set authorizations
     chrome.storage.local.get(AUTH_URLS_KEY, (res) => {
-      this.#authUrls = JSON.parse(res?.[AUTH_URLS_KEY] as string || '{}') as AuthUrls;
+      try {
+        this.#authUrls = JSON.parse(res?.[AUTH_URLS_KEY] as string || '{}') as AuthUrls;
+      } catch (error) {
+        console.error('Error parsing stored auth URLs:', error);
+        this.#authUrls = {};
+      }
     });
   }
 
