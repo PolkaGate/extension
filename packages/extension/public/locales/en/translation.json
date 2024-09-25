@@ -1400,5 +1400,6 @@
   "Check": "",
   "Chain Information": "",
   "No information found from this RPC node!": "",
-  "Add a new chain": ""
+  "Add a new chain": "",
+  "Invalid endpoint format!": ""
 }

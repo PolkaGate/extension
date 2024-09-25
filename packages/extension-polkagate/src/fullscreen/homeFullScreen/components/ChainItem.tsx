@@ -5,7 +5,7 @@
 import type { DropdownOption } from '../../../util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { ChainLogo, Switch } from '../../../components';
 
@@ -19,10 +19,8 @@ interface Props {
 function ChainItem ({ chain, disabled, isSelected, onclick }: Props): React.ReactElement {
   const theme = useTheme();
 
-  const selectedItem = useMemo(() => false, []);
-
   return (
-    <Grid alignItems='center' container justifyContent='space-between' sx={{ ':hover': { bgcolor: theme.palette.mode === 'light' ? 'rgba(24, 7, 16, 0.1)' : 'rgba(255, 255, 255, 0.1)' }, bgcolor: selectedItem ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', height: '45px', opacity: disabled ? 0.3 : 1, px: '15px' }}>
+    <Grid alignItems='center' container justifyContent='space-between' sx={{ ':hover': { bgcolor: theme.palette.mode === 'light' ? 'rgba(24, 7, 16, 0.1)' : 'rgba(255, 255, 255, 0.1)' }, cursor: 'pointer', height: '45px', opacity: disabled ? 0.3 : 1, px: '15px' }}>
       <Grid
         alignItems='center'
         sx={{
@@ -38,7 +36,7 @@ function ChainItem ({ chain, disabled, isSelected, onclick }: Props): React.Reac
       >
         <ChainLogo chainName={chain.text} genesisHash={chain.value as string} size={25} />
         <Typography
-          fontSize='16px' fontWeight={selectedItem ? 500 : 400}
+          fontSize='16px' fontWeight={isSelected ? 500 : 400}
           sx={{
             minWidth: 0,
             ml: '10px',
