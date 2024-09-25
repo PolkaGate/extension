@@ -94,13 +94,16 @@ export default function AddNewChain (): React.ReactElement {
   }, [priceId, getPrice]);
 
   useEffect(() => {
+    let api: ApiPromise | null = null;
+
     const getInfo = async () => {
       if (!verifiedEndpoint) {
         return;
       }
 
       const wsProvider = new WsProvider(verifiedEndpoint);
-      const api = await ApiPromise.create({ provider: wsProvider });
+
+      api = await ApiPromise.create({ provider: wsProvider });
 
       const { metadata } = metadataFromApi(api);
 
@@ -129,6 +132,12 @@ export default function AddNewChain (): React.ReactElement {
     };
 
     getInfo().catch(console.error);
+
+    return () => {
+      if (api) {
+        api.disconnect().catch(console.error);
+      }
+    };
   }, [currency?.code, getPrice, verifiedEndpoint]);
 
   const onCheck = useCallback(() => {
