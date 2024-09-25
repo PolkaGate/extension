@@ -74,7 +74,7 @@ function InputWithLabel ({ defaultValue, disabled, fontSize = 18, fontWeight = 3
     <Label
       helperText={helperText}
       label={label}
-      style={{ fontSize: labelFontSize, position: 'relative', letterSpacing: '-0.015em', width: '100%' }}
+      style={{ fontSize: labelFontSize, letterSpacing: '-0.015em', position: 'relative', width: '100%' }}
     >
       <Input
         autoCapitalize='off'
@@ -92,8 +92,7 @@ function InputWithLabel ({ defaultValue, disabled, fontSize = 18, fontWeight = 3
           borderColor: (isError || badInput) ? theme.palette.warning.main : theme.palette.secondary.light,
           borderWidth: (isError || badInput) ? '3px' : '1px',
           fontSize: `${fontSize}px`,
-          //@ts-ignore
-          fontWeight: { fontWeight },
+          fontWeight,
           height: `${height}px`,
           padding: 0,
           paddingLeft: '10px'
