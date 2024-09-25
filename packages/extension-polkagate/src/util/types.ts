@@ -665,6 +665,15 @@ export interface IsFetching {
   [item: string]: boolean;
 }
 
+export interface UserAddedEndpoint {
+  chain: string;
+  color: string;
+  endpoint: string;
+  priceId: string;
+}
+
+export type UserAddedChains= Record<string, UserAddedEndpoint>
+
 export interface CurrencyContextType {
   currency: CurrencyItemType | undefined;
   setCurrency: (selectedCurrency: CurrencyItemType) => void;

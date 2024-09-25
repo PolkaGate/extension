@@ -145,7 +145,7 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
         <Button
           onClick={onAddNewChain}
           startIcon={<AddIcon />}
-          sx={{ '&:hover': { bgcolor: 'divider' }, '.MuiButton-startIcon': { marginRight: '2px' }, color: theme.palette.secondary.main, fontSize: '12px', fontWeight: 300, p: 0, ml: '10px', textTransform: 'none', width: 'fit-content' }}
+          sx={{ '&:hover': { bgcolor: 'divider' }, '.MuiButton-startIcon': { marginRight: '2px' }, color: theme.palette.secondary.light, fontSize: '12px', fontWeight: 300, ml: '10px', p: 0, textTransform: 'none', width: 'fit-content' }}
           variant='text'
         >
           {t('Add a new chain')}
@@ -153,7 +153,7 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
         <Button
           onClick={onReset}
           startIcon={<ResetIcon />}
-          sx={{ '&:hover': { bgcolor: 'divider' }, '.MuiButton-startIcon': { marginRight: '2px' }, color: theme.palette.secondary.main, fontSize: '12px', fontWeight: 300, p: 0, textTransform: 'none', width: 'fit-content' }}
+          sx={{ '&:hover': { bgcolor: 'divider' }, '.MuiButton-startIcon': { marginRight: '2px' }, color: theme.palette.secondary.light, fontSize: '12px', fontWeight: 300, p: 0, textTransform: 'none', width: 'fit-content' }}
           variant='text'
         >
           {t('Reset')}

@@ -2,25 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { HexString } from '@polkadot/util/types';
-import type { DropdownOption } from '../../util/types';
-import type { UserAddedEndpoint } from './types';
+import type { DropdownOption, UserAddedEndpoint } from '../../util/types';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useMemo } from 'react';
 
-import { getStorage } from '../../components/Loading';
+import { UserAddedChainContext } from '../../components';
 
 export function useUserAddedEndpoints (): Record<HexString, UserAddedEndpoint> | undefined {
-  const [userEndpoints, setEndpoints] = useState<Record<HexString, UserAddedEndpoint>>();
-
-  useEffect(() => {
-    getStorage('userAddedEndpoint').then((info) => {
-      if (!info) {
-        return;
-      }
-
-      setEndpoints(info as Record<HexString, UserAddedEndpoint>);
-    }).catch(console.error);
-  }, []);
+  const userEndpoints = useContext(UserAddedChainContext);
 
   return userEndpoints;
 }

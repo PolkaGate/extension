@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { MetadataDef } from '@polkadot/extension-inject/types';
-import type { UserAddedEndpoint } from './types';
+import type { UserAddedEndpoint } from '@polkadot/extension-polkagate/util/types';
 
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
