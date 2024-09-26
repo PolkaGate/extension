@@ -486,7 +486,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
         return;
       }
 
-      const assetsToBeFetched = assetsChains[chainName]; /** we fetch asset hubs assets only if it is whitelisted via Polkagate/apps-config */
+      const assetsToBeFetched = assetsChains[chainName]; /** we fetch asset hubs assets only if it is whitelisted via PolkaGate/apps-config */
 
       return fetchAssetOnAssetHubs(addresses!, chainName, assetsToBeFetched);
     }

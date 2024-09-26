@@ -19,7 +19,7 @@ const accId = {
   display: 'PolkaGate',
   email: 'polkagate@outlook.com',
   legal: '@polkagate:matrix.org',
-  riot: 'Polkagate',
+  riot: 'PolkaGate',
   x: '@PolkaGate',
   web: 'http://polkagate.xyz'
 };

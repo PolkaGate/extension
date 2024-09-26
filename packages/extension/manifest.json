@@ -1,5 +1,5 @@
 {
-  "author": "Polkagate",
+  "author": "PolkaGate",
   "description": "A user-friendly wallet for seamless browser-based interaction with Polkadot/Substrate-based blockchains.",
   "homepage_url": "https://polkagate.xyz",
   "name": "PolkaGate: The gateway to the Polkadot eco.",
@@ -17,7 +17,7 @@
     "type": "module"
   },
   "action": {
-    "default_title": "Polkagate",
+    "default_title": "PolkaGate",
     "default_popup": "index.html"
   },
   "content_scripts": [

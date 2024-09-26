@@ -45,7 +45,7 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
 
   const ED = api && api.consts['balances']['existentialDeposit'] as unknown as BN;
   const nextPoolId = poolStakingConsts && poolStakingConsts.lastPoolId.toNumber() + 1;
-  const DEFAULT_POOLNAME = useMemo(() => `Polkagate 💜${nextPoolId ? ` - ${nextPoolId}` : ''}`, [nextPoolId]);
+  const DEFAULT_POOLNAME = useMemo(() => `PolkaGate 💜${nextPoolId ? ` - ${nextPoolId}` : ''}`, [nextPoolId]);
   const amountAsBN = useMemo(() => amountToMachine(createAmount, decimal), [createAmount, decimal]);
 
   const toReviewDisabled = useMemo(() => {
