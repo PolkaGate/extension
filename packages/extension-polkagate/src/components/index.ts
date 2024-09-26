@@ -34,7 +34,7 @@ export { default as FormatBalance } from './FormatBalance';
 export { default as FormatBalance2 } from './FormatBalance2';
 export { default as FormatPrice } from './FormatPrice';
 export { default as From } from './From';
-export { default as FullscreenChain } from './FullscreenChain';
+export { default as FullscreenChainNames } from './FullscreenChainNames';
 export { default as FullScreenIcon } from './FullScreenIcon';
 export { default as Header } from './Header';
 export { default as HorizontalMenuItem } from './HorizontalMenuItem';

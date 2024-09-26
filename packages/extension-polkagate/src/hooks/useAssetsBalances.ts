@@ -9,10 +9,11 @@ import type { MetadataDef } from '@polkadot/extension-inject/types';
 import type { AlertType } from '../util/types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
-import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { BN, isObject } from '@polkadot/util';
 
+import { GenesisHashOptionsContext } from '../components';
 import { getStorage, setStorage, watchStorage } from '../components/Loading';
 import { useUserAddedEndpoints } from '../fullscreen/addNewChain/utils';
 import { toCamelCase } from '../fullscreen/governance/utils/util';
@@ -21,7 +22,7 @@ import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constan
 import getChainName from '../util/getChainName';
 import { isHexToBn } from '../util/utils';
 import useSelectedChains from './useSelectedChains';
-import { useGenesisHashOptions, useIsTestnetEnabled, useTranslation } from '.';
+import { useIsTestnetEnabled, useTranslation } from '.';
 
 type WorkerMessage = Record<string, MessageBody[]>;
 type Assets = Record<string, FetchedBalance[]>;
@@ -135,7 +136,8 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
 
   const isTestnetEnabled = useIsTestnetEnabled();
   const selectedChains = useSelectedChains();
-  const genesisOptions = useGenesisHashOptions();
+  const genesisOptions = useContext(GenesisHashOptionsContext);
+
   const userAddedEndpoints = useUserAddedEndpoints();
 
   /** to limit calling of this heavy call on just home and account details */

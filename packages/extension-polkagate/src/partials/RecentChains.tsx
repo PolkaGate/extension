@@ -10,12 +10,12 @@ import type { RecentChainsType } from '../util/types';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Backdrop, ClickAwayListener, Grid, keyframes, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { ChainLogo } from '../components';
+import { ChainLogo, GenesisHashOptionsContext } from '../components';
 import { getStorage } from '../components/Loading';
 import ThreeItemCurveBackground from '../components/SVG/ThreeItemCurveBackground';
-import { useGenesisHashOptions, useInfo } from '../hooks';
+import { useInfo } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CHAINS_WITH_BLACK_LOGO, INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
 import getLogo from '../util/getLogo';
@@ -111,7 +111,7 @@ interface Props {
 function RecentChains ({ address, chainName }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { genesisHash } = useInfo(address);
-  const genesisHashes = useGenesisHashOptions();
+  const genesisHashes = useContext(GenesisHashOptionsContext);
 
   const [showRecentChains, setShowRecentChains] = useState<boolean>(false);
   // in order to prevent displaying the closing animation

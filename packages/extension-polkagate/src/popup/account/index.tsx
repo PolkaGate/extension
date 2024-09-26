@@ -23,8 +23,8 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { isOnRelayChain } from '@polkadot/extension-polkagate/src/util/utils';
 
 import { stakingClose } from '../../assets/icons';
-import { ActionContext, Assets, Chain, HorizontalMenuItem, Identity, Motion, Warning } from '../../components';
-import { useBalances, useGenesisHashOptions, useInfo, useMyAccountIdentity, useTranslation } from '../../hooks';
+import { ActionContext, Assets, Chain, GenesisHashOptionsContext, HorizontalMenuItem, Identity, Motion, Warning } from '../../components';
+import { useBalances, useInfo, useMyAccountIdentity, useTranslation } from '../../hooks';
 import { tieAccount, windowOpen } from '../../messaging';
 import { HeaderBrand, RemoteNodeSelectorWithSignals } from '../../partials';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
@@ -44,7 +44,8 @@ export default function AccountDetails (): React.ReactElement {
   const { address, genesisHash } = useParams<FormattedAddressState>();
   const { api, chain, chainName, formatted } = useInfo(address);
   const identity = useMyAccountIdentity(address);
-  const genesisOptions = useGenesisHashOptions();
+  const genesisOptions = useContext(GenesisHashOptionsContext);
+
 
   const [refresh, setRefresh] = useState<boolean>(false);
   const [assetId, setAssetId] = useState<number>();

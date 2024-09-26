@@ -4,14 +4,14 @@
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, useTheme } from '@mui/material';
-import React from 'react';
+import React, { useContext } from 'react';
 
 import { UseUserAddedChainColor } from '../fullscreen/addNewChain/utils';
 import { convertToCamelCase } from '../fullscreen/governance/utils/util';
-import { useGenesisHashOptions } from '../hooks';
 import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo2 from '../util/getLogo2';
 import { sanitizeChainName } from '../util/utils';
+import { GenesisHashOptionsContext } from './contexts';
 
 interface Props {
   chainName?: string;
@@ -23,7 +23,7 @@ interface Props {
 function ChainLogo ({ chainName, genesisHash, logo, size = 25 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const mayBeUserAddedChainColor = UseUserAddedChainColor(genesisHash);
-  const options = useGenesisHashOptions();
+  const options = useContext(GenesisHashOptionsContext);
 
   const foundChainName = options.find(({ text, value }) => value === genesisHash || text === chainName)?.text;
   const _chainName = sanitizeChainName(foundChainName || chainName);

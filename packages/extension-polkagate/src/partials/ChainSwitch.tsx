@@ -9,12 +9,13 @@ import type { HexString } from '@polkadot/util/types';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Backdrop, ClickAwayListener, Grid, keyframes, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
+import { GenesisHashOptionsContext } from '../components';
 import ThreeItemCurveBackgroundReversed from '../components/SVG/ThreeItemCurveBackgroundReversed';
 import TwoItemCurveBackground from '../components/SVG/TwoItemCurveBackground';
-import { useGenesisHashOptions, useInfo, useIsTestnetEnabled } from '../hooks';
+import { useInfo, useIsTestnetEnabled } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CHAINS_WITH_BLACK_LOGO, CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
@@ -154,11 +155,12 @@ interface Props {
   externalChainNamesToShow?: (string | undefined)[] | undefined;
 }
 
-function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Props): React.ReactElement<Props> {
+function ChainSwitch ({ address, children, externalChainNamesToShow, invert }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { pathname } = useLocation();
   const { chainName: currentChainNameFromAccount, genesisHash } = useInfo(address);
-  const genesisHashes = useGenesisHashOptions();
+  const genesisHashes = useContext(GenesisHashOptionsContext);
+
   const isTestnetEnabled = useIsTestnetEnabled();
 
   const [showOtherChains, setShowOtherChains] = useState<boolean>(false);

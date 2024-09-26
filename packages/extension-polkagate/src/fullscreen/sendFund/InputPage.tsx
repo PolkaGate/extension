@@ -17,7 +17,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BN, BN_ONE, BN_ZERO, isFunction, isNumber } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AmountWithOptions, FullscreenChain, Infotip2, InputAccount, ShowBalance, TwoButtons, Warning } from '../../components';
+import { AmountWithOptions, FullscreenChainNames, Infotip2, InputAccount, ShowBalance, TwoButtons, Warning } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { useInfo, useTeleport } from '../../hooks';
 import { getValue } from '../../popup/account/util';
@@ -431,7 +431,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
           />
         </Grid>
         <Grid item md={4.8} xs={12}>
-          <FullscreenChain
+          <FullscreenChainNames
             address={address}
             defaultValue={chain?.genesisHash || inputs?.recipientGenesisHashOrParaId}
             label={t('Chain')}

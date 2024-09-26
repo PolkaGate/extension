@@ -9,7 +9,7 @@ import type { HexString } from '@polkadot/util/types';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import { Collapse, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
@@ -17,9 +17,9 @@ import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfile
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { objectSpread } from '@polkadot/util';
 
-import { Address, InputWithLabel, SelectChain, TextAreaWithLabel, TwoButtons, VaadinIcon, Warning } from '../../../components';
+import { Address, GenesisHashOptionsContext, InputWithLabel, SelectChain, TextAreaWithLabel, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
-import { useFullscreen, useGenesisHashOptions, useMetadata, useTranslation } from '../../../hooks';
+import { useFullscreen, useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri, getMetadata, validateSeed } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import getLogo from '../../../util/getLogo';
@@ -36,7 +36,7 @@ export default function ImportSeed (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-  const genesisOptions = useGenesisHashOptions();
+  const genesisOptions = useContext(GenesisHashOptionsContext);
 
   const [isBusy, setIsBusy] = useState(false);
   const [seed, setSeed] = useState<string | null>(null);

@@ -7,10 +7,10 @@ import type { HexString } from '@polkadot/util/types';
 import type { DropdownOption } from '../util/types';
 
 import { Box, Grid, Popover, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { ChainLogo } from '../components';
-import { useGenesisHashOptions, useInfo, useIsTestnetEnabled } from '../hooks';
+import { ChainLogo, GenesisHashOptionsContext } from '../components';
+import { useInfo, useIsTestnetEnabled } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '../util/constants';
 import { sanitizeChainName } from '../util/utils';
@@ -29,7 +29,8 @@ interface NetworkListProps {
 
 const NetworkList = ({ address, chains, selectedChainName, setAnchorEl, setSelectedChainName }: NetworkListProps) => {
   const theme = useTheme();
-  const options = useGenesisHashOptions();
+  const options = useContext(GenesisHashOptionsContext);
+
   const isTestnetEnabled = useIsTestnetEnabled();
 
   const selectableNetworks = useMemo(() =>

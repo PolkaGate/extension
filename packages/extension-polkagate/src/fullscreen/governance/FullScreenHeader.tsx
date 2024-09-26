@@ -8,8 +8,8 @@ import React, { useCallback, useContext, useMemo } from 'react';
 import { useParams } from 'react-router';
 
 import { logoBlack } from '../../assets/logos';
-import { ActionContext } from '../../components';
-import { useApi, useChain, useGenesisHashOptions } from '../../hooks';
+import { ActionContext, GenesisHashOptionsContext } from '../../components';
+import { useApi, useChain } from '../../hooks';
 import { FullScreenChainSwitch, RemoteNodeSelectorWithSignals } from '../../partials';
 import { EXTENSION_NAME, GOVERNANCE_CHAINS, IDENTITY_CHAINS, SOCIAL_RECOVERY_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
@@ -27,7 +27,7 @@ interface Props {
 
 export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
-  const allChains = useGenesisHashOptions();
+  const allChains = useContext(GenesisHashOptionsContext);
 
   const api = useApi(address);
   const chain = useChain(address);

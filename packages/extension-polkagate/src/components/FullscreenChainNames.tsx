@@ -1,21 +1,20 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { DropdownOption } from '../util/types';
 
 import { FormControl, Grid, InputBase, MenuItem, Select, type SelectChangeEvent, type SxProps, type Theme, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { useGenesisHashOptions, useIsTestnetEnabled } from '@polkadot/extension-polkagate/src/hooks';
+import { useIsTestnetEnabled } from '@polkadot/extension-polkagate/src/hooks';
 import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 
-import getLogo from '../util/getLogo';
-import { sanitizeChainName, updateRecentChains } from '../util/utils';
+import { updateRecentChains } from '../util/utils';
 import ChainLogo from './ChainLogo';
+import { GenesisHashOptionsContext } from './contexts';
 import Label from './Label';
 
 interface Props {
@@ -52,7 +51,7 @@ const BootstrapInput = styled(InputBase)<{ address?: string | null }>(({ address
   }
 }));
 
-const Item: React.FC<{ height?: string, logoSize?: number, text: string, genesisHash: string }> = ({ height = '20px', logoSize = 19.8, text, genesisHash }) => {
+const Item: React.FC<{ height?: string, logoSize?: number, text: string | undefined, genesisHash?: string }> = ({ genesisHash, height = '20px', logoSize = 19.8, text }) => {
   return (
     <Grid container height={height} justifyContent='flex-start'>
       {text !== 'Allow use on any chain' &&
@@ -69,9 +68,10 @@ const Item: React.FC<{ height?: string, logoSize?: number, text: string, genesis
   );
 };
 
-function FullscreenChain ({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style }: Props) {
+function FullscreenChainNames ({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style }: Props) {
   const theme = useTheme();
-  const _allOptions = useGenesisHashOptions();
+  const _allOptions = useContext(GenesisHashOptionsContext);
+
   const isTestnetEnabled = useIsTestnetEnabled();
 
   const _options = useMemo(() => {
@@ -215,4 +215,4 @@ function FullscreenChain ({ address, defaultValue, disabledItems, helperText, la
   );
 }
 
-export default React.memo(FullscreenChain);
+export default React.memo(FullscreenChainNames);
