@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { DecidingCount } from '../../hooks/useDecidingCount';
@@ -25,14 +24,14 @@ interface Props {
   decidingCounts: DecidingCount | undefined;
 }
 
-const MENU_DELAY = 150; // mili sec
+const MENU_DELAY = 150; // ms
 
 export default function Toolbar ({ decidingCounts, menuOpen, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship', postId?: string }>();
   const api = useApi(address);
-  const ref = useRef<{ timeoutId: NodeJS.Timeout | null }>({ timeoutId: null });
+  const ref = useRef<{ timeoutId: number | null }>({ timeoutId: null });
 
   const [openDelegate, setOpenDelegate] = useState(false);
   const [showDelegationNote, setShowDelegationNote] = useState<boolean>(true);
@@ -42,22 +41,21 @@ export default function Toolbar ({ decidingCounts, menuOpen, setMenuOpen, setSel
     setShowDelegationNote(window.localStorage.getItem('delegate_about_disabled') !== 'true');
   }, [openDelegate]);
 
-  const handleOpenDelegate = () => {
+  const handleOpenDelegate = useCallback(() => {
     setOpenDelegate(true);
-  };
+  }, []);
 
   const onTopMenuMenuMouseEnter = useCallback((item: TopMenu) => {
-    clearTimeout(ref.current.timeoutId as NodeJS.Timeout);// Clear any existing timeout
+    ref.current.timeoutId && clearTimeout(ref.current.timeoutId);
 
-    // Set a new timeout of 0.5 seconds
     ref.current.timeoutId = setTimeout(() => {
-      setHoveredTopMenu(item.toLowerCase());
+      setHoveredTopMenu(item.toLowerCase() as 'referenda' | 'fellowship');
       setMenuOpen(true);
-    }, MENU_DELAY);
+    }, MENU_DELAY) as unknown as number;
   }, [setMenuOpen]);
 
   const onTopMenuMenuMouseLeave = useCallback(() => {
-    !menuOpen && clearTimeout(ref.current.timeoutId as NodeJS.Timeout);// Clear any existing timeout
+    !menuOpen && ref.current.timeoutId && clearTimeout(ref.current.timeoutId);
   }, [menuOpen]);
 
   const handleClickAway = useCallback(() => {
@@ -68,15 +66,17 @@ export default function Toolbar ({ decidingCounts, menuOpen, setMenuOpen, setSel
   const menuTextColor = theme.palette.mode === 'light' ? 'primary.main' : 'text.primary';
   const selectedMenuBgColor = theme.palette.mode === 'light' ? 'background.paper' : 'primary.main';
 
-  function TopMenuComponent({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
+  function TopMenuComponent ({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
     return (
       <Grid
         alignItems='center'
         container
         item
         justifyContent='center'
+        // eslint-disable-next-line react/jsx-no-bind
         onMouseEnter={() => onTopMenuMenuMouseEnter(item)}
-        onMouseLeave={() => onTopMenuMenuMouseLeave(item)}
+        // eslint-disable-next-line react/jsx-no-bind
+        onMouseLeave={() => onTopMenuMenuMouseLeave()}
         sx={{
           bgcolor: hoveredTopMenu === item.toLowerCase() ? selectedMenuBgColor : menuBgColor,
           color: hoveredTopMenu === item.toLowerCase() ? menuTextColor : 'white',
@@ -86,7 +86,7 @@ export default function Toolbar ({ decidingCounts, menuOpen, setMenuOpen, setSel
           px: '5px',
           width: '150px'
         }}>
-        <Typography sx={{ display: 'inline-block', fontWeight: 500, fontSize: '20px' }}>
+        <Typography sx={{ display: 'inline-block', fontSize: '20px', fontWeight: 500 }}>
           {item}
         </Typography>
         {item === 'Fellowship'
@@ -99,7 +99,7 @@ export default function Toolbar ({ decidingCounts, menuOpen, setMenuOpen, setSel
 
   return (
     <>
-      <Grid container id='menu' sx={{ bgcolor: theme.palette.mode === 'light' ? 'primary.main' : 'background.paper', borderBottom: 1, borderTop: 1, borderColor: theme.palette.mode === 'dark' && 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500, minWidth: '810px' }}>
+      <Grid container id='menu' sx={{ bgcolor: theme.palette.mode === 'light' ? 'primary.main' : 'background.paper', borderBottom: 1, borderTop: 1, borderColor: theme.palette.mode === 'dark' ? 'primary.main' : undefined, height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500, minWidth: '810px' }}>
         <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
           <Grid alignItems='center' container justifyContent='space-between'>
             <ClickAwayListener onClickAway={handleClickAway}>
@@ -110,7 +110,6 @@ export default function Toolbar ({ decidingCounts, menuOpen, setMenuOpen, setSel
             </ClickAwayListener>
             <Grid container item justifyContent='flex-end' xs={6}>
               <Button
-                // disabled={disabled}
                 onClick={handleOpenDelegate}
                 sx={{
                   '&:hover': {
@@ -130,28 +129,6 @@ export default function Toolbar ({ decidingCounts, menuOpen, setMenuOpen, setSel
               >
                 {t('Delegate Vote')}
               </Button>
-              {/* <Button
-                disabled={!api}
-                onClick={handleOpenSubmitReferendum}
-                sx={{
-                  backgroundColor: theme.palette.mode === 'light' ? 'background.paper' : 'primary.main',
-                  borderRadius: '5px',
-                  color: theme.palette.mode === 'light' ? 'primary.main' : 'text.primary',
-                  fontSize: '18px',
-                  fontWeight: 500,
-                  height: '36px',
-                  textTransform: 'none',
-                  ml: '15px',
-                  width: '190px',
-                  '&:hover': {
-                    backgroundColor: '#fff',
-                    color: '#3c52b2'
-                  }
-                }}
-                variant='contained'
-              >
-                {t('Submit Referendum')}
-              </Button> */}
             </Grid>
           </Grid>
         </Container>
