@@ -82,8 +82,6 @@ onmessage = async (e) => {
 
   let tryCount = 1;
 
-  console.log(`getAssetOnAssetHub: try ${tryCount} to fetch assets on ${chainName}.`);
-
   while (tryCount >= 1 && tryCount <= 5) {
     try {
       await getAssetOnAssetHub(addresses, assetsToBeFetched, chainName, userAddedEndpoints);

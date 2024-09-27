@@ -123,8 +123,6 @@ onmessage = async (e) => {
 
   let tryCount = 1;
 
-  console.log(`getAssetOnRelayChain: try ${tryCount} to fetch assets on ${chainName}.`);
-
   while (tryCount >= 1 && tryCount <= 5) {
     try {
       await getAssetOnRelayChain(addresses, chainName, userAddedEndpoints);
