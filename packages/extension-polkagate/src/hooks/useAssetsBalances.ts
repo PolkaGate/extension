@@ -6,16 +6,14 @@
 import type { Asset } from '@polkagate/apps-config/assets/types';
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 import type { MetadataDef } from '@polkadot/extension-inject/types';
-import type { AlertType } from '../util/types';
+import type { AlertType, DropdownOption } from '../util/types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
-import { type Dispatch, type SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, isObject } from '@polkadot/util';
 
-import { GenesisHashOptionsContext } from '../components';
 import { getStorage, setStorage, watchStorage } from '../components/Loading';
-import { useUserAddedEndpoints } from '../fullscreen/addNewChain/utils';
 import { toCamelCase } from '../fullscreen/governance/utils/util';
 import { updateMetadata } from '../messaging';
 import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
@@ -131,14 +129,11 @@ const assetsChains = createAssets();
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>): SavedAssets | undefined | null {
+export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains): SavedAssets | undefined | null {
   const { t } = useTranslation();
 
   const isTestnetEnabled = useIsTestnetEnabled();
   const selectedChains = useSelectedChains();
-  const genesisOptions = useContext(GenesisHashOptionsContext);
-
-  const userAddedEndpoints = useUserAddedEndpoints();
 
   /** to limit calling of this heavy call on just home and account details */
   const SHOULD_FETCH_ASSETS = window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs');
