@@ -6,7 +6,7 @@
 import type { Asset } from '@polkagate/apps-config/assets/types';
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 import type { MetadataDef } from '@polkadot/extension-inject/types';
-import type { AlertType, DropdownOption } from '../util/types';
+import type { AlertType, DropdownOption, UserAddedChains } from '../util/types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
