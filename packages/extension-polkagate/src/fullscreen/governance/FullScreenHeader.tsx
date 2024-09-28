@@ -11,7 +11,7 @@ import { logoBlack } from '../../assets/logos';
 import { ActionContext, GenesisHashOptionsContext } from '../../components';
 import { useApi, useChain } from '../../hooks';
 import { FullScreenChainSwitch, RemoteNodeSelectorWithSignals } from '../../partials';
-import { EXTENSION_NAME, GOVERNANCE_CHAINS, IDENTITY_CHAINS, SOCIAL_RECOVERY_CHAINS, STAKING_CHAINS } from '../../util/constants';
+import { EXTENSION_NAME, GOVERNANCE_CHAINS, IDENTITY_CHAINS, NFT_CHAINS, SOCIAL_RECOVERY_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import AddressDropdown from './components/AddressDropdown';
 import ThemeChanger from './partials/ThemeChanger';
@@ -46,6 +46,8 @@ export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false,
         return SOCIAL_RECOVERY_CHAINS;
       case 'accountDetails':
         return allChains.filter((chain) => chain.value !== '').map((chainOption) => chainOption.value as string);
+      case 'nft':
+        return NFT_CHAINS;
       default:
         return [];
     }

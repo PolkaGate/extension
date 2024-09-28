@@ -99,7 +99,7 @@ function NFT (): React.ReactElement {
           />
           {step === STEPS.UNSUPPORTED &&
             <Grid alignItems='center' container direction='column' display='block' item>
-              <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', pt: '50px', width: '400px' }}>
+              <Grid container item justifyContent='center' sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', pt: '50px', width: '70%' }}>
                 <Warning
                   fontSize='16px'
                   fontWeight={500}
