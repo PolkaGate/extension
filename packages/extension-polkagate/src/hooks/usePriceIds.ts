@@ -17,7 +17,7 @@ const assetsChains = createAssets();
  */
 export default function usePriceIds (): string[] | undefined | null {
   const selectedChains = useSelectedChains();
-  const [useAddedPriceIds, setUserAddedPriceIds] = useState<string[]>([]);
+  const [userAddedPriceIds, setUserAddedPriceIds] = useState<string[]>([]);
 
   useEffect(() => {
     getStorage('userAddedEndpoint').then((info) => {
@@ -36,8 +36,8 @@ export default function usePriceIds (): string[] | undefined | null {
     const assetsInfoOfMultiAssetSelectedChains = selectedChainsChainName?.map((chainName) => chainName && assetsChains[chainName]?.map((asset) => asset?.priceId))?.flat().filter((item) => !!item);
 
     selectedChainsChainName = selectedChainsChainName?.map((item) => item?.replace('AssetHub', '')); // TODO: needs double check
-    const nonDuplicatedPriceIds = new Set([...(selectedChainsChainName || []), ...(assetsInfoOfMultiAssetSelectedChains || []), ...useAddedPriceIds]);
+    const nonDuplicatedPriceIds = new Set([...(selectedChainsChainName || []), ...(assetsInfoOfMultiAssetSelectedChains || []), ...userAddedPriceIds]);
 
     return nonDuplicatedPriceIds.size ? [...nonDuplicatedPriceIds] as string[] : null;
-  }, [selectedChains, useAddedPriceIds]);
+  }, [selectedChains, userAddedPriceIds]);
 }
