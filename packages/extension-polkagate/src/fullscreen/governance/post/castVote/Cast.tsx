@@ -33,7 +33,7 @@ interface Props {
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   previousVote: Vote | null | undefined;
-  notVoted: boolean | undefined
+  notVoted: boolean | null | undefined
 }
 
 export interface VoteInformation {
