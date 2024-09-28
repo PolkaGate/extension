@@ -257,7 +257,7 @@ export default function AddNewChain (): React.ReactElement {
               price={price}
               style={{ my: '30px' }}
             />
-            {!isPriceIdAsChainName &&
+            {!isPriceIdAsChainName && !chainAlreadyExist &&
               <>
                 <Typography fontSize='14px' lineHeight='20px' py='15px'>
                   {t('We couldn’t find the token price ID on-chain. To view your balance in fiat, please get it from CoinGecko and enter it below. This step is optional if you only need the crypto balance.')}
