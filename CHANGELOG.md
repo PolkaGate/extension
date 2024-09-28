@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.13.1](https://github.com/polkagate/extension/compare/v0.13.0...v0.13.1) (2024-09-28)
+
+
+### Bug Fixes
+
+* update referendum comments ([#1548](https://github.com/polkagate/extension/issues/1548)) ([da77ba5](https://github.com/polkagate/extension/commit/da77ba5a8c43abd282acfda344e6e497e93602d9))
+
 # [0.13.0](https://github.com/polkagate/extension/compare/v0.12.3...v0.13.0) (2024-09-28)
 
 
