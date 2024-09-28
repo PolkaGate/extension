@@ -39,9 +39,9 @@ const Reactions = ({ comment }: {comment: CommentType | Reply;}) => {
 
   const backers =
       'comment_reactions' in comment && comment.comment_reactions['👍'].count
-        ? displayUsernames(comment.comment_reactions['👍'].usernames)
+        ? displayUsernames(comment.comment_reactions['👍'].usernames ?? [])
         : 'reply_reactions' in comment && comment.reply_reactions['👍'].count
-          ? displayUsernames(comment.reply_reactions['👍'].usernames)
+          ? displayUsernames(comment.reply_reactions['👍'].usernames ?? [])
           : '';
 
   const backersCount =
@@ -53,9 +53,9 @@ const Reactions = ({ comment }: {comment: CommentType | Reply;}) => {
 
   const opposers =
       'comment_reactions' in comment && comment.comment_reactions['👎'].count
-        ? displayUsernames(comment.comment_reactions['👎'].usernames)
+        ? displayUsernames(comment.comment_reactions['👎'].usernames ?? [])
         : 'reply_reactions' in comment && comment.reply_reactions['👎'].count
-          ? displayUsernames(comment.reply_reactions['👎'].usernames)
+          ? displayUsernames(comment.reply_reactions['👎'].usernames ?? [])
           : '';
 
   const opposersCount =
@@ -127,33 +127,60 @@ const VoteType = ({ comment }: {comment: CommentType | Reply;}) => {
   );
 };
 
+const EditedTag = ({ comment }: {comment: CommentType | Reply;}) => {
+  const { t } = useTranslation();
+  const isEdited = comment.created_at && comment.updated_at && new Date(comment.created_at).getTime() !== new Date(comment.updated_at).getTime();
+
+  if (isEdited) {
+    return (
+      <Grid item ml='10px'>
+        <Typography sx={{ color: 'text.disabled', fontSize: '14px', fontWeight: 400, p: '0 10px', textAlign: 'center' }}>
+          {t('Edited')}
+        </Typography>
+      </Grid>
+    );
+  } else {
+    return <></>;
+  }
+};
+
 export default function Comment ({ address, comment, noSource }: CommentProps): React.ReactElement {
   const theme = useTheme();
   const { api, chain } = useInfo(address);
 
   const hasReactions = useMemo(() => 'comment_reactions' in comment || 'reply_reactions' in comment, [comment]);
-  const commenterAddress = useMemo(() => comment.proposer && isValidAddress(comment.proposer) ? comment.proposer : undefined, [comment.proposer]);
+  const { commenterAddress, commenterFormattedAddress } = useMemo(() => {
+    if (!comment.proposer || !isValidAddress(comment.proposer)) {
+      return { commenterAddress: undefined, commenterFormattedAddress: undefined };
+    }
+
+    return noSource
+      ? { commenterAddress: comment.proposer, commenterFormattedAddress: undefined } // noSource means it is from PA (Polkassembly) and it returns address as substrate format
+      : { commenterAddress: undefined, commenterFormattedAddress: comment.proposer }; // means it is from SS (SubSquare) and it returns address as Polkadot/Kusama format
+  }, [comment.proposer, noSource]);
 
   return (
     <Grid alignItems='center' container item sx={{ mb: '10px' }}>
       <Grid item maxWidth='50%' width='fit-content'>
-        <Identity address={commenterAddress} api={api} chain={chain} identiconSize={25} name={comment?.username ?? undefined} noIdenticon={!commenterAddress} showShortAddress showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+        <Identity address={commenterAddress} api={api} chain={chain} formatted={commenterFormattedAddress} identiconSize={25} name={comment?.username ?? undefined} noIdenticon={!commenterAddress} showShortAddress showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
       </Grid>
       <Grid item width='fit-content'>
         <VoteType
-          comment ={comment}
+          comment={comment}
         />
       </Grid>
       <Grid item sx={{ color: 'text.disabled', fontSize: '16px', px: '15px' }}>
         {formatRelativeTime(comment.created_at)}
       </Grid>
-      {!noSource &&
+      {
         <Grid item>
           <Typography sx={{ border: `0.01px solid ${theme.palette.text.disabled}`, borderRadius: '30px', fontSize: '14px', fontWeight: 400, p: '0 10px', textAlign: 'center' }}>
-            {'Polkassembly'}
+            {noSource && 'Polkassembly'}
+            {!noSource && 'SubSquare'}
           </Typography>
         </Grid>
       }
+      <EditedTag comment={comment} />
       <Grid item sx={{ pl: '25px' }} xs={12}>
         {comment?.content &&
           <ReactMarkdown
