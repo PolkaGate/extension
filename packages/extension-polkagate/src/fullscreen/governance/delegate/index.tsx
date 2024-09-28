@@ -10,6 +10,7 @@ import type { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import type { DelegationInfo } from '../utils/types';
 import type { ModifyModes } from './modify/ModifyDelegate';
 
+import { faUserAstronaut } from '@fortawesome/free-solid-svg-icons';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
@@ -288,7 +289,7 @@ export function Delegate ({ address, open, setOpen, showDelegationNote }: Props)
     <DraggableModal minHeight={550} onClose={handleClose} open={open}>
       <>
         <SimpleModalTitle
-          icon='vaadin:del'
+          icon={step === STEPS.PROXY ? faUserAstronaut : 'vaadin:money-withdraw'}
           onClose={step !== STEPS.WAIT_SCREEN ? handleClose : noop}
           title= {title}
         />
