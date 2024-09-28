@@ -1379,5 +1379,18 @@
   "{{accountName}} has been successfully removed!": "{{accountName}} a été supprimé avec succès !",
   "Voted Aye": "A voté Oui",
   "Voted Nay": "A voté Non",
-  "Voted Abstain": "S'est abstenu"
+  "Voted Abstain": "S'est abstenu",
+  "Add New Chain": "Ajouter une nouvelle chaîne",
+  "If your chain is not listed in the PolkaGate chain list, you can provide an RPC endpoint, and we’ll automatically fetch the chain information to add it to the extension’s chain list.": "Si votre chaîne n'est pas répertoriée dans la liste des chaînes PolkaGate, vous pouvez fournir un point de terminaison RPC et nous récupérerons automatiquement les informations de la chaîne pour l'ajouter à la liste des chaînes de l'extension.",
+  "How?": "Comment ?",
+  "Find the chain endpoint in the Polkadot.js/org/apps. After selecting your chain and endpoint, copy the URL segment starting with wss and ending before the first #. For example: wss://rpc.dotters.network/polkadot": "Trouvez le point de terminaison de la chaîne sur Polkadot.js/org/apps. Après avoir sélectionné votre chaîne et point de terminaison, copiez le segment d'URL commençant par wss et se terminant avant le premier #. Par exemple : wss://rpc.dotters.network/polkadot",
+  "RPC endpoint for your desired chain:": "Point de terminaison RPC pour votre chaîne souhaitée :",
+  "Loading chain information, please wait ...": "Chargement des informations de la chaîne, veuillez patienter...",
+  "We couldn’t find the token price ID on-chain. To view your balance in fiat, please get it from CoinGecko and enter it below. This step is optional if you only need the crypto balance.": "Nous n'avons pas trouvé l'ID de prix du token sur la chaîne. Pour voir votre solde en fiat, veuillez le récupérer sur CoinGecko et l'entrer ci-dessous. Cette étape est facultative si vous n'avez besoin que du solde en crypto.",
+  "Find your token on CoinGecko. The price ID is available at: https://www.coingecko.com/en/coins/[price-id]": "Trouvez votre token sur CoinGecko. L'ID de prix est disponible à : https://www.coingecko.com/en/coins/[price-id]",
+  "Chain token price Id": "ID de prix du token de la chaîne",
+  "Check": "Vérifier",
+  "Chain Information": "Informations sur la chaîne",
+  "No information found from this RPC node!": "Aucune information trouvée à partir de ce nœud RPC !",
+  "Add a new chain": "Ajouter une nouvelle chaîne"
 }

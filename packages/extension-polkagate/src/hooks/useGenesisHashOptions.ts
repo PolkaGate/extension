@@ -4,22 +4,28 @@
 import type { HexString } from '@polkadot/util/types';
 import type { DropdownOption } from '../util/types';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { getAllMetadata } from '../messaging';
 import chains from '../util/chains';
 
 const RELAY_CHAIN = 'Relay Chain';
 
-export default function (showAnyChain = true): DropdownOption[] {
-  const [metadataChains, setMetadataChains] = useState<{ text: string; value: HexString}[]>([]);
+export default function useGenesisHashOptions (showAnyChain = true): DropdownOption[] {
+  const [metadataChains, setMetadataChains] = useState<{ text: string; value: HexString }[]>([]);
+  const metadataCache = useRef<{ text: string; value: HexString }[] | null>(null);
 
   useEffect(() => {
-    getAllMetadata().then((metadataDefs) => {
-      const res = metadataDefs.map((metadata) => ({ text: metadata.chain, value: metadata.genesisHash }));
+    if (!metadataCache.current) {
+      getAllMetadata().then((metadataDefs) => {
+        const res = metadataDefs.map((metadata) => ({ text: metadata.chain, value: metadata.genesisHash }));
 
-      setMetadataChains(res);
-    }).catch(console.error);
+        metadataCache.current = res;
+        setMetadataChains(res);
+      }).catch(console.error);
+    } else {
+      setMetadataChains(metadataCache.current);
+    }
   }, []);
 
   const hashes = useMemo(() => {

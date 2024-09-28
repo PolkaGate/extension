@@ -3,15 +3,16 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { AssetsWithUiAndPrice } from './TotalBalancePieChart';
+
 import { ArrowDropDown as ArrowDropDownIcon, ArrowDropDown as DownIcon, ArrowDropUp as UpIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { DisplayLogo } from '../../../components';
+import { AssetLogo } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, usePrices, useTranslation } from '../../../hooks';
 import getLogo2 from '../../../util/getLogo2';
-import type { AssetsWithUiAndPrice } from './TotalBalancePieChart';
 
 interface Props {
   groupedAssets: AssetsWithUiAndPrice[] | undefined
@@ -33,7 +34,7 @@ function WatchList({ groupedAssets }: Props): React.ReactElement {
     return (
       <Grid container item justifyContent='space-between'>
         <Grid alignItems='center' container item width='fit-content'>
-          <DisplayLogo assetSize='20px' baseTokenSize='14px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+          <AssetLogo assetSize='20px' baseTokenSize='14px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
           <Typography fontSize='16px' fontWeight={500} pl='5px' width='150px'>
             {asset.token} - {currency?.code}
           </Typography>
