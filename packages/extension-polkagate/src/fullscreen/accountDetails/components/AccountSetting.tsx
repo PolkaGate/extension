@@ -9,9 +9,9 @@ import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons
 import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
-import { ActionContext, NFTIcon, SocialRecoveryIcon, VaadinIcon } from '../../../components';
+import { ActionContext, SocialRecoveryIcon, VaadinIcon } from '../../../components';
 import { useInfo, useTranslation } from '../../../hooks';
-import { IDENTITY_CHAINS, NFT_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
+import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 import { popupNumbers } from '..';
 import { TaskButton } from './CommonTasks';
 
@@ -31,7 +31,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
   const identityDisable = useMemo(() => !IDENTITY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
   const proxyDisable = useMemo(() => !PROXY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
   const socialRecoveryDisable = useMemo(() => !SOCIAL_RECOVERY_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
-  const nftDisable = useMemo(() => !NFT_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
   const hardwareOrExternalAccount = useMemo(() => account?.isExternal ?? account?.isHardware, [account]);
 
   const onExportAccount = useCallback(() => {
@@ -61,10 +60,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
   const onSocialRecovery = useCallback(() => {
     address && !socialRecoveryDisable && onAction(`/socialRecovery/${address}/false`);
   }, [address, socialRecoveryDisable, onAction]);
-
-  const onNFTAlbum = useCallback(() => {
-    address && !nftDisable && onAction(`/nft/${address}`);
-}, [address, nftDisable, onAction]);
 
   const toggleAccountSetting = useCallback(() => {
     setShowAccountSettings(!showAccountSettings);
@@ -118,22 +113,6 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
             onClick={onSocialRecovery}
             secondaryIconType='page'
             text={t('Social recovery')}
-          />
-          <TaskButton
-            disabled={nftDisable}
-            icon={
-              <NFTIcon
-                color={
-                  nftDisable
-                    ? theme.palette.text.disabled
-                    : theme.palette.text.primary}
-                height={24}
-                width={24}
-              />
-            }
-            onClick={onNFTAlbum}
-            secondaryIconType='page'
-            text={t('NFT Album')}
           />
           <TaskButton
             disabled={hardwareOrExternalAccount}

@@ -16,9 +16,9 @@ import React, { useCallback, useMemo } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { PoolStakingIcon } from '../../../components';
+import { NFTIcon, PoolStakingIcon } from '../../../components';
 import { useApi, useTranslation } from '../../../hooks';
-import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../../util/constants';
+import { GOVERNANCE_CHAINS, NFT_CHAINS, STAKING_CHAINS } from '../../../util/constants';
 import { popupNumbers } from '..';
 
 interface Props {
@@ -53,7 +53,6 @@ export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): 
         const existingTab = allTabs.find(function (tab) {
           return tab.url === tabUrl;
         });
-
 
         if (existingTab?.id) {
           chrome.tabs.update(existingTab.id, { active: true }).catch(console.error);
@@ -119,6 +118,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
 
     return { stakingDisabled, stakingNotReady };
   }, [balance?.pooledBalance, balance?.soloTotal, genesisHash]);
+  const nftDisable = useMemo(() => !NFT_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const stakingIconColor = useMemo(() => stakingDisabled || stakingNotReady ? theme.palette.action.disabledBackground : theme.palette.text.primary, [stakingDisabled, theme.palette.action.disabledBackground, theme.palette.text.primary, stakingNotReady]);
 
   const hasSoloStake = Boolean(balance?.soloTotal && !balance.soloTotal.isZero());
@@ -158,6 +158,10 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
   const goToPoolStaking = useCallback(() => {
     address && !stakingDisabled && openOrFocusTab(`/poolfs/${address}/`);
   }, [address, stakingDisabled]);
+
+  const onNFTAlbum = useCallback(() => {
+    address && !nftDisable && openOrFocusTab(`/nft/${address}`);
+  }, [address, nftDisable]);
 
   const goToHistory = useCallback(() => {
     address && genesisHash && setDisplayPopup(popupNumbers.HISTORY);
@@ -249,6 +253,22 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
           secondaryIconType='page'
           show={(hasSoloStake || hasPoolStake) && !stakingDisabled}
           text={t('Stake in Pool')}
+        />
+        <TaskButton
+          disabled={nftDisable}
+          icon={
+            <NFTIcon
+              color={
+                nftDisable
+                  ? theme.palette.text.disabled
+                  : theme.palette.text.primary}
+              height={24}
+              width={24}
+            />
+          }
+          onClick={onNFTAlbum}
+          secondaryIconType='page'
+          text={t('NFT Album')}
         />
         <TaskButton
           disabled={!genesisHash}
