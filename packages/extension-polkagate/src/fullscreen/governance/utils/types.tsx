@@ -12,12 +12,13 @@ export type Origins = 'root' | 'whitelisted_caller' | 'staking_admin' | 'treasur
 export interface Reply {
   reply_reactions: Reaction;
   content: string;
-  created_at: Date,
-  id: string,
-  proposer: string,
-  updated_at: Date,
-  user_id: number,
-  username: string
+  created_at: Date;
+  id: string;
+  proposer: string;
+  updated_at: Date;
+  user_id: number;
+  username: string;
+  commentSource?: 'SS' | 'PA'; // SS --> SubSquare, PA --> Polkassembly
 }
 
 interface Reaction {
@@ -43,6 +44,7 @@ export interface CommentType {
   user_id: number;
   username: string;
   votes?: { decision?: 'yes' | 'no' | 'abstain' }[];
+  commentSource?: 'SS' | 'PA'; // SS --> SubSquare, PA --> Polkassembly
 }
 
 export interface ReferendumHistory {

@@ -58,7 +58,7 @@ export default function Comments ({ address, referendum }: CommentsProps): React
         <Grid container item xs={12}>
           {sortedComments?.map((comment, index) => (
             <Grid container key={index} sx={{ borderBottom: index !== sortedComments.length - 1 ? `0.01px solid ${theme.palette.text.disabled}` : undefined }}>
-              <CommentView address={address ?? ''} comment={comment} />
+              <CommentView address={address ?? ''} comment={comment} noSource={comment?.commentSource !== 'SS'} />
               {!!comment?.replies?.length &&
                 <Replies address={address} replies={comment?.replies} />
               }
