@@ -9,7 +9,7 @@ import type { UserAddedEndpoint } from '@polkadot/extension-polkagate/util/types
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Box, Button, Collapse, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
@@ -20,6 +20,7 @@ import { updateStorage } from '../../components/Loading';
 import { useCurrency, useFullscreen, useTranslation } from '../../hooks';
 import { updateMetadata } from '../../messaging';
 import { getPrices } from '../../util/api';
+import allChains from '../../util/chains';
 import { FULLSCREEN_WIDTH } from '../../util/constants';
 import { isWss } from '../../util/utils';
 import { metadataFromApi } from '../../util/workers/utils';
@@ -55,6 +56,8 @@ export default function AddNewChain (): React.ReactElement {
   const [isLoading, setLoading] = useState<boolean>(false);
   const [metadata, setMetadata] = useState<MetadataDef | null>();
   const [isCheckingPriceId, setCheckingPriceId] = useState<boolean>();
+
+  const chainAlreadyExist = useMemo(() => !!allChains.find(({ genesisHash }) => genesisHash === metadata?.genesisHash), [metadata?.genesisHash]);
 
   const reset = useCallback(() => {
     setMetadata(undefined);
@@ -214,14 +217,14 @@ export default function AddNewChain (): React.ReactElement {
           type='wss'
           value={endpoint}
         />
-        {isError &&
+        {(isError || chainAlreadyExist) &&
           <Warning
             iconDanger
             isBelowInput
             marginTop={0}
             theme={theme}
           >
-            {t('Invalid endpoint format!')}
+            { isError ? t('Invalid endpoint format!') : t('The chain already exists, no need to add it again!')}
           </Warning>
         }
         {!isLoading && !metadata &&
@@ -302,7 +305,7 @@ export default function AddNewChain (): React.ReactElement {
         <Grid container item justifyContent='flex-end' sx={{ borderColor: 'divider', borderTop: 0.5, bottom: '25px', height: '50px', left: 0, mx: '7%', position: 'absolute', width: '85%' }}>
           <Grid container item xs={7}>
             <TwoButtons
-              disabled={!endpoint}
+              disabled={!endpoint || chainAlreadyExist}
               isBusy={isLoading}
               mt='10px'
               onPrimaryClick={metadata ? onAdd : onCheck}

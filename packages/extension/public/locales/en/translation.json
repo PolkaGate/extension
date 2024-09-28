@@ -1401,5 +1401,6 @@
   "Chain Information": "",
   "No information found from this RPC node!": "",
   "Add a new chain": "",
-  "Invalid endpoint format!": ""
+  "Invalid endpoint format!": "",
+  "The chain already exists, no need to add it again!": ""
 }
