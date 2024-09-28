@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { ItemInformation } from './utils/types';
+import type { ItemInformation, ItemsDetail } from './utils/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -18,7 +18,7 @@ import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
 import FilterSection from './components/FilterItems';
 import ItemsList from './components/ItemsList';
-import { fetchNFTs, fetchUniques } from './utils/util';
+import { fetchItemMetadata, fetchNFTs, fetchUniques } from './utils/util';
 
 enum STEPS {
   CHECK_SCREEN,
@@ -26,7 +26,7 @@ enum STEPS {
   UNSUPPORTED
 }
 
-export default function NFT (): React.ReactElement {
+function NFT (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -37,6 +37,7 @@ export default function NFT (): React.ReactElement {
   const [step, setStep] = useState<STEPS>(STEPS.CHECK_SCREEN);
   const [myNFTsDetails, setMyNFTs] = useState<ItemInformation[] | undefined>(undefined);
   const [myUniquesDetails, setMyUniques] = useState<ItemInformation[] | undefined>(undefined);
+  const [itemsDetail, setItemsDetail] = useState<ItemsDetail>({});
   const [itemsToShow, setItemsToShow] = useState<ItemInformation[] | null | undefined>(undefined);
 
   const unsupportedChain = useMemo(() => !!(genesisHash && !(NFT_CHAINS.includes(genesisHash))), [genesisHash]);
@@ -44,6 +45,7 @@ export default function NFT (): React.ReactElement {
   const reset = useCallback(() => {
     setMyNFTs(undefined);
     setMyUniques(undefined);
+    setItemsDetail({});
     setStep(STEPS.CHECK_SCREEN);
   }, []);
 
@@ -68,6 +70,18 @@ export default function NFT (): React.ReactElement {
     fetchNFTs(api, formatted, setMyNFTs).catch(console.error);
     fetchUniques(api, formatted, setMyUniques).catch(console.error);
   }, [api, formatted, genesisHash, myNFTsDetails, unsupportedChain, myUniquesDetails]);
+
+  useEffect(() => {
+    if (!myNFTsDetails && !myUniquesDetails) {
+      return;
+    }
+
+    const allItems = [...(myNFTsDetails ?? [])].concat(myUniquesDetails ?? []);
+
+    allItems.forEach((item) => {
+      fetchItemMetadata(item, setItemsDetail).catch(console.error);
+    });
+  }, [myNFTsDetails, myUniquesDetails]);
 
   const backHome = useCallback(() => onAction('/'), [onAction]);
 
@@ -109,6 +123,7 @@ export default function NFT (): React.ReactElement {
               />
               <ItemsList
                 items={itemsToShow}
+                itemsDetail={itemsDetail}
               />
               <Grid container item justifyContent='flex-end' sx={{ '> button': { width: '280px' }, '> div': { width: '280px' }, pt: '20px' }}>
                 <PButton
@@ -125,3 +140,5 @@ export default function NFT (): React.ReactElement {
     </Grid>
   );
 }
+
+export default React.memo(NFT);

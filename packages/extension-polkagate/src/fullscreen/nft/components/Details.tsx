@@ -23,7 +23,9 @@ export const Detail = ({ inline = true, text, title }: DetailProp) => (
     <Typography fontSize='16px' fontWeight={400} sx={{ '> p': { m: 0 } }} textAlign='left'>
       <ReactMarkdown
         linkTarget='_blank'
-      >{text}</ReactMarkdown>
+      >
+        {text}
+      </ReactMarkdown>
     </Typography>
   </Grid>
 );

@@ -5,14 +5,14 @@
 
 import type { CheckboxButtonProps, FilterSectionProps } from '../utils/types';
 
-import { Grid, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Checkbox2 from '../../../components/Checkbox2';
 import InputFilter from '../../../components/InputFilter';
 
-const CheckboxButton = ({ checked, disabled, onChange, title }: CheckboxButtonProps) => {
+const CheckboxButton = React.memo(function CheckboxButton ({ checked, disabled, onChange, title }: CheckboxButtonProps) {
   const theme = useTheme();
 
   return (
@@ -26,9 +26,9 @@ const CheckboxButton = ({ checked, disabled, onChange, title }: CheckboxButtonPr
       />
     </Grid>
   );
-};
+});
 
-export default function FilterSection ({ myNFTsDetails, myUniquesDetails, setItemsToShow }: FilterSectionProps): React.ReactElement {
+function FilterSection ({ myNFTsDetails, myUniquesDetails, setItemsToShow }: FilterSectionProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -60,6 +60,7 @@ export default function FilterSection ({ myNFTsDetails, myUniquesDetails, setIte
     return [...(myNFTsDetails || []), ...(myUniquesDetails || [])];
   }, [myNFTsDetails, myUniquesDetails]);
 
+  // Memoize the filtered items to avoid unnecessary recalculations
   const filteredItems = useMemo(() => {
     if (allItems === undefined || allItems?.length === 0) {
       return undefined;
@@ -69,30 +70,39 @@ export default function FilterSection ({ myNFTsDetails, myUniquesDetails, setIte
       return null;
     }
 
+    const lowerSearch = filters.search.toLowerCase();
+
     return allItems.filter((item) => {
       const { collectionId, isCreator, isNft, isOwner, itemId } = item;
-      const { search, showMyCreated, showMyNFTs, showMyUniques, showOwn } = filters;
+      const { showMyCreated, showMyNFTs, showMyUniques, showOwn } = filters;
 
-      const matchesSearch = search
-        ? [collectionId, itemId].some((field) => field?.toLowerCase().includes(search.toLowerCase()))
-        : true;
+      // First, check if the item matches the search criteria
+      const matchesSearch = !lowerSearch ||
+        [collectionId, itemId].some((field) => field?.toLowerCase().includes(lowerSearch));
 
-      return (
-        matchesSearch &&
-        ((isNft && showMyNFTs) ||
-          (!isNft && showMyUniques) ||
-          (isCreator && showMyCreated) ||
-          (isOwner && showOwn))
-      );
+      // Then, check if the item passes the NFT/Unique filter
+      const passesNftFilter = (isNft && showMyNFTs) || (!isNft && showMyUniques);
+
+      // Finally, check if the item passes the owner/creator filter
+      const passesOwnerCreatorFilter = (isCreator && showMyCreated) || (isOwner && showOwn);
+
+      // The item must pass all three conditions to be included
+      return matchesSearch && passesNftFilter && passesOwnerCreatorFilter;
     });
-  }, [allItems, filters]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allItems, filters.search, filters.showMyCreated, filters.showMyNFTs, filters.showMyUniques, filters.showOwn]); // all the filter options added to the deps in order to ensure useMemo will realize the changes
 
   useEffect(() => {
     setItemsToShow(filteredItems);
-  }, [filteredItems, setItemsToShow]);
+  }, [filteredItems, filteredItems?.length, setItemsToShow]);
 
   return (
     <Grid alignItems='flex-end' container item justifyContent='space-around' sx={{ borderBottom: '2px solid', borderBottomColor: 'divider', mt: '20px', py: '5px' }}>
+      {filteredItems &&
+        <Typography>
+          {t('Items')}{` (${filteredItems.length})`}
+        </Typography>
+      }
       <CheckboxButton checked={filters.showMyCreated} disabled={!allItems} onChange={updateFilter('showMyCreated')} title={t('Created')} />
       <CheckboxButton checked={filters.showOwn} disabled={!allItems} onChange={updateFilter('showOwn')} title={t('Own')} />
       <CheckboxButton checked={filters.showMyUniques} disabled={!allItems} onChange={updateFilter('showMyUniques')} title={t('Uniques')} />
@@ -110,3 +120,5 @@ export default function FilterSection ({ myNFTsDetails, myUniquesDetails, setIte
     </Grid>
   );
 }
+
+export default React.memo(FilterSection);

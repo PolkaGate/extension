@@ -36,8 +36,11 @@ export interface ItemMetadata {
   tags: string[] | undefined;
 }
 
+export type ItemsDetail = Record<string, ItemMetadata | null | undefined>;
+
 export interface ItemProps {
   itemInformation: ItemInformation | undefined;
+  itemsDetail: ItemsDetail;
 }
 
 export interface ItemAvatarProp {
@@ -64,4 +67,9 @@ export interface DetailProp {
   title: string;
   text: string;
   inline?: boolean;
+}
+
+export interface ItemsListProps {
+  items: ItemInformation[] | null | undefined;
+  itemsDetail: ItemsDetail;
 }

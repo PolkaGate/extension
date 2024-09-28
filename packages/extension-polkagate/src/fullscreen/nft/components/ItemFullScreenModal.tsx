@@ -15,27 +15,14 @@ export default function ItemFullscreenModal ({ image, onClose, open }: Fullscree
       <Box sx={{ maxHeight: '90vh', maxWidth: '90vw', position: 'relative' }}>
         <IconButton
           onClick={onClose}
-          sx={{
-            '&:hover': {
-              backgroundColor: 'rgba(0,0,0,0.7)'
-            },
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            color: 'white',
-            position: 'absolute',
-            right: 8,
-            top: 8
-          }}
+          sx={{ '&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' }, backgroundColor: 'rgba(0,0,0,0.5)', color: 'white', position: 'absolute', right: 8, top: 8 }}
         >
           <CloseIcon />
         </IconButton>
         <img
           alt='NFT Fullscreen'
           src={image || ''}
-          style={{
-            maxHeight: '90vh',
-            maxWidth: '100%',
-            objectFit: 'contain'
-          }}
+          style={{ maxHeight: '90vh', maxWidth: '100%', objectFit: 'contain' }}
         />
       </Box>
     </Modal>

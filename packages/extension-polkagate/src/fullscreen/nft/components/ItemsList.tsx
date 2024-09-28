@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { ItemInformation } from '../utils/types';
+import type { ItemsListProps } from '../utils/types';
 
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
@@ -12,11 +12,7 @@ import Progress from '../../../components/Progress';
 import useTranslation from '../../../hooks/useTranslation';
 import Item from './Item';
 
-interface ItemsListProps {
-  items: ItemInformation[] | null | undefined;
-}
-
-export default function ItemsList ({ items }: ItemsListProps): React.ReactElement {
+export default function ItemsList ({ items, itemsDetail }: ItemsListProps): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -33,6 +29,7 @@ export default function ItemsList ({ items }: ItemsListProps): React.ReactElemen
       {items?.map((nftInfo) => (
         <Item
           itemInformation={nftInfo}
+          itemsDetail={itemsDetail}
           key={nftInfo.itemId}
         />
       ))
@@ -41,6 +38,13 @@ export default function ItemsList ({ items }: ItemsListProps): React.ReactElemen
         <Grid alignItems='center' container item justifyContent='center'>
           <Typography fontSize='16px' fontWeight={400}>
             {t('You do not own any NFTs/Uniques')}!
+          </Typography>
+        </Grid>
+      }
+      {items && items.length === 0 &&
+        <Grid alignItems='center' container item justifyContent='center'>
+          <Typography fontSize='16px' fontWeight={400}>
+            {t('No items match your current filter criteria')}!
           </Typography>
         </Grid>
       }
