@@ -491,7 +491,7 @@ export async function getReferendumCommentsSS(chainName: string, refId: string |
 
     return formattedComments;
   } catch (error) {
-    console.error('Error in getReferendumCommentsSS:', error);
+    console.error(`Error in getReferendumCommentsSS for chain ${chainName}, referendum ${refId}:`, error);
 
     return null;
   }
