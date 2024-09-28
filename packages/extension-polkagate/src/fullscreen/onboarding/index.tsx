@@ -112,7 +112,7 @@ function Onboarding (): React.ReactElement {
             </Grid>
           </Grid>
           <Typography fontSize='16px' fontWeight={500} pb='15px' pt='30px' width='100%'>
-            {t('We appreciate your choice in selecting Polkagate as your gateway to the Polkadot ecosystem! 🌟')}
+            {t('We appreciate your choice in selecting PolkaGate as your gateway to the Polkadot ecosystem! 🌟')}
           </Typography>
           <Typography fontSize='16px' fontWeight={400} width='100%'>
             {t('At present, you do not have any accounts. To begin your journey, you can create your first account, import existing accounts, or explore the demo option to get started.')}

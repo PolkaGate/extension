@@ -11,9 +11,9 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain, SocialRecoveryIcon, VaadinIcon } from '../components';
+import { ActionContext, GenesisHashOptionsContext, Identity, MenuItem, RemoteNodeSelector, SelectChain, SocialRecoveryIcon, VaadinIcon } from '../components';
 import ProfileMenu from '../fullscreen/homeFullScreen/partials/ProfileMenu';
-import { useGenesisHashOptions, useInfo, useTranslation } from '../hooks';
+import { useInfo, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
@@ -28,7 +28,8 @@ interface Props {
 function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const options = useGenesisHashOptions();
+  const options = useContext(GenesisHashOptionsContext);
+
   const { account, api, chain, formatted, genesisHash: currentGenesisHash } = useInfo(address);
 
   const [genesisHash, setGenesis] = useState<string | undefined>();

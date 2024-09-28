@@ -1,18 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Avatar, CircularProgress, FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import type { SelectChangeEvent } from '@mui/material';
+import type { DropdownOption } from '../util/types';
+
+import { CircularProgress, FormControl, Grid, InputBase, MenuItem, Select, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useCallback, useLayoutEffect, useState } from 'react';
 
-import { CHAINS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
-
-import getLogo from '../util/getLogo';
-import { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
+import ChainLogo from './ChainLogo';
 
 interface Props {
   defaultValue: string | number | undefined;
@@ -24,7 +23,7 @@ interface Props {
   showLogo?: boolean;
   showIcons?: boolean;
   _mt?: string | number;
-  disabledItems?: string[] | number[];
+  disabledItems?: (string | number)[];
   isItemsLoading?: boolean;
 }
 
@@ -50,13 +49,13 @@ const BootstrapInput = styled(InputBase)<{ isDisabled?: boolean }>(({ isDisabled
   }
 }));
 
-function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = false, isItemsLoading, label, onChange, options, showIcons = true, showLogo = false, value }: Props) {
+function CustomizedSelect ({ _mt = 0, defaultValue, disabledItems, isDisabled = false, isItemsLoading, label, onChange, options, showIcons = true, showLogo = false, value }: Props) {
   const theme = useTheme();
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<string>();
 
   useLayoutEffect(() => {
-    setSelectedValue(value || defaultValue);
+    setSelectedValue((value || defaultValue) as string);
   }, [value, defaultValue]);
 
   const toggleMenu = useCallback(() => !isDisabled && setShowMenu(!showMenu), [isDisabled, showMenu]);
@@ -76,6 +75,12 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
       </Typography>
       {selectedValue &&
         <Select
+          // eslint-disable-next-line react/jsx-no-bind
+          IconComponent={
+            isItemsLoading
+              ? () => <CircularProgress size={20} sx={{ color: `${theme.palette.secondary.light}`, position: 'absolute', right: '5px' }} /> 
+              : undefined
+          }
           MenuProps={{
             MenuListProps: {
               sx: {
@@ -109,12 +114,12 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
               }
             }
           }}
-          defaultValue={defaultValue}
-          IconComponent={isItemsLoading ? () => <CircularProgress size={20} sx={{ color: `${theme.palette.secondary.light}`, position: 'absolute', right: '5px' }} /> : undefined}
+          defaultValue={defaultValue as string}
           id='selectChain'
           input={<BootstrapInput isDisabled={isDisabled} />}
           onChange={_onChange}
           onClick={toggleMenu}
+          open={options?.length !== 1 && showMenu} // do not open select when page is loading , or options has just one item
           sx={{
             '> #selectChain': {
               border: '1px solid',
@@ -142,7 +147,6 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
             }
           }}
           value={selectedValue} // Assuming selectedValue is a state variable
-          open={options?.length !== 1 && showMenu} // do not open select when page is loading , or options has just one item
           // eslint-disable-next-line react/jsx-no-bind
           renderValue={(v) => {
             let textToShow = options.find((option) => v === option.value || v === option.text || String(v) === String(option.value))?.text?.split(/\s*\(/)[0];
@@ -155,7 +159,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
               <Grid container height={'30px'} justifyContent='flex-start'>
                 {showIcons && textToShow && textToShow !== 'Allow use on any chain' &&
                   <Grid alignItems='center' container item width='fit-content'>
-                    {<Avatar src={getLogo(chainName(textToShow))} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(textToShow) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 19.8, width: 19.8 }} variant='square' />}
+                    <ChainLogo chainName={chainName(textToShow)} genesisHash={v} size={19.8} />
                   </Grid>
                 }
                 <Grid alignItems='center' container item justifyContent='flex-start' pl='6px' width='fit-content'>
@@ -169,7 +173,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
         >
           {options.map(({ text, value }): React.ReactNode => (
             <MenuItem
-              disabled={disabledItems?.includes(value) || disabledItems?.includes(text)}
+              disabled={disabledItems?.includes(value || text)}
               key={value}
               sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em' }}
               value={value !== undefined ? value : text}
@@ -177,7 +181,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
               <Grid container height={'30px'} justifyContent='flex-start'>
                 {showIcons && text !== 'Allow use on any chain' &&
                   <Grid alignItems='center' container item pr='6px' width='fit-content'>
-                    <Avatar src={getLogo(chainName(text))} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(text) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 19.8, width: 19.8 }} variant='square' />
+                    <ChainLogo chainName={chainName(text)} genesisHash={value as string} size={19.8} />
                   </Grid>
                 }
                 <Grid alignItems='center' container item justifyContent='flex-start' pl='6px' width='fit-content' sx={{ overflowX: 'scroll' }}>
@@ -190,7 +194,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
           ))}
         </Select>
       }
-    </FormControl >
+    </FormControl>
   );
 }
 

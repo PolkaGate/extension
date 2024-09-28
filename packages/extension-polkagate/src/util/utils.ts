@@ -3,12 +3,12 @@
 
 import type { Theme } from '@mui/material';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
-import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
-import type { DropdownOption, FastestConnectionType, RecentChainsType, SavedMetaData, TransactionDetail } from './types';
+import type { DropdownOption, FastestConnectionType, RecentChainsType, TransactionDetail } from './types';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
@@ -157,43 +157,6 @@ export function prepareMetaData (chain: Chain | null | string, label: string, me
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     [label]: JSON.stringify({ chainName, metaData })
   });
-}
-
-export function getTransactionHistoryFromLocalStorage (
-  chain: Chain | null,
-  hierarchy: AccountWithChildren[],
-  address: string,
-  _chainName?: string
-): TransactionDetail[] {
-  const accountSubstrateAddress = getSubstrateAddress(address);
-
-  const account = hierarchy.find((h) => h.address === accountSubstrateAddress);
-
-  if (!account) {
-    console.log('something went wrong while looking for the account in accounts!!');
-
-    return [];
-  }
-
-  const chainName = chain ? sanitizeChainName(chain.name) : _chainName;
-
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  let transactionHistoryFromLocalStorage: SavedMetaData | null = null;
-
-  try {
-    transactionHistoryFromLocalStorage = account?.['history'] ? JSON.parse(String(account['history'])) : null;
-  } catch (error) {
-    console.error('Failed to parse transaction history:', error);
-  }
-
-  if (transactionHistoryFromLocalStorage) {
-    if (transactionHistoryFromLocalStorage.chainName === chainName) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return transactionHistoryFromLocalStorage.metaData;
-    }
-  }
-
-  return [];
 }
 
 export const getWebsiteFavicon = (url: string | undefined): string => {
@@ -359,6 +322,16 @@ export const isUrl = (input: string | undefined) => {
   }
 
   const urlRegex = /^(https?:\/\/)?([\w\d]+\.)+[\w\d]{2,6}(\/[\w\d]+)*$/;
+
+  return urlRegex.test(input);
+};
+
+export const isWss = (input: string | undefined): boolean => {
+  if (!input) {
+    return false;
+  }
+
+  const urlRegex = /^wss:\/\/([\w\d-]+\.)+[\w\d-]{2,}(\/[\w\d-._~:/?#\[\]@!$&'()*+,;=]*)?$/i;
 
   return urlRegex.test(input);
 };

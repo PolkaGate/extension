@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const ALLOWED_PATH = ['/', '/account/import-ledger', '/account/restore-json', '/onboarding'] as const;
-// Added for Polkagate
+// Added for PolkaGate
 const START_WITH_PATH = [
   '/account/',
   '/accountfs/',
@@ -39,5 +39,5 @@ export {
   PHISHING_PAGE_REDIRECT,
   PORT_CONTENT,
   PORT_EXTENSION,
-  START_WITH_PATH// Added for Polkagate
+  START_WITH_PATH// Added for PolkaGate
 };

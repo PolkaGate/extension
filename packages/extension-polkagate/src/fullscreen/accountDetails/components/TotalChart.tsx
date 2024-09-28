@@ -4,22 +4,21 @@
 /* eslint-disable sort-keys */
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { BN } from '@polkadot/util';
+import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import type { Prices } from '../../../util/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { Chart, registerables } from 'chart.js';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { BN } from '@polkadot/util';
-
-import { DisplayLogo } from '../../../components';
+import { AssetLogo } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, useTranslation } from '../../../hooks';
-import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
+import { DEFAULT_COLOR } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import { amountToHuman } from '../../../util/utils';
 import { adjustColor } from '../../homeFullScreen/partials/TotalBalancePieChart';
-import { DEFAULT_COLOR } from '../../../util/constants';
 
 interface Props {
   accountAssets: FetchedBalance[] | null | undefined;
@@ -138,7 +137,7 @@ export default function TotalChart({ accountAssets, pricesInCurrency }: Props): 
               return (
                 <Grid container item justifyContent='space-between' key={index} mt='5px'>
                   <Grid alignItems='center' container item width='fit-content'>
-                    <DisplayLogo assetSize='20px' baseTokenSize='14px' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+                    <AssetLogo assetSize='20px' baseTokenSize='14px' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
                     <Typography fontSize='16px' fontWeight={500} pl='5px' width='40px'>
                       {token}
                     </Typography>

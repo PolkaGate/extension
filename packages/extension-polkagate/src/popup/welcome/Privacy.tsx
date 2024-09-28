@@ -33,7 +33,7 @@ function Privacy ({ asModal, setShow, show = false }: Props): React.ReactElement
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.main', height: '1px', m: '35px auto 15px', width: '240px' }} />
       <Typography fontSize='14px' lineHeight={1.4} px='15px'>
-        {t('Polkagate is a browser extension that lets you use the Polkadot network and decentralized apps. We respect your privacy and do not collect or store any of your personal data. This is how we protect your privacy:')}
+        {t('PolkaGate is a browser extension that lets you use the Polkadot network and decentralized apps. We respect your privacy and do not collect or store any of your personal data. This is how we protect your privacy:')}
       </Typography>
       <Box sx={{ backgroundColor: 'background.paper', borderRadius: '5px', fontSize: '14px', m: '20px 15px 17px', maxHeight: '300px', overflowY: 'scroll' }}>
         <List sx={{ color: 'text.primary' }}>

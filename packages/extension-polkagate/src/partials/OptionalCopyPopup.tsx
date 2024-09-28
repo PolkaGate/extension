@@ -6,13 +6,13 @@
 import type { HexString } from '@polkadot/util/types';
 
 import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useContext, useLayoutEffect, useState } from 'react';
 
 import { selectableNetworks } from '@polkadot/networks';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { PButton, Select, ShortAddress } from '../components';
-import { useAlerts, useGenesisHashOptions, useInfo, useTranslation } from '../hooks';
+import { GenesisHashOptionsContext, PButton, Select, ShortAddress } from '../components';
+import { useAlerts, useInfo, useTranslation } from '../hooks';
 
 interface Props {
   address: string | undefined;
@@ -22,7 +22,8 @@ interface Props {
 function OptionalCopyPopup ({ address, setAnchorEl }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { chain, chainName } = useInfo(address);
-  const options = useGenesisHashOptions();
+  const options = useContext(GenesisHashOptionsContext);
+
   const { notify } = useAlerts();
 
   const [defaultAddress, setDefaultAddress] = useState<string | undefined>(address);

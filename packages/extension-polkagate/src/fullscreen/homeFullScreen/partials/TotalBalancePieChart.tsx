@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
+
 import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
 import { Box, Collapse, Divider, Grid, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -10,10 +12,9 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
-import { AccountsAssetsContext, DisplayLogo } from '../../../components';
+import { AccountsAssetsContext, AssetLogo } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrency, usePrices, useTranslation, useYouHave } from '../../../hooks';
-import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { isPriceOutdated } from '../../../popup/home/YouHave';
 import { DEFAULT_COLOR, TEST_NETS, TOKENS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
@@ -163,7 +164,7 @@ function TotalBalancePieChart({ hideNumbers, setGroupedAssets }: Props): React.R
     return (
       <Grid container item justifyContent='space-between'>
         <Grid alignItems='center' container item width='fit-content'>
-          <DisplayLogo assetSize='20px' baseTokenSize='14px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+          <AssetLogo assetSize='20px' baseTokenSize='14px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
           <Typography fontSize='16px' fontWeight={500} pl='5px' width='40px'>
             {asset.token}
           </Typography>

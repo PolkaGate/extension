@@ -9,8 +9,8 @@ import { getSubstrateAddress } from '../utils';
 // eslint-disable-next-line import/extensions
 import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from './utils';
 
-async function getAssets (addresses, assetsToBeFetched, chainName) {
-  const endpoints = getChainEndpoints(chainName);
+async function getAssets (addresses, assetsToBeFetched, chainName, userAddedEndpoints) {
+  const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
   const { api, connections } = await fastestEndpoint(endpoints);
 
   const result = metadataFromApi(api);
@@ -65,31 +65,29 @@ async function getAssets (addresses, assetsToBeFetched, chainName) {
 }
 
 onmessage = async (e) => {
-  const { addresses, chainName } = e.data;
+  const { addresses, chainName, userAddedEndpoints } = e.data;
 
   const assetsChains = createAssets();
   const assetsToBeFetched = assetsChains[chainName];
 
   /** if assetsToBeFetched === undefined then we don't fetch assets by default at first, but wil fetch them on-demand later in account details page*/
   if (!assetsToBeFetched) {
-    console.info(`worker: No assets to be fetched on ${chainName}`);
+    console.info(`getAssetOnMultiAssetChain: No assets to be fetched on ${chainName}`);
 
     return postMessage(undefined); // FIXME: if this happens, should be handled in caller
   }
 
   let tryCount = 1;
 
-  console.log(`worker: try ${tryCount} to fetch assets on ${chainName}.`);
-
   while (tryCount >= 1 && tryCount <= 5) {
     try {
-      await getAssets(addresses, assetsToBeFetched, chainName);
+      await getAssets(addresses, assetsToBeFetched, chainName, userAddedEndpoints);
 
       tryCount = 0;
 
       return;
     } catch (error) {
-      console.error(`worker: Error while fetching assets on ${chainName}, ${5 - tryCount} times to retry`, error);
+      console.error(`getAssetOnMultiAssetChain: Error while fetching assets on ${chainName}, ${5 - tryCount} times to retry`, error);
 
       tryCount === 5 && postMessage(undefined);
     }
