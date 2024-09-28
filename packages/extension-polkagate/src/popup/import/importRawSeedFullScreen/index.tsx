@@ -7,7 +7,7 @@ import type { HexString } from '@polkadot/util/types';
 
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import { Collapse, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
@@ -18,9 +18,9 @@ import { keyring } from '@polkadot/ui-keyring';
 import { objectSpread } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { Address, InputWithLabel, TextAreaWithLabel, TwoButtons, VaadinIcon, Warning } from '../../../components';
+import { Address, GenesisHashOptionsContext, InputWithLabel, TextAreaWithLabel, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
-import { useFullscreen, useGenesisHashOptions, useMetadata, useTranslation } from '../../../hooks';
+import { useFullscreen, useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import Passwords2 from '../../newAccount/createAccountFullScreen/components/Passwords2';
@@ -36,7 +36,7 @@ export default function ImportRawSeed (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-  const genesisOptions = useGenesisHashOptions();
+  const genesisOptions = useContext(GenesisHashOptionsContext);
 
   const [isBusy, setIsBusy] = useState(false);
   const [seed, setSeed] = useState<string | null>(null);

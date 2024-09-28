@@ -14,8 +14,8 @@ import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfile
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { ActionContext, AddressInput, PButton, ProxyTable, SelectChain } from '../../../components';
-import { useApiWithChain, useGenesisHashOptions, useTranslation } from '../../../hooks';
+import { ActionContext, AddressInput, GenesisHashOptionsContext, PButton, ProxyTable, SelectChain } from '../../../components';
+import { useApiWithChain, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata } from '../../../messaging';
 import { HeaderBrand, Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
@@ -31,7 +31,7 @@ export default function AddAddressOnly (): React.ReactElement {
   const [isBusy, setIsBusy] = useState(false);
 
   const api = useApiWithChain(chain);
-  const genesisOptions = useGenesisHashOptions();
+  const genesisOptions = useContext(GenesisHashOptionsContext);
 
   const disabledItems = useMemo(() => (['Allow use on any chain']), []);
 

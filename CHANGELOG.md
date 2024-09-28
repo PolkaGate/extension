@@ -1,5 +1,33 @@
 # Change Log
 
+## [0.13.1](https://github.com/polkagate/extension/compare/v0.13.0...v0.13.1) (2024-09-28)
+
+
+### Bug Fixes
+
+* update referendum comments ([#1548](https://github.com/polkagate/extension/issues/1548)) ([da77ba5](https://github.com/polkagate/extension/commit/da77ba5a8c43abd282acfda344e6e497e93602d9))
+
+# [0.13.0](https://github.com/polkagate/extension/compare/v0.12.3...v0.13.0) (2024-09-28)
+
+
+### Features
+
+* add a new chain ([#1553](https://github.com/polkagate/extension/issues/1553)) ([4613722](https://github.com/polkagate/extension/commit/4613722222efe3fa7870313fbaa49a9f4d64192a))
+
+## [0.12.3](https://github.com/polkagate/extension/compare/v0.12.2...v0.12.3) (2024-09-23)
+
+
+### Bug Fixes
+
+* fix useApi interaction with useApiWithChain2 ([#1556](https://github.com/polkagate/extension/issues/1556)) ([23f4b36](https://github.com/polkagate/extension/commit/23f4b36a51442082bb353005688c7c2c148dac72))
+
+## [0.12.2](https://github.com/polkagate/extension/compare/v0.12.1...v0.12.2) (2024-09-22)
+
+
+### Bug Fixes
+
+* identicon type issue after auto metadsata update ([54889d9](https://github.com/polkagate/extension/commit/54889d928650b6ea67349d60f554309d512e3f59))
+
 ## [0.12.1](https://github.com/polkagate/extension/compare/v0.12.0...v0.12.1) (2024-09-21)
 
 

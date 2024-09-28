@@ -17,10 +17,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BN, BN_ONE, BN_ZERO, isFunction, isNumber } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AmountWithOptions, FullscreenChain, Infotip2, InputAccount, ShowBalance, TwoButtons, Warning } from '../../components';
+import { AmountWithOptions, FullscreenChainNames, Infotip2, InputAccount, ShowBalance, TwoButtons, Warning } from '../../components';
 import { useTranslation } from '../../components/translate';
-import { getValue } from '../../popup/account/util';
 import { useInfo, useTeleport } from '../../hooks';
+import { getValue } from '../../popup/account/util';
 import { ASSET_HUBS } from '../../util/constants';
 import { amountToHuman, amountToMachine } from '../../util/utils';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
@@ -33,7 +33,7 @@ interface Props {
   assetId: number | undefined;
   inputs: Inputs | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  setInputs: React.Dispatch<React.SetStateAction<Inputs>>;
+  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
 }
 
 const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
@@ -93,7 +93,7 @@ export const Title = ({ height, icon, logo, ml, onBackClick, padding = '30px 0px
 
 const isAssethub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');
 
-export default function InputPage({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function InputPage ({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, formatted } = useInfo(address);
@@ -213,9 +213,9 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      const dummyAmount = api.createType('Balance', BN_ONE);
+      const dummyAmount = api.createType('Balance', BN_ONE) as Balance;
 
-      return setFeeCall(dummyAmount as Balance);
+      return setFeeCall(dummyAmount);
     }
 
     const _params = assetId !== undefined
@@ -353,7 +353,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
     const allAmount = _canNotTransfer ? '0' : amountToHuman(transferableBalance.sub(_maxFee).toString(), balances.decimal);
 
     setAmount(allAmount);
-  }, [api, assetId, balances, ED, maxFee]);
+  }, [api, assetId, balances, ED, maxFee, transferableBalance]);
 
   const _onChangeAmount = useCallback((value: string) => {
     if (!balances) {
@@ -431,7 +431,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
           />
         </Grid>
         <Grid item md={4.8} xs={12}>
-          <FullscreenChain
+          <FullscreenChainNames
             address={address}
             defaultValue={chain?.genesisHash || inputs?.recipientGenesisHashOrParaId}
             label={t('Chain')}

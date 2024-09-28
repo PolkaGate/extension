@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Asset } from '@polkagate/apps-config/assets/types';
+import type React from 'react';
 import type { bool, Bytes, Option, StorageKey, u8, u128 } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
 // @ts-ignore
@@ -24,7 +25,7 @@ import { useInfo, useStakingAccount } from '.';
 const assetsChains = createAssets();
 
 // TODO: decouple thi shook to smaller independent ones like usePoolBalance, useAssetBalance, useNativeBalance ...
-export default function useBalances(address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: number): BalancesInfo | undefined {
+export default function useBalances (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: number): BalancesInfo | undefined {
   const stakingAccount = useStakingAccount(address);
   const { account, api, chain, chainName, decimal: currentDecimal, formatted, token: currentToken } = useInfo(address);
   const isFetching = useContext(FetchingContext);
@@ -379,7 +380,6 @@ export default function useBalances(address: string | undefined, refresh?: boole
     return newBalances; //  returns balances that have been fetched recently and are not from the local storage, and it does not include the pooledBalance
   }
 
-  // return overall && overall.genesisHash === chain?.genesisHash ? overall : balances;
   return overall && overall.genesisHash === chain?.genesisHash && overall.token === currentToken && overall.decimal === currentDecimal
     ? overall
     : balances && balances.token === currentToken && balances.decimal === currentDecimal

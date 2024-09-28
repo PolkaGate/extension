@@ -22,6 +22,6 @@ export default function useDecimal (address: AccountId | string | undefined): nu
 
     const network = selectableNetworks.find((network) => network.genesisHash[0] === chain?.genesisHash);
 
-    return network?.decimals?.length ? network.decimals[0] : undefined;
-  }, [chain?.genesisHash]);
+    return network?.decimals?.length ? network.decimals[0] : chain?.tokenDecimals;
+  }, [chain?.genesisHash, chain?.tokenDecimals]);
 }

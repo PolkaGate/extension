@@ -89,7 +89,7 @@ const AccountTotal = ({ currencySign, hideNumbers, totalBalance }: { currencySig
   );
 };
 
-export default function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const pricesInCurrencies = usePrices();
@@ -255,3 +255,5 @@ export default function AccountInformationForHome ({ accountAssets, address, hid
     </>
   );
 }
+
+export default React.memo(AccountInformationForHome);

@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { TxInfo } from '../../../../util/types';
@@ -19,9 +18,9 @@ import FailSuccessIcon from '../../../../popup/history/partials/FailSuccessIcon'
 interface Props {
   address: string | undefined;
   txInfo: TxInfo;
-  delegateInformation: DelegateInformation;
+  delegateInformation: DelegateInformation | undefined;
   handleClose: () => void;
-  allCategoriesLength: number;
+  allCategoriesLength: number | undefined;
   removedTracksLength?: number | undefined;
   status: 'Delegate' | 'Remove' | 'Modify';
 }
@@ -61,7 +60,6 @@ export default function Confirmation ({ address, allCategoriesLength, delegateIn
           {txInfo.failureText}
         </Typography>
       }
-      {/* <AccountHolderWithProxy address={address} chain={txInfo.chain} showDivider selectedProxyAddress={txInfo.throughProxy?.address} /> */}
       <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
           {status === 'Remove' ? t('Account holder') : t('Delegation from')}:
@@ -99,23 +97,23 @@ export default function Confirmation ({ address, allCategoriesLength, delegateIn
           </Grid>
         </>
       }
-      {status !== 'Remove' && delegateInformation.delegateAmount &&
+      {status !== 'Remove' && delegateInformation?.delegateAmount &&
         <DisplayInfo
           caption={t('Vote value:')}
-          value={t(`${delegateInformation.delegateAmount} {{token}}`, { replace: { token } })}
+          value={t(`${delegateInformation?.delegateAmount} {{token}}`, { replace: { token } })}
         />
       }
       {status !== 'Remove' && delegateInformation?.delegateConviction === undefined &&
         <DisplayInfo
           caption={t('Vote multiplier:')}
-          value={t(`${delegateInformation.delegateConviction === 0 ? 0.1 : delegateInformation.delegateConviction}x`)}
+          value={t(`${delegateInformation?.delegateConviction === 0 ? 0.1 : delegateInformation?.delegateConviction}x`)}
         />
       }
       <DisplayInfo
         caption={t('Number of referenda categories:')}
-        value={t(`${status === 'Remove' && removedTracksLength ? removedTracksLength : delegateInformation.delegatedTracks.length} of ${allCategoriesLength}`, { replace: { token } })}
+        value={t(`${status === 'Remove' && removedTracksLength ? removedTracksLength : delegateInformation?.delegatedTracks.length} of ${allCategoriesLength}`, { replace: { token } })}
       />
-      <DisplayInfo caption={t('Fee:')} value={fee?.toHuman() ?? '00.00'} />
+      <DisplayInfo caption={t('Fee:')} value={fee?.toHuman() as string ?? '00.00'} />
       {txInfo?.txHash &&
         <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
           <Grid container item width='fit-content'>

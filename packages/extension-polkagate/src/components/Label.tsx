@@ -1,6 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+//@ts-nocheck
 
 import { QuestionMarkRounded as QuestionMarkRoundedIcon } from '@mui/icons-material';
 import { Grid, Tooltip } from '@mui/material';
@@ -14,7 +15,7 @@ interface Props {
   helperText?: string;
 }
 
-function Label({ children, helperText = '', label, style }: Props): React.ReactElement<Props> {
+function Label ({ children, helperText = '', label, style }: Props): React.ReactElement<Props> {
   const ref = useRef(null);
   const [tpLocation, setTpLocation] = useState<string | undefined>();
 

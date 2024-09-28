@@ -10,10 +10,11 @@ export interface News {
 
 export const news: News[] = [
   {
-    version: '0.11.0',
+    version: '0.12.0',
     notes: [
-      'Auto Mode Remote Node: RPCs can now be automatically selected based on the user’s geographic location and latency for optimal performance.',
-      'Auto Metadata Update: Metadata will be automatically updated in the background on supported chains, so manual updates are no longer necessary.'
+      'Add Your Chain: If your favorite chain isn’t available in the extension, you can now add it yourself using an RPC endpoint address.',
+      'Auto Mode Remote Node: RPCs are now automatically selected based on your location and latency, ensuring optimal performance.',
+      'Auto Metadata Update: Metadata updates automatically in the background on supported chains, eliminating the need for manual updates.'
     ]
   },
   {

@@ -3,7 +3,7 @@
 
 import type { AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
-import type { AccountsAssetsContextType, AlertContextType, APIsContext, CurrencyContextType, FetchingRequests, ReferendaContextType } from '../util/types';
+import type { AccountsAssetsContextType, AlertContextType, APIsContext, CurrencyContextType, DropdownOption, FetchingRequests, ReferendaContextType, UserAddedChains } from '../util/types';
 
 import React from 'react';
 
@@ -25,6 +25,8 @@ const MetadataReqContext = React.createContext<MetadataRequest[]>([]);
 const SettingsContext = React.createContext<SettingsStruct>(settings.get());
 const SigningReqContext = React.createContext<SigningRequest[]>([]);
 const ToastContext = React.createContext<({ show: (message: string) => void })>({ show: noop });
+const UserAddedChainContext = React.createContext<UserAddedChains>({});
+const GenesisHashOptionsContext = React.createContext<DropdownOption[]>([]);
 
 export { AccountContext,
   AccountsAssetsContext,
@@ -34,9 +36,11 @@ export { AccountContext,
   AuthorizeReqContext,
   CurrencyContext,
   FetchingContext,
+  GenesisHashOptionsContext,
   MediaContext,
   MetadataReqContext,
   ReferendaContext,
   SettingsContext,
   SigningReqContext,
-  ToastContext };
+  ToastContext,
+  UserAddedChainContext };

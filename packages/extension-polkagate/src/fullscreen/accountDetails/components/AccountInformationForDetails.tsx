@@ -11,7 +11,7 @@ import type { BalancesInfo, Prices } from '../../../util/types';
 import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { DisplayLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, Infotip2, OptionalCopyButton, ShortAddress2, VaadinIcon } from '../../../components';
+import { AssetLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, Infotip2, OptionalCopyButton, ShortAddress2, VaadinIcon } from '../../../components';
 import { useIdentity, useInfo, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount } from '../../../messaging';
 import { getValue } from '../../../popup/account/util';
@@ -102,7 +102,7 @@ const SelectedAssetBox = ({ balanceToShow, genesisHash, isBalanceOutdated, isPri
       {genesisHash
         ? <>
           <Grid item pl='7px'>
-            <DisplayLogo assetSize='42px' baseTokenSize='20px' genesisHash={balanceToShow?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+            <AssetLogo assetSize='42px' baseTokenSize='20px' genesisHash={balanceToShow?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
           </Grid>
           <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
             <BalanceRow balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} isPriceOutdated={isPriceOutdated} price={price} />
@@ -159,7 +159,7 @@ export const EyeIconFullScreen = ({ isHidden, onClick }: { isHidden: boolean | u
   );
 };
 
-export default function AccountInformationForDetails ({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+function AccountInformationForDetails ({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const theme = useTheme();
   const { account, api, chain, formatted, genesisHash, token } = useInfo(address);
 
@@ -284,3 +284,5 @@ export default function AccountInformationForDetails ({ accountAssets, address, 
     </Grid>
   );
 }
+
+export default React.memo(AccountInformationForDetails);

@@ -10,8 +10,8 @@ import { BN_ZERO } from '@polkadot/util';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from './utils';
 
 // @ts-ignore
-async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
-  const endpoints = getChainEndpoints(chainName);
+async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName, userAddedEndpoints) {
+  const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
   const { api, connections } = await fastestEndpoint(endpoints);
 
   const result = metadataFromApi(api);
@@ -71,7 +71,7 @@ async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName) {
 }
 
 onmessage = async (e) => {
-  const { addresses, assetsToBeFetched, chainName } = e.data;
+  const { addresses, assetsToBeFetched, chainName, userAddedEndpoints } = e.data;
 
   /** if assetsToBeFetched === undefined then we don't fetch assets by default at first, but wil fetch them on-demand later in account details page*/
   if (!assetsToBeFetched) {
@@ -82,11 +82,9 @@ onmessage = async (e) => {
 
   let tryCount = 1;
 
-  console.log(`getAssetOnAssetHub: try ${tryCount} to fetch assets on ${chainName}.`);
-
   while (tryCount >= 1 && tryCount <= 5) {
     try {
-      await getAssetOnAssetHub(addresses, assetsToBeFetched, chainName);
+      await getAssetOnAssetHub(addresses, assetsToBeFetched, chainName, userAddedEndpoints);
 
       tryCount = 0;
 

@@ -1,32 +1,27 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import type { DropdownOption } from '../util/types';
 
 import { createWsEndpoints } from '@polkagate/apps-config';
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useMemo } from 'react';
 
+import { GenesisHashOptionsContext } from '../components';
+import { UseUserAddedEndpoint } from '../fullscreen/addNewChain/utils';
 import { AUTO_MODE } from '../util/constants';
 import { sanitizeChainName } from '../util/utils';
-import { useGenesisHashOptions, useTranslation } from './';
 
 const supportedLC = ['Polkadot', 'Kusama', 'Westend']; // chains with supported light client
+const allEndpoints = createWsEndpoints();
 
 /**
  * @description
  * find endpoints based on chainName and also omit light client which my be add later
  */
 export function useEndpoints (genesisHash: string | null | undefined): DropdownOption[] {
-  const { t } = useTranslation();
-  const genesisOptions = useGenesisHashOptions();
-  const [allEndpoints, setAllEndpoints] = useState<LinkOption[] | undefined>();
+  const genesisOptions = useContext(GenesisHashOptionsContext);
 
-  useEffect(() => {
-    const wsEndpoints = t && createWsEndpoints(t);
-
-    setAllEndpoints(wsEndpoints);
-  }, [t]);
+  const userAddedEndpoint = UseUserAddedEndpoint(genesisHash);
 
   const endpoints: DropdownOption[] | undefined = useMemo(() => {
     if (!genesisHash) {
@@ -59,8 +54,12 @@ export function useEndpoints (genesisHash: string | null | undefined): DropdownO
     endpointOptions.length > 1 &&
     endpointOptions?.unshift(AUTO_MODE);
 
+    if (!endpointOptions?.length && userAddedEndpoint) {
+      return userAddedEndpoint;
+    }
+
     return endpointOptions;
-  }, [allEndpoints, genesisHash, genesisOptions]);
+  }, [genesisHash, genesisOptions, userAddedEndpoint]);
 
   return endpoints ?? [];
 }

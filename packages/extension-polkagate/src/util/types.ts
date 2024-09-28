@@ -167,6 +167,7 @@ export interface TxInfo extends TransactionDetail {
   token?: string;
   poolName?: string;
   validatorsCount?: number;
+  payee?: Payee,
 }
 
 export interface Auction {
@@ -663,6 +664,15 @@ export interface Fetching {
 export interface IsFetching {
   [item: string]: boolean;
 }
+
+export interface UserAddedEndpoint {
+  chain: string;
+  color: string;
+  endpoint: string;
+  priceId: string;
+}
+
+export type UserAddedChains= Record<string, UserAddedEndpoint>
 
 export interface CurrencyContextType {
   currency: CurrencyItemType | undefined;

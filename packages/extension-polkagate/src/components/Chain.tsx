@@ -1,16 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, type SxProps, type Theme } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 
-import { useGenesisHashOptions, useIsTestnetEnabled } from '@polkadot/extension-polkagate/src/hooks';
+import { useIsTestnetEnabled } from '@polkadot/extension-polkagate/src/hooks';
 import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { updateRecentChains } from '../util/utils';
+import { GenesisHashOptionsContext } from './contexts';
 import Select2 from './Select2';
 
 interface Props {
@@ -24,7 +24,7 @@ interface Props {
 }
 
 function Chain ({ address, allowAnyChainOption, defaultValue, disabledItems, label, onChange, style }: Props) {
-  let options = useGenesisHashOptions();
+  let options = useContext(GenesisHashOptionsContext);
   const isTestnetEnabled = useIsTestnetEnabled();
 
   options = allowAnyChainOption ? options : options.filter(({ text }) => text !== 'Allow use on any chain');
@@ -58,6 +58,7 @@ function Chain ({ address, allowAnyChainOption, defaultValue, disabledItems, lab
         disabledItems={_disabledItems}
         isDisabled={!address}
         label={label}
+        // @ts-ignore
         onChange={onChangeNetwork}
         options={options}
         showLogo

@@ -1,21 +1,22 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { SavedAssets } from '../../../hooks/useAssetsBalances';
 import type { DropdownOption } from '../../../util/types';
 
-import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
+import { AddCircle as AddIcon, ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, RestartAlt as ResetIcon } from '@mui/icons-material';
 import { Button, Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { InputFilter } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
 import { useGenesisHashOptions, useIsTestnetEnabled, useTranslation } from '../../../hooks';
-import { ASSETS_NAME_IN_STORAGE, SavedAssets } from '../../../hooks/useAssetsBalances';
+import { ASSETS_NAME_IN_STORAGE } from '../../../hooks/useAssetsBalances';
 import { TEST_NETS } from '../../../util/constants';
 import { DEFAULT_SELECTED_CHAINS } from '../../../util/defaultSelectedChains';
+import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import ChainItem from './ChainItem';
 
 interface Props {
@@ -24,7 +25,7 @@ interface Props {
 
 const DEFAULT_SELECTED_CHAINS_COUNT = 10;
 
-function ChainList({ anchorEl }: Props): React.ReactElement {
+function ChainList ({ anchorEl }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const allChains = useGenesisHashOptions(false);
@@ -60,7 +61,9 @@ function ChainList({ anchorEl }: Props): React.ReactElement {
   }, [allChains]);
 
   const updateSavedAssetsInStorage = useCallback(() => {
-    getStorage(ASSETS_NAME_IN_STORAGE, true).then((assets: SavedAssets) => {
+    getStorage(ASSETS_NAME_IN_STORAGE, true).then((info) => {
+      const assets = info as SavedAssets;
+
       assets && Object.keys(assets.balances).forEach((addresses) => {
         Object.keys(assets.balances[addresses]).forEach((genesisHash) => {
           if (!selectedChains.has(genesisHash)) {
@@ -121,6 +124,10 @@ function ChainList({ anchorEl }: Props): React.ReactElement {
     setSearchedChain([..._filtered]);
   }, [allChains]);
 
+  const onAddNewChain = useCallback(() => {
+    openOrFocusTab('/addNewChain', true);
+  }, []);
+
   const onReset = useCallback(() => {
     const defaultSelectedGenesisHashes = DEFAULT_SELECTED_CHAINS.map(({ value }) => value as string);
 
@@ -131,15 +138,28 @@ function ChainList({ anchorEl }: Props): React.ReactElement {
 
   return (
     <Grid container item sx={{ maxHeight: '650px', overflow: 'hidden', overflowY: 'scroll', transition: 'height 5000ms ease-in-out', width: '280px' }}>
-      <Grid container item justifyContent='flex-end'>
-        <Typography fontSize='16px' fontWeight={500} pt='10px' textAlign='center' width='100%'>
+      <Grid container item justifyContent='space-between' px='10px'>
+        <Typography fontSize='16px' fontWeight={500} py='10px' textAlign='center' width='100%'>
           {t('Select chains to view assets on')}
         </Typography>
-        <Button onClick={onReset} sx={{ '&:hover': { bgcolor: 'divider' }, color: theme.palette.secondary.main, fontSize: '12px', fontWeight: 300, mr: '10px', mt: '5px', p: 0, textTransform: 'none', width: 'fit-content' }} variant='text'>
-          {t('reset to default')}
+        <Button
+          onClick={onAddNewChain}
+          startIcon={<AddIcon />}
+          sx={{ '&:hover': { bgcolor: 'divider' }, '.MuiButton-startIcon': { marginRight: '2px' }, color: theme.palette.secondary.light, fontSize: '12px', fontWeight: 300, ml: '10px', p: 0, textTransform: 'none', width: 'fit-content' }}
+          variant='text'
+        >
+          {t('Add a new chain')}
+        </Button>
+        <Button
+          onClick={onReset}
+          startIcon={<ResetIcon />}
+          sx={{ '&:hover': { bgcolor: 'divider' }, '.MuiButton-startIcon': { marginRight: '2px' }, color: theme.palette.secondary.light, fontSize: '12px', fontWeight: 300, p: 0, textTransform: 'none', width: 'fit-content' }}
+          variant='text'
+        >
+          {t('Reset')}
         </Button>
       </Grid>
-      <Divider sx={{ bgcolor: 'divider', height: '2px', my: '5px', width: '100%' }} />
+      <Divider sx={{ bgcolor: 'divider', height: '2px', mb: '5px', width: '100%' }} />
       {[...sortedChainsToShow.slice(0, DEFAULT_SELECTED_CHAINS_COUNT)].map((item, index) => (
         <ChainItem
           chain={item}

@@ -24,7 +24,7 @@ export const saveNewOrder = (newOrder: AccountsOrder[]) => {
   chrome.storage.local.set({ addressOrder }).catch(console.error);
 };
 
-export default function DraggableAccountList({ hideNumbers, initialAccountList }: Props) {
+function DraggableAccountList ({ hideNumbers, initialAccountList }: Props) {
   const [accountsOrder, setAccountsOrder] = useState<AccountsOrder[]>(initialAccountList);
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
 
@@ -67,3 +67,5 @@ export default function DraggableAccountList({ hideNumbers, initialAccountList }
     </DndContext>
   );
 }
+
+export default React.memo(DraggableAccountList);

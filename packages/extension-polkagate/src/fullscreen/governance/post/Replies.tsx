@@ -34,7 +34,7 @@ export default function Replies ({ address, replies }: { address: string | undef
       </Grid>
       {expanded && replies?.map((reply, index) => (
         <Grid container key={index} pl='5px' pt='5px'>
-          <CommentView address={address} comment={reply} noSource />
+          <CommentView address={address} comment={reply} noSource={reply?.commentSource !== 'SS'} />
         </Grid>
       ))
       }
