@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -8,11 +7,13 @@
  * @description to show claimed rewards chart
  * */
 
+import type { ClaimedRewardInfo, SubscanClaimedRewardInfo } from '../../../../util/types';
+
 import { faChartColumn } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowDropDown as ArrowDropDownIcon, KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon } from '@mui/icons-material';
 import { Accordion, AccordionSummary, Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
-import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
+import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, type PluginChartOptions, Title, Tooltip } from 'chart.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 
@@ -22,7 +23,6 @@ import { Progress } from '../../../../components';
 import { useInfo, useTranslation } from '../../../../hooks';
 import { getNominationPoolsClaimedRewards } from '../../../../util/api';
 import { MAX_HISTORY_RECORD_TO_SHOW } from '../../../../util/constants';
-import type { ClaimedRewardInfo, SubscanClaimedRewardInfo } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
 
 ChartJS.register(
@@ -46,7 +46,7 @@ interface Props {
   address?: string;
 }
 
-export default function ClaimedRewardsChart({ address }: Props): React.ReactElement {
+export default function ClaimedRewardsChart ({ address }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { chainName, decimal, token } = useInfo(address);
@@ -233,10 +233,10 @@ export default function ClaimedRewardsChart({ address }: Props): React.ReactElem
       } else {
         return setClaimedRewardsInfo(null);
       }
-    });
+    }).catch(console.error);
   }, [chainName, address]);
 
-  const handleAccordionChange = useCallback((panel: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+  const handleAccordionChange = useCallback((panel: number) => (_event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : -1);
   }, []);
 
@@ -245,8 +245,8 @@ export default function ClaimedRewardsChart({ address }: Props): React.ReactElem
       return;
     }
 
-    const start = dataToShow[next ? pageIndex - 1 : pageIndex + 1] && dataToShow[next ? pageIndex - 1 : pageIndex + 1][1][0];
-    const end = dataToShow[next ? pageIndex - 1 : pageIndex + 1] && dataToShow[next ? pageIndex - 1 : pageIndex + 1][1][6];
+    const start = dataToShow[next ? pageIndex - 1 : pageIndex + 1]?.[1][0];
+    const end = dataToShow[next ? pageIndex - 1 : pageIndex + 1]?.[1][6];
 
     const newDate = new Date(weeksRewards[next ? 0 : weeksRewards?.length - 1][next ? 6 : 0].timestamp * 1000);
     const estimatedStart = next ? formateDate(new Date(newDate.setDate(newDate.getDate() + 1)).getTime() / 1000) : formateDate(new Date(newDate.setDate(newDate.getDate() - 7)).getTime() / 1000);
@@ -271,14 +271,14 @@ export default function ClaimedRewardsChart({ address }: Props): React.ReactElem
           weight: 'bold'
         },
         callbacks: {
-          label: function (TooltipItem: string | { label: string }[] | undefined) {
+          label: function (TooltipItem: { formattedValue: string; } | undefined) {
             if (!dataToShow || !TooltipItem) {
               return;
             }
 
             return `${TooltipItem.formattedValue} ${token ?? ''}`;
           },
-          title: function (TooltipItem: string | { label: string }[] | undefined) {
+          title: function (TooltipItem: { label: string; }[] | undefined) {
             if (!dataToShow || !TooltipItem || !token) {
               return;
             }
@@ -318,7 +318,7 @@ export default function ClaimedRewardsChart({ address }: Props): React.ReactElem
         }
       }
     }
-  };
+  } as unknown as PluginChartOptions<'bar'>;
 
   const data = {
     datasets: [
@@ -328,11 +328,11 @@ export default function ClaimedRewardsChart({ address }: Props): React.ReactElem
         borderColor: '#3A0B63',
         borderRadius: 3,
         borderWidth: 1,
-        data: dataToShow && dataToShow[pageIndex][0],
+        data: dataToShow?.[pageIndex][0],
         label: token
       }
     ],
-    labels: dataToShow && dataToShow[pageIndex][1]
+    labels: dataToShow?.[pageIndex][1]
   };
 
   const toggleDetails = useCallback(() => {
@@ -441,7 +441,14 @@ export default function ClaimedRewardsChart({ address }: Props): React.ReactElem
             </Grid>
           </Grid>
         }
-        {claimedRewardsInfo === undefined && !descSortedRewards && <Progress pt='20px' size={125} title={t('Loading rewards...')} type='cubes' />}
+        {claimedRewardsInfo === undefined && !descSortedRewards &&
+        <Progress
+          pt='20px'
+          size={125}
+          title={t('Loading rewards...')}
+          type='cubes'
+        />
+        }
         {claimedRewardsInfo === null &&
           <Grid container item justifyContent='center'>
             <Typography fontSize='16px' fontWeight={400}>
