@@ -283,35 +283,35 @@ export default function useReferendum (address: AccountId | string | undefined, 
 
     // Merge comments from referendumPA with referendumCommentsSS if available
     const comments = referendumCommentsSS
-      ? referendumPA?.comments.map((comment) => {
-        // Find a matching comment in referendumCommentsSS based on proposer or id
+      ? referendumPA?.comments.map((commentPA) => {
+        // Find a matching commentPA in referendumCommentsSS based on proposer or id
         const matchedComment = referendumCommentsSS.find(
-          (commentSS) => commentSS.proposer === comment.proposer || commentSS.id === comment.id
+          (commentSS) => commentSS.proposer === commentPA.proposer || commentSS.id === commentPA.id
         );
 
-        // If no matching comment is found, return the original comment unchanged
+        // If no matching comment is found, return the original commentPA unchanged
         if (!matchedComment) {
-          return comment;
+          return commentPA;
         }
 
         // Determine which replies to use:
         // 1. Use original replies if they exist
         // 2. Otherwise, use matched comment replies if they exist
         // 3. If neither exists, use an empty array
-        const mergedReplies = comment.replies.length > 0
-          ? comment.replies
+        const mergedReplies = commentPA.replies.length > 0
+          ? commentPA.replies
           : matchedComment.replies?.length > 0
             ? matchedComment.replies
             : [];
 
-        // Merge the original comment with the matched comment:
-        // - Spread the original comment properties
+        // Merge the original commentPA with the matched comment:
+        // - Spread the original commentPA properties
         // - Overwrite with matched comment properties
         // - Set the replies based on the mergedReplies logic
         return {
-          ...comment,
+          ...commentPA,
           ...matchedComment,
-          replies: mergedReplies,
+          replies: mergedReplies
         };
       })
       : referendumPA?.comments; // If referendumCommentsSS doesn't exist, use referendumPA comments as is
