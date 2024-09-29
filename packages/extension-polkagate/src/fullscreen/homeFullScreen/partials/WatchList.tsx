@@ -18,47 +18,47 @@ interface Props {
   groupedAssets: AssetsWithUiAndPrice[] | undefined
 }
 
-function WatchList ({ groupedAssets }: Props): React.ReactElement {
-  const { t } = useTranslation();
+const AssetPriceChange = ({ asset }: { asset: AssetsWithUiAndPrice }) => {
   const currency = useCurrency();
   const pricesInCurrencies = usePrices();
+
+  const logoInfo = useMemo(() => asset && getLogo2(asset.genesisHash, asset.token), [asset]);
+  const change = pricesInCurrencies ? pricesInCurrencies.prices[asset.priceId]?.change : 0;
+
+  return (
+    <Grid container item justifyContent='space-between'>
+      <Grid alignItems='center' container item width='fit-content'>
+        <AssetLogo assetSize='20px' baseTokenSize='14px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+        <Typography fontSize='16px' fontWeight={500} pl='5px' width='150px'>
+          {asset.token} - {currency?.code}
+        </Typography>
+      </Grid>
+      <Grid alignItems='center' columnGap='10px' container item width='fit-content'>
+        <FormatPrice
+          decimalPoint={asset.price > 1 ? 2 : 4}
+          fontSize='16px'
+          fontWeight={600}
+          num={asset.price}
+        />
+        <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '21px', m: 'auto', width: '3px' }} />
+        {change > 0
+          ? <UpIcon sx={{ color: 'success.main', fontSize: '40px' }} />
+          : <DownIcon sx={{ color: 'warning.main', fontSize: '40px' }} />
+        }
+        <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
+          {`${(change ?? 0).toFixed(2)}%`}
+        </Typography>
+      </Grid>
+    </Grid>
+  );
+};
+
+function WatchList ({ groupedAssets }: Props): React.ReactElement {
+  const { t } = useTranslation();
 
   const [showMore, setShowMore] = useState<boolean>(false);
 
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
-
-  const DisplayAssetRow = ({ asset }: { asset: AssetsWithUiAndPrice }) => {
-    const logoInfo = useMemo(() => asset && getLogo2(asset.genesisHash, asset.token), [asset]);
-    const change = pricesInCurrencies ? pricesInCurrencies.prices[asset.priceId]?.change : 0;
-
-    return (
-      <Grid container item justifyContent='space-between'>
-        <Grid alignItems='center' container item width='fit-content'>
-          <AssetLogo assetSize='20px' baseTokenSize='14px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
-          <Typography fontSize='16px' fontWeight={500} pl='5px' width='150px'>
-            {asset.token} - {currency?.code}
-          </Typography>
-        </Grid>
-        <Grid alignItems='center' columnGap='10px' container item width='fit-content'>
-          <FormatPrice
-            decimalPoint={asset.price > 1 ? 2 : 4}
-            fontSize='16px'
-            fontWeight={600}
-            num={asset.price}
-          />
-          <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '21px', m: 'auto', width: '3px' }} />
-          {change > 0
-            ? <UpIcon sx={{ color: 'success.main', fontSize: '40px' }} />
-            : <DownIcon sx={{ color: 'warning.main', fontSize: '40px' }} />
-          }
-          <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
-            {`${(change ?? 0).toFixed(2)}%`}
-          </Typography>
-        </Grid>
-      </Grid>
-    );
-  };
-
   const uniqueAssets = useMemo(() => {
     const seenTokens = new Set();
 
@@ -78,7 +78,7 @@ function WatchList ({ groupedAssets }: Props): React.ReactElement {
       {uniqueAssets && uniqueAssets.length > 0 &&
         <Grid container item pt='10px'>
           {uniqueAssets.slice(0, 3).map((asset, index) => (
-            <DisplayAssetRow
+            <AssetPriceChange
               asset={asset}
               key={index}
             />
@@ -87,7 +87,7 @@ function WatchList ({ groupedAssets }: Props): React.ReactElement {
             <Grid container item justifyContent='flex-end'>
               <Collapse in={showMore} orientation='vertical' sx={{ '> .MuiCollapse-wrapper .MuiCollapse-wrapperInner': { display: 'grid', rowGap: '10px' }, width: '100%' }}>
                 {uniqueAssets.slice(3).map((asset, index) => (
-                  <DisplayAssetRow
+                  <AssetPriceChange
                     asset={asset}
                     key={index}
                   />

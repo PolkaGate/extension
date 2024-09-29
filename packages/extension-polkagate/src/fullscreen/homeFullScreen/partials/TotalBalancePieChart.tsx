@@ -78,6 +78,37 @@ export function adjustColor (token: string, color: string | undefined, theme: Th
   return color || DEFAULT_COLOR;
 }
 
+const DisplayAssetRow = ({ asset, hideNumbers }: { asset: AssetsWithUiAndPrice, hideNumbers: boolean | undefined }) => {
+  const logoInfo = useMemo(() => asset && getLogo2(asset.genesisHash, asset.token), [asset]);
+
+  return (
+    <Grid container item justifyContent='space-between'>
+      <Grid alignItems='center' container item width='fit-content'>
+        <AssetLogo assetSize='20px' baseTokenSize='14px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+        <Typography fontSize='16px' fontWeight={500} pl='5px' width='40px'>
+          {asset.token}
+        </Typography>
+      </Grid>
+      <Grid alignItems='center' columnGap='10px' container item width='fit-content'>
+        <Typography fontSize='16px' fontWeight={600}>
+          {hideNumbers || hideNumbers === undefined
+            ? '****'
+            : <FormatPrice
+              fontSize='16px'
+              fontWeight={600}
+              num={asset.totalBalance}
+            />
+          }
+        </Typography>
+        <Divider orientation='vertical' sx={{ bgcolor: asset.ui.color, height: '21px', m: 'auto', width: '5px' }} />
+        <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
+          {hideNumbers || hideNumbers === undefined ? '****' : `${asset.percent}%`}
+        </Typography>
+      </Grid>
+    </Grid>
+  );
+};
+
 function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -88,7 +119,10 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
 
   const [showMore, setShowMore] = useState<boolean>(false);
 
-  const calPrice = useCallback((assetPrice: number | undefined, balance: BN, decimal: number) => parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0), []);
+  const calPrice = useCallback((assetPrice: number | undefined, balance: BN, decimal: number) =>
+    parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0), 
+  []);
+
   const formatNumber = useCallback(
     (num: number, decimal = 2) =>
       parseFloat(Math.trunc(num) === 0 ? num.toFixed(decimal) : num.toFixed(1))
@@ -157,37 +191,6 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
 
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
-  const DisplayAssetRow = ({ asset }: { asset: AssetsWithUiAndPrice }) => {
-    const logoInfo = useMemo(() => asset && getLogo2(asset.genesisHash, asset.token), [asset]);
-
-    return (
-      <Grid container item justifyContent='space-between'>
-        <Grid alignItems='center' container item width='fit-content'>
-          <AssetLogo assetSize='20px' baseTokenSize='14px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
-          <Typography fontSize='16px' fontWeight={500} pl='5px' width='40px'>
-            {asset.token}
-          </Typography>
-        </Grid>
-        <Grid alignItems='center' columnGap='10px' container item width='fit-content'>
-          <Typography fontSize='16px' fontWeight={600}>
-            {hideNumbers || hideNumbers === undefined
-              ? '****'
-              : <FormatPrice
-                fontSize='16px'
-                fontWeight={600}
-                num={asset.totalBalance}
-              />
-            }
-          </Typography>
-          <Divider orientation='vertical' sx={{ bgcolor: asset.ui.color, height: '21px', m: 'auto', width: '5px' }} />
-          <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
-            {hideNumbers || hideNumbers === undefined ? '****' : `${asset.percent}%`}
-          </Typography>
-        </Grid>
-      </Grid>
-    );
-  };
-
   return (
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px 10px', width: '430px' }}>
       <Grid alignItems='center' container gap='15px' item justifyContent='center'>
@@ -216,6 +219,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
             {assets.slice(0, 3).map((asset, index) => (
               <DisplayAssetRow
                 asset={asset}
+                hideNumbers={hideNumbers}
                 key={index}
               />
             ))}
@@ -225,6 +229,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
                   {assets.slice(3).map((asset, index) => (
                     <DisplayAssetRow
                       asset={asset}
+                      hideNumbers={hideNumbers}
                       key={index}
                     />
                   ))}
