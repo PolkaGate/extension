@@ -83,14 +83,14 @@ export default function LockedInReferendaFS ({ address, price, refreshNeeded, se
               />
             </Grid>
             <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '35px', mx: '10px', my: 'auto' }} />
-            <Grid item sx={{ '> div span': { display: 'block' }, fontSize: '22px', fontWeight: 400 }}>
-              <FormatPrice
-                amount={totalLocked}
-                decimals={decimal}
-                price={price}
-                skeletonHeight={20}
-              />
-            </Grid>
+            <FormatPrice
+              amount={totalLocked}
+              decimals={decimal}
+              fontSize= '22px'
+              fontWeight={ 400}
+              price={price}
+              skeletonHeight={20}
+            />
           </Grid>
           <Typography fontSize='12px' fontWeight={500} textAlign='right'>
             {api && unlockableAmount && !unlockableAmount.isZero()

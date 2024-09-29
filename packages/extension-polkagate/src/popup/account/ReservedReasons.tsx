@@ -95,10 +95,12 @@ export default function ReservedReasons ({ address, assetId, identity, setShow, 
                           balance={value}
                         />
                       </Grid>
-                      <Grid item pt='6px' sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
+                      <Grid item pt='6px' sx={{ letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
                         <FormatPrice
                           amount={value}
                           decimals={decimal}
+                          fontSize= '16px'
+                          fontWeight= {300}
                           price={price}
                         />
                       </Grid>

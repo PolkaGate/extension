@@ -145,11 +145,12 @@ export default function ReferendumDescription ({ address, currentTreasuryApprova
                         />
                       </Grid>
                       <Divider flexItem orientation='vertical' sx={{ bgcolor: theme.palette.mode === 'light' ? 'inherit' : 'text.disabled', mx: '7px', my: '8px' }} />
-                      <Grid item sx={{ color: theme.palette.mode === 'light' ? 'text.disabled' : undefined, opacity: theme.palette.mode === 'dark' ? 0.6 : 1 }}>
+                      <Grid item sx={{ opacity: theme.palette.mode === 'dark' ? 0.6 : 1 }}>
                         <FormatPrice
                           decimalPoint={2}
                           num={requestedInUSD || 0}
                           sign='$'
+                          textColor={ theme.palette.mode === 'light' ? 'text.disabled' : undefined}
                         />
                       </Grid>
                     </Grid>

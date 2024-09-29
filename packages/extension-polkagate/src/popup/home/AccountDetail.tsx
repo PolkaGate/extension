@@ -102,13 +102,14 @@ export default function AccountDetail ({ address, chain, goToAccount, hideNumber
     <>
       {priceChainName === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== priceChainName
         ? <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
-        : <Grid item sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 300 }}>
-          <FormatPrice
-            amount={getValue('total', balanceToShow)}
-            decimals={balanceToShow.decimal}
-            price={price}
-          />
-        </Grid>
+        : <FormatPrice
+          amount={getValue('total', balanceToShow)}
+          decimals={balanceToShow.decimal}
+          fontSize= '18px'
+          fontWeight= { 300}
+          price={price}
+          textColor= {isPriceOutdated ? 'primary.light' : 'text.primary'}
+        />
       }
     </>
   );

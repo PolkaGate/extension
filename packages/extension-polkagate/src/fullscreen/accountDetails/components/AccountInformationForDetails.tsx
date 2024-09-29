@@ -28,15 +28,16 @@ interface PriceJSXType {
 }
 
 const Price = ({ balanceToShow, isPriceOutdated, price }: PriceJSXType) => (
-  <Grid item sx={{ '> div span': { display: 'block' }, color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 400 }}>
-    <FormatPrice
-      amount={getValue('total', balanceToShow)}
-      decimals={balanceToShow?.decimal}
-      price={price}
-      skeletonHeight={22}
-      width='80px'
-    />
-  </Grid>
+  <FormatPrice
+    amount={getValue('total', balanceToShow)}
+    decimals={balanceToShow?.decimal}
+    fontSize='28px'
+    fontWeight= { 400 }
+    price={price}
+    skeletonHeight={22}
+    textColor={ isPriceOutdated ? 'primary.light' : 'text.primary'}
+    width='80px'
+  />
 );
 
 interface BalanceJSXType {
