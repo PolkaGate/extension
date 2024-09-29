@@ -14,8 +14,8 @@ import { Circle } from 'better-react-spinkit';
 import React, { useEffect, useState } from 'react';
 
 import { Label } from '../../components';
-import { nFormatter } from '../../components/FormatPrice';
-import { useCurrency, useTranslation } from '../../hooks';
+import FormatPrice from '../../components/FormatPrice';
+import { useTranslation } from '../../hooks';
 import { toTitleCase } from '../governance/utils/util';
 
 interface Props {
@@ -44,7 +44,6 @@ const TOKEN_PRICE_KEY = 'tokenPrice';
 export default function ShowChainInfo ({ metadata, price, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const currency = useCurrency();
 
   const [selectedChainInfo, setSelectedChainInfo] = useState<SelectedChainInfo | undefined>();
 
@@ -88,7 +87,12 @@ export default function ShowChainInfo ({ metadata, price, style }: Props): React
                   Object.entries(selectedChainInfo).map(([key, value]) => (
                     <Typography fontSize='14px' fontWeight={300} height={`${LINE_HEIGHT}px`} key={key}>
                       {key === TOKEN_PRICE_KEY
-                        ? `${currency?.sign || ''}${nFormatter(value as number, 2)}`
+                        ? <FormatPrice
+                          decimalPoint={4}
+                          fontSize='14px'
+                          fontWeight={300}
+                          num={(value || 0) as number}
+                        />
                         : value ?? '--- ---'
                       }
                     </Typography>

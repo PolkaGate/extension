@@ -49,26 +49,10 @@ const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
   );
 };
 
-export default function AccountDetail ({ address, chain, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
+const NoChainAlert = ({ chain, menuOnClick }: {chain: Chain | null | undefined, menuOnClick: () => void}) => {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const balances = useBalances(address);
-  const chainName = useChainName(address);
-  const { price, priceChainName, priceDate } = useTokenPrice(address);
 
-  const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
-  const isPriceOutdated = useMemo(() => priceDate !== undefined && Date.now() - priceDate > BALANCES_VALIDITY_PERIOD, [priceDate]);
-  const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
-
-  useEffect(() => {
-    if (balances?.chainName === chainName) {
-      return setBalanceToShow(balances);
-    }
-
-    setBalanceToShow(undefined);
-  }, [balances, chainName]);
-
-  const NoChainAlert = () => (
+  return (
     <>
       {chain === null
         ? <Grid alignItems='center' color='text.primary' container onClick={menuOnClick} sx={{ cursor: 'pointer', lineHeight: '27px', textDecoration: 'underline' }}>
@@ -81,8 +65,28 @@ export default function AccountDetail ({ address, chain, goToAccount, hideNumber
       }
     </>
   );
+};
 
-  const Balance = () => (
+const Price = ({ balanceToShow, isPriceOutdated, price, priceChainName }: { isPriceOutdated: boolean, price: number | undefined, priceChainName: string | undefined, balanceToShow: BalancesInfo | undefined}) => {
+  return (
+    <>
+      {priceChainName === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== priceChainName
+        ? <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
+        : <FormatPrice
+          amount={getValue('total', balanceToShow)}
+          decimals={balanceToShow.decimal}
+          fontSize= '18px'
+          fontWeight= { 300}
+          price={price}
+          textColor= {isPriceOutdated ? 'primary.light' : 'text.primary'}
+        />
+      }
+    </>
+  );
+};
+
+const Balance = ({ balanceToShow, isBalanceOutdated }: { balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined}) => {
+  return (
     <>
       {balanceToShow?.decimal
         ? <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary', fontWeight: 500 }}>
@@ -97,23 +101,29 @@ export default function AccountDetail ({ address, chain, goToAccount, hideNumber
       }
     </>
   );
+};
 
-  const Price = () => (
-    <>
-      {priceChainName === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== priceChainName
-        ? <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
-        : <Grid item sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 300 }}>
-          <FormatPrice
-            amount={getValue('total', balanceToShow)}
-            decimals={balanceToShow.decimal}
-            price={price}
-          />
-        </Grid>
-      }
-    </>
-  );
+const BalanceRow = ({ address, hideNumbers }: { address: string, hideNumbers: boolean | undefined}) => {
+  const theme = useTheme();
 
-  const BalanceRow = () => (
+  const balances = useBalances(address);
+  const chainName = useChainName(address);
+
+  const { price, priceChainName, priceDate } = useTokenPrice(address);
+  const isPriceOutdated = useMemo(() => priceDate !== undefined && Date.now() - priceDate > BALANCES_VALIDITY_PERIOD, [priceDate]); 
+  const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
+
+  const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
+
+  useEffect(() => {
+    if (balances?.chainName === chainName) {
+      return setBalanceToShow(balances);
+    }
+
+    setBalanceToShow(undefined);
+  }, [balances, chainName]);
+
+  return (
     <Grid alignItems='center' container fontSize='18px' item xs>
       {hideNumbers || hideNumbers === undefined
         ? <Box
@@ -121,7 +131,10 @@ export default function AccountDetail ({ address, chain, goToAccount, hideNumber
           src={(theme.palette.mode === 'dark' ? stars5White : stars5Black) as string}
           sx={{ height: '27px', width: '77px' }}
         />
-        : <Balance />
+        : <Balance
+          balanceToShow={balanceToShow}
+          isBalanceOutdated={isBalanceOutdated}
+        />
       }
       <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />
       {hideNumbers
@@ -130,10 +143,22 @@ export default function AccountDetail ({ address, chain, goToAccount, hideNumber
           src={(theme.palette.mode === 'dark' ? stars5White : stars5Black) as string}
           sx={{ height: '27px', width: '77px' }}
         />
-        : <Price />
+        : <Price
+          balanceToShow={balanceToShow}
+          isPriceOutdated={isPriceOutdated}
+          price={price}
+          priceChainName={priceChainName}
+        />
       }
     </Grid>
   );
+};
+
+function AccountDetail ({ address, chain, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
+  const chainName = useChainName(address);
+
+  console.log('mmmmmmmm');
 
   return (
     <Grid container direction='column' sx={{ width: '70%' }}>
@@ -155,13 +180,21 @@ export default function AccountDetail ({ address, chain, goToAccount, hideNumber
       </Grid>
       <Grid alignItems='center' container item>
         {!chain
-          ? <NoChainAlert />
+          ? <NoChainAlert
+            chain={chain}
+            menuOnClick={menuOnClick}
+          />
           : <Grid alignItems='center' container>
             <RecentChains address={address} chainName={chainName} />
-            <BalanceRow />
+            <BalanceRow
+              address={address}
+              hideNumbers={hideNumbers}
+            />
           </Grid>
         }
       </Grid>
     </Grid>
   );
 }
+
+export default React.memo(AccountDetail);

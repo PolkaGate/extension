@@ -56,13 +56,13 @@ const BalanceRow = ({ api, asset, pricesInCurrencies }: BalanceRowProps) => {
           token={asset.token}
         />
       </Grid>
-      <Grid item sx={{ fontSize: '13px', fontWeight: 400, lineHeight: 1 }}>
-        <FormatPrice
-          amount={total}
-          decimals={asset.decimal}
-          price={pricesInCurrencies?.prices?.[asset.priceId]?.value ?? 0}
-        />
-      </Grid>
+      <FormatPrice
+        amount={total}
+        decimals={asset.decimal}
+        fontSize='13px'
+        fontWeight={ 400}
+        price={pricesInCurrencies?.prices?.[asset.priceId]?.value ?? 0}
+      />
     </Grid>
   );
 };
