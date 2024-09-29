@@ -60,6 +60,7 @@ const BalanceRow = ({ api, asset, pricesInCurrencies }: BalanceRowProps) => {
         <FormatPrice
           amount={total}
           decimals={asset.decimal}
+          fontSize='13px'
           price={pricesInCurrencies?.prices?.[asset.priceId]?.value ?? 0}
         />
       </Grid>
