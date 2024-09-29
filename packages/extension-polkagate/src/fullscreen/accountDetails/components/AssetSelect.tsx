@@ -11,7 +11,7 @@ import { useAssetHubAssets, useTokens } from '../../../hooks';
 
 interface Props {
   address: string | undefined;
-  onChange: (value: number) => void;
+  onChange: (value: number | string) => void;
   label: string;
   style: SxProps<Theme> | undefined;
   assetId: number | undefined;
