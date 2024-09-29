@@ -13,8 +13,8 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
 import { AccountsAssetsContext, AssetLogo } from '../../../components';
-import { nFormatter } from '../../../components/FormatPrice';
-import { useCurrency, usePrices, useTranslation, useYouHave } from '../../../hooks';
+import FormatPrice from '../../../components/FormatPrice';
+import { usePrices, useTranslation, useYouHave } from '../../../hooks';
 import { isPriceOutdated } from '../../../popup/home/YouHave';
 import { DEFAULT_COLOR, TEST_NETS, TOKENS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
@@ -55,7 +55,7 @@ export interface AssetsWithUiAndPrice {
   votingBalance?: BN
 }
 
-export function adjustColor(token: string, color: string | undefined, theme: Theme): string {
+export function adjustColor (token: string, color: string | undefined, theme: Theme): string {
   if (color && (TOKENS_WITH_BLACK_LOGO.find((t) => t === token) && theme.palette.mode === 'dark')) {
     const cleanedColor = color.replace(/^#/, '');
 
@@ -78,10 +78,9 @@ export function adjustColor(token: string, color: string | undefined, theme: The
   return color || DEFAULT_COLOR;
 }
 
-function TotalBalancePieChart({ hideNumbers, setGroupedAssets }: Props): React.ReactElement {
+function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
-  const currency = useCurrency();
   const pricesInCurrencies = usePrices();
   const youHave = useYouHave();
 
@@ -171,7 +170,14 @@ function TotalBalancePieChart({ hideNumbers, setGroupedAssets }: Props): React.R
         </Grid>
         <Grid alignItems='center' columnGap='10px' container item width='fit-content'>
           <Typography fontSize='16px' fontWeight={600}>
-            {hideNumbers || hideNumbers === undefined ? '****' : `${currency?.sign ?? ''}${nFormatter(asset.totalBalance ?? 0, 2)}`}
+            {hideNumbers || hideNumbers === undefined
+              ? '****'
+              : <FormatPrice
+                fontSize='16px'
+                fontWeight={600}
+                num={asset.totalBalance}
+              />
+            }
           </Typography>
           <Divider orientation='vertical' sx={{ bgcolor: asset.ui.color, height: '21px', m: 'auto', width: '5px' }} />
           <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
@@ -194,9 +200,14 @@ function TotalBalancePieChart({ hideNumbers, setGroupedAssets }: Props): React.R
             src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
             sx={{ height: '60px', width: '154px' }}
           />
-          : <Typography fontSize='40px' fontWeight={700} sx={{ color: isPriceOutdated(youHave) ? 'primary.light' : 'text.primary' }}>
-            {`${currency?.sign ?? ''}${nFormatter(youHave?.portfolio ?? 0, 2)}`}
-          </Typography>}
+          : <FormatPrice
+            fontSize='40px'
+            fontWeight={700}
+            lineHeight={1.5}
+            num={youHave?.portfolio}
+            textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
+          />
+        }
       </Grid>
       {youHave?.portfolio !== 0 && assets && assets.length > 0 &&
         <Grid container item sx={{ borderTop: '1px solid', borderTopColor: 'divider', pt: '10px' }}>

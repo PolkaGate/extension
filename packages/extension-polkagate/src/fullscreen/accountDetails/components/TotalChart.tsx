@@ -13,8 +13,8 @@ import { Chart, registerables } from 'chart.js';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { AssetLogo } from '../../../components';
-import { nFormatter } from '../../../components/FormatPrice';
-import { useCurrency, useTranslation } from '../../../hooks';
+import FormatPrice from '../../../components/FormatPrice';
+import { useTranslation } from '../../../hooks';
 import { DEFAULT_COLOR } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import { amountToHuman } from '../../../util/utils';
@@ -31,10 +31,9 @@ interface AssetsToShow extends FetchedBalance {
   color: string
 }
 
-export default function TotalChart({ accountAssets, pricesInCurrency }: Props): React.ReactElement {
+export default function TotalChart ({ accountAssets, pricesInCurrency }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const currency = useCurrency();
   const chartRef = useRef(null);
 
   Chart.register(...registerables);
@@ -45,10 +44,10 @@ export default function TotalChart({ accountAssets, pricesInCurrency }: Props): 
   const formatNumber = useCallback((num: number): number => parseFloat(Math.trunc(num) === 0 ? num.toFixed(2) : num.toFixed(1)), []);
 
   const { assets, totalWorth } = useMemo(() => {
-    if (accountAssets && accountAssets.length) {
+    if (accountAssets?.length) {
       const _assets = accountAssets as unknown as AssetsToShow[];
 
-      let totalWorth = 0;
+      let total = 0;
 
       /** to add asset's worth and color */
       accountAssets.forEach((asset, index) => {
@@ -58,12 +57,12 @@ export default function TotalChart({ accountAssets, pricesInCurrency }: Props): 
         _assets[index].worth = assetWorth;
         _assets[index].color = adjustColor(asset.token, assetColor, theme);
 
-        totalWorth += assetWorth;
+        total += assetWorth;
       });
 
       /** to add asset's percentage */
       _assets.forEach((asset) => {
-        asset.percentage = formatNumber((asset.worth / totalWorth) * 100);
+        asset.percentage = formatNumber((asset.worth / total) * 100);
 
         return asset;
       });
@@ -71,7 +70,7 @@ export default function TotalChart({ accountAssets, pricesInCurrency }: Props): 
       _assets.sort((a, b) => b.worth - a.worth);
       const nonZeroAssets = _assets.filter((asset) => asset.worth > 0);
 
-      return { assets: nonZeroAssets, totalWorth: nFormatter(totalWorth, 2) };
+      return { assets: nonZeroAssets, totalWorth: total };
     }
 
     return { assets: undefined, totalWorth: undefined };
@@ -81,7 +80,7 @@ export default function TotalChart({ accountAssets, pricesInCurrency }: Props): 
     const worths = assets?.map(({ worth }) => worth);
     const colors = assets?.map(({ color }) => color);
 
-    //@ts-ignore
+    // @ts-ignore
     const chartInstance = new Chart(chartRef.current, {
       data: {
         datasets: [{
@@ -100,7 +99,7 @@ export default function TotalChart({ accountAssets, pricesInCurrency }: Props): 
               label: function (context) {
                 const index = colors?.findIndex((val) => val === context.element.options['backgroundColor']);
 
-                return index && index != -1 ? assets?.[index]?.token as string :'UNIT';
+                return index && index !== -1 ? assets?.[index]?.token : 'UNIT';
               }
             }
           }
@@ -109,10 +108,10 @@ export default function TotalChart({ accountAssets, pricesInCurrency }: Props): 
       type: 'doughnut'
     });
 
-    // Clean up the chart instance on component unmount
     return () => {
       chartInstance.destroy();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assets?.length, theme.palette.divider]);
 
   return (
@@ -121,9 +120,12 @@ export default function TotalChart({ accountAssets, pricesInCurrency }: Props): 
         <Typography fontSize='18px' fontWeight={400}>
           {t('Total')}
         </Typography>
-        <Typography fontSize='36px' fontWeight={700}>
-          {`${currency?.sign ?? ''}${totalWorth ?? 0}`}
-        </Typography>
+        <FormatPrice
+          fontSize='36px'
+          fontWeight={700}
+          num={totalWorth}
+          skeletonHeight={22}
+        />
       </Grid>
       {assets && assets.length > 0 &&
         <Grid container item sx={{ borderTop: '1px solid', borderTopColor: 'divider', py: '5px' }}>

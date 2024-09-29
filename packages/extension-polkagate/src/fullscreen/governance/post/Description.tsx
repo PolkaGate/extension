@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Proposal, Referendum } from '../utils/types';
@@ -15,9 +14,8 @@ import rehypeRaw from 'rehype-raw';
 
 import { BN } from '@polkadot/util';
 
-import { Identity, ShowBalance, ShowValue } from '../../../components';
-import { nFormatter } from '../../../components/FormatPrice';
-import { useApi, useChain, useDecimal, useToken, useTokenPrice, useTranslation } from '../../../hooks';
+import { FormatPrice, Identity, ShowBalance, ShowValue } from '../../../components';
+import { useInfo, useTokenPrice, useTranslation } from '../../../hooks';
 import useStyles from '../styles/styles';
 import { LabelValue } from '../TrackStats';
 import { STATUS_COLOR } from '../utils/consts';
@@ -35,10 +33,7 @@ const DEFAULT_CONTENT = 'This referendum does not have a description provided by
 export default function ReferendumDescription ({ address, currentTreasuryApprovalList, referendum }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const api = useApi(address);
-  const chain = useChain(address);
-  const decimal = useDecimal(address);
-  const token = useToken(address);
+  const { api, chain, decimal, token } = useInfo(address);
   const { price } = useTokenPrice(address);
   const style = useStyles();
 
@@ -149,9 +144,13 @@ export default function ReferendumDescription ({ address, currentTreasuryApprova
                           valueStyle={{ fontSize: 16, fontWeight: 500, pl: '5px' }}
                         />
                       </Grid>
-                      <Divider flexItem orientation='vertical' sx={{  bgcolor: theme.palette.mode === 'light' ? 'inherit' : 'text.disabled', mx: '7px', my: '8px' }} />
+                      <Divider flexItem orientation='vertical' sx={{ bgcolor: theme.palette.mode === 'light' ? 'inherit' : 'text.disabled', mx: '7px', my: '8px' }} />
                       <Grid item sx={{ color: theme.palette.mode === 'light' ? 'text.disabled' : undefined, opacity: theme.palette.mode === 'dark' ? 0.6 : 1 }}>
-                        {`$${requestedInUSD ? nFormatter(requestedInUSD, 2) : '0'}`}
+                        <FormatPrice
+                          decimalPoint={2}
+                          num={requestedInUSD || 0}
+                          sign='$'
+                        />
                       </Grid>
                     </Grid>
                   </>

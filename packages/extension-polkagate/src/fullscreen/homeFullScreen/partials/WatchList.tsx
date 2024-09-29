@@ -10,7 +10,7 @@ import { Collapse, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { AssetLogo } from '../../../components';
-import { nFormatter } from '../../../components/FormatPrice';
+import FormatPrice from '../../../components/FormatPrice';
 import { useCurrency, usePrices, useTranslation } from '../../../hooks';
 import getLogo2 from '../../../util/getLogo2';
 
@@ -18,7 +18,7 @@ interface Props {
   groupedAssets: AssetsWithUiAndPrice[] | undefined
 }
 
-function WatchList({ groupedAssets }: Props): React.ReactElement {
+function WatchList ({ groupedAssets }: Props): React.ReactElement {
   const { t } = useTranslation();
   const currency = useCurrency();
   const pricesInCurrencies = usePrices();
@@ -40,9 +40,12 @@ function WatchList({ groupedAssets }: Props): React.ReactElement {
           </Typography>
         </Grid>
         <Grid alignItems='center' columnGap='10px' container item width='fit-content'>
-          <Typography fontSize='16px' fontWeight={600}>
-            {`${currency?.sign ?? ''}${nFormatter(asset.price ?? 0, asset.price > 1 ? 2 : 4)}`}
-          </Typography>
+          <FormatPrice
+            decimalPoint={asset.price > 1 ? 2 : 4}
+            fontSize='16px'
+            fontWeight={600}
+            num={asset.price}
+          />
           <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '21px', m: 'auto', width: '3px' }} />
           {change > 0
             ? <UpIcon sx={{ color: 'success.main', fontSize: '40px' }} />
