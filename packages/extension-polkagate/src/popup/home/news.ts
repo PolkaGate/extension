@@ -10,10 +10,11 @@ export interface News {
 
 export const news: News[] = [
   {
-    version: '0.12.0',
+    version: '0.14.0',
     notes: [
-      'Add Your Chain: If your favorite chain isn’t available in the extension, you can now add it yourself using an RPC endpoint address.',
-      'Auto Mode Remote Node: RPCs are now automatically selected based on your location and latency, ensuring optimal performance.',
+      'Add Your Chain: If your favorite chain isn’t available in the extension, you can now add it manually using an RPC endpoint address.',
+      'BTC and ETH as currency: View your token balance equivalent in BTC, ETH, and other fiat currencies.',
+      'Auto Mode Remote Node: RPCs are now automatically selected based on your location and latency, for optimal performance.',
       'Auto Metadata Update: Metadata updates automatically in the background on supported chains, eliminating the need for manual updates.'
     ]
   },

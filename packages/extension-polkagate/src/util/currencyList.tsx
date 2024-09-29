@@ -18,6 +18,18 @@ export const CURRENCY_LIST = [
     sign: '£'
   },
   {
+    code: 'BTC',
+    country: 'Bitcoin',
+    currency: 'BTC',
+    sign: '₿'
+  },
+  {
+    code: 'ETH',
+    country: 'Ethereum',
+    currency: 'ETH',
+    sign: 'Ξ'
+  },
+  {
     code: 'AED',
     country: 'Emirates',
     currency: 'Dirham',

@@ -5,6 +5,7 @@
 import type { CurrencyItemType } from '../partials/Currency';
 
 import { Box, Grid, Typography, useTheme } from '@mui/material';
+import { assetsBtcSVG, assetsEthSVG } from '@polkagate/apps-config/ui/logos/assets';
 import * as flags from 'country-flag-icons/string/3x2';
 import React, { useMemo } from 'react';
 
@@ -18,6 +19,15 @@ function CurrencyItem ({ currency, onclick }: Props): React.ReactElement {
 
   const flagSVG = useMemo(() => {
     const countryCode = currency.code.slice(0, 2).toUpperCase();
+
+    if (currency.code === 'BTC') {
+      return assetsBtcSVG;
+    }
+
+    if (currency.code === 'ETH') {
+      return assetsEthSVG;
+    }
+
     const svg = (flags as Record<string, string>)[countryCode];
 
     if (svg) {
