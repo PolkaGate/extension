@@ -9,7 +9,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AccountContext, ActionContext } from '../../components';
 import { useAccountsOrder, useAlerts, useFullscreen, useProfileAccounts, useTranslation } from '../../hooks';
 import { AddNewAccountButton } from '../../partials';
-import { FullScreenHeader } from '../governance/FullScreenHeader';
+import FullScreenHeader from '../governance/FullScreenHeader';
 import HeaderComponents from './components/HeaderComponents';
 import DraggableAccountsList from './partials/DraggableAccountList';
 import HomeMenu from './partials/HomeMenu';

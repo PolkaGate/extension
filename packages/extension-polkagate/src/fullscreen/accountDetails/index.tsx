@@ -23,7 +23,7 @@ import ReceiveModal from '../../popup/receive/ReceiveModal';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import getParentNameSuri from '../../util/getParentNameSuri';
 import { getPriceIdByChainName } from '../../util/utils';
-import { FullScreenHeader } from '../governance/FullScreenHeader';
+import FullScreenHeader from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import DeriveAccountModal from '../partials/DeriveAccountModal';
 import ExportAccountModal from '../partials/ExportAccountModal';

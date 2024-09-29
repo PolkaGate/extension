@@ -17,7 +17,7 @@ import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/Inp
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 
 import { AccountContext, GenesisHashOptionsContext, Label, ProfileInput, SelectChain, TwoButtons, VaadinIcon } from '../../../components';
-import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
+import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useInfo, useProxiedAccounts, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata, tieAccount, updateMeta } from '../../../messaging';
 import { FULLSCREEN_WIDTH, PROXY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';

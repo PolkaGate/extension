@@ -23,7 +23,7 @@ import { getLatestReferendums, getReferendumsListSb, getTrackOrFellowshipReferen
 import { AllReferendaStats } from './AllReferendaStats';
 import Bread from './Bread';
 import FellowshipsList from './FellowshipsList';
-import { FullScreenHeader } from './FullScreenHeader';
+import FullScreenHeader from './FullScreenHeader';
 import ReferendumSummary from './ReferendumSummary';
 import SearchBox from './SearchBox';
 import Toolbar from './Toolbar';

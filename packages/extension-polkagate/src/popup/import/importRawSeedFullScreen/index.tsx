@@ -19,7 +19,7 @@ import { objectSpread } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { Address, GenesisHashOptionsContext, InputWithLabel, TextAreaWithLabel, TwoButtons, VaadinIcon, Warning } from '../../../components';
-import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
+import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';

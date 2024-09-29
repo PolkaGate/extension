@@ -17,7 +17,7 @@ import { createAccountExternal, windowOpen } from '../../messaging';
 import FollowUs from '../../popup/welcome/FollowUs';
 import NeedHelp from '../../popup/welcome/NeedHelp';
 import Privacy from '../../popup/welcome/Privacy';
-import { FullScreenHeader } from '../governance/FullScreenHeader';
+import FullScreenHeader from '../governance/FullScreenHeader';
 import IconBox from './IconBox';
 
 const demoAccount = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
