@@ -13,7 +13,7 @@ import { useParams } from 'react-router';
 import { useBalances, useFullscreen, useStakingAccount, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { FULLSCREEN_WIDTH, STAKING_CHAINS } from '../../../util/constants';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
-import { FullScreenHeader } from '../../governance/FullScreenHeader';
+import FullScreenHeader from '../../governance/FullScreenHeader';
 import Bread from '../../partials/Bread';
 import { Title } from '../../sendFund/InputPage';
 import Entry from '../Entry';

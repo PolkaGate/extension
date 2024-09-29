@@ -12,7 +12,7 @@ import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType
 
 import { Checkbox2, InputWithLabel, TwoButtons, VaadinIcon } from '../../../components';
 import { setStorage } from '../../../components/Loading';
-import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
+import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { PROFILE_TAGS } from '../../../hooks/useProfileAccounts';
 import { createAccountSuri, createSeed } from '../../../messaging';

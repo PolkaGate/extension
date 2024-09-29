@@ -19,7 +19,7 @@ import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfile
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { AccountContext, AccountNamePasswordCreation, ActionContext, Label, Password, VaadinIcon, Warning } from '../../../components';
-import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
+import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { deriveAccount, validateAccount, validateDerivationPath } from '../../../messaging';
 import { nextDerivationPath } from '../../../util/nextDerivationPath';

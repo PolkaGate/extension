@@ -24,7 +24,7 @@ import allChains from '../../util/chains';
 import { FULLSCREEN_WIDTH } from '../../util/constants';
 import { isWss } from '../../util/utils';
 import { metadataFromApi } from '../../util/workers/utils';
-import { FullScreenHeader } from '../governance/FullScreenHeader';
+import FullScreenHeader from '../governance/FullScreenHeader';
 import { convertToHyphenated } from '../governance/utils/util';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';

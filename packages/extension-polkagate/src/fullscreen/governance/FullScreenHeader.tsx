@@ -9,7 +9,7 @@ import { useParams } from 'react-router';
 
 import { logoBlack } from '../../assets/logos';
 import { ActionContext, GenesisHashOptionsContext } from '../../components';
-import { useApi, useChain } from '../../hooks';
+import { useInfo } from '../../hooks';
 import { FullScreenChainSwitch, RemoteNodeSelectorWithSignals } from '../../partials';
 import { EXTENSION_NAME, GOVERNANCE_CHAINS, IDENTITY_CHAINS, SOCIAL_RECOVERY_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
@@ -25,13 +25,12 @@ interface Props {
   unableToChangeAccount?: boolean;
 }
 
-export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
+function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
   const allChains = useContext(GenesisHashOptionsContext);
-
-  const api = useApi(address);
-  const chain = useChain(address);
   const onAction = useContext(ActionContext);
+
+  const { api, chain } = useInfo(address);
   const isThisHome = window.location.hash === '#/';
 
   const filteredChains = useMemo(() => {
@@ -85,7 +84,7 @@ export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false,
                 src={logoBlack as string}
                 sx={{ height: 50, mr: '2%', width: 50 }}
               />
-              <Typography color='white' fontFamily='Eras' fontSize='40px'>
+              <Typography color='white' fontFamily='Eras' fontSize='40px' sx={{ userSelect: 'none' }}>
                 {EXTENSION_NAME}
               </Typography>
             </Grid>
@@ -130,3 +129,5 @@ export function FullScreenHeader ({ _otherComponents, noAccountDropDown = false,
     </Grid>
   );
 }
+
+export default React.memo(FullScreenHeader);
