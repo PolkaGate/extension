@@ -12,11 +12,14 @@ import Progress from '../../../components/Progress';
 import useTranslation from '../../../hooks/useTranslation';
 import Item from './Item';
 
+const UNAVAILABLE_HEIGHT = 320;
+const LIST_HEIGHT = innerHeight - UNAVAILABLE_HEIGHT;
+
 export default function ItemsList ({ items, itemsDetail }: ItemsListProps): React.ReactElement {
   const { t } = useTranslation();
 
   return (
-    <Grid container item sx={{ bgcolor: 'background.paper', gap: '30px', height: '450px', maxHeight: '550px', overflowY: 'scroll', p: '20px 40px' }}>
+    <Grid container item sx={{ bgcolor: 'background.paper', gap: '30px', height: LIST_HEIGHT, maxHeight: LIST_HEIGHT, overflowY: 'scroll', p: '20px 40px' }}>
       {items === undefined &&
         <Grid alignItems='center' container item justifyContent='center'>
           <Progress
