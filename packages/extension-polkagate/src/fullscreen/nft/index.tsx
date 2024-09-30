@@ -13,7 +13,7 @@ import { ActionContext, PButton, Warning } from '../../components';
 import NFTIcon from '../../components/SVG/NFT';
 import { useFullscreen, useInfo, useTranslation } from '../../hooks';
 import { NFT_CHAINS } from '../../util/constants';
-import { FullScreenHeader } from '../governance/FullScreenHeader';
+import FullScreenHeader from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
 import FilterSection from './components/FilterItems';
@@ -125,14 +125,6 @@ function NFT (): React.ReactElement {
                 items={itemsToShow}
                 itemsDetail={itemsDetail}
               />
-              <Grid container item justifyContent='flex-end' sx={{ '> button': { width: '280px' }, '> div': { width: '280px' }, pt: '20px' }}>
-                <PButton
-                  _ml={0}
-                  _mt='0'
-                  _onClick={backHome}
-                  text={t('Back')}
-                />
-              </Grid>
             </>
           }
         </Grid>
