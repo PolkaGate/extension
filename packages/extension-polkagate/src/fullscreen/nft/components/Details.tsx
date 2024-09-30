@@ -30,17 +30,19 @@ export const Detail = ({ inline = true, text, title }: DetailProp) => (
   </Grid>
 );
 
-export default function Details ({ details: { description, image, name }, itemInformation: { collectionId, isNft, itemId }, setShowDetail, show }: DetailsProp): React.ReactElement {
+export default function Details ({ details: { description, image, metadataLink, name }, itemInformation: { collectionId, isNft, itemId }, setShowDetail, show }: DetailsProp): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
   const [showFullscreen, setShowFullscreen] = useState<boolean>(false);
 
   const closeDetail = useCallback(() => setShowDetail(false), [setShowDetail]);
+
   const openFullscreen = useCallback(() => {
     document.documentElement.requestFullscreen().catch(console.error);
     setShowFullscreen(true);
   }, []);
+
   const closeFullscreen = useCallback(() => {
     document.exitFullscreen().catch(console.error);
     setShowFullscreen(false);
@@ -71,7 +73,7 @@ export default function Details ({ details: { description, image, name }, itemIn
                 width='320px'
               />
             </Grid>
-            <Grid alignItems='center' container item sx={{ m: '20px', maxHeight: '400px', overflowY: 'scroll', rowGap: '10px', width: '370px' }}>
+            <Grid alignContent='center' alignItems='center' container item sx={{ m: '20px', maxHeight: '400px', overflowY: 'scroll', rowGap: '10px', width: '370px' }}>
               {name &&
                 <Typography fontSize='14px' fontWeight={400} sx={{ maxWidth: '380px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>
                   {name}
@@ -94,6 +96,18 @@ export default function Details ({ details: { description, image, name }, itemIn
                 <Detail
                   text={itemId}
                   title={isNft ? t('NFT ID') : t('Unique ID')}
+                />
+              }
+              {metadataLink &&
+                <Detail
+                  text={`[application/json](${metadataLink})`}
+                  title={t('Metadata')}
+                />
+              }
+              {image &&
+                <Detail
+                  text={`[image](${image})`}
+                  title={t('Image')}
                 />
               }
             </Grid>

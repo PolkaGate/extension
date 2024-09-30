@@ -6,10 +6,10 @@
 import type { ItemInformation, ItemsDetail } from './utils/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { ActionContext, PButton, Warning } from '../../components';
+import { Warning } from '../../components';
 import NFTIcon from '../../components/SVG/NFT';
 import { useFullscreen, useInfo, useTranslation } from '../../hooks';
 import { NFT_CHAINS } from '../../util/constants';
@@ -30,7 +30,6 @@ function NFT (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-  const onAction = useContext(ActionContext);
   const { address } = useParams<{ address: string }>();
   const { api, formatted, genesisHash } = useInfo(address);
 
@@ -82,8 +81,6 @@ function NFT (): React.ReactElement {
       fetchItemMetadata(item, setItemsDetail).catch(console.error);
     });
   }, [myNFTsDetails, myUniquesDetails]);
-
-  const backHome = useCallback(() => onAction('/'), [onAction]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>

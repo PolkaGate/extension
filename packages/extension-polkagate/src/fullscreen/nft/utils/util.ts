@@ -148,7 +148,7 @@ const fetchWithRetry = async (url: string, attempt = 0): Promise<Response> => {
   }
 };
 
-export const fetchData = async <T>(contentUrl: string | undefined, image = false): Promise<T | null> => {
+export const fetchData = async <T>(contentUrl: string | undefined, isMetadata = false): Promise<T | null> => {
   if (!contentUrl) {
     return null;
   }
@@ -166,7 +166,14 @@ export const fetchData = async <T>(contentUrl: string | undefined, image = false
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return image ? response.url as T : await response.json() as T;
+    if (isMetadata) {
+      return {
+        ...(await response.json() as T),
+        metadataLink: url
+      } as T;
+    } else {
+      return response.url as T;
+    }
   };
 
   if (!isIPFS) {
@@ -198,7 +205,7 @@ export const fetchItemMetadata = async (item: ItemInformation, setItemsDetail: (
       return;
     }
 
-    const itemMetadata = await fetchData<ItemMetadata>(item.data);
+    const itemMetadata = await fetchData<ItemMetadata>(item.data, true);
 
     if (!itemMetadata) {
       setItemsDetail((perv) => ({
@@ -222,7 +229,7 @@ export const fetchItemMetadata = async (item: ItemInformation, setItemsDetail: (
     }
 
     const nftImageContent = itemMetadata.image
-      ? await fetchData<string>(itemMetadata.image, true)
+      ? await fetchData<string>(itemMetadata.image)
       : null;
 
     const detail = {
