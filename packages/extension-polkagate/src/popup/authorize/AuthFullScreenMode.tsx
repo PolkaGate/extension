@@ -12,7 +12,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { AccountContext, AccountsTable, ActionContext, TwoButtons, VaadinIcon, Warning } from '../../components';
-import { FullScreenHeader } from '../../fullscreen/governance/FullScreenHeader';
+import FullScreenHeader from '../../fullscreen/governance/FullScreenHeader';
 import { useFavIcon, useFullscreen, useTranslation } from '../../hooks';
 import { approveAuthRequest, getAuthList, ignoreAuthRequest } from '../../messaging';
 import { areArraysEqual, extractBaseUrl } from '../../util/utils';

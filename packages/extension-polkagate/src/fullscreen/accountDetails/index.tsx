@@ -23,7 +23,7 @@ import ReceiveModal from '../../popup/receive/ReceiveModal';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import getParentNameSuri from '../../util/getParentNameSuri';
 import { getPriceIdByChainName } from '../../util/utils';
-import { FullScreenHeader } from '../governance/FullScreenHeader';
+import FullScreenHeader from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import DeriveAccountModal from '../partials/DeriveAccountModal';
 import ExportAccountModal from '../partials/ExportAccountModal';
@@ -150,14 +150,14 @@ export default function AccountDetails (): React.ReactElement {
     }
   }, [genesisHash, accountAssets, assetId, paramAssetId, selectedAsset]);
 
-  const onChangeAsset = useCallback((id: number) => {
+  const onChangeAsset = useCallback((id: number | string) => {
     if (id === -1) { // this is the id of native token
       setAssetIdOnAssetHub(0);
 
       return;
     }
 
-    setAssetIdOnAssetHub(id); // this works for asset hubs atm
+    setAssetIdOnAssetHub(id as number); // this works for asset hubs atm
   }, []);
 
   const goToSend = useCallback(() => {

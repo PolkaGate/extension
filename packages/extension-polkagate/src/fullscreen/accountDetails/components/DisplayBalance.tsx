@@ -4,12 +4,11 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React from 'react';
-
-import { BN } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance } from '../../../components';
 
@@ -24,7 +23,7 @@ interface Props {
   openCollapse?: boolean;
 }
 
-export default function DisplayBalance({ amount, decimal, disabled, onClick, price, openCollapse, title, token }: Props): React.ReactElement {
+export default function DisplayBalance ({ amount, decimal, disabled, onClick, openCollapse, price, title, token }: Props): React.ReactElement {
   const theme = useTheme();
 
   return (
@@ -43,14 +42,14 @@ export default function DisplayBalance({ amount, decimal, disabled, onClick, pri
           />
         </Grid>
         <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '35px', mx: '10px', my: 'auto' }} />
-        <Grid item sx={{ '> div span': { display: 'block' }, fontSize: '22px', fontWeight: 400 }}>
-          <FormatPrice
-            amount={amount}
-            decimals={decimal}
-            price={price}
-            skeletonHeight={20}
-          />
-        </Grid>
+        <FormatPrice
+          amount={amount}
+          decimals={decimal}
+          fontSize= '22px'
+          fontWeight= {400}
+          price={price}
+          skeletonHeight={20}
+        />
         {onClick &&
           <Grid item m='auto' pl='8px'>
             <IconButton

@@ -19,7 +19,7 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AddressInput, GenesisHashOptionsContext, ProxyTable, SelectChain, TwoButtons, VaadinIcon } from '../../../components';
-import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
+import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
 import { useApiWithChain, useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata } from '../../../messaging';
 import { Name } from '../../../partials';

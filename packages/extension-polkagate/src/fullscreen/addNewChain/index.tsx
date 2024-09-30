@@ -15,7 +15,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 
 import { endpointUrlPng } from '../../assets/img';
 import { ActionContext, InputWithLabel, Progress, TwoButtons, VaadinIcon, Warning } from '../../components';
-import { nFormatter } from '../../components/FormatPrice';
+import FormatPrice from '../../components/FormatPrice';
 import { updateStorage } from '../../components/Loading';
 import { useCurrency, useFullscreen, useTranslation } from '../../hooks';
 import { updateMetadata } from '../../messaging';
@@ -24,7 +24,7 @@ import allChains from '../../util/chains';
 import { FULLSCREEN_WIDTH } from '../../util/constants';
 import { isWss } from '../../util/utils';
 import { metadataFromApi } from '../../util/workers/utils';
-import { FullScreenHeader } from '../governance/FullScreenHeader';
+import FullScreenHeader from '../governance/FullScreenHeader';
 import { convertToHyphenated } from '../governance/utils/util';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
@@ -291,7 +291,12 @@ export default function AddNewChain (): React.ReactElement {
                     {priceId && price !== undefined &&
                       <Typography fontSize='16px' fontWeight={400}>
                         {price
-                          ? `${currency?.sign || ''}${nFormatter(price, 4)}`
+                          ? <FormatPrice
+                            decimalPoint={4}
+                            fontSize='18px'
+                            num={price}
+                            width='80px'
+                          />
                           : 'Check the price id, and try again!'
                         }
                       </Typography>}

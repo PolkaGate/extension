@@ -9,7 +9,7 @@ import type { HexString } from '@polkadot/util/types';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
 import { ArrowForwardIos as ArrowForwardIosIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
-import { Box, Button, Divider, Grid, Skeleton, Typography, useTheme } from '@mui/material';
+import { Box, Button, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
@@ -17,7 +17,7 @@ import { type BN, noop } from '@polkadot/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
 import { Identicon, Identity, OptionalCopyButton, ShortAddress2 } from '../../../components';
-import { nFormatter } from '../../../components/FormatPrice';
+import FormatPrice from '../../../components/FormatPrice';
 import { useCurrency, useIdentity, useInfo, usePrices, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount } from '../../../messaging';
 import { amountToHuman } from '../../../util/utils';
@@ -65,7 +65,7 @@ const AccountButton = ({ icon, onClick, text }: AccountButtonType) => {
   );
 };
 
-const AccountTotal = ({ currencySign, hideNumbers, totalBalance }: { currencySign: string | undefined, hideNumbers: boolean | undefined, totalBalance: number | undefined }) => {
+const AccountTotal = ({ hideNumbers, totalBalance }: { hideNumbers: boolean | undefined, totalBalance: number | undefined }) => {
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -78,11 +78,13 @@ const AccountTotal = ({ currencySign, hideNumbers, totalBalance }: { currencySig
         {
           hideNumbers || hideNumbers === undefined
             ? <Box component='img' src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string} sx={{ height: '36px', width: '154px' }} />
-            : totalBalance !== undefined
-              ? <Typography fontSize='32px' fontWeight={700}>
-                {`${currencySign ?? ''}${nFormatter(totalBalance ?? 0, 2)}`}
-              </Typography>
-              : <Skeleton animation='wave' height={28} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={180} />
+            : <FormatPrice
+              fontSize='32px'
+              fontWeight={700}
+              num={totalBalance}
+              skeletonHeight={28}
+              width='180px'
+            />
         }
       </Grid>
     </Grid>
@@ -187,7 +189,6 @@ function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChi
             </Grid>
           </Grid>
           <AccountTotal
-            currencySign={currency?.sign}
             hideNumbers={hideNumbers}
             totalBalance={totalBalance}
           />

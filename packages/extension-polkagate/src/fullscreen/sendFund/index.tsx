@@ -21,7 +21,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useBalances, useChain, useFullscreen, useTranslation } from '../../hooks';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
-import { FullScreenHeader } from '../governance/FullScreenHeader';
+import FullScreenHeader from '../governance/FullScreenHeader';
 import WaitScreen from '../governance/partials/WaitScreen';
 import Bread from '../partials/Bread';
 import { STEPS } from '../stake/pool/stake';

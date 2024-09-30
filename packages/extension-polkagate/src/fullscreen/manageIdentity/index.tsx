@@ -22,7 +22,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { Progress, Warning } from '../../components';
 import { useApiWithChain2, useFormatted, useFullscreen, usePeopleChain, useTranslation } from '../../hooks';
 import { FULLSCREEN_WIDTH } from '../../util/constants';
-import { FullScreenHeader } from '../governance/FullScreenHeader';
+import FullScreenHeader from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import PreviewIdentity from './Preview';
 import RequestJudgement from './RequestJudgement';

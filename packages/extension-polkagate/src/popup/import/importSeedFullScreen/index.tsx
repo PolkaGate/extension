@@ -18,7 +18,7 @@ import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constan
 import { objectSpread } from '@polkadot/util';
 
 import { Address, GenesisHashOptionsContext, InputWithLabel, SelectChain, TextAreaWithLabel, TwoButtons, VaadinIcon, Warning } from '../../../components';
-import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
+import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri, getMetadata, validateSeed } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
@@ -49,11 +49,11 @@ export default function ImportSeed (): React.ReactElement {
   const [path, setPath] = useState<string | null>(null);
   const [showMore, setShowMore] = useState<boolean>(false);
   const [name, setName] = useState<string | null | undefined>();
-  const [password, setPassword] = useState<string | null >();
+  const [password, setPassword] = useState<string | null>();
 
   const chain = useMetadata(account?.genesis, true);
 
-  const showAddress = useMemo(() => !!(account && account.address), [account]);
+  const showAddress = useMemo(() => !!(account?.address), [account]);
 
   useEffect((): void => {
     setGenesis(genesisOptions[1].value as string); // to set the polkadot as the default selected chain

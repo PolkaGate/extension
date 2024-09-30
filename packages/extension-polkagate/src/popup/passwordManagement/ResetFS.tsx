@@ -7,7 +7,7 @@ import { faWallet } from '@fortawesome/free-solid-svg-icons';
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { FullScreenHeader } from '@polkadot/extension-polkagate/src/fullscreen/governance/FullScreenHeader';
+import FullScreenHeader from '@polkadot/extension-polkagate/src/fullscreen/governance/FullScreenHeader';
 import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 

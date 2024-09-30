@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.14.0](https://github.com/polkagate/extension/compare/v0.13.1...v0.14.0) (2024-09-29)
+
+
+### Features
+
+* add BTC and ETH as currency ([#1563](https://github.com/polkagate/extension/issues/1563)) ([8b57127](https://github.com/polkagate/extension/commit/8b5712749f39ca3c1bee426bcc23b3e6ffbd368e)), closes [#1552](https://github.com/polkagate/extension/issues/1552)
+
 ## [0.13.1](https://github.com/polkagate/extension/compare/v0.13.0...v0.13.1) (2024-09-28)
 
 
