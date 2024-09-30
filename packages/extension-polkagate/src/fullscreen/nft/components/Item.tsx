@@ -8,10 +8,10 @@ import type { ItemProps } from '../utils/types';
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { Progress } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 import Details, { Detail } from './Details';
 import ItemAvatar from './ItemAvatar';
+import ItemSkeleton from './ItemSkeleton';
 
 export default function Item ({ itemInformation, itemsDetail }: ItemProps): React.ReactElement {
   const { t } = useTranslation();
@@ -25,47 +25,44 @@ export default function Item ({ itemInformation, itemsDetail }: ItemProps): Reac
 
   return (
     <>
-      <Grid container item onClick={openNftDetail} sx={{ bgcolor: 'divider', border: '1px solid', borderColor: 'divider', borderRadius: '10px', cursor: displayNft ? 'pointer' : 'default', height: '320px', width: '190px' }}>
-        {itemInformation?.data && itemDetail === undefined &&
-          <Progress
-            size={30}
-            type='circle'
-          />
-        }
-        {!itemInformation?.data &&
-          <Grid alignItems='center' container item justifyContent='center'>
-            <Typography fontSize='16px' fontWeight={400}>
-              {t('Don\'t have data')}!
-            </Typography>
-          </Grid>
-        }
-        {displayNft &&
-          <>
-            <ItemAvatar
-              image={itemDetail?.image}
-            />
-            <Grid container item px='8px'>
-              {itemDetail?.name &&
-                <Typography fontSize='14px' fontWeight={400} sx={{ maxWidth: '190px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>
-                  {itemDetail.name}
-                </Typography>
-              }
-              {itemInformation?.collectionId &&
-                <Detail
-                  text={itemInformation.collectionId}
-                  title={t('Collection ID')}
-                />
-              }
-              {itemInformation?.itemId &&
-                <Detail
-                  text={itemInformation?.itemId}
-                  title={itemInformation.isNft ? t('NFT ID') : t('Unique ID')}
-                />
-              }
+      {itemInformation?.data && itemDetail === undefined
+        ? <ItemSkeleton />
+        : <Grid container item onClick={openNftDetail} sx={{ bgcolor: 'divider', border: '1px solid', borderColor: 'divider', borderRadius: '10px', cursor: displayNft ? 'pointer' : 'default', height: '320px', width: '190px' }}>
+          {!itemInformation?.data &&
+            <Grid alignItems='center' container item justifyContent='center'>
+              <Typography fontSize='16px' fontWeight={400}>
+                {t('Without have data')}!
+              </Typography>
             </Grid>
-          </>
-        }
-      </Grid>
+          }
+          {displayNft &&
+            <>
+              <ItemAvatar
+                image={itemDetail?.image}
+              />
+              <Grid container item px='8px'>
+                {itemDetail?.name &&
+                  <Typography fontSize='14px' fontWeight={400} sx={{ maxWidth: '190px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>
+                    {itemDetail.name}
+                  </Typography>
+                }
+                {itemInformation?.collectionId &&
+                  <Detail
+                    text={itemInformation.collectionId}
+                    title={t('Collection ID')}
+                  />
+                }
+                {itemInformation?.itemId &&
+                  <Detail
+                    text={itemInformation?.itemId}
+                    title={itemInformation.isNft ? t('NFT ID') : t('Unique ID')}
+                  />
+                }
+              </Grid>
+            </>
+          }
+        </Grid>
+      }
       {showDetail && itemDetail && itemInformation &&
         <Details
           details={itemDetail}
