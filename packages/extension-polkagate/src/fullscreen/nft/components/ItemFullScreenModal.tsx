@@ -6,12 +6,14 @@
 import type { FullscreenNftModalProps } from '../utils/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Box, IconButton, Modal } from '@mui/material';
+import { Box, IconButton, Modal, useTheme } from '@mui/material';
 import React from 'react';
 
 export default function ItemFullscreenModal ({ image, onClose, open }: FullscreenNftModalProps): React.ReactElement {
+  const theme = useTheme();
+
   return (
-    <Modal onClose={onClose} open={open} sx={{ alignItems: 'center', display: 'flex', justifyContent: 'center' }}>
+    <Modal onClose={onClose} open={open} slotProps={{ backdrop: { style: { backgroundColor: theme.palette.background.paper } } }} sx={{ alignItems: 'center', display: 'flex', justifyContent: 'center' }}>
       <Box sx={{ maxHeight: '90vh', maxWidth: '90vw', position: 'relative' }}>
         <IconButton
           onClick={onClose}
@@ -22,7 +24,7 @@ export default function ItemFullscreenModal ({ image, onClose, open }: Fullscree
         <img
           alt='NFT Fullscreen'
           src={image || ''}
-          style={{ maxHeight: '90vh', maxWidth: '100%', objectFit: 'contain' }}
+          style={{ border: '2px solid', borderColor: theme.palette.primary.main, maxHeight: '90vh', maxWidth: '90vw', objectFit: 'contain' }}
         />
       </Box>
     </Modal>

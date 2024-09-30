@@ -37,13 +37,19 @@ export default function Details ({ details: { description, image, name }, itemIn
   const [showFullscreen, setShowFullscreen] = useState<boolean>(false);
 
   const closeDetail = useCallback(() => setShowDetail(false), [setShowDetail]);
-  const openFullscreen = useCallback(() => setShowFullscreen(true), []);
-  const closeFullscreen = useCallback(() => setShowFullscreen(false), []);
+  const openFullscreen = useCallback(() => {
+    document.documentElement.requestFullscreen().catch(console.error);
+    setShowFullscreen(true);
+  }, []);
+  const closeFullscreen = useCallback(() => {
+    document.exitFullscreen().catch(console.error);
+    setShowFullscreen(false);
+  }, []);
 
   return (
     <>
-      <DraggableModal onClose={closeDetail} open={show}>
-        <Grid container item justifyContent='center'>
+      <DraggableModal minHeight={515} onClose={closeDetail} open={show} width={800}>
+        <Grid container item>
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderBottomColor: 'divider', mb: '20px' }}>
             <Typography fontSize='22px' fontWeight={700}>
               {isNft ? t('NFT Detail') : t('Unique Detail')}
@@ -57,36 +63,40 @@ export default function Details ({ details: { description, image, name }, itemIn
               </IconButton>
             </Grid>
           </Grid>
-          <NftAvatar
-            height='400px'
-            image={image}
-            width='320px'
-          />
-          <Grid container item sx={{ m: '20px', maxHeight: '230px', overflowY: 'scroll', rowGap: '10px' }}>
-            {name &&
-              <Typography fontSize='14px' fontWeight={400} sx={{ maxWidth: '380px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>
-                {name}
-              </Typography>
-            }
-            {description &&
-              <Detail
-                inline={false}
-                text={description}
-                title={t('Description')}
+          <Grid container item justifyContent='space-between' width='740px'>
+            <Grid alignItems='center' container item width='fit-content'>
+              <NftAvatar
+                height='400px'
+                image={image}
+                width='320px'
               />
-            }
-            {collectionId !== undefined &&
-              <Detail
-                text={collectionId}
-                title={t('Collection ID')}
-              />
-            }
-            {itemId !== undefined &&
-              <Detail
-                text={itemId}
-                title={isNft ? t('NFT ID') : t('Unique ID')}
-              />
-            }
+            </Grid>
+            <Grid alignItems='center' container item sx={{ m: '20px', maxHeight: '400px', overflowY: 'scroll', rowGap: '10px', width: '370px' }}>
+              {name &&
+                <Typography fontSize='14px' fontWeight={400} sx={{ maxWidth: '380px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>
+                  {name}
+                </Typography>
+              }
+              {description &&
+                <Detail
+                  inline={false}
+                  text={description}
+                  title={t('Description')}
+                />
+              }
+              {collectionId !== undefined &&
+                <Detail
+                  text={collectionId}
+                  title={t('Collection ID')}
+                />
+              }
+              {itemId !== undefined &&
+                <Detail
+                  text={itemId}
+                  title={isNft ? t('NFT ID') : t('Unique ID')}
+                />
+              }
+            </Grid>
           </Grid>
         </Grid>
       </DraggableModal>

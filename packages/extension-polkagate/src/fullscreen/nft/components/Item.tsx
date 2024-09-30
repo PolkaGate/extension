@@ -31,7 +31,7 @@ export default function Item ({ itemInformation, itemsDetail }: ItemProps): Reac
           {!itemInformation?.data &&
             <Grid alignItems='center' container item justifyContent='center'>
               <Typography fontSize='16px' fontWeight={400}>
-                {t('Without have data')}!
+                {t('Without data')}!
               </Typography>
             </Grid>
           }
