@@ -8,8 +8,7 @@ import type { AccountsAssetsContextType, AlertContextType, APIsContext, Currency
 import React from 'react';
 
 import settings from '@polkadot/ui-settings';
-
-import { noop } from '../util/utils';
+import { noop } from '@polkadot/util';
 
 const AccountContext = React.createContext<AccountsContext>({ accounts: [], hierarchy: [], master: undefined });
 const AccountsAssetsContext = React.createContext<AccountsAssetsContextType>({ accountsAssets: undefined, setAccountsAssets: noop });

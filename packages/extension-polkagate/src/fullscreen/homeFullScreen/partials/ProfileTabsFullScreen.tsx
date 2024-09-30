@@ -90,7 +90,7 @@ export default function ProfileTabsFullScreen ({ orderedAccounts }: Props): Reac
           bgcolor: 'backgroundFL.secondary',
           flexFlow: 'nowrap',
           overflowX: 'scroll',
-          pb: '5px',
+          pb: '6px',
           px: '25px',
           whiteSpace: 'nowrap'
         }}

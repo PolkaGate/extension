@@ -8,11 +8,15 @@ import { useCallback, useContext } from 'react';
 import { AlertContext } from '../components';
 
 export default function useAlerts () {
-  const { setAlerts } = useContext(AlertContext);
+  const { alerts, setAlerts } = useContext(AlertContext);
 
   const notify = useCallback((text: string, severity?: Severity) => {
     setAlerts((prev) => [...prev, { severity: severity || 'info', text }]);
   }, [setAlerts]);
 
-  return { notify };
+  const removeAlert = useCallback((index: number) => {
+    setAlerts((prev) => prev.filter((_, i) => i !== index));
+  }, [setAlerts]);
+
+  return { alerts, notify, removeAlert };
 }
