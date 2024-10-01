@@ -37,7 +37,6 @@ export default function useAssetHubAssets(address: AccountId | string | undefine
         // });
 
         assetIds && api && api.query.assets && api.query.assets.metadata.multi(assetIds).then((metadata: Option<PalletAssetsAssetDetails>[]) => {
-          // console.log('metadata:', metadata);
 
           const assetOptions = metadata.map(({ name, symbol }, index) => {
             if (!symbol.toHuman()) {
