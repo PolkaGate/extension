@@ -8,7 +8,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
-import type { DropdownOption, FastestConnectionType, RecentChainsType, TransactionDetail } from './types';
+import type { DropdownOption, FastestConnectionType, RecentChainsType, TransactionDetail, UserAddedChains } from './types';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
@@ -371,9 +371,17 @@ export const getProfileColor = (index: number, theme: Theme): string => {
   return PROFILE_COLORS[0][theme.palette.mode];
 };
 
-export const getPriceIdByChainName = (chainName?: string) => {
+export const getPriceIdByChainName = (chainName?: string, useAddedChains?: UserAddedChains) => {
   if (!chainName) {
     return '';
+  }
+
+  if (useAddedChains) {
+    const maybeUserAddedPriceId = Object.entries(useAddedChains).find(([_, { chain }]) => chain?.replace(/\s/g, '')?.toLowerCase() === chainName.toLowerCase())?.[1]?.priceId;
+
+    if (maybeUserAddedPriceId) {
+      return maybeUserAddedPriceId;
+    }
   }
 
   const _chainName = (sanitizeChainName(chainName) as unknown as string).toLocaleLowerCase();
