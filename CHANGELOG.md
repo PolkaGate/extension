@@ -1,5 +1,17 @@
 # Change Log
 
+# [0.15.0](https://github.com/polkagate/extension/compare/v0.14.1...v0.15.0) (2024-10-01)
+
+
+### Bug Fixes
+
+* user added chains price id ([#1571](https://github.com/polkagate/extension/issues/1571)) ([0db1976](https://github.com/polkagate/extension/commit/0db1976a5e17da8498219e77eccdcfdbf6d97a39))
+
+
+### Features
+
+* add profile tab tooltip in FS ([#1567](https://github.com/polkagate/extension/issues/1567)) ([929b519](https://github.com/polkagate/extension/commit/929b519fe469f1b843b1b2b132a0a4e79d4f6316)), closes [#1572](https://github.com/polkagate/extension/issues/1572)
+
 ## [0.14.1](https://github.com/polkagate/extension/compare/v0.14.0...v0.14.1) (2024-10-01)
 
 
