@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { AlertContext } from '../components';
 
-const TIME_TO_REMOVE_ALERT = 5000; // 5 secs
+export const TIME_TO_REMOVE_ALERT = 5000; // 5 secs
 
 export default function useAlerts () {
   const { alerts, setAlerts } = useContext(AlertContext);

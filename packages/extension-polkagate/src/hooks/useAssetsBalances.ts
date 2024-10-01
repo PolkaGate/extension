@@ -10,6 +10,7 @@ import type { AlertType, DropdownOption, UserAddedChains } from '../util/types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 import { BN, isObject } from '@polkadot/util';
 
@@ -19,6 +20,7 @@ import { updateMetadata } from '../messaging';
 import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
 import { isHexToBn } from '../util/utils';
+import { TIME_TO_REMOVE_ALERT } from './useAlerts';
 import useSelectedChains from './useSelectedChains';
 import { useIsTestnetEnabled, useTranslation } from '.';
 
@@ -147,6 +149,15 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
   const [workersCalled, setWorkersCalled] = useState<Worker[]>();
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
+  const addAlert = useCallback(() => {
+    const id = uuidv4();
+
+    setAlerts((perv) => [...perv, { id, severity: 'success', text: t('Accounts\' balances updated!') }]);
+    const timeout = setTimeout(() => setAlerts((prev) => prev.filter(({ id: alertId }) => alertId !== id)), TIME_TO_REMOVE_ALERT);
+
+    return () => clearTimeout(timeout);
+  }, [setAlerts, t]);
+
   useEffect(() => {
     SHOULD_FETCH_ASSETS && getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
       const _timeStamp = (savedAssets as SavedAssets)?.timeStamp;
@@ -207,9 +218,9 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     /** when one round fetch is done, we will save fetched assets in storage */
     if (addresses && workersCalled?.length === 0) {
       handleAccountsSaving();
-      setAlerts((perv) => [...perv, { severity: 'success', text: t('Accounts\' balances updated!') }]);
+      addAlert();
     }
-  }, [addresses, handleAccountsSaving, setAlerts, t, workersCalled?.length]);
+  }, [addAlert, addresses, handleAccountsSaving, workersCalled?.length]);
 
   useEffect(() => {
     /** chain list may have changed */
