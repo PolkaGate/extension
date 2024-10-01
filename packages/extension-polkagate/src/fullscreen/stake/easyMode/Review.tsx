@@ -3,7 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { ApiPromise } from '@polkadot/api';
 import type { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
 import type { StakingInputs } from '../type';
 
@@ -57,11 +56,11 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
 
     return undefined;
   }, [estimatedFee, inputs]);
-  
-  const staked = useMemo(() => 
-    inputs?.extraInfo?.['amount'] && balances?.decimal 
-    ? amountToMachine((inputs.extraInfo as any)['amount'], balances.decimal)
-    :undefined
+
+  const staked = useMemo(() =>
+    inputs?.extraInfo?.['amount'] && balances?.decimal
+      ? amountToMachine((inputs.extraInfo)['amount'] as string, balances.decimal)
+      : undefined
   , [inputs, balances]);
 
   const handleCancel = useCallback(() => {
@@ -81,7 +80,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
             <Identity
               address={address}
               api={api}
-              chain={chain as any}
+              chain={chain}
               direction='row'
               identiconSize={31}
               showSocial={false}
@@ -92,7 +91,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
         </DisplayValue>
         {selectedProxyAddress &&
           <Grid container m='auto' maxWidth='92%'>
-            <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
+            <ThroughProxy address={selectedProxyAddress} chain={chain} />
           </Grid>
         }
         <DisplayValue dividerHeight='1px' title={t('Amount')}>
@@ -109,7 +108,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
             <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mx: 'auto', my: '5px', width: '170px' }} />
             <ShowPool
               api={api}
-              chain={chain as any}
+              chain={chain}
               label={t('Pool')}
               labelPosition='center'
               mode={inputs.pool.bondedPool?.state.toString() === 'Creating' ? 'Creating' : 'Joining'}
@@ -127,7 +126,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
             <Divider sx={{ bgcolor: 'secondary.main', height: '1px', width: '240px' }} />
             <Grid alignContent='center' container item justifyContent='center'>
               <Grid item sx={{ alignSelf: 'center', mr: '20px', width: 'fit=content' }}>
-                <Infotip fontSize='13px' iconTop={5} showQuestionMark text={t<string>(SYSTEM_SUGGESTION_TEXT)}>
+                <Infotip fontSize='13px' iconTop={5} showQuestionMark text={t(SYSTEM_SUGGESTION_TEXT)}>
                   <Typography sx={{ fontWeight: 300 }}>
                     {t('Selected Validators ({{count}})', { replace: { count: inputs.selectedValidators?.length } })}
                   </Typography>
@@ -155,7 +154,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
         <SignArea2
           address={address}
           call={inputs?.call}
-          extraInfo={_extraInfo as any}
+          extraInfo={_extraInfo}
           isPasswordError={isPasswordError}
           onSecondaryClick={handleCancel}
           params={inputs?.params}
@@ -176,8 +175,8 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
       {showSelectedValidators && !!inputs?.selectedValidators?.length &&
         <ShowValidators
           address={address}
-          api={api as ApiPromise}
-          chain={chain as any}
+          api={api}
+          chain={chain}
           selectedValidators={inputs.selectedValidators}
           setShowSelectedValidators={setShowSelectedValidators}
           showSelectedValidators={showSelectedValidators}
