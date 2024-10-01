@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.16.0](https://github.com/polkagate/extension/compare/v0.15.0...v0.16.0) (2024-10-01)
+
+
+### Features
+
+* add selected chains badge ([#1574](https://github.com/polkagate/extension/issues/1574)) ([db189c6](https://github.com/polkagate/extension/commit/db189c6227e239ec7671aeb605cdf2608304aca5))
+
 # [0.15.0](https://github.com/polkagate/extension/compare/v0.14.1...v0.15.0) (2024-10-01)
 
 
