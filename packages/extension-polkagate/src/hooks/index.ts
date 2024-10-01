@@ -89,6 +89,7 @@ export { default as useProxies } from './useProxies';
 export { default as useRedirectOnRefresh } from './useRedirectOnRefresh';
 export { default as useReferendum } from './useReferendum';
 export { default as useReservedDetails } from './useReservedDetails';
+export { default as useSelectedChains } from './useSelectedChains';
 export { default as useSelectedProfile } from './useSelectedProfile';
 export { default as useStakingAccount } from './useStakingAccount';
 export { default as useStakingConsts } from './useStakingConsts';

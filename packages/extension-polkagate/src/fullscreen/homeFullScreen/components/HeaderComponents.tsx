@@ -3,11 +3,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useEffect } from 'react';
+import { Badge, Grid, Typography } from '@mui/material';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { HideIcon, ShowIcon } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { useIsTestnetEnabled, useSelectedChains, useTranslation } from '../../../hooks';
+import { TEST_NETS } from '../../../util/constants';
 import Currency from '../partials/Currency';
 import FavoriteChains from '../partials/FavoriteChains';
 
@@ -33,6 +34,9 @@ const HideNumbers = ({ hideNumbers, onHideClick }: { hideNumbers: boolean | unde
 };
 
 function HeaderComponents ({ hideNumbers, setHideNumbers }: Props): React.ReactElement {
+  const selectedChains = useSelectedChains();
+  const isTestNetEnabled = useIsTestnetEnabled();
+
   const onHideClick = useCallback(() => {
     setHideNumbers(!hideNumbers);
     window.localStorage.setItem('hide_numbers', hideNumbers ? 'false' : 'true');
@@ -44,10 +48,26 @@ function HeaderComponents ({ hideNumbers, setHideNumbers }: Props): React.ReactE
     isHide === 'false' || isHide === null ? setHideNumbers(false) : setHideNumbers(true);
   }, [setHideNumbers]);
 
+  const badgeCount = useMemo(() => {
+    if (!selectedChains?.length) {
+      return 0;
+    }
+
+    let filteredList = selectedChains;
+
+    if (!isTestNetEnabled) {
+      filteredList = selectedChains.filter((item) => !TEST_NETS.includes(item));
+    }
+
+    return filteredList.length;
+  }, [isTestNetEnabled, selectedChains]);
+
   return (
     <Grid columnGap='18px' container item pl='18px' width='fit-content'>
       <Currency />
-      <FavoriteChains />
+      <Badge badgeContent={badgeCount} color='success'>
+        <FavoriteChains />
+      </Badge>
       <HideNumbers
         hideNumbers={hideNumbers}
         onHideClick={onHideClick}
