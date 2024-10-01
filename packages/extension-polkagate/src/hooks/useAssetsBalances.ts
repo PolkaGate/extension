@@ -9,8 +9,8 @@ import type { MetadataDef } from '@polkadot/extension-inject/types';
 import type { AlertType, DropdownOption, UserAddedChains } from '../util/types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
+import { Chance } from 'chance';
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 
 import { BN, isObject } from '@polkadot/util';
 
@@ -137,6 +137,8 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
   const isTestnetEnabled = useIsTestnetEnabled();
   const selectedChains = useSelectedChains();
 
+  const random = useMemo(() => new Chance(), []);
+
   /** to limit calling of this heavy call on just home and account details */
   const SHOULD_FETCH_ASSETS = window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs');
 
@@ -150,13 +152,13 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
   const addAlert = useCallback(() => {
-    const id = uuidv4();
+    const id = random.string({ length: 10 });
 
     setAlerts((perv) => [...perv, { id, severity: 'success', text: t('Accounts\' balances updated!') }]);
     const timeout = setTimeout(() => setAlerts((prev) => prev.filter(({ id: alertId }) => alertId !== id)), TIME_TO_REMOVE_ALERT);
 
     return () => clearTimeout(timeout);
-  }, [setAlerts, t]);
+  }, [random, setAlerts, t]);
 
   useEffect(() => {
     SHOULD_FETCH_ASSETS && getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {

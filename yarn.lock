@@ -17604,7 +17604,6 @@ __metadata:
     sinon-chrome: "npm:^3.0.1"
     style-loader: "npm:^3.3.2"
     umi-request: "npm:^1.4.0"
-    uuid: "npm:^10.0.0"
     webpack-bundle-analyzer: "npm:^4.9.0"
   languageName: unknown
   linkType: soft
@@ -19880,15 +19879,6 @@ __metadata:
   version: 0.1.0
   resolution: "uuid-v4@npm:0.1.0"
   checksum: 10/f107fd9a271ab512a645ad658775cd34abcb388bb39c20633056c48a0901f008a6393362ec19073aa150f52d01458f7ca9e32d594902693e7bde416c153a9f8c
-  languageName: node
-  linkType: hard
-
-"uuid@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "uuid@npm:10.0.0"
-  bin:
-    uuid: dist/bin/uuid
-  checksum: 10/35aa60614811a201ff90f8ca5e9ecb7076a75c3821e17f0f5ff72d44e36c2d35fcbc2ceee9c4ac7317f4cc41895da30e74f3885e30313bee48fda6338f250538
   languageName: node
   linkType: hard
 
