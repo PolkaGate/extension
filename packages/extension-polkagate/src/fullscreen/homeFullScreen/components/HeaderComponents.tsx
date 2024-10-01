@@ -48,7 +48,6 @@ function HeaderComponents ({ hideNumbers, setHideNumbers }: Props): React.ReactE
     isHide === 'false' || isHide === null ? setHideNumbers(false) : setHideNumbers(true);
   }, [setHideNumbers]);
 
-  console.log('selectedChains',selectedChains)
   const badgeCount = useMemo(() => {
     if (!selectedChains?.length) {
       return 0;
