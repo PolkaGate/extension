@@ -6,27 +6,15 @@
 import '@vaadin/icons';
 
 import { Grid } from '@mui/material';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { useAlerts, useTransactionState } from '../hooks';
 import Alert from './Alert';
 
-const TIME_TO_REMOVE_ALERT = 5000;
-
 function AlertBox (): React.ReactElement {
-  const { alerts, removeAlert } = useAlerts();
+  const { alerts } = useAlerts();
 
   useTransactionState();
-
-  useEffect(() => {
-    alerts.forEach((_, index) => {
-      const timeout = setTimeout(
-        () => removeAlert(index)
-        , TIME_TO_REMOVE_ALERT);
-
-      return () => clearTimeout(timeout);
-    });
-  }, [alerts, removeAlert]);
 
   return (
     <Grid container display='flex' item justifyContent='flex-end' sx={{ maxWidth: '500px', position: 'absolute', right: '20px', rowGap: '15px', top: '85px', zIndex: 100 }}>

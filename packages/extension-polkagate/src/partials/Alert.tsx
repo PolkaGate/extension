@@ -8,9 +8,9 @@ import '@vaadin/icons';
 import type { AlertType } from '../util/types';
 
 import { Alert as MuiAlert, Slide } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 
-import { useTranslation } from '../hooks';
+import { useAlerts, useTranslation } from '../hooks';
 
 interface Props {
   alert: AlertType;
@@ -18,21 +18,14 @@ interface Props {
 
 function Alert ({ alert }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const { removeAlert } = useAlerts();
 
-  const [showAlert, setShowAlert] = useState<boolean>(true);
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setShowAlert(false);
-    }, 10000);
-
-    return () => clearTimeout(timeoutId);
-  }, []);
-
-  const closeAlert = useCallback(() => setShowAlert(false), []);
+  const closeAlert = useCallback(() => {
+    removeAlert(alert.id);
+  }, [alert.id, removeAlert]);
 
   return (
-    <Slide direction='left' in={showAlert} mountOnEnter unmountOnExit>
+    <Slide direction='left' in mountOnEnter unmountOnExit>
       <MuiAlert
         onClose={closeAlert}
         severity={alert.severity}
