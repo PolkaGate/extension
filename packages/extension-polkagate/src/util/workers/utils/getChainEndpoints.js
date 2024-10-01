@@ -17,6 +17,7 @@ export function getChainEndpoints (chainName, userAddedEndpoints) {
       endpoint.info &&
       (
         endpoint.info.toLowerCase() === chainName.toLowerCase() ||
+        //@ts-ignore
         endpoint.text?.replace(/\s/g, '')?.toLowerCase() === chainName.toLowerCase()
       ) &&
       !endpoint.isDisabled && !endpoint?.isLightClient
