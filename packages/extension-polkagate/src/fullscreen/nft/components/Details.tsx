@@ -30,7 +30,7 @@ export const Detail = ({ inline = true, text, title }: DetailProp) => (
   </Grid>
 );
 
-export default function Details ({ details: { description, image, metadataLink, name }, itemInformation: { collectionId, isNft, itemId }, setShowDetail, show }: DetailsProp): React.ReactElement {
+export default function Details ({ details: { contentType, description, image, metadataLink, name }, itemInformation: { collectionId, isNft, itemId }, setShowDetail, show }: DetailsProp): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -44,8 +44,9 @@ export default function Details ({ details: { description, image, metadataLink, 
   }, []);
 
   const closeFullscreen = useCallback(() => {
-    document.exitFullscreen().catch(console.error);
     setShowFullscreen(false);
+    document.fullscreenEnabled &&
+      document.exitFullscreen().catch(console.error);
   }, []);
 
   return (
@@ -106,7 +107,7 @@ export default function Details ({ details: { description, image, metadataLink, 
               }
               {image &&
                 <Detail
-                  text={`[image](${image})`}
+                  text={`[${contentType}](${image})`}
                   title={t('Image')}
                 />
               }

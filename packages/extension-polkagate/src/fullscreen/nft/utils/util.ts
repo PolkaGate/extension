@@ -5,7 +5,7 @@ import type React from 'react';
 import type { ApiPromise } from '@polkadot/api';
 // @ts-ignore
 import type { PalletNftsItemDetails, PalletNftsItemMetadata, PalletUniquesCollectionDetails, PalletUniquesItemDetails, PalletUniquesItemMetadata } from '@polkadot/types/lookup';
-import type { ItemInformation, ItemMetadata, ItemsDetail } from './types';
+import type { DataType, ItemInformation, ItemMetadata, ItemsDetail } from './types';
 
 import { INITIAL_BACKOFF_TIME, IPFS_GATEWAYS, MAX_BACKOFF_TIME, MAX_RETRY_ATTEMPTS } from './constants';
 
@@ -172,7 +172,12 @@ export const fetchData = async <T>(contentUrl: string | undefined, isMetadata = 
         metadataLink: url
       } as T;
     } else {
-      return response.url as T;
+      const contentType = response.headers.get('content-type');
+
+      return {
+        contentType,
+        url: response.url
+      } as T;
     }
   };
 
@@ -223,18 +228,19 @@ export const fetchItemMetadata = async (item: ItemInformation, setItemsDetail: (
      * Then it converts 'mediaUri' to 'image' if present, ensuring a consistent
      * interface for the rest of the application to work with.
      */
-    if ('mediaUri' in itemMetadata) {
+    if (!('image' in itemMetadata) && 'mediaUri' in itemMetadata) {
       itemMetadata.image = itemMetadata.mediaUri as string;
       delete itemMetadata.mediaUri;
     }
 
     const nftImageContent = itemMetadata.image
-      ? await fetchData<string>(itemMetadata.image)
+      ? await fetchData<DataType>(itemMetadata.image)
       : null;
 
     const detail = {
       ...itemMetadata,
-      image: nftImageContent
+      contentType: nftImageContent?.contentType,
+      image: nftImageContent?.url
     };
 
     setItemsDetail((perv) => ({

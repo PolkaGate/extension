@@ -35,6 +35,7 @@ export interface ItemMetadata {
   attributes: Attribute[] | undefined;
   tags: string[] | undefined;
   metadataLink: string;
+  contentType?: string;
 }
 
 export type ItemsDetail = Record<string, ItemMetadata | null | undefined>;
@@ -73,4 +74,9 @@ export interface DetailProp {
 export interface ItemsListProps {
   items: ItemInformation[] | null | undefined;
   itemsDetail: ItemsDetail;
+}
+
+export interface DataType {
+  url: string;
+  contentType?: string | undefined;
 }

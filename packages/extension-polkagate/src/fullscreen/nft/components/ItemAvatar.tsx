@@ -22,9 +22,11 @@ export default function ItemAvatar ({ height = '220px', image, onFullscreen, wid
       {image &&
         <>
           <Avatar
+            draggable={false}
             src={image}
             sx={{
               height: '100%',
+              pointerEvents: 'none',
               width: '100%'
             }}
             variant='square'
