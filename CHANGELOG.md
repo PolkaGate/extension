@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.14.1](https://github.com/polkagate/extension/compare/v0.14.0...v0.14.1) (2024-10-01)
+
+
+### Bug Fixes
+
+* missing stashId in review page ([#1568](https://github.com/polkagate/extension/issues/1568)) ([8a18c8b](https://github.com/polkagate/extension/commit/8a18c8b8bf492ee603441f63a23ea134b754335d)), closes [#1570](https://github.com/polkagate/extension/issues/1570)
+
 # [0.14.0](https://github.com/polkagate/extension/compare/v0.13.1...v0.14.0) (2024-09-29)
 
 
