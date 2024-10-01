@@ -68,8 +68,10 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
   const { t } = useTranslation();
   const { price } = useTokenPrice(address, 0);
 
-  const { decimal, token } = useInfo(address);
+  const { api, decimal, token } = useInfo(address);
   const [showUnstaking, setShowUnstaking] = useState<boolean>(false);
+
+  const isFastUnstakeAvailable = api?.tx?.['fastUnstake'];
 
   const triangleColor = useMemo(() => {
     switch (title) {
@@ -136,15 +138,18 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
           }
           {icons?.map((_, index) => {
             const noValueToAct = (!amount || amount?.isZero()) && actions && actions[index] !== t('pending');
+            const isFastUnstakeToBeDisabled = !isFastUnstakeAvailable && actions?.[index] === t('fast unstake');
+
+            const isDisabled = noValueToAct || isFastUnstakeToBeDisabled;
 
             return (actions &&
-              <Grid alignItems='center' container direction='column' item justifyContent='center' key={index} minWidth='96px' onClick={noValueToAct ? noop : onClicks && onClicks[index]} sx={{ cursor: noValueToAct ? 'unset' : 'pointer', ml: '10px', width: 'fit-content' }}>
+              <Grid alignItems='center' container direction='column' item justifyContent='center' key={index} minWidth='96px' onClick={isDisabled ? noop : onClicks && onClicks[index]} sx={{ cursor: isDisabled ? 'unset' : 'pointer', ml: '10px', width: 'fit-content' }}>
                 <FontAwesomeIcon
-                  color={`${noValueToAct ? theme.palette.text.disabled : theme.palette.secondary.light}`}
+                  color={`${isDisabled ? theme.palette.text.disabled : theme.palette.secondary.light}`}
                   icon={icons[index]}
                   style={{ height: '30px', marginBottom: '-4px', stroke: `${theme.palette.text.primary}`, strokeWidth: 5, width: '20px' }}
                 />
-                <Typography color={noValueToAct ? theme.palette.text.disabled : theme.palette.secondary.light} fontSize='18px' fontWeight={400} textAlign='center'>
+                <Typography color={isDisabled ? theme.palette.text.disabled : theme.palette.secondary.light} fontSize='18px' fontWeight={400} textAlign='center'>
                   {actions[index]}
                 </Typography>
               </Grid>
