@@ -13,7 +13,7 @@ import { Box, Collapse, Divider, Grid, Typography, useTheme } from '@mui/materia
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
-import { useInfo, useNativeTokenPrice } from '@polkadot/extension-polkagate/src/hooks';
+import { useInfo, useTokenPrice } from '@polkadot/extension-polkagate/src/hooks';
 import { DATE_OPTIONS } from '@polkadot/extension-polkagate/src/util/constants';
 import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 
@@ -66,7 +66,7 @@ const ToBeReleased = ({ decimal, showUnstaking, text, toBeReleased, token }: ToB
 export default function DisplayBalance ({ actions, address, amount, icons, isUnstaking, marginTop = '10px', onClicks, title, toBeReleased }: DisplayBalanceProps): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
-  const price = useNativeTokenPrice(address);
+  const { price } = useTokenPrice(address, 0);
 
   const { decimal, token } = useInfo(address);
   const [showUnstaking, setShowUnstaking] = useState<boolean>(false);
@@ -96,7 +96,7 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
         <Typography fontSize='18px' fontWeight={400} width='28%'>
           {title}
         </Typography>
-        <Grid alignItems='center' container item width='34%'>
+        <Grid alignItems='center' container item width='36%'>
           <Grid item sx={{ fontSize: '22px', fontWeight: 600 }}>
             <ShowBalance
               balance={amount}
@@ -116,7 +116,7 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
             skeletonHeight={20}
           />
         </Grid>
-        <Grid container item justifyContent='flex-end' width='38%'>
+        <Grid container item justifyContent='flex-end' width='36%'>
           {isUnstaking &&
             <Grid alignItems='center' container direction='column' item justifyContent='center' minWidth='96px' sx={{ ml: '10px', width: 'fit-content' }}>
               <ArrowForwardIosRoundedIcon
