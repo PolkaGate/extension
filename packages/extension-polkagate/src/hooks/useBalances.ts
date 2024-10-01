@@ -100,7 +100,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
       return;
     }
 
-    const ED = api.consts['balances']['existentialDeposit'] as unknown as BN;
+    const ED = api.consts['balances'] ? api.consts['balances']['existentialDeposit'] as unknown as BN : BN_ZERO;
 
     formatted && api.derive.balances?.all(formatted).then((allBalances) => {
       //@ts-ignore

@@ -15,14 +15,13 @@ import { useParams } from 'react-router';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, ActionContext, Warning } from '../../components';
-import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
+import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTokenPrice, useTranslation } from '../../hooks';
 import { getValue } from '../../popup/account/util';
 import HistoryModal from '../../popup/history/modal/HistoryModal';
 import { AccountLabel } from '../../popup/home/AccountLabel';
 import ReceiveModal from '../../popup/receive/ReceiveModal';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import getParentNameSuri from '../../util/getParentNameSuri';
-import { getPriceIdByChainName } from '../../util/utils';
 import FullScreenHeader from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import DeriveAccountModal from '../partials/DeriveAccountModal';
@@ -70,6 +69,7 @@ export default function AccountDetails (): React.ReactElement {
   const [unlockInformation, setUnlockInformation] = useState<UnlockInformationType | undefined>();
 
   const assetId = useMemo(() => assetIdOnAssetHub !== undefined ? assetIdOnAssetHub : selectedAsset?.assetId, [assetIdOnAssetHub, selectedAsset?.assetId]);
+  const { price: currentPrice } = useTokenPrice(address, assetId);
 
   const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId || undefined);
 
@@ -105,21 +105,6 @@ export default function AccountDetails (): React.ReactElement {
   const isDualStaking = useMemo(() =>
     balancesToShow?.soloTotal && balancesToShow?.pooledBalance && !balancesToShow.soloTotal.isZero() && !balancesToShow.pooledBalance.isZero()
   , [balancesToShow?.pooledBalance, balancesToShow?.soloTotal]);
-
-  const currentPrice = useMemo((): number | undefined => {
-    const selectedAssetPriceId = selectedAsset?.priceId;
-
-    if (selectedAsset && !selectedAssetPriceId) {
-      // price is 0 for assets with no priceId
-      return 0;
-    }
-
-    const _priceId = getPriceIdByChainName(chainName);
-    const currentAssetPrices = pricesInCurrency?.prices?.[(selectedAssetPriceId || _priceId)];
-    const mayBeTestNetPrice = pricesInCurrency?.prices && !currentAssetPrices ? 0 : undefined;
-
-    return currentAssetPrices?.value || mayBeTestNetPrice;
-  }, [selectedAsset, chainName, pricesInCurrency?.prices]);
 
   useEffect(() => {
     // reset assetId on chain switch
