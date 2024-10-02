@@ -1423,5 +1423,9 @@
   "The chosen blockchain does not support NFTs/Uniques.": "",
   "On NFT / Unique Album page you can watch all of your created or owned NFT/unique items.": "",
   "Image": "",
-  "Without data": ""
+  "Without data": "",
+  "Creator": "",
+  "Owner": "",
+  "Not listed": "",
+  "Price": ""
 }

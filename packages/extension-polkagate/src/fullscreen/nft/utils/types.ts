@@ -2,14 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
+import type { ApiPromise } from '@polkadot/api';
+import type { Chain } from '@polkadot/extension-chains/types';
 
 export interface ItemInformation {
   collectionId?: string;
   itemId?: string;
   data?: string;
   isNft: boolean;
-  isCreator: boolean;
-  isOwner: boolean;
+  creator: string | undefined;
+  owner: string;
+  price?: number | null | undefined;
 }
 
 export interface FilterSectionProps {
@@ -67,8 +70,14 @@ export interface DetailsProp {
 
 export interface DetailProp {
   title: string;
-  text: string;
+  text?: string;
   inline?: boolean;
+  accountId?: string;
+  api?: ApiPromise;
+  chain?: Chain | null;
+  price?: number | null;
+  decimal?: number;
+  token?: string;
 }
 
 export interface ItemsListProps {
@@ -80,3 +89,5 @@ export interface DataType {
   url: string;
   contentType?: string | undefined;
 }
+
+export type NftsPrices = [number, string | null] | null;

@@ -5,7 +5,7 @@ import type React from 'react';
 import type { ApiPromise } from '@polkadot/api';
 // @ts-ignore
 import type { PalletNftsItemDetails, PalletNftsItemMetadata, PalletUniquesCollectionDetails, PalletUniquesItemDetails, PalletUniquesItemMetadata } from '@polkadot/types/lookup';
-import type { DataType, ItemInformation, ItemMetadata, ItemsDetail } from './types';
+import type { DataType, ItemInformation, ItemMetadata, ItemsDetail, NftsPrices } from './types';
 
 import { INITIAL_BACKOFF_TIME, IPFS_GATEWAYS, MAX_BACKOFF_TIME, MAX_RETRY_ATTEMPTS } from './constants';
 
@@ -37,13 +37,20 @@ export const fetchNFTs = async (api: ApiPromise, formatted: string, setMyNFTs: R
     const nftsMetadataRequests = await Promise.all(nftMetadataPromises);
     const nftsMetadata = nftsMetadataRequests.map((metadata) => (metadata.toPrimitive() as unknown as PalletNftsItemMetadata)?.data.toString());
 
+    const nftsPricePromise = myNFTs.map(({ ids }) =>
+      api.query['nfts']['itemPriceOf'](ids.collectionId, ids.nftId)
+    );
+    const nftsPriceRequests = await Promise.all(nftsPricePromise);
+    const nftsPrice = nftsPriceRequests.map((price) => (price.toPrimitive() as unknown as NftsPrices)?.[0]);
+
     const nftInfos = myNFTs.map(({ ids: { collectionId, nftId }, nftInfo: { deposit: { account }, owner } }, index) => ({
       collectionId,
+      creator: String(account),
       data: nftsMetadata[index],
-      isCreator: String(account) === formatted,
       isNft: true,
-      isOwner: String(owner) === formatted,
-      itemId: nftId
+      itemId: nftId,
+      owner: String(owner),
+      price: nftsPrice[index] ?? null
     }));
 
     setMyNFTs(nftInfos);
@@ -92,11 +99,11 @@ export const fetchUniques = async (api: ApiPromise, formatted: string, setMyUniq
 
       return ({
         collectionId,
+        creator,
         data: uniquesMetadata[index],
-        isCreator: creator === formatted,
         isNft: false,
-        isOwner: true,
-        itemId: uniqueId
+        itemId: uniqueId,
+        owner: formatted
       });
     });
 

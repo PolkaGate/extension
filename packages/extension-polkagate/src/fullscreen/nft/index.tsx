@@ -16,8 +16,8 @@ import { NFT_CHAINS } from '../../util/constants';
 import FullScreenHeader from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
-import FilterSection from './components/FilterItems';
 import ItemsList from './components/ItemsList';
+import Tabs from './components/Tabs';
 import { fetchItemMetadata, fetchNFTs, fetchUniques } from './utils/util';
 
 enum STEPS {
@@ -113,7 +113,7 @@ function NFT (): React.ReactElement {
               <Typography fontSize='14px' fontWeight={400}>
                 {t('On NFT / Unique Album page you can watch all of your created or owned NFT/unique items.')}
               </Typography>
-              <FilterSection
+              <Tabs
                 myNFTsDetails={myNFTsDetails}
                 myUniquesDetails={myUniquesDetails}
                 setItemsToShow={setItemsToShow}

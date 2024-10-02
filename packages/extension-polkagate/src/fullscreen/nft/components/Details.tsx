@@ -7,32 +7,64 @@ import type { DetailProp, DetailsProp } from '../utils/types';
 
 import { Close as CloseIcon, OpenInFull as OpenInFullIcon } from '@mui/icons-material';
 import { Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { useParams } from 'react-router';
 
+import { Identity, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../components/translate';
+import { useInfo } from '../../../hooks';
+import { amountToMachine } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
 import NftAvatar from './ItemAvatar';
 import ItemFullscreenModal from './ItemFullScreenModal';
 
-export const Detail = ({ inline = true, text, title }: DetailProp) => (
-  <Grid container item>
-    <Typography fontSize='16px' fontWeight={500} sx={inline ? { pr: '10px', width: 'fit-content' } : {}}>
-      {title}:
-    </Typography>
-    <Typography fontSize='16px' fontWeight={400} sx={{ '> p': { m: 0 } }} textAlign='left'>
-      <ReactMarkdown
-        linkTarget='_blank'
-      >
-        {text}
-      </ReactMarkdown>
-    </Typography>
-  </Grid>
-);
+export const Detail = React.memo(function Detail ({ accountId, api, chain, decimal, inline = true, price, text, title, token }: DetailProp) {
+  const { t } = useTranslation();
+  const convertedAmount = useMemo(() => price && decimal ? (price / 10 ** decimal).toString() : null, [decimal, price]);
+  const priceAsBN = convertedAmount ? amountToMachine(convertedAmount, decimal) : null;
+  const notListed = price !== undefined && price === null;
 
-export default function Details ({ details: { contentType, description, image, metadataLink, name }, itemInformation: { collectionId, isNft, itemId }, setShowDetail, show }: DetailsProp): React.ReactElement {
+  return (
+    <Grid container item>
+      <Typography fontSize='16px' fontWeight={500} sx={inline ? { pr: '10px', width: 'fit-content' } : {}}>
+        {title}:
+      </Typography>
+      {price &&
+        <ShowBalance
+          balance={priceAsBN}
+          decimal={decimal}
+          decimalPoint={3}
+          token={token}
+          withCurrency
+        />
+      }
+      {notListed &&
+        <Typography fontSize='16px' fontWeight={400} textAlign='left'>
+          {t('Not listed')}
+        </Typography>
+      }
+      {text &&
+        <Typography fontSize='16px' fontWeight={400} sx={{ '> p': { m: 0 } }} textAlign='left'>
+          <ReactMarkdown
+            linkTarget='_blank'
+          >
+            {text}
+          </ReactMarkdown>
+        </Typography>
+      }
+      {accountId && api && chain &&
+        <Identity api={api} chain={chain} formatted={accountId} identiconSize={30} showShortAddress style={{ fontSize: '22px', maxWidth: '350px', width: '350px' }} />
+      }
+    </Grid>
+  );
+});
+
+export default function Details ({ details: { contentType, description, image, metadataLink, name }, itemInformation: { collectionId, creator, isNft, itemId, owner, price }, setShowDetail, show }: DetailsProp): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const { address } = useParams<{ address: string | undefined }>();
+  const { api, chain, decimal, token } = useInfo(address);
 
   const [showFullscreen, setShowFullscreen] = useState<boolean>(false);
 
@@ -74,9 +106,9 @@ export default function Details ({ details: { contentType, description, image, m
                 width='320px'
               />
             </Grid>
-            <Grid alignContent='center' alignItems='center' container item sx={{ m: '20px', maxHeight: '400px', overflowY: 'scroll', rowGap: '10px', width: '370px' }}>
+            <Grid container item sx={{ m: '20px', maxHeight: '400px', overflowY: 'scroll', rowGap: '10px', width: '370px' }}>
               {name &&
-                <Typography fontSize='14px' fontWeight={400} sx={{ maxWidth: '380px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>
+                <Typography fontSize='16px' fontWeight={500} sx={{ maxWidth: '380px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>
                   {name}
                 </Typography>
               }
@@ -109,6 +141,28 @@ export default function Details ({ details: { contentType, description, image, m
                 <Detail
                   text={`[${contentType}](${image})`}
                   title={t('Image')}
+                />
+              }
+              <Detail
+                decimal={decimal}
+                price={price}
+                title={t('Price')}
+                token={token}
+              />
+              {creator &&
+                <Detail
+                  accountId={creator}
+                  api={api}
+                  chain={chain}
+                  title={t('Creator')}
+                />
+              }
+              {owner &&
+                <Detail
+                  accountId={owner}
+                  api={api}
+                  chain={chain}
+                  title={t('Owner')}
                 />
               }
             </Grid>
