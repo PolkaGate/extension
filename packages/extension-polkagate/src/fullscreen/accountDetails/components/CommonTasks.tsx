@@ -23,7 +23,7 @@ import { popupNumbers } from '..';
 
 interface Props {
   address: string | undefined;
-  assetId: number | undefined;
+  assetId: number | string | undefined;
   balance: BalancesInfo | FetchedBalance | undefined;
   genesisHash: string | null | undefined;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;

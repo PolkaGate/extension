@@ -128,7 +128,7 @@ export default function AccountDetails (): React.ReactElement {
 
     const mayBeAssetIdSelectedInHomePage = assetId !== undefined ? assetId : parseInt(paramAssetId);
 
-    if (mayBeAssetIdSelectedInHomePage >= 0 && accountAssets) {
+    if (mayBeAssetIdSelectedInHomePage as number >= 0 && accountAssets) {
       const found = accountAssets.find(({ assetId, genesisHash: _genesisHash }) => assetId === mayBeAssetIdSelectedInHomePage && genesisHash === _genesisHash);
 
       found && setSelectedAsset(found);

@@ -10,7 +10,7 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { ChainLogo, Identity, Motion, ShowBalance, SignArea2, WrongPasswordAlert } from '../../components';
-import { useApi, useChain } from '../../hooks';
+import { useInfo } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import { PROXY_TYPE } from '../../util/constants';
@@ -30,9 +30,9 @@ interface Props {
 
 export default function Review ({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const api = useApi(address);
-  const chain = useChain(address);
   const theme = useTheme();
+
+  const { api, chain } = useInfo(address);
 
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();

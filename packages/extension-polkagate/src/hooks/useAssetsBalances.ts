@@ -74,7 +74,7 @@ export const BN_MEMBERS = [
 ];
 
 export interface FetchedBalance {
-  assetId?: number,
+  assetId?: number | string,
   availableBalance: BN,
   balanceDetails?: any,
   totalBalance: BN,

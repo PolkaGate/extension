@@ -3420,9 +3420,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkagate/apps-config@npm:^0.140.3":
-  version: 0.140.3
-  resolution: "@polkagate/apps-config@npm:0.140.3"
+"@polkagate/apps-config@npm:^0.140.5":
+  version: 0.140.5
+  resolution: "@polkagate/apps-config@npm:0.140.5"
   dependencies:
     "@acala-network/type-definitions": "npm:5.1.2"
     "@bifrost-finance/type-definitions": "npm:1.11.3"
@@ -3469,7 +3469,7 @@ __metadata:
     pontem-types-bundle: "npm:1.0.15"
     rxjs: "npm:^7.8.1"
     tslib: "npm:^2.6.2"
-  checksum: 10/db28e49d837a94f8e92000bee3909d776c998e328329e81a5e7df1e533a7bf02e2e756c37912b2b0d7a4a9cdff631c40d7e3b70d6d3b09001ad2153180c581c9
+  checksum: 10/563f1d71a90a2c9c3aa16d7f5fdc5ea86e89fd50925bd410aca075fd6c432ac810d771755385da99474b18b97fb702274bbc87d0a424a6ee57086372108c32c2
   languageName: node
   linkType: hard
 
@@ -17565,7 +17565,7 @@ __metadata:
     "@polkadot/types-support": "npm:^11.2.1"
     "@polkadot/util": "npm:^12.6.2"
     "@polkadot/util-crypto": "npm:^12.6.2"
-    "@polkagate/apps-config": "npm:^0.140.3"
+    "@polkagate/apps-config": "npm:^0.140.5"
     "@semantic-release/changelog": "npm:^6.0.3"
     "@semantic-release/commit-analyzer": "npm:^13.0.0"
     "@semantic-release/git": "npm:^10.0.1"
