@@ -197,7 +197,7 @@ function AccountInformationForDetails ({ accountAssets, address, label, price, p
   const showAOC = useMemo(() => !!(nonZeroSortedAssets === undefined || (nonZeroSortedAssets && nonZeroSortedAssets.length > 0)), [nonZeroSortedAssets]);
 
   useEffect(() => {
-    /** if chain has been switched and its not among the selected chains */
+    /** if chain has been switched and its not among the accounts assets */
     if (account?.genesisHash && !accountAssets?.find(({ genesisHash }) => genesisHash === account.genesisHash)) {
       return setSelectedAsset(undefined);
     }

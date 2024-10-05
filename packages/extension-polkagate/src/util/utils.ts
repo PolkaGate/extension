@@ -501,11 +501,17 @@ export async function fastestConnection (endpoints: DropdownOption[]): Promise<F
 }
 
 export const encodeMultiLocation = (multiLocation: unknown) => {
-  const jsonString = JSON.stringify(multiLocation);
-  const u8aArray = stringToU8a(jsonString);
-  const hexString = u8aToHex(u8aArray);
+  try {
+    const jsonString = JSON.stringify(multiLocation);
+    const u8aArray = stringToU8a(jsonString);
+    const hexString = u8aToHex(u8aArray);
 
-  return hexString;
+    return hexString;
+  } catch (error) {
+    console.error('Error encoding multiLocation:', error);
+
+    return null;
+  }
 };
 
 export const decodeHexValues = (obj: unknown) => {
@@ -513,21 +519,29 @@ export const decodeHexValues = (obj: unknown) => {
     return obj;
   }
 
-  const objAsRecord = obj as Record<string, unknown>;
+  const objAsRecord = { ...obj } as Record<string, unknown>;
 
-  for (const key in obj) {
+  Object.keys(objAsRecord).forEach((key) => {
     if (typeof objAsRecord[key] === 'string' && objAsRecord[key].startsWith('0x')) {
       objAsRecord[key] = hexToString(objAsRecord[key]);
     }
-  }
+  });
 
-  return obj;
+  return objAsRecord;
 };
 
 export const decodeMultiLocation = (hexString: HexString) => {
   const decodedU8a = hexToU8a(hexString);
   const decodedJsonString = u8aToString(decodedU8a);
-  const decodedMultiLocation = JSON.parse(decodedJsonString) as unknown;
+  let decodedMultiLocation: unknown;
+
+  try {
+    decodedMultiLocation = JSON.parse(decodedJsonString);
+  } catch (error) {
+    console.error('Error parsing JSON string in decodeMultiLocation:', error);
+
+    return null;
+  }
 
   return decodeHexValues(decodedMultiLocation);
 };

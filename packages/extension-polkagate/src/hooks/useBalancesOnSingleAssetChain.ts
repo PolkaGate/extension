@@ -49,7 +49,7 @@ export default function useBalancesOnSingleAssetChain (address: string | undefin
           genesisHash: api.genesisHash.toString(),
           token
         });
-        setRefresh && setRefresh(false);
+        setRefresh?.(false);
         isFetching.fetching[String(formatted)]['balances'] = false;
         isFetching.set(isFetching.fetching);
       }).catch(console.error);

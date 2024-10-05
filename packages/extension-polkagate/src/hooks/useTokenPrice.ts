@@ -46,7 +46,7 @@ export default function useTokenPrice (address: string | undefined, assetId?: nu
     }
 
     // FixMe, on second fetch of asset id its type will get string which is weird!!
-    const priceId = _assetId !== undefined && (_assetId as number > NATIVE_TOKEN_ASSET_ID || isForeignAsset)
+    const priceId = _assetId !== undefined && ((typeof _assetId === 'number' && _assetId > NATIVE_TOKEN_ASSET_ID) || isForeignAsset)
       ? mayBeAssetsOnMultiAssetChains?.find(({ id }) => id === Number(_assetId) || id === _assetId)?.priceId
       : userAddedPriceId || getPriceIdByChainName(chainName);
 

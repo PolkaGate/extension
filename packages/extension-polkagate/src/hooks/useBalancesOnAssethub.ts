@@ -47,7 +47,7 @@ export default function useBalancesOnAssethub (address: string | undefined, asse
 
       const assetBalances = {
         ED,
-        assetId: _assetId,
+        assetId,
         availableBalance: isFrozen ? BN_ZERO : balance,
         chainName,
         date: Date.now(),

@@ -68,7 +68,12 @@ export default function AccountDetails (): React.ReactElement {
   const [displayPopup, setDisplayPopup] = useState<number | undefined>();
   const [unlockInformation, setUnlockInformation] = useState<UnlockInformationType | undefined>();
 
-  const assetId = useMemo(() => assetIdOnAssetHub !== undefined ? assetIdOnAssetHub : selectedAsset?.assetId, [assetIdOnAssetHub, selectedAsset?.assetId]);
+  const assetId = useMemo(() =>
+    assetIdOnAssetHub !== undefined
+      ? assetIdOnAssetHub
+      : selectedAsset?.assetId
+  , [assetIdOnAssetHub, selectedAsset?.assetId]);
+
   const { price: currentPrice } = useTokenPrice(address, assetId);
 
   const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId || undefined);
@@ -116,7 +121,7 @@ export default function AccountDetails (): React.ReactElement {
   }, [genesisHash]);
 
   useEffect(() => {
-    if (selectedAsset !== undefined && paramAssetId && assetId !== undefined && assetId !== parseInt(paramAssetId)) {
+    if (selectedAsset !== undefined && paramAssetId && assetId !== undefined && String(assetId) !== paramAssetId) {
       onAction(`/accountfs/${address}/${assetId}`);
     }
   }, [accountAssets, address, assetId, onAction, paramAssetId, selectedAsset]);
@@ -126,10 +131,12 @@ export default function AccountDetails (): React.ReactElement {
       return;
     }
 
-    const mayBeAssetIdSelectedInHomePage = assetId !== undefined ? assetId : parseInt(paramAssetId);
+    const mayBeAssetIdSelectedInHomePage = assetId !== undefined
+      ? assetId
+      : paramAssetId;
 
     if (mayBeAssetIdSelectedInHomePage as number >= 0 && accountAssets) {
-      const found = accountAssets.find(({ assetId, genesisHash: _genesisHash }) => assetId === mayBeAssetIdSelectedInHomePage && genesisHash === _genesisHash);
+      const found = accountAssets.find(({ assetId, genesisHash: _genesisHash }) => String(assetId) === String(mayBeAssetIdSelectedInHomePage) && genesisHash === _genesisHash);
 
       found && setSelectedAsset(found);
     }

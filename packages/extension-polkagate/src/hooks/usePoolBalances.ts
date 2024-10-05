@@ -67,7 +67,7 @@ export default function usePoolBalances (address: string | undefined, refresh?: 
       });
 
       genesisHash === chain?.genesisHash && setPooledBalance({ balance: active.add(rewards).add(unlockingValue), genesisHash });
-      setRefresh && setRefresh(false);
+      setRefresh?.(false);
       isFetching.fetching[String(formatted)]['pooledBalance'] = false;
       isFetching.set(isFetching.fetching);
     }).catch(console.error);

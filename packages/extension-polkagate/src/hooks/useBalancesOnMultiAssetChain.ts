@@ -34,7 +34,7 @@ export default function useBalancesOnMultiAssetChain (address: string | undefine
 
     try {
       const assets: [StorageKey<AnyTuple>, OrmlTokensAccountData][] = await api.query['tokens']['accounts'].entries(address);
-      const currencyIdScale = (assetInfo.extras?.['currencyIdScale'] as string).replace('0x', '');
+      const currencyIdScale = ((assetInfo.extras?.['currencyIdScale'] as string | undefined) || '').replace('0x', '');
 
       const found = assets.find((entry) => {
         if (!entry.length) {
