@@ -244,10 +244,16 @@ export const fetchItemMetadata = async (item: ItemInformation, setItemsDetail: (
       ? await fetchData<DataType>(itemMetadata.image)
       : null;
 
+    const nftAnimationContent = itemMetadata.animation_url
+      ? await fetchData<DataType>(itemMetadata.animation_url)
+      : null;
+
     const detail = {
       ...itemMetadata,
-      contentType: nftImageContent?.contentType,
-      image: nftImageContent?.url
+      animationContentType: nftAnimationContent?.contentType,
+      animation_url: nftAnimationContent?.url,
+      image: nftImageContent?.url,
+      imageContentType: nftImageContent?.contentType
     };
 
     setItemsDetail((perv) => ({

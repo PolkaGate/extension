@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
+/* eslint-disable camelcase */
 
-import type { DetailProp, DetailsProp } from '../utils/types';
+import type { DetailItemProps, DetailProp, DetailsProp } from '../utils/types';
 
 import { Close as CloseIcon, OpenInFull as OpenInFullIcon } from '@mui/icons-material';
 import { Grid, IconButton, Typography, useTheme } from '@mui/material';
@@ -11,12 +12,12 @@ import React, { useCallback, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useParams } from 'react-router';
 
-import { Identity, ShowBalance } from '../../../components';
+import { Identity, Progress, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 import { useInfo } from '../../../hooks';
 import { amountToMachine } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
-import NftAvatar from './ItemAvatar';
+import ItemAvatar from './ItemAvatar';
 import ItemFullscreenModal from './ItemFullScreenModal';
 
 export const Detail = React.memo(function Detail ({ accountId, api, chain, decimal, inline = true, price, text, title, token }: DetailProp) {
@@ -60,7 +61,52 @@ export const Detail = React.memo(function Detail ({ accountId, api, chain, decim
   );
 });
 
-export default function Details ({ details: { contentType, description, image, metadataLink, name }, itemInformation: { collectionId, creator, isNft, itemId, owner, price }, setShowDetail, show }: DetailsProp): React.ReactElement {
+export const WithLoading = ({ children, loaded }: { loaded: boolean, children: React.ReactElement }) => (
+  <>
+    {!loaded && <Progress pt={0} />}
+    {children}
+  </>
+);
+
+const Item = ({ animation_url, animationContentType, image, imageContentType }: DetailItemProps) => {
+  const [loaded, setLoaded] = useState<boolean>(false);
+
+  const onLoaded = useCallback(() => {
+    console.log('loaded');
+    setLoaded(true);
+  }, []);
+
+  if (animation_url && animationContentType === 'text/html') {
+    return (
+      <>
+        {!loaded && <Progress />}
+        <iframe
+          onLoad={onLoaded}
+          src={animation_url}
+          style={{
+            border: 'none',
+            height: '100%',
+            pointerEvents: 'none',
+            width: '100%'
+          }}
+          title='HTML Content'
+        />
+      </>
+    );
+  } else if (image && imageContentType?.startsWith('image')) {
+    return (
+      <ItemAvatar
+        height='400px'
+        image={image}
+        width='320px'
+      />
+    );
+  } else {
+    return <Progress />;
+  }
+};
+
+export default function Details ({ details: { animation_url, animationContentType, description, image, imageContentType, metadataLink, name }, itemInformation: { collectionId, creator, isNft, itemId, owner, price }, setShowDetail, show }: DetailsProp): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string | undefined }>();
@@ -100,10 +146,11 @@ export default function Details ({ details: { contentType, description, image, m
           </Grid>
           <Grid container item justifyContent='space-between' width='740px'>
             <Grid alignItems='center' container item width='fit-content'>
-              <NftAvatar
-                height='400px'
+              <Item
+                animationContentType={animationContentType}
+                animation_url={animation_url}
                 image={image}
-                width='320px'
+                imageContentType={imageContentType}
               />
             </Grid>
             <Grid container item sx={{ m: '20px', maxHeight: '400px', overflowY: 'scroll', rowGap: '10px', width: '370px' }}>
@@ -139,8 +186,14 @@ export default function Details ({ details: { contentType, description, image, m
               }
               {image &&
                 <Detail
-                  text={`[${contentType}](${image})`}
+                  text={`[${imageContentType}](${image})`}
                   title={t('Image')}
+                />
+              }
+              {animation_url &&
+                <Detail
+                  text={`[${animationContentType}](${animation_url})`}
+                  title={t('Animation')}
                 />
               }
               <Detail

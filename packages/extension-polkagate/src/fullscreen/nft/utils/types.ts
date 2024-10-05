@@ -38,7 +38,8 @@ export interface ItemMetadata {
   attributes: Attribute[] | undefined;
   tags: string[] | undefined;
   metadataLink: string;
-  contentType?: string;
+  imageContentType?: string;
+  animationContentType?: string;
 }
 
 export type ItemsDetail = Record<string, ItemMetadata | null | undefined>;
@@ -91,3 +92,10 @@ export interface DataType {
 }
 
 export type NftsPrices = [number, string | null] | null;
+
+export interface DetailItemProps {
+  animation_url: string | undefined;
+  animationContentType: string | undefined;
+  imageContentType: string | undefined;
+  image: string | null | undefined;
+}
