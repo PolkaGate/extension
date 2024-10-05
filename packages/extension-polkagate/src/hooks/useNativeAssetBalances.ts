@@ -11,22 +11,24 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { FetchingContext } from '../components';
-import { NATIVE_TOKEN_ASSET_ID } from '../util/constants';
+import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
 import { useInfo, useStakingAccount } from '.';
 
-export default function useBalancesOnSingleAssetChain (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false): BalancesInfo | undefined {
+export default function useNativeAssetBalances (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false): BalancesInfo | undefined {
   const stakingAccount = useStakingAccount(address);
-  const { account, api, chain, chainName, decimal: currentDecimal, formatted, token: currentToken } = useInfo(address);
+  const { account, api, chainName, decimal: currentDecimal, formatted, genesisHash, token: currentToken } = useInfo(address);
   const isFetching = useContext(FetchingContext);
 
   const [balances, setBalances] = useState<BalancesInfo | undefined>();
   const [newBalances, setNewBalances] = useState<BalancesInfo | undefined>();
 
+  const isFetchingNativeTokenOfAssetHub = genesisHash && ASSET_HUBS.includes(genesisHash);
+
   const token = api?.registry.chainTokens[0];
   const decimal = api?.registry.chainDecimals[0];
 
   const getBalances = useCallback(() => {
-    if (!chainName || api?.genesisHash?.toString() !== chain?.genesisHash || !decimal || !token) {
+    if (!chainName || !genesisHash || api?.genesisHash?.toString() !== genesisHash || !decimal || !token) {
       return;
     }
 
@@ -40,7 +42,7 @@ export default function useBalancesOnSingleAssetChain (address: string | undefin
 
         setNewBalances({
           ED,
-          assetId: NATIVE_TOKEN_ASSET_ID,
+          assetId: isFetchingNativeTokenOfAssetHub ? NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB : NATIVE_TOKEN_ASSET_ID,
           ...allBalances,
           chainName,
           date: Date.now(),
@@ -55,10 +57,10 @@ export default function useBalancesOnSingleAssetChain (address: string | undefin
       }).catch(console.error);
     }).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, chain?.genesisHash, chainName, formatted, isFetching.fetching[String(formatted)]?.['length'], setRefresh]);
+  }, [api, genesisHash, chainName, formatted, isFetching.fetching[String(formatted)]?.['length'], setRefresh]);
 
   useEffect(() => {
-    if (!formatted || !token || !decimal || !chainName || api?.genesisHash?.toString() !== chain?.genesisHash) {
+    if (!formatted || !token || !decimal || !chainName || api?.genesisHash?.toString() !== genesisHash) {
       return;
     }
 
@@ -75,7 +77,7 @@ export default function useBalancesOnSingleAssetChain (address: string | undefin
       console.info(`Balance is fetching for ${formatted}, hence doesn't need to fetch it again!`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, chain?.genesisHash, chainName, decimal, formatted, getBalances, isFetching.fetching[String(formatted)]?.['length'], token]);
+  }, [api, genesisHash, chainName, decimal, formatted, getBalances, isFetching.fetching[String(formatted)]?.['length'], token]);
 
   useEffect(() => {
     if (refresh) {
@@ -93,7 +95,7 @@ export default function useBalancesOnSingleAssetChain (address: string | undefin
   }, [Object.keys(isFetching?.fetching ?? {})?.length, formatted, getBalances, refresh]);
 
   useEffect(() => {
-    if (!chainName || !account || account?.genesisHash !== chain?.genesisHash) {
+    if (!chainName || !account || account?.genesisHash !== genesisHash) {
       return;
     }
 
@@ -139,6 +141,6 @@ export default function useBalancesOnSingleAssetChain (address: string | undefin
   }
 
   return balances && balances.token === currentToken && balances.decimal === currentDecimal
-    ? balances
+    ? newBalances || balances
     : undefined;
 }

@@ -23,7 +23,6 @@ export { default as useAvailableToSoloStake } from './useAvailableToSoloStake';
 export { default as useBalances } from './useBalances';
 export { default as useBalancesOnAssethub } from './useBalancesOnAssethub';
 export { default as useBalancesOnMultiAssetChain } from './useBalancesOnMultiAssetChain';
-export { default as useBalancesOnSingleAssetChain } from './useBalancesOnSingleAssetChain';
 export { default as useBlockInterval } from './useBlockInterval';
 export { default as useCanPayFee } from './useCanPayFee';
 export { default as useCanPayFeeAndDeposit } from './useCanPayFeeAndDeposit';
@@ -69,6 +68,7 @@ export { default as useMinToReceiveRewardsInSolo2 } from './useMinToReceiveRewar
 export { default as useMyAccountIdentity } from './useMyAccountIdentity';
 export { default as useMyPools } from './useMyPools';
 export { default as useMyVote } from './useMyVote';
+export { default as useNativeAssetBalances } from './useNativeAssetBalances';
 export { default as useNativeTokenPrice } from './useNativeTokenPrice';
 export { default as useNeedsPutInFrontOf } from './useNeedsPutInFrontOf';
 export { default as useNeedsRebag } from './useNeedsRebag';

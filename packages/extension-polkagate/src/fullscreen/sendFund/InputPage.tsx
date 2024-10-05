@@ -22,7 +22,7 @@ import { AmountWithOptions, FullscreenChainNames, Infotip2, InputAccount, ShowBa
 import { useTranslation } from '../../components/translate';
 import { useInfo, useTeleport } from '../../hooks';
 import { getValue } from '../../popup/account/util';
-import { ASSET_HUBS } from '../../util/constants';
+import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../util/constants';
 import { amountToHuman, amountToMachine, decodeMultiLocation } from '../../util/utils';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { toTitleCase } from '../governance/utils/util';
@@ -102,7 +102,11 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
 
   const isForeignAsset = assetId ? assetId.startsWith('0x') : undefined;
 
-  const parsedAssetId = assetId === undefined || assetId === 'undefined'
+  const noAssetId = assetId === undefined || assetId === 'undefined';
+  const isNativeToken = String(assetId) === String(NATIVE_TOKEN_ASSET_ID) || String(assetId) === String(NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB);
+  const isNonNativeToken = !noAssetId && !isNativeToken;
+
+  const parsedAssetId = noAssetId || isNativeToken
     ? undefined
     : isForeignAsset
       ? decodeMultiLocation(assetId as HexString)
@@ -118,7 +122,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
   const [transferType, setTransferType] = useState<TransferType>('Normal');
   const [maxFee, setMaxFee] = useState<Balance>();
 
-  const ED = assetId
+  const ED = isNonNativeToken
     ? balances?.ED
     : api && api.consts['balances']['existentialDeposit'] as unknown as BN;
 
@@ -133,7 +137,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
   const warningMessage = useMemo(() => {
     if (transferType !== 'All' && amountAsBN && balances?.decimal && ED && transferableBalance) {
       const totalBalance = balances.freeBalance.add(balances.reservedBalance);
-      const toTransferBalance = assetId
+      const toTransferBalance = isNonNativeToken
         ? amountAsBN
         : amountAsBN.add(estimatedFee || BN_ZERO).add(estimatedCrossChainFee || BN_ZERO);
 
@@ -149,18 +153,20 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     }
 
     return undefined;
-  }, [ED, amountAsBN, assetId, balances, transferableBalance, estimatedCrossChainFee, estimatedFee, t, transferType]);
+  }, [ED, amountAsBN, isNonNativeToken, balances, transferableBalance, estimatedCrossChainFee, estimatedFee, t, transferType]);
 
   const destinationGenesisHashes = useMemo((): DropdownOption[] => {
     const currentChainOption = chain ? [{ text: chain.name, value: chain.genesisHash as string }] : [];
     const mayBeTeleportDestinations =
-      assetId === undefined
-        ? teleportState?.destinations?.map(({ genesisHash, info, paraId }) => ({ text: toTitleCase(info) as string, value: (paraId || String(genesisHash)) as string }))
-        : [];
+     isNativeToken
+       ? teleportState?.destinations?.map(({ genesisHash, info, paraId }) => ({ text: toTitleCase(info) as string, value: (paraId || String(genesisHash)) as string }))
+       : [];
 
     return currentChainOption.concat(mayBeTeleportDestinations);
-  }, [assetId, chain, teleportState?.destinations]);
+  }, [isNativeToken, chain, teleportState?.destinations]);
 
+  console.log('isNativeToken', isNativeToken)
+  console.log('destinationGenesisHashes', destinationGenesisHashes)
   const isCrossChain = useMemo(() => recipientChainGenesisHash !== chain?.genesisHash, [chain?.genesisHash, recipientChainGenesisHash]);
 
   const onChainCall = useMemo(() => {
@@ -169,7 +175,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     }
 
     try {
-      const module = assetId !== undefined
+      const module = isNonNativeToken
         ? isAssethub(chain.genesisHash)
           ? isForeignAsset
             ? 'foreignAssets'
@@ -186,7 +192,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
       return api.tx?.[module] && (
         transferType === 'Normal'
           ? api.tx[module]['transferKeepAlive']
-          : assetId !== undefined
+          : isNonNativeToken
             ? api.tx[module]['transfer']
             : api.tx[module]['transferAll']
       );
@@ -195,7 +201,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
 
       return undefined;
     }
-  }, [api, assetId, chain, isForeignAsset, transferType]);
+  }, [api, isNonNativeToken, chain, isForeignAsset, transferType]);
 
   const call = useMemo((): SubmittableExtrinsicFunction<'promise'> | undefined => {
     if (!api) {
@@ -235,14 +241,14 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
       return setFeeCall(dummyAmount);
     }
 
-    const _params = assetId !== undefined
+    const _params = isNonNativeToken
       ? ['currencies', 'tokens'].includes(onChainCall.section)
         ? [formatted, balances.currencyId, amount]
         : [parsedAssetId, formatted, amount]
       : [formatted, amount];
 
     onChainCall(..._params).paymentInfo(formatted).then((i) => setFeeCall(i?.partialFee)).catch(console.error);
-  }, [api, formatted, balances, onChainCall, assetId, parsedAssetId]);
+  }, [api, formatted, balances, onChainCall, isNonNativeToken, parsedAssetId]);
 
   const crossChainParams = useMemo(() => {
     if (!api || !balances || !teleportState || isCrossChain === false || (recipientParaId === INVALID_PARA_ID && !teleportState?.isParaTeleport) || Number(amount) === 0) {
@@ -302,7 +308,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
       call,
       params: (isCrossChain
         ? crossChainParams
-        : assetId !== undefined
+        : isNonNativeToken
           ? ['currencies', 'tokens'].includes(onChainCall?.section || '')
             ? [recipientAddress, balances.currencyId, amountAsBN] // this is for transferring on mutliasset chains
             : [parsedAssetId, recipientAddress, amountAsBN] // this is for transferring on asset hubs
@@ -314,7 +320,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
       recipientGenesisHashOrParaId: recipientChainGenesisHash,
       totalFee: estimatedFee ? estimatedFee.add(estimatedCrossChainFee || BN_ZERO) : undefined
     });
-  }, [amountAsBN, estimatedFee, estimatedCrossChainFee, setInputs, call, parsedAssetId, recipientAddress, isCrossChain, crossChainParams, assetId, formatted, amount, recipientChainName, recipientChainGenesisHash, transferType, onChainCall?.section, balances]);
+  }, [amountAsBN, estimatedFee, estimatedCrossChainFee, setInputs, call, parsedAssetId, recipientAddress, isCrossChain, crossChainParams, isNonNativeToken, formatted, amount, recipientChainName, recipientChainGenesisHash, transferType, onChainCall?.section, balances]);
 
   useEffect(() => {
     if (!api || !transferableBalance) {
@@ -364,13 +370,13 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
 
     const isAvailableZero = transferableBalance.isZero();
 
-    const _maxFee = assetId === undefined ? maxFee : BN_ZERO;
+    const _maxFee = isNativeToken ? maxFee : BN_ZERO;
 
     const canNotTransfer = isAvailableZero || _maxFee.gte(transferableBalance);
     const allAmount = canNotTransfer ? '0' : amountToHuman(transferableBalance.sub(_maxFee).toString(), balances.decimal);
 
     setAmount(allAmount);
-  }, [assetId, balances, maxFee, transferableBalance]);
+  }, [balances, isNativeToken, maxFee, transferableBalance]);
 
   const _onChangeAmount = useCallback((value: string) => {
     if (!balances) {

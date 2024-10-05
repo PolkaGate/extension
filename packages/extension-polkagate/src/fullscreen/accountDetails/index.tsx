@@ -131,29 +131,21 @@ export default function AccountDetails (): React.ReactElement {
       return;
     }
 
-    const mayBeAssetIdSelectedInHomePage = assetId !== undefined
-      ? assetId
-      : paramAssetId;
+    const maybeAssetIdSelectedInHomePage = assetId !== undefined ? assetId : paramAssetId;
 
-    if (mayBeAssetIdSelectedInHomePage as number >= 0 && accountAssets) {
-      const found = accountAssets.find(({ assetId, genesisHash: _genesisHash }) => String(assetId) === String(mayBeAssetIdSelectedInHomePage) && genesisHash === _genesisHash);
+    if (maybeAssetIdSelectedInHomePage as number >= 0 && accountAssets) {
+      const found = accountAssets.find(({ assetId, genesisHash: _genesisHash }) => String(assetId) === String(maybeAssetIdSelectedInHomePage) && genesisHash === _genesisHash);
 
       found && setSelectedAsset(found);
     }
   }, [genesisHash, accountAssets, assetId, paramAssetId, selectedAsset]);
 
   const onChangeAsset = useCallback((id: number | string) => {
-    if (id === -1) { // this is the id of native token
-      setAssetIdOnAssetHub(0);
-
-      return;
-    }
-
     setAssetIdOnAssetHub(id as number); // this works for asset hubs atm
   }, []);
 
   const goToSend = useCallback(() => {
-    address && onAction(`/send/${address}/${assetId || ''}`);
+    address && onAction(`/send/${address}/${assetId}`);
   }, [address, assetId, onAction]);
 
   const goToSoloStaking = useCallback(() => {

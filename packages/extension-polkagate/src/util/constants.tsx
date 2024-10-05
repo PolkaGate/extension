@@ -11,8 +11,8 @@ export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 
 export const POLKADOT_SLIP44 = 354;
 
-// fix me, since we have asset ID 0 on asset hub, it can be -1 instead!
-export const NATIVE_TOKEN_ASSET_ID = 0; // zero is the native token's assetId on apps-config
+export const NATIVE_TOKEN_ASSET_ID = 0; // used for non asset hub chains
+export const NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB = -1; //  used only for asset hubs
 
 export const POLKAGATE_POOL_IDS: Record<string, number> = {
   Kusama: 18,

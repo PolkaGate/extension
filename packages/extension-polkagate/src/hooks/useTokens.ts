@@ -18,7 +18,7 @@ export default function useTokens (address: AccountId | string | undefined): Dro
 
   return network?.symbols?.length
     ? network.symbols.map((symbol, index) => {
-      return { text: symbol, value: index - (network.symbols.length) };
+      return { text: symbol, value: index - (network.symbols.length) }; // The native tokens asset ids to show in drop down are negative, such as -1, -2, etc.
     })
     : undefined;
 }

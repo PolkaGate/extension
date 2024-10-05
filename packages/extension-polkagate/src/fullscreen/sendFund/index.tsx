@@ -79,8 +79,8 @@ export default function SendFund (): React.ReactElement {
 
   const closeConfirmation = useCallback(() => {
     setRefresh(true);
-    openOrFocusTab(`/accountfs/${address}/0`, true); // TODO: add asset id instead of 0
-  }, [address, setRefresh]);
+    openOrFocusTab(`/accountfs/${assetId}/${assetId}`, true);
+  }, [assetId]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>

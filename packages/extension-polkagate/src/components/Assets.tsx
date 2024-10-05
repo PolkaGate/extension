@@ -51,7 +51,7 @@ function Assets ({ address, assetId, label, onChange, setAssetId, style }: Props
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ ...style }}>
       <Select2
-        defaultValue={options?.[0]?.value}
+        defaultValue={options?.[0]?.text}
         isItemsLoading={isLoading}
         label={label}
         onChange={onChange}

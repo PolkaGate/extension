@@ -46,7 +46,6 @@ export default function AccountDetails (): React.ReactElement {
   const identity = useMyAccountIdentity(address);
   const genesisOptions = useContext(GenesisHashOptionsContext);
 
-
   const [refresh, setRefresh] = useState<boolean>(false);
   const [assetId, setAssetId] = useState<number>();
   const balances = useBalances(address, refresh, setRefresh, false, assetId); // if assetId is undefined and chain is assethub it will fetch native token's balance
@@ -86,8 +85,8 @@ export default function AccountDetails (): React.ReactElement {
   }, [chain, goToAccount]);
 
   const goToSend = useCallback(() => {
-    address && windowOpen(`/send/${address}/${assetId || ''}`).catch(console.error);
-  }, [address, assetId]);
+    address && windowOpen(`/send/${address}/${assetId || balances?.assetId}`).catch(console.error);
+  }, [address, assetId, balances?.assetId]);
 
   const goToStaking = useCallback(() => {
     supportStaking && setShowStakingOptions(!showStakingOptions);
@@ -149,10 +148,6 @@ export default function AccountDetails (): React.ReactElement {
   }, [address]);
 
   const _onChangeAsset = useCallback((id: number) => {
-    if (id === -1) { // this is the id of native token
-      return setAssetId(undefined);
-    }
-
     setAssetId(id);
   }, []);
 
