@@ -63,7 +63,7 @@ export default function AccountDetails (): React.ReactElement {
   const pricesInCurrency = usePrices();
 
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
-  const [assetIdOnAssetHub, setAssetIdOnAssetHub] = useState<number>();
+  const [assetIdOnAssetHub, setAssetIdOnAssetHub] = useState<number | string>();
   const [selectedAsset, setSelectedAsset] = useState<FetchedBalance>();
   const [displayPopup, setDisplayPopup] = useState<number | undefined>();
   const [unlockInformation, setUnlockInformation] = useState<UnlockInformationType | undefined>();

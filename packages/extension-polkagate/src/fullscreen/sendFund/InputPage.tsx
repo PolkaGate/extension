@@ -100,7 +100,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
   const { api, chain, formatted } = useInfo(address);
   const teleportState = useTeleport(address);
 
-  const isForeignAsset = assetId && assetId.startsWith('0x');
+  const isForeignAsset = assetId ? assetId.startsWith('0x') : undefined;
 
   const parsedAssetId = assetId === undefined || assetId === 'undefined'
     ? undefined

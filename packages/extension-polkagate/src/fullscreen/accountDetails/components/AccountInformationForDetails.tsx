@@ -144,7 +144,7 @@ interface AddressDetailsProps {
   pricesInCurrency: Prices | null | undefined;
   selectedAsset: FetchedBalance | undefined;
   setSelectedAsset: React.Dispatch<React.SetStateAction<FetchedBalance | undefined>>;
-  setAssetIdOnAssetHub: React.Dispatch<React.SetStateAction<number | undefined>>;
+  setAssetIdOnAssetHub: React.Dispatch<React.SetStateAction<number | string | undefined>>;
 }
 
 export const EyeIconFullScreen = ({ isHidden, onClick }: { isHidden: boolean | undefined, onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined }) => {

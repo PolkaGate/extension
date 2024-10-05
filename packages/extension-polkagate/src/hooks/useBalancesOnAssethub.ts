@@ -20,7 +20,7 @@ export default function useBalancesOnAssethub (address: string | undefined, asse
 
   const isAssetHub = ASSET_HUBS.includes(chain?.genesisHash || '');
 
-  const isForeignAsset = assetId && typeof assetId === 'string' && assetId?.startsWith('0x');
+  const isForeignAsset = assetId ? typeof assetId === 'string' && assetId?.startsWith('0x') : undefined;
 
   const [assetBalance, setAssetBalance] = useState<BalancesInfo | undefined>();
 
