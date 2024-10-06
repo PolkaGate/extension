@@ -7,7 +7,7 @@ import { useContext, useEffect } from 'react';
 
 import { CurrencyContext } from '../components';
 import { getStorage, watchStorage } from '../components/Loading';
-import { USD_CURRENCY } from '../util/constants';
+import { USD_CURRENCY } from '../util/currencyList';
 
 /**
  * @description
