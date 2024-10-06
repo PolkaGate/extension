@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -45,7 +44,7 @@ const Account = ({ info, label }: { label: string, info: NameAddress }) => {
   );
 };
 
-export default function Confirmation({ handleDone, txInfo }: Props): React.ReactElement {
+export default function Confirmation ({ handleDone, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
