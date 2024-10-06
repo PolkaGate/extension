@@ -1,7 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { USD_CURRENCY } from './constants';
+export const ASSETS_AS_CURRENCY_LIST = ['BTC', 'ETH', 'DOT'];
+
+export const USD_CURRENCY = {
+  code: 'USD',
+  country: 'United States',
+  currency: 'Dollar',
+  sign: '$'
+};
 
 export const CURRENCY_LIST = [
   USD_CURRENCY,
@@ -20,14 +27,20 @@ export const CURRENCY_LIST = [
   {
     code: 'BTC',
     country: 'Bitcoin',
-    currency: 'BTC',
+    currency: 'Bitcoin',
     sign: '₿'
   },
   {
     code: 'ETH',
     country: 'Ethereum',
-    currency: 'ETH',
+    currency: 'Ethereum',
     sign: 'Ξ'
+  },
+  {
+    code: 'DOT',
+    country: 'Polkadot',
+    currency: 'Polkadot',
+    sign: '𝒫'
   },
   {
     code: 'AED',

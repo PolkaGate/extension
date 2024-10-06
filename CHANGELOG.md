@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.17.0](https://github.com/polkagate/extension/compare/v0.16.0...v0.17.0) (2024-10-06)
+
+
+### Features
+
+* add Polkadot as currency ([#1581](https://github.com/polkagate/extension/issues/1581)) ([6435c62](https://github.com/polkagate/extension/commit/6435c62dba89f840df3c68faa139aa384b5d1689)), closes [#1578](https://github.com/polkagate/extension/issues/1578)
+
 # [0.16.0](https://github.com/polkagate/extension/compare/v0.15.0...v0.16.0) (2024-10-01)
 
 
