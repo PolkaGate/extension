@@ -80,7 +80,7 @@ export default function Metadata ({ address, decisionDepositPayer, referendum }:
 
   const referendumLinkOnsSubscan = () => `https://${chainName}.subscan.io/referenda_v2/${String(referendum?.index)}`;
 
-  const mayBeBeneficiary = useMemo(() => {
+  const maybeBeneficiary = useMemo(() => {
     if (referendum?.call && chain) {
       return getBeneficiary(referendum, chain);
     }
@@ -173,7 +173,7 @@ export default function Metadata ({ address, decisionDepositPayer, referendum }:
             />}
             valueStyle={{ fontSize: 16, fontWeight: 500 }}
           />
-          {mayBeBeneficiary &&
+          {maybeBeneficiary &&
             <>
               <LabelValue
                 label={t('Requested for')}
@@ -187,23 +187,23 @@ export default function Metadata ({ address, decisionDepositPayer, referendum }:
                 />}
                 valueStyle={{ fontSize: 16, fontWeight: 500 }}
               />
-              {mayBeBeneficiary &&
+              {maybeBeneficiary &&
                 <LabelValue
                   label={t('Beneficiary')}
                   labelStyle={{ minWidth: '20%' }}
                   style={{ justifyContent: 'flex-start' }}
                   value={
-                    isValidAddress(mayBeBeneficiary)
+                    isValidAddress(maybeBeneficiary)
                       ? <Identity
                         api={api}
                         chain={chain}
-                        formatted={mayBeBeneficiary}
+                        formatted={maybeBeneficiary}
                         identiconSize={25}
                         showShortAddress
                         showSocial
                         style={{ fontSize: '16px', fontWeight: 500, maxWidth: '100%', minWidth: '35%' }}
                       />
-                      : <ShowValue value={mayBeBeneficiary} />
+                      : <ShowValue value={maybeBeneficiary} />
                   }
                   valueStyle={{ maxWidth: '75%', width: 'fit-content' }}
                 />

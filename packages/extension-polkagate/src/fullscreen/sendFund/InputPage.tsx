@@ -157,16 +157,14 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
 
   const destinationGenesisHashes = useMemo((): DropdownOption[] => {
     const currentChainOption = chain ? [{ text: chain.name, value: chain.genesisHash as string }] : [];
-    const mayBeTeleportDestinations =
+    const maybeTeleportDestinations =
      isNativeToken
        ? teleportState?.destinations?.map(({ genesisHash, info, paraId }) => ({ text: toTitleCase(info) as string, value: (paraId || String(genesisHash)) as string }))
        : [];
 
-    return currentChainOption.concat(mayBeTeleportDestinations);
+    return currentChainOption.concat(maybeTeleportDestinations);
   }, [isNativeToken, chain, teleportState?.destinations]);
 
-  console.log('isNativeToken', isNativeToken)
-  console.log('destinationGenesisHashes', destinationGenesisHashes)
   const isCrossChain = useMemo(() => recipientChainGenesisHash !== chain?.genesisHash, [chain?.genesisHash, recipientChainGenesisHash]);
 
   const onChainCall = useMemo(() => {

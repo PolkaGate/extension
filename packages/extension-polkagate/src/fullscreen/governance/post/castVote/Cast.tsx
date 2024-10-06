@@ -101,7 +101,7 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [voteType, setVoteType] = useState<'Aye' | 'Nay' | 'Abstain' | undefined>(getVoteType(previousVote));
-  const mayBePreviousVote = amountToHuman(previousVote?.standard?.balance || previousVote?.splitAbstain?.abstain || (previousVote?.delegating?.voted ? previousVote?.delegating?.balance : undefined), decimal);
+  const maybePreviousVote = amountToHuman(previousVote?.standard?.balance || previousVote?.splitAbstain?.abstain || (previousVote?.delegating?.voted ? previousVote?.delegating?.balance : undefined), decimal);
   const [voteAmount, setVoteAmount] = React.useState<string>('0');
   const [conviction, setConviction] = useState<number>();
 
@@ -140,12 +140,12 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
   }, [conviction, myDelegations, voteAmountAsBN]);
 
   useEffect(() => {
-    if (mayBePreviousVote) {
-      setVoteAmount(mayBePreviousVote);
+    if (maybePreviousVote) {
+      setVoteAmount(maybePreviousVote);
       previousVote?.standard && setConviction(getConviction(previousVote.standard.vote));
       previousVote?.delegating && previousVote?.delegating?.voted && setConviction(getConviction(String(previousVote.delegating.conviction)));
     }
-  }, [mayBePreviousVote, previousVote]);
+  }, [maybePreviousVote, previousVote]);
 
   useEffect(() => {
     convictionOptions === undefined && setConviction(1);
@@ -328,7 +328,7 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
 
   return (
     <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative' }}>
-      {mayBePreviousVote &&
+      {maybePreviousVote &&
         <Warning
           fontWeight={300}
           marginTop={0}
@@ -405,7 +405,7 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
           </Grid>
         </Grid>
       </Grid>
-      <Grid container height={mayBePreviousVote ? '85px' : '100px'} item>
+      <Grid container height={maybePreviousVote ? '85px' : '100px'} item>
         {voteType !== 'Abstain' &&
           <Convictions
             address={address}

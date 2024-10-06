@@ -47,9 +47,9 @@ export async function signAndSend (
       } catch (error) {
         success = false;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const mayBeErrorText = result?.dispatchError?.toString() || 'unknown error';
+        const maybeErrorText = result?.dispatchError?.toString() || 'unknown error';
 
-        failureText = `${mayBeErrorText}`;
+        failureText = `${maybeErrorText}`;
         console.log(error);
       }
 

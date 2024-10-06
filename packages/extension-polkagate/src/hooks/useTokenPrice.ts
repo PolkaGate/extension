@@ -29,7 +29,7 @@ export default function useTokenPrice (address: string | undefined, assetId?: nu
   const { chainName, genesisHash } = useInfo(address);
   const userAddedPriceId = useUserAddedPriceId(genesisHash);
   const pricesInCurrencies = usePrices();
-  const mayBeAssetsOnMultiAssetChains = assetsChains[toCamelCase(chainName || '')];
+  const maybeAssetsOnMultiAssetChains = assetsChains[toCamelCase(chainName || '')];
 
   const isAssetHub = ASSET_HUBS.includes(genesisHash || '');
 
@@ -48,15 +48,15 @@ export default function useTokenPrice (address: string | undefined, assetId?: nu
 
     // FixMe, on second fetch of asset id its type will get string which is weird!!
     const priceId = _assetId !== undefined && ((typeof _assetId === 'number' && _assetId > NATIVE_TOKEN_ASSET_ID) || isAssetHub)
-      ? mayBeAssetsOnMultiAssetChains?.find(({ id }) => id === Number(_assetId) || id === _assetId)?.priceId
+      ? maybeAssetsOnMultiAssetChains?.find(({ id }) => id === Number(_assetId) || id === _assetId)?.priceId
       : userAddedPriceId || getPriceIdByChainName(chainName);
 
-    const mayBePriceValue = priceId ? pricesInCurrencies.prices?.[priceId]?.value || 0 : 0;
+    const maybePriceValue = priceId ? pricesInCurrencies.prices?.[priceId]?.value || 0 : 0;
 
     return {
-      price: mayBePriceValue,
+      price: maybePriceValue,
       priceChainName: chainName?.toLocaleLowerCase(),
       priceDate: pricesInCurrencies.date
     };
-  }, [_assetId, chainName, isAssetHub, mayBeAssetsOnMultiAssetChains, pricesInCurrencies, userAddedPriceId]);
+  }, [_assetId, chainName, isAssetHub, maybeAssetsOnMultiAssetChains, pricesInCurrencies, userAddedPriceId]);
 }

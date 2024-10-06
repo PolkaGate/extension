@@ -183,9 +183,9 @@ export default function Popup (): React.ReactElement {
       getStorage('pricesInCurrencies')
         .then((res) => {
           const savedPricesInCurrencies = (res || {}) as PricesInCurrencies;
-          const mayBeSavedPriceInCurrentCurrencyCode = savedPricesInCurrencies[currency.code];
+          const maybeSavedPriceInCurrentCurrencyCode = savedPricesInCurrencies[currency.code];
 
-          if (mayBeSavedPriceInCurrentCurrencyCode && isPriceUpToDate(mayBeSavedPriceInCurrentCurrencyCode.date)) {
+          if (maybeSavedPriceInCurrentCurrencyCode && isPriceUpToDate(maybeSavedPriceInCurrentCurrencyCode.date)) {
             /** price in the selected currency is already updated hence no need to fetch again */
             // TODO: FixMe: what if users change selected chainS during price validity period?
             return;

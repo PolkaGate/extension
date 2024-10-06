@@ -51,8 +51,8 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
   const depositorAddress = pool?.bondedPool?.roles?.depositor?.toString();
 
   const maybeCommissionPayee = (pool?.bondedPool?.commission?.current as any)?.[1]?.toString() as string | undefined;
-  const mayBeCommission = ((pool?.bondedPool?.commission?.current as any)?.[0] || 0) as number;
-  const commissionValue = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
+  const maybeCommission = ((pool?.bondedPool?.commission?.current as any)?.[0] || 0) as number;
+  const commissionValue = Number(maybeCommission) / (10 ** 7) < 1 ? 0 : Number(maybeCommission) / (10 ** 7);
 
   const [showReview, setShowReview] = useState<boolean>(false);
   const [changes, setChanges] = useState<ChangesProps | undefined>();

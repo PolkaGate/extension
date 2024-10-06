@@ -22,7 +22,7 @@ interface Props {
 
 function ChainLogo ({ chainName, genesisHash, logo, size = 25 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  const mayBeUserAddedChainColor = useUserAddedChainColor(genesisHash);
+  const maybeUserAddedChainColor = useUserAddedChainColor(genesisHash);
   const options = useContext(GenesisHashOptionsContext);
 
   const foundChainName = options.find(({ text, value }) => value === genesisHash || text === chainName)?.text;
@@ -60,7 +60,7 @@ function ChainLogo ({ chainName, genesisHash, logo, size = 25 }: Props): React.R
         </>
         : <Avatar
           sx={{
-            bgcolor: mayBeUserAddedChainColor,
+            bgcolor: maybeUserAddedChainColor,
             borderRadius: '50%',
             fontSize: size * 0.7,
             height: size,

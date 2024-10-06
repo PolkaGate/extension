@@ -141,7 +141,7 @@ export default function useAccountLocks (address: string | undefined, palletRefe
         return; // has not voted!! or any issue
       }
 
-      const mayBePriors: Lock[] = [];
+      const maybePriors: Lock[] = [];
 
       const maybeVotes = maybeVotingFor.map((v, index): null | [BN, BN[], PalletConvictionVotingVoteCasting] => {
         if (!v.isCasting) {
@@ -152,7 +152,7 @@ export default function useAccountLocks (address: string | undefined, palletRefe
         const classId = params[index][1];
 
         if (!casting.prior[0].eq(BN_ZERO)) {
-          mayBePriors.push({
+          maybePriors.push({
             classId,
             endBlock: casting.prior[0],
             locked: 'None',
@@ -180,7 +180,7 @@ export default function useAccountLocks (address: string | undefined, palletRefe
 
       if (!refIds.length) {
         return setInfo({
-          priors: mayBePriors,
+          priors: maybePriors,
           referenda: null,
           votes: maybeVotes
         });
@@ -197,7 +197,7 @@ export default function useAccountLocks (address: string | undefined, palletRefe
         : null;
 
       setInfo({
-        priors: mayBePriors,
+        priors: maybePriors,
         referenda: maybeReferenda,
         votes: maybeVotes
       });
