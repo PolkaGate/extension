@@ -140,7 +140,9 @@ export default function useNativeAssetBalances (address: string | undefined, ref
     return newBalances; // returns balances that have been fetched recently and are not from the local storage, and it does not include the pooledBalance
   }
 
-  return balances && balances.token === currentToken && balances.decimal === currentDecimal
-    ? newBalances || balances
+  const _balances = newBalances || balances;
+
+  return _balances && _balances.token === currentToken && _balances.decimal === currentDecimal
+    ? _balances
     : undefined;
 }
