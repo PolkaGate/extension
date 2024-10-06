@@ -18,10 +18,10 @@ import CurrencyItem from './CurrencyItem';
 interface Props {
   anchorEl: HTMLButtonElement | null;
   setAnchorEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
-  setCurrencyToShow: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setCurrencyToShow: React.Dispatch<React.SetStateAction<CurrencyItemType | undefined>>;
 }
 
-const DEFAULT_CURRENCIES_TO_SHOW = 5;
+const DEFAULT_CURRENCIES_TO_SHOW = 6;
 
 function CurrencySwitch ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): React.ReactElement {
   const theme = useTheme();
@@ -42,7 +42,7 @@ function CurrencySwitch ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): R
   const changeCurrency = useCallback((currency: CurrencyItemType) => {
     setAnchorEl(null);
     setCurrency(currency);
-    setCurrencyToShow(currency.sign);
+    setCurrencyToShow(currency);
     setStorage('currency', currency).catch(console.error);
   }, [setAnchorEl, setCurrency, setCurrencyToShow]);
 
@@ -99,7 +99,7 @@ function CurrencySwitch ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): R
             value={searchKeyword ?? ''}
           />
         </Grid>
-        {[...(searchedCurrency ?? CURRENCY_LIST.slice(3))].map((item, index) => (
+        {[...(searchedCurrency ?? CURRENCY_LIST.slice(DEFAULT_CURRENCIES_TO_SHOW))].map((item, index) => (
           <CurrencyItem
             currency={item}
             key={index}

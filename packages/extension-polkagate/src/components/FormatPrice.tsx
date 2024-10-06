@@ -7,6 +7,7 @@ import { Grid, Skeleton, Typography } from '@mui/material';
 import React, { useMemo } from 'react';
 
 import { useCurrency } from '../hooks';
+import { ASSETS_AS_CURRENCY_LIST } from '../util/currencyList';
 import { amountToHuman } from '../util/utils';
 
 interface Props {
@@ -68,7 +69,7 @@ function FormatPrice ({ amount, decimalPoint = 2, decimals, fontSize, fontWeight
   }, [amount, decimals, num, price]);
 
   const _decimalPoint = useMemo(() => {
-    if (currency?.code && ['ETH', 'BTC'].includes(currency.code)) {
+    if (currency?.code && ASSETS_AS_CURRENCY_LIST.includes(currency.code)) {
       return DECIMAL_POINTS_FOR_CRYPTO_AS_CURRENCY;
     }
 

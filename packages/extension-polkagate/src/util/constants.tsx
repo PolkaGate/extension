@@ -220,13 +220,6 @@ export const REGISTRARS_LIST: { addresses: string[]; index: number; name: string
 export const NO_PASS_PERIOD = 30 * 60 * 1000; // in ms, the duration of time we do not ask user for password after a successful login
 export const MAYBE_LATER_PERIOD = 5 * 60 * 1000; // ms
 
-export const USD_CURRENCY = {
-  code: 'USD',
-  country: 'United States',
-  currency: 'Dollar',
-  sign: '$'
-};
-
 export const FULLSCREEN_WIDTH = '900px';
 export const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed', '/account/import-raw-seed', '/forgot-password', '/reset-wallet'];
 
