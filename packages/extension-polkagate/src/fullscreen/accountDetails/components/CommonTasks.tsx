@@ -118,7 +118,6 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
 
     return { stakingDisabled, stakingNotReady };
   }, [balance?.pooledBalance, balance?.soloTotal, genesisHash]);
-  const nftDisable = useMemo(() => !NFT_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const stakingIconColor = useMemo(() => stakingDisabled || stakingNotReady ? theme.palette.action.disabledBackground : theme.palette.text.primary, [stakingDisabled, theme.palette.action.disabledBackground, theme.palette.text.primary, stakingNotReady]);
 
   const hasSoloStake = Boolean(balance?.soloTotal && !balance.soloTotal.isZero());
@@ -160,8 +159,8 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
   }, [address, stakingDisabled]);
 
   const onNFTAlbum = useCallback(() => {
-    address && !nftDisable && openOrFocusTab(`/nft/${address}`);
-  }, [address, nftDisable]);
+    address && openOrFocusTab(`/nft/${address}`);
+  }, [address]);
 
   const goToHistory = useCallback(() => {
     address && genesisHash && setDisplayPopup(popupNumbers.HISTORY);
@@ -255,20 +254,17 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
           text={t('Stake in Pool')}
         />
         <TaskButton
-          disabled={nftDisable}
+          disabled={false} // We check NFTs across all supported chains, so this feature is not specific to the current chain and should not be disabled.
           icon={
             <NFTIcon
-              color={
-                nftDisable
-                  ? theme.palette.text.disabled
-                  : theme.palette.text.primary}
+              color={theme.palette.text.primary}
               height={24}
               width={24}
             />
           }
           onClick={onNFTAlbum}
           secondaryIconType='page'
-          text={t('NFT Album')}
+          text={t('NFT album')}
         />
         <TaskButton
           disabled={!genesisHash}

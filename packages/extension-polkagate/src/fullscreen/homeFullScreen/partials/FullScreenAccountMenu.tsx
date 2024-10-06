@@ -10,7 +10,7 @@ import React, { useCallback, useContext } from 'react';
 
 import { ActionContext, MenuItem, NFTIcon, SocialRecoveryIcon, VaadinIcon } from '../../../components';
 import { useInfo, useTranslation } from '../../../hooks';
-import { IDENTITY_CHAINS, NFT_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
+import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 import { POPUPS_NUMBER } from './AccountInformationForHome';
 import ProfileMenu from './ProfileMenu';
 
@@ -119,19 +119,16 @@ const Menus = ({ address, handleClose, setDisplayPopup }: {
         withHoverEffect
       />
       <MenuItem
-        disabled={isDisable(NFT_CHAINS)}
+        disabled={false} // We check NFTs across all supported chains, so this feature is not specific to the current chain and should not be disabled.
         iconComponent={
           <NFTIcon
-            color={
-              isDisable(NFT_CHAINS)
-                ? theme.palette.text.disabled
-                : theme.palette.text.primary}
+            color={theme.palette.text.primary}
             height={24}
             width={24}
           />
         }
         onClick={onNFTAlbum}
-        text={t('NFT Album')}
+        text={t('NFT album')}
         withHoverEffect
       />
       <Divider sx={{ bgcolor: 'divider', height: '1px', my: '6px' }} />

@@ -15,7 +15,7 @@ import { ActionContext, GenesisHashOptionsContext, Identity, MenuItem, NFTIcon, 
 import ProfileMenu from '../fullscreen/homeFullScreen/partials/ProfileMenu';
 import { useInfo, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
-import { IDENTITY_CHAINS, NFT_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../util/constants';
+import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
 
 interface Props {
@@ -138,19 +138,16 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
         withHoverEffect
       />
       <MenuItem
-        disabled={isDisabled(NFT_CHAINS)}
+        disabled={false} // We check NFTs across all supported chains, so this feature is not specific to the current chain and should not be disabled.
         iconComponent={
           <NFTIcon
-            color={
-              isDisabled(NFT_CHAINS)
-                ? theme.palette.text.disabled
-                : theme.palette.text.primary}
+            color={theme.palette.text.primary}
             height={24}
             width={24}
           />
         }
         onClick={onNFTAlbum}
-        text={t('NFT Album')}
+        text={t('NFT album')}
         withHoverEffect
       />
       <MenuSeparator />
