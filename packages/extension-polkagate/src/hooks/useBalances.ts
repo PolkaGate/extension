@@ -49,7 +49,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
       return;
     }
 
-    // TODO: this just saves native assets in local storage!
+    // TODO: this just saves native assets in local storage! can save other assets as well
     /** to SAVE fetched balance in local storage, first load saved balances of different chaines if any */
     const savedBalances = JSON.parse(account?.balances ?? '{}') as SavedBalances;
 
