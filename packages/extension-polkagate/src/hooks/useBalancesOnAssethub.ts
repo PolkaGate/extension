@@ -11,7 +11,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { ASSET_HUBS } from '../util/constants';
+import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
 import { decodeMultiLocation } from '../util/utils';
 import { useInfo } from '.';
 
@@ -67,7 +67,7 @@ export default function useBalancesOnAssethub (address: string | undefined, asse
   }, [api, assetId, chainName, formatted, isForeignAsset]);
 
   useEffect(() => {
-    if (assetId === undefined || !api?.query?.['assets'] || !isAssetHub) {
+    if (assetId === undefined || assetId === NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB || !api?.query?.['assets'] || !isAssetHub) {
       return;
     }
 

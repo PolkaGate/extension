@@ -240,20 +240,18 @@ export default function useReferendum (address: AccountId | string | undefined, 
     api && id !== undefined && api.query?.['referenda']?.['referendumInfoFor'] && api.query['referenda']['referendumInfoFor'](id)
       .then((result) => {
         const res = result as Option<PalletReferendaReferendumInfoConvictionVotingTally>;
-        const mayBeUnwrappedResult = (res.isSome && res.unwrap()) as PalletReferendaReferendumInfoConvictionVotingTally | undefined;
-        const mayBeOngoingRef = mayBeUnwrappedResult?.isOngoing ? mayBeUnwrappedResult?.asOngoing : undefined;
-        const mayBeTally = mayBeOngoingRef ? mayBeOngoingRef.tally : undefined;
+        const maybeUnwrappedResult = (res.isSome && res.unwrap()) as PalletReferendaReferendumInfoConvictionVotingTally | undefined;
+        const maybeOngoingRef = maybeUnwrappedResult?.isOngoing ? maybeUnwrappedResult?.asOngoing : undefined;
+        const maybeTally = maybeOngoingRef ? maybeOngoingRef.tally : undefined;
 
-        // console.log('referendum Info for:', JSON.parse(JSON.stringify(mayBeUnwrappedResult)))
-
-        setOnchainRefInfo(mayBeUnwrappedResult);
-        setOnChainTally(mayBeTally);
+        setOnchainRefInfo(maybeUnwrappedResult);
+        setOnChainTally(maybeTally);
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const mayBeOrigin = mayBeUnwrappedResult?.isOngoing ? JSON.parse(JSON.stringify(mayBeUnwrappedResult?.asOngoing?.origin)) : undefined;
+        const maybeOrigin = maybeUnwrappedResult?.isOngoing ? JSON.parse(JSON.stringify(maybeUnwrappedResult?.asOngoing?.origin)) : undefined;
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-        setMaybeOriginDC(mayBeOrigin?.origins);
+        setMaybeOriginDC(maybeOrigin?.origins);
       }).catch(console.error);
   }, [api, id, refresh]);
 

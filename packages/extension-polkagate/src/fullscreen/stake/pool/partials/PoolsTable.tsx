@@ -147,8 +147,8 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
         {poolsToShow
           ? poolsToShow.length
             ? poolsToShow.map((pool, index) => {
-              const mayBeCommission = pool.bondedPool.commission.current.isSome ? pool.bondedPool.commission.current.value[0] : 0;
-              const commission = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
+              const maybeCommission = pool.bondedPool.commission.current.isSome ? pool.bondedPool.commission.current.value[0] : 0;
+              const commission = Number(maybeCommission) / (10 ** 7) < 1 ? 0 : Number(maybeCommission) / (10 ** 7);
 
               return (
                 <Grid className='pools' container item key={index}>

@@ -130,9 +130,9 @@ export default function JoinPool (): React.ReactElement {
       return setEstimatedFee(api.createType('Balance', BN_ONE) as Balance);
     }
 
-    const mayBeAmount = amountAsBN || poolStakingConsts?.minJoinBond;
+    const maybeAmount = amountAsBN || poolStakingConsts?.minJoinBond;
 
-    mayBeAmount && api.tx['nominationPools']['join'](mayBeAmount.toString(), BN_ONE).paymentInfo(formatted).then((i) => {
+    maybeAmount && api.tx['nominationPools']['join'](maybeAmount.toString(), BN_ONE).paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee) as Balance);
     }).catch(console.error);
 

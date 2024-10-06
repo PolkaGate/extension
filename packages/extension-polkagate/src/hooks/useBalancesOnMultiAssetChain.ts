@@ -22,7 +22,7 @@ const assetsChains = createAssets();
 export default function useBalancesOnMultiAssetChain (address: string | undefined, assetId?: string | number): BalancesInfo | undefined {
   const { api, chain, chainName } = useInfo(address);
 
-  const mayBeAssetsOnMultiAssetChains = assetsChains[toCamelCase(chainName || '')];
+  const maybeAssetsOnMultiAssetChains = assetsChains[toCamelCase(chainName || '')];
   const isAssetHub = ASSET_HUBS.includes(chain?.genesisHash || '');
 
   const [assetBalance, setAssetBalance] = useState<BalancesInfo | undefined>();
@@ -74,12 +74,12 @@ export default function useBalancesOnMultiAssetChain (address: string | undefine
   }, [address, api, chainName]);
 
   useEffect(() => {
-    if (api && assetId && mayBeAssetsOnMultiAssetChains && !isAssetHub && typeof assetId === 'number') {
-      const assetInfo = mayBeAssetsOnMultiAssetChains[assetId];
+    if (api && assetId && maybeAssetsOnMultiAssetChains && !isAssetHub && typeof assetId === 'number') {
+      const assetInfo = maybeAssetsOnMultiAssetChains[assetId];
 
       assetInfo && api.query['tokens'] && fetchAssetOnMultiAssetChain(assetInfo).catch(console.error);
     }
-  }, [api, assetId, fetchAssetOnMultiAssetChain, isAssetHub, mayBeAssetsOnMultiAssetChains]);
+  }, [api, assetId, fetchAssetOnMultiAssetChain, isAssetHub, maybeAssetsOnMultiAssetChains]);
 
   return assetBalance;
 }

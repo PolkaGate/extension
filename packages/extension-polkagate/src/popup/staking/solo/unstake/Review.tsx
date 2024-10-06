@@ -109,9 +109,9 @@ export default function Review({ address, amount, chilled, estimatedFee, hasNomi
       }
 
       txs.push(unbonded(amountAsBN));
-      const mayBeBatchTxs = txs.length > 1 ? api.tx['utility']['batchAll'](txs) : txs[0];
-      const mayBeProxiedTx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, mayBeBatchTxs) : mayBeBatchTxs;
-      const { block, failureText, fee, success, txHash } = await signAndSend(api, mayBeProxiedTx, signer, formatted);
+      const maybeBatchTxs = txs.length > 1 ? api.tx['utility']['batchAll'](txs) : txs[0];
+      const maybeProxiedTx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, maybeBatchTxs) : maybeBatchTxs;
+      const { block, failureText, fee, success, txHash } = await signAndSend(api, maybeProxiedTx, signer, formatted);
 
       const info = {
         action: 'Solo Staking',

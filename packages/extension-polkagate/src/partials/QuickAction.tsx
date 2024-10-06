@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,12 +12,10 @@ import { Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
-
 import { HorizontalMenuItem, PoolStakingIcon, VaadinIcon } from '../components';
 import { useInfo, useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
-import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
+import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, NATIVE_TOKEN_ASSET_ID, STAKING_CHAINS } from '../util/constants';
 
 interface Props {
   address: AccountId | string;
@@ -26,45 +25,49 @@ interface Props {
 
 const ICON_SIZE = 10;
 
-export default function QuickAction({ address, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
+export default function QuickAction ({ address, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
-  const { account, api, formatted } = useInfo(address);
+  const { api, formatted, genesisHash } = useInfo(address);
 
   const handleOpen = useCallback(() => setQuickActionOpen(String(address)), [address, setQuickActionOpen]);
   const handleClose = useCallback(() => quickActionOpen === address && setQuickActionOpen(undefined), [address, quickActionOpen, setQuickActionOpen]);
 
+  const isStakingEnabled = genesisHash && STAKING_CHAINS.includes(genesisHash);
+  const isCrowdLoanEnabled = genesisHash && CROWDLOANS_CHAINS.includes(genesisHash);
+  const isGovernanceEnabled = genesisHash && GOVERNANCE_CHAINS.includes(genesisHash);
+
   const goToSend = useCallback(() => {
-    address && account?.genesisHash && windowOpen(`/send/${String(address)}/undefined`).catch(console.error);
-  }, [account?.genesisHash, address]);
+    address && genesisHash && windowOpen(`/send/${String(address)}/${NATIVE_TOKEN_ASSET_ID}`).catch(console.error);
+  }, [genesisHash, address]);
 
   const goToPoolStaking = useCallback(() => {
-    address && STAKING_CHAINS.includes(account?.genesisHash) && history.push({
+    address && isStakingEnabled && history.push({
       pathname: `/pool/${String(address)}/`,
       state: { api }
     });
-  }, [account?.genesisHash, address, api, history]);
+  }, [address, isStakingEnabled, history, api]);
 
   const goToSoloStaking = useCallback(() => {
-    address && STAKING_CHAINS.includes(account?.genesisHash) && history.push({
+    address && isStakingEnabled && history.push({
       pathname: `/solo/${String(address)}/`,
       state: { api }
     });
-  }, [account?.genesisHash, address, api, history]);
+  }, [address, isStakingEnabled, history, api]);
 
   const goToCrowdLoans = useCallback(() => {
-    formatted && CROWDLOANS_CHAINS.includes(account?.genesisHash) &&
+    formatted && isCrowdLoanEnabled &&
       history.push({
         pathname: `/crowdloans/${address}`
       });
-  }, [account?.genesisHash, address, formatted, history]);
+  }, [formatted, isCrowdLoanEnabled, history, address]);
 
   const goToGovernanceOrHistory = useCallback(() => {
-    GOVERNANCE_CHAINS.includes(account?.genesisHash)
-      ? windowOpen(`/governance/${address}/referenda`).catch(console.error)
-      : account?.genesisHash && history.push({ pathname: `/history/${String(address)}` });
-  }, [account?.genesisHash, address, history]);
+    isGovernanceEnabled
+      ? address && windowOpen(`/governance/${address}/referenda`).catch(console.error)
+      : genesisHash && history.push({ pathname: `/history/${String(address)}` });
+  }, [isGovernanceEnabled, address, genesisHash, history]);
 
   const isSlideOpen = quickActionOpen === address;
 
@@ -94,7 +97,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
         icon={
           <FontAwesomeIcon
             color={
-              account?.genesisHash
+              genesisHash
                 ? theme.palette.text.primary
                 : theme.palette.action.disabledBackground
             }
@@ -103,8 +106,8 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
           />
         }
         onClick={goToSend}
-        textDisabled={!account?.genesisHash}
-        title={t<string>('Send')}
+        textDisabled={!genesisHash}
+        title={t('Send')}
         titleFontSize={10}
       />
       <HorizontalMenuItem
@@ -112,7 +115,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
         dividerHeight={20}
         exceptionWidth={45}
         icon={
-          !STAKING_CHAINS.includes(account?.genesisHash)
+          !isStakingEnabled
             ? <PoolStakingIcon
               color={theme.palette.action.disabledBackground}
               height={30}
@@ -124,8 +127,8 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
         }
         labelMarginTop='-5px'
         onClick={goToPoolStaking}
-        textDisabled={!STAKING_CHAINS.includes(account?.genesisHash)}
-        title={t<string>('Pool Staking')}
+        textDisabled={!isStakingEnabled}
+        title={t('Pool Staking')}
         titleFontSize={10}
         titleLineHeight={1}
       />
@@ -136,7 +139,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
         icon={
           <BoyIcon
             sx={{
-              color: STAKING_CHAINS.includes(account?.genesisHash)
+              color: isStakingEnabled
                 ? 'text.primary'
                 : 'action.disabledBackground',
               fontSize: '30px'
@@ -145,8 +148,8 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
         }
         labelMarginTop='-5px'
         onClick={goToSoloStaking}
-        textDisabled={!STAKING_CHAINS.includes(account?.genesisHash)}
-        title={t<string>('Solo Staking')}
+        textDisabled={!isStakingEnabled}
+        title={t('Solo Staking')}
         titleFontSize={10}
         titleLineHeight={1}
       />
@@ -154,11 +157,11 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
         divider
         dividerHeight={20}
         icon={
-          <VaadinIcon icon='vaadin:piggy-bank-coin' style={{ height: '23px', color: `${CROWDLOANS_CHAINS.includes(account?.genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}` }} />
+          <VaadinIcon icon='vaadin:piggy-bank-coin' style={{ height: '23px', color: `${isCrowdLoanEnabled ? theme.palette.text.primary : theme.palette.action.disabledBackground}` }} />
         }
         onClick={goToCrowdLoans}
-        textDisabled={!CROWDLOANS_CHAINS.includes(account?.genesisHash)}
-        title={t<string>('Crowdloans')}
+        textDisabled={!isCrowdLoanEnabled}
+        title={t('Crowdloans')}
         titleFontSize={10}
       />
       <HorizontalMenuItem
@@ -166,16 +169,16 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
         icon={
           <FontAwesomeIcon
             color={
-              account?.genesisHash
+              genesisHash
                 ? theme.palette.text.primary
                 : theme.palette.action.disabledBackground
             }
-            icon={GOVERNANCE_CHAINS.includes(account?.genesisHash) ? faVoteYea : faHistory}
+            icon={isGovernanceEnabled ? faVoteYea : faHistory}
             style={{ height: '20px' }}
           />}
         onClick={goToGovernanceOrHistory}
-        textDisabled={!account?.genesisHash}
-        title={t<string>(GOVERNANCE_CHAINS.includes(account?.genesisHash) ? 'Governance' : 'History')}
+        textDisabled={!genesisHash}
+        title={t(isGovernanceEnabled ? 'Governance' : 'History')}
         titleFontSize={10}
       />
     </Grid>

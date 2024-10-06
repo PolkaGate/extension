@@ -40,8 +40,8 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
   const depositorAddress = pool?.bondedPool?.roles?.depositor?.toString();
 
   const maybeCommissionPayee = pool?.bondedPool?.commission?.current?.[1]?.toString() as string | undefined;
-  const mayBeCommission = (pool?.bondedPool?.commission?.current?.[0] || 0) as number;
-  const commissionValue = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
+  const maybeCommission = (pool?.bondedPool?.commission?.current?.[0] || 0) as number;
+  const commissionValue = Number(maybeCommission) / (10 ** 7) < 1 ? 0 : Number(maybeCommission) / (10 ** 7);
 
   const [newPoolName, setNewPoolName] = useState<string>();
   const [newRootAddress, setNewRootAddress] = useState<string | null | undefined>();

@@ -49,7 +49,7 @@ export default function QuickActionFullScreen ({ address, assetId, containerRef,
   const handleClose = useCallback(() => quickActionOpen === address && setQuickActionOpen(undefined), [address, quickActionOpen, setQuickActionOpen]);
 
   const goToSend = useCallback(() => {
-    address && account?.genesisHash && openOrFocusTab(`/send/${String(address)}/${assetId || ''}`);
+    address && account?.genesisHash && openOrFocusTab(`/send/${String(address)}/${assetId}`);
   }, [account?.genesisHash, address, assetId]);
 
   const goToPoolStaking = useCallback(() => {

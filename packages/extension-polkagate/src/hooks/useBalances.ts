@@ -8,15 +8,19 @@ import type { BalancesInfo, SavedBalances } from '../util/types';
 import { useEffect, useState } from 'react';
 
 import { updateMeta } from '../messaging';
-import { useBalancesOnAssethub, useBalancesOnMultiAssetChain, useBalancesOnSingleAssetChain, useInfo, usePoolBalances, useStakingAccount } from '.';
+import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
+import { useBalancesOnAssethub, useBalancesOnMultiAssetChain, useInfo, useNativeAssetBalances, usePoolBalances, useStakingAccount } from '.';
 
 export default function useBalances (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: string | number): BalancesInfo | undefined {
   const stakingAccount = useStakingAccount(address);
   const { account, api, chain, chainName, decimal: currentDecimal, token: currentToken } = useInfo(address);
 
-  const balances = useBalancesOnSingleAssetChain(address, refresh, setRefresh, onlyNew);
-  const maybeBalancesOnAssetHub = useBalancesOnAssethub(address, assetId);
-  const maybeBalancesOnMultiChainAssets = useBalancesOnMultiAssetChain(address, assetId);
+  const isNativeAssetId = String(assetId) === String(NATIVE_TOKEN_ASSET_ID) || String(assetId) === String(NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB);
+  const maybeNonNativeAssetId = isNativeAssetId ? undefined : assetId;
+
+  const balances = useNativeAssetBalances(address, refresh, setRefresh, onlyNew);
+  const maybeBalancesOnAssetHub = useBalancesOnAssethub(address, maybeNonNativeAssetId);
+  const maybeBalancesOnMultiChainAssets = useBalancesOnMultiAssetChain(address, maybeNonNativeAssetId);
   const pooledBalance = usePoolBalances(address, refresh);
 
   const assetBalance = maybeBalancesOnAssetHub || maybeBalancesOnMultiChainAssets;
@@ -45,6 +49,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
       return;
     }
 
+    // TODO: this just saves native assets in local storage!
     /** to SAVE fetched balance in local storage, first load saved balances of different chaines if any */
     const savedBalances = JSON.parse(account?.balances ?? '{}') as SavedBalances;
 
@@ -71,7 +76,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(account ?? {})?.length, account?.genesisHash, address, api, pooledBalance, chain, chainName, decimal, overall, token]);
 
-  if (assetId !== undefined) {
+  if (maybeNonNativeAssetId) {
     return assetBalance;
   }
 

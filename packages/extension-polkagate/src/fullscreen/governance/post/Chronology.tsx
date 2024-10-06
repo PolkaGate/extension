@@ -79,8 +79,8 @@ export default function Chronology ({ address, currentTreasuryApprovalList, refe
   const [treasuryAwardedBlock, setTreasuryAwardedBlock] = React.useState<number>();
   const isTreasury = TREASURY_TRACKS.includes(toSnakeCase(referendum?.trackName) || '');
   const isExecuted = referendum?.status === 'Executed';
-  const mayBeExecutionBlock = sortedHistory?.find((h) => h.status === 'Executed')?.block;
-  const mayBeBeneficiary = useMemo(() => {
+  const maybeExecutionBlock = sortedHistory?.find((h) => h.status === 'Executed')?.block;
+  const maybeBeneficiary = useMemo(() => {
     if (referendum?.call && chain) {
       return getBeneficiary(referendum, chain);
     }
@@ -89,13 +89,13 @@ export default function Chronology ({ address, currentTreasuryApprovalList, refe
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chain, referendum?.call]);
 
-  const mayBeAwardedDate = useMemo(() =>
-    (currentBlockNumber && spendPeriod && mayBeExecutionBlock && getAwardedDate(currentBlockNumber, mayBeExecutionBlock, spendPeriod)) ||
+  const maybeAwardedDate = useMemo(() =>
+    (currentBlockNumber && spendPeriod && maybeExecutionBlock && getAwardedDate(currentBlockNumber, maybeExecutionBlock, spendPeriod)) ||
     referendum?.timelinePA?.[1]?.statuses?.[1]?.timestamp
-  , [currentBlockNumber, mayBeExecutionBlock, spendPeriod, referendum]);
+  , [currentBlockNumber, maybeExecutionBlock, spendPeriod, referendum]);
 
   /** in rare case as ref 160 the proposers are not the same! needs more research */
-  const isInTreasuryQueue = useMemo(() => isExecuted && currentTreasuryApprovalList && !!currentTreasuryApprovalList?.find((item) => String(item.value) === referendum.requested && item.beneficiary === mayBeBeneficiary), [currentTreasuryApprovalList, isExecuted, mayBeBeneficiary, referendum]);
+  const isInTreasuryQueue = useMemo(() => isExecuted && currentTreasuryApprovalList && !!currentTreasuryApprovalList?.find((item) => String(item.value) === referendum.requested && item.beneficiary === maybeBeneficiary), [currentTreasuryApprovalList, isExecuted, maybeBeneficiary, referendum]);
   const isAwardedBasedOnPA = useMemo(() => referendum?.timelinePA?.[1]?.type === 'TreasuryProposal' && referendum?.timelinePA?.[1]?.statuses?.[1]?.status === 'Awarded', [referendum]);
   const isTreasuryProposalBasedOnPA = useMemo(() => referendum?.timelinePA?.[1]?.type === 'TreasuryProposal', [referendum]);
 
@@ -146,7 +146,7 @@ export default function Chronology ({ address, currentTreasuryApprovalList, refe
                 <Timeline sx={{ [`& .${timelineOppositeContentClasses.root}`]: { flex: 0.3 }, m: 0, p: 0 }}>
                   <TimelineItem>
                     <TimelineOppositeContent color='text.primary' sx={{ fontSize: 16, fontWeight: 500, mt: '-7px' }}>
-                      {toFormattedDate(mayBeAwardedDate)}
+                      {toFormattedDate(maybeAwardedDate)}
                     </TimelineOppositeContent>
                     <TimelineSeparator>
                       <TimelineDot sx={{ borderColor: isAwardedBasedOnPA ? 'primary.main' : 'action.focus', borderWidth: '4px', height: '20px', width: '20px' }} variant='outlined' />

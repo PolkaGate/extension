@@ -33,7 +33,7 @@ import { PButton, Progress, TwoButtons, Warning } from '.';
 
 interface Props {
   address: string;
-  mayBeApi?: ApiPromise;
+  maybeApi?: ApiPromise;
   call: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined | SubmittableExtrinsic<'promise', ISubmittableResult>;
   disabled?: boolean;
   isPasswordError?: boolean;
@@ -65,13 +65,13 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-export default function SignArea ({ address, call, disabled, extraInfo, isPasswordError, mayBeApi, onSecondaryClick, params, prevState, previousStep, primaryBtn, primaryBtnText, proxyModalHeight, proxyTypeFilter, secondaryBtnText, selectedProxy, setIsPasswordError, setRefresh, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, token }: Props): React.ReactElement<Props> {
+export default function SignArea ({ address, call, disabled, extraInfo, isPasswordError, maybeApi, onSecondaryClick, params, prevState, previousStep, primaryBtn, primaryBtnText, proxyModalHeight, proxyTypeFilter, secondaryBtnText, selectedProxy, setIsPasswordError, setRefresh, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, token }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { account, api: apiFromAddress, chain, formatted } = useInfo(address);
 
   // To handle system chain apis like people chain
-  const api = mayBeApi || apiFromAddress;
+  const api = maybeApi || apiFromAddress;
 
   const senderName = useAccountDisplay(address);
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxy?.delegate));

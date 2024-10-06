@@ -98,7 +98,7 @@ async function getAssetOnRelayChain (addresses, chainName, userAddedEndpoints) {
           : getPriceIdByChainName(chainName, userAddedEndpoints);
 
         results[address] = [{ // since some chains may have more than one asset hence we use an array here! even thought its not needed for relay chains but just to be as a general rule.
-          assetId: NATIVE_TOKEN_ASSET_ID, // Rule: we set asset id 0 for native tokens
+          assetId: NATIVE_TOKEN_ASSET_ID,
           balanceDetails: balancify({ ...balances, pooledBalance, soloTotal }),
           chainName,
           decimal: api.registry.chainDecimals[0],
