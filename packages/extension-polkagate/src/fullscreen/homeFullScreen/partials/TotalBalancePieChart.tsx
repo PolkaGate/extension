@@ -34,7 +34,7 @@ export interface AssetsWithUiAndPrice {
     color: string | undefined;
     logo: string | undefined;
   };
-  assetId?: number,
+  assetId?: number | string,
   chainName: string,
   date?: number,
   decimal: number,
@@ -192,7 +192,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
   return (
-    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 30px 10px', width: '430px' }}>
+    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 25px 10px', width: '430px' }}>
       <Grid alignItems='center' container gap='15px' item justifyContent='center'>
         <Typography sx={{ fontSize: '28px', fontVariant: 'small-caps', fontWeight: 400 }}>
           {t('My Portfolio')}
