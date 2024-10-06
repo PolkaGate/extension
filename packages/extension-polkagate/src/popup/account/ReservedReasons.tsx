@@ -23,7 +23,7 @@ import { HeaderBrand } from '../../partials';
 interface Props {
   identity: DeriveAccountRegistration | null | undefined;
   show: boolean;
-  assetId?: number;
+  assetId?: number | string;
   address: AccountId | string;
   setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }

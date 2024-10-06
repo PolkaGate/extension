@@ -633,7 +633,7 @@ export interface SavedIdentities {
 
 export interface BalancesInfo extends DeriveBalancesAll {
   ED: BN;
-  assetId?: number;
+  assetId?: number | string;
   chainName: string;
   currencyId?: unknown;
   date: number;
