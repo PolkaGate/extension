@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getProfileColor } from '@polkadot/extension-polkagate/src/util/utils';
 
-import { VaadinIcon } from '../../../components/index';
+import { Infotip2, VaadinIcon } from '../../../components/index';
 import { getStorage, setStorage, watchStorage } from '../../../components/Loading';
 import { useAlerts, useProfileAccounts, useTranslation } from '../../../hooks';
 import { showAccount } from '../../../messaging';
@@ -28,7 +28,7 @@ interface Props {
 export default function ProfileTabFullScreen ({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { notify } = useAlerts();
+  const { alerts, notify } = useAlerts();
   const profileAccounts = useProfileAccounts(orderedAccounts, text);
 
   /** set by user click on a profile tab */
@@ -84,55 +84,63 @@ export default function ProfileTabFullScreen ({ index, isHovered, orderedAccount
   }, [setSelectedProfile, t]);
 
   return (
-    <Grid
-      alignItems='center'
-      columnGap='5px'
-      container
-      item
-      justifyContent='center'
-      onClick={onClick}
-      px='8px'
-      sx={{
-        '&:hover': {
-          boxShadow: shadowOnHover
-        },
-        bgcolor: getProfileColor(index, theme) || 'background.paper',
-        borderRadius: '0 0 12px 12px',
-        boxShadow: shadow,
-        cursor: 'pointer',
-        flexShrink: 0,
-        minWidth: '100px',
-        position: 'relative',
-        transform: hideCard ? `translateY(-${HIDDEN_PERCENT})` : undefined,
-        transformOrigin: 'top',
-        transition: 'transform 0.2s, box-shadow 0.2s',
-        userSelect: 'none',
-        width: 'fit-content'
-      }}
+    <Infotip2
+      text={
+        !alerts?.length && isSelected && !areAllHidden
+          ? t('Click to hide all the profile accounts from websites!')
+          : undefined
+      }
     >
-      <VaadinIcon icon={'vaadin:check'} style={{ height: '13px', visibility: isSelected ? 'visible' : 'hidden', width: '15px' }} />
-      <Typography
-        color={'text.primary'} display='block' fontSize='16px' fontWeight={isSelected ? 500 : 400}
+      <Grid
+        alignItems='center'
+        columnGap='5px'
+        container
+        item
+        justifyContent='center'
+        onClick={onClick}
+        px='8px'
         sx={{
-          maxWidth: '100px',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          transition: isSelected ? 'none' : 'visibility 0.1s ease-in-out',
-          visibility: visibleContent ? 'visible' : 'hidden',
-          whiteSpace: 'nowrap'
-        }} textAlign='center'
-      >
-        {t(text)}
-      </Typography>
-      <VaadinIcon
-        icon={areAllHidden ? 'vaadin:eye-slash' : ''}
-        style={{
-          height: '13px',
-          transition: isSelected ? 'none' : 'visibility 0.1s ease-in-out',
-          visibility: visibleContent ? 'visible' : 'hidden',
-          width: '15px'
+          '&:hover': {
+            boxShadow: shadowOnHover
+          },
+          bgcolor: getProfileColor(index, theme) || 'background.paper',
+          borderRadius: '0 0 12px 12px',
+          boxShadow: shadow,
+          cursor: 'pointer',
+          flexShrink: 0,
+          minWidth: '100px',
+          position: 'relative',
+          transform: hideCard ? `translateY(-${HIDDEN_PERCENT})` : undefined,
+          transformOrigin: 'top',
+          transition: 'transform 0.2s, box-shadow 0.2s',
+          userSelect: 'none',
+          width: 'fit-content'
         }}
-      />
-    </Grid>
+      >
+        <VaadinIcon icon={'vaadin:check'} style={{ height: '13px', visibility: isSelected ? 'visible' : 'hidden', width: '15px' }} />
+        <Typography
+          color={'text.primary'} display='block' fontSize='16px' fontWeight={isSelected ? 500 : 400}
+          sx={{
+            maxWidth: '100px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            transition: isSelected ? 'none' : 'visibility 0.1s ease-in-out',
+            visibility: visibleContent ? 'visible' : 'hidden',
+            whiteSpace: 'nowrap'
+          }} textAlign='center'
+        >
+          {t(text)}
+        </Typography>
+        <VaadinIcon
+          icon={areAllHidden ? 'vaadin:eye-slash' : ''}
+          style={{
+            height: '13px',
+            transition: isSelected ? 'none' : 'visibility 0.1s ease-in-out',
+            visibility: visibleContent ? 'visible' : 'hidden',
+            width: '15px'
+          }}
+        />
+      </Grid>
+    </Infotip2>
   );
 }

@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, useTheme } from '@mui/material';
 import React, { useContext } from 'react';
 
-import { UseUserAddedChainColor } from '../fullscreen/addNewChain/utils';
+import { useUserAddedChainColor } from '../fullscreen/addNewChain/utils';
 import { convertToCamelCase } from '../fullscreen/governance/utils/util';
 import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo2 from '../util/getLogo2';
@@ -22,7 +22,7 @@ interface Props {
 
 function ChainLogo ({ chainName, genesisHash, logo, size = 25 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  const mayBeUserAddedChainColor = UseUserAddedChainColor(genesisHash);
+  const mayBeUserAddedChainColor = useUserAddedChainColor(genesisHash);
   const options = useContext(GenesisHashOptionsContext);
 
   const foundChainName = options.find(({ text, value }) => value === genesisHash || text === chainName)?.text;

@@ -15,6 +15,7 @@ export const news: News[] = [
       'Add Your Chain: If your favorite chain isn’t available in the extension, you can now add it manually using an RPC endpoint address.',
       'BTC and ETH as currency: View your token balance equivalent in BTC, ETH, and other fiat currencies.',
       'Auto Mode Remote Node: RPCs are now automatically selected based on your location and latency, for optimal performance.',
+      'Show Selected Chains Badge: The number of favorite selected chains is displayed in a badge on the header in full-screen home mode.',
       'Auto Metadata Update: Metadata updates automatically in the background on supported chains, eliminating the need for manual updates.'
     ]
   },

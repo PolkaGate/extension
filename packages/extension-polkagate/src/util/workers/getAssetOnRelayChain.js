@@ -95,7 +95,7 @@ async function getAssetOnRelayChain (addresses, chainName, userAddedEndpoints) {
         const genesisHash = api.genesisHash.toString();
         const priceId = TEST_NETS.includes(genesisHash)
           ? undefined
-          : getPriceIdByChainName(chainName);
+          : getPriceIdByChainName(chainName, userAddedEndpoints);
 
         results[address] = [{ // since some chains may have more than one asset hence we use an array here! even thought its not needed for relay chains but just to be as a general rule.
           assetId: NATIVE_TOKEN_ASSET_ID, // Rule: we set asset id 0 for native tokens

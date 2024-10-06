@@ -7,7 +7,7 @@ import { createWsEndpoints } from '@polkagate/apps-config';
 import { useContext, useMemo } from 'react';
 
 import { GenesisHashOptionsContext } from '../components';
-import { UseUserAddedEndpoint } from '../fullscreen/addNewChain/utils';
+import { useUserAddedEndpoint } from '../fullscreen/addNewChain/utils';
 import { AUTO_MODE } from '../util/constants';
 import { sanitizeChainName } from '../util/utils';
 
@@ -21,7 +21,7 @@ const allEndpoints = createWsEndpoints();
 export function useEndpoints (genesisHash: string | null | undefined): DropdownOption[] {
   const genesisOptions = useContext(GenesisHashOptionsContext);
 
-  const userAddedEndpoint = UseUserAddedEndpoint(genesisHash);
+  const userAddedEndpoint = useUserAddedEndpoint(genesisHash);
 
   const endpoints: DropdownOption[] | undefined = useMemo(() => {
     if (!genesisHash) {

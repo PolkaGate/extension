@@ -130,7 +130,6 @@ export default function AddNewChain (): React.ReactElement {
         }
       }
 
-      console.log('metadata:', metadata);
       setLoading(false);
     };
 

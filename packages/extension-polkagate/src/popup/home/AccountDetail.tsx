@@ -158,8 +158,6 @@ function AccountDetail ({ address, chain, goToAccount, hideNumbers, identity, is
   const { t } = useTranslation();
   const chainName = useChainName(address);
 
-  console.log('mmmmmmmm');
-
   return (
     <Grid container direction='column' sx={{ width: '70%' }}>
       <Grid container direction='row' item sx={{ lineHeight: '20px' }}>

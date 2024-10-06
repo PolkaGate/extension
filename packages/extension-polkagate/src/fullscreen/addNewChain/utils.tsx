@@ -14,7 +14,7 @@ export function useUserAddedEndpoints (): Record<HexString, UserAddedEndpoint> |
   return userEndpoints;
 }
 
-export function UseUserAddedEndpoint (genesis: string | null | undefined): DropdownOption []| undefined {
+export function useUserAddedEndpoint (genesis: string | null | undefined): DropdownOption []| undefined {
   const endpoints = useUserAddedEndpoints();
 
   return useMemo(() => {
@@ -28,8 +28,7 @@ export function UseUserAddedEndpoint (genesis: string | null | undefined): Dropd
   }, [endpoints, genesis]);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-export function UseUserAddedChainColor (_genesisHash: HexString | string | undefined): string | undefined {
+export function useUserAddedChainColor (_genesisHash: string | undefined): string | undefined {
   const endpoints = useUserAddedEndpoints();
 
   return useMemo(() => {
@@ -38,5 +37,17 @@ export function UseUserAddedChainColor (_genesisHash: HexString | string | undef
     }
 
     return Object.entries(endpoints).find(([genesisHash]) => _genesisHash === genesisHash)?.[1].color;
+  }, [_genesisHash, endpoints]);
+}
+
+export function useUserAddedPriceId (_genesisHash: string | undefined): string | undefined {
+  const endpoints = useUserAddedEndpoints();
+
+  return useMemo(() => {
+    if (!endpoints) {
+      return;
+    }
+
+    return Object.entries(endpoints).find(([genesisHash]) => _genesisHash === genesisHash)?.[1].priceId;
   }, [_genesisHash, endpoints]);
 }
