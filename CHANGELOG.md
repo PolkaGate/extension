@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.18.0](https://github.com/polkagate/extension/compare/v0.17.0...v0.18.0) (2024-10-06)
+
+
+### Features
+
+* add foreign assets support on asset hubs, such as MYTH on PAH ([#1577](https://github.com/polkagate/extension/issues/1577)) ([a77459a](https://github.com/polkagate/extension/commit/a77459acd5f70c093fc8e994bae3851d82fc6905))
+
 # [0.17.0](https://github.com/polkagate/extension/compare/v0.16.0...v0.17.0) (2024-10-06)
 
 
