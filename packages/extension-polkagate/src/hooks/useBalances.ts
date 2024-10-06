@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 
 import { updateMeta } from '../messaging';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
+import { isUpToDate } from './useAssetsBalances';
 import { useBalancesOnAssethub, useBalancesOnMultiAssetChain, useInfo, useNativeAssetBalances, usePoolBalances, useStakingAccount } from '.';
 
 export default function useBalances (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: string | number): BalancesInfo | undefined {
@@ -33,7 +34,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
   useEffect(() => {
     const apiGenesisHash = api?.genesisHash?.toString();
 
-    if (onlyNew && balances && pooledBalance && apiGenesisHash === chain?.genesisHash && apiGenesisHash === balances?.genesisHash && apiGenesisHash === pooledBalance.genesisHash) {
+    if (balances && isUpToDate(balances?.date) && pooledBalance && apiGenesisHash === chain?.genesisHash && apiGenesisHash === balances?.genesisHash && apiGenesisHash === pooledBalance.genesisHash) {
       setOverall({
         ...balances,
         pooledBalance: pooledBalance.balance,

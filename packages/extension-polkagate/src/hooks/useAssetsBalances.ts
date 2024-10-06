@@ -103,7 +103,7 @@ const DEFAULT_SAVED_ASSETS = { balances: {} as AssetsBalancesPerAddress, timeSta
 export const ASSETS_NAME_IN_STORAGE = 'assets';
 const BALANCE_VALIDITY_PERIOD = 1 * 1000 * 60;
 
-const isUpToDate = (date?: number): boolean | undefined => date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
+export const isUpToDate = (date?: number): boolean | undefined => date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
 
 function allHexToBN (balances: object | string | undefined): BalancesDetails | {} {
   if (!balances) {
