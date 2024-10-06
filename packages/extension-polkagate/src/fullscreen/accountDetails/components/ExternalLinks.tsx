@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -18,7 +17,7 @@ interface Props {
 // There are two Bifrost chains, but we only support Polkadot-Bifrost
 const SUBSQUARE_SUPPORTED_CHAINS = ['Polkadot', 'Polkadot Collectives', 'Acala', 'Bifrost', 'Centrifuge', 'Darwinia2', 'Hydration', 'Interlay', 'Litentry', 'Phala', 'Zeitgeist', 'Kusama', 'Altair', 'Basilisk', 'Litmus', 'Karura', 'Khala', 'Turing', 'Kintsugi', 'Curst', 'Rococo'];
 
-export default function ExternalLinks({ address }: Props): React.ReactElement {
+export default function ExternalLinks ({ address }: Props): React.ReactElement {
   const theme = useTheme();
   const chainName = useChainName(address);
   const formatted = useFormatted(address);
