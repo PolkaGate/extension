@@ -24,7 +24,7 @@ export default function useMyVote(
         const vote = await getAddressVote(String(formatted), api, Number(refIndex), Number(trackId));
 
         setVote(vote);
-        setRefresh && setRefresh(false);
+        setRefresh?.(false);
       }
     } catch (error) {
       console.error(error);

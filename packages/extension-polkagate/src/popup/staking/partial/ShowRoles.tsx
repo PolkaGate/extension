@@ -45,12 +45,12 @@ export default function ShowRoles({ api, chain, label, mode, pool, style }: Prop
       ]);
     }
 
-    const mayBeCommissionAddress = pool.bondedPool.commission.current?.[1];
+    const maybeCommissionAddress = pool.bondedPool.commission.current?.[1];
 
     return ([
       { address: pool.accounts?.stashId?.toString(), label: t<string>('Stash id') },
       { address: pool.accounts?.rewardId?.toString() ?? '', label: t<string>('Reward id') },
-      ...(mayBeCommissionAddress ? [{ address: mayBeCommissionAddress?.toString() ?? 'N/A', label: t<string>('Com. id') }] : [])
+      ...(maybeCommissionAddress ? [{ address: maybeCommissionAddress?.toString() ?? 'N/A', label: t<string>('Com. id') }] : [])
     ]);
   }, [mode, pool, t]);
 

@@ -36,18 +36,18 @@ export default function usePrices (): Prices | undefined | null {
 
   useEffect(() => {
     if (updatedPrice && currency) {
-      const mayBeSavedPrices = (updatedPrice)?.[currency.code];
+      const maybeSavedPrices = (updatedPrice)?.[currency.code];
 
-      mayBeSavedPrices && setSavedPrice(mayBeSavedPrices);
+      maybeSavedPrices && setSavedPrice(maybeSavedPrices);
     }
   }, [currency, updatedPrice]);
 
   useEffect(() => {
     /** Response with the saved and not outdated data if exist */
     currency?.code && getStorage('pricesInCurrencies').then((pricesInCurrencies) => {
-      const mayBeSavedPrices = (pricesInCurrencies as PricesInCurrencies)?.[currency.code];
+      const maybeSavedPrices = (pricesInCurrencies as PricesInCurrencies)?.[currency.code];
 
-      mayBeSavedPrices && setSavedPrice(mayBeSavedPrices);
+      maybeSavedPrices && setSavedPrice(maybeSavedPrices);
     }).catch(console.error);
   }, [currency]);
 

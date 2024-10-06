@@ -3,7 +3,7 @@
 
 // @ts-nocheck
 
-import { NATIVE_TOKEN_ASSET_ID } from '../../constants';
+import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../constants';
 import { getPriceIdByChainName } from '../../utils';
 // eslint-disable-next-line import/extensions
 import { balancify } from '.';
@@ -20,8 +20,10 @@ export async function toGetNativeToken (addresses, api, chainName) {
 
     const totalBalance = balances[index].freeBalance.add(balances[index].reservedBalance);
 
+    const isAssetHub = ASSET_HUBS.includes(api.genesisHash.toString());
+
     _result[address] = [{
-      assetId: NATIVE_TOKEN_ASSET_ID, // Rule: we set asset id 0 for native tokens
+      assetId: isAssetHub ? NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB : NATIVE_TOKEN_ASSET_ID,
       balanceDetails: balancify(balances[index]),
       chainName,
       decimal: api.registry.chainDecimals[0],

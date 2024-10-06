@@ -49,9 +49,8 @@ export default function SendFund (): React.ReactElement {
   const ref = useRef(chain);
   const history = useHistory();
 
-  const parsedAssetId = assetId === undefined || assetId === 'undefined' ? undefined : parseInt(assetId);
   const [refresh, setRefresh] = useState<boolean>(false);
-  const balances = useBalances(address, refresh, setRefresh, undefined, parsedAssetId);
+  const balances = useBalances(address, refresh, setRefresh, undefined, assetId);
 
   const [step, setStep] = useState<StepsType>(STEPS.INDEX);
   const [inputs, setInputs] = useState<Inputs>();
@@ -80,8 +79,8 @@ export default function SendFund (): React.ReactElement {
 
   const closeConfirmation = useCallback(() => {
     setRefresh(true);
-    openOrFocusTab(`/accountfs/${address}/0`, true); // TODO: add asset id instead of 0
-  }, [address, setRefresh]);
+    openOrFocusTab(`/accountfs/${address}/${assetId}`, true);
+  }, [address, assetId]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
@@ -106,7 +105,7 @@ export default function SendFund (): React.ReactElement {
         {(step === STEPS.INDEX) &&
           <InputPage
             address={address}
-            assetId={parsedAssetId}
+            assetId={assetId}
             balances={balances}
             inputs={inputs}
             setInputs={setInputs}

@@ -1,16 +1,15 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon, Boy as BoyIcon } from '@mui/icons-material';
 import { Box, ClickAwayListener, Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
-
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { PoolStakingIcon } from '../components';
 import { openOrFocusTab } from '../fullscreen/accountDetails/components/CommonTasks';
@@ -23,10 +22,10 @@ interface Props {
   quickActionOpen?: string | boolean;
   setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
   containerRef: React.RefObject<HTMLElement>;
-  assetId?: number | undefined
+  assetId?: number | string | undefined
 }
 
-type QuickActionButtonType = {
+interface QuickActionButtonType {
   disabled?: boolean;
   divider?: boolean;
   icon: React.ReactNode;
@@ -37,12 +36,12 @@ type QuickActionButtonType = {
 const ARROW_ICON_SIZE = 17;
 const ACTION_ICON_SIZE = '27px';
 
-export default function QuickActionFullScreen({ address, assetId, containerRef, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
+export default function QuickActionFullScreen ({ address, assetId, containerRef, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
 
-  const [showHistory, setShowHistory] = useState<boolean>();
+  const [showHistory, setShowHistory] = useState<number>();
 
   const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(account?.genesisHash ?? ''), [account?.genesisHash]);
 
@@ -50,7 +49,7 @@ export default function QuickActionFullScreen({ address, assetId, containerRef, 
   const handleClose = useCallback(() => quickActionOpen === address && setQuickActionOpen(undefined), [address, quickActionOpen, setQuickActionOpen]);
 
   const goToSend = useCallback(() => {
-    address && account?.genesisHash && openOrFocusTab(`/send/${String(address)}/${assetId || ''}`);
+    address && account?.genesisHash && openOrFocusTab(`/send/${String(address)}/${assetId}`);
   }, [account?.genesisHash, address, assetId]);
 
   const goToPoolStaking = useCallback(() => {
@@ -66,7 +65,7 @@ export default function QuickActionFullScreen({ address, assetId, containerRef, 
   }, [address, supportGov]);
 
   const goToHistory = useCallback(() => {
-    setShowHistory(true);
+    setShowHistory(1);
   }, []);
 
   const nullF = useCallback(() => null, []);

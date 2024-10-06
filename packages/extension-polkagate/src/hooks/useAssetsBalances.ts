@@ -46,7 +46,7 @@ interface BalancesDetails {
 }
 
 interface MessageBody {
-  assetId?: number,
+  assetId: number | string,
   totalBalance: string,
   chainName: string,
   decimal: string,
@@ -74,7 +74,7 @@ export const BN_MEMBERS = [
 ];
 
 export interface FetchedBalance {
-  assetId?: number,
+  assetId: number | string,
   availableBalance: BN,
   balanceDetails?: any,
   totalBalance: BN,

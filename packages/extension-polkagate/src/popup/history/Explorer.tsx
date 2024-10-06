@@ -17,7 +17,7 @@ interface Props {
 
 function getLink (chainName: string, explorer: 'subscan' | 'polkaholic' | 'statscan', type: 'account' | 'extrinsic', data: string): string {
   if (type === 'extrinsic') {
-    const mayBeTheFirstPartOfChain = chainName?.split(' ')?.[0];
+    const maybeTheFirstPartOfChain = chainName?.split(' ')?.[0];
     const chainNameWithoutSpace = chainName?.replace(/\s/g, '');
 
     switch (explorer) {
@@ -26,10 +26,10 @@ function getLink (chainName: string, explorer: 'subscan' | 'polkaholic' | 'stats
           return `https://assethub-${chainNameWithoutSpace.replace(/AssetHub/, '')}.subscan.io/extrinsic/${String(data)}`;
         }
 
-        return 'https://' + mayBeTheFirstPartOfChain + '.subscan.io/extrinsic/' + String(data); // data here is txHash
+        return 'https://' + maybeTheFirstPartOfChain + '.subscan.io/extrinsic/' + String(data); // data here is txHash
 
       case 'polkaholic':
-        return 'https://' + mayBeTheFirstPartOfChain + '.polkaholic.io/tx/' + String(data);
+        return 'https://' + maybeTheFirstPartOfChain + '.polkaholic.io/tx/' + String(data);
 
       case 'statscan':
         return 'https://westmint.statescan.io/#/accounts/' + String(data); // NOTE, data here is formatted address

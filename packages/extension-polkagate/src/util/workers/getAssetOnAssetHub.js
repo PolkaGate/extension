@@ -1,13 +1,67 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable import-newlines/enforce */
-/* eslint-disable object-curly-newline */
-
 import { BN_ZERO } from '@polkadot/util';
 
-// eslint-disable-next-line import/extensions
+import { decodeMultiLocation } from '../utils';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from './utils';
+
+//@ts-ignore
+async function getAssets (addresses, api, assets, chainName, results) {
+  try {
+    for (const asset of assets) {
+      const isForeignAssets = asset.isForeign;
+      const section = isForeignAssets ? 'foreignAssets' : 'assets';
+      const assetId = isForeignAssets ? decodeMultiLocation(asset.id) : asset.id;
+      // @ts-ignore
+      const maybeTheAssetOfAddresses = addresses.map((address) => api.query[section].account(assetId, address));
+      const assetMetaData = api.query[section].metadata(assetId);
+
+      const response = await Promise.all([assetMetaData, ...maybeTheAssetOfAddresses]);
+      const metadata = response[0];
+      const assetOfAddresses = response.slice(1);
+
+      const decimal = metadata.decimals.toNumber();
+      const token = metadata.symbol.toHuman();
+
+      // @ts-ignore
+      assetOfAddresses.forEach((_asset, index) => {
+        const balance = _asset.isNone ? BN_ZERO : _asset.unwrap().balance;
+
+        const isFrozen = isForeignAssets
+          ? metadata.isFrozen.valueOf()
+          : _asset.isSome && _asset.unwrap().status.valueOf().toString() === 'Frozen';
+
+        const _balance = String(balance);
+
+        const item = {
+          assetId: asset.id,
+          balanceDetails: {
+            availableBalance: isFrozen ? 0 : _balance,
+            lockedBalance: isFrozen ? _balance : 0,
+            reservedBalance: isFrozen ? balance : 0 // JUST to comply with the rule that total=available + reserve
+          },
+          chainName,
+          decimal,
+          freeBalance: isFrozen ? 0 : _balance, // JUST to comply with the rule ...
+          frozenBalance: isFrozen ? balance : 0, // JUST to comply with the rule that total=available + reserve
+          genesisHash: api.genesisHash.toString(),
+          isAsset: true,
+          isForeignAssets: !!isForeignAssets,
+          priceId: asset?.priceId,
+          token,
+          totalBalance: _balance
+        };
+
+        const _index = addresses[index];
+
+        results[_index]?.push(item) ?? (results[_index] = [item]);
+      });
+    }
+  } catch (e) {
+    console.error('Something went wrong while fetching assets', e);
+  }
+}
 
 // @ts-ignore
 async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName, userAddedEndpoints) {
@@ -23,61 +77,30 @@ async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName, user
   // @ts-ignore
   const nonNativeAssets = assetsToBeFetched.filter((asset) => !asset.extras?.isNative);
 
-  for (const asset of nonNativeAssets) {
-    // @ts-ignore
-    const maybeTheAssetOfAddresses = addresses.map((address) => api.query.assets.account(asset.id, address));
-    const assetMetaData = api.query.assets.metadata(asset.id);
+  /** to calculate a new Foreign Token like MYTH asset id based on its XCM multi-location */
+  // const allForeignAssets = await api.query.foreignAssets.asset.entries();
+  // for (const [key, _others] of allForeignAssets) {
+  //   const id = key.args[0];
+  //   const assetMetaData = await api.query.foreignAssets.metadata(id);
 
-    const response = await Promise.all([assetMetaData, ...maybeTheAssetOfAddresses]);
-    const metadata = response[0];
-    const AssetOfAddresses = response.slice(1);
+  //   if (assetMetaData.toHuman().symbol === 'MYTH') {
+  //     console.log('new foreign asset id:', encodeMultiLocation(id));
+  //   }
+  // }
 
-    const decimal = metadata.decimals.toNumber();
-    const token = metadata.symbol.toHuman();
-
-    AssetOfAddresses.forEach((_asset, index) => {
-      const balance = _asset.isNone ? BN_ZERO : _asset.unwrap().balance;
-      const parsedAccountAsset = JSON.parse(JSON.stringify(_asset));
-      const isFrozen = parsedAccountAsset?.status === 'Frozen';
-      const _balance = String(balance);
-
-      const item = {
-        assetId: asset.id,
-        balanceDetails: {
-          availableBalance: isFrozen ? 0 : _balance,
-          lockedBalance: isFrozen ? _balance : 0,
-          reservedBalance: isFrozen ? balance : 0 // JUST to comply with the rule that total=available + reserve
-        },
-        chainName,
-        decimal,
-        freeBalance: isFrozen ? 0 : _balance, // JUST to comply with the rule ...
-        frozenBalance: isFrozen ? balance : 0, // JUST to comply with the rule that total=available + reserve
-        genesisHash: api.genesisHash.toString(),
-        isAsset: true,
-        priceId: asset?.priceId,
-        token,
-        totalBalance: _balance
-      };
-
-      const _index = addresses[index];
-
-      // @ts-ignore
-      results[_index]?.push(item) ?? (results[_index] = [item]);
-    });
-  }
+  await getAssets(addresses, api, nonNativeAssets, chainName, results);
 
   postMessage(JSON.stringify(results));
   closeWebsockets(connections);
 }
 
 onmessage = async (e) => {
-  const { addresses, assetsToBeFetched, chainName, userAddedEndpoints } = e.data;
+  let { addresses, assetsToBeFetched, chainName, userAddedEndpoints } = e.data;
 
-  /** if assetsToBeFetched === undefined then we don't fetch assets by default at first, but wil fetch them on-demand later in account details page*/
   if (!assetsToBeFetched) {
-    console.warn(`getAssetOnAssetHub: No assets to be fetched on ${chainName}`);
+    console.warn(`getAssetOnAssetHub: No assets to be fetched on ${chainName}, but just Native Token`);
 
-    return postMessage(undefined);
+    assetsToBeFetched = [];
   }
 
   let tryCount = 1;

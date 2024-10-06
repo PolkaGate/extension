@@ -63,12 +63,17 @@ export default function AccountDetails (): React.ReactElement {
   const pricesInCurrency = usePrices();
 
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
-  const [assetIdOnAssetHub, setAssetIdOnAssetHub] = useState<number>();
+  const [assetIdOnAssetHub, setAssetIdOnAssetHub] = useState<number | string>();
   const [selectedAsset, setSelectedAsset] = useState<FetchedBalance>();
   const [displayPopup, setDisplayPopup] = useState<number | undefined>();
   const [unlockInformation, setUnlockInformation] = useState<UnlockInformationType | undefined>();
 
-  const assetId = useMemo(() => assetIdOnAssetHub !== undefined ? assetIdOnAssetHub : selectedAsset?.assetId, [assetIdOnAssetHub, selectedAsset?.assetId]);
+  const assetId = useMemo(() =>
+    assetIdOnAssetHub !== undefined
+      ? assetIdOnAssetHub
+      : selectedAsset?.assetId
+  , [assetIdOnAssetHub, selectedAsset?.assetId]);
+
   const { price: currentPrice } = useTokenPrice(address, assetId);
 
   const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId || undefined);
@@ -116,7 +121,7 @@ export default function AccountDetails (): React.ReactElement {
   }, [genesisHash]);
 
   useEffect(() => {
-    if (selectedAsset !== undefined && paramAssetId && assetId !== undefined && assetId !== parseInt(paramAssetId)) {
+    if (selectedAsset !== undefined && paramAssetId && assetId !== undefined && String(assetId) !== paramAssetId) {
       onAction(`/accountfs/${address}/${assetId}`);
     }
   }, [accountAssets, address, assetId, onAction, paramAssetId, selectedAsset]);
@@ -126,27 +131,21 @@ export default function AccountDetails (): React.ReactElement {
       return;
     }
 
-    const mayBeAssetIdSelectedInHomePage = assetId !== undefined ? assetId : parseInt(paramAssetId);
+    const maybeAssetIdSelectedInHomePage = assetId !== undefined ? assetId : paramAssetId;
 
-    if (mayBeAssetIdSelectedInHomePage >= 0 && accountAssets) {
-      const found = accountAssets.find(({ assetId, genesisHash: _genesisHash }) => assetId === mayBeAssetIdSelectedInHomePage && genesisHash === _genesisHash);
+    if (maybeAssetIdSelectedInHomePage as number >= 0 && accountAssets) {
+      const found = accountAssets.find(({ assetId, genesisHash: _genesisHash }) => String(assetId) === String(maybeAssetIdSelectedInHomePage) && genesisHash === _genesisHash);
 
       found && setSelectedAsset(found);
     }
   }, [genesisHash, accountAssets, assetId, paramAssetId, selectedAsset]);
 
   const onChangeAsset = useCallback((id: number | string) => {
-    if (id === -1) { // this is the id of native token
-      setAssetIdOnAssetHub(0);
-
-      return;
-    }
-
     setAssetIdOnAssetHub(id as number); // this works for asset hubs atm
   }, []);
 
   const goToSend = useCallback(() => {
-    address && onAction(`/send/${address}/${assetId || ''}`);
+    address && onAction(`/send/${address}/${assetId}`);
   }, [address, assetId, onAction]);
 
   const goToSoloStaking = useCallback(() => {

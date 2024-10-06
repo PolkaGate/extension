@@ -8,10 +8,11 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
+import type { HexString } from '@polkadot/util/types';
 import type { DropdownOption, FastestConnectionType, RecentChainsType, TransactionDetail, UserAddedChains } from './types';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
+import { BN, BN_TEN, BN_ZERO, hexToBn, hexToString, hexToU8a, isHex, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { EXTRA_PRICE_IDS } from './api/getPrices';
@@ -498,3 +499,49 @@ export async function fastestConnection (endpoints: DropdownOption[]): Promise<F
     };
   }
 }
+
+export const encodeMultiLocation = (multiLocation: unknown) => {
+  try {
+    const jsonString = JSON.stringify(multiLocation);
+    const u8aArray = stringToU8a(jsonString);
+    const hexString = u8aToHex(u8aArray);
+
+    return hexString;
+  } catch (error) {
+    console.error('Error encoding multiLocation:', error);
+
+    return null;
+  }
+};
+
+export const decodeHexValues = (obj: unknown) => {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+
+  const objAsRecord = { ...obj } as Record<string, unknown>;
+
+  Object.keys(objAsRecord).forEach((key) => {
+    if (typeof objAsRecord[key] === 'string' && objAsRecord[key].startsWith('0x')) {
+      objAsRecord[key] = hexToString(objAsRecord[key]);
+    }
+  });
+
+  return objAsRecord;
+};
+
+export const decodeMultiLocation = (hexString: HexString) => {
+  const decodedU8a = hexToU8a(hexString);
+  const decodedJsonString = u8aToString(decodedU8a);
+  let decodedMultiLocation: unknown;
+
+  try {
+    decodedMultiLocation = JSON.parse(decodedJsonString);
+  } catch (error) {
+    console.error('Error parsing JSON string in decodeMultiLocation:', error);
+
+    return null;
+  }
+
+  return decodeHexValues(decodedMultiLocation);
+};
