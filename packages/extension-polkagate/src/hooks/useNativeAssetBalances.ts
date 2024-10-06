@@ -4,6 +4,7 @@
 import type React from 'react';
 //@ts-ignore
 import type { FrameSystemAccountInfo } from '@polkadot/types/lookup';
+import type { HexString } from '@polkadot/util/types';
 import type { BalancesInfo, SavedBalances } from '../util/types';
 
 import { useCallback, useContext, useEffect, useState } from 'react';
@@ -12,6 +13,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { FetchingContext } from '../components';
 import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
+import { decodeMultiLocation } from '../util/utils';
 import { useInfo, useStakingAccount } from '.';
 
 export default function useNativeAssetBalances (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false): BalancesInfo | undefined {
@@ -105,9 +107,17 @@ export default function useNativeAssetBalances (address: string | undefined, ref
     if (savedBalances[chainName]) {
       const sb = savedBalances[chainName].balances;
 
+      const maybeAssetId = sb['assetId'];
+      const isForeignAsset = maybeAssetId && String(maybeAssetId).startsWith('0x');
+      const assetId = maybeAssetId === undefined
+        ? undefined
+        : isForeignAsset
+          ? decodeMultiLocation(maybeAssetId as HexString)
+          : parseInt(maybeAssetId);
+
       const lastBalances = {
         ED: new BN(sb['ED'] || '0'),
-        assetId: sb['assetId'] && parseInt(sb['assetId']),
+        assetId,
         availableBalance: new BN(sb['availableBalance']),
         chainName,
         date: savedBalances[chainName].date,
