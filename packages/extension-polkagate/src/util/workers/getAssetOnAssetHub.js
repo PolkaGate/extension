@@ -91,13 +91,12 @@ async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName, user
 }
 
 onmessage = async (e) => {
-  const { addresses, assetsToBeFetched, chainName, userAddedEndpoints } = e.data;
+  let { addresses, assetsToBeFetched, chainName, userAddedEndpoints } = e.data;
 
-  /** if assetsToBeFetched === undefined then we don't fetch assets by default at first, but wil fetch them on-demand later in account details page*/
   if (!assetsToBeFetched) {
-    console.warn(`getAssetOnAssetHub: No assets to be fetched on ${chainName}`);
+    console.warn(`getAssetOnAssetHub: No assets to be fetched on ${chainName}, but just Native Token`);
 
-    return postMessage(undefined);
+    assetsToBeFetched = [];
   }
 
   let tryCount = 1;
