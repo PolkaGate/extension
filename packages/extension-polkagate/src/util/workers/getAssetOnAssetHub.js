@@ -16,13 +16,12 @@ async function getAssets (addresses, api, assets, chainName, results) {
     const maybeTheAssetOfAddresses = addresses.map((address) => api.query[section].account(assetId, address));
     const assetMetaData = api.query[section].metadata(assetId);
 
-    const response = await Promise.all([assetMetaData, ...maybeTheAssetOfAddresses]);
-    const metadata = response[0];
-    const assetOfAddresses = response.slice(1);
+    const [metadata, assetOfAddresses] = await Promise.all([assetMetaData, ...maybeTheAssetOfAddresses]);
 
     const decimal = metadata.decimals.toNumber();
     const token = metadata.symbol.toHuman();
 
+    // @ts-ignore
     assetOfAddresses.forEach((_asset, index) => {
       const balance = _asset.isNone ? BN_ZERO : _asset.unwrap().balance;
 
