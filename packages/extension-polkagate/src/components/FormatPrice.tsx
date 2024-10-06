@@ -51,7 +51,7 @@ export function nFormatter (num: number, decimalPoint: number) {
   return item ? (num / item.value).toFixed(decimalPoint).replace(rx, '$1') + item.symbol : '0';
 }
 
-const DECIMAL_POINTS_FOR_CRYPTO_AS_CURRENCY = 3;
+const DECIMAL_POINTS_FOR_CRYPTO_AS_CURRENCY = 4;
 
 function FormatPrice ({ amount, decimalPoint = 2, decimals, fontSize, fontWeight, height, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, textAlign = 'left', textColor, width = '90px' }: Props): React.ReactElement<Props> {
   const currency = useCurrency();
