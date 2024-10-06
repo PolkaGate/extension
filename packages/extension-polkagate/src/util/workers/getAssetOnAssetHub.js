@@ -55,7 +55,6 @@ async function getAssets (addresses, api, assets, chainName, results) {
 
         const _index = addresses[index];
 
-        // @ts-ignore
         results[_index]?.push(item) ?? (results[_index] = [item]);
       });
     }
