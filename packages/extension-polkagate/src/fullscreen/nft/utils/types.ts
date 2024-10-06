@@ -99,3 +99,7 @@ export interface DetailItemProps {
   imageContentType: string | undefined;
   image: string | null | undefined;
 }
+
+export interface AudioPlayerProps {
+  audioUrl: string | undefined;
+}

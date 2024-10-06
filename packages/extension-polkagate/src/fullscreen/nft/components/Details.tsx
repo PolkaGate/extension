@@ -17,6 +17,7 @@ import { useTranslation } from '../../../components/translate';
 import { useInfo } from '../../../hooks';
 import { amountToMachine } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
+import AudioPlayer from './AudioPlayer';
 import ItemAvatar from './ItemAvatar';
 import ItemFullscreenModal from './ItemFullScreenModal';
 
@@ -72,7 +73,6 @@ const Item = ({ animation_url, animationContentType, image, imageContentType }: 
   const [loaded, setLoaded] = useState<boolean>(false);
 
   const onLoaded = useCallback(() => {
-    console.log('loaded');
     setLoaded(true);
   }, []);
 
@@ -92,6 +92,21 @@ const Item = ({ animation_url, animationContentType, image, imageContentType }: 
           title='HTML Content'
         />
       </>
+    );
+  } else if (!image && animation_url && animationContentType?.startsWith('audio')) {
+    return (
+      <AudioPlayer audioUrl={animation_url} />
+    );
+  } else if (image && imageContentType?.startsWith('image') && animation_url && animationContentType?.startsWith('audio')) {
+    return (
+      <Grid container direction='column' item rowGap='20px' width='320px'>
+        <ItemAvatar
+          height='400px'
+          image={image}
+          width='320px'
+        />
+        <AudioPlayer audioUrl={animation_url} />
+      </Grid>
     );
   } else if (image && imageContentType?.startsWith('image')) {
     return (
