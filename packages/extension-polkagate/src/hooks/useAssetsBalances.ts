@@ -103,7 +103,7 @@ const DEFAULT_SAVED_ASSETS = { balances: {} as AssetsBalancesPerAddress, timeSta
 export const ASSETS_NAME_IN_STORAGE = 'assets';
 const BALANCE_VALIDITY_PERIOD = 1 * 1000 * 60;
 
-const isUpToDate = (date?: number): boolean | undefined => date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
+export const isUpToDate = (date?: number): boolean | undefined => date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
 
 function allHexToBN (balances: object | string | undefined): BalancesDetails | {} {
   if (!balances) {
@@ -489,7 +489,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       const chainName = getChainName(genesisHash);
 
       if (!chainName) {
-        console.error('can not find chain name by genesis hash!');
+        console.error('can not find chain name by genesis hash!', genesisHash);
 
         return;
       }
@@ -499,7 +499,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       return fetchAssetOnAssetHubs(addresses!, chainName, assetsToBeFetched);
     }
 
-    /** Checking assets balances on chains with more than one assets such as Acala, hydradx, etc, */
+    /** Checking assets balances on chains with more than one assets such as Acala, Hydration, etc, */
     if (maybeMultiAssetChainName) {
       fetchMultiAssetChainAssets(maybeMultiAssetChainName);
     }

@@ -16,7 +16,7 @@ interface Props {
 }
 
 // There are two Bifrost chains, but we only support Polkadot-Bifrost
-const SUBSQUARE_SUPPORTED_CHAINS = ['Polkadot', 'Polkadot Collectives', 'Acala', 'Bifrost', 'Centrifuge', 'Darwinia2', 'HydraDX', 'Interlay', 'Litentry', 'Phala', 'Zeitgeist', 'Kusama', 'Altair', 'Basilisk', 'Litmus', 'Karura', 'Khala', 'Turing', 'Kintsugi', 'Curst', 'Rococo'];
+const SUBSQUARE_SUPPORTED_CHAINS = ['Polkadot', 'Polkadot Collectives', 'Acala', 'Bifrost', 'Centrifuge', 'Darwinia2', 'Hydration', 'Interlay', 'Litentry', 'Phala', 'Zeitgeist', 'Kusama', 'Altair', 'Basilisk', 'Litmus', 'Karura', 'Khala', 'Turing', 'Kintsugi', 'Curst', 'Rococo'];
 
 export default function ExternalLinks({ address }: Props): React.ReactElement {
   const theme = useTheme();
