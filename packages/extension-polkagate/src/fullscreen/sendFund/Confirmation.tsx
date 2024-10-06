@@ -26,8 +26,8 @@ interface DisplayInfoProps {
   showDivider?: boolean;
 }
 
-const Account = ({ info, label }: { label: string, info: NameAddress }) => {
-  const accountName = useAccountDisplay(info.address);
+const Account = ({ info, label }: { label: string, info?: NameAddress }) => {
+  const accountName = useAccountDisplay(info?.address);
 
   return (
     <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
@@ -38,7 +38,7 @@ const Account = ({ info, label }: { label: string, info: NameAddress }) => {
         {info?.name || accountName}
       </Typography>
       <Grid fontSize='16px' fontWeight={400} item lineHeight='40px' pl='5px'>
-        <ShortAddress address={info.address} inParentheses style={{ fontSize: '16px' }} />
+        <ShortAddress address={info?.address} inParentheses style={{ fontSize: '16px' }} />
       </Grid>
     </Grid>
   );
@@ -88,7 +88,7 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
             {txInfo.failureText}
           </Typography>
         }
-        <Account info={txInfo.from} label={t<string>('From')} />
+        <Account info={txInfo.from} label={t('From')} />
         {txInfo.throughProxy &&
           <Grid container m='auto' maxWidth='92%'>
             <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
@@ -96,33 +96,33 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
         }
         <Divider sx={{ bgcolor: 'secondary.main', height: '1px', m: 'auto', width: '240px' }} />
         <DisplayInfo
-          caption={t<string>('Amount:')}
+          caption={t('Amount:')}
           value={txInfo.amount && txInfo.token ? `${parseFloat(txInfo.amount)} ${txInfo.token}` : '00.00'}
         />
         <DisplayInfo
-          caption={t<string>('Chain:')}
+          caption={t('Chain:')}
           showDivider={false}
           value={chainName}
         />
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: 'auto', width: '240px' }} />
-        <Account info={txInfo.to} label={t<string>('To')} />
+        <Account info={txInfo.to} label={t('To')} />
         <Divider sx={{ bgcolor: 'secondary.main', height: '1px', m: 'auto', width: '240px' }} />
         <DisplayInfo
-          caption={t<string>('Chain:')}
+          caption={t('Chain:')}
           showDivider={false}
           value={txInfo.recipientChainName}
         />
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: 'auto', width: '240px' }} />
         <DisplayInfo
-          caption={chainName === txInfo.recipientChainName ? t<string>('Fee:') : t<string>('Total transaction fee:')}
+          caption={chainName === txInfo.recipientChainName ? t('Fee:') : t('Total transaction fee:')}
           showDivider={false}
-          value={fee?.toHuman() ?? '00.00'}
+          value={fee?.toHuman() as string ?? '00.00'}
         />
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: 'auto', width: '240px' }} />
         {txInfo?.txHash &&
           <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
             <Grid container item width='fit-content'>
-              <Typography pr='5px'>{t<string>('Hash')}:</Typography>
+              <Typography pr='5px'>{t('Hash')}:</Typography>
             </Grid>
             <Grid container item width='fit-content'>
               <ShortAddress
@@ -145,7 +145,7 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
         _mt='15px'
         _onClick={handleDone}
         _width={100}
-        text={t<string>('Done')}
+        text={t('Done')}
       />
     </Motion>
   );
