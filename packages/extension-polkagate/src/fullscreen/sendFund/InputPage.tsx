@@ -106,11 +106,12 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
   const isNativeToken = String(assetId) === String(NATIVE_TOKEN_ASSET_ID) || String(assetId) === String(NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB);
   const isNonNativeToken = !noAssetId && !isNativeToken;
 
-  const parsedAssetId = noAssetId || isNativeToken
+  const parsedAssetId = useMemo(() => noAssetId || isNativeToken
     ? undefined
     : isForeignAsset
       ? decodeMultiLocation(assetId as HexString)
-      : parseInt(assetId);
+      : parseInt(assetId)
+, [assetId, isForeignAsset, isNativeToken, noAssetId]);
 
   const [amount, setAmount] = useState<string>(inputs?.amount || '0');
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
@@ -122,10 +123,6 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
   const [transferType, setTransferType] = useState<TransferType>('Normal');
   const [maxFee, setMaxFee] = useState<Balance>();
 
-  const ED = isNonNativeToken
-    ? balances?.ED
-    : api && api.consts['balances']['existentialDeposit'] as unknown as BN;
-
   const transferableBalance = useMemo(() => getValue('transferable', balances), [balances]);
 
   const amountAsBN = useMemo(
@@ -135,7 +132,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     [amount, balances]);
 
   const warningMessage = useMemo(() => {
-    if (transferType !== 'All' && amountAsBN && balances?.decimal && ED && transferableBalance) {
+    if (transferType !== 'All' && amountAsBN && balances?.decimal && balances?.ED && transferableBalance) {
       const totalBalance = balances.freeBalance.add(balances.reservedBalance);
       const toTransferBalance = isNonNativeToken
         ? amountAsBN
@@ -147,13 +144,13 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
         return t('There is no sufficient transferable balance!');
       }
 
-      if (remainingBalanceAfterTransfer.lt(ED) && remainingBalanceAfterTransfer.gt(BN_ZERO)) {
+      if (remainingBalanceAfterTransfer.lt(balances.ED) && remainingBalanceAfterTransfer.gt(BN_ZERO)) {
         return t('This transaction will drop your balance below the Existential Deposit threshold, risking account reaping.');
       }
     }
 
     return undefined;
-  }, [ED, amountAsBN, isNonNativeToken, balances, transferableBalance, estimatedCrossChainFee, estimatedFee, t, transferType]);
+  }, [amountAsBN, isNonNativeToken, balances, transferableBalance, estimatedCrossChainFee, estimatedFee, t, transferType]);
 
   const destinationGenesisHashes = useMemo((): DropdownOption[] => {
     const currentChainOption = chain ? [{ text: chain.name, value: chain.genesisHash as string }] : [];
