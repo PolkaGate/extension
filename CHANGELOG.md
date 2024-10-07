@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.18.1](https://github.com/polkagate/extension/compare/v0.18.0...v0.18.1) (2024-10-07)
+
+
+### Bug Fixes
+
+* save update balances ([#1583](https://github.com/polkagate/extension/issues/1583)) ([eccc18e](https://github.com/polkagate/extension/commit/eccc18e1aa0121f5d04e17051dbdc7be3099ade9))
+
 # [0.18.0](https://github.com/polkagate/extension/compare/v0.17.0...v0.18.0) (2024-10-06)
 
 
