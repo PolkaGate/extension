@@ -2701,9 +2701,9 @@ __metadata:
     "@polkadot/api": "npm:^11.2.1"
     "@polkadot/rpc-provider": "npm:^11.2.1"
     "@polkadot/types": "npm:^11.2.1"
-    "@polkadot/util": "npm:^12.6.2"
-    "@polkadot/util-crypto": "npm:^12.6.2"
-    "@polkadot/x-global": "npm:^12.6.2"
+    "@polkadot/util": "npm:^13.1.1"
+    "@polkadot/util-crypto": "npm:^13.1.1"
+    "@polkadot/x-global": "npm:^13.1.1"
     "@types/chrome": "npm:^0.0.254"
     "@types/firefox-webext-browser": "npm:^111.0.5"
     tslib: "npm:^2.6.2"
@@ -3374,7 +3374,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/x-global@npm:13.1.1":
+"@polkadot/x-global@npm:13.1.1, @polkadot/x-global@npm:^13.1.1":
   version: 13.1.1
   resolution: "@polkadot/x-global@npm:13.1.1"
   dependencies:
@@ -3439,9 +3439,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkagate/apps-config@npm:^0.140.6":
-  version: 0.140.6
-  resolution: "@polkagate/apps-config@npm:0.140.6"
+"@polkagate/apps-config@npm:^0.140.7":
+  version: 0.140.7
+  resolution: "@polkagate/apps-config@npm:0.140.7"
   dependencies:
     "@acala-network/type-definitions": "npm:5.1.2"
     "@bifrost-finance/type-definitions": "npm:1.11.3"
@@ -3488,7 +3488,7 @@ __metadata:
     pontem-types-bundle: "npm:1.0.15"
     rxjs: "npm:^7.8.1"
     tslib: "npm:^2.6.2"
-  checksum: 10/b152072dad84fa287bd06aabcc5c513065413ce9a4f0791922d71cd5abd58fde261b156b1cd8f75b4d0fb2ec90c0cd9a89efc36b111e44c9253f9a11608c2e24
+  checksum: 10/5021b096ec87cc9c8dec2f97cbd9bf6a1abbdeba3979a7a5a41891b14cb856353c5bc15e4c1e974e1305d08a63087862d59b745ae55d44f4c5ab6f98dc052836
   languageName: node
   linkType: hard
 
@@ -17591,7 +17591,7 @@ __metadata:
     "@polkadot/types-support": "npm:^11.2.1"
     "@polkadot/util": "npm:^13.1.1"
     "@polkadot/util-crypto": "npm:^13.1.1"
-    "@polkagate/apps-config": "npm:^0.140.6"
+    "@polkagate/apps-config": "npm:^0.140.7"
     "@semantic-release/changelog": "npm:^6.0.3"
     "@semantic-release/commit-analyzer": "npm:^13.0.0"
     "@semantic-release/git": "npm:^10.0.1"
