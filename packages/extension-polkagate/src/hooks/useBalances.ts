@@ -9,11 +9,12 @@ import { useEffect, useState } from 'react';
 
 import { updateMeta } from '../messaging';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
+import { isUpToDate } from './useAssetsBalances';
 import { useBalancesOnAssethub, useBalancesOnMultiAssetChain, useInfo, useNativeAssetBalances, usePoolBalances, useStakingAccount } from '.';
 
 export default function useBalances (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: string | number): BalancesInfo | undefined {
   const stakingAccount = useStakingAccount(address);
-  const { account, api, chain, chainName, decimal: currentDecimal, token: currentToken } = useInfo(address);
+  const { account, api, chainName, decimal: currentDecimal, genesisHash: chainGenesisHash, token: currentToken } = useInfo(address);
 
   const isNativeAssetId = String(assetId) === String(NATIVE_TOKEN_ASSET_ID) || String(assetId) === String(NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB);
   const maybeNonNativeAssetId = isNativeAssetId ? undefined : assetId;
@@ -23,17 +24,15 @@ export default function useBalances (address: string | undefined, refresh?: bool
   const maybeBalancesOnMultiChainAssets = useBalancesOnMultiAssetChain(address, maybeNonNativeAssetId);
   const pooledBalance = usePoolBalances(address, refresh);
 
-  const assetBalance = maybeBalancesOnAssetHub || maybeBalancesOnMultiChainAssets;
-
   const [overall, setOverall] = useState<BalancesInfo | undefined>();
 
+  const assetBalance = maybeBalancesOnAssetHub || maybeBalancesOnMultiChainAssets;
   const token = api?.registry.chainTokens[0];
   const decimal = api?.registry.chainDecimals[0];
+  const apiGenesisHash = api?.genesisHash?.toString();
 
   useEffect(() => {
-    const apiGenesisHash = api?.genesisHash?.toString();
-
-    if (onlyNew && balances && pooledBalance && apiGenesisHash === chain?.genesisHash && apiGenesisHash === balances?.genesisHash && apiGenesisHash === pooledBalance.genesisHash) {
+    if (balances && isUpToDate(balances?.date) && pooledBalance && apiGenesisHash === chainGenesisHash && apiGenesisHash === balances?.genesisHash && apiGenesisHash === pooledBalance.genesisHash) {
       setOverall({
         ...balances,
         pooledBalance: pooledBalance.balance,
@@ -42,10 +41,10 @@ export default function useBalances (address: string | undefined, refresh?: bool
     } else {
       setOverall(undefined);
     }
-  }, [pooledBalance, balances, onlyNew, api?.genesisHash, account?.genesisHash, chain?.genesisHash, stakingAccount]);
+  }, [pooledBalance, balances, apiGenesisHash, chainGenesisHash, stakingAccount]);
 
   useEffect(() => {
-    if (!address || !api || api.genesisHash.toString() !== account?.genesisHash || !overall || !chainName || !token || !decimal || account?.genesisHash !== chain?.genesisHash || account?.genesisHash !== overall.genesisHash) {
+    if (!address || !apiGenesisHash || apiGenesisHash !== account?.genesisHash || !overall || !chainName || !token || !decimal || account?.genesisHash !== chainGenesisHash || account?.genesisHash !== overall.genesisHash) {
       return;
     }
 
@@ -73,14 +72,14 @@ export default function useBalances (address: string | undefined, refresh?: bool
     const metaData = JSON.stringify({ balances: JSON.stringify(savedBalances) });
 
     updateMeta(address, metaData).catch(console.error);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Object.keys(account ?? {})?.length, account?.genesisHash, address, api, pooledBalance, chain, chainName, decimal, overall, token]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [Object.keys(account ?? {})?.length, account?.genesisHash, address, apiGenesisHash, pooledBalance, chainGenesisHash, chainName, decimal, overall, token]);
 
   if (maybeNonNativeAssetId) {
     return assetBalance;
   }
 
-  return overall && overall.genesisHash === chain?.genesisHash && overall.token === currentToken && overall.decimal === currentDecimal
+  return overall && overall.genesisHash === chainGenesisHash && overall.token === currentToken && overall.decimal === currentDecimal
     ? overall
     : balances && balances.token === currentToken && balances.decimal === currentDecimal
       ? balances
