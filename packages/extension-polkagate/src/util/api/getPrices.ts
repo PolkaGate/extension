@@ -10,6 +10,7 @@ import request from 'umi-request';
 /** some chains have a different priceId than its sanitizedChainName,
  * hence we will replace their price Id using  EXTRA_PRICE_IDS */
 export const EXTRA_PRICE_IDS: Record<string, string> = {
+  hydration: 'hydradx',
   nodle: 'nodle-network',
   parallel: 'parallel-finance',
   pendulum: 'pendulum-chain'

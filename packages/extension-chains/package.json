@@ -22,9 +22,9 @@
   "main": "index.js",
   "dependencies": {
     "@polkadot/extension-inject": "^0.47.5",
-    "@polkadot/networks": "^12.6.2",
-    "@polkadot/util": "^12.6.2",
-    "@polkadot/util-crypto": "^12.6.2",
+    "@polkadot/networks": "^13.1.1",
+    "@polkadot/util": "^13.1.1",
+    "@polkadot/util-crypto": "^13.1.1",
     "tslib": "^2.6.2"
   },
   "peerDependencies": {
