@@ -41,20 +41,20 @@ export default function getLogo2 (info: string | undefined | null | Chain, token
     }
   }
 
-  let mayBeExternalLogo;
+  let maybeExternalLogo;
   const iconName = sanitizeChainName(chainNameFromGenesisHash || (info as Chain)?.name || (info as string))?.toLowerCase();
 
   const endpoint = endpoints.find((o) => o.info?.toLowerCase() === iconName);
 
   if (!endpoint) {
-    mayBeExternalLogo = Object
+    maybeExternalLogo = Object
       .entries(externalLinks)
       .find(([name]): React.ReactNode | null =>
         name.toLowerCase() === iconName
       );
   }
 
-  const found = iconName ? (endpoint?.ui || mayBeExternalLogo?.[1]?.ui) : undefined;
+  const found = iconName ? (endpoint?.ui || maybeExternalLogo?.[1]?.ui) : undefined;
 
   return found;
 }

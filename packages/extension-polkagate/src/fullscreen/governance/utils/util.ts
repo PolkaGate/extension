@@ -154,22 +154,22 @@ export const blockToX = (block: BlockNumber, noUnit = false) => {
   }
 
   const b = Number(block);
-  const mayBeDays = b / DAY_BLOCK_COUNT;
+  const maybeDays = b / DAY_BLOCK_COUNT;
 
-  if (mayBeDays >= 1) {
-    return `${mayBeDays}` + (!noUnit ? ` ${mayBeDays > 1 ? 'days' : 'day'}` : '');
+  if (maybeDays >= 1) {
+    return `${maybeDays}` + (!noUnit ? ` ${maybeDays > 1 ? 'days' : 'day'}` : '');
   }
 
-  const mayBeHours = b / HOUR_BLOCK_COUNT;
+  const maybeHours = b / HOUR_BLOCK_COUNT;
 
-  if (mayBeHours >= 1) {
-    return `${mayBeHours}` + (!noUnit ? ` ${mayBeHours > 1 ? 'hours' : 'hour'}` : '');
+  if (maybeHours >= 1) {
+    return `${maybeHours}` + (!noUnit ? ` ${maybeHours > 1 ? 'hours' : 'hour'}` : '');
   }
 
-  const mayBeMins = b / MINUTE_BLOCK_COUNT;
+  const maybeMins = b / MINUTE_BLOCK_COUNT;
 
-  if (mayBeMins >= 1) {
-    return `${mayBeMins}` + (!noUnit ? ` ${mayBeMins > 1 ? 'mins' : 'min'}` : '');
+  if (maybeMins >= 1) {
+    return `${maybeMins}` + (!noUnit ? ` ${maybeMins > 1 ? 'mins' : 'min'}` : '');
   }
 
   return undefined;

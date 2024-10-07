@@ -51,7 +51,7 @@ export default function ReferendumDescription ({ address, currentTreasuryApprova
 
   const [expanded, setExpanded] = useState<boolean>(false);
 
-  const mayBeBeneficiary = useMemo(() => {
+  const maybeBeneficiary = useMemo(() => {
     if (referendum?.call && chain) {
       return getBeneficiary(referendum, chain);
     }
@@ -60,7 +60,7 @@ export default function ReferendumDescription ({ address, currentTreasuryApprova
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chain, referendum?.call]);
 
-  const mayBeTreasuryProposalId = useMemo(() => currentTreasuryApprovalList?.find((p) => p.beneficiary === mayBeBeneficiary)?.id, [currentTreasuryApprovalList, mayBeBeneficiary]);
+  const maybeTreasuryProposalId = useMemo(() => currentTreasuryApprovalList?.find((p) => p.beneficiary === maybeBeneficiary)?.id, [currentTreasuryApprovalList, maybeBeneficiary]);
   const content = useMemo(() => {
     const res = referendum?.content?.includes('login and tell us more about your proposal') ? t(DEFAULT_CONTENT) : referendum?.content;
 
@@ -82,10 +82,10 @@ export default function ReferendumDescription ({ address, currentTreasuryApprova
 
   return (
     <>
-      {mayBeTreasuryProposalId &&
+      {maybeTreasuryProposalId &&
         <Paper elevation={1} sx={{ height: 36, mb: '2px', mt: '5px', pt: '5px', width: 'inherit' }}>
           <Typography sx={{ fontSize: '18px', fontWeight: 500, textAlign: 'center' }}>
-            {t('This Referendum is now Treasury Proposal #{{proposalId}}', { replace: { proposalId: mayBeTreasuryProposalId } })}
+            {t('This Referendum is now Treasury Proposal #{{proposalId}}', { replace: { proposalId: maybeTreasuryProposalId } })}
           </Typography>
         </Paper>
       }

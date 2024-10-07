@@ -14,8 +14,8 @@ interface Props {
   onChange: (value: number | string) => void;
   label: string;
   style: SxProps<Theme> | undefined;
-  assetId: number | undefined;
-  setAssetId: React.Dispatch<React.SetStateAction<number | undefined>>
+  assetId: number | string | undefined;
+  setAssetId: React.Dispatch<React.SetStateAction<number | string | undefined>>
 }
 
 function AssetSelect ({ address, assetId, label, onChange, setAssetId, style }: Props) {

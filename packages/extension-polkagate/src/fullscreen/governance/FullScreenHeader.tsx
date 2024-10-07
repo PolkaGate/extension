@@ -11,7 +11,7 @@ import { logoBlack } from '../../assets/logos';
 import { ActionContext, GenesisHashOptionsContext } from '../../components';
 import { useInfo } from '../../hooks';
 import { FullScreenChainSwitch, RemoteNodeSelectorWithSignals } from '../../partials';
-import { EXTENSION_NAME, GOVERNANCE_CHAINS, IDENTITY_CHAINS, NFT_CHAINS, SOCIAL_RECOVERY_CHAINS, STAKING_CHAINS } from '../../util/constants';
+import { EXTENSION_NAME, GOVERNANCE_CHAINS, IDENTITY_CHAINS, NATIVE_TOKEN_ASSET_ID, SOCIAL_RECOVERY_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import AddressDropdown from './components/AddressDropdown';
 import ThemeChanger from './partials/ThemeChanger';
@@ -45,8 +45,6 @@ function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChai
         return SOCIAL_RECOVERY_CHAINS;
       case 'accountDetails':
         return allChains.filter((chain) => chain.value !== '').map((chainOption) => chainOption.value as string);
-      case 'nft':
-        return NFT_CHAINS;
       default:
         return [];
     }
@@ -65,9 +63,7 @@ function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChai
       case 'accountDetails':
         return onAction(`/accountfs/${selectedAddress}/0`);
       case 'send':
-        return onAction(`/send/${selectedAddress}/`);
-      case 'nft':
-        return onAction(`/nft/${selectedAddress}/`);
+        return onAction(`/send/${selectedAddress}/${NATIVE_TOKEN_ASSET_ID}`);
       default:
         return null;
     }

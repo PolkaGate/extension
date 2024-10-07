@@ -199,8 +199,8 @@ export default function ConfigurePayee ({ address, setRefresh, setShow, show }: 
       return;
     }
 
-    const mayBeNew = makePayee(rewardDestinationValue, rewardDestinationAccount);
-    const payee = mayBeNew && JSON.stringify(settings.payee) !== JSON.stringify(mayBeNew) ? mayBeNew : undefined;
+    const maybeNew = makePayee(rewardDestinationValue, rewardDestinationAccount);
+    const payee = maybeNew && JSON.stringify(settings.payee) !== JSON.stringify(maybeNew) ? maybeNew : undefined;
 
     setNewPayee(payee);
   }, [makePayee, rewardDestinationAccount, rewardDestinationValue, settings]);

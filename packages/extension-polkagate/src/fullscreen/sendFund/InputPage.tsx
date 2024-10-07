@@ -6,6 +6,7 @@
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { HexString } from '@polkadot/util/types';
 import type { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
 import type { Inputs } from '.';
 
@@ -21,8 +22,8 @@ import { AmountWithOptions, FullscreenChainNames, Infotip2, InputAccount, ShowBa
 import { useTranslation } from '../../components/translate';
 import { useInfo, useTeleport } from '../../hooks';
 import { getValue } from '../../popup/account/util';
-import { ASSET_HUBS } from '../../util/constants';
-import { amountToHuman, amountToMachine } from '../../util/utils';
+import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../util/constants';
+import { amountToHuman, amountToMachine, decodeMultiLocation } from '../../util/utils';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { toTitleCase } from '../governance/utils/util';
 import { STEPS } from '../stake/pool/stake';
@@ -30,7 +31,7 @@ import { STEPS } from '../stake/pool/stake';
 interface Props {
   address: string;
   balances: BalancesInfo | undefined;
-  assetId: number | undefined;
+  assetId: string | undefined;
   inputs: Inputs | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
@@ -99,6 +100,19 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
   const { api, chain, formatted } = useInfo(address);
   const teleportState = useTeleport(address);
 
+  const isForeignAsset = assetId ? assetId.startsWith('0x') : undefined;
+
+  const noAssetId = assetId === undefined || assetId === 'undefined';
+  const isNativeToken = String(assetId) === String(NATIVE_TOKEN_ASSET_ID) || String(assetId) === String(NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB);
+  const isNonNativeToken = !noAssetId && !isNativeToken;
+
+  const parsedAssetId = useMemo(() => noAssetId || isNativeToken
+    ? undefined
+    : isForeignAsset
+      ? decodeMultiLocation(assetId as HexString)
+      : parseInt(assetId)
+, [assetId, isForeignAsset, isNativeToken, noAssetId]);
+
   const [amount, setAmount] = useState<string>(inputs?.amount || '0');
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [estimatedCrossChainFee, setEstimatedCrossChainFee] = useState<Balance>();
@@ -109,10 +123,6 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
   const [transferType, setTransferType] = useState<TransferType>('Normal');
   const [maxFee, setMaxFee] = useState<Balance>();
 
-  const ED = assetId
-    ? balances?.ED
-    : api && api.consts['balances']['existentialDeposit'] as unknown as BN;
-
   const transferableBalance = useMemo(() => getValue('transferable', balances), [balances]);
 
   const amountAsBN = useMemo(
@@ -122,9 +132,9 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     [amount, balances]);
 
   const warningMessage = useMemo(() => {
-    if (transferType !== 'All' && amountAsBN && balances?.decimal && ED && transferableBalance) {
+    if (transferType !== 'All' && amountAsBN && balances?.decimal && balances?.ED && transferableBalance) {
       const totalBalance = balances.freeBalance.add(balances.reservedBalance);
-      const toTransferBalance = assetId
+      const toTransferBalance = isNonNativeToken
         ? amountAsBN
         : amountAsBN.add(estimatedFee || BN_ZERO).add(estimatedCrossChainFee || BN_ZERO);
 
@@ -134,23 +144,23 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
         return t('There is no sufficient transferable balance!');
       }
 
-      if (remainingBalanceAfterTransfer.lt(ED) && remainingBalanceAfterTransfer.gt(BN_ZERO)) {
+      if (remainingBalanceAfterTransfer.lt(balances.ED) && remainingBalanceAfterTransfer.gt(BN_ZERO)) {
         return t('This transaction will drop your balance below the Existential Deposit threshold, risking account reaping.');
       }
     }
 
     return undefined;
-  }, [ED, amountAsBN, assetId, balances, transferableBalance, estimatedCrossChainFee, estimatedFee, t, transferType]);
+  }, [amountAsBN, isNonNativeToken, balances, transferableBalance, estimatedCrossChainFee, estimatedFee, t, transferType]);
 
   const destinationGenesisHashes = useMemo((): DropdownOption[] => {
     const currentChainOption = chain ? [{ text: chain.name, value: chain.genesisHash as string }] : [];
-    const mayBeTeleportDestinations =
-      assetId === undefined
-        ? teleportState?.destinations?.map(({ genesisHash, info, paraId }) => ({ text: toTitleCase(info) as string, value: (paraId || String(genesisHash)) as string }))
-        : [];
+    const maybeTeleportDestinations =
+     isNativeToken
+       ? teleportState?.destinations?.map(({ genesisHash, info, paraId }) => ({ text: toTitleCase(info) as string, value: (paraId || String(genesisHash)) as string }))
+       : [];
 
-    return currentChainOption.concat(mayBeTeleportDestinations);
-  }, [assetId, chain, teleportState?.destinations]);
+    return currentChainOption.concat(maybeTeleportDestinations);
+  }, [isNativeToken, chain, teleportState?.destinations]);
 
   const isCrossChain = useMemo(() => recipientChainGenesisHash !== chain?.genesisHash, [chain?.genesisHash, recipientChainGenesisHash]);
 
@@ -159,26 +169,34 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
       return undefined;
     }
 
-    const module = assetId !== undefined
-      ? isAssethub(chain.genesisHash)
-        ? 'assets'
-        : api.tx?.['currencies']
-          ? 'currencies'
-          : 'tokens'
-      : 'balances';
+    try {
+      const module = isNonNativeToken
+        ? isAssethub(chain.genesisHash)
+          ? isForeignAsset
+            ? 'foreignAssets'
+            : 'assets'
+          : api.tx?.['currencies']
+            ? 'currencies'
+            : 'tokens'
+        : 'balances';
 
-    if (['currencies', 'tokens'].includes(module)) {
-      return api.tx[module]['transfer'];
+      if (['currencies', 'tokens'].includes(module)) {
+        return api.tx[module]['transfer'];
+      }
+
+      return api.tx?.[module] && (
+        transferType === 'Normal'
+          ? api.tx[module]['transferKeepAlive']
+          : isNonNativeToken
+            ? api.tx[module]['transfer']
+            : api.tx[module]['transferAll']
+      );
+    } catch (e) {
+      console.log('Something wrong while making on chain call!', e);
+
+      return undefined;
     }
-
-    return api.tx?.[module] && (
-      transferType === 'Normal'
-        ? api.tx[module]['transferKeepAlive']
-        : assetId !== undefined
-          ? api.tx[module]['transfer']
-          : api.tx[module]['transferAll']
-    );
-  }, [api, assetId, chain, transferType]);
+  }, [api, isNonNativeToken, chain, isForeignAsset, transferType]);
 
   const call = useMemo((): SubmittableExtrinsicFunction<'promise'> | undefined => {
     if (!api) {
@@ -218,14 +236,14 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
       return setFeeCall(dummyAmount);
     }
 
-    const _params = assetId !== undefined
+    const _params = isNonNativeToken
       ? ['currencies', 'tokens'].includes(onChainCall.section)
         ? [formatted, balances.currencyId, amount]
-        : [assetId, formatted, amount]
+        : [parsedAssetId, formatted, amount]
       : [formatted, amount];
 
     onChainCall(..._params).paymentInfo(formatted).then((i) => setFeeCall(i?.partialFee)).catch(console.error);
-  }, [api, formatted, balances, onChainCall, assetId]);
+  }, [api, formatted, balances, onChainCall, isNonNativeToken, parsedAssetId]);
 
   const crossChainParams = useMemo(() => {
     if (!api || !balances || !teleportState || isCrossChain === false || (recipientParaId === INVALID_PARA_ID && !teleportState?.isParaTeleport) || Number(amount) === 0) {
@@ -285,10 +303,10 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
       call,
       params: (isCrossChain
         ? crossChainParams
-        : assetId !== undefined
+        : isNonNativeToken
           ? ['currencies', 'tokens'].includes(onChainCall?.section || '')
             ? [recipientAddress, balances.currencyId, amountAsBN] // this is for transferring on mutliasset chains
-            : [assetId, recipientAddress, amountAsBN] // this is for transferring on asset hubs
+            : [parsedAssetId, recipientAddress, amountAsBN] // this is for transferring on asset hubs
           : transferType === 'All'
             ? [recipientAddress, false] // transferAll with keepalive = false
             : [recipientAddress, amountAsBN]) as unknown[],
@@ -297,7 +315,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
       recipientGenesisHashOrParaId: recipientChainGenesisHash,
       totalFee: estimatedFee ? estimatedFee.add(estimatedCrossChainFee || BN_ZERO) : undefined
     });
-  }, [amountAsBN, estimatedFee, estimatedCrossChainFee, setInputs, call, recipientAddress, isCrossChain, crossChainParams, assetId, formatted, amount, recipientChainName, recipientChainGenesisHash, transferType, onChainCall?.section, balances]);
+  }, [amountAsBN, estimatedFee, estimatedCrossChainFee, setInputs, call, parsedAssetId, recipientAddress, isCrossChain, crossChainParams, isNonNativeToken, formatted, amount, recipientChainName, recipientChainGenesisHash, transferType, onChainCall?.section, balances]);
 
   useEffect(() => {
     if (!api || !transferableBalance) {
@@ -339,21 +357,21 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
   }, [call, formatted, isCrossChain, crossChainParams]);
 
   const setWholeAmount = useCallback(() => {
-    if (!api || !transferableBalance || !maxFee || !balances || !ED) {
+    if (!transferableBalance || !maxFee || !balances) {
       return;
     }
 
     setTransferType('All');
 
-    const _isAvailableZero = transferableBalance.isZero();
+    const isAvailableZero = transferableBalance.isZero();
 
-    const _maxFee = assetId === undefined ? maxFee : BN_ZERO;
+    const _maxFee = isNativeToken ? maxFee : BN_ZERO;
 
-    const _canNotTransfer = _isAvailableZero || _maxFee.gte(transferableBalance);
-    const allAmount = _canNotTransfer ? '0' : amountToHuman(transferableBalance.sub(_maxFee).toString(), balances.decimal);
+    const canNotTransfer = isAvailableZero || _maxFee.gte(transferableBalance);
+    const allAmount = canNotTransfer ? '0' : amountToHuman(transferableBalance.sub(_maxFee).toString(), balances.decimal);
 
     setAmount(allAmount);
-  }, [api, assetId, balances, ED, maxFee, transferableBalance]);
+  }, [balances, isNativeToken, maxFee, transferableBalance]);
 
   const _onChangeAmount = useCallback((value: string) => {
     if (!balances) {
@@ -403,7 +421,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
           <ShowBalance api={api} balance={estimatedFee} />
         </Grid>
         <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '25px', width: '57.5%' }}>
-          <Infotip2 showInfoMark text={t('Existential Deposit: {{ED}}', { replace: { ED: api?.createType('Balance', ED)?.toHuman() } })}>
+          <Infotip2 showInfoMark text={t('Existential Deposit: {{ED}}', { replace: { ED: `${amountToHuman(balances?.ED, balances?.decimal)} ${balances?.token}` } })}>
             <Typography fontSize='14px' fontWeight={400}>
               {t('Transferable amount')}
             </Typography>

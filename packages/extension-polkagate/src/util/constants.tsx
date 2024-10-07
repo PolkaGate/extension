@@ -11,8 +11,8 @@ export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 
 export const POLKADOT_SLIP44 = 354;
 
-// fix me, since we have asset ID 0 on asset hub, it can be -1 instead!
-export const NATIVE_TOKEN_ASSET_ID = 0; // zero is the native token's assetId on apps-config
+export const NATIVE_TOKEN_ASSET_ID = 0; // used for non asset hub chains
+export const NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB = -1; //  used only for asset hubs
 
 export const POLKAGATE_POOL_IDS: Record<string, number> = {
   Kusama: 18,
@@ -47,7 +47,7 @@ export const ACALA_GENESIS_HASH = '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e
 export const WESTMINT_GENESIS_HASH = '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9';
 export const STATEMINE_GENESIS_HASH = '0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a'; // KUSAMA ASSET HUB
 export const STATEMINT_GENESIS_HASH = '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f';
-export const PASEO_ASSET_HUB_GENESIS_HASH = '0x862ce2fa5abfdc3d29ead85a9472071efc69433b0128db1d6f009967fae87952';
+export const PASEO_ASSET_HUB_GENESIS_HASH = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2';
 
 export const POLKADOT_PEOPLE_GENESIS_HASH = '0x67fa177a097bfa18f77ea95ab56e9bcdfeb0e5b8a40e46298bb93e16b6fc5008';
 export const KUSAMA_PEOPLE_GENESIS_HASH = '0xc1af4cb4eb3918e5db15086c0cc5ec17fb334f728b7c65dd44bfe1e174ff8b3f';
@@ -85,10 +85,7 @@ export const TEST_NETS = [
 ];
 
 export const PROXY_CHAINS = [
-  POLKADOT_GENESIS_HASH,
-  KUSAMA_GENESIS_HASH,
-  WESTEND_GENESIS_HASH,
-  PASEO_GENESIS_HASH,
+  ...RELAY_CHAINS_GENESISHASH,
   ...ASSET_HUBS
 ];
 
@@ -115,10 +112,7 @@ export const NFT_CHAINS = [
 
 // used to enable/disable staking icon in account page
 export const STAKING_CHAINS = [
-  POLKADOT_GENESIS_HASH,
-  KUSAMA_GENESIS_HASH,
-  WESTEND_GENESIS_HASH,
-  PASEO_GENESIS_HASH
+  ...RELAY_CHAINS_GENESISHASH
 ];
 
 export const PEOPLE_CHAINS = ['Polkadot', 'Kusama', 'Westend', 'PolkadotPeople', 'KusamaPeople', 'WestendPeople'];
@@ -136,7 +130,7 @@ export const IDENTITY_CHAINS = [
   '0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931ddad144059b1eb884e5b', // Bifrost
   '0xa85cfb9b9fd4d622a5b28289a02347af987d8f73fa3108450e2b4a11c1ce5755', // Basilic
   '0xb3db41421702df9a7fcac62b53ffeac85f7853cc4e689e0b93aeb3db18c09d82', // Centrifuge
-  '0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d', // HydraDx
+  '0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d', // Hydration
   '0x742a2ca70c2fda6cee4f8df98d64c4c670a052d9568058982dad9d5a7a135c5b', // Edgeware
   '0xe61a41c53f5dcd0beb09df93b34402aada44cb05117b71059cce40a2723a4e97', // Parallel
   '0x1bb969d85965e4bb5a651abbedf21a54b6b31a21f66b5401cc3f1e286268d736', // Phala
@@ -228,7 +222,7 @@ export const MAYBE_LATER_PERIOD = 5 * 60 * 1000; // ms
 export const FULLSCREEN_WIDTH = '900px';
 export const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed', '/account/import-raw-seed', '/forgot-password', '/reset-wallet'];
 
-type ProxyTypeIndex = 'CROWDLOAN' | 'GENERAL' | 'GOVERNANCE'| 'NOMINATION_POOLS' | 'SEND_FUND'| 'STAKING';
+type ProxyTypeIndex = 'CROWDLOAN' | 'GENERAL' | 'GOVERNANCE' | 'NOMINATION_POOLS' | 'SEND_FUND' | 'STAKING';
 
 export const PROXY_TYPE: Record<ProxyTypeIndex, ProxyTypes[]> = {
   CROWDLOAN: ['Any', 'NonTransfer', 'Auction'],

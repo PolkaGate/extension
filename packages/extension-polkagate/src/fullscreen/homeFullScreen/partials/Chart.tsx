@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -17,7 +16,7 @@ interface Props {
       color: string | undefined;
       logo: string | undefined;
     };
-    assetId?: number | undefined;
+    assetId?: number | string | undefined;
     chainName: string;
     decimal: number;
     genesisHash: string;
@@ -26,14 +25,14 @@ interface Props {
   }[] | undefined;
 }
 
-function ChartTotal({ assets }: Props): React.ReactElement {
+function ChartTotal ({ assets }: Props): React.ReactElement {
   const chartRef = useRef(null);
   const theme = useTheme();
 
   Chart.register(...registerables);
 
   useEffect(() => {
-    if (!assets) {
+    if (!assets || !chartRef.current) {
       return;
     }
 

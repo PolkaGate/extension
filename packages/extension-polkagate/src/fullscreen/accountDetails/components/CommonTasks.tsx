@@ -23,7 +23,7 @@ import { popupNumbers } from '..';
 
 interface Props {
   address: string | undefined;
-  assetId: number | undefined;
+  assetId: number | string | undefined;
   balance: BalancesInfo | FetchedBalance | undefined;
   genesisHash: string | null | undefined;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
@@ -133,7 +133,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
 
   const goToSend = useCallback(() => {
     address && genesisHash &&
-      openOrFocusTab(`/send/${address}/${assetId || ''}`, true);
+      openOrFocusTab(`/send/${address}/${assetId}`, true);
   }, [address, assetId, genesisHash]);
 
   const goToReceive = useCallback(() => {
