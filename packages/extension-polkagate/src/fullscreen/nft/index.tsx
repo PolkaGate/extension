@@ -50,20 +50,14 @@ function NFT (): React.ReactElement {
     if (items) {
       setStep(STEPS.INDEX);
 
+      items.forEach((item) => {
+        fetchItemMetadata(item, setItemsDetail).catch(console.error);
+      });
+
       return;
     }
 
     setStep(STEPS.CHECK_SCREEN);
-  }, [items]);
-
-  useEffect(() => {
-    if (!items) {
-      return;
-    }
-
-    items.forEach((item) => {
-      fetchItemMetadata(item, setItemsDetail).catch(console.error);
-    });
   }, [items]);
 
   return (

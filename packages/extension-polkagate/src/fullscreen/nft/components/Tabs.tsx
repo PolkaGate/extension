@@ -23,24 +23,16 @@ function Tabs ({ items, setItemsToShow }: FilterSectionProps): React.ReactElemen
     setTab(newValue);
   }, []);
 
-  const allItems = useMemo(() => {
-    if (!items) {
-      return items;
-    }
-
-    return items;
-  }, [items]);
-
-  const nfts = allItems?.filter(({ isNft }) => isNft);
-  const uniques = allItems?.filter(({ isNft }) => !isNft);
+  const nfts = items?.filter(({ isNft }) => isNft);
+  const uniques = items?.filter(({ isNft }) => !isNft);
 
   // Memoize the filtered items to avoid unnecessary recalculations
   const filteredItems = useMemo(() => {
-    if (allItems === undefined || allItems?.length === 0) {
+    if (items === undefined || items?.length === 0) {
       return undefined;
     }
 
-    if (allItems === null) {
+    if (items === null) {
       return null;
     }
 
@@ -52,12 +44,12 @@ function Tabs ({ items, setItemsToShow }: FilterSectionProps): React.ReactElemen
         return uniques;
 
       case TabsNumber.ALL:
-        return allItems;
+        return items;
 
       default:
-        return allItems;
+        return items;
     }
-  }, [allItems, nfts, tab, uniques]); // all the filter options added to the deps in order to ensure useMemo will realize the changes
+  }, [items, nfts, tab, uniques]); // all the filter options added to the deps in order to ensure useMemo will realize the changes
 
   useEffect(() => {
     setItemsToShow(filteredItems);
@@ -65,9 +57,9 @@ function Tabs ({ items, setItemsToShow }: FilterSectionProps): React.ReactElemen
 
   return (
     <MUITabs centered onChange={handleChange} sx={{ mt: '20px' }} value={tab}>
-      <Tab disabled={!allItems} label={`All ${allItems ? `(${allItems.length})` : ''}`} sx={tabStyle} value={TabsNumber.ALL} />
-      <Tab disabled={!allItems} label={`NFTs ${nfts ? `(${nfts.length})` : ''}`} sx={tabStyle} value={TabsNumber.NFT} />
-      <Tab disabled={!allItems} label={`Uniques ${uniques ? `(${uniques.length})` : ''}`} sx={tabStyle} value={TabsNumber.UNIQUE} />
+      <Tab disabled={!items} label={`All ${items ? `(${items.length})` : ''}`} sx={tabStyle} value={TabsNumber.ALL} />
+      <Tab disabled={!items} label={`NFTs ${nfts ? `(${nfts.length})` : ''}`} sx={tabStyle} value={TabsNumber.NFT} />
+      <Tab disabled={!items} label={`Uniques ${uniques ? `(${uniques.length})` : ''}`} sx={tabStyle} value={TabsNumber.UNIQUE} />
     </MUITabs>
   );
 }
