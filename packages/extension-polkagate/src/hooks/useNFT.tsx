@@ -105,6 +105,8 @@ export default function useNFT (address: string): ItemInformation[] | null | und
   }, [addresses, fetching, getNFTs]);
 
   useEffect(() => {
+    setNfts(undefined);
+
     getFromStorage()
       .then((storedItems) => {
         if (storedItems) {

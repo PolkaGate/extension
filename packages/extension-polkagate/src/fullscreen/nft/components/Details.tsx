@@ -56,7 +56,7 @@ export const Detail = React.memo(function Detail ({ accountId, api, chain, decim
         </Typography>
       }
       {accountId && api && chain &&
-        <Identity api={api} chain={chain} formatted={accountId} identiconSize={30} showShortAddress style={{ fontSize: '22px', maxWidth: '350px', width: '350px' }} />
+        <Identity api={api} chain={chain} formatted={accountId} identiconSize={30} showShortAddress style={{ fontSize: '18px', maxWidth: '350px', width: '350px' }} />
       }
     </Grid>
   );
