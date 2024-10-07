@@ -2,10 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
-import type { ApiPromise } from '@polkadot/api';
-// @ts-ignore
-import type { PalletNftsItemDetails, PalletNftsItemMetadata, PalletUniquesCollectionDetails, PalletUniquesItemDetails, PalletUniquesItemMetadata } from '@polkadot/types/lookup';
-import type { DataType, ItemInformation, ItemMetadata, ItemsDetail, NftsPrices } from './types';
+import type { DataType, ItemInformation, ItemMetadata, ItemsDetail } from './types';
 
 import { INITIAL_BACKOFF_TIME, IPFS_GATEWAYS, MAX_BACKOFF_TIME, MAX_RETRY_ATTEMPTS } from './constants';
 

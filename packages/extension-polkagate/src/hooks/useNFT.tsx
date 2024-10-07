@@ -36,7 +36,7 @@ export default function useNFT (address: string): ItemInformation[] | null | und
     return null;
   }, []);
 
-  const processAndSetNFTs = useCallback((items: ItemInformation[], fromStorage?: boolean) => {
+  const processAndSetNFTs = useCallback((items: ItemInformation[]) => {
     if (!formatted) {
       return;
     }
@@ -53,9 +53,7 @@ export default function useNFT (address: string): ItemInformation[] | null | und
     setNfts(
       filteredItems.length
         ? filteredItems
-        : fromStorage // it is better to do not set null (you do not have any NFT/Unique items) when checking the storage!
-          ? undefined
-          : null
+        : null
     );
   }, [formatted, filterItemsByAddress]);
 
@@ -111,7 +109,7 @@ export default function useNFT (address: string): ItemInformation[] | null | und
       .then((storedItems) => {
         if (storedItems) {
           // console.log('Fetched NFTs from storage:', storedItems);
-          processAndSetNFTs(storedItems, true);
+          processAndSetNFTs(storedItems);
         }
       })
       .catch(console.error);

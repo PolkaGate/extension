@@ -28,7 +28,7 @@ export const Detail = React.memo(function Detail ({ accountId, api, chain, decim
   const notListed = price !== undefined && price === null;
 
   return (
-    <Grid container item>
+    <Grid container item py='5px'>
       <Typography fontSize='16px' fontWeight={500} sx={inline ? { pr: '10px', width: 'fit-content' } : {}}>
         {title}:
       </Typography>
@@ -168,7 +168,7 @@ export default function Details ({ details: { animation_url, animationContentTyp
                 imageContentType={imageContentType}
               />
             </Grid>
-            <Grid container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', maxHeight: '460px', overflowY: 'scroll', p: '10px', rowGap: '10px', width: '390px' }}>
+            <Grid alignContent='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', maxHeight: '460px', overflowY: 'scroll', p: '10px', rowGap: '10px', width: '390px' }}>
               {description &&
                 <Detail
                   inline={false}
