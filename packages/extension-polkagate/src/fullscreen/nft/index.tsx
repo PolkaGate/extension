@@ -6,19 +6,18 @@
 import type { ItemInformation, ItemsDetail } from './utils/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { Warning } from '../../components';
 import NFTIcon from '../../components/SVG/NFT';
-import { useFullscreen, useInfo, useTranslation } from '../../hooks';
-import { NFT_CHAINS } from '../../util/constants';
+import { useFullscreen, useNFT, useTranslation } from '../../hooks';
 import FullScreenHeader from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
 import ItemsList from './components/ItemsList';
 import Tabs from './components/Tabs';
-import { fetchItemMetadata, fetchNFTs, fetchUniques } from './utils/util';
+import { fetchItemMetadata } from './utils/util';
 
 enum STEPS {
   CHECK_SCREEN,
@@ -31,60 +30,45 @@ function NFT (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
-  const { api, formatted, genesisHash } = useInfo(address);
+
+  const items = useNFT(address);
 
   const [step, setStep] = useState<STEPS>(STEPS.CHECK_SCREEN);
-  const [myNFTsDetails, setMyNFTs] = useState<ItemInformation[] | undefined>(undefined);
-  const [myUniquesDetails, setMyUniques] = useState<ItemInformation[] | undefined>(undefined);
   const [itemsDetail, setItemsDetail] = useState<ItemsDetail>({});
   const [itemsToShow, setItemsToShow] = useState<ItemInformation[] | null | undefined>(undefined);
 
-  const unsupportedChain = useMemo(() => !!(genesisHash && !(NFT_CHAINS.includes(genesisHash))), [genesisHash]);
-
   const reset = useCallback(() => {
-    setMyNFTs(undefined);
-    setMyUniques(undefined);
     setItemsDetail({});
     setStep(STEPS.CHECK_SCREEN);
   }, []);
 
   useEffect(() => {
     reset();
-  }, [address, genesisHash, reset]);
+  }, [address, reset]);
 
   useEffect(() => {
-    if (unsupportedChain) {
-      return setStep(STEPS.UNSUPPORTED);
-    } else if (!api || !formatted) {
-      return setStep(STEPS.CHECK_SCREEN);
-    } else if (!api.query['nfts']?.['item'] || !api.query['uniques']?.['asset']) {
-      return setStep(STEPS.UNSUPPORTED);
-    } else if (myNFTsDetails || myUniquesDetails) {
+    if (items) {
       setStep(STEPS.INDEX);
 
       return;
     }
 
     setStep(STEPS.CHECK_SCREEN);
-    fetchNFTs(api, formatted, setMyNFTs).catch(console.error);
-    fetchUniques(api, formatted, setMyUniques).catch(console.error);
-  }, [api, formatted, genesisHash, myNFTsDetails, unsupportedChain, myUniquesDetails]);
+  }, [items]);
 
   useEffect(() => {
-    if (!myNFTsDetails && !myUniquesDetails) {
+    if (!items) {
       return;
     }
 
-    const allItems = [...(myNFTsDetails ?? [])].concat(myUniquesDetails ?? []);
-
-    allItems.forEach((item) => {
+    items.forEach((item) => {
       fetchItemMetadata(item, setItemsDetail).catch(console.error);
     });
-  }, [myNFTsDetails, myUniquesDetails]);
+  }, [items]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
-      <FullScreenHeader page='nft' />
+      <FullScreenHeader noChainSwitch page='nft' />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '5%' }}>
           <Bread />
@@ -114,8 +98,7 @@ function NFT (): React.ReactElement {
                 {t('On NFT / Unique Album page you can watch all of your created or owned NFT/unique items.')}
               </Typography>
               <Tabs
-                myNFTsDetails={myNFTsDetails}
-                myUniquesDetails={myUniquesDetails}
+                items={items}
                 setItemsToShow={setItemsToShow}
               />
               <ItemsList

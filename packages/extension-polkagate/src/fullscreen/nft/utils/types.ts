@@ -16,8 +16,7 @@ export interface ItemInformation {
 }
 
 export interface FilterSectionProps {
-  myUniquesDetails: ItemInformation[] | undefined;
-  myNFTsDetails: ItemInformation[] | undefined;
+  items: ItemInformation[] | null | undefined;
   setItemsToShow: React.Dispatch<React.SetStateAction<ItemInformation[] | null | undefined>>;
 }
 

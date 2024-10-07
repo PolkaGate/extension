@@ -16,7 +16,7 @@ enum TabsNumber {
 
 const tabStyle = { ':is(button.MuiButtonBase-root.MuiTab-root.Mui-selected)': { fontWeight: 500 }, color: 'primary.main', fontSize: '16px', fontWeight: 400 };
 
-function Tabs ({ myNFTsDetails, myUniquesDetails, setItemsToShow }: FilterSectionProps): React.ReactElement {
+function Tabs ({ items, setItemsToShow }: FilterSectionProps): React.ReactElement {
   const [tab, setTab] = React.useState(TabsNumber.ALL);
 
   const handleChange = useCallback((_event: React.SyntheticEvent, newValue: number) => {
@@ -24,16 +24,12 @@ function Tabs ({ myNFTsDetails, myUniquesDetails, setItemsToShow }: FilterSectio
   }, []);
 
   const allItems = useMemo(() => {
-    if (!myNFTsDetails && !myUniquesDetails) {
-      return undefined;
+    if (!items) {
+      return items;
     }
 
-    if (myNFTsDetails?.length === 0 && myUniquesDetails?.length === 0) {
-      return null;
-    }
-
-    return [...(myNFTsDetails || []), ...(myUniquesDetails || [])];
-  }, [myNFTsDetails, myUniquesDetails]);
+    return items;
+  }, [items]);
 
   const nfts = allItems?.filter(({ isNft }) => isNft);
   const uniques = allItems?.filter(({ isNft }) => !isNft);

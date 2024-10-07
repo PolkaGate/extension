@@ -18,7 +18,7 @@ import { noop } from '@polkadot/util';
 
 import { NFTIcon, PoolStakingIcon } from '../../../components';
 import { useApi, useTranslation } from '../../../hooks';
-import { GOVERNANCE_CHAINS, NFT_CHAINS, STAKING_CHAINS } from '../../../util/constants';
+import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../../util/constants';
 import { popupNumbers } from '..';
 
 interface Props {
