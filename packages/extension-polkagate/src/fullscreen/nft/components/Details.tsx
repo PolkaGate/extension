@@ -144,11 +144,11 @@ export default function Details ({ details: { animation_url, animationContentTyp
 
   return (
     <>
-      <DraggableModal minHeight={515} onClose={closeDetail} open={show} width={800}>
+      <DraggableModal minHeight={540} onClose={closeDetail} open={show} width={800}>
         <Grid container item>
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderBottomColor: 'divider', mb: '20px' }}>
-            <Typography fontSize='22px' fontWeight={700}>
-              {isNft ? t('NFT Detail') : t('Unique Detail')}
+            <Typography fontSize='20px' fontWeight={500} sx={{ maxWidth: '380px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: 'fit-content' }}>
+              {name ?? (isNft ? t('NFT Detail') : t('Unique Detail'))}
             </Typography>
             <Grid item>
               <IconButton onClick={openFullscreen} sx={{ mr: 1 }}>
@@ -168,12 +168,7 @@ export default function Details ({ details: { animation_url, animationContentTyp
                 imageContentType={imageContentType}
               />
             </Grid>
-            <Grid container item sx={{ m: '20px', maxHeight: '400px', overflowY: 'scroll', rowGap: '10px', width: '370px' }}>
-              {name &&
-                <Typography fontSize='16px' fontWeight={500} sx={{ maxWidth: '380px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>
-                  {name}
-                </Typography>
-              }
+            <Grid container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', maxHeight: '460px', overflowY: 'scroll', p: '10px', rowGap: '10px', width: '390px' }}>
               {description &&
                 <Detail
                   inline={false}
@@ -208,7 +203,7 @@ export default function Details ({ details: { animation_url, animationContentTyp
               {animation_url &&
                 <Detail
                   text={`[${animationContentType}](${animation_url})`}
-                  title={t('Animation')}
+                  title={animationContentType?.startsWith('text') ? t('Animation') : t('Audio')}
                 />
               }
               <Detail

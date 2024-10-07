@@ -64,6 +64,8 @@ function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChai
         return onAction(`/accountfs/${selectedAddress}/0`);
       case 'send':
         return onAction(`/send/${selectedAddress}/${NATIVE_TOKEN_ASSET_ID}`);
+      case 'nft':
+        return onAction(`/nft/${selectedAddress}`);
       default:
         return null;
     }
