@@ -6,7 +6,7 @@
 import { getFormattedAddress } from '../utils';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
 
-const CHAIN_CONFIG = {
+export const CHAIN_CONFIG = {
   KAH: { name: 'kusamaassethub', prefix: 2 },
   PAH: { name: 'polkadotassethub', prefix: 0 }
 };
@@ -78,14 +78,14 @@ async function fetchItems (api, addresses, chain, isNft) {
   }
 
   return myItems.map(({ ids: { collectionId, itemId }, itemInfo }, index) => ({
-    chain,
+    chain, // PAH, KAH
     collectionId,
     creator: isNft ? String(itemInfo.deposit.account) : creators?.[collectionId],
     data: metadata[index],
     isNft,
     itemId,
     owner: isNft ? String(itemInfo.owner) : itemInfo?.owner?.toString(),
-    price: prices ? prices[index] ?? null : undefined
+    price: prices?.[index] ?? null
   }));
 }
 

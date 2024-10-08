@@ -7,7 +7,7 @@
 import type { DetailItemProps, DetailProp, DetailsProp } from '../utils/types';
 
 import { Close as CloseIcon, OpenInFull as OpenInFullIcon } from '@mui/icons-material';
-import { Grid, IconButton, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, IconButton, Link, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useParams } from 'react-router';
@@ -20,18 +20,24 @@ import { DraggableModal } from '../../governance/components/DraggableModal';
 import AudioPlayer from './AudioPlayer';
 import ItemAvatar from './ItemAvatar';
 import ItemFullscreenModal from './ItemFullScreenModal';
+import { KODADOT_URL } from '../../../util/constants';
 
-export const Detail = React.memo(function Detail ({ accountId, api, chain, decimal, inline = true, price, text, title, token }: DetailProp) {
+export const Detail = React.memo(function Detail({ accountId, api, chain, decimal, divider = true, inline = true, price, text, title, token, link, linkName }: DetailProp) {
   const { t } = useTranslation();
   const convertedAmount = useMemo(() => price && decimal ? (price / 10 ** decimal).toString() : null, [decimal, price]);
   const priceAsBN = convertedAmount ? amountToMachine(convertedAmount, decimal) : null;
   const notListed = price !== undefined && price === null;
 
   return (
-    <Grid container item py='5px'>
-      <Typography fontSize='16px' fontWeight={500} sx={inline ? { pr: '10px', width: 'fit-content' } : {}}>
-        {title}:
-      </Typography>
+    <Grid container item justifyContent='space-between'>
+      {divider &&
+        <Divider sx={{ bgcolor: 'divider', height: '1px', m: '8px auto', width: '100%' }} />
+      }
+      {title &&
+        <Typography fontSize='16px' fontWeight={500} sx={inline ? { pr: '10px', width: 'fit-content' } : {}}>
+          {title}:
+        </Typography>
+      }
       {price &&
         <ShowBalance
           balance={priceAsBN}
@@ -47,7 +53,7 @@ export const Detail = React.memo(function Detail ({ accountId, api, chain, decim
         </Typography>
       }
       {text &&
-        <Typography fontSize='16px' fontWeight={400} sx={{ '> p': { m: 0 } }} textAlign='left'>
+        <Typography fontSize='16px' fontWeight={400} sx={{ '> p': { m: 0 } }} textAlign='justify'>
           <ReactMarkdown
             linkTarget='_blank'
           >
@@ -57,6 +63,11 @@ export const Detail = React.memo(function Detail ({ accountId, api, chain, decim
       }
       {accountId && api && chain &&
         <Identity api={api} chain={chain} formatted={accountId} identiconSize={30} showShortAddress style={{ fontSize: '18px', maxWidth: '350px', width: '350px' }} />
+      }
+      {link &&
+        <Link href={link} underline='hover' target='_blank'>
+          {linkName}
+        </Link>
       }
     </Grid>
   );
@@ -121,13 +132,27 @@ const Item = ({ animation_url, animationContentType, image, imageContentType }: 
   }
 };
 
-export default function Details ({ details: { animation_url, animationContentType, description, image, imageContentType, metadataLink, name }, itemInformation: { collectionId, creator, isNft, itemId, owner, price }, setShowDetail, show }: DetailsProp): React.ReactElement {
+export default function Details({ details: { animation_url, animationContentType, description, image, imageContentType, metadataLink, name }, itemInformation: { chain: network, collectionId, creator, isNft, itemId, owner, price }, setShowDetail, show }: DetailsProp): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string | undefined }>();
   const { api, chain, decimal, token } = useInfo(address);
 
   const [showFullscreen, setShowFullscreen] = useState<boolean>(false);
+
+  const networkName = useMemo(() => {
+    switch (network) {
+      case 'KAH':
+        return 'Kusama Asset Hub';
+      case 'PAH':
+        return 'Polkadot Asset Hub';
+      case 'WAH':
+        return 'Westend Asset Hub';
+
+      default:
+        return '';
+    }
+  }, []);
 
   const closeDetail = useCallback(() => setShowDetail(false), [setShowDetail]);
 
@@ -168,28 +193,35 @@ export default function Details ({ details: { animation_url, animationContentTyp
                 imageContentType={imageContentType}
               />
             </Grid>
-            <Grid alignContent='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', maxHeight: '460px', overflowY: 'scroll', p: '10px', rowGap: '10px', width: '390px' }}>
+            <Grid alignContent='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: '460px', overflowY: 'scroll', p: '15px 20px', width: '390px' }}>
               {description &&
                 <Detail
+                  divider={false}
                   inline={false}
                   text={description}
-                  title={t('Description')}
                 />
               }
+              <Detail
+                title={t('Network')}
+                text={networkName}
+              />
               {collectionId !== undefined &&
                 <Detail
+                  divider={!!description}
                   text={collectionId}
                   title={t('Collection ID')}
                 />
               }
               {itemId !== undefined &&
                 <Detail
+                  divider={!!collectionId || !!description}
                   text={itemId}
                   title={isNft ? t('NFT ID') : t('Unique ID')}
                 />
               }
               {metadataLink &&
                 <Detail
+                  divider={!!itemId}
                   text={`[application/json](${metadataLink})`}
                   title={t('Metadata')}
                 />
@@ -226,6 +258,13 @@ export default function Details ({ details: { animation_url, animationContentTyp
                   api={api}
                   chain={chain}
                   title={t('Owner')}
+                />
+              }
+              {owner &&
+                <Detail
+                  link={KODADOT_URL}
+                  linkName='Kodadot'
+                  title={t('Sell on')}
                 />
               }
             </Grid>

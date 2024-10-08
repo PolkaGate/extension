@@ -64,7 +64,7 @@ export default function AudioPlayer ({ audioUrl }: AudioPlayerProps): React.Reac
   }, []);
 
   return (
-    <Grid container item sx={{ bgcolor: 'background.paper', borderRadius: '50px', width: '320px' }}>
+    <Grid container item sx={{ bgcolor: 'background.paper', borderRadius: '50px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)', width: '320px' }}>
       <audio
         ref={audioRef}
         src={audioUrl}

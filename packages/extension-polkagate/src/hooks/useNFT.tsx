@@ -3,15 +3,24 @@
 
 import type { ItemInformation } from '../fullscreen/nft/utils/types';
 
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo,useState } from 'react';
 
 import { AccountContext } from '../components';
-import { isHexToBn } from '../util/utils';
-import useFormatted from './useFormatted';
+import { useTranslation } from '../components/translate';
+import { getFormattedAddress, isHexToBn } from '../util/utils';
+// eslint-disable-next-line import/extensions
+import { CHAIN_CONFIG } from '../util/workers/getNFTs';
+import useAlerts from './useAlerts';
 
 export default function useNFT (address: string): ItemInformation[] | null | undefined {
+  const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
-  const formatted = useFormatted(address);
+  const { notify } = useAlerts();
+
+  const myFormattedAddresses = useMemo(() =>
+    Object.values(CHAIN_CONFIG).map(({ prefix }) =>
+      getFormattedAddress(address, undefined, prefix)
+    ), [address]);
 
   const [fetching, setFetching] = useState<boolean>(false);
   const [nfts, setNfts] = useState<ItemInformation[] | null | undefined>(undefined);
@@ -22,8 +31,8 @@ export default function useNFT (address: string): ItemInformation[] | null | und
     await chrome.storage.local.set({ nftItems: JSON.stringify(items) });
   }, []);
 
-  const filterItemsByAddress = useCallback((items: ItemInformation[], addressToFilter: string) => {
-    return items.filter(({ creator, owner }) => creator === addressToFilter || owner === addressToFilter);
+  const filterItemsByAddress = useCallback((items: ItemInformation[], addressToFilter: string[]) => {
+    return items.filter(({ creator, owner }) => addressToFilter.includes(creator ?? '') || addressToFilter.includes(owner));
   }, []);
 
   const getFromStorage = useCallback(async (): Promise<ItemInformation[] | null> => {
@@ -37,7 +46,7 @@ export default function useNFT (address: string): ItemInformation[] | null | und
   }, []);
 
   const processAndSetNFTs = useCallback((items: ItemInformation[]) => {
-    if (!formatted) {
+    if (myFormattedAddresses.length === 0) {
       return;
     }
 
@@ -48,14 +57,14 @@ export default function useNFT (address: string): ItemInformation[] | null | und
       }
     });
 
-    const filteredItems = filterItemsByAddress(items, formatted);
+    const filteredItems = filterItemsByAddress(items, myFormattedAddresses);
 
     setNfts(
       filteredItems.length
         ? filteredItems
         : null
     );
-  }, [formatted, filterItemsByAddress]);
+  }, [myFormattedAddresses, filterItemsByAddress]);
 
   const getNFTs = useCallback(() => {
     setFetching(true);
@@ -72,7 +81,7 @@ export default function useNFT (address: string): ItemInformation[] | null | und
       const NFTs = e.data;
 
       if (!NFTs) {
-        setNfts(null);
+        notify(t('Unable to fetch NFT/Unique items!'), 'info');
         setFetching(false);
 
         return;
@@ -96,7 +105,7 @@ export default function useNFT (address: string): ItemInformation[] | null | und
       setFetching(false);
       getNFTsWorker.terminate();
     };
-  }, [addresses, processAndSetNFTs, saveToStorage]);
+  }, [addresses, notify, processAndSetNFTs, saveToStorage, t]);
 
   useEffect(() => {
     if (!fetching && addresses && addresses.length > 0) {

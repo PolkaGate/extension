@@ -19,7 +19,7 @@ export default function ItemsList ({ items, itemsDetail }: ItemsListProps): Reac
   const { t } = useTranslation();
 
   return (
-    <Grid container item sx={{ bgcolor: 'background.paper', gap: '30px', height: LIST_HEIGHT, maxHeight: LIST_HEIGHT, overflowY: 'scroll', p: '20px 40px' }}>
+    <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.2)', gap: '30px', height: LIST_HEIGHT, maxHeight: LIST_HEIGHT, overflowY: 'scroll', p: '20px 40px' }}>
       {items === undefined &&
         <Grid alignItems='center' container item justifyContent='center'>
           <Progress

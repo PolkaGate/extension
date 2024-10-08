@@ -248,3 +248,5 @@ export const AUTO_MODE = {
   text: 'Auto Mode',
   value: 'AutoMode'
 };
+
+export const KODADOT_URL = 'https://kodadot.xyz';

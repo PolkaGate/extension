@@ -27,7 +27,7 @@ export default function Item ({ itemInformation, itemsDetail }: ItemProps): Reac
     <>
       {itemInformation?.data && itemDetail === undefined
         ? <ItemSkeleton />
-        : <Grid container item onClick={openNftDetail} sx={{ bgcolor: 'divider', border: '1px solid', borderColor: 'divider', borderRadius: '10px', cursor: displayNft ? 'pointer' : 'default', height: '320px', width: '190px' }}>
+        : <Grid container item onClick={openNftDetail} sx={{ bgcolor: 'divider', border: '1px solid', borderColor: 'divider', borderRadius: '10px', boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.2)', cursor: displayNft ? 'pointer' : 'default', height: '320px', width: '190px' }}>
           {!itemInformation?.data &&
             <Grid alignItems='center' container item justifyContent='center'>
               <Typography fontSize='16px' fontWeight={400}>
@@ -48,12 +48,14 @@ export default function Item ({ itemInformation, itemsDetail }: ItemProps): Reac
                 }
                 {itemInformation?.collectionId &&
                   <Detail
+                    divider={false}
                     text={itemInformation.collectionId}
                     title={t('Collection ID')}
                   />
                 }
                 {itemInformation?.itemId &&
                   <Detail
+                    divider={false}
                     text={itemInformation?.itemId}
                     title={itemInformation.isNft ? t('NFT ID') : t('Unique ID')}
                   />
